@@ -1,0 +1,38 @@
+
+This thing worked, but uses Promises, so was a bit heavy, so I just used JSONPath.
+However, this looks like it has better query support.
+<script src="https://cdn.jsdelivr.net/npm/jsonata/jsonata.min.js"></script>
+<script>
+  function greeting() {
+    var json = JSON.parse(document.getElementById('json').value);
+    var result = jsonata('"Hello, " & name').evaluate(json);
+    document.getElementById('greeting').innerHTML = result;
+
+    var result = jsonata('tblP46[midinum="66"][row="0"][styleNum=2].colorClass').evaluate(getCurrentFrame().tables);
+  }
+</script>
+
+/ run unlock [ transposition, beats-editor, ...]
+
+
+//doesn't work, but if you want to try it, call this: recordy();
+function recordy(){
+        const capture = async () => {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      const video = document.createElement("video");
+
+      try {
+        const captureStream = await navigator.mediaDevices.getDisplayMedia();
+        video.srcObject = captureStream;
+        context.drawImage(video, 0, 0, window.width, window.height);
+        const frame = canvas.toDataURL("image/png");
+        captureStream.getTracks().forEach(track => track.stop());
+        document.getElementById("myIframe").src = frame;
+        //window.location.href = frame;
+      } catch (err) {
+        console.error("Error: " + err);
+      }
+    };
+    capture();
+}

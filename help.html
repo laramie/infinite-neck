@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--   Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com -->
+<head>
+    <style>
+       body {
+           font-size: 14pt;
+           margin: 2em;
+           fffont-family: "Andale Mono", AndaleMono, Georgia
+           font-family: "Georgia";
+           font-weight: normal;
+       }
+       #helpBody {
+           padding-top: 3em;
+       }
+       h1, h2 {
+           color: orange;
+           font-family: "Verdana";
+       }
+       h3, h4, h5 {
+           color: orange;
+           font-family: "Verdana";
+           margin-top: 4em;
+       }
+       hr {
+            border: 4px solid orange;
+            border-radius: 5px;
+            margin-top: 1.6em;
+       }
+       P {
+           padding-left: 4em;
+       }
+       UL {
+           padding-left: 8em;
+           font-size: 12pt;
+       }
+       UL LI {
+           padding: 4px;
+           margin-right: 4em;
+       }
+       UL > UL {
+           margin-left: 1em;
+       }
+       UL > UL > LI {
+           font-size: 8pt;
+       }
+       Table {
+           margin-left: 4em;
+       }
+       .AppLink {
+           border: 1px solid green;
+           padding: 2em;
+           background-color: #FFC;
+           margin: 1em;
+
+       }
+       .ScaleFunction td {
+           padding: 0.3em;
+
+       }
+       .ScaleFunction td:nth-child(2) {
+         text-align: center;
+         background-color: cyan;
+         font-weight: bold;
+
+       }
+       .CheatSheet td {
+           padding: 0.3em;
+       }
+       .product {
+           font-size: 32pt;
+           color: darkorange;
+           font-family: "Verdana";
+       }
+       .productsmall {
+           font-size: 130%;
+           ffcolor: darkorange;
+           color: black;
+           font-family: "Verdana";
+           -webkit-text-stroke: 1px #ffaa00;
+       }
+       .productsmaller {
+           font-size: 80%;
+           color: darkorange;
+           font-family: "Verdana";
+       }
+       .bigpoint {
+           background-color: buttercup;
+           font-weight: bold;
+           padding: 1em;
+
+       }
+       .LinkList {
+           font-size: 9pt;
+           color: darkorange;
+           font-family: "Verdana";
+           list-style-type: none;
+           padding-left: 2em;
+       }
+       .key {
+           padding-right: 3pt;
+           padding-left: 3pt;
+           display: inline-block;
+           border: 1px solid gray;
+           border-radius: 20%;
+           background-color: buttercup;
+           box-shadow: 0 0 1pt 1pt gray;
+       }
+       #maincontents {
+
+       }
+       .GUIReference {
+           font-weight: bold;
+           padding: 1em;
+           margin-left: 4em;
+           background-color: #dfd;
+       }
+       .GUIReferenceInline {
+           font-size: 90%;
+           font-weight: bold;
+           padding: 0.3em;
+           padding-left: 1em;
+           padding-right: 1em;
+           background-color: #dfd;
+       }
+       .menuExample  b {
+           color: #ffaa00;
+           font-weight: normal;
+           font-size: 130%;
+       }
+       .menuExampleBox  b {
+           color: #ffaa00;
+           font-weight: normal;
+           font-size: 130%;
+       }
+       .menuExampleBox {
+           padding: 1em;
+           width: 200px;
+           border: 1px solid black;
+           background-color: darkgreen;
+       }
+       .menuExampleLine {
+           border: 1px solid black;
+           background-color: darkgreen;
+       }
+       .menuExampleLine  b {
+           color: #ffaa00;
+           font-weight: normal;
+           font-size: 130%;
+       }
+       .helpButton {
+           background-color: orange;
+           box-shadow: 1pt 1pt 2pt 0.5pt gray;
+           padding: 0.2em;
+           color: black;
+           margin-top: 0.1em;
+           margin-left: 0.3em;
+           display: inline-block;
+       }
+       .menunav {
+           position: fixed;
+           width: 100%;
+           padding-top: 0.1em;
+           height: 2em;
+           border: 1px solid green;
+           left: 0;
+           top: 0;
+           background-color: lightyellow;
+       }
+       .floatingScreenshot {
+           border: 10px solid green;
+           box-shadow: 4pt 4pt 6pt 2pt gray;
+
+       }
+
+
+    </style>
+</head>
+<body>
+    <div class="menunav">
+        &nbsp;&nbsp;<span class="productsmaller">Laramie's </span>
+        <span class="productsmall">infinite-neck</span>
+      <a class="helpButton" href="#about">About</a>
+      <a class="helpButton" href="#why">Why</a>
+      <a class="helpButton" href="#videos">Videos</a>
+      <a class="helpButton" href="#help">Help</a>
+      <a class="helpButton" href="#glossary">Glossary</a>
+    </div>
+
+<div id="helpBody">
+<a name="about"></a>
+<hr>
+    <h2>About</h2>
+    <ul class="LinkList">
+        <li><a href="#instruments">Instruments</a>
+        <li><a href="#instrumentsInAction">Instruments in Action</a>
+        <li><a href="#walkthrough">Walkthrough</a>
+    </ul>
+
+    <p class="bigpoint">This tool helps you visualize notes across the neck of your instrument.
+        </p>
+
+        <p><img src="img/help/infinite-neck-visualization.png" width="80%"></p>
+
+
+    <p>Clicking on cells puts "notes" on the virtual neck (fretboard),
+        showing where you'll play them on the real fretboard of your instrument.  You can add bars and beats, and loop the song.
+        There's music theory baked into the tool, so you can automatically
+        highlight all legal notes in G Mixolydian, for example, with separate sets of colors for
+        chord notes, root, scale notes, passing-tones, and blue-notes.
+    </p>
+    <p>infinite-neck has the following uses for practice and sharing:
+        <br>&check;&nbsp;writing down new-to-you and interesting chord fingerings.
+        <br>&check;&nbsp;capturing a concrete way to play a song.
+        <br>&check;&nbsp;communicating the fabric of a sound: the possible notes and their moods.
+        <br>&check;&nbsp;creating art with the patterns of notes, another way to internalize the layout and relationships of notes.
+        <br>&check;&nbsp;improvising over the changes while looping.
+    </p>
+
+    <a name="instruments"></a>
+    <h3>Instruments</h3>
+    <p>
+        &check;&nbsp;Supported instruments: guitar, bass, mandolin, cello, piano, midi-pads, uke, and banjo.
+        <br>
+        &check;&nbsp;All support left-handed and right-handed players.
+        <br>
+        &check;&nbsp;Each instrument may have multiple tunings.
+        <br>
+        <br>
+        For example, a left-handed, six-string guitar could be in Standard tuning,
+        or it could be in P4, Drop-D, or DADGAD.
+        <br>
+        <br>
+        Here is the tunings table, which shows all tunings for all supported instruments. (<small><i>It's easy to add your own tunings.</i></small>)
+        <br>
+        <br>
+        <img width="95%" src="img/help/tunings-table.png">
+        <br>
+        <br>
+        <br>
+        <b>Or you could really get
+            lost in the world of alternate tunings and follow <a target="_blank" href="https://ragajunglism.org/">George Howlett's RĀGA JUNGLISM</a></b>.
+        <br>
+        <br>
+        <br>
+        <br>
+    </p>
+
+    <a name="instrumentsInAction"></a>
+    <h3>Instruments in Action</h3>
+
+    <p>
+        Most of the examples below and videos on our
+        <a target="_blank" href="https://www.youtube.com/playlist?list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">youtube chanel</a>
+        feature guitar.
+        Here are snapshots of what the other instruments look like.
+        <br>
+        <br>
+        <b>Piano</b>
+        <br>
+        <img width="95%" src="img/help/piano-schroeder.png">
+        <br>
+        <br>
+        <br>
+
+        Two Ableton Controller surfaces, when used with <b><i>Theme:</i></b> <b>DJ TrailMix</b>.
+        <br>
+        <br>
+        <b>Novation Launchpad 8x8</b>
+        <br>
+        <img width="45%" src="img/help/8x8.png">
+        <br>
+        <br>
+        <b>Linstrument 8x24</b>  <br>
+        <img width="85%" src="img/help/linstrument.png">
+        <br>
+        <br>
+
+        We support <b>Banjo</b>
+        <br>
+        <img width="95%" src="img/help/banjo-sawmill.png">
+        <br>
+        <br>
+
+
+
+        <i>We even support the <a href="https://stick.com/instruments/tunings/all/"><b>Chapman Stick</b></a>!</i>
+        <br>
+        <img width="95%" src="img/help/chapman-stick.png">
+    </p>
+
+
+<br>
+<br>
+<a name="walkthrough"></a>
+
+<h3>infinite-neck Walk-through</h3>
+
+
+<p>Here is a blank song, with a Theme that shows the piano key coloring scheme (i.e. Ebony/Ivory) as a backdrop for each fret:
+    <br />
+    <img src="img/help/blank-song.png" width="80%"></p>
+
+    <p>Here are a P4-tuning 6-string guitar, and a Standard-tuning left-hand 6-string,
+        both playing a cowboy-chord D-major, and showing those notes across the necks.
+        They are in editing mode with titles and controls, and are displayed in the same workspace.
+    </p>
+    <p><img width="600px" src="img/help/two-guitars-p4-std-L-editing.png"></p>
+
+
+    <p>Here they are in full-screen mode.</p>
+    <p><img width="600px" src="img/help/two-guitars-p4-std-L-fullscreen.png"></p>
+
+    <p class="bigpoint">You can assign colors and styles to notes.</p>
+    <p>For example: named notes (C#), chord notes (I, III, V), scale notes (natural minor),
+    mode notes (Mixolydian), enclosure notes, or passing tones can all have different colors and styles so you can visualize these patterns up the neck.
+    </p>
+
+    <p><img  width="600px" src="img/help/c-mixolydian.png"></p>
+
+    <p class="bigpoint">You can create Sections, and Beats within Sections.</p>
+    <p>A Section is like a bar or multiple bars where the underlying notes, modes, and keys don't change.
+    Within a section, a beat can highlight any notes.  The next beat could highlight different notes, but "Named Notes" stay for the whole section.
+    </p>
+
+    <p>Each new section gets: new keys, number of beats, caption, enharmonic sharps/flats.</p>
+
+    <p>That is, a Song has one or more Sections, and each Section has one or more Beats.</p>
+
+
+        <p>Each beat's length (time duration) is determined with the "BPM", or "Beats Per Minute" setting,
+            and there can be any number of beats per section, from 1 to some large integer.</p>
+
+        <p class="bigpoint">You can then loop over the Beats in one Section, or in all Sections.</p>
+
+            <p><img src="img/help/transport.png">
+            <br><i>Transport showing Section 1 of 5, on Beat 3 of 4.</i></p>
+
+        <p  class="bigpoint">You can save your songs to share with someone or to come back and practice them later.</p>
+
+    <p>Within Sections, one key is the root key for the band, and optionally, a separate root key for the "lead".
+        <i>("Bill is playing F# over Dave and the band's B".)</i></p>
+
+
+    <p>To show four chord changes over, say, a Dmin mood, you could use one Section with four Beats,
+        or you could use four Sections.</p>
+
+        <p>With four beats in one Section, the neck would look like, say,
+            a sea of bluish notes with several notes highlighted in golden backlight.
+            <ul>
+                <li>the chord changes would be shown by MultiHighlight or by MidiHighlight,
+                    which highlight just the relevant notes across the neck(s) with golden box-shadows.
+                </li>
+                <li>the band is in multiple blue colors, e.g. slightly different colors for the I, the V, the minor 3, the Seven.
+                </li>
+                <li>these notes keep the same position and color for all beats in this Section.
+                </li>
+
+            </ul>
+        </p>
+
+        <p>Or, with four Sections, the neck would look like a sea of bluish notes, and as each section is played,
+            you'd see notes change style and color, forming one chord per Section with their color changes,
+            that are different than the Dmin mood,
+        and so draw your eyes to the chosen notes/positions within a whole fabric of playable notes.
+        You can also add beats (Highlights) to these Sections for more expression.</p>
+
+        <p>I find it essential, when communicating with musicians, to "think Piano".  So in addition to the note
+            markers, or fret positions that you <i>should</i> play, <i>should <b>not</b></i> play, <i>could</i> play...etc.,
+            I have styled the guitar necks with piano key coloring embeded as ivory and ebony box inlay,
+        though in software they look more like lit-up MIDI controllers built
+        into your guitar neck like Guitar Hero with half of Synesthesia bolted on.</p>
+
+        <p style="text-align: center;"><img width="70%" src="img/help/highlights.png"></p>
+
+    <p>That is, <i>ahem,</i> a Song has one or more Sections, and each Section has one or more Beats.</p>
+
+<a name="why"></a>
+<hr>
+<h2>Why</h2>
+
+         <p>Obviously, the neck is NOT infinite,
+             since we play instruments with a fixed number of strings, and a playable number of frets,
+             generating a listenable set of tones.
+             (But you <i>could</i> have an infinite number of
+             frets, since they get infinitely smaller as you approach the bridge, albeit infinitely more unplayable.)</p>
+
+        <p>And thinking about the neck as infinite helped me to learn the repeatable patterns of the neck, and not
+             be rooted to the nut or open strings as much.  <i><small>In fact, I use open strings more now as drone notes
+             while I'm playing high up on the neck, because going up the neck doesn't unroot me from the scale I'm playing.</small></i>
+        </p>
+
+         <p>The point is that the instrument that
+             got me started on this madness was the Strandberg Boden <b><i>8-string</i></b> guitar with <b>24 frets</b>!  It seemed infinite to me!  </p>
+
+        <p><img  width="40%" src="img/help/strandberg-boden.png"></p>
+         <p>Also,
+             deciding to play this beast meant that when switching to 8-string bass (or 5-string bass),
+             I'd have to know different layouts than Standard guitar tuning.
+             So I decided for my own practice, I would use Perfect-Fourth-Tuning (P4)
+             on this 8-string guitar and all my basses.  Soon, the
+             logic and playability of this P4 system led me to convert some of my 6-string guitars to P4.
+             My soloing and comping
+             advanced remarkably.  <i><small>I never realized that the part of my brain that likes to improvise
+             gets all anxious and goes away when I hit that major third between the G and B strings
+             and I play a real clam because I'm missing a half-step.</small></i></p>
+
+         <p>Along the way, I had to sort out where my Classical training and Jazz training had different names
+                 for the pitches of a scale, and what to call these enharmonically <i><small>
+                     (classical purists note--here we show your choice of [all sharps] or [all flats] in any key,
+                     per Section, but no weird enharmonic names or mixed sharps and flats--sorry, no B# or C## for you!)</small></i>,
+                     and what to call these pitches when the key changed,
+                 but the played note was the same.
+                 <i>e.g. the band jumps from the key of A to the key of D# and you want to play the minor third function in the new key,
+                 or you want to know what that minor third you were playing in A means, now that everyone else is playing in D#.
+                 <small>"Girl from Ipanema" anyone?</small></i>
+
+         <p>So I decided to share this tool and to include other tunings, and ambidexterity,
+             so you can use this tool in your instrument and tuning of choice.
+             </p>
+
+         <p>Open some of the example files under "File | Open song from: [Song Library]"
+             to see it in action, or watch some of the videos on
+             our <a target="_blank" href="https://www.youtube.com/playlist?list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">youtube chanel</a>.
+         </p>
+         <p>You'll want to use this tool to:
+             <ul>
+                 <li>Understand Laramie's system of scale note/function naming (a hybrid between Jazz and Classical conventions),
+                     and its uses for singing, playing, and visualizing modal and modeless playing.
+                 <li>Try the benefits of Ebony/Ivory visualization from the piano, brought to the guitar.
+                     Especially when learning modes or playing in "The People's Key".
+                 <li>Apprehend the patterns formed by scales and chords across and up the neck.
+                 <li>Move these patterns around the neck.
+                 <li>Watch lead patterns moving against patterns of comping, and practice improvising over the patterns and changes.
+                 <li>See the difference between tunings in real time
+             (pull up two tunings and press Ctrl-minus in your browser to make them both fit).
+                 <li>Practice a song someone has saved in some other tuning, by switching it to your tuning.
+             </ul>
+             </p>
+       <p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions or gripes.  </p>
+
+
+
+<a name="videos"></a>
+<hr>
+<h1>Help Videos</h1>
+<p>
+    <ul class="LinkList">
+    <li><a href="https://www.youtube.com/playlist?list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">infinite-neck Video Playlist</a>
+    <li><a href="https://www.youtube.com/watch?v=qwNUnLNGCKQ&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=1">Intro</a>
+    <li><a href="https://www.youtube.com/watch?v=rCRxt7ORFLg&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=2">GUI Menus</a>
+    </ul>
+</p>
+
+
+<a name="help"></a>
+<hr>
+<h1>Help File</h1>
+<p>
+    <!-- update this list with
+        cd ~/laramie/infinite-neck/src-dev
+        grep 'a name' help.html
+
+        search for:    .*"(.*)"\>\</a\>
+        replace with:  <li><a href="#$1">$1</a>
+    -->
+        <ul class="LinkList">
+                <li><a href="#functions">Laramie's system of scale note/function naming</a>
+                <ul class="LinkList">
+                    <li><a href="#alternatives">Alternatives</a>
+                </ul>
+                <li><a href="#usage">Usage</a>
+                <li><a href="#contextHelp">Context Help Topics</a>
+                <ul class="LinkList">
+                    <li><a href="#divFileControls">File</a>
+                    <li><a href="#divSectionControls">Section</a>
+                    <li><a href="#divViewControls">View</a>
+                    <li><a href="#divThemeControls">Theme</a>
+                    <li><a href="#divFillNotes">Fill</a>
+                    <li><a href="#divTunings">Tunings</a>
+                    <li><a href="#palette">Palette</a>
+                </ul>
+
+                <li><a href="#options">Options</a>
+                <li><a href="#graveyard">The Graveyard</a>
+                <li><a href="#themes">Themes</a>
+                <li><a href="#cheatsheet">Cheatsheet/Keymap</a>
+                <li><a href="#commandline">Command Line Menu</a>
+                <li><a href="#techie">Techie bits</a>
+                <li><a href="#glossary">Glossary</a>
+        </ul>
+</p>
+
+<a name="functions"></a>
+    <hr>
+    <h2>Laramie's system of scale note/function naming</h2>
+        <p>All note functions with all note names (Key of C, P4 tuning):<br>
+            <img src="img/help/function-and-notenames-all.png" width="800px"></p>
+        <p>All note functions, root C shown in aqua, diatonic C-major notes in yellow, and black keys in gray with no notes,
+            because C-major has no black key notes.:<br>
+            <img src="img/help/function-names.png" width="800px"></p>
+        <p>Note functions for just one octave, chromatic scale in C:<br>
+            <img src="img/help/one-octave.png" width="800px"></p>
+
+        <table class="ScaleFunction" cellspacing="0" border="1">
+            <tr>
+                <th>Degree</th>  <th>Symbol</th>  <th>Name</th>  <th>Example<br> in A</th> <th>Pronounced</th><th>Classical</th>
+            </tr>
+            <tr>
+                <td>1</td>  <td>I</td>  <td>one</td>   <td>A</td>  <td>one</td><td>I</td>
+            </tr>
+            <tr>
+                <td>2</td>  <td>&tau;</td>  <td>tau</td>    <td>A#</td>  <td>tau (like the Greek letter, rhymes with cow)</td><td>dim2</td>
+            </tr>
+            <tr>
+                <td>3</td>  <td>II</td>  <td>two</td>      <td>B</td>   <td>two</td><td>II</td>
+            </tr>
+            <tr>
+                <td>4</td>  <td>m</td>  <td>mi</td>        <td>C</td>   <td>my</td><td>min</td>
+            </tr>
+            <tr>
+                <td>5</td>  <td>III</td>  <td>three</td>    <td>C#</td>  <td>three</td><td>III</td>
+            </tr>
+            <tr>
+                <td>6</td>  <td>IV</td>  <td>four</td>      <td>D</td>    <td>four</td><td>IV</td>
+            </tr>
+            <tr>
+                <td>7</td>  <td>&Theta;</td>  <td>tri</td>    <td>D#</td> <td>try</td> <td>tritone</td>
+            </tr>
+            <tr>
+                <td>8</td>  <td>V</td>  <td>five</td>          <td>E</td>   <td>fie--rhymes with five without the "v" sound</td><td>V</td>
+            </tr>
+            <tr>
+                <td>9</td>  <td>&sigma;</td>  <td>sa</td>     <td>F</td> <td>rhymes with cat without the "t"</td><td>min6/aug5</td>
+            </tr>
+            <tr>
+                <td>10</td>  <td>6</td>  <td>six</td>           <td>F#</td>   <td>six</td><td>VI</td>
+            </tr>
+            <tr>
+                <td>11</td>  <td>&delta;</td>  <td>dom</td>       <td>G</td>   <td>sounds like the begininning of "dominant", rhymes with Tom</td><td>dom7</td>
+            </tr>
+            <tr>
+                <td>12</td>  <td>&Delta;</td>  <td>say</td>    <td>G#</td>    <td>sounds like "say"; like the 'a' in "major seventh"</td><td>VII</td>
+            </tr>
+        </table>
+        <p><small><i>Classical music theory provides only 7 note names, and then expects you to glue on words
+            like "augmented", "diminished", "altered", "major", and "minor".
+            The problem is the symbols can change, so that for example the "II" becomes "ii" if diatonic,
+            which makes it minor.  Add Jazz people and you'll hear "flat 9" or "the flat 2".
+            And half of the Classical folks reading wouldn't agree that it would be correct
+            to notate a 12-tone chromatic scale thusly:
+            I ii II iii III IV v V vi VI vii VII.  Because ii represents the minor mode and not the flatted II.
+
+            These examples don't explain the problems well, or even correctly, but that's
+            kind of the point.  These systems do not precisely address what I want to
+            express: a unique set of single letter names for each of the twelve tones of the chromatic scale.
+            I do this by assigning names concretely, which apply in any 12-tone
+            playing, assuming you know where the "root" is, or the key of the band or dominant instrument,
+            usually the bass player.  I used symbols familiar to Jazz and Session players, and added a few new ones
+            where singular, concrete names were needed.
+            </i></small></p>
+
+            <p>Features of the system
+                <ul>
+                    <li>The "Name" is my name for that symbol and function</li>
+                    <li>The "Pronunciation" is my way of singing that symbol, for example "m" is named "mi" and is pronounced like the English word "my".</li>
+                    <li>"Symbol" is also called Function, Function Name, or Note</li>
+                    <li>A &Theta; is always 7 steps up from the root.</li>
+                    <li>If you change root, the new &Theta; is calculated as 7 steps above the new root.</li>
+                    <li>A III is always a major third.</li>
+                    <li>An m is always a minor third, and so on.</li>
+                    <li>It's easy to think of the notes as simple: one character, one syllable</li>
+                    <li>I think the easiest to sing sounds are shown in my pronounciation--one syllable, ends in vowel.</li>
+                </ul>
+            </p>
+
+            <p>Here, the Root Key is set to the key of C:<br>
+                <img src="img/help/NoteFunctionKeyC.png"><br><br>
+                Here, it is the key of F:<br>
+                <img src="img/help/NoteFunctionKeyF.png">
+            </p>
+
+      <a name="alternatives"></a>
+      <h3>Alternatives</h3>
+      <p>Navigate to the Function Symbols in the View menu:
+      </p>
+      <span class="GUIReferenceInline">View | Function Symbols</span>
+      <p>
+            NoteFunction symbols dropdown shown:
+            <BR /><img style="border: 10px solid green;" src="img/help/FunctionSymbolsDropdownDefault.png">
+
+
+        </p>
+
+      <p>There are built-in alternatives, and a way for you to define your own.</p>
+
+      <h4>Built-in alternatives</h4>
+
+      <p>
+          <img style="border: 10px solid green;" src="img/help/FunctionNumbersDropdown.png">
+          <BR />
+          <table border='1' cellpadding='4' cellspacing='0'>
+              <tr><th>scheme</th><th>usage</th><th>display</th></tr>
+              <tr><td>Default</td><td>Laramie's system</td><td>I&nbsp;&nbsp; &tau;&nbsp;&nbsp; II&nbsp;&nbsp; m&nbsp;&nbsp; III&nbsp;&nbsp; IV&nbsp;&nbsp; &Theta;&nbsp;&nbsp; V&nbsp;&nbsp; &sigma;&nbsp;&nbsp; 6&nbsp;&nbsp; &delta;&nbsp;&nbsp; &Delta;</td></tr>
+              <tr><td>Sounds Like</td><td>Sung words for Laramie's system</td><td>One&nbsp;&nbsp; Tau&nbsp;&nbsp; Two&nbsp;&nbsp; Mi&nbsp;&nbsp; Three&nbsp;&nbsp; Four&nbsp;&nbsp; Tri&nbsp;&nbsp; Fi&nbsp;&nbsp; Sa&nbsp;&nbsp; Six&nbsp;&nbsp; Dom&nbsp;&nbsp; Say</td></tr>
+              <tr><td>Function Numbers</td><td>Counting from 1 as the first, Root pitch</td><td>1&nbsp;&nbsp; 2&nbsp;&nbsp; 3&nbsp;&nbsp; 4&nbsp;&nbsp; 5&nbsp;&nbsp; 6&nbsp;&nbsp; 7&nbsp;&nbsp; 8&nbsp;&nbsp; 9&nbsp;&nbsp; 10&nbsp;&nbsp; 11&nbsp;&nbsp; 12</td></tr>
+              <tr><td>Function Offset</td><td>Distance from the Root</td><td>+0&nbsp;&nbsp; +1&nbsp;&nbsp; +2&nbsp;&nbsp; +3&nbsp;&nbsp; +4&nbsp;&nbsp; +5&nbsp;&nbsp; +6&nbsp;&nbsp; +7&nbsp;&nbsp; +8&nbsp;&nbsp; +9&nbsp;&nbsp; +10&nbsp;&nbsp; +11</td></tr>
+              <tr><td>Solf&#232;ge</td><td>A bit of Old Europe, <a target='_blank' href='https://en.wikipedia.org/wiki/Solfege#Modern_use'>modernized</a>.</td><td>Do&nbsp;&nbsp; Ra&nbsp;&nbsp; Re&nbsp;&nbsp; Ma&nbsp;&nbsp; Mi&nbsp;&nbsp; Fa&nbsp;&nbsp; Se&nbsp;&nbsp; Sol&nbsp;&nbsp; Le&nbsp;&nbsp; La&nbsp;&nbsp; Ta&nbsp;&nbsp; Ti</td></tr>
+              <tr><td>Kanji Numerals</td><td>Nobody uses this notation (yet), but Kanji is cool.</td><td>&#x4e00;&nbsp;&nbsp; &#x4e8c;&nbsp;&nbsp; &#x4e09;&nbsp;&nbsp; &#x56db;&nbsp;&nbsp; &#x4e94;&nbsp;&nbsp; &#x516d;&nbsp;&nbsp; &#x4e03;&nbsp;&nbsp; &#x516b;&nbsp;&nbsp; &#x4e5d;&nbsp;&nbsp; &#x5341;&nbsp;&nbsp; &#x5341;&#x4e00;&nbsp;&nbsp; &#x5341;&#x4e8c;</td></tr>
+          </table>
+      </p>
+
+      <p>The best way to understand these is to fill up the neck with NamedNotes,
+          then select each of the schemes in the dropdown to try them out.
+          <small><i>They update in real-time, but you may have to scroll to see the neck.</i></small>
+      </p>
+
+      <p>
+          As you do that, the editing box called <b>Function Symbols</b> will get populated
+          with the internal string of characters and HTML character entities.
+
+      </p>
+
+      <p>
+            Setting the scheme <b>Function Numbers</b> for Function symbols:
+            <BR /><img style="border: 10px solid green;" src="img/help/FunctionNumbers.png">
+
+        </p>
+
+        <p>
+            The Function Symbols get set to this:
+        </p>
+
+        <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["1","2","3","4","5","6","7","8","9","10","11","12"]</div>
+
+        <p>
+            The notes display like this: <br />
+            <img src="img/help/customNoteFunctionNums.png">
+        </p>
+
+        <h4>User-added alternatives</h4>
+        <p>
+             You can change the NoteFunction symbols to any string or HTML Entity you choose.
+             A string is anything you can type on the keyboard; an HTML Entity is something like <b>&amp;blah;</b> where blah
+             is some string of numbers and letters--the browser turns them into things you can't type, like symbols.
+             You just need to edit the array here: <br><span class="GUIReferenceInline">View | Function Symbols</span>
+        </p>
+
+         <p>
+             This is a Javascript array, so the commas, quotes and braces must remain exactly as they are--just
+             change the values between the quote marks, leaving the quotes, commas and braces.
+        </p>
+
+
+      <br>
+      <p>They default to this:</p>
+      <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["I","&amp;tau;","II","m","III","IV","&amp;Theta;","V","&amp;sigma;","6","&amp;delta;","&amp;Delta;"]</div>
+      <p>
+          <img src="img/help/defaultNoteFunctionEntities.png">
+      </p>
+
+      <br>
+      <p>Or you could go crazy and use lots of HTML Entities:</p>
+      <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["&amp;#x21BA;","&amp;tau;","&amp;empty;","&amp;nabla;","&amp;oplus;","&amp;int;","&amp;Theta;","&amp;otimes;","&amp;sigma;","&amp;prod;","&amp;infin;","&amp;ocirc;"]</div>
+      <br />
+      <p>
+          <img src="img/help/customNoteFunctionEntities.png">
+      </p>
+
+      <br>
+      <p>Or use regular strings, such as Solf&#232;ge:</p>
+      <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]</div>
+      <p>
+          <img src="img/help/customNoteFunctionSolfage.png">
+      </p>
+
+      <br>
+      <p>Early in the design phase, I tried extending the Classical notation to use chord function names as note function names.
+          I find it confusing, being all too similar.
+          Drop me a note if you have a better idea, but here is what that looks like:</p>
+      <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["I","ii","II","iii","III","IV","v","V","vi","VI","vii","VII"]</div>
+      <p>
+          <img src="img/help/customNoteFunctionRoman.png">
+      </p>
+
+<a name="usage"></a>
+<hr>
+<h2>Usage</h2>
+<p>A cell is one of the squares on the neck, and represents one fret on one string. </p>
+
+<p><span class="productsmall">infinite-neck</span> allows you to mark the notes on your Instrument with various types of notes, shown below.  Otherwise,
+    a cell is empty. (You can also choose to show all the note names in all cells, but these won't have an inner border
+    or backglow behind them as notes do.)  When a cell has one or more notes or highlights, it is called "Active".</p>
+
+<p>With the various types of notes, you can express notes which should be known anywhere on the neck, or which should
+    be played exactly where shown.  With recording Beats and ordering the Sections, and with Looping, you can then arrange
+    the song into a practice sheet, or a visualization of notes to play or notes you <i>could</i> play.
+</p>
+
+<p>To help you visualize
+  the neck, <span class="productsmall">infinite-neck</span> shows where the piano keys would lie on your tuning.
+  In most Themes, cells have a white background for white keys on the piano, and a gray background for black keys on the piano.
+</p>
+
+<p>Tunings may change on your guitar, but a C is always a white key, and a C&sharp; (or D&flat;) is always a black key.
+You can switch to Theme "Coffee Brown" to see a keyboard that does not have piano key backgrounds.
+And any Theme can be changed by choosing
+the same color for noteWhiteKeyColor and noteBlackKeyColor in the Theme.</p>
+
+<p>Here are six cells showing four white-keys, and two black-keys. A "Single" note is
+placed on A, and a "NamedNote" is placed on F&sharp; which selects <u>all</u> F&sharp;s.</p>
+
+<p><img src="img/help/one-cell.png"></p>
+
+<p>Click a Palette note kind (Named, Single, Tiny, Bend...).</p>
+
+<p><img src="img/help/palette-note-types.png"></p>
+
+<p>Click a Palette radio button to select a note role, e.g. Root or Chord,</p>
+
+<p><img src="img/help/palette.png"></p>
+
+
+<p>or just some color you like.</p>
+
+<p><img src="img/help/palette-more.png"></p>
+
+<p>Click any cell.  Cells of that note name turn the selected color.
+        <ul>
+        <li>e.g. Click C, E, and G.</li>
+        <li>Now with "Named" notes, you have all Cmajor chords shown.  </li>
+        <li>With "Single" notes, you just
+        have the cells you clicked.</li>
+        <li>With "Tiny" notes and "Bend" notes, you'll have smaller note functions placed over the cells.</li>
+    </ul>
+</p>
+
+
+<p>Click the Clear radio button, then any note name you want to clear.
+    (These are specific to the kind of note, so also select the kind of note.)
+</p>
+
+<p>
+Check the 'Highlight' checkbox to put a border around just one square,
+e.g. to highlight the actual chord voicing you would play.
+With "Pitch" and "Multi" notes, you'll just highlight those notes:
+</p>
+<p>
+    <ul>
+    <li><b>Pitch</b> shows all notes with one MIDI pitch (e.g. 62) on that instrument,
+        <br>
+    <img src="img/help/pitch.png">
+    </li>
+    <li><b>Multi</b> lets you highlight multiple notes at once, by played position.
+        Here we are showing the D-major chord, with a handy dominant seven chord
+        highlighted in magenta, which we could play as a substitution if we wanted a Blues seventh.
+        <br>
+    <img src="img/help/multi-highlight.png">
+    </li>
+</ul>
+</p>
+
+
+<p>Click the 'keep' radio button, to avoid making changes when scrolling
+ around.</p>
+
+ <p><img src="img/help/keep.png"></p>
+
+<p>Click the 'clear' radio button to delete a note of the kind selected (Named, Single, Tiny, Bend).</p>
+
+ <p><img src="img/help/clear.png"></p>
+
+
+<h3>Note Types -- special handling:</h3>
+<p><img style="border: 20px solid green;" src="img/help/REC-button.png"></p>
+<p>
+<pre>        &check;To keep highlights: record them in individual Beats within Setions.
+            &diams; Highlights you get when "REC" is inactive are not kept in the Section.
+
+        &check;NamedNotes persist in Sections, but can't be recorded in Beats.
+
+        &check;SingleNotes, Tiny notes, and Bends persist in Sections, and can be recorded in beats.
+           &diams; If "REC" is active, notes record into beats, as you click them
+           &diams; If "REC" is inactive, notes record into the Section, that is, they persist for all the beats.
+
+        &check;SingleNotes are like NamedNotes, but you only get one note, not all notes that match the note name.
+            &diams;    So a NamedNote "F#" will select and color all F#'s on the neck.
+            &diams;    A SingleNote "F#" will just color one F# cell: the one you clicked.
+            &diams;    A SingleNote has a corner rounded off in its display, and a brighter default backglow.
+</pre>
+</p>
+<br>
+<p><i>Here is a snapshot of a part of the neck showing all the Active I's and III's with NamedNotes, and one Active &tau; with a SingleNote.</i>
+    <br /><img style="border: 20px solid green;" src="img/help/single-note-v-named-note.png"></p>
+
+
+<a name="contextHelp"></a>
+<hr>
+<h2>Context Help Topics</h2>
+
+<a name="divFileControls"></a>
+<h3>File</h3>
+<p><img class="floatingScreenshot" src="img/help/context/menu-file.png"></p>
+
+ <p>The file menu lets you open songs to play or edit:
+     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp;  songs from your local system you created
+     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp;  songs someone sent to you
+     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp;  from the library on our web server
+ </p>
+
+ <p>The file menu lets you save songs to your local system.
+     <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;  Enter a name for your song (e.g. change the name from "Round-midnight" to your song name).
+     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  This file is in JSON format, which is readable in any text editor.
+     <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;  Click the "Download Song" button.
+     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  Affirm the system dialog, choosing a location for your file.
+     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  From here, you can archive it, share it, and upload it later to view it again.
+
+ </p>
+
+ <p>
+ </p>
+
+<a name="divSectionControls"></a>
+<h3>Section</h3>
+ <p>The divSectionControls...
+ </p>
+
+<a name="divViewControls"></a>
+<h3>View</h3>
+ <p>The divViewControls...
+ </p>
+
+<a name="divThemeControls"></a>
+<h3>Themes</h3>
+ <p>The divThemeControls...
+ </p>
+
+<a name="divFillNotes"></a>
+<h3>Fill</h3>
+ <p>Fills in order of: Scale, Chord, Root.
+         <br>
+         <br>
+         &bull;&nbsp;To fill just Scale, set Chord and Root to "Keep".
+         <br>
+         <br>
+         &bull;&nbsp;To fill Scale and Chord, set Root to "Keep".
+         <br>
+         <br>
+         &bull;&nbsp;To erase, select "None" for color and click "Fill Notes" again.
+         <br>
+         <br>
+         &bull;&nbsp;AutoColor chooses colors based on the note function colors: [note1, note2, ... note12],
+         which overrides noteChord, noteScale, and noteRoot.
+         <br>&nbsp;&nbsp;So to see the color effect of filling, AutoColor button should be <span class="BtnPunchedOut">punched out</span>, not <span class="BtnPunchedIn">punched in</span>  .
+ </p>
+
+<a name="divTunings"></a>
+<h3>Tunings</h3>
+  <p>Look under the "Tunings" menu to turn on and off various installed tunings,
+      and customize them (number of frets, left-handed).
+      </p>
+
+<a name="palette"></a>
+<h3>Palette</h3>
+ <p>The Palette...
+ </p>
+
+ <a name="options"></a>
+<hr>
+ <h2>Options</h2>
+ <p>Beware that keyboard shortcuts may be captured by textboxes such as the song name or BPM, or even the
+     radio buttons of colors on the Palette.  Hit <span class="key">ESC</span> to close up menus to ensure the keyboard shortcuts documented
+     here behave as expected.</p>
+
+ <p class="GUIReference">Menu :: View :: Natural fret widths</p>
+ <p>When checked, pressing <span class="key">w</span> or <span class="key">W</span> while menus are closed will increase/decrease the
+     width of the frets, but will use the natural mathematical proportion of frets, such that they
+     get smaller up the neck. This is the default.  When not checked, the <span class="key">w</span> and <span class="key">W</span> keys still increase and decrease, but all frets have
+     the same width.
+ </p>
+ <p>Certain instruments in the library have an option in the JSON file called <b>fixedFretWidthMult</b>
+     which scales the fixed width, and thus do not use Natural Fret Widths.
+     <b>Piano Schroeder</b> is one of these.
+ </p>
+
+ <p class="GUIReference">Menu :: Section :: Allow transposition by keyboard shortcuts <span class="key">t</span>,
+     <span class="key">T</span>, <span class="key">j</span>, <span class="key">J</span> </p>
+ <p>When checked, pressing <span class="key">t</span> or <span class="key">T</span> while menus are closed will transpose
+ any named-notes, preserving their role colors/styles. Pressing <span class="key">j</span> or <span class="key">J</span>
+ will transpose by fourths,
+ or <b><u>J</u></b>ump strings up or down.
+
+ When not checked, these keys cannot
+ trigger transposition, which is the safe default.</p>
+
+ <a name="graveyard"></a>
+<hr>
+<h2>The Graveyard</h2>
+<p>Objects that are deleted are burried in the Graveyard.
+    They can be revived, which will place them back into the song as though never deleted,
+    except perhaps in a different order if things have been added or deleted in the meantime.  See the help sections
+on how to move Sections and Beats.  The order of Stylesheets is part of setting the Stylesheets for a Song, so check the
+Stylesheet order
+(in <span class="GUIReferenceInline" >Palette | <span style="border: 1px solid gray; background-color: lightgreen;">Stylesheets</span></span> ) after reviving them.</p>
+
+
+<p>The Graveyard can be found under the File menu, and in the Command-Line under <span class="menuExampleLine"><b>/fg</b> (<b>f</b>ile <b>g</b>raveyard)</span>.</p>
+
+<p class="GUIReference">Menu :: File :: View Graveyard</p>
+
+<p><img style="border: 20px solid green;" src="img/help/viewGraveyard.png"></p>
+
+
+<p>    (It is presented at the bottom of the page after all instruments, so scroll down if autoscroll doesn't take you there.)</p>
+
+<p><img width="80%" style="border: 20px solid green;" src="img/help/graveyard.png"></p>
+
+<p>Click "show/hide" to see the object that was burried.</p>
+<p>Click "raise" to revive the object that was burried.  The "lastRevived" timestamp will be updated,
+    and the object will be placed back into the song.</p>
+<p>In fact, you can revive an object more than once.  This makes clones, which is useful.
+    For Sections, there are more detailed cloning buttons on the Section menu page: Clone, and Shallow Clone.</p>
+
+
+<a name="themes"></a>
+<hr>
+<h2>Themes</h2>
+ <p>Themes, we got themes, baby!  Just choose one from the dropdown (or edit them in super-geek mode under the Themes menu).</p>
+
+ <p>
+    <h3>Adult Swim</h3>
+    <img width="80%" src="img/help/theme-adult-swim.png"><br><br>
+    <h3>Everyone into the Pool</h3>
+    <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br>
+    <h3>Zinfandel</h3>
+    <img width="80%" src="img/help/theme-zinfandel.png"><br><br>
+    <h3>Autobahn</h3>
+    <img width="80%" src="img/help/theme-autobahn.png"><br><br>
+    <h3>Late Nite</h3>
+    <img width="80%" src="img/help/theme-late-nite.png"><br><br>
+    <h3>Big in Japan</h3>
+    <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
+    <h3>Pool Shark</h3>
+    <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
+ </p>
+
+ <a name="cheatsheet"></a>
+ <hr>
+ <h2>Cheatsheet</h2>
+    <h3>Keymap:</h3>
+    <p>These keys can be pressed at any time.  If you have other menus up,
+    or the Command-Line, keystrokes may go to those.  Just hit <span class="key">ESC</span> first,
+to hide menus and the Command-Line.</p>
+    <table class="CheatSheet" cellspacing="0" border="1">
+        <tr>
+            <th>key
+            </th>
+            <th>also
+            </th>
+            <th>action
+            </th>
+        </tr>
+        <tr>
+            <td><span class="key">p</span>
+            </td>
+            <td><span class="key">P</span>
+            </td>
+            <td>show/hide Palette
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">t</span>
+            </td>
+            <td>
+            </td>
+            <td>show/hide Transport
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">s</span>
+            </td>
+            <td><span class="key">S</span>
+            </td>
+            <td>show/hide Section menu
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">v</span>
+            </td>
+            <td>
+            </td>
+            <td>show/hide View menu
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">i</span>
+            </td>
+            <td>
+            </td>
+            <td>show/hide Fill menu
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">l</span>
+            </td>
+            <td><span class="key">L</span>
+            </td>
+            <td>Loop
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">b</span>
+            </td>
+            <td><span class="key">B</span>
+            </td>
+            <td>previous Beat
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">n</span>
+            </td>
+            <td><span class="key">N</span>
+            </td>
+            <td>Next beat
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">,</span>
+            </td>
+            <td><span class="key">&lt;</span>
+            </td>
+            <td>previous Section
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">.</span>
+            </td>
+            <td><span class="key">&gt;</span>
+            </td>
+            <td>next Section
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">k</span>
+            </td>
+            <td>
+            </td>
+            <td>raise root Key
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">K</span>
+            </td>
+            <td>
+            </td>
+            <td>lower root Key
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">j</span>
+            </td>
+            <td>
+            </td>
+            <td>Transpose named-notes up a perfect fourth -- Jump one string on a P4 instrument.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">J</span>
+            </td>
+            <td>
+            </td>
+            <td>Transpose named-notes down a perfect fourth -- Jump one string on a P4 instrument.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">u</span>
+            </td>
+            <td><span class="key">D</span>
+            </td>
+            <td>raise root key and Transpose named-notes up one semitone. [Must have "Allow transposition..."
+                checkbox checked in "Section" menu page]
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">d</span>
+            </td>
+            <td><span class="key">U</span>
+            </td>
+            <td>lower root key and Transpose named-notes down one semitone. [Must have "Allow transposition..."
+                checkbox checked in "Section" menu page, or use Command-line:
+                <span class="menuExampleLine"><b>/fu</b> (<b>f</b>ile <b>u</b>nlock)</span>]
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">w</span>
+            </td>
+            <td><span class="key">W</span>
+            </td>
+            <td>change width of cells: <span class="key">w</span> increases, and cycles back to smallest again if you go past the widest;
+                <span class="key">W</span> decreases and stops at minimum.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">h</span>
+            </td>
+            <td><span class="key">H</span>
+            </td>
+            <td>change height of cells: <span class="key">h</span> increases, and cycles back to smallest again if you go past the widest;
+                <span class="key">H</span> decreases and stops at minimum.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">a</span>
+            </td>
+            <td>
+            </td>
+            <td>Show/hide Song title and caption
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">A</span>
+            </td>
+            <td>
+            </td>
+            <td>Show/hide Instrument captions
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">c</span>
+            </td>
+            <td>
+            </td>
+            <td>Toggle Auto-color
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">ESC</span>
+            </td>
+            <td>
+            </td>
+            <td>Hide menus, blur focus so keypresses do the action, rather than being captured by a textbox, e.g. the SongName.
+            </td>
+        </tr>
+
+        <tr>
+            <td><span class="key">0</span>
+            </td>
+            <td>
+            </td>
+            <td>[the zero key] Cycle through display options of the Nut: {none, small, ...., wide}.  (First hit is "none" so Nut disappears.)  Super-wide Nut settings
+                are for when you are zoomed way out in the browser (and want the instrument to look like a Koto).
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">-</span>
+            </td>
+            <td>
+            </td>
+            <td>Decrease User-Interface font size.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">=</span>
+            </td>
+            <td>
+            </td>
+            <td>Increase User-Interface font size.
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">_</span>
+            </td>
+            <td>
+            </td>
+            <td>Decrease Cell/Note font size to tweek your Note display.  (Note: moves in small increments)
+            </td>
+        </tr>
+        <tr>
+            <td><span class="key">+</span>
+            </td>
+            <td>
+            </td>
+            <td>Increase Cell/Note font size. (Note: moves in small increments)
+            </td>
+        </tr>
+
+
+        <tr>
+            <td><span class="key">Ctrl</span> <span class="key">-/+</span>
+            </td>
+            <td><span class="key">Cmd</span> <span class="key">-/+</span>
+            </td>
+            <td>Learn how to do this in your browser: it resizes the elements of the page up and down.
+                On Mac, it will be <span class="key">Cmd</span> instead of <span class="key">Ctrl</span>.
+                This is a great feature of any browser app, and you can use it to scale the neck(s) to your liking.
+                Use <span class="key">Cmd</span>-<span class="key">0</span> or <span class="key">Ctrl</span>-<span class="key">0</span>
+                to reset to default so you can see the buttons and controls.
+            </td>
+        </tr>
+        </table>
+        <p>
+            Note: <span class="key">TAB</span> order works in this application, and <span class="key">SPACE</span>
+            key and arrow keys are not overriden,
+                so all keyboard navigation
+            should work.  <i>(However, we remove all the transport buttons from TAB order,
+                and other controls you can reach by the Command-Line
+            or keyboard shortcuts.)</i>  So tabbing to the hamburger button means
+            <span class="key">SPACE</span> will click the hamburger, as usual.  Tabbing to radiobuttons
+            lets you then use arrow keys to select different colors, for example.  There is one radio group for all the Note types, and one
+            radio group for the colors.  Once you are in the palette, however, a <span class="key">p</span> key will get trapped by the radio buttons.  So to
+            exit the palette, you must use <span class="key">ESC</span>.
+        </p>
+
+
+<a name="commandline"></a>
+<hr>
+        <h3>Command Line Menu:</h3>
+
+        <p>Here is the command line interface, so you can type commands one-handed while balancing your guitar on your knee.<br>
+            <img width="1000px" src="img/help/cmd-line.png"></p>
+
+        <p>Here is the whole app with the command line showing.  Just press <span class="key">/</span> to pop it up.<br>
+            <img  width="600px" src="img/help/cmd-line-w-app.png"></p>
+
+        <table class="CheatSheet menuExample" cellspacing="0" border="1">
+            <tr>
+                <th>key
+                </th>
+                <th>also
+                </th>
+                <th>action
+                </th>
+            </tr>
+            <tr>
+                <td><span class="key"><b>/</b></span>
+                </td>
+                <td>
+                </td>
+                <td>The <span class="key"><b>/</b></span> key pops up the Command-Line Menu.  Any highlighted letter selects the next menu.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>!</b></span>
+                </td>
+                <td>
+                </td>
+                <td>An exclamation point <b>!</b> marks a menu item chosen when there is a "Bang Menu" item,
+                    that is, an item that takes action when you press the
+                    key that is highlighted by the menu.  The exclamation point lets you know that item
+                    was, in fact, selected, and that it's action has taken place.  Usually, you are left
+                    at that menu, and the exclamation point is shown.  You can choose a menu item
+                    at this sibling level, and they will then get the exclamation point,
+                    or run the same choice again.  But a menuItem can have a property that
+                    pops it back up to the parent menu when its action has happened.  For these, select the
+                    parent item again to execute again.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>ESC</b></span>
+                </td>
+                <td>
+                </td>
+                <td>The <span class="key">ESC</span> key (Escape) closes up the Command-Line Menu, and also closes any
+                    popped up dialogs.  It leaves you at the top level so that global keyboard shortcuts work.
+                    If you are at the top level, you can use any global keyboard shortcut, and you can enter Command-Line
+                    commands, and then <b>x</b> or <b>ESC</b>
+                    to get back to the top level.
+                        So the following sequence:
+                    <div class="menuExampleBox"><b>ESC w w p</b></div>
+                    would get you to the top level, run the keyboard shortcut <span class="key">w</span> twice to
+                        make the cells wider by two clicks,
+                    then run the keyboard shortcut <span class="key">p</span> which shows the Palette.
+                    <br />Or, the sequence: <div class="menuExampleBox"><b>ESC f /pns ESC</b></div> would put you
+                    at the top level, then go
+                    into fullscreen (logo, buttons, per-instrument buttons, and transport panel are all hidden), and choose
+                    <div class="menuExampleBox"><b>p</b>alette | <b>n</b>ote | <b>s</b>ingle</div> as your
+                    kind of note for the next moment you click on a cell.  You can verify this by looking at the
+                    Palette dialog.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>ENTER</b></span>
+                </td>
+                <td>
+                </td>
+                <td>The <span class="key">ENTER</span> key either sends the value you just typed to the parent menu item as a parameter,
+                    or, if you typed nothing, the <span class="key">ENTER</span> key pops you up to the parent menut item you were just at.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>..</b></span>
+                </td>
+                <td>
+                </td>
+                <td>Explicitly go up one menu by typing this instead of a letter menu choice, then
+                    hitting the <span class="key">ENTER</span> key.  Alternately, you can just hit <span class="key">ENTER</span> alone to go up one menu.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>x</b></span>
+                </td>
+                <td>
+                </td>
+                <td>Most menus present the last menu item as e<b>x</b>it, which exits the Command-Line menu.  You can
+                    jump back into the Command-Line by pressing <span class="key"><b>m</b></span>, or you can start a new Command-line
+                    at the root of the menu by typing <span class="key"><b>/</b></span>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key"><b>;</b></span>
+                </td>
+                <td>
+                </td>
+                <td>Top-level menus are associated with a dialog page that is one of the menus you get by clicking a menu button.
+                    You can show these dialogs by hitting <span class="key"><b>;</b></span> key when you see the menu item:
+                    <br>
+                    <div class="menuExampleBox"><b>;</b> dialog</div>
+                </td>
+            </tr>
+        </table>
+
+
+
+<a name="techie"></a>
+<hr>
+<h2>Techie Bits</h2>
+<p>
+<div style="border: 2px solid green">
+<pre>
+        In Chrome::Inspect you can use Developer tools to directly access the ObjectModel of the Song.
+
+        Synopsize the "tables" collection:
+           getSong().frames.forEach(function(a){console.log("id"+JSON.stringify(a.tables))});
+
+        Delete all played notes (tables) in a song, leaving Named and Recorded notes only :
+           getSong().frames.forEach(function(a){a.tables = {}; });
+
+        Delete all Recorded notes:
+           getSong().frames.forEach(function(a){a.recordedNotes = {}; });
+
+        Set entire song to sharps:
+           getSong().frames.forEach(function(a){a.sharps = true; });
+</pre>
+</div>
+</p>
+
+<br />
+<br />
+
+
+<a name="glossary"></a>
+<hr>
+<h2>Glossary</h2>
+<p>
+<div style="border: 2px solid green">
+<pre>
+        Note Names
+        Note Functions
+        MIDI Number
+
+        NamedNote
+        SingleNote
+        TinyNote
+        Bend
+            semitone
+            pre-bend
+            up-down
+        Fingering
+        Section
+        Beat
+        Tunings
+        Root
+        Root/Chord/Scale - in Fill
+
+        Cell
+        Theme
+        Pitch
+        Multi
+        Display Options
+        Clone
+        Shallow Clone
+</pre>
+</p>
+</div>
+
+
+ <div class="AppLink">
+ The Help link creates this page up a new tab/window, so you can close this window.
+ But here's a link to the application page: <a href="index.html">Infinite Neck</a>
+ </div>
+
+
+<p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions or gripes.  </p>
+
+</div from="helpBody">
+</body>
+</html>

@@ -1,0 +1,41 @@
+=============BUGS===================
+20240419: Section:NamedNotes => Stylesheet :: FindColor with AutoColor yields the weird green5 that means lookupcolor failed.
+
+TODO: 20240325 When you add a singleNote with a real color button, then go to automaticColor, the singleNote gets autocolored, when it should retain the color if placed by the user.
+      Question: how is this really different from the user placing real colors, or even noteScale then going to autocolor.
+      Seems like it should be an override.
+
+TODO: 20240325 code a section-level button to "print" autocolors to Model notes.
+
+Can't export low highlighted notes from P4 to MIDI8x8.
+
+LH bends all seem to come out up-down after export.
+
+This code is hosing whatever came from the theme.  But not sure if I want it.
+I just want the font color in the theme  for showing the All Note names when the cell color is weird.
+if (gLastBlackBackgroundColor && gLastWhiteBackgroundColor){
+        $('.noteWhiteKey').css({color: "transparent"});   //gLastWhiteBackgroundColor});
+        $('.noteBlackKey').css({color: "transparent"});   //gLastBlackBackgroundColor});
+        console.log("gLastBlackBackgroundColor:"+gLastBlackBackgroundColor);
+
+        basically, got it working, but other themes set "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#331e01" so you have to redo this in the theme.  Default theme does "transparent" so a theme can still override.
+
+Transform doesn't erase note correctly.
+
+Fill doesn't erase notes correctly.
+
+Clone sticks new ones at the end, should be just next.
+
+=============FEATURES===============
+
+User-customizable highlight colorSingleNotes
+
+User-customizable button spacing: 1) between table cells, and 2) IvoryEbony space.
+
+=============FIXED==================
+mix-blend-mode is screwed.  Hard to turn it off, in noteTransparent. [FIX: added noteTransparent to gNOTE_COLORS]
+
+Can't use + button to add more beats.
+
+Bends aren't persisting.

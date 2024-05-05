@@ -1,0 +1,83 @@
+Note: to get around any Cross-Domain stuff, serve up from localhost:
+    iTerm
+    cd ~/LARAMIE/infinite-neck/src-dev/
+    python -m SimpleHTTPServer
+    
+============ 20240301 ===========
+Uncaught ReferenceError: currFrame is not defined
+    at fillChord2 (notetable.js:599)
+    at fillChord (notetable.js:554)
+    at HTMLButtonElement.<anonymous> (infinite-neck.js:1858)
+    at HTMLButtonElement.dispatch (jquery-1.8.3.js:3058)
+    at HTMLButtonElement.eventHandle (jquery-1.8.3.js:2676)
+    ==>
+    for (key in chordNoteNames){
+            var noteName = chordNoteNames[key];
+            currFrame.namedNotes[noteName] = {"noteNameClass": ".note"+noteName, "colorClass": chordsColor};
+        }
+    }
+    if (rootColor != "noteClear") {
+        theRootClass.removeClass(gNOTE_COLORS);
+        theRootClass.addClass(lookupUserColorClass(rootColor))
+		            .addClass("NoteActive");
+        currFrame.namedNotes[rootName] = {"noteNameClass": ".note"+rootName, "colorClass": rootColor};
+
+
+
+=============== DOM Layout of TD.note =================================================================
+
+td  <>--->[.note .noteEb .noteBlackKey]
+ |
+ +--div.NoteDisplay NoteActive   --NoteActive has pink dropshadow  -- border-radius has effect (white layer, real layer is singleNote and namedNote
+        div.tinyNote
+        div.singleNote   -- border-radius has effect on .singleNote
+            span.midinumDisplay - has "60"
+            span.tinyscriptL - has "Eb"
+            span.tinyscriptR - has "IV"
+        div.Fingering
+        div.namedNote <>--->[namedNote, noteGreen1, noteHatched]  -- border-radius has effect on .namedNote
+            span.midinumDisplayNamedNote - has "60"
+            div
+                span.tinyscriptL - has "Eb"
+                span.tinyscriptR - has "IV"
+
+
+$(".namedNote").css({"border-radius": "100px", left: "100px"}); - moves the note colorClass to the right, and changes radius.
+$(".NoteDisplay").css({"border-radius": "100px", left: "100px"}); - moves the white square behind to show it matches the .namedNote.
+    ==> border-radius must match on these two.
+    But they don't move together - one moves 100, the other, being a child of the parent, moves 200.
+    Also, moving div.NoteDisplay also moves single notes, since they also ride inside NoteDisplay.
+Remember, since they are classes on the same div, selecting on .NoteDisplay and .NoteActive has the same effect.
+$(".NoteActive").css({"border-radius": "10px", left: "0", "background-color": "yellow"});
+    NoteActive is the one with a pink glow border.  When its radius doesn't match .namedNote, you get the big pink halo in the Ivory space.
+
+$(".namedNote").css({"border-radius": "10px"});     //main color area
+$(".NoteDisplay").css({"border-radius": "10px"});
+$(".NoteActive").css({"border-radius": "10px"});    //pink glow, match radius of .namedNote and .NoteActive
+
+.singleNote has, in the css:  border-radius: 10px; border-top-left-radius: 40px;
+
+td.note and .noteBlackKey must have the same border-radius:
+    $(".noteBlackKey").css({"border-radius": "50%"});
+    $(".note").css({"border-radius": "20%"});
+
+Looking through infinite-neck.css we see:
+
+.note {
+    border-radius: 15px;    //the outside corner of TD
+
+.singleNote {
+    border-radius: 10px;
+    border-top-left-radius: 40px;
+
+.NoteDisplay {
+    margin: 10px; /* driver of space for IvoryEbony */
+    border-radius: 10px;
+
+.NoteActive {
+    box-shadow: 0 0 3pt 2pt pink;  /*also cool as black instead of pink.*/
+    $(".NoteActive").css({"border-radius": "10px"});
+
+
+.namedNote {
+    border-radius: 10px;

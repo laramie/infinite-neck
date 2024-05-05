@@ -1,0 +1,1899 @@
+/*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
+:root {
+  /* These are required by the theme() call in infinite-neck.js */
+  --nut-gradient-color: brown;
+  --diamonds-color: pink;
+  --double-diamonds-color: aqua;
+  --diamonds-background-color: transparent;
+  --diamonds-size: 1em;
+  --note-white-shadow-color: black;
+  --note-black-shadow-color: white;
+  --instrument-margin-tb: 4em; /* now just bottom, not top. */
+  --cell-spacing: 8px; /*theme set it to values like: 0.5em;*/
+  --border-image-black-key: none;
+  --border-image-white-key: none;
+  --instrument-border-image: url('img/celtic-background-black.png');
+
+  /*
+          --border-image-black-key: url('img/celtic-background-black.png');
+          --border-image-white-key: url('img/celtic-background-white.png');
+  */
+
+  /*  Not themed now, just regular variables:    */
+  --bend-padding-left: 2em;
+  --singleNote-top-left-radius: 60%; /*this has to do done here, because it is picked up by the theme, which sets border-radius, so you must set this after, but I didn't want to have it hard-coded in theme(). */
+  --named-note-font-size: 22pt;
+  --named-note-radius: 16%;  /* themed directly into places like  " .namedNote, .NoteDisplay" by theme() */
+  --nut-width: 60px;    /* values from 2em up. A var() ref is inserted into .NoteDisplay from JS.  */
+  --td-note-font-family: "EB Garamond", "Garamond", serif;        /* , san-serif;*/
+  --left-subscript-font-size: 0.6em;
+  --right-subscript-font-size: 0.6em;
+  --midi-font-size: 0.5em;
+  --fingering-font-size: 100%;
+  --fingering-position: -0.5em;
+  --tiny-note-max-height: 45%;
+  --tiny-note-font-size: 100%;
+
+  --debug-border: 0;  /* just the border thickness */
+
+
+}
+
+body {
+    aabackground-color: #1f3330;
+    GGbackground-color: #381d00;
+    background-color: #1a0e03;
+    definitely-background-color: cornsilk;
+    font-size: 10pt;
+    font-family: Helvetica;
+    margin: 0;
+    padding: 0;
+
+}
+
+.basicBackground {
+    background-color: #AD310B;
+    -webkit-transition: background-color 1000ms linear;
+    -ms-transition: background-color 1000ms linear;
+    transition: background-color 1000ms linear;
+}
+
+.transBackground {
+    background-color: #FF0;
+    -webkit-transition: background-color 1000ms linear;
+    -ms-transition: background-color 1000ms linear;
+    transition: background-color 1000ms linear;
+}
+
+/*****************************************************************/
+
+.vollkorn {
+  font-family: "Vollkorn", serif;
+  font-optical-sizing: auto;
+  font-weight: 600; /* 400-800 */
+  font-style: normal;
+}
+
+.eczar {
+  font-family: "Eczar", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.cardo-regular {
+  font-family: "Cardo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cardo-bold {
+  font-family: "Cardo", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.cardo-regular-italic {
+  font-family: "Cardo", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.eb-garamond {
+  font-family: "EB Garamond", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/*****************************************************************/
+
+/* experimental: for drawLine() */
+#fullsvg {
+  left: 0px;
+  top: 0px;
+  position: fixed;
+  margin: 0;
+  pointer-events: none;
+}
+
+
+.exportButton {
+    padding: 6pt;
+    margin-bottom: 2pt;
+    font-size:  70%;
+    background-color: 578607;
+    color: black;
+    box-shadow: inset 0 0 2pt 2pt  black;
+    border-radius: 0.2em;
+    border: 1px solid black;
+}
+.HamburgerClass {
+    padding: 6pt;
+    margin:0;
+    font-size:  160%;
+    box-shadow: inset 0 0 2pt 2pt  black;
+    border: 1px solid black;
+    background-color: darkseagreen;
+    border-radius: 0.2em;
+}
+.HamburgerInstrumentClass {
+    padding: 4pt;
+    margin:0;
+    margin-bottom: 2pt;
+    box-shadow: inset 0 0 2pt 2pt #020;
+    border: 1px solid #020;
+    background-color: darkseagreen;
+    border-radius: 0.2em;
+}
+
+
+
+
+#btnShowWarny {
+    font-size: 70%;
+}
+
+#divQuick {
+    margin-left: 4em;
+}
+
+#divControls {
+    margin-left: 1em;
+}
+
+
+#divMessages {
+    background-color: white;
+    font-family: monospace;
+    white-space: pre;
+    margin: 3em;
+    margin-bottom: 12em;
+}
+
+#divSongList {
+    background-color: white;
+    display: block;
+    width: 90%;
+    height: 90%;
+    left: 5%;
+    top: 5%;
+    columns: 4;
+}
+
+.fingeringRBBackground,
+.paletteRBBackground,
+.chooseNoteStyleRBBackground,
+.fingeringRBBackground {
+    background-color: white;
+    border-radius: 0.2em;
+    border: 1px solid black;
+    box-shadow:  2pt 2pt 4pt 1pt  black;
+    margin: 0.2em;
+}
+.paletteRBBackground {
+    margin-bottom: 0.4em;
+}
+.fingeringRBBackground {
+    ddmargin-top: 0.5em;
+    ddmargin-left: 0.5em;
+}
+.sectionPageControlsGroup,
+.sectionPageControlsGroupResize {
+    background-color: cornsilk;
+    padding: 1em;
+    margin: 0;
+    margin-left: 0;
+}
+.sectionPageControlsGroupResize {
+    resize: both;
+    overflow: scroll;
+}
+#divPaletteDraggable {
+   //display: inline-block;
+   ffposition: absolute;
+   padding: 3em;
+   position: fixed;
+}
+
+#sectionBeatsCallout {
+    padding: 0.8em;
+    border: 1px double green;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 0.1em;
+}
+#sectionTransportButtons {
+    display: inline-block;
+    margin-left: 4.8em;
+    padding: 0.6em;
+    box-sizing: border-box;
+}
+#sectionFrameButtons  {
+    display: inline-block;
+    padding: 0.2em;
+}
+#sectionFrameButtons button {
+    margin: 0.2em;
+    margin-left: 1.2em;
+    background-color: lightgreen;
+}
+.safeButton{
+    background-color: lightgreen !important;
+}
+.riskyButton {
+    background-color: pink !important;
+}
+
+input {
+    font-size: 100%;
+}
+select {
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 100%;
+}
+button {
+    font-size: 100%;
+}
+#selThemes {
+    font-size: 100%;
+    color: black;
+    background-color: #6faa09;
+    width: 8em;
+    height: 2.0em;
+    box-shadow:  0 0 6pt 2pt  black;
+}
+
+table {
+    FRRRRRRRmargin: 0.1em;
+    border: 0;
+}
+table.organizer td {
+    margin:0;
+    padding: 0;
+    vertical-align: top;
+    text-align: left;"
+}
+
+table.controls {
+    margin: 0.3em;
+    margin-left: 1em;
+    padding: 0;
+    border-width: 0;
+    background-color: #eee;
+}
+table.controls td {
+    padding: 0.4em;
+    background-color: lightgray;
+    font-size:  100%;
+}
+
+table.controls2 {
+    margin: 0.3em;
+    padding: 0.6em;
+    border-width: 0;
+    background-color: white;
+}
+table.controls2 td {
+    padding: 0.6em;
+    background-color: lightgray;
+}
+table.controls2 select {
+    margin: 0.3em;
+}
+
+.tblDisplayOptions {
+    border: 2px solid black;
+}
+.tblDisplayOptions tr {
+}
+.tblDisplayOptions td {
+    border: 1px solid gray;
+}
+.tblDisplayOptions th {
+    border: 1px solid gray;
+}
+
+
+.vertical-header {
+  text-align: left;
+  vertical-align: bottom;
+  background-color: #ddd;
+}
+.vertical-header span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.userColorResultCaption {
+    font-weight: bold;
+    background-color: lightgray;
+}
+.userColorResultLinks {
+    font-weight: bold;
+    background-color: lightgray;
+    text-align: left;
+}
+.userColorResultRow td {
+    border: 2px solid black;
+}
+
+
+.slider {
+  -webkit-appearance: none;
+  width: 95%;
+  height: 15px;
+  background: #000;
+  outline: none;
+  border: 3px solid darkgreen;
+  border-radius: 8px;
+}
+
+
+/* for chrome/safari */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: green;
+  cursor: pointer;
+  border: 1px solid lawngreen;
+  border-radius: 4px;
+}
+
+/* for firefox */
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: green;
+  cursor: pointer;
+  border: 1px solid lawngreen;
+  border-radius: 4px;
+  color: yellow;
+}
+
+
+#themeTableControls {
+    width: 10%;
+    float: left;
+}
+#themeTableResults {
+    width: 45%;
+    float: left;
+    border: 1px solid green;
+    background-color: cornsilk;
+    white-space: pre;
+}
+
+#themeDiff {
+    border: 1px solid green;
+    border-collapse: collapse;
+}
+#themeDiff td {
+    padding: 0.2em;
+}
+#themeDiff caption {
+    padding: 1em;
+}
+#themeDiff caption span {
+    padding: 0.5em;
+    margin: 2px;
+    border: 2px solid black;
+}
+.themeDiff_Changed {
+    background-color: orange;
+}
+.themeDiff_NotDefault {
+    background-color: white;
+}
+.themeDiff_Default {
+    background-color: pink;
+}
+.undefThemeOption {
+    font-size: 80%;
+    font-style: italic;
+}
+
+
+#divViewControls {
+    width: 90%;
+}
+
+.tuningsTable {
+    background-color: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.tuningsTable tr:nth-child(odd) {
+  background-color: lightgreen;
+  ffcolor: #fff;
+}
+.tuningsTable select {
+    font-size: 80%;
+}
+.tuningsTable td {
+    font-size: 80%;
+    padding: 0.8em;
+    border: 1px solid gray;
+}
+.tuningsTable th {
+    font-size:  80%;
+}
+.tuningsTable tr:hover {
+    background-color: Khaki;
+}
+
+.tblGraveyard {
+    margin: 0.3em;
+    padding: 0.6em;
+    border:1px solid black;
+    background-color: white;
+}
+
+.tblGraveyard {
+    background-color: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.tblGraveyard tr:nth-child(odd) {
+  background-color: lightgreen;
+}
+.tblGraveyard td {
+    font-size: 100%;
+    padding: 0.8em;
+    border: 1px solid gray;
+}
+.tblGraveyard th {
+    font-size:  80%;
+    font-weight: bold;
+}
+
+
+.menuTable {
+    border: 0;
+    width: 95%;
+    margin-left: 0.4em;
+}
+
+.menuCaption {    /* this was the spacer every menu page had.  I pulled them out because you can see which button is clickd.
+                     But now you can hide the buttons, so might want something like this back.
+                     */
+    font-size: 1pt;  /*just so I don't have to delete the html right now.*/
+    font-weight: bold;
+    color: transparent;/*just so I don't have to delete the html right now.  */
+    ffpadding:0.2em;
+    text-align: center;
+    vertical-align: middle;
+}
+.menuPage {
+    ffpadding-top: 1em;
+    ffpadding-left: 1em;
+    ggborder: 1px solid black;
+}
+.productsmall {
+    font-size:  70%;
+    color: orange;
+    font-family: "Verdana";
+    margin-left: 1em;
+}
+.product {
+    font-size: 200%;
+    ffcolor: darkorange;
+    color: black;
+    font-family: "Verdana";
+    -webkit-text-stroke: 1px #ffaa00;
+}
+.key {
+    padding: 2pt;
+    padding-right: 3pt;
+    padding-left: 3pt;
+    display: inline-block;
+    border: 1px solid gray;
+    border-radius: 20%;
+    background-color: white; was: buttercup;
+    box-shadow: 1pt 1pt 2pt 0.5pt gray;
+}
+
+#HH1 {
+    display: inline;
+}
+
+#KC1 {
+    display: inline;
+    padding: 1px;
+}
+
+#spanRecordNotes {
+   display: block; unicode-bidi: embed; font-family: monospace; white-space: pre;
+}
+
+#divFileControls {
+    display: none;
+}
+#divSongControls {
+    display: none;
+}
+#divSectionControls {
+    display: none;
+}
+#divFillNotes {
+    display: none;
+}
+#divTunings {
+    display: none;
+}
+
+
+#palette {
+  display: none
+  FOR-DRAG-position: absolute;
+  position: relative;
+  z-index: 9;
+  text-align: center;
+  FOR-DRAG-width: 400px;
+  padding: 0; /*.1em;*/
+  FOR-DRAG-padding-top: 0.4em;
+  FOR-DRAG-background-color: #dfd;
+  FOR-DRAG-box-shadow: inset 0 0 10pt 2pt  black;
+  FOR-DRAG-border-radius: 4pt;
+  FOR-DRAG-left: 5%;
+  FOR-DRAG-width: 90%;
+  FOR-DRAG-height: 20em;
+  width: 100%;
+  left: 0;
+}
+
+#paletteheader {
+  padding: 10px;
+  margin: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: lightgreen;
+  ffcolor: #fff;
+}
+
+#palette label {
+    margin: 1px;
+    padding: 0.4em;
+    height: 1.6em;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size:  100%;
+}
+#palette label.chooseHighlight {
+    margin: 0.1em;
+    width: 5em;
+    font-weight: bold;
+    border: 1px solid gray;
+    background-color: buttercup;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+#chooseHighlightNamed,
+#chooseHighlightSingle,
+#chooseHighlightTiny {
+    padding: 0.85em;
+}
+#chooseHighlightBend {
+    padding: 0.2em;
+}
+
+#palette label.chooseFinger {
+    padding: 0.4em;
+    width: 3em;
+}
+
+#palette label.chooseKeep,
+#palette label.chooseClear {
+    padding: 0.8em;
+    height: 1.4em;
+    width: 8em;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    ffffbackground-color: white;
+    color: black;
+    font-weight: bold;
+    border: 1px solid gray;
+    background-color: buttercup;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+
+#palette label.chooseKeep:checked,
+#palette label.chooseClear:checked {
+   FFFFbox-shadow: 1pt 1pt  3pt 0.01pt cyan;
+}
+
+label.chooseHighlight#idMidiPitchesLbl {
+    outline: 6px solid yellow ;
+    outline-offset: -8px;
+    padding: 0.4em;
+}
+label.chooseHighlight#idMidiPitchesSingleLbl {
+    outline: 6px solid chartreuse;
+    outline-offset: -8px;
+    padding: 0.4em;
+}
+#selBend {
+    font-size:  100%;
+}
+
+#palette label.userColorRB {
+  margin: 4px;
+  text-align: left;
+  padding: 0.4em;
+  padding-left: 5px;
+  font-weight: bold;
+  font-size: 100%;
+  font-family: sans-serif;
+  border: 1px solid gray;
+  ffbox-shadow: 1.5pt 0.5pt 2pt 1pt gray;
+  box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+
+.radioFillChooser {
+    background-color: white;
+    display: inline-block;
+    border: 1px solid black;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+    padding: 0.3em;
+    margin: 0.2em;
+    width: 6em;
+}
+
+.ActiveStylesheets {
+    text-align: left;
+    font-weight: bold;
+    margin-left: 2em;
+}
+.tblColorDicts td {
+    width: 2em;
+}
+.colorDictTransparent {
+    border: 1px solid #555;
+    border-radius: 3px;
+}
+.tblColorDictOneRow{
+    border: 1px solid #555;
+}
+.tblColorDictOneRow td {
+    min-width: 1em;
+    text-align: center;
+}
+.tblColorDictOneRow td:first-child {
+   background-color: #222;
+   border: 1px solid #777;
+}
+/* currentColorDict: a span around our table of user colors: tblColorDictOneRow */
+.currentColorDict {
+    display: inline-block;
+    height: 1em;
+}
+.currentColorDict a {
+   pointer-events: none;
+   cursor: default;
+   color: gold;
+   font-weight: normal;
+}
+.currentColorDict a:link {
+  text-decoration: none;
+}
+.currentColorDict a:visited {
+  text-decoration: none;
+}
+.currentColorDict a:hover {
+  text-decoration: none;
+}
+.currentColorDict a:active {
+  text-decoration: none;
+}
+
+
+#btnPrevFrame2, #btnNextFrame2, #btnFirstFrame, #btnLastFrame {
+    font-size:  70%;
+    background: #ffbf00;
+    box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
+    border-radius: 20%;
+}
+#btnPrevFrame, #btnNextFrame{
+    font-size:  150%;
+    background: #ffbf00;
+    box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
+    border-radius: 20%;
+}
+#btnPrevBeat, #btnNextBeat {
+    font-size:  100%;
+    background-color: lightgreen;
+}
+#btnPrevBeatTransport, #btnNextBeatTransport {
+}
+.ArmedButton {
+  background-color: green;
+  border-radius: 10%;
+  box-shadow: 0 0 3pt 3pt lightgreen;
+  padding: 0.2em;
+  font-size: 0.6em;
+}
+.ButtonOn {
+    background-color: red !important;
+}
+#btnLoopFrames.ButtonOn {
+    background-color: magenta !important;
+}
+
+.BtnPunchedIn {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    background-color: #dfd;
+    color: black;
+}
+.BtnPunchedOut {
+	box-shadow: inset 7px 7px 7px -4px #b1f53d;
+    border-radius: 4px;
+    background-color: #6faa09;
+    color: black;
+}
+.PunchedTogether {
+    border: 1px solid #578607;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 2px;
+}
+#divControls button {
+}
+
+.MainMenuTabBtn, .MenuButton {
+    padding: 0.4em;
+    color: black;
+    font-family: Helvetica;
+    font-size: 120%;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+.BigMobileBtn {
+    padding: 1em;
+}
+
+
+.lblSongName {
+    color: darkred;
+    font-size:  200%;
+    font-family: "Shadows Into Light", cursive;
+    font-weight: 400;
+    font-style: normal;
+    margin-left: 1em;
+}
+#lblCurrentBeat {
+    font-size: 150%;
+    font-weight: bold;
+}
+/* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
+ *  so it inherits font-size, etc. */
+.lblSectionCaption {
+    font-family: "Shadows Into Light", cursive;
+    color: #b05917;
+    font-weight: 200;
+    font-size:  200%;
+}
+.lblSectionNumber {
+    border: 1px solid  darkolivegreen;
+    padding: 0.2em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.lblSectionmark {
+    color: darkolivegreen;
+    font-size: 60%;
+    padding-right: 0.3em;
+    display: inline-block;
+}
+.lblFramesStatusFrameNo{
+    color: green;
+    font-size: 100%;
+    font-weight: normal;
+}
+.SongTitleLeadSheet {
+    font-size:  140%;
+    font-family: Georgia;
+    font-weight: 400;
+    font-style: normal;
+    color: darkolivegreen;
+}
+.SongTitleLeadSheet .lblRootID {
+    font-size:  100%;
+    text-align: center;
+    vertical-align: middle;
+}
+.SongTitleLeadSheet .lblRootIDLead {
+    font-size:  100%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+.bpm {
+    font-size:  80%;
+    margin: 0;
+    padding: 0;
+}
+.bpm small {
+    font-size: 60%;
+}
+
+#divFileControls label {
+    color:black;
+    border: none;
+}
+#lblHideWarning {
+    font-weight: bold;
+    color: darkred;
+}
+P {
+    margin: 0;
+    padding: 0;
+}
+.instrumentBackground {
+    color: gold;
+    japan-cool-background-color: brown;
+    everyone-into-the-pool-foo: 1;
+    ddbackground-color: #381d00;/* Zinfandel deep brown works with body background-color: #1a0e03  */
+    background-color: #0aa; /*working default greenish*/
+    margin: 1em;
+    FFmargin-top: var(--instrument-margin-tb);
+    margin-bottom: var(--instrument-margin-tb);
+    margin-left: 1.5em;
+    border: 1px solid black;
+    box-shadow: 0 0 6pt 3pt maroon;
+    border-radius: 0.3em;
+    padding: 8pt;
+    //background-image: url('img/celtic-background-2.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-image: var(--instrument-border-image) 30 / 19px round;
+}
+.tbodyMIDI  td {
+    padding: 0.5em;
+    vertical-align: middle;
+}
+.trline {
+    border: 1px solid black;
+    height: 0.2em;
+}
+.skinny {
+    height: 10;
+    padding: 0;
+    margin: 0;
+}
+
+#tabledestTopPad {
+    height: 5em;
+}
+#tabledest {
+    display: inline-block;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin: 0;
+    margin-left: 1em;
+}
+
+#topControlsCaptions {
+    ffmargin-top: 1em;
+    font-size:  120%;
+    text-align: left;
+    width: 100%;
+    color: gold;
+}
+.lblRootID,
+.lblRootIDLead {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    padding: 0.2em;
+    background-color: #dfd;
+    font-size:  75%;
+    color: black;
+}
+.lblRootID {
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+.lblRootIDLead {
+    background-color: aqua;
+    color: brown;
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+
+#tblRoots {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    vertical-align: bottom;
+    height: 1.45em;
+}
+#tdRootLead {
+    padding: 0;
+    margin: 0;
+    width: 1.4em;
+}
+
+/* Prevents inconsistent highlighting of element while being dragged
+   Copied from https://stackoverflow.com/questions/826782 */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.toolWindowRounded {
+    color: black;
+    border: 1px solid black;
+    padding: 0.5em;
+    margin: 0;
+    NNNNNmargin-left: 4em;
+    margin-top: 0em;
+    background-color: #dfd;
+    font-size:  100%;
+    ddvertical-align: middle;
+    box-shadow: inset 0 0 10pt 4pt  black;
+}
+
+/* contains #transport */
+.topControlsSections  {
+    display: inline-block;
+    min-width: 24em;  /* when transport grows, this must be changed */
+    position: fixed;
+    left: 10em;/* set programmatically, so this is default in case js fails.*/
+    z-index: 30;
+}
+#transport {
+    font-size: 200%;
+    z-index: 50;
+}
+.insetTransportBeat {
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 5px;
+    padding: 0.1em;
+    display: inline-block;
+}
+#lblFramesStatus2 {
+    display: inline-block;
+    width: 2.4em;
+    text-align: left;
+    color: black;
+}
+#lblFramesStatus {
+    font-size: 120%;
+}
+#sectionOrder{
+    margin-left: 1em;
+}
+
+
+.redButton {
+    width: 1.5em;
+    height: 1.5em;
+    background: lightgreen;
+    box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
+    display: inline-block;
+    border-radius: 5px;
+    font-size: 0.7em;
+}
+#btnPrevBeatTransport, #btnNextBeatTransport {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+.lblNoteClickedCaption {
+    font-size:  100%;
+    border: 1px solid green;
+    padding: 0.1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+#lblBeats {
+    font-size:  100%;
+}
+#lblBeat {
+    font-size:  100%;
+}
+#lblBeatCounter {
+    display: inline-block;
+    width: 2.4em;
+}
+
+
+input:read-only,textarea:read-only {
+  background-color: silver;
+}
+.warningMessage {
+    border: 2px solid red;
+    background-color: lightyellow;
+    margin: 5em;
+    padding: 5em;
+    color: black;
+    text-align: center;
+}
+.floater {
+    font-family: monospace;
+    position: fixed;
+    left: 50px;
+    background-color: lightblue;
+    border: 2px solid;
+    padding: 20px;
+    width: 90%;
+    height: 50%;
+    resize: both;
+    overflow: auto;
+    white-space: pre-wrap;
+}
+.floaterClose {
+    float: right;
+    background-color: aqua;
+    border: 1px solid green;
+    padding: 0.3em;
+    font-size: 1.2em;
+    box-shadow: 0 0 6pt 4pt lightgreen;
+    border-radius: 2pt;
+    z-index: 60;
+}
+.INFO_Table {
+    border: 1px solid blue;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.INFO_Table td {
+    padding: 0.5em;
+    border: 1px solid gray;
+}
+
+.INFO_Table tr:hover {
+    background-color: coral;
+}
+
+
+.diamondRow {
+
+}
+.diamondsRow td {
+    background-color: var(--diamonds-background-color);
+    font-size: var(--diamonds-size);
+}
+.diamondRowSupernut {
+    background: none !important;
+}
+.diamonds {
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+    color: var(--diamonds-color);
+    font-size: 100%;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.diamonds.tuningCaption {
+    text-align: left;
+    vertical-align: top;
+    font-size:  60%;
+}
+.doubleDiamonds{
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+    color: var(--double-diamonds-color);
+    WORKEDfont-size: calc( var(--diamonds-size) * 10);
+    font-size: 60% !important;  /* because a doubleDiamonds td contains another table which has td.doubleDiamonds */
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+
+.captionRow {
+    font-size:  140%;
+}
+.captionRow .subcaption {
+    font-size:  80%;
+}
+.captionRow .lblRootID {
+    font-size:  110%;
+    text-align: center;
+    vertical-align: middle;
+}
+.captionRow .lblRootIDLead {
+    font-size:  110%;
+    text-align: center;
+    vertical-align: middle;
+}
+.tuningReverseCaption {
+    font-weight: bold;
+    border: 2px solid cyan;
+    color: brown;
+    background-color: lightgreen;
+}
+
+small {
+    font-size:  80%;
+}
+
+.tinyscripts {
+    font-size:  60%;
+    display: none;
+}
+
+/* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
+.leftmarginInstrument {
+    margin-left: 110px; /* same as td.note */
+}
+
+#EXAMPLECmdMenuOptionsTable  td:first-child {}
+#EXAMPLECmdMenuOptionsTable  td:nth-child(2) {width: 100pt;}
+
+
+
+
+
+
+/************ Now all the display note cells ***************/
+
+.stringDividerTD {
+    background-color: black;
+}
+td.note small {
+    font-size: 0.55em;
+    padding: 0;
+    margin: 0;
+}
+
+.nut {
+    border: 2px solid brown;
+    border-right: 20px double brown;
+    margin: 4px;
+    FFopacity: 50%;
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20.5px, var(--nut-gradient-color) 21px );
+}
+.nutR {
+    border: 2px solid brown;
+    border-left: 20px double brown;
+    margin: 4px;
+    FFopacity: 50%;
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20px, var(--nut-gradient-color) 21px );
+}
+.noteHatched {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20px, var(--nut-gradient-color) 21px );
+}
+.noteHatched2 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, brown 10px, brown 14px );
+}
+.noteHatched3 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, black 10px, black 14px );
+}
+.noteHatched4 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, white 10px, white 14px );
+}
+
+table.fretTable {
+    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
+    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+}
+
+
+
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.flexCol {
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+}
+
+
+td.note {
+    /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/
+    height: 100%;
+    font-size: var(--named-note-font-size);
+    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+    text-align: right;
+    vertical-align: middle;
+    font-family: var(--td-note-font-family), sans-serif;
+        was: "Dosis", sans-serif;
+    position: relative;
+      /* below 3 highlight is mushed.
+                    * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
+    /* LOL Best effect yet!   -webkit-transform: rotate(-90deg);   */
+
+}
+
+td.note.noteBlackKey {
+    background-image: var(--border-image-black-key);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+td.note.noteWhiteKey {
+    background-image: var(--border-image-white-key);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+
+.NoteDisplay {  /** THIS IS THE THING TO REPLACE AS DEST OF .noteRed1 etc. **/
+        margin: 0; /* below 15 the highlight gets mushed.
+                       * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
+        padding: 0;
+        position: relative;  /* By taking 'relative' the position coordinates of children are relative to this div. */
+        border-radius: 10px;
+        min-height: 20px;
+        min-width: 20px;
+}
+.namedNote {
+    position: absolute;
+    border-radius: 10px;
+    display: block;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+
+}
+
+
+.singleNote {
+    /* these two lines from cellFn */
+    position: absolute;
+    bottom: 0em;
+
+    display:none;
+    z-index: 4;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* this is used by SingleNote */
+.tinyscriptR {
+    font-size: var(--right-subscript-font-size);  /* this is the driver of the right cell letter.*/
+    position: absolute;
+    bottom: -0.5ex;
+    right: calc(var(--named-note-radius));
+    border: var(--debug-border) solid green;
+    vertical-align: top;
+    text-align: right;
+}
+
+.tinyscriptL {
+    font-size: var(--left-subscript-font-size); was: 0.6em;
+    position: absolute;
+    left: calc(var(--named-note-radius) * 0.5);
+    bottom: -0.5ex;
+    border: var(--debug-border) solid green;
+}
+.CenterCell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    font-size: 120%;
+    border: var(--debug-border) solid blue;
+}
+.midinumDisplayNamedNote{
+    position: absolute;
+    right: calc(var(--named-note-radius) * 0.5);
+    top: 0;
+    font-size: var(--midi-font-size);
+    text-align: right;
+    border: var(--debug-border) solid red;
+}
+.midinumDisplay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: var(--midi-font-size);
+    border: var(--debug-border) dashed red;
+}
+
+.note {
+    border-radius: 15px;  /*when a note is marked, this radius is in effect,
+                           the TD has a radius you can see just inside the cell limits. */
+}
+.enharmonicName { /* used to squish the sharps and flats together, but not Roman numerals. */
+    letter-spacing: -0.1em;
+}
+.tinyNote {
+    display:none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1em;
+    max-height: var(--tiny-note-max-height);
+    font-size: min(0.8em, var(--tiny-note-font-size));
+    z-index: 6;
+    border-radius: 6px;
+    text-align: center;
+    vertical-align: top;
+ }
+
+.tinyNotePlayed {
+    display: block;
+    border: 1px solid orange;
+}
+.singleNotePlayed {
+     display: block;
+     box-shadow: 0 0 3pt 4pt gold;
+ }
+.tinyNotePlayedBend {
+    display: block;
+    z-index: 6;
+    border: 1px solid orange;
+    text-align: left;
+    vertical-align: center;
+    font-size: 0.6em;
+    ffftop: 0.5em;
+    fffleft: 0.5em;
+    height:30%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.NoteActive {
+    LIKE-KEYbackground-color: transparent;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+}
+.noteBlackKey .NoteActive {
+    box-shadow: 0 0 4pt 1pt var(--note-black-shadow-color);  /*also cool as black instead of pink.*/
+}
+.noteWhiteKey .NoteActive {
+    box-shadow: 0 0 3pt 2pt var(--note-white-shadow-color);  /*also cool as black instead of pink.*/
+}
+/* test with :
+ *   <div style="width: 100px; margin: 100px;" id="boxme">
+ *    Fourscore and seven years ago...
+ *     </div>
+ */
+#boxme {
+    ddbox-shadow: 15pt 15pt 4pt 4pt aqua, 25pt 25pt 2pt 8pt black;
+    box-shadow: 0 0 6pt 1pt aqua, 0 0 1pt 1pt black;
+    hhborder: 1px solid blue;
+    border-radius: 5pt;
+    background-color: transparent;
+}
+
+.FingeringPlayed {
+    display: block;
+    box-shadow: 0 0 4pt 4pt cornflowerblue;
+    border: 1px solid darkblue;
+    border-radius: 50%;
+}
+.Fingering {
+    display: none;
+    z-index: 12;
+    position: absolute;
+    top: calc( 50% - 0.6em );
+    /*right: -10%;*/
+    right: var(--fingering-position);
+
+
+/**************
+    TODO: Make right and top variables so we can change in a dropdown.
+**************/
+
+    padding:0;
+    padding-bottom: 0.1em;
+    font-weight: normal;
+    font-family: monospace;
+    font-size: var(--fingering-font-size);
+    text-align: center;
+    vertical-align: middle;
+}
+.FingerColor {
+    color: cornflowerblue;
+    background-color: black;
+}
+.Finger1 {
+    color: aqua;
+    background-color: black;
+}
+.Finger2 {
+    color: dodgerblue;
+    background-color: black;
+}
+.Finger3 {
+    color: magenta;
+    background-color: black;
+}
+.Finger4 {
+    color: red;
+    background-color: black;
+}
+.FingerT {
+    color: yellow;
+    background-color: black;
+}
+.Playback {
+    font-size: 0.9em;
+}
+
+
+
+
+
+.noteBlackKey {
+    box-shadow: 0 0 2pt 1pt cornflowerblue;
+    background-color: green; foo: #555;
+    color: green;
+}
+.noteWhiteKey {
+    background-color:white;
+    color: blue;
+    box-shadow: 0 0 2pt 1pt pink;
+}
+.notePinkKey {
+    background-color:pink !important;
+    color: black;
+    box-shadow: 0 0 2pt 1pt cornflowerblue;
+}
+.namesRowCell .noteBlackKey   {
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    font-size:  100%;
+    border: 1px solid black;
+    margin-top: 20px;
+}
+.namesRowCell .noteWhiteKey {
+    color: black;
+    text-align: center;
+    vertical-align: middle;
+    font-size:  100%;
+    border: 1px solid black;
+    margin-top: 20px;
+    position: relative;
+    left: 10%;
+    width: 80%;
+}
+.namesRowCell .noteWhiteKey.noteB {
+    position: relative;
+    left: 18%;
+    width: 80%;
+}
+.namesRowCell .noteWhiteKey.noteC {
+    position: relative;
+    left: 0;
+    width: 80%;
+}
+.namesRowCell .noteWhiteKey.noteE {
+    position: relative;
+    left: 18%;
+    width: 80%;
+}
+.namesRowCell .noteWhiteKey.noteF {
+    position: relative;
+    left: 0;
+    width: 80%;
+}
+
+
+
+
+
+.noteHighlight {
+    box-shadow: 0 0 4pt 4pt yellow;
+}
+.noteHighlight .namedNote {
+    box-shadow: 0 0 9pt 8pt yellow;
+}
+.noteHighlight .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt red;
+}
+/** box-shadow nums: offset-x offset-y blur-radius spread-radius
+  * see: https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+ */
+.noteHighlightSingle {
+    box-shadow: 0 0 4pt 4pt magenta;
+}
+.noteHighlightSingle .namedNote {
+    box-shadow: 0 0 4pt 4pt magenta;
+}
+.noteHighlightSingle .NoteDisplay {
+    box-shadow: 0 0 4pt 4pt red;
+}
+
+.midiPitch{
+    color: green;
+    background-color: yellow;
+}
+
+.noteBassPlayer {
+    color: darkorange;
+    background-color: black;
+}
+
+.tinyNote.noteBassPlayer {
+    border-radius: 1.5em !important;
+    border: 2px solid maroon !important;
+    font-size: 70% !important;
+    top: 35% !important;
+    left: 0.1em !important;
+}
+.noteBassPlayerCaption {
+    color: black;
+    background-color: red;
+}
+.noteAutomatic {
+    color: black;
+    background-image: url('img/swirl.png');
+    background-size: cover;
+}
+
+.spanLeadDifferentFromRoot, #lblRootIDLead {
+    display:inline;
+    display:none;
+    color: brown;
+    width: 4em;
+    height:2em;
+    padding: 0.2em;
+    font-size:  75%;
+    font-weight: bold;
+    background-color: aqua;
+    border: 1px solid orange;
+    border-radius: 6px;
+    text-align: center;
+    vertcal-align: middle;
+}
+.semitone1, .semitone2, .semitone3, .prebend1, .prebend2, .prebend3, .updown1, .updown2, .updown3 {
+   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+   -moz-box-sizing: border-box; /* Firefox, other Gecko */
+   box-sizing: border-box; /* Opera/IE 8+ */
+   padding-left: var(--bend-padding-left);
+   height: 50%;
+}
+.semitone1 {
+    width: calc( 180% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.semitone2 {
+    width: calc( 280% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.semitone3 {
+    width: calc( 380% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.prebend1 {
+    width: calc( 180% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 80%;
+}
+.prebend2 {
+    width: calc( 280% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 80%;
+}
+.prebend3 {
+    width: calc( 380% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    vertical-align: top;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 50%;
+}
+.updown1 {
+    width: calc( 190% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+.updown2 {
+    width: calc( 290% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+.updown3 {
+    width: calc( 390% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+
+.semitone1LH, .semitone2LH, .semitone3LH, .prebend1LH, .prebend2LH, .prebend3LH, .updown1LH, .updown2LH, .updown3LH {
+   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+   -moz-box-sizing: border-box; /* Firefox, other Gecko */
+   box-sizing: border-box; /* Opera/IE 8+ */
+   height: 50%;
+   text-align: right;
+}
+.prebend1LH, .prebend2LH, .prebend3LH, .updown1LH, .updown2LH, .updown3LH {
+    padding-right: var(--bend-padding-left);
+}
+
+.semitone1LH {
+    position: absolute;
+    left: calc( -180% - 2*var(--cell-spacing) );
+    width: calc( 180% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 80%;
+}
+.semitone2LH {
+    position: absolute;
+    left: calc( -280% - 4*var(--cell-spacing) );
+    width: calc( 280% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 80%;
+}
+.semitone3LH {
+    position: absolute;
+    left: calc( -380% - 6*var(--cell-spacing) );
+    width: calc( 380% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 50%;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border-bottom-left-radius: 50%;
+}
+.prebend1LH {
+    position: absolute;
+    left: calc( -180% - 2*var(--cell-spacing) );
+    width: calc( 180% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.prebend2LH {
+    position: absolute;
+    left: calc( -280% - 4*var(--cell-spacing) );
+    width: calc( 280% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.prebend3LH {
+    position: absolute;
+    left: calc( -380% - 6*var(--cell-spacing) );
+    width: calc( 380% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    vertical-align: top;
+    border-top-left-radius: 0%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 0%;
+}
+.updown1LH {
+    position: absolute;
+    left: calc( -190% - 2*var(--cell-spacing) );
+    width: calc( 190% + 2*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+.updown2LH {
+    position: absolute;
+    left: calc( -290% - 4*var(--cell-spacing) );
+    width: calc( 290% + 4*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+.updown3LH {
+    position: absolute;
+    left: calc( -390% - 6*var(--cell-spacing) );
+    width: calc( 390% + 6*var(--cell-spacing) + var(--bend-padding-left) );
+    border-top-left-radius: 80%;
+    border-top-right-radius: 80%;
+    border-bottom-right-radius: 80%;
+    border-bottom-left-radius: 80%;
+}
+
+.noteTransparent {
+    font-family: var(--td-note-font-family) !important;
+    background-color: transparent;
+}
+.noteBlackKey .noteTransparent {
+    color: rgb(255, 255, 255);
+    mix-blend-mode: difference;
+}
+.noteWhiteKey .noteTransparent {
+    color: rgb(255, 255, 255);
+    mix-blend-mode: difference;
+}
+
+#colorPicker, #hatchPicker {
+     background-color: lightgray;
+
+}
+.colorPickerCell {
+    width: 2em;
+    background-color: gray;
+}
+.hatchPickerCell {
+    width: 4em;
+    background-color: gray;
+}
+.pickerButton {
+    box-shadow: 2pt 2pt 2pt 0.01pt gray;
+    padding: 2pt;
+    margin: 4pt;
+    display: inline-block;
+
+    border: 2px solid darkolivegreen;
+}
+/*
+.noteRed1 { color: orange; background-color:darkred;  }
+.noteRed2 { color: orange; background-color:crimson;  }
+.noteRed3 { color: orange; background-color:firebrick;  }
+.noteRed4 { color: orange; background-color:maroon;  }
+.noteRed5 { color: orange; background-color:red;  }
+.noteRed6 { color: orange; background-color:mediumvioletred;  }
+.noteRed7 { color: orange; background-color:orangered;  }
+*/
+.noteRed1 { color: orange; background-color:#4d0000;  }
+.noteRed2 { color: orange; background-color:maroon;  }
+.noteRed3 { color: orange; background-color:chocolate;  }
+.noteRed4 { color: orange; background-color:firebrick;  }
+.noteRed5 { color: yellow; background-color:crimson;  }
+.noteRed6 { color: orange; background-color:orangered;  }
+.noteRed7 { color: orange; background-color:DeepPink;  }
+
+
+
+
+.noteBrown1 { color: darkorange; background-color:#321414; }
+.noteBrown2 { color: yellow; background-color:sienna; }
+.noteBrown3 { color: yellow; background-color:chocolate; }
+.noteBrown4 { color: yellow; background-color:coral; }
+.noteBrown5 { color: yellow; background-color:darkorange; }
+.noteBrown6 { color: yellow; background-color:darkgoldenrod; }
+.noteBrown7 { color: yellow; background-color:goldenrod; }
+
+
+.LOVELY-BUT-SLIGHTLY-ORANGE-notePink3 { color: black; background-color:violet;  }
+
+
+.notePink1 { color: lightblue; background-color:indigo;  }
+.notePink2 { color: black; background-color:mediumslateblue;  }
+.notePink3 { color: yellow; background-color:purple;  }
+.notePink4 { color: black; background-color:mediumvioletred;  }
+.notePink5 { color: black; background-color:magenta;  }
+.notePink6 { color: black; background-color:pink;  }
+.notePink7 { color: black; background-color:RosyBrown;  }
+
+
+.noteBlue1 { color: Wheat; background-color:Navy; }
+.noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
+.noteBlue3 { color: black; background-color:cornflowerblue; }
+.noteBlue4 { color: black; background-color:dodgerblue; }
+.noteBlue5 { color: black; background-color:deepskyblue; }
+.noteBlue6 { color: black; background-color:aqua; }
+.noteBlue7 { color: black; background-color:aquamarine; }
+
+
+
+
+.noteGreen1 { color: black; background-color:lightseagreen;  }
+.noteGreen2 { color: black; background-color:teal;  }
+.noteGreen3 { color: black;  background-color: green;}
+.noteGreen4 { color: black; background-color:darkolivegreen;  }
+.noteGreen5 { color: black; background-color:darkseagreen;  }
+.noteGreen6 { color: black; background-color:lightgreen;  }
+.noteGreen7 { color: black; background-color:chartreuse;  }
+
+.noteYellow1 { color: black; background-color:GreenYellow; }
+.noteYellow2 { color: black; background-color: DarkKhaki; }
+.noteYellow3 { color: black; background-color:GoldenRod;  }
+.noteYellow4 { color: black; background-color:Gold;  }
+.noteYellow5 { color: black; background-color:Yellow;  }
+.noteYellow6 { color: black; background-color:Khaki;  }
+.noteYellow7 { color: black; color: black; background-color:lightyellow;  }
+
+
+
+
+.noteLightBlue1 { color: black; background-color:#aaf; }
+.noteLightGreen1 { color: black; background-color:Blue; }
+.noteGray { color: black; background-color:#ddd; }
+.noteDarkGray { background-color:#999; }
+.noteBlack { background-color: black; color: lightyellow; }
+.noteWhite { background-color: white; color: black; }
+
+.noteBlackout1 {
+    background-color: #222;
+    color: #222;
+}
+.noteBlackout1Caption {
+    background-color: #222;
+    color: #BBB;
+}
+.noteBlackout2 {
+    background-color: #555;
+    color: #555;
+}
+.noteBlackout2Caption {
+    background-color: #555;
+    color: #BBB;
+}
+
+.right {
+    float: right;
+}
+.left{
+    float: left;
+}
+.clearBoth {
+    /* container of .left and .right might should have this. */
+    clear: both;
+}
