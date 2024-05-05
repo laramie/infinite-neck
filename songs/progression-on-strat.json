@@ -1,0 +1,372 @@
+{
+  "frames": [
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "48",
+            "row": "5",
+            "col": "8",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "54",
+            "row": "4",
+            "col": "9",
+            "colorClass": "noteChord2",
+            "styleNum": 2
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteColornote",
+            "styleNum": 2
+          },
+          {
+            "midinum": "48",
+            "row": "5",
+            "col": "8",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "54",
+            "row": "4",
+            "col": "9",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          }
+        ]
+      },
+      "namedNotes": {
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteChord2"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteColornote"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteRoot"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "48",
+            "row": "5",
+            "col": "8",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "54",
+            "row": "4",
+            "col": "9",
+            "colorClass": "noteChord2",
+            "styleNum": 2
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteColornote",
+            "styleNum": 2
+          },
+          {
+            "midinum": "54",
+            "row": "4",
+            "col": "9",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          }
+        ]
+      },
+      "namedNotes": {
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteChord2"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteColornote"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteRoot"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "48",
+            "row": "5",
+            "col": "8",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "54",
+            "row": "4",
+            "col": "9",
+            "colorClass": "noteChord2",
+            "styleNum": 2
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteColornote",
+            "styleNum": 2
+          },
+          {
+            "midinum": "48",
+            "row": "5",
+            "col": "8",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "52",
+            "row": "4",
+            "col": "7",
+            "colorClass": "noteFinger2",
+            "styleNum": 1
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "col": "7",
+            "colorClass": "noteFinger2",
+            "styleNum": 1
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteFinger2",
+            "styleNum": 1
+          }
+        ]
+      },
+      "namedNotes": {
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteChord2"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteColornote"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteRoot"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "80",
+  "rootID": "3",
+  "songName": "progression-on-strat",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteRoot": {
+      "colorClass": "noteGreen1",
+      "caption": "Root"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteChord": {
+      "colorClass": "noteRed4",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed2",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteBrown7",
+      "caption": "Ch3"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    }
+  }
+}

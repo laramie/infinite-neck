@@ -1,0 +1,605 @@
+{
+  "frames": [
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "69",
+            "row": "0",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 5,
+            "bendValue": "updown3"
+          },
+          {
+            "midinum": "64",
+            "row": "1",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 5,
+            "bendValue": "updown3"
+          }
+        ]
+      },
+      "namedNotes": {
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        }
+      },
+      "recordedNotes": {
+        "1": [
+          {
+            "midinum": "59",
+            "row": "3",
+            "col": "9",
+            "colorClass": "noteFingerT",
+            "styleNum": 6,
+            "finger": "T"
+          }
+        ],
+        "2": [
+          {
+            "midinum": "59",
+            "row": "2",
+            "styleNum": 3
+          },
+          {
+            "midinum": "64",
+            "row": "2",
+            "col": "9",
+            "colorClass": "noteFingerT",
+            "styleNum": 6,
+            "finger": "T"
+          }
+        ],
+        "3": [
+          {
+            "midinum": "60",
+            "row": "2",
+            "styleNum": 3
+          },
+          {
+            "midinum": "65",
+            "row": "2",
+            "col": "10",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          },
+          {
+            "midinum": "71",
+            "row": "1",
+            "col": "11",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          },
+          {
+            "midinum": "76",
+            "row": "0",
+            "col": "11",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          }
+        ],
+        "4": [
+          {
+            "midinum": "61",
+            "row": "2",
+            "styleNum": 4
+          },
+          {
+            "midinum": "57",
+            "row": "3",
+            "styleNum": 4
+          }
+        ],
+        "5": [
+          {
+            "midinum": "57",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "52",
+            "row": "4",
+            "styleNum": 4
+          },
+          {
+            "midinum": "53",
+            "row": "4",
+            "styleNum": 4
+          },
+          {
+            "midinum": "59",
+            "row": "3",
+            "styleNum": 4
+          }
+        ],
+        "6": [
+          {
+            "midinum": "53",
+            "row": "4",
+            "styleNum": 4
+          },
+          {
+            "midinum": "65",
+            "row": "2",
+            "styleNum": 4
+          },
+          {
+            "midinum": "59",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "71",
+            "row": "1",
+            "styleNum": 4
+          }
+        ],
+        "7": [
+          {
+            "midinum": "72",
+            "row": "1",
+            "styleNum": 4
+          },
+          {
+            "midinum": "67",
+            "row": "2",
+            "styleNum": 4
+          },
+          {
+            "midinum": "62",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "71",
+            "row": "1",
+            "styleNum": 4
+          }
+        ],
+        "8": [
+          {
+            "midinum": "67",
+            "row": "2",
+            "styleNum": 4
+          },
+          {
+            "midinum": "62",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "63",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "64",
+            "row": "3",
+            "styleNum": 4
+          }
+        ],
+        "9": [
+          {
+            "midinum": "63",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "64",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "69",
+            "row": "2",
+            "styleNum": 4
+          },
+          {
+            "midinum": "74",
+            "row": "1",
+            "styleNum": 4
+          },
+          {
+            "midinum": "75",
+            "row": "1",
+            "styleNum": 4
+          },
+          {
+            "midinum": "76",
+            "row": "1",
+            "styleNum": 4
+          },
+          {
+            "midinum": "81",
+            "row": "0",
+            "styleNum": 4
+          }
+        ],
+        "10": [
+          {
+            "midinum": "76",
+            "row": "1",
+            "styleNum": 4
+          },
+          {
+            "midinum": "81",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "82",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "83",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "84",
+            "row": "0",
+            "styleNum": 4
+          }
+        ],
+        "11": [
+          {
+            "midinum": "82",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "83",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "84",
+            "row": "0",
+            "styleNum": 4
+          },
+          {
+            "midinum": "85",
+            "row": "0",
+            "styleNum": 4
+          }
+        ],
+        "12": [
+          {
+            "midinum": "70",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "69",
+            "row": "3",
+            "styleNum": 4
+          },
+          {
+            "midinum": "68",
+            "row": "3",
+            "styleNum": 4
+          }
+        ]
+      },
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 12,
+      "currentBeat": 8,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "68",
+            "row": "0",
+            "col": "3",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "64",
+            "row": "1",
+            "col": "4",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "60",
+            "row": "2",
+            "col": "5",
+            "colorClass": "noteScale",
+            "styleNum": 2
+          },
+          {
+            "midinum": "70",
+            "row": "0",
+            "col": "5",
+            "colorClass": "noteChord",
+            "styleNum": 1
+          },
+          {
+            "midinum": "65",
+            "row": "1",
+            "col": "5",
+            "colorClass": "noteChord",
+            "styleNum": 1
+          },
+          {
+            "midinum": "71",
+            "row": "0",
+            "col": "6",
+            "colorClass": "noteFinger4",
+            "styleNum": 1
+          },
+          {
+            "midinum": "62",
+            "row": "2",
+            "col": "7",
+            "colorClass": "noteFinger4",
+            "styleNum": 1
+          },
+          {
+            "midinum": "74",
+            "row": "0",
+            "col": "9",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          },
+          {
+            "midinum": "63",
+            "row": "2",
+            "col": "8",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          },
+          {
+            "midinum": "67",
+            "row": "1",
+            "col": "7",
+            "colorClass": "noteFinger1",
+            "styleNum": 6,
+            "finger": "1"
+          },
+          {
+            "midinum": "75",
+            "row": "0",
+            "col": "10",
+            "colorClass": "noteFinger2",
+            "styleNum": 6,
+            "finger": "2"
+          },
+          {
+            "midinum": "65",
+            "row": "2",
+            "col": "10",
+            "colorClass": "noteFinger3",
+            "styleNum": 6,
+            "finger": "3"
+          }
+        ]
+      },
+      "namedNotes": {},
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "54",
+            "row": "3",
+            "col": "4",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "49",
+            "row": "4",
+            "col": "4",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "60",
+            "row": "2",
+            "col": "5",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "65",
+            "row": "1",
+            "col": "5",
+            "colorClass": "noteBass",
+            "styleNum": 1
+          },
+          {
+            "midinum": "72",
+            "row": "0",
+            "col": "7",
+            "colorClass": "noteColornote3",
+            "styleNum": 5,
+            "bendValue": "semitone1"
+          },
+          {
+            "midinum": "67",
+            "row": "1",
+            "col": "7",
+            "colorClass": "noteColornote3",
+            "styleNum": 5,
+            "bendValue": "semitone1"
+          },
+          {
+            "midinum": "69",
+            "row": "1",
+            "col": "9",
+            "colorClass": "noteColornote3",
+            "styleNum": 5,
+            "bendValue": "prebend3"
+          },
+          {
+            "midinum": "63",
+            "row": "2",
+            "col": "8",
+            "colorClass": "noteRoot",
+            "styleNum": 5,
+            "bendValue": "updown3"
+          }
+        ]
+      },
+      "namedNotes": {},
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 4,
+      "sharps": false
+    }
+  ],
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "244",
+  "rootID": "3",
+  "songName": "snake-1",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteRoot": {
+      "colorClass": "noteGreen1 noteHatched",
+      "caption": "Root"
+    },
+    "noteChord": {
+      "colorClass": "noteRed2",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed4",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteRed5",
+      "caption": "Ch3"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    }
+  }
+}

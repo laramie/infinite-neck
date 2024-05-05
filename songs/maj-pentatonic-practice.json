@@ -1,0 +1,357 @@
+{
+  "frames": [
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "49",
+            "row": "5",
+            "col": "9",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          },
+          {
+            "midinum": "59",
+            "row": "3",
+            "col": "9",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          },
+          {
+            "midinum": "68",
+            "row": "1",
+            "col": "8",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          }
+        ]
+      },
+      "namedNotes": {
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteColornote2"
+        },
+        "Bb": {},
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteChord3"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
+      "rootID": 7,
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "NoteDisplaySizes": {
+          "width": "120px",
+          "height": "70px"
+        },
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1"
+      }
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "49",
+            "row": "5",
+            "col": "9",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          },
+          {
+            "midinum": "59",
+            "row": "3",
+            "col": "9",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          },
+          {
+            "midinum": "68",
+            "row": "1",
+            "col": "8",
+            "colorClass": "noteGreen7",
+            "styleNum": 2
+          }
+        ]
+      },
+      "namedNotes": {
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteColornote2"
+        },
+        "Bb": {},
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteChord3"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
+      "rootID": "7",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "NoteDisplaySizes": {
+          "width": "120px",
+          "height": "70px"
+        },
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": true,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1"
+      }
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteColornote2"
+        },
+        "Bb": {},
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteChord3"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "In E maj, but playing MODE: G",
+      "rootID": "7",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 2,
+      "sharps": true,
+      "displayOptions": {
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "NoteDisplaySizes": {
+          "width": "120px",
+          "height": "70px"
+        },
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1"
+      }
+    }
+  ],
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "333",
+  "rootID": "3",
+  "songName": "maj-pentatonic-practice",
+  "namedNoteOpacity": "1",
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteRoot": {
+      "colorClass": "noteGreen1",
+      "caption": "Root"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteChord": {
+      "colorClass": "noteRed4",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed2",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteBrown7",
+      "caption": "Ch3"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    }
+  }
+}

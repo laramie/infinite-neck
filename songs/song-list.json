@@ -1,0 +1,32 @@
+{
+    "songs": [
+         "All-Chords-A.json",
+         "All-Chords-Ab.json",
+         "All-Chords-All-Keys.json",
+         "All-Chords-B.json",
+         "All-Chords-Bb.json",
+         "All-Chords-C.json",
+         "All-Chords-D.json",
+         "All-Chords-Db.json",
+         "All-Chords-E.json",
+         "All-Chords-Eb.json",
+         "All-Chords-F.json",
+         "All-Chords-G.json",
+         "All-Chords-Gb.json",
+         "All-Chords-in-C-cleaned.json",
+         "All-Chords.json",
+         "colors-march-through-12-semitones.json",
+         "maj-pentatonic-practice.json",
+         "name-that-note-game.json",
+         "name-that-note-sharps.json",
+         "name-that-note-Bass.json",
+         "name-that-note-Bass-0-7.json",
+         "name-that-note-Bass-0-7-sharps.json",
+         "perfect-4ths-calc.json",
+         "pretty-lights-more-bling.json",
+         "progression-on-strat.json",
+         "snake.json",
+         "song-list.json",
+         "three-chord-wonder.json"
+    ]
+}

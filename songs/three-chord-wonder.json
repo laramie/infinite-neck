@@ -1,0 +1,329 @@
+{
+  "frames": [
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "48",
+            "row": "4",
+            "col": "3",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "C"
+          },
+          {
+            "midinum": "53",
+            "row": "3",
+            "col": "3",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "F"
+          },
+          {
+            "midinum": "57",
+            "row": "2",
+            "col": "2",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "A"
+          }
+        ]
+      },
+      "namedNotes": {
+        "F": {
+          "noteName": "F",
+          "noteNameClass": ".noteF",
+          "colorClass": "note0",
+          "styleNum": 0
+        },
+        "A": {
+          "noteName": "A",
+          "noteNameClass": ".noteA",
+          "colorClass": "note4",
+          "styleNum": 0
+        },
+        "C": {
+          "noteName": "C",
+          "noteNameClass": ".noteC",
+          "colorClass": "noteTransparent",
+          "styleNum": 0
+        }
+      },
+      "recordedNotes": {},
+      "caption": "Tension: Blues IV is I, III, V, which is IV, VI8, I relative to C ",
+      "rootID": 8,
+      "rootIDLead": "3",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "43",
+            "row": "5",
+            "col": "3",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "G"
+          },
+          {
+            "midinum": "47",
+            "row": "4",
+            "col": "2",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "B"
+          },
+          {
+            "midinum": "53",
+            "row": "3",
+            "col": "3",
+            "colorClass": "noteTransparent",
+            "styleNum": 1,
+            "noteName": "F"
+          }
+        ]
+      },
+      "namedNotes": {
+        "G": {
+          "type": "note",
+          "noteName": "G",
+          "noteNameClass": ".noteG",
+          "colorClass": "note7",
+          "styleNum": 0
+        },
+        "B": {
+          "type": "note",
+          "noteName": "B",
+          "noteNameClass": ".noteB",
+          "colorClass": "note11",
+          "styleNum": 0
+        },
+        "F": {
+          "type": "note",
+          "noteName": "F",
+          "noteNameClass": ".noteF",
+          "colorClass": "note5",
+          "styleNum": 0
+        }
+      },
+      "recordedNotes": {},
+      "caption": "Blues 5 is V, Maj7, and IV, which are I, 3, and V relative to G Myxolidian.",
+      "rootID": "3",
+      "rootIDLead": "10",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "C": {
+          "noteName": "C",
+          "noteNameClass": ".noteC",
+          "colorClass": "noteTransparent",
+          "styleNum": 0
+        },
+        "E": {
+          "noteName": "E",
+          "noteNameClass": ".noteE",
+          "colorClass": "noteTransparent",
+          "styleNum": 0
+        },
+        "G": {
+          "noteName": "G",
+          "noteNameClass": ".noteG",
+          "colorClass": "noteTransparent",
+          "styleNum": 0
+        }
+      },
+      "recordedNotes": {},
+      "caption": "Home to key of C",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "gFramesCurrentIndex": 2,
+  "gFirstBeatSeen": false,
+  "gSongModelListener": null,
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "80",
+  "rootID": "3",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "songName": "three-chord-wonder",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteTransparent": {
+      "colorClass": "noteTransparent",
+      "caption": "Emboss"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteRoot": {
+      "colorClass": "noteGreen1",
+      "caption": "Root"
+    },
+    "noteChord": {
+      "colorClass": "noteRed4",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed2",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteBrown7",
+      "caption": "Ch3"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    },
+    "note0": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "I"
+    },
+    "note1": {
+      "colorClass": "notePink5",
+      "caption": "&tau;"
+    },
+    "note2": {
+      "colorClass": "noteBlue1",
+      "caption": "II"
+    },
+    "note3": {
+      "colorClass": "noteBlue8",
+      "caption": "m"
+    },
+    "note4": {
+      "colorClass": "noteGreen1",
+      "caption": "III"
+    },
+    "note5": {
+      "colorClass": "noteRed4",
+      "caption": "IV"
+    },
+    "note6": {
+      "colorClass": "noteBrown3",
+      "caption": "&Theta;"
+    },
+    "note7": {
+      "colorClass": "noteRed4",
+      "caption": "V"
+    },
+    "note8": {
+      "colorClass": "noteGreen7",
+      "caption": "&sigma;"
+    },
+    "note9": {
+      "colorClass": "noteBlue2",
+      "caption": "6"
+    },
+    "note10": {
+      "colorClass": "noteBlue1",
+      "caption": "&delta;"
+    },
+    "note11": {
+      "colorClass": "notePink2",
+      "caption": "&Delta;"
+    }
+  },
+  "theme": "Autobahn"
+}

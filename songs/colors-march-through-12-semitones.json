@@ -1,0 +1,1045 @@
+{
+  "frames": [
+    {
+      "tables": {},
+      "namedNotes": {
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteScale"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteScale"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteGreen1"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteGreen4"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteRed3"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteBrown2"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteBlue1"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": "0",
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteGreen1"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteGreen4"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteRed3"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteBrown2"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteBlue1"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 1,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteGreen1"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteGreen4"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteRed3"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteBrown2"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteBlue1"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 2,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteGreen1"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteGreen4"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteRed3"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteBrown2"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteBlue1"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 3,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteScale"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteGreen1"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteGreen4"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteRed3"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteBrown2"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteBlue1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 4,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteScale"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteGreen1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteGreen4"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteRed3"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteBrown2"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteBlue1"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 5,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteGreen1"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteGreen4"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteRed3"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteBrown2"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBlue1"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 6,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteGreen1"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteGreen4"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteRed3"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBrown2"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteBlue1"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 7,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteGreen1"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteGreen4"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteRed3"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteBrown2"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteBlue1"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 8,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteScale"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteGreen1"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteGreen4"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteRed3"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteBrown2"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteBlue1"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 9,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteGreen1"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteGreen4"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteRed3"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteBrown2"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue1"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 10,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteGreen1"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteGreen4"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteRed3"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBrown2"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteBlue1"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 11,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteGreen1"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteGreen4"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteRed3"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteBrown2"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBlue1"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 6,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteScale"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteGreen1"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteGreen4"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteRed3"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteBrown2"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteBlue1"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 1,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteGreen1"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteGreen4"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteRed3"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteBrown2"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteBlue1"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 8,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteScale"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteGreen1"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteGreen4"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteRed3"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteBrown2"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteBlue1"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 3,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteGreen1"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteGreen4"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteRed3"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteBrown2"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteBlue1"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 10,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteScale"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteScale"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteScale"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteGreen1"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteGreen4"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteRed3"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteBrown2"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteBlue1"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 5,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteScale"
+        },
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteScale"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteScale"
+        },
+        "Eb": {
+          "noteNameClass": ".noteEb",
+          "colorClass": "noteGreen1"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteGreen4"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteRed3"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteBrown2"
+        },
+        "Gb": {
+          "noteNameClass": ".noteGb",
+          "colorClass": "noteBlue1"
+        },
+        "D": {
+          "noteNameClass": ".noteD",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 0,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    },
+    {
+      "tables": {},
+      "namedNotes": {
+        "E": {
+          "noteNameClass": ".noteE",
+          "colorClass": "noteScale"
+        },
+        "B": {
+          "noteNameClass": ".noteB",
+          "colorClass": "noteScale"
+        },
+        "G": {
+          "noteNameClass": ".noteG",
+          "colorClass": "noteScale"
+        },
+        "Bb": {
+          "noteNameClass": ".noteBb",
+          "colorClass": "noteGreen1"
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "colorClass": "noteGreen4"
+        },
+        "F": {
+          "noteNameClass": ".noteF",
+          "colorClass": "noteRed3"
+        },
+        "C": {
+          "noteNameClass": ".noteC",
+          "colorClass": "noteBrown2"
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "colorClass": "noteBlue1"
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "colorClass": "noteBlue4"
+        }
+      },
+      "recordedNotes": {},
+      "rootID": 7,
+      "beats": "4",
+      "sharps": false,
+      "currentBeat": 1
+    }
+  ],
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "200",
+  "rootID": "3",
+  "songName": "colors-march-through-12-semitones",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteRoot": {
+      "colorClass": "noteGreen1 noteHatched",
+      "caption": "Root"
+    },
+    "noteChord": {
+      "colorClass": "noteRed2",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed4",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteRed5",
+      "caption": "Ch3"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    }
+  }
+}

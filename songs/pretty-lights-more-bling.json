@@ -1,0 +1,252 @@
+{
+  "frames": [
+    {
+      "tables": {},
+      "namedNotes": {
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "noteName": "Ab",
+          "colorClass": "noteScale",
+           "styleNum": 0
+        }
+      },
+      "recordedNotes": {
+        "2": [
+          {
+            "midinum": "57",
+            "row": "3",
+            "styleNum": 3
+          }
+        ],
+        "3": [
+          {
+            "midinum": "53",
+            "row": "4",
+            "styleNum": 3
+          }
+        ],
+        "4": [
+          {
+            "midinum": "49",
+            "row": "5",
+            "styleNum": 3
+          }
+        ]
+      },
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 3,
+      "sharps": false
+    },
+    {
+      "tables": {
+        "tblP46": [
+          {
+            "midinum": "60",
+            "row": "2",
+            "col": "5",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          },
+          {
+            "midinum": "66",
+            "row": "1",
+            "col": "6",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          },
+          {
+            "midinum": "56",
+            "row": "3",
+            "col": "6",
+            "colorClass": "noteRoot",
+            "styleNum": 2
+          }
+        ]
+      },
+      "namedNotes": {
+        "C": {
+          "noteNameClass": ".noteC",
+          "noteName": "C",
+          "colorClass": "noteScale",
+           "styleNum": 0
+        },
+        "Ab": {
+          "noteNameClass": ".noteAb",
+          "noteName": "Ab",
+          "colorClass": "noteScale",
+           "styleNum": 0
+        },
+        "Db": {
+          "noteNameClass": ".noteDb",
+          "noteName": "Db",
+          "colorClass": "noteScale",
+           "styleNum": 0
+        },
+        "A": {
+          "noteNameClass": ".noteA",
+          "noteName": "A",
+          "colorClass": "noteChord2",
+           "styleNum": 0
+        }
+      },
+      "recordedNotes": {
+        "2": [
+          {
+            "midinum": "67",
+            "row": "2",
+            "styleNum": 3
+          },
+          {
+            "midinum": "76",
+            "row": "0",
+            "styleNum": 3
+          }
+        ],
+        "3": [
+          {
+            "midinum": "61",
+            "row": "2",
+            "styleNum": 3
+          }
+        ],
+        "4": [
+          {
+            "midinum": "72",
+            "row": "1",
+            "styleNum": 3
+          }
+        ]
+      },
+      "caption": "",
+      "rootID": 8,
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 4,
+      "sharps": false
+    }
+  ],
+  "visibleTables": [
+    "tblP46"
+  ],
+  "defaultBPM": "80",
+  "rootID": "3",
+  "songName": "pretty-lights-more-bling",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "tunings": [
+    {
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "userColors": {
+    "noteRoot": {
+      "colorClass": "noteGreen1 noteHatched",
+      "caption": "Root"
+    },
+    "noteChord": {
+      "colorClass": "noteRed2",
+      "caption": "Chord"
+    },
+    "noteChord2": {
+      "colorClass": "noteRed4",
+      "caption": "Ch2"
+    },
+    "noteChord3": {
+      "colorClass": "noteRed5",
+      "caption": "Ch3"
+    },
+    "noteScale": {
+      "colorClass": "noteBlue2",
+      "caption": "Scale"
+    },
+    "noteColornote": {
+      "colorClass": "notePink1",
+      "caption": "Colornote"
+    },
+    "noteColornote2": {
+      "colorClass": "notePink2",
+      "caption": "C4"
+    },
+    "noteColornote3": {
+      "colorClass": "notePink3",
+      "caption": "C3"
+    },
+    "noteChromatic": {
+      "colorClass": "noteYellow5",
+      "caption": "Chromatic"
+    },
+    "notePassingTone": {
+      "colorClass": "noteBlue4",
+      "caption": "Passing"
+    },
+    "noteAvoid": {
+      "colorClass": "noteBlack noteHatched2",
+      "caption": "Avoid"
+    },
+    "noteBass": {
+      "colorClass": "noteBassPlayer",
+      "captionClass": "noteBassPlayer",
+      "caption": "Bass"
+    },
+    "noteLead": {
+      "colorClass": "notePink3",
+      "caption": "Lead"
+    },
+    "noteLead2": {
+      "colorClass": "notePink6",
+      "caption": "Lead 2"
+    },
+    "noteFingerT": {
+      "colorClass": "FingerT",
+      "caption": "Thumb"
+    },
+    "noteFinger1": {
+      "colorClass": "Finger1",
+      "caption": "Finger1"
+    },
+    "noteFinger2": {
+      "colorClass": "Finger2",
+      "caption": "F2"
+    },
+    "noteFinger3": {
+      "colorClass": "Finger3",
+      "caption": "F3"
+    },
+    "noteFinger4": {
+      "colorClass": "Finger4",
+      "caption": "F4"
+    }
+  }
+}
