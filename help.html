@@ -197,24 +197,42 @@
         <li><a href="#walkthrough">Walkthrough</a>
     </ul>
 
-    <p class="bigpoint">This tool helps you visualize notes across the neck of your instrument.
+    <p class="bigpoint">This tool, <span class="productsmall">infinite-neck</span>, helps you visualize notes across the neck of your instrument.
         </p>
 
         <p><img src="img/help/infinite-neck-visualization.png" width="80%"></p>
 
 
-    <p>Clicking on cells puts "notes" on the virtual neck (fretboard),
+    <p>The fretboard is displayed as a spreadsheet-like table with cells representing each fret/string position.
+        Clicking on cells puts "notes" on the virtual neck/fretboard,
         showing where you'll play them on the real fretboard of your instrument.  You can add bars and beats, and loop the song.
         There's music theory baked into the tool, so you can automatically
         highlight all legal notes in G Mixolydian, for example, with separate sets of colors for
         chord notes, root, scale notes, passing-tones, and blue-notes.
     </p>
-    <p>infinite-neck has the following uses for practice and sharing:
+    <p><span class="productsmall">infinite-neck</span> has the following uses for practice and sharing:
         <br>&check;&nbsp;writing down new-to-you and interesting chord fingerings.
         <br>&check;&nbsp;capturing a concrete way to play a song.
         <br>&check;&nbsp;communicating the fabric of a sound: the possible notes and their moods.
         <br>&check;&nbsp;creating art with the patterns of notes, another way to internalize the layout and relationships of notes.
         <br>&check;&nbsp;improvising over the changes while looping.
+    </p>
+
+    <p>
+        You can run the program from my website:
+        <br>&bull;&nbsp;&nbsp;<a target="_blank" href="http://demo.laramiecrocker.com/infinite-neck/">demo.laramiecrocker.com/infinite-neck</a>
+        <br>&bull;&nbsp;&nbsp;No login required, free to use.
+        <br>&bull;&nbsp;&nbsp;Download/save the songs you create for later use or sharing.
+        <br>
+        <br>
+
+        Or, you can download the project from source in Github: <a target="_blank" href="https://github.com/laramie/infinite-neck">github.com/laramie/infinite-neck</a>
+        <br>&bull;&nbsp;&nbsp;Written in HTML, Javascript/jQuery, and CSS.
+        <br>&bull;&nbsp;&nbsp;Creative Commons Attribution-NonCommercial-ShareAlike license.
+        <br>&bull;&nbsp;&nbsp;Serve it up from a localhost server such as <b>python -m SimpleHTTPServer</b>
+        <br>&bull;&nbsp;&nbsp;Point Chrome or Firefox at http://localhost:8000/, and enjoy!
+        <br>
+        <br>
     </p>
 
     <a name="instruments"></a>
@@ -406,14 +424,21 @@
              and I play a real clam because I'm missing a half-step.</small></i></p>
 
          <p>Along the way, I had to sort out where my Classical training and Jazz training had different names
-                 for the pitches of a scale, and what to call these enharmonically <i><small>
-                     (classical purists note--here we show your choice of [all sharps] or [all flats] in any key,
-                     per Section, but no weird enharmonic names or mixed sharps and flats--sorry, no B# or C## for you!)</small></i>,
-                     and what to call these pitches when the key changed,
+                 for the pitches of a scale, and what to call these enharmonically,
+                 and what to call these pitches when the key changed,
                  but the played note was the same.
-                 <i>e.g. the band jumps from the key of A to the key of D# and you want to play the minor third function in the new key,
-                 or you want to know what that minor third you were playing in A means, now that everyone else is playing in D#.
-                 <small>"Girl from Ipanema" anyone?</small></i>
+
+                 <br><br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;<i>e.g. the band jumps from the key of A
+                     to the key of D# and you want to play the minor third function in the new key,
+                 or you want to know what that minor third you were playing in A means,
+                 now that everyone else is playing in D#.
+                 <small>"<a target="youtube" href="https://www.youtube.com/watch?v=OFWCbGzxofU">Girl from Ipanema</a>" anyone?</small></i>
+
+                 <br><br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;<i>Classical purists note--here
+                     we show your choice of [all sharps] or [all flats] in any key,
+                 per Section, but no weird enharmonic names or mixed sharps and flats--sorry,
+                 no B# or C## for you!</i>
+                 <br>
 
          <p>So I decided to share this tool and to include other tunings, and ambidexterity,
              so you can use this tool in your instrument and tuning of choice.
@@ -437,7 +462,7 @@
                  <li>Practice a song someone has saved in some other tuning, by switching it to your tuning.
              </ul>
              </p>
-       <p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions or gripes.  </p>
+       <p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions, comments, or gripes.  </p>
 
 
 
@@ -546,10 +571,12 @@
         <p><small><i>Classical music theory provides only 7 note names, and then expects you to glue on words
             like "augmented", "diminished", "altered", "major", and "minor".
             The problem is the symbols can change, so that for example the "II" becomes "ii" if diatonic,
-            which makes it minor.  Add Jazz people and you'll hear "flat 9" or "the flat 2".
-            And half of the Classical folks reading wouldn't agree that it would be correct
+            which makes it minor.  Add Jazz lingo and you'll hear terms like "flat 9" or "the flat 2".
+            And in Classical terms it would not be correct
             to notate a 12-tone chromatic scale thusly:
             I ii II iii III IV v V vi VI vii VII.  Because ii represents the minor mode and not the flatted II.
+            <a target='_blank' href='https://en.wikipedia.org/wiki/Solfege#Modern_use'>Modernized Solf&#232;ge</a>
+            get close, but few people use this system, and it does not have single-character symbols.
 
             These examples don't explain the problems well, or even correctly, but that's
             kind of the point.  These systems do not precisely address what I want to
@@ -676,8 +703,8 @@
 
       <br>
       <p>Early in the design phase, I tried extending the Classical notation to use chord function names as note function names.
-          I find it confusing, being all too similar.
-          Drop me a note if you have a better idea, but here is what that looks like:</p>
+          I find it confusing, being all too similar.  So this scheme is <b><i>not</i></b> available in <span class="productsmall">infinite-neck</span>.
+          <a href="http://LaramieCrocker.com/contact.html">Drop me a note</a> if you have a better idea, but here is what that would look like:</p>
       <div style="margin-left: 4em; border: 1px solid gray; padding: 12pt; ">["I","ii","II","iii","III","IV","v","V","vi","VI","vii","VII"]</div>
       <p>
           <img src="img/help/customNoteFunctionRoman.png">
@@ -686,7 +713,8 @@
 <a name="usage"></a>
 <hr>
 <h2>Usage</h2>
-<p>A cell is one of the squares on the neck, and represents one fret on one string. </p>
+<p>The neck is shown as a table of cells, like a spreadsheet.
+    A cell is one of the squares on the neck, and represents one fret on one string. </p>
 
 <p><span class="productsmall">infinite-neck</span> allows you to mark the notes on your Instrument with various types of notes, shown below.  Otherwise,
     a cell is empty. (You can also choose to show all the note names in all cells, but these won't have an inner border
@@ -702,8 +730,11 @@
   In most Themes, cells have a white background for white keys on the piano, and a gray background for black keys on the piano.
 </p>
 
-<p>Tunings may change on your guitar, but a C is always a white key, and a C&sharp; (or D&flat;) is always a black key.
-You can switch to Theme "Coffee Brown" to see a keyboard that does not have piano key backgrounds.
+<p>Tunings may change on your guitar, such that a C may the the first fret on the second string, or it may be the open second string in P4.
+    But a C is always a white key, and a C&sharp; (or D&flat;) is always a black key.
+You can switch to Theme "Coffee Brown" to see a keyboard that does not make a distinction between black and white.
+Theme "Blade" has black for black keys (but sadly, no cool hexagons because the CSS coding was too crazy).
+Theme "Landau Top" has brown and tan keys (just like a cherry, stock Chevy Monte Carlo).
 And any Theme can be changed by choosing
 the same color for noteWhiteKeyColor and noteBlackKeyColor in the Theme.</p>
 
@@ -737,7 +768,9 @@ placed on A, and a "NamedNote" is placed on F&sharp; which selects <u>all</u> F&
 
 
 <p>Click the Clear radio button, then any note name you want to clear.
-    (These are specific to the kind of note, so also select the kind of note.)
+    (These are specific to the kind of note, so also select the kind of note.) Actually, while you have a note
+    style selected, you can also
+    just click the note again with the same style to remove that note--click on, click off, click on, click off. <i>Karate Kid anyone?</i>
 </p>
 
 <p>
@@ -747,13 +780,16 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 </p>
 <p>
     <ul>
-    <li><b>Pitch</b> shows all notes with one MIDI pitch (e.g. 62) on that instrument,
+    <li><b>Pitch</b> shows all notes with one MIDI pitch highlighted in yellow outline on that instrument.
+        Here it's a P4 guitar, showing all positions with MIDI pitch 62.
         <br>
     <img src="img/help/pitch.png">
     </li>
     <li><b>Multi</b> lets you highlight multiple notes at once, by played position.
-        Here we are showing the D-major chord, with a handy dominant seven chord
-        highlighted in magenta, which we could play as a substitution if we wanted a Blues seventh.
+        Here's that same P4 guitar.  We have, again, shown a D-major chord across the neck with NamedNotes in blue.
+        The actual fingering we'll start with is shown with SingleNotes in filled-in magenta.
+        Plus, we have highlighted, in magenta outline, a handy dominant seven chord,
+         which we could play as a substitution if we wanted a Blues seventh.
         <br>
     <img src="img/help/multi-highlight.png">
     </li>
@@ -822,17 +858,167 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
 <a name="divSectionControls"></a>
 <h3>Section</h3>
- <p>The divSectionControls...
+ <p>The Section menu lets you:
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; create, delete, and reorder sections
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Clone sections (make a full copy)
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Shallow Clone sections (make a copy with NamedNotes, but not SingleNotes, TinyNotes or Highlights)
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; add a beat after the last beat [+]
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; delete the current beat [-]
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; add a beat before the existing first beat [^]
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; loop over the beats in just one section as you add notes to the beats (different from Loop Song on the Transport)
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; save DisplayOptions, which include the Root Key and Lead Root Key, plus all the items on the View menu, plus Theme and Stylesheets
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; transpose all NamedNotes in the Section
+      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; set the enharmonic choice of sharps or flats for the key of the Section.
  </p>
+
+  <h4 style="margin-left: 4em;">Section :: Destination</h4>
+
+ <p>When moving, creating or cloning Sections, pay attention to the dropdown called "Destination after &sect;".  This is where
+     the new/moved Section ends up.  So chosing "Destination after &sect;" of 3 creates or moves to Section 4.  Chosing
+     "BEGIN" as the Destination creates or moves to Section 1, pushing the existing Section 1 to Section 2,
+     and bumping all other Sections later as well.
+ </p>
+ <h4 style="margin-left: 4em;">Section :: Transposition</h4>
+ <p>If the "Allow transposition by keyboard shortcuts d, U, u, D,  j , & J" checkbox is checked, then these
+     keyboard shortcuts work; otherwise they don't.
+     This prevents you from inadvertently transposing a Section, which is confusing if you don't notice the transposition hint.
+     The hint is that all the NamedNotes move (which you might miss),
+     and a yellow highlight is placed around all the new Root notes
+     (which only hangs out until you click a note or change sections).
+</p>
+<p>Transposing "Up" moves the notes and the Root Key up the scale one half-step.  Transposing with the "j" key ("Jump") moves the notes
+    and the Root up a fourth, which is up one string on a P4 instrument.  Remember that Jumping up a fourth from the G string
+    to the B string in Standard guitar tuning will not be on the same fret.
+</p>
+<p>
+    Here we show a Section with a C major chord shown in NamedNotes (all legal notes on the neck) which <i>will</i> move
+    when we transpose.
+    We have added a B-flat SingleNote, which is the dominant seven.
+    Since it is a SingleNote, it <i>won't</i> move when we transpose.
+    (Also, all SingleNotes have a thin yellow backglow so they look different from NamedNotes,
+    much thinner than the fat yellow Highlight which surrounds the entire cell.)
+</p>
+<p>
+        Transposing from C to D-flat then looks like this:
+ </p>
+
+
+ <p>
+    Before:
+    <br>
+    <img class="floatingScreenshot" width="60%" src="img/help/context/transpose-C-up-before.png">
+ </p>
+ <p>
+     After:
+     <br>
+     <img class="floatingScreenshot"  width="60%" src="img/help/context/transpose-C-up-after.png">
+ </p>
+ <p>Notice that the C major chord is now a D-flat major chord, that all D-flats are highlighted with a fat, yellow Highlight to show you the new Root,
+     and that the B-flat SingleNote is still a B-flat, but its Note Function has changed from the dominant seven to the six,
+     since its relative position to the Root has changed (it was two strings up from the Root, same fret; now it
+     is still two strings up, but one fret back).
+     You can see the new Root key in the caption bar of the instrument: a small, sunken box has a D-flat where before it had a C.
+     You can also see that AutoColor has shown the Note Functions being the same in the new key, since AutoColor assigns colors
+     to Note Function, regardless of NoteName or Root Key.  In this AutoColor ColorScheme ("CycleOfColors"), the Root is black, the V is red,
+     and the III is a kelly green.  In this scheme, Dominant seven (&delta;) is a pool blue, while the 6 is a chartreuse green.
+ </p>
+<h4 style="margin-left: 4em;">Section :: Key Change</h4>
+<p>
+    If we had just wanted to change keys but leave all the notes, we would just change the key of
+    the Section with the dropdown "Key", which would look like this:
+</p>
+<p>
+   Before (Root = C):
+   <br>
+   <img class="floatingScreenshot" width="30%" src="img/help/context/key-change-C-Dflat-before.png">
+</p>
+
+<p>
+    After (Root = D-flat):
+    <br>
+    <img class="floatingScreenshot"  width="30%" src="img/help/context/key-change-C-Dflat-after.png">
+</p>
+
+<p>Notice that the notes stayed in the same positions, but the keys have changed.
+    (The Note Names are still [C,E,G] on the same frets and strings.)
+    Thus all the notes have new Note Functions.
+    Since AutoColor is on, the notes automatically get new colors--AutoColor assigns a color per Note Function.
+</p>
+
+
+
 
 <a name="divViewControls"></a>
 <h3>View</h3>
- <p>The divViewControls...
+
+<p>All the controls on this page update the fretboard display in real-time.
+     All can be saved to the Section Display Options, such that
+     when you navigate to another Section, the Display Options you saved will be restored upon coming back to this Section.
+</p>
+
+<p>
+     If you want to save these options, it is best to set them at least in the first Section, so that when looping
+     the song, or opening the song from a file, the default options you chose get restored logically.  When you navigate to
+     another section, the options persist until you hit another section that has Display Options set.  As you change Sections,
+     if the View menu is showing, you'll see the option controls get updated.
+</p>
+
+<p>Also click Save Display Options to overwrite previously saved options for just the current Section.
+</p>
+
+<p>Click Clear Display Options to delete these options for just the current Section.
+</p>
+
+<p>These buttons also appear in the Section menu, and apply to the current Section.
+</p>
+
+<p>You can audit all the Display Options for all Sections that have them set with the Command-Line <span class="menuExampleLine"><b><small>/vdd</small></b></span>
+     Scroll down to see the audit
+     of all Sections with Display Options.  The options that change are highlighted.  You can also sit on the View page and
+     watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( &lt; and &gt; ).
+     Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
+     come back to the View menu.
+ </p>
+
+<p>You can play around with the following options:
+<br>&nbsp;&nbsp;Show Right Subscript
+<br>&nbsp;&nbsp;Show Right Subscript in Center
+<br>&nbsp;&nbsp;Show Left Subscript
+<br>&nbsp;&nbsp;Show MIDI Number
+<br>&nbsp;&nbsp;Right Subscript: Function | Notename
+<br>
+<br>
+
+These will render various results like these, which you can also tweak with the sizing options.
+<br>
+For all these examples, "Show Left Subscript" and "Show Right Subscript" are checked.
+<br>
+<br>Right Subscript: Notename
+<br><img src="img/help/context/note-opt-4.png">
+<br>
+<br>Show MIDI Number, Right Subscript: Notename
+<br><img src="img/help/context/note-opt-3.png">
+<br>
+<br>Right Subscript in Center, Right Subscript: Notename
+<br><img src="img/help/context/note-opt-5.png">
+<br>
+<br>Right Subscript in Center, Right Subscript: Function
+<br><img src="img/help/context/note-opt-6.png">
+<br>
+<br>Right Subscript in Center, Show MIDI Number, Right Subscript: Function
+<br><img src="img/help/context/note-opt-1.png">
+<br>
+<br>Right Subscript in Center, Show MIDI Number, Right Subscript: Notename
+<br><img src="img/help/context/note-opt-2.png">
+
  </p>
 
 <a name="divThemeControls"></a>
 <h3>Themes</h3>
- <p>The divThemeControls...
+ <p>Normally, you can change Themes by just selecting one from the dropdown in the main menu button bar.
+ </p>
+ <p>The Theme menu is for tweaking the current Theme, and for building new Themes.  It's a bit techie, so we'll
+     explain it in a video at some point.
  </p>
 
 <a name="divFillNotes"></a>
@@ -857,12 +1043,125 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 <a name="divTunings"></a>
 <h3>Tunings</h3>
   <p>Look under the "Tunings" menu to turn on and off various installed tunings,
-      and customize them (number of frets, left-handed).
+      and customize them (number of frets, left-handed).  These controls update the
+      instruments in real-time, but you may have to scroll down to see them.
       </p>
 
 <a name="palette"></a>
 <h3>Palette</h3>
- <p>The Palette...
+ <p>The Palette lets you choose what kind of note you'll be placing when you click in a cell,
+     and what color and hatching will be used.
+ </p>
+
+ <p>First, choose what kind of note: Named, Single, Tiny, Bend, Pitch Highlight, Multi Highlight, or Fingering.
+     There's more detail in the <a href="#glossary">Glossary</a> about these note kinds.
+ </p>
+
+ <p>Then, decide whether you'll use AutoColor.  With AutoColor, Note Functions are
+     assigned a color each by the current ColorScheme.
+     Without AutoColor, more color buttons will appear: these are colors assigned to Roles.
+     A Role is something like Root or Chord.  All Root notes then have the same color.  All Chord notes have the same color.
+     (Except that we provide not just one but [Chord, Ch2, and Ch3],
+     so that you can have three different chord colors to be assigned as you click.)
+     If you just want a color for each note, that you'll assign, then click "More..." after the Major Seventh role color radio button.
+     You'll then see the full palette infinite-neck provides.  Whenever AutoColor is active, your color choices for individual colors chosen this
+     way will be ignored.
+ </p>
+
+ <p>AutoColor uses a ColorScheme.  infinite-neck comes with a Default ColorScheme, called "CycleOfColors", which is based
+     on my whack theory that associating a color with each Note Function helps to learn and spot patterns of chords.  That is, a Major Seventh chord
+     always looks the same, color-wise, so seeing an inversion of that chord on the neck should stimulate a memory, and help
+     us navigate the pattern of that chord all around the neck.  If you find it weird or annoying, you have two options: 1) turn AutoColor off; 2) customize
+     AutoColor to a scheme of your liking.
+</p>
+
+<p>
+     Customization also allows you to have multiple ColorSchemes, for example,
+     one scheme for minor moods, another for major moods.
+</p>
+
+<p>
+     With AutoColor off, you can still have the colors and hatches mean something, by using Roles.
+     A Role for Root or Chord was discussed above.
+     You can also use or customize the Roles for Avoid, Avoid2 and Avoid3, so that these notes mean
+     "Avoid this note!"  To do this, you would turn
+     AutoColor off, then click Avoid, then click in a cell to place that Avoid note, either a SingleNote,
+     or a NamedNote.  You can do this in multiple keys,
+     such that in Section 1, in the key of C, the flat II (&tau;) would be an Avoid note, while in Section 2,
+     in the key of A playing a
+     <a target="_blank" href="https://en.wikipedia.org/wiki/Gypsy_scale">Gypsy scale</a> where the
+     flat 2 (&tau;) is legal, then the natural 2 (II)
+     would be an Avoid note, so you'd place a Role note of Avoid there.
+ </p>
+
+ <p>Customizing the colors for the Roles [Root, Chord, and Scale] sets these as the colors for the Fill menu.  When using Fill,
+     you probably want AutoColor off to take advantage of this.
+ </p>
+
+ <p>To change ColorScheme away from CycleOfColors, click the [Customize...] button on the Palette menu.
+     Chose colors and hatches for
+     each of the Note Functions [note1, note2, ....,note12] using the little picker buttons and their pop-up pickers.
+     (Click the little button again to make the picker go away, or click a
+     color/hatch to chose it and make the picker go away.)
+     When you have colors selected for each of the Note Functions [note1,...,note12],
+     then click the [Record Stylesheet] button.  You can provide a Stylesheet name,
+     or the name "user" will be filled in for you.  Now the Stylesheets will be shown,
+     the same as if you had clicked the [Stylesheets] button, and your new Stylesheet will be a the bottom of the list.
+     The bottom row is the composite stylesheet of built-in stylesheets plus your user stylesheets, as selected with the links
+     and checkboxes, which you can play around with.  This result is your active ColorScheme, and is saved in the song.
+     To apply it to other songs, open this song first, delete any Sections, then open the Song you want to view
+     using the "Append sections to current song" checkbox on the File menu.
+     (There always has to be one Section, so just mash on the Delete Section button repeatedly in the Section
+     menu until you are down to one Section and it is blank.)  Now when you open the other song, you'll see that song's
+     Sections, along with its saved Stylesheets, and your new Stylesheet.
+ </p>
+
+ <p>You can also customize the colors for Fingering the same way.  You'll see that the Default stylesheets are broken up
+     into CycleOfColors for Note Functions, Fingerings for fingering colors, and Roles for Role colors.  You may overide any of the
+     individual colors in your stylesheet, and leave some Roles or Fingers or Note Functions as Default by not adding things in your stylesheet.
+     You may also have multiple stylesheets by entering different names in "Stylesheet name" before clicking "Record Stylesheet".
+ </p>
+
+ <p>There is another way to record a stylesheet: manually place colored NamedNotes on the neck, then click Section:NamedNotes==&gt;Stylesheet.
+     This will create a stylesheet for the Note Functions only, based on the colors you chose for those Note Function locations.
+     You do not need to do all Note Functions--you could just override the II and the &Delta; for example.  Then, when AutoColor is on
+     the two notes in your stylesheet would override the Default, but other notes would use the Default.
+ </p>
+
+ <p>Finally, there are several special "Color" buttons: [Clear, Keep, and Find Color].
+</p>
+
+<p>
+     "Keep" disables placing new notes,
+     so is useful if you just want to click around and not change anything, or if you are doing a presentation
+     and don't want to mess things up.
+</p>
+
+<p>
+ "Clear" lets you delete notes of the kind
+     selected.  Actually, you can also just click on a note, and if you have the note kind selected,
+     that note will go away.  If you click again,
+     the note will come back, but with whatever color you currently have active.
+</p>
+
+<p>
+     To find what color you used before, make sure AutoColor is off, then click "Find Color", then click the note
+     on the neck.  The color name will appear in the Caption of that instrument, so open up the Caption row
+     with the little hamburger on the instrument.
+     If the whole Caption on the instrument is missing, press ESC then SHIFT-A to show it.
+     The color will also be highlighted on the Palette, so you
+     will have to have AutoColor off, and you should click "More..." after the [&Delta;] radio button to show
+     the full color palette.
+ </p>
+
+ <p>Two more colors are special: [Emboss, and Auto].  Emboss just creates a note with transparent background.  This is useful
+     if you'll be using AutoColor, so as to be obvious when AutoColor is off--all the notes will just be transparent but still have borders, highlights, etc.
+     Emboss is also useful if you'd like to just display the Named Notes so you can see their positions all the way up the neck,
+     and then use color to draw your attention to SingleNotes that you'll actually play.
+ </p>
+ <p>The color called "Auto" places notes with a color selected by AutoColor, but that color persists even when AutoColor is off.
+     This is useful if you want the colors from a ColorScheme to apply while placing notes, but you don't want to use AutoColor
+     because you are using color Roles, or are using Emboss.
  </p>
 
  <a name="options"></a>
@@ -896,7 +1195,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
  <a name="graveyard"></a>
 <hr>
 <h2>The Graveyard</h2>
-<p>Objects that are deleted are burried in the Graveyard.
+<p>Objects that are deleted are buried in the Graveyard.
     They can be revived, which will place them back into the song as though never deleted,
     except perhaps in a different order if things have been added or deleted in the meantime.  See the help sections
 on how to move Sections and Beats.  The order of Stylesheets is part of setting the Stylesheets for a Song, so check the
@@ -915,8 +1214,8 @@ Stylesheet order
 
 <p><img width="80%" style="border: 20px solid green;" src="img/help/graveyard.png"></p>
 
-<p>Click "show/hide" to see the object that was burried.</p>
-<p>Click "raise" to revive the object that was burried.  The "lastRevived" timestamp will be updated,
+<p>Click "show/hide" to see the object that was buried.</p>
+<p>Click "raise" to revive the object that was buried.  The "lastRevived" timestamp will be updated,
     and the object will be placed back into the song.</p>
 <p>In fact, you can revive an object more than once.  This makes clones, which is useful.
     For Sections, there are more detailed cloning buttons on the Section menu page: Clone, and Shallow Clone.</p>
@@ -942,6 +1241,18 @@ Stylesheet order
     <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
     <h3>Pool Shark</h3>
     <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
+    <h3>Blade</h3>
+    <img width="80%" src="img/help/theme-blade.png"><br><br>
+    <h3>Coffee Brown</h3>
+    <img width="80%" src="img/help/theme-coffee-brown.png"><br><br>
+    <h3>Landau Top</h3>
+    <img width="80%" src="img/help/theme-landau-top.png"><br><br>
+    <h3>Renfaire</h3>
+    <img width="80%" src="img/help/theme-renfaire.png"><br><br>
+    <h3>Robin Hood</h3>
+    <img width="80%" src="img/help/theme-robin-hood.png"><br><br>
+    <h3>Shire</h3>
+    <img width="80%" src="img/help/theme-shire.png"><br><br>
  </p>
 
  <a name="cheatsheet"></a>
@@ -1246,7 +1557,8 @@ to hide menus and the Command-Line.</p>
                 </td>
                 <td>An exclamation point <b>!</b> marks a menu item chosen when there is a "Bang Menu" item,
                     that is, an item that takes action when you press the
-                    key that is highlighted by the menu.  The exclamation point lets you know that item
+                    key that is highlighted by the menu.  (You don't actually type <b>!</b>, the system just displays it.)
+                    The exclamation point lets you know that item
                     was, in fact, selected, and that it's action has taken place.  Usually, you are left
                     at that menu, and the exclamation point is shown.  You can choose a menu item
                     at this sibling level, and they will then get the exclamation point,
@@ -1301,7 +1613,7 @@ to hide menus and the Command-Line.</p>
                 </td>
                 <td>
                 </td>
-                <td>Most menus present the last menu item as e<b>x</b>it, which exits the Command-Line menu.  You can
+                <td>[lower-case x] Most menus present the last menu item as e<b>x</b>it, which exits the Command-Line menu.  You can
                     jump back into the Command-Line by pressing <span class="key"><b>m</b></span>, or you can start a new Command-line
                     at the root of the menu by typing <span class="key"><b>/</b></span>
                 </td>
@@ -1327,7 +1639,22 @@ to hide menus and the Command-Line.</p>
 <p>
 <div style="border: 2px solid green">
 <pre>
-        In Chrome::Inspect you can use Developer tools to directly access the ObjectModel of the Song.
+        Using the Command-Line Menu, you can view Diagnostics:  /vd
+                song model:   /vds
+                    the model of the entire Song
+                in-memory model:  /vdi
+                    the model of just one Section
+                menu dump:
+                    condensed, simple printout all the menu items in menu.js
+                user colors:
+                    full display of colors in userColors.js
+                    This is better seen graphically in Palette | Stylesheets
+                displayOptions:
+                    all the DisplayOptions stored for each Section
+
+        In Chrome::Inspect you can use Developer tools Console
+           to directly access the ObjectModel of the Song:
+                getSong()
 
         Synopsize the "tables" collection:
            getSong().frames.forEach(function(a){console.log("id"+JSON.stringify(a.tables))});
@@ -1352,45 +1679,273 @@ to hide menus and the Command-Line.</p>
 <hr>
 <h2>Glossary</h2>
 <p>
-<div style="border: 2px solid green">
-<pre>
-        Note Names
-        Note Functions
-        MIDI Number
 
-        NamedNote
-        SingleNote
-        TinyNote
-        Bend
-            semitone
-            pre-bend
-            up-down
-        Fingering
-        Section
-        Beat
-        Tunings
-        Root
-        Root/Chord/Scale - in Fill
+    <table class="CheatSheet menuExample" cellspacing="0" border="1">
+        <tr>
+            <th>Term
+            </th>
+            <th>Definition
+            </th>
+        </tr>
+        <tr>
+            <td>Note Names
+            </td>
+            <td>Names of notes in the octave: [A, A#, B, B#, ..., G#] or [A, B&#9837;, ...].
+                See <a target="_blank" href="https://en.wikipedia.org/wiki/Musical_note#12-tone_chromatic_scale">wikipedia's entry</a>.
+                In <span class="productsmaller">infinite-neck</span>, each
+                Section allows flats, or sharps, but not both.
+                Also, <span class="productsmaller">infinite-neck</span> does not display the enharmonic names such as B#, or C##.
+            </td>
+        </tr>
+        <tr>
+            <td>Note Functions
+            </td>
+            <td>What a note functions as.  For example, in the key of C, the note G functions as "the Five" (or "V").
+                The function is where a note sits in the mode or scale you are playing.  So if the band switches to the key
+                of A, that G note becomes the dominant seven, because we count from A up seven scale-tones.  This would be
+                the case if we were playing in A Mixolydian.  If we were in A major, the mode has G# as the major seven, so the G
+                is a flatted G#--that is, <i>not</i> in the major mode.  <span class="productsmaller">infinite-neck</span> deals
+                with this by assigning a unique symbol to each Note Function: a dominant seven is &delta; and a major seven is &Delta;.
+            </td>
+        </tr>
+        <tr>
+            <td>MIDI Number
+            </td>
+            <td>The MIDI specification assigns an integer to each pitch within a range from 0 to 127, a superset of the piano range.
+                Here is a decent <a target="_blank" href="https://newt.phys.unsw.edu.au/jw/notes.html">MIDI chart</a>.
+                Note that there are several conventions as to what to call the notes, e.g. C4 or C3 for middle-C.
+                However, the MIDI number is constant.  A middle-C is always MIDI Number 60.
+                <span class="productsmaller">infinite-neck</span> shows the MIDI Number, not the names such as C3, C4 or c&#96;&#96;.
+            </td>
+        </tr>
+        <tr>
+            <td>NamedNote
+            </td>
+            <td>Display of all notes with the same Note Name.  Placing a NamedNote such as "F" on the neck marks all F's.
+            </td>
+        </tr>
+        <tr>
+            <td>SingleNote
+            </td>
+            <td>Display of one note on the neck.  Placing a SingleNote such as "F" on the neck marks one F -- the one you clicked.
+                SingleNotes always float over NamedNotes, so you can add SingleNotes on top of NamedNotes and even use different colors if AutoColor is off.
+                SingleNotes have one rounded corner so you can see if a NamedNote is present.
+            </td>
+        </tr>
+        <tr>
+            <td>TinyNote
+            </td>
+            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is also a TinyNote, so you can't use both in one cell.)
+            </td>
+        </tr>
+        <tr>
+            <td>Bend
+            </td>
+            <td>A special type of TinyNote, which shows the range of notes that bending (stretching) a string moves through.
+                For example, if you finger a note at A, but then stretch the string sideways,
+                it will raise the pitch smoothly through A#, G, and maybe even G# if you have light strings or are high up on the neck.
+                <span class="productsmaller">infinite-neck</span> designates the cell where your bend starts with a square end, and the
+                destination note as the pointed end.  In the same example, A is the start, A#, G and G# are the destination notes.  A# would be
+                a semitone bend, G would be a 2-semitone bend, and G# a 3-semitone bend. A pre-bend is where you bend the note up before
+                plucking the string, and then release the tension so that the pitch drops--the destination is then A.
+                <span class="productsmaller">infinite-neck</span> calls it an "up-down" bend where you start off relaxed, sound the note, then bend up
+                and then release the tension so the pitch comes back down.
+            </td>
+        </tr>
+        <tr>
+            <td>semitone
+            </td>
+            <td>A half-step, e.g. from C to C#.  A semitone Bend is where you stretch the string so that the pitch that sounds is
+                a half-step (semitone) above where the fretted pitch would be if played relaxed.
+            </td>
+        </tr>
+        <tr>
+            <td>pre-bend
+            </td>
+            <td>A pre-bend is where you bend the note up before
+            plucking the string, and then release the tension so that the pitch drops.
+            </td>
+        </tr>
+        <tr>
+            <td>up-down
+            </td>
+            <td><span class="productsmaller">infinite-neck</span> calls it an "up-down" bend where you start off relaxed, sound the note, then bend up
+            and then release the tension so the pitch comes back down.
+            </td>
+        </tr>
+        <tr>
+            <td>Fingering
+            </td>
+            <td>Which finger you use to play each note: 1, 2, 3, 4, T correspond to Index finger, Middle finger, Ring finger, Pinkie, and Thumb.
+                Also, "Fingering" can means simply placing a finger on a string at a fret.
+            </td>
+        </tr>
+        <tr>
+            <td>Section
+            </td>
+            <td>Corresponds roughly to a Bar of music.  Except that if the groove and key stay the same,
+                you might have multiple Bars for the Section. <span class="productsmaller">infinite-neck</span> does not distinguish
+                or show Bars, just Beats in Sections.  If you want to show 4 bars of groove in G, but each bar should show 4 beats
+                so that you can show chords that change on the beat, then you'd create a Section with 16 beats.  This would be useful
+                if you wanted to show the "fabric" of the groove with NamedNotes, and then use SingleNotes to show actual notes to play.
+                <br>
+                <br>
+                In a Funk jam, there are typically two Sections--when the bass player changes the Root, that would be the second
+                Section, and when the Bass player goes back, we'd be back in the first section, regardless of whether we hung on the first Root
+                for 8 bars.  Alternately, some jams have two separate bass Root notes per bar, while the mode stays basically the same.  These can be modeled
+                as two Sections per bar.
+                <br>
+                <br>
+                When you are placing notes in <span class="productsmaller">infinite-neck</span>, you are looking
+                at the neck in one Section.  Within this section, as the Beats roll by, SingleNotes, TinyNotes, and Highlights
+                can move around, but everything else stays the same.  Specifically, the NamedNotes keep their positions for the
+                entire Section.  In one Section, the things that stay the same are: Caption, Root Key, Lead Root Key, Display Options,
+                Theme, and the enharmonic display of key (A# versus G&#9837;).
+                When you go to the next Section, you get a new collection of recorded notes in Beats.
+                That is, Section 1 could have two beats with up to 2 sets of recorded notes;
+                 Section 2 could have 16 beats with up to 16 sets of recorded notes.
 
-        Cell
-        Theme
-        Pitch
-        Multi
-        Display Options
-        Clone
-        Shallow Clone
-</pre>
+            </td>
+        </tr>
+        <tr>
+            <td>Beat
+            </td>
+            <td>One display of notes within a Section.  At every beat change, you can change SingleNotes, TinyNotes, and Highlights, but you don't have to.
+                To change these on each Beat, record (press "Rec"), then click the notes you want, then change
+                to the next Beat with the Transport or keyboard shortcut without changing Section.  When done, turn off recording.
+                You can then Loop Beats, or Loop the Song, to see your work.  You can place notes while looping, but you gotta be fast,
+                or set the BPM to be slow, while editing.  A Beat is associated with the BPM (Beat Per Minute).  So at 80 BPM, you'll get 80 beats in one minute.
+                If you had 8 beats to Section 1, and 8 beats to Section 2, looping over these two Sections would yeild 5 loops in one minute.
+                Each Section may have different number of Beats.  If you are matching a song in 4/4 at 80 BPM, then put 4 Beats
+                in each Section.  If you want to show fingering on the 1/8th note, put 8 Beats per Section, and set BPM to 160.
+            </td>
+        </tr>
+        <tr>
+            <td>Instrument
+            </td>
+            <td>In <span class="productsmaller">infinite-neck</span>, an Instrument is one display of the neck.
+                Even though in the real world, while a single instrument can be re-tuned to another Tuning, it would
+                still be the same instrument, e.g. "my Flame Gibson Guitar."  In <span class="productsmaller">infinite-neck</span>
+                when you have a 6-string guitar in DADGAD displayed on the same page as a 6-string guitar in Standard tuning,
+                we call it two Instruments.
+            </td>
+        </tr>
+        <tr>
+            <td>Tunings
+            </td>
+            <td>Each set of pitches on one instrument is called a Tuning.  So for 6-string guitar, DADGAD would be one Tuning, P4 would be another Tuning.
+                Banjo Graveyard is another Tuning, as is Banjo Sawmill.
+                Each instrument displayed in <span class="productsmaller">infinite-neck</span> is one Tuning, but you can display multiple instruments.
+
+            </td>
+        </tr>
+        <tr>
+            <td>Root
+            </td>
+            <td>The note at the first degree of a scale or mode.  Also, the Root Key (or Key of the Root Note).
+                So in A minor, A is the Root and the Root Key.
+            </td>
+        </tr>
+        <tr>
+            <td>Root/Chord/Scale - in Fill
+            </td>
+            <td>Root would be the home note of the key of the bass player,
+                Chord is the chord you want to play in this key, and Scale is the collection of notes that define that key or mode.
+                Fill allows you to color these in different colors.  So you could play in C, playing [C,D,E,F,G,A,B,C] and these would
+                be the scale notes for Cmajor, with a Root of C.  If you played [C,D,E,F,G,A,B&#9837;,C] you could say you were
+                playing C Mixolydian, so C is the Root, and these notes are the Scale notes.  An appropriate Chord would then be C7
+                (C dominant 7).  <span class="productsmaller">infinite-neck</span> allows you to Fill the neck with NamedNotes
+                using Chords and Scale notes (including modes) that are not necessarily in the key.  So if you set the key to C,
+                then fill with a m7b5 chord and Locrian scale, you'll notice that the m7b5 chord fits over the Locrian mode scale notes,
+                but that most of these are not in C major scale.  So really, you aren't in C major, but in C Locrian, and it works
+                perfectly with a C m7b5.  These are all available in the Fill menu dropdowns.
+            </td>
+        </tr>
+        <tr>
+            <td>Cell
+            </td>
+            <td>One spot on the neck -- one string at one fret.  The term comes from spreadsheets, since we use HTML tables to model the fretboard.
+            </td>
+        </tr>
+        <tr>
+            <td>Theme
+            </td>
+            <td>A collection of styles, shapes, and sizes for the display of the instrument neck.  There are built-in Themes
+                that you can select for a song using the dropdown in the main menu row of buttons.   (Or, you can select different Themes
+                for any Section if you save the DisplayOptions for that Section.)
+                You can tweak the Theme to your liking using the Theme menu.  Advanced users can define their own
+                by editing the JSON text file themes.js.
+            </td>
+        </tr>
+        <tr>
+            <td>Pitch
+            </td>
+            <td>1) A setting for Highlights that displays a highlight around all notes with the same MIDI pitch, since a middle C appears
+                in multiple spots across strings on a guitar, for example.
+                <br>
+                <br>
+                2) A specific frequency of note, e.g. a 440Hz Concert A.  The MIDI spec defines default frequencies of pitch
+                for each named note.  In <span class="productsmaller">infinite-neck</span> we simply use one MIDI number for each note,
+                so pitches here are standardized on the MIDI default pitch spec, and we allow display of the MIDI pitch number
+                for each cell.  That is, we don't show microtonal pitches, or alternative pitch-tunings.
+            </td>
+        </tr>
+        <tr>
+            <td>Multi
+            </td>
+            <td>Highlight style that lets you highlight multiple notes on one Beat.
+            </td>
+        </tr>
+        <tr>
+            <td>Display Options
+            </td>
+            <td>Each Section can remember the options set on the View menu,
+                when you click Save Display Options on the Section or View menu pages.
+                <br>
+                <br>
+                Some size options are not automated on playback if Presentation Mode is not checked.
+                [Cell width, Cell height, NoteFontSize].
+                The idea is that changing the cell widths while looping would be annoying, but
+                if you were presenting in a classroom, you might want to "zoom in" on a portion of the neck, so you'd change
+                the cell width for that one Section, say, Section 2.  Then, when you went from Section 1, where
+                you show all possible notes for C Mixolydian, to Section 2, where you show just the first 5 frets on screen.
+                You can set this all up in advance, so that in your presentation, all you need to do is hit the &gt; key
+                to advance through the example.
+                <br>
+                <br>
+                When these get out of control or confusing, audit them with the keyboard Command-Line <span class="menuExampleLine"><b><small>/vdd</small></b></span>  Scroll down to see the audit
+                of all Sections with Display Options.  The options that change are highlighted.  You can also sit on the View page and
+                watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( &lt; and &gt; ).
+                Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
+                come back to the View menu.
+            </td>
+        </tr>
+        <tr>
+            <td>Clone
+            </td>
+            <td>Sections may be Cloned with either "Clone" or "Shallow Clone".  "Clone" copies everything about the Section,
+                including all Notes.
+            </td>
+        </tr>
+        <tr>
+            <td>Shallow Clone
+            </td>
+            <td>Sections may be Cloned with either "Clone" or "Shallow Clone".  "Shallow Clone" copies everything about the Section,
+                but only NamedNotes, not SingleNotes or TinyNotes.  This is useful if you want to stay in the same key and groove,
+                but show different chords or fingerings in a new Section.
+            </td>
+        </tr>
+    </table>
 </p>
-</div>
 
 
  <div class="AppLink">
- The Help link creates this page up a new tab/window, so you can close this window.
+ The Help link creates this page in a new tab/window, so you can close this window.
  But here's a link to the application page: <a href="index.html">Infinite Neck</a>
  </div>
 
 
-<p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions or gripes.  </p>
+<p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions, comments, or gripes.  </p>
 
 </div from="helpBody">
 </body>

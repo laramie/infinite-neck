@@ -1119,52 +1119,52 @@
       "colorClass": "FingerT",
       "caption": "Thumb"
     },
-    "note0": {
+    "note1": {
       "colorClass": "noteBassPlayer",
       "captionClass": "noteBassPlayer",
       "caption": "I"
     },
-    "note1": {
+    "note2": {
       "colorClass": "notePink4",
       "caption": "&tau;"
     },
-    "note2": {
+    "note3": {
       "colorClass": "noteBlue1",
       "caption": "II"
     },
-    "note3": {
+    "note4": {
       "colorClass": "noteBlue8",
       "caption": "m"
     },
-    "note4": {
+    "note5": {
       "colorClass": "noteGreen1",
       "caption": "III"
     },
-    "note5": {
+    "note6": {
       "colorClass": "noteBrown1",
       "caption": "IV"
     },
-    "note6": {
+    "note7": {
       "colorClass": "noteBrown3",
       "caption": "&Theta;"
     },
-    "note7": {
+    "note8": {
       "colorClass": "noteRed4",
       "caption": "V"
     },
-    "note8": {
+    "note9": {
       "colorClass": "noteGreen4",
       "caption": "&sigma;"
     },
-    "note9": {
+    "note10": {
       "colorClass": "noteGreen7",
       "caption": "6"
     },
-    "note10": {
+    "note11": {
       "colorClass": "noteBlue2",
       "caption": "&delta;"
     },
-    "note11": {
+    "note12": {
       "colorClass": "notePink2",
       "caption": "&Delta;"
     }

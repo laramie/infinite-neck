@@ -43,7 +43,7 @@
 				var noteName = keys[k];
 				var noteFnNum = noteNameToNoteID(noteName);
 				var rel =(12+noteFnNum-rootIndex) % 12;
-				var noteKey = "note"+rel;
+				var noteKey = "note"+(rel+1);   //Use 1-based for note1, note2, etc.
 				var note = notes[keys[k]];
 				var cc = note.colorClass;
 				if (cc){
@@ -164,12 +164,14 @@
 		resultRow.css({"height": "3em"});
 		tbl.append(resultRow);
 
+
 		$('#divColorDictsDest').empty().append(tbl);
 		$('#divColorDicts').show();
 		var activeStylesheets = calculateActiveStylesheets();
 		$('.ActiveStylesheets').html("Active Stylesheets: "+activeStylesheets);
 		gSong.activeStylesheets = activeStylesheets;
 
+		updateCurrentColorDictStrip(activeStylesheets, gUserColorDict);
 		registerColorSchemeCBEventSelectors(eventSelectors);
 	}
 
@@ -337,7 +339,6 @@
 
 			moveStylesheetToEnd(dictkey);
 			applyStylesheetsTo_gUserColorDict();
-			updateCurrentColorDictStrip(dictkey);
 			buildUserColors();
 			buildColorDicts();
 			fullRepaint();
@@ -346,7 +347,6 @@
 
 	function refreshStylesheets(){
 		applyStylesheetsTo_gUserColorDict();
-		//updateCurrentColorDictStrip(dictkey);
 		buildUserColors();
 		buildColorDicts();
 		fullRepaint();
@@ -377,10 +377,8 @@
 		fullRepaint();
 	}
 
-	function updateCurrentColorDictStrip(dictkey){
-		var colorScheme = gSong.colorDicts[dictkey];
-		//var row = $('#'+COLOR_DICT_ROW+dictkey);
-		var row = colorDictDisplayRow(dictkey, colorScheme, false);
+	function updateCurrentColorDictStrip(dictLabel, colorScheme){
+		var row = colorDictDisplayRow(dictLabel, colorScheme, false);
 		var newRow = $('<tr>');
 		newRow.html(row.html());
 		var tbl = $("<table class='tblColorDictOneRow'>");
@@ -669,7 +667,8 @@
 		var relNoteNum = (12 + noteNum - theRootID) % 12; //the function number: Tau is 1.  0-based: 0==first note of scale
 		//var noteFnBase = noteNamesFuncArr[relNoteNum];
 
-		var userColor = gUserColorDict.dict["note"+relNoteNum];
+		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
+		var userColor = gUserColorDict.dict[notePlusNumKey];
 		if (userColor){
 			result.colorClass = userColor.colorClass;
 			result.functionNum = relNoteNum;

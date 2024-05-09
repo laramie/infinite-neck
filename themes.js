@@ -187,6 +187,22 @@ var gThemes = {
         "borderImageWhiteKey": "none"
         /*"borderImageBlackKey":  "url('img/landau-chrome-h.png')"*/
     },
+    "Blackout" : {
+        "id": "Blackout",
+        "caption":"Blackout",
+        "noteRadius": "12%",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "7pt",
+        "instrumentBackground": "black",
+        "nutColor": "black",
+        "noteWhiteKeyColor": "black",
+        "noteBlackKeyColor": "gray",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "black",
+        "borderImageWhiteKey": "none",
+        "borderImageBlackKey":  "url('img/blade.png')"
+    },
     "AdultSwim" : {
         "id": "AdultSwim",
         "caption":"Adult Swim",

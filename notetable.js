@@ -213,7 +213,7 @@ function colorNote(cell) {
 
     if (doIndividualAutomatic){
         var lookupResult = lookupClassForNote(proxyNote);
-        theColorClass = "note"+lookupResult.functionNum;
+        theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
     }
 
     if (!doKeep){
@@ -589,10 +589,14 @@ function showMidiNotesInTable(tableID, midinum, preferredRow){
   if (tds.length==0){
       tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"']");
       return $(tds[0]);
+
+      //TODO: we now bail here.  Verify that we don't need this old code:
       tds.each(function(index, element) {
            var theTD = $(element);
            return theTD;
       });
+
+
   } else {
       return $(tds[0]);
   }

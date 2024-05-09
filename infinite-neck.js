@@ -1010,6 +1010,9 @@
 			var sizesObj = options.NoteDisplaySizes;
 		 	$("#dropDownCellWidth").val(sizesObj.width);
 		 	$("#dropDownCellHeight").val(sizesObj.height);	 // e.g. {"width": 120,"height": 60};
+			if (sizesObj.NoteFontSize){
+				setNoteFontSize(sizesObj.NoteFontSize);
+			}
 		}
 
 		if (options.showAllNoteNames){
@@ -1091,9 +1094,10 @@
 
 		options.currentColorDict = gSong.currentColorDict;
 		options.NoteDisplaySizes =  {
-										"caption": parseInt($("#dropDownCellWidth").val()) + 'x' + parseInt($("#dropDownCellHeight").val()),
+										"caption": parseInt($("#dropDownCellWidth").val()) + 'x' + parseInt($("#dropDownCellHeight").val()) + ':' + getNoteFontSize(),
 			                        	"width":$("#dropDownCellWidth").val(),
-										"height":$("#dropDownCellHeight").val()
+										"height":$("#dropDownCellHeight").val(),
+										"NoteFontSize":getNoteFontSize()
 									};
 		options.dropDownFunctionSymbols = {
 										"caption":	$("#dropDownFunctionSymbols option:selected").text(),

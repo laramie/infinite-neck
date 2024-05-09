@@ -338,6 +338,10 @@ table.controls2 select {
 .userColorResultRow td {
     border: 2px solid black;
 }
+.tblColorDictOneRow td:first-child {
+    font-size: 60%;
+    font-weight: normal;
+}
 
 
 .slider {
@@ -1560,7 +1564,9 @@ td.note.noteWhiteKey {
     color: darkorange;
     background-color: black;
 }
-
+/*This is cool in that the Role "Bass" as TinyNote will appear lower and round, like I originally wanted for bass notes.  
+However, don't use for Root or other things.
+*/
 .tinyNote.noteBassPlayer {
     border-radius: 1.5em !important;
     border: 2px solid maroon !important;
@@ -1867,7 +1873,10 @@ td.note.noteWhiteKey {
 .noteLightGreen1 { color: black; background-color:Blue; }
 .noteGray { color: black; background-color:#ddd; }
 .noteDarkGray { background-color:#999; }
-.noteBlack { background-color: black; color: lightyellow; }
+.noteBlack {
+    background-color: black;
+    color: darkorange;
+}
 .noteWhite { background-color: white; color: black; }
 
 .noteBlackout1 {

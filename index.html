@@ -956,13 +956,19 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>UI Font Size:<br >
+                                <td>UI Font Size:
+                                    <br >
                                     <span class="key">-</span> or <span class="key">=</span>
+                                    <br>
+                                    <br>
+                                    <small><i><b>NOT automated</b></i></small>
+
+
                                 </td>
                                 <td>
                                     <span id="lblUIFontSize" style="background-color: white">&nbsp;</span>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button" onclick="increaseUIFont()">+</button>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button" onclick="decreaseUIFont()">-</button>
+                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button" onclick="increaseUIFont()" class="BtnPunchedOut">+</button>
+                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button" onclick="decreaseUIFont()" class="BtnPunchedOut">-</button>
 
                                 </td>
                             </tr>
@@ -973,8 +979,8 @@
                                 </td>
                                 <td>
                                     <span id="lblCellFontSize" style="background-color: white">&nbsp;</span>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button" onclick="increaseNoteFont()">+</button>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button" onclick="decreaseNoteFont()">-</button>
+                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button" onclick="increaseNoteFont()" class="BtnPunchedOut">+</button>
+                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button" onclick="decreaseNoteFont()" class="BtnPunchedOut">-</button>
 
 
                                 </td>
@@ -1133,7 +1139,7 @@
                         <p class="clearBoth"><small>Options are all applied from this Section forward until another Section sets Display Options.  <i>Tip: Set-and-forget in the first section.</i></small></p>
                         <br>
                         <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation Mode</label>
-                            <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights.</i></small></p>
+                            <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small></p>
                         </p>
 
                     </div>

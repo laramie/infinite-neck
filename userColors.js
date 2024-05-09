@@ -26,8 +26,8 @@ var gUserColorDictRolesDefault = {
             "tiny": "Sc"
         },
         "noteRoot": {
-            "colorClass": "noteBassPlayer",
-            "captionClass": "noteBassPlayer",
+            "colorClass": "noteBlack",
+            "captionClass": "noteBlack",
             "caption": "Root",
             "tiny": "R"
         },
@@ -145,52 +145,52 @@ var gDefault_CycleOfColors = {
     computed: false,
     checked: true,
     dict: {
-        "note0": {
-            "colorClass": "noteBassPlayer",
-            "captionClass": "noteBassPlayer",
+        "note1": {
+            "colorClass": "noteBlack",
+            "MOJOcaptionClass": "noteBlack",
             "caption": "I"
         },
-        "note1": {
+        "note2": {
             "colorClass": "notePink1",
             "caption": "&tau;"
         },
-        "note2": {
+        "note3": {
             "colorClass": "notePink2",
             "caption": "II"
         },
-        "note3": {
+        "note4": {
             "colorClass": "noteBlue1",
             "caption": "m"
         },
-        "note4": {
+        "note5": {
             "colorClass": "noteGreen3",
             "caption": "III"
         },
-        "note5": {
+        "note6": {
             "colorClass": "noteBrown1",
             "caption": "IV"
         },
-        "note6": {
+        "note7": {
             "colorClass": "noteBrown3",
             "caption": "&Theta;"
         },
-        "note7": {
+        "note8": {
             "colorClass": "noteRed2",
             "caption": "V"
         },
-        "note8": {
+        "note9": {
             "colorClass": "noteGreen5",
             "caption": "&sigma;"
         },
-        "note9": {
+        "note10": {
             "colorClass": "noteGreen7",
             "caption": "6"
         },
-        "note10": {
+        "note11": {
             "colorClass": "noteBlue4",
             "caption": "&delta;"
         },
-        "note11": {
+        "note12": {
             "colorClass": "notePink5",
             "caption": "&Delta;"
         }
@@ -202,51 +202,51 @@ var gAllClear = {
     computed: false,
     checked: true,
     dict: {
-        "note0": {
+        "note1": {
           "caption": "I",
           "colorClass": "noteWhite"
         },
-        "note1": {
+        "note2": {
           "caption": "&tau;",
           "colorClass": "noteWhite"
         },
-        "note2": {
+        "note3": {
           "caption": "II",
           "colorClass": "noteWhite"
         },
-        "note3": {
+        "note4": {
           "caption": "m",
           "colorClass": "noteWhite"
         },
-        "note4": {
+        "note5": {
           "caption": "III",
           "colorClass": "noteWhite"
         },
-        "note5": {
+        "note6": {
           "caption": "IV",
           "colorClass": "noteWhite"
         },
-        "note6": {
+        "note7": {
           "caption": "&Theta;",
           "colorClass": "noteWhite"
         },
-        "note7": {
+        "note8": {
           "caption": "V",
           "colorClass": "noteWhite"
         },
-        "note8": {
+        "note9": {
           "caption": "&sigma;",
           "colorClass": "noteWhite"
         },
-        "note9": {
+        "note10": {
           "caption": "6",
           "colorClass": "noteWhite"
         },
-        "note10": {
+        "note11": {
           "caption": "&delta;",
           "colorClass": "noteWhite"
         },
-        "note11": {
+        "note12": {
           "caption": "&Delta;",
           "colorClass": "noteWhite"
         },
