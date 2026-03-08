@@ -18,7 +18,8 @@ export class Emoji {
         GAME_DIE: "\uD83C\uDFB2",             // 🎲
         CHEESE_WEDGE: "\uD83E\uDDC0",         // 🧀
         GLOBE_WITH_MERIDIANS: "\uD83C\uDF10", // 🌐
-        BACKHAND_INDEX_POINTING_RIGHT: "\uD83D\uDC49" // 👉
+        BACKHAND_INDEX_POINTING_RIGHT: "\uD83D\uDC49", // 👉
+        HEAVY_ROUND_BULLET: "\u25CF"                   // ●
     });
 
     static get FILEACCESS() { return Emoji.Chars.FLOPPY_DISK; }
@@ -36,4 +37,5 @@ export class Emoji {
     static get CHEESE() { return Emoji.Chars.CHEESE_WEDGE; }
     static get BIGPLAN() { return Emoji.Chars.GLOBE_WITH_MERIDIANS; }
     static get INFO() { return Emoji.Chars.BACKHAND_INDEX_POINTING_RIGHT; }
+    static get BULLET() { return Emoji.Chars.HEAVY_ROUND_BULLET; }
 }
