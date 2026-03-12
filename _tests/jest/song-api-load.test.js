@@ -12,15 +12,30 @@ import EventBus from '../../event-bus.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SONG_FILENAME = 'All-Chords-All-Keys-w-highlights.json';
-const SONG_PATH = path.join(__dirname, '../../songs', SONG_FILENAME);
+const PRIMARY_SONG_FILENAME = 'All-Chords-All-Keys-w-highlights.json';
+const SECONDARY_SONG_FILENAME = 'snake.json';
 
-function readSongJson() {
-    return JSON.parse(fs.readFileSync(SONG_PATH, 'utf8'));
+const LOADED_SONG_FIXTURES = [
+    {
+        label: PRIMARY_SONG_FILENAME,
+        filename: PRIMARY_SONG_FILENAME
+    },
+    {
+        label: SECONDARY_SONG_FILENAME,
+        filename: SECONDARY_SONG_FILENAME
+    }
+];
+
+function getSongPath(songFilename = PRIMARY_SONG_FILENAME) {
+    return path.join(__dirname, '../../songs', songFilename);
 }
 
-function loadSongForApiTests() {
-    const data = readSongJson();
+function readSongJson(songFilename = PRIMARY_SONG_FILENAME) {
+    return JSON.parse(fs.readFileSync(getSongPath(songFilename), 'utf8'));
+}
+
+function loadSongForApiTests(songFilename = PRIMARY_SONG_FILENAME) {
+    const data = readSongJson(songFilename);
 
     setupSongTests();
     getSong().setHeadless(true, true);
@@ -72,15 +87,15 @@ function projectToShape(candidate, shape) {
 
 
 describe('Song JSON round-trip save path', () => {
-    test('load JSON -> prepareForSave -> stringify(replacer) produces equivalent saved shape', () => {
-        const data = readSongJson();
+    test.each(LOADED_SONG_FIXTURES)('load $label -> prepareForSave -> stringify(replacer) produces equivalent saved shape', ({ filename }) => {
+        const data = readSongJson(filename);
         const song = createFreshHeadlessSong();
         song.addSections(data);
         song.prepareForSave({
             visibleTableIds:      data.visibleNoteTables ?? [],
             songName:             data.songName,
             theme:                data.theme,
-            bpm:                  parseInt(data.defaultBPM),
+            bpm:                  parseInt(data.defaultBPM, 10),
             userColors:           data.userColors,
             userInstrumentTuning: data.userInstrumentTuning
         });
@@ -102,16 +117,16 @@ describe('Song JSON round-trip save path', () => {
 });
 
 describe('Song API bootstrap from JSON', () => {
-    test('loads All-Chords-All-Keys-w-highlights.json into the Song model', () => {
-        const { data, song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('loads $label into the Song model', ({ filename }) => {
+        const { data, song } = loadSongForApiTests(filename);
 
         expect(Array.isArray(data.sections)).toBe(true);
         expect(data.sections.length).toBeGreaterThan(0);
         expect(song.getSections().length).toBe(data.sections.length);
     });
 
-    test('leaves the loaded Song ready for headless API tests', () => {
-        const { data, song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('leaves $label ready for headless API tests', ({ filename }) => {
+        const { data, song } = loadSongForApiTests(filename);
 
         expect(song.isHeadless).toBe(true);
         expect(song.getCurrentSection()).toBe(song.getSections()[song.getSectionsCurrentIndex()]);
@@ -123,8 +138,8 @@ describe('Song API bootstrap from JSON', () => {
 });
 
 describe('Song API on loaded JSON', () => {
-    test('getCurrentSection returns the section at the current index after load', () => {
-        const { data, song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('getCurrentSection returns the section at the current index after loading $label', ({ filename }) => {
+        const { data, song } = loadSongForApiTests(filename);
         const lastIndex = getLastSectionIndex(song);
 
         expect(song.getSectionsCurrentIndex()).toBe(lastIndex);
@@ -132,8 +147,8 @@ describe('Song API on loaded JSON', () => {
         expect(song.getCurrentSection()).toBe(data.sections[lastIndex]);
     });
 
-    test('gotoSection selects a valid section and ignores an invalid one', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('gotoSection selects a valid section and ignores an invalid one for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
         const targetIndex = 1;
         const originalLastIndex = getLastSectionIndex(song);
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -152,8 +167,8 @@ describe('Song API on loaded JSON', () => {
         warnSpy.mockRestore();
     });
 
-    test('getBeat reads currentBeat from the selected section and normalizes bad values to 1', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('getBeat reads currentBeat from the selected section and normalizes bad values to 1 for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
 
         song.gotoSection(2);
         song.getCurrentSection().currentBeat = '3';
@@ -165,8 +180,8 @@ describe('Song API on loaded JSON', () => {
         expect(song.getCurrentSection().currentBeat).toBe(1);
     });
 
-    test('getRelativeSectionWithWrap resolves relative, absolute, and malformed inputs on a real loaded song', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('getRelativeSectionWithWrap resolves relative, absolute, and malformed inputs on loaded song $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
         const lastIndex = getLastSectionIndex(song);
         const warnings = [];
 
@@ -180,8 +195,8 @@ describe('Song API on loaded JSON', () => {
 });
 
 describe('Song beat APIs on loaded JSON', () => {
-    test('getBeats and setBeats round-trip through current section', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('getBeats and setBeats round-trip through current section for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
 
         song.gotoSection(0);
         song.setBeats('7');
@@ -190,8 +205,8 @@ describe('Song beat APIs on loaded JSON', () => {
         expect(song.getCurrentSection().beats).toBe('7');
     });
 
-    test('gotoFirstBeat, nextBeat, and prevBeat respect section beat bounds', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('gotoFirstBeat, nextBeat, and prevBeat respect section beat bounds for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
         const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
 
         song.gotoSection(0);
@@ -219,11 +234,28 @@ describe('Song beat APIs on loaded JSON', () => {
 
         triggerSpy.mockRestore();
     });
+
+    test('deleteBeat on snake keeps recordedNotes aligned with beats and currentBeat', () => {
+        const { song } = loadSongForApiTests(SECONDARY_SONG_FILENAME);
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.gotoSection(0);
+        song.getCurrentSection().currentBeat = 3;
+        song.deleteBeat();
+
+        expect(song.getBeats()).toBe(11);
+        expect(song.getBeat()).toBe(3);
+        expect(song.getCurrentSection().recordedNotes['12']).toBeUndefined();
+        expect(Array.isArray(song.getCurrentSection().recordedNotes['3'])).toBe(true);
+        expect(Array.isArray(song.getCurrentSection().recordedNotes['11'])).toBe(true);
+
+        triggerSpy.mockRestore();
+    });
 });
 
 describe('Song section navigation APIs on loaded JSON', () => {
-    test('firstSection, lastSection, prevSection, and nextSection update index deterministically', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('firstSection, lastSection, prevSection, and nextSection update index deterministically for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
         const lastIndex = getLastSectionIndex(song);
 
         song.lastSection();
@@ -239,8 +271,8 @@ describe('Song section navigation APIs on loaded JSON', () => {
         expect(song.getSectionsCurrentIndex()).toBe(1);
     });
 
-    test('gotoNextSection and gotoPrevSection honor wrap flags at boundaries', () => {
-        const { song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('gotoNextSection and gotoPrevSection honor wrap flags at boundaries for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
         const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
         const lastIndex = getLastSectionIndex(song);
 
@@ -370,8 +402,8 @@ describe('Song index and table accessor contracts', () => {
         warnSpy.mockRestore();
     });
 
-    test('getTableArrInCurrentSection and getTableArrInSection return stable arrays and create missing ones', () => {
-        const { data, song } = loadSongForApiTests();
+    test.each(LOADED_SONG_FIXTURES)('getTableArrInCurrentSection and getTableArrInSection return stable arrays and create missing ones for $label', ({ filename }) => {
+        const { data, song } = loadSongForApiTests(filename);
         const existingTableID = data.visibleNoteTables[0];
 
         song.gotoSection(0);
