@@ -2,7 +2,11 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { jest } from '@jest/globals';
-import { setupSongTests, getSong } from '../../infinite-neck.js';
+import {
+    setupSongTests,
+    getSong,
+    skipColorDictsReplacer
+} from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +41,58 @@ function createFreshHeadlessSong() {
     getSong().setHeadless(true, true);
     return getSong();
 }
+
+function projectToShape(candidate, shape) {
+    if (Array.isArray(shape)) {
+        if (!Array.isArray(candidate)) return [];
+        return shape.map((item, idx) => projectToShape(candidate[idx], item));
+    }
+    if (shape && typeof shape === 'object') {
+        const out = {};
+        Object.keys(shape).forEach((key) => {
+            out[key] = projectToShape(candidate ? candidate[key] : undefined, shape[key]);
+        });
+        return out;
+    }
+    return candidate;
+}
+
+
+
+describe('Song JSON round-trip save path', () => {
+    test('load JSON -> prepareForSave -> stringify(replacer) produces equivalent saved shape', () => {
+        const data = readSongJson();
+        const song = createFreshHeadlessSong();
+        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        try {
+            song.addSections(data);
+            song.prepareForSave({
+                visibleTableIds:      data.visibleNoteTables ?? [],
+                songName:             data.songName,
+                theme:                data.theme,
+                bpm:                  parseInt(data.defaultBPM),
+                userColors:           data.userColors,
+                userInstrumentTuning: data.userInstrumentTuning
+            });
+
+            const savedText = JSON.stringify(getSong(), skipColorDictsReplacer, 2);
+            const savedObj = JSON.parse(savedText);
+
+            const expectedSavedShape = JSON.parse(JSON.stringify(data, skipColorDictsReplacer, 2));
+            const actualComparable = projectToShape(savedObj, expectedSavedShape);
+
+            // tunings is derived from visibleNoteTables but each tuning object carries a runtime
+            // `visible` flag (DOM visibility state) that is always false in a headless test.
+            // visibleNoteTables covers the real persistence contract; tunings is a denormalization.
+            delete expectedSavedShape.tunings;
+            delete actualComparable.tunings;
+
+            expect(actualComparable).toEqual(expectedSavedShape);
+        } finally {
+            logSpy.mockRestore();
+        }
+    });
+});
 
 describe('Song API bootstrap from JSON', () => {
     test('loads All-Chords-All-Keys-w-highlights.json into the Song model', () => {

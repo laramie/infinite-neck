@@ -1,8 +1,5 @@
 import EventBus from './event-bus.js';
 import {
-	allTunings
-} from './tunings.js';
-import {
     Note
 } from './note.js';
 import {
@@ -12,7 +9,6 @@ import {
     getRecordedNotesForSection
 } from './section-recorder.js';
 import {
-    TABLEDIV_ID_PREFIX,
     TABLE_ID_PREFIX,
     getTunings
 } from './table-builder.js';
@@ -235,6 +231,7 @@ function makeSongLegacy(){
 
             removeUnusedTablesFromMemoryModel: removeUnusedTablesFromMemoryModel,
             markVisibleTablesForFileSave: markVisibleTablesForFileSave,
+            prepareForSave: prepareForSave,
             getTuningHashInMemoryModel: getTuningHashInMemoryModel,
             removeNotePlayedFromTable: removeNotePlayedFromTable,
             moveNamedNotesAllSections: moveNamedNotesAllSections,
@@ -1037,18 +1034,22 @@ function makeSongLegacy(){
             });
 	}
 
-    function markVisibleTablesForFileSave(){
-        this.visibleNoteTables = [];
-        allTunings.tunings.forEach(tuning => {
-            var baseID = tuning.baseID;
-            var divSelector = "#"+TABLEDIV_ID_PREFIX+baseID;
-            if ($(divSelector).is(':visible')) {  //TODO: this is a problem with Jest tests.  Refactor to sent this in.
-                this.visibleNoteTables.push(TABLE_ID_PREFIX+baseID);
-            }
-        });
-	    var tunings = getTunings(this.visibleNoteTables);
-	    this.tunings = tunings;
-	}
+    function markVisibleTablesForFileSave(visibleTableIds){
+        this.visibleNoteTables = visibleTableIds;
+        this.tunings = getTunings(visibleTableIds);
+    }
+
+    function prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
+        this.markVisibleTablesForFileSave(visibleTableIds);
+        this.removeUnusedTablesFromMemoryModel();
+        this.songName = songName;
+        this.defaultBPM = "" + bpm;
+        this.userColors = userColors;
+        this.theme = theme;
+        if (userInstrumentTuning) {
+            this.userInstrumentTuning = userInstrumentTuning;
+        }
+    }
 
   function getTuningHashInMemoryModel(){
    var hashTuningNames = {};
