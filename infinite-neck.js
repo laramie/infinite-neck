@@ -632,7 +632,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// all the default run-time generated dicts, bloating the file.
 	// And other run-time props are removed.
 	export function skipColorDictsReplacer(key, value){
-		console.log("key: "+key);
 		if (   key === 'userColors' 
 			|| key === 'colorDicts' 
 			|| key === 'fretLengths' 

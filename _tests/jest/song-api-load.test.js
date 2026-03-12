@@ -42,6 +42,18 @@ function createFreshHeadlessSong() {
     return getSong();
 }
 
+function createSectionWithCaption(song, caption) {
+    const section = song.constructSection();
+    section.caption = caption;
+    return section;
+}
+
+function seedSongWithCaptionedSections(song, captions) {
+    song.sections = [];
+    song.gSectionsCurrentIndex = 0;
+    captions.forEach((caption) => song.addSection(createSectionWithCaption(song, caption)));
+}
+
 function projectToShape(candidate, shape) {
     if (Array.isArray(shape)) {
         if (!Array.isArray(candidate)) return [];
@@ -63,34 +75,29 @@ describe('Song JSON round-trip save path', () => {
     test('load JSON -> prepareForSave -> stringify(replacer) produces equivalent saved shape', () => {
         const data = readSongJson();
         const song = createFreshHeadlessSong();
-        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-        try {
-            song.addSections(data);
-            song.prepareForSave({
-                visibleTableIds:      data.visibleNoteTables ?? [],
-                songName:             data.songName,
-                theme:                data.theme,
-                bpm:                  parseInt(data.defaultBPM),
-                userColors:           data.userColors,
-                userInstrumentTuning: data.userInstrumentTuning
-            });
+        song.addSections(data);
+        song.prepareForSave({
+            visibleTableIds:      data.visibleNoteTables ?? [],
+            songName:             data.songName,
+            theme:                data.theme,
+            bpm:                  parseInt(data.defaultBPM),
+            userColors:           data.userColors,
+            userInstrumentTuning: data.userInstrumentTuning
+        });
 
-            const savedText = JSON.stringify(getSong(), skipColorDictsReplacer, 2);
-            const savedObj = JSON.parse(savedText);
+        const savedText = JSON.stringify(getSong(), skipColorDictsReplacer, 2);
+        const savedObj = JSON.parse(savedText);
 
-            const expectedSavedShape = JSON.parse(JSON.stringify(data, skipColorDictsReplacer, 2));
-            const actualComparable = projectToShape(savedObj, expectedSavedShape);
+        const expectedSavedShape = JSON.parse(JSON.stringify(data, skipColorDictsReplacer, 2));
+        const actualComparable = projectToShape(savedObj, expectedSavedShape);
 
-            // tunings is derived from visibleNoteTables but each tuning object carries a runtime
-            // `visible` flag (DOM visibility state) that is always false in a headless test.
-            // visibleNoteTables covers the real persistence contract; tunings is a denormalization.
-            delete expectedSavedShape.tunings;
-            delete actualComparable.tunings;
+        // tunings is derived from visibleNoteTables but each tuning object carries a runtime
+        // `visible` flag (DOM visibility state) that is always false in a headless test.
+        // visibleNoteTables covers the real persistence contract; tunings is a denormalization.
+        delete expectedSavedShape.tunings;
+        delete actualComparable.tunings;
 
-            expect(actualComparable).toEqual(expectedSavedShape);
-        } finally {
-            logSpy.mockRestore();
-        }
+        expect(actualComparable).toEqual(expectedSavedShape);
     });
 });
 
@@ -252,6 +259,174 @@ describe('Song section navigation APIs on loaded JSON', () => {
 
         expect(triggerSpy).toHaveBeenCalled();
         triggerSpy.mockRestore();
+    });
+});
+
+describe('Song section mutation APIs', () => {
+    test('insertSectionAtDest honors BEGIN, END, and numeric insertion-after behavior', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
+
+        const beginSection = createSectionWithCaption(song, 'BEGIN-X');
+        song.insertSectionAtDest(beginSection, 'BEGIN');
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(song.getSections()[0].caption).toBe('BEGIN-X');
+
+        const endSection = createSectionWithCaption(song, 'END-X');
+        song.insertSectionAtDest(endSection, 'END');
+        expect(song.getSectionsCurrentIndex()).toBe(song.getSections().length - 1);
+        expect(song.getSections()[song.getSections().length - 1].caption).toBe('END-X');
+
+        const afterZeroSection = createSectionWithCaption(song, 'AFTER-0');
+        song.insertSectionAtDest(afterZeroSection, '0');
+        expect(song.getSectionsCurrentIndex()).toBe(1);
+        expect(song.getSections()[1].caption).toBe('AFTER-0');
+    });
+
+    test('moveSectionTo and moveSectionToEND reorder sections while preserving section identity', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['A', 'B', 'C', 'D']);
+
+        song.gotoSection(1); // B
+        const movingSection = song.getCurrentSection();
+        song.moveSectionTo(3);
+
+        expect(song.getSectionsCurrentIndex()).toBe(3);
+        expect(song.getCurrentSection()).toBe(movingSection);
+        expect(song.getSections().map((s) => s.caption)).toEqual(['A', 'C', 'D', 'B']);
+
+        song.gotoSection(0); // A
+        const sectionToEnd = song.getCurrentSection();
+        song.moveSectionToEND();
+
+        expect(song.getSectionsCurrentIndex()).toBe(song.getSections().length - 1);
+        expect(song.getCurrentSection()).toBe(sectionToEnd);
+        expect(song.getSections().map((s) => s.caption)).toEqual(['C', 'D', 'B', 'A']);
+    });
+
+    test('deleteCurrentSection removes one section, updates current index, and keeps remaining order', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.gotoSection(1); // B
+        const didDelete = song.deleteCurrentSection();
+
+        expect(didDelete).toBe(true);
+        expect(song.getSections().length).toBe(2);
+        expect(song.getSections().map((s) => s.caption)).toEqual(['A', 'C']);
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(song.getCurrentSection().caption).toBe('A');
+
+        triggerSpy.mockRestore();
+    });
+
+    test('addDeepCloneSection deep-clones noteTables and recordedNotes', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        const source = createSectionWithCaption(song, 'SOURCE');
+        source.rootID = '7';
+        source.rootIDLead = '9';
+        source.beats = '3';
+        source.namedNotes = { A: true, C: true };
+        source.noteTables.tblP46 = [{ midinum: 60, row: 1, colorClass: 'c1', styleNum: 1 }];
+        source.recordedNotes = { '1': [{ midinum: 60, row: 1 }], '2': [], '3': [] };
+        song.addSection(source);
+        song.gotoSection(0);
+
+        const cloned = song.addDeepCloneSection();
+
+        expect(song.getSections().length).toBe(2);
+        expect(song.getCurrentSection()).toBe(cloned);
+        expect(cloned).not.toBe(source);
+        expect(cloned.noteTables).toEqual(source.noteTables);
+        expect(cloned.recordedNotes).toEqual(source.recordedNotes);
+        expect(cloned.noteTables).not.toBe(source.noteTables);
+        expect(cloned.recordedNotes).not.toBe(source.recordedNotes);
+        expect(cloned.currentBeat).toBe(1);
+
+        triggerSpy.mockRestore();
+    });
+});
+
+describe('Song index and table accessor contracts', () => {
+    test('fixupCurrentIndexForLoadedSong clamps out-of-range high and low values', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        song.gSectionsCurrentIndex = 999;
+        song.fixupCurrentIndexForLoadedSong();
+        expect(song.getSectionsCurrentIndex()).toBe(song.getSections().length - 1);
+
+        song.gSectionsCurrentIndex = -5;
+        song.fixupCurrentIndexForLoadedSong();
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(warnSpy).toHaveBeenCalled();
+
+        warnSpy.mockRestore();
+    });
+
+    test('getTableArrInCurrentSection and getTableArrInSection return stable arrays and create missing ones', () => {
+        const { data, song } = loadSongForApiTests();
+        const existingTableID = data.visibleNoteTables[0];
+
+        song.gotoSection(0);
+        const existingArr = song.getTableArrInCurrentSection(existingTableID);
+        expect(Array.isArray(existingArr)).toBe(true);
+
+        const missingTableID = 'tblTEST_MISSING';
+        const createdArr = song.getTableArrInCurrentSection(missingTableID);
+        expect(Array.isArray(createdArr)).toBe(true);
+        expect(createdArr.length).toBe(0);
+        createdArr.push({ midinum: 64, row: 3 });
+        expect(song.getCurrentSection().noteTables[missingTableID]).toEqual([{ midinum: 64, row: 3 }]);
+
+        const section2 = song.getSections()[2];
+        const section2Arr = song.getTableArrInSection(section2, missingTableID);
+        expect(Array.isArray(section2Arr)).toBe(true);
+        expect(section2.noteTables[missingTableID]).toBe(section2Arr);
+    });
+});
+
+describe('Song note mapping and emptiness contracts', () => {
+    test('noteNameToNoteID, noteIDToNoteName, and root name getters are consistent', () => {
+        const song = createFreshHeadlessSong();
+        song.gotoSection(0);
+
+        expect(song.noteNameToNoteID('Db')).toBe(4);
+        expect(song.noteNameToNoteID('A')).toBe(0);
+
+        song.getCurrentSection().sharps = false;
+        expect(song.noteIDToNoteName(1)).toContain('9837'); // flat glyph
+
+        song.getCurrentSection().sharps = true;
+        expect(song.noteIDToNoteName(1)).toContain('9839'); // sharp glyph
+
+        song.getCurrentSection().rootID = '3';
+        song.getCurrentSection().rootIDLead = '-1';
+        expect(song.getRootNoteName()).toBe('C');
+        expect(song.getLeadNoteName()).toBe('C');
+
+        song.getCurrentSection().rootIDLead = '7';
+        expect(song.getLeadNoteName()).toBe('E');
+    });
+
+    test('isEmpty returns true for empty section and false when notes are present', () => {
+        const song = createFreshHeadlessSong();
+        const section = song.constructSection();
+
+        expect(song.isEmpty(section)).toBe(true);
+
+        section.namedNotes.A = true;
+        expect(song.isEmpty(section)).toBe(false);
+
+        delete section.namedNotes.A;
+        section.noteTables.tblP46 = [{ midinum: 60, row: 1 }];
+        expect(song.isEmpty(section)).toBe(false);
     });
 });
 
