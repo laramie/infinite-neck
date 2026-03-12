@@ -34,3 +34,22 @@ Here's what I did (20260302):
  1374  sudo n lts
 So now n is installed. Here's how to updated it, which updates to latest node:
 sudo n latest
+
+
+===========
+ As of 202603/12
+===========
+laramie@penguin:~/pristine-cli-tools/cli-tools/bin/namespacer$ history | grep 'npm install'
+
+ 1994  sudo npm install -g n
+
+ 1965  npm install recast
+ 1985  npm install jscodeshift --save-dev
+ 1987  npm install @babel/core @babel/types @babel/generator
+ 1999  npm install pino
+
+ Now, Claude says do the following, because --save-dev is for tools I use, others are to be attached to the project because, like the logger, everyone will need them.
+ npm install recast
+npm install jscodeshift --save-dev
+npm install @babel/core @babel/types @babel/generator --save-dev
+npm install pino
