@@ -25,7 +25,6 @@ coverage/
 
 /infinite-neck/nbproject/private/
 /_TEMP_ONLY/
-package-lock.json
 bin/namespacer/data/src
 bin/namespacer/data/plans
 bin/namespacer/data/out
