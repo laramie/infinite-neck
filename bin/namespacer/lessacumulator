@@ -1,6 +1,0 @@
-#less -R _accumulator.steps.json
-# use -r to allow color across lines, otherwise less does resets for each line
-# use -f to force it to see binary files and not prompt, because all these ANSI control chars make it seem like a binary file.
-# One caveat: when you use less's ability to go forward a line [RETURN] or back a line [k] it hasn't seent the escape sequence, so 
-# suddenly lines will be without color.  Fix is to go to the top of the file [g], or up a page or so [b] then come back down with [SPACE] or [ENTER]:.
-less -f -r _accumulator.steps.json 

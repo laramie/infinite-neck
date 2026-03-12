@@ -1,6 +1,0 @@
-# to use this, do:
-    alias clr='./clr'
-
-clear
-rm -f data/plans/accumulator.plan
-
