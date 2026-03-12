@@ -19,7 +19,7 @@ import {
 import {
 	toInt
 } from './utils.js';
-import { ANSIColors } from './bin/namespacer/ANSIColors.js';
+import { ANSIColors } from './bin/ANSIColors.js';
 
 const NUM_FRETS_MAX = 108;
 
