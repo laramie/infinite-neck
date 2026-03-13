@@ -1,43 +1,27 @@
 import EventBus from './event-bus.js';
 import {
-	allTunings
-} from './tunings.js';
-import {
-    Note
-} from './note.js';
-import {
     GraveType
 } from './graveyard.js';
 import {
     getRecordedNotesForSection
 } from './section-recorder.js';
 import {
-    TABLEDIV_ID_PREFIX,
     TABLE_ID_PREFIX,
     getTunings
 } from './table-builder.js';
 import {
 	toInt
 } from './utils.js';
-import { ANSIColors } from './bin/namespacer/ANSIColors.js';
+import { ANSIColors } from './bin/ANSIColors.js';
+import { Section } from './Section.js';
 
 const NUM_FRETS_MAX = 108;
 
 export const constNoteNamesArr       = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
-const constNoteNamesArrFlats = "A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>".split(',');
-
-const constNoteNamesArrSharps = "A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>,D,D<small>&#9839;</small>,E,F,F<small>&#9839;</small>,G,G<small>&#9839;</small>".split(',');
-
 //Don't export this one, it uses "this" and must be used through the method.
 function noteIDToNoteName(noteIndex){
-    var noteName;
-    if (this.getCurrentSection().sharps){
-        noteName = constNoteNamesArrSharps[noteIndex];
-    } else {
-        noteName = constNoteNamesArrFlats[noteIndex];
-    }
-    return noteName;
+    return this.getCurrentSection().noteIDToDisplayName(noteIndex);
 }
 
 function noteIDToNoteNameRaw(noteIndex){
@@ -92,55 +76,29 @@ export class Song {
     constructor() {
         Object.assign(this, makeSongLegacy());
     }
-
-    getCurrentSection(){
-        return this.sections[this.gSectionsCurrentIndex];
-    }
-
-    getSectionsCurrentIndex(){
-        return this.gSectionsCurrentIndex;
-    }
-
-    gotoNextSection(orGotoFirst){
-        var isRandom = this.randomLoop == true;
-        if (isRandom) {
-            var rand = Math.random();
-            var randSection = Math.floor(rand*this.sections.length);
-            if (randSection == this.gSectionsCurrentIndex){
-                for (var r = 0; r<10; r++){
-                    rand = Math.random();
-                    randSection = Math.floor(rand*this.sections.length);
-                    if (randSection != this.gSectionsCurrentIndex){
-                        break;
-                    }
-                }
-            }
-            this.gSectionsCurrentIndex = randSection;
-            console.log("Random:"+(rand*this.sections.length)+" section:"+randSection);
-        } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
-            if( orGotoFirst ) this.firstSection();
-        } else {
-            this.nextSection();
-        }
-        requestUiClearAndReplaySection();
-    }
-
-    gotoPrevSection(orGotoLast){
-        if (this.getSectionsCurrentIndex()==0){
-            if( orGotoLast ) this.lastSection();
-        } else {
-            this.prevSection();
-        }
-        requestUiClearAndReplaySection();
-    }
 }
 
 export function makeSong() {
     return new Song();
 }
 
+export function makeSongFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
+    const song = makeSong();
+    if (headless) {
+        song.setHeadless(true, quiet);
+    }
+    if (fileObj && Array.isArray(fileObj.sections)) {
+        song.addSections(fileObj);
+        if (fixIndex) {
+            song.fixupCurrentIndexForLoadedSong();
+        }
+    }
+    return song;
+}
+
 function makeSongLegacy(){
     const DEFAULT_BEATS = 4;
+    const RANDOM_SECTION_HISTORY_MAX = 16;
     const noteNamesFuncArrDEFAULT = [
 	    "I", // 1 - I    I
 	    "&tau;", //"&tau;", // 2 - Tau    was: "&#x1D70F;"
@@ -185,11 +143,14 @@ function makeSongLegacy(){
             fretLengths: FRET_LENGTHS_ARRAY,
             presentationMode: false,
             constructing: false,
+            randomSectionHistory: [],
         //METHODS:
             make: construct_gSections,
 
             fixupCurrentIndexForLoadedSong: fixupCurrentIndexForLoadedSong,
             getRelativeSectionWithWrap: getRelativeSectionWithWrap,
+            getRelativeSectionIndexWithWrap: getRelativeSectionIndexWithWrap,
+            getRelativeSectionIndicesWithWrap: getRelativeSectionIndicesWithWrap,
             test_getRelativeSectionWithWrap: test_getRelativeSectionWithWrap,
             constructSection: constructSection,
 
@@ -217,6 +178,11 @@ function makeSongLegacy(){
             prevSection: prevSection,
             nextSection: nextSection,
             gotoSection: gotoSection,
+            gotoNextSection: gotoNextSection,
+            gotoPrevSection: gotoPrevSection,
+
+            getCurrentSection: getCurrentSection,
+            getSectionsCurrentIndex: getSectionsCurrentIndex,
 
             insertSectionAtDest: insertSectionAtDest,
             newSection: newSection,
@@ -235,6 +201,7 @@ function makeSongLegacy(){
 
             removeUnusedTablesFromMemoryModel: removeUnusedTablesFromMemoryModel,
             markVisibleTablesForFileSave: markVisibleTablesForFileSave,
+            prepareForSave: prepareForSave,
             getTuningHashInMemoryModel: getTuningHashInMemoryModel,
             removeNotePlayedFromTable: removeNotePlayedFromTable,
             moveNamedNotesAllSections: moveNamedNotesAllSections,
@@ -264,17 +231,21 @@ function makeSongLegacy(){
 
 
 	function construct_gSections(){
+        initializeSongState.call(this);
+    }
+
+    function initializeSongState(){
         this.constructing = true;
         this.isHeadless = false;
-    	this.sections = [];
-    	this.visibleNoteTables = [];
+        this.sections = [];
+        this.randomSectionHistory = [];
+        this.visibleNoteTables = [];
         this.colorDicts = {};
-    	this.defaultBPM = "80";
+        this.defaultBPM = "80";
         this.rootID = "3";
         this.gSectionsCurrentIndex = this.addSection(this.constructSection());
-	    this.namedNoteOpacity = "1.00";
-	    this.singleNoteOpacity = "1.00";
-        //this.sharps = false;
+        this.namedNoteOpacity = "1.00";
+        this.singleNoteOpacity = "1.00";
         this.constructing = false;
         delete this.constructing;
     }
@@ -300,7 +271,8 @@ function makeSongLegacy(){
     }
 
     function getCurrentSection(){
-        return this.sections[this.gSectionsCurrentIndex];
+        const section = this.sections[this.gSectionsCurrentIndex];
+        return normalizeSection.call(this, section);
 	}
 
     function test_getRelativeSectionWithWrap(consoleLog = false){
@@ -404,7 +376,6 @@ function makeSongLegacy(){
             BAD_INPUT:       'X',
             EMPTY:           'E'
         });
-        var firstChar = Direction.EMPTY; //TODO: fix this.
 
         if (sAmount && sAmount[0]){
 
@@ -476,9 +447,11 @@ function makeSongLegacy(){
                         return this.sections[this.sections.length-1];                           
                     }
                     return this.sections[intNum-1];
-                case Direction.PREVIOUS_PLAYED:  //(@)  TODO: this needs to use a stored list of previously played sections if Random Looping.
-                    intNum = -1*Math.abs(intNum);  
-                    //fall through for now, use the FORWARD/BACKWARD logic.
+                case Direction.PREVIOUS_PLAYED:  //(@) sections back in random-play history
+                    if (intNum < 1) {
+                        return this.sections[currentIndex];
+                    }
+                    return this.sections[getPreviousPlayedSectionIndex.call(this, intNum, currentIndex)];
                 case Direction.FORWARD: // (+)
                     var wrappedIndex = wrap(intNum, this.sections, currentIndex);
                     return this.sections[wrappedIndex];
@@ -497,86 +470,69 @@ function makeSongLegacy(){
         }
     }
 
+    function pushRandomSectionHistory(idx){
+        if (!Array.isArray(this.randomSectionHistory)){
+            this.randomSectionHistory = [];
+        }
+        if (!Number.isInteger(idx)){
+            return;
+        }
+        if (idx < 0 || idx >= this.sections.length){
+            return;
+        }
+        this.randomSectionHistory.push(idx);
+        if (this.randomSectionHistory.length > RANDOM_SECTION_HISTORY_MAX){
+            this.randomSectionHistory.splice(0, this.randomSectionHistory.length - RANDOM_SECTION_HISTORY_MAX);
+        }
+    }
+
+    function getPreviousPlayedSectionIndex(nBack, fallbackIndex){
+        if (!Array.isArray(this.randomSectionHistory) || this.randomSectionHistory.length === 0){
+            return fallbackIndex;
+        }
+        const safeBack = Math.max(1, Math.abs(toInt(nBack, 1)));
+        const historyPos = Math.max(0, this.randomSectionHistory.length - safeBack);
+        const idx = this.randomSectionHistory[historyPos];
+        if (!Number.isInteger(idx) || idx < 0 || idx >= this.sections.length){
+            return fallbackIndex;
+        }
+        return idx;
+    }
+
+    function getRelativeSectionIndexWithWrap(sAmount, logCollector = null) {
+        const section = this.getRelativeSectionWithWrap(sAmount, logCollector);
+        return this.sections.indexOf(section);
+    }
+
+    function getRelativeSectionIndicesWithWrap(relativeSectionSpecs, logCollector = null) {
+        if (!Array.isArray(relativeSectionSpecs)) {
+            return [];
+        }
+        return relativeSectionSpecs.map(spec => this.getRelativeSectionIndexWithWrap(spec, logCollector));
+    }
+
     function getSectionsCurrentIndex(){
         return this.gSectionsCurrentIndex;
     }
 
-    function song_getRootKey(){
-        var rootIndex = toInt(this.getCurrentSection().rootID, 0);
-        return noteIDToNoteName(rootIndex);
+    function constructSection(){
+	    return Section.revive(new Section({
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: DEFAULT_BEATS
+        }), {
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: DEFAULT_BEATS
+        });
     }
 
-    // This all works with Section objects, but JSON doesn't revive them. Working on the reviver, but for now, don't use.
-    function constructSection(){
-	    let result = {
-            getRootKey: section_getRootKey,
-            getRootKeyLead: section_getRootKeyLead,
-            getLeadNoteName: section_getLeadNoteName,
-            getRootNoteName: section_getRootNoteName,
-            cloneFrom: cloneFrom,
-            make: section_constructor
-        };
-        result.make();
-        result.sharps=this.sharps;
-        result.rootID = this.rootID; //TODO: check that this new default is OK.  Avoiding calling this.rootID = $("#dropDownRoot").val();
-            /*
-            TODO: this.rootID = $("#dropDownRoot").val(); should be result.rootID, 
-                  but also that is set in section_constructor()
-                  at any rate we need to get rid of jQuery.
-            */
-        return result;
-        function section_constructor(){
-    	    this.noteTables = {};
-    	    this.namedNotes = {};
-    	    this.recordedNotes = {};
-    		this.caption = "";
-    	    //TODO: I removed this, but we need to test that we do its repacement properly
-            //   this.rootID = $("#dropDownRoot").val();
-    		this.rootIDLead = "-1";
-
-            var beatsPer = DEFAULT_BEATS;
-    	    this.beats = beatsPer;
-    		this.currentBeat = 1;
-    	    //this.sharps = parentSong.sharps;
-            this.sharps = false;
-    	}
-        function cloneFrom(other){
-            this.noteTables = other.noteTables;
-            this.namedNotes = other.namedNotes ;
-            this.recordedNotes = other.recordedNotes ;
-            this.caption = other.caption ;
-            this.rootID = other.rootID ;
-            this.rootIDLead = other.rootIDLead ;
-            this.beatsPer = other.beatsPer ;
-            this.beats = other.beats ;
-            this.currentBeat = other.currentBeat ;
-            this.sharps = other.sharps ;
-            this.noteNamesFuncArr = other.noteNamesFuncArr; 
-        }
-
-        //these two return an html string that is either sharps or flats, depending on section.
-        function section_getRootKey(){
-            var rootIndex = toInt(this.rootID, 0);
-    		return noteIDToNoteName(rootIndex);
-        }
-        function section_getRootKeyLead(){
-    		var leadkey =  noteIDToNoteName(toInt(this.rootIDLead, 0));
-            if (!leadkey){
-                return noteIDToNoteName(toInt(this.rootID, 0));
-            }
-            return leadkey;
-        }
-
-        //these two return a simple noteName, one of [A, Bb, B, C, Db, ...etc.]
-        function section_getRootNoteName(){
-            return noteIDToNoteNameRaw(toInt(this.rootID, 0));
-        }
-        function section_getLeadNoteName(){
-            if (this.rootIDLead == "-1"){
-                return noteIDToNoteNameRaw(toInt(this.rootID, 0));
-            }
-            return noteIDToNoteNameRaw(toInt(this.rootIDLead, 0));
-        }
+    function normalizeSection(sectionLike){
+        return Section.revive(sectionLike, {
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: DEFAULT_BEATS
+        });
     }
 
     function removeAllSections(){
@@ -585,6 +541,7 @@ function makeSongLegacy(){
     }
 
 	function addSection(section){
+        section = normalizeSection.call(this, section);
 	    var newIndex = this.sections.push(section) - 1;
 	    this.gSectionsCurrentIndex = newIndex;
 	    if (!this.constructing) this.publish_UpdateSectionStatus();
@@ -592,6 +549,7 @@ function makeSongLegacy(){
 	    // sections is an array of gNotesPlayed objects. push() returns length.
 	}
 	function addSectionAfterCurrent(section){
+        section = normalizeSection.call(this, section);
         if (this.sections.length == 0){
             this.sections.push(section);
             this.gSectionsCurrentIndex = 0;
@@ -614,92 +572,55 @@ function makeSongLegacy(){
 	        //special case: file open is adding sections, but default section is empty, so delete it.
 	        this.sections = [];
 	    }
-	    var count = Array.prototype.push.apply(this.sections, fileObj.sections);
+        var normalizedSections = fileObj.sections.map(section => normalizeSection.call(this, section));
+        var count = Array.prototype.push.apply(this.sections, normalizedSections);
         this.gSectionsCurrentIndex = count - 1;
 	}
 
     //these two return an html string that is either sharps or flats, depending on section.
     function song_getRootKey(){
-        var rootIndex = toInt(this.getCurrentSection().rootID, 0);
-        return noteIDToNoteName(rootIndex);
+        return this.getCurrentSection().getRootKey();
     }
     function song_getRootKeyLead(){
-        var leadkey =  noteIDToNoteName(toInt(this.getCurrentSection().rootIDLead, 0));
-        if (!leadkey){
-            return noteIDToNoteName(toInt(this.getCurrentSection().rootID, 0));
-        }
-        return leadkey;
+        return this.getCurrentSection().getRootKeyLead();
     }
 
     //these two return a simple noteName, one of [A, Bb, B, C, Db, ...etc.]
     function song_getRootNoteName(){
-        return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootID, 0));
+        return this.getCurrentSection().getRootNoteName();
     }
     function song_getLeadNoteName(){
-        if (this.getCurrentSection().rootIDLead == "-1"){
-            return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootID, 0));
-        }
-        return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootIDLead, 0));
+        return this.getCurrentSection().getLeadNoteName();
     }
 
 	function getBeat(){
-	    var beat = toInt(this.getCurrentSection().currentBeat, 1);
-	    this.getCurrentSection().currentBeat = beat;
-	    return beat;
+        return this.getCurrentSection().getBeat();
 	}
 	function incBeat(){
-        var beat = this.getBeat();
-        var beats = this.getBeats();
-	    if (beat >= beats){
-	        beat = beats;
-	        return beat;
-	    }
-	    beat++;
-	    this.getCurrentSection().currentBeat = beat;
-	    return beat;
+        return this.getCurrentSection().incBeat(DEFAULT_BEATS);
 	}
 	function incBeatLoop(){
-	    var beat = this.getBeat();
-	    var beats = this.getBeats();
-		beat++;
-	    if (beat > beats){
-	        beat = 1;
-	    }
-	    this.getCurrentSection().currentBeat = beat;
-	    return beat;
+        return this.getCurrentSection().incBeatLoop(DEFAULT_BEATS);
 	}
 	function decBeat(){
-	    var beat = this.getBeat();
-	    var beats = this.getBeats();
-	    if (beat <= 1){
-	        beat = 1;
-	        return beat;
-	    }
-	    beat--;
-	    this.getCurrentSection().currentBeat = beat;
-	    return beat;
+        return this.getCurrentSection().decBeat(DEFAULT_BEATS);
 	}
 
 	function getBeats(){
         var curr = this.getCurrentSection();
         if (!curr){
-            console.log("WARNING: this.getCurrentSection() returned undefined in song.getBeats().");
+			console.warn("this.getCurrentSection() returned undefined in song.getBeats().");
             return DEFAULT_BEATS;
         }
-	    var beats = toInt(curr.beats, -1);
-	    if (beats < 1){
-	        beats = DEFAULT_BEATS;
-	        this.getCurrentSection().beats = ""+beats;
-	    }
-	    return beats;
+        return curr.getBeats(DEFAULT_BEATS);
 	}
 	function setBeats(newValue){
-		this.getCurrentSection().beats = newValue;
+        this.getCurrentSection().setBeats(newValue);
 	}
 
 
 	function gotoFirstBeat(){
-	    this.getCurrentSection().currentBeat = 1;
+        this.getCurrentSection().gotoFirstBeat();
 	    this.gFirstBeatSeen = false;
 	}
 
@@ -735,7 +656,7 @@ function makeSongLegacy(){
          var nStartBeat = this.getBeat();
          var nBeats = this.getBeats();
          if (nBeats <=1){
-        	 console.log("Can't delele beat #1. returning.");
+    	        	 console.warn("Can't delele beat #1. returning.");
         	 return;
          }
          var recordedNotes = this.getCurrentSection().recordedNotes;
@@ -783,7 +704,6 @@ function makeSongLegacy(){
         if (song.isHeadless){
             return;
         }
-        console.log("in new EventBus strategy: publish_SectionChanged");
         //sectionChanged(); //TODO:EventBus: call this throught the EventBus
         EventBus.trigger('SectionChanged', { sectionIndex: song.getSectionsCurrentIndex() });
     }      
@@ -794,7 +714,6 @@ function makeSongLegacy(){
         if (song.isHeadless){
             return;
         }
-        console.log("in new EventBus strategy: this.publish_UpdateSectionStatus");
         //updateSectionsStatus();  // TODO:EventBus:  call this through the EventBus instead.
         EventBus.trigger('UpdateSectionStatus', { sectionIndex: song.getSectionsCurrentIndex() });
     }
@@ -849,6 +768,7 @@ function makeSongLegacy(){
     function gotoNextSection(orGotoFirst){
         var isRandom = this.randomLoop == true;
         if (isRandom) {
+            var prevSectionIdx = this.gSectionsCurrentIndex;
             var rand = Math.random();
             var randSection = Math.floor(rand*this.sections.length);
             if (randSection == this.gSectionsCurrentIndex){
@@ -860,8 +780,8 @@ function makeSongLegacy(){
                     }
                 }
             }
+            pushRandomSectionHistory.call(this, prevSectionIdx);
             this.gSectionsCurrentIndex = randSection;
-            console.log("Random:"+(rand*this.sections.length)+" section:"+randSection);
         } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
             if( orGotoFirst ) this.firstSection();
 		} else {
@@ -880,6 +800,7 @@ function makeSongLegacy(){
 	}
 
     function insertSectionAtDest(aSection, destIndex){
+        aSection = normalizeSection.call(this, aSection);
         if (destIndex == "END"){
             this.sections.push(aSection);
             this.gSectionsCurrentIndex = this.sections.length-1;
@@ -922,17 +843,8 @@ function makeSongLegacy(){
 	    return this.addCloneSection(true, destIndex);
 	}
 	function addCloneSection(deep, destIndex){
-	    var aSection = this.constructSection();  //populates rootID from dropDownRoot.
-	    aSection.namedNotes = JSON.parse(JSON.stringify(this.getCurrentSection().namedNotes));
-	    aSection.rootID = this.getCurrentSection().rootID;          //$("#dropDownRoot").val();
-		aSection.rootIDLead = this.getCurrentSection().rootIDLead;  //$('#dropDownRootLead').val(); //foobar: or: use value from getCurren Section...
-	    aSection.caption = this.getCurrentSection().caption;
-	    aSection.beats = this.getCurrentSection().beats;
-	    aSection.currentBeat = 1;
-	    if (deep){
-	        aSection.noteTables = JSON.parse(JSON.stringify(this.getCurrentSection().noteTables));
-     	    aSection.recordedNotes = JSON.parse(JSON.stringify(this.getCurrentSection().recordedNotes));
-	    }
+        var aSection = this.constructSection();  //populates rootID from dropDownRoot.
+        aSection.populateCloneFrom(this.getCurrentSection(), { deep });
         if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
         } else {
@@ -953,7 +865,7 @@ function makeSongLegacy(){
         this.graveyard.bury(GraveType.SECTION, obj, context);
 
         if (this.sections.length<=1){
-	        console.log("Can't remove only section. Clearing instead.");
+            console.warn("Can't remove only section. Clearing instead.");
 	        this.sections = [];
             this.gSectionsCurrentIndex = 0;
 	        this.newSection();
@@ -970,16 +882,7 @@ function makeSongLegacy(){
 	}
 
 	function isEmpty(section){
-       var namedNoteCount = 0;
-       var tableCount = 0;
-       Object.keys(section.namedNotes).forEach(noteName => {
-            namedNoteCount++;
-        });
-        Object.keys(section.noteTables).forEach(tablename => {
-            var tablearr = section.noteTables[tablename];
-            tableCount += tablearr.length;
-        });
-        return ((tableCount + namedNoteCount) == 0);
+        return Section.revive(section).isEmpty();
 	}
 
     function moveSectionToEND(){
@@ -1005,54 +908,44 @@ function makeSongLegacy(){
     function cycleThruKeysAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            var curr = toInt(section.rootID, 0);
-            curr = (12 + curr + amount) % 12;
-            section.rootID = curr;
+            normalizeSection.call(this, section).transposeRoot(amount);
         });
 	}
 
     function getTableArrInCurrentSection(tableID){
-	    return getTableArrInSection(this.getCurrentSection(), tableID);
+        return this.getCurrentSection().getTableArr(tableID);
 	}
 
 	function getTableArrInSection(section, tableID){
-	    var tableArr = section.noteTables[tableID];
-	    if (!tableArr){
-	        section.noteTables[tableID] = [];
-	        tableArr = section.noteTables[tableID];
-	    }
-	    return tableArr;
+        return normalizeSection.call(this, section).getTableArr(tableID);
 	}
 
 
     function removeUnusedTablesFromMemoryModel(){
-            this.sections.forEach(section => { // for all sections...
-                var tempTables = {};
-                Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
-                        if (tablearr && tablearr.length && tablearr.length > 0) {
-                                tempTables[tablename] = tablearr;
-                        }
-                });
-                section.noteTables = tempTables;
-            });
+    	    this.sections.forEach(section => {
+    	        normalizeSection.call(this, section).removeEmptyTables();
+    	    });
 	}
 
-    function markVisibleTablesForFileSave(){
-        this.visibleNoteTables = [];
-        allTunings.tunings.forEach(tuning => {
-            var baseID = tuning.baseID;
-            var divSelector = "#"+TABLEDIV_ID_PREFIX+baseID;
-            if ($(divSelector).is(':visible')) {  //TODO: this is a problem with Jest tests.  Refactor to sent this in.
-                this.visibleNoteTables.push(TABLE_ID_PREFIX+baseID);
-            }
-        });
-	    var tunings = getTunings(this.visibleNoteTables);
-	    this.tunings = tunings;
-	}
+    function markVisibleTablesForFileSave(visibleTableIds){
+        this.visibleNoteTables = visibleTableIds;
+        this.tunings = getTunings(visibleTableIds);
+    }
+
+    function prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
+        this.markVisibleTablesForFileSave(visibleTableIds);
+        this.removeUnusedTablesFromMemoryModel();
+        this.songName = songName;
+        this.defaultBPM = "" + bpm;
+        this.userColors = userColors;
+        this.theme = theme;
+        if (userInstrumentTuning) {
+            this.userInstrumentTuning = userInstrumentTuning;
+        }
+    }
 
   function getTuningHashInMemoryModel(){
    var hashTuningNames = {};
-   var section;
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
@@ -1100,27 +993,6 @@ function makeSongLegacy(){
 
     }
     function moveNamedNotesForSection(amount, section){
-        var namedNotesClone = {};
-        var namedNotes = section.namedNotes;
-        Object.keys(namedNotes).forEach(noteName => {
-            var index = constNoteNamesArr.indexOf(noteName);  //globally known list of A,Bb,B,C etc.
-            index=(12+index + amount) % 12;
-            var transposedNoteName = constNoteNamesArr[index];
-            var otherNote = namedNotes[noteName];
-            if (otherNote.colorClass){
-                var clonedNote = Note.cloneNote(otherNote);
-                clonedNote.noteName = transposedNoteName;
-                namedNotesClone[transposedNoteName] = clonedNote;
-            }
-        });
-        section.namedNotes = namedNotesClone;
-        //console.log("original: "+JSON.stringify(namedNotes) + "\r\n new:"+JSON.stringify(this.getCurrentSection().namedNotes));
-        return getRootNoteName(section);  //as we transpose, keep highlighting the rootID.
-  	}
-
-  	function getRootNoteName(section){
-  		var noteID = parseInt( section.rootID );
-  		var noteName = constNoteNamesArr[noteID];
-  		return noteName;
+	    return normalizeSection.call(this, section).moveNamedNotes(amount);
   	}
 }

@@ -92,6 +92,10 @@ import {
 	TableBuilder
 	} from './TableBuilder.js';
 import {
+	TABLEDIV_ID_PREFIX,
+	TABLE_ID_PREFIX
+} from './table-builder.js';
+import {
 	allTunings
 } from './tunings.js';
 import {
@@ -525,7 +529,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	 }
 
 	export function exportFromTable(tblSource){
-		getSong().markVisibleTablesForFileSave();
+		const visibleTableIds = allTunings.tunings
+		    .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+		    .map(t => TABLE_ID_PREFIX + t.baseID);
+		getSong().markVisibleTablesForFileSave(visibleTableIds);
 		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
 			if (tblSource != tableDest){
 				//console.log("src:"+tblSource+", dest:"+tableDest);
@@ -597,20 +604,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
   	}
 
 	export function updateMemoryModelPreFileSave(){
-	    getSong().markVisibleTablesForFileSave();
-	    getSong().removeUnusedTablesFromMemoryModel();
-	    getBPM();
-	    
-		//TODO: move this to a more obvious function.
-		// Example, we should be storing that state in the visibleTables array of Table objects, which I also need for Tunings that watch other sections...
-		getSong().songName = $("#txtFilename").val();  
-		
-		getSong().userColors = gUserColorDict.dict;
-		getSong().theme = $('#selThemes').val();
-		var theUSERTuning = TableBuilder.findTuningForID("USER");
-		if (theUSERTuning){
-			getSong().userInstrumentTuning = theUSERTuning;  //This is just persistence.  The allTunings.tunings with id="USER" is the live object that is consulted for building noteTables at runtime.
-		}
+	    const visibleTableIds = allTunings.tunings
+	        .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+	        .map(t => TABLE_ID_PREFIX + t.baseID);
+	    var bpm = parseInt($("#txtBPM").val());
+	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
+	    getSong().prepareForSave({
+	        visibleTableIds,
+	        songName: $("#txtFilename").val(),
+	        theme: $('#selThemes').val(),
+	        bpm,
+	        userColors: gUserColorDict.dict,
+	        userInstrumentTuning: TableBuilder.findTuningForID("USER")  //Persistence only. allTunings.tunings with id="USER" is the live object used at runtime.
+	    });
 	}
 
 	export function downloadBackupThenClearGraveyard(){
@@ -626,7 +632,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// all the default run-time generated dicts, bloating the file.
 	// And other run-time props are removed.
 	export function skipColorDictsReplacer(key, value){
-		console.log("key: "+key);
 		if (   key === 'userColors' 
 			|| key === 'colorDicts' 
 			|| key === 'fretLengths' 
@@ -651,7 +656,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    }
 
 		const blob = new Blob([text], {type: "application/json"});
-		console.log("saved Blob:\r\n"+blob);
 		const url = URL.createObjectURL(blob);
 		a.setAttribute("href", url)
 	    a.setAttribute("download", fname+".json");   // HTML5 property, to force browser to download it.
@@ -716,7 +720,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				hideAllMenuDivs();
 				reader.readAsText(file);
 			} else {
-				console.log("File not supported!"+file.name);
+				console.warn("File not supported!"+file.name);
 			}
         });
 	}
@@ -810,7 +814,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		var tuningsShowing = TableBuilder.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
-			console.log("showDefaultTuning because file load found none");
 			TableBuilder.showDefaultTuning();
 		}
 

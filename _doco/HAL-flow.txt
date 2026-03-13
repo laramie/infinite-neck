@@ -25,7 +25,7 @@ he came up with his *own* emoji, since he saw that was *my style*!
 So on Auto-select agent, they switched from ChatGPT-4.1 to ChatGPT-5.3-Codex, which is geek squared.
   Sure enough, he turned out to be smarter, fixing error I didn't even know would exist with changes I requested,
   and proposing crafty, elegant code.  But he was stone cold and even more literal.  And they switched him up, 
-  so at one point he because Claude Sonnet 4.6 (there's also a Claude Haiku).
+  so at one point he becomes Claude Sonnet 4.6 (there's also a Claude Haiku).
   For example, I thanked him as I usually do after a particularly good run.  His response was prepended with his response code:
     [Acknowledged gratitude:]
       "You're welcome!"

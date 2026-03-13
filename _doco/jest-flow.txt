@@ -59,6 +59,8 @@ Verbosity in Jest based on running one test, or dirscan:
 
     Option 1: Command line
         laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+        e.g.
+           node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
 
 
     Option 2: jest.config.js

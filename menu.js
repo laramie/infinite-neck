@@ -693,18 +693,21 @@ export var gMenuFile =    {
                   "trigger": "s",
                   "children": [
                     {
+                      "name": "semitone1",
                       "caption": "<b>1</b>&nbsp;fret",
                       "trigger": "1",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "semitone2",
                       "caption": "<b>2</b>&nbsp;frets",
                       "trigger": "2",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "semitone3",
                       "caption": "<b>3</b>&nbsp;frets",
                       "trigger": "3",
                       "action": "selectBendType",
@@ -717,18 +720,21 @@ export var gMenuFile =    {
                   "trigger": "p",
                   "children": [
                     {
+                      "name": "prebend1",
                       "caption": "<b>1</b>&nbsp;fret",
                       "trigger": "1",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "prebend2",
                       "caption": "<b>2</b>&nbsp;frets",
                       "trigger": "2",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "prebend3",
                       "caption": "<b>3</b>&nbsp;frets",
                       "trigger": "3",
                       "action": "selectBendType",
@@ -741,18 +747,21 @@ export var gMenuFile =    {
                   "trigger": "u",
                   "children": [
                     {
+                      "name": "updown1",
                       "caption": "<b>1</b>&nbsp;fret",
                       "trigger": "1",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "updown2",
                       "caption": "<b>2</b>&nbsp;frets",
                       "trigger": "2",
                       "action": "selectBendType",
                       "popOnBang": true
                     },
                     {
+                      "name": "updown3",
                       "caption": "<b>3</b>&nbsp;frets",
                       "trigger": "3",
                       "action": "selectBendType",
