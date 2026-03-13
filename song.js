@@ -76,52 +76,6 @@ export class Song {
     constructor() {
         Object.assign(this, makeSongLegacy());
     }
-
-    getCurrentSection(){
-        const section = this.sections[this.gSectionsCurrentIndex];
-        return Section.revive(section, {
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: 4
-        });
-    }
-
-    getSectionsCurrentIndex(){
-        return this.gSectionsCurrentIndex;
-    }
-
-    gotoNextSection(orGotoFirst){
-        var isRandom = this.randomLoop == true;
-        if (isRandom) {
-            var rand = Math.random();
-            var randSection = Math.floor(rand*this.sections.length);
-            if (randSection == this.gSectionsCurrentIndex){
-                for (var r = 0; r<10; r++){
-                    rand = Math.random();
-                    randSection = Math.floor(rand*this.sections.length);
-                    if (randSection != this.gSectionsCurrentIndex){
-                        break;
-                    }
-                }
-            }
-            this.gSectionsCurrentIndex = randSection;
-            console.log("Random:"+(rand*this.sections.length)+" section:"+randSection);
-        } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
-            if( orGotoFirst ) this.firstSection();
-        } else {
-            this.nextSection();
-        }
-        requestUiClearAndReplaySection();
-    }
-
-    gotoPrevSection(orGotoLast){
-        if (this.getSectionsCurrentIndex()==0){
-            if( orGotoLast ) this.lastSection();
-        } else {
-            this.prevSection();
-        }
-        requestUiClearAndReplaySection();
-    }
 }
 
 export function makeSong() {
@@ -206,6 +160,11 @@ function makeSongLegacy(){
             prevSection: prevSection,
             nextSection: nextSection,
             gotoSection: gotoSection,
+            gotoNextSection: gotoNextSection,
+            gotoPrevSection: gotoPrevSection,
+
+            getCurrentSection: getCurrentSection,
+            getSectionsCurrentIndex: getSectionsCurrentIndex,
 
             insertSectionAtDest: insertSectionAtDest,
             newSection: newSection,

@@ -8,6 +8,7 @@ import {
     skipColorDictsReplacer
 } from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
+import { Song, makeSong } from '../../song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -580,6 +581,30 @@ describe('Song note mapping and emptiness contracts', () => {
 });
 
 describe('Song construction and section add APIs', () => {
+    test('new Song() and makeSong() initialize with equivalent defaults and section index semantics', () => {
+        const viaClass = new Song();
+        const viaFactory = makeSong();
+
+        [viaClass, viaFactory].forEach((song) => {
+            song.setHeadless(true, true);
+            expect(song.defaultBPM).toBe('80');
+            expect(song.rootID).toBe('3');
+            expect(song.getSections().length).toBe(1);
+            expect(song.getSectionsCurrentIndex()).toBe(0);
+            expect(typeof song.getCurrentSection().getRootNoteName).toBe('function');
+        });
+
+        const classSection = viaClass.constructSection();
+        const factorySection = viaFactory.constructSection();
+        viaClass.addSection(classSection);
+        viaFactory.addSection(factorySection);
+
+        expect(viaClass.getSectionsCurrentIndex()).toBe(1);
+        expect(viaFactory.getSectionsCurrentIndex()).toBe(1);
+        expect(viaClass.getCurrentSection()).toBe(classSection);
+        expect(viaFactory.getCurrentSection()).toBe(factorySection);
+    });
+
     test('fresh song initialization keeps expected defaults and starting section state', () => {
         const song = createFreshHeadlessSong();
 
