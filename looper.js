@@ -87,19 +87,25 @@ export function setLooperProviders(providers){
 		return $("#btnLoopBeats").text() === LOOPING_BEATS_CAPTION;
 	}
 
-	function showBeatsIntervalHandler(){
-		var song = looperProviders.getSong();
+	export function tickBeat(song, { sectionsLooping, showBeats }) {
 		var beat = song.getBeat();
 		var beats = song.getBeats();
-	    if (beat >= beats){
-			if (sectionsLooping()){
+		if (beat >= beats) {
+			if (sectionsLooping) {
 				song.gotoNextSection(true);  //calls showBeats()
 			} else {
 				song.incBeatLoop();
-				looperProviders.showBeats();
+				showBeats();
 			}
 		} else {
 			song.incBeatLoop();
-			looperProviders.showBeats();
+			showBeats();
 		}
+	}
+
+	function showBeatsIntervalHandler(){
+		tickBeat(looperProviders.getSong(), {
+			sectionsLooping: sectionsLooping(),
+			showBeats: looperProviders.showBeats
+		});
 	}
