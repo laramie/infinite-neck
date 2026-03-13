@@ -254,17 +254,20 @@ function makeSongLegacy(){
 
 
 	function construct_gSections(){
+        initializeSongState.call(this);
+    }
+
+    function initializeSongState(){
         this.constructing = true;
         this.isHeadless = false;
-    	this.sections = [];
-    	this.visibleNoteTables = [];
+        this.sections = [];
+        this.visibleNoteTables = [];
         this.colorDicts = {};
-    	this.defaultBPM = "80";
+        this.defaultBPM = "80";
         this.rootID = "3";
         this.gSectionsCurrentIndex = this.addSection(this.constructSection());
-	    this.namedNoteOpacity = "1.00";
-	    this.singleNoteOpacity = "1.00";
-        //this.sharps = false;
+        this.namedNoteOpacity = "1.00";
+        this.singleNoteOpacity = "1.00";
         this.constructing = false;
         delete this.constructing;
     }
@@ -887,9 +890,7 @@ function makeSongLegacy(){
     function cycleThruKeysAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            var curr = toInt(section.rootID, 0);
-            curr = (12 + curr + amount) % 12;
-            section.rootID = curr;
+            normalizeSection.call(this, section).transposeRoot(amount);
         });
 	}
 

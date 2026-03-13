@@ -191,6 +191,12 @@ export class Section {
         return this.getRootNoteName();
     }
 
+    transposeRoot(amount) {
+        const curr = toInt(this.rootID, 0);
+        this.rootID = (12 + curr + amount) % 12;
+        return this.rootID;
+    }
+
     static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
         const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
 

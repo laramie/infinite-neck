@@ -580,6 +580,18 @@ describe('Song note mapping and emptiness contracts', () => {
 });
 
 describe('Song construction and section add APIs', () => {
+    test('fresh song initialization keeps expected defaults and starting section state', () => {
+        const song = createFreshHeadlessSong();
+
+        expect(song.defaultBPM).toBe('80');
+        expect(song.rootID).toBe('3');
+        expect(song.namedNoteOpacity).toBe('1.00');
+        expect(song.singleNoteOpacity).toBe('1.00');
+        expect(song.getSections().length).toBe(1);
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(song.getCurrentSection()).toHaveProperty('rootID');
+    });
+
     test('constructSection returns a section-shaped object with default song rootID', () => {
         const song = createFreshHeadlessSong();
         const section = song.constructSection();
@@ -616,5 +628,27 @@ describe('Song construction and section add APIs', () => {
 
         expect(song.getSections().length).toBe(3);
         expect(song.getSectionsCurrentIndex()).toBe(2);
+    });
+
+    test('cycleThruKeysAllSections transposes each section rootID with wrap', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+
+        const s1 = song.constructSection();
+        const s2 = song.constructSection();
+        const s3 = song.constructSection();
+        s1.rootID = 0;
+        s2.rootID = '11';
+        s3.rootID = 5;
+        song.addSection(s1);
+        song.addSection(s2);
+        song.addSection(s3);
+
+        song.cycleThruKeysAllSections(2);
+
+        expect(song.getSections()[0].rootID).toBe(2);
+        expect(song.getSections()[1].rootID).toBe(1);
+        expect(song.getSections()[2].rootID).toBe(7);
     });
 });
