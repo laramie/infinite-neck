@@ -98,6 +98,7 @@ export function makeSongFromData(fileObj, { headless = true, quiet = true, fixIn
 
 function makeSongLegacy(){
     const DEFAULT_BEATS = 4;
+    const RANDOM_SECTION_HISTORY_MAX = 16;
     const noteNamesFuncArrDEFAULT = [
 	    "I", // 1 - I    I
 	    "&tau;", //"&tau;", // 2 - Tau    was: "&#x1D70F;"
@@ -142,6 +143,7 @@ function makeSongLegacy(){
             fretLengths: FRET_LENGTHS_ARRAY,
             presentationMode: false,
             constructing: false,
+            randomSectionHistory: [],
         //METHODS:
             make: construct_gSections,
 
@@ -236,6 +238,7 @@ function makeSongLegacy(){
         this.constructing = true;
         this.isHeadless = false;
         this.sections = [];
+        this.randomSectionHistory = [];
         this.visibleNoteTables = [];
         this.colorDicts = {};
         this.defaultBPM = "80";
@@ -444,9 +447,11 @@ function makeSongLegacy(){
                         return this.sections[this.sections.length-1];                           
                     }
                     return this.sections[intNum-1];
-                case Direction.PREVIOUS_PLAYED:  //(@)  TODO: this needs to use a stored list of previously played sections if Random Looping.
-                    intNum = -1*Math.abs(intNum);  
-                    //fall through for now, use the FORWARD/BACKWARD logic.
+                case Direction.PREVIOUS_PLAYED:  //(@) sections back in random-play history
+                    if (intNum < 1) {
+                        return this.sections[currentIndex];
+                    }
+                    return this.sections[getPreviousPlayedSectionIndex.call(this, intNum, currentIndex)];
                 case Direction.FORWARD: // (+)
                     var wrappedIndex = wrap(intNum, this.sections, currentIndex);
                     return this.sections[wrappedIndex];
@@ -463,6 +468,35 @@ function makeSongLegacy(){
         } else {
             return this.getCurrentSection();        
         }
+    }
+
+    function pushRandomSectionHistory(idx){
+        if (!Array.isArray(this.randomSectionHistory)){
+            this.randomSectionHistory = [];
+        }
+        if (!Number.isInteger(idx)){
+            return;
+        }
+        if (idx < 0 || idx >= this.sections.length){
+            return;
+        }
+        this.randomSectionHistory.push(idx);
+        if (this.randomSectionHistory.length > RANDOM_SECTION_HISTORY_MAX){
+            this.randomSectionHistory.splice(0, this.randomSectionHistory.length - RANDOM_SECTION_HISTORY_MAX);
+        }
+    }
+
+    function getPreviousPlayedSectionIndex(nBack, fallbackIndex){
+        if (!Array.isArray(this.randomSectionHistory) || this.randomSectionHistory.length === 0){
+            return fallbackIndex;
+        }
+        const safeBack = Math.max(1, Math.abs(toInt(nBack, 1)));
+        const historyPos = Math.max(0, this.randomSectionHistory.length - safeBack);
+        const idx = this.randomSectionHistory[historyPos];
+        if (!Number.isInteger(idx) || idx < 0 || idx >= this.sections.length){
+            return fallbackIndex;
+        }
+        return idx;
     }
 
     function getRelativeSectionIndexWithWrap(sAmount, logCollector = null) {
@@ -575,7 +609,7 @@ function makeSongLegacy(){
 	function getBeats(){
         var curr = this.getCurrentSection();
         if (!curr){
-            console.log("WARNING: this.getCurrentSection() returned undefined in song.getBeats().");
+			console.warn("this.getCurrentSection() returned undefined in song.getBeats().");
             return DEFAULT_BEATS;
         }
         return curr.getBeats(DEFAULT_BEATS);
@@ -622,7 +656,7 @@ function makeSongLegacy(){
          var nStartBeat = this.getBeat();
          var nBeats = this.getBeats();
          if (nBeats <=1){
-        	 console.log("Can't delele beat #1. returning.");
+    	        	 console.warn("Can't delele beat #1. returning.");
         	 return;
          }
          var recordedNotes = this.getCurrentSection().recordedNotes;
@@ -670,7 +704,6 @@ function makeSongLegacy(){
         if (song.isHeadless){
             return;
         }
-        console.log("in new EventBus strategy: publish_SectionChanged");
         //sectionChanged(); //TODO:EventBus: call this throught the EventBus
         EventBus.trigger('SectionChanged', { sectionIndex: song.getSectionsCurrentIndex() });
     }      
@@ -681,7 +714,6 @@ function makeSongLegacy(){
         if (song.isHeadless){
             return;
         }
-        console.log("in new EventBus strategy: this.publish_UpdateSectionStatus");
         //updateSectionsStatus();  // TODO:EventBus:  call this through the EventBus instead.
         EventBus.trigger('UpdateSectionStatus', { sectionIndex: song.getSectionsCurrentIndex() });
     }
@@ -736,6 +768,7 @@ function makeSongLegacy(){
     function gotoNextSection(orGotoFirst){
         var isRandom = this.randomLoop == true;
         if (isRandom) {
+            var prevSectionIdx = this.gSectionsCurrentIndex;
             var rand = Math.random();
             var randSection = Math.floor(rand*this.sections.length);
             if (randSection == this.gSectionsCurrentIndex){
@@ -747,8 +780,8 @@ function makeSongLegacy(){
                     }
                 }
             }
+            pushRandomSectionHistory.call(this, prevSectionIdx);
             this.gSectionsCurrentIndex = randSection;
-            console.log("Random:"+(rand*this.sections.length)+" section:"+randSection);
         } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
             if( orGotoFirst ) this.firstSection();
 		} else {
@@ -832,7 +865,7 @@ function makeSongLegacy(){
         this.graveyard.bury(GraveType.SECTION, obj, context);
 
         if (this.sections.length<=1){
-	        console.log("Can't remove only section. Clearing instead.");
+            console.warn("Can't remove only section. Clearing instead.");
 	        this.sections = [];
             this.gSectionsCurrentIndex = 0;
 	        this.newSection();

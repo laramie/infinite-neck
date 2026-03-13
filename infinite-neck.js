@@ -656,7 +656,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    }
 
 		const blob = new Blob([text], {type: "application/json"});
-		console.log("saved Blob:\r\n"+blob);
 		const url = URL.createObjectURL(blob);
 		a.setAttribute("href", url)
 	    a.setAttribute("download", fname+".json");   // HTML5 property, to force browser to download it.
@@ -721,7 +720,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				hideAllMenuDivs();
 				reader.readAsText(file);
 			} else {
-				console.log("File not supported!"+file.name);
+				console.warn("File not supported!"+file.name);
 			}
         });
 	}
@@ -815,7 +814,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		var tuningsShowing = TableBuilder.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
-			console.log("showDefaultTuning because file load found none");
 			TableBuilder.showDefaultTuning();
 		}
 

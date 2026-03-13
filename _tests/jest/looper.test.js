@@ -1,5 +1,15 @@
 import { jest } from '@jest/globals';
-import { setLooperProviders, sectionsLooping, beatsLooping, tickBeat } from '../../looper.js';
+import {
+	setLooperProviders,
+	sectionsLooping,
+	beatsLooping,
+	tickBeat,
+	toggleLoopSections,
+	toggleLoopBeats,
+	restartLoopSections,
+	__resetLooperForTests,
+	__resetLooperProvidersForTests
+} from '../../looper.js';
 
 function makeMockSong({ beat = 1, beats = 4 } = {}) {
 	const s = {
@@ -82,6 +92,112 @@ describe('looper looping-state providers', () => {
 		setLooperProviders({
 			getLoopBeatsCaption: () => 'LOOP BEATS'
 		});
+		expect(beatsLooping()).toBe(false);
+	});
+});
+
+function installHeadlessLoopState({ randomLoop = false } = {}) {
+	const state = {
+		sectionsCaption: 'LOOP',
+		beatsCaption: 'LOOP BEATS',
+		sectionsOn: false,
+		beatsOn: false,
+		transportOn: false,
+		lastIntervalMs: null,
+		setIntervalCalls: 0,
+		clearIntervalCalls: 0,
+		showBPMCalls: 0,
+	};
+
+	setLooperProviders({
+		getSong: () => ({ randomLoop }),
+		getMillisForBeatClock: () => 125,
+		getLoopSectionsCaption: () => state.sectionsCaption,
+		getLoopBeatsCaption: () => state.beatsCaption,
+		setLoopSectionsButton: (caption, isOn) => {
+			state.sectionsCaption = caption;
+			state.sectionsOn = !!isOn;
+		},
+		setLoopBeatsButton: (caption, isOn) => {
+			state.beatsCaption = caption;
+			state.beatsOn = !!isOn;
+		},
+		setLoopBeatsTransportButton: (isOn) => {
+			state.transportOn = !!isOn;
+		},
+		setLoopInterval: (_handler, millis) => {
+			state.lastIntervalMs = millis;
+			state.setIntervalCalls += 1;
+			return 99;
+		},
+		clearLoopInterval: () => {
+			state.clearIntervalCalls += 1;
+		},
+		showBPM: () => {
+			state.showBPMCalls += 1;
+		}
+	});
+
+	return state;
+}
+
+describe('looper toggles and restart', () => {
+	beforeEach(() => {
+		__resetLooperForTests();
+	});
+
+	test('toggleLoopSections turns sections looping on when off', () => {
+		const state = installHeadlessLoopState();
+		toggleLoopSections();
+		expect(state.sectionsCaption).toBe('LOOPING...');
+		expect(state.sectionsOn).toBe(true);
+		expect(state.setIntervalCalls).toBe(1);
+		expect(state.lastIntervalMs).toBe(125);
+		expect(state.showBPMCalls).toBe(1);
+	});
+
+	test('toggleLoopSections turns sections looping off when on', () => {
+		const state = installHeadlessLoopState();
+		toggleLoopSections();
+		toggleLoopSections();
+		expect(state.sectionsCaption).toBe('LOOP');
+		expect(state.sectionsOn).toBe(false);
+		expect(state.beatsCaption).toBe('LOOP BEATS');
+		expect(state.transportOn).toBe(false);
+		expect(state.clearIntervalCalls).toBe(1);
+	});
+
+	test('toggleLoopBeats turns beats looping on then off', () => {
+		const state = installHeadlessLoopState();
+		toggleLoopBeats();
+		expect(state.beatsCaption).toBe('LOOPING...');
+		expect(state.beatsOn).toBe(true);
+		expect(state.transportOn).toBe(true);
+		toggleLoopBeats();
+		expect(state.beatsCaption).toBe('LOOP BEATS');
+		expect(state.beatsOn).toBe(false);
+		expect(state.transportOn).toBe(false);
+	});
+
+	test('restartLoopSections keeps sections looping active', () => {
+		const state = installHeadlessLoopState();
+		restartLoopSections();
+		expect(state.sectionsCaption).toBe('LOOPING...');
+		restartLoopSections();
+		expect(state.sectionsCaption).toBe('LOOPING...');
+		expect(state.sectionsOn).toBe(true);
+		expect(state.setIntervalCalls).toBe(2);
+		expect(state.clearIntervalCalls).toBe(1);
+	});
+});
+
+describe('looper default provider safety', () => {
+	test('sectionsLooping/beatsLooping are safe without jquery', () => {
+		__resetLooperForTests();
+		__resetLooperProvidersForTests();
+		expect(() => sectionsLooping()).not.toThrow();
+		expect(() => beatsLooping()).not.toThrow();
+		expect(sectionsLooping()).toBe(false);
 		expect(beatsLooping()).toBe(false);
 	});
 });

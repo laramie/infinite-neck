@@ -1,11 +1,49 @@
-let looperProviders = {
-	getMillisForBeatClock: function () { return 0; },
-	getSong: function () { return null; },
-	getLoopSectionsCaption: function () { return $("#btnLoopSections").text(); },
-	getLoopBeatsCaption: function () { return $("#btnLoopBeats").text(); },
-	showBeats: function () {},
-	showBPM: function () {}
-};
+function hasJQuery() {
+	return typeof $ !== 'undefined';
+}
+
+function getButtonCaption(selector, fallbackCaption) {
+	if (!hasJQuery()) return fallbackCaption;
+	return $(selector).text();
+}
+
+function setButtonState(selector, caption, isOn) {
+	if (!hasJQuery()) return;
+	if (caption !== null) {
+		$(selector).html(caption);
+	}
+	$(selector).toggleClass('ButtonOn', !!isOn);
+}
+
+function createDefaultLooperProviders() {
+	return {
+		getMillisForBeatClock: function () { return 0; },
+		getSong: function () { return null; },
+		getLoopSectionsCaption: function () { return getButtonCaption('#btnLoopSections', 'LOOP'); },
+		getLoopBeatsCaption: function () { return getButtonCaption('#btnLoopBeats', 'LOOP BEATS'); },
+		setLoopSectionsButton: function (caption, isOn) { setButtonState('#btnLoopSections', caption, isOn); },
+		setLoopBeatsButton: function (caption, isOn) { setButtonState('#btnLoopBeats', caption, isOn); },
+		setLoopBeatsTransportButton: function (isOn) { setButtonState('#btnLoopBeatsTransport', null, isOn); },
+		setLoopInterval: function (handler, millis) {
+			if (typeof setInterval !== 'function') return null;
+			return setInterval(handler, millis);
+		},
+		clearLoopInterval: function (pointer) {
+			if (pointer === null || typeof pointer === 'undefined') return;
+			if (typeof clearInterval === 'function') {
+				clearInterval(pointer);
+				return;
+			}
+			if (typeof clearTimeout === 'function') {
+				clearTimeout(pointer);
+			}
+		},
+		showBeats: function () {},
+		showBPM: function () {}
+	};
+}
+
+let looperProviders = createDefaultLooperProviders();
 
 export function setLooperProviders(providers){
 	if (!providers) return;
@@ -25,29 +63,32 @@ export function setLooperProviders(providers){
 	const NOT_LOOPING_BEATS_CAPTION     = "LOOP BEATS";
 
 	function clearBeatAndSectionLooping(){
-		window.clearTimeout(showBeatsIntervalPointer);
+		if (showBeatsIntervalPointer !== null) {
+			looperProviders.clearLoopInterval(showBeatsIntervalPointer);
+		}
 		showBeatsIntervalPointer = null;
-		$("#btnLoopSections").html(NOT_LOOPING_FRAMES_CAPTION).removeClass("ButtonOn");    //css({"background": "white"});
-		$("#btnLoopBeats").html(NOT_LOOPING_BEATS_CAPTION).removeClass("ButtonOn");      //.css({"background": "white"});
-		$("#btnLoopBeatsTransport").removeClass("ButtonOn");      //.css({"background": "white"});
+		looperProviders.setLoopSectionsButton(NOT_LOOPING_FRAMES_CAPTION, false);
+		looperProviders.setLoopBeatsButton(NOT_LOOPING_BEATS_CAPTION, false);
+		looperProviders.setLoopBeatsTransportButton(false);
 	}
 
 	function startLoopSections(){
 		looperProviders.showBPM();
 		var caption = LOOPING_FRAMES_CAPTION;
-		if (looperProviders.getSong().randomLoop){
+		var song = looperProviders.getSong();
+		if (song && song.randomLoop){
 			caption = LOOPING_FRAMES_CAPTION_RANDOM;
 		}
-		$("#btnLoopSections").html(caption).addClass("ButtonOn");    //.css({"background": "magenta"});
+		looperProviders.setLoopSectionsButton(caption, true);
 		var millisNextBeat = looperProviders.getMillisForBeatClock();
-		showBeatsIntervalPointer = window.setInterval(showBeatsIntervalHandler, millisNextBeat);
+		showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
 	}
 	function startLoopBeats(){
-		$("#btnLoopBeats").html(LOOPING_BEATS_CAPTION).addClass("ButtonOn");    //.css({"background": "magenta"});
-		$("#btnLoopBeatsTransport").addClass("ButtonOn");                       //.css({"background": "magenta"});
+		looperProviders.setLoopBeatsButton(LOOPING_BEATS_CAPTION, true);
+		looperProviders.setLoopBeatsTransportButton(true);
 
 		var millisNextBeat = looperProviders.getMillisForBeatClock();
-		showBeatsIntervalPointer = window.setInterval(showBeatsIntervalHandler, millisNextBeat);
+		showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
 	}
 
 	export function toggleLoopSections(){
@@ -106,8 +147,20 @@ export function setLooperProviders(providers){
 	}
 
 	function showBeatsIntervalHandler(){
+		var song = looperProviders.getSong();
+		if (!song || typeof song.getBeat !== 'function' || typeof song.getBeats !== 'function') {
+			return;
+		}
 		tickBeat(looperProviders.getSong(), {
 			sectionsLooping: sectionsLooping(),
 			showBeats: looperProviders.showBeats
 		});
+	}
+
+	export function __resetLooperForTests(){
+		showBeatsIntervalPointer = null;
+	}
+
+	export function __resetLooperProvidersForTests(){
+		looperProviders = createDefaultLooperProviders();
 	}

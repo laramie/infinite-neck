@@ -278,6 +278,62 @@ describe('Song API on loaded JSON', () => {
 
         expect(song.getRelativeSectionIndicesWithWrap(null, warnings)).toEqual([]);
     });
+
+    test('@n falls back to current section when random-loop history is empty', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['S1', 'S2', 'S3', 'S4']);
+        song.gotoSection(2);
+
+        expect(song.getRelativeSectionIndexWithWrap('@1')).toBe(2);
+        expect(song.getRelativeSectionIndexWithWrap('@2')).toBe(2);
+    });
+
+    test('@n resolves against random-loop history in headless mode', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['S1', 'S2', 'S3', 'S4']);
+        song.gotoSection(0);
+        song.randomLoop = true;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        const randSpy = jest.spyOn(Math, 'random')
+            .mockReturnValueOnce(0.60) // 0 -> 2
+            .mockReturnValueOnce(0.90); // 2 -> 3
+
+        song.gotoNextSection(true);
+        song.gotoNextSection(true);
+
+        expect(song.getSectionsCurrentIndex()).toBe(3);
+        expect(song.getRelativeSectionIndexWithWrap('@1')).toBe(2);
+        expect(song.getRelativeSectionIndexWithWrap('@2')).toBe(0);
+        expect(song.getRelativeSectionIndexWithWrap('@9')).toBe(0);
+
+        randSpy.mockRestore();
+        triggerSpy.mockRestore();
+        logSpy.mockRestore();
+    });
+
+    test('random-loop history is capped to 16 entries', () => {
+        const song = createFreshHeadlessSong();
+        seedSongWithCaptionedSections(song, ['S1', 'S2', 'S3', 'S4']);
+        song.gotoSection(0);
+        song.randomLoop = true;
+
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+        const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        const randSpy = jest.spyOn(Math, 'random').mockReturnValue(0.90);
+
+        for (let i = 0; i < 40; i += 1) {
+            song.gotoNextSection(true);
+        }
+
+        expect(song.randomSectionHistory.length).toBe(16);
+        expect(song.randomSectionHistory.every(idx => Number.isInteger(idx))).toBe(true);
+
+        randSpy.mockRestore();
+        triggerSpy.mockRestore();
+        logSpy.mockRestore();
+    });
 });
 
 describe('Song beat APIs on loaded JSON', () => {
