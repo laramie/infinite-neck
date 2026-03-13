@@ -373,7 +373,6 @@ function makeSongLegacy(){
             BAD_INPUT:       'X',
             EMPTY:           'E'
         });
-        var firstChar = Direction.EMPTY; //TODO: fix this.
 
         if (sAmount && sAmount[0]){
 
@@ -482,7 +481,6 @@ function makeSongLegacy(){
         return this.gSectionsCurrentIndex;
     }
 
-    // This all works with Section objects, but JSON doesn't revive them. Working on the reviver, but for now, don't use.
     function constructSection(){
 	    return Section.revive(new Section({
             rootID: this.rootID,
@@ -915,7 +913,6 @@ function makeSongLegacy(){
 
   function getTuningHashInMemoryModel(){
    var hashTuningNames = {};
-   var section;
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
