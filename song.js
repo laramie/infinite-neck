@@ -19,19 +19,9 @@ const NUM_FRETS_MAX = 108;
 
 export const constNoteNamesArr       = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
-const constNoteNamesArrFlats = "A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>".split(',');
-
-const constNoteNamesArrSharps = "A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>,D,D<small>&#9839;</small>,E,F,F<small>&#9839;</small>,G,G<small>&#9839;</small>".split(',');
-
 //Don't export this one, it uses "this" and must be used through the method.
 function noteIDToNoteName(noteIndex){
-    var noteName;
-    if (this.getCurrentSection().sharps){
-        noteName = constNoteNamesArrSharps[noteIndex];
-    } else {
-        noteName = constNoteNamesArrFlats[noteIndex];
-    }
-    return noteName;
+    return this.getCurrentSection().noteIDToDisplayName(noteIndex);
 }
 
 function noteIDToNoteNameRaw(noteIndex){
@@ -88,7 +78,12 @@ export class Song {
     }
 
     getCurrentSection(){
-        return this.sections[this.gSectionsCurrentIndex];
+        const section = this.sections[this.gSectionsCurrentIndex];
+        return Section.revive(section, {
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: 4
+        });
     }
 
     getSectionsCurrentIndex(){
@@ -295,7 +290,8 @@ function makeSongLegacy(){
     }
 
     function getCurrentSection(){
-        return this.sections[this.gSectionsCurrentIndex];
+        const section = this.sections[this.gSectionsCurrentIndex];
+        return normalizeSection.call(this, section);
 	}
 
     function test_getRelativeSectionWithWrap(consoleLog = false){

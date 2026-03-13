@@ -475,6 +475,30 @@ describe('Song index and table accessor contracts', () => {
         expect(arr2).toBe(arr1);
         expect(arr2).toEqual([{ midinum: 66, row: 2 }]);
     });
+
+    test('getCurrentSection revives a plain section object to Section methods on access', () => {
+        const song = createFreshHeadlessSong();
+
+        const plainSection = {
+            noteTables: {},
+            namedNotes: {},
+            recordedNotes: {},
+            caption: 'plain',
+            rootID: '3',
+            rootIDLead: '-1',
+            beats: 4,
+            currentBeat: 1,
+            sharps: false
+        };
+
+        song.sections = [plainSection];
+        song.gSectionsCurrentIndex = 0;
+
+        const revived = song.getCurrentSection();
+        expect(typeof revived.getTableArr).toBe('function');
+        expect(typeof revived.getRootNoteName).toBe('function');
+        expect(revived).toBe(plainSection);
+    });
 });
 
 describe('Song note mapping and emptiness contracts', () => {
