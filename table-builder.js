@@ -63,16 +63,6 @@ export const TABLEDIV_ID_PREFIX = "div";
 export const ALL_TUNINGS_TABLE_ID = "allTuningsTable";
 export const MY_TUNINGS_TABLE_ID = "myTuningsTable";
 
-function removeMyTuning(baseID) {
-	var myTunings = getMyTuningsStore();
-	var idx = myTunings.findIndex(function (tuning) {
-		return tuning.baseID === baseID;
-	});
-	if (idx >= 0) {
-		myTunings.splice(idx, 1);
-	}
-}
-
 //the "table" is the instrument NoteTable, i.e. the neck, not the tunings html table on the Tunings page.
 export function buildNoteTable(options) {
 	if (options.visible == false) {
@@ -216,11 +206,15 @@ export function buildNoteTable(options) {
 	var spanRootID = "&nbsp;&nbsp;&nbsp;<span class='lblRootID'></span>";
 	var joniTuning = "<span class='joniTuning'><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
+	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
+	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>&nbsp;&nbsp;&nbsp;';
 	var p = $("<p>");
 	p.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
 	var S = "&nbsp;&nbsp;";
-	p.html('<b>' + options.caption + '</b>&nbsp;&nbsp;&nbsp;<span class="subcaption">'
+	p.html(tuningBaseIDCaption
+		+ tuningIDCaption
+		+ '<span class="subcaption">'
 		+ options.nStrings + '-string '
 		+ options.baseInstrument
 		+ '&nbsp;&nbsp;&nbsp;[' + rowRangeToNoteNames(options.rowRange, options) + ']' + S
@@ -338,7 +332,7 @@ export function rowRangeToNoteNames(rowRange, options) {
 
 }
 
-function generateNextTuningID(baseID) {
+export function generateNextTuningID(baseID) {
 	// Given S6, generate S6_1, S6_2, etc.
 	// Given S6_1, generates S6_2, etc.
 	var allMyTunings = getMyTuningsStore() || [];
@@ -430,7 +424,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
 		// For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text
 		var idCellHtml;
 		if (primaryControl === "visibility") {
-			idCellHtml = '<input type="text" class="inputTuningID" data-oldid="' + tun.baseID + '" value="' + tun.baseID + '" />';
+			idCellHtml = '<nobr><input type="text" class="inputTuningID" data-oldid="' + tun.baseID + '" value="' + tun.baseID + '" /><button type="button" class="moveyButton">&check;</button></nobr>';
 		} else {
 			idCellHtml = tun.baseID;
 		}
@@ -669,7 +663,6 @@ export function bindFormTuningsEvents() {
 		}
 		if (!show) {
 			$('#' + TABLEDIV_ID_PREFIX + basekey).hide();
-			removeMyTuning(basekey);
 			requestReloadAllTuningsDisplay();
 			requestReinstallAllTuningsTables();
 			return;
@@ -764,6 +757,7 @@ export function bindFormTuningsEvents() {
 		getMyTuningsStore().push(cloned);
 		requestReloadAllTuningsDisplay();
 		requestReinstallAllTuningsTables();
+		$('#btnMyTuningsTab').trigger('click');
 	});
 
 	// Tuning ID edit handler (for myTunings table only)

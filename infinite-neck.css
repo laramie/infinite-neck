@@ -1185,6 +1185,14 @@ input:read-only,textarea:read-only {
 .captionRow {
     font-size:  140%;
 }
+.captionRow .tuningBaseIDCaption {
+    font-size: medium;
+    font-weight: normal;
+}
+.captionRow .tuningIDCaption {
+    font-size: inherit;
+    font-weight: bolder;
+}
 .captionRow .subcaption {
     font-size:  80%;
 }

@@ -406,13 +406,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().myTunings = customTunings;
 		}
 
+	function showTuningsTab(which) {
+		var showMy = which !== 'all';
+		$('#divMyTuningsTab').toggle(showMy);
+		$('#divAllTuningsTab').toggle(!showMy);
+		$('#btnMyTuningsTab')
+			.toggleClass('BtnPunchedIn', showMy)
+			.toggleClass('BtnPunchedOut', !showMy);
+		$('#btnAllTuningsTab')
+			.toggleClass('BtnPunchedIn', !showMy)
+			.toggleClass('BtnPunchedOut', showMy);
+	}
+
 	export function reloadAllTuningsDisplay(){
 		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
-			var myTuningsDiv = $('#divMyTunings');
-			var allTuningsDiv = $('#divAllTunings');
-			var myTunings = (getSong().myTunings || []).filter(function(tuning) {
-				return !!tuning.visible;
-			});
+			var myTuningsDiv = $('#divMyTuningsTab');
+			var allTuningsDiv = $('#divAllTuningsTab');
+			var myTunings = getSong().myTunings || [];
 			myTuningsDiv.empty();
 			allTuningsDiv.empty();
 			myTuningsDiv
@@ -1555,6 +1565,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#divColorDicts').toggle();
 		});
 
+		$('#btnMyTuningsTab').click(function() {
+			showTuningsTab('my');
+		});
+		$('#btnAllTuningsTab').click(function() {
+			showTuningsTab('all');
+		});
+
 		$("#btnSectionControls").click(function() {
 		    showOneMenu("#divSectionControls");
 		});
@@ -1563,6 +1580,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$("#btnTunings").click(function() {
 		    reloadAllTuningsDisplay();
+			showTuningsTab('my');
 		    showOneMenu("#divTunings");
 		});
 		$("#btnFillNotes").click(function() {
