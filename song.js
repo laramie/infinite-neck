@@ -890,16 +890,7 @@ function makeSongLegacy(){
 	}
 
 	function isEmpty(section){
-       var namedNoteCount = 0;
-       var tableCount = 0;
-       Object.keys(section.namedNotes).forEach(noteName => {
-            namedNoteCount++;
-        });
-        Object.keys(section.noteTables).forEach(tablename => {
-            var tablearr = section.noteTables[tablename];
-            tableCount += tablearr.length;
-        });
-        return ((tableCount + namedNoteCount) == 0);
+        return Section.revive(section).isEmpty();
 	}
 
     function moveSectionToEND(){
@@ -932,29 +923,18 @@ function makeSongLegacy(){
 	}
 
     function getTableArrInCurrentSection(tableID){
-	    return getTableArrInSection(this.getCurrentSection(), tableID);
+        return this.getCurrentSection().getTableArr(tableID);
 	}
 
 	function getTableArrInSection(section, tableID){
-	    var tableArr = section.noteTables[tableID];
-	    if (!tableArr){
-	        section.noteTables[tableID] = [];
-	        tableArr = section.noteTables[tableID];
-	    }
-	    return tableArr;
+        return normalizeSection.call(this, section).getTableArr(tableID);
 	}
 
 
     function removeUnusedTablesFromMemoryModel(){
-            this.sections.forEach(section => { // for all sections...
-                var tempTables = {};
-                Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
-                        if (tablearr && tablearr.length && tablearr.length > 0) {
-                                tempTables[tablename] = tablearr;
-                        }
-                });
-                section.noteTables = tempTables;
-            });
+    	    this.sections.forEach(section => {
+    	        normalizeSection.call(this, section).removeEmptyTables();
+    	    });
 	}
 
     function markVisibleTablesForFileSave(visibleTableIds){

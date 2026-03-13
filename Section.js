@@ -118,6 +118,41 @@ export class Section {
         this.currentBeat = 1;
     }
 
+    getTableArr(tableID) {
+        let tableArr = this.noteTables[tableID];
+        if (!tableArr) {
+            this.noteTables[tableID] = [];
+            tableArr = this.noteTables[tableID];
+        }
+        return tableArr;
+    }
+
+    isEmpty() {
+        let namedNoteCount = 0;
+        let tableCount = 0;
+
+        Object.keys(this.namedNotes).forEach(() => {
+            namedNoteCount++;
+        });
+
+        Object.keys(this.noteTables).forEach((tableName) => {
+            const tableArr = this.noteTables[tableName];
+            tableCount += tableArr.length;
+        });
+
+        return (tableCount + namedNoteCount) == 0;
+    }
+
+    removeEmptyTables() {
+        const compact = {};
+        Object.entries(this.noteTables).forEach(([tableName, tableArr]) => {
+            if (tableArr && tableArr.length && tableArr.length > 0) {
+                compact[tableName] = tableArr;
+            }
+        });
+        this.noteTables = compact;
+    }
+
     static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
         const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
 

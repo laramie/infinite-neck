@@ -422,6 +422,19 @@ describe('Song index and table accessor contracts', () => {
         expect(Array.isArray(section2Arr)).toBe(true);
         expect(section2.noteTables[missingTableID]).toBe(section2Arr);
     });
+
+    test('Section-backed table accessor keeps array identity for repeated requests', () => {
+        const song = createFreshHeadlessSong();
+        const section = song.getCurrentSection();
+        const tableID = 'tblIDENTITY';
+
+        const arr1 = section.getTableArr(tableID);
+        arr1.push({ midinum: 66, row: 2 });
+        const arr2 = section.getTableArr(tableID);
+
+        expect(arr2).toBe(arr1);
+        expect(arr2).toEqual([{ midinum: 66, row: 2 }]);
+    });
 });
 
 describe('Song note mapping and emptiness contracts', () => {
@@ -459,6 +472,21 @@ describe('Song note mapping and emptiness contracts', () => {
         delete section.namedNotes.A;
         section.noteTables.tblP46 = [{ midinum: 60, row: 1 }];
         expect(song.isEmpty(section)).toBe(false);
+    });
+
+    test('removeUnusedTablesFromMemoryModel removes only empty note tables in each section', () => {
+        const song = createFreshHeadlessSong();
+        const section = song.getCurrentSection();
+
+        section.noteTables.tblEMPTY1 = [];
+        section.noteTables.tblKEEP = [{ midinum: 70, row: 1 }];
+        section.noteTables.tblEMPTY2 = [];
+
+        song.removeUnusedTablesFromMemoryModel();
+
+        expect(section.noteTables.tblKEEP).toEqual([{ midinum: 70, row: 1 }]);
+        expect(section.noteTables.tblEMPTY1).toBeUndefined();
+        expect(section.noteTables.tblEMPTY2).toBeUndefined();
     });
 });
 
