@@ -200,6 +200,7 @@ function makeSongLegacy(){
             getTableArrInSection: getTableArrInSection,
 
             removeUnusedTablesFromMemoryModel: removeUnusedTablesFromMemoryModel,
+            renameTuningIDInModel: renameTuningIDInModel,
             markVisibleTablesForFileSave: markVisibleTablesForFileSave,
             prepareForSave: prepareForSave,
             getTuningHashInMemoryModel: getTuningHashInMemoryModel,
@@ -239,6 +240,8 @@ function makeSongLegacy(){
         this.isHeadless = false;
         this.sections = [];
         this.randomSectionHistory = [];
+        this.myTunings = [];
+        this.tunings = [];
         this.visibleNoteTables = [];
         this.colorDicts = {};
         this.defaultBPM = "80";
@@ -926,6 +929,25 @@ function makeSongLegacy(){
     	        normalizeSection.call(this, section).removeEmptyTables();
     	    });
 	}
+
+    function renameTuningIDInModel(oldID, newID) {
+        var oldKey = TABLE_ID_PREFIX + oldID;
+        var newKey = TABLE_ID_PREFIX + newID;
+        // Rename in each section's noteTables
+        this.sections.forEach(function(section) {
+            if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
+                section.noteTables[newKey] = section.noteTables[oldKey];
+                delete section.noteTables[oldKey];
+            }
+        });
+        // Rename in visibleNoteTables array
+        if (this.visibleNoteTables) {
+            var idx = this.visibleNoteTables.indexOf(oldKey);
+            if (idx >= 0) {
+                this.visibleNoteTables[idx] = newKey;
+            }
+        }
+    }
 
     function markVisibleTablesForFileSave(visibleTableIds){
         this.visibleNoteTables = visibleTableIds;

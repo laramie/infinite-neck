@@ -448,27 +448,33 @@ table.controls2 select {
     width: 90%;
 }
 
-.tuningsTable {
+#allTuningsTable,
+#myTuningsTable {
     background-color: white;
     border: 1px solid black;
     border-collapse: collapse;
     border-spacing: 0;
 }
-.tuningsTable tr:nth-child(odd) {
+#allTuningsTable tr:nth-child(odd),
+#myTuningsTable tr:nth-child(odd) {
   background-color: lightgreen;
 }
-.tuningsTable select {
+#allTuningsTable select,
+#myTuningsTable select {
     font-size: 80%;
 }
-.tuningsTable td {
+#allTuningsTable td,
+#myTuningsTable td {
     font-size: 80%;
     padding: 0.8em;
     border: 1px solid gray;
 }
-.tuningsTable th {
+#allTuningsTable th,
+#myTuningsTable th {
     font-size:  80%;
 }
-.tuningsTable tr:hover {
+#allTuningsTable tr:hover,
+#myTuningsTable tr:hover {
     background-color: Khaki;
 }
 

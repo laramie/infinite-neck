@@ -92,6 +92,8 @@ import {
 	TableBuilder
 	} from './TableBuilder.js';
 import {
+	ALL_TUNINGS_TABLE_ID,
+	MY_TUNINGS_TABLE_ID,
 	TABLEDIV_ID_PREFIX,
 	TABLE_ID_PREFIX
 } from './table-builder.js';
@@ -374,10 +376,57 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
+		function cloneTuningForSong(tuning) {
+			return JSON.parse(JSON.stringify(tuning));
+		}
+
+		function loadSongOwnedTunings() {
+			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
+				return tuning.baseID;
+			}));
+			var customTunings = [];
+			var seenBaseIDs = new Set();
+			var addCustomTuning = function(tuning) {
+				if (!tuning || !tuning.baseID || tuning.baseID === "USER") {
+					return;
+				}
+				if (builtInBaseIDs.has(tuning.baseID) || seenBaseIDs.has(tuning.baseID)) {
+					return;
+				}
+				seenBaseIDs.add(tuning.baseID);
+				customTunings.push(cloneTuningForSong(tuning));
+			};
+
+			if (Array.isArray(getSong().myTunings)) {
+				getSong().myTunings.forEach(addCustomTuning);
+			}
+			if (Array.isArray(getSong().tunings)) {
+				getSong().tunings.forEach(addCustomTuning);
+			}
+			getSong().myTunings = customTunings;
+		}
+
 	export function reloadAllTuningsDisplay(){
-	    var div = $('#divAllTunings');
-	    div.empty();
-		div.append(TableBuilder.dumpTuningsToTable(getSong().getTuningHashInMemoryModel()));
+		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
+			var myTuningsDiv = $('#divMyTunings');
+			var allTuningsDiv = $('#divAllTunings');
+			var myTunings = (getSong().myTunings || []).filter(function(tuning) {
+				return !!tuning.visible;
+			});
+			myTuningsDiv.empty();
+			allTuningsDiv.empty();
+			myTuningsDiv
+				.append($("<p><b>My Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
+					tableID: MY_TUNINGS_TABLE_ID,
+					primaryControl: 'visibility'
+				}));
+			allTuningsDiv
+				.append($("<p><b>All Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
+					tableID: ALL_TUNINGS_TABLE_ID,
+					primaryControl: 'clone'
+				}));
 		TableBuilder.bindFormTuningsEvents();
 	}
 
@@ -529,7 +578,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	 }
 
 	export function exportFromTable(tblSource){
-		const visibleTableIds = allTunings.tunings
+		const visibleTableIds = TableBuilder.getAllTunings()
 		    .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 		    .map(t => TABLE_ID_PREFIX + t.baseID);
 		getSong().markVisibleTablesForFileSave(visibleTableIds);
@@ -604,7 +653,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
   	}
 
 	export function updateMemoryModelPreFileSave(){
-	    const visibleTableIds = allTunings.tunings
+	    const visibleTableIds = TableBuilder.getAllTunings()
 	        .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 	        .map(t => TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
@@ -732,6 +781,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		var jsonObj = JSON.parse(str);
 		Object.assign(gSong, jsonObj);
+		loadSongOwnedTunings();
 		getSong().fixupCurrentIndexForLoadedSong();
 
 		if (getSong().userInstrumentTuning){
@@ -739,31 +789,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (theUSERTuning){
 				TableBuilder.hideAllTunings();
 				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
-			}
-		}
-
-		//Copy getSong().tunings into allTunings.tunings
-		if (getSong().tunings && Array.isArray(getSong().tunings)) {
-			var duplicateBaseIDs = [];
-			for (var i = 0; i < getSong().tunings.length; i++) {
-				var songTuning = getSong().tunings[i];
-				var exists = allTunings.tunings.some(function(tuning) {
-					return tuning.baseID === songTuning.baseID;
-				});
-				if (exists) {
-					duplicateBaseIDs.push(songTuning.baseID);
-					continue;
-				}
-				
-				var cloned = JSON.parse(JSON.stringify(songTuning));  // Deep clone 
-				allTunings.tunings.push(cloned);
-			}
-			if (duplicateBaseIDs.length > 0) {
-				alert(
-					"Tuning(s) with baseID(s) '" +
-					duplicateBaseIDs.join("', '") +
-					"' already exist in allTunings. Skipping."
-				);
 			}
 		}
 
@@ -882,8 +907,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installAllTuningsTables(){
 		var count = 0;
-		for (let i = 0; i < allTunings.tunings.length; i++) {
-			var div = TableBuilder.buildNoteTable(allTunings.tunings[i]);
+		var tunings = TableBuilder.getAllTunings();
+		for (let i = 0; i < tunings.length; i++) {
+			var div = TableBuilder.buildNoteTable(tunings[i]);
 			if (div){
 		        $('#tabledest')
 				    .append(div)

@@ -12,6 +12,8 @@ import {
 	dumpTuningsToTable,
 	generateSelect,
 	generateSelectStringDividerHt,
+	getAllTunings,
+	getMyTunings,
 	getTunings,
 	 setSongProvider,
 	showDefaultTuning,
@@ -57,8 +59,8 @@ class TableBuilder {
 		return rowRangeToNoteNames(rowRange, options);
 	}
 
-	static dumpTuningsToTable(tuningsInMemoryHash) {
-		return dumpTuningsToTable(tuningsInMemoryHash);
+	static dumpTuningsToTable(tuningsInMemoryHash, tunings, options) {
+		return dumpTuningsToTable(tuningsInMemoryHash, tunings, options);
 	}
 
 	static generateSelect(ID, frets) {
@@ -67,6 +69,14 @@ class TableBuilder {
 
 	static generateSelectStringDividerHt(ID, sHeightValue) {
 		return generateSelectStringDividerHt(ID, sHeightValue);
+	}
+
+	static getAllTunings() {
+		return getAllTunings();
+	}
+
+	static getMyTunings() {
+		return getMyTunings();
 	}
 
 	static getTunings(tableNamesArr) {
