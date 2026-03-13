@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { tickBeat } from '../../looper.js';
+import { setLooperProviders, sectionsLooping, beatsLooping, tickBeat } from '../../looper.js';
 
 function makeMockSong({ beat = 1, beats = 4 } = {}) {
 	const s = {
@@ -48,5 +48,40 @@ describe('looper tickBeat', () => {
 		expect(song.gotoNextSection).toHaveBeenCalledWith(true);
 		expect(song.incBeatLoop).not.toHaveBeenCalled();
 		expect(showBeats).not.toHaveBeenCalled();
+	});
+});
+
+describe('looper looping-state providers', () => {
+	test('sectionsLooping true for LOOPING... caption', () => {
+		setLooperProviders({
+			getLoopSectionsCaption: () => 'LOOPING...'
+		});
+		expect(sectionsLooping()).toBe(true);
+	});
+
+	test('sectionsLooping true for RANDOM.... caption', () => {
+		setLooperProviders({
+			getLoopSectionsCaption: () => 'RANDOM....'
+		});
+		expect(sectionsLooping()).toBe(true);
+	});
+
+	test('sectionsLooping false for non-loop caption', () => {
+		setLooperProviders({
+			getLoopSectionsCaption: () => 'LOOP'
+		});
+		expect(sectionsLooping()).toBe(false);
+	});
+
+	test('beatsLooping reflects loop-beats caption', () => {
+		setLooperProviders({
+			getLoopBeatsCaption: () => 'LOOPING...'
+		});
+		expect(beatsLooping()).toBe(true);
+
+		setLooperProviders({
+			getLoopBeatsCaption: () => 'LOOP BEATS'
+		});
+		expect(beatsLooping()).toBe(false);
 	});
 });

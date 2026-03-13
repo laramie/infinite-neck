@@ -1,6 +1,8 @@
 let looperProviders = {
 	getMillisForBeatClock: function () { return 0; },
 	getSong: function () { return null; },
+	getLoopSectionsCaption: function () { return $("#btnLoopSections").text(); },
+	getLoopBeatsCaption: function () { return $("#btnLoopBeats").text(); },
 	showBeats: function () {},
 	showBPM: function () {}
 };
@@ -78,13 +80,13 @@ export function setLooperProviders(providers){
 	}
 	export function sectionsLooping(){
 		return (
-			$("#btnLoopSections").text() === LOOPING_FRAMES_CAPTION
+			looperProviders.getLoopSectionsCaption() === LOOPING_FRAMES_CAPTION
 		) || (
-			$("#btnLoopSections").text() === LOOPING_FRAMES_CAPTION_RANDOM
+			looperProviders.getLoopSectionsCaption() === LOOPING_FRAMES_CAPTION_RANDOM
 		);
 	}
 	export function beatsLooping(){
-		return $("#btnLoopBeats").text() === LOOPING_BEATS_CAPTION;
+		return looperProviders.getLoopBeatsCaption() === LOOPING_BEATS_CAPTION;
 	}
 
 	export function tickBeat(song, { sectionsLooping, showBeats }) {
