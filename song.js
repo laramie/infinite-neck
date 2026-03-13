@@ -1,8 +1,5 @@
 import EventBus from './event-bus.js';
 import {
-    Note
-} from './note.js';
-import {
     GraveType
 } from './graveyard.js';
 import {
@@ -991,21 +988,6 @@ function makeSongLegacy(){
 
     }
     function moveNamedNotesForSection(amount, section){
-        var namedNotesClone = {};
-        var namedNotes = section.namedNotes;
-        Object.keys(namedNotes).forEach(noteName => {
-            var index = constNoteNamesArr.indexOf(noteName);  //globally known list of A,Bb,B,C etc.
-            index=(12+index + amount) % 12;
-            var transposedNoteName = constNoteNamesArr[index];
-            var otherNote = namedNotes[noteName];
-            if (otherNote.colorClass){
-                var clonedNote = Note.cloneNote(otherNote);
-                clonedNote.noteName = transposedNoteName;
-                namedNotesClone[transposedNoteName] = clonedNote;
-            }
-        });
-        section.namedNotes = namedNotesClone;
-        //console.log("original: "+JSON.stringify(namedNotes) + "\r\n new:"+JSON.stringify(this.getCurrentSection().namedNotes));
-        return Section.revive(section).getRootNoteName();  //as we transpose, keep highlighting the rootID.
+	    return normalizeSection.call(this, section).moveNamedNotes(amount);
   	}
 }

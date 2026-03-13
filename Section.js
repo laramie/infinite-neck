@@ -1,4 +1,5 @@
 import { toInt } from './utils.js';
+import { Note } from './note.js';
 
 const NOTE_NAMES_RAW = 'A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab'.split(',');
 const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>'.split(',');
@@ -151,6 +152,27 @@ export class Section {
             }
         });
         this.noteTables = compact;
+    }
+
+    moveNamedNotes(amount) {
+        const namedNotesClone = {};
+        const namedNotes = this.namedNotes;
+
+        Object.keys(namedNotes).forEach((noteName) => {
+            let index = NOTE_NAMES_RAW.indexOf(noteName);
+            index = (12 + index + amount) % 12;
+            const transposedNoteName = NOTE_NAMES_RAW[index];
+            const otherNote = namedNotes[noteName];
+
+            if (otherNote.colorClass) {
+                const clonedNote = Note.cloneNote(otherNote);
+                clonedNote.noteName = transposedNoteName;
+                namedNotesClone[transposedNoteName] = clonedNote;
+            }
+        });
+
+        this.namedNotes = namedNotesClone;
+        return this.getRootNoteName();
     }
 
     static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {

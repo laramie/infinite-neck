@@ -498,6 +498,31 @@ describe('Song note mapping and emptiness contracts', () => {
         expect(section.noteTables.tblEMPTY1).toBeUndefined();
         expect(section.noteTables.tblEMPTY2).toBeUndefined();
     });
+
+    test('moveNamedNotesForSection transposes note keys, clones kept notes, and drops notes without colorClass', () => {
+        const song = createFreshHeadlessSong();
+        const section = song.getCurrentSection();
+
+        section.rootID = '0'; // A
+        const sourceA = { noteNameClass: '.noteA', colorClass: 'noteScale' };
+        const sourceC = { noteNameClass: '.noteC', colorClass: 'noteChord' };
+        const sourceEbNoColor = { noteNameClass: '.noteEb' };
+        section.namedNotes = {
+            A: sourceA,
+            C: sourceC,
+            Eb: sourceEbNoColor
+        };
+
+        const highlightedRoot = song.moveNamedNotesForSection(2, section);
+
+        expect(highlightedRoot).toBe('A');
+        expect(Object.keys(section.namedNotes).sort()).toEqual(['B', 'D']);
+        expect(section.namedNotes.B.noteName).toBe('B');
+        expect(section.namedNotes.D.noteName).toBe('D');
+        expect(section.namedNotes.B).not.toBe(sourceA);
+        expect(section.namedNotes.D).not.toBe(sourceC);
+        expect(section.namedNotes.F).toBeUndefined();
+    });
 });
 
 describe('Song construction and section add APIs', () => {
