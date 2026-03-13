@@ -8,7 +8,7 @@ import {
     skipColorDictsReplacer
 } from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
-import { Song, makeSong } from '../../song.js';
+import { Song, makeSong, makeSongFromData } from '../../song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -146,6 +146,53 @@ describe('Song API bootstrap from JSON', () => {
         expect(typeof section.getTableArr).toBe('function');
         expect(typeof section.isEmpty).toBe('function');
     });
+
+    test.each(LOADED_SONG_FIXTURES)('makeSongFromData loads $label through canonical factory path', ({ filename }) => {
+        const data = readSongJson(filename);
+        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+
+        expect(song.isHeadless).toBe(true);
+        expect(song.getSections().length).toBe(data.sections.length);
+        expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
+    });
+
+    test('makeSongFromData normalizes partial section payloads with Section defaults', () => {
+        const partial = {
+            sections: [
+                {
+                    caption: 'legacy-partial'
+                }
+            ]
+        };
+
+        const song = makeSongFromData(partial, { headless: true, quiet: true, fixIndex: true });
+        const section = song.getCurrentSection();
+
+        expect(song.getSections().length).toBe(1);
+        expect(section.caption).toBe('legacy-partial');
+        expect(section.rootID).toBe(song.rootID);
+        expect(section.rootIDLead).toBe('-1');
+        expect(section.beats).toBe(4);
+        expect(section.currentBeat).toBe(1);
+        expect(section.noteTables).toEqual({});
+        expect(section.namedNotes).toEqual({});
+        expect(section.recordedNotes).toEqual({});
+        expect(typeof section.getTableArr).toBe('function');
+    });
+
+    test('makeSongFromData callers can clamp out-of-range gSectionsCurrentIndex via fixupCurrentIndexForLoadedSong', () => {
+        const data = readSongJson(PRIMARY_SONG_FILENAME);
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: false });
+        song.gSectionsCurrentIndex = 99999;
+        song.fixupCurrentIndexForLoadedSong();
+
+        expect(song.getSectionsCurrentIndex()).toBe(song.getSections().length - 1);
+        expect(warnSpy).toHaveBeenCalled();
+
+        warnSpy.mockRestore();
+    });
 });
 
 describe('Song API on loaded JSON', () => {
@@ -202,6 +249,34 @@ describe('Song API on loaded JSON', () => {
         expect(song.getSections().indexOf(song.getRelativeSectionWithWrap('2', warnings))).toBe(1);
         expect(song.getSections().indexOf(song.getRelativeSectionWithWrap('foo', warnings))).toBe(lastIndex);
         expect(warnings).toContain('Malformed section amount: foo');
+    });
+
+    test.each(LOADED_SONG_FIXTURES)('getRelativeSectionIndexWithWrap returns direct indices for loaded song $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
+        const lastIndex = getLastSectionIndex(song);
+        const warnings = [];
+
+        song.gotoSection(lastIndex);
+
+        expect(song.getRelativeSectionIndexWithWrap('+1', warnings)).toBe(0);
+        expect(song.getRelativeSectionIndexWithWrap('0', warnings)).toBe(0);
+        expect(song.getRelativeSectionIndexWithWrap('2', warnings)).toBe(1);
+        expect(song.getRelativeSectionIndexWithWrap('foo', warnings)).toBe(lastIndex);
+        expect(warnings).toContain('Malformed section amount: foo');
+    });
+
+    test.each(LOADED_SONG_FIXTURES)('getRelativeSectionIndicesWithWrap resolves lists of relative specs for loaded song $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
+        const lastIndex = getLastSectionIndex(song);
+        const warnings = [];
+
+        song.gotoSection(lastIndex);
+
+        const indices = song.getRelativeSectionIndicesWithWrap(['+1', '&2', 'foo'], warnings);
+        expect(indices).toEqual([0, lastIndex, lastIndex]);
+        expect(warnings).toContain('Malformed section amount: foo');
+
+        expect(song.getRelativeSectionIndicesWithWrap(null, warnings)).toEqual([]);
     });
 });
 

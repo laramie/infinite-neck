@@ -82,6 +82,20 @@ export function makeSong() {
     return new Song();
 }
 
+export function makeSongFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
+    const song = makeSong();
+    if (headless) {
+        song.setHeadless(true, quiet);
+    }
+    if (fileObj && Array.isArray(fileObj.sections)) {
+        song.addSections(fileObj);
+        if (fixIndex) {
+            song.fixupCurrentIndexForLoadedSong();
+        }
+    }
+    return song;
+}
+
 function makeSongLegacy(){
     const DEFAULT_BEATS = 4;
     const noteNamesFuncArrDEFAULT = [
@@ -133,6 +147,8 @@ function makeSongLegacy(){
 
             fixupCurrentIndexForLoadedSong: fixupCurrentIndexForLoadedSong,
             getRelativeSectionWithWrap: getRelativeSectionWithWrap,
+            getRelativeSectionIndexWithWrap: getRelativeSectionIndexWithWrap,
+            getRelativeSectionIndicesWithWrap: getRelativeSectionIndicesWithWrap,
             test_getRelativeSectionWithWrap: test_getRelativeSectionWithWrap,
             constructSection: constructSection,
 
@@ -448,6 +464,18 @@ function makeSongLegacy(){
         } else {
             return this.getCurrentSection();        
         }
+    }
+
+    function getRelativeSectionIndexWithWrap(sAmount, logCollector = null) {
+        const section = this.getRelativeSectionWithWrap(sAmount, logCollector);
+        return this.sections.indexOf(section);
+    }
+
+    function getRelativeSectionIndicesWithWrap(relativeSectionSpecs, logCollector = null) {
+        if (!Array.isArray(relativeSectionSpecs)) {
+            return [];
+        }
+        return relativeSectionSpecs.map(spec => this.getRelativeSectionIndexWithWrap(spec, logCollector));
     }
 
     function getSectionsCurrentIndex(){
