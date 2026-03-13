@@ -33,6 +33,22 @@ export class Section {
         this.noteNamesFuncArr = other.noteNamesFuncArr;
     }
 
+    populateCloneFrom(sourceSection, { deep = false } = {}) {
+        this.namedNotes = JSON.parse(JSON.stringify(sourceSection.namedNotes));
+        this.rootID = sourceSection.rootID;
+        this.rootIDLead = sourceSection.rootIDLead;
+        this.caption = sourceSection.caption;
+        this.beats = sourceSection.beats;
+        this.currentBeat = 1;
+
+        if (deep) {
+            this.noteTables = JSON.parse(JSON.stringify(sourceSection.noteTables));
+            this.recordedNotes = JSON.parse(JSON.stringify(sourceSection.recordedNotes));
+        }
+
+        return this;
+    }
+
     getRootKey() {
         return this.noteIDToDisplayName(toInt(this.rootID, 0));
     }

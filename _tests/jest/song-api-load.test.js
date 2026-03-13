@@ -392,6 +392,36 @@ describe('Song section mutation APIs', () => {
 
         triggerSpy.mockRestore();
     });
+
+    test('addShallowCloneSection clones namedNotes but leaves noteTables and recordedNotes empty', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        const source = createSectionWithCaption(song, 'SOURCE-SHALLOW');
+        source.rootID = '5';
+        source.rootIDLead = '7';
+        source.beats = '6';
+        source.namedNotes = { A: { colorClass: 'noteScale' }, C: { colorClass: 'noteChord' } };
+        source.noteTables.tblP46 = [{ midinum: 61, row: 1, colorClass: 'c2', styleNum: 2 }];
+        source.recordedNotes = { '1': [{ midinum: 61, row: 1 }] };
+        song.addSection(source);
+        song.gotoSection(0);
+
+        const cloned = song.addShallowCloneSection();
+
+        expect(song.getSections().length).toBe(2);
+        expect(song.getCurrentSection()).toBe(cloned);
+        expect(cloned).not.toBe(source);
+        expect(cloned.namedNotes).toEqual(source.namedNotes);
+        expect(cloned.namedNotes).not.toBe(source.namedNotes);
+        expect(cloned.noteTables).toEqual({});
+        expect(cloned.recordedNotes).toEqual({});
+        expect(cloned.currentBeat).toBe(1);
+
+        triggerSpy.mockRestore();
+    });
 });
 
 describe('Song index and table accessor contracts', () => {

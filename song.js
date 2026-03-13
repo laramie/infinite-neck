@@ -826,17 +826,8 @@ function makeSongLegacy(){
 	    return this.addCloneSection(true, destIndex);
 	}
 	function addCloneSection(deep, destIndex){
-	    var aSection = this.constructSection();  //populates rootID from dropDownRoot.
-	    aSection.namedNotes = JSON.parse(JSON.stringify(this.getCurrentSection().namedNotes));
-	    aSection.rootID = this.getCurrentSection().rootID;          //$("#dropDownRoot").val();
-		aSection.rootIDLead = this.getCurrentSection().rootIDLead;  //$('#dropDownRootLead').val(); //foobar: or: use value from getCurren Section...
-	    aSection.caption = this.getCurrentSection().caption;
-	    aSection.beats = this.getCurrentSection().beats;
-	    aSection.currentBeat = 1;
-	    if (deep){
-	        aSection.noteTables = JSON.parse(JSON.stringify(this.getCurrentSection().noteTables));
-     	    aSection.recordedNotes = JSON.parse(JSON.stringify(this.getCurrentSection().recordedNotes));
-	    }
+        var aSection = this.constructSection();  //populates rootID from dropDownRoot.
+        aSection.populateCloneFrom(this.getCurrentSection(), { deep });
         if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
         } else {
