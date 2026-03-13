@@ -499,11 +499,6 @@ function makeSongLegacy(){
         return this.gSectionsCurrentIndex;
     }
 
-    function song_getRootKey(){
-        var rootIndex = toInt(this.getCurrentSection().rootID, 0);
-        return noteIDToNoteName(rootIndex);
-    }
-
     // This all works with Section objects, but JSON doesn't revive them. Working on the reviver, but for now, don't use.
     function constructSection(){
 	    return Section.revive(new Section({
@@ -569,26 +564,18 @@ function makeSongLegacy(){
 
     //these two return an html string that is either sharps or flats, depending on section.
     function song_getRootKey(){
-        var rootIndex = toInt(this.getCurrentSection().rootID, 0);
-        return noteIDToNoteName(rootIndex);
+        return this.getCurrentSection().getRootKey();
     }
     function song_getRootKeyLead(){
-        var leadkey =  noteIDToNoteName(toInt(this.getCurrentSection().rootIDLead, 0));
-        if (!leadkey){
-            return noteIDToNoteName(toInt(this.getCurrentSection().rootID, 0));
-        }
-        return leadkey;
+        return this.getCurrentSection().getRootKeyLead();
     }
 
     //these two return a simple noteName, one of [A, Bb, B, C, Db, ...etc.]
     function song_getRootNoteName(){
-        return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootID, 0));
+        return this.getCurrentSection().getRootNoteName();
     }
     function song_getLeadNoteName(){
-        if (this.getCurrentSection().rootIDLead == "-1"){
-            return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootID, 0));
-        }
-        return noteIDToNoteNameRaw(toInt(this.getCurrentSection().rootIDLead, 0));
+        return this.getCurrentSection().getLeadNoteName();
     }
 
 	function getBeat(){
@@ -1019,12 +1006,6 @@ function makeSongLegacy(){
         });
         section.namedNotes = namedNotesClone;
         //console.log("original: "+JSON.stringify(namedNotes) + "\r\n new:"+JSON.stringify(this.getCurrentSection().namedNotes));
-        return getRootNoteName(section);  //as we transpose, keep highlighting the rootID.
-  	}
-
-  	function getRootNoteName(section){
-  		var noteID = parseInt( section.rootID );
-  		var noteName = constNoteNamesArr[noteID];
-  		return noteName;
+        return Section.revive(section).getRootNoteName();  //as we transpose, keep highlighting the rootID.
   	}
 }

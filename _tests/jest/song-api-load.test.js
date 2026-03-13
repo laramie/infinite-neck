@@ -135,6 +135,16 @@ describe('Song API bootstrap from JSON', () => {
         expect(song.getCurrentSection()).toHaveProperty('namedNotes');
         expect(song.getCurrentSection()).toHaveProperty('noteTables');
     });
+
+    test.each(LOADED_SONG_FIXTURES)('revives loaded sections with Section methods for $label', ({ filename }) => {
+        const { song } = loadSongForApiTests(filename);
+        const section = song.getSections()[0];
+
+        expect(typeof section.getRootKey).toBe('function');
+        expect(typeof section.getRootNoteName).toBe('function');
+        expect(typeof section.getTableArr).toBe('function');
+        expect(typeof section.isEmpty).toBe('function');
+    });
 });
 
 describe('Song API on loaded JSON', () => {
