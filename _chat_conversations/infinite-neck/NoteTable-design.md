@@ -622,3 +622,46 @@ F2. repaint / clearAll / colorNote scoping
 - Files: notetable.js, infinite-neck.js
 - Thread tableId parameter through repaint-chain functions (see selector attack map from Phase 1).
 - Observer tables: repaint reads section from registry but does not fire click events.
+
+# Commit Phase Tracker (refactor/NoteTableModel)
+
+This is the authoritative execution order for this branch.
+
+Important clarification:
+- S0 is the starting state, not an implementation phase.
+- S2 is the schema cut and should be implemented together with P4.
+
+Recommended sequence:
+
+1. Phase A (P0): Foundation and no-behavior-change wiring
+- Introduce NoteTableModel and NoteTableRegistry scaffolding.
+- Add minimal adapters/facades so existing call paths still work.
+- Commit message suggestion: `P0 foundation: NoteTableModel/Registry scaffolding`.
+
+2. Phase B (P1): Selector scoping pass
+- Make selectors table-scoped across paint/repaint/highlight paths.
+- Keep behavior equivalent except for scoping.
+- Commit message suggestion: `P1 selector scoping: table-specific DOM selection`.
+
+3. Phase C (P2 + P3): Read routing and observer behavior
+- Route table reads through relativeSection resolution.
+- Enforce observer table read-only behavior (no cell edit/click write paths).
+- Commit message suggestion: `P2/P3 routing: observer read-only and section binding`.
+
+4. Phase D (S2 + P4): Schema cut and recorded-beat isolation
+- Perform the one-step S0 -> S2 migration.
+- Move recorded beats under table ownership.
+- Remove section-level recordedNotes from save output.
+- Implement table-origin beat isolation.
+- Commit message suggestion: `S2/P4 schema + beats: table-owned played/recorded notes`.
+
+5. Phase E: Stabilization and cleanup
+- Remove temporary adapters that are no longer needed.
+- Finalize tests, docs, and any migration warnings.
+- Commit message suggestion: `stabilize: cleanup adapters, finalize tests/docs`.
+
+Per-phase gate policy:
+- Green Jest before commit.
+- UI acceptance check for affected behavior before commit.
+- Keep commits narrow and phase-specific.
+

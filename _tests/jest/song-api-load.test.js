@@ -742,6 +742,40 @@ describe('Song note mapping and emptiness contracts', () => {
         expect(section.namedNotes.D).not.toBe(sourceC);
         expect(section.namedNotes.F).toBeUndefined();
     });
+
+    test('moveNamedNotes transposes current section without throwing (Song context retained)', () => {
+        const song = createFreshHeadlessSong();
+        const section = song.getCurrentSection();
+
+        section.rootID = '0';
+        section.namedNotes = {
+            A: { noteNameClass: '.noteA', colorClass: 'noteScale' },
+            C: { noteNameClass: '.noteC', colorClass: 'noteChord' }
+        };
+
+        expect(() => song.moveNamedNotes(1)).not.toThrow();
+        expect(Object.keys(section.namedNotes).sort()).toEqual(['Bb', 'Db']);
+    });
+
+    test('moveNamedNotesAllSections transposes every section without throwing (Song context retained)', () => {
+        const song = createFreshHeadlessSong();
+        const first = song.getCurrentSection();
+        first.rootID = '0';
+        first.namedNotes = {
+            A: { noteNameClass: '.noteA', colorClass: 'noteScale' }
+        };
+
+        const second = song.constructSection();
+        second.rootID = '3';
+        second.namedNotes = {
+            C: { noteNameClass: '.noteC', colorClass: 'noteChord' }
+        };
+        song.addSection(second);
+
+        expect(() => song.moveNamedNotesAllSections(2)).not.toThrow();
+        expect(Object.keys(first.namedNotes)).toEqual(['B']);
+        expect(Object.keys(second.namedNotes)).toEqual(['D']);
+    });
 });
 
 describe('Song construction and section add APIs', () => {

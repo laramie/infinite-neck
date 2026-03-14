@@ -14,6 +14,7 @@ import {
 } from './utils.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
+import { NoteTableRegistry } from './NoteTableModel.js';
 
 const NUM_FRETS_MAX = 108;
 
@@ -89,6 +90,7 @@ export function makeSongFromData(fileObj, { headless = true, quiet = true, fixIn
     }
     if (fileObj && Array.isArray(fileObj.sections)) {
         song.addSections(fileObj);
+        song.hydrateNoteTableRegistry(fileObj);
         if (fixIndex) {
             song.fixupCurrentIndexForLoadedSong();
         }
@@ -203,6 +205,9 @@ function makeSongLegacy(){
             renameTuningIDInModel: renameTuningIDInModel,
             markVisibleTablesForFileSave: markVisibleTablesForFileSave,
             prepareForSave: prepareForSave,
+            getNoteTableRegistry: getNoteTableRegistry,
+            getNoteTableModelsSnapshot: getNoteTableModelsSnapshot,
+            hydrateNoteTableRegistry: hydrateNoteTableRegistry,
             getTuningHashInMemoryModel: getTuningHashInMemoryModel,
             removeNotePlayedFromTable: removeNotePlayedFromTable,
             moveNamedNotesAllSections: moveNamedNotesAllSections,
@@ -249,8 +254,36 @@ function makeSongLegacy(){
         this.gSectionsCurrentIndex = this.addSection(this.constructSection());
         this.namedNoteOpacity = "1.00";
         this.singleNoteOpacity = "1.00";
+        Object.defineProperty(this, 'noteTableRegistry', {
+            value: new NoteTableRegistry(),
+            writable: true,
+            enumerable: false,
+            configurable: true
+        });
         this.constructing = false;
         delete this.constructing;
+    }
+
+    function getNoteTableRegistry(){
+        if (!this.noteTableRegistry){
+            Object.defineProperty(this, 'noteTableRegistry', {
+                value: new NoteTableRegistry(),
+                writable: true,
+                enumerable: false,
+                configurable: true
+            });
+        }
+        return this.noteTableRegistry;
+    }
+
+    function hydrateNoteTableRegistry(fileObj = {}){
+        const registry = this.getNoteTableRegistry();
+        registry.hydrateFromFile(fileObj);
+        return registry;
+    }
+
+    function getNoteTableModelsSnapshot(){
+        return this.getNoteTableRegistry().toSnapshot();
     }
 
     function setHeadless(value, quiet = false){
@@ -1006,12 +1039,12 @@ function makeSongLegacy(){
     function moveNamedNotesAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            moveNamedNotesForSection(amount, section);
+            moveNamedNotesForSection.call(this, amount, section);
         });
 	}
 
     function moveNamedNotes(amount){
-        return moveNamedNotesForSection(amount, this.getCurrentSection());
+        return moveNamedNotesForSection.call(this, amount, this.getCurrentSection());
 
     }
     function moveNamedNotesForSection(amount, section){
