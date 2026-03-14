@@ -281,7 +281,8 @@ export function colorNote(cell, tableID = null) {
 
     var proxyNote = {"midinum": midinum,
                      "row": cellrow,
-                     "styleNum": styleNum};
+                     "styleNum": styleNum,
+                     "tableID": activeTableID || undefined};
 
     if (doIndividualAutomatic){
         var lookupResult = lookupClassForNote(proxyNote);
@@ -497,6 +498,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     notePlayed.midinum = midinum;
     notePlayed.row = r;
     notePlayed.col = c;
+    notePlayed.tableID = parentTableID || undefined;
     notePlayed.colorClass = theColorClass;
 
     var sn = jCell.attr("stylenum");
@@ -690,9 +692,10 @@ export function showHighlightsForBeat(nBeat, tableID = null){
 		var arrForBeat = dict[""+nBeat];
         if (arrForBeat) {
             arrForBeat.forEach(note => {
-                var tdNote = $(scopeSelector("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']", tableID));
+                var noteTableID = note.tableID || tableID;
+                var tdNote = $(scopeSelector("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']", noteTableID));
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $(scopeSelector("td.note[midinum='"+note.midinum+"']", tableID))
+                    $(scopeSelector("td.note[midinum='"+note.midinum+"']", noteTableID))
                         .addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     tdNote

@@ -23,6 +23,21 @@ function clearHighlights() {
     return sectionRecorderProviders.clearHighlights();
 }
 
+function notesMatchByIdentity(element, candidate) {
+        const sameCoreIdentity = element.midinum == candidate.midinum
+            && element.row == candidate.row
+            && element.styleNum == candidate.styleNum;
+        if (!sameCoreIdentity) {
+            return false;
+        }
+        const elementHasTable = element.tableID != null && element.tableID !== '';
+        const candidateHasTable = candidate.tableID != null && candidate.tableID !== '';
+        if (elementHasTable || candidateHasTable) {
+            return element.tableID === candidate.tableID;
+        }
+        return true;
+}
+
 
 
     export function getRecordedNotesForSection(){
@@ -90,9 +105,7 @@ function clearHighlights() {
 
     export function recordingHasPlayedNote(sBeatNum, proxyNote){
 		function filterForNote(element, index, array){
-            if (element.midinum == proxyNote.midinum
-				&& element.row == proxyNote.row
-				&& element.styleNum == proxyNote.styleNum){
+            if (notesMatchByIdentity(element, proxyNote)) {
 				  return true;
 			}
 			return false;
@@ -111,9 +124,7 @@ function clearHighlights() {
 
 	function filterOutMidinumRowStyleNum(recordedNotes, sBeatNum, recNote){
 		function callbackRemoveNotesWith_midinum_row_styleNum(element, index, array){
-			if (element.midinum == recNote.midinum
-				&& element.row == recNote.row
-				&& element.styleNum == recNote.styleNum){
+            if (notesMatchByIdentity(element, recNote)) {
 				  return false;
 			}
 			return true;

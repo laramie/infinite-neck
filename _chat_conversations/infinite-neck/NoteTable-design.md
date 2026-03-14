@@ -641,6 +641,8 @@ Recommended sequence:
 2. Phase B (P1): Selector scoping pass
 - Make selectors table-scoped across paint/repaint/highlight paths.
 - Keep behavior equivalent except for scoping.
+- Product decision from UI review: note highlight behavior (`noteHighlight` and `noteHighlightSingle`) remains global across visible tables for now, matching legacy behavior and musical intent.
+- The new optional `tableID` scoping hooks stay in place as groundwork; a future setting may allow single-table highlight mode.
 - Commit message suggestion: `P1 selector scoping: table-specific DOM selection`.
 
 3. Phase C (P2 + P3): Read routing and observer behavior
