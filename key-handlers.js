@@ -90,6 +90,27 @@ const DEFAULT_FONT_SIZE = 10;
 const DEFAULT_NOTE_FONT_SIZE = 22;  // Keep in sync with infinite-neck.css :root --named-note-font-size: 22pt;  Here "pt" is glued on by code below.
 
 
+function moveSelectByClampedStep(selectSelector, delta) {
+	var jSelect = $(selectSelector);
+	if (jSelect.length === 0) {
+		return;
+	}
+	var optionCount = jSelect.find('option').length;
+	if (optionCount === 0) {
+		return;
+	}
+	var currentIndex = jSelect.prop('selectedIndex');
+	if (currentIndex < 0) {
+		currentIndex = 0;
+	}
+	var nextIndex = Math.max(0, Math.min(optionCount - 1, currentIndex + delta));
+	if (nextIndex === currentIndex) {
+		return;
+	}
+	jSelect.prop('selectedIndex', nextIndex).trigger('change');
+}
+
+
 function document_keyup(evt) {
     if (evt.keyCode == 27) {  // ESC key
         leaveFullscreen();
@@ -203,24 +224,16 @@ function document_keypress(e) {
                 transpose(-5);
                 break;
             case "W":
-                if($('#dropDownCellWidth option:selected').prev().length>0)
-                     $('#dropDownCellWidth option:selected').prev().attr('selected', 'selected').trigger('change');
-                 break;
+				 moveSelectByClampedStep('#dropDownCellWidth', -1);
+				 break;
             case "w":
-                    if($('#dropDownCellWidth option:selected').next().length>0)
-                         $('#dropDownCellWidth option:selected').next().attr('selected', 'selected').trigger('change');
-                    else
-                         $('#dropDownCellWidth option').first().attr('selected', 'selected').trigger('change');
-                 break;
+				 moveSelectByClampedStep('#dropDownCellWidth', 1);
+				 break;
             case "H":
-                    if($('#dropDownCellHeight option:selected').prev().length>0)
-                         $('#dropDownCellHeight option:selected').prev().attr('selected', 'selected').trigger('change');
+					moveSelectByClampedStep('#dropDownCellHeight', -1);
                 break;
             case "h":
-                    if($('#dropDownCellHeight option:selected').next().length>0)
-                         $('#dropDownCellHeight option:selected').next().attr('selected', 'selected').trigger('change');
-                    else
-                         $('#dropDownCellHeight option').first().attr('selected', 'selected').trigger('change');
+					moveSelectByClampedStep('#dropDownCellHeight', 1);
                 break;
             case "v":
             case "V":

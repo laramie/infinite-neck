@@ -380,7 +380,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return JSON.parse(JSON.stringify(tuning));
 		}
 
-		function loadSongOwnedTunings() {
+		export function collectSongOwnedTunings(song) {
+			if (!song) {
+				return [];
+			}
 			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
 				return tuning.baseID;
 			}));
@@ -397,13 +400,73 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				customTunings.push(cloneTuningForSong(tuning));
 			};
 
-			if (Array.isArray(getSong().myTunings)) {
-				getSong().myTunings.forEach(addCustomTuning);
+			if (Array.isArray(song.myTunings)) {
+				song.myTunings.forEach(addCustomTuning);
 			}
-			if (Array.isArray(getSong().tunings)) {
-				getSong().tunings.forEach(addCustomTuning);
+			if (Array.isArray(song.tunings)) {
+				song.tunings.forEach(addCustomTuning);
 			}
-			getSong().myTunings = customTunings;
+			return customTunings;
+		}
+
+		function loadSongOwnedTunings() {
+			getSong().myTunings = collectSongOwnedTunings(getSong());
+		}
+
+		function getStartupTuningBaseID(defaultBaseID) {
+			var fallback = defaultBaseID || 'S6';
+			if (typeof window === 'undefined' || !window.location || typeof URLSearchParams === 'undefined') {
+				return fallback;
+			}
+
+			var raw = new URLSearchParams(window.location.search || '').get('tuning');
+			if (!raw) {
+				return fallback;
+			}
+
+			var requested = raw.trim();
+			if (!requested) {
+				return fallback;
+			}
+
+			var variants = [];
+			var addVariant = function(value) {
+				if (!value) {
+					return;
+				}
+				if (!variants.includes(value)) {
+					variants.push(value);
+				}
+			};
+
+			addVariant(requested);
+			addVariant(requested.toUpperCase());
+			if (requested.startsWith(TABLE_ID_PREFIX)) {
+				addVariant(requested.substring(TABLE_ID_PREFIX.length));
+			}
+			if (requested.toUpperCase().startsWith(TABLE_ID_PREFIX.toUpperCase())) {
+				addVariant(requested.substring(TABLE_ID_PREFIX.length).toUpperCase());
+			}
+
+			for (var i = 0; i < variants.length; i++) {
+				var candidate = variants[i];
+				if (!candidate) {
+					continue;
+				}
+				var byID = TableBuilder.findTuningForID(candidate);
+				if (byID && byID.baseID !== 'USER') {
+					return byID.baseID;
+				}
+				if (candidate.includes('_')) {
+					var baseCandidate = candidate.split('_')[0];
+					var byBase = TableBuilder.findTuningForID(baseCandidate);
+					if (byBase && byBase.baseID !== 'USER') {
+						return byBase.baseID;
+					}
+				}
+			}
+
+			return fallback;
 		}
 
 	function showTuningsTab(which) {
@@ -423,6 +486,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			var myTuningsDiv = $('#divMyTuningsTab');
 			var allTuningsDiv = $('#divAllTuningsTab');
 			var myTunings = getSong().myTunings || [];
+			var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
 			myTuningsDiv.empty();
 			allTuningsDiv.empty();
 			myTuningsDiv
@@ -437,6 +501,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					tableID: ALL_TUNINGS_TABLE_ID,
 					primaryControl: 'clone'
 				}));
+			if (userControls.length > 0) {
+				allTuningsDiv.append(userControls);
+			}
 		TableBuilder.bindFormTuningsEvents();
 	}
 
@@ -478,7 +545,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			options.rootIDLead = getCurrentSection().rootIDLead;//20240423
 	        //console.log("=========Using rootID from getCurrentSection(): "+rootID+" ");
 	    } else {
-	        var optVal = $('#dropDownRoot  option:selected').val();
+	        var optVal = $('#dropDownRoot').val();
 			var rootIDLead = $("#dropDownRootLead").val();
 	        options.rootID = parseInt(optVal);
 			options.rootIDLead = toInt(rootIDLead, -2);
@@ -493,7 +560,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.useCenterForRightFunction = $("#cbCenterForRightFunction").prop("checked");
 		options.NoteDisplaySizes = {"width":$("#dropDownCellWidth").val(),"height":$("#dropDownCellHeight").val()};
 		options.naturalFretWidths = $("#cbNaturalFretWidths").prop("checked");
-		options.naturaFontScaling = toInt($('#selNaturaFontScaling option:selected').val(), 45);
+		options.naturaFontScaling = toInt($('#selNaturaFontScaling').val(), 60);
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -1316,11 +1383,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$("#lblHideWarning").hide();
 
-		setNamedNoteOpacity(options.namedNoteOpacity);
-		setSingleNoteOpacity(options.singleNoteOpacity);
-		setTinyNoteOpacity(options.tinyNoteOpacity);
+		getSong().namedNoteOpacity = options.namedNoteOpacity;
+		getSong().singleNoteOpacity = options.singleNoteOpacity;
+		getSong().tinyNoteOpacity = options.tinyNoteOpacity;
+		$("#rangeNamedNoteOpacity").attr("value", options.namedNoteOpacity);
+		$("#rangeSingleNoteOpacity").attr("value", options.singleNoteOpacity);
+		$("#rangeTinyNoteOpacity").attr("value", options.tinyNoteOpacity);
 
-		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value).change();
+		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value);
+		try {
+			getSong().noteNamesFuncArr = JSON.parse(options.dropDownFunctionSymbols.value);
+		} catch (error) {
+			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
+				? [...getSong().noteNamesFuncArrDEFAULT]
+				: JSON.parse($('#dropDownFunctionSymbols').val());
+			getSong().noteNamesFuncArr = fallback;
+		}
 
 
 		var currentColorDict = options.currentColorDict;
@@ -1330,6 +1408,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		$("#cbAutomaticColor").prop("checked", options.autoColor);
+		if (options.autoColor) {
+			$('#manualColors').hide();
+			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			$('#manualColors').show();
+			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
+		}
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
 		$("#selNaturaFontScaling").val(options.naturalFontScaling);
@@ -1341,6 +1426,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selFingeringPosition").val(options.fingeringPosition);
 		$("#selTinyNoteFontSize").val(options.tinyNoteFontSize);
 		$("#selTinyNoteMaxHeight").val(options.tinyNoteMaxHeight);
+
+		setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
+		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
+		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
+		setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
+		setOneCssVar("--tiny-note-font-size", $("#selTinyNoteFontSize").val());
+		setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
+		setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
+		setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
+
+		fullRepaint();
 	}
 
 	export function controlsToDisplayOptions(){
@@ -2155,6 +2251,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().graveyard = makeGraveyard();
 		installDefaultColorDicts();
 		applyStylesheetsTo_gUserColorDict();
+		TableBuilder.ensureDefaultMyTuning('S6');
 
 		//TODO: in each test be sure to set this somehow: getSong().songName = currentFilename;
 	}
@@ -2187,6 +2284,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#divColorDicts').hide();
 		$("#CustomColorEditors").hide();
 
+		TableBuilder.ensureDefaultMyTuning(getStartupTuningBaseID('S6'));
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();

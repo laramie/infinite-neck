@@ -524,13 +524,26 @@ export function getTunings(tableNamesArr) {
 
 
 export function showDefaultTuning() {
-	//if none, then show for newbies or browsers that clear checkboxes:
-	var numShowing = showHideTunings();
-	if (numShowing == 0) {
-		console.log("================== NOT showDefaultTuning showing P46 ==========="); 
-		//showHideTuning(true, "P46");
+	if (getMyTuningsStore().length === 0) {
+		ensureDefaultMyTuning('S6');
+		requestReloadAllTuningsDisplay();
+		requestReinstallAllTuningsTables();
+		return;
 	}
-	return numShowing;
+	return showHideTunings();
+}
+
+export function ensureDefaultMyTuning(defaultBaseID) {
+	if (!defaultBaseID) defaultBaseID = 'S6';
+	var store = getMyTuningsStore();
+	if (store.length > 0) return;
+	var original = findTuningForID(defaultBaseID);
+	if (!original) return;
+	var cloned = JSON.parse(JSON.stringify(original));
+	cloned.baseID = generateNextTuningID(defaultBaseID);
+	cloned.instance = true;
+	cloned.visible = true;
+	store.push(cloned);
 }
 
 export function showHideTunings() {
@@ -731,7 +744,7 @@ export function bindFormTuningsEvents() {
 				tun.caption = sCaption.trim();
 			}
 
-			tun.baseInstrument = $('#dropDownBaseInstrument  option:selected').val();
+			tun.baseInstrument = $('#dropDownBaseInstrument').val();
 
 			requestReloadAllTuningsDisplay();
 			requestReinstallAllTuningsTables();

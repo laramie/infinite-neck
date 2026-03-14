@@ -109,37 +109,37 @@ import { gThemes } from './themes.js';
 	export function controlsToTheme(){
 		var defaultOptions = JSON.parse(JSON.stringify(getDefaultTheme()));
 		var options = JSON.parse(JSON.stringify(defaultOptions));
-		var origThemeOptions = getThemes()[$('#selThemes option:selected').val()];
+		var origThemeOptions = getThemes()[$('#selThemes').val()];
 
 		function overwriteDefaultWithThemeValue(defOptions, themeOptions){
 			Object.assign(defOptions, themeOptions);
 		}
 		//this applies current controls to default options.
 		function overwriteDefaultWithControlValue(options){
-			options.id = options.id + "-"+$('#selThemes option:selected').val();
+			options.id = options.id + "-"+$('#selThemes').val();
 			options.caption = options.caption + "+"+$('#selThemes option:selected').text();
-			options.noteRadius = $('#dropDownNoteRadius option:selected').val();
-			options.namedNoteRadius = $('#dropDownNamedNoteRadius option:selected').val();
-			options.notePadding = $('#dropDownIvoryEbony option:selected').val();
-			options.cellSpacing = $('#dropDownCellSpacing option:selected').val();
-			options.instrumentBackground = $('#dropDownInstrumentBackground option:selected').val();
-			options.instrumentMargins = $('#dropDownInstrumentMargins option:selected').val();
-			options.nutColor = $('#dropDownNutColor option:selected').val();
-			options.diamondsSize = $('#dropDownDiamondsSize option:selected').val();
-			options.diamondsColor = $('#dropDownDiamondsColor option:selected').val();
-			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor option:selected').val();
-			options.diamondsBackgroundColor = $('#dropDownDiamondsBackgroundColor option:selected').val();
-			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor option:selected').val();
-			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor option:selected').val();
-			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor option:selected').val();
-			options.noteBlackKeyShadowColor = $('#dropDownNoteBlackKeyShadowColor option:selected').val();
-			options.noteWhiteKeyColor = $('#dropDownNoteWhiteKeyColor option:selected').val();
-			options.noteBlackKeyColor = $('#dropDownNoteBlackKeyColor option:selected').val();
-			options.noteWhiteKeyFontColor = $('#dropDownNoteWhiteKeyFontColor option:selected').val();
-			options.noteBlackKeyFontColor = $('#dropDownNoteBlackKeyFontColor option:selected').val();
-			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey option:selected').val();
-			options.borderImageBlackKey = $('#dropDownBorderImageBlackKey option:selected').val();
-			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage option:selected').val();
+			options.noteRadius = $('#dropDownNoteRadius').val();
+			options.namedNoteRadius = $('#dropDownNamedNoteRadius').val();
+			options.notePadding = $('#dropDownIvoryEbony').val();
+			options.cellSpacing = $('#dropDownCellSpacing').val();
+			options.instrumentBackground = $('#dropDownInstrumentBackground').val();
+			options.instrumentMargins = $('#dropDownInstrumentMargins').val();
+			options.nutColor = $('#dropDownNutColor').val();
+			options.diamondsSize = $('#dropDownDiamondsSize').val();
+			options.diamondsColor = $('#dropDownDiamondsColor').val();
+			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor').val();
+			options.diamondsBackgroundColor = $('#dropDownDiamondsBackgroundColor').val();
+			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor').val();
+			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor').val();
+			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor').val();
+			options.noteBlackKeyShadowColor = $('#dropDownNoteBlackKeyShadowColor').val();
+			options.noteWhiteKeyColor = $('#dropDownNoteWhiteKeyColor').val();
+			options.noteBlackKeyColor = $('#dropDownNoteBlackKeyColor').val();
+			options.noteWhiteKeyFontColor = $('#dropDownNoteWhiteKeyFontColor').val();
+			options.noteBlackKeyFontColor = $('#dropDownNoteBlackKeyFontColor').val();
+			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey').val();
+			options.borderImageBlackKey = $('#dropDownBorderImageBlackKey').val();
+			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage').val();
 		}
 		overwriteDefaultWithThemeValue(options, origThemeOptions);
 		overwriteDefaultWithControlValue(options);

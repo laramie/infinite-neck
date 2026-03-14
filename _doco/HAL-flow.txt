@@ -47,4 +47,9 @@ So on Auto-select agent, they switched from ChatGPT-4.1 to ChatGPT-5.3-Codex, wh
 There's a funny moment where I had two different chatbots, one on my local machine, one installed in the Github phone app.  They give conflicting information 
   and the one on the laptop basically says, yeah, don't trust that agent on the phone.  Not explicitly, but of course 
   that's how it seems to me, as a drama-sensitive human.
+
+Claude spells facade as façade, because of course, he's French!   
                        
+Cody is a poet: 
+   "Per-section DisplayOptions hydration on navigation"
+                          

@@ -17,6 +17,7 @@ import {
 	getTunings,
 	 setSongProvider,
 	showDefaultTuning,
+	ensureDefaultMyTuning,
 	showHideTunings,
 	hideTuning,
 	showTuning,
@@ -89,6 +90,10 @@ class TableBuilder {
 
 	static showDefaultTuning() {
 		return showDefaultTuning();
+	}
+
+	static ensureDefaultMyTuning(defaultBaseID) {
+		return ensureDefaultMyTuning(defaultBaseID);
 	}
 
 	static showHideTunings() {
