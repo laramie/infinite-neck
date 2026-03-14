@@ -5,7 +5,8 @@ import { jest } from '@jest/globals';
 import {
     setupSongTests,
     getSong,
-    skipColorDictsReplacer
+    skipColorDictsReplacer,
+    collectSongOwnedTunings
 } from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
 import { Song, makeSong, makeSongFromData } from '../../song.js';
@@ -57,6 +58,38 @@ function createFreshHeadlessSong() {
     getSong().setHeadless(true, true);
     return getSong();
 }
+
+describe('Headless tuning bootstrap contracts', () => {
+    test('setupSongTests seeds at least one myTuning in the model', () => {
+        const song = createFreshHeadlessSong();
+        expect(Array.isArray(song.myTunings)).toBe(true);
+        expect(song.myTunings.length).toBeGreaterThan(0);
+        expect(song.myTunings[0]).toHaveProperty('baseID');
+        expect(song.myTunings[0].baseID).toMatch(/^S6_\d+$/);
+        expect(song.myTunings[0].baseID).toBe('S6_1');
+    });
+
+    test('collectSongOwnedTunings makes file tunings available in myTunings', () => {
+        const song = createFreshHeadlessSong();
+        const existing = { baseID: 'ALT_1', caption: 'Alt One' };
+        song.myTunings = [existing, { baseID: 'USER', caption: 'ignore' }];
+        song.tunings = [
+            { baseID: 'ALT_2', caption: 'Alt Two' },
+            { baseID: 'S6', caption: 'Built-in should be ignored' },
+            { baseID: 'ALT_1', caption: 'Duplicate should be ignored' }
+        ];
+
+        const merged = collectSongOwnedTunings(song);
+        song.myTunings = merged;
+
+        expect(song.myTunings.map(t => t.baseID)).toEqual(['ALT_1', 'ALT_2']);
+        expect(song.myTunings.find(t => t.baseID === 'USER')).toBeUndefined();
+        expect(song.myTunings.find(t => t.baseID === 'S6')).toBeUndefined();
+
+        song.myTunings[0].caption = 'Mutated clone';
+        expect(existing.caption).toBe('Alt One');
+    });
+});
 
 function createSectionWithCaption(song, caption) {
     const section = song.constructSection();

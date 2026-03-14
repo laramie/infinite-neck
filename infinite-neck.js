@@ -92,6 +92,8 @@ import {
 	TableBuilder
 	} from './TableBuilder.js';
 import {
+	ALL_TUNINGS_TABLE_ID,
+	MY_TUNINGS_TABLE_ID,
 	TABLEDIV_ID_PREFIX,
 	TABLE_ID_PREFIX
 } from './table-builder.js';
@@ -374,10 +376,134 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
+		function cloneTuningForSong(tuning) {
+			return JSON.parse(JSON.stringify(tuning));
+		}
+
+		export function collectSongOwnedTunings(song) {
+			if (!song) {
+				return [];
+			}
+			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
+				return tuning.baseID;
+			}));
+			var customTunings = [];
+			var seenBaseIDs = new Set();
+			var addCustomTuning = function(tuning) {
+				if (!tuning || !tuning.baseID || tuning.baseID === "USER") {
+					return;
+				}
+				if (builtInBaseIDs.has(tuning.baseID) || seenBaseIDs.has(tuning.baseID)) {
+					return;
+				}
+				seenBaseIDs.add(tuning.baseID);
+				customTunings.push(cloneTuningForSong(tuning));
+			};
+
+			if (Array.isArray(song.myTunings)) {
+				song.myTunings.forEach(addCustomTuning);
+			}
+			if (Array.isArray(song.tunings)) {
+				song.tunings.forEach(addCustomTuning);
+			}
+			return customTunings;
+		}
+
+		function loadSongOwnedTunings() {
+			getSong().myTunings = collectSongOwnedTunings(getSong());
+		}
+
+		function getStartupTuningBaseID(defaultBaseID) {
+			var fallback = defaultBaseID || 'S6';
+			if (typeof window === 'undefined' || !window.location || typeof URLSearchParams === 'undefined') {
+				return fallback;
+			}
+
+			var raw = new URLSearchParams(window.location.search || '').get('tuning');
+			if (!raw) {
+				return fallback;
+			}
+
+			var requested = raw.trim();
+			if (!requested) {
+				return fallback;
+			}
+
+			var variants = [];
+			var addVariant = function(value) {
+				if (!value) {
+					return;
+				}
+				if (!variants.includes(value)) {
+					variants.push(value);
+				}
+			};
+
+			addVariant(requested);
+			addVariant(requested.toUpperCase());
+			if (requested.startsWith(TABLE_ID_PREFIX)) {
+				addVariant(requested.substring(TABLE_ID_PREFIX.length));
+			}
+			if (requested.toUpperCase().startsWith(TABLE_ID_PREFIX.toUpperCase())) {
+				addVariant(requested.substring(TABLE_ID_PREFIX.length).toUpperCase());
+			}
+
+			for (var i = 0; i < variants.length; i++) {
+				var candidate = variants[i];
+				if (!candidate) {
+					continue;
+				}
+				var byID = TableBuilder.findTuningForID(candidate);
+				if (byID && byID.baseID !== 'USER') {
+					return byID.baseID;
+				}
+				if (candidate.includes('_')) {
+					var baseCandidate = candidate.split('_')[0];
+					var byBase = TableBuilder.findTuningForID(baseCandidate);
+					if (byBase && byBase.baseID !== 'USER') {
+						return byBase.baseID;
+					}
+				}
+			}
+
+			return fallback;
+		}
+
+	function showTuningsTab(which) {
+		var showMy = which !== 'all';
+		$('#divMyTuningsTab').toggle(showMy);
+		$('#divAllTuningsTab').toggle(!showMy);
+		$('#btnMyTuningsTab')
+			.toggleClass('BtnPunchedIn', showMy)
+			.toggleClass('BtnPunchedOut', !showMy);
+		$('#btnAllTuningsTab')
+			.toggleClass('BtnPunchedIn', !showMy)
+			.toggleClass('BtnPunchedOut', showMy);
+	}
+
 	export function reloadAllTuningsDisplay(){
-	    var div = $('#divAllTunings');
-	    div.empty();
-		div.append(TableBuilder.dumpTuningsToTable(getSong().getTuningHashInMemoryModel()));
+		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
+			var myTuningsDiv = $('#divMyTuningsTab');
+			var allTuningsDiv = $('#divAllTuningsTab');
+			var myTunings = getSong().myTunings || [];
+			var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
+			myTuningsDiv.empty();
+			allTuningsDiv.empty();
+			myTuningsDiv
+				.append($("<p><b>My Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
+					tableID: MY_TUNINGS_TABLE_ID,
+					primaryControl: 'visibility'
+				}));
+			allTuningsDiv
+				.append($("<p><b>All Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
+					tableID: ALL_TUNINGS_TABLE_ID,
+					primaryControl: 'clone'
+				}));
+			if (userControls.length > 0) {
+				allTuningsDiv.append(userControls);
+			}
 		TableBuilder.bindFormTuningsEvents();
 	}
 
@@ -419,7 +545,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			options.rootIDLead = getCurrentSection().rootIDLead;//20240423
 	        //console.log("=========Using rootID from getCurrentSection(): "+rootID+" ");
 	    } else {
-	        var optVal = $('#dropDownRoot  option:selected').val();
+	        var optVal = $('#dropDownRoot').val();
 			var rootIDLead = $("#dropDownRootLead").val();
 	        options.rootID = parseInt(optVal);
 			options.rootIDLead = toInt(rootIDLead, -2);
@@ -434,7 +560,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.useCenterForRightFunction = $("#cbCenterForRightFunction").prop("checked");
 		options.NoteDisplaySizes = {"width":$("#dropDownCellWidth").val(),"height":$("#dropDownCellHeight").val()};
 		options.naturalFretWidths = $("#cbNaturalFretWidths").prop("checked");
-		options.naturaFontScaling = toInt($('#selNaturaFontScaling option:selected').val(), 45);
+		options.naturaFontScaling = toInt($('#selNaturaFontScaling').val(), 60);
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -529,7 +655,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	 }
 
 	export function exportFromTable(tblSource){
-		const visibleTableIds = allTunings.tunings
+		const visibleTableIds = TableBuilder.getAllTunings()
 		    .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 		    .map(t => TABLE_ID_PREFIX + t.baseID);
 		getSong().markVisibleTablesForFileSave(visibleTableIds);
@@ -604,7 +730,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
   	}
 
 	export function updateMemoryModelPreFileSave(){
-	    const visibleTableIds = allTunings.tunings
+	    const visibleTableIds = TableBuilder.getAllTunings()
 	        .filter(t => $(`#${TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 	        .map(t => TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
@@ -732,6 +858,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		var jsonObj = JSON.parse(str);
 		Object.assign(gSong, jsonObj);
+		loadSongOwnedTunings();
 		getSong().fixupCurrentIndexForLoadedSong();
 
 		if (getSong().userInstrumentTuning){
@@ -739,31 +866,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (theUSERTuning){
 				TableBuilder.hideAllTunings();
 				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
-			}
-		}
-
-		//Copy getSong().tunings into allTunings.tunings
-		if (getSong().tunings && Array.isArray(getSong().tunings)) {
-			var duplicateBaseIDs = [];
-			for (var i = 0; i < getSong().tunings.length; i++) {
-				var songTuning = getSong().tunings[i];
-				var exists = allTunings.tunings.some(function(tuning) {
-					return tuning.baseID === songTuning.baseID;
-				});
-				if (exists) {
-					duplicateBaseIDs.push(songTuning.baseID);
-					continue;
-				}
-				
-				var cloned = JSON.parse(JSON.stringify(songTuning));  // Deep clone 
-				allTunings.tunings.push(cloned);
-			}
-			if (duplicateBaseIDs.length > 0) {
-				alert(
-					"Tuning(s) with baseID(s) '" +
-					duplicateBaseIDs.join("', '") +
-					"' already exist in allTunings. Skipping."
-				);
 			}
 		}
 
@@ -882,8 +984,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installAllTuningsTables(){
 		var count = 0;
-		for (let i = 0; i < allTunings.tunings.length; i++) {
-			var div = TableBuilder.buildNoteTable(allTunings.tunings[i]);
+		var tunings = TableBuilder.getAllTunings();
+		for (let i = 0; i < tunings.length; i++) {
+			var div = TableBuilder.buildNoteTable(tunings[i]);
 			if (div){
 		        $('#tabledest')
 				    .append(div)
@@ -1280,11 +1383,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$("#lblHideWarning").hide();
 
-		setNamedNoteOpacity(options.namedNoteOpacity);
-		setSingleNoteOpacity(options.singleNoteOpacity);
-		setTinyNoteOpacity(options.tinyNoteOpacity);
+		getSong().namedNoteOpacity = options.namedNoteOpacity;
+		getSong().singleNoteOpacity = options.singleNoteOpacity;
+		getSong().tinyNoteOpacity = options.tinyNoteOpacity;
+		$("#rangeNamedNoteOpacity").attr("value", options.namedNoteOpacity);
+		$("#rangeSingleNoteOpacity").attr("value", options.singleNoteOpacity);
+		$("#rangeTinyNoteOpacity").attr("value", options.tinyNoteOpacity);
 
-		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value).change();
+		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value);
+		try {
+			getSong().noteNamesFuncArr = JSON.parse(options.dropDownFunctionSymbols.value);
+		} catch (error) {
+			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
+				? [...getSong().noteNamesFuncArrDEFAULT]
+				: JSON.parse($('#dropDownFunctionSymbols').val());
+			getSong().noteNamesFuncArr = fallback;
+		}
 
 
 		var currentColorDict = options.currentColorDict;
@@ -1294,6 +1408,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		$("#cbAutomaticColor").prop("checked", options.autoColor);
+		if (options.autoColor) {
+			$('#manualColors').hide();
+			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			$('#manualColors').show();
+			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
+		}
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
 		$("#selNaturaFontScaling").val(options.naturalFontScaling);
@@ -1305,6 +1426,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selFingeringPosition").val(options.fingeringPosition);
 		$("#selTinyNoteFontSize").val(options.tinyNoteFontSize);
 		$("#selTinyNoteMaxHeight").val(options.tinyNoteMaxHeight);
+
+		setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
+		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
+		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
+		setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
+		setOneCssVar("--tiny-note-font-size", $("#selTinyNoteFontSize").val());
+		setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
+		setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
+		setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
+
+		fullRepaint();
 	}
 
 	export function controlsToDisplayOptions(){
@@ -1529,6 +1661,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#divColorDicts').toggle();
 		});
 
+		$('#btnMyTuningsTab').click(function() {
+			showTuningsTab('my');
+		});
+		$('#btnAllTuningsTab').click(function() {
+			showTuningsTab('all');
+		});
+
 		$("#btnSectionControls").click(function() {
 		    showOneMenu("#divSectionControls");
 		});
@@ -1537,6 +1676,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$("#btnTunings").click(function() {
 		    reloadAllTuningsDisplay();
+			showTuningsTab('my');
 		    showOneMenu("#divTunings");
 		});
 		$("#btnFillNotes").click(function() {
@@ -2111,6 +2251,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().graveyard = makeGraveyard();
 		installDefaultColorDicts();
 		applyStylesheetsTo_gUserColorDict();
+		TableBuilder.ensureDefaultMyTuning('S6');
 
 		//TODO: in each test be sure to set this somehow: getSong().songName = currentFilename;
 	}
@@ -2143,6 +2284,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#divColorDicts').hide();
 		$("#CustomColorEditors").hide();
 
+		TableBuilder.ensureDefaultMyTuning(getStartupTuningBaseID('S6'));
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();

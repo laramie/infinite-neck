@@ -1,0 +1,43 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { makeSongFromData } from '../../song.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const FIXTURE_FILE = path.join(__dirname, '../../songs/tests/display-options.json');
+
+function readFixture() {
+    return JSON.parse(fs.readFileSync(FIXTURE_FILE, 'utf8'));
+}
+
+describe('Headless UI smoke contracts', () => {
+    test('display-options fixture can navigate sections, loop, and save without throwing', () => {
+        expect(() => {
+            const data = readFixture();
+            const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+
+            song.gotoSection(0);
+            song.gotoNextSection(true);
+            song.gotoNextSection(true);
+            song.gotoPrevSection(true);
+            song.gotoSection(2);
+
+            song.prepareForSave({
+                visibleTableIds: data.visibleNoteTables ?? [],
+                songName: data.songName,
+                theme: data.theme,
+                bpm: parseInt(data.defaultBPM, 10),
+                userColors: data.userColors,
+                userInstrumentTuning: data.userInstrumentTuning
+            });
+
+            const savedObj = JSON.parse(JSON.stringify(song));
+            expect(savedObj.sections).toHaveLength(3);
+            savedObj.sections.forEach((section) => {
+                expect(section).toHaveProperty('displayOptions');
+            });
+        }).not.toThrow();
+    });
+});

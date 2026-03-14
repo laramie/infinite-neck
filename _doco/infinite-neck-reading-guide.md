@@ -56,3 +56,7 @@ Use this as a quick map while reading [infinite-neck.js](../infinite-neck.js).
 - Keyboard command router: [key-handlers.js](../key-handlers.js)
 - Section recording helpers: [section-recorder.js](../section-recorder.js)
 - Tuning/table utilities: [table-builder.js](../table-builder.js)
+
+## Session Notes
+
+- Copy of ongoing scan phases and findings: [doco/copy-of-infinite-neck-scanning.md](../doco/copy-of-infinite-neck-scanning.md)

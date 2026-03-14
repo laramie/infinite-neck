@@ -179,7 +179,11 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 			var fretWidth = toInt(width,60);
             if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
 				multiplier = getSong().fretLengths[cellcol];
-				fretWidth = fretWidth * multiplier * 0.6;
+                let mellowNormieRadical = 60;
+                if (options.naturaFontScaling){
+                    mellowNormieRadical = options.naturaFontScaling;
+                }
+				fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
 			}
             if (tuning.fixedFretWidthMult ){
                 fretWidth = width * tuning.fixedFretWidthMult * 0.6;
@@ -442,7 +446,7 @@ export function clearNamedNoteDivs(namedNoteDivs){
 
 
 export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray) {
-    var bendValue = $('#selBend option:selected').val();
+    var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
         var isNut = cell.hasClass("nut") || cell.hasClass("nutR");
         if (isNut){
@@ -768,13 +772,13 @@ export function colorWhiteBlackKeys() {
 }
 
 export function fillChord() {
-    var chordFnNotes = $('#dropDownChords option:selected').val();
+    var chordFnNotes = $('#dropDownChords').val();
     var chordFnNotesArr = chordFnNotes.split(',');
 
-    var scaleNotes = $('#dropDownScales option:selected').val();
+    var scaleNotes = $('#dropDownScales').val();
     var scaleNotesArr = scaleNotes.split(',');
 
-    var rootID = parseInt($('#dropDownRoot  option:selected').val());
+    var rootID = parseInt($('#dropDownRoot').val());
     var rootName = constNoteNamesArr[rootID];
     var rootClassName = ".note" + constNoteNamesArr[rootID];
 
