@@ -200,6 +200,8 @@ function makeSongLegacy(){
 
             getTableArrInCurrentSection: getTableArrInCurrentSection,
             getTableArrInSection: getTableArrInSection,
+            getSectionForTable: getSectionForTable,
+            isObserverTable: isObserverTable,
 
             removeUnusedTablesFromMemoryModel: removeUnusedTablesFromMemoryModel,
             renameTuningIDInModel: renameTuningIDInModel,
@@ -955,6 +957,24 @@ function makeSongLegacy(){
 	function getTableArrInSection(section, tableID){
         return normalizeSection.call(this, section).getTableArr(tableID);
 	}
+
+    function getSectionForTable(tableID){
+        if (!tableID) {
+            return this.getCurrentSection();
+        }
+        const section = this.getNoteTableRegistry().getSectionForTable(tableID, this);
+        if (!section) {
+            return this.getCurrentSection();
+        }
+        return normalizeSection.call(this, section);
+    }
+
+    function isObserverTable(tableID){
+        if (!tableID) {
+            return false;
+        }
+        return this.getNoteTableRegistry().isObserverTable(tableID);
+    }
 
 
     function removeUnusedTablesFromMemoryModel(){

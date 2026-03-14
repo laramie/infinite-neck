@@ -28,7 +28,8 @@
          "pretty-lights-more-bling.json",
          "progression-on-strat.json",
          "snake.json",
-         "three-chord-wonder.json"
+         "three-chord-wonder.json",
+         "tests/two-sec-one-observer.json"
     
     ],
     "ignoredSongs": [

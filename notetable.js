@@ -36,8 +36,10 @@ import {
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
     getCurrentSection: function () { return null; },
+    getSectionForTable: function () { return null; },
     getSong: function () { return null; },
     hideNoteClickedCaption: function () { },
+    isObserverTable: function () { return false; },
     resetNoteNames: function () { },
     setNoteClickedCaption: function () { },
     showBeats: function () { },
@@ -50,8 +52,15 @@ export function setNotetableProviders(nextProviders = {}) {
 
 function getBeatNumber() { return notetableProviders.getBeatNumber(); }
 function getCurrentSection() { return notetableProviders.getCurrentSection(); }
+function getSectionForTable(tableID = null) {
+    if (!tableID) {
+        return getCurrentSection();
+    }
+    return notetableProviders.getSectionForTable(tableID) || getCurrentSection();
+}
 function getSong() { return notetableProviders.getSong(); }
 function hideNoteClickedCaption() { return notetableProviders.hideNoteClickedCaption(); }
+function isObserverTable(tableID = null) { return notetableProviders.isObserverTable(tableID); }
 function resetNoteNames() { return notetableProviders.resetNoteNames(); }
 function setNoteClickedCaption(...args) { return notetableProviders.setNoteClickedCaption(...args); }
 function showBeats() { return notetableProviders.showBeats(); }
@@ -74,6 +83,43 @@ function resolveTableID(cell, explicitTableID = null) {
         return null;
     }
     return cell.attr('celltable') || cell.closest('table').attr('id') || null;
+}
+
+// After writing a beat note into the active table's current section, repaint any
+// observer tables whose routed section wraps back to the same section so they
+// immediately reflect the change.
+function repaintObserversForCurrentSection() {
+    var song = getSong();
+    if (!song || !Array.isArray(song.visibleNoteTables)) return;
+    var currentSection = getCurrentSection();
+    song.visibleNoteTables.forEach(function(tblId) {
+        if (!isObserverTable(tblId)) return;
+        if (getSectionForTable(tblId) === currentSection) {
+            clearAll(tblId);
+            replay(tblId);
+        }
+    });
+}
+
+function resolveNamedNoteElements(noteName, activeTableID = null) {
+    const fallback = () => $(scopeSelector('.note' + noteName, activeTableID));
+    const song = getSong();
+    if (!song || !song.getSectionForTable || !Array.isArray(song.visibleNoteTables)) {
+        return fallback();
+    }
+
+    const currentSection = getCurrentSection();
+    const selectors = [];
+    song.visibleNoteTables.forEach((tableId) => {
+        if (song.getSectionForTable(tableId) === currentSection) {
+            selectors.push(`#${tableId} .note${noteName}`);
+        }
+    });
+
+    if (!selectors.length) {
+        return fallback();
+    }
+    return $(selectors.join(', '));
 }
 
 export function isRecording(){
@@ -225,6 +271,9 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 
 export function colorNote(cell, tableID = null) {
     const activeTableID = resolveTableID(cell, tableID);
+    if (isObserverTable(activeTableID)) {
+        return;
+    }
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -334,6 +383,7 @@ export function colorNote(cell, tableID = null) {
                     colorSingleNotes(cell, theColorClass, styleNum, false); //not sure why we want to drop in here with noteClear.... TODO!
                 }
             }
+            repaintObserversForCurrentSection();
             return;
         } else if (doHighlight){
             if (doEraseHighlight){
@@ -372,7 +422,7 @@ export function colorNote(cell, tableID = null) {
         if (doKeep) {
             return;
         }
-        var noteNameElements = $(scopeSelector('.note' + noteName, activeTableID)); // G --> .noteG
+        var noteNameElements = resolveNamedNoteElements(noteName, activeTableID); // e.g. G -> .noteG in all tables bound to current section
         var namedNoteDiv = noteNameElements.find(".namedNote");
 
         // NOTE: this is a little brittle: if you add any other structural classes besides "namedNote", this breaks.
@@ -580,35 +630,45 @@ export function replay(tableID = null){
     var hideFingering   = $("#cbHideFingering").prop("checked");
 
     if (!hideNamedNotes){
-        var clone = {};
-        Object.keys(currSection.namedNotes).forEach(noteName => {
-            //   every G cell has a class "noteG" --> however, as stored,
-            //   namedNote.noteNameClass is ".noteG", to make it a selector
-            //       ==> Construct jQuery with ".noteG"
-            var namedNote = currSection.namedNotes[noteName];
-            var theSelect;
-            if (namedNote.noteName){
-                theSelect = ".note"+namedNote.noteName;
-            } else {
-                theSelect = namedNote.noteNameClass; //old style before 20240324
-            }
-            var theClass = $(scopeSelector(theSelect, tableID));
-            if (!theSelect){
-                console.log("undef:"+JSON.stringify(namedNote));
-            }
-            //console.log("named:"+theSelect+":"+theClass.length);
-            var theColorClass = lookupUserColorClass(namedNote);
-            styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+        // Route named notes per-table so observer tables show their own section's
+        // named notes rather than the current section's named notes.
+        var tableListForNamed = tableID
+            ? [tableID]
+            : Array.from(new Set(getSong().visibleNoteTables || []));
+        tableListForNamed.forEach(function(tblId) {
+            var tblSection = getSectionForTable(tblId);
+            if (!tblSection) return;
+            Object.keys(tblSection.namedNotes).forEach(function(noteName) {
+                var namedNote = tblSection.namedNotes[noteName];
+                var theSelect;
+                if (namedNote.noteName){
+                    theSelect = ".note"+namedNote.noteName;
+                } else {
+                    theSelect = namedNote.noteNameClass; //old style before 20240324
+                }
+                if (!theSelect){
+                    console.log("undef:"+JSON.stringify(namedNote));
+                    return;
+                }
+                var theClass = $(scopeSelector(theSelect, tblId));
+                var theColorClass = lookupUserColorClass(namedNote);
+                styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+            });
         });
     } else {
         $(scopeSelector('.namedNote', tableID)).hide();
     }
 
-    Object.keys(currSection.noteTables).forEach(tablename => {
-        if (tableID && tablename !== tableID) {
+    var tableNames = tableID
+        ? [tableID]
+        : Array.from(new Set((getSong().visibleNoteTables || []).concat(Object.keys(currSection.noteTables || {}))));
+
+    tableNames.forEach(tablename => {
+        var routedSection = getSectionForTable(tablename);
+        var tablearr = routedSection && routedSection.noteTables ? routedSection.noteTables[tablename] : null;
+        if (!tablearr || !tablearr.length) {
             return;
         }
-        var tablearr = currSection.noteTables[tablename];
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
@@ -693,6 +753,9 @@ export function showHighlightsForBeat(nBeat, tableID = null){
         if (arrForBeat) {
             arrForBeat.forEach(note => {
                 var noteTableID = note.tableID || tableID;
+                if (isObserverTable(noteTableID)) {
+                    return;
+                }
                 var tdNote = $(scopeSelector("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']", noteTableID));
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
                     $(scopeSelector("td.note[midinum='"+note.midinum+"']", noteTableID))

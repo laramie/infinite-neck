@@ -9,6 +9,12 @@ import { gThemes } from './themes.js';
     export function getThemes(){
         return gThemes;
     }
+	export function getThemeByIdOrDefault(themeId){
+		if (themeId && gThemes[themeId]) {
+			return gThemes[themeId];
+		}
+		return getDefaultTheme();
+	}
     export function getWidget_SelectThemes(){
         return generateSelectThemes(gThemes);
     }
@@ -186,6 +192,7 @@ import { gThemes } from './themes.js';
 	}
 
 	export function theme(themeOptions){
+		themeOptions = themeOptions || getDefaultTheme();
 		function rule(cssVarName, whichOption){
 			if (themeOptions[whichOption]){
 				return cssVarName+": "+themeOptions[whichOption]+"; ";   //no extra quotes around cssVarName or value.  This is CSS not JSON.

@@ -1,0 +1,81 @@
+{
+  "sections": [
+    {
+      "noteTables": {
+        "tblP46": [
+          {
+            "midinum": "69",
+            "row": "0",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 1
+          }
+        ],
+        "tblS6": []
+      },
+      "namedNotes": {
+        "C": {
+          "noteName": "C",
+          "colorClass": "noteScale"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "section-1",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "noteTables": {
+        "tblP46": [
+          {
+            "midinum": "72",
+            "row": "0",
+            "col": "7",
+            "colorClass": "noteChord",
+            "styleNum": 1
+          }
+        ],
+        "tblS6": []
+      },
+      "namedNotes": {
+        "G": {
+          "noteName": "G",
+          "colorClass": "noteRoot"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "section-2",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "visibleNoteTables": [
+    "tblP46",
+    "tblS6"
+  ],
+  "noteTableModels": {
+    "tblP46": {
+      "relativeSection": "",
+      "caption": "Active",
+      "enabled": true
+    },
+    "tblS6": {
+      "relativeSection": "-1",
+      "caption": "Observer",
+      "enabled": true
+    }
+  },
+  "defaultBPM": "100",
+  "rootID": "3",
+  "songName": "two-sec-one-observer",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "theme": "Autobahn"
+}

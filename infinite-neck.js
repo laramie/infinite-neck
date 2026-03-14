@@ -81,6 +81,7 @@ import {
 	auditThemes,
 	clearThemeDiffResults,
 	getDefaultTheme,
+	getThemeByIdOrDefault,
 	getThemes,
 	getWidget_SelectThemes,
 	INFO,
@@ -174,8 +175,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setNotetableProviders({
 			getBeatNumber,
 			getCurrentSection,
+			getSectionForTable,
 			getSong,
 			hideNoteClickedCaption,
+			isObserverTable,
 			resetNoteNames,
 			setNoteClickedCaption,
 			showBeats,
@@ -233,6 +236,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function getCurrentSection(){
 	    return getSong().getCurrentSection();
+	}
+
+	export function getSectionForTable(tableID = null){
+		return getSong().getSectionForTable(tableID);
+	}
+
+	export function isObserverTable(tableID = null){
+		return getSong().isObserverTable(tableID);
 	}
 
 	export function getSectionsCurrentIndex(){
@@ -891,6 +902,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		}
 		getSong().addSections(jsonObj);
+		getSong().hydrateNoteTableRegistry(jsonObj);
 		getSong().graveyard = makeGraveyard(getSong().graveyard);
 
 		var userTheme = getSong().userTheme;
@@ -911,7 +923,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideGraveyard();
 		installDefaultColorDicts();
 
-		$('#selThemes').val(getSong().theme).change();
+		const selectedThemeId = $('#selThemes').val();
+		const fallbackThemeId = (selectedThemeId && getThemes()[selectedThemeId])
+			? selectedThemeId
+			: getDefaultTheme().id;
+		const safeTheme = getThemeByIdOrDefault(getSong().theme || fallbackThemeId);
+		getSong().theme = safeTheme.id;
+		$('#selThemes').val(safeTheme.id).change();
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
 
@@ -1221,22 +1239,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		export function getNamedNoteOpacity(){
-			return $("#rangeNamedNoteOpacity").attr("value");
+			return $("#rangeNamedNoteOpacity").val();
 		}
 
 		export function setNamedNoteOpacity(newValue){
-			$("#rangeNamedNoteOpacity").attr("value", (newValue));
+			$("#rangeNamedNoteOpacity").val(newValue);
 			setNamedNoteOpacity_inner(null, newValue);
 		}
 
 		//======== SingleNote opacity ==========
 
 		export function getSingleNoteOpacity(){
-			return $("#rangeSingleNoteOpacity").attr("value");
+			return $("#rangeSingleNoteOpacity").val();
 		}
 
 		export function setSingleNoteOpacity(newValue){
-			$("#rangeSingleNoteOpacity").attr("value", (newValue));
+			$("#rangeSingleNoteOpacity").val(newValue);
 			setSingleNoteOpacity_inner(null, newValue);
 		}
 
@@ -1254,11 +1272,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//======== TinyNote opacity ==========
 
 		export function getTinyNoteOpacity(){
-			return $("#rangeTinyNoteOpacity").attr("value");
+			return $("#rangeTinyNoteOpacity").val();
 		}
 
 		export function setTinyNoteOpacity(newValue){
-			$("#rangeTinyNoteOpacity").attr("value", (newValue));
+			$("#rangeTinyNoteOpacity").val(newValue);
 			setTinyNoteOpacity_inner(null, newValue);
 		}
 
@@ -1393,9 +1411,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().namedNoteOpacity = options.namedNoteOpacity;
 		getSong().singleNoteOpacity = options.singleNoteOpacity;
 		getSong().tinyNoteOpacity = options.tinyNoteOpacity;
-		$("#rangeNamedNoteOpacity").attr("value", options.namedNoteOpacity);
-		$("#rangeSingleNoteOpacity").attr("value", options.singleNoteOpacity);
-		$("#rangeTinyNoteOpacity").attr("value", options.tinyNoteOpacity);
+		$("#rangeNamedNoteOpacity").val(options.namedNoteOpacity);
+		$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
+		$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
 
 		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value);
 		try {
@@ -2142,7 +2160,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#selThemes').change(function() {
 			var id = this.id;
 			var val =  this.value;
-			var selectedTheme = getThemes()[val];
+			var selectedTheme = getThemeByIdOrDefault(val);
 			theme(selectedTheme);
 			themeToControls(getDefaultTheme());  //Not all themes have all values, so reset all the dropdowns with theme "Default" first.
 			themeToControls(selectedTheme);
@@ -2241,8 +2259,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	/** After calling this, choose a theme either by default or by looking in song you just opened for USER theme. */
 	export function rebuildThemesDropdown(){
+		var selectedThemeId = $('#selThemes').val();
 		$('#SelectThemesDest').html(getWidget_SelectThemes());  //must come before bindThemeEvents()
 		bindThemeEvents();
+		if (selectedThemeId && getThemes()[selectedThemeId]) {
+			$('#selThemes').val(selectedThemeId);
+		}
 		auditThemes();//sends WARN messages, so hide after.
 		$('#warny').hide();
 		$('#themeTableResults').hide();

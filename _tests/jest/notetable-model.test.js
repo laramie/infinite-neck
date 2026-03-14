@@ -78,4 +78,46 @@ describe('Song integration with NoteTableRegistry (P0)', () => {
         const persisted = JSON.parse(JSON.stringify(song));
         expect(persisted.noteTableRegistry).toBeUndefined();
     });
+
+    test('getSectionForTable resolves observer tables through relativeSection', () => {
+        const data = readSong('songs/tests/display-options.json');
+        data.visibleNoteTables = ['tblNate', 'tblMyra'];
+        data.noteTableModels = {
+            tblNate: { relativeSection: '', caption: 'Active', enabled: true },
+            tblMyra: { relativeSection: '^1', caption: 'Observer', enabled: true }
+        };
+
+        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+        song.gotoSection(2);
+
+        expect(song.getSectionForTable('tblNate')).toBe(song.getCurrentSection());
+        expect(song.getSectionForTable('tblMyra')).toBe(song.getSections()[1]);
+    });
+
+    test('isObserverTable reflects NoteTableRegistry state', () => {
+        const data = readSong('songs/tests/display-options.json');
+        data.visibleNoteTables = ['tblNate', 'tblMyra'];
+        data.noteTableModels = {
+            tblNate: { relativeSection: '', caption: 'Active', enabled: true },
+            tblMyra: { relativeSection: '&1', caption: 'Observer', enabled: true }
+        };
+
+        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+
+        expect(song.isObserverTable('tblNate')).toBe(false);
+        expect(song.isObserverTable('tblMyra')).toBe(true);
+        expect(song.isObserverTable(null)).toBe(false);
+    });
+
+    test('two-sec-one-observer fixture routes observer table to previous section', () => {
+        const data = readSong('songs/tests/two-sec-one-observer.json');
+        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+
+        song.gotoSection(1);
+
+        expect(song.isObserverTable('tblP46')).toBe(false);
+        expect(song.isObserverTable('tblS6')).toBe(true);
+        expect(song.getSectionForTable('tblP46')).toBe(song.getCurrentSection());
+        expect(song.getSectionForTable('tblS6')).toBe(song.getSections()[0]);
+    });
 });

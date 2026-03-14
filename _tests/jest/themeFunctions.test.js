@@ -1,4 +1,4 @@
-import { getDefaultTheme, getThemes, getWidget_SelectThemes } from '../../themeFunctions.js';
+import { getDefaultTheme, getThemeByIdOrDefault, getThemes, getWidget_SelectThemes } from '../../themeFunctions.js';
 
 describe('themeFunctions baseline contracts', () => {
     test('getDefaultTheme returns the Default theme object', () => {
@@ -21,6 +21,21 @@ describe('themeFunctions baseline contracts', () => {
             expect(themes[id].id).toBe(id);
             expect(themes[id]).toHaveProperty('caption');
         });
+    });
+
+    test('getThemeByIdOrDefault falls back to Default for missing ids', () => {
+        const def = getDefaultTheme();
+
+        expect(getThemeByIdOrDefault()).toBe(def);
+        expect(getThemeByIdOrDefault('')).toBe(def);
+        expect(getThemeByIdOrDefault('not-a-real-theme')).toBe(def);
+    });
+
+    test('getThemeByIdOrDefault returns the requested theme when present', () => {
+        const themes = getThemes();
+        const nonDefaultId = Object.keys(themes).find((id) => id !== 'Default');
+
+        expect(getThemeByIdOrDefault(nonDefaultId)).toBe(themes[nonDefaultId]);
     });
 
     test('getWidget_SelectThemes includes all theme ids in the select HTML', () => {
