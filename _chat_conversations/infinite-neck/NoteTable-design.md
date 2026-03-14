@@ -643,6 +643,8 @@ Recommended sequence:
 - Keep behavior equivalent except for scoping.
 - Product decision from UI review: note highlight behavior (`noteHighlight` and `noteHighlightSingle`) remains global across visible tables for now, matching legacy behavior and musical intent.
 - The new optional `tableID` scoping hooks stay in place as groundwork; a future setting may allow single-table highlight mode.
+- Deferred note: git tag `multi-MIDI-highlights-introduced` marks the point where multiple recorded MIDI highlights began crossing visible tables.
+- Deferred note: non-recorded highlight behavior is acceptable for now, but recorded MIDI highlights across different tables should eventually render with different colors per table; otherwise distinct notes can look falsely identical. Revisit this later rather than folding it into the current phase.
 - Commit message suggestion: `P1 selector scoping: table-specific DOM selection`.
 
 3. Phase C (P2 + P3): Read routing and observer behavior
