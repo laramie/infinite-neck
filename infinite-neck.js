@@ -129,6 +129,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
 
+	function scopeSelector(selector, tableID = null) {
+		if (!tableID) {
+			return selector;
+		}
+		return `#${tableID} ${selector}`;
+	}
+
 	export const NUM_FRETS_MAX = 108;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
@@ -579,27 +586,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		replay();
 	}
 
-	export function buildCells(sharps, options) {
+	export function buildCells(sharps, options, tableID = null) {
 		if (sharps) {
-			buildCellsFromSelector("td.noteAb", "G", SHARP, 11, options);
-			buildCellsFromSelector("td.noteBb", "A", SHARP, 1, options);
-			buildCellsFromSelector("td.noteDb", "C", SHARP, 4, options);
-			buildCellsFromSelector("td.noteEb", "D", SHARP, 6, options);
-			buildCellsFromSelector("td.noteGb", "F", SHARP, 9, options);
+			buildCellsFromSelector("td.noteAb", "G", SHARP, 11, options, tableID);
+			buildCellsFromSelector("td.noteBb", "A", SHARP, 1, options, tableID);
+			buildCellsFromSelector("td.noteDb", "C", SHARP, 4, options, tableID);
+			buildCellsFromSelector("td.noteEb", "D", SHARP, 6, options, tableID);
+			buildCellsFromSelector("td.noteGb", "F", SHARP, 9, options, tableID);
 		} else {
-			buildCellsFromSelector("td.noteAb","A", FLAT, 11, options);
-			buildCellsFromSelector("td.noteBb","B", FLAT, 1, options);
-			buildCellsFromSelector("td.noteDb","D", FLAT, 4, options);
-			buildCellsFromSelector("td.noteEb","E", FLAT, 6, options);
-			buildCellsFromSelector("td.noteGb","G", FLAT, 9, options);
+			buildCellsFromSelector("td.noteAb","A", FLAT, 11, options, tableID);
+			buildCellsFromSelector("td.noteBb","B", FLAT, 1, options, tableID);
+			buildCellsFromSelector("td.noteDb","D", FLAT, 4, options, tableID);
+			buildCellsFromSelector("td.noteEb","E", FLAT, 6, options, tableID);
+			buildCellsFromSelector("td.noteGb","G", FLAT, 9, options, tableID);
 		}
-		buildCellsFromSelector("td.noteA","A", NATURAL, 0, options);
-		buildCellsFromSelector("td.noteB","B", NATURAL, 2, options);
-		buildCellsFromSelector("td.noteC","C", NATURAL, 3, options);
-		buildCellsFromSelector("td.noteD","D", NATURAL, 5, options);
-		buildCellsFromSelector("td.noteE","E", NATURAL, 7, options);
-		buildCellsFromSelector("td.noteF","F", NATURAL, 8, options);
-		buildCellsFromSelector("td.noteG","G", NATURAL, 10, options);
+		buildCellsFromSelector("td.noteA","A", NATURAL, 0, options, tableID);
+		buildCellsFromSelector("td.noteB","B", NATURAL, 2, options, tableID);
+		buildCellsFromSelector("td.noteC","C", NATURAL, 3, options, tableID);
+		buildCellsFromSelector("td.noteD","D", NATURAL, 5, options, tableID);
+		buildCellsFromSelector("td.noteE","E", NATURAL, 7, options, tableID);
+		buildCellsFromSelector("td.noteF","F", NATURAL, 8, options, tableID);
+		buildCellsFromSelector("td.noteG","G", NATURAL, 10, options, tableID);
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,
@@ -1306,25 +1313,25 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	//var gLastWhiteBackgroundColor = null;
 	//var gLastBlackBackgroundColor = null;
-	export function showAllNoteNames(show){
+	export function showAllNoteNames(show, tableID = null){
 		if (show){
-			var LastBlackBackgroundColor = $('.noteBlackKey').css("background-color");
-			var LastWhiteBackgroundColor  = $('.noteWhiteKey').css("background-color");
+			var LastBlackBackgroundColor = $(scopeSelector('.noteBlackKey', tableID)).css("background-color");
+			var LastWhiteBackgroundColor  = $(scopeSelector('.noteWhiteKey', tableID)).css("background-color");
 			var hexbb = convertRGB_to_HEX(LastBlackBackgroundColor);
 			var hexww = convertRGB_to_HEX(LastWhiteBackgroundColor);
 			var bw = false; //false is cooler. //force choice of Black/White color for all background colors.  mid-tone colors don't work so well.
 			var fontblack = invertColor(hexbb, bw);
 			var fontwhite = invertColor(hexww, bw);
-			$('.noteWhiteKey').css({color: fontwhite});
-			$('.noteBlackKey').css({color: fontblack});
+			$(scopeSelector('.noteWhiteKey', tableID)).css({color: fontwhite});
+			$(scopeSelector('.noteBlackKey', tableID)).css({color: fontblack});
 		} else {
 			//if (gLastBlackBackgroundColor && gLastWhiteBackgroundColor){
 			//		$('.noteWhiteKey').css({color: "transparent"});   //gLastWhiteBackgroundColor});
 			//		$('.noteBlackKey').css({color: "transparent"});   //gLastBlackBackgroundColor});
 			//		console.log("gLastBlackBackgroundColor:"+gLastBlackBackgroundColor);
 			//} else {
-			$('.noteWhiteKey').css({color: "transparent"}); //this must sync with .noteWhiteKey's default background color so letters disappear.
-			$('.noteBlackKey').css({color: "transparent"});  //ditto
+			$(scopeSelector('.noteWhiteKey', tableID)).css({color: "transparent"}); //this must sync with .noteWhiteKey's default background color so letters disappear.
+			$(scopeSelector('.noteBlackKey', tableID)).css({color: "transparent"});  //ditto
 			//}
 			//alert("else "+$('.noteWhiteKey').css("color"));
 

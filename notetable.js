@@ -59,6 +59,23 @@ function turnOffHiding() { return notetableProviders.turnOffHiding(); }
 
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
+function scopeSelector(selector, tableID = null) {
+    if (!tableID) {
+        return selector;
+    }
+    return `#${tableID} ${selector}`;
+}
+
+function resolveTableID(cell, explicitTableID = null) {
+    if (explicitTableID) {
+        return explicitTableID;
+    }
+    if (!cell || !cell.length) {
+        return null;
+    }
+    return cell.attr('celltable') || cell.closest('table').attr('id') || null;
+}
+
 export function isRecording(){
     var btn = $("#btnRecord");
     var recording = btn.attr("recording");
@@ -156,8 +173,8 @@ export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, not
      return result;
 }
 
-export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options){
-    var cellsSet = $(selector);
+export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options, tableID = null){
+    var cellsSet = $(scopeSelector(selector, tableID));
 	cellsSet.each(function(i, obj){
         var cell=$(this);
         var td = $(obj);
@@ -206,7 +223,8 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 
 //=================================CLICK HANDLING===============================
 
-export function colorNote(cell) {
+export function colorNote(cell, tableID = null) {
+    const activeTableID = resolveTableID(cell, tableID);
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -214,11 +232,11 @@ export function colorNote(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
-    $("td.note.noteHighlight").removeClass("noteHighlight");
+    $(scopeSelector("td.note.noteHighlight", activeTableID)).removeClass("noteHighlight");
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
 
     if (  theHighlight != "MidiPitchesSingle" ){
-        $("td.note.noteHighlightSingle").removeClass("noteHighlightSingle");
+        $(scopeSelector("td.note.noteHighlightSingle", activeTableID)).removeClass("noteHighlightSingle");
     }
     switch (theHighlight){
         case "Named":
@@ -319,10 +337,10 @@ export function colorNote(cell) {
         } else if (doHighlight){
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
+                $(scopeSelector("td.note[midinum='"+midinum+"']", activeTableID)).removeClass("noteHighlight");
             } else {
                 cell.addClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").addClass("noteHighlight");
+                $(scopeSelector("td.note[midinum='"+midinum+"']", activeTableID)).addClass("noteHighlight");
             }
             if (isRecording()){
               	recordHighlight(doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
@@ -331,10 +349,10 @@ export function colorNote(cell) {
        } else if (doHighlightSingle){
            if (doEraseHighlightSingle){
                cell.removeClass("noteHighlightSingle");
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(scopeSelector("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']", activeTableID));
                tdn.removeClass("noteHighlightSingle");
            } else {
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(scopeSelector("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']", activeTableID));
                tdn.addClass("noteHighlightSingle");
            }
            if (isRecording()){
@@ -347,13 +365,13 @@ export function colorNote(cell) {
         }
 
         if(doDropper) {
-            dropper(cell, cellcol, cellrow, styleNum, noteName);
+            dropper(cell, cellcol, cellrow, styleNum, noteName, activeTableID);
             return;
         }
         if (doKeep) {
             return;
         }
-        var noteNameElements = $('.note' + noteName); // G --> .noteG
+        var noteNameElements = $(scopeSelector('.note' + noteName, activeTableID)); // G --> .noteG
         var namedNoteDiv = noteNameElements.find(".namedNote");
 
         // NOTE: this is a little brittle: if you add any other structural classes besides "namedNote", this breaks.
@@ -395,8 +413,9 @@ export function colorNote(cell) {
     }
 }
 
-export function dropper(cell, cellcol, cellrow, styleNum, noteName){
+export function dropper(cell, cellcol, cellrow, styleNum, noteName, tableID = null){
     var jCell = $(cell);
+    const activeTableID = resolveTableID(jCell, tableID);
     if (noteName && styleNum == 0){ //namedNote
         var note = getCurrentSection().namedNotes[noteName];
         if (note){
@@ -405,7 +424,7 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
                 .attr('checked', 'checked')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
             setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
+            $(scopeSelector("td.note", activeTableID)).css({"cursor": "auto"});
         }
         return;
     }
@@ -421,7 +440,7 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
                 .attr('checked', 'checked')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
             setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
+            $(scopeSelector("td.note", activeTableID)).css({"cursor": "auto"});
         }
     }
 }
@@ -551,7 +570,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 //=================================REPLAY========================================
 
-export function replay(){
+export function replay(tableID = null){
     var currSection = getCurrentSection();
     var hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
     var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
@@ -571,7 +590,7 @@ export function replay(){
             } else {
                 theSelect = namedNote.noteNameClass; //old style before 20240324
             }
-            var theClass = $(theSelect);
+            var theClass = $(scopeSelector(theSelect, tableID));
             if (!theSelect){
                 console.log("undef:"+JSON.stringify(namedNote));
             }
@@ -580,10 +599,13 @@ export function replay(){
             styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
         });
     } else {
-        $('.namedNote').hide();
+        $(scopeSelector('.namedNote', tableID)).hide();
     }
 
     Object.keys(currSection.noteTables).forEach(tablename => {
+        if (tableID && tablename !== tableID) {
+            return;
+        }
         var tablearr = currSection.noteTables[tablename];
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
@@ -645,32 +667,32 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 }
 
 
-export function showHighlightsForBeat(nBeat){
+export function showHighlightsForBeat(nBeat, tableID = null){
     var dict = getCurrentSection().recordedNotes;
     if (dict){
 
-        $("td.note").removeClass("noteHighlight");
+        $(scopeSelector("td.note", tableID)).removeClass("noteHighlight");
 
-        $("td.note").removeClass("noteHighlightSingle");
+        $(scopeSelector("td.note", tableID)).removeClass("noteHighlightSingle");
 
-		$("div.Fingering.Playback")
+        $(scopeSelector("div.Fingering.Playback", tableID))
 			.attr("class", "Fingering")    //remove marker classes: FingeringPlayed Playback, and any color
 			.hide();
 
-		$("div.singleNote.Playback")
+        $(scopeSelector("div.singleNote.Playback", tableID))
 		    .attr("class", "singleNote")  //remove marker classes: singleNote singleNotePlayed Playback, and any color
 			.hide();
 
-		$("div.tinyNote.Playback")
+        $(scopeSelector("div.tinyNote.Playback", tableID))
 			.attr("class", "tinyNote")   //remove marker classes: [tinyNotePlayed tinyNotePlayedBend Playback] and any color
 		 	.hide();
 
 		var arrForBeat = dict[""+nBeat];
         if (arrForBeat) {
             arrForBeat.forEach(note => {
-                var tdNote = $("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
+                var tdNote = $(scopeSelector("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']", tableID));
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $("td.note[midinum='"+note.midinum+"']")
+                    $(scopeSelector("td.note[midinum='"+note.midinum+"']", tableID))
                         .addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     tdNote
@@ -712,8 +734,8 @@ export function showHighlightsForBeat(nBeat){
     }
 }
 
-export function highlightOneNote(noteName){
-	var selector = "td.note"+noteName;
+export function highlightOneNote(noteName, tableID = null){
+    var selector = scopeSelector("td.note"+noteName, tableID);
       $(selector).addClass("noteHighlight");
 	  //console.log("Highlighting:"+noteName+" :: "+selector);
 }
@@ -722,53 +744,59 @@ export function highlightOneNote(noteName){
 
 //=================================CLEARING========================================
 
-export function fullRepaint(){
+export function fullRepaint(tableID = null){
+    if (tableID) {
+        clearAll(tableID);
+        replay(tableID);
+        showBeats();
+        return;
+    }
     clearAll();
     resetNoteNames();
     showBeats();
 }
 
-export function clearAll() {
+export function clearAll(tableID = null) {
     hideNoteClickedCaption();
-    var tdNote = $("td.note");
+    var tdNote = $(scopeSelector("td.note", tableID));
     tdNote.children(".NoteDisplay").removeClass("NoteActive");
 
     var namedNoteDiv = tdNote.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
 
-    var tdNoteTinyNote = $("td.note .tinyNote");
+    var tdNoteTinyNote = $(scopeSelector("td.note .tinyNote", tableID));
     tdNoteTinyNote.removeClass().addClass("tinyNote");
 
-    $("td.note .singleNote").removeClass().addClass("singleNote");
+    $(scopeSelector("td.note .singleNote", tableID)).removeClass().addClass("singleNote");
 
-    $("td.note .Fingering").removeClass().addClass("Fingering");
+    $(scopeSelector("td.note .Fingering", tableID)).removeClass().addClass("Fingering");
 
-    $(".noteHighlight").css("outline", "");
-    clearHighlights();
-    colorWhiteBlackKeys();
+    $(scopeSelector(".noteHighlight", tableID)).css("outline", "");
+    clearHighlights(tableID);
+    colorWhiteBlackKeys(tableID);
 }
 
-export function clearHighlights(){
-    $("td.note").removeClass("noteHighlight");
-    $("td.note").removeClass("noteHighlightSingle");
+export function clearHighlights(tableID = null){
+    $(scopeSelector("td.note", tableID)).removeClass("noteHighlight");
+    $(scopeSelector("td.note", tableID)).removeClass("noteHighlightSingle");
 }
 
 
 //==================FILLING=====================================================
 
-export function colorWhiteBlackKeys() {
-    $('.noteDb:not(.nut,.nutR)').addClass("noteBlackKey");
-    $('.noteEb:not(.nut,.nutR)').addClass("noteBlackKey");
-    $('.noteGb:not(.nut,.nutR)').addClass("noteBlackKey");
-    $('.noteAb:not(.nut,.nutR)').addClass("noteBlackKey");
-    $('.noteBb:not(.nut,.nutR)').addClass("noteBlackKey");
-    $('.noteD:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteE:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteF:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteG:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteA:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteB:not(.nut,.nutR)').addClass("noteWhiteKey");
-    $('.noteC:not(.nut,.nutR)').addClass("noteWhiteKey");
+export function colorWhiteBlackKeys(tableID = null) {
+    $(scopeSelector('.noteDb:not(.nut,.nutR)', tableID)).addClass("noteBlackKey");
+    $(scopeSelector('.noteEb:not(.nut,.nutR)', tableID)).addClass("noteBlackKey");
+    $(scopeSelector('.noteGb:not(.nut,.nutR)', tableID)).addClass("noteBlackKey");
+    $(scopeSelector('.noteAb:not(.nut,.nutR)', tableID)).addClass("noteBlackKey");
+    $(scopeSelector('.noteBb:not(.nut,.nutR)', tableID)).addClass("noteBlackKey");
+    $(scopeSelector('.noteD:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteE:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteF:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteG:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteA:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteB:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
+    $(scopeSelector('.noteC:not(.nut,.nutR)', tableID)).addClass("noteWhiteKey");
 }
 
 export function fillChord() {
