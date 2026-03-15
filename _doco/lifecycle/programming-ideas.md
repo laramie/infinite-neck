@@ -1,3 +1,11 @@
+# Table of Contents
+
+- [Idea: Using jsonata](#idea-using-jsonata)
+- [Idea: future menu items to implement in menujs](#idea-future-menu-items-to-implement-in-menujs)
+- [Idea: Draw lines using SVG](#idea-draw-lines-using-svg)
+- [Idea: Using navigatormediadevicesgetdisplaymedia-to-attempt-screen-capturestreamcaptures](#idea-using-navigatormediadevicesgetdisplaymedia-to-attempt-screen-capturestreamcaptures)
+- [Idea: Refactor makeSong() into real class Song javascript class](#idea-refactor-makesong-into-real-class-song-javascript-class)
+
 # Programming Ideas
 
 ---
