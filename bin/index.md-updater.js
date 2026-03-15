@@ -1,5 +1,6 @@
-const fs = require('fs');
-const path = require('path');
+
+import fs from 'fs';
+import path from 'path';
 
 function updateIndex(dir) {
   const indexPath = path.join(dir, 'index.md');
@@ -25,9 +26,9 @@ function updateIndex(dir) {
   fs.writeFileSync(indexPath, out);
 }
 
-// Usage: node update-index.js _doco/design
-if (require.main === module) {
+// Usage: node index.md-updater.js _doco/design
+if (import.meta.url === `file://${process.argv[1]}`) {
   const dir = process.argv[2];
-  if (!dir) throw new Error('Usage: node update-index.js <directory>');
+  if (!dir) throw new Error('Usage: node index.md-updater.js <directory>');
   updateIndex(dir);
 }
