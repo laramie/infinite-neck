@@ -3,7 +3,7 @@
 - [Idea: Using jsonata](#idea-using-jsonata)
 - [Idea: future menu items to implement in menujs](#idea-future-menu-items-to-implement-in-menujs)
 - [Idea: Draw lines using SVG](#idea-draw-lines-using-svg)
-- [Idea: Using navigatormediadevicesgetdisplaymedia-to-attempt-screen-capturestreamcaptures](#idea-using-navigatormediadevicesgetdisplaymedia-to-attempt-screen-capturestreamcaptures)
+- [Idea: Using navigator to screen-capture](#idea-using-navigator-to-screen-capture)
 - [Idea: Refactor makeSong() into real class Song javascript class](#idea-refactor-makesong-into-real-class-song-javascript-class)
 
 # Programming Ideas
@@ -55,11 +55,12 @@ This thing worked, but uses Promises, so was a bit heavy, so I just used JSONPat
 
 ---
 
-## Idea: Using navigator.mediaDevices.getDisplayMedia() to attempt screen captureStreamCaptures
+## Idea: Using navigator to screen-capture
 
 - **Summary:**
   - Created a sample implementation here, recordy()
 - **Status:**
+  - Idea was to use: navigator.mediaDevices.getDisplayMedia to screen capture.
   - Doesn't work
 
 ```js
