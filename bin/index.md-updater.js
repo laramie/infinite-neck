@@ -5,7 +5,7 @@ import path from 'path';
 function updateIndex(dir) {
   const indexPath = path.join(dir, 'index.md');
   const files = fs.readdirSync(dir)
-    .filter(f => f.endsWith('.md') && f !== 'index.md')
+    .filter(f => ((f.endsWith('.md') && f !== 'index.md') || (f.endsWith('.txt') && f !== 'index.txt')))
     .sort();
 
   let notes = {};
