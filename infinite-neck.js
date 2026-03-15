@@ -1,118 +1,3 @@
-// Normalize song tunings: ensure all song-owned tunings and references have unique IDs, never colliding with built-in allTunings
-function normalizeSongTuningIDs(song) {
-	if (!song) return;
-	const builtInIDs = new Set(allTunings.tunings.map(t => t.baseID));
-	const usedIDs = new Set();
-	// Helper to generate a unique ID
-	function uniqueID(baseID) {
-		let id = baseID;
-		let i = 1;
-		while (builtInIDs.has(id) || usedIDs.has(id)) {
-			id = baseID + '_' + i;
-			i++;
-		}
-		usedIDs.add(id);
-		return id;
-	}
-
-	// 1. Gather all referenced tbl* IDs from visibleNoteTables and all section.noteTables
-	const referencedBaseIDs = new Set();
-	if (Array.isArray(song.visibleNoteTables)) {
-		song.visibleNoteTables.forEach(tableID => {
-			let baseID = tableID.startsWith('tbl') ? tableID.substring(3) : tableID;
-			referencedBaseIDs.add(baseID);
-		});
-	}
-	if (Array.isArray(song.sections)) {
-		song.sections.forEach(section => {
-			if (section && section.noteTables && typeof section.noteTables === 'object') {
-				Object.keys(section.noteTables).forEach(tableID => {
-					let baseID = tableID.startsWith('tbl') ? tableID.substring(3) : tableID;
-					referencedBaseIDs.add(baseID);
-				});
-			}
-		});
-	}
-
-	// 2. Ensure myTunings contains a unique instance for each referenced tbl*, and no duplicates
-	let myTunings = Array.isArray(song.myTunings) ? song.myTunings.slice() : [];
-	const myTuningsMap = new Map();
-	myTunings.forEach(tuning => {
-		if (tuning && tuning.baseID) {
-			myTuningsMap.set(tuning.baseID, tuning);
-		}
-	});
-	referencedBaseIDs.forEach(baseID => {
-		if (!myTuningsMap.has(baseID)) {
-			// Try to find in song.tunings, else create a default
-			let found = null;
-			if (Array.isArray(song.tunings)) found = song.tunings.find(t => t.baseID === baseID);
-			if (!found) found = allTunings.tunings.find(t => t.baseID === baseID);
-			if (found) {
-				// Clone to avoid mutating built-ins
-				let clone = JSON.parse(JSON.stringify(found));
-				clone.instance = true;
-				clone.visible = false;
-				myTuningsMap.set(baseID, clone);
-			}
-		}
-	});
-	// Remove any myTunings not referenced
-	for (let key of myTuningsMap.keys()) {
-		if (!referencedBaseIDs.has(key)) {
-			myTuningsMap.delete(key);
-		}
-	}
-	// Assign back, sorted for determinism
-	song.myTunings = Array.from(myTuningsMap.values());
-
-	// 3. Ensure visibleNoteTables contains only unique IDs, all present in myTunings
-	let uniqueVisible = [];
-	let seen = new Set();
-	if (Array.isArray(song.visibleNoteTables)) {
-		song.visibleNoteTables.forEach(tableID => {
-			let baseID = tableID.startsWith('tbl') ? tableID.substring(3) : tableID;
-			if (!seen.has(baseID) && myTuningsMap.has(baseID)) {
-				uniqueVisible.push('tbl' + baseID);
-				seen.add(baseID);
-			}
-		});
-	}
-	song.visibleNoteTables = uniqueVisible;
-
-	// 4. Mark visible in myTunings for those in visibleNoteTables
-	song.myTunings.forEach(tuning => {
-		tuning.visible = song.visibleNoteTables.some(tableID => tableID.endsWith(tuning.baseID));
-	});
-
-	// 5. section noteTables: ensure keys match myTunings baseIDs
-	if (Array.isArray(song.sections)) {
-		song.sections.forEach(section => {
-			if (section && section.noteTables && typeof section.noteTables === 'object') {
-				const newNoteTables = {};
-				Object.keys(section.noteTables).forEach(tableID => {
-					let baseID = tableID.startsWith('tbl') ? tableID.substring(3) : tableID;
-					if (myTuningsMap.has(baseID)) {
-						newNoteTables['tbl' + baseID] = section.noteTables[tableID];
-					}
-				});
-				section.noteTables = newNoteTables;
-			}
-		});
-	}
-
-	// 6. noteTableModels: ensure keys match myTunings baseIDs
-	if (song.noteTableModels && typeof song.noteTableModels === 'object') {
-		const newModels = {};
-		Object.keys(song.noteTableModels).forEach(tableID => {
-			let baseID = tableID.startsWith('tbl') ? tableID.substring(3) : tableID;
-			if (myTuningsMap.has(baseID)) {
-				newModels['tbl' + baseID] = song.noteTableModels[tableID];
-			}
-		});
-		song.noteTableModels = newModels;
-	}
-}
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
 import {
@@ -514,107 +399,32 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		export function collectSongOwnedTunings(song) {
-			   if (!song) {
-				   return [];
-			   }
-			   // 1. Build a map of baseID -> tuning, with precedence: section noteTables > visibleNoteTables > myTunings > song.tunings > allTunings
-			   var baseIDMap = {};
-			   // Helper to add/replace by baseID
-			   function putTuning(tuning, opts = {}) {
-				   if (!tuning || !tuning.baseID || tuning.baseID === "USER") return;
-				   // If visible, always take precedence
-				   if (opts.forceVisible) {
-					   baseIDMap[tuning.baseID] = Object.assign({}, cloneTuningForSong(tuning), { visible: true, instance: true });
-					   return;
-				   }
-				   // Only add if not already present
-				   if (!baseIDMap[tuning.baseID]) {
-					   baseIDMap[tuning.baseID] = cloneTuningForSong(tuning);
-				   }
-			   }
-			   // Helper to generate a unique instance ID for a tuning, but only if needed
-			   function generateInstanceID(baseID, song) {
-				   // If baseID already ends with _songfile or _1, _2, etc., keep as is
-				   if (/_(songfile|\d+)$/.test(baseID)) return baseID;
-				   // Only generate a new instance if no matching tuning exists in myTunings or tunings
-				   let exists = (id) => Object.keys(baseIDMap).includes(id)
-					   || (Array.isArray(song.myTunings) && song.myTunings.some(t => t.baseID === id))
-					   || (Array.isArray(song.tunings) && song.tunings.some(t => t.baseID === id));
-				   if (!exists(baseID)) return baseID;
-				   let i = 1;
-				   while (exists(baseID + '_' + i)) i++;
-				   return baseID + '_' + i;
-			   }
+			if (!song) {
+				return [];
+			}
+			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
+				return tuning.baseID;
+			}));
+			var customTunings = [];
+			var seenBaseIDs = new Set();
+			var addCustomTuning = function(tuning) {
+				if (!tuning || !tuning.baseID || tuning.baseID === "USER") {
+					return;
+				}
+				if (builtInBaseIDs.has(tuning.baseID) || seenBaseIDs.has(tuning.baseID)) {
+					return;
+				}
+				seenBaseIDs.add(tuning.baseID);
+				customTunings.push(cloneTuningForSong(tuning));
+			};
 
-			   // 1. Section noteTables (highest precedence, always visible)
-			   if (Array.isArray(song.sections)) {
-				   song.sections.forEach(function(section) {
-					   if (!section || !section.noteTables || typeof section.noteTables !== 'object') return;
-					   Object.keys(section.noteTables).forEach(function(tableID) {
-						   var baseID = tableID.startsWith(TABLE_ID_PREFIX) ? tableID.substring(TABLE_ID_PREFIX.length) : tableID;
-						   // Try to find the tuning in myTunings, song.tunings, or allTunings
-						   var source = null;
-						   var instanceID = baseID;
-						   if (Array.isArray(song.myTunings)) {
-							   source = song.myTunings.find(t => t && t.baseID === baseID);
-						   }
-						   if (!source && Array.isArray(song.tunings)) {
-							   source = song.tunings.find(t => t && t.baseID === baseID);
-						   }
-						   if (!source) {
-							   source = allTunings.tunings.find(t => t.baseID === baseID);
-						   }
-						   // Only generate a new instance if no matching tuning exists
-						   if (source && !Object.keys(baseIDMap).includes(baseID) && !((Array.isArray(song.myTunings) && song.myTunings.some(t => t.baseID === baseID)) || (Array.isArray(song.tunings) && song.tunings.some(t => t.baseID === baseID)))) {
-							   putTuning(source, { forceVisible: true });
-						   }
-					   });
-				   });
-			   }
-			   // 2. visibleNoteTables (next precedence, always visible)
-			   if (Array.isArray(song.visibleNoteTables)) {
-				   song.visibleNoteTables.forEach(function(tableID) {
-					   var baseID = tableID.startsWith(TABLE_ID_PREFIX) ? tableID.substring(TABLE_ID_PREFIX.length) : tableID;
-					   var source = null;
-					   var instanceID = baseID;
-					   if (Array.isArray(song.myTunings)) {
-						   source = song.myTunings.find(t => t && t.baseID === baseID);
-					   }
-					   if (!source && Array.isArray(song.tunings)) {
-						   source = song.tunings.find(t => t && t.baseID === baseID);
-					   }
-					   if (!source) {
-						   source = allTunings.tunings.find(t => t.baseID === baseID);
-					   }
-					   // Only generate a new instance if no matching tuning exists
-					   if (source && !Object.keys(baseIDMap).includes(baseID) && !((Array.isArray(song.myTunings) && song.myTunings.some(t => t.baseID === baseID)) || (Array.isArray(song.tunings) && song.tunings.some(t => t.baseID === baseID)))) {
-						   putTuning(source, { forceVisible: true });
-					   }
-				   });
-			   }
-			   // 3. myTunings (user custom, not visible unless referenced above)
-			   if (Array.isArray(song.myTunings)) {
-				   song.myTunings.forEach(function(tuning) {
-					   // Only add if not a built-in
-					   var isBuiltIn = allTunings.tunings.some(t => t.baseID === tuning.baseID);
-					   if (!isBuiltIn) {
-						   putTuning(tuning);
-					   }
-				   });
-			   }
-			   // 4. song.tunings (legacy, not visible unless referenced above)
-			   if (Array.isArray(song.tunings)) {
-				   song.tunings.forEach(function(tuning) {
-					   // Only add if not a built-in
-					   var isBuiltIn = allTunings.tunings.some(t => t.baseID === tuning.baseID);
-					   if (!isBuiltIn) {
-						   putTuning(tuning);
-					   }
-				   });
-			   }
-			   // 5. (Do not add allTunings unless referenced)
-			   // Return as array
-			   return Object.values(baseIDMap);
+			if (Array.isArray(song.myTunings)) {
+				song.myTunings.forEach(addCustomTuning);
+			}
+			if (Array.isArray(song.tunings)) {
+				song.tunings.forEach(addCustomTuning);
+			}
+			return customTunings;
 		}
 
 		function loadSongOwnedTunings() {
@@ -690,29 +500,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function reloadAllTuningsDisplay(){
-			   var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
-			   var myTuningsDiv = $('#divMyTuningsTab');
-			   var allTuningsDiv = $('#divAllTuningsTab');
-			   var myTunings = getSong().myTunings || [];
-			   var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
-			   myTuningsDiv.empty();
-			   allTuningsDiv.empty();
-			   myTuningsDiv
-				   .append($('<p><b>My Tunings</b></p>'))
-				   .append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
-					   tableID: MY_TUNINGS_TABLE_ID,
-					   primaryControl: 'visibility'
-				   }));
-			   allTuningsDiv
-				   .append($('<p><b>All Tunings</b></p>'))
-				   .append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
-					   tableID: ALL_TUNINGS_TABLE_ID,
-					   primaryControl: 'clone'
-				   }));
-			   if (userControls.length > 0) {
-				   allTuningsDiv.append(userControls);
-			   }
-		   TableBuilder.bindFormTuningsEvents();
+		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
+			var myTuningsDiv = $('#divMyTuningsTab');
+			var allTuningsDiv = $('#divAllTuningsTab');
+			var myTunings = getSong().myTunings || [];
+			var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
+			myTuningsDiv.empty();
+			allTuningsDiv.empty();
+			myTuningsDiv
+				.append($("<p><b>My Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
+					tableID: MY_TUNINGS_TABLE_ID,
+					primaryControl: 'visibility'
+				}));
+			allTuningsDiv
+				.append($("<p><b>All Tunings</b></p>"))
+				.append(TableBuilder.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
+					tableID: ALL_TUNINGS_TABLE_ID,
+					primaryControl: 'clone'
+				}));
+			if (userControls.length > 0) {
+				allTuningsDiv.append(userControls);
+			}
+		TableBuilder.bindFormTuningsEvents();
 	}
 
 	export function resetSharpsControls() {
@@ -1060,54 +870,53 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function openSong(str){
-	var numFoundBeforeFileLoad = TableBuilder.showTuningsForTablesInFile();
-	if (numFoundBeforeFileLoad == 0) {
-		TableBuilder.hideAllTunings();
-	}
-	var jsonObj = JSON.parse(str);
-	normalizeSongTuningIDs(jsonObj);
-	Object.assign(gSong, jsonObj);
-	loadSongOwnedTunings();
-	getSong().fixupCurrentIndexForLoadedSong();
-
-	if (getSong().userInstrumentTuning) {
-		var theUSERTuning = TableBuilder.findTuningForID("USER");
-		if (theUSERTuning) {
+		var numFoundBeforeFileLoad = TableBuilder.showTuningsForTablesInFile();
+		if (numFoundBeforeFileLoad==0){
 			TableBuilder.hideAllTunings();
-			Object.assign(theUSERTuning, getSong().userInstrumentTuning); //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
 		}
-	}
+		var jsonObj = JSON.parse(str);
+		Object.assign(gSong, jsonObj);
+		loadSongOwnedTunings();
+		getSong().fixupCurrentIndexForLoadedSong();
 
-	var frs = [];
-	Object.values(jsonObj.sections).forEach(section => {
-		var replacementSection = getSong().constructSection();
-		section = Object.assign(replacementSection, section);
-		frs.push(section);
-	});
-	jsonObj.sections = frs;
-	if (!getSong().isEmpty(getSong().getCurrentSection())) {
-		var yes = $("#cbAppendSections").prop("checked");
-		if (!yes) {
-			getSong().removeAllSections();
+		if (getSong().userInstrumentTuning){
+			var theUSERTuning = TableBuilder.findTuningForID("USER");
+			if (theUSERTuning){
+				TableBuilder.hideAllTunings();
+				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
+			}
 		}
+
+		var frs = [];
+		Object.values(jsonObj.sections).forEach(section => {
+			var replacementSection = getSong().constructSection();
+			section = Object.assign(replacementSection, section);
+			frs.push(section);
+		});
+		jsonObj.sections = frs;
+		if (!getSong().isEmpty(getSong().getCurrentSection())){
+
+			var yes = $("#cbAppendSections").prop("checked");
+			if (!yes){
+				getSong().removeAllSections();
+			}
+		}
+		getSong().addSections(jsonObj);
+		getSong().hydrateNoteTableRegistry(jsonObj);
+		getSong().graveyard = makeGraveyard(getSong().graveyard);
+
+		var userTheme = getSong().userTheme;
+		if (userTheme){
+			userTheme["id"] = "USER";
+			getThemes()["USER"] = userTheme;
+			getSong().theme = "USER";
+		}
+		rebuildThemesDropdown();
+
+		
+
+		updateAfterOpenSong();
 	}
-	getSong().addSections(jsonObj);
-	getSong().hydrateNoteTableRegistry(jsonObj);
-	getSong().graveyard = makeGraveyard(getSong().graveyard);
-
-	var userTheme = getSong().userTheme;
-	if (userTheme) {
-		userTheme["id"] = "USER";
-		getThemes()["USER"] = userTheme;
-		getSong().theme = "USER";
-	}
-	rebuildThemesDropdown();
-
-	// FINAL normalization after all assignments
-	normalizeSongTuningIDs(getSong());
-
-	updateAfterOpenSong();
-}
 
 
 	export function updateAfterOpenSong(){

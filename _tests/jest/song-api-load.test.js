@@ -89,20 +89,6 @@ describe('Headless tuning bootstrap contracts', () => {
         song.myTunings[0].caption = 'Mutated clone';
         expect(existing.caption).toBe('Alt One');
     });
-
-    test('collectSongOwnedTunings includes tunings referenced by visibleNoteTables', () => {
-        const song = createFreshHeadlessSong();
-        song.myTunings = [];
-        song.tunings = [];
-        song.visibleNoteTables = ['tblP46', 'tblS6'];
-
-        const merged = collectSongOwnedTunings(song);
-        const mergedIDs = merged.map(t => t.baseID);
-
-        expect(mergedIDs).toContain('P46');
-        expect(mergedIDs).toContain('S6');
-        expect(merged.every(t => t.visible === true)).toBe(true);
-    });
 });
 
 function createSectionWithCaption(song, caption) {

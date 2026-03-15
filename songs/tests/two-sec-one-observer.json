@@ -2,7 +2,7 @@
   "sections": [
     {
       "noteTables": {
-        "tblP46_songfile": [
+        "tblP46": [
           {
             "midinum": "69",
             "row": "0",
@@ -11,7 +11,7 @@
             "styleNum": 1
           }
         ],
-        "tblS6_songfile": []
+        "tblS6": []
       },
       "namedNotes": {
         "C": {
@@ -29,7 +29,7 @@
     },
     {
       "noteTables": {
-        "tblP46_songfile": [
+        "tblP46": [
           {
             "midinum": "72",
             "row": "0",
@@ -38,7 +38,7 @@
             "styleNum": 1
           }
         ],
-        "tblS6_songfile": []
+        "tblS6": []
       },
       "namedNotes": {
         "G": {
@@ -56,16 +56,16 @@
     }
   ],
   "visibleNoteTables": [
-    "tblP46_songfile",
-    "tblS6_songfile"
+    "tblP46",
+    "tblS6"
   ],
   "noteTableModels": {
-    "tblP46_songfile": {
+    "tblP46": {
       "relativeSection": "",
       "caption": "Active",
       "enabled": true
     },
-    "tblS6_songfile": {
+    "tblS6": {
       "relativeSection": "^1",
       "caption": "Observer",
       "enabled": true
@@ -77,73 +77,5 @@
   "namedNoteOpacity": "1.00",
   "singleNoteOpacity": "1.00",
   "tinyNoteOpacity": "1.00",
-  "theme": "Autobahn",
-  "myTunings": [
-    {
-      "instance": true,
-      "baseID": "S6_songfile",
-      "baseInstrument": "Guitar",
-      "caption": "Standard",
-      "nStrings": 6,
-      "rowRange": [
-        64,
-        59,
-        55,
-        50,
-        45,
-        40
-      ],
-      "diamonds": [
-        3,
-        5,
-        7,
-        9,
-        15,
-        17,
-        19,
-        21
-      ],
-      "doubleDiamonds": [
-        12,
-        24
-      ],
-      "frets": 16,
-      "nut": true,
-      "reverse": false,
-      "visible": true
-    },
-    {
-      "instance": true,
-      "baseID": "P46_songfile",
-      "baseInstrument": "Guitar",
-      "caption": "P4",
-      "nStrings": 6,
-      "rowRange": [
-        65,
-        60,
-        55,
-        50,
-        45,
-        40
-      ],
-      "diamonds": [
-        3,
-        5,
-        7,
-        9,
-        15,
-        17,
-        19,
-        21
-      ],
-      "doubleDiamonds": [
-        12,
-        24
-      ],
-      "frets": 24,
-      "nut": true,
-      "reverse": false,
-      "visible": true
-    }
-  ]
+  "theme": "Autobahn"
 }
