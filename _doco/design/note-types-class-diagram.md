@@ -99,3 +99,101 @@ And somewhere the "bendValue" property is set .
 
 
 ```
+
+## Note Type Inheritance
+
+- Note types are all represenented by one class, but they can be thought of as separate classes based on their properties.  The different "inheritance" tree of Notes when thought of this way is:
+
+```
+NamedNote
+PlayedNote
+    SingleNote
+    TinyNote
+    Bend
+HighlightMidi
+HighlightMulti
+```
+
+- This is represented by this diagram here: 
+
+```mermaid
+classDiagram
+    class Note {
+        +String noteName
+        +Number styleNum
+    }
+
+    class NamedNote {
+        +String noteName
+        +Number styleNum
+        +String colorClass
+        +cloneFrom(otherNote)
+        +colorNote()
+    }
+
+    class PlayedNote {
+        +String noteName
+        +Number styleNum
+        +String colorClass
+        +Number midinum
+        +Number col
+        +Number row
+        +colorNote()
+    }
+
+    class SingleNote {
+        +String noteName
+        +Number styleNum
+        +String colorClass
+        +Number midinum
+        +Number col
+        +Number row
+        +colorSingleNotes()
+    }
+
+    class TinyNote {
+        +String noteName
+        +Number styleNum
+        +String colorClass
+        +Number midinum
+        +Number col
+        +Number row
+    }
+
+    class Bend {
+        +String noteName
+        +Number styleNum
+        +String colorClass
+        +Number midinum
+        +Number col
+        +Number row
+        +Number bendValue
+    }
+
+    class HighlightMidi {
+        +String noteName
+        +Number styleNum
+        +Number midinum
+        +Number row
+        +recordHighlightSingle()
+    }
+
+    class HighlightMulti {
+        +String noteName
+        +Number styleNum
+        +Number midinum
+        +Number row
+        +recordHighlightSingle()
+    }
+
+    PlayedNote <|-- SingleNote
+    PlayedNote <|-- TinyNote
+    PlayedNote <|-- Bend
+
+    %% NamedNote and PlayedNote both have colorNote()
+    %% SingleNote has colorSingleNotes()
+    %% HighlightMidi and HighlightMulti have recordHighlightSingle()
+    %% All types inherit from a conceptual Note base, but only PlayedNote has subtypes here
+    %% NamedNote, HighlightMidi, HighlightMulti are shown as separate root types per the text
+```
+
