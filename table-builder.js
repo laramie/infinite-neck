@@ -31,6 +31,29 @@ function getSong() {
     return getSongProvider();
 }
 
+function getRelativeSectionSpecForTable(baseID) {
+	var song = getSong();
+	if (!song || !song.getNoteTableRegistry) {
+		return '';
+	}
+	var registry = song.getNoteTableRegistry();
+	if (!registry || !registry.get) {
+		return '';
+	}
+	var tableID = TABLE_ID_PREFIX + baseID;
+	var tableModel = registry.get(tableID);
+	if (!tableModel || !tableModel.getRelativeSection) {
+		return '';
+	}
+	return tableModel.getRelativeSection() || '';
+}
+function getRelativeSectionResolved(rel){
+	let relSection = getSong().getRelativeSectionWithWrap(rel);
+	let resSectionIndex = getSong().getSections().indexOf(relSection);
+	return resSectionIndex;
+}
+
+
 function requestReinstallAllTuningsTables() {
     EventBus.trigger('ReinstallAllTuningsTables');
 }
@@ -204,6 +227,14 @@ export function buildNoteTable(options) {
 
 	var spanLeadDifferentFromRoot = "&nbsp;<span class='spanLeadDifferentFromRoot'></span>";
 	var spanRootID = "&nbsp;&nbsp;&nbsp;<span class='lblRootID'></span>";
+	var relativeSectionSpec = getRelativeSectionSpecForTable(options.baseID);
+	var spanRelativeSectionLabel = relativeSectionSpec
+		? "&nbsp;&nbsp;<span class='relativeSectionLabel'>" + relativeSectionSpec + "</span>"
+		: "";
+	var relativeSectionResolved = 1 + getRelativeSectionResolved(relativeSectionSpec);	
+	var spanRelativeSectionResolved = relativeSectionResolved
+		? "&nbsp;&nbsp;<span class='relativeSectionResolved'>" + relativeSectionResolved + "</span>"
+		: "";
 	var joniTuning = "<span class='joniTuning'><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
@@ -227,6 +258,8 @@ export function buildNoteTable(options) {
 		+ hamburgerColorDict + S + S
 		+ '</span>'
 		+ hamburger + S + S
+		+ spanRelativeSectionLabel
+		+ spanRelativeSectionResolved
 		+ "<div class='currentColorDict''></div>" + S
 
 	);

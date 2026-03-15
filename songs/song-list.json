@@ -29,7 +29,9 @@
          "progression-on-strat.json",
          "snake.json",
          "three-chord-wonder.json",
-         "tests/two-sec-one-observer.json"
+         "tests/two-sec-one-observer.json",
+         "tests/observer+p48.json",
+         "tests/2-observers.json"
     
     ],
     "ignoredSongs": [

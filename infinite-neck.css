@@ -1206,6 +1206,22 @@ input:read-only,textarea:read-only {
     text-align: center;
     vertical-align: middle;
 }
+.captionRow .relativeSectionResolved {
+    font-size: 90%;
+    font-weight: bold;
+    border: 1px solid rgb(234, 255, 0);
+    border-radius: 0.35em;
+    padding: 0.05em 0.4em;
+    background-color: #001e00;
+}
+.captionRow .relativeSectionLabel {
+    font-size: 90%;
+    font-weight: bold;
+    border: 1px solid #4a8;
+    border-radius: 0.35em;
+    padding: 0.05em 0.4em;
+    background-color: #00081e;
+}
 .tuningReverseCaption {
     font-weight: bold;
     border: 2px solid cyan;

@@ -1,0 +1,508 @@
+{
+  "sections": [
+    {
+      "noteTables": {
+        "tblP46_3": [
+          {
+            "midinum": "69",
+            "row": "0",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 1,
+            "noteName": "A"
+          }
+        ],
+        "tblP46_2": [
+          {
+            "midinum": "69",
+            "row": "0",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 1,
+            "noteName": "A"
+          }
+        ],
+        "tblP46": [
+          {
+            "midinum": "69",
+            "row": "0",
+            "col": "4",
+            "colorClass": "noteRoot",
+            "styleNum": 1,
+            "noteName": "A"
+          }
+        ]
+      },
+      "namedNotes": {
+        "C": {
+          "noteName": "C",
+          "colorClass": "noteScale"
+        },
+        "Db": {
+          "noteName": "Db",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "section-1",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "noteTables": {},
+      "namedNotes": {
+        "C": {
+          "noteName": "C",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "E": {
+          "noteName": "E",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "A": {
+          "noteName": "A",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "D": {
+          "noteName": "D",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "noteTables": {
+        "tblP46": [
+          {
+            "midinum": "72",
+            "row": "0",
+            "col": "7",
+            "colorClass": "noteChord",
+            "styleNum": 1,
+            "noteName": "C"
+          },
+          {
+            "noteName": "Db",
+            "styleNum": 2,
+            "midinum": "61",
+            "row": "3",
+            "col": "11",
+            "tableID": "tblP46",
+            "colorClass": "noteTransparent"
+          }
+        ]
+      },
+      "namedNotes": {
+        "G": {
+          "noteName": "G",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "F": {},
+        "E": {
+          "noteName": "E",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "C": {
+          "noteName": "C",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "Ab": {
+          "noteName": "Ab",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        }
+      },
+      "recordedNotes": {},
+      "caption": "section-2",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "noteTables": {},
+      "namedNotes": {
+        "F": {
+          "noteName": "F",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "A": {
+          "noteName": "A",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "C": {
+          "noteName": "C",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "Db": {
+          "noteName": "Db",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "D": {
+          "noteName": "D",
+          "styleNum": 0,
+          "colorClass": "noteTransparent"
+        },
+        "Eb": {}
+      },
+      "recordedNotes": {},
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "gSectionsCurrentIndex": 3,
+  "gFirstBeatSeen": false,
+  "userInstrumentTuning": {
+    "instance": false,
+    "baseID": "USER",
+    "baseInstrument": "Guitar",
+    "caption": "User",
+    "nStrings": 6,
+    "rowRange": [
+      64,
+      59,
+      55,
+      50,
+      45,
+      40
+    ],
+    "diamonds": [
+      3,
+      5,
+      7,
+      9,
+      15,
+      17,
+      19,
+      21
+    ],
+    "doubleDiamonds": [
+      12,
+      24
+    ],
+    "frets": 16,
+    "nut": true,
+    "reverse": false,
+    "visible": false
+  },
+  "gSongModelListener": null,
+  "noteNamesFuncArrDEFAULT": [
+    "I",
+    "&tau;",
+    "II",
+    "m",
+    "III",
+    "IV",
+    "&Theta;",
+    "V",
+    "&sigma;",
+    "6",
+    "&delta;",
+    "&Delta;"
+  ],
+  "sharps": false,
+  "captionsRowShowing": true,
+  "presentationMode": false,
+  "randomSectionHistory": [],
+  "isHeadless": false,
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "S6_1",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": false
+    },
+    {
+      "instance": true,
+      "baseID": "P48_Laramie",
+      "baseInstrument": "Guitar",
+      "caption": "P4-8",
+      "nStrings": 8,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0.6em",
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "tunings": [
+    {
+      "instance": false,
+      "baseID": "P46_3",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": false,
+      "baseID": "P46_2",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": false,
+      "baseID": "P46",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": false,
+      "baseID": "S6",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": true,
+      "baseID": "P48_Laramie",
+      "baseInstrument": "Guitar",
+      "caption": "P4-8",
+      "nStrings": 8,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0.6em",
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "visibleNoteTables": [
+    "tblP46_3",
+    "tblP46_2",
+    "tblP46"
+  ],
+  "defaultBPM": "100",
+  "rootID": "3",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "graveyard": {
+    "records": []
+  },
+  "activeStylesheets": "Default",
+  "songName": "observer+p48",
+  "noteTableModels": {
+    "tblP46": {
+      "relativeSection": "",
+      "caption": "Active",
+      "enabled": true
+    },
+    "tblP46_2": {
+      "relativeSection": "-1",
+      "caption": "Active",
+      "enabled": true
+    },
+    "tblP46_3": {
+      "relativeSection": "-2",
+      "caption": "Active",
+      "enabled": true
+    }
+  },
+  "tinyNoteOpacity": "1.00",
+  "theme": "Autobahn"
+}
