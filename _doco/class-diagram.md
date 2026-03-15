@@ -1,5 +1,19 @@
 ```mermaid
 classDiagram
+    class InfiniteNeckJS {
+        <<god-class / manager>>
+        +appInit()
+        +installModuleProviders()
+        +reloadAllTuningsDisplay()
+        +sectionChanged()
+        +updateAfterOpenSong()
+        +resetNoteNames()
+        +installAllTuningsTables()
+        +setupOpenFile()
+        +downloadPlayedNotes()
+        ...
+    }
+
     class Song {
         +String title
         +String artist
@@ -61,6 +75,11 @@ classDiagram
         +Number styleNum
     }
 
+    InfiniteNeckJS ..> Song : orchestrates
+    InfiniteNeckJS ..> TableBuilder : uses
+    InfiniteNeckJS ..> NoteTable : manages
+    InfiniteNeckJS ..> Section : coordinates
+    InfiniteNeckJS ..> Tuning : coordinates
     Song "1" o-- "*" Section : contains
     Song "1" o-- "*" Tuning : uses
     Song "1" o-- "1" NoteTableRegistry : manages
@@ -70,4 +89,4 @@ classDiagram
     TableBuilder <.. NoteTable : builds
     TableBuilder <.. Tuning : manages
 
-```    
+```

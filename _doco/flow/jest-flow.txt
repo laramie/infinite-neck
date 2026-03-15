@@ -1,83 +1,106 @@
-jest.config.js
-    must have: 
-        export default {
-            testEnvironment: 'node',
-            transform: {},
-        };
-    must NOT have:
-        export default {
-            extensionsToTreatAsEsm: ['.js'],
-            transform: {},
-            testEnvironment: 'node',
-        }; 
+Jest Configuration 
+    jest.config.js
+        must have: 
+            export default {
+                testEnvironment: 'node',
+                transform: {},
+            };
+        must NOT have:
+            export default {
+                extensionsToTreatAsEsm: ['.js'],
+                transform: {},
+                testEnvironment: 'node',
+            }; 
 
-package.json
-    must have: 
-        "type": "module",
-        ... 
-        "scripts": {
-            "test": "echo \"Error: no test specified\" && exit 1",
-            "knip": "knip"
-        },
-    "scripts" is special section node runs when you say "npx" in a (bash) shell.
-        npx test      --> runs the command in {scripts.test}
-        npx knip      --> runs knip, which I installed with npm.
-    So if I install: 
-        "scripts": {
-            "test": "node --experimental-vm-modules node_modules/.bin/jest",
-            "knip": "knip"
-        }
-    Now npx knows to run my jest tests when I say:
-        npx test
+    package.json
+        must have: 
+            "type": "module",
+            ... 
+            "scripts": {
+                "test": "echo \"Error: no test specified\" && exit 1",
+                "knip": "knip"
+            },
+        "scripts" is special section node runs when you say "npx" in a (bash) shell.
+            npx test      --> runs the command in {scripts.test}
+            npx knip      --> runs knip, which I installed with npm.
+        So if I install: 
+            "scripts": {
+                "test": "node --experimental-vm-modules node_modules/.bin/jest",
+                "knip": "knip"
+            }
+        Now npx knows to run my jest tests when I say:
+            npx test
 
-Do NOT do this:
-    npx jest _tests/jest/namespacer/regex-suites.test.js
+    Do NOT do this:
+        npx jest _tests/jest/namespacer/regex-suites.test.js
 
-DO do this: 
-    node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/regex-suites.test.js
-    You must run with that flag because jest is all out of date 'nshit.
+    DO do this: 
+        node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/regex-suites.test.js
+        You must run with that flag because jest is all out of date 'nshit.
 
-ANSIColors.test.js worked:
-    laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/ANSIColors.test.js
-RegexSuites.test.js worked: 
-     laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/RegexSuites.test.js
-Accumulator.test.js worked: 
-     laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/Accumulator.test.js
-SampleStep.test.js worked: 
-    laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/SampleStep.test.js
-
-
-Therefore, run this to run all tests in this dir:
-    cd ~/infinite-neck$ 
-    node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/
-
-Verbosity is set in infinite-neck in _tests/jest/namespacer/LogVerboseJest.js
-    To change it, set the env var:
-        export INFINITE_NECK_VERBOSE=-1
-
-Verbosity in Jest based on running one test, or dirscan:
-
-    Option 1: Command line
-        laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
-        e.g.
-           node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+Working Jest Tests 
+    ANSIColors.test.js worked:
+        laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/ANSIColors.test.js
+    RegexSuites.test.js worked: 
+        laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/RegexSuites.test.js
+    Accumulator.test.js worked: 
+        laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/Accumulator.test.js
+    SampleStep.test.js worked: 
+        laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/SampleStep.test.js
 
 
-    Option 2: jest.config.js
-        module.exports = {
-            verbose: true,
-            // ...other config
-        };
+    Therefore, run this to run all tests in this dir:
+        cd ~/infinite-neck$ 
+        node --experimental-vm-modules node_modules/.bin/jest _tests/jest/namespacer/
 
-    Option 3: package.json
-        "jest": {
-            "verbose": true
-        }
+Caching
+    WARNING: Jest does cache.
+        jest --clearCache   
+        npx jest --clearCache
+        jest --no-cache   
 
-WARNING: Jest does cache.
-    jest --clearCache   
-    npx jest --clearCache
-    jest --no-cache     
 
-            
-            
+Test Verbosity
+    INFINITE_NECK_VERBOSE
+
+        I have all my tests set up to be verbose or terse. 
+        It is controlled with an ENV var.  You can export that in bash:
+        infinite-neck Verbosity is set in infinite-neck in _tests/jest/namespacer/LogVerboseJest.js
+            To change it, set the env var:
+                export INFINITE_NECK_VERBOSE=-1
+
+
+        or set it in VS Code from the GUI 
+            (Ask HAL if you need the file format, but it goes in "configurations" parallel to "program": "${workspaceFolder}/node_modules/.bin/jest"):
+            Primary Side Bar
+                Run and Debug
+                    Open "launch.json" (the little gear next to the run arrow dropdown at the top) 
+                        launch.json:
+                            "env": {
+                                "INFINITE_NECK_VERBOSE": "1"
+                            }
+
+    Jest Verbosity in Jest based on running one test, or dirscan:
+
+        Option 1: Command line
+            laramie@penguin:~/infinite-neck$ node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+            e.g.
+            node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+
+
+        Option 2: jest.config.js
+            module.exports = {
+                verbose: true,
+                // ...other config
+            };
+
+        Option 3: package.json
+            "jest": {
+                "verbose": true
+            }
+
+
+
+
+                
+                
