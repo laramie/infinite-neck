@@ -1,3 +1,75 @@
+#
+# Mermaid Class Diagram: Proposed NoteTable Refactor
+
+```mermaid
+classDiagram
+  class Song {
+    +sections : Section[]
+    +myTunings
+    +tunings
+    +getLayout()
+    +setLayout(layout)
+  }
+  class Section {
+    +noteTables : NoteTable[]
+    +getNoteTable(baseID)
+  }
+  class Layout {
+    +noteTables : NoteTable[]
+    +currentSection : Section
+    +arrange()
+    +showNoteTable()
+    +hideNoteTable()
+    +setSection(section)
+    +getVisibleNoteTables()
+  }
+  class NoteTable {
+    +tuning : Tuning
+    +baseID : string
+    +caption : string
+    +relativeSection : string
+    +observerType : enum
+    +showPrevBeat : bool
+    +showNextBeat : bool
+    +section : Section
+    +notes : Note[]
+    +render()
+    +setSection(section)
+    +setTuning(tuning)
+    +updateNotes()
+    +isObserver()
+    +isListener()
+    +getObservedSection()
+    +getObservedNotes()
+    +clearNotes()
+    +clone()
+  }
+  class ObserverNoteTable {
+    +getObservedSection()
+    +getObservedNotes()
+    +updateNotes()
+  }
+  class ListenerNoteTable {
+    +getObservedSection()
+    +getObservedNotes()
+    +updateNotes()
+  }
+  class Tuning
+  class Note
+  class TableBuilder {
+    +buildNoteTable(options)
+  }
+
+  Song o-- Section : contains
+  Song o-- Layout : uses
+  Section o-- NoteTable : contains
+  Layout o-- NoteTable : manages
+  NoteTable <|-- ObserverNoteTable
+  NoteTable <|-- ListenerNoteTable
+  NoteTable o-- Tuning : uses
+  NoteTable o-- Note : contains
+  TableBuilder ..> NoteTable : builds
+```
 # Planning: Moving Towards NoteTable as a First-Class Object
 
 ## Overview
