@@ -616,6 +616,17 @@ export function showHideTuning(show, basekey) {
 	var tuning = findTuningForID(basekey);
 	if (tuning) {
 		tuning.visible = show;  //change it in the in-memory model.
+		let visibleNoteTables = getSong().visibleNoteTables;
+		if (show){
+			if (visibleNoteTables.indexOf(tuning.baseID)<0){
+				visibleNoteTables.push(tuning.baseID);
+			} 
+		} else {
+			const index = visibleNoteTables.indexOf(tuning.baseID);
+			if (index > -1) { 
+				visibleNoteTables.splice(index, 1); 
+			}
+		}
 	} else {
 		var stacktrace = "";
 		try {
