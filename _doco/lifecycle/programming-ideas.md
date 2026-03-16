@@ -1,13 +1,26 @@
-============================================
-Idea: Using jsonata.
-Summary: 
-   Uses Promise objects
-   Provides evaluation of strings
-Status:   
-   Not used in current code because Promise objects were a bit unweildy for me.
-============================================
-This thing worked, but uses Promises, so was a bit heavy, so I just used JSONPath.
-However, this looks like it has better query support.
+# Table of Contents
+
+- [Idea: Using jsonata](#idea-using-jsonata)
+- [Idea: future menu items to implement in menujs](#idea-future-menu-items-to-implement-in-menujs)
+- [Idea: Draw lines using SVG](#idea-draw-lines-using-svg)
+- [Idea: Using navigator to screen-capture](#idea-using-navigator-to-screen-capture)
+- [Idea: Refactor makeSong() into real class Song javascript class](#idea-refactor-makesong-into-real-class-song-javascript-class)
+
+# Programming Ideas
+
+---
+
+## Idea: Using jsonata
+
+- **Summary:**
+  - Uses Promise objects
+  - Provides evaluation of strings
+- **Status:**
+  - Not used in current code because Promise objects were a bit unwieldy for me.
+
+This thing worked, but uses Promises, so was a bit heavy, so I just used JSONPath. However, this looks like it has better query support.
+
+```html
 <script src="https://cdn.jsdelivr.net/npm/jsonata/jsonata.min.js"></script>
 <script>
   function greeting() {
@@ -18,42 +31,39 @@ However, this looks like it has better query support.
     var result = jsonata('tblP46[midinum="66"][row="0"][styleNum=2].colorClass').evaluate(getCurrentSection().noteTables);
   }
 </script>
+```
 
+---
 
+## Idea: future menu items to implement in menu.js
 
-============================================
-Idea: future menu items to implement in menu.js
-============================================
+- `/ run unlock [ transposition, beats-editor, ...]`
+- **Status:**
+  - as of 20260220 I have implemented / run lock and /run unlock
 
-/ run unlock [ transposition, beats-editor, ...]
-Status:  
-     as of 20260220 I have implemented / run lock and /run unlock
+---
 
+## Idea: Draw lines using SVG
 
-
-============================================
-Idea: Draw lines using SVG
-Summary:
-   The idea was so I could draw flow lines from one note to the other,
-     but this was handled with Bends.  Also, other lines, such as the polygons in theme "Blade" were simply done with 
-     background-image of type PNG which supports transparent backgrounds.
-Status:   
-   Seemed like a cool idea, but not worth the work.
-============================================
+- **Summary:**
+  - The idea was so I could draw flow lines from one note to the other, but this was handled with Bends.  Also, other lines, such as the polygons in theme "Blade" were simply done with background-image of type PNG which supports transparent backgrounds.
+- **Status:**
+  - Seemed like a cool idea, but not worth the work.
 
 // You can draw lines using SVG!
-	//  https://stackoverflow.com/questions/56722754/draw-a-line-from-one-element-to-another
+//  https://stackoverflow.com/questions/56722754/draw-a-line-from-one-element-to-another
 
+---
 
+## Idea: Using navigator to screen-capture
 
-============================================
-Idea: Using navigator.mediaDevices.getDisplayMedia() to attempt screen captureStreamCaptures
-Summary:
-   Created a sample implementation here, recordy()
-Status:   
-   Doesn't work
-============================================
+- **Summary:**
+  - Created a sample implementation here, recordy()
+- **Status:**
+  - Idea was to use: navigator.mediaDevices.getDisplayMedia to screen capture.
+  - Doesn't work
 
+```js
 //doesn't work, but if you want to try it, call this: recordy();
 function recordy(){
         const capture = async () => {
@@ -75,17 +85,17 @@ function recordy(){
     };
     capture();
 }
+```
 
+---
 
-============================================
-Idea: Refactor makeSong() into read class Song javascript class
-Summary:
-     Chat recommended this approach, rather than what is in song.js now
-     Our full conversation is stored in the project: _chat_conversations/refactor-song-js-into-Song-class.md 
-      
+## Idea: Refactor makeSong() into real class Song javascript class
 
-============================================
+- **Summary:**
+  - Chat recommended this approach, rather than what is in song.js now
+  - Our full conversation is stored in the project: _chat_conversations/refactor-song-js-into-Song-class.md
 
+```js
 /**
  * @typedef {Object} Song
  * @property {function(boolean):void} gotoNextSection
@@ -153,7 +163,4 @@ class Song {
 
 // Example usage:
 // let gSong = new Song();
-
-
-
-============================================
+```
