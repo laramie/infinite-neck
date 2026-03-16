@@ -1,5 +1,8 @@
 # Moving Towards NoteTable as first-class object
 
+## Document Version
+- version: V2
+
 ## Discussion
 
 - `notetable.js` currently manages *all* tables in `#tabledest`, which is the div container that contains everything visible and playing.  We want to move to `#tabledest` being managed by a `Layout` that knows which instruments are in it and handles CSS layouts. 
@@ -90,5 +93,53 @@
 ```
 
 - within the inner loop, so requestReinstallAllTuningsTables is called way too many times!
+
+## Document Updates
+- This current document is the driving design document maintained by the Developer.
+
+- This section will be incorporated into document which is managed by Copilot, and which has valuable design decisions and specifications created by Copilot in previous iterations.  It is to be updated with a goal of preserving existing structure, references, and classes, unless these become obviated.  Then Copilot should update the document: 
+
+    + [Copilot-manged design document](notetable-as-real-object-planning.md)
+    + Let this Copilot managed document now specify the Version number V2, in the H2 section at the top called "Document Version", currently on V1.
+
+
+### New Requirements and Rules for V2
+
+1. The NoteTable class should now have a NoteTableView View class responsible for emitting HTML.  Unclear which class is the controller right now.
+
+2. The Layout class should be spilt into the following classes:
+    a. a LayoutManager class
+        + responsible for maintinging a list of Layout.ID values used anywhere in the Song in memory (and therefore in persistence in the song file).        
+        + Maps between Section index and which Layout class to hand back (probably to itself most of the time, except for reporting)
+
+        
+    b. a Layout class
+
+        + has an ID property (string), with examples:
+            + "FullBand"
+            + "Guitars"
+            + "Solo"
+            " "DrumNBass"
+            + "WillyPractice"
+
+        + Knows which named Responsive CSS layout will be used.  Stored in the property Layout.responsivePattern, which will become a class to specify all the things a pattern would need: left/right/flow, NoteTable order, orientation.
+
+        + Knows which NoteTable objects will be included and visible.    
+
+        + emits blocks of HTML emitted by NoteTableView into DIV elements within the Layout.responsivePattern chosen, e.g. "Table" "Flow", and other CSS standard Responsive Web Design patterns.         
+
+
+    c. NoteTableView class
+
+        + View class for NoteTable
+
+        + emits HTML from NoteTable when asked to repaint().
+
+3. ListenerNoteTable now a role, not a class
+
+- The class ListenerNoteTable is no longer a class. It is now a role, caled Listener, perhaps just specified with a property.  Either a regular NoteTable or an ObserverNoteTable will be able to "Listen" to other NoteTable object *within the same section*.  
+
+- Rule: no Listener may specify any Section other than the CurrentSection.          
+
 
 
