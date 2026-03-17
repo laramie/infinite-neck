@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Tree 80kg Module Test</title>
+  <link rel="stylesheet" href="json-tree-80kg.css">
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    button { margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <h2>Test: json-tree-80kg.js</h2>
+  <button id="renderBtn">Render JSON Tree</button>
+  <div id="div1" style="display:none;"></div>
+  <div id="div2" data-json style="border:1px solid #ccc; padding:1em; margin-top:1em;"></div>
+
+  <script type="module">
+    import { jsonTree } from './json-tree-80kg.js';
+
+    // Example tree data
+    const infTree = {
+            "sections": [
+                {
+                "noteTables": {},
+                "namedNotes": {},
+                "recordedNotes": {},
+                "caption": "",
+                "rootID": "3",
+                "rootIDLead": "-1",
+                "beats": 4,
+                "currentBeat": 1,
+                "sharps": false
+                }
+            ],
+            "gSectionsCurrentIndex": 0,
+            "gFirstBeatSeen": false,
+            "userInstrumentTuning": {
+                "instance": false,
+                "baseID": "USER",
+                "baseInstrument": "Guitar",
+                "caption": "User",
+                "nStrings": 6,
+                "rowRange": [
+                64,
+                59,
+                55,
+                50,
+                45,
+                40
+                ],
+                "diamonds": [
+                3,
+                5,
+                7,
+                9,
+                15,
+                17,
+                19,
+                21
+                ],
+                "doubleDiamonds": [
+                12,
+                24
+                ],
+                "frets": 16,
+                "nut": true,
+                "reverse": false,
+                "visible": false
+            },
+            "gSongModelListener": null,
+            "noteNamesFuncArrDEFAULT": [
+                "I",
+                "τ",
+                "II",
+                "m",
+                "III",
+                "IV",
+                "Θ",
+                "V",
+                "σ",
+                "6",
+                "δ",
+                "Δ"
+            ],
+            "sharps": false,
+            "captionsRowShowing": false,
+            "presentationMode": false,
+            "randomSectionHistory": [],
+            "isHeadless": false,
+            "myTunings": [
+                {
+                "instance": true,
+                "baseID": "S6_1",
+                "baseInstrument": "Guitar",
+                "caption": "Standard",
+                "nStrings": 6,
+                "rowRange": [
+                    64,
+                    59,
+                    55,
+                    50,
+                    45,
+                    40
+                ],
+                "diamonds": [
+                    3,
+                    5,
+                    7,
+                    9,
+                    15,
+                    17,
+                    19,
+                    21
+                ],
+                "doubleDiamonds": [
+                    12,
+                    24
+                ],
+                "frets": 16,
+                "nut": true,
+                "reverse": false,
+                "visible": true
+                }
+            ],
+            "tunings": [
+                {
+                "instance": true,
+                "baseID": "S6_1",
+                "baseInstrument": "Guitar",
+                "caption": "Standard",
+                "nStrings": 6,
+                "rowRange": [
+                    64,
+                    59,
+                    55,
+                    50,
+                    45,
+                    40
+                ],
+                "diamonds": [
+                    3,
+                    5,
+                    7,
+                    9,
+                    15,
+                    17,
+                    19,
+                    21
+                ],
+                "doubleDiamonds": [
+                    12,
+                    24
+                ],
+                "frets": 16,
+                "nut": true,
+                "reverse": false,
+                "visible": true
+                }
+            ],
+            "visibleNoteTables": [
+                "tblS6_1"
+            ],
+            "defaultBPM": "80",
+            "rootID": "3",
+            "namedNoteOpacity": "1.00",
+            "singleNoteOpacity": "1.00",
+            "graveyard": {
+                "records": []
+            },
+            "activeStylesheets": "Default",
+            "songName": "Round-midnight",
+            "theme": "Autobahn"
+            };
+
+    document.getElementById('renderBtn').addEventListener('click', () => {
+      const div2 = document.getElementById('div2');
+      div2.innerHTML = '';
+      jsonTree(infTree, div2);
+    });
+  </script>
+</body>
+</html>

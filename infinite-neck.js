@@ -40,6 +40,7 @@ import {
 	setSectionKeysSharps,
 	setKeyHandlerProviders,
 	showMessages,
+	hideMessages,
 	document_keypress,
 	document_keyup
 } from './key-handlers.js';
@@ -479,6 +480,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnAllTuningsTab')
 			.toggleClass('BtnPunchedIn', !showMy)
 			.toggleClass('BtnPunchedOut', showMy);
+	}
+
+	function showMessagesTab(which) {
+		var showMsgs = which !== 'JsonTree';
+		$('#divMessages').toggle(showMsgs);
+		$('#divJsonTree').toggle(!showMsgs);
+		$('#btnMessagesTab')
+			.toggleClass('BtnPunchedIn', showMsgs)
+			.toggleClass('BtnPunchedOut', !showMsgs);
+		$('#btnJsonTreeTab')
+			.toggleClass('BtnPunchedIn', !showMsgs)
+			.toggleClass('BtnPunchedOut', showMsgs);
+	}
+	function hideMessages_KeyHandler(){
+		hideMessages();
 	}
 
 	export function reloadAllTuningsDisplay(){
@@ -1666,6 +1682,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$('#btnAllTuningsTab').click(function() {
 			showTuningsTab('all');
+		});
+		$('#btnMessagesTab').click(function() {
+			showMessagesTab('Messages');
+		});
+		$('#btnJsonTreeTab').click(function() {
+			showMessagesTab('JsonTree');
+		});
+		$('#btnHideMessagesJsonTree').click(function() {
+			hideMessages_KeyHandler();
 		});
 
 		$("#btnSectionControls").click(function() {

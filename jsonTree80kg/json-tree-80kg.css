@@ -1,0 +1,8 @@
+[data-json]  span  {  margin:5px  0px  5px  0px;  }
+[data-json]  span,  
+[data-json]  span  em  {  font-family:  monospace;  display:block;  letter-spacing:  0.5px;    }
+[data-json]  span  span  {  margin-left:30px;  }
+[data-json]  span  em  {  font-style:  normal;  display:  inline;  color:rgb(0,  43,  54);    }
+[data-json]  span  em  >  em  {  color:#f57e04;    margin:0px  5px  0px  5px;    }
+[data-json]  span  em[data-type="number"]  >  em  {  color:#4081ec;  }
+[data-json]  span  em[data-type="boolean"]  >  em  {  color:#34a852}
