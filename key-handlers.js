@@ -25,7 +25,8 @@ import {
 	gMenuFile,
 	gMenuPointer,
 	setMenuValueResolver,
-	setMenuAtRoot
+	setMenuAtRoot,
+	gMenuLoaded
 } from './menu.js';
 import {
 	gUserColorDict
@@ -557,7 +558,10 @@ export function performCmdAction(menuItem, args){
 			showMessagesJSON(JSON.stringify(getSong(), null, 2));
 			break;
 		case "showViewDiagnosticsMenu":
-			showMessagesJSON(JSON.stringify(dumpMenus(), null, 2));
+			showMessages(dumpMenus());
+			break;
+        case "showViewDiagnosticsMenuJson":
+			showMessagesJSON(gMenuLoaded);
 			break;
         case "showViewDiagnosticsUserColorDict":
             showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
