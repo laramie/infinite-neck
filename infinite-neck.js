@@ -482,7 +482,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.toggleClass('BtnPunchedOut', showMy);
 	}
 
-	function showMessagesTab(which) {
+	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
 		$('#divMessages').toggle(showMsgs);
 		$('#divJsonTree').toggle(!showMsgs);

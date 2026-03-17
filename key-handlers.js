@@ -33,6 +33,9 @@ import {
 import {
 	toInt
 } from './utils.js';
+import {
+	showMessagesTab
+} from './infinite-neck.js';
 
 export { document_keypress, document_keyup };
 
@@ -738,7 +741,7 @@ export function showMessages(html){
     $("#divMessageAndJsonTree").show();
     $("#divMessages").show();
     $("#divMessages").html(html);
-	$('#btnMessagesTab').toggleClass('BtnPunchedIn', true)
+	showMessagesTab("Messages");
     hideCmdLine();
     scrollToMessages();
 }

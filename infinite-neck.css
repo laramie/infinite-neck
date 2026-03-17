@@ -182,14 +182,16 @@ body {
 }
 
 #divMessageAndJsonTree {
-    margin: 3em;
     font-size: 120%; 
+    padding-left: 1em;
 }
 #divMessages, #divJsonTree {
+    padding: 1em;
     display: none;
     background-color: white;
     font-family: monospace;
     white-space: pre;
+    margin: 0.2em;
     margin-bottom: 12em;
 }
 

@@ -23,9 +23,9 @@ function createSVGNode(n, v) {
 // Exported: svg (returns a function that creates SVG elements for arrows)
 export const svg = (function(node) {
   return function(text) {
-    let svgElem = node('svg', { width: 12, height: 12 });
+    let svgElem = node('svg', { width: 20, height: 20 });
     svgElem.appendChild(
-      node('path', { d: text, transform: 'scale(0.3  0.3)  translate(0  15)' })
+      node('path', { d: text, transform: 'scale(0.5  0.5)  translate(0  15)', fill: 'darkred' })
     );
     return svgElem;
   };
