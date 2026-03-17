@@ -12,19 +12,20 @@
 		<link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Kode+Mono:wght@400..700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Eczar:wght@400..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 
+        <link rel="stylesheet" href="jsonTree80kg/json-tree-80kg.css">
 
         <link rel="stylesheet" type="text/css" href="infinite-neck.css"/>
         <link rel="stylesheet" type="text/css" href="command-line.css"/>
 
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="jsonpath-0.8.0.js"></script>
-
+  </head>
+  <body>
+    <div id="root"></div>
         <script type="module" src="infinite-neck.js"></script>
-
         <style id="laramieStyle">
            .placeholder {color: red;}
         </style>
-
     </head>
     <body>
         <div class="container">
@@ -1822,7 +1823,13 @@
 		</tr>
 		</table>
 	</div>
-	<div id="divMessages"></div>
+    <div id="divMessageAndJsonTree" style="display:none">
+        <button id="btnMessagesTab" type="button" class="MainMenuTabBtn BtnPunchedIn">Messages</button>
+        <button id="btnJsonTreeTab" type="button" class="MainMenuTabBtn BtnPunchedOut">JSON Tree</button>
+        <button id="btnHideMessagesJsonTree" type="button" class="MainMenuTabBtn BtnPunchedOut">Hide</button>
+        <div id="divMessages"></div>
+        <div id="divJsonTree" data-json ></div>
+    </div>
     <div id="divESCAPE" style="display: none;">
         <br>
         <br>

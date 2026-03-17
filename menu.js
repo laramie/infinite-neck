@@ -597,6 +597,11 @@ export var gMenuFile =    {
               "action": "showViewDiagnosticsMenu"
             },
             {
+              "caption": "menu <b>j</b>son",
+              "trigger": "j",
+              "action": "showViewDiagnosticsMenuJson"
+            },
+            {
               "caption": "user <b>c</b>olors",
               "trigger": "c",
               "action": "showViewDiagnosticsUserColorDict"
@@ -924,6 +929,7 @@ export var gMenuFile =    {
         not the Y/n confirmation, so the performCmdAction sets actionResult.popOnBang."
   *****/
 
+export const gMenuLoaded = JSON.stringify(gMenuFile, null, 4);
 
 export var gMenuPointer = gMenuFile;
 var gCurrentMenuStack = [];
@@ -1101,18 +1107,23 @@ export function dumpMenus(){
     return result;
 }
 
-function showChildMenusRecursively(menu, level){
+function showChildMenusRecursively(menu, level){  
+    function l(m){
+      console.log(m);
+    }
     level++;
     var indent = "";
     for(var i=0;i<level;i++){indent=indent+'----';}
     var result = indent+menu.caption+":>";
     //l(""+level+":menu.caption:"+menu.caption);
     var children = menu.children;
-    children.forEach(child => {
-      var childrenMenus = showChildMenusRecursively(child, level);
-      result = result+"<br>"+childrenMenus;
-      //l(""+level+":children::"+childrenMenus);
-    });
+    if (children){
+      children.forEach(child => {
+        var childrenMenus = showChildMenusRecursively(child, level);
+        result = result+"<br>"+childrenMenus;
+        //l(""+level+":children::"+childrenMenus);
+      });
+    }
     return result;
 }
 

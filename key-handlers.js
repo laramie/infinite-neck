@@ -1,4 +1,5 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
+import { jsonTree } from './jsonTree80kg/json-tree-80kg.js';
 import { setOneCssVar } from './themeFunctions.js';
 import {
 	clearCmdResults,
@@ -24,7 +25,8 @@ import {
 	gMenuFile,
 	gMenuPointer,
 	setMenuValueResolver,
-	setMenuAtRoot
+	setMenuAtRoot,
+	gMenuLoaded
 } from './menu.js';
 import {
 	gUserColorDict
@@ -32,6 +34,9 @@ import {
 import {
 	toInt
 } from './utils.js';
+import {
+	showMessagesTab
+} from './infinite-neck.js';
 
 export { document_keypress, document_keyup };
 
@@ -547,16 +552,19 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "showViewDiagnostics":
-			showMessages(JSON.stringify(getCurrentSection(), null, 2));
+			showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
 			break;
 		case "showViewDiagnosticsFullModel":
-			showMessages(JSON.stringify(getSong(), null, 2));
+			showMessagesJSON(JSON.stringify(getSong(), null, 2));
 			break;
 		case "showViewDiagnosticsMenu":
-			showMessages(JSON.stringify(dumpMenus(), null, 2));
+			showMessages(dumpMenus());
+			break;
+        case "showViewDiagnosticsMenuJson":
+			showMessagesJSON(gMenuLoaded);
 			break;
         case "showViewDiagnosticsUserColorDict":
-            showMessages(JSON.stringify(gUserColorDict.dict, null, 2));
+            showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
             actionResult.result = "ColorDictionary sent to Messages";
             break;
         case "showViewDiagnosticsDisplayOptions":
@@ -565,17 +573,19 @@ export function performCmdAction(menuItem, args){
             break;
         case "showViewDiagnosticsSongFileFormat":
 			updateMemoryModelPreFileSave();
-			showMessages(JSON.stringify(getSong(), skipColorDictsReplacer, 2));
+			showMessagesJSON(JSON.stringify(getSong(), skipColorDictsReplacer, 2));
 			break;
 		case "showGraveyard":
 			showGraveyard();
 			break;
 		case "hideViewMessages":
+			$("#divMessageAndJsonTree").hide()
             $("#divMessages").hide();
             actionResult.result = "Messages hidden";
             break;
 
 		case "printSections":
+			$("#divMessageAndJsonTree").show()
             $("#divMessages").show();
 			$("#divMessages").html(printSections());
 			hideCmdLine();
@@ -721,17 +731,27 @@ export function performCmdAction(menuItem, args){
 }
 
 function scrollToMessages(){
-    var scrollDiv = document.getElementById("divMessages").offsetTop;
+    var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
     window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
 }
+export function showMessagesJSON(json){
+	showMessages(json);
+    const div = document.getElementById('divJsonTree');
+	div.innerHTML = '';
+	let data = JSON.parse(json);
+	jsonTree(data, div);
+}
 export function showMessages(html){
+    $("#divMessageAndJsonTree").show();
     $("#divMessages").show();
     $("#divMessages").html(html);
+	showMessagesTab("Messages");
     hideCmdLine();
     scrollToMessages();
 }
-function hideMessages(){
+export function hideMessages(){
     $("#divMessages").hide();
+	$("#divMessageAndJsonTree").hide();
 }
 function showGraveyard(){
     hideAllMenuDivs();

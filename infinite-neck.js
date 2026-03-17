@@ -40,6 +40,7 @@ import {
 	setSectionKeysSharps,
 	setKeyHandlerProviders,
 	showMessages,
+	hideMessages,
 	document_keypress,
 	document_keyup
 } from './key-handlers.js';
@@ -479,6 +480,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnAllTuningsTab')
 			.toggleClass('BtnPunchedIn', !showMy)
 			.toggleClass('BtnPunchedOut', showMy);
+	}
+
+	export function showMessagesTab(which) {
+		var showMsgs = which !== 'JsonTree';
+		$('#divMessages').toggle(showMsgs);
+		$('#divJsonTree').toggle(!showMsgs);
+		$('#btnMessagesTab')
+			.toggleClass('BtnPunchedIn', showMsgs)
+			.toggleClass('BtnPunchedOut', !showMsgs);
+		$('#btnJsonTreeTab')
+			.toggleClass('BtnPunchedIn', !showMsgs)
+			.toggleClass('BtnPunchedOut', showMsgs);
+	}
+	function hideMessages_KeyHandler(){
+		hideMessages();
 	}
 
 	export function reloadAllTuningsDisplay(){
@@ -1214,22 +1230,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		export function getNamedNoteOpacity(){
-			return $("#rangeNamedNoteOpacity").attr("value");
+			return $("#rangeNamedNoteOpacity").val();
 		}
 
 		export function setNamedNoteOpacity(newValue){
-			$("#rangeNamedNoteOpacity").attr("value", (newValue));
+			$("#rangeNamedNoteOpacity").val(newValue);
 			setNamedNoteOpacity_inner(null, newValue);
 		}
 
 		//======== SingleNote opacity ==========
 
 		export function getSingleNoteOpacity(){
-			return $("#rangeSingleNoteOpacity").attr("value");
+			return $("#rangeSingleNoteOpacity").val();
 		}
 
 		export function setSingleNoteOpacity(newValue){
-			$("#rangeSingleNoteOpacity").attr("value", (newValue));
+			$("#rangeSingleNoteOpacity").val(newValue);
 			setSingleNoteOpacity_inner(null, newValue);
 		}
 
@@ -1247,11 +1263,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//======== TinyNote opacity ==========
 
 		export function getTinyNoteOpacity(){
-			return $("#rangeTinyNoteOpacity").attr("value");
+			return $("#rangeTinyNoteOpacity").val();
 		}
 
 		export function setTinyNoteOpacity(newValue){
-			$("#rangeTinyNoteOpacity").attr("value", (newValue));
+			$("#rangeTinyNoteOpacity").val(newValue);
 			setTinyNoteOpacity_inner(null, newValue);
 		}
 
@@ -1386,9 +1402,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().namedNoteOpacity = options.namedNoteOpacity;
 		getSong().singleNoteOpacity = options.singleNoteOpacity;
 		getSong().tinyNoteOpacity = options.tinyNoteOpacity;
-		$("#rangeNamedNoteOpacity").attr("value", options.namedNoteOpacity);
-		$("#rangeSingleNoteOpacity").attr("value", options.singleNoteOpacity);
-		$("#rangeTinyNoteOpacity").attr("value", options.tinyNoteOpacity);
+		$("#rangeNamedNoteOpacity").val(options.namedNoteOpacity);
+		$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
+		$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
 
 		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value);
 		try {
@@ -1666,6 +1682,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$('#btnAllTuningsTab').click(function() {
 			showTuningsTab('all');
+		});
+		$('#btnMessagesTab').click(function() {
+			showMessagesTab('Messages');
+		});
+		$('#btnJsonTreeTab').click(function() {
+			showMessagesTab('JsonTree');
+		});
+		$('#btnHideMessagesJsonTree').click(function() {
+			hideMessages_KeyHandler();
 		});
 
 		$("#btnSectionControls").click(function() {

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Usage: ./run-jest.sh _tests/jest/namespacer/ANSIColors.test.js"
-echo "Usage: ./run-jest.sh bin/namespacer/Logger.test.js"
-echo "Or just ./run-jest.sh to run all tests."
 
-cd "$(dirname "$0")"
-node --experimental-vm-modules node_modules/.bin/jest "$@"
+#node --experimental-vm-modules node_modules/.bin/jest "$@"
+node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
