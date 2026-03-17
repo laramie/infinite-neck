@@ -63,7 +63,7 @@ export function jsonTree(tree, parent) {
       let label = add('em', node);
       label.dataset.type = typeof value;
       value === null ? add('b', label, 'NULL') : add('em', label, value);
-      add('em', label, typeof value).style.color = 'rgba(220,220,220,1)';
+      add('em', label, typeof value).style.color = '#c1e1e1';
     } else {
       node.append(svg(path.show));
       let trigger = add('em', node, key + ':  {  ');
