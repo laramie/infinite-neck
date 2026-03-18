@@ -951,7 +951,9 @@ function makeSongLegacy(){
 
     function markVisibleTablesForFileSave(visibleTableIds){
         this.visibleNoteTables = visibleTableIds;
-        this.tunings = getTunings(visibleTableIds);
+        
+        //Not really, any more.  You just have myTunings.
+        //    this.tunings = getTunings(visibleTableIds);
     }
 
     function prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
@@ -961,9 +963,15 @@ function makeSongLegacy(){
         this.defaultBPM = "" + bpm;
         this.userColors = userColors;
         this.theme = theme;
-        if (userInstrumentTuning) {
-            this.userInstrumentTuning = userInstrumentTuning;
-        }
+        /* not really any more: if someone customizes USER, then they Clone it, 
+         * and it becomes part of myTunings, with base instrument being USER.
+         * so it is not saved separately--it is just a template for a clone just like 
+         * any other instrument, just that you can specify tuning and BanjoNut.
+         * 
+         *   if (userInstrumentTuning) {
+         *      this.userInstrumentTuning = userInstrumentTuning;
+         *   }
+         */ 
     }
 
   function getTuningHashInMemoryModel(){
