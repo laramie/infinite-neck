@@ -2484,3 +2484,864 @@ Validation
 This gives you a clear, reusable constructor/load path before any deeper constructor-map cleanup.
 
 Made changes.
+
+User: Very nice.  Played a bunch of dirty tricks on UI, all PASS.  Went in to a section, started the beat looper, moved section to after BEGIN, and section moved there and kept looping beats.  With normal Looping, not only the Transport section and beat indicators track Section, but all the labels on the Section menu div tracked Section, even the destination dropdown.  Able to add beats and notes while looping and while beat looping.  No timing issues, even deleting sections and raising them from graveyard while looping all worked.  Able to put stuff with recorded notes into the graveyard, and they are properly still there on page hard reload and Load Song from user. Looking very good with no concurrency issues!
+
+GitHub Copilot: Excellent acceptance signal. This is exactly the kind of stress path that usually exposes hidden state coupling, and your results indicate the Song/Section refactor has held up under real transport + mutation pressure.
+
+Recommended next stage: Stage 13 “Dead-Code and Redundancy Cleanup”
+1. Remove now-redundant legacy comments/TODOs in Song around “Section objects don’t revive” and related stale notes.
+2. Trim duplicate helper pathways that now just forward to Section with no extra behavior.
+3. Keep behavior identical, with no UI-flow changes.
+4. Add one “no-regression cleanup” test pass only (no new behavioral surface).
+
+Why this is next:
+1. Low risk after your heavy UI torture tests.
+2. Improves readability sharply before any deeper architectural moves.
+3. Makes future diffs smaller and easier to reason about.
+
+If you want, I’ll execute Stage 13 in one pass and keep changes narrowly scoped to cleanup-only edits plus full test verification.
+
+User: On that topic, before the next stage, I'm wondering if there is a way to mock the Window.setInterval() in looper.js:startLoopSections() and looper.js::startLoopBeats().  
+
+Because in the window event handler, there's no jQuery, just model methods (other than your "looperProviders".  
+
+function showBeatsIntervalHandler(){
+        var song = looperProviders.getSong();
+        var beat = song.getBeat();
+        var beats = song.getBeats();
+        if (beat >= beats){
+            if (sectionsLooping()){
+                song.gotoNextSection(true);  //calls showBeats()
+            } else {
+                song.incBeatLoop();
+                looperProviders.showBeats();
+            }
+        } else {
+            song.incBeatLoop();
+            looperProviders.showBeats();
+        }
+    }
+
+    So after our refactoring, would it work to plan a headless looper to test the model for rapid state changes?  
+
+    I mean, there's a much bigger conversation to be had about automated testing of UI in node with jsdom or even Playwright level testing.  Those would test the logjams of Looping too fast. 
+
+    But for what we are working on, would a mock or Model side timer make sense to test?
+
+GitHub Copilot: Yes, that makes excellent sense, and your instinct is right.
+
+For what you want, there are two useful test layers:
+
+1. Headless looper tick logic (fast, deterministic, model-focused)
+- Best path: extract the body of the interval callback into a pure function, something like “advance one loop tick”.
+- Inputs: song-like object, “are we section-looping?”, and “showBeats callback”.
+- Then test rapid state transitions with plain mocks: beat rollover, section advance, beat-loop-only behavior, etc.
+- This gives you high-confidence coverage of the timing-sensitive model decisions without DOM or real timers.
+
+2. Timer wiring tests (still unit-level)
+- Mock/stub interval APIs (`setInterval`, `clearTimeout`) and verify:
+  - start functions schedule one interval
+  - toggle/restart clears and reschedules correctly
+- In Jest this is straightforward with fake timers or direct spies.
+
+What blocks direct testing today
+- looper.js `sectionsLooping()` and `beatsLooping()` read jQuery button text, so the interval path is not fully headless yet.
+- The callback itself is mostly model-safe, but loop-mode detection is currently DOM-coupled.
+
+Recommended minimal refactor for testability
+1. Extract a pure tick function from looper.js.
+2. Route loop-mode checks through provider functions (or pass booleans) instead of reading jQuery inside tick logic.
+3. Keep existing UI behavior unchanged; only improve seams for tests.
+
+So: yes, a mock/model-side timer strategy is a very good next move, and it fits perfectly with your current refactor direction before jumping to jsdom/Playwright-level UI automation.
+
+User: Great.  We will schedule that approach.
+
+OK, back to present-day.  Let's proceed with Stage 13, please.
+
+GitHub Copilot: I’ll do Stage 13 as cleanup-only: remove stale refactor-era comments and dead explanatory text in song.js while keeping behavior identical, then run full tests.
+
+Searched for text `This all works with Section objects|TODO: this.rootID|TODO: I removed this|Avoiding calling this.rootID|refactor|legacy|for now, don't use` (`**/song.js`), 4 results
+
+Searched for text `TODO:` (`**/song.js`), 7 results
+
+Read [](file:///home/laramie/infinite-neck/song.js#430-430), lines 430 to 560
+
+Read [](file:///home/laramie/infinite-neck/song.js#346-346), lines 346 to 392
+
+I found a few true cleanup-only wins (stale comment, dead variable, and one unused declaration) and I’m removing just those with zero behavior changes.
+
+Generating patch (31 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose 2>&1 | tail -12
+
+Stage 13 cleanup pass complete.
+
+What I cleaned in song.js:
+1. Removed dead outer `firstChar` variable in `getRelativeSectionWithWrap` (it was immediately shadowed and unused).
+2. Removed stale “Section objects don’t revive yet” comment above `constructSection` (no longer true).
+3. Removed unused `var section;` in `getTuningHashInMemoryModel`.
+
+Validation:
+- Full Jest run remains green: `110/110` tests, `3/3` suites.
+
+No behavior changed; this was strictly readability/dead-code cleanup as planned.
+
+Made changes.
+
+User: Good.  Since there was actual code removed in getRelativeSectionWithWrap, I looked at the test results for that in verbose mode and the test cases check out.  Which we would expect because firstChar is not used, but ... Anyway, test looks good.
+
+GitHub Copilot: Compacted conversationRight — `firstChar` was assigned but never read, so its removal is purely cosmetic from the logic's perspective. Good that verbose mode confirmed the individual cases rather than just the count.
+
+Ready to proceed with Stage 14 (looper tick extraction) whenever you want to start.
+
+User: OK, committed Stage 13 changes, added one tiny line in index.html to reference favicon.ico because the browser warning was starting to annoy me. Back to clean browser logs.
+
+Ready for Stage 14, my friend.
+
+GitHub Copilot: Let me read the looper first to understand what we're working with. 
+
+Read [](file:///home/laramie/infinite-neck/looper.js)
+
+Read [](file:///home/laramie/infinite-neck/looper.js#106-106), lines 106 to 106
+
+Good, the looper file is small. `showBeatsIntervalHandler` has one DOM dependency: the call to `sectionsLooping()` (which reads `$("#btnLoopSections").text()`). The plan:
+
+1. Extract a pure exported `tickBeat(song, { sectionsLooping, showBeats })` from `showBeatsIntervalHandler`
+2. `showBeatsIntervalHandler` calls `tickBeat` with live values — no logic change, just delegation
+3. Add a new Jest test file for `tickBeat` with mock songs covering mid-beat, end-of-beat (no section loop), and end-of-beat (section loop)
+
+Let me check the existing test files quickly for structure patterns: 
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest)
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/song-load-new.test.js#1-1), lines 1 to 40
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/song-relative-section.test.js#1-1), lines 1 to 60
+
+Let me check the jest config to make sure a new test file will be picked up automatically: 
+
+Read [](file:///home/laramie/infinite-neck/jest.config.js)
+
+Searched for text `"test"` (`**/package.json`), 1 result
+
+Good. No explicit `testMatch` — default glob picks up all `*.test.js` files. Let me implement Stage 14 now. 
+
+Created 4 todos
+
+Starting: *Extract tickBeat into looper.js* (1/4)
+
+Steps 1 and 2 are a single atomic edit to `showBeatsIntervalHandler`: 
+
+Replacing 16 lines with 22 lines in [](file:///home/laramie/infinite-neck/looper.js)
+
+
+```
+
+```
+
+
+Starting: *Create looper.test.js with 4 cases* (3/4)
+
+Created [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+Starting: *Run full test suite* (4/4)
+
+Ran terminal command:  npm test -- --runInBand 2>&1 | tail -20
+
+4 failures in the new suite. Let me see the actual error: 
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/looper.test.js 2>&1
+Completed with input:  npm test -- --runInBand _tests/jest/looper.test.js 2>&1
+
+`jest` isn't auto-injected in ESM mode. Let me check how the existing tests use it:  
+
+Searched for text `jest.fn\|jest.spyOn\|from '@jest'` (`**/_tests/jest/song-api-load.test.js`), no results
+
+Searched for regex `jest\.fn|jest\.spyOn|@jest/globals` (`**/_tests/jest/*.test.js`), 18 results
+
+`import { jest } from '@jest/globals'` — the other tests use that. Fix the import in looper.test.js: 
+
+Replacing 1 lines with 2 lines in [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand 2>&1 | tail -12
+
+Completed: *Run full test suite* (4/4)
+
+114/114, 4 suites. Stage 14 complete.
+
+**What changed:**
+
+- looper.js: `showBeatsIntervalHandler` body extracted into exported `tickBeat(song, { sectionsLooping, showBeats })`. The handler now just calls `tickBeat` with the live DOM-sourced values. No behavioral change to the running app.
+- looper.test.js: 4 new contract tests using mock song objects — mid-beat tick, end-of-beat no-loop, end-of-beat with section loop, beat > beats edge case.
+
+`sectionsLooping()` and `beatsLooping()` still read from the DOM for the UI path — `tickBeat` doesn't care how the caller determines those booleans, which is exactly what makes it testable.
+
+Made changes.
+
+User: Nicely done!
+
+GitHub Copilot: Thanks! The looper is now testable without touching a browser. Ready for Stage 15 whenever you are — or if the prebend dropdown bug is calling your name first.
+
+User: Well, you made an honest man out of me .  I went in and saw that I didn't have the required value of the SELECT when setting it in the handler, because my command menu structure omitted a property.  DONE.  Thanks for the reminder.
+
+Let's go on to Stage 15.
+
+GitHub Copilot: Great update. I’ll quickly pull the staged roadmap context so I can execute Stage 15 directly and keep momentum.
+
+Read memory
+
+Read memory infinite-neck-scanning.md
+
+Read memory song-class-migration-2026-03-12.md
+
+I found prior migration notes, but they contain older contradictory state, so I’m now scanning the code/docs for the explicit Stage 15 definition before editing.
+
+Searched for regex `Stage 15|Stage15|Stage-15|stage 15` (`**/*.{md,txt,js,json}`), no results
+
+Searched for regex `Stage 14|looper tick|tickBeat|showBeatsIntervalHandler` (`**/*.{md,txt,js}`), 16 results
+
+Read [](file:///home/laramie/infinite-neck/_chat_conversations/infinite-neck/refactor-song-js-into-Song-class.md#1-1), lines 1 to 220
+
+Searched for regex `Stage 1|Stage 2|Stage 3|Stage 14|Stage 15` (`**/_chat_conversations/infinite-neck/refactor-song-js-into-Song-class.md`), no results
+
+Read [](file:///home/laramie/infinite-neck/looper.js)
+
+Searched for regex `setLooperProviders|toggleLoopSections|toggleLoopBeats|sectionsLooping\(|beatsLooping\(` (`**/*.js`), 20 results
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1-1), lines 1 to 120
+
+Searched for regex `setLooperProviders\(|sectionsLooping\(|toggleLoopSections\(|toggleLoopBeats\(` (`**/infinite-neck.js`), 5 results
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#140-140), lines 140 to 210
+
+I’m implementing Stage 15 as the remaining looper decoupling piece: move looping-state reads behind providers and add tests proving those functions work headlessly.
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+Read [](file:///home/laramie/infinite-neck/looper.js)
+
+Generating patch (26 lines) in [](file:///home/laramie/infinite-neck/looper.js)
+
+
+```
+
+```
+
+
+Generating patch (46 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+
+```
+
+```
+Stage 15 decoupling is in place: looping-state checks now read through injectable providers, and I added focused tests for those provider-driven checks. Next I’ll run the full suite to verify everything stays green.
+
+Ran terminal command:  npm test -- --runInBand
+
+Inserted into memory file infinite-neck-scanning.md
+
+Stage 15 is complete and green.
+
+What I changed:
+- Routed looping-state reads through looper providers in looper.js:
+  - Added provider hooks for loop captions:
+    - getLoopSectionsCaption
+    - getLoopBeatsCaption
+  - Updated sectionsLooping in looper.js and beatsLooping in looper.js to use those providers instead of direct DOM reads.
+- Added/extended tests in looper.test.js:
+  - Existing tickBeat tests still pass.
+  - New provider-driven tests validate:
+    - LOOPING... caption => sectionsLooping true
+    - RANDOM.... caption => sectionsLooping true
+    - LOOP caption => sectionsLooping false
+    - LOOPING... / LOOP BEATS behavior for beatsLooping
+
+Validation:
+- Full suite passes: 118 tests, 4 suites.
+
+This keeps runtime behavior unchanged while making loop-state detection headless-testable and more injectable for future refactors. 
+
+Next natural step:
+1. Commit Stage 15 as the provider-based loop-state decoupling milestone.
+
+Made changes.
+
+User: All right.  I already committed, but I added a comment to the commit, labelling it Stage 15.  looper.test.js  code looks quite interesting!
+
+Ready for the next!
+
+GitHub Copilot: Perfect. I’ll quickly find the defined Stage 16 target in the project notes so I can jump straight into implementation.
+
+Searched for regex `Stage 16|Stage16|next stage|Stage 1[6-9]|Stage [2-9][0-9]` (`**/*.{md,txt,js,json}`), 3 results
+
+Read [](file:///home/laramie/infinite-neck/_doco/song-refactor-chat.md#1450-1450), lines 1450 to 1535
+
+Read [](file:///home/laramie/infinite-neck/_doco/song-refactor-chat.md#2180-2180), lines 2180 to 2295
+
+Searched for regex `Stage 15|Stage 14|Stage 16|next I’d do|next stage` (`**/_doco/song-refactor-chat.md`), 4 results
+
+I’m moving Stage 16 forward by decoupling the remaining looper DOM/timer writes behind providers, so toggle/restart behavior can be tested headlessly too.
+
+Generating patch (58 lines) in [](file:///home/laramie/infinite-neck/looper.js)
+
+
+```
+
+```
+
+
+Generating patch (110 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/looper.test.js
+Completed with input:  npm test -- --runInBand _tests/jest/looper.test.js
+
+Quick delta: one toggle test was flaky due module-level interval pointer carrying across tests. I’m adding a tiny test-only reset hook to make the suite deterministic, then rerunning.
+
+Generating patch (14 lines) in [](file:///home/laramie/infinite-neck/looper.js)
+
+
+```
+
+```
+
+
+Generating patch (23 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/looper.test.js && npm test -- --runInBand
+
+Inserted into memory file infinite-neck-scanning.md
+
+Stage 16 is done and green.
+
+I went ahead and implemented the next looper decoupling slice so toggle/restart flows are now headless-testable too.
+
+Changes made:
+- Refactored side-effect outputs in looper.js:
+1. Added provider hooks for writing button state:
+- setLoopSectionsButton
+- setLoopBeatsButton
+- setLoopBeatsTransportButton
+2. Added provider hooks for timer control:
+- setLoopInterval
+- clearLoopInterval
+3. Updated clear/start paths to use providers instead of direct DOM/timer calls.
+4. Kept browser behavior identical via default provider implementations.
+5. Added test reset helper: __resetLooperForTests in looper.js
+
+- Expanded tests in looper.test.js:
+1. Existing tickBeat tests still pass.
+2. Existing provider caption tests still pass.
+3. Added new tests for:
+- toggleLoopSections on/off
+- toggleLoopBeats on/off
+- restartLoopSections behavior
+4. Added beforeEach reset using the new looper reset helper for deterministic isolation.
+
+Validation:
+- Looper-only suite: 12/12 passed
+- Full suite: 122/122 passed, 4/4 suites
+
+If you want, next I can do Stage 17 as a cleanup pass to remove remaining direct jQuery dependencies from looper control functions and keep the file mostly provider-driven end-to-end.
+
+Made changes.
+
+User: Yes that would be a good move.
+
+GitHub Copilot: I’ll do Stage 17 as a focused looper hardening pass: make default providers runtime-safe without jQuery/window and keep behavior identical in browser mode.
+
+Read [](file:///home/laramie/infinite-neck/looper.js)
+
+Generating patch (109 lines) in [](file:///home/laramie/infinite-neck/looper.js)
+
+
+```
+
+```
+I’ve removed unsafe default assumptions (`$`, `window`, non-null song) in looper defaults. Next I’m adding a small test to lock this headless-safe default contract and then running the suites.
+
+Generating patch (35 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/looper.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/looper.test.js && npm test -- --runInBand
+
+Inserted into memory file infinite-neck-scanning.md
+
+Excellent call. Stage 17 is complete.
+
+What I changed:
+- Hardened default provider behavior in looper.js:
+1. Added safe internal helpers for optional jQuery access:
+- hasJQuery
+- getButtonCaption
+- setButtonState
+2. Moved default provider construction into createDefaultLooperProviders() and made defaults safe when jQuery/window are absent.
+3. Replaced direct timer globals with guarded wrappers:
+- setLoopInterval uses setInterval only if available
+- clearLoopInterval handles null/undefined pointer and uses clearInterval/clearTimeout safely
+4. Added null-safe song access:
+- startLoopSections now checks getSong() before reading randomLoop
+- showBeatsIntervalHandler now returns early if no valid song interface exists
+5. Added provider reset helper for tests:
+- __resetLooperProvidersForTests in looper.js
+
+- Extended tests in looper.test.js:
+1. Added default-provider safety test:
+- sectionsLooping/beatsLooping do not throw without jQuery
+- both return false in headless default mode
+
+Validation:
+- Looper suite: 13/13 passed
+- Full suite: 123/123 passed, 4/4 suites
+
+This gives you a looper module that is now provider-driven end-to-end in behavior, with robust headless defaults instead of implicit browser assumptions.
+
+Made changes.
+
+User: So in getRelativeSectionWithWrap() we say we will deliver n Sections back in looper history even if the looping was in Random mode.  These are the rules @1 and @2 mentioned in the comments and in the mini-rules engine in 
+
+_tests/jest/song-relative-section.test.js:rulesDescription and 
+_tests/jest/song-relative-section.test.js:testCases.
+
+That would require a history list of some kind, or relative 0 if no Random looping has occurred yet.  There's no handling of this history in the Looper yet, is there?
+
+GitHub Copilot: I’ll verify this directly in code by checking `getRelativeSectionWithWrap` and looper state paths for any random-loop history recording.
+
+Searched for regex `PREVIOUS_PLAYED|@1|@2|previous played|history|randomLoop|getRelativeSectionWithWrap` (`**/song.js`), 18 results
+
+Searched for regex `history|previous|randomLoop|gotoNextSection|sectionsLooping|tickBeat` (`**/looper.js`), 13 results
+
+Read [](file:///home/laramie/infinite-neck/song.js#340-340), lines 340 to 490
+
+Read [](file:///home/laramie/infinite-neck/song.js#700-700), lines 700 to 790
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/song-relative-section.test.js)
+
+Correct, there is no real random-history handling yet.
+
+Current behavior:
+- The @ rule is documented, but still a placeholder. In song.js, the PREVIOUS_PLAYED branch has a TODO and currently falls through to normal wrapped math.
+- Random section changes in gotoNextSection in song.js pick a random index, but do not append anything to a history list.
+- The looper tick path in looper.js just calls gotoNextSection(true) when section-looping; it does not track previous random sections itself.
+- Tests currently describe @n semantics in song-relative-section.test.js, but the table-driven test cases in song-relative-section.test.js do not include explicit @n assertions yet.
+
+So your reading is exactly right: without a stored played-section history, @1/@2 cannot yet mean “last random-played sections” in the true sense.
+
+User: So can we add a state such as an array accesible gotoNextSection() probably on Song/ (Unless a closure is more appropriate...they always kind of weird me out, but if you think it is stable and maintainable and better than a Song member, that's OK).
+
+And then we'd need to implement the TODO in 
+ getRelativeSectionWithWrap........
+ ......
+ case Direction.PREVIOUS_PLAYED: 
+
+ Could you see if an implementation would would for our Looper in GUI and Headless mode please?
+
+
+GitHub Copilot: Yes, this is a good fit for Song state (not a closure): I’m going to add a bounded random-play history array on Song, write it from `gotoNextSection` when random mode is active, and then wire `@n` resolution to that history with safe fallback to current section. After that I’ll add tests that run headless to verify behavior.
+
+Searched for regex `getRelativeSectionWithWrap resolves|@n|randomLoop|gotoNextSection\(|warnings_getRelSec` (`**/_tests/jest/song-api-load.test.js`), 3 results
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/song-api-load.test.js#1-1), lines 1 to 280
+
+I confirmed exactly where to wire it. I’m now implementing Song-level random history (`gotoNextSection` writer + `@n` reader) and adding API tests for no-history fallback plus real random-loop history resolution in headless mode.
+
+Generating patch (87 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Generating patch (45 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/song-api-load.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+Completed with input:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+
+I’ve applied the changes and tests; now I’m reading the test output log file the terminal tool saved so I can confirm pass/fail details.
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_pjptrX0mg1I7ubC6Lf6oLxzf__vscode-1773334697174/content.txt)
+
+One headless issue surfaced: `gotoNextSection` always fires a UI replay event, which pulls jQuery handlers. I’m patching `gotoNextSection`/`gotoPrevSection` to skip UI replay when headless (same pattern already used by `gotoSection`), then rerunning tests.
+
+Generating patch (27 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+Completed with input:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_rtSoXudT9tTWLEq1mgJZu4IJ__vscode-1773334697177/content.txt)
+
+I found the regression: those headless guards changed established EventBus contract tests. I’m reverting that part and instead isolating only the new random-history test by stubbing `EventBus.trigger`, which keeps existing behavior intact while still validating `@n`.
+
+Generating patch (27 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Generating patch (22 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/song-api-load.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_hKoz9Kt1zbyWctOJRj3E3iVi__vscode-1773334697181/content.txt)
+
+Inserted into memory file infinite-neck-scanning.md
+
+Searched for regex `RANDOM_SECTION_HISTORY_MAX|randomSectionHistory|getPreviousPlayedSectionIndex|case Direction.PREVIOUS_PLAYED|pushRandomSectionHistory|gotoNextSection\(` (`**/song.js`), 20 results
+
+Searched for regex `@n falls back|@n resolves against random-loop history` (`**/_tests/jest/song-api-load.test.js`), 2 results
+
+Implemented, and it works.
+
+What was added:
+1. Song now has explicit random-play history state:
+- Added bounded array state (max 256): song.js, song.js, song.js
+- Added helper writers/readers:
+  - song.js
+  - song.js
+
+2. Random transitions now record history in gotoNextSection:
+- Previous index is captured before random jump and pushed into history: song.js, song.js
+
+3. Implemented the TODO in getRelativeSectionWithWrap for @n:
+- PREVIOUS_PLAYED now resolves from random history instead of falling through to simple wrap math: song.js, song.js
+
+Behavior now:
+- @1 = last section visited before the current random jump
+- @2 = two random jumps ago
+- If history is empty, @n falls back to current section (your “relative 0” fallback)
+- If n is larger than available history, it clamps to the oldest available history entry
+
+Validation:
+- Added tests for both fallback and real history resolution:
+  - [song-api-load.test.js]( _tests/jest/song-api-load.test.js#L282)
+  - [song-api-load.test.js]( _tests/jest/song-api-load.test.js#L291)
+- Full suite passes: 125/125, 4/4 suites.
+
+On GUI vs Headless:
+- Headless is explicitly tested via Jest.
+- GUI uses the same Song path (`gotoNextSection`), so Looper-driven random section changes will populate the same history and @n resolution works there too.
+
+Made changes.
+
+User: Fantastic.  The use case is someone playing along with a practice song, and another NoteTable, or four of them, show the previous four patterns of chords they had to match while playing on their real-world instrument.  If they mess up, they could pause, or even in real-time, keep looking at what they were supposed to have played.  So it's effectively like reading a book, where the reader shows you previous pages so you have context.  In this case the "previous pages" were selected randomly, but they were still the last four pages you saw.  So in practical terms we only need 16 members in the array.  Most humans are said to be limited to 7 complex numbers in a row they can remember, so more than 16 would be super human.  My mom could play Mozart pieces from memory, but that's different.  We store memories as long strings of triggers or something.
+
+Also, funny side note on this feature you just implemented for me: This was the feature that convinced me I had to absolutely get this thing modular, testable and Class/Instance based, because to have four views looking at scroll-ahead and scroll-back, the objects could not pollute each other and pollute the Song state.  So that's when I attacked moving to ES6, and spent a few weeks writing a Regex version of a code migration tool, which was bin/namespacer in this project, since abandonded and moved to @laramie/cli-tools because you figured out how to migrate to ES6 in a much more direct and solid way.  So thank you for all that.
+
+GitHub Copilot: Love this use case. I’m going to lock the random-history buffer to 16 exactly as you described and add a test that proves it stays bounded during repeated random looping, then I’ll run the suite.
+
+Generating patch (8 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Generating patch (34 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/song-api-load.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+
+Patch is in; I’m now reading the saved terminal output to confirm test status and spot any surprises.
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_4QW7WloiGcOY1yyOFd9PlPdG__vscode-1773334697188/content.txt#1-1), lines 1 to 320
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_4QW7WloiGcOY1yyOFd9PlPdG__vscode-1773334697188/content.txt#320-320), lines 320 to 520
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_4QW7WloiGcOY1yyOFd9PlPdG__vscode-1773334697188/content.txt#520-520), lines 520 to 550
+
+One small polish: the new cap test is passing but spams random-loop logs. I’ll silence `console.log` just inside those two new tests so test output stays clean.
+
+Generating patch (36 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/song-api-load.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand _tests/jest/song-api-load.test.js && npm test -- --runInBand
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/b823c61e2270aa2e512af59057fcc0fb/GitHub.copilot-chat/chat-session-resources/e17fc039-ef08-4dfe-bad0-0f70422b026d/call_tagAvwINeW5tpVSwZOX9J5dg__vscode-1773334697193/content.txt)
+
+Inserted into memory file infinite-neck-scanning.md
+
+That story is awesome, and it maps perfectly to the architecture direction you pushed for. The “previous pages” metaphor is exactly what this feature now supports.
+
+Implemented now:
+- Random history cap is 16 in song.js.
+- Existing @n behavior continues to use Song random history in song.js.
+- Added a regression test that proves the history never grows past 16 in song-api-load.test.js.
+- Also kept the @n fallback and history-resolution tests in place:
+  - song-api-load.test.js
+  - song-api-load.test.js
+
+Validation:
+- Focused suite passed: 56/56 in song-api-load.
+- Full suite passed: 126/126, 4/4 suites.
+
+One minor polish I included:
+- Suppressed random-loop console noise inside those new tests only, so test output stays readable.
+
+If you want next, I can add one small API helper for your multi-view NoteTable case:
+1. getPreviousPlayedSectionIndices(count) returning the last N history indices (clamped), ready for four simultaneous “look-back” tables.
+
+Made changes.
+
+User: That's all good.  The real-world implication is important: a user can legitimately leave this program looping all day if they want, and the browser should not crash.  The program can be used for music practice, for a wall-mounted screen as an art display, or during a long music class or lectures.  So leaks out of looping cases are bad.  If you haven't already, point me to the console.log statements and I'll nuke them.  I'm sure they are debug only.
+
+GitHub Copilot: I’ll scan runtime files for console.log calls, especially section-loop and random-loop paths, and then give you a tight hit list to delete.
+
+Searched for regex `console\.log\(` (`**/song.js`), 11 results
+
+Searched for regex `console\.log\(` (`**/looper.js`), no results
+
+Searched for regex `console\.log\(` (`**/infinite-neck.js`), 13 results
+
+Great callout. Here are the active console logs I found, with the loop-related one first.
+
+Most relevant to long-running loop noise:
+- Random loop debug line in gotoNextSection: song.js
+
+Likely debug-only in Song runtime:
+- Headless mode banner in setHeadless: song.js
+- EventBus strategy trace in publish_SectionChanged: song.js
+- EventBus strategy trace in publish_UpdateSectionStatus: song.js
+
+Probably not loop noise, but still console.log:
+- getBeats warning (could be console.warn instead): song.js
+- deleteBeat guard message: song.js
+- deleteCurrentSection guard message: song.js
+- test helper logging path (only when explicitly enabled): song.js
+
+Also outside Song:
+- A few active logs in app runtime:
+  - infinite-neck.js
+  - infinite-neck.js
+  - infinite-neck.js
+
+If you want, I can do a quick cleanup pass now that removes only clear debug logs and leaves true warning/error messaging intact.
+
+User: That would be great.
+
+GitHub Copilot: I’ll remove the high-frequency runtime debug logs first (random-loop and EventBus trace logs), and switch log-as-warning spots to console.warn so you keep signal without noisy debug output.
+
+Generating patch (60 lines) in [](file:///home/laramie/infinite-neck/song.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  npm test -- --runInBand
+
+I finished the cleanup and tests are green. I’ll do one quick scan to show exactly which console.log entries remain so you can decide if you want a second pass beyond loop-risk paths.
+
+Searched for regex `console\.log\(` (`**/song.js`), 5 results
+
+Done. I removed the loop-risk debug logs and kept behavior intact.
+
+What I removed/changed in song.js:
+- Removed EventBus trace logs in:
+  - song.js
+  - song.js
+- Removed random-loop per-tick log in:
+  - song.js
+- Changed warning-style logs from console.log to console.warn in:
+  - song.js
+  - song.js
+  - song.js
+
+Validation:
+- Full test suite passed: 126/126, 4/4 suites.
+
+What console.log still remains in song.js:
+- Headless startup banner: song.js
+- Explicit diagnostic output in the test helper path only: song.js
+- A few commented-out logs only (inactive): song.js, song.js, song.js
+
+If you want, I can do one more tiny pass to remove the remaining two active console.log calls as well.
+
+Made changes.
+
+User: Please retain the song.js:297 and song.js:256 logs.  They are useful for my verbose mode test runs which I use as a developer, not as a CI environment or end user, and I think that in INFINITE_NECK_VERBOSE=0 they are suppressed. Nuke the others.
+
+GitHub Copilot: Compacted conversationLet me check the current state of those infinite-neck.js lines before removing them. 
+
+Searched for regex `console\.log` (`**/infinite-neck.js`), 13 results
+
+Three active logs at lines 659, 724, 818. Let me read the context around each.   
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#656-656), lines 656 to 662
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#721-721), lines 721 to 727
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#815-815), lines 815 to 821
+
+Replacing 11 lines with 9 lines in [](file:///home/laramie/infinite-neck/infinite-neck.js)
+
+
+```
+
+```
+Done. Removed the blob-save log and the tuning-fallback log; upgraded the file-type guard to `console.warn`. The two logs in song.js (lines 256 and 297) are untouched.
+
+Made changes.
+
+
+
+
+
+=======
+# Song / Looper Refactor — Handoff Notes (Chat 3)
+
+_Continuation from song-refactor-chat-2.md_
+_State as of 2026-03-12 — 126/126 tests green, 4 suites_
+
+---
+
+## What Just Landed (this chat)
+
+| Stage | Summary | Status |
+|-------|---------|--------|
+| 16 | Looper toggle / restart headless-testable | ✅ done |
+| 17 | Default looper providers jQuery/window-safe | ✅ done |
+| — | `@n` PREVIOUS_PLAYED random-section history in Song | ✅ done |
+| — | History cap set to 16 (long-running / all-day safety) | ✅ done |
+| — | Debug `console.log` cleanup — hot-loop paths nuked | ✅ done |
+
+---
+
+## Codebase State
+
+### looper.js
+- Full injectable-provider pattern complete — **zero** direct `$()`, `window.setInterval`, or `window.clearTimeout` calls in logic paths
+- `createDefaultLooperProviders()` factory with `hasJQuery()`, `getButtonCaption()`, `setButtonState()` safe helpers
+- Exports: `setLooperProviders`, `toggleLoopSections`, `restartLoopSections`, `toggleLoopBeats`, `sectionsLooping`, `beatsLooping`, `tickBeat`, `__resetLooperForTests`, `__resetLooperProvidersForTests`
+
+### song.js
+- `RANDOM_SECTION_HISTORY_MAX = 16`
+- `randomSectionHistory: []` — initialized in obj literal and `initializeSongState()`
+- `pushRandomSectionHistory(idx)` — validates, pushes, splices to cap
+- `getPreviousPlayedSectionIndex(nBack, fallbackIndex)` — safe n-back lookup with fallback
+- `gotoNextSection` — records `prevSectionIdx` before random jump
+- `getRelativeSectionWithWrap` `Direction.PREVIOUS_PLAYED` case — now uses history (was TODO / falling through)
+- **Console logs retained** (intentional): line 256 headless banner (quiet-guarded), line 297 test helper (explicit opt-in)
+- Hot-loop logs removed: EventBus trace x2, random-tick log, blob-save log, tuning-fallback log
+- Upgraded to `console.warn`: getBeats guard, deleteBeat guard, deleteCurrentSection guard, file-type guard
+
+### infinite-neck.js
+- Removed: `console.log("saved Blob:...")` (line was 659)
+- Upgraded: `console.log("File not supported!...")` → `console.warn`
+- Removed: `console.log("showDefaultTuning because file load found none")`
+
+### Test files
+- `_tests/jest/looper.test.js` — 13 tests, 4 describe blocks
+- `_tests/jest/song-api-load.test.js` — 56 tests, includes 3 new random-history tests
+
+---
+
+## Key Patterns / Rules to Remember
+
+- **ESM Jest**: always `import { jest } from '@jest/globals'` in test files
+- **EventBus guard**: any headless test that calls `gotoNextSection` / `gotoPrevSection` must mock EventBus:
+  ```js
+  jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+  ```
+- **Looper interval isolation**: toggle/restart suite requires `beforeEach(() => __resetLooperForTests())`
+- **Song construction**: `makeSong()` returns `new Song()` which `Object.assign`s from `makeSongLegacy()`
+
+---
+
+## The Big Vision (Next Feature)
+
+**Goal: Guitar Hero / Synthesia-style look-ahead + look-back**
+
+Show multiple Sections simultaneously on-screen around the current play position:
+
+```
+[ @2 back ] [ @1 back ] [ >>> NOW <<< ] [ +1 ahead ] [ +2 ahead ]
+```
+
+- The `@n` PREVIOUS_PLAYED history we just built is the **look-back engine**
+- Look-ahead needs a symmetric read-forward pass from Song (read-only, no state mutation)
+- NoteTable views would each receive a section index and render independently
+- Candidate new Song API: `getPreviousPlayedSectionIndices(count)` — returns last N history indices as array (pitched but not yet accepted)
+- Look-ahead counterpart: `getLookAheadSectionIndices(count)` — returns next N section indices from current position respecting FORWARD/RANDOM mode
+
+### Suggested next stages
+1. `getPreviousPlayedSectionIndices(count)` batch getter + test
+2. `getLookAheadSectionIndices(count)` — FORWARD and RANDOM variants (random = speculative, non-mutating)
+3. NoteTable multi-instance wiring (UI layer, out of scope for this refactor track but enabled by it)
+
+---
+
+## Test Run Snapshot
+```
+Test Suites: 4 passed, 4 total
+Tests:       126 passed, 126 total
+Time:        ~2.7s
+```
+
+Run with: `npm test -- --runInBand`
+
+---
+
+_Enjoy the pizza. The codebase will be here when you get back._
