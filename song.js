@@ -1006,12 +1006,12 @@ function makeSongLegacy(){
     function moveNamedNotesAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            moveNamedNotesForSection(amount, section);
+            moveNamedNotesForSection.call(this, amount, section);       
         });
 	}
 
     function moveNamedNotes(amount){
-        return moveNamedNotesForSection(amount, this.getCurrentSection());
+        return moveNamedNotesForSection.call(this, amount, this.getCurrentSection());
 
     }
     function moveNamedNotesForSection(amount, section){
