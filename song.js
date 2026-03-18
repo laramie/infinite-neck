@@ -15,6 +15,8 @@ import {
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
 
+const DEFAULT_BEATS = 4;
+const RANDOM_SECTION_HISTORY_MAX = 16;
 const NUM_FRETS_MAX = 108;
 export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
@@ -140,7 +142,7 @@ export class Song {
     noteIDToNoteNameRaw(noteIndex) {
         return constNoteNamesArr[noteIndex];
     }
-    static noteNameToNoteID(noteName) {
+    noteNameToNoteID(noteName) {
         return constNoteNamesArr.indexOf(noteName);
     }
 
@@ -322,7 +324,7 @@ export class Song {
                     if (intNum < 1) {
                         return this.sections[currentIndex];
                     }
-                    return this.sections[getPreviousPlayedSectionIndex.call(this, intNum, currentIndex)];
+                    return this.sections[this.getPreviousPlayedSectionIndex(intNum, currentIndex)];
                 case Direction.FORWARD: // (+)
                     var wrappedIndex = wrap(intNum, this.sections, currentIndex);
                     return this.sections[wrappedIndex];
@@ -411,7 +413,7 @@ export class Song {
     }
 
 	addSection(section){
-        section = normalizeSection.call(this, section);
+        section = this.normalizeSection(section);
 	    var newIndex = this.sections.push(section) - 1;
 	    this.gSectionsCurrentIndex = newIndex;
 	    if (!this.constructing) this.publish_UpdateSectionStatus();
@@ -419,7 +421,7 @@ export class Song {
 	    // sections is an array of gNotesPlayed objects. push() returns length.
 	}
 	addSectionAfterCurrent(section){
-        section = normalizeSection.call(this, section);
+        section = this.normalizeSection(section);
         if (this.sections.length == 0){
             this.sections.push(section);
             this.gSectionsCurrentIndex = 0;
@@ -429,7 +431,7 @@ export class Song {
     	    var newIndex = this.sections.splice(start, deleteCount, section);
             this.gSectionsCurrentIndex = this.gSectionsCurrentIndex+1;
         }
-        requestUiFullRepaint();
+        this.requestUiFullRepaint();
 	    this.publish_UpdateSectionStatus();
 	    return this.gSectionsCurrentIndex;
 	    // sections is an array of gNotesPlayed objects.
@@ -438,28 +440,28 @@ export class Song {
 	    return this.sections;
 	}
 	addSections(fileObj){
-	    if (this.sections.length==1 && isEmpty(this.sections[0])){
+	    if (this.sections.length==1 && this.isEmpty(this.sections[0])){
 	        //special case: file open is adding sections, but default section is empty, so delete it.
 	        this.sections = [];
 	    }
-        var normalizedSections = fileObj.sections.map(section => normalizeSection.call(this, section));
+        var normalizedSections = fileObj.sections.map(section => this.normalizeSection(section));
         var count = Array.prototype.push.apply(this.sections, normalizedSections);
         this.gSectionsCurrentIndex = count - 1;
 	}
 
     //these two return an html string that is either sharps or flats, depending on section.
-    song_getRootKey(){
+    getRootKey(){
         return this.getCurrentSection().getRootKey();
     }
-    song_getRootKeyLead(){
+    getRootKeyLead(){
         return this.getCurrentSection().getRootKeyLead();
     }
 
     //these two return a simple noteName, one of [A, Bb, B, C, Db, ...etc.]
-    song_getRootNoteName(){
+    getRootNoteName(){
         return this.getCurrentSection().getRootNoteName();
     }
-    song_getLeadNoteName(){
+    getLeadNoteName(){
         return this.getCurrentSection().getLeadNoteName();
     }
 
@@ -506,8 +508,8 @@ export class Song {
 		this.setBeats(beatCount+1);
         this.gotoFirstBeat();
 		this.publish_UpdateSectionStatus();
-		requestUiFullRepaint();
-        requestUiShowBeats();
+		this.requestUiFullRepaint();
+        this.requestUiShowBeats();
 	}
 
     shuffleRecordedBeatsDown(recordedBeats, nBeats, nStartBeat){
@@ -531,13 +533,13 @@ export class Song {
          }
          var recordedNotes = this.getCurrentSection().recordedNotes;
          if (recordedNotes){
-        	 this.getCurrentSection().recordedNotes = shuffleRecordedBeatsDown(recordedNotes, nBeats, nStartBeat);
+        	 this.getCurrentSection().recordedNotes = this.shuffleRecordedBeatsDown(recordedNotes, nBeats, nStartBeat);
          }
          this.setBeats(nBeats-1);
          var currBeat = nStartBeat > this.getBeats() ? this.getBeats() : nStartBeat;
          this.getCurrentSection().currentBeat = currBeat;
          this.publish_UpdateSectionStatus();
-    		 requestUiShowBeats();
+         this.requestUiShowBeats();
     }
 
     prevBeat(){
@@ -549,7 +551,7 @@ export class Song {
     }
 
     prevNextBeat(isNext){
-			requestUiClearHighlights();
+			this.requestUiClearHighlights();
   	        var beat  = this.getBeat();
   	        var beats = this.getBeats();
 
@@ -563,7 +565,7 @@ export class Song {
   	            }
   	        }
             this.publish_UpdateSectionStatus();
-    			requestUiShowBeats();
+            this.requestUiShowBeats();
     }
 
 
@@ -627,8 +629,8 @@ export class Song {
         if (sectionIdx > -1 && sectionIdx < this.sections.length){
             this.gSectionsCurrentIndex = sectionIdx;
             if (!this.isHeadless){
-				requestUiClearAndReplaySection();
-                publish_SectionChanged();
+				this.requestUiClearAndReplaySection();
+                this.publish_SectionChanged();
             }
         } else {
             console.warn("############### bad sectionIdx:"+sectionIdx+" gotoSection("+idx+") len:"+this.sections.length);
@@ -650,14 +652,14 @@ export class Song {
                     }
                 }
             }
-            pushRandomSectionHistory.call(this, prevSectionIdx);
+            this.pushRandomSectionHistory(prevSectionIdx);
             this.gSectionsCurrentIndex = randSection;
         } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
             if( orGotoFirst ) this.firstSection();
 		} else {
 			this.nextSection();
 		}
-        requestUiClearAndReplaySection();
+        this.requestUiClearAndReplaySection();
 	}
 
 	gotoPrevSection(orGotoLast){
@@ -666,11 +668,11 @@ export class Song {
 		} else {
 			this.prevSection();
 		}
-        requestUiClearAndReplaySection();
+        this.requestUiClearAndReplaySection();
 	}
 
     insertSectionAtDest(aSection, destIndex){
-        aSection = normalizeSection.call(this, aSection);
+        aSection = this.normalizeSection(aSection);
         if (destIndex == "END"){
             this.sections.push(aSection);
             this.gSectionsCurrentIndex = this.sections.length-1;
@@ -701,7 +703,7 @@ export class Song {
         } else {
             this.addSectionAfterCurrent(aSection);
         }
-        requestUiClearAll();
+        this.requestUiClearAll();
 	    this.gotoFirstBeat();
 	    this.publish_SectionChanged();//updateSectionsStatus();
 	}
@@ -720,8 +722,8 @@ export class Song {
         } else {
     		this.addSectionAfterCurrent(aSection);
         }
-        requestUiClearAll();
-        requestUiResetNoteNames();//calls replay
+        this.requestUiClearAll();
+        this.requestUiResetNoteNames();//calls replay
 	    //updateSectionsStatus();
         this.publish_SectionChanged();//calls updateSectionsStatus...TODO might be one too many calls in this chain--could cleanup for efficiency
 	    return aSection;
@@ -744,8 +746,8 @@ export class Song {
 
         this.sections.splice(this.gSectionsCurrentIndex, 1);
 	    this.prevSection();
-        requestUiClearAll();
-        requestUiReplay();
+        this.requestUiClearAll();
+        this.requestUiReplay();
         this.publish_SectionChanged();
         //fullRepaint();
 		return true;
@@ -778,7 +780,7 @@ export class Song {
     cycleThruKeysAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            normalizeSection.call(this, section).transposeRoot(amount);
+            this.normalizeSection(section).transposeRoot(amount);
         });
 	}
 
@@ -787,13 +789,13 @@ export class Song {
 	}
 
 	getTableArrInSection(section, tableID){
-        return normalizeSection.call(this, section).getTableArr(tableID);
+        return this.normalizeSection(section).getTableArr(tableID);
 	}
 
 
     removeUnusedTablesFromMemoryModel(){
     	    this.sections.forEach(section => {
-    	        normalizeSection.call(this, section).removeEmptyTables();
+    	        this.normalizeSection(section).removeEmptyTables();
     	    });
 	}
 
@@ -881,16 +883,16 @@ export class Song {
     moveNamedNotesAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            moveNamedNotesForSection.call(this, amount, section);       
+            this.moveNamedNotesForSection(amount, section);       
         });
 	}
 
     moveNamedNotes(amount){
-        return moveNamedNotesForSection.call(this, amount, this.getCurrentSection());
+        return this.moveNamedNotesForSection(amount, this.getCurrentSection());
 
     }
     moveNamedNotesForSection(amount, section){
-	    return normalizeSection.call(this, section).moveNamedNotes(amount);
+	    return this.normalizeSection(section).moveNamedNotes(amount);
   	}
     //============= EventBus =========================
 
@@ -927,4 +929,3 @@ export class Song {
 
 }
 
-// Export SongModel, noteNameToNoteID, constNoteNamesArr
