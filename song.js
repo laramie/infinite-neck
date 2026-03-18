@@ -16,226 +16,84 @@ import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
 
 const NUM_FRETS_MAX = 108;
+export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
-export const constNoteNamesArr       = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
-
-//Don't export this one, it uses "this" and must be used through the method.
-function noteIDToNoteName(noteIndex){
-    return this.getCurrentSection().noteIDToDisplayName(noteIndex);
+export function noteNameToNoteID(noteName) {
+    return constNoteNamesArr.indexOf(noteName);
 }
 
-function noteIDToNoteNameRaw(noteIndex){
-    return constNoteNamesArr[noteIndex];
-}
-
-export function noteNameToNoteID(noteName){
-		return constNoteNamesArr.indexOf(noteName);
-	}
-
-function requestUiClearAll() {
-    EventBus.trigger('SongUiClearAll');
-}
-
-function requestUiReplay() {
-    EventBus.trigger('SongUiReplay');
-}
-
-function requestUiFullRepaint() {
-    EventBus.trigger('SongUiFullRepaint');
-}
-
-function requestUiClearHighlights() {
-    EventBus.trigger('SongUiClearHighlights');
-}
-
-function requestUiResetNoteNames() {
-    EventBus.trigger('SongUiResetNoteNames');
-}
-
-function requestUiShowBeats() {
-    EventBus.trigger('SongUiShowBeats');
-}
-
-function requestUiClearAndReplaySection() {
-    EventBus.trigger('SongUiClearAndReplaySection');
-}
-
-
-/**
- * @typedef {Object} Song
- * @property {function(boolean):void} gotoNextSection
- * @property {function():void} replay
- * @property {function():void} getCurrentSection
- * // ...add other methods you use...
- */
-
-/**
- * @returns {Song}
- */
 export class Song {
-    constructor() {
-        Object.assign(this, makeSongLegacy());
-    }
-}
-
-export function makeSong() {
-    return new Song();
-}
-
-export function makeSongFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
-    const song = makeSong();
-    if (headless) {
-        song.setHeadless(true, quiet);
-    }
-    if (fileObj && Array.isArray(fileObj.sections)) {
-        song.addSections(fileObj);
-        if (fixIndex) {
-            song.fixupCurrentIndexForLoadedSong();
+    constructor({ fileObj = null, legacy = true, headless = false, quiet = true, fixIndex = false } = {}) {
+        if (legacy) {
+            this._initLegacy();
+        } else if (fileObj) {
+            this._initFromData(fileObj, { headless, quiet, fixIndex });
+        } else {
+            this._initLegacy();
         }
     }
-    return song;
-}
 
-function makeSongLegacy(){
-    const DEFAULT_BEATS = 4;
-    const RANDOM_SECTION_HISTORY_MAX = 16;
-    const noteNamesFuncArrDEFAULT = [
-	    "I", // 1 - I    I
-	    "&tau;", //"&tau;", // 2 - Tau    was: "&#x1D70F;"
-	    "II", // 3 - II
-	    "m", // 4 - m
-	    "III", // 5 - 3
-	    "IV", // 6 - IV
-	    "&Theta;", // 7 - Tri
-	    "V", // 8 - V
-	    "&sigma;", // 9 - Sigma
-	    "6", // 10 - VI
-	    "&delta;", // 11 - dom
-	    "&Delta;" // 12 - I
-	];
+    _initLegacy() {
+        this.sections = null;
+        this.gSectionsCurrentIndex = 0;
+        this.gFirstBeatSeen = false;
+        this.userInstrumentTuning = null;
+        this.gSongModelListener = null;
+        this.noteNamesFuncArrDEFAULT = [
+            "I", // 1 - I    I
+            "&tau;", //"&tau;", // 2 - Tau    was: "&#x1D70F;"
+            "II", // 3 - II
+            "m", // 4 - m
+            "III", // 5 - 3
+            "IV", // 6 - IV
+            "&Theta;", // 7 - Tri
+            "V", // 8 - V
+            "&sigma;", // 9 - Sigma
+            "6", // 10 - VI
+            "&delta;", // 11 - dom
+            "&Delta;" // 12 - I
+        ];
 
-    const FRET_LENGTHS_ARRAY = (() => {
-		var width = 60;
-		var L0 = 1;  //tuned length, (L-sub-zero)
-		const MAGIC_RATIO = 0.9438743;      //hand calculated from equation for fret ratios.
-		const FIRSTFRET_LENGTH = 0.05297;   //hand calculated from equation for fret ratios.
-        const fretLengths = [];
-		for (var n=2; n<=NUM_FRETS_MAX+1; n++){
-			var Cn = (Math.pow(MAGIC_RATIO, n));
-			var Cnm1 = (Math.pow(MAGIC_RATIO, (n-1)));
-			var R = (L0*(1-Cn)-L0*(1-Cnm1))/FIRSTFRET_LENGTH ; //0.05297 is the length of the first fret, if tuned length is 1.
-			fretLengths.push(R);
-		}
-        return fretLengths;
-    })();
-
-    let obj = {
-        //FIELDS:
-            sections: null,
-        	gSectionsCurrentIndex: 0,
-            gFirstBeatSeen: false,
-            userInstrumentTuning: null,
-            gSongModelListener: null,
-            noteNamesFuncArrDEFAULT: [...noteNamesFuncArrDEFAULT],
-            noteNamesFuncArr: [...noteNamesFuncArrDEFAULT],
-            sharps: false,
-            captionsRowShowing: false,
-            fretLengths: FRET_LENGTHS_ARRAY,
-            presentationMode: false,
-            constructing: false,
-            randomSectionHistory: [],
-        //METHODS:
-            make: construct_gSections,
-
-            fixupCurrentIndexForLoadedSong: fixupCurrentIndexForLoadedSong,
-            getRelativeSectionWithWrap: getRelativeSectionWithWrap,
-            getRelativeSectionIndexWithWrap: getRelativeSectionIndexWithWrap,
-            getRelativeSectionIndicesWithWrap: getRelativeSectionIndicesWithWrap,
-            test_getRelativeSectionWithWrap: test_getRelativeSectionWithWrap,
-            constructSection: constructSection,
-
-            getSections: getSections,
-            addSection: addSection,
-            addSections: addSections,
-            addSectionAfterCurrent: addSectionAfterCurrent,
-            removeAllSections: removeAllSections,
-
-            getBeat: getBeat,
-            incBeat: incBeat,
-            incBeatLoop: incBeatLoop,
-            decBeat: decBeat,
-            getBeats: getBeats,
-            setBeats: setBeats,
-            deleteBeat: deleteBeat,
-            prevBeat: prevBeat,
-            nextBeat: nextBeat,
-            prevNextBeat: prevNextBeat,
-            gotoFirstBeat: gotoFirstBeat,
-            moveBeatsLater: moveBeatsLater,
-
-            firstSection: firstSection,
-            lastSection: lastSection,
-            prevSection: prevSection,
-            nextSection: nextSection,
-            gotoSection: gotoSection,
-            gotoNextSection: gotoNextSection,
-            gotoPrevSection: gotoPrevSection,
-
-            getCurrentSection: getCurrentSection,
-            getSectionsCurrentIndex: getSectionsCurrentIndex,
-
-            insertSectionAtDest: insertSectionAtDest,
-            newSection: newSection,
-            addShallowCloneSection: addShallowCloneSection,
-            addDeepCloneSection: addDeepCloneSection,
-            addCloneSection: addCloneSection,
-            deleteCurrentSection: deleteCurrentSection,
-            isEmpty: isEmpty,
-            moveSectionToEND: moveSectionToEND,
-            moveSectionTo: moveSectionTo,
-
-            cycleThruKeysAllSections: cycleThruKeysAllSections,
-
-            getTableArrInCurrentSection: getTableArrInCurrentSection,
-            getTableArrInSection: getTableArrInSection,
-
-            removeUnusedTablesFromMemoryModel: removeUnusedTablesFromMemoryModel,
-            renameTuningIDInModel: renameTuningIDInModel,
-            markVisibleTablesForFileSave: markVisibleTablesForFileSave,
-            prepareForSave: prepareForSave,
-            getTuningHashInMemoryModel: getTuningHashInMemoryModel,
-            removeNotePlayedFromTable: removeNotePlayedFromTable,
-            moveNamedNotesAllSections: moveNamedNotesAllSections,
-            moveNamedNotes: moveNamedNotes,
-            moveNamedNotesForSection: moveNamedNotesForSection,
-
-            getRootKey: song_getRootKey,
-            getLeadKey: song_getRootKeyLead,
-            getLeadNoteName: song_getLeadNoteName,
-            getRootNoteName: song_getRootNoteName,
-
-            // Expose noteIDToNoteName and noteIDToNoteNameRaw as methods
-            noteIDToNoteName: noteIDToNoteName,
-            noteIDToNoteNameRaw: noteIDToNoteNameRaw,
-            noteNameToNoteID: noteNameToNoteID,
-
-            //new method for EventBus:
-                publish_SectionChanged: publish_SectionChanged,
-            publish_UpdateSectionStatus: publish_UpdateSectionStatus,
-                publish_SectionMoved: publish_SectionMoved,
-            setHeadless: setHeadless
-    }
-    obj.make();
-    return obj;
-
-
-
-
-	function construct_gSections(){
-        initializeSongState.call(this);
+        this.noteNamesFuncArr = [...this.noteNamesFuncArrDEFAULT];
+        this.sharps = false;
+        this.captionsRowShowing = false;
+        this.fretLengths = (() => {
+            var width = 60;
+            var L0 = 1;
+            const MAGIC_RATIO = 0.9438743;
+            const FIRSTFRET_LENGTH = 0.05297;
+            const fretLengths = [];
+            for (var n = 2; n <= NUM_FRETS_MAX + 1; n++) {
+                var Cn = (Math.pow(MAGIC_RATIO, n));
+                var Cnm1 = (Math.pow(MAGIC_RATIO, (n - 1)));
+                var R = (L0 * (1 - Cn) - L0 * (1 - Cnm1)) / FIRSTFRET_LENGTH;
+                fretLengths.push(R);
+            }
+            return fretLengths;
+        })();
+        this.presentationMode = false;
+        this.constructing = false;
+        this.randomSectionHistory = [];
+        this.make();
     }
 
-    function initializeSongState(){
+    _initFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
+        this._initLegacy();
+        if (headless) {
+            this.setHeadless(true, quiet);
+        }
+        if (fileObj && Array.isArray(fileObj.sections)) {
+            this.addSections(fileObj);
+            if (fixIndex) {
+                this.fixupCurrentIndexForLoadedSong();
+            }
+        }
+    }
+
+    // --- Methods from makeSongLegacy ---
+    make() { this.construct_gSections(); }
+    construct_gSections() { this.initializeSongState(); }
+    initializeSongState() {
         this.constructing = true;
         this.isHeadless = false;
         this.sections = [];
@@ -252,33 +110,43 @@ function makeSongLegacy(){
         this.constructing = false;
         delete this.constructing;
     }
-
-    function setHeadless(value, quiet = false){
+    setHeadless(value, quiet = false) {
         this.isHeadless = value;
-         if (this.isHeadless){
-            if (!quiet) console.log(ANSIColors.Bold+ANSIColors.cyan("Song running in Headless mode.  No $ or jQuery calls supported."));
+        if (this.isHeadless) {
+            if (!quiet) console.log(ANSIColors.Bold + ANSIColors.cyan("Song running in Headless mode.  No $ or jQuery calls supported."));
             return;
         }
     }
-
-    function fixupCurrentIndexForLoadedSong(){
+    fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;
-        if (this.gSectionsCurrentIndex >= this.sections.length){
-            this.gSectionsCurrentIndex = this.sections.length-1;
-            console.warn("gSong::fixupCurrentIndexForLoadedSong() found that the song gSectionsCurrentIndex was out of range: "+sci+" resetting to : "+this.gSectionsCurrentIndex);
+        if (this.gSectionsCurrentIndex >= this.sections.length) {
+            this.gSectionsCurrentIndex = this.sections.length - 1;
+            console.warn("gSong::fixupCurrentIndexForLoadedSong() found that the song gSectionsCurrentIndex was out of range: " + sci + " resetting to : " + this.gSectionsCurrentIndex);
         }
-        if (this.gSectionsCurrentIndex < 0){
+        if (this.gSectionsCurrentIndex < 0) {
             this.gSectionsCurrentIndex = 0;
-            console.warn("gSong::fixupCurrentIndexForLoadedSong() found that the song gSectionsCurrentIndex was out of range: "+sci);
-        }  
+            console.warn("gSong::fixupCurrentIndexForLoadedSong() found that the song gSectionsCurrentIndex was out of range: " + sci);
+        }
+    }
+    getCurrentSection() {
+        const section = this.sections[this.gSectionsCurrentIndex];
+        return this.normalizeSection(section);
     }
 
-    function getCurrentSection(){
-        const section = this.sections[this.gSectionsCurrentIndex];
-        return normalizeSection.call(this, section);
-	}
+    // ==========  Utility methods ==========
+    noteIDToNoteName(noteIndex) {
+        return this.getCurrentSection().noteIDToDisplayName(noteIndex);
+    }
+    noteIDToNoteNameRaw(noteIndex) {
+        return constNoteNamesArr[noteIndex];
+    }
+    static noteNameToNoteID(noteName) {
+        return constNoteNamesArr.indexOf(noteName);
+    }
 
-    function test_getRelativeSectionWithWrap(consoleLog = false){
+    // =========== wrapping ==================
+
+    test_getRelativeSectionWithWrap(consoleLog = false){
         const testResult = {
             warnings: [],
             infos: [],
@@ -368,7 +236,7 @@ function makeSongLegacy(){
      *    Negative signs after the first character are ignored, so @-1 is the same as @1, and --1 is the same as -1.
      *     So you can go "back" with -1 or ^1 or @1, and --1, ^-1, and @-1 are identical, respectively.
     */
-    function getRelativeSectionWithWrap(sAmount, logCollector = null) {
+    getRelativeSectionWithWrap(sAmount, logCollector = null) {
         const Direction = Object.freeze({
             FORWARD:         '+',
             BACKWARD:        '-',
@@ -472,8 +340,7 @@ function makeSongLegacy(){
             return this.getCurrentSection();        
         }
     }
-
-    function pushRandomSectionHistory(idx){
+    pushRandomSectionHistory(idx){
         if (!Array.isArray(this.randomSectionHistory)){
             this.randomSectionHistory = [];
         }
@@ -489,7 +356,7 @@ function makeSongLegacy(){
         }
     }
 
-    function getPreviousPlayedSectionIndex(nBack, fallbackIndex){
+    getPreviousPlayedSectionIndex(nBack, fallbackIndex){
         if (!Array.isArray(this.randomSectionHistory) || this.randomSectionHistory.length === 0){
             return fallbackIndex;
         }
@@ -502,23 +369,23 @@ function makeSongLegacy(){
         return idx;
     }
 
-    function getRelativeSectionIndexWithWrap(sAmount, logCollector = null) {
+    getRelativeSectionIndexWithWrap(sAmount, logCollector = null) {
         const section = this.getRelativeSectionWithWrap(sAmount, logCollector);
         return this.sections.indexOf(section);
     }
 
-    function getRelativeSectionIndicesWithWrap(relativeSectionSpecs, logCollector = null) {
+    getRelativeSectionIndicesWithWrap(relativeSectionSpecs, logCollector = null) {
         if (!Array.isArray(relativeSectionSpecs)) {
             return [];
         }
         return relativeSectionSpecs.map(spec => this.getRelativeSectionIndexWithWrap(spec, logCollector));
     }
 
-    function getSectionsCurrentIndex(){
+    getSectionsCurrentIndex(){
         return this.gSectionsCurrentIndex;
     }
 
-    function constructSection(){
+    constructSection(){
 	    return Section.revive(new Section({
             rootID: this.rootID,
             sharps: this.sharps,
@@ -530,7 +397,7 @@ function makeSongLegacy(){
         });
     }
 
-    function normalizeSection(sectionLike){
+    normalizeSection(sectionLike){
         return Section.revive(sectionLike, {
             rootID: this.rootID,
             sharps: this.sharps,
@@ -538,12 +405,12 @@ function makeSongLegacy(){
         });
     }
 
-    function removeAllSections(){
+    removeAllSections(){
         this.sections = [];
         this.addSection(this.constructSection());
     }
 
-	function addSection(section){
+	addSection(section){
         section = normalizeSection.call(this, section);
 	    var newIndex = this.sections.push(section) - 1;
 	    this.gSectionsCurrentIndex = newIndex;
@@ -551,7 +418,7 @@ function makeSongLegacy(){
 	    return newIndex;
 	    // sections is an array of gNotesPlayed objects. push() returns length.
 	}
-	function addSectionAfterCurrent(section){
+	addSectionAfterCurrent(section){
         section = normalizeSection.call(this, section);
         if (this.sections.length == 0){
             this.sections.push(section);
@@ -567,10 +434,10 @@ function makeSongLegacy(){
 	    return this.gSectionsCurrentIndex;
 	    // sections is an array of gNotesPlayed objects.
 	}
-	function getSections(){
+	getSections(){
 	    return this.sections;
 	}
-	function addSections(fileObj){
+	addSections(fileObj){
 	    if (this.sections.length==1 && isEmpty(this.sections[0])){
 	        //special case: file open is adding sections, but default section is empty, so delete it.
 	        this.sections = [];
@@ -581,35 +448,35 @@ function makeSongLegacy(){
 	}
 
     //these two return an html string that is either sharps or flats, depending on section.
-    function song_getRootKey(){
+    song_getRootKey(){
         return this.getCurrentSection().getRootKey();
     }
-    function song_getRootKeyLead(){
+    song_getRootKeyLead(){
         return this.getCurrentSection().getRootKeyLead();
     }
 
     //these two return a simple noteName, one of [A, Bb, B, C, Db, ...etc.]
-    function song_getRootNoteName(){
+    song_getRootNoteName(){
         return this.getCurrentSection().getRootNoteName();
     }
-    function song_getLeadNoteName(){
+    song_getLeadNoteName(){
         return this.getCurrentSection().getLeadNoteName();
     }
 
-	function getBeat(){
+	getBeat(){
         return this.getCurrentSection().getBeat();
 	}
-	function incBeat(){
+	incBeat(){
         return this.getCurrentSection().incBeat(DEFAULT_BEATS);
 	}
-	function incBeatLoop(){
+	incBeatLoop(){
         return this.getCurrentSection().incBeatLoop(DEFAULT_BEATS);
 	}
-	function decBeat(){
+	decBeat(){
         return this.getCurrentSection().decBeat(DEFAULT_BEATS);
 	}
 
-	function getBeats(){
+	getBeats(){
         var curr = this.getCurrentSection();
         if (!curr){
 			console.warn("this.getCurrentSection() returned undefined in song.getBeats().");
@@ -617,17 +484,17 @@ function makeSongLegacy(){
         }
         return curr.getBeats(DEFAULT_BEATS);
 	}
-	function setBeats(newValue){
+	setBeats(newValue){
         this.getCurrentSection().setBeats(newValue);
 	}
 
 
-	function gotoFirstBeat(){
+	gotoFirstBeat(){
         this.getCurrentSection().gotoFirstBeat();
 	    this.gFirstBeatSeen = false;
 	}
 
-	function moveBeatsLater(){
+	moveBeatsLater(){
 		var result = {};
         var beatCount = this.getBeats();
 		var notes = getRecordedNotesForSection();
@@ -643,7 +510,7 @@ function makeSongLegacy(){
         requestUiShowBeats();
 	}
 
-    function shuffleRecordedBeatsDown(recordedBeats, nBeats, nStartBeat){
+    shuffleRecordedBeatsDown(recordedBeats, nBeats, nStartBeat){
   	  for (var curr=nStartBeat; curr<=nBeats; curr++){
   		if (recordedBeats[curr]){
   			delete recordedBeats[curr];
@@ -655,7 +522,7 @@ function makeSongLegacy(){
   	  return recordedBeats;
     }
 
-    function deleteBeat(){
+    deleteBeat(){
          var nStartBeat = this.getBeat();
          var nBeats = this.getBeats();
          if (nBeats <=1){
@@ -673,15 +540,15 @@ function makeSongLegacy(){
     		 requestUiShowBeats();
     }
 
-    function prevBeat(){
+    prevBeat(){
   	  this.prevNextBeat(false);
     }
 
-    function nextBeat(){
+    nextBeat(){
   	  this.prevNextBeat(true);
     }
 
-    function prevNextBeat(isNext){
+    prevNextBeat(isNext){
 			requestUiClearHighlights();
   	        var beat  = this.getBeat();
   	        var beats = this.getBeats();
@@ -702,7 +569,7 @@ function makeSongLegacy(){
 
     //============== TODO:EventBus keep all new EventBus handling code between these comments, ending in END-TODO:EventBus =====================================
     
-    function publish_SectionChanged(){
+    publish_SectionChanged(){
         var song = this || obj;
         if (song.isHeadless){
             return;
@@ -712,7 +579,7 @@ function makeSongLegacy(){
     }      
 
     // replacement for direct calls to infinite-neck.js :: updateSectionsStatus();
-    function publish_UpdateSectionStatus(){
+    publish_UpdateSectionStatus(){
         var song = this || obj;
         if (song.isHeadless){
             return;
@@ -722,7 +589,7 @@ function makeSongLegacy(){
     }
 
     //Not handled at all yet:
-    function publish_SectionMoved(){
+    publish_SectionMoved(){
         var song = this || obj;
         EventBus.trigger('SectionMoved', { sectionIndex: song.getSectionsCurrentIndex() });
     }
@@ -733,29 +600,29 @@ function makeSongLegacy(){
     
     //============== Section handling =====================================
 
-	function firstSection(){
+	firstSection(){
 	    this.gSectionsCurrentIndex = 0;
         this.publish_SectionChanged();
 	}
 
-	function lastSection() {
+	lastSection() {
 		 this.gSectionsCurrentIndex = this.sections.length-1;
          this.publish_SectionChanged();
 	}
 
-	function prevSection(){
+	prevSection(){
 	    if (this.gSectionsCurrentIndex > 0){
 	        this.gSectionsCurrentIndex--;
 	    }
         this.publish_SectionChanged();
 	}
-	function nextSection(){
+	nextSection(){
 	    if (this.gSectionsCurrentIndex < (this.sections.length-1)){
 	        this.gSectionsCurrentIndex++;
 	    }
         this.publish_SectionChanged();
 	}
-    function gotoSection(idx){
+    gotoSection(idx){
         var sectionIdx = toInt(idx, -1);
         if (sectionIdx > -1 && sectionIdx < this.sections.length){
             this.gSectionsCurrentIndex = sectionIdx;
@@ -768,7 +635,7 @@ function makeSongLegacy(){
         }
     }
 
-    function gotoNextSection(orGotoFirst){
+    gotoNextSection(orGotoFirst){
         var isRandom = this.randomLoop == true;
         if (isRandom) {
             var prevSectionIdx = this.gSectionsCurrentIndex;
@@ -793,7 +660,7 @@ function makeSongLegacy(){
         requestUiClearAndReplaySection();
 	}
 
-	function gotoPrevSection(orGotoLast){
+	gotoPrevSection(orGotoLast){
 		if (this.getSectionsCurrentIndex()==0){
 			if( orGotoLast ) this.lastSection();
 		} else {
@@ -802,7 +669,7 @@ function makeSongLegacy(){
         requestUiClearAndReplaySection();
 	}
 
-    function insertSectionAtDest(aSection, destIndex){
+    insertSectionAtDest(aSection, destIndex){
         aSection = normalizeSection.call(this, aSection);
         if (destIndex == "END"){
             this.sections.push(aSection);
@@ -827,7 +694,7 @@ function makeSongLegacy(){
         }
     }
 
-	function newSection(destIndex){
+	newSection(destIndex){
 	    var aSection = this.constructSection();  //populates rootID from dropDownRoot.
 	    if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
@@ -839,13 +706,13 @@ function makeSongLegacy(){
 	    this.publish_SectionChanged();//updateSectionsStatus();
 	}
 
-	function addShallowCloneSection(destIndex){
+	addShallowCloneSection(destIndex){
 	    return this.addCloneSection(false, destIndex);
 	}
-	function addDeepCloneSection(destIndex){
+	addDeepCloneSection(destIndex){
 	    return this.addCloneSection(true, destIndex);
 	}
-	function addCloneSection(deep, destIndex){
+	addCloneSection(deep, destIndex){
         var aSection = this.constructSection();  //populates rootID from dropDownRoot.
         aSection.populateCloneFrom(this.getCurrentSection(), { deep });
         if (destIndex){
@@ -860,7 +727,7 @@ function makeSongLegacy(){
 	    return aSection;
 	}
 
-	function deleteCurrentSection(){
+	deleteCurrentSection(){
 	    var obj = this.getCurrentSection();
         var context = {"SectionIndex": this.getSections().indexOf(obj),
                        "caption": obj.caption
@@ -884,18 +751,18 @@ function makeSongLegacy(){
 		return true;
 	}
 
-	function isEmpty(section){
+	isEmpty(section){
         return Section.revive(section).isEmpty();
 	}
 
-    function moveSectionToEND(){
+    moveSectionToEND(){
 		var section = this.getCurrentSection();
         var arr = this.sections;
 	    arr.push(arr.splice(this.gSectionsCurrentIndex, 1)[0]);
         this.lastSection(); //calls clear and update
 	}
 
-	function moveSectionTo(newIndex){
+	moveSectionTo(newIndex){
         if (newIndex > this.sections.length-1){
             alert("moveSectionTo can't move to section index: "+newIndex+" because sections.length = "+this.sections.length);
             return;
@@ -908,29 +775,29 @@ function makeSongLegacy(){
     //=============== Model Management/Cleanup Functions ==========================================
 
     //This function works: it transposes every Section in a Song by 'amount', but I haven't installed it in the menu yet.
-    function cycleThruKeysAllSections(amount){
+    cycleThruKeysAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
             normalizeSection.call(this, section).transposeRoot(amount);
         });
 	}
 
-    function getTableArrInCurrentSection(tableID){
+    getTableArrInCurrentSection(tableID){
         return this.getCurrentSection().getTableArr(tableID);
 	}
 
-	function getTableArrInSection(section, tableID){
+	getTableArrInSection(section, tableID){
         return normalizeSection.call(this, section).getTableArr(tableID);
 	}
 
 
-    function removeUnusedTablesFromMemoryModel(){
+    removeUnusedTablesFromMemoryModel(){
     	    this.sections.forEach(section => {
     	        normalizeSection.call(this, section).removeEmptyTables();
     	    });
 	}
 
-    function renameTuningIDInModel(oldID, newID) {
+    renameTuningIDInModel(oldID, newID) {
         var oldKey = TABLE_ID_PREFIX + oldID;
         var newKey = TABLE_ID_PREFIX + newID;
         // Rename in each section's noteTables
@@ -949,14 +816,14 @@ function makeSongLegacy(){
         }
     }
 
-    function markVisibleTablesForFileSave(visibleTableIds){
+    markVisibleTablesForFileSave(visibleTableIds){
         this.visibleNoteTables = visibleTableIds;
         
         //Not really, any more.  You just have myTunings.
         //    this.tunings = getTunings(visibleTableIds);
     }
 
-    function prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
+    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
         this.markVisibleTablesForFileSave(visibleTableIds);
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;
@@ -974,7 +841,7 @@ function makeSongLegacy(){
          */ 
     }
 
-  function getTuningHashInMemoryModel(){
+  getTuningHashInMemoryModel(){
    var hashTuningNames = {};
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
@@ -998,7 +865,7 @@ function makeSongLegacy(){
 	}
 
 
-    function removeNotePlayedFromTable(notePlayed, parentTableID){
+    removeNotePlayedFromTable(notePlayed, parentTableID){
       var tableArr = this.getTableArrInCurrentSection(parentTableID);
       tableArr.forEach((itemNotePlayed, key) => {
             if (   itemNotePlayed.col == notePlayed.col
@@ -1011,18 +878,53 @@ function makeSongLegacy(){
         });
     }
 
-    function moveNamedNotesAllSections(amount){
+    moveNamedNotesAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
             moveNamedNotesForSection.call(this, amount, section);       
         });
 	}
 
-    function moveNamedNotes(amount){
+    moveNamedNotes(amount){
         return moveNamedNotesForSection.call(this, amount, this.getCurrentSection());
 
     }
-    function moveNamedNotesForSection(amount, section){
+    moveNamedNotesForSection(amount, section){
 	    return normalizeSection.call(this, section).moveNamedNotes(amount);
   	}
+    //============= EventBus =========================
+
+    requestUiClearAll() {
+        EventBus.trigger('SongUiClearAll');
+    }
+
+    requestUiReplay() {
+        EventBus.trigger('SongUiReplay');
+    }
+
+    requestUiFullRepaint() {
+        EventBus.trigger('SongUiFullRepaint');
+    }
+
+    requestUiClearHighlights() {
+        EventBus.trigger('SongUiClearHighlights');
+    }
+
+    requestUiResetNoteNames() {
+        EventBus.trigger('SongUiResetNoteNames');
+    }
+
+    requestUiShowBeats() {
+        EventBus.trigger('SongUiShowBeats');
+    }
+
+    requestUiClearAndReplaySection() {
+        EventBus.trigger('SongUiClearAndReplaySection');
+    }
+
+
+
+
 }
+
+// Export SongModel, noteNameToNoteID, constNoteNamesArr
