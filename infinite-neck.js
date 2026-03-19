@@ -70,7 +70,7 @@ import {
 	Note
 } from './note.js'; 
 import {
-	makeSong
+	Song
 } from './song.js';
 import {
 	clearRecordedNotes,
@@ -2270,7 +2270,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	// Headless replacement for document.ready for testing
 	export function setupSongTests() {
-		gSong = makeSong();  //var song global in this file (at top).
+		//gSong = makeSong();  //var song global in this file (at top).
+		gSong = new Song();
+
 		installModuleProviders();
 		
 		getSong().graveyard = makeGraveyard();
@@ -2296,10 +2298,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return true;
 		}
 
-		/**
-		@type {ReturnType<typeof makeSong>}
-		*/
-		gSong = makeSong();  //var song global in this file (at top).
+		//gSong = makeSong();  //var song global in this file (at top).
+		gSong = new Song();
 		
 		getSong().graveyard = makeGraveyard();
 

@@ -584,13 +584,11 @@ export function showHideTuning(show, basekey) {
 	if (tuning) {
 		tuning.visible = show;  //change it in the in-memory model.
 	} else {
-		var stacktrace = "";
-		try {
-			throw new Error();
-		} catch (e) {
-			stacktrace = "" + e.stack;
-		}
-		alert("Tuning not found for: " + basekey + " at: " + stacktrace);
+		//example: user opens new song, but default tuning S6_1 has been added to myTunings
+		// and getAllTunings() concats myTunings into allTunings list, but findTuningForID
+		// only consults all Tunings, so S6_1 will never be found.  Log it and TODO fix it 
+		// when we sort out what to do with myTunings. 20260318.
+		console.log("showHideTuning::Tuning not found (probably a myTunings) for: " + basekey);
 	}
 }
 

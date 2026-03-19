@@ -9,7 +9,7 @@ import {
     collectSongOwnedTunings
 } from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
-import { Song, makeSong, makeSongFromData } from '../../song.js';
+import { Song} from '../../song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -180,16 +180,17 @@ describe('Song API bootstrap from JSON', () => {
         expect(typeof section.isEmpty).toBe('function');
     });
 
-    test.each(LOADED_SONG_FIXTURES)('makeSongFromData loads $label through canonical factory path', ({ filename }) => {
+    test.each(LOADED_SONG_FIXTURES)('Song constructor loads $label through canonical factory path', ({ filename }) => {
         const data = readSongJson(filename);
-        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: true });
+        const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
+        //const song = makeSongFromData(data,              { headless: true, quiet: true, fixIndex: true });
 
         expect(song.isHeadless).toBe(true);
         expect(song.getSections().length).toBe(data.sections.length);
         expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
     });
 
-    test('makeSongFromData normalizes partial section payloads with Section defaults', () => {
+    test('Song constructor normalizes partial section payloads with Section defaults', () => {
         const partial = {
             sections: [
                 {
@@ -198,7 +199,8 @@ describe('Song API bootstrap from JSON', () => {
             ]
         };
 
-        const song = makeSongFromData(partial, { headless: true, quiet: true, fixIndex: true });
+        const song = new Song({fileObj: partial, legacy: false, headless: true, quiet: true, fixIndex: true });
+        //const song = makeSongFromData(partial,              { headless: true, quiet: true, fixIndex: true });
         const section = song.getCurrentSection();
 
         expect(song.getSections().length).toBe(1);
@@ -213,11 +215,12 @@ describe('Song API bootstrap from JSON', () => {
         expect(typeof section.getTableArr).toBe('function');
     });
 
-    test('makeSongFromData callers can clamp out-of-range gSectionsCurrentIndex via fixupCurrentIndexForLoadedSong', () => {
+    test('Song callers can clamp out-of-range gSectionsCurrentIndex via fixupCurrentIndexForLoadedSong', () => {
         const data = readSongJson(PRIMARY_SONG_FILENAME);
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const song = makeSongFromData(data, { headless: true, quiet: true, fixIndex: false });
+        const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
+        //const song =  makeSongFromData(data,             { headless: true, quiet: true, fixIndex: false });
         song.gSectionsCurrentIndex = 99999;
         song.fixupCurrentIndexForLoadedSong();
 
@@ -745,29 +748,6 @@ describe('Song note mapping and emptiness contracts', () => {
 });
 
 describe('Song construction and section add APIs', () => {
-    test('new Song() and makeSong() initialize with equivalent defaults and section index semantics', () => {
-        const viaClass = new Song();
-        const viaFactory = makeSong();
-
-        [viaClass, viaFactory].forEach((song) => {
-            song.setHeadless(true, true);
-            expect(song.defaultBPM).toBe('80');
-            expect(song.rootID).toBe('3');
-            expect(song.getSections().length).toBe(1);
-            expect(song.getSectionsCurrentIndex()).toBe(0);
-            expect(typeof song.getCurrentSection().getRootNoteName).toBe('function');
-        });
-
-        const classSection = viaClass.constructSection();
-        const factorySection = viaFactory.constructSection();
-        viaClass.addSection(classSection);
-        viaFactory.addSection(factorySection);
-
-        expect(viaClass.getSectionsCurrentIndex()).toBe(1);
-        expect(viaFactory.getSectionsCurrentIndex()).toBe(1);
-        expect(viaClass.getCurrentSection()).toBe(classSection);
-        expect(viaFactory.getCurrentSection()).toBe(factorySection);
-    });
 
     test('fresh song initialization keeps expected defaults and starting section state', () => {
         const song = createFreshHeadlessSong();
