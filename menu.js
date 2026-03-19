@@ -94,6 +94,18 @@ export var gMenuFile =    {
           "action": "unlock",
         },
         {
+          "name": "version",
+          "caption": "<b>v</b>ersion info",
+          "trigger": "v",
+          "action": "version",
+        },
+        {
+          "name": "versionMore",
+          "caption": "<b>V</b>ersion as Show Message",
+          "trigger": "V",
+          "action": "versionMore",
+        },
+        {
           "caption": "<b>a</b>dvanced",
           "trigger": "a",
           "children": [

@@ -13,6 +13,8 @@ export function getVersion() {
   return version;
 }
 
+//Usage in web browser: see infinite-neck.js :: getVersionString()
+
 // Usage: node version-read.js
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log(JSON.stringify(getVersion(), null, 2));
