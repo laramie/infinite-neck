@@ -35,7 +35,9 @@ import {
 	toInt
 } from './utils.js';
 import {
-	showMessagesTab
+	showMessagesTab,
+	getVersionString,
+	getVersionObject
 } from './infinite-neck.js';
 
 export { document_keypress, document_keyup };
@@ -348,6 +350,15 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "unlock":
             $("#cbTransposeNotes").prop("checked", true);
+			break;
+		case "version":
+			actionResult.result = getVersionString();
+			break;
+		case "versionMore":
+			actionResult.result = getVersionString();
+			let version = getVersionObject();
+			showMessagesJSON(JSON.stringify(version, null, 2),
+			                 `<a target='_blank' href='${version.README}'>${version.README}</a><br><br>`);
 			break;
 		case "downloadPlayedNotes":
 			downloadPlayedNotes();
@@ -734,8 +745,8 @@ function scrollToMessages(){
     var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
     window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
 }
-export function showMessagesJSON(json){
-	showMessages(json);
+export function showMessagesJSON(json, preamble = ""){
+	showMessages(preamble+json);
     const div = document.getElementById('divJsonTree');
 	div.innerHTML = '';
 	let data = JSON.parse(json);

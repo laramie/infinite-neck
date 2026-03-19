@@ -225,6 +225,28 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	installModuleProviders();
 
+	// Fetch version.json once at module load and store in module-level const
+	let version = { gitTag: 'LOADING', error: null };
+	fetch('version.json')
+	  .then(response => {
+	    if (!response.ok) throw new Error('Failed to load version.json');
+	    return response.json();
+	  })
+	  .then(json => {
+	    version = json;
+	  })
+	  .catch(err => {
+	    version = { gitTag: 'ERROR', error: err.message };
+	    console.error('Error loading version.json:', err);
+	  });
+
+	export function getVersionString() {
+	  return 	(version.gitTag || 'UNKNOWN');
+	}
+	export function getVersionObject(){
+		return (version || {"error": "version didn't load"});
+	}
+
 	export function getCurrentSection(){
 	    return getSong().getCurrentSection();
 	}
@@ -2282,7 +2304,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		//TODO: in each test be sure to set this somehow: getSong().songName = currentFilename;
 	}
-	
+
 	// appInit() called by document.ready
 	// File-level appInit for browser startup
 	export function appInit() {

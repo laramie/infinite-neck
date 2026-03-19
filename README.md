@@ -3,7 +3,8 @@
 For further details, please refer to the following documents:
 
 # Understanding how to use infinite-neck
-- [App Help File](help.html)
+- [App Help File, on Web](http://demo.laramiecrocker.com/infinite-neck/help.html)
+- [App Help File, in GitHub source](help.html)
 
 ## Software development documents
 - [Design Notes](_doco/design/index.md)
