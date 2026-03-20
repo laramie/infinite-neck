@@ -227,7 +227,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	let version =  {"gitTag": "NOT INITIALIZED"}
 	function fetchVersionInBrowser() {
-		debugger
 		// Fetch version.json once at module load and store in module-level const
 		version = { gitTag: 'LOADING', error: null };
 		fetch('version.json')
@@ -510,15 +509,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
-		$('#divMessages').toggle(showMsgs);
-		$('#divJsonTree').toggle(!showMsgs);
-		$('#btnMessagesTab')
-			.toggleClass('BtnPunchedIn', showMsgs)
-			.toggleClass('BtnPunchedOut', !showMsgs);
-		$('#btnJsonTreeTab')
-			.toggleClass('BtnPunchedIn', !showMsgs)
-			.toggleClass('BtnPunchedOut', showMsgs);
-	}
+		   $('#divMessages').toggle(showMsgs);
+		   $('#divJsonTree').toggle(!showMsgs);
+		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnHideMessagesJsonTree';
+		   $(selector).css('display', 'inline-block');
+
+		   $('#btnMessagesTab')
+			   .toggleClass('BtnPunchedIn', showMsgs)
+			   .toggleClass('BtnPunchedOut', !showMsgs);
+		   $('#btnJsonTreeTab')
+			   .toggleClass('BtnPunchedIn', !showMsgs)
+			   .toggleClass('BtnPunchedOut', showMsgs);
+	   }
 	function hideMessages_KeyHandler(){
 		hideMessages();
 	}
