@@ -313,7 +313,7 @@ function runSongValidation(file, data, songTestOptions = {}) {
     let currentSectionIndex = -1;
     let currentObjectDump = "";
     try {
-        logVerbose(1, '🡆  In song ⠶ ' + file
+        logVerbose(2, '🡆  In song ⠶ ' + file
             + LF + "    • expectedFailure:" + songTestOptions.expectedFailure
             + LF + "    • summary:" + JSON.stringify({ expectedSections, sectionRootIDs, song_rootID: data.rootID })
             + LF + "    • songTestOptions:" + JSON.stringify(songTestOptions));
@@ -356,7 +356,7 @@ function runSongValidation(file, data, songTestOptions = {}) {
             if (VERBOSE_MODE > 2) {
                 dump = LF + LF + "⮮‾‾‾‾‾ Current Object" + LF + currentObjectDump + LF + "⮬______";  //
             }
-            logVerbose(1, errorMsg + dump);
+            logVerbose(2, errorMsg + dump);
         } else {
             errorSummary = '';
         }

@@ -225,9 +225,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	installModuleProviders();
 
+	let version =  {"gitTag": "NOT INITIALIZED"}
 	function fetchVersionInBrowser() {
+		debugger
 		// Fetch version.json once at module load and store in module-level const
-		let version = { gitTag: 'LOADING', error: null };
+		version = { gitTag: 'LOADING', error: null };
 		fetch('version.json')
 			.then(response => {
 				if (!response.ok) throw new Error('Failed to load version.json');
