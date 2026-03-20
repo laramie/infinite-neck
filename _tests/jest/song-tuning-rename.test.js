@@ -1,8 +1,9 @@
 import { jest } from '@jest/globals';
-import {
-    setupSongTests,
-    getSong
-} from '../../infinite-neck.js';
+import { 
+    setupSongTests, 
+    getSong, 
+    readVersionHeadless 
+} from '../../infinite-neck-headless.js';
 import {
     setSongProvider,
     findTuningForID,

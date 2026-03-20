@@ -1,8 +1,12 @@
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { setupSongTests, getSong } from '../../infinite-neck.js';
 import { logVerbose, INFINITE_NECK_VERBOSE, VERBOSE_MODE, VERBOSE_MODE_INT } from './LogVerboseJest.js';
+import { 
+    setupSongTests, 
+    getSong, 
+    readVersionHeadless 
+} from '../../infinite-neck-headless.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -309,7 +313,7 @@ function runSongValidation(file, data, songTestOptions = {}) {
     let currentSectionIndex = -1;
     let currentObjectDump = "";
     try {
-        logVerbose(1, '🡆  In song ⠶ ' + file
+        logVerbose(2, '🡆  In song ⠶ ' + file
             + LF + "    • expectedFailure:" + songTestOptions.expectedFailure
             + LF + "    • summary:" + JSON.stringify({ expectedSections, sectionRootIDs, song_rootID: data.rootID })
             + LF + "    • songTestOptions:" + JSON.stringify(songTestOptions));
@@ -352,7 +356,7 @@ function runSongValidation(file, data, songTestOptions = {}) {
             if (VERBOSE_MODE > 2) {
                 dump = LF + LF + "⮮‾‾‾‾‾ Current Object" + LF + currentObjectDump + LF + "⮬______";  //
             }
-            logVerbose(1, errorMsg + dump);
+            logVerbose(2, errorMsg + dump);
         } else {
             errorSummary = '';
         }
@@ -383,6 +387,7 @@ describe('getSong() test_getRelativeSectionWithWrap', () => {
     test('should run test_getRelativeSectionWithWrap without errors', () => {
         setupSongTests();
         getSong().setHeadless(true, true/*quiet*/);
+        logVerbose(1, "Build Version: \n"+JSON.stringify(readVersionHeadless(),null,4));
         //songs always have the "Miranda" section as sections[0].
         getSong().sections[0].caption = 'Section 1 (default)';
         getSong().sections[0].rootID = '1';

@@ -225,20 +225,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	installModuleProviders();
 
-	// Fetch version.json once at module load and store in module-level const
-	let version = { gitTag: 'LOADING', error: null };
-	fetch('version.json')
-	  .then(response => {
-	    if (!response.ok) throw new Error('Failed to load version.json');
-	    return response.json();
-	  })
-	  .then(json => {
-	    version = json;
-	  })
-	  .catch(err => {
-	    version = { gitTag: 'ERROR', error: err.message };
-	    console.error('Error loading version.json:', err);
-	  });
+	let version =  {"gitTag": "NOT INITIALIZED"}
+	function fetchVersionInBrowser() {
+		debugger
+		// Fetch version.json once at module load and store in module-level const
+		version = { gitTag: 'LOADING', error: null };
+		fetch('version.json')
+			.then(response => {
+				if (!response.ok) throw new Error('Failed to load version.json');
+				return response.json();
+			})
+			.then(json => {
+				version = json;
+			})
+			.catch(err => {
+				version = { gitTag: 'ERROR', error: err.message };
+				console.error('Error loading version.json:', err);
+			});
+	}
 
 	export function getVersionString() {
 	  return 	(version.gitTag || 'UNKNOWN');
@@ -2292,8 +2296,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	// Headless replacement for document.ready for testing
 	export function setupSongTests() {
-		//gSong = makeSong();  //var song global in this file (at top).
-		gSong = new Song();
+		gSong = new Song();   //var song global in this file (at top).
 
 		installModuleProviders();
 		
@@ -2319,6 +2322,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			alert(logString);
 			return true;
 		}
+
+		fetchVersionInBrowser();
 
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
