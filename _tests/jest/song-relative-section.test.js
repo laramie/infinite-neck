@@ -1,6 +1,11 @@
 // Import the real function from the main codebase
 import { Song } from '../../song.js';
-import { setupSongTests, getSong } from '../../infinite-neck.js';
+import { 
+    setupSongTests, 
+    getSong, 
+    readVersionHeadless
+} from '../../infinite-neck-headless.js';
+
 
 import { logVerbose, logVerboseTrue } from './LogVerboseJest.js';
 

@@ -1,8 +1,12 @@
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { setupSongTests, getSong } from '../../infinite-neck.js';
 import { logVerbose, INFINITE_NECK_VERBOSE, VERBOSE_MODE, VERBOSE_MODE_INT } from './LogVerboseJest.js';
+import { 
+    setupSongTests, 
+    getSong, 
+    readVersionHeadless 
+} from '../../infinite-neck-headless.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -383,6 +387,7 @@ describe('getSong() test_getRelativeSectionWithWrap', () => {
     test('should run test_getRelativeSectionWithWrap without errors', () => {
         setupSongTests();
         getSong().setHeadless(true, true/*quiet*/);
+        logVerbose(1, "Build Version: \n"+JSON.stringify(readVersionHeadless(),null,4));
         //songs always have the "Miranda" section as sections[0].
         getSong().sections[0].caption = 'Section 1 (default)';
         getSong().sections[0].rootID = '1';

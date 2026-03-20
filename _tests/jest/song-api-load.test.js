@@ -2,12 +2,14 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { jest } from '@jest/globals';
-import {
-    setupSongTests,
-    getSong,
+import { 
+    setupSongTests, 
+    getSong, 
+    readVersionHeadless,
     skipColorDictsReplacer,
-    collectSongOwnedTunings
-} from '../../infinite-neck.js';
+    collectSongOwnedTunings 
+} from '../../infinite-neck-headless.js';
+
 import EventBus from '../../event-bus.js';
 import { Song} from '../../song.js';
 
