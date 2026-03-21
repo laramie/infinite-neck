@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 20260320
+
+Added dual box-shadow to nut, since black I note was disapperaring: td.nut div.NoteActive .CenterCell
+
 ### 20260319
 
 `version` works in Jest tests via infinite-neck-headless.js.  infinite-neck.js does not import any Node.js modules.  
