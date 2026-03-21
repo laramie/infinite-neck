@@ -2,7 +2,17 @@
 
 ### 20260320
 
+- build version: `stable-20260320`
+
 Added dual box-shadow to nut, since black I note was disapperaring: td.nut div.NoteActive .CenterCell
+
+Added flexbox layout to View page, Themes page.  Broke long tables into flexbox cards.
+
+Fixed bug where snake.json, which didn't have a .theme, was crashing the default Theme dropdown.
+
+Added some Themes font colors.
+
+Investigated why there are nested .CenterCell div in a NoteTable.  Don't remove them.  They are there for some height layout purpose.
 
 ### 20260319
 

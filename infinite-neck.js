@@ -1022,12 +1022,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function increaseNoteFont(){
-		setNoteFontSize(getNoteFontSize() + 0.5);
+		setNoteFontSize(getNoteFontSize() + 1);
 	}
 
 	export function decreaseNoteFont(){
 		if (getNoteFontSize() > 0.5){
-			setNoteFontSize(getNoteFontSize() - 0.5);
+			setNoteFontSize(getNoteFontSize() - 1);
 		}
 	}
 

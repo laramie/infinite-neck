@@ -329,6 +329,70 @@ table.controls2 select {
     margin: 0.3em;
 }
 
+#divViewControls {
+    display: flex;       /* Creates the flexbox context */
+    flex-wrap: wrap;     /* Allows cards to move to the next row */
+    gap: 10px;           /* Sets spacing between cards */
+    justify-content: space-around; 
+}
+
+.divViewCard {
+    flex: 1 0 200px; 
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.divViewCard th, td {
+  border: 1px solid black; /* Sets the border width, style, and color */
+  border-collapse: collapse; /* Merges adjacent borders into a single line */
+  padding: 0.4em; /* Adds space between content and borders, for better readability */
+}
+.divViewCard table{
+    width: 95%;
+}
+.sliderTable td:nth-child(2),
+.sliderTable th:nth-child(2) {
+  width: 60%;
+  min-width: 150px; /* Example min-width in pixels or other units */
+}
+#divViewDisplayOptions {
+    padding: 2em;
+}
+#rangeNamedNoteOpacity, #rangeTinyNoteOpacity, #rangeSingleNoteOpacity {
+    height: 0.5em;
+}
+/* Chrome, Safari, Edge, Opera */
+#rangeNamedNoteOpacity::-webkit-slider-thumb, #rangeTinyNoteOpacity::-webkit-slider-thumb, #rangeSingleNoteOpacity::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default appearance */
+  appearance: none;
+  height: 2em;
+  width: 1em;
+  margin-top: -0.1em;
+}
+/* Firefox */
+#rangeNamedNoteOpacity::-moz-range-thumb, #rangeSingleNoteOpacity::-moz-range-thumb, #rangeTinyNoteOpacity::-moz-range-thumb {
+  height: 2em;
+  width: 1em;
+  /* Firefox generally centers it automatically */
+}
+
+#divThemeControlsFlex {
+    display: flex;       /* Creates the flexbox context */
+    flex-wrap: wrap;     /* Allows cards to move to the next row */
+    gap: 2em;           /* Sets spacing between cards */
+    justify-content: space-around; 
+    background-color: white;
+    margin: 1em;
+}
+.themeTableControls {
+     flex: 1 0 200px; 
+    background-color: lightgray;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+
 .tblDisplayOptions {
     border: 2px solid black;
 }
@@ -407,10 +471,6 @@ table.controls2 select {
 }
 
 
-#themeTableControls {
-    width: 10%;
-    float: left;
-}
 #themeTableResults {
     width: 45%;
     float: left;
@@ -999,19 +1059,6 @@ P {
     height: 1.35em;
     width: 1.35em;
     padding-bottom: 0;
-}
-
-#tblRoots {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    vertical-align: bottom;
-    height: 1.45em;
-}
-#tdRootLead {
-    padding: 0;
-    margin: 0;
-    width: 1.4em;
 }
 
 /* Prevents inconsistent highlighting of element while being dragged
