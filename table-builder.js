@@ -201,6 +201,9 @@ export function buildNoteTable(options) {
 	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png' style='width:35px;height:15px;'></button>";
+	
+	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
+	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton moveyButton' type='button' tabindex='-1'>Wiring</button>";
 
 	var spanLeadDifferentFromRoot = "&nbsp;<span class='spanLeadDifferentFromRoot'></span>";
 	var spanRootID = "&nbsp;&nbsp;&nbsp;<span class='lblRootID'></span>";
@@ -225,12 +228,21 @@ export function buildNoteTable(options) {
 		+ spanLeadDifferentFromRoot + S
 		+ noteClickedCaption
 		+ hamburgerColorDict + S + S
+		+ btnShowWiring + S + S
 		+ '</span>'
 		+ hamburger + S + S
 		+ "<div class='currentColorDict''></div>" + S
 
 	);
 	div.append(p);
+
+	let divWiring = $("<div>");
+	divWiring.attr("id", TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
+	divWiring.addClass("divWiring");
+	divWiring.html("Wiring for "+TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
+	div.append(divWiring);
+	
+	
 	div.append(table);
 	return div;
 }

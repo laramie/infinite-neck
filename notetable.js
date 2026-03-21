@@ -206,6 +206,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 
 //=================================CLICK HANDLING===============================
 
+// td.note click calls just this from infinite-neck.js::installTDNoteClick()
 export function colorNote(cell) {
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;

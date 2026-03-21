@@ -1169,6 +1169,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divESCAPE").hide();
 		}
 	}
+	export function showTransport() {
+		$('#transport').show();
+	}
 	export function toggleTransport(){
 		//var wasVisible =  $('.transport').is(':visible');
 		$('#transport').toggle();
@@ -1551,6 +1554,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$dicts.removeClass("largeColorDict").hide();
 			}
 		});
+		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
+		$(".showWiringButton").click(function() {
+			$(".divWiring").toggle();
+		});
+
 	}
 
 	export function transportResize(){
@@ -2404,18 +2412,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			transportResize();
 		} );
 		transportResize();
-
-
-		/*
-		$('#cbFloatPalette').change(function() {
-			if (this.checked){
-				dragElement(document.getElementById("palette"));
-			} else {
-				dontDragElement(document.getElementById("palette"));
-			}
-		});
-		*/
         draggable(document.getElementById('transport'));
+		showTransport();
 
 		scrollToTop();
 	}

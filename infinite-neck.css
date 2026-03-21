@@ -165,6 +165,14 @@ body {
     background-color: darkseagreen;
     border-radius: 0.2em;
 }
+.showWiringButton {
+    padding: 8px;
+    padding-top: 11px;
+    box-shadow: inset 0 0 2pt 2pt  black;
+    border: 3px solid black;
+    background-color: darkseagreen;
+    border-radius: 0.2em;
+}
 
 
 
@@ -350,6 +358,59 @@ table.controls2 select {
 .divViewCard table{
     width: 95%;
 }
+.instrumentBackground {
+
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100%; /* optional, for full height */
+    width: 100%;  /* optional, for full width */
+    gap: 0;       /* adjust as needed */
+
+    color: gold;
+    /*    
+        japan-cool-background-color: brown;   
+        everyone-into-the-pool-foo: 1;
+        background-color: #381d00;/* Zinfandel deep brown works with body background-color: #1a0e03  
+    */
+    background-color: #0aa; /*working default greenish*/
+    margin: 1em;
+    margin-bottom: var(--instrument-margin-tb);
+    margin-left: 1.5em;
+    border: 1px solid black;
+    box-shadow: 0 0 6pt 3pt maroon;
+    border-radius: 0.3em;
+    padding: 8pt;
+    /*background-image: url('img/celtic-background-2.png');*/
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-image: var(--instrument-border-image) 30 / 19px round;
+}
+
+.captionRow {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+}
+
+.divWiring {
+  grid-column: 1;
+  grid-row: 2;
+  width: 300px;
+}
+
+.fretTable {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+}
+table.fretTable {
+    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
+    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+}
+
+
+
 .sliderTable td:nth-child(2),
 .sliderTable th:nth-child(2) {
   width: 60%;
@@ -982,26 +1043,6 @@ P {
     margin: 0;
     padding: 0;
 }
-.instrumentBackground {
-    color: gold;
-    /*    
-        japan-cool-background-color: brown;   
-        everyone-into-the-pool-foo: 1;
-        background-color: #381d00;/* Zinfandel deep brown works with body background-color: #1a0e03  
-    */
-    background-color: #0aa; /*working default greenish*/
-    margin: 1em;
-    margin-bottom: var(--instrument-margin-tb);
-    margin-left: 1.5em;
-    border: 1px solid black;
-    box-shadow: 0 0 6pt 3pt maroon;
-    border-radius: 0.3em;
-    padding: 8pt;
-    /*background-image: url('img/celtic-background-2.png');*/
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    border-image: var(--instrument-border-image) 30 / 19px round;
-}
 .tbodyMIDI  td {
     padding: 0.5em;
     vertical-align: middle;
@@ -1320,11 +1361,6 @@ td.note small {
 }
 .noteHatched4 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, white 10px, white 14px );
-}
-
-table.fretTable {
-    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
-    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
 }
 
 
