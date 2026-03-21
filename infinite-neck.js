@@ -947,27 +947,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function updateAfterOpenSong(){
 		hideGraveyard();
 		installDefaultColorDicts();
-		//console.log("updateAfterOpenSong====>"+JSON.stringify(getSong())+" ====> getSong().theme::"+getSong().theme);
 		
-		let songTheme = getSong().theme;
+		let songTheme = getSong().theme;  //some songs, e.g. snake.json, don't have theme stored.
 		if (!songTheme){
-			songTheme = getDefaultTheme();
-			console.log("updateAfterOpenSong Default::songTheme====>"+JSON.stringify(songTheme));
+			songTheme = getDefaultTheme().id;
 		}
-		console.log("updateAfterOpenSong songTheme====>"+JSON.stringify(songTheme));
-		
-		var selectedValue = $('#mySelect').val();
-		console.log("Selected Value: " + selectedValue);
-		var selectedText = $('#mySelect option:selected').text();
-		console.log("Selected Text: " + selectedText);
-		$('#selThemes option').each(function() {
-			var optionValue = $(this).val();
-			var optionText = $(this).text();
-			console.log("Option Value: " + optionValue + ", Option Text: " + optionText);
-		});
-		let theSel = $('#selThemes').val(songTheme);
-		console.log("selThemes.val:"+$('#selThemes').val());
-		theSel.change();
+		$('#mySelect').val(songTheme).change();
+
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
 

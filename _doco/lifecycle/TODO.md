@@ -3,44 +3,9 @@
 ## Inbox / Unassigned
 
 - place new TODOs here...
-- Fix CSS once snake.json Theme bug is gone: 
-   ```
-   Goes after: .CenterCell
-   td.nut div.NoteActive .CenterCell {
-      border: 1px solid yellow !important;
-  }
-   ```
-- then, monkey around with this again: 
-    ```
-    notetable.js:
-    +"<div class='CenterCell'>"
-    //+"<div>"
-        +"<div class='"+noteFunctionClass+"'>"
-            +   cell
-        + "</div>"
-        +"<span class='tinyscriptL'>"
-            +   subright
-        +"</span>"
-    +"</div>"
+- 
 
-      +"<div class='CenterCell'>"
-    //+"<div>"
-        +"<div class='"+noteFunctionClass+"'>"
-          +   cell
-        + "</div>"
-        +"<span class='tinyscriptL'>"
-            +   subright
-        +"</span>"
-    +"</div>"
-
-    ``` 
 ## Outstanding Tasks
-
-- Move all file I/O operations to Accumulator, which will have an API for all file access.
-
-- Move all logging to Accumulator, which will have an API for all logging access.
-
-- Get StepAccumulator to hand out child accums.  (previous commit hosed this line).
 
 ## Bugs
 

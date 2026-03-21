@@ -15,19 +15,21 @@ import { gThemes } from './themes.js';
     //==========================================================================
 
     function generateSelectThemes(themes){
-        var sel = "<select class='selThemesClass' id='selThemes' tabindex='-1'>";
-        var value = "";
-        var result = "";
-        var opt;
-
-		Object.values(themes).forEach(theme => {
-			//console.log("theme:"+theme.id+":"+JSON.stringify(theme, null, 2));
-			opt =  "<option tabindex='-1' value='"+theme.id+"'>"+theme.caption+" </option>";
-			sel = sel + opt;
-		});
-        sel = sel + "</select>";
-        return sel;
-    }
+	var sel = "<select class='selThemesClass' id='selThemes' tabindex='-1'>";
+	var value = "";
+	var result = "";
+	var opt;
+	var isFirst = true;
+	Object.values(themes).forEach(theme => {
+		//console.log("theme:"+theme.id+":"+JSON.stringify(theme, null, 2));
+		var selectedAttr = isFirst ? " selected" : "";
+		opt =  "<option tabindex='-1' value='"+theme.id+"'"+selectedAttr+">"+theme.caption+" </option>";
+		sel = sel + opt;
+		isFirst = false;
+	});
+	sel = sel + "</select>";
+	return sel;
+}
 
     //============  Helper functions for manipulating the DOM stylesheet =======
 	/** send this to the DOM but not as a theme.
