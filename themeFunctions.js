@@ -15,19 +15,21 @@ import { gThemes } from './themes.js';
     //==========================================================================
 
     function generateSelectThemes(themes){
-        var sel = "<select class='selThemesClass' id='selThemes' tabindex='-1'>";
-        var value = "";
-        var result = "";
-        var opt;
-
-		Object.values(themes).forEach(theme => {
-			//console.log("theme:"+theme.id+":"+JSON.stringify(theme, null, 2));
-			opt =  "<option tabindex='-1' value='"+theme.id+"'>"+theme.caption+" </option>";
-			sel = sel + opt;
-		});
-        sel = sel + "</select>";
-        return sel;
-    }
+	var sel = "<select class='selThemesClass' id='selThemes' tabindex='-1'>";
+	var value = "";
+	var result = "";
+	var opt;
+	var isFirst = true;
+	Object.values(themes).forEach(theme => {
+		//console.log("theme:"+theme.id+":"+JSON.stringify(theme, null, 2));
+		var selectedAttr = isFirst ? " selected" : "";
+		opt =  "<option tabindex='-1' value='"+theme.id+"'"+selectedAttr+">"+theme.caption+" </option>";
+		sel = sel + opt;
+		isFirst = false;
+	});
+	sel = sel + "</select>";
+	return sel;
+}
 
     //============  Helper functions for manipulating the DOM stylesheet =======
 	/** send this to the DOM but not as a theme.
@@ -186,8 +188,10 @@ import { gThemes } from './themes.js';
 	}
 
 	export function theme(themeOptions){
+		console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
 		function rule(cssVarName, whichOption){
-			if (themeOptions[whichOption]){
+			//console.log("cssVarName:"+cssVarName+", whichOption:"+whichOption+"<=="); 
+			if (themeOptions && themeOptions[whichOption]){
 				return cssVarName+": "+themeOptions[whichOption]+"; ";   //no extra quotes around cssVarName or value.  This is CSS not JSON.
 			} else if (defaultOptions[whichOption]){
 				return cssVarName+": "+defaultOptions[whichOption]+"; ";   //no extra quotes around cssVarName or value.  This is CSS not JSON.

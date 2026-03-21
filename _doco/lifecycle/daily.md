@@ -21,6 +21,9 @@
         node bin/version-update.js ./version.json
         node bin/version-read.js
         ```
+        
+    - Update ./_doco/lifecycle/CHANGELOG.md
+
     - In general, we want pushed versions to be equal to the TAG:
 
         ```

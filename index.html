@@ -547,24 +547,7 @@
             </table>
 		</div>
         </form>
-        <form id="frmColors">
-		  <div id="divPaletteOld">
-			<table class="menuTable">
-			<tr>
-			<td class="menuCaption">
-				<span class="menuCaption">Palette</span>
-			</td>
-			<td class="menuPage" width="100%">
-                <!--<div id="divPaletteDraggable" class="topControlsSections sectionPageControlsGroup">
-                    FROM
-                    =============
-            ================
-            TO-->
-            </td>
-            </tr>
-        </table><!--END menuTable-->
-        </div>
-        </form>
+        
 
         <div id="divFillNotes">
             <form id="frmFillNotes">
@@ -711,432 +694,460 @@
                 <!--end menuTable-->
             </form>
         </div>
-        <!-- divViewControls -->
-        <div id="divViewControls">
-            <table class="menuTable">
-                <tr>
-                    <td class="menuCaption">
-                        <span class="menuCaption">View</span>
-                    </td>
-                    <td class="menuPage">
-
-                        <div><!-- outer for floater -->
-
-                        <table class="controls left">
-							<tr>
-								<td style="background-color: lightyellow; border: 1px solid gray; text-align: left;">
-									<table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
-										<tr>
-											<td colspan="2" align="left" style="text-align: left;">
-												<span id="lblHideWarning">"Palette::Keep" is now selected</span>
-												<br />
-                                                <table border="1" cellpadding='0' cellspacing='0'>
-                                                    <tr>
-                                                        <td>NamedNote Opacity:
-                                                        </td>
-                                                        <td>
-                                                            <input id="rangeNamedNoteOpacity"
-                                                                 type="range" min="0" max="1.0" value="1.0" step="0.01"
-											 class="slider">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>SingleNote Opacity:
-                                                        </td>
-                                                        <td>
-                                                            <input id="rangeSingleNoteOpacity" type="range" min="0" max="1.0" value="1.0" step="0.01"
-                                                                 class="slider">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>TinyNote Opacity:
-                                                        </td>
-                                                        <td><input id="rangeTinyNoteOpacity" type="range" min="0" max="1.0" value="1.0" step="0.01"
-                                                             class="slider">
-                                                        </td>
-                                                    </tr>
-                                                </table>
-
-												<br />
-												<nobr><label for="cbHideNamedNotes"><input id="cbHideNamedNotes"
-													type="checkbox" name="cbnHideNamedNotes"
-													value="1" >HIDE Named Notes</label></nobr>
-												<br />
-												<nobr><label for="cbHideSingleNotes"><input id="cbHideSingleNotes"
-													type="checkbox" name="cbnHideSingleNotes"
-													value="3">HIDE Single Notes</label></nobr>
-												<br>
-												<nobr><label for="cbHideTinyNotes"><input id="cbHideTinyNotes"
-													type="checkbox" name="cbnHideTinyNotes"
-													value="2">HIDE Tiny Notes, Bends</label></nobr>
-												<br>
-												<nobr><label for="cbHideFingering"><input id="cbHideFingering"
-													type="checkbox" name="cbnHideFingering"
-													value="4">HIDE Fingering</label></nobr>
-                                                <br>
-                                                <nobr><label for="cbShowAllNoteNames"><input id="cbShowAllNoteNames"
-                                                       type="checkbox" name="cbnShowAllNoteNames" value="1">Show All Note Names</label></nobr>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-						<table id="controlTable" class="controls left">
-							<tr>
-								<td style="background-color: lightyellow; border: 1px solid gray; text-align: left;">
-									<table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
-										<tr>
-											<td colspan="2" align="left" style="text-align: left;">
-												<nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes"
-													type="checkbox" name="cbnFunctions"
-													value="1" checked="checked">Show Right Subscript</label></nobr>
-												<br />
-												<nobr>&nbsp;&nbsp;<label for="cbCenterForRightFunction"><input id="cbCenterForRightFunction"
-													type="checkbox" name="cbnCenterForRightFunction"
-													value="1" checked="checked" >Show Right Subscript in Center</label></nobr>
-												<br />
-												<nobr><label for="cbShowSubscriptFunctions"><input id="cbShowSubscriptFunctions"
-													type="checkbox" name="cbnShowSubscriptFunctions" value="2"
-													checked="checked">Show Left Subscript</label></nobr>
-												<br />
-												<nobr><label for="cbMidiNum"><input id="cbMidiNum"
-													type="checkbox" name="cbnMidiNum" value="2"
-													FOOchecked="checked">Show MIDI Number</label></nobr>
-											</td>
-										</tr>
-										<tr>
-											<td>&nbsp;&nbsp;Right Subscript:
-											</td>
-											<td style="text-align: left;">
-												<nobr><label for="rbFunction"><input type="radio" id="rbFunction"
-													name="rbnFunctionNotename" value="showFunction" checked="checked" >Function</label></nobr>
-												<br />
-												<nobr><label for="rbNotename"><input type="radio" id="rbNotename"
-													name="rbnFunctionNotename" value="showNotename"  >Notename</label></nobr>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-							<tr>
-                                <td>
-                                    <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
-                                    <label for="textareaFunctionSymbols">Function Symbols:<br />
-                                    <nobr>
-                                        <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" cols="24" class="scalingTextarea">
-                                        </textarea>
-                                        <button type="button" id="btnFunctionSymbolsChanged" class="BtnPunchedOut">&check;</button>
-                                        <button type="button" id="btnFunctionSymbolsReset" class="BtnPunchedOut">&#x21BA;</button>
-                                    </nobr>
-                                    <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
-                                    <br />
-                                    <select id="dropDownFunctionSymbols">
-                                        <option value='["I","&tau;","II","m","III","IV","&Theta;","V","&sigma;","6","&delta;","&Delta;"]'>Default</option>
-                                        <option value='["One","Tau","Two","Mi","Three","Four","Tri","Fi","Sa","Six","Dom","Say"]'>Sounds Like</option>
-                                        <option value='["1","2","3","4","5","6","7","8","9","10","11","12"]'>Function Numbers</option>
-                                        <option value='["+0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11"]'>Function Offset</option>
-                                        <option value='["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]'>Solf&#232;ge</option>
-                                        <option value='["&#x4e00;","&#x4e8c;","&#x4e09;","&#x56db;","&#x4e94;","&#x516d;","&#x4e03;","&#x516b;","&#x4e5d;","&#x5341;","&#x5341;&#x4e00;","&#x5341;&#x4e8c;"]'>Kanji Numerals</option>
-                                    </select>
-                                    </label>
-                                </td>
-							</tr>
-						</table>
-                        <!-- END View Function/Note controls -->
-
-                        <div class="sectionPageControlsGroup left"
-                                style="margin-left: 1em; margin-top: 0.4em; background-color: lightyellow; border: 1px solid green; text-align: left;">
-                        <table border="1" cellpadding='3' cellspacing='0' >
-                            <tr>
-                                <th>Option &amp; Keystroke
-                                </th>
-                                <th>Value
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Cell Height:<br >
-                                    <span class="key">h</span> or <span class="key">H</span>
-                                </td>
-                                <td>
-                                    <select id="dropDownCellHeight">
-                                        <option value="20px">20</option>
-                                        <option value="40px">40</option>
-                                        <option value="50px"  selected >50</option>
-                                        <option value="50px"  selected >50</option>
-                                        <option value="70px">70</option>
-                                        <option value="80px">80</option>
-                                        <option value="100px">100</option>
-                                        <option value="120px">120</option>
-                                        <option value="140px">140</option>
-                                        <option value="160px">160</option>
-                                        <option value="180px">180</option>
-                                        <option value="200px">200</option>
-                                        <option value="300px">300</option>
-                                        <option value="400px">400</option>
-                                        <option value="600px">600</option>
-                                        <option value="800px">800</option>
-                                        <option value="1000px">1000</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Cell Width:<br >
-                                    <span class="key">w</span> or <span class="key">W</span>
-                                </td>
-                                <td>
-                                    <select id="dropDownCellWidth">
-                                        <option value="20px">20</option>
-                                        <option value="40px">40</option>
-                                        <option value="60px">60</option>
-                                        <option value="70px">70</option>
-                                        <option value="80px">80</option>
-                                        <option value="100px" selected>100</option>
-                                        <option value="120px">120</option>
-                                        <option value="140px">140</option>
-                                        <option value="160px">160</option>
-                                        <option value="200px">200</option>
-                                        <option value="260px">260</option>
-                                        <option value="320px">320</option>
-                                        <option value="440px">440</option>
-                                        <option value="600px">600</option>
-                                        <option value="800px">800</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="cbNaturalFretWidths">Natural fret widths</label>
-                                </td>
-                                <td>
-                                    <input id="cbNaturalFretWidths"
-                                        type="checkbox" name="cbnNaturalFretWidths" value="1" checked>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Natural Font Scaling:
-                                </td>
-                                <td>
-                                    <select id="selNaturaFontScaling">
-                                        <option value="30">mellow</option>
-                                        <option value="60"  selected>normie</option>
-                                        <option value="95">radical</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Note Font:
-                                </td>
-                                <td>
-                                    <select id="selNoteFont">
-                                        <option value="EB Garamond" selected>EB Garamond</option>
-                                        <option value="Cardo" >Cardo</option>
-                                        <option value="Eczar" >Eczar</option>
-                                        <option value="Vollkorn">Vollkorn</option>
-                                        <option value="Dosis">Dosis</option>
-                                        <option value="Shadows Into Light">Shadows Into Light</option>
-                                        <option value="UnifrakturCook">UnifrakturCook</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>UI Font Size:
-                                    <br >
-                                    <span class="key">-</span> or <span class="key">=</span>
-                                    <br>
-                                    <br>
-                                    <small><i><b>NOT automated</b></i></small>
 
 
-                                </td>
-                                <td>
-                                    <span id="lblUIFontSize" style="background-color: white">&nbsp;</span>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button" data-action="increaseUIFont" class="BtnPunchedOut">+</button>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button" data-action="decreaseUIFont" class="BtnPunchedOut">-</button>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Cell Font Size:<br >
-                                    <span class="key">_</span> or <span class="key">+</span> <small>(w/ <span class="key">SHIFT</span> key)</small>
-                                    <br >Reset with: <span class="key">)</span>
-                                </td>
-                                <td>
-                                    <span id="lblCellFontSize" style="background-color: white">&nbsp;</span>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button" data-action="increaseNoteFont" class="BtnPunchedOut">+</button>
-                                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button" data-action="decreaseNoteFont" class="BtnPunchedOut">-</button>
+<div id="divViewControls">
+    <div class="divViewCard">
+        <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+            <tr>
+                <td colspan="2" align="left" style="text-align: left;">
+                    <span id="lblHideWarning">"Palette::Keep" is now selected</span>
+                    <br />
+                    <table class="sliderTable" border="1" cellpadding='0' cellspacing='0'>
+                        <tr>
+                            <td>NamedNote Opacity:
+                            </td>
+                            <td>
+                                <input id="rangeNamedNoteOpacity" type="range" min="0" max="1.0" value="1.0" step="0.01"
+                                    class="slider">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>SingleNote Opacity:
+                            </td>
+                            <td>
+                                <input id="rangeSingleNoteOpacity" type="range" min="0" max="1.0" value="1.0"
+                                    step="0.01" class="slider">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>TinyNote Opacity:
+                            </td>
+                            <td><input id="rangeTinyNoteOpacity" type="range" min="0" max="1.0" value="1.0" step="0.01"
+                                    class="slider">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br />
+                    <nobr><label for="cbHideNamedNotes"><input id="cbHideNamedNotes" type="checkbox"
+                                name="cbnHideNamedNotes" value="1">HIDE Named Notes</label></nobr>
+                    <br />
+                    <nobr><label for="cbHideSingleNotes"><input id="cbHideSingleNotes" type="checkbox"
+                                name="cbnHideSingleNotes" value="3">HIDE Single Notes</label></nobr>
+                    <br>
+                    <nobr><label for="cbHideTinyNotes"><input id="cbHideTinyNotes" type="checkbox"
+                                name="cbnHideTinyNotes" value="2">HIDE Tiny Notes, Bends</label></nobr>
+                    <br>
+                    <nobr><label for="cbHideFingering"><input id="cbHideFingering" type="checkbox"
+                                name="cbnHideFingering" value="4">HIDE Fingering</label></nobr>
+                    <br>
+                    <nobr><label for="cbShowAllNoteNames"><input id="cbShowAllNoteNames" type="checkbox"
+                                name="cbnShowAllNoteNames" value="1">Show All Note Names</label></nobr>
+                </td>
+            </tr>
+        </table>
+    </div>
 
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>leftSubscriptFontSize:
-                                </td>
-                                <td>
-                                    <select id="selLeftSubscriptFontSize">
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" selected>80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                        <option value="110%">110%</option>
-                                        <option value="120%">120%</option>
-                                        <option value="130%">130%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>rightSubscriptFontSize:
-                                </td>
-                                <td>
-                                    <select id="selRightSubscriptFontSize">
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" selected>80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                        <option value="110%">110%</option>
-                                        <option value="120%">120%</option>
-                                        <option value="130%">130%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>midiSubscriptFontSize:
-                                </td>
-                                <td>
-                                    <select id="selMidiFontSize">
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" selected>80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                        <option value="110%">110%</option>
-                                        <option value="120%">120%</option>
-                                        <option value="130%">130%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Fingering Font Size:
-                                </td>
-                                <td>
-                                    <select id="selFingeringFontSize">
-                                        <option value="10%" >10%</option>
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" selected>80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                        <option value="110%">110%</option>
-                                        <option value="120%">120%</option>
-                                        <option value="130%">130%</option>
-                                        <option value="150%">150%</option>
-                                        <option value="200%">200%</option>
-                                        <option value="300%">300%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Fingering Position:
-                                </td>
-                                <td>
-                                    <select id="selFingeringPosition">
-                                        <option value="-0.5em" >-0.5em</option>
-                                        <option value="0"  selected>0</option>
-                                        <option value="0.5em" >0.5em</option>
-                                        <option value="10%" >10%</option>
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="90%" >90%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Tiny Note Font Size:
-                                </td>
-                                <td>
-                                    <select id="selTinyNoteFontSize">
-                                        <option value="20%" >20%</option>
-                                        <option value="30%" >30%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" selected>80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                        <option value="110%">110%</option>
-                                        <option value="120%">120%</option>
-                                        <option value="130%">130%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Tiny Note Max Height:
-                                </td>
-                                <td>
-                                    <select id="selTinyNoteMaxHeight">
-                                        <option value="25%" >25%</option>
-                                        <option value="35%" >35%</option>
-                                        <option value="40%" >40%</option>
-                                        <option value="45%"  selected>45%</option>
-                                        <option value="50%" >50%</option>
-                                        <option value="60%" >60%</option>
-                                        <option value="70%" >70%</option>
-                                        <option value="80%" >80%</option>
-                                        <option value="90%" >90%</option>
-                                        <option value="100%" >100%</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </table>
-                    </div><!--end sectionPageControlsGroup -->
-                    <div class="sectionPageControlsGroup left"
-                            style="max-width: 20em; margin-left: 1em; margin-top: 0.4em; background-color: lightyellow; border: 1px solid green; text-align: left;">
-                        <b class="left">Display Options:</b><br>
-                        <span style="float:left; ">
-                            <button id="btnControlsToDisplayOptions2" class="riskyButton" type="button" >SAVE <small><br>Display Options</small></button>
-                        </span>
-                        <span style="float:left; ">
-                            <button id="btnDeleteDisplayOptions2" class="riskyButton" type="button" >CLEAR<small><br>Display Options</small></button>
-                        </span>
-                        <p class="clearBoth"><small>Options are all applied from this Section forward until another Section sets Display Options.  <i>Tip: Set-and-forget in the first section.</i></small></p>
-                        <br>
-                        <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation Mode</label>
-                            <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
-                        </p>
 
-                    </div>
 
-                    <div class="clearBoth"></div>
-                    </div><!-- END div for floaters. -->
 
-                    </td>
-                </tr>
-            </table><!-- END menuTable-->
-        </div> <!-- END divViewControls -->
+    <div class="divViewCard">
+        <table class="controls left">
+            <tr>
+                <td style="background-color: lightyellow; border: 1px solid gray; text-align: left;">
+                    <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+                        <tr>
+                            <td colspan="2" align="left" style="text-align: left;">
+                                <nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes" type="checkbox"
+                                            name="cbnFunctions" value="1" checked="checked">Show Right Subscript</label>
+                                </nobr>
+                                <br />
+                                <nobr>&nbsp;&nbsp;<label for="cbCenterForRightFunction"><input
+                                            id="cbCenterForRightFunction" type="checkbox"
+                                            name="cbnCenterForRightFunction" value="1" checked="checked">Show Right
+                                        Subscript in Center</label></nobr>
+                                <br />
+                                <nobr><label for="cbShowSubscriptFunctions"><input id="cbShowSubscriptFunctions"
+                                            type="checkbox" name="cbnShowSubscriptFunctions" value="2"
+                                            checked="checked">Show Left Subscript</label></nobr>
+                                <br />
+                                <nobr><label for="cbMidiNum"><input id="cbMidiNum" type="checkbox" name="cbnMidiNum"
+                                            value="2" FOOchecked="checked">Show MIDI Number</label></nobr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;&nbsp;Right Subscript:
+                            </td>
+                            <td style="text-align: left;">
+                                <nobr><label for="rbFunction"><input type="radio" id="rbFunction"
+                                            name="rbnFunctionNotename" value="showFunction"
+                                            checked="checked">Function</label></nobr>
+                                <br />
+                                <nobr><label for="rbNotename"><input type="radio" id="rbNotename"
+                                            name="rbnFunctionNotename" value="showNotename">Notename</label></nobr>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
+                    <label for="textareaFunctionSymbols">Function Symbols:<br />
+                        <nobr>
+                            <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" cols="24"
+                                class="scalingTextarea">
+                                </textarea>
+                            <button type="button" id="btnFunctionSymbolsChanged" class="BtnPunchedOut">&check;</button>
+                            <button type="button" id="btnFunctionSymbolsReset" class="BtnPunchedOut">&#x21BA;</button>
+                        </nobr>
+                        <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
+                        <br />
+                        <select id="dropDownFunctionSymbols">
+                            <option
+                                value='["I","&tau;","II","m","III","IV","&Theta;","V","&sigma;","6","&delta;","&Delta;"]'>
+                                Default</option>
+                            <option value='["One","Tau","Two","Mi","Three","Four","Tri","Fi","Sa","Six","Dom","Say"]'>
+                                Sounds Like</option>
+                            <option value='["1","2","3","4","5","6","7","8","9","10","11","12"]'>Function Numbers
+                            </option>
+                            <option value='["+0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11"]'>Function
+                                Offset</option>
+                            <option value='["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]'>Solf&#232;ge
+                            </option>
+                            <option
+                                value='["&#x4e00;","&#x4e8c;","&#x4e09;","&#x56db;","&#x4e94;","&#x516d;","&#x4e03;","&#x516b;","&#x4e5d;","&#x5341;","&#x5341;&#x4e00;","&#x5341;&#x4e8c;"]'>
+                                Kanji Numerals</option>
+                        </select>
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="divViewCard">
+        <table style="width: 100%; border: 2px solid black;" cellpadding='3' cellspacing='0'>
+            <tr>
+                <th>Option &amp; Keystroke
+                </th>
+                <th>Value
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Cell Height:<br>
+                    <span class="key">h</span> or <span class="key">H</span>
+                </td>
+                <td>
+                    <select id="dropDownCellHeight">
+                        <option value="10px">10</option>
+                        <option value="15px">15</option>
+                        <option value="20px">20</option>
+                        <option value="30px">30</option>
+                        <option value="40px">40</option>
+                        <option value="50px" selected>50</option>
+                        <option value="60px">60</option>
+                        <option value="70px">70</option>
+                        <option value="80px">80</option>
+                        <option value="100px">100</option>
+                        <option value="120px">120</option>
+                        <option value="140px">140</option>
+                        <option value="160px">160</option>
+                        <option value="180px">180</option>
+                        <option value="200px">200</option>
+                        <option value="300px">300</option>
+                        <option value="400px">400</option>
+                        <option value="600px">600</option>
+                        <option value="800px">800</option>
+                        <option value="1000px">1000</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Cell Width:<br>
+                    <span class="key">w</span> or <span class="key">W</span>
+                </td>
+                <td>
+                    <select id="dropDownCellWidth">
+                        <option value="20px">20</option>
+                        <option value="40px">40</option>
+                        <option value="60px">60</option>
+                        <option value="70px">70</option>
+                        <option value="80px">80</option>
+                        <option value="100px" selected>100</option>
+                        <option value="120px">120</option>
+                        <option value="140px">140</option>
+                        <option value="160px">160</option>
+                        <option value="200px">200</option>
+                        <option value="260px">260</option>
+                        <option value="320px">320</option>
+                        <option value="440px">440</option>
+                        <option value="600px">600</option>
+                        <option value="800px">800</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="cbNaturalFretWidths">Natural fret widths</label>
+                </td>
+                <td>
+                    <input id="cbNaturalFretWidths" type="checkbox" name="cbnNaturalFretWidths" value="1" checked>
+                </td>
+            </tr>
+            <tr>
+                <td>Natural Font Scaling:
+                </td>
+                <td>
+                    <select id="selNaturaFontScaling">
+                        <option value="30">mellow</option>
+                        <option value="60" selected>normie</option>
+                        <option value="95">radical</option>
+                    </select>
+                </td>
+            </tr>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <div class="divViewCard">
+        <table border="1" cellpadding='3' cellspacing='0'>
+            <tr>
+                <th>Option &amp; Keystroke
+                </th>
+                <th>Value
+                </th>
+            </tr>
+            <tr>
+                <td>Note Font:
+                </td>
+                <td>
+                    <select id="selNoteFont">
+                        <option value="EB Garamond" selected>EB Garamond</option>
+                        <option value="Cardo">Cardo</option>
+                        <option value="Eczar">Eczar</option>
+                        <option value="Vollkorn">Vollkorn</option>
+                        <option value="Dosis">Dosis</option>
+                        <option value="Shadows Into Light">Shadows Into Light</option>
+                        <option value="UnifrakturCook">UnifrakturCook</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>UI Font Size:
+                    <br>
+                    <span class="key">-</span> or <span class="key">=</span>
+                </td>
+                <td>
+                    <span id="lblUIFontSize" style="background-color: white">&nbsp;</span>
+                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button" data-action="increaseUIFont"
+                        class="BtnPunchedOut">+</button>
+                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button" data-action="decreaseUIFont"
+                        class="BtnPunchedOut">-</button>
+                        <br><br><small><i><b>NOT automated</b></i></small>
+
+                </td>
+            </tr>
+            <tr>
+                <td>Cell Font Size:<br>
+                    <span class="key">SHIFT</span><span class="key">_</span>
+                    <br><span class="key">SHIFT</span><span class="key">+</span> 
+                    <br>Reset:&nbsp;&nbsp;<span class="key">)</span>
+                </td>
+                <td>
+                    <span id="lblCellFontSize" style="background-color: white">&nbsp;</span>
+                    &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button" data-action="increaseNoteFont"
+                        class="BtnPunchedOut">+</button>
+                    &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button" data-action="decreaseNoteFont"
+                        class="BtnPunchedOut">-</button>
+
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="divViewCard">    
+        <table border="1" cellpadding='3' cellspacing='0'>
+            <tr>
+                <th>Option &amp; Keystroke
+                </th>
+                <th>Value
+                </th>
+            </tr>
+            <tr>
+                <td>leftSubscriptFontSize:
+                </td>
+                <td>
+                    <select id="selLeftSubscriptFontSize">
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%" selected>80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                        <option value="110%">110%</option>
+                        <option value="120%">120%</option>
+                        <option value="130%">130%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>rightSubscriptFontSize:
+                </td>
+                <td>
+                    <select id="selRightSubscriptFontSize">
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%" selected>80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                        <option value="110%">110%</option>
+                        <option value="120%">120%</option>
+                        <option value="130%">130%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>midiSubscriptFontSize:
+                </td>
+                <td>
+                    <select id="selMidiFontSize">
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%" selected>80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                        <option value="110%">110%</option>
+                        <option value="120%">120%</option>
+                        <option value="130%">130%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Fingering Font Size:
+                </td>
+                <td>
+                    <select id="selFingeringFontSize">
+                        <option value="10%">10%</option>
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%" selected>80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                        <option value="110%">110%</option>
+                        <option value="120%">120%</option>
+                        <option value="130%">130%</option>
+                        <option value="150%">150%</option>
+                        <option value="200%">200%</option>
+                        <option value="300%">300%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Fingering Position:
+                </td>
+                <td>
+                    <select id="selFingeringPosition">
+                        <option value="-0.5em">-0.5em</option>
+                        <option value="0" selected>0</option>
+                        <option value="0.5em">0.5em</option>
+                        <option value="10%">10%</option>
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="70%">70%</option>
+                        <option value="90%">90%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Tiny Note Font Size:
+                </td>
+                <td>
+                    <select id="selTinyNoteFontSize">
+                        <option value="20%">20%</option>
+                        <option value="30%">30%</option>
+                        <option value="40%">40%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%" selected>80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                        <option value="110%">110%</option>
+                        <option value="120%">120%</option>
+                        <option value="130%">130%</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Tiny Note Max Height:
+                </td>
+                <td>
+                    <select id="selTinyNoteMaxHeight">
+                        <option value="25%">25%</option>
+                        <option value="35%">35%</option>
+                        <option value="40%">40%</option>
+                        <option value="45%" selected>45%</option>
+                        <option value="50%">50%</option>
+                        <option value="60%">60%</option>
+                        <option value="70%">70%</option>
+                        <option value="80%">80%</option>
+                        <option value="90%">90%</option>
+                        <option value="100%">100%</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+
+    <div class="divViewCard" id="divViewDisplayOptions">
+        <b class="left">Display Options:</b><br>
+        <span style="float:left; ">
+            <button id="btnControlsToDisplayOptions2" class="riskyButton" type="button">SAVE <small><br>Display
+                    Options</small></button>
+        </span>
+        <span style="float:left; ">
+            <button id="btnDeleteDisplayOptions2" class="riskyButton" type="button">CLEAR<small><br>Display
+                    Options</small></button>
+        </span>
+        <p class="clearBoth"><small>Options are all applied from this Section forward until another Section sets Display
+                Options. <i>Tip: Set-and-forget in the first section.</i></small></p>
+        <br>
+        <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
+                Mode</label>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
+        </p>
+    </div>
+
+</div>
+<!-- END divViewControls -->
 
 
 
@@ -1152,13 +1163,14 @@
 
                         <div class="sectionPageControlsGroup">
 
-                        <button id="btnShowWarny" class="safeButton" type="button" >Show Theme Messages</button>
-                        <button id="btnToggleThemeTableResults" class="safeButton" type="button" >Results</button>
+                            <button id="btnTheme" class="safeButton" type="button" >Theme</button>
+                            <button id="btnToggleThemeTableResults" class="safeButton" type="button" >Results</button>
+                            <button id="btnShowWarny" class="safeButton" type="button" >Show Theme Messages</button>
                         <br>
 
                         <!-- Theme Controls -->
-                       
-                        <table id="themeTableControls" border="1" cellpadding='3' cellspacing='0'>
+                    <div id="divThemeControlsFlex">   
+                        <table class="themeTableControls" border="1" cellpadding='3' cellspacing='0'>
                             <tr>
                                 <td>
                                     Cell/Note Radius (outer):
@@ -1294,6 +1306,19 @@
                             </tr>
                             <tr>
                                 <td>
+                                    Instrument Border:
+                                </td>
+                                <td>
+                                    <select id="dropDownInstrumentBorderImage">
+                                        <option selected value="none">none</option>
+                                        <option value="url('img/celtic-background-black.png')">celtic</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="themeTableControls" border="1" cellpadding='3' cellspacing='0'>
+                            <tr>
+                                <td>
                                     Nut Color:
                                 </td>
                                 <td>
@@ -1408,6 +1433,8 @@
                                     </select>
                                 </td>
                             </tr>
+                        </table>
+                        <table class="themeTableControls" border="1" cellpadding='3' cellspacing='0'>
                             <tr>
                                 <td>
                                     Note White Shadow Color:
@@ -1474,12 +1501,16 @@
                                 </td>
                                 <td>
                                     <select id="dropDownNoteWhiteKeyColor">
+                                        <option value="transparent">transparent</option>
                                         <option value="white" selected>white</option>
-                                        <option value="#f5e0c4">creamy</option>
-                                        <option value="lightgreen">lightgreen</option>
+                                        <option value="black">black</option>
+                                        <option value="#191919">anthracite</option>
+                                        <option value="#555">grayDJ555</option>
                                         <option value="#331e01">nut brown</option>
-                                        <option value="black" >black</option>
+                                        <option value="#362312">shire brown</option>
+                                        <option value="#f5e0c4">creamy</option>
                                         <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
                                     </select>
                                 </td>
                             </tr>
@@ -1489,11 +1520,16 @@
                                 </td>
                                 <td>
                                     <select id="dropDownNoteBlackKeyColor">
+                                        <option value="transparent">transparent</option>
+                                        <option value="white">white</option>
                                         <option value="black" selected>black</option>
+                                        <option value="#191919">anthracite</option>
                                         <option value="#555">grayDJ555</option>
                                         <option value="#331e01">nut brown</option>
                                         <option value="#362312">shire brown</option>
-                                        <option value="white">white</option>
+                                        <option value="#f5e0c4">creamy</option>
+                                        <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
                                     </select>
                                 </td>
                             </tr>
@@ -1504,10 +1540,15 @@
                                 <td>
                                     <select id="dropDownNoteWhiteKeyFontColor">
                                         <option value="transparent" selected>transparent</option>
-                                        <option value="#f5e0c4">creamy</option>
-                                        <option value="#331e01">nut brown</option>
                                         <option value="white">white</option>
                                         <option value="black">black</option>
+                                        <option value="#191919">anthracite</option>
+                                        <option value="#555">grayDJ555</option>
+                                        <option value="#331e01">nut brown</option>
+                                        <option value="#362312">shire brown</option>
+                                        <option value="#f5e0c4">creamy</option>
+                                        <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
                                     </select>
                                 </td>
                             </tr>
@@ -1518,9 +1559,15 @@
                                 <td>
                                     <select id="dropDownNoteBlackKeyFontColor">
                                         <option value="transparent" selected>transparent</option>
-                                        <option value="#331e01">nut brown</option>
-                                        <option value="black">black</option>
                                         <option value="white">white</option>
+                                        <option value="black">black</option>
+                                        <option value="#191919">anthracite</option>
+                                        <option value="#555">grayDJ555</option>
+                                        <option value="#331e01">nut brown</option>
+                                        <option value="#362312">shire brown</option>
+                                        <option value="#f5e0c4">creamy</option>
+                                        <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
                                     </select>
                                 </td>
                             </tr>
@@ -1553,23 +1600,9 @@
                                     </select>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    Instrument Border:
-                                </td>
-                                <td>
-                                    <select id="dropDownInstrumentBorderImage">
-                                        <option selected value="none">none</option>
-                                        <option value="url('img/celtic-background-black.png')">celtic</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" style="text-align: center;">
-                                    <button id="btnTheme" class="safeButton" type="button" >Theme</button>
-                                </td>
-                            </tr>
+                            
                         </table>
+                    </div>
                        
                         <!-- END Theme Controls -->
                         <table id="themeTableResults">
@@ -1745,12 +1778,8 @@
     <span style="float: right; vertical-align: middle; margin-right: 2em;">
         <span id="transport" class="noselect topControlsSections toolWindowRounded" >
             <span class="insetTransportBeat" style="border: 1px solid green; padding: 0.2em; text-align: center; vertical-align: middle;">
-                <table id="tblRoots">
-                    <tr>
-                        <td ><span class="lblRootID"></span></td>
-                        <td id="tdRootLead"><span class="lblRootIDLead"></span></td>
-                    </tr>
-                </table>
+                <span class="lblRootID"></span>
+                <span class="lblRootIDLead"></span>
                 <button id="btnFirstSection"  type="button" tabindex="-1" >&#x21E4;</button>
                 <button id="btnPrevSection2"  type="button" tabindex="-1" >&laquo;</button>
                 <small style="margin-left: 0.6em; font-size: 50%">&sect;</small><span style="vertical-align: middle" id="lblSectionsStatus2"></span>

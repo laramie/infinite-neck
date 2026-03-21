@@ -227,7 +227,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	let version =  {"gitTag": "NOT INITIALIZED"}
 	function fetchVersionInBrowser() {
-		debugger
 		// Fetch version.json once at module load and store in module-level const
 		version = { gitTag: 'LOADING', error: null };
 		fetch('version.json')
@@ -510,15 +509,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
-		$('#divMessages').toggle(showMsgs);
-		$('#divJsonTree').toggle(!showMsgs);
-		$('#btnMessagesTab')
-			.toggleClass('BtnPunchedIn', showMsgs)
-			.toggleClass('BtnPunchedOut', !showMsgs);
-		$('#btnJsonTreeTab')
-			.toggleClass('BtnPunchedIn', !showMsgs)
-			.toggleClass('BtnPunchedOut', showMsgs);
-	}
+		   $('#divMessages').toggle(showMsgs);
+		   $('#divJsonTree').toggle(!showMsgs);
+		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnHideMessagesJsonTree';
+		   $(selector).css('display', 'inline-block');
+
+		   $('#btnMessagesTab')
+			   .toggleClass('BtnPunchedIn', showMsgs)
+			   .toggleClass('BtnPunchedOut', !showMsgs);
+		   $('#btnJsonTreeTab')
+			   .toggleClass('BtnPunchedIn', !showMsgs)
+			   .toggleClass('BtnPunchedOut', showMsgs);
+	   }
 	function hideMessages_KeyHandler(){
 		hideMessages();
 	}
@@ -945,8 +947,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function updateAfterOpenSong(){
 		hideGraveyard();
 		installDefaultColorDicts();
+		
+		let songTheme = getSong().theme;  //some songs, e.g. snake.json, don't have theme stored.
+		if (!songTheme){
+			songTheme = getDefaultTheme().id;
+		}
+		$('#mySelect').val(songTheme).change();
 
-		$('#selThemes').val(getSong().theme).change();
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
 
@@ -1015,12 +1022,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function increaseNoteFont(){
-		setNoteFontSize(getNoteFontSize() + 0.5);
+		setNoteFontSize(getNoteFontSize() + 1);
 	}
 
 	export function decreaseNoteFont(){
 		if (getNoteFontSize() > 0.5){
-			setNoteFontSize(getNoteFontSize() - 0.5);
+			setNoteFontSize(getNoteFontSize() - 1);
 		}
 	}
 
