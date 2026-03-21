@@ -361,7 +361,7 @@ table.controls2 select {
 .instrumentBackground {
 
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: auto 1fr;
     grid-template-rows: auto 1fr;
     height: 100%; /* optional, for full height */
     width: 100%;  /* optional, for full width */
@@ -395,7 +395,8 @@ table.controls2 select {
 .divWiring {
   grid-column: 1;
   grid-row: 2;
-  width: 300px;
+    /* width removed for responsive grid */
+    min-width: 200px; /* optional: set your preferred minimum, or remove for pure auto */
 }
 
 .fretTable {
