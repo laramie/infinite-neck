@@ -186,8 +186,10 @@ import { gThemes } from './themes.js';
 	}
 
 	export function theme(themeOptions){
+		console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
 		function rule(cssVarName, whichOption){
-			if (themeOptions[whichOption]){
+			//console.log("cssVarName:"+cssVarName+", whichOption:"+whichOption+"<=="); 
+			if (themeOptions && themeOptions[whichOption]){
 				return cssVarName+": "+themeOptions[whichOption]+"; ";   //no extra quotes around cssVarName or value.  This is CSS not JSON.
 			} else if (defaultOptions[whichOption]){
 				return cssVarName+": "+defaultOptions[whichOption]+"; ";   //no extra quotes around cssVarName or value.  This is CSS not JSON.

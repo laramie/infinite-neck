@@ -947,8 +947,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function updateAfterOpenSong(){
 		hideGraveyard();
 		installDefaultColorDicts();
-
-		$('#selThemes').val(getSong().theme).change();
+		//console.log("updateAfterOpenSong====>"+JSON.stringify(getSong())+" ====> getSong().theme::"+getSong().theme);
+		
+		let songTheme = getSong().theme;
+		if (!songTheme){
+			songTheme = getDefaultTheme();
+			console.log("updateAfterOpenSong Default::songTheme====>"+JSON.stringify(songTheme));
+		}
+		console.log("updateAfterOpenSong songTheme====>"+JSON.stringify(songTheme));
+		
+		var selectedValue = $('#mySelect').val();
+		console.log("Selected Value: " + selectedValue);
+		var selectedText = $('#mySelect option:selected').text();
+		console.log("Selected Text: " + selectedText);
+		$('#selThemes option').each(function() {
+			var optionValue = $(this).val();
+			var optionText = $(this).text();
+			console.log("Option Value: " + optionValue + ", Option Text: " + optionText);
+		});
+		let theSel = $('#selThemes').val(songTheme);
+		console.log("selThemes.val:"+$('#selThemes').val());
+		theSel.change();
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
 
