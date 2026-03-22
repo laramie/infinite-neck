@@ -26,9 +26,7 @@ import {
     recordingHasPlayedNote,
     unRecordPlayedNote
 } from './section-recorder.js';
-import {
-    TableBuilder
-} from './TableBuilder.js';
+import * as TuningsLibrary from './TuningsLibrary.js';
 import {
 	toInt
 } from './utils.js';
@@ -165,7 +163,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 		var cellcol = td.attr("cellcol");
         var celltable = td.attr("celltable");
         if (celltable) {
-            var tuning = TableBuilder.findTuningForName(celltable);
+            var tuning = TuningsLibrary.findTuningForName(celltable);
             cell.html(cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
 
 			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));

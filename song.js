@@ -5,10 +5,7 @@ import {
 import {
     getRecordedNotesForSection
 } from './section-recorder.js';
-import {
-    TABLE_ID_PREFIX,
-    getTunings
-} from './table-builder.js';
+import * as TuningsLibrary from './TuningsLibrary.js';
 import {
 	toInt
 } from './utils.js';
@@ -65,7 +62,7 @@ export class Song {
             const MAGIC_RATIO = 0.9438743;
             const FIRSTFRET_LENGTH = 0.05297;
             const fretLengths = [];
-            for (var n = 2; n <= NUM_FRETS_MAX + 1; n++) {
+            for (var n = 2; n <= TuningsLibrary.NUM_FRETS_MAX + 1; n++) {
                 var Cn = (Math.pow(MAGIC_RATIO, n));
                 var Cnm1 = (Math.pow(MAGIC_RATIO, (n - 1)));
                 var R = (L0 * (1 - Cn) - L0 * (1 - Cnm1)) / FIRSTFRET_LENGTH;
@@ -800,8 +797,8 @@ export class Song {
 	}
 
     renameTuningIDInModel(oldID, newID) {
-        var oldKey = TABLE_ID_PREFIX + oldID;
-        var newKey = TABLE_ID_PREFIX + newID;
+        var oldKey =  TuningsLibrary.TABLE_ID_PREFIX + oldID;
+        var newKey =  TuningsLibrary.TABLE_ID_PREFIX + newID;
         // Rename in each section's noteTables
         this.sections.forEach(function(section) {
             if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
@@ -820,9 +817,6 @@ export class Song {
 
     markVisibleTablesForFileSave(visibleTableIds){
         this.visibleNoteTables = visibleTableIds;
-        
-        //Not really, any more.  You just have myTunings.
-        //    this.tunings = getTunings(visibleTableIds);
     }
 
     prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
@@ -832,15 +826,6 @@ export class Song {
         this.defaultBPM = "" + bpm;
         this.userColors = userColors;
         this.theme = theme;
-        /* not really any more: if someone customizes USER, then they Clone it, 
-         * and it becomes part of myTunings, with base instrument being USER.
-         * so it is not saved separately--it is just a template for a clone just like 
-         * any other instrument, just that you can specify tuning and BanjoNut.
-         * 
-         *   if (userInstrumentTuning) {
-         *      this.userInstrumentTuning = userInstrumentTuning;
-         *   }
-         */ 
     }
 
   getTuningHashInMemoryModel(){
@@ -848,7 +833,7 @@ export class Song {
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
-                    var tuningID = tablename.substring(TABLE_ID_PREFIX.length);
+                    var tuningID = tablename.substring( TuningsLibrary.TABLE_ID_PREFIX.length);
                     var val = hashTuningNames[tuningID];
                     if (!val) {
                         val = tablearr.length;

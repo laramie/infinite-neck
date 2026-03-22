@@ -11,7 +11,7 @@ import {
     getAllTunings,
     getMyTunings,
     TABLE_ID_PREFIX
-} from '../../table-builder.js';
+} from '../../TableBuilder.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -24,7 +24,7 @@ function createFreshHeadlessSong() {
 }
 
 /**
- * Wire table-builder's song provider to the current test song and return it.
+ * Wire TableBuilder's song provider to the current test song and return it.
  * This mirrors the pattern used in infinite-neck.js / installModuleProviders.
  */
 function wireSongProvider(song) {
