@@ -527,7 +527,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			myTuningsDiv.empty();
 			allTuningsDiv.empty();
 			myTuningsDiv
-				.append($("<p><b>My Tunings</b></p>"))
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
 					tableID: TuningsLibrary.MY_TUNINGS_TABLE_ID,
 					primaryControl: 'visibility'

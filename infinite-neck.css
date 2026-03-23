@@ -317,7 +317,7 @@ table.controls {
     border-width: 0;
     background-color: #eee;
 }
-table.controls td {
+table.controls  {
     padding: 0.4em;
     background-color: lightgray;
     font-size:  100%;
@@ -336,6 +336,18 @@ table.controls2 td {
 table.controls2 select {
     margin: 0.3em;
 }
+table.viewControls{
+border-collapse: collapse; 
+    
+}
+table.viewControls td,
+table.viewControls th {
+    background-color: lightyellow; 
+    border: 1px solid gray; 
+    text-align: left;
+    padding: 0.4em; 
+    padding-left: 0.8em;
+}
 
 #divViewControls {
     display: flex;       /* Creates the flexbox context */
@@ -350,13 +362,8 @@ table.controls2 select {
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.divViewCard th, td {
-  border: 1px solid black; /* Sets the border width, style, and color */
-  border-collapse: collapse; /* Merges adjacent borders into a single line */
-  padding: 0.4em; /* Adds space between content and borders, for better readability */
-}
 .divViewCard table{
-    width: 95%;
+    width: 100%;
 }
 .instrumentBackground {
     display: grid;
@@ -444,10 +451,14 @@ table.fretTable {
     margin: 1em;
 }
 .themeTableControls {
-     flex: 1 0 200px; 
-    background-color: lightgray;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1 0 200px; 
+    background-color: rgb(249, 201, 98);
+    border: 1px solid black;
+    box-shadow: 4pt 4pt  2pt 0.2pt gray;
+}
+.themeTableControls td {
+  border: 1px solid gray;
+  padding-left: 0.8em;
 }
 
 

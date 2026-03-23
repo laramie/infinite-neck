@@ -699,7 +699,7 @@
 
 <div id="divViewControls" style="display:none;">
     <div class="divViewCard">
-        <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+        <table class="viewControls">
             <tr>
                 <td colspan="2" align="left" style="text-align: left;">
                     <span id="lblHideWarning">"Palette::Keep" is now selected</span>
@@ -755,12 +755,9 @@
 
 
     <div class="divViewCard">
-        <table class="controls left">
-            <tr>
-                <td style="background-color: lightyellow; border: 1px solid gray; text-align: left;">
-                    <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+                    <table class="viewControls">
                         <tr>
-                            <td colspan="2" align="left" style="text-align: left;">
+                            <td colspan="2" >
                                 <nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes" type="checkbox"
                                             name="cbnFunctions" value="1" checked="checked">Show Right Subscript</label>
                                 </nobr>
@@ -781,7 +778,7 @@
                         <tr>
                             <td>&nbsp;&nbsp;Right Subscript:
                             </td>
-                            <td style="text-align: left;">
+                            <td >
                                 <nobr><label for="rbFunction"><input type="radio" id="rbFunction"
                                             name="rbnFunctionNotename" value="showFunction"
                                             checked="checked">Function</label></nobr>
@@ -791,10 +788,8 @@
                             </td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                    <br>
+                    <div style="padding: 0.8em; background-color: #f4f4f4;">
                     <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
                     <label for="textareaFunctionSymbols">Function Symbols:<br />
                         <nobr>
@@ -823,13 +818,11 @@
                                 Kanji Numerals</option>
                         </select>
                     </label>
-                </td>
-            </tr>
-        </table>
+                </div>
     </div>
 
     <div class="divViewCard">
-        <table style="width: 100%; border: 2px solid black;" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -917,7 +910,7 @@
 
 
     <div class="divViewCard">
-        <table border="1" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -974,7 +967,7 @@
     </div>
 
     <div class="divViewCard">    
-        <table border="1" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -1761,7 +1754,7 @@
             </form>
         </div>
 
-        <div id="divDesktop">
+        <div id="divDesktop"  style="display: none;">
             <form id="frmDesktop">
                 <table class="menuTable">
                     <tr>
@@ -1769,7 +1762,7 @@
                             <span class="menuCaption">Desktop</span>
                         </td>
                         <td class="menuPage">
-                        <div style="float: left; display: none;" class="sectionPageControlsGroup">
+                        <div style="float: left;" class="sectionPageControlsGroup">
                                 <p>Buttons for Mobile instead of keyboard shortcuts. </p>
                                 <br>
                                 <br>
