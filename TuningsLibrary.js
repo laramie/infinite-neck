@@ -5,6 +5,7 @@
 import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
+import { refreshShowAllNoteNames } from './infinite-neck.js';
 
 
 export const TABLE_ID_PREFIX = "tbl";
@@ -109,7 +110,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var primaryControl = options.primaryControl || "clone";
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var trh = $("<tr>");
-    trh.html("<th>" + primaryHeader + "</th><th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th>"
+    trh.html("<th>" + primaryHeader + "</th><th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
     );
     table.append(trh);
@@ -147,6 +148,15 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + ' type="checkbox" name="cbnNut' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedNut + '></nobr></label>';
 
+        var checked_doSpecialRows = tun.doSpecialRows ? " checked " : "";
+        var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.doSpecialRows + '"><nobr>'
+            + '<input class="checkboxDoSpecialRows"   id="cbDoSpecialRows' + tun.doSpecialRows + '" '
+            + ' type="checkbox" name="cbnDoSpecialRows' + tun.doSpecialRows + '" value="'
+            + tun.baseID + '" ' + checked_doSpecialRows + '></nobr></label>';
+
+            
+
+
         var BN = tun.banjoNut ? JSON.stringify(tun.banjoNut) : "";
         if (BN) {
             BN = BN.replaceAll(",", ",<br>");
@@ -170,6 +180,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         } else {
             idCellHtml = tun.baseID;
         }
+        let specialRows = (tun.specialBackgroundIDRows) 
+                            ? checkboxDoSpecialRows+' '+tun.specialBackgroundIDRows 
+                            : "";
 
         var tr = $("<tr>");
         tr.append($("<td>").html(primaryControlHtml));
@@ -179,6 +192,8 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(tun.baseInstrument));
         tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));
         tr.append($("<td>").html("" + tun.rowRange));
+        tr.append($("<td>").html());
+        tr.append($("<td>").html(specialRows));
         tr.append($("<td>").html("" + BN));
         tr.append($("<td>").html(checkboxLH));
         tr.append($("<td>").html(checkboxPN));
@@ -405,6 +420,13 @@ export function bindFormTuningsEvents() {
         var tuning = findTuningForID(tuningID);
         tuning.stringDividerHeight = this.value;
         requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .checkboxDoSpecialRows').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.doSpecialRows = this.checked;
+        requestReinstallAllTuningsTables();
+        refreshShowAllNoteNames();
     });
     $('#frmTunings .checkboxPN').change(function () {
         var tuningID = this.value;

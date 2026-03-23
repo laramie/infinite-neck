@@ -191,13 +191,20 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             var fontMultiplier = Math.pow(multiplier, options.naturaFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
             cell.attr("fontMultiplier", fontMultiplier);
 
-            var newSizes;
+            var newTDSizes;
+            var newNoteDisplaySizes;
             if (isNut){
-                newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
+                //newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
+                newTDSizes = {"width":"var(--nut-width)", "height":h};  //special for nut.
+                newNoteDisplaySizes = {"font-size":""+(0.6*fontMultiplier)+"em", "height":h};  //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
             } else {
-                newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
+                //newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
+                newTDSizes = {"width":sW, "height":h};
+                newNoteDisplaySizes = {"font-size":""+fontMultiplier+"em", "height":h};  //If you set the width for the NoteDisplay instead of td.note it gets wonky.
             }
-			cell.children(".NoteDisplay").css(newSizes);
+			//cell.children(".NoteDisplay").css(newSizes);
+			cell.children(".NoteDisplay").css(newNoteDisplaySizes);
+			cell.css(newTDSizes);  //The calculated width must be on .td.note, not .NoteDisplay
         }
     });
 }

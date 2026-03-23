@@ -1,6 +1,7 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
 import * as TuningsLibrary from './TuningsLibrary.js';
+import { setOneCssVar } from './themeFunctions.js';
 
 const DEFAULT_NOTE_NAMES = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
@@ -35,6 +36,9 @@ export function buildNoteTable(options) {
 		doStringDivider = true;
 	}
 	var tuningNoteNames = "";
+
+	let addBackgroundImageWithoutTheme = false;
+
 	for (var r = 0; r < numRows; r++) {
 		tuningNoteNames = midinumToNoteName(options.rowRange[r]) + tuningNoteNames;
 		var row = $('<tr>');
@@ -44,6 +48,16 @@ export function buildNoteTable(options) {
 		dividerRow.addClass('stringDividerTR');
 		var nCols = options.nut ? options.frets + 1 : options.frets;
 		var banjoNut = options.banjoNut ? options.banjoNut[r] : undefined;
+
+    	//$('.noteDb:not(.nut,.nutR,.noBackgroundImg)').addClass("noteBlackKey");
+		let specialBackgroundIDRowsClass = "";
+		if (options.doSpecialRows && options.specialBackgroundIDRows){
+			if (options.specialBackgroundIDRows && options.specialBackgroundIDRows.includes(r)) {
+				specialBackgroundIDRowsClass = 'specialRowBackgroundImg';
+				addBackgroundImageWithoutTheme = true;
+			}
+		}
+
 
 		for (var c = 0; c < nCols; c++) {
 			var deadCell = false;
@@ -81,9 +95,9 @@ export function buildNoteTable(options) {
 			var noteClass = "note" + noteName;//"noteD";
 			var notePinkClass = "";
 			if (options.pinkKey && noteName == options.pinkKey) {
-				notePinkClass = " notePinkKey";
+				notePinkClass = "notePinkKey";
 			}
-			var tdline = '<td class="note ' + noteClass + notePinkClass + ' ' + nutClass + '" noteName="' + noteName + '">';
+			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + '" noteName="' + noteName + '">';
 			var cell = $(tdline).html("");
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);
@@ -123,6 +137,13 @@ export function buildNoteTable(options) {
 
 		table.append(row);
 	} //end for-loop rows
+
+	if (addBackgroundImageWithoutTheme){
+		//setOneCssVar("--special-row-border-image-black-key", "url('img/celtic-background-black.png')");
+		//setOneCssVar("--special-row-border-image-white-key", "url('img/celtic-background-white.png')");
+		setOneCssVar("--special-background-color-black-key", "#110500");
+		setOneCssVar("--special-background-color-white-key", "#ffdd77");
+	}
 
 	if (options.diamonds) {
 		var diamondRow = diamondsRow(options);

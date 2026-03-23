@@ -97,8 +97,13 @@ import { gThemes } from './themes.js';
 			setVal('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			setVal('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
 			setVal('#dropDownNoteBlackKeyShadowColor', 'noteBlackKeyShadowColor');
+			
 			setVal('#dropDownNoteWhiteKeyColor', 'noteWhiteKeyColor');
 			setVal('#dropDownNoteBlackKeyColor', 'noteBlackKeyColor');
+			setVal('#dropDownNoteWhiteKeySpecialColor', 'noteWhiteKeySpecialColor');
+			setVal('#dropDownNoteBlackKeySpecialColor', 'noteBlackKeySpecialColor');
+
+
 			setVal('#dropDownNoteWhiteKeyFontColor', 'noteWhiteKeyFontColor');
 			setVal('#dropDownNoteBlackKeyFontColor', 'noteBlackKeyFontColor');
 			setVal('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
@@ -135,8 +140,12 @@ import { gThemes } from './themes.js';
 			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor').val();
 			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor').val();
 			options.noteBlackKeyShadowColor = $('#dropDownNoteBlackKeyShadowColor').val();
+
 			options.noteWhiteKeyColor = $('#dropDownNoteWhiteKeyColor').val();
 			options.noteBlackKeyColor = $('#dropDownNoteBlackKeyColor').val();
+			options.noteWhiteKeySpecialColor = $('#dropDownNoteWhiteKeySpecialColor').val();
+			options.noteBlackKeySpecialColor = $('#dropDownNoteBlackKeySpecialColor').val();
+
 			options.noteWhiteKeyFontColor = $('#dropDownNoteWhiteKeyFontColor').val();
 			options.noteBlackKeyFontColor = $('#dropDownNoteBlackKeyFontColor').val();
 			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey').val();
@@ -241,6 +250,10 @@ import { gThemes } from './themes.js';
 									+rule("--double-diamonds-color", "doubleDiamondsColor")
 									+rule("--diamonds-size", "diamondsSize")
 									+rule("--note-white-color", "noteWhiteColor")
+			
+									+rule("--note-white-key-special-color", "noteWhiteKeySpecialColor")
+									+rule("--note-black-key-special-color", "noteBlackKeySpecialColor")
+
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
 									+rule("--instrument-margin-tb", "instrumentMargins")
@@ -299,8 +312,12 @@ import { gThemes } from './themes.js';
 			showOptions('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			showOptions('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
 			showOptions('#dropDownNoteBlackKeyShadowColor', 'noteBlackKeyShadowColor');
+
 			showOptions('#dropDownNoteWhiteKeyColor', 'noteWhiteKeyColor');
 			showOptions('#dropDownNoteBlackKeyColor', 'noteBlackKeyColor');
+			showOptions('#dropDownNoteWhiteKeySpecialColor', 'noteWhiteKeySpecialColor');
+			showOptions('#dropDownNoteBlackKeySpecialColor', 'noteBlackKeySpecialColor');
+
 			showOptions('#dropDownNoteWhiteKeyFontColor', 'noteWhiteKeyFontColor');
 			showOptions('#dropDownNoteBlackKeyFontColor', 'noteBlackKeyFontColor');
 			showOptions('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');

@@ -19,6 +19,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt cornflowerblue", 
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "#555",
+        "noteWhiteKeySpecialColor": "#ffab3c",
+        "noteBlackKeySpecialColor": "#170803",
         "noteWhiteKeyFontColor": "transparent",
         "noteBlackKeyFontColor": "transparent",
         "borderImageWhiteKey": "none",
@@ -172,6 +174,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt pink",
         "noteWhiteKeyColor": "#331e01",
         "noteBlackKeyColor": "#331e01",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
+        "noteBlackKeySpecialColor": "SaddleBrown",
         "noteWhiteKeyFontColor": "#331e01",
         "noteBlackKeyFontColor": "#331e01"
     },

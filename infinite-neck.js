@@ -617,14 +617,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function buildCells(sharps, options) {
+		updateMemoryModelPreFileSave();
+		console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
+		let theVisibleNoteTables = getSong().visibleNoteTables;
+		theVisibleNoteTables.forEach(tableID => {
+		    buildCellsForTable(sharps, options, `#${tableID}`);
+		});
+	}
+	export function buildCellsForTable(sharps, options, tableID=""){
+		let tableID_prefix = "";
+		if (tableID){
+			tableID_prefix = tableID + ' ';
+		}
 		if (sharps) {
-			buildCellsFromSelector("td.noteAb", "G", SHARP, 11, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteAb", "G", SHARP, 11, options);
 			buildCellsFromSelector("td.noteBb", "A", SHARP, 1, options);
 			buildCellsFromSelector("td.noteDb", "C", SHARP, 4, options);
 			buildCellsFromSelector("td.noteEb", "D", SHARP, 6, options);
 			buildCellsFromSelector("td.noteGb", "F", SHARP, 9, options);
 		} else {
-			buildCellsFromSelector("td.noteAb","A", FLAT, 11, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteAb","A", FLAT, 11, options);
 			buildCellsFromSelector("td.noteBb","B", FLAT, 1, options);
 			buildCellsFromSelector("td.noteDb","D", FLAT, 4, options);
 			buildCellsFromSelector("td.noteEb","E", FLAT, 6, options);
@@ -1348,6 +1360,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 
+	export function refreshShowAllNoteNames(){
+		let isChecked = $("#cbShowAllNoteNames").prop("checked");
+		showAllNoteNames(!isChecked); //hack: do it twice for side-effects.
+		showAllNoteNames(isChecked);
+	}
 
 	//var gLastWhiteBackgroundColor = null;
 	//var gLastBlackBackgroundColor = null;
@@ -2199,6 +2216,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			themeToControls(getDefaultTheme());  //Not all themes have all values, so reset all the dropdowns with theme "Default" first.
 			themeToControls(selectedTheme);
 			clearThemeDiffResults();
+			refreshShowAllNoteNames();
 		});
 		$('#warny').click(function(){
 			$(this).hide();
