@@ -14,7 +14,7 @@ import {
 } from './graveyard.js';
 import {
 	midinumToNoteName
-} from './table-builder.js';
+} from './TableBuilder.js';
 import {
 	gUserColorDict,
 	gUserColorDictOEM

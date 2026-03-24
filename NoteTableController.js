@@ -26,9 +26,7 @@ import {
     recordingHasPlayedNote,
     unRecordPlayedNote
 } from './section-recorder.js';
-import {
-    TableBuilder
-} from './TableBuilder.js';
+import * as TuningsLibrary from './TuningsLibrary.js';
 import {
 	toInt
 } from './utils.js';
@@ -165,7 +163,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 		var cellcol = td.attr("cellcol");
         var celltable = td.attr("celltable");
         if (celltable) {
-            var tuning = TableBuilder.findTuningForName(celltable);
+            var tuning = TuningsLibrary.findTuningForName(celltable);
             cell.html(cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
 
 			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));
@@ -193,19 +191,27 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             var fontMultiplier = Math.pow(multiplier, options.naturaFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
             cell.attr("fontMultiplier", fontMultiplier);
 
-            var newSizes;
+            var newTDSizes;
+            var newNoteDisplaySizes;
             if (isNut){
-                newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
+                //newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
+                newTDSizes = {"width":"var(--nut-width)", "height":h};  //special for nut.
+                newNoteDisplaySizes = {"font-size":""+(0.6*fontMultiplier)+"em", "height":h};  //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
             } else {
-                newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
+                //newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
+                newTDSizes = {"width":sW, "height":h};
+                newNoteDisplaySizes = {"font-size":""+fontMultiplier+"em", "height":h};  //If you set the width for the NoteDisplay instead of td.note it gets wonky.
             }
-			cell.children(".NoteDisplay").css(newSizes);
+			//cell.children(".NoteDisplay").css(newSizes);
+			cell.children(".NoteDisplay").css(newNoteDisplaySizes);
+			cell.css(newTDSizes);  //The calculated width must be on .td.note, not .NoteDisplay
         }
     });
 }
 
 //=================================CLICK HANDLING===============================
 
+// td.note click calls just this from infinite-neck.js::installTDNoteClick()
 export function colorNote(cell) {
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
@@ -627,28 +633,17 @@ export function replay(){
 
 export function showMidiNotesInTable(tableID, midinum, preferredRow){
   var tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"'][cellrow='"+preferredRow+"']");
-  //console.log("tds.length:"+tds.length);
   if (tds.length==0){
       tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"']");
       return $(tds[0]);
-
-      //TODO: we now bail here.  Verify that we don't need this old code:
-      tds.each(function(index, element) {
-           var theTD = $(element);
-           return theTD;
-      });
-
-
   } else {
       return $(tds[0]);
   }
 }
 
-
 export function showHighlightsForBeat(nBeat){
     var dict = getCurrentSection().recordedNotes;
     if (dict){
-
         $("td.note").removeClass("noteHighlight");
 
         $("td.note").removeClass("noteHighlightSingle");

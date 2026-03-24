@@ -284,7 +284,7 @@
       <a class="helpButton" href="#videos">Videos</a>
       <a class="helpButton" href="#help">Help</a>
       <a class="helpButton" href="#keymap">Keymap</a>
-      <a class="helpButton" href="#commandline">Command-Line</a>
+      <a class="helpButton" href="#commandline">Command-line</a>
       <a class="helpButton" href="#glossary">Glossary</a>
     </div>
 
@@ -674,7 +674,7 @@
                     </ul>
                 </li>
                 <li><a href="#keymap">Keymap</a></li>
-                <li><a href="#commandline">Command-Line Menu</a>
+                <li><a href="#commandline">Command-line Menu</a>
                     <ul class="LinkList">
                         <li><a href="#keysInCommandLine">Keys</a></li>
                         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
@@ -1367,7 +1367,28 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
   <p>Look under the "Tunings" menu to turn on and off various installed tunings,
       and customize them (number of frets, left-handed).  These controls update the
       instruments in real-time, but you may have to scroll down to see them.
-      </p>
+    </p>
+    <a name="tunings-special-rows"></a>
+    <h4>Special Rows</h4>
+    <p>
+        Tunings S6, Standard 6-string guitar, and S8 default to using "Special Rows".  The thinnest two strings are shown
+        in a different background color scheme, so P4 players can have a visual reminder of the Special-ness of these strings--they 
+        are a half-step off of Perfect Fourths tuning (P4).
+        By default, 
+        an S6 or S8 tuning turn on "Special Rows" with a checkbox in the "My Tunings" table or "All Tunings" table.  Uncheck if you don't 
+        want special rows displayed with different background colors. 
+    </p>
+    <p>
+        You can also Theme these to other colors under Theme :: "Note White Key Special Color", and "Note Black Key Special Color".
+    </p>
+    <p>
+        Here SR is checked, and the Special Rows and displayed in other colors:
+        <br> <br><img src="img/help/context/S6-SpecialRows-on.png">
+    </p>
+    <p>
+        Here SR is unchecked, and the Special Rows are displayed normally:
+          <br> <br><img src="img/help/context/S6-SpecialRows-off.png">
+    </p>
 
 <a name="palette"></a>
 <h3>Palette</h3>
@@ -1610,6 +1631,20 @@ in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>
     <h3>Shire</h3>
     <img width="80%" src="img/help/theme-shire.png"><br><br>
  </p>
+
+ <p>
+        If you see that the top two rows are a different color scheme, you might have Special Rows turned on by default.
+        See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
+ </p>
+ <p>
+    Here SR is checked, and the Special Rows and displayed in other colors:
+        <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-on.png">
+    </p>
+    <p>
+        Here SR is unchecked, and the Special Rows are displayed normally:
+          <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
+    </p>
+
 
 <hr>
 <a name="keymap"></a>
@@ -2103,8 +2138,17 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
 <hr>
 <a name="commandline"></a>
-<h1>Command-Line Menu</h1>
+<h1>Command-line Menu</h1>
 
+    <ul class="LinkList">
+        <li><a href="#command-line-overview">Overview</a></li>
+        <li><a href="#keysInCommandLine">Keys Used in the Command-line</a></li>
+        <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
+        <li><a href="#commandLineMenuDump">Full Menu Listing</a></li>
+    </ul>
+
+        <a name="command-line-overview"></a>
+        <h4>Command-line Overview</h4>
         <p>Here is the command-line interface, so you can type commands one-handed while balancing your guitar on your knee.
             <br>
             <br>
@@ -2157,7 +2201,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </p>
 
         <a name="keysInCommandLine"></a>
-        <h4>Keys used in the command-line</h4>
+        <h4>Keys Used in the Command-line</h4>
         <table id="tblKeysInCommandLine" class="CheatSheet" cellspacing="0" border="1">
             <tr>
                 <th id="key">key
@@ -2256,7 +2300,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </table>
         
         <a name="commandLineUsefulCommands"></a>
-            <h4>Useful Commands</h4>
+            <h4>Command-line Useful Commands</h4>
             <p>Most of the command-line menu items are self-explanatory.  Here are some notes for ones that aren't.
             </p>
             <p>Any command that "prints" out a result does it on the main page, below any instruments.
@@ -2343,7 +2387,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             
 <a name="commandLineMenuDump"></a>
-            <h4>Full Menu Listing</h4>
+            <h4>Command-line Full Menu Listing</h4>
        <p><span class="menuExampleLine">/vdm</span> prints out a plaintext listing of the entire command-line heirarchy. </p> 
        <p>Here, for example, is the command-line menu structure as of 20260217:</p>
 
@@ -2730,6 +2774,15 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>Each set of pitches on one instrument is called a Tuning.  So for 6-string guitar, DADGAD would be one Tuning, P4 would be another Tuning.
                 Banjo Graveyard is another Tuning, as is Banjo Sawmill.
                 Each instrument displayed in <span class="productsmaller">infinite-neck</span> is one Tuning, but you can display multiple instruments.
+
+            </td>
+        </tr>
+        <tr>
+            <td>Special Rows
+            </td>
+            <td>In Tunings, "Special Rows" showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
+                first two rows of the instrument to be shown in different background colors, to distinguish them from P4 tunings.
+                        See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
 
             </td>
         </tr>

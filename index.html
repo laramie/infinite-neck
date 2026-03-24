@@ -697,9 +697,9 @@
 
 
 
-<div id="divViewControls">
+<div id="divViewControls" style="display:none;">
     <div class="divViewCard">
-        <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+        <table class="viewControls">
             <tr>
                 <td colspan="2" align="left" style="text-align: left;">
                     <span id="lblHideWarning">"Palette::Keep" is now selected</span>
@@ -755,12 +755,9 @@
 
 
     <div class="divViewCard">
-        <table class="controls left">
-            <tr>
-                <td style="background-color: lightyellow; border: 1px solid gray; text-align: left;">
-                    <table border="0" style="background-color: lightyellow; border: 1px solid green; text-align: left;">
+                    <table class="viewControls">
                         <tr>
-                            <td colspan="2" align="left" style="text-align: left;">
+                            <td colspan="2" >
                                 <nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes" type="checkbox"
                                             name="cbnFunctions" value="1" checked="checked">Show Right Subscript</label>
                                 </nobr>
@@ -781,7 +778,7 @@
                         <tr>
                             <td>&nbsp;&nbsp;Right Subscript:
                             </td>
-                            <td style="text-align: left;">
+                            <td >
                                 <nobr><label for="rbFunction"><input type="radio" id="rbFunction"
                                             name="rbnFunctionNotename" value="showFunction"
                                             checked="checked">Function</label></nobr>
@@ -791,10 +788,8 @@
                             </td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
+                    <br>
+                    <div style="padding: 0.8em; background-color: #f4f4f4;">
                     <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
                     <label for="textareaFunctionSymbols">Function Symbols:<br />
                         <nobr>
@@ -823,13 +818,11 @@
                                 Kanji Numerals</option>
                         </select>
                     </label>
-                </td>
-            </tr>
-        </table>
+                </div>
     </div>
 
     <div class="divViewCard">
-        <table style="width: 100%; border: 2px solid black;" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -917,7 +910,7 @@
 
 
     <div class="divViewCard">
-        <table border="1" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -974,7 +967,7 @@
     </div>
 
     <div class="divViewCard">    
-        <table border="1" cellpadding='3' cellspacing='0'>
+        <table class="viewControls">
             <tr>
                 <th>Option &amp; Keystroke
                 </th>
@@ -1152,7 +1145,7 @@
 
 
         <!-- divThemeControls -->
-        <div id="divThemeControls">
+        <div id="divThemeControls" style="display:none;">
             <table class="menuTable">
                 <tr>
                     <td class="menuCaption">
@@ -1527,6 +1520,50 @@
                                         <option value="#555">grayDJ555</option>
                                         <option value="#331e01">nut brown</option>
                                         <option value="#362312">shire brown</option>
+                                        <option value="#170803">Umber</option>
+                                        <option value="#f5e0c4">creamy</option>
+                                        <option value="#ffab3c">yellowy</option>
+                                        <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Note White Key Special Color:
+                                </td>
+                                <td>
+                                    <select id="dropDownNoteWhiteKeySpecialColor">
+                                        <option value="transparent">transparent</option>
+                                        <option value="white" selected>white</option>
+                                        <option value="black">black</option>
+                                        <option value="#191919">anthracite</option>
+                                        <option value="#555">grayDJ555</option>
+                                        <option value="#331e01">nut brown</option>
+                                        <option value="#362312">shire brown</option>
+                                        <option value="SaddleBrown">SaddleBrown</option>
+                                        <option value="#f5e0c4">creamy</option>
+                                        <option value="#170803">Umber</option>
+                                        <option value="#ffab3c">yellowy</option>
+                                        <option value="aqua">aqua</option>
+                                        <option value="lightgreen">lightgreen</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Note Black Key Special Color:
+                                </td>
+                                <td>
+                                    <select id="dropDownNoteBlackKeySpecialColor">
+                                        <option value="transparent">transparent</option>
+                                        <option value="white">white</option>
+                                        <option value="black" selected>black</option>
+                                        <option value="#191919">anthracite</option>
+                                        <option value="#555">grayDJ555</option>
+                                        <option value="#331e01">nut brown</option>
+                                        <option value="#362312">shire brown</option>
+                                        <option value="SaddleBrown">SaddleBrown</option>
                                         <option value="#f5e0c4">creamy</option>
                                         <option value="aqua">aqua</option>
                                         <option value="lightgreen">lightgreen</option>
@@ -1717,7 +1754,7 @@
             </form>
         </div>
 
-        <div id="divDesktop">
+        <div id="divDesktop"  style="display: none;">
             <form id="frmDesktop">
                 <table class="menuTable">
                     <tr>
@@ -1725,7 +1762,7 @@
                             <span class="menuCaption">Desktop</span>
                         </td>
                         <td class="menuPage">
-                        <div style="float: left;" class="sectionPageControlsGroup ">
+                        <div style="float: left;" class="sectionPageControlsGroup">
                                 <p>Buttons for Mobile instead of keyboard shortcuts. </p>
                                 <br>
                                 <br>
@@ -1776,7 +1813,7 @@
     </div><!--end div: class=container-->
 
     <span style="float: right; vertical-align: middle; margin-right: 2em;">
-        <span id="transport" class="noselect topControlsSections toolWindowRounded" >
+        <span id="transport" class="noselect topControlsSections toolWindowRounded" style="display: none;">
             <span class="insetTransportBeat" style="border: 1px solid green; padding: 0.2em; text-align: center; vertical-align: middle;">
                 <span class="lblRootID"></span>
                 <span class="lblRootIDLead"></span>
@@ -1802,7 +1839,7 @@
 
 
 	<div>
-		<div id="topControlsCaptions">
+		<div id="topControlsCaptions" style="display: none;">
 			<nobr>
 				       <strong><span class="lblSongName" ></span></strong>
 				       <span class="SongTitleLeadSheet">
@@ -1814,7 +1851,7 @@
 		</div>
 	</div>
 
-    <div id="divQuick">
+    <div id="divQuick" style="display: none;">
         <button id="btnShowAllNoteNames"  class="MenuButton BtnPunchedOut" type="button" tabindex="-1" >Show All Note Names</button>
         <button id="btnRandomLoop"  class="MenuButton BtnPunchedOut" type="button" tabindex="-1" >Random Loop</button>
         <span class="PunchedTogether"><button id="btnFuncV"  class="MenuButton BtnPunchedIn" type="button" tabindex="-1" >Func</button>
@@ -1829,7 +1866,7 @@
 	<div id="tabledest"></div><!-- The place where all the Instrument noteTables go. -->
 
 
-	<div id="CmdMenu">
+	<div id="CmdMenu" style="display: none;">
 		<table id="CmdMenuStackAndOptions">
 		<tr>
 			<td  id="CmdMenuBreadcrumbs">
