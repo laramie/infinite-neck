@@ -527,13 +527,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			allTuningsDiv.empty();
 			myTuningsDiv
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
-					tableID: TuningsLibrary.MY_TUNINGS_TABLE_ID,
+					tableID: Constants.MY_TUNINGS_TABLE_ID,
 					primaryControl: 'visibility'
 				}));
 			allTuningsDiv
 				.append($("<p><b>All Tunings</b></p>"))
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
-					tableID: TuningsLibrary.ALL_TUNINGS_TABLE_ID,
+					tableID: Constants.ALL_TUNINGS_TABLE_ID,
 					primaryControl: 'clone'
 				}));
 			if (userControls.length > 0) {
@@ -703,7 +703,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function exportFromTable(tblSource){
 		const visibleTableIds = TuningsLibrary.getAllTunings()
-		    .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+		    .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 		    .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 		getSong().markVisibleTablesForFileSave(visibleTableIds);
 		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
@@ -778,7 +778,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function updateMemoryModelPreFileSave(){
 	    const visibleTableIds = TuningsLibrary.getAllTunings()
-	        .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+	        .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }

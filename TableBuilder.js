@@ -161,7 +161,7 @@ export function buildNoteTable(options) {
 
 	var div = $('<div>');
 	div.addClass("instrumentBackground");
-	div.attr("id", TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID);
+	div.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
 	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + Constants.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png' style='width:35px;height:15px;'></button>";
@@ -201,9 +201,9 @@ export function buildNoteTable(options) {
 	div.append(p);
 
 	let divWiring = $("<div>");
-	divWiring.attr("id", TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
+	divWiring.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
 	divWiring.addClass("divWiring");
-	divWiring.html("Wiring for "+TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
+	divWiring.html("Wiring for "+Constants.TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
 	div.append(divWiring);
 	
 	
