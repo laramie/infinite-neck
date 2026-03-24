@@ -14,7 +14,6 @@ import { Section } from './Section.js';
 
 const DEFAULT_BEATS = 4;
 const RANDOM_SECTION_HISTORY_MAX = 16;
-const NUM_FRETS_MAX = 108;
 export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
 export function noteNameToNoteID(noteName) {
@@ -797,8 +796,8 @@ export class Song {
 	}
 
     renameTuningIDInModel(oldID, newID) {
-        var oldKey =  TuningsLibrary.TABLE_ID_PREFIX + oldID;
-        var newKey =  TuningsLibrary.TABLE_ID_PREFIX + newID;
+        var oldKey =  Constants.TABLE_ID_PREFIX + oldID;
+        var newKey =  Constants.TABLE_ID_PREFIX + newID;
         // Rename in each section's noteTables
         this.sections.forEach(function(section) {
             if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
@@ -833,7 +832,7 @@ export class Song {
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
-                    var tuningID = tablename.substring( TuningsLibrary.TABLE_ID_PREFIX.length);
+                    var tuningID = tablename.substring( Constants.TABLE_ID_PREFIX.length);
                     var val = hashTuningNames[tuningID];
                     if (!val) {
                         val = tablearr.length;

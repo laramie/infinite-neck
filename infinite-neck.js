@@ -1,5 +1,7 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
+
+import * as Constants from './Constants.js';
 import {
 	chuseStylesheet,
 	deleteUserStylesheet,
@@ -122,8 +124,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const NATURAL = "&nbsp;";
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
-
-	export const NUM_FRETS_MAX = 108;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
 						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
@@ -460,11 +460,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			addVariant(requested);
 			addVariant(requested.toUpperCase());
-			if (requested.startsWith(TuningsLibrary.TABLE_ID_PREFIX)) {
-				addVariant(requested.substring(TuningsLibrary.TABLE_ID_PREFIX.length));
+			if (requested.startsWith(Constants.TABLE_ID_PREFIX)) {
+				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length));
 			}
-			if (requested.toUpperCase().startsWith(TuningsLibrary.TABLE_ID_PREFIX.toUpperCase())) {
-				addVariant(requested.substring(TuningsLibrary.TABLE_ID_PREFIX.length).toUpperCase());
+			if (requested.toUpperCase().startsWith(Constants.TABLE_ID_PREFIX.toUpperCase())) {
+				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length).toUpperCase());
 			}
 
 			for (var i = 0; i < variants.length; i++) {
@@ -705,7 +705,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function exportFromTable(tblSource){
 		const visibleTableIds = TuningsLibrary.getAllTunings()
 		    .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-		    .map(t => TuningsLibrary.TABLE_ID_PREFIX + t.baseID);
+		    .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 		getSong().markVisibleTablesForFileSave(visibleTableIds);
 		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
 			if (tblSource != tableDest){
@@ -780,7 +780,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function updateMemoryModelPreFileSave(){
 	    const visibleTableIds = TuningsLibrary.getAllTunings()
 	        .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-	        .map(t => TuningsLibrary.TABLE_ID_PREFIX + t.baseID);
+	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({

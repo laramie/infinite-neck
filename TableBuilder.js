@@ -1,5 +1,7 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
+
+import * as Constants from './Constants.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
 import { setOneCssVar } from './themeFunctions.js';
 
@@ -21,7 +23,7 @@ export function buildNoteTable(options) {
 	table.attr("border", "0");
 	table.attr("cellpadding", "0");
 	table.attr("cellspacing", "4");
-	table.attr("id", TuningsLibrary.TABLE_ID_PREFIX + options.baseID);
+	table.attr("id", Constants.TABLE_ID_PREFIX + options.baseID);
 	table.attr("rowRange", '[' + options.rowRange.toString() + ']');
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
@@ -102,7 +104,7 @@ export function buildNoteTable(options) {
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);
 			cell.attr("cellcol", colDisplay);
-			cell.attr("celltable", TuningsLibrary.TABLE_ID_PREFIX + options.baseID);
+			cell.attr("celltable", Constants.TABLE_ID_PREFIX + options.baseID);
 			cell.html("" + noteName);
 			if (deadCell) {
 				cell = $('<td class="note" style="min-width: 1em; background-color: #222;">');
@@ -160,7 +162,7 @@ export function buildNoteTable(options) {
 	var div = $('<div>');
 	div.addClass("instrumentBackground");
 	div.attr("id", TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID);
-	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + TuningsLibrary.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
+	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + Constants.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png' style='width:35px;height:15px;'></button>";
 	

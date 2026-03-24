@@ -56,20 +56,20 @@
       },
       "namedNotes": {
         "Gb": {
-          "noteNameClass": ".noteGb",
-          "colorClass": "noteChord2"
+          "colorClass": "noteChord2",
+          "noteName": "Gb"
         },
         "C": {
-          "noteNameClass": ".noteC",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "C"
         },
         "A": {
-          "noteNameClass": ".noteA",
-          "colorClass": "noteColornote"
+          "colorClass": "noteColornote",
+          "noteName": "A"
         },
         "D": {
-          "noteNameClass": ".noteD",
-          "colorClass": "noteRoot"
+          "colorClass": "noteRoot",
+          "noteName": "D"
         }
       },
       "recordedNotes": {},
@@ -136,20 +136,20 @@
       },
       "namedNotes": {
         "Gb": {
-          "noteNameClass": ".noteGb",
-          "colorClass": "noteChord2"
+          "colorClass": "noteChord2",
+          "noteName": "Gb"
         },
         "C": {
-          "noteNameClass": ".noteC",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "C"
         },
         "A": {
-          "noteNameClass": ".noteA",
-          "colorClass": "noteColornote"
+          "colorClass": "noteColornote",
+          "noteName": "A"
         },
         "D": {
-          "noteNameClass": ".noteD",
-          "colorClass": "noteRoot"
+          "colorClass": "noteRoot",
+          "noteName": "D"
         }
       },
       "recordedNotes": {},
@@ -223,20 +223,20 @@
       },
       "namedNotes": {
         "Gb": {
-          "noteNameClass": ".noteGb",
-          "colorClass": "noteChord2"
+          "colorClass": "noteChord2",
+          "noteName": "Gb"
         },
         "C": {
-          "noteNameClass": ".noteC",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "C"
         },
         "A": {
-          "noteNameClass": ".noteA",
-          "colorClass": "noteColornote"
+          "colorClass": "noteColornote",
+          "noteName": "A"
         },
         "D": {
-          "noteNameClass": ".noteD",
-          "colorClass": "noteRoot"
+          "colorClass": "noteRoot",
+          "noteName": "D"
         }
       },
       "recordedNotes": {},

@@ -32,19 +32,16 @@
       "namedNotes": {
         "F": {
           "noteName": "F",
-          "noteNameClass": ".noteF",
           "colorClass": "note1",
           "styleNum": 0
         },
         "A": {
           "noteName": "A",
-          "noteNameClass": ".noteA",
           "colorClass": "note5",
           "styleNum": 0
         },
         "C": {
           "noteName": "C",
-          "noteNameClass": ".noteC",
           "colorClass": "noteTransparent",
           "styleNum": 0
         }
@@ -90,21 +87,18 @@
         "G": {
           "type": "note",
           "noteName": "G",
-          "noteNameClass": ".noteG",
           "colorClass": "note8",
           "styleNum": 0
         },
         "B": {
           "type": "note",
           "noteName": "B",
-          "noteNameClass": ".noteB",
           "colorClass": "note12",
           "styleNum": 0
         },
         "F": {
           "type": "note",
           "noteName": "F",
-          "noteNameClass": ".noteF",
           "colorClass": "note6",
           "styleNum": 0
         }
@@ -122,19 +116,16 @@
       "namedNotes": {
         "C": {
           "noteName": "C",
-          "noteNameClass": ".noteC",
           "colorClass": "noteTransparent",
           "styleNum": 0
         },
         "E": {
           "noteName": "E",
-          "noteNameClass": ".noteE",
           "colorClass": "noteTransparent",
           "styleNum": 0
         },
         "G": {
           "noteName": "G",
-          "noteNameClass": ".noteG",
           "colorClass": "noteTransparent",
           "styleNum": 0
         }

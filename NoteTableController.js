@@ -556,41 +556,44 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 
 //=================================REPLAY========================================
-
 export function replay(){
-    var currSection = getCurrentSection();
-    var hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
-    var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-    var hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-    var hideFingering   = $("#cbHideFingering").prop("checked");
+    let replayOptions = {};
+    replayOptions.currSection = getCurrentSection();
+    replayOptions.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
+    replayOptions.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+    replayOptions.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+    replayOptions.hideFingering   = $("#cbHideFingering").prop("checked");
 
-    if (!hideNamedNotes){
-        var clone = {};
-        Object.keys(currSection.namedNotes).forEach(noteName => {
-            //   every G cell has a class "noteG" --> however, as stored,
-            //   namedNote.noteNameClass is ".noteG", to make it a selector
-            //       ==> Construct jQuery with ".noteG"
-            var namedNote = currSection.namedNotes[noteName];
+    replayOptions.tablename = "";
+    replayTable(replayOptions);
+
+}
+
+export function replayTable(replayOptions){
+    let nnTablenameSelector = replayOptions.tablename
+                        ? '#'+replayOptions.tablename+' '
+                        : "";
+    
+    if (!replayOptions.hideNamedNotes){
+        Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {
+            var namedNote = replayOptions.currSection.namedNotes[noteName];
             var theSelect;
             if (namedNote.noteName){
-                theSelect = ".note"+namedNote.noteName;
-            } else {
-                theSelect = namedNote.noteNameClass; //old style before 20240324
+                theSelect = nnTablenameSelector+".note"+namedNote.noteName;
             }
             var theClass = $(theSelect);
             if (!theSelect){
                 console.log("undef:"+JSON.stringify(namedNote));
             }
-            //console.log("named:"+theSelect+":"+theClass.length);
             var theColorClass = lookupUserColorClass(namedNote);
             styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
         });
     } else {
-        $('.namedNote').hide();
+        $(nnTablenameSelector+'.namedNote').hide();
     }
 
-    Object.keys(currSection.noteTables).forEach(tablename => {
-        var tablearr = currSection.noteTables[tablename];
+    Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
+        var tablearr = replayOptions.currSection.noteTables[tablename];
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
@@ -599,23 +602,21 @@ export function replay(){
                 var textdiv;
                 if (script.styleNum == undefined){
                     script.styleNum = 1;//legacy files not saved with styleNum attr.
-                    console.log("======================== undefined styleNum =============="+JSON.stringify(script));
-                    //remove this if you don't see it in console. I've been on this file format for a while now.
                 }
-                if (script.styleNum == Note.STYLENUM_TINY && !hideTinyNotes){
+                if (script.styleNum == Note.STYLENUM_TINY && !replayOptions.hideTinyNotes){
                     textdiv = $(this).find(".tinyNote");
                     textdiv.addClass("tinyNotePlayed");
                     textdiv.css("opacity",  getSong().tinyNoteOpacity);
-                } else if (script.styleNum == Note.STYLENUM_SINGLE && !hideSingleNotes){
+                } else if (script.styleNum == Note.STYLENUM_SINGLE && !replayOptions.hideSingleNotes){
                     textdiv = $(this).find(".singleNote");
                     textdiv.addClass("singleNotePlayed");
                     textdiv.css("opacity",  getSong().singleNoteOpacity);
-                } else if (script.styleNum == Note.STYLENUM_BEND && !hideTinyNotes){
+                } else if (script.styleNum == Note.STYLENUM_BEND && !replayOptions.hideTinyNotes){
                     textdiv = $(this).find(".tinyNote");
                     textdiv.addClass("tinyNotePlayedBend");
                     textdiv.addClass(script.bendValue);
                     textdiv.css("opacity",  getSong().tinyNoteOpacity);//tiny and bends go together on visibility and opacity
-                } else if (script.styleNum == Note.STYLENUM_FINGERING && !hideFingering){
+                } else if (script.styleNum == Note.STYLENUM_FINGERING && !replayOptions.hideFingering){
                     textdiv = $(this).find(".Fingering");
                     if (script.finger){
                         textdiv.html(script.finger);
@@ -630,6 +631,10 @@ export function replay(){
         });
     });
 }
+
+//=================================REPLAY========================================
+
+
 
 export function showMidiNotesInTable(tableID, midinum, preferredRow){
   var tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"'][cellrow='"+preferredRow+"']");

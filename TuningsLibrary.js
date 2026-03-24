@@ -2,17 +2,12 @@
 // Contains all TuningsTable management and helpers.
 // Copyright (c) 2023, 2024 Laramie Crocker
 
+import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames } from './infinite-neck.js';
 
-
-export const TABLE_ID_PREFIX = "tbl";
-export const NUM_FRETS_MAX = 108;
-export const TABLEDIV_ID_PREFIX = "div";
-export const ALL_TUNINGS_TABLE_ID = "allTuningsTable";
-export const MY_TUNINGS_TABLE_ID = "myTuningsTable";
 
 let getSongProvider = function () {
     return null;
@@ -51,9 +46,9 @@ export function findTuning(oneBaseID) {
 }
 
 
-/** name includes the string TABLE_ID_PREFIX, currently "tbl" **/
+/** name includes the string Constants.TABLE_ID_PREFIX, currently "tbl" **/
 export function findTuningForName(tableID) {
-    var tuningID = tableID.substring(TABLE_ID_PREFIX.length);
+    var tuningID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
     return findTuningForID(tuningID);
 }
 
@@ -72,7 +67,7 @@ export function findTuningForID(id) {
 
 export function getTunings(tableNamesArr) {
     return tableNamesArr.map(tableID => {
-        const tuningID = tableID.substring(TABLE_ID_PREFIX.length);
+        const tuningID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
         return findTuningForID(tuningID);
     });
 }
@@ -212,7 +207,7 @@ const SELECT_STRINGDIVIDER_PFX = "selDivider";
 
 export function generateSelect(ID, frets) {
     var sel = "<select class='selectFrets' id='" + SELECT_FRETS_PFX + ID + "'>";
-    for (var r = 1; r <= NUM_FRETS_MAX; r++) {  // NUM_FRETS_MAX from infinite-neck.js
+    for (var r = 1; r <= Constants.NUM_FRETS_MAX; r++) {  // Constants.NUM_FRETS_MAX from infinite-neck.js
         var selected = "";
         if (r == frets) {
             selected = " selected ";
@@ -268,7 +263,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
 }
 
 export function showHideTunings() {
-    var tuningsCheckboxes = $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible');
+    var tuningsCheckboxes = $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible');
     tuningsCheckboxes.each(function (index, element) {
         var theCB = $(element)
         var show = theCB.prop('checked');
@@ -276,7 +271,7 @@ export function showHideTunings() {
         showHideTuning(show, basekey);
         //console.log("showhideTuning: idx:"+index+" ["+basekey+"] "+show);
     });
-    var numTunings = $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible:checked').length;
+    var numTunings = $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible:checked').length;
     //console.log("showHideTunings num: "+numTunings);
     return numTunings;
 }
@@ -290,7 +285,7 @@ export function showTuning(tablekey) {
 export function showHideTuning(show, basekey) {
     //console.log("showHideTuning:"+show+":"+basekey);
     var cbKey = "#cb" + basekey;
-    var divKey = "#" + TABLEDIV_ID_PREFIX + basekey;
+    var divKey = "#" + Constants.TABLEDIV_ID_PREFIX + basekey;
     var jcb = $(cbKey);
     var jdiv = $(divKey);
     jcb.prop("checked", show);
@@ -317,14 +312,14 @@ export function showTuningsForTablesInFile() {
     getSong().sections.forEach(section => {
         Object.entries(section.noteTables).forEach(([tablekey, tablearr]) => {
             if (tablearr && tablearr.length > 0) {
-                const basekey = tablekey.substring(TABLE_ID_PREFIX.length);
+                const basekey = tablekey.substring(Constants.TABLE_ID_PREFIX.length);
                 showTuning(basekey);
                 numFound++;
             }
         });
     });
     getSong().visibleNoteTables.forEach(visTableID => {
-        const visbasekey = visTableID.substring(TABLE_ID_PREFIX.length);
+        const visbasekey = visTableID.substring(Constants.TABLE_ID_PREFIX.length);
         const tuning = findTuning(visbasekey);
         if (tuning) {
             tuning.visible = true;
@@ -385,7 +380,7 @@ function convertStringToIntArray(inputString) {
 //One dependency: the existence of a form called "#frmTunings" with our tuningstable.
 
 export function bindFormTuningsEvents() {
-    $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
+    $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
         var show = this.checked;
         var basekey = this.value;
         var tuning = findTuning(basekey);
@@ -395,7 +390,7 @@ export function bindFormTuningsEvents() {
             console.log("tuning not found for basekey: " + basekey);
         }
         if (!show) {
-            $('#' + TABLEDIV_ID_PREFIX + basekey).hide();
+            $('#' + Constants.TABLEDIV_ID_PREFIX + basekey).hide();
             requestReloadAllTuningsDisplay();
             requestReinstallAllTuningsTables();
             return;

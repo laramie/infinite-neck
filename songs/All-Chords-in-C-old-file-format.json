@@ -5,7 +5,6 @@
       "namedNotes": {
         "Db": {
           "noteName": "Db",
-          "noteNameClass": ".noteDb",
           "colorClass": "noteTransparent",
           "styleNum": 0
         }
@@ -22,62 +21,50 @@
       "noteTables": {},
       "namedNotes": {
         "Ab": {
-          "noteNameClass": ".noteAb",
           "colorClass": "noteBass",
           "noteName": "Ab"
         },
         "Db": {
-          "noteNameClass": ".noteDb",
           "colorClass": "noteBass",
           "noteName": "Db"
         },
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBass",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBass",
           "noteName": "Eb"
         },
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBass",
           "noteName": "Bb"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBrown7",
           "noteName": "D"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBrown4",
           "noteName": "A"
         },
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteBrown1",
           "noteName": "E"
         },
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "noteRed1",
           "noteName": "B"
         },
         "F": {
-          "noteNameClass": ".noteF",
           "colorClass": "noteBlue4",
           "noteName": "F"
         },
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteBrown5",
           "noteName": "G"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteGreen4",
           "noteName": "C"
         }
@@ -94,30 +81,25 @@
       "noteTables": {},
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {},
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
         "A": {},
         "Ab": {},
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "notePink2",
           "noteName": "B"
         },
@@ -150,17 +132,14 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
@@ -170,13 +149,11 @@
         "Ab": {},
         "B": {},
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
         "Gb": {},
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
@@ -208,7 +185,6 @@
         "G": {},
         "D": {},
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
@@ -218,17 +194,14 @@
         "Ab": {},
         "B": {},
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBrown3",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
@@ -260,14 +233,12 @@
         "G": {},
         "D": {},
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {},
         "E": {},
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBlue2",
           "noteName": "A"
         },
@@ -275,12 +246,10 @@
         "B": {},
         "Bb": {},
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBrown3",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
@@ -311,23 +280,19 @@
       "namedNotes": {
         "G": {},
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {},
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBlue2",
           "noteName": "A"
         },
@@ -385,23 +350,19 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {},
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
@@ -437,23 +398,19 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {},
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {
-          "noteNameClass": ".noteF",
           "colorClass": "noteRed4",
           "noteName": "F"
         },
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
@@ -489,19 +446,16 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {},
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {},
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
@@ -509,7 +463,6 @@
         "Ab": {},
         "B": {},
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
@@ -541,13 +494,11 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {},
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
@@ -557,13 +508,11 @@
         "Ab": {},
         "B": {},
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
         "Gb": {},
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
@@ -597,19 +546,16 @@
         "C": {},
         "F": {},
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBlue2",
           "noteName": "A"
         },
         "Ab": {},
         "B": {},
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
@@ -641,7 +587,6 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
@@ -652,14 +597,12 @@
         "A": {},
         "Ab": {},
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "notePink2",
           "noteName": "B"
         },
         "Bb": {},
         "Gb": {},
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
@@ -689,62 +632,50 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {
-          "noteNameClass": ".noteF",
           "colorClass": "noteRed4",
           "noteName": "F"
         },
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBlue2",
           "noteName": "A"
         },
         "Ab": {
-          "noteNameClass": ".noteAb",
           "colorClass": "noteGreen7",
           "noteName": "Ab"
         },
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "notePink2",
           "noteName": "B"
         },
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBrown3",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
         "Db": {
-          "noteNameClass": ".noteDb",
           "colorClass": "notePink5",
           "noteName": "Db"
         }
@@ -773,62 +704,50 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteRed4",
           "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBlue1",
           "noteName": "D"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteBass",
           "noteName": "C"
         },
         "F": {
-          "noteNameClass": ".noteF",
           "colorClass": "noteRed4",
           "noteName": "F"
         },
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteRoot",
           "noteName": "E"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBlue2",
           "noteName": "A"
         },
         "Ab": {
-          "noteNameClass": ".noteAb",
           "colorClass": "noteGreen7",
           "noteName": "Ab"
         },
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "notePink2",
           "noteName": "B"
         },
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBlue1",
           "noteName": "Bb"
         },
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBrown3",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBlue8",
           "noteName": "Eb"
         },
         "Db": {
-          "noteNameClass": ".noteDb",
           "colorClass": "notePink5",
           "noteName": "Db"
         }
