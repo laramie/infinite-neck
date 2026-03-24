@@ -1,5 +1,23 @@
 # ChangeLog
 
+### 20260324
+
+- Fixed display of View tab tables with better borders and backgrounds, and less table nesting, thus clearing up CSS bug introduced that cause *all* tables to have extra borders.  Added help for "Special Rows". Removed extra paragraph in "My Tunings" with useless title.  Fixed bug where Desktop wouldn't toggle back on to be visible.
+
+- Initialize doSpecialRows in tunings.js for S8 and S6 so they are Special by default.
+
+
+- Added Special Row, for Standard guitars, if you want to show the rows that are tuned different than P4 you can turn on SR in the Tuning, and it will use different colors, which you can also theme with Note White Key Special Color and Note Black Key Special Color.
+
+- Migrated table-builder.js to TableBuilder.js, obviating the Facade class, and instead using an import * as...; Killed old song-old.js; Moved most of the Tunings table out of TableBuilder into TuningsLibrary.js; moved notetable.js to NoteTableController.js, since it is mostly a Controller, but still has View in it, which can now be refactored out.
+
+- New song V1 to V2 converter installed.
+
+- Added css and button and flex grid layout so .instrumentBackground now has a slot for wiring on the left side.  P caption row is still above all, but wiring is on the left of th
+e instrument table.  This will be for Wiring what this table is listening to on the EventBus for new notes, deleted noted, midi notes, and external midi events.
+
+
+
 ### 20260320
 
 - build version: `stable-20260320`

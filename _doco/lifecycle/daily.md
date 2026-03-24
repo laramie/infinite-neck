@@ -53,4 +53,13 @@
         ```
         tar xcv infinite-neck-deploy.tar.gz
         ```
+
+### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
+
+```sh
+git checkout fix/attr-value
+git fetch origin
+git rebase origin/master
+git push --force-with-lease
+```
      
