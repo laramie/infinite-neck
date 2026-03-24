@@ -105,7 +105,7 @@ describe('renameTuningIDInModel: pure model rename', () => {
 
     beforeEach(() => {
         song = createFreshHeadlessSong();
-        wireSongProvider(song);
+        //wireSongProvider(song);
         song.myTunings = [];
         // Give the song a single plain section with no notes
         song.sections[0].noteTables = {};
@@ -193,7 +193,7 @@ describe('headless Clone → use → rename scenario', () => {
 
     beforeEach(() => {
         song = createFreshHeadlessSong();
-        wireSongProvider(song);
+        //wireSongProvider(song);
         song.myTunings = [];
         song.sections[0].noteTables = {};
         song.visibleNoteTables = [];

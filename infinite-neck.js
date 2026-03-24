@@ -143,7 +143,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function installModuleProviders(){
-		TuningsLibrary.setSongProvider(getSong);
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions

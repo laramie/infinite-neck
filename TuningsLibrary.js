@@ -6,21 +6,9 @@ import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
-import { refreshShowAllNoteNames } from './infinite-neck.js';
+import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
 
 
-let getSongProvider = function () {
-    return null;
-};
-export function setSongProvider(providerFn) {
-    if (typeof providerFn === 'function') {
-        getSongProvider = providerFn;
-    }
-}
-
-function getSong() {
-    return getSongProvider();
-}
 
 export function getMyTuningsStore() {
     var song = getSong();

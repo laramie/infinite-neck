@@ -1,3 +1,4 @@
+import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import {
     GraveType
@@ -5,7 +6,6 @@ import {
 import {
     getRecordedNotesForSection
 } from './section-recorder.js';
-import * as TuningsLibrary from './TuningsLibrary.js';
 import {
 	toInt
 } from './utils.js';
@@ -61,7 +61,7 @@ export class Song {
             const MAGIC_RATIO = 0.9438743;
             const FIRSTFRET_LENGTH = 0.05297;
             const fretLengths = [];
-            for (var n = 2; n <= TuningsLibrary.NUM_FRETS_MAX + 1; n++) {
+            for (var n = 2; n <= Constants.NUM_FRETS_MAX + 1; n++) {
                 var Cn = (Math.pow(MAGIC_RATIO, n));
                 var Cnm1 = (Math.pow(MAGIC_RATIO, (n - 1)));
                 var R = (L0 * (1 - Cn) - L0 * (1 - Cnm1)) / FIRSTFRET_LENGTH;
