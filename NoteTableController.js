@@ -633,28 +633,17 @@ export function replay(){
 
 export function showMidiNotesInTable(tableID, midinum, preferredRow){
   var tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"'][cellrow='"+preferredRow+"']");
-  //console.log("tds.length:"+tds.length);
   if (tds.length==0){
       tds = $("table[id='"+tableID+"'] td[midinum='"+midinum+"']");
       return $(tds[0]);
-
-      //TODO: we now bail here.  Verify that we don't need this old code:
-      tds.each(function(index, element) {
-           var theTD = $(element);
-           return theTD;
-      });
-
-
   } else {
       return $(tds[0]);
   }
 }
 
-
 export function showHighlightsForBeat(nBeat){
     var dict = getCurrentSection().recordedNotes;
     if (dict){
-
         $("td.note").removeClass("noteHighlight");
 
         $("td.note").removeClass("noteHighlightSingle");
