@@ -8,31 +8,30 @@ function buildWiringWidget(tuningID, tablename) {
     controlsDiv.dataset.tuningID = tuningID;
     controlsDiv.dataset.tablename = tablename;
 
-    // Set the span for this widget's table
     const spanTablename = controlsDiv.querySelector('.thisTablename');
-    spanTablename.textContent = tablename;
+    spanTablename.textContent = "";
     spanTablename.dataset.tablename = tablename;
 
-    // Populate the select with all visible table names
-    const selTablename = controlsDiv.querySelector('.selTablename');
-    selTablename.innerHTML = '';
-    getSong().getVisibleTunings().forEach(tid => {
-        const opt = document.createElement('option');
-        opt.value = tid;
-        opt.textContent = tid;
-        selTablename.appendChild(opt);
-    });
-
-    // Button event
     const button = controlsDiv.querySelector('.btnAddWiring');
     button.addEventListener('click', () => {
+        // If button is blocked, do nothing
+        if ($(button).hasClass('WiredButtonBlocked')) return;
         const editRelativeSection = controlsDiv.querySelector('.editRelativeSection');
         const thisTable = spanTablename.dataset.tablename;
+        const selTablename = controlsDiv.querySelector('.selTablename');
         getSong().addWiring(
             thisTable,
             editRelativeSection.value,
             selTablename.value
         );
+        updateWiringButtonStatus(controlsDiv);
+    });
+
+    $(controlsDiv).find('.selTablename').on('change', function() {
+        updateWiringButtonStatus(controlsDiv);
+    });
+    $(controlsDiv).find('.editRelativeSection').on('change input', function() {
+        updateWiringButtonStatus(controlsDiv);
     });
 
     return controlsDiv;
@@ -45,11 +44,54 @@ export function addWiringWidget(tuningID, tablename) {
 
 export function updateAllWiringSelects() {
     const tuningIDs = getSong().getVisibleTunings();
+    const wirings = getSong().wirings;
     $('.Wiring-controls').each(function() {
+        const thisTable = $(this).find('.thisTablename').data('tablename');
         const sel = $(this).find('.selTablename');
+        const editRelativeSection = $(this).find('.editRelativeSection');
+        // ...populate select and set values as before...
         sel.empty();
+        sel.append($('<option>', { value: "", text: "none" }));
+        const prefix = (typeof Constants !== 'undefined' && Constants.TABLE_ID_PREFIX) ? Constants.TABLE_ID_PREFIX : 'tbl';
         tuningIDs.forEach(tid => {
-            sel.append($('<option>', { value: tid, text: tid }));
+            if (thisTable !== tid) {
+                let displayText = tid.startsWith(prefix) ? tid.slice(prefix.length) : tid;
+                sel.append($('<option>', { value: tid, text: displayText }));
+            }
         });
+        const wiring = wirings.find(w => w.tablename === thisTable) || {};
+        sel.val(wiring.listenToTablename || "");
+        editRelativeSection.val(wiring.relativeSection || "");
+
+        // Use the new function
+        updateWiringButtonStatus(this);
     });
+}
+
+function updateWiringButtonStatus(widget) {
+    const wirings = getSong().wirings;
+    const thisTable = $(widget).find('.thisTablename').data('tablename');
+    const sel = $(widget).find('.selTablename');
+    const editRelativeSection = $(widget).find('.editRelativeSection');
+    const button = $(widget).find('.btnAddWiring');
+    const wiring = wirings.find(w => w.tablename === thisTable) || {};
+
+    const isBlocked = sel.val() === "";
+    const isWired =
+        (thisTable === wiring.tablename) &&
+        (editRelativeSection.val() === (wiring.relativeSection || "")) &&
+        (sel.val() === (wiring.listenToTablename || ""));
+
+    if (isBlocked) {
+        button.removeClass('WiredButtonOn');
+        button.addClass('WiredButtonBlocked');
+        button.html('<s>No Instrument</s>');
+    } else if (isWired) {
+        button.removeClass('WiredButtonBlocked');
+        button.addClass('WiredButtonOn');
+        button.text('Wired');
+    } else {
+        button.removeClass('WiredButtonOn WiredButtonBlocked');
+        button.text('Add Wiring');
+    }
 }

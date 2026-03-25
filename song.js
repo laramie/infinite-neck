@@ -129,8 +129,14 @@ export class Song {
             .map(t => t.baseID);
         return visibleTuningIDs;    
     }
-    addWiring(tablename, relativeSection, listenToTablename){
-        this.wirings.push(new Wiring(tablename, relativeSection, listenToTablename));
+    addWiring(tablename, relativeSection, listenToTablename) {
+        const idx = this.wirings.findIndex(w => w.tablename === tablename);
+        const newWiring = new Wiring(tablename, relativeSection, listenToTablename);
+        if (idx === -1) {
+            this.wirings.push(newWiring);
+        } else {
+            this.wirings[idx] = newWiring;
+        }
     }
     fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;

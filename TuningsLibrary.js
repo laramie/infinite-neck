@@ -379,13 +379,9 @@ export function bindFormTuningsEvents() {
         }
         if (!show) {
             $('#' + Constants.TABLEDIV_ID_PREFIX + basekey).hide();
-            requestReloadAllTuningsDisplay();
-            requestReinstallAllTuningsTables();
-            return;
         }
         requestReinstallAllTuningsTables();
         showHideTuning(show, basekey);
-        requestUpdateAllWiringSelects();
     });
     $('#frmTunings .checkboxLH').change(function () {
         var tuningID = this.value;
@@ -530,13 +526,14 @@ export function bindFormTuningsEvents() {
 
 function requestReinstallAllTuningsTables() {
     EventBus.trigger('ReinstallAllTuningsTables');
+    EventBus.trigger('UpdateAllWiringSelects');
 }
 
 function requestReloadAllTuningsDisplay() {
     EventBus.trigger('ReloadAllTuningsDisplay');
 }
 function requestUpdateAllWiringSelects() {
-    EventBus.trigger('UpdateAllWiringSelects');
+   EventBus.trigger('UpdateAllWiringSelects'); 
 }
 
 
