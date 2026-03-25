@@ -385,6 +385,7 @@ export function bindFormTuningsEvents() {
         }
         requestReinstallAllTuningsTables();
         showHideTuning(show, basekey);
+        requestUpdateAllWiringSelects();
     });
     $('#frmTunings .checkboxLH').change(function () {
         var tuningID = this.value;
@@ -533,6 +534,9 @@ function requestReinstallAllTuningsTables() {
 
 function requestReloadAllTuningsDisplay() {
     EventBus.trigger('ReloadAllTuningsDisplay');
+}
+function requestUpdateAllWiringSelects() {
+    EventBus.trigger('UpdateAllWiringSelects');
 }
 
 

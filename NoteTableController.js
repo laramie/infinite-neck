@@ -8,7 +8,7 @@
 *   which manages the real engine of infinite-neck.js, the display of the main model: getSong().
 *   Output is all for the instrument noteTables built and inserted into index.html.
 */
-
+import * as Constants from './Constants.js';
 import {
     lookupClassForNote,
     lookupUserColorClass
@@ -564,7 +564,16 @@ export function replay(){
     replayOptions.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
     replayOptions.hideFingering   = $("#cbHideFingering").prop("checked");
 
-    replayOptions.tablename = "";
+    let visibleTables = getSong().getVisibleTunings();
+    visibleTables.forEach(tablename =>{
+        replayOptions.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
+        replayTable(replayOptions);
+
+    });
+    
+
+    replayOptions.tablename = Constants.TABLE_ID_PREFIX+"DADGAD_1";
+    replayOptions.currSection = getSong().getRelativeSectionWithWrap("-1");
     replayTable(replayOptions);
 
 }
@@ -592,8 +601,10 @@ export function replayTable(replayOptions){
         $(nnTablenameSelector+'.namedNote').hide();
     }
 
-    Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
-        var tablearr = replayOptions.currSection.noteTables[tablename];
+    let tablename = replayOptions.tablename;
+    //Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
+    var tablearr = replayOptions.currSection.noteTables[tablename];
+    if (tablearr){
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
@@ -629,7 +640,8 @@ export function replayTable(replayOptions){
                 }
             });
         });
-    });
+    }
+    //});
 }
 
 //=================================REPLAY========================================

@@ -110,6 +110,7 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+import * as WiringBuilder from './templates/WiringBuilder.js';
 
 // If running in a browser, call appInit() on DOM ready
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
@@ -542,6 +543,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TuningsLibrary.bindFormTuningsEvents();
 	}
 
+	function updateAllWiringSelects() {
+		WiringBuilder.updateAllWiringSelects();
+	}
+
 	export function resetSharpsControls() {
 	    //turn all to sharps
 	    $(".ddnAb").html("G<small>&#9839;&nbsp;</small>");
@@ -777,7 +782,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
   	}
 
 	export function updateMemoryModelPreFileSave(){
-	    const visibleTableIds = TuningsLibrary.getAllTunings()
+	    const visibleTableIds = TuningsLibrary.getMyTunings()
 	        .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
@@ -837,48 +842,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
     // file open / open file / openFile event
-	export function setupOpenFileHAL(){
-		var fileInput = document.getElementById('fileInput');
-		fileInput.addEventListener('change', function(e) {  //click works, but is too jumpy. change doesn't work when you apply same file.
-			var file = fileInput.files[0];
-			var textType = /json.*/;
-			if (file.type.match(textType)) {
-				var reader = new FileReader();
-				reader.onload = function() {
-					var jsonObj = JSON.parse(reader.result);
-					var frs = [];
-					Object.values(jsonObj.sections).forEach(section => {
-						var replacementSection = getSong().constructSection();
-						section = Object.assign(replacementSection, section);
-						frs.push(section);
-					});
-					jsonObj.sections = frs;
-					if (!getSong().isEmpty(getSong().getCurrentSection())){
-						var yes = $("#cbAppendSections").prop("checked");
-						if (!yes){
-							getSong().removeAllSections();
-						}
-					}
-					getSong().addSections(jsonObj);
-					getSong().graveyard = makeGraveyard(getSong().graveyard);
-
-					var userTheme = getSong().userTheme;
-					if (userTheme){
-						userTheme["id"] = "USER";
-						getThemes()["USER"] = userTheme;
-						getSong().theme = "USER";
-					}
-					rebuildThemesDropdown();
-
-					updateAfterOpenSong();
-				};
-				hideAllMenuDivs();
-				reader.readAsText(file);
-			}
-		});
-	}
-
-	// file open / open file / openFile event
 	export function setupOpenFile(){
 	  	var fileInput = document.getElementById('fileInput');
 		fileInput.addEventListener('change', function(e) {  //click works, but is too jumpy. change doesn't work when you apply same file.
@@ -2349,6 +2312,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		fetchVersionInBrowser();
 
+		
+
+
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
 		
@@ -2410,6 +2376,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TuningsLibrary.bindFormTuningsEvents();
 		bindDataActionHandlers();
 
+		loadTemplates().then(() => {
+    		getSong().getVisibleTuningIDs().forEach(tuningID => {
+				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+			});
+		});
+
 
 		$("#btnFlats").click();  //calls resetNoteNames();
 
@@ -2433,6 +2405,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//      will now be called from index.html                          =======
 	//      after all other script tags.                                =======
 	//=========================================================================
+
+	function loadTemplates(url = 'templates/templates.html') {
+		return fetch(url)
+			.then(response => response.text())
+				.then(html => {
+					const temp = document.createElement('div');
+					temp.innerHTML = html;
+					// Move all <template> elements to the main document
+					temp.querySelectorAll('template').forEach(tpl => {
+						document.body.appendChild(tpl);
+				});
+			});
+	}
+
 
 	
 
@@ -2480,6 +2466,12 @@ EventBus.on('ReinstallAllTuningsTables', function() {
 });
 EventBus.on('ReloadAllTuningsDisplay', function() {
 	reloadAllTuningsDisplay();
+});
+EventBus.on('UpdateAllWiringSelects', function() {
+	getSong().getVisibleTuningIDs().forEach(tuningID => {
+		WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+	});
+	updateAllWiringSelects();
 });
 
 

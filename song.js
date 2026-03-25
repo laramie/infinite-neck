@@ -11,6 +11,7 @@ import {
 } from './utils.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
+import { Wiring } from './Wiring.js';
 
 const DEFAULT_BEATS = 4;
 const RANDOM_SECTION_HISTORY_MAX = 16;
@@ -72,6 +73,7 @@ export class Song {
         this.presentationMode = false;
         this.constructing = false;
         this.randomSectionHistory = [];
+        this.wirings = [];
         this.make();
     }
 
@@ -114,6 +116,21 @@ export class Song {
             if (!quiet) console.log(ANSIColors.Bold + ANSIColors.cyan("Song running in Headless mode.  No $ or jQuery calls supported."));
             return;
         }
+    }
+    getVisibleTunings(){
+        const visibleTableIds = this.myTunings
+            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+            .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
+        return visibleTableIds;    
+    }
+    getVisibleTuningIDs(){
+        const visibleTuningIDs = this.myTunings
+            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+            .map(t => t.baseID);
+        return visibleTuningIDs;    
+    }
+    addWiring(tablename, relativeSection, listenToTablename){
+        this.wirings.push(new Wiring(tablename, relativeSection, listenToTablename));
     }
     fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;
