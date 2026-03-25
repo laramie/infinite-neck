@@ -9,6 +9,7 @@ export const allTunings = {
       "rowRange": [65, 60, 55, 50, 45, 40, 35, 30],
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "showDiamonds": true,
       "stringDividerHeight": "0.6em",
       "frets": 24,
       "nut": true,

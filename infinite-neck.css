@@ -370,6 +370,21 @@ table.viewControls th {
   grid-column: 1 / span 2;
   grid-row: 1;
 }
+.instrumentSectionBox {
+   border: 1px solid green; 
+   padding: 0.3em;
+}
+.instrumentSectionMark {
+    
+    color: green;
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+.relativeSectionLabel{
+    color: rgb(7, 164, 83);
+    font-size: 80%;
+    padding-right: 0.5em;
+}
 
 
 

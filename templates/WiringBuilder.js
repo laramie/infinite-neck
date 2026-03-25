@@ -1,4 +1,7 @@
-import { getSong } from '../infinite-neck.js';
+import { 
+    getSong,
+    restoreWiringOpenState
+} from '../infinite-neck.js';
 
 function buildWiringWidget(tuningID, tablename) {
     const template = document.getElementById('Wiring-template');
@@ -66,6 +69,7 @@ export function updateAllWiringSelects() {
         // Use the new function
         updateWiringButtonStatus(this);
     });
+    restoreWiringOpenState();
 }
 
 function updateWiringButtonStatus(widget) {

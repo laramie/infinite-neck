@@ -558,7 +558,6 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 //=================================REPLAY========================================
 export function replay(){
     let replayOptions = {};
-    replayOptions.currSection = getCurrentSection();
     replayOptions.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
     replayOptions.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
     replayOptions.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
@@ -567,18 +566,31 @@ export function replay(){
     let visibleTables = getSong().getVisibleTunings();
     visibleTables.forEach(tablename =>{
         replayOptions.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
+        let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
+        if (wiring && wiring.relativeSection){
+            replayOptions.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
+            replayOptions.listenToTablename = wiring.listenToTablename;
+            replayOptions.relativeSection = wiring.relativeSection;
+        } else if (wiring && wiring.listenToTablename) {
+            replayOptions.currSection = getCurrentSection();
+            replayOptions.listenToTablename = wiring.listenToTablename;
+        } else {
+            replayOptions.currSection = getCurrentSection();
+            replayOptions.listenToTablename = tablename;
+        }
+        replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
         replayTable(replayOptions);
-
     });
-    
-
-    replayOptions.tablename = Constants.TABLE_ID_PREFIX+"DADGAD_1";
-    replayOptions.currSection = getSong().getRelativeSectionWithWrap("-1");
-    replayTable(replayOptions);
-
 }
 
 export function replayTable(replayOptions){
+    let relativeSectionText = replayOptions.relativeSection 
+                                ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
+                                : "";
+
+
+    $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+replayOptions.sectionIndex);
+
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
@@ -602,8 +614,9 @@ export function replayTable(replayOptions){
     }
 
     let tablename = replayOptions.tablename;
+    let listenToTablename = replayOptions.listenToTablename;
     //Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
-    var tablearr = replayOptions.currSection.noteTables[tablename];
+    var tablearr = replayOptions.currSection.noteTables[listenToTablename];
     if (tablearr){
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";

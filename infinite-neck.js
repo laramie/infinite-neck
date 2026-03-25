@@ -143,6 +143,25 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return gSong;
 	}
 
+	let WIRING_OPEN = false;
+	export function restoreWiringOpenState(){
+		setWiringOpenState(WIRING_OPEN);
+	}
+	export function setWiringOpenState(open) {
+		WIRING_OPEN = !!open;
+		if (WIRING_OPEN) {
+			$(".divWiring").show();
+			$(".showWiringButton").addClass("ShowWiringButtonOpen");
+		} else {
+			$(".divWiring").hide();
+			$(".showWiringButton").removeClass("ShowWiringButtonOpen");
+		}
+	}
+	
+	function toggleWiringOpenState() {
+		setWiringOpenState(!WIRING_OPEN);
+	}
+
 	function installModuleProviders(){
 		setDisplayOptionsProviders({
 			getSong,
@@ -1527,7 +1546,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
 		$(".showWiringButton").click(function() {
-			$(".divWiring").toggle();
+			toggleWiringOpenState();
 		});
 
 	}
@@ -2380,7 +2399,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
     		getSong().getVisibleTuningIDs().forEach(tuningID => {
 				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 			});
+			setWiringOpenState(false)
 		});
+		setWiringOpenState(false)
+
 
 
 		$("#btnFlats").click();  //calls resetNoteNames();
@@ -2472,6 +2494,9 @@ EventBus.on('UpdateAllWiringSelects', function() {
 		WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 	});
 	updateAllWiringSelects();
+});
+EventBus.on('InstrumentAdded', function() {
+	setWiringOpenState(true);  // to open
 });
 
 

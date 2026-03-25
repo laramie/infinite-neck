@@ -94,7 +94,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th><th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
+        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
     );
     table.append(trh);
     var sInMemCount = "";
@@ -124,6 +124,11 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + ' type="checkbox" name="cbnPN' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedPN + '></nobr></label>';
 
+        var checkedShowDiamonds = tun.showDiamonds ? " checked " : "";
+        var checkboxShowDiamonds = '<label for="cbShowDiamonds' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxShowDiamonds"   id="cbShowDiamonds' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnShowDiamonds' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
 
         var checkedNut = tun.nut ? " checked " : "";
         var checkboxNut = '<label for="cbNut' + tun.baseID + '"><nobr>'
@@ -180,6 +185,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html("" + BN));
         tr.append($("<td>").html(checkboxLH));
         tr.append($("<td>").html(checkboxPN));
+        tr.append($("<td>").html(checkboxShowDiamonds));
         tr.append($("<td>").html(checkboxNut));
         tr.append($("<td>").html(selectBlock)); //numFrets
         tr.append($("<td>").html(selectStringDividerHt));
@@ -414,6 +420,12 @@ export function bindFormTuningsEvents() {
         tuning.pianoNamesRow = this.checked;
         requestReinstallAllTuningsTables();
     });
+    $('#frmTunings .checkboxShowDiamonds').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.showDiamonds = this.checked;
+        requestReinstallAllTuningsTables();
+    });
     $('#frmTunings .checkboxNut').change(function () {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
@@ -477,6 +489,7 @@ export function bindFormTuningsEvents() {
         getMyTuningsStore().push(cloned);
         requestReloadAllTuningsDisplay();
         requestReinstallAllTuningsTables();
+        requestInstrumentAdded();
         $('#btnMyTuningsTab').trigger('click');
     });
 
@@ -534,6 +547,9 @@ function requestReloadAllTuningsDisplay() {
 }
 function requestUpdateAllWiringSelects() {
    EventBus.trigger('UpdateAllWiringSelects'); 
+}
+function requestInstrumentAdded() {
+   EventBus.trigger('InstrumentAdded'); 
 }
 
 

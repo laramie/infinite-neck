@@ -147,7 +147,7 @@ export function buildNoteTable(options) {
 		setOneCssVar("--special-background-color-white-key", "#ffdd77");
 	}
 
-	if (options.diamonds) {
+	if (options.diamonds && options.showDiamonds) {
 		var diamondRow = diamondsRow(options);
 		if (diamondRow != null) {
 			table.append(diamondRow);
@@ -175,6 +175,7 @@ export function buildNoteTable(options) {
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
 	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>&nbsp;&nbsp;&nbsp;';
+	var sectionMark = '<span class="instrumentSectionBox" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
 	var p = $("<p>");
 	p.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
@@ -194,7 +195,7 @@ export function buildNoteTable(options) {
 		+ hamburgerColorDict + S + S
 		+ btnShowWiring + S + S
 		+ '</span>'
-		+ hamburger + S + S
+		+ hamburger + S + S + sectionMark  +S
 		+ "<div class='currentColorDict''></div>" + S
 
 	);
