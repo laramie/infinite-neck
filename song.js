@@ -247,7 +247,7 @@ export class Song {
      *    @2  Two sections ago played in Random mode
      *    ^1  previous section, no wrap, just go as early as you can, max is Section 1
      *    ^-1 ignore sign, just do ^1
-     *    ^+1
+     *    ^+1 ignore sign, just do ^1
      *    ^2  2 sections back, no wrap, just go as early as you can, max is Section 1
      *    &1  1 section ahead, no wrap, max is last Section
      *    &2  2 sections ahead, no wrap, max is last Section

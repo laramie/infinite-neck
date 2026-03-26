@@ -158,7 +158,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 	
-	function toggleWiringOpenState() {
+	export function toggleWiringOpenState() {
 		setWiringOpenState(!WIRING_OPEN);
 	}
 
@@ -640,7 +640,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function buildCells(sharps, options) {
 		updateMemoryModelPreFileSave();
-		console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
+		//console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
 		let theVisibleNoteTables = getSong().visibleNoteTables;
 		theVisibleNoteTables.forEach(tableID => {
 		    buildCellsForTable(sharps, options, `#${tableID}`);

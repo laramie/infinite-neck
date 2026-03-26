@@ -150,7 +150,7 @@ export const allTunings = {
       "caption": "Cello",
       "nStrings": 4,
       "rowRange": [57, 50, 43, 36],
-      "showDiamonds": true,
+      "showDiamonds": false,
       "diamonds": [],
       "doubleDiamonds": [],
       "stringDividerHeight": "0",

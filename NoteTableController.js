@@ -387,13 +387,13 @@ export function colorNote(cell) {
             var automaticColorClass = lookupUserColorClass(note);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().namedNotes[noteName] = {};
+            getCurrentSection().namedNotes[noteName] = {};   //V2-storage
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
                 styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
-    		    getCurrentSection().namedNotes[noteName] = note;
+    		    getCurrentSection().namedNotes[noteName] = note;   //V2-storage
             }
 		}
         //console.log("  namedNoteDiv-->className:"+namedNoteDiv.prop("className"));
@@ -528,7 +528,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
         theMidiNotePlayedClass = "tinyNotePlayedBend";
         theBendClass = bendValue;
     }
-    getSong().removeNotePlayedFromTable(notePlayed, parentTableID);
+    getSong().removeNotePlayedFromTable(notePlayed, parentTableID);  //V2-storage
     if (!clear){
         if (    !singleNoteAlreadyPlayed
              && !tinyNoteAlreadyPlayed
@@ -536,11 +536,11 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
              && !fingeringAlreadyPlayed
              && !bendAlreadyPlayed
            ){
-                var tableArr = getSong().getTableArrInCurrentSection(parentTableID);
+                var tableArr = getSong().getTableArrInCurrentSection(parentTableID);  //V2-storage
                 if (dontAddToTableArray){  //because recording has already added the note to beats in recordedNotes.
                     //console.log("Not adding note to tablearray:"+JSON.stringify(notePlayed));
                 } else {
-                    tableArr.push(notePlayed);
+                    tableArr.push(notePlayed);  //V2-storage
                 }
 
         		textdiv.addClass(lookupUserColorClass(notePlayed));
@@ -601,8 +601,8 @@ export function replayTable(replayOptions){
                         : "";
     
     if (!replayOptions.hideNamedNotes){
-        Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {
-            var namedNote = replayOptions.currSection.namedNotes[noteName];
+        Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {  //V2-storage
+            var namedNote = replayOptions.currSection.namedNotes[noteName];     //V2-storage
             var theSelect;
             if (namedNote.noteName){
                 theSelect = nnTablenameSelector+".note"+namedNote.noteName;
@@ -620,9 +620,8 @@ export function replayTable(replayOptions){
 
     let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
-    //Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
-    var tablearr = replayOptions.currSection.noteTables[listenToTablename];
-    console.log("tablearr: "+JSON.stringify(tablearr));
+    var tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
+    //console.log("tablearr[listenToTablename:"+listenToTablename+"]: "+JSON.stringify(tablearr));
     if (tablearr){
         tablearr.forEach(script => {
             console.log("replay===tablename==>"+tablename+"===listenToTablename===>"+listenToTablename+"<===");
@@ -661,7 +660,6 @@ export function replayTable(replayOptions){
             });
         });
     }
-    //});
 }
 
 //=================================REPLAY========================================
@@ -907,12 +905,12 @@ export function doFill(theClass, NoteNames, Color){
 		//             .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};
+            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};    //V2-storage
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            currSection.namedNotes[NoteNames[key]] = {};
+            currSection.namedNotes[NoteNames[key]] = {};   //V2-storage
         });
     }
 }

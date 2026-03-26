@@ -49,7 +49,7 @@
        }
        UL {
            padding-left: 8em;
-           font-size: 12pt;
+           font-size: 90%;
        }
        UL LI {
            padding: 4px;
@@ -59,7 +59,7 @@
            margin-left: 1em;
        }
        UL > UL > LI {
-           font-size: 8pt;
+           font-size: 90%;
        }
        Table {
            margin-left: 4em;
@@ -71,15 +71,29 @@
            margin: 1em;
 
        }
+       .ScaleFunction {
+           border: 1px solid black;
+           border-collapse: collapse;
+       }
        .ScaleFunction td {
            padding: 0.3em;
-
+            border: 1px solid black;
+            
        }
        .ScaleFunction td:nth-child(2) {
          text-align: center;
          background-color: cyan;
          font-weight: bold;
 
+       }
+       .ExamplesTable {
+        border: 1px solid black;
+        padding: 0.6em;
+        border-collapse: collapse;
+       }
+       .ExamplesTable td,th {
+        border: 1px solid black;
+        padding: 0.4em;
        }
        .CheatSheet td {
            padding: 0.3em;
@@ -626,6 +640,7 @@
                     </ul>
                 </li>
                 <li><a href="#usage">Usage</a></li>
+                <li><a href="#copy-paste-delete-undo-o-my">Copy, Paste, Delete, Save, Versions, O My!</a></li>
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
@@ -652,6 +667,11 @@
                         <li><a href="#divFillNotes">Fill</a></li>
                         <li><a href="#divTunings">Tunings</a></li>
                         <li><a href="#palette">Palette</a></li>
+                        <li><a href="#event-wiring">Event Wiring Controls</a></li> 
+                        <ul class="LinkList">           
+                            <li><a href="#relative-section-amount-values">Relative Section Amount Legal Values</a></li>            
+                            <li><a href="#relative-section-amount-examples">Relative Section Amount Examples</a></li>
+                        </ul>
                     </ul>
                 </li>
                 <li><a href="#options">Options</a></li>
@@ -699,7 +719,7 @@
         <p>Note functions for just one octave, chromatic scale in C:<br>
             <img src="img/help/one-octave.png" width="800px"></p>
 
-        <table class="ScaleFunction" cellspacing="0" border="1">
+        <table class="ScaleFunction">
             <tr>
                 <th>Degree</th>  <th>Symbol</th>  <th>Name</th>  <th>Example<br> in A</th> <th>Pronounced</th><th>Classical</th>
             </tr>
@@ -990,6 +1010,48 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
  <p><img src="img/help/clear.png"></p>
 
+
+<a name="copy-paste-delete-undo-o-my"></a>
+<h3>Copy, Paste, Delete, Save, Versions, O My!</h3>
+<p><span class="productsmaller">infinite-neck</span> doesn't have many of the things we associate with computer programs.  It doesn't 
+do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions for getting what you need to get done, with different idioms.
+</p>
+<p>
+<table class="ExamplesTable">
+    <tr><th>Idiom</th><th>What to do</th></tr>        
+    <tr><td>Graveyard</td><td>Use the Graveyard to revive things you delete: Sections, Stylesheets.  You can revive multiple times,
+        so this can be used to copy/paste a Section.  You can also Clone a section.
+    </td></tr>
+     <tr><td>Copy Section</td><td>Use Clone Deep or Clone Shallow on the Section page.  Deep copies all notes and Display Options.</td></tr>
+    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.</td></tr>
+    <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/clone whole sections, and within that new section you can transpose. So the flow would be:
+        <ul>
+            <li>Unlock the Song so Transposition works <span class="menuExampleLine"><b><small>/fu</small></b></span>
+            <li>In Section 1, place notes for the I chord.
+            <li>Clone Section 1 into Section 2 <span class="menuExampleLine"><b><small>/sec</small></b></span>
+            <li>Go to Section 2 (clone drops you here automatically)
+            <li>Transpose up a 4th with <b><u>j</u></b>ump (or <b><u>u</u></b>p 5 times). This gives you a IV chord.
+            <li>Clone Section 2 into Section 3 <span class="menuExampleLine"><b><small>/sec</small></b></span>
+            <li>Transpose up two half-steps with <b><u>u</u></b>p 2 times.  This gives you the V chord. 
+            <li>Hit <b><u>l</u></b>oop!
+            <li>Voila! The three-chord wonder.
+            <li>(Right now this only works with NamedNotes, but Transposing PlayedNotes is coming soon...)
+        </ul>
+    </td></tr>
+    <tr><td>Open</td><td>File | Open Song | Choose File, or File | Open Song from [Song Library]   </td></tr>
+    <tr><td>Save</td><td>File | Song Name  then File | Download . This downloads the song to your computer.  To open it again later, use File | Open Song | Choose File.
+        Since Undo/Redo is not available, save your file often so you have versioning.
+           </td></tr>
+    <tr><td>Version</td><td>Since you can download a song multiple times, your browser will likely add sequence numbers to the filename if
+        it would conflict with a filename in your Downloads folder.  Voila! Instant versioning.
+    </td></tr>
+    <tr><td>Merge</td><td>Open the first song.  Check the checkbox just under Open Song that says "Append sections to current song" then open the second song, and you'll have those sections appended. </td></tr>
+    <tr><td>Preferences</td><td>Preferences are stored in the song file.  If you have preferences you'd like to apply every time, create a song with one empty Section, then save it with a name like Preferences or Template so you can find it later.  
+        Always use that file at the start of your work and change the name to the new, working song.  
+        If you want to open another existing song, open your Template file first, then open the song you want 
+        to see second with the checkbox "Append sections to current song".</td></tr>
+</table>
+</p>
 
 <a name="note-types-special-handling"></a>
 <h3>Note Types -- special handling:</h3>
@@ -1507,6 +1569,93 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
      because you are using color Roles, or are using Emboss.
  </p>
 
+<a name="event-wiring"></a>
+<h3>Event Wiring Controls</h3>
+ <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop, and (some day) on the MIDI bus.  
+    The Event Wiring Controls (toggle with keyboard shortcut <span class="key">e</span> or with the "Wiring" buttons) let you map these events to each instrument.  Here are the main controls:
+            <ul> 
+                <li><b>Relative Section Amount</b>: a string with a direction and an integer, giving a number of Sections to "look-ahead" or "look-behind" for notes to display in this table.
+                    The default is the empty string, which means "Current Section".  Going +1 (ahead) means look-ahead to the next Section and show those notes in this table/instrument, so that
+                    this table is a preview of the coming Section. Going -1 (behind) means look-behind to the previous Section and show what you just played.
+                    In this way, you can place a look-behind instrument just above your instrument, and a look-ahead instrument just below your instrument,
+                    and you have a three paned view of (1) past notes, (2) notes in this Section, and (3) notes coming up, 
+                    otherwise known as a "Piano Roll" or similar to what you 
+                    coud see in a score, or chart, or Guitar-Hero, or Synthesia, or Tetris.
+                </li>
+                <li><b>Instrument</b>: a dropdown list of other instruments, so you can "listen" to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  Notes you "listen" to 
+                    will be replayed in your instrument but not recorded in your instrument (unless you turn on recording for your instrument).
+                    You can only listen to one instrument, and you can't listen to your own instrument.  
+                    If you chose "Relative Section" in a clone of your instrument, you can have the clones listen to your instrument,
+                     in which case you have look-ahead and look-behind of other Sections.
+                </li>
+                <li><b>Wiring button</b>: shows various states: <b>[<s>No Instrument</s>]</b>, <b>[Add Wiring]</b>, <b>[Wired]</b>.  
+                    <ul>
+                        <li><b>[<s>No Instrument</s>]</b> means you need to select an instrument from the Instrument
+                    drop-down.  If it only shows "none" you need to add one more instrument into My Tunings from the All Tunings library.
+                        </li>
+                        <li><b>[Add Wiring]</b> means you are ready to wire the selected instruments events to the current instrument, possibly with Relative Section Amount.  Clicking on the 
+                            button wires the events, and puts you in the <b>[Wired]</b> state for that instrument.
+                        </li>
+                        <li><b>[Wired]</b> means you are actively listening to another instrument in this Section, or in another Section with Relative Section Amount.  
+                            Change either Relative Section Amount or selected Instrument to have the button go to <b>[Add Wiring]</b> state so you can change the wiring.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+ <a name="relative-section-amount-values"></a>
+<h4>Relative Section Amount Legal Values</h4>            
+
+    <table class="ExamplesTable">
+    <tr><th>Amount</th><th>Meaning</th></tr>        
+    <tr><td>+n</td><td>next n sections ahead, with wrap</td></tr>
+	<tr><td>-n</td><td>previous n sections back, with wrap</td></tr>
+	<tr><td>-0</td><td>previous 0 is always current section</td></tr>
+	<tr><td>+0</td><td>next 0 is always current section</td></tr>
+	<tr><td>0</td><td>first section, Section 1</td></tr>
+	<tr><td>n</td><td>Section n absolute, or last if n too large</td></tr>
+	<tr><td>@n</td><td>Last n sections ago played in Random mode</td></tr>
+	<tr><td>^n</td><td>previous n section back, no wrap, max Section 1</td></tr>
+	<tr><td>^-n</td><td>ignore sign, just do ^n</td></tr>
+	<tr><td>^+n</td><td>ignore sign, just do ^n</td></tr>
+	<tr><td>&n</td><td>n sections ahead, no wrap, max is last Section</td></tr>
+	<tr><td>&-n</td><td>ignore sign, just do &n</td></tr>
+	<tr><td>&+n</td><td>ignore sign, just do &n</td></tr>
+	<tr><td>malformed</td><td>malformed/invalid input returns current section</td></tr>
+    </table>
+
+ <a name="relative-section-amount-examples"></a>
+<h4>Relative Section Amount Examples</h4>
+<table  class="ExamplesTable">
+   <tr><td>+3   </td><td>3 sections ahead, with wrap</td></tr>
+   <tr><td>-3   </td><td>3 sections back, with wrap</td></tr>
+   <tr><td>-1   </td><td>previous section, with wrap</td></tr>
+   <tr><td>+1   </td><td>next section, with wrap</td></tr>
+   <tr><td>-0   </td><td>current section</td></tr>
+   <tr><td>+0   </td><td>current section</td></tr>
+   <tr><td> 0   </td><td>first section (Section 1)</td></tr>
+   <tr><td> 1   </td><td>Section 1 absolute (there always must be one section)</td></tr>
+   <tr><td> 2   </td><td>Section 2 absolute, or last if num too large</td></tr>
+   <tr><td> @1  </td><td>Last section played in Random mode</td></tr>
+   <tr><td> @2  </td><td>Two sections ago played in Random mode</td></tr>
+   <tr><td> ^1  </td><td>previous section, no wrap, just go as early as you can, max is Section 1</td></tr>
+   <tr><td> ^-1 </td><td>ignore sign, just do ^1</td></tr>
+   <tr><td> ^+1 </td><td>ignore sign, just do ^1</td></tr>
+   <tr><td> ^2  </td><td>2 sections back, no wrap, just go as early as you can, max is Section 1</td></tr>
+   <tr><td> &1  </td><td>1 section ahead, no wrap, max is last Section</td></tr>
+   <tr><td> &2  </td><td>2 sections ahead, no wrap, max is last Section</td></tr>
+   <tr><td> &-2 </td><td>ignore sign, just do &2</td></tr>
+   <tr><td> &+2 </td><td>ignore sign, just do &2</td></tr>
+</table>
+<p>
+     Notes:    
+     <ul><li>Negative signs after the first character are ignored, so @-1 is the same as @1, and --1 is the same as -1.
+              So you can go "back" with -1 or ^1 or @1, and --1, ^-1, and @-1 are identical, respectively.
+        <li>"Wrap" means: if going forward and getting to the END, wrap back to the First Section; if going backwards past BEGIN, wrap to the Last Section.
+    </ul>
+</p>
+
+
 <hr>
 <a name="options"></a>
  <h2>Options</h2>
@@ -1660,6 +1809,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#toggleAutoColor">c</a></li>
      <a href="#lowerRootKeyAnd">d</a> 
     <a href="#raiseRootKeyAnd">D</a></li>
+     <a href="#toggleWiringOpenState">e</a> 
      <a href="#toggleFullscreenMode">f</a> 
     <a href="#toggleFullscreenMode">F</a></li>
      <a href="#changeHeightOfCells">h</a> 
@@ -1796,6 +1946,15 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>launch <a href="#commandline">command-line</a>
+                </td>
+            </tr>
+            
+            <tr id="toggleWiringOpenState">
+                <td><span class="key">e</span>
+                </td>
+                <td>
+                </td>
+                <td>toggle <b><u>e</u></b>vent wiring controls
                 </td>
             </tr>
             
@@ -2728,10 +2887,16 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 if you wanted to show the "fabric" of the groove with NamedNotes, and then use SingleNotes to show actual notes to play.
                 <br>
                 <br>
+                If you had a basic 12-Bar Blues, ( C|C|C|C / F|F|C|C / G|F|C|G ), you could model it as one Section of 16 beats, 
+                then two sections of 8 beats each,
+                then 4 Sections of 4 beats each.
+                <br>
+                <br>
                 In a Funk jam, there are typically two Sections--when the bass player changes the Root, that would be the second
                 Section, and when the Bass player goes back, we'd be back in the first section, regardless of whether we hung on the first Root
-                for 8 bars.  Alternately, some jams have two separate bass Root notes per bar, while the mode stays basically the same.  These can be modeled
-                as two Sections per bar.
+                for 8 bars.  Alternately, some jams have two separate bass Root notes per bar, while the mode stays basically the same.  
+                These can be modeled
+                as two Sections per bar, or as one Section, and then use RecordedNotes to show the bass moving.
                 <br>
                 <br>
                 When you are placing notes in <span class="productsmaller">infinite-neck</span>, you are looking
@@ -2778,12 +2943,36 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             </td>
         </tr>
         <tr>
-            <td>Special Rows
+            <td>Special Rows (SR)
             </td>
             <td>In Tunings, "Special Rows" showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
                 first two rows of the instrument to be shown in different background colors, to distinguish them from P4 tunings.
                         See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
 
+            </td>
+        </tr>
+        <tr>
+            <td>Diamond Rows
+            </td>
+            <td>In "My Tunings", or the "All Tunings" library, the column "Diamonds" checkmark causes the 
+                diamonds found on the necks of real instruments to be shown below the fretboard in <span class="productsmaller">infinite-neck</span>.
+                Diamonds are the dots, squares, diamonds, or other shapes and inlays (in pearl, ebony etc.) 
+                found typically at the 3rd, 5th, 7th, 9th, and twelth frets on the 
+                fretboard of guitars, and sometimes on the top edge of the neck, too.
+                Each Tuning in the Tunings Library may have "diamonds" property and a "doubleDiamonds" property which give the 
+                fret locations for instruments
+                that have them (e.g. a Uke has different positions that guitars, and some guitars have diamonds on the first fret 
+                while many don't).  Instruments such as Cellos don't have them in <span class="productsmaller">infinite-neck</span>.
+                Diamonds and DoubleDiamonds are styled differently in Themes. 
+
+            </td>
+        </tr>
+        <tr>
+            <td>Banjo Nut (BN)
+            </td>
+            <td>In "My Tunings", or the "All Tunings" library, the values in column "BN" causes the 
+                Nut location to move per string. Used for modelling Banjo, and also for creating custom Capos
+                in USER tunings.  See the instructions under "Customize USER Tuning" in the "All Tunings" library at the bottom of the table.
             </td>
         </tr>
         <tr>

@@ -37,7 +37,8 @@ import {
 import {
 	showMessagesTab,
 	getVersionString,
-	getVersionObject
+	getVersionObject,
+	toggleWiringOpenState
 } from './infinite-neck.js';
 
 export { document_keypress, document_keyup };
@@ -143,6 +144,15 @@ function document_keypress(e) {
                 showCmdLine();
                 e.preventDefault();
                 break;
+            case "/":
+                setMenuAtRoot();
+                clearCmdResults();
+                showCmdLine();
+                var menu = gMenuPointer;
+                var childCaptions = buildChildMenuCaptionsRow(menu);
+                updateCmdLineView();
+                e.preventDefault();
+                break;
             case "a":
                 toggleCaption();
                 break;
@@ -156,35 +166,12 @@ function document_keypress(e) {
             case "c": //"_C_olor"
                 $("#cbAutomaticColor").click();
                 break;
-            case "n":
-            case "N":
-                getSong().nextBeat();
+            case "e":
+                toggleWiringOpenState();
                 break;
-            case "<":
-            case ",":
-                getSong().gotoPrevSection(false);
-                break;
-            case ">":
-            case ".":
-                getSong().gotoNextSection(false);
-                break;
-            case "[":
-                checkRB('#idMidiPitches');
-                break;
-            case "]":
-                checkRB('#idMidiPitchesSingle');
-                break;
-            case "p":
-            case "P":
-                showOneMenu("#palette");
-                break;
-            case "s":
-            case "S":
-                showOneMenu("#divSectionControls");
-                break;
-            case "l":
-            case "L":
-                toggleLoopSections();
+            case "f":
+            case "F":
+                toggleFullscreen();
                 break;
             case "i":
                 showOneMenu("#divFillNotes");
@@ -197,14 +184,33 @@ function document_keypress(e) {
                 cycleThruKeys(-1);
                 highlightOneNote(getSong().getRootNoteName());
                 break;
-            case "f":
-            case "F":
-                toggleFullscreen();
+            case "l":
+            case "L":
+                toggleLoopSections();
+                break;
+            case "n":
+            case "N":
+                getSong().nextBeat();
+                break;
+            case "p":
+            case "P":
+                showOneMenu("#palette");
+                break;
+            case "q":
+                $('#divQuick').toggle();
+                break;
+            case "s":
+            case "S":
+                showOneMenu("#divSectionControls");
                 break;
             case "t":
                 toggleTransport();
                 break;
-            case "u":
+            case "v":
+            case "V":
+                showOneMenu("#divViewControls");
+                break;
+			case "u":
             case "D":  //SHIFT-D is the same as "up"
                 if ( ! $("#cbTransposeNotes").prop("checked")){
                     break;
@@ -241,22 +247,6 @@ function document_keypress(e) {
                 break;
             case "h":
 					moveSelectByClampedStep('#dropDownCellHeight', 1);
-                break;
-            case "v":
-            case "V":
-                showOneMenu("#divViewControls");
-                break;
-            case "q":
-                $('#divQuick').toggle();
-                break;
-            case "/":
-                setMenuAtRoot();
-                clearCmdResults();
-                showCmdLine();
-                var menu = gMenuPointer;
-                var childCaptions = buildChildMenuCaptionsRow(menu);
-                updateCmdLineView();
-                e.preventDefault();
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
@@ -315,6 +305,20 @@ function document_keypress(e) {
                 m_NoteFontSize = DEFAULT_NOTE_FONT_SIZE;
                 setOneCssVar("--named-note-font-size",""+m_NoteFontSize+"pt");
                 updateFontLabel();
+                break;
+            case "<":
+            case ",":
+                getSong().gotoPrevSection(false);
+                break;
+            case ">":
+            case ".":
+                getSong().gotoNextSection(false);
+                break;
+            case "[":
+                checkRB('#idMidiPitches');
+                break;
+            case "]":
+                checkRB('#idMidiPitchesSingle');
                 break;
             default:
         }
