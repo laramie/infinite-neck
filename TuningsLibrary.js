@@ -2,30 +2,13 @@
 // Contains all TuningsTable management and helpers.
 // Copyright (c) 2023, 2024 Laramie Crocker
 
+import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
-import { refreshShowAllNoteNames } from './infinite-neck.js';
+import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
 
 
-export const TABLE_ID_PREFIX = "tbl";
-export const NUM_FRETS_MAX = 108;
-export const TABLEDIV_ID_PREFIX = "div";
-export const ALL_TUNINGS_TABLE_ID = "allTuningsTable";
-export const MY_TUNINGS_TABLE_ID = "myTuningsTable";
-
-let getSongProvider = function () {
-    return null;
-};
-export function setSongProvider(providerFn) {
-    if (typeof providerFn === 'function') {
-        getSongProvider = providerFn;
-    }
-}
-
-function getSong() {
-    return getSongProvider();
-}
 
 export function getMyTuningsStore() {
     var song = getSong();
@@ -51,9 +34,9 @@ export function findTuning(oneBaseID) {
 }
 
 
-/** name includes the string TABLE_ID_PREFIX, currently "tbl" **/
+/** name includes the string Constants.TABLE_ID_PREFIX, currently "tbl" **/
 export function findTuningForName(tableID) {
-    var tuningID = tableID.substring(TABLE_ID_PREFIX.length);
+    var tuningID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
     return findTuningForID(tuningID);
 }
 
@@ -72,7 +55,7 @@ export function findTuningForID(id) {
 
 export function getTunings(tableNamesArr) {
     return tableNamesArr.map(tableID => {
-        const tuningID = tableID.substring(TABLE_ID_PREFIX.length);
+        const tuningID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
         return findTuningForID(tuningID);
     });
 }
@@ -111,7 +94,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th><th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
+        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
     );
     table.append(trh);
     var sInMemCount = "";
@@ -141,6 +124,11 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + ' type="checkbox" name="cbnPN' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedPN + '></nobr></label>';
 
+        var checkedShowDiamonds = tun.showDiamonds ? " checked " : "";
+        var checkboxShowDiamonds = '<label for="cbShowDiamonds' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxShowDiamonds"   id="cbShowDiamonds' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnShowDiamonds' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
 
         var checkedNut = tun.nut ? " checked " : "";
         var checkboxNut = '<label for="cbNut' + tun.baseID + '"><nobr>'
@@ -197,6 +185,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html("" + BN));
         tr.append($("<td>").html(checkboxLH));
         tr.append($("<td>").html(checkboxPN));
+        tr.append($("<td>").html(checkboxShowDiamonds));
         tr.append($("<td>").html(checkboxNut));
         tr.append($("<td>").html(selectBlock)); //numFrets
         tr.append($("<td>").html(selectStringDividerHt));
@@ -212,7 +201,7 @@ const SELECT_STRINGDIVIDER_PFX = "selDivider";
 
 export function generateSelect(ID, frets) {
     var sel = "<select class='selectFrets' id='" + SELECT_FRETS_PFX + ID + "'>";
-    for (var r = 1; r <= NUM_FRETS_MAX; r++) {  // NUM_FRETS_MAX from infinite-neck.js
+    for (var r = 1; r <= Constants.NUM_FRETS_MAX; r++) {  // Constants.NUM_FRETS_MAX from infinite-neck.js
         var selected = "";
         if (r == frets) {
             selected = " selected ";
@@ -268,7 +257,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
 }
 
 export function showHideTunings() {
-    var tuningsCheckboxes = $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible');
+    var tuningsCheckboxes = $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible');
     tuningsCheckboxes.each(function (index, element) {
         var theCB = $(element)
         var show = theCB.prop('checked');
@@ -276,7 +265,7 @@ export function showHideTunings() {
         showHideTuning(show, basekey);
         //console.log("showhideTuning: idx:"+index+" ["+basekey+"] "+show);
     });
-    var numTunings = $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible:checked').length;
+    var numTunings = $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible:checked').length;
     //console.log("showHideTunings num: "+numTunings);
     return numTunings;
 }
@@ -290,7 +279,7 @@ export function showTuning(tablekey) {
 export function showHideTuning(show, basekey) {
     //console.log("showHideTuning:"+show+":"+basekey);
     var cbKey = "#cb" + basekey;
-    var divKey = "#" + TABLEDIV_ID_PREFIX + basekey;
+    var divKey = "#" + Constants.TABLEDIV_ID_PREFIX + basekey;
     var jcb = $(cbKey);
     var jdiv = $(divKey);
     jcb.prop("checked", show);
@@ -317,14 +306,14 @@ export function showTuningsForTablesInFile() {
     getSong().sections.forEach(section => {
         Object.entries(section.noteTables).forEach(([tablekey, tablearr]) => {
             if (tablearr && tablearr.length > 0) {
-                const basekey = tablekey.substring(TABLE_ID_PREFIX.length);
+                const basekey = tablekey.substring(Constants.TABLE_ID_PREFIX.length);
                 showTuning(basekey);
                 numFound++;
             }
         });
     });
     getSong().visibleNoteTables.forEach(visTableID => {
-        const visbasekey = visTableID.substring(TABLE_ID_PREFIX.length);
+        const visbasekey = visTableID.substring(Constants.TABLE_ID_PREFIX.length);
         const tuning = findTuning(visbasekey);
         if (tuning) {
             tuning.visible = true;
@@ -385,7 +374,7 @@ function convertStringToIntArray(inputString) {
 //One dependency: the existence of a form called "#frmTunings" with our tuningstable.
 
 export function bindFormTuningsEvents() {
-    $('#' + MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
+    $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
         var show = this.checked;
         var basekey = this.value;
         var tuning = findTuning(basekey);
@@ -395,10 +384,7 @@ export function bindFormTuningsEvents() {
             console.log("tuning not found for basekey: " + basekey);
         }
         if (!show) {
-            $('#' + TABLEDIV_ID_PREFIX + basekey).hide();
-            requestReloadAllTuningsDisplay();
-            requestReinstallAllTuningsTables();
-            return;
+            $('#' + Constants.TABLEDIV_ID_PREFIX + basekey).hide();
         }
         requestReinstallAllTuningsTables();
         showHideTuning(show, basekey);
@@ -432,6 +418,12 @@ export function bindFormTuningsEvents() {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
         tuning.pianoNamesRow = this.checked;
+        requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .checkboxShowDiamonds').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.showDiamonds = this.checked;
         requestReinstallAllTuningsTables();
     });
     $('#frmTunings .checkboxNut').change(function () {
@@ -497,6 +489,7 @@ export function bindFormTuningsEvents() {
         getMyTuningsStore().push(cloned);
         requestReloadAllTuningsDisplay();
         requestReinstallAllTuningsTables();
+        requestInstrumentAdded();
         $('#btnMyTuningsTab').trigger('click');
     });
 
@@ -546,10 +539,17 @@ export function bindFormTuningsEvents() {
 
 function requestReinstallAllTuningsTables() {
     EventBus.trigger('ReinstallAllTuningsTables');
+    EventBus.trigger('UpdateAllWiringSelects');
 }
 
 function requestReloadAllTuningsDisplay() {
     EventBus.trigger('ReloadAllTuningsDisplay');
+}
+function requestUpdateAllWiringSelects() {
+   EventBus.trigger('UpdateAllWiringSelects'); 
+}
+function requestInstrumentAdded() {
+   EventBus.trigger('InstrumentAdded'); 
 }
 
 

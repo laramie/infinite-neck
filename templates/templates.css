@@ -1,0 +1,33 @@
+
+.divWiring {
+    display: grid;
+    grid-column: 1;
+    min-width: 200px; /* optional: set your preferred minimum, or remove for pure auto */
+}
+
+.Wiring-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   /* left-align, not stretched */
+  justify-content: flex-start; /* align to top */
+  padding: 0.8em;
+  gap: 0.8em;                /* space between controls, optional */
+  box-sizing: border-box;    /* ensures padding is included in width */
+}
+
+.WiredButton {
+  background-color: green;
+  border-radius: 10%;
+  box-shadow: 0 0 3pt 3pt lightgreen;
+  padding: 0.2em;
+  font-size: 1em;
+}
+.WiredButtonOn {
+    background-color: red !important;
+}
+.WiredButtonBlocked {
+    background-color: rgb(245, 192, 15) !important; 
+}
+.ShowWiringButtonOpen {
+    background-color: rgb(245, 192, 15) !important; 
+}

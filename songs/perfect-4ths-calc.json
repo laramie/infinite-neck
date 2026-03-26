@@ -4,62 +4,50 @@
       "noteTables": {},
       "namedNotes": {
         "Ab": {
-          "noteNameClass": ".noteAb",
           "colorClass": "noteBass",
           "noteName": "Ab"
         },
         "Db": {
-          "noteNameClass": ".noteDb",
           "colorClass": "noteBass",
           "noteName": "Db"
         },
         "Gb": {
-          "noteNameClass": ".noteGb",
           "colorClass": "noteBass",
           "noteName": "Gb"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
           "colorClass": "noteBass",
           "noteName": "Eb"
         },
         "Bb": {
-          "noteNameClass": ".noteBb",
           "colorClass": "noteBass",
           "noteName": "Bb"
         },
         "D": {
-          "noteNameClass": ".noteD",
           "colorClass": "noteBrown7",
           "noteName": "D"
         },
         "A": {
-          "noteNameClass": ".noteA",
           "colorClass": "noteBrown4",
           "noteName": "A"
         },
         "E": {
-          "noteNameClass": ".noteE",
           "colorClass": "noteBrown1",
           "noteName": "E"
         },
         "B": {
-          "noteNameClass": ".noteB",
           "colorClass": "noteRed1",
           "noteName": "B"
         },
         "F": {
-          "noteNameClass": ".noteF",
           "colorClass": "noteBlue4",
           "noteName": "F"
         },
         "G": {
-          "noteNameClass": ".noteG",
           "colorClass": "noteBrown5",
           "noteName": "G"
         },
         "C": {
-          "noteNameClass": ".noteC",
           "colorClass": "noteGreen4",
           "noteName": "C"
         }

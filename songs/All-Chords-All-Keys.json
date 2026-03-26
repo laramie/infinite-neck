@@ -329,7 +329,6 @@
         },
         "Eb": {
           "noteName": "Eb",
-          "noteNameClass": ".noteEb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -359,7 +358,6 @@
         },
         "Eb": {
           "noteName": "Eb",
-          "noteNameClass": ".noteEb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -701,7 +699,6 @@
         },
         "Eb": {
           "noteName": "Eb",
-          "noteNameClass": ".noteEb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -731,7 +728,6 @@
         },
         "Eb": {
           "noteName": "Eb",
-          "noteNameClass": ".noteEb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1073,7 +1069,6 @@
         },
         "E": {
           "noteName": "E",
-          "noteNameClass": ".noteE",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1103,7 +1098,6 @@
         },
         "E": {
           "noteName": "E",
-          "noteNameClass": ".noteE",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1445,7 +1439,6 @@
         },
         "F": {
           "noteName": "F",
-          "noteNameClass": ".noteF",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1475,7 +1468,6 @@
         },
         "F": {
           "noteName": "F",
-          "noteNameClass": ".noteF",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1818,7 +1810,6 @@
         "F": {},
         "Gb": {
           "noteName": "Gb",
-          "noteNameClass": ".noteGb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -1848,7 +1839,6 @@
         },
         "Gb": {
           "noteName": "Gb",
-          "noteNameClass": ".noteGb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2190,7 +2180,6 @@
         },
         "G": {
           "noteName": "G",
-          "noteNameClass": ".noteG",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2220,7 +2209,6 @@
         },
         "G": {
           "noteName": "G",
-          "noteNameClass": ".noteG",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2562,7 +2550,6 @@
         },
         "Ab": {
           "noteName": "Ab",
-          "noteNameClass": ".noteAb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2592,7 +2579,6 @@
         },
         "Ab": {
           "noteName": "Ab",
-          "noteNameClass": ".noteAb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2934,7 +2920,6 @@
         },
         "A": {
           "noteName": "A",
-          "noteNameClass": ".noteA",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -2964,7 +2949,6 @@
         },
         "A": {
           "noteName": "A",
-          "noteNameClass": ".noteA",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -3306,7 +3290,6 @@
         },
         "Bb": {
           "noteName": "Bb",
-          "noteNameClass": ".noteBb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -3336,7 +3319,6 @@
         },
         "Bb": {
           "noteName": "Bb",
-          "noteNameClass": ".noteBb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -3678,7 +3660,6 @@
         },
         "B": {
           "noteName": "B",
-          "noteNameClass": ".noteB",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -3708,7 +3689,6 @@
         },
         "B": {
           "noteName": "B",
-          "noteNameClass": ".noteB",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -4050,7 +4030,6 @@
         },
         "C": {
           "noteName": "C",
-          "noteNameClass": ".noteC",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -4080,7 +4059,6 @@
         },
         "C": {
           "noteName": "C",
-          "noteNameClass": ".noteC",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -4490,7 +4468,6 @@
         },
         "Db": {
           "noteName": "Db",
-          "noteNameClass": ".noteDb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }
@@ -4599,7 +4576,6 @@
         },
         "Db": {
           "noteName": "Db",
-          "noteNameClass": ".noteDb",
           "colorClass": "noteFinger4",
           "styleNum": 0
         }

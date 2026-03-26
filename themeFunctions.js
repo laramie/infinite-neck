@@ -197,7 +197,7 @@ import { gThemes } from './themes.js';
 	}
 
 	export function theme(themeOptions){
-		console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
+		//console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
 		function rule(cssVarName, whichOption){
 			//console.log("cssVarName:"+cssVarName+", whichOption:"+whichOption+"<=="); 
 			if (themeOptions && themeOptions[whichOption]){

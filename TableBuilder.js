@@ -1,5 +1,7 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
+
+import * as Constants from './Constants.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
 import { setOneCssVar } from './themeFunctions.js';
 
@@ -21,7 +23,7 @@ export function buildNoteTable(options) {
 	table.attr("border", "0");
 	table.attr("cellpadding", "0");
 	table.attr("cellspacing", "4");
-	table.attr("id", TuningsLibrary.TABLE_ID_PREFIX + options.baseID);
+	table.attr("id", Constants.TABLE_ID_PREFIX + options.baseID);
 	table.attr("rowRange", '[' + options.rowRange.toString() + ']');
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
@@ -102,7 +104,7 @@ export function buildNoteTable(options) {
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);
 			cell.attr("cellcol", colDisplay);
-			cell.attr("celltable", TuningsLibrary.TABLE_ID_PREFIX + options.baseID);
+			cell.attr("celltable", Constants.TABLE_ID_PREFIX + options.baseID);
 			cell.html("" + noteName);
 			if (deadCell) {
 				cell = $('<td class="note" style="min-width: 1em; background-color: #222;">');
@@ -145,7 +147,7 @@ export function buildNoteTable(options) {
 		setOneCssVar("--special-background-color-white-key", "#ffdd77");
 	}
 
-	if (options.diamonds) {
+	if (options.diamonds && options.showDiamonds) {
 		var diamondRow = diamondsRow(options);
 		if (diamondRow != null) {
 			table.append(diamondRow);
@@ -159,8 +161,8 @@ export function buildNoteTable(options) {
 
 	var div = $('<div>');
 	div.addClass("instrumentBackground");
-	div.attr("id", TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID);
-	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + TuningsLibrary.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
+	div.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
+	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + Constants.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png' style='width:35px;height:15px;'></button>";
 	
@@ -173,6 +175,7 @@ export function buildNoteTable(options) {
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
 	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>&nbsp;&nbsp;&nbsp;';
+	var sectionMark = '<span class="instrumentSectionBox" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
 	var p = $("<p>");
 	p.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
@@ -192,16 +195,16 @@ export function buildNoteTable(options) {
 		+ hamburgerColorDict + S + S
 		+ btnShowWiring + S + S
 		+ '</span>'
-		+ hamburger + S + S
+		+ hamburger + S + S + sectionMark  +S
 		+ "<div class='currentColorDict''></div>" + S
 
 	);
 	div.append(p);
 
 	let divWiring = $("<div>");
-	divWiring.attr("id", TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
+	divWiring.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
 	divWiring.addClass("divWiring");
-	divWiring.html("Wiring for "+TuningsLibrary.TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
+	divWiring.html("Wiring for "+Constants.TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
 	div.append(divWiring);
 	
 	

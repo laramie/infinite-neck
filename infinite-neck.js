@@ -1,5 +1,7 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
+
+import * as Constants from './Constants.js';
 import {
 	chuseStylesheet,
 	deleteUserStylesheet,
@@ -108,6 +110,7 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+import * as WiringBuilder from './templates/WiringBuilder.js';
 
 // If running in a browser, call appInit() on DOM ready
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
@@ -122,8 +125,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const NATURAL = "&nbsp;";
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
-
-	export const NUM_FRETS_MAX = 108;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
 						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
@@ -142,8 +143,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return gSong;
 	}
 
+	let WIRING_OPEN = false;
+	export function restoreWiringOpenState(){
+		setWiringOpenState(WIRING_OPEN);
+	}
+	export function setWiringOpenState(open) {
+		WIRING_OPEN = !!open;
+		if (WIRING_OPEN) {
+			$(".divWiring").show();
+			$(".showWiringButton").addClass("ShowWiringButtonOpen");
+		} else {
+			$(".divWiring").hide();
+			$(".showWiringButton").removeClass("ShowWiringButtonOpen");
+		}
+	}
+	
+	export function toggleWiringOpenState() {
+		setWiringOpenState(!WIRING_OPEN);
+	}
+
 	function installModuleProviders(){
-		TuningsLibrary.setSongProvider(getSong);
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions
@@ -460,11 +479,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			addVariant(requested);
 			addVariant(requested.toUpperCase());
-			if (requested.startsWith(TuningsLibrary.TABLE_ID_PREFIX)) {
-				addVariant(requested.substring(TuningsLibrary.TABLE_ID_PREFIX.length));
+			if (requested.startsWith(Constants.TABLE_ID_PREFIX)) {
+				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length));
 			}
-			if (requested.toUpperCase().startsWith(TuningsLibrary.TABLE_ID_PREFIX.toUpperCase())) {
-				addVariant(requested.substring(TuningsLibrary.TABLE_ID_PREFIX.length).toUpperCase());
+			if (requested.toUpperCase().startsWith(Constants.TABLE_ID_PREFIX.toUpperCase())) {
+				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length).toUpperCase());
 			}
 
 			for (var i = 0; i < variants.length; i++) {
@@ -528,19 +547,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			allTuningsDiv.empty();
 			myTuningsDiv
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
-					tableID: TuningsLibrary.MY_TUNINGS_TABLE_ID,
+					tableID: Constants.MY_TUNINGS_TABLE_ID,
 					primaryControl: 'visibility'
 				}));
 			allTuningsDiv
 				.append($("<p><b>All Tunings</b></p>"))
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
-					tableID: TuningsLibrary.ALL_TUNINGS_TABLE_ID,
+					tableID: Constants.ALL_TUNINGS_TABLE_ID,
 					primaryControl: 'clone'
 				}));
 			if (userControls.length > 0) {
 				allTuningsDiv.append(userControls);
 			}
 		TuningsLibrary.bindFormTuningsEvents();
+	}
+
+	function updateAllWiringSelects() {
+		WiringBuilder.updateAllWiringSelects();
 	}
 
 	export function resetSharpsControls() {
@@ -617,7 +640,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function buildCells(sharps, options) {
 		updateMemoryModelPreFileSave();
-		console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
+		//console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
 		let theVisibleNoteTables = getSong().visibleNoteTables;
 		theVisibleNoteTables.forEach(tableID => {
 		    buildCellsForTable(sharps, options, `#${tableID}`);
@@ -704,8 +727,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function exportFromTable(tblSource){
 		const visibleTableIds = TuningsLibrary.getAllTunings()
-		    .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-		    .map(t => TuningsLibrary.TABLE_ID_PREFIX + t.baseID);
+		    .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+		    .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 		getSong().markVisibleTablesForFileSave(visibleTableIds);
 		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
 			if (tblSource != tableDest){
@@ -778,9 +801,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
   	}
 
 	export function updateMemoryModelPreFileSave(){
-	    const visibleTableIds = TuningsLibrary.getAllTunings()
-	        .filter(t => $(`#${TuningsLibrary.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-	        .map(t => TuningsLibrary.TABLE_ID_PREFIX + t.baseID);
+	    const visibleTableIds = TuningsLibrary.getMyTunings()
+	        .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({
@@ -838,48 +861,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
     // file open / open file / openFile event
-	export function setupOpenFileHAL(){
-		var fileInput = document.getElementById('fileInput');
-		fileInput.addEventListener('change', function(e) {  //click works, but is too jumpy. change doesn't work when you apply same file.
-			var file = fileInput.files[0];
-			var textType = /json.*/;
-			if (file.type.match(textType)) {
-				var reader = new FileReader();
-				reader.onload = function() {
-					var jsonObj = JSON.parse(reader.result);
-					var frs = [];
-					Object.values(jsonObj.sections).forEach(section => {
-						var replacementSection = getSong().constructSection();
-						section = Object.assign(replacementSection, section);
-						frs.push(section);
-					});
-					jsonObj.sections = frs;
-					if (!getSong().isEmpty(getSong().getCurrentSection())){
-						var yes = $("#cbAppendSections").prop("checked");
-						if (!yes){
-							getSong().removeAllSections();
-						}
-					}
-					getSong().addSections(jsonObj);
-					getSong().graveyard = makeGraveyard(getSong().graveyard);
-
-					var userTheme = getSong().userTheme;
-					if (userTheme){
-						userTheme["id"] = "USER";
-						getThemes()["USER"] = userTheme;
-						getSong().theme = "USER";
-					}
-					rebuildThemesDropdown();
-
-					updateAfterOpenSong();
-				};
-				hideAllMenuDivs();
-				reader.readAsText(file);
-			}
-		});
-	}
-
-	// file open / open file / openFile event
 	export function setupOpenFile(){
 	  	var fileInput = document.getElementById('fileInput');
 		fileInput.addEventListener('change', function(e) {  //click works, but is too jumpy. change doesn't work when you apply same file.
@@ -1565,7 +1546,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
 		$(".showWiringButton").click(function() {
-			$(".divWiring").toggle();
+			toggleWiringOpenState();
 		});
 
 	}
@@ -2350,6 +2331,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		fetchVersionInBrowser();
 
+		
+
+
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
 		
@@ -2411,6 +2395,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TuningsLibrary.bindFormTuningsEvents();
 		bindDataActionHandlers();
 
+		loadTemplates().then(() => {
+    		getSong().getVisibleTuningIDs().forEach(tuningID => {
+				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+			});
+			setWiringOpenState(false)
+		});
+		setWiringOpenState(false)
+
+
 
 		$("#btnFlats").click();  //calls resetNoteNames();
 
@@ -2434,6 +2427,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//      will now be called from index.html                          =======
 	//      after all other script tags.                                =======
 	//=========================================================================
+
+	function loadTemplates(url = 'templates/templates.html') {
+		return fetch(url)
+			.then(response => response.text())
+				.then(html => {
+					const temp = document.createElement('div');
+					temp.innerHTML = html;
+					// Move all <template> elements to the main document
+					temp.querySelectorAll('template').forEach(tpl => {
+						document.body.appendChild(tpl);
+				});
+			});
+	}
+
 
 	
 
@@ -2481,6 +2488,15 @@ EventBus.on('ReinstallAllTuningsTables', function() {
 });
 EventBus.on('ReloadAllTuningsDisplay', function() {
 	reloadAllTuningsDisplay();
+});
+EventBus.on('UpdateAllWiringSelects', function() {
+	getSong().getVisibleTuningIDs().forEach(tuningID => {
+		WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+	});
+	updateAllWiringSelects();
+});
+EventBus.on('InstrumentAdded', function() {
+	setWiringOpenState(true);  // to open
 });
 
 

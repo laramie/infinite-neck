@@ -14,11 +14,6 @@
   --border-image-white-key: none;
   --instrument-border-image: url('img/celtic-background-black.png');
 
-  /*
-          --border-image-black-key: url('img/celtic-background-black.png');
-          --border-image-white-key: url('img/celtic-background-white.png');
-  */
-
   /*  Not themed now, just regular variables:    */
   --bend-padding-left: 2em;
   --singleNote-top-left-radius: 60%; /*this has to do done here, because it is picked up by the theme, which sets border-radius, so you must set this after, but I didn't want to have it hard-coded in theme(). */
@@ -35,22 +30,14 @@
   --tiny-note-font-size: 100%;
 
   --debug-border: 0;  /* just the border thickness */
-
-
 }
 
 body {
-    /*
-        background-color: #1f3330;
-        background-color: #381d00;
-        definitely-background-color: cornsilk;
-    */
     background-color: #1a0e03;
     font-size: 10pt;
     font-family: Helvetica;
     margin: 0;
     padding: 0;
-
 }
 
 .basicBackground {
@@ -226,13 +213,6 @@ body {
 .paletteRBBackground {
     margin-bottom: 0.4em;
 }
-/* 
-        .fingeringRBBackground {
-            
-            margin-top: 0.5em;
-            margin-left: 0.5em;
-        }
-*/
 .sectionPageControlsGroup,
 .sectionPageControlsGroupResize {
     background-color: cornsilk;
@@ -371,13 +351,7 @@ table.viewControls th {
     grid-template-rows: auto 1fr;
     height: 100%; /* optional, for full height */
     gap: 0;       /* adjust as needed */
-
     color: gold;
-    /*    
-        japan-cool-background-color: brown;   
-        everyone-into-the-pool-foo: 1;
-        background-color: #381d00;/* Zinfandel deep brown works with body background-color: #1a0e03  
-    */
     background-color: #0aa; /*working default greenish*/
     margin: 1em;
     margin-bottom: var(--instrument-margin-tb);
@@ -396,13 +370,23 @@ table.viewControls th {
   grid-column: 1 / span 2;
   grid-row: 1;
 }
-
-.divWiring {
-  grid-column: 1;
-  grid-row: 2;
-    /* width removed for responsive grid */
-    min-width: 200px; /* optional: set your preferred minimum, or remove for pure auto */
+.instrumentSectionBox {
+   border: 1px solid green; 
+   padding: 0.3em;
 }
+.instrumentSectionMark {
+    
+    color: green;
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+.relativeSectionLabel{
+    color: rgb(7, 164, 83);
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+
+
 
 .fretTable {
   grid-column: 2;
@@ -414,8 +398,6 @@ table.fretTable {
     user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
 }
 
-
-
 .sliderTable td:nth-child(2),
 .sliderTable th:nth-child(2) {
   width: 60%;
@@ -424,86 +406,6 @@ table.fretTable {
 #divViewDisplayOptions {
     padding: 2em;
 }
-#rangeNamedNoteOpacity, #rangeTinyNoteOpacity, #rangeSingleNoteOpacity {
-    height: 0.5em;
-}
-/* Chrome, Safari, Edge, Opera */
-#rangeNamedNoteOpacity::-webkit-slider-thumb, #rangeTinyNoteOpacity::-webkit-slider-thumb, #rangeSingleNoteOpacity::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default appearance */
-  appearance: none;
-  height: 2em;
-  width: 1em;
-  margin-top: -0.1em;
-}
-/* Firefox */
-#rangeNamedNoteOpacity::-moz-range-thumb, #rangeSingleNoteOpacity::-moz-range-thumb, #rangeTinyNoteOpacity::-moz-range-thumb {
-  height: 2em;
-  width: 1em;
-  /* Firefox generally centers it automatically */
-}
-
-#divThemeControlsFlex {
-    display: flex;       /* Creates the flexbox context */
-    flex-wrap: wrap;     /* Allows cards to move to the next row */
-    gap: 2em;           /* Sets spacing between cards */
-    justify-content: space-around; 
-    background-color: white;
-    margin: 1em;
-}
-.themeTableControls {
-    flex: 1 0 200px; 
-    background-color: rgb(249, 201, 98);
-    border: 1px solid black;
-    box-shadow: 4pt 4pt  2pt 0.2pt gray;
-}
-.themeTableControls td {
-  border: 1px solid gray;
-  padding-left: 0.8em;
-}
-
-
-
-.tblDisplayOptions {
-    border: 2px solid black;
-}
-/*
-    .tblDisplayOptions tr {
-    }
-*/
-.ActiveStylesheets td {
-    border: 1px solid gray;
-}
-.tblDisplayOptions th {
-    border: 1px solid gray;
-}
-
-
-.vertical-header {
-  text-align: left;
-  vertical-align: bottom;
-  background-color: #ddd;
-}
-.vertical-header span {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-}
-.userColorResultCaption {
-    font-weight: bold;
-    background-color: lightgray;
-}
-.userColorResultLinks {
-    font-weight: bold;
-    background-color: lightgray;
-    text-align: left;
-}
-.userColorResultRow td {
-    border: 2px solid black;
-}
-.tblColorDictOneRow td:first-child {
-    font-size: 60%;
-    font-weight: normal;
-}
-
 
 .slider {
   -webkit-appearance: none;
@@ -539,6 +441,83 @@ table.fretTable {
   border-radius: 4px;
   color: yellow;
 }
+#rangeNamedNoteOpacity, #rangeTinyNoteOpacity, #rangeSingleNoteOpacity {
+    height: 0.5em;
+}
+/* Chrome, Safari, Edge, Opera */
+#rangeNamedNoteOpacity::-webkit-slider-thumb, #rangeTinyNoteOpacity::-webkit-slider-thumb, #rangeSingleNoteOpacity::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default appearance */
+  appearance: none;
+  height: 2em;
+  width: 1em;
+  margin-top: -0.1em;
+}
+/* Firefox */
+#rangeNamedNoteOpacity::-moz-range-thumb, #rangeSingleNoteOpacity::-moz-range-thumb, #rangeTinyNoteOpacity::-moz-range-thumb {
+  height: 2em;
+  width: 1em;
+  /* Firefox generally centers it automatically */
+}
+
+
+
+
+#divThemeControlsFlex {
+    display: flex;       /* Creates the flexbox context */
+    flex-wrap: wrap;     /* Allows cards to move to the next row */
+    gap: 2em;           /* Sets spacing between cards */
+    justify-content: space-around; 
+    background-color: white;
+    margin: 1em;
+}
+.themeTableControls {
+    flex: 1 0 200px; 
+    background-color: rgb(249, 201, 98);
+    border: 1px solid black;
+    box-shadow: 4pt 4pt  2pt 0.2pt gray;
+}
+.themeTableControls td {
+  border: 1px solid gray;
+  padding-left: 0.8em;
+}
+
+.tblDisplayOptions {
+    border: 2px solid black;
+}
+.ActiveStylesheets td {
+    border: 1px solid gray;
+}
+.tblDisplayOptions th {
+    border: 1px solid gray;
+}
+
+
+.vertical-header {
+  text-align: left;
+  vertical-align: bottom;
+  background-color: #ddd;
+}
+.vertical-header span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.userColorResultCaption {
+    font-weight: bold;
+    background-color: lightgray;
+}
+.userColorResultLinks {
+    font-weight: bold;
+    background-color: lightgray;
+    text-align: left;
+}
+.userColorResultRow td {
+    border: 2px solid black;
+}
+.tblColorDictOneRow td:first-child {
+    font-size: 60%;
+    font-weight: normal;
+}
+
 
 
 #themeTableResults {
@@ -1371,21 +1350,6 @@ td.note small {
 .noteHatched4 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, white 10px, white 14px );
 }
-
-
-
-
-.flexRow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-.flexCol {
-    display: flex;
-    flex-direction: column;
-    align-content: stretch;
-}
-
 
 td.note {
     /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/

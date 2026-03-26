@@ -23,16 +23,16 @@
       },
       "namedNotes": {
         "G": {
-          "noteNameClass": ".noteG",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "G"
         },
         "D": {
-          "noteNameClass": ".noteD",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "D"
         },
         "Eb": {
-          "noteNameClass": ".noteEb",
-          "colorClass": "noteScale"
+          "colorClass": "noteScale",
+          "noteName": "Eb"
         }
       },
       "recordedNotes": {

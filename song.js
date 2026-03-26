@@ -1,3 +1,4 @@
+import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import {
     GraveType
@@ -5,16 +6,15 @@ import {
 import {
     getRecordedNotesForSection
 } from './section-recorder.js';
-import * as TuningsLibrary from './TuningsLibrary.js';
 import {
 	toInt
 } from './utils.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
+import { Wiring } from './Wiring.js';
 
 const DEFAULT_BEATS = 4;
 const RANDOM_SECTION_HISTORY_MAX = 16;
-const NUM_FRETS_MAX = 108;
 export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
 export function noteNameToNoteID(noteName) {
@@ -62,7 +62,7 @@ export class Song {
             const MAGIC_RATIO = 0.9438743;
             const FIRSTFRET_LENGTH = 0.05297;
             const fretLengths = [];
-            for (var n = 2; n <= TuningsLibrary.NUM_FRETS_MAX + 1; n++) {
+            for (var n = 2; n <= Constants.NUM_FRETS_MAX + 1; n++) {
                 var Cn = (Math.pow(MAGIC_RATIO, n));
                 var Cnm1 = (Math.pow(MAGIC_RATIO, (n - 1)));
                 var R = (L0 * (1 - Cn) - L0 * (1 - Cnm1)) / FIRSTFRET_LENGTH;
@@ -73,6 +73,7 @@ export class Song {
         this.presentationMode = false;
         this.constructing = false;
         this.randomSectionHistory = [];
+        this.wirings = [];
         this.make();
     }
 
@@ -114,6 +115,27 @@ export class Song {
         if (this.isHeadless) {
             if (!quiet) console.log(ANSIColors.Bold + ANSIColors.cyan("Song running in Headless mode.  No $ or jQuery calls supported."));
             return;
+        }
+    }
+    getVisibleTunings(){
+        const visibleTableIds = this.myTunings
+            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+            .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
+        return visibleTableIds;    
+    }
+    getVisibleTuningIDs(){
+        const visibleTuningIDs = this.myTunings
+            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
+            .map(t => t.baseID);
+        return visibleTuningIDs;    
+    }
+    addWiring(tablename, relativeSection, listenToTablename) {
+        const idx = this.wirings.findIndex(w => w.tablename === tablename);
+        const newWiring = new Wiring(tablename, relativeSection, listenToTablename);
+        if (idx === -1) {
+            this.wirings.push(newWiring);
+        } else {
+            this.wirings[idx] = newWiring;
         }
     }
     fixupCurrentIndexForLoadedSong() {
@@ -225,7 +247,7 @@ export class Song {
      *    @2  Two sections ago played in Random mode
      *    ^1  previous section, no wrap, just go as early as you can, max is Section 1
      *    ^-1 ignore sign, just do ^1
-     *    ^+1
+     *    ^+1 ignore sign, just do ^1
      *    ^2  2 sections back, no wrap, just go as early as you can, max is Section 1
      *    &1  1 section ahead, no wrap, max is last Section
      *    &2  2 sections ahead, no wrap, max is last Section
@@ -797,8 +819,8 @@ export class Song {
 	}
 
     renameTuningIDInModel(oldID, newID) {
-        var oldKey =  TuningsLibrary.TABLE_ID_PREFIX + oldID;
-        var newKey =  TuningsLibrary.TABLE_ID_PREFIX + newID;
+        var oldKey =  Constants.TABLE_ID_PREFIX + oldID;
+        var newKey =  Constants.TABLE_ID_PREFIX + newID;
         // Rename in each section's noteTables
         this.sections.forEach(function(section) {
             if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
@@ -833,7 +855,7 @@ export class Song {
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
-                    var tuningID = tablename.substring( TuningsLibrary.TABLE_ID_PREFIX.length);
+                    var tuningID = tablename.substring( Constants.TABLE_ID_PREFIX.length);
                     var val = hashTuningNames[tuningID];
                     if (!val) {
                         val = tablearr.length;

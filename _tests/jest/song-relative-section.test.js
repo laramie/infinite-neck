@@ -1,10 +1,6 @@
 // Import the real function from the main codebase
 import { Song } from '../../song.js';
-import { 
-    setupSongTests, 
-    getSong, 
-    readVersionHeadless
-} from '../../infinite-neck-headless.js';
+import { setupSongTests, getSong } from '../../infinite-neck.js';
 
 
 import { logVerbose, logVerboseTrue } from './LogVerboseJest.js';
@@ -18,7 +14,7 @@ const rulesDescription = [
 	{ symbol: "-0", caption: "previous 0 is always current section" },
 	{ symbol: "+0", caption: "next 0 is always current section" },
 	{ symbol: "0", caption: "first section" },
-	{ symbol: "n", caption: "Section n absolute, or last if num too large" },
+	{ symbol: "n", caption: "Section n absolute, or last if n too large" },
 	{ symbol: "@n", caption: "Last n sections ago played in Random mode" },
 	{ symbol: "^n", caption: "previous n section back, no wrap, max Section 1" },
 	{ symbol: "^-n", caption: "ignore sign, just do ^n" },

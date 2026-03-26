@@ -1,17 +1,16 @@
 import { jest } from '@jest/globals';
+import * as Constants from '../../Constants.js';
+
 import { 
     setupSongTests, 
     getSong, 
-    readVersionHeadless 
 } from '../../infinite-neck-headless.js';
 import {
-    setSongProvider,
     findTuningForID,
-    generateNextTuningID,
-    getAllTunings,
-    getMyTunings,
-    TABLE_ID_PREFIX
-} from '../../TableBuilder.js';
+    generateNextTuningID
+} from '../../TuningsLibrary.js';
+ 
+
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -21,15 +20,6 @@ function createFreshHeadlessSong() {
     setupSongTests();
     getSong().setHeadless(true, true);
     return getSong();
-}
-
-/**
- * Wire TableBuilder's song provider to the current test song and return it.
- * This mirrors the pattern used in infinite-neck.js / installModuleProviders.
- */
-function wireSongProvider(song) {
-    setSongProvider(() => song);
-    return song;
 }
 
 /**
@@ -61,7 +51,7 @@ function seedNotesInSection0(song, tableKey, notes) {
 describe('generateNextTuningID', () => {
     beforeEach(() => {
         const song = createFreshHeadlessSong();
-        wireSongProvider(song);
+        //wireSongProvider(song);
         song.myTunings = [];
     });
 
@@ -115,7 +105,7 @@ describe('renameTuningIDInModel: pure model rename', () => {
 
     beforeEach(() => {
         song = createFreshHeadlessSong();
-        wireSongProvider(song);
+        //wireSongProvider(song);
         song.myTunings = [];
         // Give the song a single plain section with no notes
         song.sections[0].noteTables = {};
@@ -124,46 +114,46 @@ describe('renameTuningIDInModel: pure model rename', () => {
 
     test('renames the noteTables key in the section', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
-        seedNotesInSection0(song, TABLE_ID_PREFIX + 'P46_1', [{ beat: 1 }]);
-        song.visibleNoteTables = [TABLE_ID_PREFIX + 'P46_1'];
+        seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', [{ beat: 1 }]);
+        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
         const section = song.getSections()[0];
-        expect(section.noteTables).not.toHaveProperty(TABLE_ID_PREFIX + 'P46_1');
-        expect(section.noteTables).toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
+        expect(section.noteTables).not.toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_1');
+        expect(section.noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
     });
 
     test('preserves the note data during rename', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
         const notes = [{ beat: 1, string: 0, fret: 3 }];
-        seedNotesInSection0(song, TABLE_ID_PREFIX + 'P46_1', notes);
+        seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', notes);
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
         const section = song.getSections()[0];
-        expect(section.noteTables[TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes);
+        expect(section.noteTables[Constants.TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes);
     });
 
     test('updates visibleNoteTables to reflect the new key', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
-        song.visibleNoteTables = [TABLE_ID_PREFIX + 'P46_1'];
+        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
-        expect(song.visibleNoteTables).not.toContain(TABLE_ID_PREFIX + 'P46_1');
-        expect(song.visibleNoteTables).toContain(TABLE_ID_PREFIX + 'P46_lead');
+        expect(song.visibleNoteTables).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
+        expect(song.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
     });
 
     test('is a no-op in sections that do not have the old key', () => {
         // Section 0 has a different table; old key doesn't exist there
-        seedNotesInSection0(song, TABLE_ID_PREFIX + 'S6', [{ beat: 1 }]);
+        seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'S6', [{ beat: 1 }]);
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
         const section = song.getSections()[0];
-        expect(section.noteTables).toHaveProperty(TABLE_ID_PREFIX + 'S6');
-        expect(section.noteTables).not.toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
+        expect(section.noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'S6');
+        expect(section.noteTables).not.toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
     });
 
     test('renames across multiple sections', () => {
@@ -174,23 +164,23 @@ describe('renameTuningIDInModel: pure model rename', () => {
 
         const notes0 = [{ beat: 1 }];
         const notes1 = [{ beat: 2 }];
-        seedNotesInSection0(song, TABLE_ID_PREFIX + 'P46_1', notes0);
-        song.getSections()[1].noteTables[TABLE_ID_PREFIX + 'P46_1'] = notes1;
+        seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', notes0);
+        song.getSections()[1].noteTables[Constants.TABLE_ID_PREFIX + 'P46_1'] = notes1;
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
-        expect(song.getSections()[0].noteTables).toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
-        expect(song.getSections()[1].noteTables).toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
-        expect(song.getSections()[0].noteTables[TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes0);
-        expect(song.getSections()[1].noteTables[TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes1);
+        expect(song.getSections()[0].noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(song.getSections()[1].noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(song.getSections()[0].noteTables[Constants.TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes0);
+        expect(song.getSections()[1].noteTables[Constants.TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes1);
     });
 
     test('does not touch visibleNoteTables when old key is absent', () => {
-        song.visibleNoteTables = [TABLE_ID_PREFIX + 'S6'];
+        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'S6'];
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
-        expect(song.visibleNoteTables).toEqual([TABLE_ID_PREFIX + 'S6']);
+        expect(song.visibleNoteTables).toEqual([Constants.TABLE_ID_PREFIX + 'S6']);
     });
 });
 
@@ -203,7 +193,7 @@ describe('headless Clone → use → rename scenario', () => {
 
     beforeEach(() => {
         song = createFreshHeadlessSong();
-        wireSongProvider(song);
+        //wireSongProvider(song);
         song.myTunings = [];
         song.sections[0].noteTables = {};
         song.visibleNoteTables = [];
@@ -225,8 +215,8 @@ describe('headless Clone → use → rename scenario', () => {
 
         // Step 3: Seed notes into the song under the clone's table key
         const notes = [{ beat: 1, string: 2, fret: 5 }];
-        seedNotesInSection0(song, TABLE_ID_PREFIX + 'P46_1', notes);
-        song.visibleNoteTables = [TABLE_ID_PREFIX + 'P46_1'];
+        seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', notes);
+        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
 
         // Step 4: Rename via model method and sync the myTunings entry
         song.renameTuningIDInModel('P46_1', 'P46_lead');
@@ -234,18 +224,18 @@ describe('headless Clone → use → rename scenario', () => {
 
         // Step 5: Verify model consistency
         const section = song.getSections()[0];
-        expect(section.noteTables).toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
-        expect(section.noteTables).not.toHaveProperty(TABLE_ID_PREFIX + 'P46_1');
-        expect(section.noteTables[TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes);
-        expect(song.visibleNoteTables).toContain(TABLE_ID_PREFIX + 'P46_lead');
-        expect(song.visibleNoteTables).not.toContain(TABLE_ID_PREFIX + 'P46_1');
+        expect(section.noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(section.noteTables).not.toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_1');
+        expect(section.noteTables[Constants.TABLE_ID_PREFIX + 'P46_lead']).toEqual(notes);
+        expect(song.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(song.visibleNoteTables).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
         expect(song.myTunings[0].baseID).toBe('P46_lead');
 
         // Step 6: JSON round-trip — renamed key survives serialisation
         const jsonText = JSON.stringify(song);
         const restored = JSON.parse(jsonText);
-        expect(restored.sections[0].noteTables).toHaveProperty(TABLE_ID_PREFIX + 'P46_lead');
-        expect(restored.visibleNoteTables).toContain(TABLE_ID_PREFIX + 'P46_lead');
+        expect(restored.sections[0].noteTables).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(restored.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
         expect(restored.myTunings[0].baseID).toBe('P46_lead');
     });
 

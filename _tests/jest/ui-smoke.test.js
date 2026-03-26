@@ -6,7 +6,9 @@ import { Song } from '../../song.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 const FIXTURE_FILE = path.join(__dirname, '../../songs/tests/display-options.json');
+
 
 function readFixture() {
     return JSON.parse(fs.readFileSync(FIXTURE_FILE, 'utf8'));
@@ -17,7 +19,6 @@ describe('Headless UI smoke contracts', () => {
         expect(() => {
             const data = readFixture();
             const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
-            //const song = makeSongFromData(data,              { headless: true, quiet: true, fixIndex: true });
 
             song.gotoSection(0);
             song.gotoNextSection(true);

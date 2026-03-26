@@ -19,6 +19,14 @@
     - Create a TAG in CHANGELOG.md, **_but not in git yet_**:
         - Update ./_doco/lifecycle/CHANGELOG.md
         - Include the TAG, and any relevant comments from `git log`
+
+        - get the log: 
+        ```
+            git fetch origin
+            git checkout fix/my-branch
+            git log origin/master..HEAD --pretty=format:"- %s"
+        ```
+
     - Run the version-update.js command to update version.json, then check it.
     
         ```    
@@ -53,4 +61,13 @@
         ```
         tar xcv infinite-neck-deploy.tar.gz
         ```
+
+### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
+
+```sh
+git checkout fix/attr-value
+git fetch origin
+git rebase origin/master
+git push --force-with-lease
+```
      

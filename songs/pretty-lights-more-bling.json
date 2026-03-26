@@ -4,10 +4,9 @@
       "noteTables": {},
       "namedNotes": {
         "Ab": {
-          "noteNameClass": ".noteAb",
           "noteName": "Ab",
           "colorClass": "noteScale",
-           "styleNum": 0
+          "styleNum": 0
         }
       },
       "recordedNotes": {
@@ -68,28 +67,24 @@
       },
       "namedNotes": {
         "C": {
-          "noteNameClass": ".noteC",
           "noteName": "C",
           "colorClass": "noteScale",
-           "styleNum": 0
+          "styleNum": 0
         },
         "Ab": {
-          "noteNameClass": ".noteAb",
           "noteName": "Ab",
           "colorClass": "noteScale",
-           "styleNum": 0
+          "styleNum": 0
         },
         "Db": {
-          "noteNameClass": ".noteDb",
           "noteName": "Db",
           "colorClass": "noteScale",
-           "styleNum": 0
+          "styleNum": 0
         },
         "A": {
-          "noteNameClass": ".noteA",
           "noteName": "A",
           "colorClass": "noteChord2",
-           "styleNum": 0
+          "styleNum": 0
         }
       },
       "recordedNotes": {
