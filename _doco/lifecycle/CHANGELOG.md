@@ -1,5 +1,17 @@
 # ChangeLog
 
+### 20260326
+
+- Added 'e' to key shortcuts to toggle event wirings; set up some comments to help with locating song model access points for V2 file format; changed default Special Row colors to be less in-your-face; defaulted Cello to not showDiamonds because it has an empty array for diamonds, rather than simply not having diamonds, for some reason;  fixed a few comments and strings around wrapping rules.
+- Final step to make listeners listen AND play their own notes; Added showDiamonds to tunings so you can easily turn them off with a checkbox in the myInstruments.
+- Added instrument section box with current index and relative if present; Handled WIRING_OPEN state;  Allow myTunings table to hide diamonds row;  TuningsLibrary now triggers EventBus 'InstrumentAdded';
+- ProTools-like wiring now in place for instruments to listen to another table, or do relativeSection to another table. Connected to the model's getSong().wirings, and that persists.  You don't relativeSection or anything to yourself.  Not wired into refactored replayTable() yet....
+- Wirings in place with new Templating in ./templates/
+- Cleaned up missing Constants so that TuningsLibrary table id was not getting through.
+- Got Jest tests working again, moved constants into Constants.js and got rid of some "providers".
+- Ready for GP4 refactor.
+- Added changelog and instructions for 20260324
+
 ### 20260324
 
 - Fixed display of View tab tables with better borders and backgrounds, and less table nesting, thus clearing up CSS bug introduced that cause *all* tables to have extra borders.  Added help for "Special Rows". Removed extra paragraph in "My Tunings" with useless title.  Fixed bug where Desktop wouldn't toggle back on to be visible.

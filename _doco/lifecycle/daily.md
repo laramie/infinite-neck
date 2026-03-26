@@ -19,6 +19,14 @@
     - Create a TAG in CHANGELOG.md, **_but not in git yet_**:
         - Update ./_doco/lifecycle/CHANGELOG.md
         - Include the TAG, and any relevant comments from `git log`
+
+        - get the log: 
+        ```
+            git fetch origin
+            git checkout fix/my-branch
+            git log origin/master..HEAD --pretty=format:"- %s"
+        ```
+
     - Run the version-update.js command to update version.json, then check it.
     
         ```    
