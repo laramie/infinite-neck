@@ -571,15 +571,20 @@ export function replay(){
             replayOptions.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
             replayOptions.listenToTablename = wiring.listenToTablename;
             replayOptions.relativeSection = wiring.relativeSection;
-        } else if (wiring && wiring.listenToTablename) {
-            replayOptions.currSection = getCurrentSection();
-            replayOptions.listenToTablename = wiring.listenToTablename;
+            return;
         } else {
+            if (wiring && wiring.listenToTablename) {
+                replayOptions.currSection = getCurrentSection();
+                replayOptions.listenToTablename = wiring.listenToTablename;
+                replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
+                replayTable(replayOptions);
+            }
             replayOptions.currSection = getCurrentSection();
             replayOptions.listenToTablename = tablename;
+            replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
+            replayTable(replayOptions);
         }
-        replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
-        replayTable(replayOptions);
+        
     });
 }
 
@@ -617,8 +622,10 @@ export function replayTable(replayOptions){
     let listenToTablename = replayOptions.listenToTablename;
     //Object.keys(replayOptions.currSection.noteTables).forEach(tablename => {
     var tablearr = replayOptions.currSection.noteTables[listenToTablename];
+    console.log("tablearr: "+JSON.stringify(tablearr));
     if (tablearr){
         tablearr.forEach(script => {
+            console.log("replay===tablename==>"+tablename+"===listenToTablename===>"+listenToTablename+"<===");
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
             console.log("select:"+jtdselector+":"+jtd.length);
