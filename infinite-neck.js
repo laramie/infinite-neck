@@ -1173,26 +1173,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function transpose(amount){
 		cycleThruKeys(amount);
-		var namedNoteName = getSong().moveNamedNotes(amount);
+		getSong().moveNamedNotes(amount); //operates on getCurrentSection().
 
 		//fullRepaint();//Don't do this, it is a bit slow because it rebuilds.
 		clearAll();
 		replay();
 		showBeats();
-
+		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
 		highlightOneNote(namedNoteName);
 	}
 
 	export function transposeSong(amount){
 		getSong().cycleThruKeysAllSections(amount);
-		var namedNoteName = getSong().moveNamedNotesAllSections(amount);
+		getSong().moveNamedNotesAllSections(amount);
 		fullRepaint();
-		/*clearAll();
-		replay();
-		showBeats();
-
+		//Did the whole song, but at least give visual cue that we did something by highlighting current section:
+		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
 		highlightOneNote(namedNoteName);
-		*/
 	}
 
 	export function transposeSongKeys(amount){

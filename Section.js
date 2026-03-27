@@ -188,7 +188,7 @@ export class Section {
         });
 
         this.namedNotes = namedNotesClone;
-        return this.getRootNoteName();
+        //callers should call this afterwards: this.getRootNoteName();
     }
 
     transposeRoot(amount) {

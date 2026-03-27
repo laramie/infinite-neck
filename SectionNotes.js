@@ -1,4 +1,4 @@
-export class NoteTable {
+export class SectionNotes {
     constructor(id){
         this.id = id;
         this.playedNotes = [];

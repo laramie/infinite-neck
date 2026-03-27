@@ -895,11 +895,11 @@ export class Song {
 	}
 
     moveNamedNotes(amount){
-        return this.moveNamedNotesForSection(amount, this.getCurrentSection());
+        this.moveNamedNotesForSection(amount, this.getCurrentSection());
 
     }
     moveNamedNotesForSection(amount, section){
-	    return this.normalizeSection(section).moveNamedNotes(amount);
+	    this.normalizeSection(section).moveNamedNotes(amount);
   	}
     //============= EventBus =========================
 

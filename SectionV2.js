@@ -1,6 +1,6 @@
 import { toInt } from './utils.js';
 import { Note } from './note.js';
-import { NoteTable } from './NoteTable.js';
+import { SectionNotes } from './SectionNotes.js';
 
 const NOTE_NAMES_RAW = 'A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab'.split(',');
 const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>'.split(',');
@@ -9,7 +9,7 @@ const DEFAULT_BEATS = 4;
 
 export class SectionV2 {
 	constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
-		this.noteTables = {};
+		this.sectionNotes = {};
 		this.caption = '';
 		this.rootID = rootID;
 		this.rootIDLead = '-1';
@@ -31,14 +31,14 @@ export class SectionV2 {
 		section.currentBeat = sectionLike.currentBeat !== undefined ? sectionLike.currentBeat : 1;
 		section.sharps = sectionLike.sharps !== undefined ? sectionLike.sharps : sharps;
 
-		// noteTables: { id: { playedNotes, namedNotes, recordedNotes } }
-		if (sectionLike.noteTables && typeof sectionLike.noteTables === 'object') {
-			Object.entries(sectionLike.noteTables).forEach(([tableID, tableObj]) => {
-				const nt = new NoteTable(tableID);
-				if (Array.isArray(tableObj.playedNotes)) nt.playedNotes = tableObj.playedNotes;
-				if (typeof tableObj.namedNotes === 'object') nt.namedNotes = tableObj.namedNotes;
-				if (typeof tableObj.recordedNotes === 'object') nt.recordedNotes = tableObj.recordedNotes;
-				section.noteTables[tableID] = nt;
+		// sectionNotes: { id: { playedNotes, namedNotes, recordedNotes } }
+		if (sectionLike.sectionNotes && typeof sectionLike.sectionNotes === 'object') {
+			Object.entries(sectionLike.sectionNotes).forEach(([tableID, sectionNotesObj]) => {
+				const sn = new SectionNotes(tableID);
+				if (Array.isArray(sectionNotesObj.playedNotes)) sn.playedNotes = sectionNotesObj.playedNotes;
+				if (typeof sectionNotesObj.namedNotes === 'object') sn.namedNotes = sectionNotesObj.namedNotes;
+				if (typeof sectionNotesObj.recordedNotes === 'object') sn.recordedNotes = sectionNotesObj.recordedNotes;
+				section.sectionNotes[tableID] = sn;
 			});
 		}
 		return section;
@@ -132,19 +132,14 @@ export class SectionV2 {
 		this.currentBeat = 1;
 	}
 
-	// V2: getTable returns the NoteTable object
-	getTable(tableID) {
-		return this.noteTables[tableID];
-	}
-
 	// V2: isEmpty checks all NoteTables for content
 	isEmpty() {
 		let noteCount = 0;
-		Object.values(this.noteTables).forEach((nt) => {
-			if (nt) {
-				noteCount += (Array.isArray(nt.playedNotes) ? nt.playedNotes.length : 0);
-				noteCount += Object.keys(nt.namedNotes || {}).length;
-				noteCount += Object.keys(nt.recordedNotes || {}).length;
+		Object.values(this.sectionNotes).forEach((sn) => {
+			if (sn) {
+				noteCount += (Array.isArray(sn.playedNotes) ? sn.playedNotes.length : 0);
+				noteCount += Object.keys(sn.namedNotes || {}).length;
+				noteCount += Object.keys(sn.recordedNotes || {}).length;
 			}
 		});
 		return noteCount === 0;
@@ -153,16 +148,80 @@ export class SectionV2 {
 	// V2: removeEmptyTables removes NoteTables with no notes
 	removeEmptyTables() {
 		const compact = {};
-		Object.entries(this.noteTables).forEach(([tableID, nt]) => {
-			const hasNotes = (Array.isArray(nt.playedNotes) && nt.playedNotes.length > 0)
-				|| (nt.namedNotes && Object.keys(nt.namedNotes).length > 0)
-				|| (nt.recordedNotes && Object.keys(nt.recordedNotes).length > 0);
+		Object.entries(this.sectionNotes).forEach(([tableID, sn]) => {
+			const hasNotes = (Array.isArray(sn.playedNotes) && sn.playedNotes.length > 0)
+				|| (sn.namedNotes && Object.keys(sn.namedNotes).length > 0)
+				|| (sn.recordedNotes && Object.keys(sn.recordedNotes).length > 0);
 			if (hasNotes) {
-				compact[tableID] = nt;
+				compact[tableID] = sn;
 			}
 		});
-		this.noteTables = compact;
+		this.sectionNotes = compact;
 	}
 
 	// --- Methods that reference namedNotes, noteTables, or recordedNotes directly are omitted or must be rewritten for V2 ---
+
+	moveNamedNotes(amount) {
+		Object.entries(this.sectionNotes).forEach(([tableID, sn]) => {
+			const namedNotes = sn.namedNotes;
+			moveNamedNotesForOneTable(namedNotes, amount);
+		});
+	}
+	moveNamedNotesForOneTable(namedNotes, amount) {
+		const namedNotesClone = {};
+		Object.keys(namedNotes).forEach((noteName) => {
+			let index = NOTE_NAMES_RAW.indexOf(noteName);
+			index = (12 + index + amount) % 12;
+			const transposedNoteName = NOTE_NAMES_RAW[index];
+			const otherNote = namedNotes[noteName];
+
+			if (otherNote.colorClass) {
+				const clonedNote = Note.cloneNote(otherNote);
+				clonedNote.noteName = transposedNoteName;
+				namedNotesClone[transposedNoteName] = clonedNote;
+			}
+		});
+		this.namedNotes = namedNotesClone;
+	}
+
+	transposeRoot(amount) {
+		const curr = toInt(this.rootID, 0);
+		this.rootID = (12 + curr + amount) % 12;
+		return this.rootID;
+	}
+
+	static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
+		const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
+
+		Object.setPrototypeOf(section, Section.prototype);
+
+		if (!section.noteTables || typeof section.noteTables !== 'object') section.noteTables = {};
+		if (!section.namedNotes || typeof section.namedNotes !== 'object') section.namedNotes = {};
+		if (!section.recordedNotes || typeof section.recordedNotes !== 'object') section.recordedNotes = {};
+
+		
+		if (section.caption === undefined) section.caption = '';
+		if (section.rootID === undefined) section.rootID = rootID;
+		if (section.rootIDLead === undefined) section.rootIDLead = '-1';
+		if (section.beats === undefined) section.beats = beats;
+		if (section.currentBeat === undefined) section.currentBeat = 1;
+		if (section.sharps === undefined) section.sharps = sharps;
+
+		return section;
+	}
+
+
+	//================= New V2 Methods =========================================
+
+	getSectionNotesArray(){
+		return this.sectionNotes;
+	}
+	getSectionNotes(tableID) {
+		return this.sectionNotes[tableID];
+	}
+	renameSectionNotesTableID(newTableID){
+		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.
+	}
+
+	
 }
