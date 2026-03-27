@@ -11,6 +11,7 @@ import {
 } from './utils.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
+import { SectionV2 } from './SectionV2.js';
 import { Wiring } from './Wiring.js';
 
 const DEFAULT_BEATS = 4;
@@ -33,6 +34,7 @@ export class Song {
     }
 
     _initLegacy() {
+        this.useSectionV2 = false;
         this.sections = null;
         this.gSectionsCurrentIndex = 0;
         this.gFirstBeatSeen = false;
@@ -117,6 +119,27 @@ export class Song {
             return;
         }
     }
+    
+    dump(full) {
+        const OMIT_WHEN_TERSE = new Set([
+            'noteNamesFuncArrDEFAULT',
+            'noteNamesFuncArr',
+            'fretLengths',
+            'colorDicts',
+            'myTunings'
+        ]);
+
+        function replacer(key, value) {
+            if (!full && OMIT_WHEN_TERSE.has(key)) {
+                return undefined;
+            }
+            return value;
+        }
+
+        let res = JSON.stringify(this, replacer, 4);
+        return res;
+    }
+    
     getVisibleTunings(){
         const visibleTableIds = this.myTunings
             .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
@@ -407,23 +430,43 @@ export class Song {
     }
 
     constructSection(){
-	    return Section.revive(new Section({
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: DEFAULT_BEATS
-        }), {
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: DEFAULT_BEATS
-        });
+        if (this.useSectionV2){
+            return SectionV2.revive(new SectionV2({
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            }), {
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            });
+        } else {
+            return Section.revive(new Section({
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            }), {
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            });
+        }
     }
 
     normalizeSection(sectionLike){
-        return Section.revive(sectionLike, {
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: DEFAULT_BEATS
-        });
+         if (this.useSectionV2){
+            return SectionV2.revive(sectionLike, {
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            });
+        } else {
+            return Section.revive(sectionLike, {
+                rootID: this.rootID,
+                sharps: this.sharps,
+                beats: DEFAULT_BEATS
+            });
+        }
     }
 
     removeAllSections(){

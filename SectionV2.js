@@ -193,13 +193,29 @@ export class SectionV2 {
 	static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
 		const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
 
-		Object.setPrototypeOf(section, Section.prototype);
+		Object.setPrototypeOf(section, SectionV2.prototype);
 
-		if (!section.noteTables || typeof section.noteTables !== 'object') section.noteTables = {};
-		if (!section.namedNotes || typeof section.namedNotes !== 'object') section.namedNotes = {};
-		if (!section.recordedNotes || typeof section.recordedNotes !== 'object') section.recordedNotes = {};
+		// V2: initialize sectionNotes from legacy noteTables if present, otherwise empty
+		if (!section.sectionNotes || typeof section.sectionNotes !== 'object') {
+			section.sectionNotes = {};
+		}
 
-		
+		// Migrate legacy flat noteTables into sectionNotes entries
+		if (section.noteTables && typeof section.noteTables === 'object') {
+			Object.entries(section.noteTables).forEach(([tableID, playedNotes]) => {
+				if (!section.sectionNotes[tableID]) {
+					const sn = new SectionNotes(tableID);
+					if (Array.isArray(playedNotes)) sn.playedNotes = playedNotes;
+					section.sectionNotes[tableID] = sn;
+				}
+			});
+			delete section.noteTables;
+		}
+
+		// Clean up legacy top-level flat fields
+		delete section.namedNotes;
+		delete section.recordedNotes;
+
 		if (section.caption === undefined) section.caption = '';
 		if (section.rootID === undefined) section.rootID = rootID;
 		if (section.rootIDLead === undefined) section.rootIDLead = '-1';
