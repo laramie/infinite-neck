@@ -11,7 +11,7 @@ function createFreshHeadlessSong() {
 
 test('cycleThruKeysAllSections transposes each section rootID with wrap', () => {
     const song = createFreshHeadlessSong();
-    song.useSectionV2 = true;
+    song.setSongfileVersion("V2");
     song.sections = [];
     song.gSectionsCurrentIndex = 0;
 

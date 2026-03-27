@@ -119,6 +119,12 @@ export class Song {
             return;
         }
     }
+    setSongfileVersion(version){
+        if (version==="V2"){
+            this.useSectionV2 = true;
+        }
+        this.songfileVersion = version;
+    }
     
     dump(full) {
         const OMIT_WHEN_TERSE = new Set([

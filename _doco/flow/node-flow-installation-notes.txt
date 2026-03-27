@@ -53,3 +53,11 @@ laramie@penguin:~/pristine-cli-tools/cli-tools/bin/namespacer$ history | grep 'n
 npm install jscodeshift --save-dev
 npm install @babel/core @babel/types @babel/generator --save-dev
 npm install pino
+
+============
+jsonpath-plus
+============
+npm install jsonpath-plus
+
+
+

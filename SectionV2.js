@@ -212,6 +212,23 @@ export class SectionV2 {
 			delete section.noteTables;
 		}
 
+		// Migrate legacy top-level namedNotes and recordedNotes into each sectionNotes entry
+		const legacyNamedNotes = (section.namedNotes && typeof section.namedNotes === 'object')
+			? section.namedNotes : null;
+		const legacyRecordedNotes = (section.recordedNotes && typeof section.recordedNotes === 'object')
+			? section.recordedNotes : null;
+
+		if (legacyNamedNotes || legacyRecordedNotes) {
+			Object.values(section.sectionNotes).forEach((sn) => {
+				if (legacyNamedNotes && Object.keys(sn.namedNotes).length === 0) {
+					sn.namedNotes = legacyNamedNotes;
+				}
+				if (legacyRecordedNotes && Object.keys(sn.recordedNotes).length === 0) {
+					sn.recordedNotes = legacyRecordedNotes;
+				}
+			});
+		}
+
 		// Clean up legacy top-level flat fields
 		delete section.namedNotes;
 		delete section.recordedNotes;
