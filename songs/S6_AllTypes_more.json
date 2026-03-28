@@ -86,8 +86,7 @@
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false,
-      "noteTables": {}
+      "sharps": false
     }
   ],
   "gSectionsCurrentIndex": 0,
@@ -161,5 +160,6 @@
   },
   "activeStylesheets": "Default",
   "songName": "S6_1Sec_AllTypes-V2",
-  "theme": "Autobahn"
+  "theme": "Autobahn",
+    "songfileVersion": "V2"
 }
