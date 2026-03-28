@@ -190,6 +190,7 @@ export class SectionV2 {
 		return this.rootID;
 	}
 
+
 	static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
 		const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
 

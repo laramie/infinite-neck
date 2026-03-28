@@ -18,6 +18,7 @@
          "All-Chords-All-Keys.json",
          "All-Chords-All-Keys-w-highlights.json",
          "All-Keys-Maj7-Chords-Piano.json",
+         "BassNGtr2SecAllTypes.json",
          "colors-march-through-12-semitones.json",
          "Diatonic-Scales-Piano.json",
          "maj-pentatonic-practice.json",
@@ -29,6 +30,10 @@
          "perfect-4ths-calc.json",
          "pretty-lights-more-bling.json",
          "progression-on-strat.json",
+         "S6_AllTypes.json",
+         "S6_AllTypes-V2.json",
+         "S6_1Sec_AllTypes-V2.json",
+         "S6_2Sec_AllTypes-V2.json",
          "snake.json",
          "three-chord-wonder.json"
     

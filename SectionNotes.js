@@ -1,6 +1,5 @@
 export class SectionNotes {
-    constructor(id){
-        this.id = id;
+    constructor(){
         this.playedNotes = [];
         this.namedNotes = {};
         this.recordedNotes = {};

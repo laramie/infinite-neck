@@ -303,6 +303,27 @@ export function showHideTuning(show, basekey) {
 
 export function showTuningsForTablesInFile() {
     var numFound = 0;
+    if (getSong().useSectionV2){
+        getSong().visibleNoteTables.forEach(visTableID => {
+            const visbasekey = visTableID.substring(Constants.TABLE_ID_PREFIX.length);
+            const tuning = findTuning(visbasekey);
+            if (tuning) {
+                tuning.visible = true;
+            } else {
+                console.log("tuning not found for basekey: " + visbasekey);
+            }
+            requestReinstallAllTuningsTables();
+            showTuning(visbasekey);
+            numFound++;
+        });
+        return numFound;
+    } else {
+        return showTuningsForTablesInFileV1()
+    }
+}
+
+export function showTuningsForTablesInFileV1() {
+    var numFound = 0;
     getSong().sections.forEach(section => {
         Object.entries(section.noteTables).forEach(([tablekey, tablearr]) => {
             if (tablearr && tablearr.length > 0) {

@@ -900,6 +900,9 @@ export class Song {
     }
 
   getTuningHashInMemoryModel(){
+    if (this.useSectionV2){
+        return {"warning":"Not Implemented for V2 yet"};
+    }
    var hashTuningNames = {};
      this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {

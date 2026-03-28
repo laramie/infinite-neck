@@ -4,11 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-
-        
-
-
         {
             "type": "node",
             "request": "launch",
@@ -24,15 +19,6 @@
                 "INFINITE_NECK_SONG": "",
                 "INFINITE_NECK_SONGLIST": "tests/test-song-list-harsh-test.json"
             }
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/infinite-neck.js"
         },
         {
             "type": "node",

@@ -220,12 +220,23 @@ export function colorNote(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
+    let parentTableID = "";
+    let parentTableSel = "";
+    var parentTable = cell.closest("table");
+    if (parentTable){
+        var jParentTable =  $(parentTable);
+        parentTableID = jParentTable.attr("id");
+        parentTableSel = '#'+parentTableID+' ';
+        console.log("==== colorNote ==parentTableID====>>>>>>>"+parentTableID);
+    }
+
     $("td.note.noteHighlight").removeClass("noteHighlight");
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
 
     if (  theHighlight != "MidiPitchesSingle" ){
-        $("td.note.noteHighlightSingle").removeClass("noteHighlightSingle");
+        $(parentTableSel+"td.note.noteHighlightSingle").removeClass("noteHighlightSingle");
     }
+
     switch (theHighlight){
         case "Named":
             styleNum = Note.STYLENUM_NAMED;
@@ -325,10 +336,10 @@ export function colorNote(cell) {
         } else if (doHighlight){
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
+                $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
             } else {
                 cell.addClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").addClass("noteHighlight");
+                $(parentTableSel+"td.note[midinum='"+midinum+"']").addClass("noteHighlight");
             }
             if (isRecording()){
               	recordHighlight(doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
@@ -337,10 +348,10 @@ export function colorNote(cell) {
        } else if (doHighlightSingle){
            if (doEraseHighlightSingle){
                cell.removeClass("noteHighlightSingle");
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
                tdn.removeClass("noteHighlightSingle");
            } else {
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
                tdn.addClass("noteHighlightSingle");
            }
            if (isRecording()){
@@ -359,7 +370,7 @@ export function colorNote(cell) {
         if (doKeep) {
             return;
         }
-        var noteNameElements = $('.note' + noteName); // G --> .noteG
+        var noteNameElements = $(parentTableSel+'.note' + noteName); // G --> .noteG
         var namedNoteDiv = noteNameElements.find(".namedNote");
 
         // NOTE: this is a little brittle: if you add any other structural classes besides "namedNote", this breaks.
@@ -387,13 +398,14 @@ export function colorNote(cell) {
             var automaticColorClass = lookupUserColorClass(note);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().namedNotes[noteName] = {};   //V2-storage
+            debugger
+            getCurrentSection().sectionNotes[parentTableID].namedNotes[noteName] = {};   //V2-storage
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
                 styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
-    		    getCurrentSection().namedNotes[noteName] = note;   //V2-storage
+    		    getCurrentSection().sectionNotes[parentTableID].namedNotes[noteName] = note;   //V2-storage
             }
 		}
         //console.log("  namedNoteDiv-->className:"+namedNoteDiv.prop("className"));
@@ -599,28 +611,63 @@ export function replayTable(replayOptions){
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
+    let tablename = replayOptions.tablename;
+    let listenToTablename = replayOptions.listenToTablename;
     
     if (!replayOptions.hideNamedNotes){
-        Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {  //V2-storage
-            var namedNote = replayOptions.currSection.namedNotes[noteName];     //V2-storage
-            var theSelect;
-            if (namedNote.noteName){
-                theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+        if (replayOptions.currSection.namedNotes){
+            Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {  //V2-storage
+                console.log("Doing V1 replay of namedNotes:"+noteName);
+                var namedNote = replayOptions.currSection.namedNotes[noteName];     //V2-storage
+                var theSelect;
+                if (namedNote.noteName){
+                    theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                }
+                var theClass = $(theSelect);
+                if (!theSelect){
+                    console.log("undef:"+JSON.stringify(namedNote));
+                }
+                var theColorClass = lookupUserColorClass(namedNote);
+                styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+            });
+        } else {
+            console.log("Doing V2 preflight: "+JSON.stringify(replayOptions.currSection));
+            if (replayOptions.currSection.sectionNotes && replayOptions.currSection.sectionNotes[tablename]){
+                let namedNotes = replayOptions.currSection.sectionNotes[tablename].namedNotes;
+                if (namedNotes){
+                    Object.keys(namedNotes).forEach(noteName => {  //V2-storage
+                        console.log("Doing V2 replay of namedNotes:"+noteName);
+                        var namedNote = namedNotes[noteName];     //V2-storage
+                        var theSelect;
+                        if (namedNote.noteName){
+                            theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                        }
+                        var theClass = $(theSelect);
+                        if (!theSelect){
+                            console.log("undef:"+JSON.stringify(namedNote));
+                        }
+                        var theColorClass = lookupUserColorClass(namedNote);
+                        styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+                    });
+                }
             }
-            var theClass = $(theSelect);
-            if (!theSelect){
-                console.log("undef:"+JSON.stringify(namedNote));
-            }
-            var theColorClass = lookupUserColorClass(namedNote);
-            styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-        });
+        }
+
+
+
     } else {
         $(nnTablenameSelector+'.namedNote').hide();
     }
 
-    let tablename = replayOptions.tablename;
-    let listenToTablename = replayOptions.listenToTablename;
-    var tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
+    var tablearr = null;
+    if (replayOptions.currSection.noteTables){
+        tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
+    } else {
+        let sn = replayOptions.currSection.sectionNotes[listenToTablename];
+        if (sn){
+            tablearr = sn.playedNotes;
+        }
+    }
     //console.log("tablearr[listenToTablename:"+listenToTablename+"]: "+JSON.stringify(tablearr));
     if (tablearr){
         tablearr.forEach(script => {
@@ -677,30 +724,47 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 }
 
 export function showHighlightsForBeat(nBeat){
-    var dict = getCurrentSection().recordedNotes;
+    let visibleTables = getSong().getVisibleTunings();
+    visibleTables.forEach(tablename =>{
+        showHighlightsForBeatForTable(nBeat, tablename);
+    });
+}
+
+
+export function showHighlightsForBeatForTable(nBeat, tablename){
+    //var dict = getCurrentSection().recordedNotes;
+    let tableSelector = '';
+    if (tablename){
+        tableSelector = '#'+tablename+' ';
+    }
+    let sn = getCurrentSection().sectionNotes[tablename];
+    let dict = null;
+    if (sn) {
+        dict = sn.recordedNotes;
+    }
     if (dict){
-        $("td.note").removeClass("noteHighlight");
+        $(tableSelector+"td.note").removeClass("noteHighlight");
 
-        $("td.note").removeClass("noteHighlightSingle");
+        $(tableSelector+"td.note").removeClass("noteHighlightSingle");
 
-		$("div.Fingering.Playback")
+		$(tableSelector+"div.Fingering.Playback")
 			.attr("class", "Fingering")    //remove marker classes: FingeringPlayed Playback, and any color
 			.hide();
 
-		$("div.singleNote.Playback")
+		$(tableSelector+"div.singleNote.Playback")
 		    .attr("class", "singleNote")  //remove marker classes: singleNote singleNotePlayed Playback, and any color
 			.hide();
 
-		$("div.tinyNote.Playback")
+		$(tableSelector+"div.tinyNote.Playback")
 			.attr("class", "tinyNote")   //remove marker classes: [tinyNotePlayed tinyNotePlayedBend Playback] and any color
 		 	.hide();
 
 		var arrForBeat = dict[""+nBeat];
         if (arrForBeat) {
             arrForBeat.forEach(note => {
-                var tdNote = $("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
+                var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $("td.note[midinum='"+note.midinum+"']")
+                    $(tableSelector+"td.note[midinum='"+note.midinum+"']")
                         .addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     tdNote

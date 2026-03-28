@@ -12,7 +12,8 @@ const __dirname = path.dirname(__filename);
 
 //const PRIMARY_SONG_FILENAME = 'All-Chords-All-Keys-w-highlights.json';
 //const PRIMARY_SONG_FILENAME = 'progression-on-strat.json';
-const PRIMARY_SONG_FILENAME = 'BassNGtr2SecAllTypes.json';
+//const PRIMARY_SONG_FILENAME = 'BassNGtr2SecAllTypes.json';
+const PRIMARY_SONG_FILENAME = 'v2-snake.json';
 
 function getSongPath(songFilename = PRIMARY_SONG_FILENAME) {
     return path.join(__dirname, '../../songs', songFilename);

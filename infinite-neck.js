@@ -881,6 +881,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function openSong(str){
+		debugger
 		var numFoundBeforeFileLoad = TuningsLibrary.showTuningsForTablesInFile();
 		if (numFoundBeforeFileLoad==0){
 			TuningsLibrary.hideAllTunings();
@@ -2333,6 +2334,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
+		gSong.setSongfileVersion("V2");//MAGIC!!
 		
 		getSong().graveyard = makeGraveyard();
 
