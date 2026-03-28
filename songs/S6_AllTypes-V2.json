@@ -1,47 +1,14 @@
 {
   "sections": [
     {
-      "sectionNotes": {
-        "tblS6_1": {
-          "playedNotes": [
-            {
-              "noteName": "C",
-              "styleNum": 2,
-              "midinum": "60",
-              "row": "2",
-              "col": "5",
-              "colorClass": "noteTransparent"
-            }
-          ],
-          "namedNotes": {
-            "E": {
-              "noteName": "E",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            }
-          },
-          "recordedNotes": {
-            "1": [
-              {
-                "noteName": "Bb",
-                "styleNum": 5,
-                "midinum": "58",
-                "row": "2",
-                "col": "3",
-                "colorClass": "noteTransparent",
-                "bendValue": "semitone2"
-              }
-            ]
-          }
-        }
-      },
+      "sectionNotes": {},
       "caption": "Home Key C",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
       "sharps": false
-    }   
+    }
   ],
   "gSectionsCurrentIndex": 0,
   "gFirstBeatSeen": false,
@@ -100,5 +67,6 @@
   },
   "activeStylesheets": "Default",
   "songName": "S6_AllTypes-V2",
-  "theme": "Autobahn"
+  "theme": "Autobahn",
+  "songfileVersion": "V2"
 }

@@ -1,126 +1,98 @@
 {
   "sections": [
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Ab": {
-          "noteName": "Ab",
-          "colorClass": "noteScale",
-          "styleNum": 0
-        }
-      },
-      "recordedNotes": {
-        "2": [
-          {
-            "midinum": "57",
-            "row": "3",
-            "styleNum": 3
-          }
-        ],
-        "3": [
-          {
-            "midinum": "53",
-            "row": "4",
-            "styleNum": 3
-          }
-        ],
-        "4": [
-          {
-            "midinum": "49",
-            "row": "5",
-            "styleNum": 3
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": "4",
       "currentBeat": 3,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "60",
-            "row": "2",
-            "col": "5",
-            "colorClass": "noteRoot",
-            "styleNum": 2
-          },
-          {
-            "midinum": "66",
-            "row": "1",
-            "col": "6",
-            "colorClass": "noteRoot",
-            "styleNum": 2
-          },
-          {
-            "midinum": "56",
-            "row": "3",
-            "col": "6",
-            "colorClass": "noteRoot",
-            "styleNum": 2
-          }
-        ]
-      },
-      "namedNotes": {
-        "C": {
-          "noteName": "C",
-          "colorClass": "noteScale",
-          "styleNum": 0
-        },
-        "Ab": {
-          "noteName": "Ab",
-          "colorClass": "noteScale",
-          "styleNum": 0
-        },
-        "Db": {
-          "noteName": "Db",
-          "colorClass": "noteScale",
-          "styleNum": 0
-        },
-        "A": {
-          "noteName": "A",
-          "colorClass": "noteChord2",
-          "styleNum": 0
-        }
-      },
-      "recordedNotes": {
-        "2": [
-          {
-            "midinum": "67",
-            "row": "2",
-            "styleNum": 3
-          },
-          {
-            "midinum": "76",
-            "row": "0",
-            "styleNum": 3
-          }
-        ],
-        "3": [
-          {
-            "midinum": "61",
-            "row": "2",
-            "styleNum": 3
-          }
-        ],
-        "4": [
-          {
-            "midinum": "72",
-            "row": "1",
-            "styleNum": 3
-          }
-        ]
-      },
       "caption": "",
       "rootID": 8,
       "rootIDLead": "-1",
       "beats": "4",
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {
+        "tblP46": {
+          "playedNotes": [
+            {
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteRoot",
+              "styleNum": 2
+            },
+            {
+              "midinum": "66",
+              "row": "1",
+              "col": "6",
+              "colorClass": "noteRoot",
+              "styleNum": 2
+            },
+            {
+              "midinum": "56",
+              "row": "3",
+              "col": "6",
+              "colorClass": "noteRoot",
+              "styleNum": 2
+            }
+          ],
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteScale",
+              "styleNum": 0
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "colorClass": "noteScale",
+              "styleNum": 0
+            },
+            "Db": {
+              "noteName": "Db",
+              "colorClass": "noteScale",
+              "styleNum": 0
+            },
+            "A": {
+              "noteName": "A",
+              "colorClass": "noteChord2",
+              "styleNum": 0
+            }
+          },
+          "recordedNotes": {
+            "2": [
+              {
+                "midinum": "67",
+                "row": "2",
+                "styleNum": 3
+              },
+              {
+                "midinum": "76",
+                "row": "0",
+                "styleNum": 3
+              }
+            ],
+            "3": [
+              {
+                "midinum": "61",
+                "row": "2",
+                "styleNum": 3
+              }
+            ],
+            "4": [
+              {
+                "midinum": "72",
+                "row": "1",
+                "styleNum": 3
+              }
+            ]
+          }
+        }
+      }
     }
   ],
   "visibleNoteTables": [
@@ -243,5 +215,6 @@
       "colorClass": "Finger4",
       "caption": "F4"
     }
-  }
+  },
+  "songfileVersion": "V2"
 }

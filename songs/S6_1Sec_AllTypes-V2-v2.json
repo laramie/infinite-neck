@@ -1,12 +1,6 @@
 {
   "sections": [
     {
-      "caption": "Home Key C",
-      "rootID": "3",
-      "rootIDLead": "-1",
-      "beats": 4,
-      "currentBeat": 4,
-      "sharps": false,
       "sectionNotes": {
         "tblS6_1": {
           "playedNotes": [
@@ -17,11 +11,24 @@
               "row": "2",
               "col": "5",
               "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "2",
+              "col": "7",
+              "colorClass": "noteTransparent"
             }
           ],
           "namedNotes": {
-            "C": {
-              "noteName": "C",
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -37,16 +44,70 @@
                 "colorClass": "noteTransparent",
                 "bendValue": "semitone2"
               }
+            ],
+            "2": [
+              {
+                "noteName": "C",
+                "styleNum": 5,
+                "midinum": "60",
+                "row": "2",
+                "col": "5",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone2"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "D",
+                "styleNum": 5,
+                "midinum": "62",
+                "row": "2",
+                "col": "7",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone2"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "Bb",
+                "styleNum": 5,
+                "midinum": "70",
+                "row": "0",
+                "col": "6",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone2"
+              }
             ]
           }
         }
-      }
+      },
+      "caption": "Home Key C",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false,
+      "noteTables": {}
     }
   ],
   "gSectionsCurrentIndex": 0,
   "gFirstBeatSeen": false,
   "userInstrumentTuning": null,
   "gSongModelListener": null,
+  "noteNamesFuncArrDEFAULT": [
+    "I",
+    "&tau;",
+    "II",
+    "m",
+    "III",
+    "IV",
+    "&Theta;",
+    "V",
+    "&sigma;",
+    "6",
+    "&delta;",
+    "&Delta;"
+  ],
   "sharps": false,
   "captionsRowShowing": false,
   "presentationMode": false,
@@ -99,7 +160,6 @@
     "records": []
   },
   "activeStylesheets": "Default",
-  "songName": "BassNGtr2SecAllTypes",
-  "theme": "Autobahn",
-  "songfileVersion": "V2"
+  "songName": "S6_1Sec_AllTypes-V2",
+  "theme": "Autobahn"
 }

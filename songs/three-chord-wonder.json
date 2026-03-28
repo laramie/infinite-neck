@@ -1,142 +1,128 @@
 {
   "sections": [
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "48",
-            "row": "4",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "C"
-          },
-          {
-            "midinum": "53",
-            "row": "3",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "F"
-          },
-          {
-            "midinum": "57",
-            "row": "2",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "A"
-          }
-        ]
-      },
-      "namedNotes": {
-        "F": {
-          "noteName": "F",
-          "colorClass": "note1",
-          "styleNum": 0
-        },
-        "A": {
-          "noteName": "A",
-          "colorClass": "note5",
-          "styleNum": 0
-        },
-        "C": {
-          "noteName": "C",
-          "colorClass": "noteTransparent",
-          "styleNum": 0
-        }
-      },
-      "recordedNotes": {},
       "caption": "Tension: Blues IV is I, III, V, which is IV, VI8, I relative to C ",
       "rootID": 8,
       "rootIDLead": "3",
       "beats": "4",
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {
+        "tblP46": {
+          "playedNotes": [
+            {
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "C"
+            },
+            {
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "F"
+            },
+            {
+              "midinum": "57",
+              "row": "2",
+              "col": "2",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "A"
+            }
+          ],
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "colorClass": "note1",
+              "styleNum": 0
+            },
+            "A": {
+              "noteName": "A",
+              "colorClass": "note5",
+              "styleNum": 0
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteTransparent",
+              "styleNum": 0
+            }
+          },
+          "recordedNotes": {}
+        }
+      }
     },
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "43",
-            "row": "5",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "G"
-          },
-          {
-            "midinum": "47",
-            "row": "4",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "B"
-          },
-          {
-            "midinum": "53",
-            "row": "3",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 1,
-            "noteName": "F"
-          }
-        ]
-      },
-      "namedNotes": {
-        "G": {
-          "type": "note",
-          "noteName": "G",
-          "colorClass": "note8",
-          "styleNum": 0
-        },
-        "B": {
-          "type": "note",
-          "noteName": "B",
-          "colorClass": "note12",
-          "styleNum": 0
-        },
-        "F": {
-          "type": "note",
-          "noteName": "F",
-          "colorClass": "note6",
-          "styleNum": 0
-        }
-      },
-      "recordedNotes": {},
       "caption": "Blues 5 is V, Maj7, and IV, which are I, 3, and V relative to G Myxolidian.",
       "rootID": "3",
       "rootIDLead": "10",
       "beats": "4",
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {
+        "tblP46": {
+          "playedNotes": [
+            {
+              "midinum": "43",
+              "row": "5",
+              "col": "3",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "G"
+            },
+            {
+              "midinum": "47",
+              "row": "4",
+              "col": "2",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "B"
+            },
+            {
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent",
+              "styleNum": 1,
+              "noteName": "F"
+            }
+          ],
+          "namedNotes": {
+            "G": {
+              "type": "note",
+              "noteName": "G",
+              "colorClass": "note8",
+              "styleNum": 0
+            },
+            "B": {
+              "type": "note",
+              "noteName": "B",
+              "colorClass": "note12",
+              "styleNum": 0
+            },
+            "F": {
+              "type": "note",
+              "noteName": "F",
+              "colorClass": "note6",
+              "styleNum": 0
+            }
+          },
+          "recordedNotes": {}
+        }
+      }
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "C": {
-          "noteName": "C",
-          "colorClass": "noteTransparent",
-          "styleNum": 0
-        },
-        "E": {
-          "noteName": "E",
-          "colorClass": "noteTransparent",
-          "styleNum": 0
-        },
-        "G": {
-          "noteName": "G",
-          "colorClass": "noteTransparent",
-          "styleNum": 0
-        }
-      },
-      "recordedNotes": {},
       "caption": "Home to key of C",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     }
   ],
   "gSectionsCurrentIndex": 2,
@@ -316,5 +302,6 @@
       "caption": "&Delta;"
     }
   },
-  "theme": "Autobahn"
+  "theme": "Autobahn",
+  "songfileVersion": "V2"
 }

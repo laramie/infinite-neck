@@ -1,30 +1,6 @@
 {
   "sections": [
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Gb": {
-          "noteName": "Gb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Bb": {
-          "noteName": "Bb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Db": {
-          "noteName": "Db",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "F": {
-          "noteName": "F",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "F#   A#   C#   E#  <i style=\"font-size: 60%; color: green;\">[ F# hath 6 sharps ]</i>",
       "rootID": "9",
       "rootIDLead": "-1",
@@ -66,394 +42,116 @@
         "fingeringPosition": "0",
         "tinyNoteFontSize": "80%",
         "tinyNoteMaxHeight": "45%"
-      }
+      },
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "B": {
-          "noteName": "B",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Eb": {
-          "noteName": "Eb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Gb": {
-          "noteName": "Gb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Bb": {
-          "noteName": "Bb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "B   D#   F#  A#  <i style=\"font-size: 60%; color: green;\">[ B hath 5 sharps ]</i>",
       "rootID": "2",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": true
+      "sharps": true,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "E": {
-          "noteName": "E",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Ab": {
-          "noteName": "Ab",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "B": {
-          "noteName": "B",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Eb": {
-          "noteName": "Eb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "E   G#   B    D#  <i style=\"font-size: 60%; color: green;\">[ E hath 4 sharps ]",
       "rootID": "7",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": true
+      "sharps": true,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "A": {
-          "noteName": "A",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Db": {
-          "noteName": "Db",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "E": {
-          "noteName": "E",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Ab": {
-          "noteName": "Ab",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "A   C#   E   G#  <i style=\"font-size: 60%; color: green;\">[ A hath 3 sharps ]</i> ",
       "rootID": "0",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": true
+      "sharps": true,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "D": {
-          "noteName": "D",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Gb": {
-          "noteName": "Gb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "A": {
-          "noteName": "A",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Db": {
-          "noteName": "Db",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "D   F#  A   C# <i style=\"font-size: 60%; color: green;\">[ D hath 2 sharps ]</i>",
       "rootID": "5",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": true
+      "sharps": true,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "G": {
-          "noteName": "G",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "B": {
-          "noteName": "B",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "D": {
-          "noteName": "D",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Gb": {
-          "noteName": "Gb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "G   B   D   F#   <i style=\"font-size: 60%; color: green;\">[ G hath 1 sharp ]</i>",
       "rootID": "10",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": true
+      "sharps": true,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "C": {
-          "noteName": "C",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "E": {
-          "noteName": "E",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "G": {
-          "noteName": "G",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "B": {
-          "noteName": "B",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "C   E   G   B ",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Bb": {},
-        "D": {},
-        "F": {
-          "noteName": "F",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "A": {
-          "noteName": "A",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "C": {
-          "noteName": "C",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Eb": {},
-        "E": {
-          "noteName": "E",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "F    A    C    E   <i style=\"font-size: 60%; color: green;\">[F hath 1 flat]</i>",
       "rootID": 8,
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Bb": {
-          "noteName": "Bb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "D": {
-          "noteName": "D",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "F": {
-          "noteName": "F",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "A": {
-          "noteName": "A",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "Bb    D    F    A   <i style=\"font-size: 60%; color: green;\">[Bb hath 2 flats]</i>",
       "rootID": 1,
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Eb": {
-          "noteName": "Eb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "G": {
-          "noteName": "G",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Bb": {
-          "noteName": "Bb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "D": {
-          "noteName": "D",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "Eb   G    Bb   D    <i style=\"font-size: 60%; color: green;\">[Eb hath 3 flats]</i>",
       "rootID": "6",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Ab": {
-          "noteName": "Ab",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "C": {
-          "noteName": "C",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Eb": {
-          "noteName": "Eb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "G": {
-          "noteName": "G",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "Ab   C    Eb   G   <i style=\"font-size: 60%; color: green;\">[Ab hath 4 flats]</i>",
       "rootID": "11",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Db": {
-          "noteName": "Db",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "F": {
-          "noteName": "F",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Ab": {
-          "noteName": "Ab",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "C": {
-          "noteName": "C",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "Db    F   Ab    C    <i style=\"font-size: 60%; color: green;\">[Db hath  5 flats]</i>",
       "rootID": "4",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Gb": {
-          "noteName": "Gb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Bb": {
-          "noteName": "Bb",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "Db": {
-          "noteName": "Db",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        },
-        "F": {
-          "noteName": "F",
-          "styleNum": 0,
-          "colorClass": "noteTransparent"
-        }
-      },
-      "recordedNotes": {},
       "caption": "Gb   Bb   Db   F    <i style=\"font-size: 60%; color: green;\">[Gb hath 6 flats]</i>",
       "rootID": "9",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     }
   ],
   "gSectionsCurrentIndex": 0,
@@ -582,5 +280,6 @@
     "borderImageWhiteKey": "none",
     "borderImageBlackKey": "none",
     "instrumentBorderImage": "none"
-  }
+  },
+  "songfileVersion": "V2"
 }

@@ -1,994 +1,301 @@
 {
   "sections": [
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "28",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "E"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "28",
-            "row": "3",
-            "col": "0",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "E"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "29",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "F"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "29",
-            "row": "3",
-            "col": "1",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "F"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "30",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "Gb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "30",
-            "row": "3",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Gb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "31",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "G"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "31",
-            "row": "3",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "G"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "32",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "Ab"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "32",
-            "row": "3",
-            "col": "4",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Ab"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "32",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "Ab"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "32",
-            "row": "3",
-            "col": "4",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Ab"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "33",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "A"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "33",
-            "row": "3",
-            "col": "5",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "A"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "34",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "Bb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "34",
-            "row": "3",
-            "col": "6",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Bb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "35",
-            "row": "3",
-            "styleNum": 4,
-            "noteName": "B"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "35",
-            "row": "3",
-            "col": "7",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "B"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "33",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "A"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "33",
-            "row": "2",
-            "col": "0",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "A"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "34",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "Bb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "34",
-            "row": "2",
-            "col": "1",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Bb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "35",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "B"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "35",
-            "row": "2",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "B"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "36",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "C"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "36",
-            "row": "2",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "C"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "37",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "Db"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "37",
-            "row": "2",
-            "col": "4",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Db"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "38",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "D"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "38",
-            "row": "2",
-            "col": "5",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "D"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "39",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "Eb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "39",
-            "row": "2",
-            "col": "6",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Eb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "40",
-            "row": "2",
-            "styleNum": 4,
-            "noteName": "E"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "40",
-            "row": "2",
-            "col": "7",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "E"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "38",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "D"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "38",
-            "row": "1",
-            "col": "0",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "D"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "39",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "Eb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "39",
-            "row": "1",
-            "col": "1",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Eb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "40",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "E"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "40",
-            "row": "1",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "E"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "41",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "F"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "41",
-            "row": "1",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "F"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "42",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "Gb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "42",
-            "row": "1",
-            "col": "4",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Gb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "43",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "G"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "43",
-            "row": "1",
-            "col": "5",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "G"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "44",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "Ab"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "44",
-            "row": "1",
-            "col": "6",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Ab"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "45",
-            "row": "1",
-            "styleNum": 4,
-            "noteName": "A"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "45",
-            "row": "1",
-            "col": "7",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "A"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "43",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "G"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "43",
-            "row": "0",
-            "col": "0",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "G"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "44",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "Ab"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "44",
-            "row": "0",
-            "col": "1",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Ab"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "45",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "A"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "45",
-            "row": "0",
-            "col": "2",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "A"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "46",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "Bb"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "46",
-            "row": "0",
-            "col": "3",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Bb"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "47",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "B"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "47",
-            "row": "0",
-            "col": "4",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "B"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "48",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "C"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "48",
-            "row": "0",
-            "col": "5",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "C"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "49",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "Db"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "49",
-            "row": "0",
-            "col": "6",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "Db"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     },
     {
-      "noteTables": {},
-      "namedNotes": {},
-      "recordedNotes": {
-        "1": [
-          {
-            "midinum": "50",
-            "row": "0",
-            "styleNum": 4,
-            "noteName": "D"
-          }
-        ],
-        "2": [
-          {
-            "midinum": "50",
-            "row": "0",
-            "col": "7",
-            "colorClass": "noteTransparent",
-            "styleNum": 2,
-            "noteName": "D"
-          }
-        ]
-      },
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 2,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotes": {}
     }
   ],
   "gSectionsCurrentIndex": 32,
@@ -1169,5 +476,6 @@
       "caption": "&Delta;"
     }
   },
-  "theme": "LandauTop"
+  "theme": "LandauTop",
+  "songfileVersion": "V2"
 }
