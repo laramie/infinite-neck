@@ -220,14 +220,14 @@ export function colorNote(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
-    let parentTableID = "";
+    let tableID = "";
     let parentTableSel = "";
     var parentTable = cell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
-        parentTableID = jParentTable.attr("id");
-        parentTableSel = '#'+parentTableID+' ';
-        console.log("==== colorNote ==parentTableID====>>>>>>>"+parentTableID);
+        tableID = jParentTable.attr("id");
+        parentTableSel = '#'+tableID+' ';
+        console.log("==== colorNote ==tableID====>>>>>>>"+tableID);
     }
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
@@ -296,13 +296,13 @@ export function colorNote(cell) {
     //  1) if the user clicks twice whilst recording, remove that note from recording and display.
     //  2) we hose the existing classes on notes being removed, and add back in the essential class.
     //       e.g. cell.find(".singleNote").attr("class", ".singleNote").hide();
-    function handleRecordedNote(className){
-        if (recordingHasPlayedNote(sBeatNum, proxyNote)){
-                unRecordPlayedNote(sBeatNum, proxyNote);
+    function handleRecordedNote(tableID, className){
+        if (recordingHasPlayedNote(tableID, sBeatNum, proxyNote)){
+                unRecordPlayedNote(tableID, sBeatNum, proxyNote);
                 cell.find('.'+className).attr("class", className).hide();
         } else {
             var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true);
-            recordPlayedNote(sBeatNum, thatNote);
+            recordPlayedNote(tableID, sBeatNum, thatNote);
             cell.find('.'+className).addClass("Playback").show();
         }
     }
@@ -318,12 +318,12 @@ export function colorNote(cell) {
                 if (isRecording()){
                     if (theColorClass != "noteClear"){
                         if (styleNum == Note.STYLENUM_FINGERING){
-                            handleRecordedNote("Fingering");
+                            handleRecordedNote(tableID, "Fingering");
                         } else if (styleNum == Note.STYLENUM_SINGLE){
-                            handleRecordedNote("singleNote");
+                            handleRecordedNote(tableID, "singleNote");
                         } else if (styleNum == Note.STYLENUM_TINY
                                ||  styleNum == Note.STYLENUM_BEND){
-                            handleRecordedNote("tinyNote");
+                            handleRecordedNote(tableID, "tinyNote");
                         } else {
                             colorSingleNotes(cell, theColorClass, styleNum, false);//no recording for namedNote.
                         }
@@ -342,7 +342,7 @@ export function colorNote(cell) {
                 $(parentTableSel+"td.note[midinum='"+midinum+"']").addClass("noteHighlight");
             }
             if (isRecording()){
-              	recordHighlight(doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
+              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
             }
            return;
        } else if (doHighlightSingle){
@@ -355,7 +355,7 @@ export function colorNote(cell) {
                tdn.addClass("noteHighlightSingle");
            }
            if (isRecording()){
-               recordHighlightSingle(doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
+               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
            }
            return;
         } else {
@@ -399,13 +399,13 @@ export function colorNote(cell) {
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
             debugger
-            getCurrentSection().sectionNotes[parentTableID].namedNotes[noteName] = {};   //V2-storage
+            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   //V2-storage
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
                 styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
-    		    getCurrentSection().sectionNotes[parentTableID].namedNotes[noteName] = note;   //V2-storage
+    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;   //V2-storage
             }
 		}
         //console.log("  namedNoteDiv-->className:"+namedNoteDiv.prop("className"));
@@ -428,12 +428,12 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
         return;
     }
     //else styleNum ==> Single,Tiny,Bend.
-    var parentTableID = "";
+    var tableID = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
-        parentTableID = jParentTable.attr("id");
-        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+parentTableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
+        tableID = jParentTable.attr("id");
+        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
         if (foundColorClass){
             $("input[name=rbColor][value="+foundColorClass+"]")
                 .attr('checked', 'checked')
@@ -473,12 +473,12 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     }
     var clear = (theColorClass == "noteClear");
     var jCell = $(cell);
-    var parentTableID = "";
+    var tableID = "";
     var reversed = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
-        parentTableID = jParentTable.attr("id");
+        tableID = jParentTable.attr("id");
         reversed = jParentTable.attr("reversed");
         if (reversed === "true"){
             bendValue = bendValue+"LH";
@@ -540,7 +540,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
         theMidiNotePlayedClass = "tinyNotePlayedBend";
         theBendClass = bendValue;
     }
-    getSong().removeNotePlayedFromTable(notePlayed, parentTableID);  //V2-storage
+    getSong().removeNotePlayedFromTable(notePlayed, tableID);  //V2-storage
     if (!clear){
         if (    !singleNoteAlreadyPlayed
              && !tinyNoteAlreadyPlayed
@@ -548,7 +548,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
              && !fingeringAlreadyPlayed
              && !bendAlreadyPlayed
            ){
-                var tableArr = getSong().getTableArrInCurrentSection(parentTableID);  //V2-storage
+                var tableArr = getSong().getTableArrInCurrentSection(tableID);  //V2-storage
                 if (dontAddToTableArray){  //because recording has already added the note to beats in recordedNotes.
                     //console.log("Not adding note to tablearray:"+JSON.stringify(notePlayed));
                 } else {

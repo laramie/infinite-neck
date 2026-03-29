@@ -12,6 +12,7 @@ import {
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
 import { SectionV2 } from './SectionV2.js';
+import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
 
 const DEFAULT_BEATS = 4;
@@ -435,17 +436,23 @@ export class Song {
         return this.gSectionsCurrentIndex;
     }
 
+    static assertAllSectionNotesAreInstances(section) {
+        Object.entries(section.sectionNotes).forEach(([tableID, sn]) => {
+            if (!(sn instanceof SectionNotes)) {
+                console.error(`sectionNotes[${tableID}] is not a SectionNotes instance!`, sn);
+            }
+        });
+    }
+
     constructSection(){
         if (this.useSectionV2){
-            return SectionV2.revive(new SectionV2({
+            let theSection = new SectionV2({
                 rootID: this.rootID,
                 sharps: this.sharps,
                 beats: DEFAULT_BEATS
-            }), {
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            });
+            }); 
+            Song.assertAllSectionNotesAreInstances(theSection);
+            return theSection;
         } else {
             return Section.revive(new Section({
                 rootID: this.rootID,
@@ -461,11 +468,13 @@ export class Song {
 
     normalizeSection(sectionLike){
          if (this.useSectionV2){
-            return SectionV2.revive(sectionLike, {
+            let theSection = SectionV2.revive(sectionLike, {
                 rootID: this.rootID,
                 sharps: this.sharps,
                 beats: DEFAULT_BEATS
             });
+            Song.assertAllSectionNotesAreInstances(theSection);
+            return theSection;
         } else {
             return Section.revive(sectionLike, {
                 rootID: this.rootID,
@@ -564,15 +573,22 @@ export class Song {
 	    this.gFirstBeatSeen = false;
 	}
 
+    moveBeatsLaterForTable(tableID, beatCount){
+        var result = {};
+        var notes = getRecordedNotesForSection(tableID);
+        for (var i=1; i<=beatCount; i++){
+            result[""+(i+1)] = notes[""+i];
+        }
+        result["1"] = [];
+        getCurrentSection().getSectionNotes(tableID).recordedNotes = result;
+    }
+
 	moveBeatsLater(){
-		var result = {};
         var beatCount = this.getBeats();
-		var notes = getRecordedNotesForSection();
-		for (var i=1; i<=beatCount; i++){
-			result[""+(i+1)] = notes[""+i];
-		}
-		result["1"] = [];
-		this.getCurrentSection().recordedNotes = result;
+        let allTablesInSection = getCurrentSection().getAllSectionNotes();
+        allTablesInSection.forEach(([tableID, sn]) => {
+            this.moveBeatsLaterForTable(tableID, beatCount);
+        });
 		this.setBeats(beatCount+1);
         this.gotoFirstBeat();
 		this.publish_UpdateSectionStatus();
@@ -592,22 +608,25 @@ export class Song {
   	  return recordedBeats;
     }
 
-    deleteBeat(){
-         var nStartBeat = this.getBeat();
-         var nBeats = this.getBeats();
-         if (nBeats <=1){
-    	        	 console.warn("Can't delele beat #1. returning.");
-        	 return;
-         }
-         var recordedNotes = this.getCurrentSection().recordedNotes;
-         if (recordedNotes){
-        	 this.getCurrentSection().recordedNotes = this.shuffleRecordedBeatsDown(recordedNotes, nBeats, nStartBeat);
-         }
-         this.setBeats(nBeats-1);
-         var currBeat = nStartBeat > this.getBeats() ? this.getBeats() : nStartBeat;
-         this.getCurrentSection().currentBeat = currBeat;
-         this.publish_UpdateSectionStatus();
-         this.requestUiShowBeats();
+    deleteBeat() {
+        var nStartBeat = this.getBeat();
+        var nBeats = this.getBeats();
+        if (nBeats <= 1) {
+            console.warn("Can't delete beat #1. returning.");
+            return;
+        }
+        // For each table in sectionNotes:
+        let allTablesInSection = this.getCurrentSection().getAllSectionNotes();
+        allTablesInSection.forEach(([tableID, sn]) => {
+            if (sn.recordedNotes) {
+                sn.recordedNotes = this.shuffleRecordedBeatsDown(sn.recordedNotes, nBeats, nStartBeat);
+            }
+        });
+        this.setBeats(nBeats - 1);
+        var currBeat = nStartBeat > this.getBeats() ? this.getBeats() : nStartBeat;
+        this.getCurrentSection().currentBeat = currBeat;
+        this.publish_UpdateSectionStatus();
+        this.requestUiShowBeats();
     }
 
     prevBeat(){
@@ -853,6 +872,7 @@ export class Song {
 	}
 
     getTableArrInCurrentSection(tableID){
+        debugger
         return this.getCurrentSection().getTableArr(tableID);
 	}
 

@@ -20,7 +20,7 @@ export class SectionV2 {
 
 	/**
 	 * Load a SectionV2 from a section-like object in the new V2 format.
-	 * Each noteTables entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
+	 * Each sectionNotes entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
 	 */
 	static fromV2Format(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
 		const section = new SectionV2({ rootID, sharps, beats });
@@ -34,11 +34,14 @@ export class SectionV2 {
 		// sectionNotes: { id: { playedNotes, namedNotes, recordedNotes } }
 		if (sectionLike.sectionNotes && typeof sectionLike.sectionNotes === 'object') {
 			Object.entries(sectionLike.sectionNotes).forEach(([tableID, sectionNotesObj]) => {
-				const sn = new SectionNotes(tableID);
+				const sn = new SectionNotes();
 				if (Array.isArray(sectionNotesObj.playedNotes)) sn.playedNotes = sectionNotesObj.playedNotes;
 				if (typeof sectionNotesObj.namedNotes === 'object') sn.namedNotes = sectionNotesObj.namedNotes;
 				if (typeof sectionNotesObj.recordedNotes === 'object') sn.recordedNotes = sectionNotesObj.recordedNotes;
 				section.sectionNotes[tableID] = sn;
+				if (!(sn instanceof SectionNotes)) {
+					console.error(`sectionNotes[${tableID}] is not a SectionNotes instance!`, sn);
+				}
 			});
 		}
 		return section;
@@ -132,6 +135,7 @@ export class SectionV2 {
 		this.currentBeat = 1;
 	}
 
+	
 	// V2: isEmpty checks all NoteTables for content
 	isEmpty() {
 		let noteCount = 0;
@@ -205,7 +209,7 @@ export class SectionV2 {
 		if (section.noteTables && typeof section.noteTables === 'object') {
 			Object.entries(section.noteTables).forEach(([tableID, playedNotes]) => {
 				if (!section.sectionNotes[tableID]) {
-					const sn = new SectionNotes(tableID);
+					const sn = new SectionNotes();
 					if (Array.isArray(playedNotes)) sn.playedNotes = playedNotes;
 					section.sectionNotes[tableID] = sn;
 				}
@@ -247,11 +251,33 @@ export class SectionV2 {
 
 	//================= New V2 Methods =========================================
 
-	getSectionNotesArray(){
-		return this.sectionNotes;
+	ensureSectionNotes(tableID){
+		let sn = this.sectionNotes[tableID];
+		if (sn && !(sn instanceof SectionNotes)) {
+			console.error(`sectionNotes[${tableID}] is not a SectionNotes instance!`, sn);
+		}
+		if (!sn){
+			sn = new SectionNotes();
+			this.sectionNotes[tableID] = sn;
+		}
+		return sn;
 	}
+
+	getTableArr(tableID) {
+        let sn = this.ensureSectionNotes(tableID);
+		return sn.playedNotes;
+    }
+
 	getSectionNotes(tableID) {
-		return this.sectionNotes[tableID];
+		const sn = this.ensureSectionNotes(tableID);
+		if (!(sn instanceof SectionNotes)) {
+			console.error(`getSectionNotes(${tableID}) did not return a SectionNotes instance!`, sn);
+		}
+		return sn;
+	}
+	getAllSectionNotes() {
+		// Returns an array of [tableID, SectionNotes] pairs, so you can .forEach(([tableID, sn]) => ...)
+		return Object.entries(this.sectionNotes);
 	}
 	renameSectionNotesTableID(newTableID){
 		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.

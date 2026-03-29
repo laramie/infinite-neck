@@ -5,6 +5,8 @@
 import {
     Note
 } from './note.js';
+import { SectionNotes } from './SectionNotes.js';
+
 
 var sectionRecorderProviders = {
     getCurrentSection: function () { return null; },
@@ -25,23 +27,24 @@ function clearHighlights() {
 
 
 
-    export function getRecordedNotesForSection(){
-	    if (!getCurrentSection().recordedNotes){
-	       getCurrentSection().recordedNotes = {}
-	    }
-	    return getCurrentSection().recordedNotes;
+    export function getRecordedNotesForSection(tableID){
+        const sn = getCurrentSection().getSectionNotes(tableID);
+        if (!(sn instanceof SectionNotes)) {
+            console.error('getSectionNotes did not return a SectionNotes instance:', sn);
+        }
+	    return sn.recordedNotes;
 	}
 
     export function clearRecordedNotes(){
       clearHighlights();
 	}
 
-    export function recordHighlight(doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName) {
+    export function recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName) {
         var recNote = Note.newNote(noteName, styleNum);
         recNote.midinum = midinum;
         recNote.row = cellrow;
 
-        var recordedNotes = getRecordedNotesForSection();
+        var recordedNotes = getRecordedNotesForSection(tableID);
         var notesInBeatArr = recordedNotes[sBeatNum];
         if (!notesInBeatArr){
           recordedNotes[sBeatNum] = [];
@@ -53,12 +56,12 @@ function clearHighlights() {
         //console.log("noteHighlight:"+JSON.stringify(recordedNotes, null, 2));
     }
 
-    export function recordHighlightSingle(doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName){
+    export function recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName){
         var recNote = Note.newNote(noteName, styleNum);
         recNote.midinum = midinum;
         recNote.row = cellrow;
 
-        var recordedNotes = getRecordedNotesForSection();
+        var recordedNotes = getRecordedNotesForSection(tableID);
         var notesInBeatArr = recordedNotes[sBeatNum];
         if (!notesInBeatArr){
             recordedNotes[sBeatNum] = [];
@@ -79,8 +82,8 @@ function clearHighlights() {
         }
     }
 
-    export function recordPlayedNote(sBeatNum, recNote){
-        var recordedNotes = getRecordedNotesForSection();
+    export function recordPlayedNote(tableID, sBeatNum, recNote){
+        var recordedNotes = getRecordedNotesForSection(tableID);
         var notesInBeatArr = recordedNotes[sBeatNum];
         if (!notesInBeatArr){
             recordedNotes[sBeatNum] = [];
@@ -88,7 +91,7 @@ function clearHighlights() {
         recordedNotes[sBeatNum].push(recNote);
     }
 
-    export function recordingHasPlayedNote(sBeatNum, proxyNote){
+    export function recordingHasPlayedNote(tableID, sBeatNum, proxyNote){
 		function filterForNote(element, index, array){
             if (element.midinum == proxyNote.midinum
 				&& element.row == proxyNote.row
@@ -97,7 +100,7 @@ function clearHighlights() {
 			}
 			return false;
         }
-		var recordedNotes = getRecordedNotesForSection();
+		var recordedNotes = getRecordedNotesForSection(tableID);
 		var notesInBeatArr = recordedNotes[sBeatNum];
 		if (!notesInBeatArr){
 			return false;
@@ -105,8 +108,8 @@ function clearHighlights() {
 		return recordedNotes[sBeatNum].filter(filterForNote).length>0;
 	}
 
-    export function unRecordPlayedNote(sBeatNum, recNote){
-		getRecordedNotesForSection()[sBeatNum] = filterOutMidinumRowStyleNum(getRecordedNotesForSection(), sBeatNum, recNote);
+    export function unRecordPlayedNote(tableID, sBeatNum, recNote){
+		getRecordedNotesForSection(tableID)[sBeatNum] = filterOutMidinumRowStyleNum(getRecordedNotesForSection(tableID), sBeatNum, recNote);
 	}
 
 	function filterOutMidinumRowStyleNum(recordedNotes, sBeatNum, recNote){

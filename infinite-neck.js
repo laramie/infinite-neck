@@ -887,7 +887,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			TuningsLibrary.hideAllTunings();
 		}
 		var jsonObj = JSON.parse(str);
-		Object.assign(gSong, jsonObj);
+
+
+		//Object.assign(gSong, jsonObj);
+		// Save and remove sections before assigning
+		const { sections, ...rest } = jsonObj;
+		Object.assign(gSong, rest); // assign all but sections
 		loadSongOwnedTunings();
 		getSong().fixupCurrentIndexForLoadedSong();
 
