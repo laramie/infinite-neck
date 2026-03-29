@@ -881,7 +881,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function openSong(str){
-		debugger
 		var numFoundBeforeFileLoad = TuningsLibrary.showTuningsForTablesInFile();
 		if (numFoundBeforeFileLoad==0){
 			TuningsLibrary.hideAllTunings();

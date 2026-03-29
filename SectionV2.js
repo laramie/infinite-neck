@@ -168,7 +168,7 @@ export class SectionV2 {
 	moveNamedNotes(amount) {
 		Object.entries(this.sectionNotes).forEach(([tableID, sn]) => {
 			const namedNotes = sn.namedNotes;
-			moveNamedNotesForOneTable(namedNotes, amount);
+			this.moveNamedNotesForOneTable(namedNotes, amount);
 		});
 	}
 	moveNamedNotesForOneTable(namedNotes, amount) {

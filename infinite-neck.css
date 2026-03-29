@@ -371,7 +371,7 @@ table.viewControls th {
   grid-row: 1;
 }
 .instrumentSectionBox {
-   border: 1px solid green; 
+   
    padding: 0.3em;
 }
 .instrumentSectionMark {
@@ -903,6 +903,12 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 #btnLoopSections.ButtonOn {
     background-color: magenta !important;
 }
+.LooperLight {
+    border: 1px solid green; 
+}
+.LooperLightOn {
+    border: 1px solid magenta !important; 
+}
 
 .BtnPunchedIn {
     box-shadow: inset 2px 2px 5px 2px #555;
@@ -975,11 +981,11 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     font-size:  200%;
 }
 .lblSectionNumber {
-    border: 1px solid  darkolivegreen;
     padding: 0.2em;
     margin-left: 1em;
     margin-right: 1em;
 }
+
 .lblSectionmark {
     color: darkolivegreen;
     font-size: 60%;

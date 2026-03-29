@@ -175,7 +175,7 @@ export function buildNoteTable(options) {
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
 	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>&nbsp;&nbsp;&nbsp;';
-	var sectionMark = '<span class="instrumentSectionBox" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
+	var sectionMark = '<span class="instrumentSectionBox LooperLight" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
 	var p = $("<p>");
 	p.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';

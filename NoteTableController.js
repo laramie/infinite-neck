@@ -376,15 +376,6 @@ export function colorNote(cell) {
         // NOTE: this is a little brittle: if you add any other structural classes besides "namedNote", this breaks.
         var lenOtherClasses = namedNoteDiv.prop("className").replace('namedNote','').length; // .trim()???deal with spaces
         var noteAlreadyColored = (lenOtherClasses>0);
-        /*
-        console.log("  note: "
-                    +"\r\n   theColorClass:"+theColorClass
-                    +"\r\n   lookupUserColorClassByClass:"+lookupUserColorClassByClass(theColorClass)
-                    //+"\r\n   lookupUserColorClass(note):"+lookupUserColorClass(note)
-                    +"\r\n   namedNoteDiv-->className:"+namedNoteDiv.prop("className")
-                    );
-        */
-
 
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
 			getCurrentSection().namedNotes[noteName] = {};
@@ -398,7 +389,6 @@ export function colorNote(cell) {
             var automaticColorClass = lookupUserColorClass(note);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            debugger
             getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   //V2-storage
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
@@ -408,7 +398,6 @@ export function colorNote(cell) {
     		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;   //V2-storage
             }
 		}
-        //console.log("  namedNoteDiv-->className:"+namedNoteDiv.prop("className"));
         return;
     }
 }
@@ -569,34 +558,34 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 //=================================REPLAY========================================
 export function replay(){
-    let replayOptions = {};
-    replayOptions.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
-    replayOptions.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-    replayOptions.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-    replayOptions.hideFingering   = $("#cbHideFingering").prop("checked");
+    let opts = {};
+    opts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
+    opts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+    opts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+    opts.hideFingering   = $("#cbHideFingering").prop("checked");
 
     let visibleTables = getSong().getVisibleTunings();
     visibleTables.forEach(tablename =>{
-        replayOptions.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
+        opts.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
-            replayOptions.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
-            replayOptions.listenToTablename = wiring.listenToTablename;
-            replayOptions.relativeSection = wiring.relativeSection;
-            return;
+            opts.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
+            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            opts.listenToTablename = wiring.listenToTablename;
+            opts.relativeSection = wiring.relativeSection;
+            replayTable(opts);
         } else {
             if (wiring && wiring.listenToTablename) {
-                replayOptions.currSection = getCurrentSection();
-                replayOptions.listenToTablename = wiring.listenToTablename;
-                replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
-                replayTable(replayOptions);
+                opts.currSection = getCurrentSection();
+                opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+                opts.listenToTablename = wiring.listenToTablename;
+                replayTable(opts);
             }
-            replayOptions.currSection = getCurrentSection();
-            replayOptions.listenToTablename = tablename;
-            replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
-            replayTable(replayOptions);
+            opts.currSection = getCurrentSection();
+            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            opts.listenToTablename = tablename;
+            replayTable(opts);
         }
-        
     });
 }
 
@@ -605,8 +594,7 @@ export function replayTable(replayOptions){
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
 
-
-    $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+replayOptions.sectionIndex);
+    $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
 
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
@@ -615,46 +603,24 @@ export function replayTable(replayOptions){
     let listenToTablename = replayOptions.listenToTablename;
     
     if (!replayOptions.hideNamedNotes){
-        if (replayOptions.currSection.namedNotes){
-            Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {  //V2-storage
-                console.log("Doing V1 replay of namedNotes:"+noteName);
-                var namedNote = replayOptions.currSection.namedNotes[noteName];     //V2-storage
-                var theSelect;
-                if (namedNote.noteName){
-                    theSelect = nnTablenameSelector+".note"+namedNote.noteName;
-                }
-                var theClass = $(theSelect);
-                if (!theSelect){
-                    console.log("undef:"+JSON.stringify(namedNote));
-                }
-                var theColorClass = lookupUserColorClass(namedNote);
-                styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-            });
-        } else {
-            console.log("Doing V2 preflight: "+JSON.stringify(replayOptions.currSection));
-            if (replayOptions.currSection.sectionNotes && replayOptions.currSection.sectionNotes[tablename]){
-                let namedNotes = replayOptions.currSection.sectionNotes[tablename].namedNotes;
-                if (namedNotes){
-                    Object.keys(namedNotes).forEach(noteName => {  //V2-storage
-                        console.log("Doing V2 replay of namedNotes:"+noteName);
-                        var namedNote = namedNotes[noteName];     //V2-storage
-                        var theSelect;
-                        if (namedNote.noteName){
-                            theSelect = nnTablenameSelector+".note"+namedNote.noteName;
-                        }
-                        var theClass = $(theSelect);
-                        if (!theSelect){
-                            console.log("undef:"+JSON.stringify(namedNote));
-                        }
-                        var theColorClass = lookupUserColorClass(namedNote);
-                        styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-                    });
-                }
+        if (replayOptions.currSection.sectionNotes && replayOptions.currSection.sectionNotes[listenToTablename]){
+            let namedNotes = replayOptions.currSection.sectionNotes[listenToTablename].namedNotes;
+            if (namedNotes){
+                Object.keys(namedNotes).forEach(noteName => {
+                    var namedNote = namedNotes[noteName];
+                    var theSelect;
+                    if (namedNote.noteName){
+                        theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                    }
+                    var theClass = $(theSelect);
+                    if (!theSelect){
+                        console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
+                    }
+                    var theColorClass = lookupUserColorClass(namedNote);
+                    styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+                });
             }
         }
-
-
-
     } else {
         $(nnTablenameSelector+'.namedNote').hide();
     }
@@ -668,7 +634,6 @@ export function replayTable(replayOptions){
             tablearr = sn.playedNotes;
         }
     }
-    //console.log("tablearr[listenToTablename:"+listenToTablename+"]: "+JSON.stringify(tablearr));
     if (tablearr){
         tablearr.forEach(script => {
             console.log("replay===tablename==>"+tablename+"===listenToTablename===>"+listenToTablename+"<===");
@@ -732,7 +697,6 @@ export function showHighlightsForBeat(nBeat){
 
 
 export function showHighlightsForBeatForTable(nBeat, tablename){
-    //var dict = getCurrentSection().recordedNotes;
     let tableSelector = '';
     if (tablename){
         tableSelector = '#'+tablename+' ';
@@ -809,10 +773,7 @@ export function showHighlightsForBeatForTable(nBeat, tablename){
 export function highlightOneNote(noteName){
 	var selector = "td.note"+noteName;
       $(selector).addClass("noteHighlight");
-	  //console.log("Highlighting:"+noteName+" :: "+selector);
 }
-
-
 
 //=================================CLEARING========================================
 
@@ -846,7 +807,6 @@ export function clearHighlights(){
     $("td.note").removeClass("noteHighlight");
     $("td.note").removeClass("noteHighlightSingle");
 }
-
 
 //==================FILLING=====================================================
 

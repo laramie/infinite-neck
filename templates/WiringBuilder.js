@@ -32,6 +32,12 @@ function buildWiringWidget(tuningID, tablename) {
 
     $(controlsDiv).find('.selTablename').on('change', function() {
         updateWiringButtonStatus(controlsDiv);
+        // If the new value is "" (none), remove the wiring for thisTablename, and empty the Relative Section Amount.
+        if ($(this).val() === "") {
+            const thisTablename = $(controlsDiv).find('.thisTablename').data('tablename');
+            getSong().removeWiring(thisTablename);
+            $(controlsDiv).find('.editRelativeSection').val("");
+        }
     });
     $(controlsDiv).find('.editRelativeSection').on('change input', function() {
         updateWiringButtonStatus(controlsDiv);
@@ -52,7 +58,6 @@ export function updateAllWiringSelects() {
         const thisTable = $(this).find('.thisTablename').data('tablename');
         const sel = $(this).find('.selTablename');
         const editRelativeSection = $(this).find('.editRelativeSection');
-        // ...populate select and set values as before...
         sel.empty();
         sel.append($('<option>', { value: "", text: "none" }));
         const prefix = (typeof Constants !== 'undefined' && Constants.TABLE_ID_PREFIX) ? Constants.TABLE_ID_PREFIX : 'tbl';
@@ -66,7 +71,6 @@ export function updateAllWiringSelects() {
         sel.val(wiring.listenToTablename || "");
         editRelativeSection.val(wiring.relativeSection || "");
 
-        // Use the new function
         updateWiringButtonStatus(this);
     });
     restoreWiringOpenState();

@@ -14,6 +14,11 @@ function setButtonState(selector, caption, isOn) {
 	}
 	$(selector).toggleClass('ButtonOn', !!isOn);
 }
+function setLooperLightState(selector, isOn) {
+	if (!hasJQuery()) return;
+	$(selector).toggleClass('LooperLightOn', !!isOn);
+}
+
 
 function createDefaultLooperProviders() {
 	return {
@@ -21,7 +26,10 @@ function createDefaultLooperProviders() {
 		getSong: function () { return null; },
 		getLoopSectionsCaption: function () { return getButtonCaption('#btnLoopSections', 'LOOP'); },
 		getLoopBeatsCaption: function () { return getButtonCaption('#btnLoopBeats', 'LOOP BEATS'); },
-		setLoopSectionsButton: function (caption, isOn) { setButtonState('#btnLoopSections', caption, isOn); },
+		setLoopSectionsButton: function (caption, isOn) { 
+			setButtonState('#btnLoopSections', caption, isOn); 
+			setLooperLightState('.LooperLight', isOn);
+		},
 		setLoopBeatsButton: function (caption, isOn) { setButtonState('#btnLoopBeats', caption, isOn); },
 		setLoopBeatsTransportButton: function (isOn) { setButtonState('#btnLoopBeatsTransport', null, isOn); },
 		setLoopInterval: function (handler, millis) {

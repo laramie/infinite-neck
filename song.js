@@ -168,6 +168,9 @@ export class Song {
             this.wirings[idx] = newWiring;
         }
     }
+    removeWiring(tablename){
+        this.wirings = this.wirings.filter(w => w.tablename !== tablename);
+    }
     fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;
         if (this.gSectionsCurrentIndex >= this.sections.length) {
@@ -872,7 +875,6 @@ export class Song {
 	}
 
     getTableArrInCurrentSection(tableID){
-        debugger
         return this.getCurrentSection().getTableArr(tableID);
 	}
 
