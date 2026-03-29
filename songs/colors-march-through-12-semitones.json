@@ -6,144 +6,144 @@
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 1,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 2,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 3,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 4,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 5,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 6,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 7,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 8,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 9,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 10,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 11,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 6,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 1,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 8,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 3,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 10,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 5,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 0,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "rootID": 7,
       "beats": "4",
       "sharps": false,
       "currentBeat": 1,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     }
   ],
   "visibleNoteTables": [
-    "tblP46"
+    "tblP46_1"
   ],
   "defaultBPM": "200",
   "rootID": "3",
@@ -152,7 +152,7 @@
   "singleNoteOpacity": "1.00",
   "tunings": [
     {
-      "baseID": "P46",
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,

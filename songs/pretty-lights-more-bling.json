@@ -7,7 +7,7 @@
       "beats": "4",
       "currentBeat": 3,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "caption": "",
@@ -16,8 +16,8 @@
       "beats": "4",
       "currentBeat": 4,
       "sharps": false,
-      "sectionNotes": {
-        "tblP46": {
+      "sectionNotesDict": {
+        "tblP46_1": {
           "playedNotes": [
             {
               "midinum": "60",
@@ -96,7 +96,7 @@
     }
   ],
   "visibleNoteTables": [
-    "tblP46"
+    "tblP46_1"
   ],
   "defaultBPM": "80",
   "rootID": "3",
@@ -105,7 +105,7 @@
   "singleNoteOpacity": "1.00",
   "tunings": [
     {
-      "baseID": "P46",
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,

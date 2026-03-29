@@ -603,8 +603,8 @@ export function replayTable(replayOptions){
     let listenToTablename = replayOptions.listenToTablename;
     
     if (!replayOptions.hideNamedNotes){
-        if (replayOptions.currSection.sectionNotes && replayOptions.currSection.sectionNotes[listenToTablename]){
-            let namedNotes = replayOptions.currSection.sectionNotes[listenToTablename].namedNotes;
+        if (replayOptions.currSection.sectionNotesDict && replayOptions.currSection.sectionNotesDict[listenToTablename]){
+            let namedNotes = replayOptions.currSection.sectionNotesDict[listenToTablename].namedNotes;
             if (namedNotes){
                 Object.keys(namedNotes).forEach(noteName => {
                     var namedNote = namedNotes[noteName];
@@ -629,7 +629,7 @@ export function replayTable(replayOptions){
     if (replayOptions.currSection.noteTables){
         tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
     } else {
-        let sn = replayOptions.currSection.sectionNotes[listenToTablename];
+        let sn = replayOptions.currSection.sectionNotesDict[listenToTablename];
         if (sn){
             tablearr = sn.playedNotes;
         }
@@ -701,7 +701,7 @@ export function showHighlightsForBeatForTable(nBeat, tablename){
     if (tablename){
         tableSelector = '#'+tablename+' ';
     }
-    let sn = getCurrentSection().sectionNotes[tablename];
+    let sn = getCurrentSection().sectionNotesDict[tablename];
     let dict = null;
     if (sn) {
         dict = sn.recordedNotes;

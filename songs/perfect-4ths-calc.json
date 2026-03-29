@@ -7,7 +7,7 @@
       "beats": "4",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     }
   ],
   "gSectionsCurrentIndex": 0,

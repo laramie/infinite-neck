@@ -27,8 +27,8 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotes": {
-        "tblP46": {
+      "sectionNotesDict": {
+        "tblP46_1": {
           "playedNotes": [
             {
               "midinum": "49",
@@ -114,8 +114,8 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotes": {
-        "tblP46": {
+      "sectionNotesDict": {
+        "tblP46_1": {
           "playedNotes": [
             {
               "midinum": "49",
@@ -201,11 +201,11 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     }
   ],
   "visibleNoteTables": [
-    "tblP46"
+    "tblP46_1"
   ],
   "defaultBPM": "333",
   "rootID": "3",
@@ -215,7 +215,7 @@
   "tinyNoteOpacity": "1",
   "tunings": [
     {
-      "baseID": "P46",
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,

@@ -7,7 +7,7 @@
       "beats": "4",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "caption": "${getSong().getRootKey()} Maj 9",
@@ -16,7 +16,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "type": "Section",
@@ -26,8 +26,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -72,8 +72,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -114,8 +114,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -156,8 +156,8 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -221,8 +221,8 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -259,8 +259,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -297,8 +297,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -339,8 +339,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -381,8 +381,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -419,8 +419,8 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
-        "tblPiano": {
+      "sectionNotesDict": {
+        "tblPiano_1": {
           "playedNotes": [
             {
               "midinum": "58",
@@ -455,7 +455,7 @@
   "gFirstBeatSeen": false,
   "gSongModelListener": null,
   "visibleNoteTables": [
-    "tblP46"
+    "tblP46_1"
   ],
   "defaultBPM": "44",
   "rootID": "3",
@@ -464,7 +464,7 @@
   "songName": "All-Chords-C",
   "tunings": [
     {
-      "baseID": "P46",
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,

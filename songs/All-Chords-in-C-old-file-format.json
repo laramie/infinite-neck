@@ -7,7 +7,7 @@
       "beats": 4,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "caption": "",
@@ -16,7 +16,7 @@
       "beats": "4",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "caption": "C Maj 9",
@@ -25,7 +25,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {}
+      "sectionNotesDict": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -34,7 +34,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -87,7 +87,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -137,7 +137,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -187,7 +187,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -260,7 +260,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -310,7 +310,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -360,7 +360,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -410,7 +410,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -460,7 +460,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -507,7 +507,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -554,7 +554,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {
@@ -628,7 +628,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotes": {
+      "sectionNotesDict": {
         "tblPiano": {
           "playedNotes": [
             {

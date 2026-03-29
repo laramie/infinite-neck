@@ -440,9 +440,9 @@ export class Song {
     }
 
     static assertAllSectionNotesAreInstances(section) {
-        Object.entries(section.sectionNotes).forEach(([tableID, sn]) => {
+        Object.entries(section.sectionNotesDict).forEach(([tableID, sn]) => {
             if (!(sn instanceof SectionNotes)) {
-                console.error(`sectionNotes[${tableID}] is not a SectionNotes instance!`, sn);
+                console.error(`sectionNotesDict[${tableID}] is not a SectionNotes instance!`, sn);
             }
         });
     }
@@ -618,7 +618,7 @@ export class Song {
             console.warn("Can't delete beat #1. returning.");
             return;
         }
-        // For each table in sectionNotes:
+        // For each table in sectionNotesDict:
         let allTablesInSection = this.getCurrentSection().getAllSectionNotes();
         allTablesInSection.forEach(([tableID, sn]) => {
             if (sn.recordedNotes) {

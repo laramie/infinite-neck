@@ -11,13 +11,26 @@ function convertSectionV1toV2(section) {
   const v1RecordedNotes = section.recordedNotes || {};
   const v2SectionNotes = {};
 
-  // For each noteTable in V1, create V2 structure under sectionNotes
-  for (const [tableId, playedNotesArr] of Object.entries(v1NoteTables)) {
-    v2SectionNotes[tableId] = {
-      playedNotes: Array.isArray(playedNotesArr) ? playedNotesArr : [],
-      namedNotes: { ...v1NamedNotes },
-      recordedNotes: { ...v1RecordedNotes }
-    };
+  const noteTableKeys = Object.keys(v1NoteTables);
+  if (noteTableKeys.length > 0) {
+    // For each noteTable in V1, create V2 structure under sectionNotesDict
+    for (const [tableId, playedNotesArr] of Object.entries(v1NoteTables)) {
+      v2SectionNotes[tableId] = {
+        playedNotes: Array.isArray(playedNotesArr) ? playedNotesArr : [],
+        namedNotes: { ...v1NamedNotes },
+        recordedNotes: { ...v1RecordedNotes }
+      };
+    }
+  } else {
+    // No noteTables: try to use first visibleNoteTables entry as tableId
+    if (Array.isArray(globalVisibleNoteTables) && globalVisibleNoteTables.length > 0) {
+      const tableId = globalVisibleNoteTables[0];
+      v2SectionNotes[tableId] = {
+        playedNotes: [],
+        namedNotes: { ...v1NamedNotes },
+        recordedNotes: { ...v1RecordedNotes }
+      };
+    }
   }
 
   // Copy all other properties except noteTables, namedNotes, recordedNotes
@@ -30,13 +43,16 @@ function convertSectionV1toV2(section) {
 
   return {
     ...rest,
-    sectionNotes: v2SectionNotes
+    sectionNotesDict: v2SectionNotes
   };
 }
 
 function convertV1toV2(v1) {
   const v2 = { ...v1 };
+  // Make visibleNoteTables available globally for section conversion
+  global.globalVisibleNoteTables = Array.isArray(v1.visibleNoteTables) ? v1.visibleNoteTables : [];
   v2.sections = (v1.sections || []).map(convertSectionV1toV2);
+  delete global.globalVisibleNoteTables;
   return v2;
 }
 
