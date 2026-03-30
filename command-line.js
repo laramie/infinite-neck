@@ -48,7 +48,6 @@ function preloadCmdLineFromInputMenu(inputMenu) {
     if (!inputMenu) {
         return;
     }
-    debugger
     let inputMenuDefaultStr = "";
     let inputMenuDefault = inputMenu.default;
     if (inputMenuDefault && typeof inputMenuDefault === 'object'){
