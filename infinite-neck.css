@@ -115,17 +115,6 @@ body {
     transform: translateY(3px); /* Move the button down slightly */
 }
 
-.exportButton {
-    padding: 6pt;
-    margin-bottom: 2pt;
-    font-size:  70%;
-    background-color: 578607;
-    color: black;
-    box-shadow: inset 0 0 2pt 2pt  black;
-    border-radius: 0.2em;
-    border: 1px solid black;
-    
-}   
 .HamburgerClass {
     padding: 6pt;
     margin:0;
@@ -144,25 +133,27 @@ body {
     background-color: darkseagreen;
     border-radius: 0.2em;
 }
-.showcolordict {
-    padding: 8px;
-    padding-top: 11px;
-    box-shadow: inset 0 0 2pt 2pt  black;
-    border: 3px solid black;
-    background-color: darkseagreen;
-    border-radius: 0.2em;
-}
+
+.showcolordict, 
 .showWiringButton {
-    padding: 8px;
-    padding-top: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    font-size: 80%; /* match .showWiringButton for consistency */
+    padding: 0.4em;
     box-shadow: inset 0 0 2pt 2pt  black;
     border: 3px solid black;
     background-color: darkseagreen;
     border-radius: 0.2em;
+    font-size: 80%;
 }
 
-
-
+.showcolordict img {
+    display: block;
+    max-height: 1.2em; /* or adjust as needed for your line height */
+    width: auto;
+}
 
 #btnShowWarny {
     font-size: 70%;
@@ -345,41 +336,6 @@ table.viewControls th {
 .divViewCard table{
     width: 100%;
 }
-.instrumentBackground {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
-    height: 100%; /* optional, for full height */
-    gap: 0;       /* adjust as needed */
-    color: gold;
-    background-color: #0aa; /*working default greenish*/
-    margin: 1em;
-    margin-bottom: var(--instrument-margin-tb);
-    margin-left: 1.5em;
-    border: 1px solid black;
-    box-shadow: 0 0 6pt 3pt maroon;
-    border-radius: 0.3em;
-    padding: 8pt;
-    /*background-image: url('img/celtic-background-2.png');*/
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    border-image: var(--instrument-border-image) 30 / 19px round;
-}
-
-.captionRow {
-  grid-column: 1 / span 2;
-  grid-row: 1;
-}
-.instrumentSectionBox {
-   
-   padding: 0.3em;
-}
-.instrumentSectionMark {
-    
-    color: green;
-    font-size: 80%;
-    padding-right: 0.5em;
-}
 .relativeSectionLabel{
     color: rgb(7, 164, 83);
     font-size: 80%;
@@ -387,16 +343,6 @@ table.viewControls th {
 }
 
 
-
-.fretTable {
-  grid-column: 2;
-  grid-row: 2;
-  height: 100%;
-}
-table.fretTable {
-    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
-    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
-}
 
 .sliderTable td:nth-child(2),
 .sliderTable th:nth-child(2) {
@@ -1051,13 +997,6 @@ P {
     margin: 0;
 }
 
-#tabledestTopPad {
-    height: 5em;
-}
-#tabledest {
-    display: inline-block;
-}
-
 .container {
     width: 100%;
     height: 100%;
@@ -1309,10 +1248,7 @@ small {
     display: none;
 }
 
-/* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
-.leftmarginInstrument {
-    margin-left: 110px; /* same as td.note */
-}
+
 
 #EXAMPLECmdMenuOptionsTable  td:nth-child(2) {width: 100pt;}
 
@@ -1735,7 +1671,7 @@ However, don't use for Root or other things.
     width: 4em;
     height:2em;
     padding: 0.2em;
-    font-size:  75%;
+    font-size:  65%;
     font-weight: bold;
     background-color: aqua;
     border: 1px solid orange;

@@ -975,6 +975,14 @@ export class Song {
     moveNamedNotesForSection(amount, section){
 	    this.normalizeSection(section).moveNamedNotes(amount);
   	}
+
+    movePlayedNotesAllSections(amount){
+        console.log("movePlayedNotesAllSections not implemented");
+    }
+    moveRecordedNotesAllSections(amount){
+        console.log("moveRecordedNotesAllSections not implemented");
+    }
+    
     //============= EventBus =========================
 
     requestUiClearAll() {

@@ -737,13 +737,17 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "pluginDaCapoWInput":
 			console.log("pluginDaCapoWInput: "+stringifyMenuItem(menuItem));
+			console.log("pluginDaCapoWInput inputs: "+JSON.stringify(argByInputID));
+			let daCapoOptWI = JSON.parse(argByInputID);
+			let daCapoWI = new DaCapo();
+			daCapoWI.installHook(DaCapo.ON_SONG_END, daCapoOptWI);
+			restartLoopSections(); 
 			break;
 		case "pluginDaCapo":
 			console.log("pluginDaCapo: "+stringifyMenuItem(menuItem));
 			let daCapo = new DaCapo();
-			let amount = 1;
-			let sections = "[]"; //empty array means "all sections"
-			daCapo.installHook(DaCapo.ON_SONG_END, amount, sections);
+			let daCapoOpt = {'amount':1, 'NamedNotes':true};
+			daCapo.installHook(DaCapo.ON_SONG_END, daCapoOpt);
 			restartLoopSections(); 
 			break;
 		case "noAction":

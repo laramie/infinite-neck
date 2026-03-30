@@ -8,6 +8,19 @@ export function setMenuValueResolver(resolverFn) {
   }
 }
 
+export function resolveMenuValue(value) {
+    if (value === undefined || value === null) {
+        return "";
+    }
+
+    const resolved = gMenuValueResolver(value);
+    if (resolved === undefined || resolved === null) {
+        return "" + value;
+    }
+
+    return "" + resolved;
+}
+
 export var gMenuFile =    {
   "name": "root",
   "parent": null,
@@ -148,9 +161,10 @@ export var gMenuFile =    {
               "action": "pluginDaCapoWInput",
               "input": {
                 "type": "input",
-                "caption": "1, 2, etc.",
-                "default": "1",
-                "datatype": "int",
+                "caption": "JSON config",
+                "defaultWorked": "{'named':true,'played':true}",
+                "default": {'amount': 1, 'NamedNotes':true, 'PlayedNotes':true, 'RecordedNotes':true},
+                "datatype": "json",
                 "id": "daCapoInput"
               }
             },

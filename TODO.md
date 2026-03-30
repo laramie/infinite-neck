@@ -26,7 +26,6 @@ UI state is gathered by the controller (`infinite-neck.js`) and passed into the 
 - `song.js` — `prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning })` — the pure model entry point for all save-path state
 - `song.js` — `markVisibleTablesForFileSave(visibleTableIds)` — accepts the array, sets `visibleNoteTables` + `tunings`
 - `infinite-neck.js` — `updateMemoryModelPreFileSave()` — the controller-layer DOM snapshot; the only place that reads DOM values for save
-- `infinite-neck.js` — `exportFromTable()` — also computes `visibleTableIds` for cross-table note export
 
 ### TODOs — Wire UI change events directly into the model
 

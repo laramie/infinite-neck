@@ -692,9 +692,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		$('.MainMenuTabBtn').removeClass("BtnPunchedIn").addClass("BtnPunchedOut");
 	    //$("#topControlsCaptions").show();
-	 }
+	}
 
-	 export function showOneMenu(strMenuDiv){
+	export function showOneMenu(strMenuDiv){
 		 var wasFull = leaveFullscreen();
 		 var jStrMenuDiv = $(strMenuDiv);
 		 if (wasFull){
@@ -711,9 +711,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		 }
 		 //$("#topControlsCaptions").hide();
 		 scrollToTop();
-	 }
+	}
 
-	 export function getHelpTopic(){
+	export function getHelpTopic(){
 		 var anchor = "";
 		 for (const [key, value] of Object.entries(AllMenuDivs)){
 			 var jStrMenuDiv = $(key);
@@ -723,42 +723,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
  			 }
  		 }
 		 return  'help.html'+anchor;
-	 }
-
-	export function exportFromTable(tblSource){
-		const visibleTableIds = TuningsLibrary.getAllTunings()
-		    .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-		    .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
-		getSong().markVisibleTablesForFileSave(visibleTableIds);
-		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
-			if (tblSource != tableDest){
-				//console.log("src:"+tblSource+", dest:"+tableDest);
-				exportPlayedNotesToOtherTable(tblSource, tableDest);
-			}
-		});
 	}
-
-	export function exportPlayedNotesToOtherTable(tblSource, tblDest){
-	  var noteArr = getSong().getTableArrInCurrentSection(tblSource);
-	  noteArr.forEach(noteCell => {
-		  //console.log("exportPlayedNotesToOtherTable "+noteCell.midinum+","+noteCell.row);
-		  var jtd = showMidiNotesInTable(tblDest, noteCell.midinum, noteCell.row);
-		  //colorNote(jtd);
-		  colorSingleNotes(jtd, noteCell.colorClass, noteCell.styleNum, false);
-	  });
-	}
-
-
 
 	export function turnOnKeep(){
-      $("#idKeep").prop("checked", true);
-  }
+		$("#idKeep").prop("checked", true);
+	}
 
-  export function hideNoteClickedCaption(){
-     $(".lblNoteClickedCaption").hide();
-  }
+	export function hideNoteClickedCaption(){
+		$(".lblNoteClickedCaption").hide();
+	}
 
-  export function setNoteClickedCaption(cell, theColorClass, styleNum){
+    export function setNoteClickedCaption(cell, theColorClass, styleNum){
       var caption = "";
       if (cell.attr('midinum')){
           $(".lblNoteClickedCaption").show();
@@ -774,7 +749,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					 +'&nbsp;<small>'+Note.styleNumToCaption(styleNum)+':'+theColorClass+'</small>' ;
 	    }
       $(".lblNoteClickedCaption").html(caption);
-   }
+    }
 
   	export function getBeatNumber(){
 		return $("#lblCurrentBeat").text();
@@ -1188,13 +1163,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		highlightOneNote(namedNoteName);
 	}
 
-	export function transposeSong(amount, which = ['NamedNotes']){
-		//But which could be: ['NamedNotes', 'PlayedNotes', 'RecordedNotes']
-		//If song is "unlocked" then allow ['n','p','r']
-		//To figure out: is it valuable to provide semantic access to just changing keys?
+	export function transposeSong(amount, options){
+		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true}
 		getSong().cycleThruKeysAllSections(amount);
 		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
-		getSong().moveNamedNotesAllSections(amount);
+		if (options.NamedNotes){
+			getSong().moveNamedNotesAllSections(amount);
+		}
+		if (options.PlayedNotes){
+			getSong().movePlayedNotesAllSections(amount);
+		}
+		if (options.RecordedNotes){
+			getSong().moveRecordedNotesAllSections(amount);
+		}
 		fullRepaint();
 		//Did the whole song, but at least give visual cue that we did something by highlighting current section:
 		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
@@ -1622,14 +1603,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(document).on('click', 'td.hatchPickerCell', function(e) {
 			e.preventDefault();
 			hatchPickerClicked(this);
-		});
-
-		$(document).on('click', 'button.exportButton', function(e) {
-			e.preventDefault();
-			const tableId = $(this).data('export-tableid');
-			if (tableId) {
-				exportFromTable(tableId);
-			}
 		});
 
 		$(document).on('click', '.graveyard-raise-link', function(e) {

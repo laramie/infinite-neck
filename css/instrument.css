@@ -1,0 +1,149 @@
+/*
+   Some CSS rules come in at runtime, inserted into:
+   <script id="laramieStyle">
+       table.fretTable {border-spacing: 5pt; }
+       .instrumentBackground {background-color: black; }
+       .....
+   </script>
+
+   The basic layout as of 20260330 is: 
+
+   	<div id="tabledest">
+		<div class="instrumentBackground" id="divS6_1">
+			<div class="captionRow">
+            </div>
+			<div class="currentColorDict">
+			</div>
+			<p></p>
+			<div class="divWiring" id="divS6_1_wiring" style="display: none;">
+				<div class="Wiring-controls" data-tablename="tblS6_1" data-tuning-i-d="S6_1" data-tuningid="" id="tblS6_1-Wiring-controls">
+				</div>
+			</div>
+			<table border="0" cellpadding="0" cellspacing="4" 
+                   class="fretTable" id="tblS6_1">
+				<tr class="stringRow">
+				</tr>
+			</table>
+		</div>
+        <div class="instrumentBackground" id="divP46_1">
+           Another instrument...
+        </div>
+	</div>
+*/
+
+
+#tabledestTopPad {
+    height: 5em;
+}
+#tabledest {
+    display: inline-block;
+}
+
+
+
+.instrumentBackground {
+    display: flex;
+    flex-direction: column;
+    width: 99% ;
+    box-sizing: border-box;
+    color: gold;
+    background-color: #0aa; 
+    margin: 1em;
+    margin-bottom: var(--instrument-margin-tb);
+    margin-left: 1.5em;
+    border: 1px solid black;
+    box-shadow: 0 0 6pt 3pt maroon;
+    border-radius: 0.3em;
+    padding: 8pt;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-image: var(--instrument-border-image) 30 / 19px round;
+}
+
+instrumentBackground .captionRow {
+    width: 100%;
+}
+.captionRowInstrument {
+    display: inline;
+}
+.captionRowLiveInfo {
+    display: inline;
+    padding: 0;
+}
+
+.spanLeadDifferentFromRoot,
+.joniTuning,
+.lblNoteClickedCaption,
+.tuningBaseIDCaption,
+.tuningIDCaption,
+.instrumentSectionBox,
+.captionRowInstrument,
+.subcaption {
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+}
+.captionRowLiveInfo {
+    margin: 0;
+    height: 1em;
+    width: 1.8em;
+}
+.captionRow .lblRootID {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60%;
+    padding-bottom: 0.01em;
+}
+
+.wiringAndFretTable {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.divWiring {
+    width: 250px; /* or whatever fixed width you want */
+    flex-shrink: 0;
+}
+.divWiring input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fretTableWrapper {
+    flex: 1 1 0;
+    min-width: 0; /* prevents overflow issues */
+    overflow-x: auto;
+}
+
+.fretTableWrapper table {
+  width: 100%; 
+}
+
+.fretTable {
+  height: 100%;
+}
+table.fretTable {
+    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
+    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+}
+
+
+
+/*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
+.instrumentSectionBox {
+   display: inline;
+}
+/* The section character: §    */
+.instrumentSectionMark {
+    color: green;
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+
+
+/* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
+.leftmarginInstrument {
+    margin-left: 110px; /* same as td.note */
+}

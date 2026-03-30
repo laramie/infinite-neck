@@ -39,7 +39,7 @@ export class DaCapo {
 		this.installedHooks = new Map();
 	}
 
-	installHook(hookPoint, amount = '0', sections = '[]') {
+	installHook(hookPoint, options, amount = '0', sections = '[]') {
 		const eventName = toHookEventName(hookPoint);
 		if (!eventName) {
 			throw new Error('DaCapo.installHook() unsupported hook point: ' + hookPoint);
@@ -51,8 +51,20 @@ export class DaCapo {
 			hookPoint,
 			eventName,
 			amount: normalizeStringParam(amount, '0'),
-			sections: normalizeStringParam(sections, '[]')
+			sections: normalizeStringParam(sections, '[]'),
+            options: options
 		};
+
+        /** The payload is sent by whomever sent the EventBus message, in this case looper.js
+         *  who sends:
+         *        EventBus.trigger('DaCapo:OnSectionEnd', {
+         *              sectionIndex: currentSectionIndex,
+         *              sectionCount,
+         *              beat,
+         *              beats
+         *        });
+         * So the payload is the object that is the second arg to trigger().
+         */
 
 		const handler = (payload) => {
 			this.handleHook(hookConfig, payload);
@@ -102,18 +114,13 @@ export class DaCapo {
 	}
 
 	handleSongEnd(hookConfig, payload) {
-		const amount = this.parseAmount(hookConfig.amount);
-		const sections = this.parseSections(hookConfig.sections);
-
-		if (sections.length > 0) {
-			this.warn('DaCapo ON_SONG_END currently ignores sections filter: ' + hookConfig.sections);
-		}
+		//const amount = this.parseAmount(hookConfig.amount);
+		//const sections = this.parseSections(hookConfig.sections);
 
         this.logger.log("========= in handleSongEnd===== \n ==== hookConfig:\n"+JSON.stringify(hookConfig)+"   \n ==== payload:\n"+JSON.stringify(payload));
-		this.transposeSongAction(amount);
+		this.transposeSongAction(hookConfig.options.amount, hookConfig.options);
 		return {
-			amount,
-			sections,
+			hookConfig,
 			payload
 		};
 	}

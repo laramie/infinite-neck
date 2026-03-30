@@ -1,5 +1,6 @@
 {
     "editor.fontSize": 16,
     "editor.formatOnSave": false,
-    "editor.lineNumbers": "off"
+    "editor.lineNumbers": "off",
+    "editor.glyphMargin": false
 }
