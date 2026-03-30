@@ -7,7 +7,7 @@
       "beats": 4,
       "currentBeat": 4,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblS6_1": {
           "playedNotes": [
             {

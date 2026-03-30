@@ -9,7 +9,7 @@ const DEFAULT_BEATS = 4;
 
 export class SectionV2 {
 	constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
-		this.sectionNotesDict = {};
+		this.sectionNotesByTable = {};
 		this.caption = '';
 		this.rootID = rootID;
 		this.rootIDLead = '-1';
@@ -20,7 +20,7 @@ export class SectionV2 {
 
 	/**
 	 * Load a SectionV2 from a section-like object in the new V2 format.
-	 * Each sectionNotesDict entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
+	 * Each sectionNotesByTable entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
 	 */
 	static fromV2Format(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
 		const section = new SectionV2({ rootID, sharps, beats });
@@ -31,16 +31,16 @@ export class SectionV2 {
 		section.currentBeat = sectionLike.currentBeat !== undefined ? sectionLike.currentBeat : 1;
 		section.sharps = sectionLike.sharps !== undefined ? sectionLike.sharps : sharps;
 
-		// sectionNotesDict: { id: { playedNotes, namedNotes, recordedNotes } }
-		if (sectionLike.sectionNotesDict && typeof sectionLike.sectionNotesDict === 'object') {
-			Object.entries(sectionLike.sectionNotesDict).forEach(([tableID, sectionNotesObj]) => {
+		// sectionNotesByTable: { id: { playedNotes, namedNotes, recordedNotes } }
+		if (sectionLike.sectionNotesByTable && typeof sectionLike.sectionNotesByTable === 'object') {
+			Object.entries(sectionLike.sectionNotesByTable).forEach(([tableID, sectionNotesObj]) => {
 				const sn = new SectionNotes();
 				if (Array.isArray(sectionNotesObj.playedNotes)) sn.playedNotes = sectionNotesObj.playedNotes;
 				if (typeof sectionNotesObj.namedNotes === 'object') sn.namedNotes = sectionNotesObj.namedNotes;
 				if (typeof sectionNotesObj.recordedNotes === 'object') sn.recordedNotes = sectionNotesObj.recordedNotes;
-				section.sectionNotesDict[tableID] = sn;
+				section.sectionNotesByTable[tableID] = sn;
 				if (!(sn instanceof SectionNotes)) {
-					console.error(`sectionNotesDict[${tableID}] is not a SectionNotes instance!`, sn);
+					console.error(`sectionNotesByTable[${tableID}] is not a SectionNotes instance!`, sn);
 				}
 			});
 		}
@@ -139,7 +139,7 @@ export class SectionV2 {
 	// V2: isEmpty checks all NoteTables for content
 	isEmpty() {
 		let noteCount = 0;
-		Object.values(this.sectionNotesDict).forEach((sn) => {
+		Object.values(this.sectionNotesByTable).forEach((sn) => {
 			if (sn) {
 				noteCount += (Array.isArray(sn.playedNotes) ? sn.playedNotes.length : 0);
 				noteCount += Object.keys(sn.namedNotes || {}).length;
@@ -152,7 +152,7 @@ export class SectionV2 {
 	// V2: removeEmptyTables removes NoteTables with no notes
 	removeEmptyTables() {
 		const compact = {};
-		Object.entries(this.sectionNotesDict).forEach(([tableID, sn]) => {
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
 			const hasNotes = (Array.isArray(sn.playedNotes) && sn.playedNotes.length > 0)
 				|| (sn.namedNotes && Object.keys(sn.namedNotes).length > 0)
 				|| (sn.recordedNotes && Object.keys(sn.recordedNotes).length > 0);
@@ -160,32 +160,32 @@ export class SectionV2 {
 				compact[tableID] = sn;
 			}
 		});
-		this.sectionNotesDict = compact;
+		this.sectionNotesByTable = compact;
 	}
 
 	// --- Methods that reference namedNotes, noteTables, or recordedNotes directly are omitted or must be rewritten for V2 ---
 
 	moveNamedNotes(amount) {
-		Object.entries(this.sectionNotesDict).forEach(([tableID, sn]) => {
-			const namedNotes = sn.namedNotes;
-			this.moveNamedNotesForOneTable(namedNotes, amount);
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
+			this.moveNamedNotesForOneTable(sn, amount);
 		});
 	}
-	moveNamedNotesForOneTable(namedNotes, amount) {
+	moveNamedNotesForOneTable(sn, amount) {
+		const namedNotes = sn.namedNotes;
 		const namedNotesClone = {};
 		Object.keys(namedNotes).forEach((noteName) => {
 			let index = NOTE_NAMES_RAW.indexOf(noteName);
 			index = (12 + index + amount) % 12;
 			const transposedNoteName = NOTE_NAMES_RAW[index];
 			const otherNote = namedNotes[noteName];
-
+	
 			if (otherNote.colorClass) {
 				const clonedNote = Note.cloneNote(otherNote);
 				clonedNote.noteName = transposedNoteName;
 				namedNotesClone[transposedNoteName] = clonedNote;
 			}
 		});
-		this.namedNotes = namedNotesClone;
+		sn.namedNotes = namedNotesClone;
 	}
 
 	transposeRoot(amount) {
@@ -200,9 +200,9 @@ export class SectionV2 {
 
 		Object.setPrototypeOf(section, SectionV2.prototype);
 
-		// V2: initialize sectionNotesDict from legacy noteTables if present, otherwise empty
-		if (!section.sectionNotesDict || typeof section.sectionNotesDict !== 'object') {
-			section.sectionNotesDict = {};
+		// V2: initialize sectionNotesByTable from legacy noteTables if present, otherwise empty
+		if (!section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
+			section.sectionNotesByTable = {};
 		}
 
 		if (section.caption === undefined) section.caption = '';
@@ -219,13 +219,13 @@ export class SectionV2 {
 	//================= New V2 Methods =========================================
 
 	ensureSectionNotes(tableID){
-		let sn = this.sectionNotesDict[tableID];
+		let sn = this.sectionNotesByTable[tableID];
 		if (sn && !(sn instanceof SectionNotes)) {
-			console.error(`sectionNotesDict[${tableID}] is not a SectionNotes instance!`, sn);
+			console.error(`sectionNotesByTable[${tableID}] is not a SectionNotes instance!`, sn);
 		}
 		if (!sn){
 			sn = new SectionNotes();
-			this.sectionNotesDict[tableID] = sn;
+			this.sectionNotesByTable[tableID] = sn;
 		}
 		return sn;
 	}
@@ -244,7 +244,7 @@ export class SectionV2 {
 	}
 	getAllSectionNotes() {
 		// Returns an array of [tableID, SectionNotes] pairs, so you can .forEach(([tableID, sn]) => ...)
-		return Object.entries(this.sectionNotesDict);
+		return Object.entries(this.sectionNotesByTable);
 	}
 	renameSectionNotesTableID(newTableID){
 		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.

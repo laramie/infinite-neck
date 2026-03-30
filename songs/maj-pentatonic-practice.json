@@ -27,7 +27,7 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1": {
           "playedNotes": [
             {
@@ -114,7 +114,7 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1": {
           "playedNotes": [
             {
@@ -201,7 +201,7 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
       },
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     }
   ],
   "visibleNoteTables": [

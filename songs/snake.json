@@ -7,7 +7,7 @@
       "beats": 12,
       "currentBeat": 8,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1_1": {
           "playedNotes": [
             {
@@ -312,7 +312,7 @@
       "beats": "4",
       "currentBeat": 4,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1_1": {
           "playedNotes": [
             {
@@ -417,7 +417,7 @@
       "beats": "4",
       "currentBeat": 4,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1_1": {
           "playedNotes": [
             {

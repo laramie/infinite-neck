@@ -13,7 +13,7 @@ function convertSectionV1toV2(section) {
 
   const noteTableKeys = Object.keys(v1NoteTables);
   if (noteTableKeys.length > 0) {
-    // For each noteTable in V1, create V2 structure under sectionNotesDict
+    // For each noteTable in V1, create V2 structure under sectionNotesByTable
     for (const [tableId, playedNotesArr] of Object.entries(v1NoteTables)) {
       v2SectionNotes[tableId] = {
         playedNotes: Array.isArray(playedNotesArr) ? playedNotesArr : [],
@@ -43,7 +43,7 @@ function convertSectionV1toV2(section) {
 
   return {
     ...rest,
-    sectionNotesDict: v2SectionNotes
+    sectionNotesByTable: v2SectionNotes
   };
 }
 

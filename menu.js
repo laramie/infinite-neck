@@ -138,6 +138,31 @@ export var gMenuFile =    {
           ]
         },
         {
+          "caption": "<b>p</b>lugins",
+          "trigger": "p",
+          "children": [
+            {
+              "name": "inputsDaCapo",
+              "caption": "<b>i</b>nputs to DaCapo",
+              "trigger": "i",
+              "action": "pluginDaCapoWInput",
+              "input": {
+                "type": "input",
+                "caption": "1, 2, etc.",
+                "default": "1",
+                "datatype": "int",
+                "id": "daCapoInput"
+              }
+            },
+            {
+                "name": "daCapo",
+                "caption": "<b>d</b>aCapo",
+                "trigger": "d",
+                "action": "pluginDaCapo"
+            }
+          ]
+        },
+        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-song"

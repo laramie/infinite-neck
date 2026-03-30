@@ -19,7 +19,7 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt cornflowerblue", 
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "#555",
-        "noteWhiteKeySpecialColor": "#f5e0c4",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
         "noteBlackKeySpecialColor": "#191919",
         "noteWhiteKeyFontColor": "transparent",
         "noteBlackKeyFontColor": "transparent",

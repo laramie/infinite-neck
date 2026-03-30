@@ -1,3 +1,5 @@
+import EventBus from './event-bus.js';
+
 function hasJQuery() {
 	return typeof $ !== 'undefined';
 }
@@ -80,17 +82,28 @@ export function setLooperProviders(providers){
 		looperProviders.setLoopBeatsTransportButton(false);
 	}
 
-	function startLoopSections(){
-		looperProviders.showBPM();
-		var caption = LOOPING_FRAMES_CAPTION;
-		var song = looperProviders.getSong();
-		if (song && song.randomLoop){
-			caption = LOOPING_FRAMES_CAPTION_RANDOM;
-		}
-		looperProviders.setLoopSectionsButton(caption, true);
-		var millisNextBeat = looperProviders.getMillisForBeatClock();
-		showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
-	}
+    function startLoopSections(){
+        looperProviders.showBPM();
+        var caption = LOOPING_FRAMES_CAPTION;
+        var song = looperProviders.getSong();
+        if (song && song.randomLoop){
+            caption = LOOPING_FRAMES_CAPTION_RANDOM;
+        }
+        looperProviders.setLoopSectionsButton(caption, true);
+    
+        if (song) {
+            EventBus.trigger('DaCapo:OnSongBegin', {
+                sectionIndex: song.getSectionsCurrentIndex(),
+                sectionCount: song.getSections().length,
+                beat: song.getBeat(),
+                beats: song.getBeats()
+            });
+        }
+    
+        var millisNextBeat = looperProviders.getMillisForBeatClock();
+        showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
+    }
+
 	function startLoopBeats(){
 		looperProviders.setLoopBeatsButton(LOOPING_BEATS_CAPTION, true);
 		looperProviders.setLoopBeatsTransportButton(true);
@@ -138,21 +151,49 @@ export function setLooperProviders(providers){
 		return looperProviders.getLoopBeatsCaption() === LOOPING_BEATS_CAPTION;
 	}
 
-	export function tickBeat(song, { sectionsLooping, showBeats }) {
-		var beat = song.getBeat();
-		var beats = song.getBeats();
-		if (beat >= beats) {
-			if (sectionsLooping) {
-				song.gotoNextSection(true);  //calls showBeats()
-			} else {
-				song.incBeatLoop();
-				showBeats();
-			}
-		} else {
-			song.incBeatLoop();
-			showBeats();
-		}
-	}
+    export function tickBeat(song, { sectionsLooping, showBeats }) {
+        var beat = song.getBeat();
+        var beats = song.getBeats();
+    
+        if (beat >= beats) {
+            const currentSectionIndex = song.getSectionsCurrentIndex();
+            const sectionCount = song.getSections().length;
+            const isLastSection = currentSectionIndex >= (sectionCount - 1);
+    
+            EventBus.trigger('DaCapo:OnSectionEnd', {
+                sectionIndex: currentSectionIndex,
+                sectionCount,
+                beat,
+                beats
+            });
+    
+            if (sectionsLooping) {
+                if (isLastSection) {
+                    EventBus.trigger('DaCapo:OnSongEnd', {
+                        sectionIndex: currentSectionIndex,
+                        sectionCount,
+                        beat,
+                        beats
+                    });
+                }
+    
+                song.gotoNextSection(true);  //calls showBeats()
+    
+                EventBus.trigger('DaCapo:OnSectionBegin', {
+                    sectionIndex: song.getSectionsCurrentIndex(),
+                    sectionCount: song.getSections().length,
+                    beat: song.getBeat(),
+                    beats: song.getBeats()
+                });
+            } else {
+                song.incBeatLoop();
+                showBeats();
+            }
+        } else {
+            song.incBeatLoop();
+            showBeats();
+        }
+    }
 
 	function showBeatsIntervalHandler(){
 		var song = looperProviders.getSong();

@@ -558,14 +558,16 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 //=================================REPLAY========================================
 export function replay(){
-    let opts = {};
-    opts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
-    opts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-    opts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-    opts.hideFingering   = $("#cbHideFingering").prop("checked");
+    let baseopts = {};
+    baseopts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
+    baseopts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+    baseopts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+    baseopts.hideFingering   = $("#cbHideFingering").prop("checked");
 
     let visibleTables = getSong().getVisibleTunings();
     visibleTables.forEach(tablename =>{
+        let opts = {};
+        Object.assign(opts, baseopts);
         opts.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
@@ -603,8 +605,8 @@ export function replayTable(replayOptions){
     let listenToTablename = replayOptions.listenToTablename;
     
     if (!replayOptions.hideNamedNotes){
-        if (replayOptions.currSection.sectionNotesDict && replayOptions.currSection.sectionNotesDict[listenToTablename]){
-            let namedNotes = replayOptions.currSection.sectionNotesDict[listenToTablename].namedNotes;
+        if (replayOptions.currSection.sectionNotesByTable && replayOptions.currSection.sectionNotesByTable[listenToTablename]){
+            let namedNotes = replayOptions.currSection.sectionNotesByTable[listenToTablename].namedNotes;
             if (namedNotes){
                 Object.keys(namedNotes).forEach(noteName => {
                     var namedNote = namedNotes[noteName];
@@ -629,7 +631,7 @@ export function replayTable(replayOptions){
     if (replayOptions.currSection.noteTables){
         tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
     } else {
-        let sn = replayOptions.currSection.sectionNotesDict[listenToTablename];
+        let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
         if (sn){
             tablearr = sn.playedNotes;
         }
@@ -701,7 +703,7 @@ export function showHighlightsForBeatForTable(nBeat, tablename){
     if (tablename){
         tableSelector = '#'+tablename+' ';
     }
-    let sn = getCurrentSection().sectionNotesDict[tablename];
+    let sn = getCurrentSection().sectionNotesByTable[tablename];
     let dict = null;
     if (sn) {
         dict = sn.recordedNotes;

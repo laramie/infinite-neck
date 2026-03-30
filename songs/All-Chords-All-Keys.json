@@ -7,7 +7,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -16,7 +16,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -25,7 +25,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -34,7 +34,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -43,7 +43,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -52,7 +52,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -61,7 +61,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -70,7 +70,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -79,7 +79,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -88,7 +88,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -97,7 +97,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -106,7 +106,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -115,7 +115,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -124,7 +124,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -133,7 +133,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -142,7 +142,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -151,7 +151,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -160,7 +160,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -169,7 +169,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -178,7 +178,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -187,7 +187,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -196,7 +196,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -205,7 +205,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -214,7 +214,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -223,7 +223,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -232,7 +232,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -241,7 +241,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -250,7 +250,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -259,7 +259,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -268,7 +268,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -277,7 +277,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -286,7 +286,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -295,7 +295,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -304,7 +304,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -313,7 +313,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -322,7 +322,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -331,7 +331,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -340,7 +340,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -349,7 +349,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -358,7 +358,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -367,7 +367,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -376,7 +376,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -385,7 +385,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -394,7 +394,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -403,7 +403,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -412,7 +412,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -421,7 +421,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -430,7 +430,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -439,7 +439,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -448,7 +448,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -457,7 +457,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -466,7 +466,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -475,7 +475,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -484,7 +484,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -493,7 +493,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -502,7 +502,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -511,7 +511,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -520,7 +520,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -529,7 +529,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -538,7 +538,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -547,7 +547,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -556,7 +556,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -565,7 +565,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -574,7 +574,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -583,7 +583,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -592,7 +592,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -601,7 +601,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -610,7 +610,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -619,7 +619,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -628,7 +628,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -637,7 +637,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -646,7 +646,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -655,7 +655,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -664,7 +664,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -673,7 +673,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -682,7 +682,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -691,7 +691,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -700,7 +700,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -709,7 +709,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -718,7 +718,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -727,7 +727,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -736,7 +736,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -745,7 +745,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -754,7 +754,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -763,7 +763,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -772,7 +772,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -781,7 +781,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -790,7 +790,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -799,7 +799,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -808,7 +808,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -817,7 +817,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -826,7 +826,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -835,7 +835,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -844,7 +844,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -853,7 +853,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -862,7 +862,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -871,7 +871,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -880,7 +880,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -889,7 +889,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -898,7 +898,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -907,7 +907,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -916,7 +916,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -925,7 +925,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -934,7 +934,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -943,7 +943,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -952,7 +952,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -961,7 +961,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -970,7 +970,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -979,7 +979,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -988,7 +988,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -997,7 +997,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -1006,7 +1006,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -1015,7 +1015,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -1024,7 +1024,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -1033,7 +1033,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -1042,7 +1042,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -1051,7 +1051,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -1060,7 +1060,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -1069,7 +1069,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -1078,7 +1078,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -1087,7 +1087,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -1096,7 +1096,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -1105,7 +1105,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -1114,7 +1114,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -1123,7 +1123,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -1132,7 +1132,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -1141,7 +1141,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -1150,7 +1150,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -1159,7 +1159,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -1168,7 +1168,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -1177,7 +1177,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min-maj",
@@ -1186,7 +1186,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "chromatic",
@@ -1195,7 +1195,7 @@
       "beats": "1",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "Maj 9",
@@ -1204,7 +1204,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min 7 / min 9",
@@ -1213,7 +1213,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7 b5",
@@ -1222,7 +1222,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dim",
@@ -1231,7 +1231,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "6-9",
@@ -1240,7 +1240,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus II",
@@ -1249,7 +1249,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "sus IV",
@@ -1258,7 +1258,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "dom7",
@@ -1267,7 +1267,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "min7",
@@ -1276,7 +1276,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "13  /   dom7 add-6",
@@ -1285,7 +1285,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1": {
           "playedNotes": [
             {
@@ -1406,7 +1406,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblP46_1": {
           "playedNotes": [
             {

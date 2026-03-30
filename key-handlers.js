@@ -40,6 +40,7 @@ import {
 	getVersionObject,
 	toggleWiringOpenState
 } from './infinite-neck.js';
+import DaCapo from './plugins/DaCapo.js';
 
 export { document_keypress, document_keyup };
 
@@ -441,7 +442,7 @@ export function performCmdAction(menuItem, args){
 			break;
         case "transposeSong":
             if (argByInputID){
-				var amount = toInt(argByInputID, 0);
+				let amount = toInt(argByInputID, 0);
 				if (amount != 0){
 				    transposeSong(amount);
                     actionResult.result = "transposed "+amount;
@@ -450,7 +451,7 @@ export function performCmdAction(menuItem, args){
             break;
         case "transposeSongKeys":
             if (argByInputID){
-				var amount = toInt(argByInputID, 0);
+				let amount = toInt(argByInputID, 0);
 				if (amount != 0){
 				    transposeSongKeys(amount);
                     actionResult.result = "transposed keys "+amount;
@@ -733,6 +734,17 @@ export function performCmdAction(menuItem, args){
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
 			$("#rbBend").prop("checked", true);
+			break;
+		case "pluginDaCapoWInput":
+			console.log("pluginDaCapoWInput: "+stringifyMenuItem(menuItem));
+			break;
+		case "pluginDaCapo":
+			console.log("pluginDaCapo: "+stringifyMenuItem(menuItem));
+			let daCapo = new DaCapo();
+			let amount = 1;
+			let sections = "[]"; //empty array means "all sections"
+			daCapo.installHook(DaCapo.ON_SONG_END, amount, sections);
+			restartLoopSections(); 
 			break;
 		case "noAction":
 			console.log("noAction=====!");

@@ -7,7 +7,7 @@
       "beats": "4",
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "caption": "${getSong().getRootKey()} Maj 9",
@@ -16,7 +16,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {}
+      "sectionNotesByTable": {}
     },
     {
       "type": "Section",
@@ -26,7 +26,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -72,7 +72,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -114,7 +114,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -156,7 +156,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -221,7 +221,7 @@
       "beats": 2,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -259,7 +259,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -297,7 +297,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -339,7 +339,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -381,7 +381,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
@@ -419,7 +419,7 @@
       "beats": 1,
       "currentBeat": 1,
       "sharps": false,
-      "sectionNotesDict": {
+      "sectionNotesByTable": {
         "tblPiano_1": {
           "playedNotes": [
             {
