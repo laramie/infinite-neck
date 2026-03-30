@@ -1188,8 +1188,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		highlightOneNote(namedNoteName);
 	}
 
-	export function transposeSong(amount){
+	export function transposeSong(amount, which = ['NamedNotes']){
+		//But which could be: ['NamedNotes', 'PlayedNotes', 'RecordedNotes']
+		//If song is "unlocked" then allow ['n','p','r']
+		//To figure out: is it valuable to provide semantic access to just changing keys?
 		getSong().cycleThruKeysAllSections(amount);
+		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
 		getSong().moveNamedNotesAllSections(amount);
 		fullRepaint();
 		//Did the whole song, but at least give visual cue that we did something by highlighting current section:
