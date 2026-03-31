@@ -111,6 +111,7 @@ import {
 	toInt
 } from './utils.js';
 import * as WiringBuilder from './templates/WiringBuilder.js';
+import { makeDivDockable, dockDivInPage } from './dockable.js';
 
 // If running in a browser, call appInit() on DOM ready
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
@@ -1562,9 +1563,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
 	}
-
-
-
 
 	//==================== 4) UI event binding and control wiring =============
 
