@@ -308,10 +308,14 @@ function document_keypress(e) {
                 updateFontLabel();
                 break;
             case "<":
+				getSong().firstSection(false);
+                break;
             case ",":
                 getSong().gotoPrevSection(false);
                 break;
             case ">":
+				getSong().lastSection(false);
+                break;
             case ".":
                 getSong().gotoNextSection(false);
                 break;

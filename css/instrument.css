@@ -8,28 +8,30 @@
 
    The basic layout as of 20260330 is: 
 
-   	<div id="tabledest">
-		<div class="instrumentBackground" id="divS6_1">
+    <div id="tabledest">
+		<div class="instrumentBackground" id="divDEV_1">
 			<div class="captionRow">
-            </div>
-			<div class="currentColorDict">
-			</div>
-			<p></p>
-			<div class="divWiring" id="divS6_1_wiring" style="display: none;">
-				<div class="Wiring-controls" data-tablename="tblS6_1" data-tuning-i-d="S6_1" data-tuningid="" id="tblS6_1-Wiring-controls">
+				<button class="HamburgerInstrumentClass showsubcaption moveyButton" id="btnHamburgerDEV_1" tabindex="-1" type="button">≡</button><span class="captionRowInstrument"><span class="tuningIDCaption">DEV_1</span></span><span class="subcaption"><span class="tuningBaseIDCaption">Developer</span>1-string Guitar[F]<span class="joniTuning"><small>Joni:</small>[F]</span><span class="lblNoteClickedCaption" style="display: none;"></span><button class="showcolordict moveyButton" id="btnHamburgerColorDictDEV_1" tabindex="-1" type="button"><img src="img/colordictThumbnail.png"></button><button class="showWiringButton moveyButton ShowWiringButtonOpen" id="btnHamburgerShowWiringDEV_1" tabindex="-1" type="button">Wiring</button></span><span class="captionRowLiveInfo"><span class="lblRootID"></span><span class="spanLeadDifferentFromRoot"></span><span class="instrumentSectionBox LooperLight" id="relSec_tblDEV_1"><span class="instrumentSectionMark">§</span>1</span></span>
+				<div class="currentColorDict">
 				</div>
 			</div>
-			<table border="0" cellpadding="0" cellspacing="4" 
-                   class="fretTable" id="tblS6_1">
-				<tr class="stringRow">
-				</tr>
-			</table>
+			<div class="wiringAndFretTable">
+				<div class="divWiring" id="divDEV_1_wiring">
+					<div class="Wiring-controls" data-tablename="tblDEV_1" data-tuning-i-d="DEV_1" data-tuningid="" id="tblDEV_1-Wiring-controls">
+					</div>
+				</div>
+				<div class="fretTableWrapper">
+					<table border="0" cellpadding="0" cellspacing="4" class="fretTable" id="tblDEV_1">
+					</table>
+				</div>
+			</div>
 		</div>
         <div class="instrumentBackground" id="divP46_1">
            Another instrument...
         </div>
 	</div>
-*/
+        */
+        
 
 
 #tabledestTopPad {
