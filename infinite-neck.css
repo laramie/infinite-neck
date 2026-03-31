@@ -111,6 +111,33 @@ body {
   pointer-events: none;
 }
 
+.btnMoveTuningDown {
+    background-color: #5084ff;
+    font-weight: bold;
+    font-size: 120%;
+}
+.btnMoveTuningDown:disabled {
+    background-color: #ababab;
+    font-weight: normal;
+    font-size: 120%;
+}
+.btnMoveTuningUp {
+    background-color: #87fc59;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.btnMoveTuningUp:disabled {
+    background-color: #ababab;
+    font-weight: normal;
+    font-size: 120%;
+}
+
+.btnRemoveTuning {
+    background-color: #e45724;
+    font-size: 120%;
+}
+
 .moveyButton{
     cursor: pointer;
     position: relative;
@@ -512,6 +539,34 @@ table.viewControls th {
 
 #divViewControls {
     width: 90%;
+}
+
+#divMyTuningsTab {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: auto;
+}
+
+#myTuningsTable {
+    width: max-content;
+    min-width: 100%;
+    margin-right: 3em;
+    margin-bottom: 1em;
+}
+
+#divAllTuningsTab {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: auto;
+}
+
+#allTuningsTable {
+    width: max-content;
+    min-width: 100%;
+    margin-right: 3em;
+    margin-bottom: 1em;
 }
 
 #allTuningsTable,

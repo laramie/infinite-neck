@@ -551,7 +551,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					primaryControl: 'visibility'
 				}));
 			allTuningsDiv
-				.append($("<p><b>All Tunings</b></p>"))
 				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
 					tableID: Constants.ALL_TUNINGS_TABLE_ID,
 					primaryControl: 'clone'
@@ -1124,6 +1123,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().captionsRowShowing = $('.captionRow').is(":visible");
 			$('.captionRow').hide();
 			$("#tabledestTopPad").show();
+			setWiringOpenState(false); //going fullscreen
 		} else {
 			if (getSong().captionsRowShowing){
 				$('.captionRow').show();

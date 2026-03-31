@@ -92,15 +92,21 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     }
     var primaryControl = options.primaryControl || "clone";
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
+    var showMoveColumn = primaryControl === "visibility";
     var trh = $("<tr>");
-    trh.html("<th>" + primaryHeader + "</th><th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
+    trh.html("<th>" + primaryHeader + "</th>"
+        + (showMoveColumn ? "<th>Move</th>" : "")
+        +"<th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
+        
     );
     table.append(trh);
     var sInMemCount = "";
     var rows = tunings.length;
     for (var r = 0; r < rows; r++) {
         var tun = tunings[r];
+        var disableMoveUp = r === 0 ? ' disabled' : '';
+        var disableMoveDown = r === rows - 1 ? ' disabled' : '';
         var checkedVisible = tun.visible ? " checked " : "";
 
         var captionStr = '<nobr>' + tun.caption + '</nobr>';
@@ -160,6 +166,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
 
         var selectBlock = generateSelect(tun.baseID, tun.frets);
         var selectStringDividerHt = generateSelectStringDividerHt(tun.baseID, tun.stringDividerHeight);
+        var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
+            + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
+            + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '">X</button>';
 
         // For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text
         var idCellHtml;
@@ -174,6 +183,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
 
         var tr = $("<tr>");
         tr.append($("<td>").html(primaryControlHtml));
+        if (showMoveColumn) {
+            tr.append($("<td>").html(moveButtonHtml));
+        }
         tr.append($("<td>").html(captionStr));
         tr.append($("<td>").html(idCellHtml));
         tr.append($("<td>").html(tun.nStrings + "-string"));
@@ -190,6 +202,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(selectBlock)); //numFrets
         tr.append($("<td>").html(selectStringDividerHt));
         tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
+        
 
         table.append(tr);
     }
@@ -352,6 +365,46 @@ export function hideAllTunings() {
     getAllTunings().forEach(tuning => hideTuning(tuning.baseID));
 }
 
+export function moveMyTuningUp(baseID) {
+    var myTunings = getMyTuningsStore();
+    var index = myTunings.findIndex(function (tuning) {
+        return tuning.baseID === baseID;
+    });
+    if (index <= 0) {
+        return false;
+    }
+    var tuning = myTunings[index];
+    myTunings.splice(index, 1);
+    myTunings.splice(index - 1, 0, tuning);
+    return true;
+}
+
+export function moveMyTuningDown(baseID) {
+    var myTunings = getMyTuningsStore();
+    var index = myTunings.findIndex(function (tuning) {
+        return tuning.baseID === baseID;
+    });
+    if (index < 0 || index >= myTunings.length - 1) {
+        return false;
+    }
+    var tuning = myTunings[index];
+    myTunings.splice(index, 1);
+    myTunings.splice(index + 1, 0, tuning);
+    return true;
+}
+
+export function removeMyTuning(baseID) {
+    var myTunings = getMyTuningsStore();
+    var index = myTunings.findIndex(function (tuning) {
+        return tuning.baseID === baseID;
+    });
+    if (index < 0) {
+        return false;
+    }
+    myTunings.splice(index, 1);
+    return true;
+}
+
 //===============================================================================
 
 /**
@@ -512,6 +565,33 @@ export function bindFormTuningsEvents() {
         requestReinstallAllTuningsTables();
         requestInstrumentAdded();
         $('#btnMyTuningsTab').trigger('click');
+    });
+
+    $('#frmTunings').off('click', '.btnMoveTuningUp').on('click', '.btnMoveTuningUp', function () {
+        var baseID = $(this).data('baseid');
+        if (!moveMyTuningUp(baseID)) {
+            return;
+        }
+        requestReloadAllTuningsDisplay();
+        requestReinstallAllTuningsTables();
+    });
+
+    $('#frmTunings').off('click', '.btnMoveTuningDown').on('click', '.btnMoveTuningDown', function () {
+        var baseID = $(this).data('baseid');
+        if (!moveMyTuningDown(baseID)) {
+            return;
+        }
+        requestReloadAllTuningsDisplay();
+        requestReinstallAllTuningsTables();
+    });
+
+    $('#frmTunings').off('click', '.btnRemoveTuning').on('click', '.btnRemoveTuning', function () {
+        var baseID = $(this).data('baseid');
+        if (!removeMyTuning(baseID)) {
+            return;
+        }
+        requestReloadAllTuningsDisplay();
+        requestReinstallAllTuningsTables();
     });
 
     // Tuning ID edit handler (for myTunings table only)
