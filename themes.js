@@ -76,7 +76,6 @@ export const gThemes = {
         "doubleDiamondsColor": "red",
         "noteWhiteShadowColor": "black",
         "noteBlackShadowColor": "black",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "LateNite" : {
         "id": "LateNite",
@@ -197,7 +196,8 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "white",
         "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey":  "url('img/blade.png')",
-        "borderImageBlackKey":  "none"
+        "borderImageBlackKey":  "none",
+        "instrumentBorderImage": "url('img/blade-border.png')"
     },
     "Piano" : {
         "id": "Piano",

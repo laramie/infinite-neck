@@ -57,8 +57,8 @@
     max-width: 100%; /* prevent overflow past viewport */
     min-width: 0;     /* allow shrinking in flex context */
     overflow: visible;
-
     box-sizing: border-box;
+    padding: 0.5em;
     color: gold;
     background-color: #0aa; 
     border: 1px solid rgb(0, 0, 0);
@@ -67,7 +67,6 @@
     background-repeat: no-repeat;
     background-size: 100% 100%;
     border-image: var(--instrument-border-image) 30 / 19px round;
-    WORKEDborder-width: 1.4em;
     border-width: var(--instrument-border-thickness);
 }
 .dontDoTheseOnInstrumentBackground {
@@ -125,7 +124,6 @@ instrumentBackground .captionRow {
     min-width: 0;     /* prevents overflow issues */
     max-width: 100vw;
     overflow-x: auto; /* enables horizontal scrolling for the table only */
-    WORKEDpadding-right: 1.4em;
     padding-right: var(--instrument-border-thickness);
 }
 

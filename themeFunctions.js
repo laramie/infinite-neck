@@ -161,7 +161,7 @@ import { gThemes } from './themes.js';
 				options.instrumentBorderThickness = '1.4em'; 
 				setOneCssVar('--instrument-border-thickness', '1.4em');
 			} else {
-				options.instrumentBorderThickness = '0'; 
+				options.instrumentBorderThickness = '0.2em'; 
 				setOneCssVar('--instrument-border-thickness', '0');
 			}
     
