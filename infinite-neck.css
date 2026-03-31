@@ -1127,11 +1127,7 @@ P {
     left: 10em;/* set programmatically, so this is default in case js fails.*/
     z-index: 30;
 }
-.floatingWindowResizable {
-    z-index: 100;
-    resize: both;
-    overflow: auto;
-}
+
 #transport {
     font-size: 200%;
     z-index: 1000;

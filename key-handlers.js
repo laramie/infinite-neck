@@ -754,6 +754,18 @@ export function performCmdAction(menuItem, args){
 			daCapo.installHook(DaCapo.ON_SONG_END, daCapoOpt);
 			restartLoopSections(); 
 			break;
+		case "disposeAllDockables":
+			disposeAllDockables();
+			break;		
+		case "dockAllDockables":
+			dockAllDockables();
+			break;		
+		case "gatherAllDockables":
+			gatherAllDockables();
+			break;		
+		case "clampAllDockablesToViewport":
+			clampAllDockablesToViewport();
+			break;		
 		case "noAction":
 			console.log("noAction=====!");
 			actionResult.result = "none";
