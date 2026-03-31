@@ -46,20 +46,25 @@
 .instrumentBackground {
     display: flex;
     flex-direction: column;
-    width: 99% ;
+    width: 100%;      /* was 99% -- use 100% for full constraint */
+    max-width: 100vw; /* prevent overflow past viewport */
+    min-width: 0;     /* allow shrinking in flex context */
+
     box-sizing: border-box;
     color: gold;
     background-color: #0aa; 
-    margin: 1em;
-    margin-bottom: var(--instrument-margin-tb);
-    margin-left: 1.5em;
     border: 1px solid black;
     box-shadow: 0 0 6pt 3pt maroon;
     border-radius: 0.3em;
-    padding: 8pt;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     border-image: var(--instrument-border-image) 30 / 19px round;
+}
+.dontDoTheseOnInstrumentBackground {
+    margin: 1em;
+    margin-bottom: var(--instrument-margin-tb);
+    margin-left: 1.5em;
+    padding: 8pt;
 }
 
 instrumentBackground .captionRow {
@@ -98,37 +103,40 @@ instrumentBackground .captionRow {
 }
 
 .wiringAndFretTable {
-  display: flex;
-  flex-direction: row;
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.divWiring {
-    width: 250px; /* or whatever fixed width you want */
-    flex-shrink: 0;
-}
-.divWiring input[type="text"] {
-  width: 100%;
-  box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    min-width: 0;     /* critical for flexbox overflow */
+    width: 100%;      /* ensure it doesn't overflow parent */
+    max-width: 100vw; /* prevent overflow past viewport */
 }
 
 .fretTableWrapper {
     flex: 1 1 0;
-    min-width: 0; /* prevents overflow issues */
-    overflow-x: auto;
+    min-width: 0;     /* prevents overflow issues */
+    max-width: 100vw;
+    overflow-x: auto; /* enables horizontal scrolling for the table only */
 }
 
-.fretTableWrapper table {
-  width: 100%; 
+.fretTableWrapper table.fretTable {
+    width: max-content; /* table can be as wide as needed */
+    min-width: 100%;    /* ensures table fills container if not wide */
 }
 
-.fretTable {
-  height: 100%;
-}
-table.fretTable {
+
+.nonDraggyFretTableWBorder {
     border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
     user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+}
+
+.divWiring {
+    width: 250px;      /* fixed width */
+    flex-shrink: 0;
+    /* No overflow or scroll here */
+    /* Stays visible while table scrolls */
+}
+.divWiring input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 

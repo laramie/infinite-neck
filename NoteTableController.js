@@ -783,6 +783,12 @@ export function fullRepaint(){
     clearAll();
     resetNoteNames();
     showBeats();
+    // After resizing cells
+    const wrapper = document.querySelector('.fretTableWrapper');
+    if (wrapper) {
+        // Force reflow
+        void wrapper.offsetWidth;
+    }
 }
 
 export function clearAll() {

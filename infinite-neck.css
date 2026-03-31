@@ -32,13 +32,19 @@
   --debug-border: 0;  /* just the border thickness */
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
+    overflow-x: hidden;
     background-color: #1a0e03;
     font-size: 10pt;
     font-family: Helvetica;
     margin: 0;
     padding: 0;
 }
+
 
 .basicBackground {
     background-color: #AD310B;
