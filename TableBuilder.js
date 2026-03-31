@@ -220,7 +220,12 @@ export function buildNoteTable(options) {
 	fretTableWrapper.addClass("fretTableWrapper");
 	fretTableWrapper.append(table);
 	wiringAndFretTable.append(fretTableWrapper);
-	return instrumentBackground;
+
+	let instrumentBackgroundOuter = $("<div>");
+	instrumentBackgroundOuter.addClass("instrumentBackgroundOuter");
+	instrumentBackgroundOuter.append(instrumentBackground);
+	
+	return instrumentBackgroundOuter;
 }
 
 export function getJoniTuning(options) {

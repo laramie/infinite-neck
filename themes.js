@@ -60,7 +60,8 @@ export const gThemes = {
         "diamondsSize": "0.6em",
         "diamondsColor": "red",
         "doubleDiamondsColor": "orange",
-        "diamondsBackgroundColor":"black"
+        "diamondsBackgroundColor":"black",
+        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "Autobahn" : {
         "id": "Autobahn",
@@ -74,7 +75,8 @@ export const gThemes = {
         "diamondsColor": "green",
         "doubleDiamondsColor": "red",
         "noteWhiteShadowColor": "black",
-        "noteBlackShadowColor": "black"
+        "noteBlackShadowColor": "black",
+        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "LateNite" : {
         "id": "LateNite",

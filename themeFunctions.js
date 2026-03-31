@@ -109,6 +109,11 @@ import { gThemes } from './themes.js';
 			setVal('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
 			setVal('#dropDownBorderImageBlackKey', 'borderImageBlackKey');
 			setVal('#dropDownInstrumentBorderImage', 'instrumentBorderImage');
+			if (theme["instrumentBorderImage"]){
+				setOneCssVar('--instrument-border-thickness', '1.4em');
+			} else {
+				setOneCssVar('--instrument-border-thickness', '0');
+			}
 		}
 		setThemeControlValues();
 	}
@@ -151,6 +156,15 @@ import { gThemes } from './themes.js';
 			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey').val();
 			options.borderImageBlackKey = $('#dropDownBorderImageBlackKey').val();
 			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage').val();
+
+			if (options.instrumentBorderImage && options.instrumentBorderImage !== "none"){
+				options.instrumentBorderThickness = '1.4em'; 
+				setOneCssVar('--instrument-border-thickness', '1.4em');
+			} else {
+				options.instrumentBorderThickness = '0'; 
+				setOneCssVar('--instrument-border-thickness', '0');
+			}
+    
 		}
 		overwriteDefaultWithThemeValue(options, origThemeOptions);
 		overwriteDefaultWithControlValue(options);
@@ -262,6 +276,7 @@ import { gThemes } from './themes.js';
 									+rule("--border-image-black-key", "borderImageBlackKey")
 									+rule("--border-image-white-key", "borderImageWhiteKey")
 									+rule("--instrument-border-image", "instrumentBorderImage")
+									+rule("--instrument-border-thickness", "instrumentBorderThickness")
 									//+rule("--td-note-font-family", "tdNoteFontFamily")
 									//+rule("--right-subscript-font-size", "rightSubscriptFontSize")
 
