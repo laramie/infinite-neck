@@ -178,13 +178,8 @@ export function buildNoteTable(options) {
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="moveyButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">Float</button>`;
 	
-	
-	
-	var btnPopOutDiv = `<button onclick="makeDivDockable('div${options.baseID}')">Float Section</button>`;
-	
-	
-	var S = "&nbsp;&nbsp;";
 	captionRow.html(
 		hamburger 
 		+ '<span class="captionRowInstrument">'

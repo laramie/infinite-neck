@@ -2427,13 +2427,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 import EventBus from './event-bus.js';
 
-EventBus.on('UpdateSectionStatus', function(data) {
+EventBus.on('UpdateSectionStatus', function(event, data) {
   updateSectionsStatus();
 });
-EventBus.on('SectionChanged', function(data) {
+EventBus.on('SectionChanged', function(event, data) {
   sectionChanged();
 });
-EventBus.on('SectionMoved', function(data) {
+EventBus.on('SectionMoved', function(event, data) {
   updateSectionsStatus();
   fullRepaint();
 });
@@ -2458,7 +2458,7 @@ EventBus.on('SongUiShowBeats', function() {
 EventBus.on('SongUiClearAndReplaySection', function() {
 	clearAndReplaySection();
 });
-EventBus.on('ShowMessages', function(data) {
+EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
 });
 EventBus.on('ReinstallAllTuningsTables', function() {

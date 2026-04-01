@@ -2,7 +2,7 @@
 
 #CmdMenu {
     display: inline-block;
-    z-index: 60;
+    z-index: 2000;
     position: fixed;
     padding: 0.2em;
     opacity: 95%;

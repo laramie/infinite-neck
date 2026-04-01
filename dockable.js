@@ -1,3 +1,28 @@
+// Clamp only the size (width/height) of a floating window to fit within the viewport, without moving it
+function clampDockableSizeToViewport(floatWin, margin = 12) {
+    if (!floatWin) return;
+
+    const viewportWidth = Math.max(window.innerWidth || 0, 0);
+    const viewportHeight = Math.max(window.innerHeight || 0, 0);
+    const rect = floatWin.getBoundingClientRect();
+
+    let newWidth = rect.width;
+    let newHeight = rect.height;
+
+    // Calculate the maximum width so the right edge is within the viewport minus margin
+    const maxRight = viewportWidth - margin;
+    if (rect.right > maxRight) {
+        newWidth = Math.max(0, maxRight - rect.left);
+        floatWin.style.width = newWidth + 'px';
+    }
+
+    // Calculate the maximum height so the bottom edge is within the viewport minus margin
+    const maxBottom = viewportHeight - margin;
+    if (rect.bottom > maxBottom) {
+        newHeight = Math.max(0, maxBottom - rect.top);
+        floatWin.style.height = newHeight + 'px';
+    }
+}
 // dockable.js
 
 import { draggable } from './drag.js';
@@ -31,6 +56,7 @@ function clampOneDockableToViewport(floatWin, margin = 12) {
     if (!Number.isFinite(left)) left = rect.left;
     if (!Number.isFinite(top)) top = rect.top;
 
+    // Clamp position
     const maxLeft = Math.max(margin, viewportWidth - rect.width - margin);
     const maxTop = Math.max(margin, viewportHeight - rect.height - margin);
 
@@ -39,6 +65,22 @@ function clampOneDockableToViewport(floatWin, margin = 12) {
 
     floatWin.style.left = left + 'px';
     floatWin.style.top = top + 'px';
+
+    // Adjust size if too large for viewport
+    let newWidth = rect.width;
+    let newHeight = rect.height;
+    const maxWidth = viewportWidth - 2 * margin;
+    const maxHeight = viewportHeight - 2 * margin;
+
+    if (rect.width > maxWidth) {
+        newWidth = maxWidth;
+        floatWin.style.width = newWidth + 'px';
+    }
+    // Only shrink height if needed
+    if (rect.height > maxHeight) {
+        newHeight = maxHeight;
+        floatWin.style.height = newHeight + 'px';
+    }
 }
 
 function applyHandleOrientation(floatWin, handle, contentHost, orientation, toggleBtn) {
@@ -91,7 +133,7 @@ export function makeDivDockable(divId) {
     floatWin.style.top = '100px';
     floatWin.style.left = '100px';
     floatWin.style.zIndex = 200;
-    floatWin.style.background = '#fff';
+    floatWin.style.background = '#96001c';
     floatWin.style.border = '2px solid #888';
     floatWin.style.borderRadius = '12px';
     floatWin.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';
@@ -109,7 +151,7 @@ export function makeDivDockable(divId) {
     const handle = document.createElement('div');
     handle.style.display = 'flex';
     handle.style.boxSizing = 'border-box';
-    handle.style.background = '#eee';
+    handle.style.background = '#5aff39';
     handle.style.cursor = 'grab';
     handle.style.userSelect = 'none';
 
@@ -140,12 +182,13 @@ export function makeDivDockable(divId) {
     toggleHandleBtn.style.padding = '0';
     toggleHandleBtn.style.margin = '0';
     toggleHandleBtn.style.lineHeight = '1';
-    toggleHandleBtn.style.fontSize = '1.2em';
+    toggleHandleBtn.style.fontSize = '2.2em';
     toggleHandleBtn.style.cursor = 'pointer';
     toggleHandleBtn.onclick = function (e) {
         e.stopPropagation();
         const nextOrientation = floatWin.dataset.handleOrientation === 'top' ? 'side' : 'top';
         applyHandleOrientation(floatWin, handle, contentHost, nextOrientation, toggleHandleBtn);
+        clampDockableSizeToViewport(floatWin);
     };
 
     handle.appendChild(dockBtn);
@@ -164,6 +207,8 @@ export function makeDivDockable(divId) {
     // Add to body
     document.body.appendChild(floatWin);
     clampOneDockableToViewport(floatWin);
+    const floatBtn = document.getElementById('btnFloatSection_' + divId);
+    if (floatBtn) floatBtn.style.display = 'none'; // or floatBtn.disabled = true;
 }
 
 export function dockDivInPage(divId) {
@@ -181,6 +226,9 @@ export function dockDivInPage(divId) {
             state.parent.appendChild(div);
         }
     }
+
+    const floatBtn = document.getElementById('btnFloatSection_' + divId);
+    if (floatBtn) floatBtn.style.display = ''; // or floatBtn.disabled = false;
 
     // Remove floating window
     floatWin.remove();
@@ -205,7 +253,7 @@ export function dockAllDockables() {
     });
 }
 
-export function gatherAllDockables(startLeft = 12, startTop = 12, gap = 18) {
+export function gatherAllDockables(startLeft = 40, startTop = 40, gap = 40) {
     let left = startLeft;
     let top = startTop;
 

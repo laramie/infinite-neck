@@ -167,9 +167,11 @@ export class Song {
         } else {
             this.wirings[idx] = newWiring;
         }
+        EventBus.trigger("Wiring:added", {tablename:tablename, listenToTablename: listenToTablename});
     }
     removeWiring(tablename){
         this.wirings = this.wirings.filter(w => w.tablename !== tablename);
+        EventBus.trigger("Wiring:removed", {tablename:tablename});
     }
     fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;

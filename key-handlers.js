@@ -41,6 +41,7 @@ import {
 	toggleWiringOpenState
 } from './infinite-neck.js';
 import DaCapo from './plugins/DaCapo.js';
+import EventBus from './event-bus.js';
 
 export { document_keypress, document_keyup };
 
@@ -756,6 +757,8 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
 			break;		
 		case "dockAllDockables":
 			dockAllDockables();

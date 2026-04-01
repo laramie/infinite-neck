@@ -680,6 +680,32 @@ export var gMenuFile =    {
           "action": "toggleFullscreen"
         },
         {
+          "caption": "<b>w</b>indow",
+          "trigger": "w",
+          "children": [
+            {
+              "caption": "<b>c</b>leanup",
+              "trigger": "c",
+              "action": "disposeAllDockables"
+            },
+            {
+              "caption": "<b>d</b>ock all",
+              "trigger": "d",
+              "action": "dockAllDockables"
+            },
+            {
+              "caption": "<b>g</b>ather",
+              "trigger": "g",
+              "action": "gatherAllDockables"
+            },
+            {
+              "caption": "<b>v</b>iewport",
+              "trigger": "v",
+              "action": "clampAllDockablesToViewport"
+            }
+          ]
+        },
+        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-view"
