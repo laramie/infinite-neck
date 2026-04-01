@@ -508,17 +508,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return fallback;
 		}
 
-	function showTuningsTab(which) {
-		var showMy = which !== 'all';
-		$('#divMyTuningsTab').toggle(showMy);
-		$('#divAllTuningsTab').toggle(!showMy);
-		$('#btnMyTuningsTab')
-			.toggleClass('BtnPunchedIn', showMy)
-			.toggleClass('BtnPunchedOut', !showMy);
-		$('#btnAllTuningsTab')
-			.toggleClass('BtnPunchedIn', !showMy)
-			.toggleClass('BtnPunchedOut', showMy);
-	}
+	
 
 	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
@@ -538,30 +528,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideMessages();
 	}
 
-	export function reloadAllTuningsDisplay(){
-		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
-			var myTuningsDiv = $('#divMyTuningsTab');
-			var allTuningsDiv = $('#divAllTuningsTab');
-			var myTunings = getSong().myTunings || [];
-			var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
-			myTuningsDiv.empty();
-			allTuningsDiv.empty();
-			myTuningsDiv
-				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
-					tableID: Constants.MY_TUNINGS_TABLE_ID,
-					primaryControl: 'visibility'
-				}));
-			allTuningsDiv
-				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
-					tableID: Constants.ALL_TUNINGS_TABLE_ID,
-					primaryControl: 'clone'
-				}));
-			if (userControls.length > 0) {
-				allTuningsDiv.append(userControls);
-			}
-		TuningsLibrary.bindFormTuningsEvents();
-	}
-
+	
 	function updateAllWiringSelects() {
 		WiringBuilder.updateAllWiringSelects();
 	}
@@ -692,6 +659,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		$('.MainMenuTabBtn').removeClass("BtnPunchedIn").addClass("BtnPunchedOut");
 	    //$("#topControlsCaptions").show();
+	}
+	export function isMenuShowing(strMenuDiv){
+		var jStrMenuDiv = $(strMenuDiv);
+		return jStrMenuDiv.is(":visible");
 	}
 
 	export function showOneMenu(strMenuDiv){
@@ -1024,6 +995,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		buildColorDicts();
 	}
 
+	//TODO: make this targeted, especially watching out for un-docked tables.
 	export function reinstallAllTuningsTables(){
 			var target = $("#tabledest");
 			target.empty();
@@ -1638,7 +1610,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    showOneMenu("#divDesktop");
 		});
 
-
 		$("#btnHelp").click(function() {
 
 		});
@@ -1648,12 +1619,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		   hideAllMenuDivs();
 		});
 
-
 		$("#cbPresentationMode").change(function(){
 			getSong().presentationMode = this.checked;
 		});
-
-
 
 		$("#showHideExtraColors").click(function(event) {
 			$("#extraColors").toggle();
@@ -1685,12 +1653,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#divColorDicts').toggle();
 		});
 
-		$('#btnMyTuningsTab').click(function() {
-			showTuningsTab('my');
-		});
-		$('#btnAllTuningsTab').click(function() {
-			showTuningsTab('all');
-		});
 		$('#btnMessagesTab').click(function() {
 			showMessagesTab('Messages');
 		});
@@ -1708,9 +1670,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    showOneMenu("#divFileControls")
 		});
 		$("#btnTunings").click(function() {
-		    reloadAllTuningsDisplay();
-			showTuningsTab('my');
-		    showOneMenu("#divTunings");
+			showOneMenu("#divTunings");//toggles on
+			requestReloadTuningsDisplays();//sets MyTunings button to PunchedIn, so has to go last.
 		});
 		$("#btnFillNotes").click(function() {
 		    showOneMenu("#divFillNotes");
@@ -2368,7 +2329,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		buildUserColors();
 		installRBColorChangeEvents();
 
-		reloadAllTuningsDisplay();
+		//requestReloadAllTuningsDisplay();
 		TuningsLibrary.showDefaultTuning();//calls showHideTunings and shows S6 if none found.
 		TuningsLibrary.bindFormTuningsEvents();
 		bindDataActionHandlers();
@@ -2422,10 +2383,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	
 
-	//==================== New handling of the EventBus =======================
-	//Uncaught SyntaxError: Unexpected token 'export' (at event-bus.js:18:1)
+//==================== New handling of the EventBus =======================
+//Uncaught SyntaxError: Unexpected token 'export' (at event-bus.js:18:1)
 
 import EventBus from './event-bus.js';
+
+
+function requestReloadTuningsDisplays() {
+	EventBus.trigger('ReloadTuningsDisplays');
+}
 
 EventBus.on('UpdateSectionStatus', function(event, data) {
   updateSectionsStatus();
@@ -2463,9 +2429,6 @@ EventBus.on('ShowMessages', function(event, data) {
 });
 EventBus.on('ReinstallAllTuningsTables', function() {
 	reinstallAllTuningsTables();
-});
-EventBus.on('ReloadAllTuningsDisplay', function() {
-	reloadAllTuningsDisplay();
 });
 EventBus.on('UpdateAllWiringSelects', function() {
 	getSong().getVisibleTuningIDs().forEach(tuningID => {

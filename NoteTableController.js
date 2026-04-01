@@ -217,6 +217,8 @@ export const Cause = Object.freeze({
     DEFAULT: "default",
     DROPPER: "dropper",
     KEEP: "keep",
+    CLEAR: "clear",
+    NAMEDNOTE: "NamedNote",
     PLAYEDNOTE: "PlayedNote",
     HIGHLIGHT: "HighlightPitch", // a MIDI highlight, not multi because one MIDI pitch is global.
     HIGHLIGHTMULTI: "HighlightMulti" // for historical reasons, HighlightSingle==HighlightMulti
@@ -412,9 +414,10 @@ export function colorNoteInner(cell) {
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
 			getCurrentSection().namedNotes[noteName] = {};
             clearNamedNoteDivs(namedNoteDiv);
-            noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");;
+            noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+            result.returnCause = Cause.CLEAR;
 		} else {
-
+            result.returnCause = Cause.NAMEDNOTE;
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
 
@@ -430,7 +433,7 @@ export function colorNoteInner(cell) {
     		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;   //V2-storage
             }
 		}
-        result.returnCause = Cause.DEFAULT;
+        
         return result;
     }
 }
@@ -1017,6 +1020,7 @@ EventBus.on('Note:colored', function(event, data) {
         if (wiring.listenToTablename === sourceTableID && wiring.tablename !== sourceTableID) {
             // Prevent infinite loop: don't notify the source table
             // Replay the listener table (full replay, as layouts may differ)
+            clearAllForTable(wiring.tablename);
             replayTable({
                 tablename: wiring.tablename,
                 listenToTablename: sourceTableID,
