@@ -1827,7 +1827,7 @@
 
             <!-- divTunings -->
             <div id="divTunings">
-                <form id="frmTunings">
+                <form id="frmTunings" onsubmit="return false;">
                     <table class="menuTable">
                         <tr>
                             <td class="menuCaption">
@@ -1873,41 +1873,41 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
+                                                            <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "BanjoNut") -->
                                                             <label for="textareaBanjoNut"><b>BN (Banjo Nut):</b><br>
-                                                            <textarea id="textareaBanjoNut" name="txtnBanjoNut" rows="1" cols="80" class="scalingTextarea" style="width: 877px; height: 53px;"></textarea>
+                                                                <textarea id="textareaBanjoNut" name="txtnBanjoNut" rows="1" cols="80" class="scalingTextarea" style="width: 877px; height: 53px;"></textarea>
                                                             </label>
                                                             <br>
-                                                            <button type="button" onclick="document.getElementById('banjoNutExamples').style.display = (document.getElementById('banjoNutExamples').style.display === 'none' ? 'block' : 'none');">
-                                                            Examples
-                                                            </button>
-                                                            <div id="banjoNutExamples" style="display: none; margin-top: 0.5em; border: 1px solid #aaa; border-radius: 0.3em; max-width: 900px;">
-                                                            <table style="width: 100%; border-collapse: collapse;">
-                                                                <tr style="background: #f4f4f4; cursor: pointer;" data-banjo-nut-value='{"4":5}' onclick="document.getElementById('textareaBanjoNut').value = this.dataset.banjoNutValue; document.getElementById('banjoNutExamples').style.display = 'none';">
-                                                                <td style="width: 40%; font-family: monospace;">{"4":5}</td>
-                                                                <td>Makes a BanjoNut/Capo at the fifth fret on the fifth string.</td>
-                                                                </tr>
-                                                                <tr style="background: #e9f7ff; cursor: pointer;" data-banjo-nut-value='{"0":2, "1":4}' onclick="document.getElementById('textareaBanjoNut').value = this.dataset.banjoNutValue; document.getElementById('banjoNutExamples').style.display = 'none';">
-                                                                <td style="width: 40%; font-family: monospace;">{"0":2, "1":4}</td>
-                                                                <td>BanjoNut at the second fret on the first string, and one on the fourth fret of the second string.</td>
-                                                                </tr>
-                                                                <tr style="background: #f4f4f4; cursor: pointer;" data-banjo-nut-value='{"0":2, "1":2, "2":2, "3":2, "4":2}' onclick="document.getElementById('textareaBanjoNut').value = this.dataset.banjoNutValue; document.getElementById('banjoNutExamples').style.display = 'none';">
-                                                                <td style="width: 40%; font-family: monospace;">{"0":2, "1":2, "2":2, "3":2, "4":2}</td>
-                                                                <td>Drop-D style capo at the second fret covering the first five strings.</td>
-                                                                </tr>
-                                                                <tr style="background: #e9f7ff; cursor: pointer;" data-banjo-nut-value='{}' onclick="document.getElementById('textareaBanjoNut').value = this.dataset.banjoNutValue; document.getElementById('banjoNutExamples').style.display = 'none';">
-                                                                <td style="width: 40%; font-family: monospace;">{}</td>
-                                                                <td>Resets the BN to be a standard nut.</td>
-                                                                </tr>
-                                                            </table>
+                                                            <button type="button" id="btnBanjoNutExamples" class="BtnPunchedOut">Examples</button>
+                                                            <div id="divBanjoNutExamples" class="BanjoNutExamplesPanel">
+                                                                <table class="BanjoNutExamplesTable">
+                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"4":5}'>
+                                                                        <td class="BanjoNutExamplesCodeCell">{"4":5}</td>
+                                                                        <td>Makes a BanjoNut/Capo at the fifth fret on the fifth string.</td>
+                                                                    </tr>
+                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"0":2, "1":4}'>
+                                                                        <td class="BanjoNutExamplesCodeCell">{"0":2, "1":4}</td>
+                                                                        <td>BanjoNut at the second fret on the first string, and one on the fourth fret of the second string.</td>
+                                                                    </tr>
+                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"0":2, "1":2, "2":2, "3":2, "4":2}'>
+                                                                        <td class="BanjoNutExamplesCodeCell">{"0":2, "1":2, "2":2, "3":2, "4":2}</td>
+                                                                        <td>Drop-D style capo at the second fret covering the first five strings.</td>
+                                                                    </tr>
+                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{}'>
+                                                                        <td class="BanjoNutExamplesCodeCell">{}</td>
+                                                                        <td>Resets the BN to be a standard nut.</td>
+                                                                    </tr>
+                                                                </table>
                                                             </div>
                                                             <br>
                                                             <small>
-                                                            Empty, or one or more pairs of id:fret to specify where to block out a nut position up the neck, such as is used for Banjo or using a Capo.<br>
-                                                            "0" is the first string, and 0 is the first position, which places the nut in the normal position. The nut is fret 0. Thus the first fret is fret 1.<br>
-                                                            {"zero-based-string-id": zero-based-fret-number}<br>
-                                                            Follow the braces, commas, and quotes exactly as shown in these examples.
+                                                                Empty, or one or more pairs of id:fret to specify where to block out a nut position up the neck, such as is used for Banjo or using a Capo.<br>
+                                                                "0" is the first string, and 0 is the first position, which places the nut in the normal position. The nut is fret 0. Thus the first fret is fret 1.<br>
+                                                                {"zero-based-string-id": zero-based-fret-number}<br>
+                                                                Follow the braces, commas, and quotes exactly as shown in these examples.
                                                             </small>
-                                                        </td>                                                    </tr>
+                                                            <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td>
@@ -2029,6 +2029,8 @@
 
         </div><!--end div: class=container-->
 
+        <!--  *******************   TRANSPORT *********************    -->
+
         <span style="float: right; vertical-align: middle; margin-right: 2em;">
             <span id="transport" class="noselect topControlsSections toolWindowRounded" style="display: none;">
                 <span class="insetTransportBeat"
@@ -2059,6 +2061,8 @@
                 <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>
             </span>
         </span>
+
+         <!--  *******************   END TRANSPORT *********************    -->
 
 
         <div>

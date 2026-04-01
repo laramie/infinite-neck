@@ -32,6 +32,9 @@
   --debug-border: 0;  /* just the border thickness */
 }
 
+
+/***************************** HTML Basics *****************************/
+
 html {
   overflow-x: hidden;
 }
@@ -44,7 +47,41 @@ body {
     margin: 0;
     padding: 0;
 }
+P {
+    margin: 0;
+    padding: 0;
+}
 
+input {
+    font-size: 100%;
+}
+select {
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 100%;
+}
+button {
+    font-size: 100%;
+}
+
+table {
+    border: 0;
+}
+
+/***************************** CSS Basics *****************************/
+
+.right {
+    float: right;
+}
+.left{
+    float: left;
+}
+.clearBoth {
+    /* container of .left and .right might should have this. */
+    clear: both;
+}
 
 .basicBackground {
     background-color: #AD310B;
@@ -60,7 +97,21 @@ body {
     transition: background-color 1000ms linear;
 }
 
-/*****************************************************************/
+
+/* Prevents inconsistent highlighting of element while being dragged
+   Copied from https://stackoverflow.com/questions/826782 */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+
+/***************************** Fonts *****************************/
 
 .vollkorn {
   font-family: "Vollkorn", serif;
@@ -100,7 +151,8 @@ body {
   font-style: normal;
 }
 
-/*****************************************************************/
+
+/***************************** SVG *****************************/
 
 /* experimental: for drawLine() */
 #fullsvg {
@@ -110,6 +162,56 @@ body {
   margin: 0;
   pointer-events: none;
 }
+
+
+/***************************** Buttons *****************************/
+
+
+.BtnPunchedIn {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    background-color: #dfd;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease;
+}
+.BtnPunchedIn:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+.BtnPunchedOut {
+	box-shadow: inset 7px 7px 7px -4px #b1f53d;
+    border-radius: 4px;
+    background-color: #6faa09;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease;
+}
+.BtnPunchedOut:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+.PunchedTogether {
+    border: 1px solid #578607;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 2px;
+}
+
+.MainMenuTabBtn, .MenuButton {
+    padding: 0.4em;
+    color: black;
+    font-family: Helvetica;
+    font-size: 120%;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+.BigMobileBtn {
+    padding: 1em;
+}
+
 
 .btnMoveTuningDown {
     background-color: #5084ff;
@@ -201,6 +303,9 @@ body {
     margin-left: 1em;
 }
 
+/***************************** Messages Area *****************************/
+
+
 #divMessageAndJsonTree {
     font-size: 120%; 
     padding-left: 1em;
@@ -215,29 +320,13 @@ body {
     margin-bottom: 12em;
 }
 
-#divSongList {
-    background-color: white;
-    display: block;
-    width: 90%;
-    height: 90%;
-    left: 5%;
-    top: 5%;
-    columns: 4;
+/***************************** Section *****************************/
+
+#lblCurrentBeat {
+    font-size: 150%;
+    font-weight: bold;
 }
 
-.fingeringRBBackground,
-.paletteRBBackground,
-.chooseNoteStyleRBBackground,
-.fingeringRBBackground {
-    background-color: white;
-    border-radius: 0.2em;
-    border: 1px solid black;
-    box-shadow:  2pt 2pt 4pt 1pt  black;
-    margin: 0.2em;
-}
-.paletteRBBackground {
-    margin-bottom: 0.4em;
-}
 .sectionPageControlsGroup,
 .sectionPageControlsGroupResize {
     background-color: cornsilk;
@@ -249,10 +338,7 @@ body {
     resize: both;
     overflow: scroll;
 }
-#divPaletteDraggable {
-   padding: 3em;
-   position: fixed;
-}
+
 
 #sectionBeatsCallout {
     padding: 0.8em;
@@ -283,67 +369,10 @@ body {
     background-color: pink !important;
 }
 
-input {
-    font-size: 100%;
-}
-select {
-    font-size: 100%;
-}
+/***************************** View *****************************/
 
-textarea {
-    font-size: 100%;
-}
-button {
-    font-size: 100%;
-}
-#selThemes {
-    font-size: 100%;
-    color: black;
-    background-color: #6faa09;
-    width: 8em;
-    height: 2.0em;
-    box-shadow:  0 0 6pt 2pt  black;
-}
-
-table {
-    border: 0;
-}
-table.organizer td {
-    margin:0;
-    padding: 0;
-    vertical-align: top;
-    text-align: left;
-}
-
-table.controls {
-    margin: 0.3em;
-    margin-left: 1em;
-    padding: 0;
-    border-width: 0;
-    background-color: #eee;
-}
-table.controls  {
-    padding: 0.4em;
-    background-color: lightgray;
-    font-size:  100%;
-}
-
-table.controls2 {
-    margin: 0.3em;
-    padding: 0.6em;
-    border-width: 0;
-    background-color: white;
-}
-table.controls2 td {
-    padding: 0.6em;
-    background-color: lightgray;
-}
-table.controls2 select {
-    margin: 0.3em;
-}
 table.viewControls{
-border-collapse: collapse; 
-    
+    border-collapse: collapse; 
 }
 table.viewControls td,
 table.viewControls th {
@@ -375,7 +404,12 @@ table.viewControls th {
     font-size: 80%;
     padding-right: 0.5em;
 }
+#lblHideWarning {
+    font-weight: bold;
+    color: darkred;
+}
 
+/***************************** View Sliders *****************************/
 
 
 .sliderTable td:nth-child(2),
@@ -440,7 +474,17 @@ table.viewControls th {
 }
 
 
+/***************************** Themes *****************************/
 
+
+#selThemes {
+    font-size: 100%;
+    color: black;
+    background-color: #6faa09;
+    width: 8em;
+    height: 2.0em;
+    box-shadow:  0 0 6pt 2pt  black;
+}
 
 #divThemeControlsFlex {
     display: flex;       /* Creates the flexbox context */
@@ -471,7 +515,6 @@ table.viewControls th {
     border: 1px solid gray;
 }
 
-
 .vertical-header {
   text-align: left;
   vertical-align: bottom;
@@ -497,8 +540,6 @@ table.viewControls th {
     font-size: 60%;
     font-weight: normal;
 }
-
-
 
 #themeTableResults {
     width: 45%;
@@ -538,9 +579,7 @@ table.viewControls th {
 }
 
 
-#divViewControls {
-    width: 90%;
-}
+/***************************** Tunings / My Tunings *****************************/
 
 #divMyTuningsTab {
     flex: 1 1 0;
@@ -600,6 +639,49 @@ table.viewControls th {
     background-color: Khaki;
 }
 
+.userInstrumentControlsGroup {
+    background-color: cornsilk;
+    padding: 1em;
+    margin: 0;
+    margin-left: 4em;
+    width: 65%;
+}
+#tblUserInstrumentEditor{
+    border-spacing: 20px; 
+}
+
+.BanjoNutExamplesPanel {
+    display: none;
+    margin-top: 0.5em;
+    border: 1px solid #aaa;
+    border-radius: 0.3em;
+    max-width: 900px;
+}
+
+.BanjoNutExamplesTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.BanjoNutExamplesRow {
+    cursor: pointer;
+}
+
+.BanjoNutExamplesRow:nth-child(odd) {
+    background: #f4f4f4;
+}
+
+.BanjoNutExamplesRow:nth-child(even) {
+    background: #e9f7ff;
+}
+
+.BanjoNutExamplesCodeCell {
+    width: 40%;
+    font-family: monospace;
+}
+
+/***************************** Graveyard *****************************/
+
 .tblGraveyard {
     margin: 0.3em;
     padding: 0.6em;
@@ -626,6 +708,7 @@ table.viewControls th {
     font-weight: bold;
 }
 
+/***************************** Menu *****************************/
 
 .menuTable {
     border: 0;
@@ -681,9 +764,6 @@ table.viewControls th {
 #divFileControls {
     display: none;
 }
-#divSongControls {
-    display: none;
-}
 #divSectionControls {
     display: none;
 }
@@ -693,17 +773,8 @@ table.viewControls th {
 #divTunings {
     display: none;
 }
-.userInstrumentControlsGroup {
-    background-color: cornsilk;
-    padding: 1em;
-    margin: 0;
-    margin-left: 4em;
-    width: 65%;
-}
-#tblUserInstrumentEditor{
-    border-spacing: 20px; 
-}
 
+/***************************** Palette *****************************/
 
 #palette {
   display: none;
@@ -711,21 +782,15 @@ table.viewControls th {
   z-index: 9;
   text-align: center;
   padding: 0; /*.1em;*/
-  /*
-    FOR-DRAG position: absolute;
-    FOR-DRAG width: 400px;
-    FOR-DRAG padding-top: 0.4em;
-    FOR-DRAG background-color: #dfd;
-    FOR-DRAG box-shadow: inset 0 0 10pt 2pt  black;
-    FOR-DRAG border-radius: 4pt;
-    FOR-DRAG left: 5%;
-    FOR-DRAG width: 90%;
-    FOR-DRAG height: 20em;
-  */
   width: 100%;
   left: 0;
 }
-
+table.organizer td {
+    margin:0;
+    padding: 0;
+    vertical-align: top;
+    text-align: left;
+}
 #paletteheader {
   padding: 10px;
   margin: 10px;
@@ -733,6 +798,29 @@ table.viewControls th {
   z-index: 10;
   background-color: lightgreen;
 }
+#divPaletteDraggable {
+   padding: 3em;
+   position: fixed;
+}
+
+.fingeringRBBackground,
+.paletteRBBackground,
+.chooseNoteStyleRBBackground,
+.fingeringRBBackground {
+    background-color: white;
+    border-radius: 0.2em;
+    border: 1px solid black;
+    box-shadow:  2pt 2pt 4pt 1pt  black;
+    margin: 0.2em;
+}
+.paletteRBBackground {
+    margin-bottom: 0.4em;
+}
+#divPaletteDraggable {
+   padding: 3em;
+   position: fixed;
+}
+
 
 #palette label {
     margin: 1px;
@@ -877,6 +965,31 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     padding: 0.2em;
 }
 
+/***************************** Transport *****************************/
+
+#transport {
+    font-size: 200%;
+    z-index: 1000;
+    /* could also do this dynamically: document.getElementById('transport').style.zIndex = 1000; */
+}
+
+/* contains #transport */
+.topControlsSections  {
+    display: inline-block;
+    min-width: 24em;  /* when transport grows, this must be changed */
+    position: fixed;
+    left: 10em;/* set programmatically, so this is default in case js fails.*/
+    z-index: 30;
+}
+
+.insetTransportBeat {
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 5px;
+    padding: 0.1em;
+    display: inline-block;
+}
+
+
 
 #btnPrevSection2, #btnNextSection2, #btnFirstSection, #btnLastSection {
     font-size:  70%;
@@ -894,10 +1007,6 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     font-size:  100%;
     background-color: lightgreen;
 }
-/*
-    #btnPrevBeatTransport, #btnNextBeatTransport {
-    }
-*/
 .ArmedButton {
   background-color: green;
   border-radius: 10%;
@@ -918,55 +1027,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     border: 1px solid magenta !important; 
 }
 
-.BtnPunchedIn {
-    box-shadow: inset 2px 2px 5px 2px #555;
-    border-radius: 4px;
-    background-color: #dfd;
-    color: black;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease;
-}
-.BtnPunchedIn:active {
-    box-shadow: inset 0 0 2pt 2pt #6faa09;
-    transform: translateY(3px); /* Move the button down slightly */
-}
-.BtnPunchedOut {
-	box-shadow: inset 7px 7px 7px -4px #b1f53d;
-    border-radius: 4px;
-    background-color: #6faa09;
-    color: black;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease;
-}
-.BtnPunchedOut:active {
-    box-shadow: inset 0 0 2pt 2pt #6faa09;
-    transform: translateY(3px); /* Move the button down slightly */
-}
-.PunchedTogether {
-    border: 1px solid #578607;
-    border-radius: 4px;
-    display: inline-block;
-    padding: 2px;
-}
-/*
-    #divControls button {
-    }
-*/
-
-.MainMenuTabBtn, .MenuButton {
-    padding: 0.4em;
-    color: black;
-    font-family: Helvetica;
-    font-size: 120%;
-    border: 1px solid black;
-    border-radius: 4px;
-}
-.BigMobileBtn {
-    padding: 1em;
-}
-
+/***************************** Caption Row Main Page *****************************/
 
 .lblSongName {
     color: darkred;
@@ -975,10 +1036,6 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     font-weight: 400;
     font-style: normal;
     margin-left: 1em;
-}
-#lblCurrentBeat {
-    font-size: 150%;
-    font-weight: bold;
 }
 /* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
  *  so it inherits font-size, etc. */
@@ -1023,6 +1080,17 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     vertical-align: middle;
 }
 
+/***************************** File *****************************/
+
+#divSongList {
+    background-color: white;
+    display: block;
+    width: 90%;
+    height: 90%;
+    left: 5%;
+    top: 5%;
+    columns: 4;
+}
 
 .bpm {
     font-size:  80%;
@@ -1037,14 +1105,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     color:black;
     border: none;
 }
-#lblHideWarning {
-    font-weight: bold;
-    color: darkred;
-}
-P {
-    margin: 0;
-    padding: 0;
-}
+
+
+/***************************** Un-organized *****************************/
+
 .tbodyMIDI  td {
     padding: 0.5em;
     vertical-align: middle;
@@ -1097,18 +1161,6 @@ P {
     padding-bottom: 0;
 }
 
-/* Prevents inconsistent highlighting of element while being dragged
-   Copied from https://stackoverflow.com/questions/826782 */
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
-}
-
 .toolWindowRounded {
     color: black;
     border: 1px solid black;
@@ -1118,27 +1170,6 @@ P {
     background-color: #dfd;
     font-size:  100%;
     box-shadow: inset 0 0 10pt 4pt  black;
-}
-
-/* contains #transport */
-.topControlsSections  {
-    display: inline-block;
-    min-width: 24em;  /* when transport grows, this must be changed */
-    position: fixed;
-    left: 10em;/* set programmatically, so this is default in case js fails.*/
-    z-index: 30;
-}
-
-#transport {
-    font-size: 200%;
-    z-index: 1000;
-    /* could also do this dynamically: document.getElementById('transport').style.zIndex = 1000; */
-}
-.insetTransportBeat {
-    box-shadow: inset 2px 5px 20px black;
-    border-radius: 5px;
-    padding: 0.1em;
-    display: inline-block;
 }
 #lblSectionsStatus2 {
     display: inline-block;
@@ -1236,6 +1267,8 @@ input:read-only,textarea:read-only {
     background-color: coral;
 }
 
+/***************************** Instrument / NoteTable / FretTable *****************************/
+
 
 .diamondsRow td {
     background-color: var(--diamonds-background-color);
@@ -1320,8 +1353,8 @@ small {
 
 
 
+/*****************************  Now all the display note cells *****************************/
 
-/************ Now all the display note cells ***************/
 
 .stringDividerTD {
     background-color: black;
@@ -1922,6 +1955,10 @@ However, don't use for Root or other things.
     mix-blend-mode: difference;
 }
 
+
+/*****************************  More Palette and Color Picker Colors *****************************/
+
+
 #colorPicker, #hatchPicker {
      background-color: lightgray;
 
@@ -1942,15 +1979,7 @@ However, don't use for Root or other things.
 
     border: 2px solid darkolivegreen;
 }
-/*
-.noteRed1 { color: orange; background-color:darkred;  }
-.noteRed2 { color: orange; background-color:crimson;  }
-.noteRed3 { color: orange; background-color:firebrick;  }
-.noteRed4 { color: orange; background-color:maroon;  }
-.noteRed5 { color: orange; background-color:red;  }
-.noteRed6 { color: orange; background-color:mediumvioletred;  }
-.noteRed7 { color: orange; background-color:orangered;  }
-*/
+
 .noteRed1 { color: orange; background-color:#4d0000;  }
 .noteRed2 { color: orange; background-color:maroon;  }
 .noteRed3 { color: yellow; background-color:chocolate;  }
@@ -1958,9 +1987,6 @@ However, don't use for Root or other things.
 .noteRed5 { color: yellow; background-color:crimson;  }
 .noteRed6 { color: orange; background-color:orangered;  }
 .noteRed7 { color: orange; background-color:DeepPink;  }
-
-
-
 
 .noteBrown1 { color: orange; background-color: #160000; }
 .noteBrown2 { color: darkorange; background-color:#321414; }
@@ -1970,9 +1996,7 @@ However, don't use for Root or other things.
 .noteBrown6 { color: yellow; background-color:darkgoldenrod; }
 .noteBrown7 { color: yellow; background-color:goldenrod; }
 
-
 .LOVELY-BUT-SLIGHTLY-ORANGE-notePink3 { color: black; background-color:violet;  }
-
 
 .notePink1 { color: lightblue; background-color:indigo;  }
 .notePink2 { color: black; background-color:mediumslateblue;  }
@@ -1982,7 +2006,6 @@ However, don't use for Root or other things.
 .notePink6 { color: black; background-color:pink;  }
 .notePink7 { color: black; background-color:RosyBrown;  }
 
-
 .noteBlue1 { color: Wheat; background-color:Navy; }
 .noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
 .noteBlue3 { color: black; background-color:cornflowerblue; }
@@ -1990,9 +2013,6 @@ However, don't use for Root or other things.
 .noteBlue5 { color: black; background-color:deepskyblue; }
 .noteBlue6 { color: black; background-color:aqua; }
 .noteBlue7 { color: black; background-color:aquamarine; }
-
-
-
 
 .noteGreen1 { color: white; background-color: #002d04;  }
 .noteGreen2 { color: white; background-color:#06402B;  }
@@ -2009,8 +2029,6 @@ However, don't use for Root or other things.
 .noteYellow5 { color: black; background-color: #ffff33;  }
 .noteYellow6 { color: black; background-color: #ffff66;  }
 .noteYellow7 { color: black; background-color: #ffff99; }
-
-
 
 .noteLightBlue1 { color: black; background-color:#aaf; }
 .noteLightGreen1 { color: black; background-color:Blue; }
@@ -2041,14 +2059,6 @@ However, don't use for Root or other things.
     color: #BBB;
 }
 
-.right {
-    float: right;
-}
-.left{
-    float: left;
-}
-.clearBoth {
-    /* container of .left and .right might should have this. */
-    clear: both;
-}
+
+
 

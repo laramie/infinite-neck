@@ -2083,6 +2083,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			fullRepaint();
 		});
 		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
+		// CODE-EXAMPLE("TextAreaWButtonWidget", "BanjoNut")
+		$("#btnBanjoNutExamples").click(function() {
+			$("#divBanjoNutExamples").toggle();
+		});
+
+		$("#divBanjoNutExamples tr[data-banjo-nut-value]").click(function() {
+			$("#textareaBanjoNut").val($(this).attr("data-banjo-nut-value")).trigger("change");
+			$("#divBanjoNutExamples").hide();
+		});
+		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
 		$('#dropDownFunctionSymbols').change(function() {
             var value = $('#dropDownFunctionSymbols').val();
 			getSong().noteNamesFuncArr = JSON.parse(value);  //this one is safe--comes from our built SELECT.

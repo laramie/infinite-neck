@@ -110,7 +110,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var checkedVisible = tun.visible ? " checked " : "";
 
         var captionStr = '<nobr>' + tun.caption + '</nobr>';
-        var primaryControlHtml = '<button class="btnCloneTuning" data-baseid="' + tun.baseID + '">Clone</button>';
+        var primaryControlHtml = '<button type="button" class="btnCloneTuning" data-baseid="' + tun.baseID + '">Clone</button>';
         if (primaryControl === "visibility") {
             primaryControlHtml = '<label for="cb' + tun.baseID + '"><input id="cb' + tun.baseID + '" '
                 + ' type="checkbox" class="cbTuningVisible" '
@@ -496,6 +496,10 @@ function showTuningsTab(which) {
 }
 
 export function bindFormTuningsEvents() {
+    $('#frmTunings').off('submit').on('submit', function (event) {
+        event.preventDefault();
+    });
+
     $('#btnMyTuningsTab').click(function() {
         showTuningsTab('my');
     });
