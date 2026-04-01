@@ -242,6 +242,46 @@ export class SectionV2 {
 		}
 		return sn;
 	}
+	getSectionNotesDisplayData() {
+		const namedNotes = new Set();
+		const playedNotes = [];
+		const recordedNotes = [];
+
+		this.getAllSectionNotes().forEach(([tableID, sn]) => {
+			Object.keys(sn?.namedNotes || {}).forEach((noteName) => {
+				namedNotes.add(noteName);
+			});
+
+			const playedCount = Array.isArray(sn?.playedNotes) ? sn.playedNotes.length : 0;
+			if (playedCount > 0) {
+				playedNotes.push(`${tableID}:${playedCount}`);
+			}
+
+			const recordedCount = Object.values(sn?.recordedNotes || {}).reduce((count, notesForBeat) => {
+				return count + (Array.isArray(notesForBeat) ? notesForBeat.length : 0);
+			}, 0);
+			if (recordedCount > 0) {
+				recordedNotes.push(`${tableID}:${recordedCount}`);
+			}
+		});
+
+		return {
+			namedNotes: Array.from(namedNotes).sort((left, right) => left.localeCompare(right)),
+			playedNotes,
+			recordedNotes
+		};
+	}
+
+	getSectionNotesDisplayString() {
+		const details = this.getSectionNotesDisplayData();
+		return [
+			'{',
+			`    namedNotes: ${JSON.stringify(details.namedNotes)},`,
+			`    playedNotes: ${JSON.stringify(details.playedNotes)},`,
+			`    recordedNotes: ${JSON.stringify(details.recordedNotes)}`,
+			'}'
+		].join('\n');
+	}
 	getAllSectionNotes() {
 		// Returns an array of [tableID, SectionNotes] pairs, so you can .forEach(([tableID, sn]) => ...)
 		return Object.entries(this.sectionNotesByTable);

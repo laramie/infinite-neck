@@ -664,13 +664,9 @@ export function replayTable(replayOptions){
     }
 
     var tablearr = null;
-    if (replayOptions.currSection.noteTables){
-        tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
-    } else {
-        let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
-        if (sn){
-            tablearr = sn.playedNotes;
-        }
+    let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
+    if (sn){
+        tablearr = sn.playedNotes;
     }
     if (tablearr){
         tablearr.forEach(script => {

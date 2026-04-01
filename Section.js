@@ -8,9 +8,6 @@ const DEFAULT_BEATS = 4;
 
 export class Section {
     constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
-        this.noteTables = {};
-        this.namedNotes = {};
-        this.recordedNotes = {};
         this.caption = '';
         this.rootID = rootID;
         this.rootIDLead = '-1';
@@ -20,9 +17,7 @@ export class Section {
     }
 
     cloneFrom(other) {
-        this.noteTables = other.noteTables;
-        this.namedNotes = other.namedNotes;
-        this.recordedNotes = other.recordedNotes;
+        this.sectionNotesByTable = other.sectionNotesByTable;
         this.caption = other.caption;
         this.rootID = other.rootID;
         this.rootIDLead = other.rootIDLead;
@@ -34,7 +29,6 @@ export class Section {
     }
 
     populateCloneFrom(sourceSection, { deep = false } = {}) {
-        this.namedNotes = JSON.parse(JSON.stringify(sourceSection.namedNotes));
         this.rootID = sourceSection.rootID;
         this.rootIDLead = sourceSection.rootIDLead;
         this.caption = sourceSection.caption;
@@ -42,8 +36,7 @@ export class Section {
         this.currentBeat = 1;
 
         if (deep) {
-            this.noteTables = JSON.parse(JSON.stringify(sourceSection.noteTables));
-            this.recordedNotes = JSON.parse(JSON.stringify(sourceSection.recordedNotes));
+            this.sectionNotesByTable = JSON.parse(JSON.stringify(sourceSection.sectionNotesByTable));
         }
 
         return this;

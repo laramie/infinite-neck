@@ -927,8 +927,8 @@ export class Song {
     if (this.useSectionV2){
         return {"warning":"Not Implemented for V2 yet"};
     }
-   var hashTuningNames = {};
-     this.sections.forEach((section, sectionIdx) => { //for all sections...
+    var hashTuningNames = {};
+    this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
                 if (tablearr && tablearr.length && tablearr.length > 0) {
                     var tuningID = tablename.substring( Constants.TABLE_ID_PREFIX.length);
@@ -946,7 +946,7 @@ export class Song {
                 }
             });
         });
-	  return hashTuningNames;
+	    return hashTuningNames;
 	}
 
 

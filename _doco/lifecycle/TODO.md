@@ -3,7 +3,12 @@
 ## Inbox / Unassigned
 
 - place new TODOs here...
-- 
+- doing noteTables the old way: 
+  - printSections() in infinite-neck.js is 
+  - export function printTablesStats(noteTables)
+  - export function dropper(cell, cellcol, cellrow, styleNum, noteName)
+
+
 
 ## Outstanding Tasks
 

@@ -1174,10 +1174,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			const sections = getSections();
 			const B = "<br />";
 			let result = "<table border='1' cellspacing='0'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th><th>Details</th>";
-			let namedNotes, specialNotes;
+			let details;
 			sections.forEach((section, idx) => {
-				namedNotes = (section.namedNotes && Object.keys(section.namedNotes).length > 0) ? "namedNotes: " + JSON.stringify(Object.keys(section.namedNotes)) : "";
-				specialNotes = (section.noteTables && Object.keys(section.noteTables).length > 0) ? "<br />SpecialNotes: " + printTablesStats(section.noteTables) : "";
+				if (typeof section.getSectionNotesDisplayString === 'function') {
+					details = "<pre style='margin:0'>" + section.getSectionNotesDisplayString() + "</pre>";
+				} else {
+					const namedNotes = (section.namedNotes && Object.keys(section.namedNotes).length > 0) ? "namedNotes: " + JSON.stringify(Object.keys(section.namedNotes)) : "";
+					const specialNotes = (section.noteTables && Object.keys(section.noteTables).length > 0) ? "<br />SpecialNotes: " + printTablesStats(section.noteTables) : "";
+					details = namedNotes + specialNotes;
+				}
 				const SEP = "</td><td>";
 				result += "<tr><td>"
 					+ "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
@@ -1185,8 +1190,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					+ "<B style='font-size: 130%;'>" + getSong().noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + getSong().noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
 					+ (section.sharps ? " &sharp; " : " &flat; ") + SEP
 					+ "<b style='font-size: 130%;'>" + section.caption + "</b>" + SEP
-					+ namedNotes
-					+ specialNotes
+					+ details
 					+ "</td></tr>";
 			});
 			return result + "</table>";
