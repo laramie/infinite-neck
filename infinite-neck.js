@@ -91,6 +91,7 @@ import {
 	theme,
 	themeToControls
 } from './themeFunctions.js';
+import * as SectionPrinter from './section-printer.js';
 import * as TableBuilder from './TableBuilder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
 import {
@@ -209,6 +210,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
+			printSectionNotes,
 			resetNoteNames,
 			sectionChanged,
 			setBPM,
@@ -1161,45 +1163,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showBeats();
 	}
 
-		export function printTablesStats(noteTables){
-			let result = "";
-			const B = "<br />";
-			Object.entries(noteTables).forEach(([key, tableArr]) => {
-				result += B + key + ":" + tableArr.length;
-			});
-			return result;
-		}
+	export function printSections() {
+		return SectionPrinter.printSections(getSong(), getSections());
+	}
 
-		export function printSections(){
-			const sections = getSections();
-			const B = "<br />";
-			let result = "<table border='1' cellspacing='0'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th><th>Details</th>";
-			let details;
-			sections.forEach((section, idx) => {
-				if (typeof section.getSectionNotesDisplayString === 'function') {
-					details = "<pre style='margin:0'>" + section.getSectionNotesDisplayString() + "</pre>";
-				} else {
-					const namedNotes = (section.namedNotes && Object.keys(section.namedNotes).length > 0) ? "namedNotes: " + JSON.stringify(Object.keys(section.namedNotes)) : "";
-					const specialNotes = (section.noteTables && Object.keys(section.noteTables).length > 0) ? "<br />SpecialNotes: " + printTablesStats(section.noteTables) : "";
-					details = namedNotes + specialNotes;
-				}
-				const SEP = "</td><td>";
-				result += "<tr><td>"
-					+ "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
-					+ section.beats + SEP
-					+ "<B style='font-size: 130%;'>" + getSong().noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + getSong().noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
-					+ (section.sharps ? " &sharp; " : " &flat; ") + SEP
-					+ "<b style='font-size: 130%;'>" + section.caption + "</b>" + SEP
-					+ details
-					+ "</td></tr>";
-			});
-			return result + "</table>";
-		}
+	export function printSectionNotes(){
+		return SectionPrinter.printSectionNotes(getSong(), getSections());
+	}
 
-		export function linkToSection(idx){
-			getSong().gotoSection(idx);
-			hideCmdLine();
-		}
+
+	export function linkToSection(idx) {
+		getSong().gotoSection(idx);
+		hideCmdLine();
+	}
 
 		export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
 	        //console.log("rangeSlide:"+element_id+" value: "+value);

@@ -70,4 +70,10 @@ git fetch origin
 git rebase origin/master
 git push --force-with-lease
 ```
+
+### To validate the command-line menu
+
+```
+npm run validate:cmdmenu
+```
      

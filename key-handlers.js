@@ -75,6 +75,7 @@ function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(..
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
+function printSectionNotes(...args) { return requireProvider('printSectionNotes')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
@@ -609,6 +610,12 @@ export function performCmdAction(menuItem, args){
 			$("#divMessageAndJsonTree").show()
             $("#divMessages").show();
 			$("#divMessages").html(printSections());
+			hideCmdLine();
+			break;
+		case "printSectionNotes":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+			$("#divMessages").html(printSectionNotes());
 			hideCmdLine();
 			break;
 		case "sectionDelete":

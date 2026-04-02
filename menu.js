@@ -496,9 +496,20 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>p</b>rint",
-          "trigger": "p",
-          "action": "printSections"
+        "caption": "<b>p</b>rint",
+        "trigger": "p",
+        "children": [
+            {
+              "caption": "<b>s</b>ummary",
+              "trigger": "s",
+              "action": "printSections"
+            },
+            {
+              "caption": "<b>n</b>otes",
+              "trigger": "n",
+              "action": "printSectionNotes"
+            }            
+          ]
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
