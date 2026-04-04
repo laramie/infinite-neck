@@ -24,6 +24,7 @@ const INFINITE_NECK_SUITE = process.env.INFINITE_NECK_SUITE;
 const INFINITE_NECK_SUITE_INPUT = parseInt(INFINITE_NECK_SUITE, 10);
 const SUITE = isNaN(INFINITE_NECK_SUITE_INPUT) ? 0 : INFINITE_NECK_SUITE_INPUT;
 const MORE_THRESHOLD = VERBOSE_MODE > 1 ? 100 : 10;
+const RUN_WHOLE_SONG_LIBRARY_TESTS = process.env.INFINITE_NECK_RUN_LIBRARY_TESTS === '1';
 
 function printVerboseModeMessage() {
     function getHelpMsg() {
@@ -415,7 +416,9 @@ describe('getSong() test_getRelativeSectionWithWrap', () => {
     });
 });
 
-describe('Song file and getSong() loading validation', () => {
+const describeSongFileLoading = RUN_WHOLE_SONG_LIBRARY_TESTS ? describe : describe.skip;
+
+describeSongFileLoading('Song file and getSong() loading validation', () => {
     let accumFilename = [];
     let data = null;
     logVerbose(2, "🛈  Song Files to be tested with songTestOptions: " + LF + JSON.stringify(songFiles, null, 4));

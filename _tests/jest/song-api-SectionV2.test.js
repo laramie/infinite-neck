@@ -31,5 +31,5 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
     expect(song.getSections()[0].rootID).toBe(2);
     expect(song.getSections()[1].rootID).toBe(1);
     expect(song.getSections()[2].rootID).toBe(7);
-    console.log("SectionV2 dump: \n"+song.dump(false));
+    //console.log("SectionV2 dump: \n"+song.dump(false));
 });

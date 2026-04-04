@@ -1,0 +1,452 @@
+{
+  "useSectionV2": true,
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "playedNotes": [],
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "C",
+                "styleNum": 2,
+                "midinum": "48",
+                "row": "4",
+                "col": "3",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "Eb",
+                "styleNum": 2,
+                "midinum": "51",
+                "row": "3",
+                "col": "1",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "E",
+                "styleNum": 2,
+                "midinum": "52",
+                "row": "3",
+                "col": "2",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "Bb",
+                "styleNum": 5,
+                "midinum": "58",
+                "row": "2",
+                "col": "3",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone1"
+              }
+            ]
+          }
+        }
+      },
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false,
+      "noteTables": {},
+      "namedNotes": {},
+      "recordedNotes": {}
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "playedNotes": [],
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "F",
+                "styleNum": 2,
+                "midinum": "53",
+                "row": "3",
+                "col": "3",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "C",
+                "styleNum": 2,
+                "midinum": "60",
+                "row": "2",
+                "col": "5",
+                "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "B",
+                "styleNum": 5,
+                "midinum": "59",
+                "row": "2",
+                "col": "4",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone1"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "G",
+                "styleNum": 2,
+                "midinum": "55",
+                "row": "3",
+                "col": "5",
+                "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "A",
+                "styleNum": 5,
+                "midinum": "57",
+                "row": "2",
+                "col": "2",
+                "colorClass": "noteTransparent",
+                "bendValue": "prebend1"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "Gb",
+                "styleNum": 2,
+                "midinum": "54",
+                "row": "3",
+                "col": "4",
+                "colorClass": "noteTransparent"
+              }
+            ]
+          }
+        }
+      },
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "playedNotes": [],
+          "namedNotes": {
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "F",
+                "styleNum": 2,
+                "midinum": "53",
+                "row": "3",
+                "col": "3",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "D",
+                "styleNum": 2,
+                "midinum": "50",
+                "row": "4",
+                "col": "5",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "B",
+                "styleNum": 2,
+                "midinum": "47",
+                "row": "4",
+                "col": "2",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "F",
+                "styleNum": 5,
+                "midinum": "41",
+                "row": "5",
+                "col": "1",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone2"
+              }
+            ]
+          }
+        }
+      },
+      "caption": "",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 2,
+      "sharps": false
+    }
+  ],
+  "gSectionsCurrentIndex": 2,
+  "gFirstBeatSeen": false,
+  "userInstrumentTuning": null,
+  "gSongModelListener": null,
+  "noteNamesFuncArrDEFAULT": [
+    "I",
+    "&tau;",
+    "II",
+    "m",
+    "III",
+    "IV",
+    "&Theta;",
+    "V",
+    "&sigma;",
+    "6",
+    "&delta;",
+    "&Delta;"
+  ],
+  "sharps": false,
+  "captionsRowShowing": false,
+  "presentationMode": false,
+  "randomSectionHistory": [],
+  "wirings": [
+    {
+      "tablename": "tblS6_observer_lookbehind",
+      "relativeSection": "-1",
+      "listenToTablename": "tblS6_1"
+    },
+    {
+      "tablename": "tblS6_observer_lookahead",
+      "relativeSection": "+1",
+      "listenToTablename": "tblS6_1"
+    }
+  ],
+  "isHeadless": false,
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "S6_observer_lookbehind",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": true,
+      "baseID": "S6_1",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    },
+    {
+      "instance": true,
+      "baseID": "S6_observer_lookahead",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ],
+  "tunings": [],
+  "visibleNoteTables": [
+    "tblS6_observer_lookbehind",
+    "tblS6_1",
+    "tblS6_observer_lookahead"
+  ],
+  "defaultBPM": "80",
+  "rootID": "3",
+  "namedNoteOpacity": "1.00",
+  "singleNoteOpacity": "1.00",
+  "songfileVersion": "V2",
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1775265347269,
+        "date": "4/3/2026",
+        "time": "6:15:47 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"playedNotes\": [],\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"48\",\n                        \"row\": \"4\",\n                        \"col\": \"3\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"2\": [\n                    {\n                        \"noteName\": \"Eb\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"51\",\n                        \"row\": \"3\",\n                        \"col\": \"1\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"52\",\n                        \"row\": \"3\",\n                        \"col\": \"2\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"4\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 5,\n                        \"midinum\": \"58\",\n                        \"row\": \"2\",\n                        \"col\": \"3\",\n                        \"colorClass\": \"noteTransparent\",\n                        \"bendValue\": \"semitone1\"\n                    }\n                ]\n            }\n        }\n    },\n    \"caption\": \"\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false,\n    \"noteTables\": {},\n    \"namedNotes\": {},\n    \"recordedNotes\": {}\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1775265353907,
+        "date": "4/3/2026",
+        "time": "6:15:53 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"playedNotes\": [],\n            \"namedNotes\": {\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"53\",\n                        \"row\": \"3\",\n                        \"col\": \"3\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"2\": [\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"50\",\n                        \"row\": \"4\",\n                        \"col\": \"5\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"B\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"47\",\n                        \"row\": \"4\",\n                        \"col\": \"2\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"4\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 5,\n                        \"midinum\": \"41\",\n                        \"row\": \"5\",\n                        \"col\": \"1\",\n                        \"colorClass\": \"noteTransparent\",\n                        \"bendValue\": \"semitone2\"\n                    }\n                ]\n            }\n        }\n    },\n    \"caption\": \"\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1775265354652,
+        "date": "4/3/2026",
+        "time": "6:15:54 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"playedNotes\": [],\n            \"namedNotes\": {\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"53\",\n                        \"row\": \"3\",\n                        \"col\": \"3\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"2\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"colorClass\": \"noteTransparent\"\n                    },\n                    {\n                        \"noteName\": \"B\",\n                        \"styleNum\": 5,\n                        \"midinum\": \"59\",\n                        \"row\": \"2\",\n                        \"col\": \"4\",\n                        \"colorClass\": \"noteTransparent\",\n                        \"bendValue\": \"semitone1\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"55\",\n                        \"row\": \"3\",\n                        \"col\": \"5\",\n                        \"colorClass\": \"noteTransparent\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 5,\n                        \"midinum\": \"57\",\n                        \"row\": \"2\",\n                        \"col\": \"2\",\n                        \"colorClass\": \"noteTransparent\",\n                        \"bendValue\": \"prebend1\"\n                    }\n                ],\n                \"4\": [\n                    {\n                        \"noteName\": \"Gb\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"54\",\n                        \"row\": \"3\",\n                        \"col\": \"4\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ]\n            }\n        }\n    },\n    \"caption\": \"\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "activeStylesheets": "Default",
+  "songName": "S6_1-3sec-all-types-observers-copy",
+  "theme": "Default"
+}

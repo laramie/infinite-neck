@@ -593,7 +593,9 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 
 //=================================REPLAY========================================
-export function replay(){
+
+export function getReplayOptionsArray(){
+    let resultOptionsArray = [];
     let baseopts = {};
     baseopts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
     baseopts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
@@ -611,20 +613,33 @@ export function replay(){
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
-            replayTable(opts);
+            resultOptionsArray.push(opts);
         } else {
             if (wiring && wiring.listenToTablename) {
                 opts.currSection = getCurrentSection();
                 opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
                 opts.listenToTablename = wiring.listenToTablename;
-                replayTable(opts);
+                resultOptionsArray.push(opts);
             }
             opts.currSection = getCurrentSection();
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = tablename;
-            replayTable(opts);
+            resultOptionsArray.push(opts);
         }
     });
+    return resultOptionsArray;
+}
+
+export function replay(){
+    let optsArray = getReplayOptionsArray();
+    //You will get back an array of opts:
+    //  if wiring.relativeSection, there will be one opts, meaning replay() will be called once.
+    //  if wiring. listenToTablename and not relativeSection, you will get two, 
+    //      meaning replay() will be called first for your listenToTablename, then once for your own tablename.
+    optsArray.forEach(opts => {
+        replayTable(opts);
+    });
+
 }
 
 export function replayTable(replayOptions){
@@ -723,19 +738,19 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 }
 
 export function showHighlightsForBeat(nBeat){
-    let visibleTables = getSong().getVisibleTunings();
-    visibleTables.forEach(tablename =>{
-        showHighlightsForBeatForTable(nBeat, tablename);
+    let optsArray = getReplayOptionsArray();
+    optsArray.forEach(opts => {
+        showHighlightsForBeatForOptions(nBeat, opts);
     });
 }
 
-
-export function showHighlightsForBeatForTable(nBeat, tablename){
+//This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
+export function showHighlightsForBeatForOptions(nBeat, options){
     let tableSelector = '';
-    if (tablename){
-        tableSelector = '#'+tablename+' ';
+    if (options.tablename){
+        tableSelector = '#'+options.tablename+' ';
     }
-    let sn = getCurrentSection().sectionNotesByTable[tablename];
+    let sn = options.currSection.sectionNotesByTable[options.listenToTablename];
     let dict = null;
     if (sn) {
         dict = sn.recordedNotes;

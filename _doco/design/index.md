@@ -2,6 +2,7 @@
 
 Below is a list of documentation files in this directory. Add or edit notes after each link as needed.
 
+- [LayoutManager-specification.md](LayoutManager-specification.md)
 - [class-diagram-20260316.md](class-diagram-20260316.md)
 - [class-diagram-note-types.md](class-diagram-note-types.md)
 - [class-diagram.md](class-diagram.md)

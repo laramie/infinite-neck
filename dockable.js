@@ -1,3 +1,17 @@
+const hasWindow = typeof window !== 'undefined';
+const hasDocument = typeof document !== 'undefined';
+const dockableFloatStateFallback = {};
+
+// Utility: Return a JSON string of all dockable state objects (for debugging/inspection)
+export function getAllDockableStateJSON() {
+    // You can refine this to include other window properties if needed
+    const floatState = hasWindow ? (window._dockableFloatState || {}) : dockableFloatStateFallback;
+    try {
+        return JSON.stringify(floatState, null, 2);
+    } catch (e) {
+        return 'Error stringifying dockable state: ' + e;
+    }
+}
 // Clamp only the size (width/height) of a floating window to fit within the viewport, without moving it
 function clampDockableSizeToViewport(floatWin, margin = 12) {
     if (!floatWin) return;
@@ -28,11 +42,13 @@ function clampDockableSizeToViewport(floatWin, margin = 12) {
 import { draggable } from './drag.js';
 
 function getDockableFloatState() {
+    if (!hasWindow) return dockableFloatStateFallback;
     if (!window._dockableFloatState) window._dockableFloatState = {};
     return window._dockableFloatState;
 }
 
 function getFloatingDockables() {
+    if (!hasDocument) return [];
     const floatState = getDockableFloatState();
     return Object.keys(floatState)
         .map(divId => ({
@@ -115,6 +131,7 @@ function applyHandleOrientation(floatWin, handle, contentHost, orientation, togg
 }
 
 export function makeDivDockable(divId) {
+    if (!hasDocument) return;
     const floatState = getDockableFloatState();
 
     const div = document.getElementById(divId);
@@ -212,6 +229,7 @@ export function makeDivDockable(divId) {
 }
 
 export function dockDivInPage(divId) {
+    if (!hasDocument) return;
     const floatState = getDockableFloatState();
     const div = document.getElementById(divId);
     const state = floatState[divId];
@@ -272,14 +290,18 @@ export function clampAllDockablesToViewport(margin = 12) {
     });
 }
 
-window.addEventListener('resize', function () {
-    clampAllDockablesToViewport();
-});
+if (hasWindow) {
+    window.addEventListener('resize', function () {
+        clampAllDockablesToViewport();
+    });
+}
 
 // Make functions globally accessible for inline HTML usage
-window.makeDivDockable = makeDivDockable;
-window.dockDivInPage = dockDivInPage;
-window.disposeAllDockables = disposeAllDockables;
-window.dockAllDockables = dockAllDockables;
-window.gatherAllDockables = gatherAllDockables;
-window.clampAllDockablesToViewport = clampAllDockablesToViewport;
+if (hasWindow) {
+    window.makeDivDockable = makeDivDockable;
+    window.dockDivInPage = dockDivInPage;
+    window.disposeAllDockables = disposeAllDockables;
+    window.dockAllDockables = dockAllDockables;
+    window.gatherAllDockables = gatherAllDockables;
+    window.clampAllDockablesToViewport = clampAllDockablesToViewport;
+}

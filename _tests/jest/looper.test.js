@@ -18,6 +18,8 @@ function makeMockSong({ beat = 1, beats = 4 } = {}) {
 	};
 	s.getBeat = jest.fn(() => s._beat);
 	s.getBeats = jest.fn(() => s._beats);
+	s.getSectionsCurrentIndex = jest.fn(() => 0);
+	s.getSections = jest.fn(() => [{ caption: 'One' }, { caption: 'Two' }]);
 	s.incBeatLoop = jest.fn();
 	s.gotoNextSection = jest.fn();
 	return s;
@@ -110,7 +112,13 @@ function installHeadlessLoopState({ randomLoop = false } = {}) {
 	};
 
 	setLooperProviders({
-		getSong: () => ({ randomLoop }),
+		getSong: () => ({
+			randomLoop,
+			getSectionsCurrentIndex: () => 0,
+			getSections: () => [{ caption: 'One' }, { caption: 'Two' }],
+			getBeat: () => 1,
+			getBeats: () => 4
+		}),
 		getMillisForBeatClock: () => 125,
 		getLoopSectionsCaption: () => state.sectionsCaption,
 		getLoopBeatsCaption: () => state.beatsCaption,

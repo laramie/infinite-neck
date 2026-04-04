@@ -59,9 +59,15 @@ test('printSectionNotes renders V2 note tables by instrument', async () => {
 
 	const result = neck.printSectionNotes();
 
-	expect(result).toContain("<th colspan='3'>S6_1</th>");
-	expect(result).toContain("<th colspan='3'>P4_1</th>");
-	expect(result).toContain("<th>named</th><th>played</th><th>rec</th><th>named</th><th>played</th><th>rec</th>");
-	expect(result).toContain("<b style='font-size: 130%;'>Verse</b></td><td>C, E</td><td>C, E</td><td>1: A, B, G 2: B, G, C</td><td>G</td><td>G</td><td>3: G, A</td>");
-	expect(result).toContain("<b style='font-size: 130%;'>Bridge</b></td><td>A</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
+	 expect(result).toContain("colspan='3'>S6_1</th>");
+	 expect(result).toContain("colspan='3'>P4_1</th>");
+	 expect(result).toContain(">named</th><th class='SPN_evenColp'>played</th><th class='SPN_evenColr'>rec</th>");
+	 expect(result).toContain("<b style='font-size: 130%;'>Verse</b>");
+	 expect(result).toContain("<div class='SPN_NN'>C, E</div>");
+	 expect(result).toContain("<div class='SPN_PN'>C,E</div>");
+	 expect(result).toContain("<span class='beatNum'>1:</span> A,B,G");
+	 expect(result).toContain("<span class='beatNum'>2:</span> B,G,C");
+	 expect(result).toContain("<span class='beatNum'>3:</span> G,A");
+	 expect(result).toContain("<b style='font-size: 130%;'>Bridge</b>");
+	 expect(result).toContain("<div class='SPN_NN'>A</div>");
 });

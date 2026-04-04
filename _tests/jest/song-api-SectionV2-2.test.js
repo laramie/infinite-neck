@@ -10,10 +10,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//const PRIMARY_SONG_FILENAME = 'All-Chords-All-Keys-w-highlights.json';
-//const PRIMARY_SONG_FILENAME = 'progression-on-strat.json';
-//const PRIMARY_SONG_FILENAME = 'BassNGtr2SecAllTypes.json';
-const PRIMARY_SONG_FILENAME = 'v2-snake.json';
+const PRIMARY_SONG_FILENAME = 'All-Chords.json';
 
 function getSongPath(songFilename = PRIMARY_SONG_FILENAME) {
     return path.join(__dirname, '../../songs', songFilename);
@@ -52,5 +49,5 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
     const expected = before.map((n) => (12 + n + 2) % 12);
 
     expect(after).toEqual(expected);
-    console.log("SectionV2 dump: \n"+song.dump(false));
+    //console.log("SectionV2 dump: \n"+song.dump(false));
 });
