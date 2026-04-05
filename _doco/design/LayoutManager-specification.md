@@ -954,3 +954,15 @@ Another thing that should be considered is that getDefaultTuning has been a bear
   - Add to first spec.  It is useful when doing these template layouts to see the participating SELECTs, INPUTs and BUTTONs from the start.  And the implementation of the event is very similar to forward propogation, so we should be testing them together.
 4. Decide when to introduce alternate placement modes such as flex or grid.
   - Answer: Defer.  flex and grid are such bears to work with, we'll target that when this work is stable and accepted.
+5. If Layout .... "kind" is "instrument", support features as special properties: 
+  - diamondsRow: boolean
+  - leftCaption: boolean (if true, instrument will be built with an HTML block with two cells in one column:
+    - a horizontal, left-to-right text span that has classes so that it functions as an indicator of Section, relativeSection, and Looper status:
+      ```
+      var sectionMark = '<span class="instrumentSectionBox LooperLight" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
+      ```
+      renders as: 
+      ```
+      <span class="instrumentSectionBox LooperLight" id="relSec_tblS6_1"><span class="instrumentSectionMark">§</span>1</span>
+      ```
+    - a vertical, bottom-to-top text writing direction cell that contains the Tuning ID.

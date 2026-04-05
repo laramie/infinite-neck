@@ -622,6 +622,7 @@ export function getReplayOptionsArray(){
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
             opts.type = ReplayOptions.RELATIVE;
+            opts.directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
             resultOptionsArray.push(opts);
         } else {
             if (wiring && wiring.listenToTablename) {
@@ -753,10 +754,9 @@ export function showHighlightsForBeat(nBeat){
     optsArray.forEach(opts => {
         if (opts.type === ReplayOptions.RELATIVE) {
             //nBeat is 1-based.
-            let directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
-            if (directionType === Song.DirectionType.BACKWARD){
+            if (opts.directionType === Song.DirectionType.BACKWARD){
                 showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);
-            } else if (directionType === Song.DirectionType.FORWARD){
+            } else if (opts.directionType === Song.DirectionType.FORWARD){
                 showHighlightsForBeatForOptions(1, opts);    
             }
         } else {

@@ -2125,6 +2125,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			themeToControls(selectedTheme);
 			clearThemeDiffResults();
 			refreshShowAllNoteNames();
+			$(this).blur();  // Remove focus so keyboard doesn't change selection
 		});
 		$('#warny').click(function(){
 			$(this).hide();
