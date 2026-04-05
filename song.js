@@ -268,6 +268,45 @@ export class Song {
         return testResult;
     }
 
+
+    static DirectionType = Object.freeze({
+        FORWARD:         '+',
+        BACKWARD:        '-',
+        OTHER:           'O',
+        EMPTY:           'E'
+    });
+
+    static Direction = Object.freeze({
+        FORWARD:         '+',
+        BACKWARD:        '-',
+        ABSOLUTE:        'A',
+        PREVIOUS_PLAYED: '@',  // legal values for full string: "@-2" or "@2" or "@+2"
+        BACKWARD_NOWRAP: '^',  // legal values: ^1 ^2  go backwards.  No minus sign.
+        FORWARD_NOWRAP:  '&',  // legal value: &1 &2 go forwards. No minus signs.
+        BAD_INPUT:       'X',
+        EMPTY:           'E'
+    });
+
+    getRelativeSectionDirection(sAmount){
+        let result = this.getRelativeSectionWithWrapAndDirection(sAmount)
+        switch (result.direction){
+            case Song.Direction.FORWARD:         
+            case Song.Direction.FORWARD_NOWRAP:  
+                return Song.DirectionType.FORWARD;
+            case Song.Direction.BACKWARD:        
+            case Song.Direction.PREVIOUS_PLAYED: 
+            case Song.Direction.BACKWARD_NOWRAP: 
+                return Song.DirectionType.BACKWARD;
+            case Song.Direction.EMPTY: 
+                return Song.DirectionType.EMPTY;
+            case Song.Direction.ABSOLUTE:        
+            case Song.Direction.BAD_INPUT:       
+                return Song.DirectionType.OTHER;
+            default:
+                return Song.DirectionType.OTHER;
+        }
+    }
+
     /*   Support
      *   +3   3 sections ahead, with wrap
      *   -3   3 sections back, with wrap
@@ -292,25 +331,22 @@ export class Song {
      *    Negative signs after the first character are ignored, so @-1 is the same as @1, and --1 is the same as -1.
      *     So you can go "back" with -1 or ^1 or @1, and --1, ^-1, and @-1 are identical, respectively.
     */
+
     getRelativeSectionWithWrap(sAmount, logCollector = null) {
-        const Direction = Object.freeze({
-            FORWARD:         '+',
-            BACKWARD:        '-',
-            ABSOLUTE:        'A',
-            PREVIOUS_PLAYED: '@',  // legal values for full string: "@-2" or "@2" or "@+2"
-            BACKWARD_NOWRAP: '^',  // legal values: ^1 ^2  go backwards.  No minus sign.
-            FORWARD_NOWRAP:  '&',  // legal value: &1 &2 go forwards. No minus signs.
-            BAD_INPUT:       'X',
-            EMPTY:           'E'
-        });
+        let result = this.getRelativeSectionWithWrapAndDirection(sAmount, logCollector);
+        return result.section;
+    }
 
+    getRelativeSectionWithWrapAndDirection(sAmount, logCollector = null) {
         if (sAmount && sAmount[0]){
-
+    
+            // Special case: "0" means first section
             if (sAmount === "0") {
-                return this.sections[0];
+                return { section: this.sections[0], direction: Song.Direction.ABSOLUTE };
             }
+            // Special case: "+0" or "-0" means current section
             if (sAmount === "+0" || sAmount === "-0") {
-                return this.sections[this.gSectionsCurrentIndex];
+                return { section: this.sections[this.gSectionsCurrentIndex], direction: Song.Direction.ABSOLUTE };
             }
             // Extract firstChar if present
             const match = sAmount.match(/^([+\-@^&])([-+]?\d+)/);
@@ -323,17 +359,17 @@ export class Song {
                 intNum = Math.abs(parseInt(match[2], 10));
                 isnum = /^[-+]?\d+$/.test(match[2]);
                 if (!isnum){
-                    firstChar = Direction.BAD_INPUT;
+                    firstChar = Song.Direction.BAD_INPUT;
                 }
             } else {
                 // If no special char, check for pure integer
                 if (/^[-+]?\d+$/.test(sAmount)) {
-                    firstChar = Direction.ABSOLUTE;
+                    firstChar = Song.Direction.ABSOLUTE;
                     intNum = Math.abs(parseInt(sAmount, 10));  //deal with the illegal --2.
                     isnum = true;
                 } else {
                     // Malformed input: neither special char nor integer
-                    firstChar = Direction.BAD_INPUT;
+                    firstChar = Song.Direction.BAD_INPUT;
                     intNum = 0;
                     isnum = false;
                     const msg = "Malformed section amount: " + sAmount;
@@ -344,58 +380,61 @@ export class Song {
                     }
                 }
             }
-
-            
+    
             var currentIndex = this.gSectionsCurrentIndex;
             function wrap(oneBasedDistance, sectionsArray, currentZeroBasedIndex){
                 const n = sectionsArray.length;
                 const wrappedIndex = ((currentZeroBasedIndex + oneBasedDistance) % n + n) % n;
                 return wrappedIndex;
             }
-
+    
             if (intNum === 0){
-                firstChar = Direction.BAD_INPUT;
+                firstChar = Song.Direction.BAD_INPUT;
             }
-
-            if ((firstChar === Direction.FORWARD || firstChar === Direction.BACKWARD) && intNum === 0) {
-                firstChar = Direction.ABSOLUTE;
+    
+            if ((firstChar === Song.Direction.FORWARD || firstChar === Song.Direction.BACKWARD) && intNum === 0) {
+                firstChar = Song.Direction.ABSOLUTE;
                 intNum = 1;
             }
-
+    
             switch (firstChar){
-                case Direction.BAD_INPUT:
-                case Direction.EMPTY:
-                    return this.sections[currentIndex];
-                case Direction.ABSOLUTE: //(number only, goto num or max)
+                case Song.Direction.BAD_INPUT:
+                    return { section: this.sections[currentIndex], direction: Song.Direction.BAD_INPUT };
+                case Song.Direction.EMPTY:
+                    return { section: this.sections[currentIndex], direction: Song.Direction.EMPTY };
+                case Song.Direction.ABSOLUTE: //(number only, goto num or max)
                     if (intNum < 1) {
-                        return this.sections[0];
+                        return { section: this.sections[0], direction: Song.Direction.ABSOLUTE };
                     }
                     if (intNum > this.sections.length){
-                        return this.sections[this.sections.length-1];                           
+                        return { section: this.sections[this.sections.length-1], direction: Song.Direction.ABSOLUTE };
                     }
-                    return this.sections[intNum-1];
-                case Direction.PREVIOUS_PLAYED:  //(@) sections back in random-play history
+                    return { section: this.sections[intNum-1], direction: Song.Direction.ABSOLUTE };
+                case Song.Direction.PREVIOUS_PLAYED:  //(@) sections back in random-play history
                     if (intNum < 1) {
-                        return this.sections[currentIndex];
+                        return { section: this.sections[currentIndex], direction: Song.Direction.PREVIOUS_PLAYED };
                     }
-                    return this.sections[this.getPreviousPlayedSectionIndex(intNum, currentIndex)];
-                case Direction.FORWARD: // (+)
+                    return { section: this.sections[this.getPreviousPlayedSectionIndex(intNum, currentIndex)], direction: Song.Direction.PREVIOUS_PLAYED };
+                case Song.Direction.FORWARD: // (+)
                     var wrappedIndex = wrap(intNum, this.sections, currentIndex);
-                    return this.sections[wrappedIndex];
-                case Direction.BACKWARD: //(-)
+                    return { section: this.sections[wrappedIndex], direction: Song.Direction.FORWARD };
+                case Song.Direction.BACKWARD: //(-)
                     var wrappedIndex = wrap( -1 * intNum, this.sections, currentIndex);
-                    return this.sections[wrappedIndex];
-                case Direction.BACKWARD_NOWRAP:  //(^)
-                    return this.sections[Math.max(0, (currentIndex - Math.abs(intNum)))];
-                case Direction.FORWARD_NOWRAP:   //(&)
+                    return { section: this.sections[wrappedIndex], direction: Song.Direction.BACKWARD };
+                case Song.Direction.BACKWARD_NOWRAP:  //(^)
+                    return { section: this.sections[Math.max(0, (currentIndex - Math.abs(intNum)))], direction: Song.Direction.BACKWARD_NOWRAP };
+                case Song.Direction.FORWARD_NOWRAP:   //(&)
                     var idx = (currentIndex + Math.abs(intNum))
                     var maxidx = this.sections.length-1;
-                    return this.sections[(idx > maxidx) ? maxidx : idx];
+                    return { section: this.sections[(idx > maxidx) ? maxidx : idx], direction: Song.Direction.FORWARD_NOWRAP };
             }
         } else {
-            return this.getCurrentSection();        
+            // If sAmount is empty or falsy, return current section with EMPTY direction
+            return { section: this.getCurrentSection(), direction: Song.Direction.EMPTY };
         }
     }
+
+
     pushRandomSectionHistory(idx){
         if (!Array.isArray(this.randomSectionHistory)){
             this.randomSectionHistory = [];

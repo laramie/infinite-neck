@@ -92,6 +92,14 @@ export class SectionV2 {
 		return beats;
 	}
 
+    getBeatCount(){
+        let beats = toInt(this.beats, -1); 
+        if (beats>-1){
+            return beats;
+        }
+        return -1;
+    }   
+
 	setBeats(newValue) {
 		this.beats = newValue;
 	}

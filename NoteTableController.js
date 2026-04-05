@@ -17,6 +17,7 @@ import {
     Note
 } from './note.js';
 import {
+    Song,
     constNoteNamesArr
 } from './song.js';
 import {
@@ -594,6 +595,13 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 //=================================REPLAY========================================
 
+
+export const ReplayOptions = Object.freeze({
+    RELATIVE: 'RELATIVE',
+    SELF: 'SELF',
+    LISTENER: 'LISTENER'
+});
+
 export function getReplayOptionsArray(){
     let resultOptionsArray = [];
     let baseopts = {};
@@ -613,17 +621,20 @@ export function getReplayOptionsArray(){
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
+            opts.type = ReplayOptions.RELATIVE;
             resultOptionsArray.push(opts);
         } else {
             if (wiring && wiring.listenToTablename) {
                 opts.currSection = getCurrentSection();
                 opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
                 opts.listenToTablename = wiring.listenToTablename;
+                opts.type = ReplayOptions.LISTENER;
                 resultOptionsArray.push(opts);
             }
             opts.currSection = getCurrentSection();
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = tablename;
+            opts.type = ReplayOptions.SELF;
             resultOptionsArray.push(opts);
         }
     });
@@ -740,7 +751,17 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
-        showHighlightsForBeatForOptions(nBeat, opts);
+        if (opts.type === ReplayOptions.RELATIVE) {
+            //nBeat is 1-based.
+            let directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
+            if (directionType === Song.DirectionType.BACKWARD){
+                showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);
+            } else if (directionType === Song.DirectionType.FORWARD){
+                showHighlightsForBeatForOptions(1, opts);    
+            }
+        } else {
+            showHighlightsForBeatForOptions(nBeat, opts);
+        }
     });
 }
 

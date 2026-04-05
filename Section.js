@@ -94,7 +94,7 @@ export class Section {
         }
         return beats;
     }
-
+    
     setBeats(newValue) {
         this.beats = newValue;
     }
