@@ -162,8 +162,8 @@ export function buildNoteTable(options) {
 	var instrumentBackground = $('<div>');
 	instrumentBackground.addClass("instrumentBackground");
 	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
-	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
-	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png'></button>";
+	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
+	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' ><img src='img/colordictThumbnail.png'></button>";
 	
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
 	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton moveyButton' type='button' tabindex='-1'>Wiring</button>";
