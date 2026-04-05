@@ -18,6 +18,16 @@ export class Note {
         }
     }
 
+    static fromJSON(noteLike) {
+        if (noteLike instanceof Note) {
+            return noteLike;
+        }
+        if (!noteLike || typeof noteLike !== 'object') {
+            return noteLike;
+        }
+        return new Note(noteLike);
+    }
+
     static styleNumToCaption(styleNum){
         switch(styleNum){
             case Note.STYLENUM_NAMED:
@@ -43,7 +53,19 @@ export class Note {
     }
 
     static cloneNote(other) {
-        return new Note(other);
+        return Note.fromJSON(other)?.clone?.() ?? Note.fromJSON(other);
+    }
+
+    toJSON() {
+        const json = {};
+        Object.keys(this).forEach((key) => {
+            json[key] = this[key];
+        });
+        return json;
+    }
+
+    clone() {
+        return Note.fromJSON(this.toJSON());
     }
 }
 

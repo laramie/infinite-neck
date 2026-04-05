@@ -1,7 +1,8 @@
 import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import {
-    GraveType
+    GraveType,
+    makeGraveyard
 } from './graveyard.js';
 import {
     getRecordedNotesForSection
@@ -13,10 +14,19 @@ import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
 import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
+import {
+    hydrateSongFromFileObject,
+    songToFileObject,
+    songToJSONString
+} from './SongFile.js';
 
 const DEFAULT_BEATS = 4;
 const RANDOM_SECTION_HISTORY_MAX = 16;
 export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+const INTERNAL_SONG_KEYS = new Set([
+    '_persistedIsHeadless',
+    '_persistedHasNoteNamesFuncArrDefault'
+]);
 
 export function noteNameToNoteID(noteName) {
     return constNoteNamesArr.indexOf(noteName);
@@ -34,6 +44,8 @@ export class Song {
     }
 
     _initLegacy() {
+        this._persistedIsHeadless = undefined;
+		this._persistedHasNoteNamesFuncArrDefault = false;
         this.sections = null;
         this.gSectionsCurrentIndex = 0;
         this.gFirstBeatSeen = false;
@@ -79,12 +91,61 @@ export class Song {
     }
 
     _initFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
-        this._initLegacy();
+        const hydratedSong = Song.fromJSON(fileObj, { headless, quiet, fixIndex });
+        Object.assign(this, hydratedSong);
+    }
+
+    static fromJSON(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
+        const song = new Song({ legacy: true });
+        return hydrateSongFromFileObject(song, fileObj, { headless, quiet, fixIndex });
+    }
+
+    _hydrateFromJSON(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
         if (headless) {
             this.setHeadless(true, quiet);
         }
-        if (fileObj && Array.isArray(fileObj.sections)) {
-            this.addSections(fileObj);
+
+        const safeFileObj = (fileObj && typeof fileObj === 'object') ? fileObj : {};
+        const runtimeOnlyKeys = new Set([
+            'sections',
+            'noteNamesFuncArr',
+            'fretLengths',
+            'colorDicts',
+            'constructing',
+            'isHeadless'
+        ]);
+
+        Object.entries(safeFileObj).forEach(([key, value]) => {
+            if (key === 'isHeadless') {
+                this._persistedIsHeadless = value;
+                return;
+            }
+            if (key === 'noteNamesFuncArrDEFAULT') {
+                this._persistedHasNoteNamesFuncArrDefault = true;
+            }
+            if (runtimeOnlyKeys.has(key)) {
+                return;
+            }
+            if (key === 'wirings') {
+                this.wirings = Array.isArray(value)
+                    ? value.map((wiringLike) => Wiring.fromJSON(wiringLike))
+                    : [];
+                return;
+            }
+            if (key === 'graveyard') {
+                this.graveyard = makeGraveyard(value);
+                return;
+            }
+            this[key] = value;
+        });
+
+        if (!this.graveyard) {
+            this.graveyard = makeGraveyard();
+        }
+
+        if (Array.isArray(safeFileObj.sections) && safeFileObj.sections.length > 0) {
+            this.sections = [];
+            this.addSections(safeFileObj);
             if (fixIndex) {
                 this.fixupCurrentIndexForLoadedSong();
             }
@@ -141,6 +202,44 @@ export class Song {
         let res = JSON.stringify(this, replacer, 4);
         return res;
     }
+
+    toJSON() {
+        return songToFileObject(this);
+    }
+
+	toJSONString(spacing = 2) {
+		return songToJSONString(this, spacing);
+	}
+
+    //Use this function to skip saving the ColorDics, because they get generated anyway.
+    // Ultimately, only user-customized dicts should be saved, but right now it is doing 
+    // all the default run-time generated dicts, bloating the file.
+    // And other run-time props are removed.
+    static persistentSongFileReplacer(key, value){
+        if (   key === 'userColors' 
+            || key === 'colorDicts' 
+            || key === 'fretLengths' 
+            || key === 'noteNamesFuncArr'
+            || key === 'noteNamesFuncArrDEFAULT'
+            || key === 'gSectionsCurrentIndex'
+            || key === 'gFirstBeatSeen'
+            || key === 'gSongModelListener'
+            || key === 'randomSectionHistory'
+            || key === 'isHeadless'
+            || key === 'tunings'
+            ) 
+        {
+            return undefined;
+        }
+        return value;
+    }
+
+    getPersistentSongFile(){
+        this.updateMemoryModelPreFileSave();
+        var text = JSON.stringify(getSong(), Song.persistentSongFileReplacer, 2); // Create element. (with 2 spaces indentation)
+        return text;
+    }
+
     
     getVisibleTunings(){
         const visibleTableIds = this.myTunings
@@ -494,14 +593,26 @@ export class Song {
     }
 
     normalizeSection(sectionLike){
-        let theSection = Section.revive(sectionLike, {
+        let theSection = Section.fromJSON(sectionLike, {
             rootID: this.rootID,
             sharps: this.sharps,
-            beats: DEFAULT_BEATS
+            beats: DEFAULT_BEATS,
+            defaultTableID: this.getDefaultTableID()
         });
         Song.assertAllSectionNotesAreInstances(theSection);
         return theSection;
     }
+
+	getDefaultTableID() {
+		if (Array.isArray(this.visibleNoteTables) && this.visibleNoteTables.length > 0) {
+			return this.visibleNoteTables[0];
+		}
+		const firstTuning = Array.isArray(this.myTunings) ? this.myTunings[0] : null;
+		if (firstTuning?.baseID) {
+			return Constants.TABLE_ID_PREFIX + firstTuning.baseID;
+		}
+		return undefined;
+	}
 
     removeAllSections(){
         this.sections = [];
@@ -821,8 +932,7 @@ export class Song {
 	    return this.addCloneSection(true, destIndex);
 	}
 	addCloneSection(deep, destIndex){
-        var aSection = this.constructSection();  //populates rootID from dropDownRoot.
-        aSection.populateCloneFrom(this.getCurrentSection(), { deep });
+    var aSection = this.getCurrentSection().clone({ deep });
         if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
         } else {
@@ -860,7 +970,7 @@ export class Song {
 	}
 
 	isEmpty(section){
-        return Section.revive(section).isEmpty();
+        return this.normalizeSection(section).isEmpty();
 	}
 
     moveSectionToEND(){

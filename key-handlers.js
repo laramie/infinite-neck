@@ -69,6 +69,7 @@ function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNo
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
 function getCurrentSection(...args) { return requireProvider('getCurrentSection')(...args); }
+function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
@@ -83,7 +84,6 @@ function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpac
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
-function skipColorDictsReplacer(...args) { return requireProvider('skipColorDictsReplacer')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
@@ -92,7 +92,6 @@ function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
 function updateFontLabel(...args) { return requireProvider('updateFontLabel')(...args); }
-function updateMemoryModelPreFileSave(...args) { return requireProvider('updateMemoryModelPreFileSave')(...args); }
 function updateSectionsStatus(...args) { return requireProvider('updateSectionsStatus')(...args); }
 
 
@@ -594,8 +593,7 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "DisplayOptions sent to Messages";
             break;
         case "showViewDiagnosticsSongFileFormat":
-			updateMemoryModelPreFileSave();
-			showMessagesJSON(JSON.stringify(getSong(), skipColorDictsReplacer, 2));
+			showMessagesJSON(JSON.stringify(getPersistentSongFile()));
 			break;
 		case "showGraveyard":
 			showGraveyard();

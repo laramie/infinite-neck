@@ -5,8 +5,6 @@ import { jest } from '@jest/globals';
 import { 
     setupSongTests, 
     getSong, 
-    readVersionHeadless,
-    skipColorDictsReplacer,
     collectSongOwnedTunings 
 } from '../../infinite-neck-headless.js';
 
@@ -131,7 +129,7 @@ describe('Song JSON round-trip save path', () => {
             userInstrumentTuning: data.userInstrumentTuning
         });
 
-        const savedText = JSON.stringify(getSong(), skipColorDictsReplacer, 2);
+        const savedText = JSON.stringify(getSong().getPersistentSongFile());
         const savedObj = JSON.parse(savedText);
 
         expect(savedObj.songName).toBe(data.songName);

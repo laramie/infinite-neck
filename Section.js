@@ -6,9 +6,60 @@ const NOTE_NAMES_RAW = 'A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab'.split(',');
 const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>'.split(',');
 const NOTE_NAMES_SHARPS = 'A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>,D,D<small>&#9839;</small>,E,F,F<small>&#9839;</small>,G,G<small>&#9839;</small>'.split(',');
 const DEFAULT_BEATS = 4;
+const INTERNAL_SECTION_KEYS = new Set([
+	'_legacyDefaultTableID',
+	'_legacyFallbackSectionNotes',
+	'_noteTablesProxy',
+	'_persistedLegacySectionData'
+]);
+
+function isPlainObject(value) {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function clonePersistedValue(value) {
+	if (value?.toJSON && typeof value.toJSON === 'function') {
+		return value.toJSON();
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => clonePersistedValue(item));
+	}
+	if (isPlainObject(value)) {
+		const clone = {};
+		Object.entries(value).forEach(([key, child]) => {
+			clone[key] = clonePersistedValue(child);
+		});
+		return clone;
+	}
+	return value;
+}
+
+function hasSectionNotesContent(sectionNotes) {
+	if (!(sectionNotes instanceof SectionNotes)) {
+		return false;
+	}
+	return sectionNotes.playedNotes.length > 0
+		|| Object.keys(sectionNotes.namedNotes).length > 0
+		|| Object.keys(sectionNotes.recordedNotes).length > 0;
+}
+
+function cloneNamedOrRecordedNotes(notesLike) {
+	const safeNotes = (notesLike && typeof notesLike === 'object') ? notesLike : {};
+	const clone = {};
+	Object.entries(safeNotes).forEach(([key, value]) => {
+		clone[key] = value instanceof Note
+			? value.clone()
+			: clonePersistedValue(value);
+	});
+	return clone;
+}
 
 export class Section {
-	constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
+	constructor({ rootID = '3', sharps = false, beats = 4, defaultTableID = undefined } = {}) {
+		this._legacyDefaultTableID = defaultTableID;
+		this._legacyFallbackSectionNotes = new SectionNotes();
+		this._noteTablesProxy = null;
+		this._persistedLegacySectionData = {};
 		this.sectionNotesByTable = {};
 		this.caption = '';
 		this.rootID = rootID;
@@ -18,33 +69,98 @@ export class Section {
 		this.sharps = sharps;
 	}
 
-	/**
-	 * Load a Section from a section-like object in the new V2 format.
-	 * Each sectionNotesByTable entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
-	 */
-	static fromV2Format(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
-		const section = new Section({ rootID, sharps, beats });
-		section.caption = sectionLike.caption || '';
-		section.rootID = sectionLike.rootID !== undefined ? sectionLike.rootID : rootID;
-		section.rootIDLead = sectionLike.rootIDLead !== undefined ? sectionLike.rootIDLead : '-1';
-		section.beats = sectionLike.beats !== undefined ? sectionLike.beats : beats;
-		section.currentBeat = sectionLike.currentBeat !== undefined ? sectionLike.currentBeat : 1;
-		section.sharps = sectionLike.sharps !== undefined ? sectionLike.sharps : sharps;
-
-		// sectionNotesByTable: { id: { playedNotes, namedNotes, recordedNotes } }
-		if (sectionLike.sectionNotesByTable && typeof sectionLike.sectionNotesByTable === 'object') {
-			Object.entries(sectionLike.sectionNotesByTable).forEach(([tableID, sectionNotesObj]) => {
-				const sn = new SectionNotes();
-				if (Array.isArray(sectionNotesObj.playedNotes)) sn.playedNotes = sectionNotesObj.playedNotes;
-				if (typeof sectionNotesObj.namedNotes === 'object') sn.namedNotes = sectionNotesObj.namedNotes;
-				if (typeof sectionNotesObj.recordedNotes === 'object') sn.recordedNotes = sectionNotesObj.recordedNotes;
-				section.sectionNotesByTable[tableID] = sn;
-				if (!(sn instanceof SectionNotes)) {
-					console.error(`sectionNotesByTable[${tableID}] is not a SectionNotes instance!`, sn);
-				}
-			});
+	static fromJSON(sectionLike, {
+		rootID = '3',
+		sharps = false,
+		beats = 4,
+		defaultTableID = undefined
+	} = {}) {
+		if (sectionLike instanceof Section) {
+			if (sectionLike._legacyDefaultTableID === undefined && defaultTableID !== undefined) {
+				sectionLike._legacyDefaultTableID = defaultTableID;
+			}
+			return sectionLike;
 		}
+
+		const safeSection = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
+		const section = new Section({
+			rootID: safeSection.rootID !== undefined ? safeSection.rootID : rootID,
+			sharps: safeSection.sharps !== undefined ? safeSection.sharps : sharps,
+			beats: safeSection.beats !== undefined ? safeSection.beats : beats,
+			defaultTableID
+		});
+
+		['noteTables', 'namedNotes', 'recordedNotes'].forEach((key) => {
+			if (Object.prototype.hasOwnProperty.call(safeSection, key)) {
+				section._persistedLegacySectionData[key] = clonePersistedValue(safeSection[key]);
+			}
+		});
+
+		section.caption = safeSection.caption ?? '';
+		section.rootIDLead = safeSection.rootIDLead !== undefined ? safeSection.rootIDLead : '-1';
+		section.currentBeat = safeSection.currentBeat !== undefined ? safeSection.currentBeat : 1;
+
+		Object.entries(safeSection).forEach(([key, value]) => {
+			if ([
+				'caption',
+				'rootID',
+				'rootIDLead',
+				'beats',
+				'currentBeat',
+				'sharps',
+				'sectionNotesByTable',
+				'noteTables',
+				'namedNotes',
+				'recordedNotes'
+			].includes(key)) {
+				return;
+			}
+			section[key] = clonePersistedValue(value);
+		});
+
+		if (isPlainObject(safeSection.sectionNotesByTable)) {
+			Object.entries(safeSection.sectionNotesByTable).forEach(([tableID, sectionNotesLike]) => {
+				section.sectionNotesByTable[tableID] = SectionNotes.fromJSON(sectionNotesLike);
+				section._legacyDefaultTableID ??= tableID;
+			});
+		} else {
+			const legacyNoteTables = isPlainObject(safeSection.noteTables) ? safeSection.noteTables : {};
+			const legacyNamedNotes = isPlainObject(safeSection.namedNotes) ? safeSection.namedNotes : {};
+			const legacyRecordedNotes = isPlainObject(safeSection.recordedNotes) ? safeSection.recordedNotes : {};
+			const tableIDs = Object.keys(legacyNoteTables);
+
+			if (tableIDs.length > 0) {
+				tableIDs.forEach((tableID) => {
+					section.sectionNotesByTable[tableID] = new SectionNotes({
+						playedNotes: legacyNoteTables[tableID],
+						namedNotes: legacyNamedNotes,
+						recordedNotes: legacyRecordedNotes
+					});
+					section._legacyDefaultTableID ??= tableID;
+				});
+			} else {
+				if (defaultTableID !== undefined && (Object.keys(legacyNamedNotes).length > 0 || Object.keys(legacyRecordedNotes).length > 0)) {
+					section.sectionNotesByTable[defaultTableID] = new SectionNotes({
+						playedNotes: [],
+						namedNotes: legacyNamedNotes,
+						recordedNotes: legacyRecordedNotes
+					});
+					section._legacyDefaultTableID = defaultTableID;
+				} else {
+					section._legacyFallbackSectionNotes = new SectionNotes({
+						playedNotes: [],
+						namedNotes: legacyNamedNotes,
+						recordedNotes: legacyRecordedNotes
+					});
+				}
+			}
+		}
+
 		return section;
+	}
+
+	static fromV2Format(sectionLike, options = {}) {
+		return Section.fromJSON(sectionLike, options);
 	}
 
 	// --- Methods below are copied from Section.js, unchanged, unless they reference namedNotes, noteTables, or recordedNotes directly ---
@@ -202,27 +318,129 @@ export class Section {
 		return this.rootID;
 	}
 
-
-	static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
-		const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
-
-		Object.setPrototypeOf(section, Section.prototype);
-
-		// V2: initialize sectionNotesByTable from legacy noteTables if present, otherwise empty
-		if (!section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
-			section.sectionNotesByTable = {};
-		}
-
-		if (section.caption === undefined) section.caption = '';
-		if (section.rootID === undefined) section.rootID = rootID;
-		if (section.rootIDLead === undefined) section.rootIDLead = '-1';
-		if (section.beats === undefined) section.beats = beats;
-		if (section.currentBeat === undefined) section.currentBeat = 1;
-		if (section.sharps === undefined) section.sharps = sharps;
-
-		return section;
+	static revive(sectionLike, options = {}) {
+		return Section.fromJSON(sectionLike, options);
 	}
 
+	getPrimaryTableID() {
+		const tableIDs = Object.keys(this.sectionNotesByTable);
+		if (tableIDs.length > 0) {
+			return tableIDs[0];
+		}
+		return this._legacyDefaultTableID;
+	}
+
+	get noteTables() {
+		if (!this._noteTablesProxy) {
+			this._noteTablesProxy = new Proxy({}, {
+				get: (_target, property) => {
+					if (property === 'hasOwnProperty') {
+						return (key) => Object.prototype.hasOwnProperty.call(this.sectionNotesByTable, key);
+					}
+					if (typeof property !== 'string') {
+						return undefined;
+					}
+					const sectionNotes = this.sectionNotesByTable[property];
+					return sectionNotes ? sectionNotes.playedNotes : undefined;
+				},
+				set: (_target, property, value) => {
+					if (typeof property !== 'string') {
+						return false;
+					}
+					const sectionNotes = this.ensureSectionNotes(property);
+					sectionNotes.playedNotes = Array.isArray(value)
+						? value.map((note) => note instanceof Note ? note.clone() : clonePersistedValue(note))
+						: [];
+					return true;
+				},
+				deleteProperty: (_target, property) => {
+					if (typeof property !== 'string') {
+						return true;
+					}
+					delete this.sectionNotesByTable[property];
+					return true;
+				},
+				has: (_target, property) => {
+					return typeof property === 'string'
+						&& Object.prototype.hasOwnProperty.call(this.sectionNotesByTable, property);
+				},
+				ownKeys: () => Object.keys(this.sectionNotesByTable),
+				getOwnPropertyDescriptor: (_target, property) => {
+					if (typeof property === 'string' && Object.prototype.hasOwnProperty.call(this.sectionNotesByTable, property)) {
+						return {
+							configurable: true,
+							enumerable: true,
+							writable: true,
+							value: this.sectionNotesByTable[property].playedNotes
+						};
+					}
+					return undefined;
+				}
+			});
+		}
+		return this._noteTablesProxy;
+	}
+
+	set noteTables(noteTablesLike) {
+		const existingLegacyNotes = this.getLegacySectionNotes().clone();
+		this.sectionNotesByTable = {};
+		const safeNoteTables = isPlainObject(noteTablesLike) ? noteTablesLike : {};
+		const tableIDs = Object.keys(safeNoteTables);
+
+		if (tableIDs.length === 0) {
+			this._legacyFallbackSectionNotes = existingLegacyNotes;
+			return;
+		}
+
+		tableIDs.forEach((tableID, index) => {
+			this.sectionNotesByTable[tableID] = new SectionNotes({
+				playedNotes: safeNoteTables[tableID],
+				namedNotes: index === 0 ? existingLegacyNotes.namedNotes : {},
+				recordedNotes: index === 0 ? existingLegacyNotes.recordedNotes : {}
+			});
+			this._legacyDefaultTableID ??= tableID;
+		});
+	}
+
+	get namedNotes() {
+		return this.getLegacySectionNotes().namedNotes;
+	}
+
+	set namedNotes(namedNotesLike) {
+		this.getLegacySectionNotes().namedNotes = cloneNamedOrRecordedNotes(namedNotesLike);
+	}
+
+	get recordedNotes() {
+		return this.getLegacySectionNotes().recordedNotes;
+	}
+
+	set recordedNotes(recordedNotesLike) {
+		this.getLegacySectionNotes().recordedNotes = cloneNamedOrRecordedNotes(recordedNotesLike);
+	}
+
+	getLegacySectionNotes() {
+		const primaryTableID = this.getPrimaryTableID();
+		if (primaryTableID && this.sectionNotesByTable[primaryTableID]) {
+			return this.sectionNotesByTable[primaryTableID];
+		}
+		return this._legacyFallbackSectionNotes;
+	}
+
+	migrateLegacyFallbackToTable(tableID) {
+		if (!tableID) {
+			return;
+		}
+		const sectionNotes = this.sectionNotesByTable[tableID];
+		if (!sectionNotes || !hasSectionNotesContent(this._legacyFallbackSectionNotes)) {
+			return;
+		}
+		if (!hasSectionNotesContent(sectionNotes)) {
+			sectionNotes.playedNotes = this._legacyFallbackSectionNotes.playedNotes;
+			sectionNotes.namedNotes = this._legacyFallbackSectionNotes.namedNotes;
+			sectionNotes.recordedNotes = this._legacyFallbackSectionNotes.recordedNotes;
+		}
+		this._legacyFallbackSectionNotes = new SectionNotes();
+	}
 
 	//================= New V2 Methods =========================================
 
@@ -234,6 +452,8 @@ export class Section {
 		if (!sn){
 			sn = new SectionNotes();
 			this.sectionNotesByTable[tableID] = sn;
+			this._legacyDefaultTableID ??= tableID;
+			this.migrateLegacyFallbackToTable(tableID);
 		}
 		return sn;
 	}
@@ -296,6 +516,99 @@ export class Section {
 	}
 	renameSectionNotesTableID(newTableID){
 		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.
+	}
+
+	toJSON() {
+		const sectionNotesByTable = {};
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sectionNotes]) => {
+			sectionNotesByTable[tableID] = SectionNotes.fromJSON(sectionNotes).toJSON();
+		});
+
+		if (Object.keys(sectionNotesByTable).length === 0 && hasSectionNotesContent(this._legacyFallbackSectionNotes)) {
+			const fallbackTableID = this._legacyDefaultTableID;
+			if (fallbackTableID) {
+				sectionNotesByTable[fallbackTableID] = this._legacyFallbackSectionNotes.toJSON();
+			}
+		}
+
+		const json = {
+			caption: this.caption,
+			rootID: this.rootID,
+			rootIDLead: this.rootIDLead,
+			beats: this.beats,
+			currentBeat: this.currentBeat,
+			sharps: this.sharps,
+			sectionNotesByTable
+		};
+
+		Object.keys(this).forEach((key) => {
+			if ([
+				'caption',
+				'rootID',
+				'rootIDLead',
+				'beats',
+				'currentBeat',
+				'sharps',
+				'sectionNotesByTable'
+			].includes(key) || INTERNAL_SECTION_KEYS.has(key)) {
+				return;
+			}
+			json[key] = clonePersistedValue(this[key]);
+		});
+
+		Object.entries(this._persistedLegacySectionData).forEach(([key, value]) => {
+			json[key] = clonePersistedValue(value);
+		});
+
+		return json;
+	}
+
+	clone({ deep = true } = {}) {
+		if (deep) {
+			return Section.fromJSON(this.toJSON(), {
+				defaultTableID: this._legacyDefaultTableID
+			});
+		}
+
+		const clone = new Section({
+			rootID: this.rootID,
+			sharps: this.sharps,
+			beats: this.beats,
+			defaultTableID: this._legacyDefaultTableID
+		});
+		clone.caption = this.caption;
+		clone.rootIDLead = this.rootIDLead;
+		clone.currentBeat = 1;
+
+		Object.keys(this).forEach((key) => {
+			if ([
+				'caption',
+				'rootID',
+				'rootIDLead',
+				'beats',
+				'currentBeat',
+				'sharps',
+				'sectionNotesByTable'
+			].includes(key) || INTERNAL_SECTION_KEYS.has(key)) {
+				return;
+			}
+			clone[key] = clonePersistedValue(this[key]);
+		});
+
+		clone.namedNotes = cloneNamedOrRecordedNotes(this.namedNotes);
+		return clone;
+	}
+
+	populateCloneFrom(sectionLike, { deep = true } = {}) {
+		const source = Section.fromJSON(sectionLike, {
+			defaultTableID: this._legacyDefaultTableID
+		});
+		const clone = source.clone({ deep });
+
+		Object.keys(this).forEach((key) => {
+			delete this[key];
+		});
+		Object.assign(this, clone);
 	}
 
 	
