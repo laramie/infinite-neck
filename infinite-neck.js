@@ -780,7 +780,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (   key === 'userColors' 
 			|| key === 'colorDicts' 
 			|| key === 'fretLengths' 
-			|| key === 'noteNamesFuncArr' ) {
+			|| key === 'noteNamesFuncArr'
+			|| key === 'noteNamesFuncArrDEFAULT'
+	 	   ) 
+		{
 			return undefined;
 		}
 		return value;
@@ -2265,7 +2268,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
-		gSong.setSongfileVersion("V2");//MAGIC!!
+		gSong.setSongfileVersion("V2");
 		
 		getSong().graveyard = makeGraveyard();
 

@@ -49,5 +49,5 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
     const expected = before.map((n) => (12 + n + 2) % 12);
 
     expect(after).toEqual(expected);
-    //console.log("SectionV2 dump: \n"+song.dump(false));
+    //console.log("Section dump: \n"+song.dump(false));
 });

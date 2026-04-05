@@ -11,7 +11,6 @@ import {
 } from './utils.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
-import { SectionV2 } from './SectionV2.js';
 import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
 
@@ -35,7 +34,6 @@ export class Song {
     }
 
     _initLegacy() {
-        this.useSectionV2 = false;
         this.sections = null;
         this.gSectionsCurrentIndex = 0;
         this.gFirstBeatSeen = false;
@@ -121,9 +119,6 @@ export class Song {
         }
     }
     setSongfileVersion(version){
-        if (version==="V2"){
-            this.useSectionV2 = true;
-        }
         this.songfileVersion = version;
     }
     
@@ -489,43 +484,23 @@ export class Song {
     }
 
     constructSection(){
-        if (this.useSectionV2){
-            let theSection = new SectionV2({
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            }); 
-            Song.assertAllSectionNotesAreInstances(theSection);
-            return theSection;
-        } else {
-            return Section.revive(new Section({
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            }), {
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            });
-        }
+        let theSection = new Section({
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: DEFAULT_BEATS
+        }); 
+        Song.assertAllSectionNotesAreInstances(theSection);
+        return theSection;
     }
 
     normalizeSection(sectionLike){
-         if (this.useSectionV2){
-            let theSection = SectionV2.revive(sectionLike, {
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            });
-            Song.assertAllSectionNotesAreInstances(theSection);
-            return theSection;
-        } else {
-            return Section.revive(sectionLike, {
-                rootID: this.rootID,
-                sharps: this.sharps,
-                beats: DEFAULT_BEATS
-            });
-        }
+        let theSection = Section.revive(sectionLike, {
+            rootID: this.rootID,
+            sharps: this.sharps,
+            beats: DEFAULT_BEATS
+        });
+        Song.assertAllSectionNotesAreInstances(theSection);
+        return theSection;
     }
 
     removeAllSections(){
@@ -963,9 +938,7 @@ export class Song {
     }
 
   getTuningHashInMemoryModel(){
-    if (this.useSectionV2){
-        return {"warning":"Not Implemented for V2 yet"};
-    }
+    return {"warning":"Not Implemented for V2 yet, see section-printer.js"};
     var hashTuningNames = {};
     this.sections.forEach((section, sectionIdx) => { //for all sections...
             Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {

@@ -1,5 +1,6 @@
 import { toInt } from './utils.js';
 import { Note } from './note.js';
+import { SectionNotes } from './SectionNotes.js';
 
 const NOTE_NAMES_RAW = 'A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab'.split(',');
 const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,D,E<small>&#9837;</small>,E,F,G<small>&#9837;</small>,G,A<small>&#9837;</small>'.split(',');
@@ -7,214 +8,295 @@ const NOTE_NAMES_SHARPS = 'A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>
 const DEFAULT_BEATS = 4;
 
 export class Section {
-    constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
-        this.noteTables = {};
-        this.namedNotes = {};
-        this.recordedNotes = {};
-        this.caption = '';
-        this.rootID = rootID;
-        this.rootIDLead = '-1';
-        this.beats = beats;
-        this.currentBeat = 1;
-        this.sharps = sharps;
-    }
+	constructor({ rootID = '3', sharps = false, beats = 4 } = {}) {
+		this.sectionNotesByTable = {};
+		this.caption = '';
+		this.rootID = rootID;
+		this.rootIDLead = '-1';
+		this.beats = beats;
+		this.currentBeat = 1;
+		this.sharps = sharps;
+	}
 
-    cloneFrom(other) {
-        this.noteTables = other.noteTables;
-        this.namedNotes = other.namedNotes;
-        this.recordedNotes = other.recordedNotes;
-        this.caption = other.caption;
-        this.rootID = other.rootID;
-        this.rootIDLead = other.rootIDLead;
-        this.beatsPer = other.beatsPer;
-        this.beats = other.beats;
-        this.currentBeat = other.currentBeat;
-        this.sharps = other.sharps;
-        this.noteNamesFuncArr = other.noteNamesFuncArr;
-    }
+	/**
+	 * Load a Section from a section-like object in the new V2 format.
+	 * Each sectionNotesByTable entry is a dictionary of NoteTable objects, each with playedNotes, namedNotes, recordedNotes.
+	 */
+	static fromV2Format(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
+		const section = new Section({ rootID, sharps, beats });
+		section.caption = sectionLike.caption || '';
+		section.rootID = sectionLike.rootID !== undefined ? sectionLike.rootID : rootID;
+		section.rootIDLead = sectionLike.rootIDLead !== undefined ? sectionLike.rootIDLead : '-1';
+		section.beats = sectionLike.beats !== undefined ? sectionLike.beats : beats;
+		section.currentBeat = sectionLike.currentBeat !== undefined ? sectionLike.currentBeat : 1;
+		section.sharps = sectionLike.sharps !== undefined ? sectionLike.sharps : sharps;
 
-    populateCloneFrom(sourceSection, { deep = false } = {}) {
-        this.rootID = sourceSection.rootID;
-        this.rootIDLead = sourceSection.rootIDLead;
-        this.caption = sourceSection.caption;
-        this.beats = sourceSection.beats;
-        this.currentBeat = 1;
-        this.namedNotes = JSON.parse(JSON.stringify(sourceSection.namedNotes || {}));
+		// sectionNotesByTable: { id: { playedNotes, namedNotes, recordedNotes } }
+		if (sectionLike.sectionNotesByTable && typeof sectionLike.sectionNotesByTable === 'object') {
+			Object.entries(sectionLike.sectionNotesByTable).forEach(([tableID, sectionNotesObj]) => {
+				const sn = new SectionNotes();
+				if (Array.isArray(sectionNotesObj.playedNotes)) sn.playedNotes = sectionNotesObj.playedNotes;
+				if (typeof sectionNotesObj.namedNotes === 'object') sn.namedNotes = sectionNotesObj.namedNotes;
+				if (typeof sectionNotesObj.recordedNotes === 'object') sn.recordedNotes = sectionNotesObj.recordedNotes;
+				section.sectionNotesByTable[tableID] = sn;
+				if (!(sn instanceof SectionNotes)) {
+					console.error(`sectionNotesByTable[${tableID}] is not a SectionNotes instance!`, sn);
+				}
+			});
+		}
+		return section;
+	}
 
-        if (deep) {
-            this.noteTables = JSON.parse(JSON.stringify(sourceSection.noteTables || {}));
-            this.recordedNotes = JSON.parse(JSON.stringify(sourceSection.recordedNotes || {}));
-        } else {
-            this.noteTables = {};
-            this.recordedNotes = {};
+	// --- Methods below are copied from Section.js, unchanged, unless they reference namedNotes, noteTables, or recordedNotes directly ---
+
+	getRootKey() {
+		return this.noteIDToDisplayName(toInt(this.rootID, 0));
+	}
+
+	getRootKeyLead() {
+		const leadKey = this.noteIDToDisplayName(toInt(this.rootIDLead, 0));
+		if (!leadKey) {
+			return this.noteIDToDisplayName(toInt(this.rootID, 0));
+		}
+		return leadKey;
+	}
+
+	getRootNoteName() {
+		return NOTE_NAMES_RAW[toInt(this.rootID, 0)];
+	}
+
+	getLeadNoteName() {
+		if (this.rootIDLead == '-1') {
+			return NOTE_NAMES_RAW[toInt(this.rootID, 0)];
+		}
+		return NOTE_NAMES_RAW[toInt(this.rootIDLead, 0)];
+	}
+
+	noteIDToDisplayName(noteIndex) {
+		const names = this.sharps ? NOTE_NAMES_SHARPS : NOTE_NAMES_FLATS;
+		return names[noteIndex];
+	}
+
+	getBeat() {
+		const beat = toInt(this.currentBeat, 1);
+		this.currentBeat = beat;
+		return beat;
+	}
+
+	getBeats(defaultBeats = DEFAULT_BEATS) {
+		let beats = toInt(this.beats, -1);
+		if (beats < 1) {
+			beats = defaultBeats;
+			this.beats = '' + beats;
+		}
+		return beats;
+	}
+
+    getBeatCount(){
+        let beats = toInt(this.beats, -1); 
+        if (beats>-1){
+            return beats;
         }
+        return -1;
+    }   
 
-        return this;
+	setBeats(newValue) {
+		this.beats = newValue;
+	}
+
+	incBeat(defaultBeats = DEFAULT_BEATS) {
+		let beat = this.getBeat();
+		const beats = this.getBeats(defaultBeats);
+		if (beat >= beats) {
+			beat = beats;
+			return beat;
+		}
+		beat++;
+		this.currentBeat = beat;
+		return beat;
+	}
+
+	incBeatLoop(defaultBeats = DEFAULT_BEATS) {
+		let beat = this.getBeat();
+		const beats = this.getBeats(defaultBeats);
+		beat++;
+		if (beat > beats) {
+			beat = 1;
+		}
+		this.currentBeat = beat;
+		return beat;
+	}
+
+	decBeat(defaultBeats = DEFAULT_BEATS) {
+		let beat = this.getBeat();
+		const beats = this.getBeats(defaultBeats);
+		if (beat <= 1) {
+			beat = 1;
+			return beat;
+		}
+		beat--;
+		this.currentBeat = beat;
+		return beat;
+	}
+
+	gotoFirstBeat() {
+		this.currentBeat = 1;
+	}
+
+	
+	// V2: isEmpty checks all NoteTables for content
+	isEmpty() {
+		let noteCount = 0;
+		Object.values(this.sectionNotesByTable).forEach((sn) => {
+			if (sn) {
+				noteCount += (Array.isArray(sn.playedNotes) ? sn.playedNotes.length : 0);
+				noteCount += Object.keys(sn.namedNotes || {}).length;
+				noteCount += Object.keys(sn.recordedNotes || {}).length;
+			}
+		});
+		return noteCount === 0;
+	}
+
+	// V2: removeEmptyTables removes NoteTables with no notes
+	removeEmptyTables() {
+		const compact = {};
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
+			const hasNotes = (Array.isArray(sn.playedNotes) && sn.playedNotes.length > 0)
+				|| (sn.namedNotes && Object.keys(sn.namedNotes).length > 0)
+				|| (sn.recordedNotes && Object.keys(sn.recordedNotes).length > 0);
+			if (hasNotes) {
+				compact[tableID] = sn;
+			}
+		});
+		this.sectionNotesByTable = compact;
+	}
+
+	// --- Methods that reference namedNotes, noteTables, or recordedNotes directly are omitted or must be rewritten for V2 ---
+
+	moveNamedNotes(amount) {
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
+			this.moveNamedNotesForOneTable(sn, amount);
+		});
+	}
+	moveNamedNotesForOneTable(sn, amount) {
+		const namedNotes = sn.namedNotes;
+		const namedNotesClone = {};
+		Object.keys(namedNotes).forEach((noteName) => {
+			let index = NOTE_NAMES_RAW.indexOf(noteName);
+			index = (12 + index + amount) % 12;
+			const transposedNoteName = NOTE_NAMES_RAW[index];
+			const otherNote = namedNotes[noteName];
+	
+			if (otherNote.colorClass) {
+				const clonedNote = Note.cloneNote(otherNote);
+				clonedNote.noteName = transposedNoteName;
+				namedNotesClone[transposedNoteName] = clonedNote;
+			}
+		});
+		sn.namedNotes = namedNotesClone;
+	}
+
+	transposeRoot(amount) {
+		const curr = toInt(this.rootID, 0);
+		this.rootID = (12 + curr + amount) % 12;
+		return this.rootID;
+	}
+
+
+	static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
+		const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
+
+		Object.setPrototypeOf(section, Section.prototype);
+
+		// V2: initialize sectionNotesByTable from legacy noteTables if present, otherwise empty
+		if (!section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
+			section.sectionNotesByTable = {};
+		}
+
+		if (section.caption === undefined) section.caption = '';
+		if (section.rootID === undefined) section.rootID = rootID;
+		if (section.rootIDLead === undefined) section.rootIDLead = '-1';
+		if (section.beats === undefined) section.beats = beats;
+		if (section.currentBeat === undefined) section.currentBeat = 1;
+		if (section.sharps === undefined) section.sharps = sharps;
+
+		return section;
+	}
+
+
+	//================= New V2 Methods =========================================
+
+	ensureSectionNotes(tableID){
+		let sn = this.sectionNotesByTable[tableID];
+		if (sn && !(sn instanceof SectionNotes)) {
+			console.error(`sectionNotesByTable[${tableID}] is not a SectionNotes instance!`, sn);
+		}
+		if (!sn){
+			sn = new SectionNotes();
+			this.sectionNotesByTable[tableID] = sn;
+		}
+		return sn;
+	}
+
+	getTableArr(tableID) {
+        let sn = this.ensureSectionNotes(tableID);
+		return sn.playedNotes;
     }
 
-    getRootKey() {
-        return this.noteIDToDisplayName(toInt(this.rootID, 0));
-    }
+	getSectionNotes(tableID) {
+		const sn = this.ensureSectionNotes(tableID);
+		if (!(sn instanceof SectionNotes)) {
+			console.error(`getSectionNotes(${tableID}) did not return a SectionNotes instance!`, sn);
+		}
+		return sn;
+	}
+	getSectionNotesDisplayData() {
+		const namedNotes = new Set();
+		const playedNotes = [];
+		const recordedNotes = [];
 
-    getRootKeyLead() {
-        const leadKey = this.noteIDToDisplayName(toInt(this.rootIDLead, 0));
-        if (!leadKey) {
-            return this.noteIDToDisplayName(toInt(this.rootID, 0));
-        }
-        return leadKey;
-    }
+		this.getAllSectionNotes().forEach(([tableID, sn]) => {
+			Object.keys(sn?.namedNotes || {}).forEach((noteName) => {
+				namedNotes.add(noteName);
+			});
 
-    getRootNoteName() {
-        return NOTE_NAMES_RAW[toInt(this.rootID, 0)];
-    }
+			const playedCount = Array.isArray(sn?.playedNotes) ? sn.playedNotes.length : 0;
+			if (playedCount > 0) {
+				playedNotes.push(`${tableID}:${playedCount}`);
+			}
 
-    getLeadNoteName() {
-        if (this.rootIDLead == '-1') {
-            return NOTE_NAMES_RAW[toInt(this.rootID, 0)];
-        }
-        return NOTE_NAMES_RAW[toInt(this.rootIDLead, 0)];
-    }
+			const recordedCount = Object.values(sn?.recordedNotes || {}).reduce((count, notesForBeat) => {
+				return count + (Array.isArray(notesForBeat) ? notesForBeat.length : 0);
+			}, 0);
+			if (recordedCount > 0) {
+				recordedNotes.push(`${tableID}:${recordedCount}`);
+			}
+		});
 
-    noteIDToDisplayName(noteIndex) {
-        const names = this.sharps ? NOTE_NAMES_SHARPS : NOTE_NAMES_FLATS;
-        return names[noteIndex];
-    }
+		return {
+			namedNotes: Array.from(namedNotes).sort((left, right) => left.localeCompare(right)),
+			playedNotes,
+			recordedNotes
+		};
+	}
 
-    getBeat() {
-        const beat = toInt(this.currentBeat, 1);
-        this.currentBeat = beat;
-        return beat;
-    }
+	getSectionNotesDisplayString() {
+		const details = this.getSectionNotesDisplayData();
+		return [
+			'{',
+			`    namedNotes: ${JSON.stringify(details.namedNotes)},`,
+			`    playedNotes: ${JSON.stringify(details.playedNotes)},`,
+			`    recordedNotes: ${JSON.stringify(details.recordedNotes)}`,
+			'}'
+		].join('\n');
+	}
+	getAllSectionNotes() {
+		// Returns an array of [tableID, SectionNotes] pairs, so you can .forEach(([tableID, sn]) => ...)
+		return Object.entries(this.sectionNotesByTable);
+	}
+	renameSectionNotesTableID(newTableID){
+		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.
+	}
 
-    getBeats(defaultBeats = DEFAULT_BEATS) {
-        let beats = toInt(this.beats, -1);
-        if (beats < 1) {
-            beats = defaultBeats;
-            this.beats = '' + beats;
-        }
-        return beats;
-    }
-    
-    setBeats(newValue) {
-        this.beats = newValue;
-    }
-
-    incBeat(defaultBeats = DEFAULT_BEATS) {
-        let beat = this.getBeat();
-        const beats = this.getBeats(defaultBeats);
-        if (beat >= beats) {
-            beat = beats;
-            return beat;
-        }
-        beat++;
-        this.currentBeat = beat;
-        return beat;
-    }
-
-    incBeatLoop(defaultBeats = DEFAULT_BEATS) {
-        let beat = this.getBeat();
-        const beats = this.getBeats(defaultBeats);
-        beat++;
-        if (beat > beats) {
-            beat = 1;
-        }
-        this.currentBeat = beat;
-        return beat;
-    }
-
-    decBeat(defaultBeats = DEFAULT_BEATS) {
-        let beat = this.getBeat();
-        const beats = this.getBeats(defaultBeats);
-        if (beat <= 1) {
-            beat = 1;
-            return beat;
-        }
-        beat--;
-        this.currentBeat = beat;
-        return beat;
-    }
-
-    gotoFirstBeat() {
-        this.currentBeat = 1;
-    }
-
-    getTableArr(tableID) {
-        let tableArr = this.noteTables[tableID];
-        if (!tableArr) {
-            this.noteTables[tableID] = [];
-            tableArr = this.noteTables[tableID];
-        }
-        return tableArr;
-    }
-
-    isEmpty() {
-        let namedNoteCount = 0;
-        let tableCount = 0;
-
-        Object.keys(this.namedNotes).forEach(() => {
-            namedNoteCount++;
-        });
-
-        Object.keys(this.noteTables).forEach((tableName) => {
-            const tableArr = this.noteTables[tableName];
-            tableCount += tableArr.length;
-        });
-
-        return (tableCount + namedNoteCount) == 0;
-    }
-
-    removeEmptyTables() {
-        const compact = {};
-        Object.entries(this.noteTables).forEach(([tableName, tableArr]) => {
-            if (tableArr && tableArr.length && tableArr.length > 0) {
-                compact[tableName] = tableArr;
-            }
-        });
-        this.noteTables = compact;
-    }
-
-    moveNamedNotes(amount) {
-        const namedNotesClone = {};
-        const namedNotes = this.namedNotes;
-
-        Object.keys(namedNotes).forEach((noteName) => {
-            let index = NOTE_NAMES_RAW.indexOf(noteName);
-            index = (12 + index + amount) % 12;
-            const transposedNoteName = NOTE_NAMES_RAW[index];
-            const otherNote = namedNotes[noteName];
-
-            if (otherNote.colorClass) {
-                const clonedNote = Note.cloneNote(otherNote);
-                clonedNote.noteName = transposedNoteName;
-                namedNotesClone[transposedNoteName] = clonedNote;
-            }
-        });
-
-        this.namedNotes = namedNotesClone;
-        //callers should call this afterwards: this.getRootNoteName();
-    }
-
-    transposeRoot(amount) {
-        const curr = toInt(this.rootID, 0);
-        this.rootID = (12 + curr + amount) % 12;
-        return this.rootID;
-    }
-
-    static revive(sectionLike, { rootID = '3', sharps = false, beats = 4 } = {}) {
-        const section = (sectionLike && typeof sectionLike === 'object') ? sectionLike : {};
-
-        Object.setPrototypeOf(section, Section.prototype);
-
-        if (!section.noteTables || typeof section.noteTables !== 'object') section.noteTables = {};
-        if (!section.namedNotes || typeof section.namedNotes !== 'object') section.namedNotes = {};
-        if (!section.recordedNotes || typeof section.recordedNotes !== 'object') section.recordedNotes = {};
-        if (section.caption === undefined) section.caption = '';
-        if (section.rootID === undefined) section.rootID = rootID;
-        if (section.rootIDLead === undefined) section.rootIDLead = '-1';
-        if (section.beats === undefined) section.beats = beats;
-        if (section.currentBeat === undefined) section.currentBeat = 1;
-        if (section.sharps === undefined) section.sharps = sharps;
-
-        return section;
-    }
+	
 }

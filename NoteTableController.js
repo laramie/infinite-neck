@@ -425,13 +425,13 @@ export function colorNoteInner(cell) {
             var automaticColorClass = lookupUserColorClass(note);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   //V2-storage
+            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
                 styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
-    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;   //V2-storage
+    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;
             }
 		}
         
@@ -566,7 +566,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
         theMidiNotePlayedClass = "tinyNotePlayedBend";
         theBendClass = bendValue;
     }
-    getSong().removeNotePlayedFromTable(notePlayed, tableID);  //V2-storage
+    getSong().removeNotePlayedFromTable(notePlayed, tableID);
     if (!clear){
         if (    !singleNoteAlreadyPlayed
              && !tinyNoteAlreadyPlayed
@@ -574,11 +574,11 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
              && !fingeringAlreadyPlayed
              && !bendAlreadyPlayed
            ){
-                var tableArr = getSong().getTableArrInCurrentSection(tableID);  //V2-storage
+                var tableArr = getSong().getTableArrInCurrentSection(tableID);
                 if (dontAddToTableArray){  //because recording has already added the note to beats in recordedNotes.
                     //console.log("Not adding note to tablearray:"+JSON.stringify(notePlayed));
                 } else {
-                    tableArr.push(notePlayed);  //V2-storage
+                    tableArr.push(notePlayed);
                 }
 
         		textdiv.addClass(lookupUserColorClass(notePlayed));
@@ -1029,12 +1029,12 @@ export function doFill(theClass, NoteNames, Color){
 		//             .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};    //V2-storage
+            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            currSection.namedNotes[NoteNames[key]] = {};   //V2-storage
+            currSection.namedNotes[NoteNames[key]] = {};
         });
     }
 }

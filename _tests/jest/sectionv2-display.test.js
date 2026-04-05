@@ -1,7 +1,7 @@
-import { SectionV2 } from '../../SectionV2.js';
+import { Section } from '../../Section.js';
 
 test('getSectionNotesDisplayString consolidates V2 notes for display', () => {
-	const section = new SectionV2();
+	const section = new Section();
 
 	const s6 = section.getSectionNotes('tblS6_1');
 	s6.namedNotes.C = { colorClass: 'Blue' };

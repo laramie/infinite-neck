@@ -160,12 +160,7 @@ describe('Song API bootstrap from JSON', () => {
         expect(currentSection).toBe(song.getSections()[song.getSectionsCurrentIndex()]);
         expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
         expect(currentSection).toHaveProperty('caption');
-        if (song.useSectionV2) {
-            expect(currentSection).toHaveProperty('sectionNotesByTable');
-        } else {
-            expect(currentSection).toHaveProperty('namedNotes');
-            expect(currentSection).toHaveProperty('noteTables');
-        }
+        expect(currentSection).toHaveProperty('sectionNotesByTable');
     });
 
     test.each(LOADED_SONG_FIXTURES)('revives loaded sections with Section methods for $label', ({ filename }) => {
