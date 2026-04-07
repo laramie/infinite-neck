@@ -4,11 +4,9 @@ import {
 } from './colorPickerColors.js';
 import {
 	Note
-} from './note.js';
-import {
-	constNoteNamesArr,
-	noteNameToNoteID
-} from './song.js';
+} from './Note.js';
+import { noteNameToNoteID } from './Constants.js';
+import { constNoteNamesArr } from './Constants.js';
 import {
 	GraveType
 } from './graveyard.js';

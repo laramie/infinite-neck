@@ -2,12 +2,13 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { jest } from '@jest/globals';
+
 import { 
     setupSongTests, 
     getSong, 
     collectSongOwnedTunings 
 } from '../../infinite-neck-headless.js';
-
+import { noteNameToNoteID } from './../Constants.js';
 import EventBus from '../../event-bus.js';
 import { Song} from '../../song.js';
 
@@ -408,7 +409,6 @@ describe('Song beat APIs on loaded JSON', () => {
         const song = createFreshHeadlessSong();
         const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
 
-        song.setSongfileVersion('V2');
         song.sections = [];
         song.gSectionsCurrentIndex = 0;
 
@@ -682,8 +682,8 @@ describe('Song note mapping and emptiness contracts', () => {
         const song = createFreshHeadlessSong();
         song.gotoSection(0);
 
-        expect(song.noteNameToNoteID('Db')).toBe(4);
-        expect(song.noteNameToNoteID('A')).toBe(0);
+        expect(noteNameToNoteID('Db')).toBe(4);
+        expect(noteNameToNoteID('A')).toBe(0);
 
         song.getCurrentSection().sharps = false;
         expect(song.noteIDToNoteName(1)).toContain('9837'); // flat glyph

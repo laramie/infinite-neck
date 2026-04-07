@@ -7,6 +7,21 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug SongHeadless.js",
+            "program": "${workspaceFolder}/SongHeadless.js",
+            "args": ["./songs/persistence/forward-backward-observers.json"],
+            "cwd": "${workspaceFolder}/",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"],
+            "runtimeExecutable": "node",
+            "outputCapture": "std",
+            "env": {
+                "NO_COLOR": "0"
+            }
+        },        
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug Jest Tests",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": [

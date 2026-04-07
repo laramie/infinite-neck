@@ -26,7 +26,6 @@ function loadPrimarySongForApiTests() {
     setupSongTests();
     const song = getSong();
     song.setHeadless(true, true);
-    song.setSongfileVersion("V2");
     song.addSections(data);
 
     return { data, song };
@@ -49,5 +48,4 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
     const expected = before.map((n) => (12 + n + 2) % 12);
 
     expect(after).toEqual(expected);
-    //console.log("Section dump: \n"+song.dump(false));
 });

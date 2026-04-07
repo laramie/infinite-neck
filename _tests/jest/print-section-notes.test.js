@@ -22,7 +22,6 @@ async function createFreshV2Song() {
 	neck.setupSongTests();
 	const song = neck.getSong();
 	song.setHeadless(true, true);
-	song.setSongfileVersion('V2');
 	song.sections = [];
 	song.gSectionsCurrentIndex = 0;
 	return { song, neck };

@@ -4,7 +4,7 @@
 //Of course, this picks up the gSong reference from infinite-neck.js via getCurrentSection().
 import {
     Note
-} from './note.js';
+} from './Note.js';
 import { SectionNotes } from './SectionNotes.js';
 
 

@@ -11,7 +11,6 @@ function createFreshHeadlessSong() {
 
 test('cycleThruKeysAllSections transposes each section rootID with wrap', () => {
     const song = createFreshHeadlessSong();
-    song.setSongfileVersion("V2");
     song.sections = [];
     song.gSectionsCurrentIndex = 0;
 
@@ -31,5 +30,4 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
     expect(song.getSections()[0].rootID).toBe(2);
     expect(song.getSections()[1].rootID).toBe(1);
     expect(song.getSections()[2].rootID).toBe(7);
-    //console.log("Section dump: \n"+song.dump(false));
 });

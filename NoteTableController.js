@@ -15,11 +15,10 @@ import {
 } from './colorFunctions.js';
 import {
     Note
-} from './note.js';
+} from './Note.js';
 import {
-    Song,
-    constNoteNamesArr
-} from './song.js';
+    Song} from './Song.js';
+import { constNoteNamesArr } from './Constants.js';
 import {
     recordHighlight,
     recordHighlightSingle,

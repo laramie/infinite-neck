@@ -70,10 +70,10 @@ import {
 } from './NoteTableController.js';
 import {
 	Note
-} from './note.js'; 
+} from './Note.js'; 
 import {
 	Song
-} from './song.js';
+} from './Song.js';
 import {
 	clearRecordedNotes,
 	setSectionRecorderProviders
@@ -2254,7 +2254,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
-		gSong.setSongfileVersion("V2");
 		
 		getSong().graveyard = makeGraveyard();
 

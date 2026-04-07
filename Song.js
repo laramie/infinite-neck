@@ -1,8 +1,7 @@
 import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import {
-    GraveType,
-    makeGraveyard
+    GraveType
 } from './graveyard.js';
 import {
     getRecordedNotesForSection
@@ -14,164 +13,22 @@ import { ANSIColors } from './bin/ANSIColors.js';
 import { Section } from './Section.js';
 import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
-import {
-    hydrateSongFromFileObject,
-    songToFileObject,
-    songToJSONString
-} from './SongFile.js';
+import { DEFAULT_BEATS, RANDOM_SECTION_HISTORY_MAX } from './Constants.js';
+import { SongPersistence } from './SongPersistence.js';
 
-const DEFAULT_BEATS = 4;
-const RANDOM_SECTION_HISTORY_MAX = 16;
-export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
-const INTERNAL_SONG_KEYS = new Set([
-    '_persistedIsHeadless',
-    '_persistedHasNoteNamesFuncArrDefault'
-]);
 
-export function noteNameToNoteID(noteName) {
-    return constNoteNamesArr.indexOf(noteName);
-}
-
-export class Song {
-    constructor({ fileObj = null, legacy = true, headless = false, quiet = true, fixIndex = false } = {}) {
-        if (legacy) {
-            this._initLegacy();
-        } else if (fileObj) {
-            this._initFromData(fileObj, { headless, quiet, fixIndex });
-        } else {
-            this._initLegacy();
-        }
+export class Song extends SongPersistence {
+    constructor(obj) {
+        super(obj, Section); 
+        // TODO:  deal with this: fixupCurrentIndexForLoadedSong 
     }
 
-    _initLegacy() {
-        this._persistedIsHeadless = undefined;
-		this._persistedHasNoteNamesFuncArrDefault = false;
-        this.sections = null;
-        this.gSectionsCurrentIndex = 0;
-        this.gFirstBeatSeen = false;
-        this.userInstrumentTuning = null;
-        this.gSongModelListener = null;
-        this.noteNamesFuncArrDEFAULT = [
-            "I", // 1 - I    I
-            "&tau;", //"&tau;", // 2 - Tau    was: "&#x1D70F;"
-            "II", // 3 - II
-            "m", // 4 - m
-            "III", // 5 - 3
-            "IV", // 6 - IV
-            "&Theta;", // 7 - Tri
-            "V", // 8 - V
-            "&sigma;", // 9 - Sigma
-            "6", // 10 - VI
-            "&delta;", // 11 - dom
-            "&Delta;" // 12 - I
-        ];
-
-        this.noteNamesFuncArr = [...this.noteNamesFuncArrDEFAULT];
-        this.sharps = false;
-        this.captionsRowShowing = false;
-        this.fretLengths = (() => {
-            var width = 60;
-            var L0 = 1;
-            const MAGIC_RATIO = 0.9438743;
-            const FIRSTFRET_LENGTH = 0.05297;
-            const fretLengths = [];
-            for (var n = 2; n <= Constants.NUM_FRETS_MAX + 1; n++) {
-                var Cn = (Math.pow(MAGIC_RATIO, n));
-                var Cnm1 = (Math.pow(MAGIC_RATIO, (n - 1)));
-                var R = (L0 * (1 - Cn) - L0 * (1 - Cnm1)) / FIRSTFRET_LENGTH;
-                fretLengths.push(R);
-            }
-            return fretLengths;
-        })();
-        this.presentationMode = false;
-        this.constructing = false;
-        this.randomSectionHistory = [];
-        this.wirings = [];
-        this.make();
+    getPersistentSongFile(){
+        this.updateMemoryModelPreFileSave();
+        var text = JSON.stringify(getSong(), SongPersistence.persistentSongFileReplacer, 2); 
+        return text;
     }
-
-    _initFromData(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
-        const hydratedSong = Song.fromJSON(fileObj, { headless, quiet, fixIndex });
-        Object.assign(this, hydratedSong);
-    }
-
-    static fromJSON(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
-        const song = new Song({ legacy: true });
-        return hydrateSongFromFileObject(song, fileObj, { headless, quiet, fixIndex });
-    }
-
-    _hydrateFromJSON(fileObj, { headless = true, quiet = true, fixIndex = true } = {}) {
-        if (headless) {
-            this.setHeadless(true, quiet);
-        }
-
-        const safeFileObj = (fileObj && typeof fileObj === 'object') ? fileObj : {};
-        const runtimeOnlyKeys = new Set([
-            'sections',
-            'noteNamesFuncArr',
-            'fretLengths',
-            'colorDicts',
-            'constructing',
-            'isHeadless'
-        ]);
-
-        Object.entries(safeFileObj).forEach(([key, value]) => {
-            if (key === 'isHeadless') {
-                this._persistedIsHeadless = value;
-                return;
-            }
-            if (key === 'noteNamesFuncArrDEFAULT') {
-                this._persistedHasNoteNamesFuncArrDefault = true;
-            }
-            if (runtimeOnlyKeys.has(key)) {
-                return;
-            }
-            if (key === 'wirings') {
-                this.wirings = Array.isArray(value)
-                    ? value.map((wiringLike) => Wiring.fromJSON(wiringLike))
-                    : [];
-                return;
-            }
-            if (key === 'graveyard') {
-                this.graveyard = makeGraveyard(value);
-                return;
-            }
-            this[key] = value;
-        });
-
-        if (!this.graveyard) {
-            this.graveyard = makeGraveyard();
-        }
-
-        if (Array.isArray(safeFileObj.sections) && safeFileObj.sections.length > 0) {
-            this.sections = [];
-            this.addSections(safeFileObj);
-            if (fixIndex) {
-                this.fixupCurrentIndexForLoadedSong();
-            }
-        }
-    }
-
-    // --- Methods from makeSongLegacy ---
-    make() { this.construct_gSections(); }
-    construct_gSections() { this.initializeSongState(); }
-    initializeSongState() {
-        this.constructing = true;
-        this.isHeadless = false;
-        this.sections = [];
-        this.randomSectionHistory = [];
-        this.myTunings = [];
-        this.tunings = [];
-        this.visibleNoteTables = [];
-        this.colorDicts = {};
-        this.defaultBPM = "80";
-        this.rootID = "3";
-        this.gSectionsCurrentIndex = this.addSection(this.constructSection());
-        this.namedNoteOpacity = "1.00";
-        this.singleNoteOpacity = "1.00";
-        this.constructing = false;
-        delete this.constructing;
-    }
+    
     setHeadless(value, quiet = false) {
         this.isHeadless = value;
         if (this.isHeadless) {
@@ -179,67 +36,6 @@ export class Song {
             return;
         }
     }
-    setSongfileVersion(version){
-        this.songfileVersion = version;
-    }
-    
-    dump(full) {
-        const OMIT_WHEN_TERSE = new Set([
-            'noteNamesFuncArrDEFAULT',
-            'noteNamesFuncArr',
-            'fretLengths',
-            'colorDicts',
-            'myTunings'
-        ]);
-
-        function replacer(key, value) {
-            if (!full && OMIT_WHEN_TERSE.has(key)) {
-                return undefined;
-            }
-            return value;
-        }
-
-        let res = JSON.stringify(this, replacer, 4);
-        return res;
-    }
-
-    toJSON() {
-        return songToFileObject(this);
-    }
-
-	toJSONString(spacing = 2) {
-		return songToJSONString(this, spacing);
-	}
-
-    //Use this function to skip saving the ColorDics, because they get generated anyway.
-    // Ultimately, only user-customized dicts should be saved, but right now it is doing 
-    // all the default run-time generated dicts, bloating the file.
-    // And other run-time props are removed.
-    static persistentSongFileReplacer(key, value){
-        if (   key === 'userColors' 
-            || key === 'colorDicts' 
-            || key === 'fretLengths' 
-            || key === 'noteNamesFuncArr'
-            || key === 'noteNamesFuncArrDEFAULT'
-            || key === 'gSectionsCurrentIndex'
-            || key === 'gFirstBeatSeen'
-            || key === 'gSongModelListener'
-            || key === 'randomSectionHistory'
-            || key === 'isHeadless'
-            || key === 'tunings'
-            ) 
-        {
-            return undefined;
-        }
-        return value;
-    }
-
-    getPersistentSongFile(){
-        this.updateMemoryModelPreFileSave();
-        var text = JSON.stringify(getSong(), Song.persistentSongFileReplacer, 2); // Create element. (with 2 spaces indentation)
-        return text;
-    }
-
     
     getVisibleTunings(){
         const visibleTableIds = this.myTunings
@@ -247,15 +43,19 @@ export class Song {
             .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
         return visibleTableIds;    
     }
+
     getVisibleTuningIDs(){
         const visibleTuningIDs = this.myTunings
             .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
             .map(t => t.baseID);
         return visibleTuningIDs;    
     }
+
     addWiring(tablename, relativeSection, listenToTablename) {
         const idx = this.wirings.findIndex(w => w.tablename === tablename);
-        const newWiring = new Wiring(tablename, relativeSection, listenToTablename);
+        const newWiring = new Wiring({ tablename:tablename, 
+                                       relativeSection:relativeSection, 
+                                       listenToTablename:listenToTablename});
         if (idx === -1) {
             this.wirings.push(newWiring);
         } else {
@@ -263,10 +63,12 @@ export class Song {
         }
         EventBus.trigger("Wiring:added", {tablename:tablename, listenToTablename: listenToTablename});
     }
+
     removeWiring(tablename){
         this.wirings = this.wirings.filter(w => w.tablename !== tablename);
         EventBus.trigger("Wiring:removed", {tablename:tablename});
     }
+
     fixupCurrentIndexForLoadedSong() {
         var sci = this.gSectionsCurrentIndex;
         if (this.gSectionsCurrentIndex >= this.sections.length) {
@@ -278,21 +80,19 @@ export class Song {
             console.warn("gSong::fixupCurrentIndexForLoadedSong() found that the song gSectionsCurrentIndex was out of range: " + sci);
         }
     }
+
     getCurrentSection() {
         const section = this.sections[this.gSectionsCurrentIndex];
-        return this.normalizeSection(section);
+        return section;
     }
 
     // ==========  Utility methods ==========
+
+    //has to be a method because it uses Section key and sharps/flats.
     noteIDToNoteName(noteIndex) {
         return this.getCurrentSection().noteIDToDisplayName(noteIndex);
     }
-    noteIDToNoteNameRaw(noteIndex) {
-        return constNoteNamesArr[noteIndex];
-    }
-    noteNameToNoteID(noteName) {
-        return constNoteNamesArr.indexOf(noteName);
-    }
+    
 
     // =========== wrapping ==================
 
@@ -311,7 +111,7 @@ export class Song {
                 let message = "test-relative: sections[" + idx + "] by   "
                                + String(sAmount).padStart(4, ' ')  
                                + " ==> sections["+resultIdx+"] ::"
-                               +" key:" + String(this.noteIDToNoteNameRaw(resultSection.rootID)).padEnd(3, ' ') 
+                               +" key:" + String(Constants.noteIDToNoteNameRaw(resultSection.rootID)).padEnd(3, ' ') 
                                + " caption:" + resultSection.caption;
                 let terseMessage = "[" + idx + "] " + String(sAmount).padStart(4, ' ')  + " ==> ["+resultIdx+"]"              
                 if (consoleLog) {
@@ -592,17 +392,6 @@ export class Song {
         return theSection;
     }
 
-    normalizeSection(sectionLike){
-        let theSection = Section.fromJSON(sectionLike, {
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: DEFAULT_BEATS,
-            defaultTableID: this.getDefaultTableID()
-        });
-        Song.assertAllSectionNotesAreInstances(theSection);
-        return theSection;
-    }
-
 	getDefaultTableID() {
 		if (Array.isArray(this.visibleNoteTables) && this.visibleNoteTables.length > 0) {
 			return this.visibleNoteTables[0];
@@ -620,7 +409,7 @@ export class Song {
     }
 
 	addSection(section){
-        section = this.normalizeSection(section);
+        section = section;
 	    var newIndex = this.sections.push(section) - 1;
 	    this.gSectionsCurrentIndex = newIndex;
 	    if (!this.constructing) this.publish_UpdateSectionStatus();
@@ -628,7 +417,7 @@ export class Song {
 	    // sections is an array of gNotesPlayed objects. push() returns length.
 	}
 	addSectionAfterCurrent(section){
-        section = this.normalizeSection(section);
+        section = section;
         if (this.sections.length == 0){
             this.sections.push(section);
             this.gSectionsCurrentIndex = 0;
@@ -651,7 +440,7 @@ export class Song {
 	        //special case: file open is adding sections, but default section is empty, so delete it.
 	        this.sections = [];
 	    }
-        var normalizedSections = fileObj.sections.map(section => this.normalizeSection(section));
+        var normalizedSections = fileObj.sections.map(section => section);
         var count = Array.prototype.push.apply(this.sections, normalizedSections);
         this.gSectionsCurrentIndex = count - 1;
 	}
@@ -786,7 +575,7 @@ export class Song {
     }
 
 
-    //============== TODO:EventBus keep all new EventBus handling code between these comments, ending in END-TODO:EventBus =====================================
+    //============== NOTE: Keep all new EventBus handling code between these comments, ending in END-TODO:EventBus =====================================
     
     publish_SectionChanged(){
         var song = this || obj;
@@ -889,7 +678,6 @@ export class Song {
 	}
 
     insertSectionAtDest(aSection, destIndex){
-        aSection = this.normalizeSection(aSection);
         if (destIndex == "END"){
             this.sections.push(aSection);
             this.gSectionsCurrentIndex = this.sections.length-1;
@@ -970,7 +758,7 @@ export class Song {
 	}
 
 	isEmpty(section){
-        return this.normalizeSection(section).isEmpty();
+        return section.isEmpty();
 	}
 
     moveSectionToEND(){
@@ -996,7 +784,7 @@ export class Song {
     cycleThruKeysAllSections(amount){
         var sections = this.getSections();
         sections.forEach(section => {
-            this.normalizeSection(section).transposeRoot(amount);
+            section.transposeRoot(amount);
         });
 	}
 
@@ -1005,13 +793,13 @@ export class Song {
 	}
 
 	getTableArrInSection(section, tableID){
-        return this.normalizeSection(section).getTableArr(tableID);
+        return section.getTableArr(tableID);
 	}
 
 
     removeUnusedTablesFromMemoryModel(){
     	    this.sections.forEach(section => {
-    	        this.normalizeSection(section).removeEmptyTables();
+    	        section.removeEmptyTables();
     	    });
 	}
 
@@ -1097,7 +885,7 @@ export class Song {
 
     }
     moveNamedNotesForSection(amount, section){
-	    this.normalizeSection(section).moveNamedNotes(amount);
+	    section.moveNamedNotes(amount);
   	}
 
     movePlayedNotesAllSections(amount){

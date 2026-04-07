@@ -1,6 +1,9 @@
 import { Section } from '../../Section.js';
+import { getSectionNotesDisplayString,
+	     getSectionNotesDisplayData
+		} from '../../section-printer.js';
 
-test('getSectionNotesDisplayString consolidates V2 notes for display', () => {
+test('getSectionNotesDisplayString consolidates notes for display', () => {
 	const section = new Section();
 
 	const s6 = section.getSectionNotes('tblS6_1');
@@ -20,13 +23,13 @@ test('getSectionNotesDisplayString consolidates V2 notes for display', () => {
 	p4Recorded.recordedNotes['2'] = [{}, {}];
 	p4Recorded.recordedNotes['3'] = [{}, {}];
 
-	expect(section.getSectionNotesDisplayData()).toEqual({
+	expect(getSectionNotesDisplayData(section)).toEqual({
 		namedNotes: ['C', 'E', 'G'],
 		playedNotes: ['tblS6_1:2', 'tblP4_2:1'],
 		recordedNotes: ['tblS6_1:3', 'tblP4_1:7']
 	});
 
-	expect(section.getSectionNotesDisplayString()).toBe([
+	expect(getSectionNotesDisplayString(section)).toBe([
 		'{',
 		'    namedNotes: ["C","E","G"],',
 		'    playedNotes: ["tblS6_1:2","tblP4_2:1"],',

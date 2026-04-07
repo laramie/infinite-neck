@@ -29,30 +29,31 @@ class Song {
         this.fretLengths = Constants.calcFretLengths();
     }
 
-    static persistentSongFileReplacer(key, value){
-        if (   key === 'userColors' 
-            || key === 'colorDicts' 
-            || key === 'fretLengths' 
-            || key === 'noteNamesFuncArr'
-            || key === 'noteNamesFuncArrDEFAULT'
-            || key === 'gSectionsCurrentIndex'
-            || key === 'gFirstBeatSeen'
-            || key === 'gSongModelListener'
-            || key === 'randomSectionHistory'
-            || key === 'isHeadless'
-            || key === 'tunings'
-            ) 
-        {
-            return undefined;
-        }
-        return value;
-    }
-
+    
     getPersistentSongFile(){
         this.updateMemoryModelPreFileSave();
         var text = JSON.stringify(getSong(), Song.persistentSongFileReplacer, 2); // Create element. (with 2 spaces indentation)
         return text;
     }
+
+    static fromJSON(obj) {
+        const song = new Song();
+        song.presentationMode = obj.presentationMode;
+        song.defaultBPM = obj.defaultBPM;
+        song.rootID = obj.rootID;
+        song.namedNoteOpacity = obj.namedNoteOpacity;
+        song.singleNoteOpacity = obj.singleNoteOpacity;
+        song.sharps = obj.sharps;
+        song.captionsRowShowing = obj.captionsRowShowing;
+        // Add other primitive fields as needed
+
+        if (Array.isArray(obj.sections)) {
+            song.sections = obj.sections.map(sectionObj => new Section(sectionObj));
+        }
+        return song;
+    }
+
+
 
 }
             
