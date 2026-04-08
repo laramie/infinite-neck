@@ -25,22 +25,21 @@ const songDefaults = {
     gSongModelListener: null,
     captionsRowShowing: false,
 
-    //owned collections:
+    //shared collections:
     noteNamesFuncArr: [...Constants.noteNamesFuncArrDEFAULT],
-    fretLengths: Constants.calcFretLengths(),
-    randomSectionHistory: [],
-    myTunings: [],
-    visibleNoteTables: [],
-    colorDicts: {},
-    
-    //owned collections of classes:
-    sections: [],
-    wirings: []
+    fretLengths: Constants.calcFretLengths()    
 };
 
 export class SongPersistence {
     constructor(obj = {}, Section_Class) {
+        //do these first for non-null defaults, though they may get overwritten by obj.
+        this.randomSectionHistory = [];
+        this.myTunings = [];
+        this.visibleNoteTables = [];
+        this.colorDicts = {};
+
         Object.assign(this, songDefaults, obj);
+
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
         this.graveyard = makeGraveyard(obj.graveyard);

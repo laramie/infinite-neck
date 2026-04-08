@@ -10,8 +10,8 @@ const sectionDefaults = {
 
 export class SectionPersistence {
     constructor(obj = {}, SectionNotes_Class) {
-         Object.assign(this, sectionDefaults, obj);
         this.sectionNotesByTable = {};
+        Object.assign(this, sectionDefaults, obj);
         for (const [k, v] of Object.entries(obj.sectionNotesByTable||{})) {
             this.sectionNotesByTable[k] = new SectionNotes_Class(v);
         }

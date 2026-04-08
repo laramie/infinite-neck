@@ -203,5 +203,17 @@ export class Section extends SectionPersistence {
 		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.
 	}
 
+	clone(deep){
+		let c = new Section(JSON.parse(JSON.stringify(this)));
+		if (!deep){
+			let snbt = c.getAllSectionNotes();
+			snbt.forEach(([tableID, sectionNotes]) => {
+				sectionNotes.emptyPlayedNotes();
+				sectionNotes.emptyRecordedNotes();
+			});
+		}
+		return c;
+	}
+
 	
 }

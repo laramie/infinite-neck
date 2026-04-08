@@ -31,7 +31,6 @@ class Song {
 
     
     getPersistentSongFile(){
-        this.updateMemoryModelPreFileSave();
         var text = JSON.stringify(getSong(), Song.persistentSongFileReplacer, 2); // Create element. (with 2 spaces indentation)
         return text;
     }

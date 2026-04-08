@@ -782,7 +782,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function downloadPlayedNotes(){
 		var text = getPersistentSongFile();
 	    var a = document.createElement('a'); // Attach href attribute with value of your file.
-	    //a.setAttribute("href", "data:application/xml;charset=utf-8," + text);
 	    var fname = "";
 	    fname = $("#txtFilename").val().trim();
 	    if (fname==""){
@@ -806,7 +805,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (file.type.match(textType)) {
 				var reader = new FileReader();
 				reader.onload = function(e) {
-					var str = JSON.stringify(reader.result, null, 2); // spacing level = 2
+					var str = JSON.stringify(reader.result, null, 2);
 					openSong(reader.result);
 				}
 				hideAllMenuDivs();
@@ -818,6 +817,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function openSong(str){
+		var jsonObj = JSON.parse(str);
+		gSong = new Song(jsonObj);
+		gSong.ensureDefaultSection();
+		updateAfterOpenSong();
+	}
+
+	export function openSong202603(str){
 		var numFoundBeforeFileLoad = TuningsLibrary.showTuningsForTablesInFile();
 		if (numFoundBeforeFileLoad==0){
 			TuningsLibrary.hideAllTunings();
@@ -2254,8 +2260,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
-		
-		getSong().graveyard = makeGraveyard();
+		gSong.ensureDefaultSection();
 
 		installDefaultColorDicts();
 		applyStylesheetsTo_gUserColorDict();
@@ -2363,7 +2368,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	
 
 //==================== New handling of the EventBus =======================
-//Uncaught SyntaxError: Unexpected token 'export' (at event-bus.js:18:1)
 
 import EventBus from './event-bus.js';
 

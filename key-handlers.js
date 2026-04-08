@@ -593,7 +593,7 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "DisplayOptions sent to Messages";
             break;
         case "showViewDiagnosticsSongFileFormat":
-			showMessagesJSON(JSON.stringify(getPersistentSongFile()));
+			showMessagesJSON(getPersistentSongFile());
 			break;
 		case "showGraveyard":
 			showGraveyard();

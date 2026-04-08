@@ -24,8 +24,7 @@ export class Song extends SongPersistence {
     }
 
     getPersistentSongFile(){
-        this.updateMemoryModelPreFileSave();
-        var text = JSON.stringify(getSong(), SongPersistence.persistentSongFileReplacer, 2); 
+        var text = JSON.stringify(this, SongPersistence.persistentSongFileReplacer, 2); 
         return text;
     }
     
@@ -383,12 +382,10 @@ export class Song extends SongPersistence {
     }
 
     constructSection(){
-        let theSection = new Section({
-            rootID: this.rootID,
-            sharps: this.sharps,
-            beats: DEFAULT_BEATS
-        }); 
-        Song.assertAllSectionNotesAreInstances(theSection);
+        let theSection = new Section();
+        theSection.rootID = this.rootID;
+        theSection.sharps = this.sharps;
+        theSection.beats = DEFAULT_BEATS;
         return theSection;
     }
 
@@ -407,6 +404,14 @@ export class Song extends SongPersistence {
         this.sections = [];
         this.addSection(this.constructSection());
     }
+
+    ensureDefaultSection(){
+        this.sections = this.sections || [];
+        if (this.getSections().length === 0){
+            this.addSection(this.constructSection());
+        }
+    }
+
 
 	addSection(section){
         section = section;
@@ -720,7 +725,7 @@ export class Song extends SongPersistence {
 	    return this.addCloneSection(true, destIndex);
 	}
 	addCloneSection(deep, destIndex){
-    var aSection = this.getCurrentSection().clone({ deep });
+        var aSection = this.getCurrentSection().clone(deep);
         if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
         } else {
