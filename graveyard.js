@@ -1,18 +1,7 @@
 import EventBus from './event-bus.js';
-
-let graveyardProviders = {
-    getSong: function () { return null; },
-    applyStylesheet: function () {}
-};
-
-export function setGraveyardProviders(providers){
-    if (!providers) return;
-    graveyardProviders = {
-        ...graveyardProviders,
-        ...providers
-    };
-}
-
+import { getSong } from './infinite-neck.js';
+import { chuseStylesheet } from './colorFunctions.js';
+import { Section } from './Section.js';
 
 export const GraveType = Object.freeze({
         UNKNOWN: "UNKNOWN",
@@ -26,45 +15,26 @@ export const GraveType = Object.freeze({
         DESKTOP: "DESKTOP",
         INSTRUMENT: "INSTRUMENT"
 });
-export function makeGraveyard(flatObj){
 
-    let obj = {
-        //FIELDS:
-            records: [],
-        //METHODS:
-            make: construct_graveyard,
-            getRecords: getRecords,
-            getRecordCount: getRecordCount,
-            addRecord: addRecord,
-            makeRecord: makeRecord,
-            dumpGraveyard: dumpGraveyard,
-            buildNoteTable: buildNoteTable,
-            bury: bury,
-            raise: raise,
-            clear: clear
-    }
-    obj.make(flatObj);
-    return obj;
-
-    function construct_graveyard(flatObj){
-        if (flatObj){
-            this.records = flatObj.records;
-        }
+export class Graveyard {
+    constructor(jsonObj){
+        this.records = []; //just in case.
+        Object.assign(this, jsonObj); //jsonObj.records is an array, no methods needed.   
     }
 
-    function getRecords(){
+    getRecords(){
         return this.records;
     }
 
-    function getRecordCount(){
+    getRecordCount(){
         return this.records.length;
     }
 
-    function dumpGraveyard(){
+    dumpGraveyard(){
         return JSON.stringify(this.records, null, 4);
     }
 
-    function makeRecord(){
+    makeRecord(){
         var n = Date.now();
         var d = new Date(n);
         var dt = d.toLocaleDateString();
@@ -80,14 +50,14 @@ export function makeGraveyard(flatObj){
         }
     }
 
-    function addRecord(record){
+    addRecord(record){
         if (record.type == GraveType.UNKNOWN){
             throw new TypeError("Graveyard.addRecord() :: record.type not set to a GraveType");
         }
         this.records.push(record);
     }
 
-    function bury(graveType, obj, context){
+    bury(graveType, obj, context){
         var rec = this.makeRecord();
         rec.type = graveType;
         rec.context = context;
@@ -95,7 +65,7 @@ export function makeGraveyard(flatObj){
         this.addRecord(rec);
     }
 
-    function raise(indexNum){
+    raise(indexNum){
         var record = this.records[indexNum];
         if (!record){
             alert("null record in raise("+indexNum+")");
@@ -106,7 +76,8 @@ export function makeGraveyard(flatObj){
                 break;
             case GraveType.SECTION:
                 record.caption = record.caption + " raised from: "+record.context.SectionIndex +" at "+record.time;
-                graveyardProviders.getSong().addSection(JSON.parse(record.json));
+                //getSong().addSection(JSON.parse(record.json));
+                getSong().addSection(new Section(JSON.parse(record.json)));
                 break;
             case GraveType.DISPLAY:
             case GraveType.BEAT:
@@ -115,11 +86,11 @@ export function makeGraveyard(flatObj){
                 if (dictkey){
                     var base = dictkey;
                     var i = 1;
-                    while (graveyardProviders.getSong().colorDicts[dictkey]){
+                    while (getSong().colorDicts[dictkey]){
                         dictkey = base+'R'+(i++);
                     }
-                    graveyardProviders.getSong().colorDicts[dictkey] = JSON.parse(record.json);
-                    graveyardProviders.applyStylesheet(dictkey);
+                    getSong().colorDicts[dictkey] = JSON.parse(record.json);
+                    chuseStylesheet(dictkey);
                 }
                 break;
             case GraveType.THEME:
@@ -132,7 +103,8 @@ export function makeGraveyard(flatObj){
                  return;
         }
         record.lastRevived = Date.now();
-        EventBus.trigger('ShowMessages', { html: graveyardProviders.getSong().graveyard.buildNoteTable() });
+        //EventBus.trigger('ShowMessages', { html: getSong().graveyard.buildGraveyardTable() });
+        EventBus.trigger('ShowMessages', { html: this.buildGraveyardTable() });
         EventBus.trigger('SongUiFullRepaint');
     }
 
@@ -140,13 +112,13 @@ export function makeGraveyard(flatObj){
        Useful for reducing file size and cleaning it up.
        Be sure to call to download a backup in the UI first.
     */
-    function clear(){
+    clear(){
         var removed = this.records.length;
         this.records.length = 0;        // JS engine clears reference to the array (better than records=[]);
         return removed;                 
     }
 
-    function buildNoteTable(){
+    buildGraveyardTable(){
         var result = [];
         var resultBody = [];
         var SEP = "</td><td>";

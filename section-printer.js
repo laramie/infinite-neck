@@ -7,7 +7,7 @@ export function printSections(theSong, theSections) {
     let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th><th>Details</th>";
     let details;
     theSections.forEach((section, idx) => {
-        details = "<pre style='margin:0'>" + section.getSectionNotesDisplayString() + "</pre>";
+        details = "<pre style='margin:0'>" + getSectionNotesDisplayString(section) + "</pre>";
         const SEP = "</td><td>";
         result += "<tr><td>"
             + "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>" + SEP

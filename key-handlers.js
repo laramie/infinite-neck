@@ -810,7 +810,7 @@ export function hideMessages(){
 }
 function showGraveyard(){
     hideAllMenuDivs();
-    showMessages(getSong().graveyard.buildNoteTable());
+    showMessages(getSong().graveyard.buildGraveyardTable());
 }
 export function hideGraveyard(){
     $("#divMessages").hide();

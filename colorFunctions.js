@@ -396,7 +396,7 @@ function fullRepaint() {
 		getSong().colorDicts = temp;
 	}
 
-	export function chuseStylesheet(dictkey){
+export function chuseStylesheet(dictkey){
 		var colorScheme = getSong().colorDicts[dictkey];
 		if (colorScheme){
 			getSong().currentColorDict = dictkey;

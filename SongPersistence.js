@@ -1,7 +1,7 @@
 import * as Constants from './Constants.js';
 import {Wiring} from './Wiring.js';
 import {
-    makeGraveyard
+    Graveyard
 } from './graveyard.js';
 
 const songDefaults = {
@@ -42,7 +42,7 @@ export class SongPersistence {
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
-        this.graveyard = makeGraveyard(obj.graveyard);
+        this.graveyard = new Graveyard(obj.graveyard);
     }
 
     static persistentSongFileReplacer(key, value){

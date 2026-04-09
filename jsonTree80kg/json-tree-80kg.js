@@ -41,19 +41,43 @@ export function add(element, parent, content) {
   return e;
 }
 
+//OEM version worked with the svg element outside of em.
 // Exported: toggle (toggles display of JSON tree branches)
-export function toggle(element) {
-  let display = element.nextSibling.style.display.indexOf('block') ? false : true;
-  element.nextSibling.style.display = display ? 'none' : 'block';
-  element.previousSibling.parentNode.querySelectorAll('svg path').forEach(arrow => {
-    arrow.setAttribute('d', arrow.getAttribute('d') ? (display ? path.show : path.hide) : '');
-  });
-  element.nextSibling.querySelectorAll('div').forEach(el => {
-    el.style.display = display ? 'none' : 'block';
+
+// Recursively update all triangles under a parent div
+function updateTrianglesRecursive(parentDiv) {
+  // For each em with a child svg (triangle) in this subtree
+  parentDiv.querySelectorAll('em').forEach(em => {
+    const svgPath = em.querySelector('svg path');
+    const nextDiv = em.nextSibling;
+    if (svgPath && nextDiv && nextDiv.tagName === 'DIV') {
+      // If the div is visible, triangle should be down; else right
+      const isOpen = nextDiv.style.display === 'block';
+      svgPath.setAttribute('d', isOpen ? path.hide : path.show);
+      // Recurse into children
+      updateTrianglesRecursive(nextDiv);
+    }
   });
 }
 
-// Exported: json (renders a JSON object as a tree in the DOM)
+export function toggle(element) {
+  // Determine if currently open
+  const isOpen = element.nextSibling.style.display === 'block';
+  // Toggle open/close
+  element.nextSibling.style.display = isOpen ? 'none' : 'block';
+  // Set triangle direction: down if open, right if closed
+  element.querySelectorAll('svg path').forEach(arrow => {
+    arrow.setAttribute('d', isOpen ? path.show : path.hide);
+  });
+  // Show/hide children divs
+  element.nextSibling.querySelectorAll('div').forEach(el => {
+    el.style.display = isOpen ? 'none' : 'block';
+  });
+  // Recursively update all triangles in the subtree
+  updateTrianglesRecursive(element.nextSibling);
+}
+
+
 export function jsonTree(tree, parent) {
   Object.entries(tree).forEach(([key, value]) => {
     let node = add('span', parent);
@@ -65,9 +89,12 @@ export function jsonTree(tree, parent) {
       value === null ? add('b', label, 'NULL') : add('em', label, value);
       add('em', label, typeof value).style.color = '#c1e1e1';
     } else {
-      node.append(svg(path.show));
-      let trigger = add('em', node, key + ':  {  ');
+      // Create the clickable em element
+      let trigger = add('em', node);
       trigger.style.cursor = 'pointer';
+      // Append the SVG inside the em
+      trigger.appendChild(svg(path.show));
+      trigger.appendChild(document.createTextNode(key + ':  {  '));
       trigger.addEventListener('click', event => {
         toggle(event.currentTarget);
       });

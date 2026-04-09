@@ -28,10 +28,6 @@ import {
 	draggable
 } from './drag.js';
 import {
-	makeGraveyard,
-	setGraveyardProviders
-} from './graveyard.js';
-import {
 	getFontSize,
 	getUIFontSize,
 	hideGraveyard,
@@ -168,10 +164,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions
-		});
-		setGraveyardProviders({
-			getSong,
-			applyStylesheet: chuseStylesheet
 		});
 		setLooperProviders({
 			getSong,
@@ -766,7 +758,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function downloadBackupThenClearGraveyard(){
 		downloadPlayedNotes();
 		getSong().graveyard.clear();
-		showMessages(getSong().graveyard.buildNoteTable()); // No change: buildNoteTable is not a TableBuilder method here
+		showMessages(getSong().graveyard.buildGraveyardTable()); // No change: buildNoteTable is not a TableBuilder method here
 	}
 
 	//==================== 3) File open/save and persistence ==================
@@ -861,7 +853,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		}
 		getSong().addSections(jsonObj);
-		getSong().graveyard = makeGraveyard(getSong().graveyard);
 
 		var userTheme = getSong().userTheme;
 		if (userTheme){
@@ -943,7 +934,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showGraveyard(){
 		hideAllMenuDivs();
-		showMessages(getSong().graveyard.buildNoteTable());
+		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	export function increaseUIFont(){
@@ -2230,7 +2221,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		installModuleProviders();
 		
-		getSong().graveyard = makeGraveyard();
+		//getSong().graveyard = makeGraveyard();
 		installDefaultColorDicts();
 		applyStylesheetsTo_gUserColorDict();
 		TuningsLibrary.ensureDefaultMyTuning('S6');
