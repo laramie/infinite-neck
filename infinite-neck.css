@@ -111,6 +111,15 @@ table {
                                   supported by Chrome and Opera */
 }
 
+.vertical-header {
+  text-align: left;
+  vertical-align: bottom;
+  background-color: #ddd;
+}
+.vertical-header span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
 
 /***************************** Fonts *****************************/
 
@@ -290,10 +299,6 @@ table {
     display: block;
     max-height: 1.2em; /* or adjust as needed for your line height */
     width: auto;
-}
-
-#btnShowWarny {
-    font-size: 70%;
 }
 
 #divQuick {
@@ -556,109 +561,7 @@ table.viewControls th {
 
 
 /***************************** Themes *****************************/
-
-
-#selThemes {
-    font-size: 100%;
-    color: black;
-    background-color: #6faa09;
-    width: 8em;
-    height: 2.0em;
-    box-shadow:  0 0 6pt 2pt  black;
-}
-
-#divThemeControlsFlex {
-    display: flex;       /* Creates the flexbox context */
-    flex-wrap: wrap;     /* Allows cards to move to the next row */
-    gap: 2em;           /* Sets spacing between cards */
-    justify-content: space-around; 
-    background-color: white;
-    margin: 1em;
-}
-.themeTableControls {
-    flex: 1 0 200px; 
-    background-color: rgb(249, 201, 98);
-    border: 1px solid black;
-    box-shadow: 4pt 4pt  2pt 0.2pt gray;
-}
-.themeTableControls td {
-  border: 1px solid gray;
-  padding-left: 0.8em;
-}
-
-.tblDisplayOptions {
-    border: 2px solid black;
-}
-.ActiveStylesheets td {
-    border: 1px solid gray;
-}
-.tblDisplayOptions th {
-    border: 1px solid gray;
-}
-
-.vertical-header {
-  text-align: left;
-  vertical-align: bottom;
-  background-color: #ddd;
-}
-.vertical-header span {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-}
-.userColorResultCaption {
-    font-weight: bold;
-    background-color: lightgray;
-}
-.userColorResultLinks {
-    font-weight: bold;
-    background-color: lightgray;
-    text-align: left;
-}
-.userColorResultRow td {
-    border: 2px solid black;
-}
-.tblColorDictOneRow td:first-child {
-    font-size: 60%;
-    font-weight: normal;
-}
-
-#themeTableResults {
-    width: 45%;
-    float: left;
-    border: 1px solid green;
-    background-color: cornsilk;
-    white-space: pre;
-}
-
-#themeDiff {
-    border: 1px solid green;
-    border-collapse: collapse;
-}
-#themeDiff td {
-    padding: 0.2em;
-}
-#themeDiff caption {
-    padding: 1em;
-}
-#themeDiff caption span {
-    padding: 0.5em;
-    margin: 2px;
-    border: 2px solid black;
-}
-.themeDiff_Changed {
-    background-color: orange;
-}
-.themeDiff_NotDefault {
-    background-color: white;
-}
-.themeDiff_Default {
-    background-color: pink;
-}
-.undefThemeOption {
-    font-size: 80%;
-    font-style: italic;
-}
-
+/*              All done in ./templates/themes.css        */
 
 /***************************** Tunings / My Tunings *****************************/
 
@@ -855,6 +758,13 @@ table.viewControls th {
     display: none;
 }
 
+/***************************** key-handlers: display-options *****************************/
+.tblDisplayOptions {
+    border: 2px solid black;
+}
+.tblDisplayOptions th {
+    border: 1px solid gray;
+}
 /***************************** Palette *****************************/
 
 #palette {
@@ -901,7 +811,6 @@ table.organizer td {
    padding: 3em;
    position: fixed;
 }
-
 
 #palette label {
     margin: 1px;
@@ -991,18 +900,27 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     width: 6em;
 }
 
+/***************************** Palette::Stylesheets/ColorDict *****************************/
+
+
 .ActiveStylesheets {
     text-align: left;
     font-weight: bold;
     margin-left: 2em;
 }
-.tblColorDicts td {
-    width: 2em;
+.ActiveStylesheets td {
+    border: 1px solid gray;
 }
+
 .colorDictTransparent {
     border: 1px solid #555;
     border-radius: 3px;
 }
+
+.tblColorDicts td {
+    width: 2em;
+}
+
 .tblColorDictOneRow{
     border: 1px solid #555;
 }
@@ -1014,6 +932,11 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
    background-color: #222;
    border: 1px solid #777;
 }
+.tblColorDictOneRow td:first-child {
+    font-size: 60%;
+    font-weight: normal;
+}
+
 /* currentColorDict: a div around our table of user colors: tblColorDictOneRow */
 .currentColorDict {
     display: none;
@@ -1044,6 +967,19 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 .largeColorDict td {
     padding: 0.2em;
+}
+
+.userColorResultCaption {
+    font-weight: bold;
+    background-color: lightgray;
+}
+.userColorResultLinks {
+    font-weight: bold;
+    background-color: lightgray;
+    text-align: left;
+}
+.userColorResultRow td {
+    border: 2px solid black;
 }
 
 /***************************** Transport *****************************/

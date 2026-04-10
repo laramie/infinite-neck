@@ -1,0 +1,63 @@
+import * as ThemeFunctions from '../themeFunctions.js';
+import * as InfiniteNeck from '../infinite-neck.js';
+
+export class ThemesBuilder {
+    static divThemes = null; //Singleton
+    static addToDest(divDestSelector) {
+        if (!ThemesBuilder.divThemes){
+            const template = document.getElementById('themes-template');
+            const clone = template.content.cloneNode(true);
+            ThemesBuilder.divThemes = clone.querySelector('#divThemes');
+            $(divDestSelector).empty().append(ThemesBuilder.divThemes);
+            ThemesBuilder.bindEvents();
+            $('#warny').hide();
+            $('#themeTableResults').hide();
+        }
+        return ThemesBuilder.divThemes;
+    }
+
+    /** After calling this, choose a theme either by default or by looking in song you just opened for USER theme. */
+    static rebuildThemesDropdown(){
+        $('#selThemes').off('change');
+        $('#SelectThemesDest').html(ThemeFunctions.getWidget_SelectThemes());  //must come before bindThemeEvents()
+        ThemeFunctions.auditThemes();//sends WARN messages, so hide after.
+        $('#warny').hide();
+        $('#themeTableResults').hide();
+        $('#selThemes').on('change', ThemesBuilder.selThemesChange);
+    }
+
+    static selThemesChange(){
+        console.log("#selThemes::change");
+        var id = this.id;
+        var val =  this.value;
+        var selectedTheme = ThemeFunctions.getThemes()[val];
+        ThemeFunctions.theme(selectedTheme);
+        ThemeFunctions.themeToControls(ThemeFunctions.getDefaultTheme());  //Not all themes have all values, so reset all the dropdowns with theme "Default" first.
+        ThemeFunctions.themeToControls(selectedTheme);
+        ThemeFunctions.clearThemeDiffResults();
+        InfiniteNeck.refreshShowAllNoteNames();
+        $(this).blur();  // Remove focus so keyboard doesn't change selection
+    }
+    
+    static bindEvents(){
+        //======= themes  =======
+        $('#btnTheme').click(function() {
+            var newTheme = ThemeFunctions.controlsToTheme();
+            ThemeFunctions.theme(newTheme);
+            InfiniteNeck.getSong().userTheme = newTheme;
+            ThemeFunctions.getThemes()["USER"] = newTheme;
+        });
+        $('#btnToggleThemeTableResults').click(function() {
+            $('#themeTableResults').toggle();
+        });
+        $('#selThemes').change(ThemesBuilder.selThemesChange);
+        $('#warny').click(function(){
+            $(this).hide();
+        });
+        $('#btnShowWarny').click(function(){
+            $('#warny').css("zIndex", 80000);
+            $('#warny').show();
+        });
+    }
+
+}

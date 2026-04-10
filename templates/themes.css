@@ -1,0 +1,72 @@
+
+#btnShowWarny {
+    font-size: 70%;
+}
+
+
+
+#selThemes {
+    font-size: 100%;
+    color: black;
+    background-color: #6faa09;
+    width: 8em;
+    height: 2.0em;
+    box-shadow:  0 0 6pt 2pt  black;
+}
+
+#divThemeControlsFlex {
+    display: flex;       /* Creates the flexbox context */
+    flex-wrap: wrap;     /* Allows cards to move to the next row */
+    gap: 2em;           /* Sets spacing between cards */
+    justify-content: space-around; 
+    background-color: white;
+    margin: 1em;
+}
+.themeTableControls {
+    flex: 1 0 200px; 
+    background-color: rgb(249, 201, 98);
+    border: 1px solid black;
+    box-shadow: 4pt 4pt  2pt 0.2pt gray;
+}
+.themeTableControls td {
+  border: 1px solid gray;
+  padding-left: 0.8em;
+}
+
+
+#themeTableResults {
+    width: 45%;
+    float: left;
+    border: 1px solid green;
+    background-color: cornsilk;
+    white-space: pre;
+}
+
+#themeDiff {
+    border: 1px solid green;
+    border-collapse: collapse;
+}
+#themeDiff td {
+    padding: 0.2em;
+}
+#themeDiff caption {
+    padding: 1em;
+}
+#themeDiff caption span {
+    padding: 0.5em;
+    margin: 2px;
+    border: 2px solid black;
+}
+.themeDiff_Changed {
+    background-color: orange;
+}
+.themeDiff_NotDefault {
+    background-color: white;
+}
+.themeDiff_Default {
+    background-color: pink;
+}
+.undefThemeOption {
+    font-size: 80%;
+    font-style: italic;
+}

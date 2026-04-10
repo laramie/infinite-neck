@@ -246,19 +246,21 @@ export function generateSelectStringDividerHt(ID, sHeightValue) {
 
 //================ Public functions to manage tunings ==========================
 
-export function showDefaultTuning() {
+export const DEFAULT_TUNING = 'S6';
+
+export function showDefaultTuning(preferredTuning = DEFAULT_TUNING) {
     if (getMyTuningsStore().length === 0) {
-        ensureDefaultMyTuning('S6');
+        ensureDefaultMyTuning(preferredTuning);
         reloadAllTuningsDisplay();
         reloadMyTuningsDisplay()
-        requestReinstallAllTuningsTables();
+        //requestReinstallAllTuningsTables();
         return;
     }
     return showHideTunings();
 }
 
 export function ensureDefaultMyTuning(defaultBaseID) {
-    if (!defaultBaseID) defaultBaseID = 'S6';
+    if (!defaultBaseID) defaultBaseID = DEFAULT_TUNING;
     var store = getMyTuningsStore();
     if (store.length > 0) return;
     var original = findTuningForID(defaultBaseID);
@@ -566,6 +568,7 @@ export function bindFormTuningsEvents() {
             }
 
             tun.baseInstrument = $('#dropDownBaseInstrument').val();
+            getSong().userInstrumentTuning = tun;
 
             reloadAllTuningsDisplay();
             // this click just modifies the tunings table, so not an instrument. requestReinstallAllTuningsTables();

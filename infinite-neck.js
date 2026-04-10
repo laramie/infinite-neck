@@ -76,16 +76,10 @@ import {
 } from './section-recorder.js';
 import './svgLines.js';
 import {
-	controlsToTheme,
-	auditThemes,
-	clearThemeDiffResults,
 	getDefaultTheme,
 	getThemes,
-	getWidget_SelectThemes,
-	INFO,
-	setOneCssVar,
-	theme,
-	themeToControls
+	THEME_INFO,
+	setOneCssVar
 } from './themeFunctions.js';
 import * as SectionPrinter from './section-printer.js';
 import * as TableBuilder from './TableBuilder.js';
@@ -108,6 +102,7 @@ import {
 	toInt
 } from './utils.js';
 import * as WiringBuilder from './templates/WiringBuilder.js';
+import { ThemesBuilder } from './templates/themes.builder.js';
 import { makeDivDockable, dockDivInPage } from './dockable.js';
 
 // If running in a browser, call appInit() on DOM ready
@@ -862,13 +857,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		rebuildThemesDropdown();
 
-		
-
 		updateAfterOpenSong();
 	}
 
 
 	export function updateAfterOpenSong(){
+		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
 		installDefaultColorDicts();
 		
@@ -876,7 +870,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!songTheme){
 			songTheme = getDefaultTheme().id;
 		}
-		$('#mySelect').val(songTheme).change();
+		$('#selThemes').val(songTheme).change();
 
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
@@ -886,6 +880,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
 
+
+		
+		if (getSong().userInstrumentTuning){
+			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
+			if (theUSERTuning){
+				TuningsLibrary.hideAllTunings();
+				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
+			}
+		}
 
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
@@ -2075,7 +2078,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnControlsToDisplayOptions, #btnControlsToDisplayOptions2").click(function() {
 	        var options = controlsToDisplayOptions();
 			getCurrentSection().displayOptions = options;
-			INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
+			THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
 			showHideDisplayOptionsPresent();
 	    });
 		$("#btnDeleteDisplayOptions, #btnDeleteDisplayOptions2").click(function() {
@@ -2091,36 +2094,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 	}
 
-	export function bindThemeEvents(){
-		//======= themes  =======
-		$('#btnTheme').click(function() {
-			var newTheme = controlsToTheme();
-			theme(newTheme);
-			getSong().userTheme = newTheme;
-			getThemes()["USER"] = newTheme;
-		});
-		$('#btnToggleThemeTableResults').click(function() {
-			$('#themeTableResults').toggle();
-		});
-		$('#selThemes').change(function() {
-			var id = this.id;
-			var val =  this.value;
-			var selectedTheme = getThemes()[val];
-			theme(selectedTheme);
-			themeToControls(getDefaultTheme());  //Not all themes have all values, so reset all the dropdowns with theme "Default" first.
-			themeToControls(selectedTheme);
-			clearThemeDiffResults();
-			refreshShowAllNoteNames();
-			$(this).blur();  // Remove focus so keyboard doesn't change selection
-		});
-		$('#warny').click(function(){
-			$(this).hide();
-		});
-		$('#btnShowWarny').click(function(){
-			$('#warny').show();
-		});
-	}
-
+	
 	export function bindDataActionHandlers(){
 		const dataActionHandlers = {
 			help: () => window.open(getHelpTopic(), 'infinitehelp'),
@@ -2139,9 +2113,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			saveScalingPrefs,
 			applyScalingPrefs,
 			clearScalingPrefs,
-				loadSong,
-				linkToSection,
-				hideGraveyard
+			loadSong,
+			linkToSection,
+			hideGraveyard,
+			saveInstrumentPrefs,
+			applyInstrumentPrefs,
+			clearInstrumentPrefs
 		};
 
 		$(document).on('click', '[data-action]', function(e) {
@@ -2167,6 +2144,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function ChromeFullscreen() {
 	  document.documentElement.webkitRequestFullScreen();
 	}
+
+	//============= Scaling Prefs in localStorage ==========================
 
 	const SCALING_PREFS = "ScalingPrefs";
 
@@ -2204,13 +2183,38 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divScalingPrefs").html("ScalingPrefs: "+JSON.stringify(localStorage.getItem(SCALING_PREFS)));
 	}
 
+	//============= Instrument Prefs in localStorage ==========================
+
+	const INSTRUMENT_PREFS = "InstrumentPrefs";
+
+	export function saveInstrumentPrefs(){
+		let instrumentPrefs = {baseID: "P46"};
+
+		localStorage.setItem(INSTRUMENT_PREFS, JSON.stringify(instrumentPrefs));
+		$("#divInstrumentPrefs").html(JSON.stringify(instrumentPrefs));
+
+	}
+
+	export function applyInstrumentPrefs(){
+		var instrumentPrefsStr = localStorage.getItem(INSTRUMENT_PREFS);
+		if (instrumentPrefsStr){
+			var instrumentPrefs = JSON.parse(instrumentPrefsStr);
+			if (instrumentPrefs.baseID){
+				return instrumentPrefs.baseID;
+			}
+		}
+		return "";
+	}
+
+	export function clearInstrumentPrefs(){
+		localStorage.removeItem(INSTRUMENT_PREFS);
+	}
+
+	//========================================================================
+
 	/** After calling this, choose a theme either by default or by looking in song you just opened for USER theme. */
 	export function rebuildThemesDropdown(){
-		$('#SelectThemesDest').html(getWidget_SelectThemes());  //must come before bindThemeEvents()
-		bindThemeEvents();
-		auditThemes();//sends WARN messages, so hide after.
-		$('#warny').hide();
-		$('#themeTableResults').hide();
+		ThemesBuilder.rebuildThemesDropdown();
 	}
 
 	//==================== 5) App init and EventBus integration ===============
@@ -2259,7 +2263,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#divColorDicts').hide();
 		$("#CustomColorEditors").hide();
 
-		TuningsLibrary.ensureDefaultMyTuning(getStartupTuningBaseID('S6'));
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();
@@ -2268,12 +2271,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDesktopEvents();
 		applyScalingPrefs(true);
 
-		rebuildThemesDropdown();
-		$('#selThemes').val("Autobahn").change();
-		//will get picked up in open file, but here is the default theme,
-		//    which isn't "Default", although it should be.
-		//$('#selThemes').val("PoolShark").change();
-
+		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 
 		var currentFilename = $("#txtFilename").val();
@@ -2284,7 +2282,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#cbHighlight').prop('checked', false);
 		//NOTE: "checked" is done in buildUserColors, so you don't need to check any rb colors here.
 
-		$("#palette").show();
+		//$("#palette").show();
 		$('#cbAutomaticColor').prop('checked', true);
 		$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
 
@@ -2304,20 +2302,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		buildUserColors();
 		installRBColorChangeEvents();
 
-		//requestReloadAllTuningsDisplay();
-		TuningsLibrary.showDefaultTuning();//calls showHideTunings and shows S6 if none found.
-		TuningsLibrary.bindFormTuningsEvents();
 		bindDataActionHandlers();
 
 		loadTemplates().then(() => {
     		getSong().getVisibleTuningIDs().forEach(tuningID => {
 				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 			});
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
 			setWiringOpenState(false)
 		});
 		setWiringOpenState(false)
 
-
+		loadTemplates('templates/themes.html').then(() => {
+    		ThemesBuilder.addToDest('#divThemeControls');
+			rebuildThemesDropdown();
+			$('#selThemes').val("Autobahn").change();
+		});
+		
 
 		$("#btnFlats").click();  //calls resetNoteNames();
 
@@ -2332,6 +2334,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         draggable(document.getElementById('transport'));
 		showTransport();
 
+		debugger
+		let preferredTuning = applyInstrumentPrefs();
+		console.log(" ======== appInit preferredTuning =========:"+preferredTuning);
+		TuningsLibrary.showDefaultTuning(preferredTuning);//calls showHideTunings and shows S6 if none found.
+		TuningsLibrary.bindFormTuningsEvents();
 		scrollToTop();
 	}
 	// End of appInit() with document ready call

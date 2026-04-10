@@ -129,7 +129,7 @@ instrumentBackground .captionRow {
 
 .fretTableWrapper table.fretTable {
     width: max-content; /* table can be as wide as needed */
-    min-width: 100%;    /* ensures table fills container if not wide */
+    min-width: 10%;    /* at 100% it was hogging and resizing cells when it had to fill the width.  This is better 20260410 */
 }
 
 

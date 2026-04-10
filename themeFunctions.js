@@ -285,13 +285,13 @@ import { gThemes } from './themes.js';
 		var style = $("style#laramieStyle");    //looking for <style id='laramieStyle'>
 		style.html(styleBody);  //you can check that document.styleSheets will not have gotten any longer.
 		themeResults(JSON.stringify(themeOptions, null, 2));
-		INFO("style sent to DOM: <br>"+styleBody);
+		THEME_INFO("style sent to DOM: <br>"+styleBody);
 	}
 
 	function WARN(message){
 		warny("WARNING: "+message, true);
 	}
-	export function INFO(message){
+	export function THEME_INFO(message){
 		warny("INFO: "+message, false);
 	}
 	function warny(message, logToConsole){
@@ -341,7 +341,7 @@ import { gThemes } from './themes.js';
 		}	
 		auditThemesShowOptions();
 
-		INFO("auditThemes result <br>"+table[0].outerHTML);
+		THEME_INFO("auditThemes result <br>"+table[0].outerHTML);
 	}
 
 	function showSelectOptions(selector, delimeter){
