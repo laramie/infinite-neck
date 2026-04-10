@@ -34,6 +34,11 @@ export class Note {
         return note;
     }
 
+    static cloneNote(other){
+        let clonedObj = JSON.parse(JSON.stringify(other));
+        return new Note(clonedObj);
+    }
+
     constructor(obj = {}){
         Object.assign(this, obj);
     }

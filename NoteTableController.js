@@ -609,13 +609,18 @@ export function getReplayOptionsArray(){
     baseopts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
     baseopts.hideFingering   = $("#cbHideFingering").prop("checked");
 
-    let visibleTables = getSong().getVisibleTunings();
-    visibleTables.forEach(tablename =>{
+    function freshOpts(baseopts, tablename){
         let opts = {};
         Object.assign(opts, baseopts);
-        opts.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
+        opts.tablename = tablename; //e.g. Constants.TABLE_ID_PREFIX+"S6_1";
+        return opts;
+    }
+
+    let visibleTables = getSong().getVisibleTunings();
+    visibleTables.forEach(tablename =>{
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
+            let opts = freshOpts(baseopts, tablename);
             opts.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = wiring.listenToTablename;
@@ -625,12 +630,14 @@ export function getReplayOptionsArray(){
             resultOptionsArray.push(opts);
         } else {
             if (wiring && wiring.listenToTablename) {
-                opts.currSection = getCurrentSection();
-                opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
-                opts.listenToTablename = wiring.listenToTablename;
-                opts.type = ReplayOptions.LISTENER;
-                resultOptionsArray.push(opts);
+                let listenerOpts = freshOpts(baseopts, tablename);
+                listenerOpts.currSection = getCurrentSection();
+                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerOpts.currSection);
+                listenerOpts.listenToTablename = wiring.listenToTablename;
+                listenerOpts.type = ReplayOptions.LISTENER;
+                resultOptionsArray.push(listenerOpts);
             }
+            let opts = freshOpts(baseopts, tablename);
             opts.currSection = getCurrentSection();
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = tablename;
@@ -696,10 +703,8 @@ export function replayTable(replayOptions){
     }
     if (tablearr){
         tablearr.forEach(script => {
-            console.log("replay===tablename==>"+tablename+"===listenToTablename===>"+listenToTablename+"<===");
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
-            console.log("select:"+jtdselector+":"+jtd.length);
             jtd.each(function(i, obj){
                 var textdiv;
                 if (script.styleNum == undefined){
@@ -938,10 +943,6 @@ export function fillChord() {
     var scaleColor = $("input:radio[name=rbnFillNoteScale]:checked").val()
     var chordsColor = $("input:radio[name=rbnFillNoteChord]:checked").val()
     var rootColor = $("input:radio[name=rbnFillNoteRoot]:checked").val()
-
-    //var scaleColor = $('#dropDownScalesColors option:selected').val();
-    //var chordsColor = $('#dropDownChordsColors option:selected').val();
-    //var rootColor = $('#dropDownRootColors option:selected').val();
 
     var keepRoot = (rootColor == "noteKeep");
     var keepChords = (chordsColor == "noteKeep");

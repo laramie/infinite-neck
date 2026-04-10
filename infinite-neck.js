@@ -403,101 +403,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
-		function cloneTuningForSong(tuning) {
-			return JSON.parse(JSON.stringify(tuning));
-		}
-
-		export function collectSongOwnedTunings(song) {
-			if (!song) {
-				return [];
-			}
-			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
-				return tuning.baseID;
-			}));
-			var customTunings = [];
-			var seenBaseIDs = new Set();
-			var addCustomTuning = function(tuning) {
-				if (!tuning || !tuning.baseID || tuning.baseID === "USER") {
-					return;
-				}
-				if (builtInBaseIDs.has(tuning.baseID) || seenBaseIDs.has(tuning.baseID)) {
-					return;
-				}
-				seenBaseIDs.add(tuning.baseID);
-				customTunings.push(cloneTuningForSong(tuning));
-			};
-
-			if (Array.isArray(song.myTunings)) {
-				song.myTunings.forEach(addCustomTuning);
-			}
-			if (Array.isArray(song.tunings)) {
-				song.tunings.forEach(addCustomTuning);
-			}
-			return customTunings;
-		}
-
-		function loadSongOwnedTunings() {
-			getSong().myTunings = collectSongOwnedTunings(getSong());
-		}
-
-		function getStartupTuningBaseID(defaultBaseID) {
-			var fallback = defaultBaseID || 'S6';
-			if (typeof window === 'undefined' || !window.location || typeof URLSearchParams === 'undefined') {
-				return fallback;
-			}
-
-			var raw = new URLSearchParams(window.location.search || '').get('tuning');
-			if (!raw) {
-				return fallback;
-			}
-
-			var requested = raw.trim();
-			if (!requested) {
-				return fallback;
-			}
-
-			var variants = [];
-			var addVariant = function(value) {
-				if (!value) {
-					return;
-				}
-				if (!variants.includes(value)) {
-					variants.push(value);
-				}
-			};
-
-			addVariant(requested);
-			addVariant(requested.toUpperCase());
-			if (requested.startsWith(Constants.TABLE_ID_PREFIX)) {
-				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length));
-			}
-			if (requested.toUpperCase().startsWith(Constants.TABLE_ID_PREFIX.toUpperCase())) {
-				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length).toUpperCase());
-			}
-
-			for (var i = 0; i < variants.length; i++) {
-				var candidate = variants[i];
-				if (!candidate) {
-					continue;
-				}
-				var byID = TuningsLibrary.findTuningForID(candidate);
-				if (byID && byID.baseID !== 'USER') {
-					return byID.baseID;
-				}
-				if (candidate.includes('_')) {
-					var baseCandidate = candidate.split('_')[0];
-					var byBase = TuningsLibrary.findTuningForID(baseCandidate);
-					if (byBase && byBase.baseID !== 'USER') {
-						return byBase.baseID;
-					}
-				}
-			}
-
-			return fallback;
-		}
-
-	
-
 	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
 		   $('#divMessages').toggle(showMsgs);
@@ -810,57 +715,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		updateAfterOpenSong();
 	}
 
-	export function openSong202603(str){
-		var numFoundBeforeFileLoad = TuningsLibrary.showTuningsForTablesInFile();
-		if (numFoundBeforeFileLoad==0){
-			TuningsLibrary.hideAllTunings();
-		}
-		var jsonObj = JSON.parse(str);
-
-
-		//Object.assign(gSong, jsonObj);
-		// Save and remove sections before assigning
-		const { sections, ...rest } = jsonObj;
-		Object.assign(gSong, rest); // assign all but sections
-		loadSongOwnedTunings();
-		getSong().fixupCurrentIndexForLoadedSong();
-
-		if (getSong().userInstrumentTuning){
-			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
-			if (theUSERTuning){
-				TuningsLibrary.hideAllTunings();
-				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
-			}
-		}
-
-		var frs = [];
-		Object.values(jsonObj.sections).forEach(section => {
-			var replacementSection = getSong().constructSection();
-			section = Object.assign(replacementSection, section);
-			frs.push(section);
-		});
-		jsonObj.sections = frs;
-		if (!getSong().isEmpty(getSong().getCurrentSection())){
-
-			var yes = $("#cbAppendSections").prop("checked");
-			if (!yes){
-				getSong().removeAllSections();
-			}
-		}
-		getSong().addSections(jsonObj);
-
-		var userTheme = getSong().userTheme;
-		if (userTheme){
-			userTheme["id"] = "USER";
-			getThemes()["USER"] = userTheme;
-			getSong().theme = "USER";
-		}
-		rebuildThemesDropdown();
-
-		updateAfterOpenSong();
-	}
-
-
 	export function updateAfterOpenSong(){
 		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
@@ -879,8 +733,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
-
-
 		
 		if (getSong().userInstrumentTuning){
 			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
@@ -892,11 +744,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
-			TuningsLibrary.showDefaultTuning();
+			showDefaultTunings();
 		}
 
 		replay();
 		sectionChanged();
+	}
+
+	function showDefaultTunings(){
+		let preferredTuningArray = applyInstrumentPrefs();
+		const params = new URLSearchParams(window.location.search);
+		const tuning = params.get('tuning');
+		if (tuning){
+			TuningsLibrary.showDefaultTuning(tuning);
+		} else if ( Array.isArray(preferredTuningArray) && preferredTuningArray.length>0 ){
+			console.log(" ======== appInit preferredTuning =========:"+JSON.stringify(preferredTuningArray));
+			preferredTuningArray.forEach(baseID => {
+				TuningsLibrary.showDefaultTuning(baseID);//calls showHideTunings and shows S6 if none found.
+			});
+		} else {
+			TuningsLibrary.showDefaultTuning();
+		}
 	}
 
 	export function installDefaultColorDicts(){
@@ -2188,7 +2056,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const INSTRUMENT_PREFS = "InstrumentPrefs";
 
 	export function saveInstrumentPrefs(){
-		let instrumentPrefs = {baseID: "P46"};
+		let baseIDArray = TuningsLibrary.getMyTunings().map(tuning => tuning.fromBaseID)
+		let instrumentPrefs = {baseIDArray: baseIDArray};
 
 		localStorage.setItem(INSTRUMENT_PREFS, JSON.stringify(instrumentPrefs));
 		$("#divInstrumentPrefs").html(JSON.stringify(instrumentPrefs));
@@ -2196,11 +2065,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function applyInstrumentPrefs(){
+		$("#divInstrumentPrefs").html("");
 		var instrumentPrefsStr = localStorage.getItem(INSTRUMENT_PREFS);
 		if (instrumentPrefsStr){
 			var instrumentPrefs = JSON.parse(instrumentPrefsStr);
-			if (instrumentPrefs.baseID){
-				return instrumentPrefs.baseID;
+			if (instrumentPrefs){
+				$("#divInstrumentPrefs").html(JSON.stringify(instrumentPrefs));
+				if (instrumentPrefs.baseIDArray){
+					return instrumentPrefs.baseIDArray;
+				}
 			}
 		}
 		return "";
@@ -2208,6 +2081,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function clearInstrumentPrefs(){
 		localStorage.removeItem(INSTRUMENT_PREFS);
+		$("#divInstrumentPrefs").html("");
 	}
 
 	//========================================================================
@@ -2250,10 +2124,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		fetchVersionInBrowser();
 
-		
-
-
-		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
 		gSong.ensureDefaultSection();
 
@@ -2270,7 +2140,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installTDNoteClick();
 		bindDesktopEvents();
 		applyScalingPrefs(true);
-
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 
@@ -2279,17 +2148,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().songName = currentFilename;
 		$('.topControlsCaptions').show();
 
-		$('#cbHighlight').prop('checked', false);
-		//NOTE: "checked" is done in buildUserColors, so you don't need to check any rb colors here.
-
-		//$("#palette").show();
+		//in palette div: 
 		$('#cbAutomaticColor').prop('checked', true);
 		$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
 
-		$("#dropDownRootColors").val("noteKeep");
-	    $("#dropDownChordsColors").val("noteKeep");
-	    $("#dropDownScalesColors").val("noteKeep");
-      	$("#lblHideWarning").hide();
+      	$("#lblHideWarning").hide(); //in divViewControls
 
 		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions etc.
  		hideAllMenuDivs();
@@ -2334,10 +2197,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         draggable(document.getElementById('transport'));
 		showTransport();
 
-		debugger
-		let preferredTuning = applyInstrumentPrefs();
-		console.log(" ======== appInit preferredTuning =========:"+preferredTuning);
-		TuningsLibrary.showDefaultTuning(preferredTuning);//calls showHideTunings and shows S6 if none found.
+		showDefaultTunings();
+		
 		TuningsLibrary.bindFormTuningsEvents();
 		scrollToTop();
 	}

@@ -249,24 +249,25 @@ export function generateSelectStringDividerHt(ID, sHeightValue) {
 export const DEFAULT_TUNING = 'S6';
 
 export function showDefaultTuning(preferredTuning = DEFAULT_TUNING) {
-    if (getMyTuningsStore().length === 0) {
+   // if (getMyTuningsStore().length === 0) {
         ensureDefaultMyTuning(preferredTuning);
         reloadAllTuningsDisplay();
         reloadMyTuningsDisplay()
         //requestReinstallAllTuningsTables();
-        return;
-    }
+     //   return;
+   // }
     return showHideTunings();
 }
 
 export function ensureDefaultMyTuning(defaultBaseID) {
     if (!defaultBaseID) defaultBaseID = DEFAULT_TUNING;
     var store = getMyTuningsStore();
-    if (store.length > 0) return;
+    //if (store.length > 0) return;
     var original = findTuningForID(defaultBaseID);
     if (!original) return;
     var cloned = JSON.parse(JSON.stringify(original));
     cloned.baseID = generateNextTuningID(defaultBaseID);
+    cloned.fromBaseID = defaultBaseID;
     cloned.instance = true;
     cloned.visible = true;
     store.push(cloned);
@@ -589,6 +590,7 @@ export function bindFormTuningsEvents() {
 
         var cloned = JSON.parse(JSON.stringify(original)); // Deep clone
         cloned.baseID = newBaseID;
+        cloned.fromBaseID = baseID;
         cloned.instance = true;
         cloned.visible = true;
         getMyTuningsStore().push(cloned);

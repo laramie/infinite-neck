@@ -12,6 +12,21 @@
 
 ## Outstanding Tasks
 
+### Make Themes apply to one table
+
+- Whack, but this actually works, and applies changes to *just* that table, not the others.
+  Could wire this up with per-table themes.  Here's an example of hacking in just one table (tblS6_1) into the rule.
+
+  `themeFunctions.js :: theme()` :
+  ```
+    var styleBody = "#tblS6_1 td.note {"
+            +rule("padding", "notePadding")
+            +rule("border-radius", "noteRadius")
+            +"}"
+        +"#tblS6_1 .namedNote, .NoteDisplay {"
+            +rule("border-radius", "namedNoteRadius")
+        +"}"
+  ```
 ### Migrating songs to V2 and deleting songs obviated by DaCapo
 
 - `All-Chords.json` The original.  12 Sections In C, 12 chords Maj9, min9, min7b5, dim, 6-9, SusII, SusIV, dom7, min7, 13/dom7-add6, min-maj, . Just wire it to DaCapo.
