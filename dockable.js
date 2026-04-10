@@ -150,7 +150,8 @@ export function makeDivDockable(divId) {
     floatWin.style.top = '100px';
     floatWin.style.left = '100px';
     floatWin.style.zIndex = 200;
-    floatWin.style.background = '#96001c';
+    //floatWin.style.background = '#96001c';
+    floatWin.style.background = 'white';
     floatWin.style.border = '2px solid #888';
     floatWin.style.borderRadius = '12px';
     floatWin.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';

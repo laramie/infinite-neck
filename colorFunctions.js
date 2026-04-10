@@ -75,6 +75,7 @@ function fullRepaint() {
 	}
 
 	export function recordUserColorsBoth(doSampleSection, doPickerChoices){
+		debugger
 		var colorSchemeName = $('#txtColorSchemeName').val();
 		var chosenSystemSchemeName = $('#txtColorSchemeName').attr('systemSchemeName');
 		var cleanResult = clean_ColorSchemeName(colorSchemeName);
@@ -88,25 +89,35 @@ function fullRepaint() {
 	    var rootIndexLead = toInt(getCurrentSection().rootIDLead, 0);
 
 		var colorDict = {};
-		var notes = getCurrentSection().namedNotes;
-		var keys = Object.keys(notes);
 
 		if (doSampleSection){
-			keys.forEach(noteName => {
-				var noteFnNum = noteNameToNoteID(noteName);
-				var rel = (12 + noteFnNum - rootIndex) % 12;
-				var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
-				var note = notes[noteName];
-				var cc = note.colorClass;
-				if (cc) {
-					var noteClone = JSON.parse(JSON.stringify(note));
-					noteClone.colorClass = cc;
-					var res = lookupUserColor(noteClone);
-					var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
-					defClone.colorClass = res.colorClass;
-					colorDict[noteKey] = defClone;
+			let tunings = getSong().getVisibleTunings();
+			if (tunings.length>0){
+				let firstTableID = tunings[0];
+				var notes = getCurrentSection().getSectionNotes(firstTableID).namedNotes;
+				if (notes){
+					var keys = Object.keys(notes);
+					keys.forEach(noteName => {
+						var noteFnNum = noteNameToNoteID(noteName);
+						var rel = (12 + noteFnNum - rootIndex) % 12;
+						var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
+						var note = notes[noteName];
+						var cc = note.colorClass;
+						if (cc) {
+							var noteClone = JSON.parse(JSON.stringify(note));
+							noteClone.colorClass = cc;
+							var res = lookupUserColor(noteClone);
+							var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
+							defClone.colorClass = res.colorClass;
+							colorDict[noteKey] = defClone;
+						}
+					});
+				} else {
+					console.log("didn't find notes for firstTableID["+firstTableID+"] when doSampleSection in colorFunctions::recordUserColorsBoth()");
 				}
-			});
+			} else {
+				console.log("No visible tunings for doSampleSection in colorFunctions::recordUserColorsBoth()");
+			}
 		}
 
 		if (doPickerChoices){

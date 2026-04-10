@@ -9,8 +9,6 @@ import {
 	showHatchPicker,
 	colorPickerClicked,
 	hatchPickerClicked,
-	recordUserColors,
-	recordUserColorsFromSection,
 	applyStylesheetsTo_gUserColorDict,
 	buildColorDicts,
 	buildUserColors,
@@ -102,7 +100,8 @@ import {
 	toInt
 } from './utils.js';
 import * as WiringBuilder from './templates/WiringBuilder.js';
-import { ThemesBuilder } from './templates/themes.builder.js';
+import { ThemesBuilder }  from './templates/themes.builder.js';
+import { PaletteBuilder } from './templates/palette.builder.js';
 import { makeDivDockable, dockDivInPage } from './dockable.js';
 
 // If running in a browser, call appInit() on DOM ready
@@ -536,7 +535,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// List of menu divs, accessed through .entries(), and associated button names,
 	//  accessed through selectors stored in values with menu as key: AllMenuDivs[strMenuDiv]
 	const AllMenuDivs = {
-		"#palette": "#btnPalette",
+		"#divPalette": "#btnPalette",
 		"#divFileControls": "#btnFileControls",
 		"#divSectionControls": "#btnSectionControls",
 		"#divViewControls": "#btnViewControls",
@@ -1138,6 +1137,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 	export function refreshShowAllNoteNames(){
+		debugger
 		let isChecked = $("#cbShowAllNoteNames").prop("checked");
 		showAllNoteNames(!isChecked); //hack: do it twice for side-effects.
 		showAllNoteNames(isChecked);
@@ -1149,6 +1149,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (show){
 			var LastBlackBackgroundColor = $('.noteBlackKey').css("background-color");
 			var LastWhiteBackgroundColor  = $('.noteWhiteKey').css("background-color");
+			if (!LastBlackBackgroundColor || !LastWhiteBackgroundColor){
+				return;
+			}
 			var hexbb = convertRGB_to_HEX(LastBlackBackgroundColor);
 			var hexww = convertRGB_to_HEX(LastWhiteBackgroundColor);
 			var bw = false; //false is cooler. //force choice of Black/White color for all background colors.  mid-tone colors don't work so well.
@@ -1377,41 +1380,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function bindDesktopEvents(){
 
-		// Event delegation for stylesheet selection and deletion links
-		$(document).on('click', 'a.choose-stylesheet', function(e) {
-			e.preventDefault();
-			const dictkey = $(this).data('dictkey');
-			chuseStylesheet(dictkey);
-		});
-
-		$(document).on('click', 'a.delete-stylesheet', function(e) {
-			e.preventDefault();
-			const dictkey = $(this).data('dictkey');
-			deleteUserStylesheet(dictkey);
-		});
-
-		$(document).on('click', 'span.choose-color-picker', function(e) {
-			e.preventDefault();
-			const target = $(this).data('target');
-			showColorPicker(this, target);
-		});
-
-		$(document).on('click', 'span.choose-hatch-picker', function(e) {
-			e.preventDefault();
-			const target = $(this).data('target');
-			showHatchPicker(this, target);
-		});
-
-		$(document).on('click', 'td.colorPickerCell', function(e) {
-			e.preventDefault();
-			colorPickerClicked(this);
-		});
-
-		$(document).on('click', 'td.hatchPickerCell', function(e) {
-			e.preventDefault();
-			hatchPickerClicked(this);
-		});
-
+		
 		$(document).on('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
 			const index = toInt($(this).data('grave-index'), -1);
@@ -1441,7 +1410,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		$("#btnPalette").click(function() {
-			showOneMenu("#palette");
+			showOneMenu("#divPalette");
 		});
 		$("#btnDesktop").click(function() {
 		    showOneMenu("#divDesktop");
@@ -1458,36 +1427,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$("#cbPresentationMode").change(function(){
 			getSong().presentationMode = this.checked;
-		});
-
-		$("#showHideExtraColors").click(function(event) {
-			$("#extraColors").toggle();
-			if ($("#extraColors").is(":visible")){
-				$("#showHideExtraColors")
-					.html("Less...")
-					.removeClass("BtnPunchedOut")
-					.addClass("BtnPunchedIn");
-			} else {
-				$("#showHideExtraColors")
-				    .html("More...")
-					.removeClass("BtnPunchedIn")
-					.addClass("BtnPunchedOut");
-			}
-			event.stopPropagation();
-		});
-
-		$("#showHideCustomColorEditors").click(function(event) {
-			$("#CustomColorEditors").toggle();
-			if ($("#CustomColorEditors").is(":visible")){
-				$("#showHideCustomColorEditors").html("Customize Less ...");
-			} else {
-				$("#showHideCustomColorEditors").html("Customize ...");
-			}
-			event.stopPropagation();
-		});
-
-		$("#showHideCustomColorLinks").click(function() {
-			$('#divColorDicts').toggle();
 		});
 
 		$('#btnMessagesTab').click(function() {
@@ -1811,42 +1750,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('.instrumentBackground').css({"margin-top": margin, "margin-bottom": +margin });
 		});
 
-	    $('#selBend').click(function() {
-	        $("#rbBend").prop("checked", true);
-	    });
-
-		$("#rbFinger0").click(function(){
-            checkRB("#idRFinger0");
-        });
-		$("#rbFinger1").click(function(){
-			checkRB("#idRFinger1");
-		});
-		$("#rbFinger2").click(function(){
-			checkRB("#idRFinger2");
-		});
-		$("#rbFinger3").click(function(){
-			checkRB("#idRFinger3");
-		});
-		$("#rbFinger4").click(function(){
-			checkRB("#idRFinger4");
-		});
-		$("#rbFingerT").click(function(){
-			checkRB("#idRFingerT");
-		});
-
-		$("#cbAutomaticColor").change(function() {
-			if (this.checked) {
-				//console.log("cbAutomaticColor was checked--hiding");
-				$('#manualColors').hide();
-				$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-			} else {
-				//console.log("cbAutomaticColor was not checked--showing");
-				$('#manualColors').show();
-				$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-			}
-			fullRepaint();
-		});
-
 		$('#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering').change(function() {
 				var hnchecked = $('#cbHideNamedNotes').prop("checked");
 				var hschecked = $('#cbHideSingleNotes').prop("checked");
@@ -1954,12 +1857,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			showHideDisplayOptionsPresent();
 	    });
 
-		$("#btnRecordUserColors").click(function() {
-			recordUserColors();
-		});
-		$("#btnRecordUserColorsFromSection").click(function() {
-			recordUserColorsFromSection();
-		});
+		
 	}
 
 	
@@ -2127,12 +2025,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		gSong = new Song();
 		gSong.ensureDefaultSection();
 
-		installDefaultColorDicts();
-		applyStylesheetsTo_gUserColorDict();
-		buildColorDicts();
-		$('#divColorDicts').hide();
-		$("#CustomColorEditors").hide();
-
+		
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();
@@ -2148,10 +2041,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().songName = currentFilename;
 		$('.topControlsCaptions').show();
 
-		//in palette div: 
-		$('#cbAutomaticColor').prop('checked', true);
-		$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
-
+		
       	$("#lblHideWarning").hide(); //in divViewControls
 
 		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions etc.
@@ -2162,8 +2052,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		updateFontLabel();
 
-		buildUserColors();
-		installRBColorChangeEvents();
+		loadTemplates('templates/palette.html').then(() => {
+			PaletteBuilder.addToDest("#divPalette");
+			installDefaultColorDicts();
+			applyStylesheetsTo_gUserColorDict();
+			buildColorDicts();
+			$('#divColorDicts').hide();
+			$("#CustomColorEditors").hide();
+
+			//in palette div: 
+			$('#cbAutomaticColor').prop('checked', true);
+			$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
+
+			buildUserColors();
+			installRBColorChangeEvents();
+		});
+
 
 		bindDataActionHandlers();
 
