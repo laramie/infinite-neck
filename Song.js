@@ -497,19 +497,23 @@ export class Song extends SongPersistence {
 	    this.gFirstBeatSeen = false;
 	}
 
-    moveBeatsLaterForTable(tableID, beatCount){
+    gotoBeat(oneBasedIndex){
+        this.getCurrentSection().gotoBeat(oneBasedIndex);
+    }
+
+    moveBeatsLaterForTable(tableID, beatCount, oneBasedIndex){
         var result = {};
         var notes = getRecordedNotesForSection(tableID);
         for (var i=1; i<=beatCount; i++){
             result[""+(i+1)] = notes[""+i];
         }
         result["1"] = [];
-        getCurrentSection().getSectionNotes(tableID).recordedNotes = result;
+        this.getCurrentSection().getSectionNotes(tableID).recordedNotes = result;
     }
 
-	moveBeatsLater(){
+	moveBeatsLater(oneBasedIndex){
         var beatCount = this.getBeats();
-        let allTablesInSection = getCurrentSection().getAllSectionNotes();
+        let allTablesInSection = this.getCurrentSection().getAllSectionNotes();
         allTablesInSection.forEach(([tableID, sn]) => {
             this.moveBeatsLaterForTable(tableID, beatCount);
         });
@@ -519,6 +523,12 @@ export class Song extends SongPersistence {
 		this.requestUiFullRepaint();
         this.requestUiShowBeats();
 	}
+    insertFirstBeat(){
+        moveBeatsLater(1);
+    }
+    insertBeat(oneBasedIndex){
+        moveBeatsLater(oneBasedIndex);
+    }
 
     shuffleRecordedBeatsDown(recordedBeats, nBeats, nStartBeat){
   	  for (var curr=nStartBeat; curr<=nBeats; curr++){

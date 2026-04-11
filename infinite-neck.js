@@ -32,8 +32,6 @@ import {
 	getNoteFontSize,
 	setUIFontSize,
 	setNoteFontSize,
-	setSectionKeysFlats,
-	setSectionKeysSharps,
 	setKeyHandlerProviders,
 	showMessages,
 	hideMessages,
@@ -209,7 +207,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleCaption,
 			toggleFullscreen,
 			toggleInstrumentCaptionRow,
-			toggleTransport,
 			transpose,
 			transposeSong,
 			transposeSongKeys,
@@ -310,12 +307,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function updateSectionsStatus(){
 		$(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
-	    $("#lblSectionsStatus").html(txt);
 	    $("#lblSectionsStatus2").html(txt);
-	    $("#txtBeatsPer" ).val(getSong().getBeats());
 		$("#lblBeats").html(getSong().getBeats());
-	    var jLblCurrentBeat = $("#lblCurrentBeat");
-	    jLblCurrentBeat.text("1");
 	    $("#lblBeat").html("1");
 
 	    //clearRecordedNotes();
@@ -361,7 +354,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function showBeats(){
 		var beat = getSong().getBeat();
 		$("#lblBeat").html(""+beat);
-		$("#lblCurrentBeat").text(""+beat);
 		showHighlightsForBeat(beat);
 	}
 
@@ -538,7 +530,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const AllMenuDivs = {
 		"#divPalette": "#btnPalette",
 		"#divFileControls": "#btnFileControls",
-		"#divSectionControls": "#btnSectionControls",
 		"#divViewControls": "#btnViewControls",
 		"#divThemeControls": "#btnThemeControls",
 		"#divFillNotes": "#btnFillNotes",
@@ -616,7 +607,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
     }
 
   	export function getBeatNumber(){
-		return $("#lblCurrentBeat").text();
+		return getSong().getBeat();
 	}
 
 	export function doingAutomaticColor(){
@@ -890,48 +881,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 
-  export function addBeat(){
-          clearHighlights();
-          var jLblCurrentBeat = $("#lblCurrentBeat");
-	        var sBeats = $("#txtBeatsPer").val();
-	        if (sBeats == ""){
-	            $("#txtBeatsPer").val("1");
-	            sBeats = $("#txtBeatsPer").val();
-	            jLblCurrentBeat.text("1");
-	            $("#lblBeat").html("1");
-				$("#lblBeats").html(sBeats);
-	            return;
-	        }
-	        var sCurrBeat = jLblCurrentBeat.text();
-	        var currBeat = parseInt(sCurrBeat);
-	        var beats = parseInt(sBeats);
-	        if (currBeat == beats){
-	                beats++;
-	                currBeat++;
-	                $("#txtBeatsPer").val(beats);
-					$("#lblBeats").html(beats);
-	                jLblCurrentBeat.text(currBeat);
-	                $("#lblBeat").html(currBeat);
-	        } else if (currBeat < beats) {
-	                beats++;
-	                $("#txtBeatsPer").val(beats);
-					$("#lblBeats").html(beats);
-	        }
-			getCurrentSection().beats = beats;
-			$('#lblBeats').html(beats);
-			showBeats();
-  }
-
-	// see also: song.js :: cycleThruKeysAllSections()
-	export function cycleThruKeys(amount){
-		var curr = toInt(getCurrentSection().rootID, 0);
-		curr=(12+curr + amount) % 12;
-		getCurrentSection().rootID = curr;
-		$("#dropDownRoot").val(getCurrentSection().rootID);
-		resetNoteNames();
-		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
-		updateSectionsStatus();
-	}
+    export function addBeat(){
+		clearHighlights();
+		var beats = getSong().getBeats();
+		beats++;
+		getSong().setBeats(beats);
+		$('#lblBeats').html(beats);
+		showBeats();
+    }
 
 	export function leaveFullscreen(){
 		var wasVisible =  $('.container').is(':visible');
@@ -980,8 +937,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('.captionRow').toggle();
 	}
 
+	export function setSectionKeysFlats(){
+		getSong().sharps = false;
+		getCurrentSection().sharps = false;
+		resetNoteNames();
+		updateSectionsStatus();
+	}
 	
-	
+	export function setSectionKeysSharps(){
+		getSong().sharps = true;
+		getCurrentSection().sharps = true;
+		resetNoteNames();
+		updateSectionsStatus();
+	}
+	// see also: song.js :: cycleThruKeysAllSections()
+	export function cycleThruKeys(amount){
+		var curr = toInt(getCurrentSection().rootID, 0);
+		curr=(12+curr + amount) % 12;
+		getCurrentSection().rootID = curr;
+		$("#dropDownRoot").val(getCurrentSection().rootID);
+		resetNoteNames();
+		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
+		updateSectionsStatus();
+	}
 
 	export function transpose(amount){
 		cycleThruKeys(amount);
@@ -1138,7 +1116,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 	export function refreshShowAllNoteNames(){
-		debugger
 		let isChecked = $("#cbShowAllNoteNames").prop("checked");
 		showAllNoteNames(!isChecked); //hack: do it twice for side-effects.
 		showAllNoteNames(isChecked);
@@ -1363,6 +1340,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$('#transport').css({"left": left+"px", "top": top+"px"});
 	}
+	export function toggleSectionDrawer(){
+		var transportWasVisible =  $('#transport').is(':visible');
+		if (!transportWasVisible){
+			console.log("transport was not visible: showing transport and section drawer");
+			$('#transport').show();
+			$('#spanSectionDrawer').show();
+		} else {
+			console.log("transport was visible: toggle section drawer"+$('#spanSectionDrawer').is(':visible'));
+			$('#spanSectionDrawer').toggle();
+			console.log("after toggle section drawer"+$('#spanSectionDrawer').is(':visible'));
+		}
+		transportResize();
+	}
+
 
 	export function toggleAutoColorCheckbox(){
 		var cbac = $("#cbAutomaticColor");
@@ -1375,6 +1366,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		cbac.prop("checked", false);
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
+	}
+
+	export function handleBtnControlsToDisplayOptions() {
+		var options = controlsToDisplayOptions();
+		getCurrentSection().displayOptions = options;
+		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
+		showHideDisplayOptionsPresent();
+	}
+	
+	export function handleBtnDeleteDisplayOptions() {
+		delete getCurrentSection().displayOptions;
+		showHideDisplayOptionsPresent();
 	}
 
 	//==================== 4) UI event binding and control wiring =============
@@ -1440,9 +1443,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hideMessages_KeyHandler();
 		});
 
-		$("#btnSectionControls").click(function() {
-		    showOneMenu("#divSectionControls");
-		});
 		$("#btnFileControls").click(function() {
 		    showOneMenu("#divFileControls")
 		});
@@ -1545,31 +1545,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearAndReplaySection();
 		});
 
-		$("#btnNewSection").click(function() {
-		    var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().newSection(newIndex);
-		});
-		$("#btnDeleteSection").click(function() {
-		    getSong().deleteCurrentSection();
-		});
-		$("#btnAddShallowCloneSection").click(function() {
-			var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().addShallowCloneSection(newIndex);
-		});
-		$("#btnAddDeepCloneSection").click(function() {
-		    var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().addDeepCloneSection(newIndex);
-		});
-		$('#btnMoveSectionOrder').click(function(){
-			var newIndex = $('#dropDownSectionOrder').val();
-			if (newIndex == "END"){
-				getSong().moveSectionToEND();
-			} else {
-				getSong().moveSectionTo(newIndex);
-			}
-			updateSectionsStatus();
-			fullRepaint();
-		});
 		$("#btnLoopSections").click(function() {
 		    toggleLoopSections();
 		});
@@ -1580,8 +1555,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    toggleLoopBeats();
 		});
 		$("#btnEditSection").click(function() {
-		    $('#spanSectionDrawer').toggle();
-			transportResize();
+			toggleSectionDrawer();
 		});
 
 
@@ -1621,10 +1595,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$("#txtBeatsPer" ).on( "change", function() {
-		 getCurrentSection().beats = $( this ).val();
-		});
-
 		$("#btnPrevBeat").click(function() {
 		    getSong().prevBeat();
 		    showHighlightsForBeat(getSong().getBeat());
@@ -1637,23 +1607,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$("#btnNextBeatTransport").click(function() {
 		  	getSong().nextBeat();
-		});
-
-		$("#btnInsertFirstBeat").click(function() {
-		    getSong().moveBeatsLater();
-		});
-		$("#btnAddBeat").click(function() {
-		    addBeat();
-		});
-		$("#btnDeleteBeat").click(function() {
-			getSong().deleteBeat();
-		});
-
-		$("#txtCaption" ).on( "change", function() {
-		 var cap = $( this ).val();
-		 getCurrentSection().caption = cap;
-		 $(".lblSectionCaption").html(cap);
-
 		});
 		$("#txtFilename" ).on( "change", function() {
 		 $(".lblSongName").html($( this ).val());
@@ -1822,15 +1775,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        fillChord();
 	    });
 
-		$("#btnControlsToDisplayOptions, #btnControlsToDisplayOptions2").click(function() {
-	        var options = controlsToDisplayOptions();
-			getCurrentSection().displayOptions = options;
-			THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
-			showHideDisplayOptionsPresent();
+		$("#btnControlsToDisplayOptions2").click(function() {
+	        handleBtnControlsToDisplayOptions();
 	    });
-		$("#btnDeleteDisplayOptions, #btnDeleteDisplayOptions2").click(function() {
-			delete getCurrentSection().displayOptions;
-			showHideDisplayOptionsPresent();
+		$("#btnDeleteDisplayOptions2").click(function() {
+			handleBtnDeleteDisplayOptions();
 	    });
 
 		

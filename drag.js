@@ -18,7 +18,7 @@ export function draggable(el, handle) {
 
     window.addEventListener('mousemove', mouseMoveHandler);
     window.addEventListener('mouseup', reset);
-    e.preventDefault();
+    //e.preventDefault();
   });
 }
 

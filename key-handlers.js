@@ -38,7 +38,11 @@ import {
 	showMessagesTab,
 	getVersionString,
 	getVersionObject,
-	toggleWiringOpenState
+	toggleWiringOpenState,
+	toggleTransport,
+	toggleSectionDrawer,
+	setSectionKeysFlats,
+	setSectionKeysSharps
 } from './infinite-neck.js';
 import DaCapo from './plugins/DaCapo.js';
 import EventBus from './event-bus.js';
@@ -87,7 +91,6 @@ function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); 
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
-function toggleTransport(...args) { return requireProvider('toggleTransport')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
@@ -203,7 +206,7 @@ function document_keypress(e) {
                 break;
             case "s":
             case "S":
-                showOneMenu("#divSectionControls");
+                toggleSectionDrawer();
                 break;
             case "t":
                 toggleTransport();
@@ -865,19 +868,7 @@ export function setNoteFontSize(newValue){
     updateNoteFont();
 }
 
-export function setSectionKeysFlats(){
-    getSong().sharps = false;
-    getCurrentSection().sharps = false;
-    resetNoteNames();
-    updateSectionsStatus();
-}
 
-export function setSectionKeysSharps(){
-    getSong().sharps = true;
-    getCurrentSection().sharps = true;
-    resetNoteNames();
-    updateSectionsStatus();
-}
 
 
 export function getValue(what){

@@ -108,6 +108,10 @@ export class Section extends SectionPersistence {
 		this.currentBeat = 1;
 	}
 
+	gotoBeat(oneBasedIndex){
+		this.currentBeat = oneBasedIndex;
+	}
+
 	
 	// V2: isEmpty checks all NoteTables for content
 	isEmpty() {

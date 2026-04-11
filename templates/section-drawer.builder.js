@@ -1,4 +1,6 @@
 import * as NoteTableController from '../NoteTableController.js';
+import * as InfiniteNeck from '../infinite-neck.js';
+import { getSong, getCurrentSection } from '../infinite-neck.js';
 
 export class SectionDrawerBuilder {
     static span_sectionDrawer = null; //Singleton.
@@ -16,37 +18,89 @@ export class SectionDrawerBuilder {
 
     static bindEvents(){
         $("#btnSharps").click(function() {
-            setSectionKeysSharps();
+            InfiniteNeck.setSectionKeysSharps();
         });
         $("#btnFlats").click(function() {
-            setSectionKeysFlats();
+            InfiniteNeck.setSectionKeysFlats();
         });
 
         $("#btnTransposeDown").click(function() {
-                transpose(-1);
+                InfiniteNeck.transpose(-1);
         });
         $("#btnTransposeUp").click(function() {
-                transpose(1);
+                InfiniteNeck.transpose(1);
         });
         $("#btnTransposeJumpDown").click(function() {
-                transpose(-5);
+                InfiniteNeck.transpose(-5);
         });
         $("#btnTransposeJumpUp").click(function() {
-                transpose(5);
+                InfiniteNeck.transpose(5);
         });
 
         // CODE-EXAMPLE("SelectWidget", "Root")
         $('#dropDownRoot').change(function() {
-            getCurrentSection().rootID = $(this).val();
-            fullRepaint();
-            updateSectionsStatus();
+            InfiniteNeck.getCurrentSection().rootID = $(this).val();
+            NoteTableController.fullRepaint();
+            InfiniteNeck.updateSectionsStatus();
         });
         // END CODE-EXAMPLE("SelectWidget", "Root")
         $('#dropDownRootLead').change(function() {
-            getCurrentSection().rootIDLead = $('#dropDownRootLead').val();
-            fullRepaint();
-            updateSectionsStatus();
+            InfiniteNeck.getCurrentSection().rootIDLead = $('#dropDownRootLead').val();
+            NoteTableController.fullRepaint();
+            InfiniteNeck.updateSectionsStatus();
         });
+
+
+        $("#btnInsertFirstBeat").click(function() {
+            getSong().moveBeatsLater();
+        });
+        $("#btnAddBeat").click(function() {
+            InfiniteNeck.addBeat();
+        });
+        $("#btnDeleteBeat").click(function() {
+            getSong().deleteBeat();
+        });
+
+        $("#txtCaption" ).on( "change", function() {
+            var cap = $( this ).val();
+            getCurrentSection().caption = cap;
+            $(".lblSectionCaption").html(cap);
+
+        });
+
+
+        $("#btnNewSection").click(function() {
+            var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
+            getSong().newSection(newIndex);
+        });
+        $("#btnDeleteSection").click(function() {
+            getSong().deleteCurrentSection();
+        });
+        $("#btnAddShallowCloneSection").click(function() {
+            var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
+            getSong().addShallowCloneSection(newIndex);
+        });
+        $("#btnAddDeepCloneSection").click(function() {
+            var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
+            getSong().addDeepCloneSection(newIndex);
+        });
+        $('#btnMoveSectionOrder').click(function(){
+            var newIndex = $('#dropDownSectionOrder').val();
+            if (newIndex == "END"){
+                getSong().moveSectionToEND();
+            } else {
+                getSong().moveSectionTo(newIndex);
+            }
+            InfiniteNeck.updateSectionsStatus();
+            NoteTableController.fullRepaint();
+        });
+        $("#btnControlsToDisplayOptions").click(function() {
+	        InfiniteNeck.handleBtnControlsToDisplayOptions();
+	    });
+		$("#btnDeleteDisplayOptions").click(function() {
+			InfiniteNeck.handleBtnDeleteDisplayOptions();
+	    });
+
     }
 
 }

@@ -1,6 +1,6 @@
 <template id='section-drawer-template'>
     <span id="sectionDrawer">
-
+    <form id="frmSectionDrawer" onsubmit="return false;">
         <table id="tableSectionDrawerLayout">
             <tr>
                 <td colspan='2'>
@@ -66,7 +66,7 @@
             <tr>
                 <td>
                     <span>
-                        <button id="btnSectionDrawerMoveSectionOrder" type="button"
+                        <button id="btnMoveSectionOrder" type="button"
                             title="Move Section">M<small>ove</small></button>
                         <label>Destination &sect;:</label>
                         <select id="dropDownSectionOrder">
@@ -111,5 +111,6 @@
                 </td>
             </tr>
         </table>
+    </form>
     </span>
 </template>
