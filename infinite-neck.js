@@ -102,6 +102,7 @@ import {
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
+import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { makeDivDockable, dockDivInPage } from './dockable.js';
 
 // If running in a browser, call appInit() on DOM ready
@@ -1578,6 +1579,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnLoopBeatsTransport").click(function() {
 		    toggleLoopBeats();
 		});
+		$("#btnEditSection").click(function() {
+		    $('#spanSectionDrawer').toggle();
+			transportResize();
+		});
+
 
 		$("#cbShowAllNoteNames").click(function() {
 			var show = $("#cbShowAllNoteNames").prop("checked");
@@ -1657,38 +1663,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		 setBPM($(this).val());  //interestingly, this does NOT cause jQuery to call ".change()" again.
 		});
 
-		$("#btnSharps").click(function() {
-	        setSectionKeysSharps();
-	    });
-	    $("#btnFlats").click(function() {
-	       setSectionKeysFlats();
-	    });
 
-		$("#btnTransposeDown").click(function() {
-			 transpose(-1);
-	    });
-	    $("#btnTransposeUp").click(function() {
-			 transpose(1);
-	    });
-		$("#btnTransposeJumpDown").click(function() {
-			 transpose(-5);
-	    });
-	    $("#btnTransposeJumpUp").click(function() {
-			 transpose(5);
-	    });
 
-		// CODE-EXAMPLE("SelectWidget", "Root")
-	    $('#dropDownRoot').change(function() {
-	        getCurrentSection().rootID = $(this).val();
-	        fullRepaint();
-	        updateSectionsStatus();
-	    });
-		// END CODE-EXAMPLE("SelectWidget", "Root")
-		$('#dropDownRootLead').change(function() {
-            getCurrentSection().rootIDLead = $('#dropDownRootLead').val();
-            fullRepaint();
-	        updateSectionsStatus();
-	    });
 
 		$("#btnRowRangeReset").click(function() {
 			//$('#textareaRowRange').val(JSON.stringify(noteNamesRowRangeArr));
@@ -2093,6 +2069,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(document).on('keypress', document_keypress);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);
+
+
+		
+		loadTemplates('templates/section-drawer.html').then(() => {
+			SectionDrawerBuilder.addToDest("#spanSectionDrawer");
+		});
 
 		$( window ).on( "resize", function() {
 			transportResize();

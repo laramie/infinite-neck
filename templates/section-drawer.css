@@ -1,0 +1,33 @@
+
+#sectionDrawer {
+   font-size: 80%;  
+}
+#tableSectionDrawerLayout td {
+    padding-bottom: 0.4em;
+}
+
+#sectionDrawer select {
+    font-size: 70%;
+    box-shadow: 5px 2px 4px black;
+}
+#sectionDrawer option {
+    font-size: 70%;
+}
+#sectionDrawer label {
+    font-size: 50%;
+}
+#sectionDrawer button{
+    display: inline-block;
+    margin-right: 6px;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+}
+#sectionDrawer small {
+    font-size: 60%;
+} 
+#sectionDrawer .displayOptionsButton {
+    background-color: lightblue;
+}
+#btnSectionDrawerDeleteSection {
+    background-color: rgb(253, 85, 59);
+}
