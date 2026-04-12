@@ -4,11 +4,6 @@ function hasJQuery() {
 	return typeof $ !== 'undefined';
 }
 
-function getButtonCaption(selector, fallbackCaption) {
-	if (!hasJQuery()) return fallbackCaption;
-	return $(selector).text();
-}
-
 function setButtonState(selector, caption, isOn) {
 	if (!hasJQuery()) return;
 	if (caption !== null) {
@@ -26,8 +21,6 @@ function createDefaultLooperProviders() {
 	return {
 		getMillisForBeatClock: function () { return 0; },
 		getSong: function () { return null; },
-		getLoopSectionsCaption: function () { return getButtonCaption('#btnLoopSections', 'LOOP'); },
-		getLoopBeatsCaption: function () { return getButtonCaption('#btnLoopBeats', 'LOOP BEATS'); },
 		setLoopSectionsButton: function (caption, isOn) { 
 			setButtonState('#btnLoopSections', caption, isOn); 
 			setLooperLightState('.LooperLight', isOn);
@@ -54,6 +47,8 @@ function createDefaultLooperProviders() {
 }
 
 let looperProviders = createDefaultLooperProviders();
+let isSectionsLooping = false;
+let isBeatsLooping = false;
 
 export function setLooperProviders(providers){
 	if (!providers) return;
@@ -73,6 +68,8 @@ export function setLooperProviders(providers){
 	const NOT_LOOPING_BEATS_CAPTION     = "LOOP BEATS";
 
 	function clearBeatAndSectionLooping(){
+		isSectionsLooping = false;
+		isBeatsLooping = false;
 		if (showBeatsIntervalPointer !== null) {
 			looperProviders.clearLoopInterval(showBeatsIntervalPointer);
 		}
@@ -83,6 +80,8 @@ export function setLooperProviders(providers){
 	}
 
     function startLoopSections(){
+		isSectionsLooping = true;
+		isBeatsLooping = false;
         looperProviders.showBPM();
         var caption = LOOPING_FRAMES_CAPTION;
         var song = looperProviders.getSong();
@@ -105,6 +104,8 @@ export function setLooperProviders(providers){
     }
 
 	function startLoopBeats(){
+		isSectionsLooping = false;
+		isBeatsLooping = true;
 		looperProviders.setLoopBeatsButton(LOOPING_BEATS_CAPTION, true);
 		looperProviders.setLoopBeatsTransportButton(true);
 
@@ -141,14 +142,10 @@ export function setLooperProviders(providers){
 		}
 	}
 	export function sectionsLooping(){
-		return (
-			looperProviders.getLoopSectionsCaption() === LOOPING_FRAMES_CAPTION
-		) || (
-			looperProviders.getLoopSectionsCaption() === LOOPING_FRAMES_CAPTION_RANDOM
-		);
+		return isSectionsLooping;
 	}
 	export function beatsLooping(){
-		return looperProviders.getLoopBeatsCaption() === LOOPING_BEATS_CAPTION;
+		return isBeatsLooping;
 	}
 
     export function tickBeat(song, { sectionsLooping, showBeats }) {
@@ -208,6 +205,8 @@ export function setLooperProviders(providers){
 
 	export function __resetLooperForTests(){
 		showBeatsIntervalPointer = null;
+		isSectionsLooping = false;
+		isBeatsLooping = false;
 	}
 
 	export function __resetLooperProvidersForTests(){

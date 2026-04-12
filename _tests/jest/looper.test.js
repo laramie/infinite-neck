@@ -63,35 +63,9 @@ describe('looper tickBeat', () => {
 	});
 });
 
-describe('looper looping-state providers', () => {
-	test('sectionsLooping true for LOOPING... caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'LOOPING...'
-		});
-		expect(sectionsLooping()).toBe(true);
-	});
-
-	test('sectionsLooping true for RANDOM.... caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'RANDOM....'
-		});
-		expect(sectionsLooping()).toBe(true);
-	});
-
-	test('sectionsLooping false for non-loop caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'LOOP'
-		});
+describe('looper looping state', () => {
+	test('looping state defaults to false', () => {
 		expect(sectionsLooping()).toBe(false);
-	});
-
-	test('beatsLooping reflects loop-beats caption', () => {
-		setLooperProviders({
-		});
-		expect(beatsLooping()).toBe(true);
-
-		setLooperProviders({
-		});
 		expect(beatsLooping()).toBe(false);
 	});
 });
@@ -118,10 +92,13 @@ function installHeadlessLoopState({ randomLoop = false } = {}) {
 			getBeats: () => 4
 		}),
 		getMillisForBeatClock: () => 125,
-		getLoopSectionsCaption: () => state.sectionsCaption,
 		setLoopSectionsButton: (caption, isOn) => {
 			state.sectionsCaption = caption;
 			state.sectionsOn = !!isOn;
+		},
+		setLoopBeatsButton: (caption, isOn) => {
+			state.beatsCaption = caption;
+			state.beatsOn = !!isOn;
 		},
 		setLoopBeatsTransportButton: (isOn) => {
 			state.transportOn = !!isOn;
@@ -150,6 +127,8 @@ describe('looper toggles and restart', () => {
 	test('toggleLoopSections turns sections looping on when off', () => {
 		const state = installHeadlessLoopState();
 		toggleLoopSections();
+		expect(sectionsLooping()).toBe(true);
+		expect(beatsLooping()).toBe(false);
 		expect(state.sectionsCaption).toBe('LOOPING...');
 		expect(state.sectionsOn).toBe(true);
 		expect(state.setIntervalCalls).toBe(1);
@@ -161,6 +140,8 @@ describe('looper toggles and restart', () => {
 		const state = installHeadlessLoopState();
 		toggleLoopSections();
 		toggleLoopSections();
+		expect(sectionsLooping()).toBe(false);
+		expect(beatsLooping()).toBe(false);
 		expect(state.sectionsCaption).toBe('LOOP');
 		expect(state.sectionsOn).toBe(false);
 		expect(state.beatsCaption).toBe('LOOP BEATS');
@@ -171,10 +152,13 @@ describe('looper toggles and restart', () => {
 	test('toggleLoopBeats turns beats looping on then off', () => {
 		const state = installHeadlessLoopState();
 		toggleLoopBeats();
+		expect(beatsLooping()).toBe(true);
+		expect(sectionsLooping()).toBe(false);
 		expect(state.beatsCaption).toBe('LOOPING...');
 		expect(state.beatsOn).toBe(true);
 		expect(state.transportOn).toBe(true);
 		toggleLoopBeats();
+		expect(beatsLooping()).toBe(false);
 		expect(state.beatsCaption).toBe('LOOP BEATS');
 		expect(state.beatsOn).toBe(false);
 		expect(state.transportOn).toBe(false);
@@ -183,8 +167,10 @@ describe('looper toggles and restart', () => {
 	test('restartLoopSections keeps sections looping active', () => {
 		const state = installHeadlessLoopState();
 		restartLoopSections();
+		expect(sectionsLooping()).toBe(true);
 		expect(state.sectionsCaption).toBe('LOOPING...');
 		restartLoopSections();
+		expect(sectionsLooping()).toBe(true);
 		expect(state.sectionsCaption).toBe('LOOPING...');
 		expect(state.sectionsOn).toBe(true);
 		expect(state.setIntervalCalls).toBe(2);
