@@ -25,7 +25,6 @@ function createDefaultLooperProviders() {
 			setButtonState('#btnLoopSections', caption, isOn); 
 			setLooperLightState('.LooperLight', isOn);
 		},
-		setLoopBeatsButton: function (caption, isOn) { setButtonState('#btnLoopBeats', caption, isOn); },
 		setLoopBeatsTransportButton: function (isOn) { setButtonState('#btnLoopBeatsTransport', null, isOn); },
 		setLoopInterval: function (handler, millis) {
 			if (typeof setInterval !== 'function') return null;
@@ -75,7 +74,6 @@ export function setLooperProviders(providers){
 		}
 		showBeatsIntervalPointer = null;
 		looperProviders.setLoopSectionsButton(NOT_LOOPING_FRAMES_CAPTION, false);
-		looperProviders.setLoopBeatsButton(NOT_LOOPING_BEATS_CAPTION, false);
 		looperProviders.setLoopBeatsTransportButton(false);
 	}
 
@@ -106,7 +104,6 @@ export function setLooperProviders(providers){
 	function startLoopBeats(){
 		isSectionsLooping = false;
 		isBeatsLooping = true;
-		looperProviders.setLoopBeatsButton(LOOPING_BEATS_CAPTION, true);
 		looperProviders.setLoopBeatsTransportButton(true);
 
 		var millisNextBeat = looperProviders.getMillisForBeatClock();
