@@ -1,92 +1,77 @@
 import EventBus from './event-bus.js';
+import * as InfiniteNeck from './infinite-neck.js';
 
-function hasJQuery() {
-	return typeof $ !== 'undefined';
-}
-
-function setButtonState(selector, caption, isOn) {
-	if (!hasJQuery()) return;
-	if (caption !== null) {
-		$(selector).html(caption);
-	}
-	$(selector).toggleClass('ButtonOn', !!isOn);
-}
-function setLooperLightState(selector, isOn) {
-	if (!hasJQuery()) return;
-	$(selector).toggleClass('LooperLightOn', !!isOn);
-}
-
-
-function createDefaultLooperProviders() {
-	return {
-		getMillisForBeatClock: function () { return 0; },
-		getSong: function () { return null; },
-		setLoopSectionsButton: function (caption, isOn) { 
-			setButtonState('#btnLoopSections', caption, isOn); 
-			setLooperLightState('.LooperLight', isOn);
-		},
-		setLoopBeatsTransportButton: function (isOn) { setButtonState('#btnLoopBeatsTransport', null, isOn); },
-		setLoopInterval: function (handler, millis) {
-			if (typeof setInterval !== 'function') return null;
-			return setInterval(handler, millis);
-		},
-		clearLoopInterval: function (pointer) {
-			if (pointer === null || typeof pointer === 'undefined') return;
-			if (typeof clearInterval === 'function') {
-				clearInterval(pointer);
-				return;
-			}
-			if (typeof clearTimeout === 'function') {
-				clearTimeout(pointer);
-			}
-		},
-		showBeats: function () {},
-		showBPM: function () {}
-	};
-}
-
-let looperProviders = createDefaultLooperProviders();
 let isSectionsLooping = false;
 let isBeatsLooping = false;
-
-export function setLooperProviders(providers){
-	if (!providers) return;
-	looperProviders = {
-		...looperProviders,
-		...providers
-	};
-}
 
     var showBeatsIntervalPointer = null;
 
 	const LOOPING_FRAMES_CAPTION        = "LOOPING...";
 	const LOOPING_FRAMES_CAPTION_RANDOM = "RANDOM....";
-	const NOT_LOOPING_FRAMES_CAPTION    = "LOOP";
 
 	const LOOPING_BEATS_CAPTION         = "LOOPING...";
-	const NOT_LOOPING_BEATS_CAPTION     = "LOOP BEATS";
+
+	function getSong(){
+		return InfiniteNeck.getSong();
+	}
+
+	function getMillisForBeatClock(){
+		return InfiniteNeck.getMillisForBeatClock();
+	}
+
+	function showBeats(){
+		InfiniteNeck.showBeats();
+	}
+
+	function showBPM(){
+		InfiniteNeck.showBPM();
+	}
+
+	function startLoopInterval(handler, millis){
+		if (typeof setInterval !== 'function') return null;
+		return setInterval(handler, millis);
+	}
+
+	function stopLoopInterval(pointer){
+		if (pointer === null || typeof pointer === 'undefined') return;
+		if (typeof clearInterval === 'function') {
+			clearInterval(pointer);
+			return;
+		}
+		if (typeof clearTimeout === 'function') {
+			clearTimeout(pointer);
+		}
+	}
 
 	function clearBeatAndSectionLooping(){
+		const wasSectionsLooping = isSectionsLooping;
+		const wasBeatsLooping = isBeatsLooping;
 		isSectionsLooping = false;
 		isBeatsLooping = false;
 		if (showBeatsIntervalPointer !== null) {
-			looperProviders.clearLoopInterval(showBeatsIntervalPointer);
+			stopLoopInterval(showBeatsIntervalPointer);
 		}
 		showBeatsIntervalPointer = null;
-		looperProviders.setLoopSectionsButton(NOT_LOOPING_FRAMES_CAPTION, false);
-		looperProviders.setLoopBeatsTransportButton(false);
+		if (wasSectionsLooping) {
+			EventBus.trigger('Looper:OnLoopSectionsStop');
+		}
+		if (wasBeatsLooping) {
+			EventBus.trigger('Looper:OnLoopBeatsStop');
+		}
 	}
 
     function startLoopSections(){
 		isSectionsLooping = true;
 		isBeatsLooping = false;
-        looperProviders.showBPM();
+	        showBPM();
         var caption = LOOPING_FRAMES_CAPTION;
-        var song = looperProviders.getSong();
+        var song = getSong();
         if (song && song.randomLoop){
             caption = LOOPING_FRAMES_CAPTION_RANDOM;
         }
-        looperProviders.setLoopSectionsButton(caption, true);
+	        EventBus.trigger('Looper:OnLoopSectionsStart', {
+			caption
+		});
     
         if (song) {
             EventBus.trigger('DaCapo:OnSongBegin', {
@@ -97,17 +82,19 @@ export function setLooperProviders(providers){
             });
         }
     
-        var millisNextBeat = looperProviders.getMillisForBeatClock();
-        showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
+	        var millisNextBeat = getMillisForBeatClock();
+	        showBeatsIntervalPointer = startLoopInterval(showBeatsIntervalHandler, millisNextBeat);
     }
 
 	function startLoopBeats(){
 		isSectionsLooping = false;
 		isBeatsLooping = true;
-		looperProviders.setLoopBeatsTransportButton(true);
+		EventBus.trigger('Looper:OnLoopBeatsStart', {
+			caption: LOOPING_BEATS_CAPTION
+		});
 
-		var millisNextBeat = looperProviders.getMillisForBeatClock();
-		showBeatsIntervalPointer = looperProviders.setLoopInterval(showBeatsIntervalHandler, millisNextBeat);
+		var millisNextBeat = getMillisForBeatClock();
+		showBeatsIntervalPointer = startLoopInterval(showBeatsIntervalHandler, millisNextBeat);
 	}
 
 	export function toggleLoopSections(){
@@ -190,13 +177,13 @@ export function setLooperProviders(providers){
     }
 
 	function showBeatsIntervalHandler(){
-		var song = looperProviders.getSong();
+		var song = getSong();
 		if (!song || typeof song.getBeat !== 'function' || typeof song.getBeats !== 'function') {
 			return;
 		}
-		tickBeat(looperProviders.getSong(), {
+		tickBeat(song, {
 			sectionsLooping: sectionsLooping(),
-			showBeats: looperProviders.showBeats
+			showBeats
 		});
 	}
 
@@ -204,8 +191,4 @@ export function setLooperProviders(providers){
 		showBeatsIntervalPointer = null;
 		isSectionsLooping = false;
 		isBeatsLooping = false;
-	}
-
-	export function __resetLooperProvidersForTests(){
-		looperProviders = createDefaultLooperProviders();
 	}

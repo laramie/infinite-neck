@@ -40,7 +40,6 @@ import {
 	document_keyup
 } from './key-handlers.js';
 import {
-	setLooperProviders,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -162,12 +161,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions
-		});
-		setLooperProviders({
-			getSong,
-			getMillisForBeatClock,
-			showBeats,
-			showBPM
 		});
 		setNotetableProviders({
 			getBeatNumber,
@@ -1558,7 +1551,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    toggleLoopSections();
 		});
 		$("#btnLoopBeatsTransport").click(function() {
-			debugger
 		    toggleLoopBeats();
 		});
 		$("#btnEditSection").click(function() {
@@ -2130,6 +2122,12 @@ EventBus.on('UpdateAllWiringSelects', function() {
 });
 EventBus.on('InstrumentAdded', function() {
 	setWiringOpenState(true);  // to open
+});
+EventBus.on('Looper:OnLoopBeatsStart', function() {
+	$('#btnLoopBeatsTransport').addClass('ButtonOn');
+});
+EventBus.on('Looper:OnLoopBeatsStop', function() {
+	$('#btnLoopBeatsTransport').removeClass('ButtonOn');
 });
 
 

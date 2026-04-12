@@ -1,4 +1,5 @@
 import * as NoteTableController from '../NoteTableController.js';
+import EventBus from '../event-bus.js';
 import * as InfiniteNeck from '../infinite-neck.js';
 import { getSong, getCurrentSection } from '../infinite-neck.js';
 
@@ -116,4 +117,24 @@ export class SectionDrawerBuilder {
         $("#dropDownRoot").val(getCurrentSection().rootID);
     }
 
+    static showLoopSectionsStarted(data){
+        const caption = (data && data.caption)
+            ? data.caption
+            : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
+        $('#btnLoopSections').html(caption).addClass('ButtonOn');
+        $('.LooperLight').addClass('LooperLightOn');
+    }
+
+    static showLoopSectionsStopped(){
+        $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
+        $('.LooperLight').removeClass('LooperLightOn');
+    }
+
 }
+
+EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
+    SectionDrawerBuilder.showLoopSectionsStarted(data);
+});
+EventBus.on('Looper:OnLoopSectionsStop', function() {
+    SectionDrawerBuilder.showLoopSectionsStopped();
+});
