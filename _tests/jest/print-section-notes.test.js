@@ -27,7 +27,7 @@ async function createFreshV2Song() {
 	return { song, neck };
 }
 
-test('printSectionNotes renders V2 note tables by instrument', async () => {
+test('printSectionsNotes renders V2 note tables by instrument', async () => {
 	const { song, neck } = await createFreshV2Song();
 
 	const firstSection = song.constructSection();
@@ -56,7 +56,7 @@ test('printSectionNotes renders V2 note tables by instrument', async () => {
 	secondSection.getSectionNotes('tblS6_1').namedNotes.A = { colorClass: 'Red' };
 	song.addSection(secondSection);
 
-	const result = neck.printSectionNotes();
+	const result = neck.printSectionsNotes();
 
 	 expect(result).toContain("colspan='3'>S6_1</th>");
 	 expect(result).toContain("colspan='3'>P4_1</th>");

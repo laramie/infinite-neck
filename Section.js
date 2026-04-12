@@ -215,6 +215,7 @@ export class Section extends SectionPersistence {
 				sectionNotes.emptyPlayedNotes();
 				sectionNotes.emptyRecordedNotes();
 			});
+			delete c.displayOptions;
 		}
 		return c;
 	}

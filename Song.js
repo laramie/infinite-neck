@@ -504,30 +504,47 @@ export class Song extends SongPersistence {
     moveBeatsLaterForTable(tableID, beatCount, oneBasedIndex){
         var result = {};
         var notes = getRecordedNotesForSection(tableID);
-        for (var i=1; i<=beatCount; i++){
+        var insertIndex = toInt(oneBasedIndex, 1);
+        if (insertIndex < 1){
+            insertIndex = 1;
+        }
+        if (insertIndex > beatCount + 1){
+            insertIndex = beatCount + 1;
+        }
+        for (var i=1; i<insertIndex; i++){
+            result[""+i] = notes[""+i];
+        }
+        for (var i=beatCount; i>=insertIndex; i--){
             result[""+(i+1)] = notes[""+i];
         }
-        result["1"] = [];
+        result[""+insertIndex] = [];
         this.getCurrentSection().getSectionNotes(tableID).recordedNotes = result;
     }
 
 	moveBeatsLater(oneBasedIndex){
         var beatCount = this.getBeats();
+        var insertIndex = toInt(oneBasedIndex, 1);
+        if (insertIndex < 1){
+            insertIndex = 1;
+        }
+        if (insertIndex > beatCount + 1){
+            insertIndex = beatCount + 1;
+        }
         let allTablesInSection = this.getCurrentSection().getAllSectionNotes();
         allTablesInSection.forEach(([tableID, sn]) => {
-            this.moveBeatsLaterForTable(tableID, beatCount);
+            this.moveBeatsLaterForTable(tableID, beatCount, insertIndex);
         });
 		this.setBeats(beatCount+1);
-        this.gotoFirstBeat();
+    	this.gotoBeat(insertIndex);
 		this.publish_UpdateSectionStatus();
 		this.requestUiFullRepaint();
         this.requestUiShowBeats();
 	}
     insertFirstBeat(){
-        moveBeatsLater(1);
+        this.moveBeatsLater(1);
     }
     insertBeat(oneBasedIndex){
-        moveBeatsLater(oneBasedIndex);
+        this.moveBeatsLater(oneBasedIndex);
     }
 
     shuffleRecordedBeatsDown(recordedBeats, nBeats, nStartBeat){
@@ -717,7 +734,7 @@ export class Song extends SongPersistence {
     }
 
 	newSection(destIndex){
-	    var aSection = this.constructSection();  //populates rootID from dropDownRoot.
+	    var aSection = this.constructSection();
 	    if (destIndex){
             this.insertSectionAtDest(aSection, destIndex);
         } else {

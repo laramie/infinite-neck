@@ -117,6 +117,11 @@
                                         type="button">&check;</button>
                                     &nbsp;&nbsp;&nbsp;<button id="btnGraveyard" type="button"
                                         data-action="showGraveyard">View Graveyard</button>
+                                        &nbsp;&nbsp;&nbsp;<label for="cbTransposeNotes"><input id="cbTransposeNotes" type="checkbox"
+                                                name="cbnTransposeNotes" value="1">Allow transposition by keyboard
+                                            shortcuts <b><u>d</u></b>, <b><u>U</u></b>, <b><u>u</u></b>,
+                                            <b><u>D</u></b>, <b><u>&nbsp;j&nbsp;</u></b>, &amp; <b><u>J</u></b>
+                                        </label>
                                 </div>
                             </td>
                         </tr>
@@ -435,9 +440,6 @@
                             </td>
                             <td>
                                 <select id="dropDownCellHeight">
-                                    <option value="10px">10</option>
-                                    <option value="15px">15</option>
-                                    <option value="20px">20</option>
                                     <option value="30px">30</option>
                                     <option value="40px">40</option>
                                     <option value="50px" selected>50</option>
@@ -568,7 +570,7 @@
                 <div class="divViewCard">
                     <table class="viewControls">
                         <tr>
-                            <th>Option &amp; Keystroke
+                            <th>Option
                             </th>
                             <th>Value
                             </th>
@@ -722,12 +724,12 @@
                 <div class="divViewCard" id="divViewDisplayOptions">
                     <b class="left">Display Options:</b><br>
                     <span style="float:left; ">
-                        <button id="btnControlsToDisplayOptions2" class="riskyButton" type="button">SAVE
+                        <button id="btnControlsToDisplayOptions_Section" class="riskyButton" type="button">SAVE
                             <small><br>Display
                                 Options</small></button>
                     </span>
                     <span style="float:left; ">
-                        <button id="btnDeleteDisplayOptions2" class="riskyButton" type="button">CLEAR<small><br>Display
+                        <button id="btnDeleteDisplayOptions_View" class="riskyButton" type="button">CLEAR<small><br>Display
                                 Options</small></button>
                     </span>
                     <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
@@ -935,7 +937,7 @@
                                     <br>
                                     <br>
                                     <button id="btnSaveScaling" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="saveScalingPrestoragefs">Save Scaling Prefs</button>
+                                        data-action="saveScalingPrefs">Save Scaling Prefs</button>
                                     <br>
                                     <br>
                                     <button id="btnApplyScaling" class="BtnPunchedOut BigMobileBtn" type="button"

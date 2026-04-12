@@ -2,6 +2,7 @@
 
 
 import * as Constants from './Constants.js';
+import EventBus from './event-bus.js';
 import {
 	chuseStylesheet,
 	deleteUserStylesheet,
@@ -128,6 +129,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// 5) App init and EventBus integration
 
 	//==================== 1) Core providers and accessors ====================
+	
+	var gAppInit_running = false; //set in appInit() and cleared when done and Promises from loadTemplate() have returned..
+	export function appInit_running(){
+		return gAppInit_running;
+	}
 
 	var gSong = null;  //constructed in document ready.
 	export function getSong(){
@@ -148,7 +154,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(".showWiringButton").removeClass("ShowWiringButtonOpen");
 		}
 	}
-	
 	export function toggleWiringOpenState() {
 		setWiringOpenState(!WIRING_OPEN);
 	}
@@ -196,7 +201,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
-			printSectionNotes,
+			printSectionsNotes,
 			resetNoteNames,
 			sectionChanged,
 			setBPM,
@@ -283,17 +288,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showHideDisplayOptionsPresent(){
 		var options = getCurrentSection().displayOptions;
-		if (options){
-			$('#btnDeleteDisplayOptions,#btnDeleteDisplayOptions2').prop("disabled",false);
-		} else {
-			$('#btnDeleteDisplayOptions,#btnDeleteDisplayOptions2').prop("disabled",true);
-		}
+		$('#btnDeleteDisplayOptions_View').prop("disabled", !options);
+		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
 	export function sectionChanged(){
-		$('#dropDownSectionOrder').html(buildDropDownSectionOrderOptions());
-		$("#dropDownRoot").val(getCurrentSection().rootID);
-	    $("#dropDownRootLead").val(getCurrentSection().rootIDLead);
 		var options = getCurrentSection().displayOptions;
 		if (options){
 			displayOptionsToControls(options);
@@ -302,18 +301,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    getSong().gotoFirstBeat();
 	    showHighlightsForBeat(getSong().getBeat());
 	    updateSectionsStatus();
+		SectionDrawerBuilder.sectionChanged();
 	}
 
 	export function updateSectionsStatus(){
-		$(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
-	    var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
-	    $("#lblSectionsStatus2").html(txt);
-		$("#lblBeats").html(getSong().getBeats());
-	    $("#lblBeat").html("1");
-
-	    //clearRecordedNotes();
-	    $("#txtCaption").val(getSong().getCurrentSection().caption);
-	    var key =  getSong().getCurrentSection().rootID;
+		//These should be in #topControlsCaptions in index.html
+	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var rawCaption = getSong().getCurrentSection().caption;
 		var caption = eval("\`"+rawCaption+"\`");
 	    $(".lblSectionCaption").html(caption);
@@ -327,18 +320,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var keyname = getSong().noteIDToNoteName(rootIndex);
 		var keynameLead = getSong().noteIDToNoteName(rootIndexLead);
 
+		
+		//This is in Instrument Caption row:
+		var spans = $(".spanLeadDifferentFromRoot");
+	    
+		//These are in Transport:
+	    var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
+	    $("#lblSectionsStatus2").html(txt);
+		
+		// .lblRootID and .lblRootIDLead have controls in 
+		//     Fill, Transport, and Song Caption:
 	    $(".lblRootID").html(keyname);
-
-	    var spans = $(".spanLeadDifferentFromRoot");
-	    if (getSong().getCurrentSection().rootIDLead != "-1"){
+		if (getSong().getCurrentSection().rootIDLead != "-1"){
 	        spans.html("lead key: "+keynameLead);
 	        spans.show();
 	        $(".lblRootIDLead").html(keynameLead).show();
 	    } else {
           spans.hide();
-          $(".lblRootIDLead").hide();//zanzibar
+          $(".lblRootIDLead").hide();
 	    }
-		showHideDisplayOptionsPresent();
+
+		showHideDisplayOptionsPresent();  //also calls SectionDrawerBuilder API.
 	}
 
 	export function clearAndReplaySection(){
@@ -448,19 +450,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 	export function resetNoteNames() {
-	    var options = {};
-	    var rootID = getCurrentSection().rootID;
+	    let options = {};
+	    let rootID = getCurrentSection().rootID;
+		let rootIDLead = getCurrentSection().rootIDLead;
 	    getSong().sharps = getCurrentSection().sharps;
+		console.log("==================in resetNoteNames=================="
+					+ `rootID: ${rootID} rootIDLead: ${rootIDLead}`
+					+ (new Error('in resetNoteNames stack trace')).stack
+		);
 	    if (rootID!=null && ((""+rootID).length>0)) {
 	        options.rootID = rootID;
-			options.rootIDLead = getCurrentSection().rootIDLead;//20240423
-	        //console.log("=========Using rootID from getCurrentSection(): "+rootID+" ");
+			options.rootIDLead = rootIDLead;
 	    } else {
+			alert('rootID not in current section');
+			debugger
 	        var optVal = $('#dropDownRoot').val();
-			var rootIDLead = $("#dropDownRootLead").val();
+			rootIDLead = $("#dropDownRootLead").val();
 	        options.rootID = parseInt(optVal);
 			options.rootIDLead = toInt(rootIDLead, -2);
-	        //console.log("==========NOT Using rootID:"+rootID+", using dropDownRoot value instead: "+optVal+" options.rootID: "+options.rootID);
 	        getCurrentSection().rootID = options.rootID;
 	        getCurrentSection().rootIDLead = options.rootIDLead;
 	    }
@@ -749,7 +756,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (tuning){
 			TuningsLibrary.showDefaultTuning(tuning);
 		} else if ( Array.isArray(preferredTuningArray) && preferredTuningArray.length>0 ){
-			console.log(" ======== appInit preferredTuning =========:"+JSON.stringify(preferredTuningArray));
 			preferredTuningArray.forEach(baseID => {
 				TuningsLibrary.showDefaultTuning(baseID);//calls showHideTunings and shows S6 if none found.
 			});
@@ -955,7 +961,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var curr = toInt(getCurrentSection().rootID, 0);
 		curr=(12+curr + amount) % 12;
 		getCurrentSection().rootID = curr;
-		$("#dropDownRoot").val(getCurrentSection().rootID);
+		SectionDrawerBuilder.rootIDChanged();
 		resetNoteNames();
 		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
 		updateSectionsStatus();
@@ -998,12 +1004,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showBeats();
 	}
 
-	export function printSections() {
-		return SectionPrinter.printSections(getSong(), getSections());
+	export function printSections(showDetail) {
+		return SectionPrinter.printSections(getSong(), getSections(), showDetail);
 	}
 
-	export function printSectionNotes(){
-		return SectionPrinter.printSectionNotes(getSong(), getSections());
+	export function printSectionsNotes(){
+		return SectionPrinter.printSectionsNotes(getSong(), getSections());
 	}
 
 
@@ -1775,10 +1781,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        fillChord();
 	    });
 
-		$("#btnControlsToDisplayOptions2").click(function() {
+		$("#btnControlsToDisplayOptions_View").click(function() {
 	        handleBtnControlsToDisplayOptions();
 	    });
-		$("#btnDeleteDisplayOptions2").click(function() {
+		$("#btnDeleteDisplayOptions_View").click(function() {
 			handleBtnDeleteDisplayOptions();
 	    });
 
@@ -1933,6 +1939,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// appInit() called by document.ready
 	// File-level appInit for browser startup
 	export function appInit() {
+		gAppInit_running = true;
+
 		window.onerror = function (message, url, lineNo, colno, error){
 			let logString = 'window.onerror: ' + message
 				+ '\r\n URL:'+url
@@ -1969,7 +1977,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		
       	$("#lblHideWarning").hide(); //in divViewControls
 
-		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions etc.
+		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions_* etc.
  		hideAllMenuDivs();
 		$("#divQuick").hide();
 		$("#tabledestTopPad").hide();
@@ -1995,47 +2003,55 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 		bindDataActionHandlers();
-
-		loadTemplates().then(() => {
-    		getSong().getVisibleTuningIDs().forEach(tuningID => {
-				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
-			});
-			EventBus.trigger('ReinstallAllTuningsTables');
-			EventBus.trigger('UpdateAllWiringSelects');
-			setWiringOpenState(false)
-		});
-		setWiringOpenState(false)
-
-		loadTemplates('templates/themes.html').then(() => {
-    		ThemesBuilder.addToDest('#divThemeControls');
-			rebuildThemesDropdown();
-			$('#selThemes').val("Autobahn").change();
-		});
+		TuningsLibrary.bindFormTuningsEvents();
 		
-
-		$("#btnFlats").click();  //calls resetNoteNames();
 
 		$(document).on('keypress', document_keypress);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);
 
-
-		
-		loadTemplates('templates/section-drawer.html').then(() => {
-			SectionDrawerBuilder.addToDest("#spanSectionDrawer");
-		});
+		setWiringOpenState(false);
 
 		$( window ).on( "resize", function() {
 			transportResize();
 		} );
+		debugger
 		transportResize();
         draggable(document.getElementById('transport'));
 		showTransport();
-
 		showDefaultTunings();
-		
-		TuningsLibrary.bindFormTuningsEvents();
 		scrollToTop();
+
+		const promises = [
+			loadTemplates().then(() => {
+				getSong().getVisibleTuningIDs().forEach(tuningID => {
+					WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+				});
+				//EventBus.trigger('ReinstallAllTuningsTables');
+				//EventBus.trigger('UpdateAllWiringSelects');
+				setWiringOpenState(false);
+			}),
+
+			loadTemplates('templates/themes.html').then(() => {
+				ThemesBuilder.addToDest('#divThemeControls');
+				rebuildThemesDropdown();
+				$('#selThemes').val("Autobahn").change();
+			}),
+			
+			loadTemplates('templates/section-drawer.html').then(() => {
+				SectionDrawerBuilder.addToDest("#spanSectionDrawer");
+				sectionChanged();
+			})
+		];
+		Promise.all(promises).then(() => {
+			setSectionKeysFlats();  //The default. Calls resetNoteNames();
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
+			setWiringOpenState(false);
+			gAppInit_running = false;
+			fullRepaint();
+			scrollToTop();
+		});
 	}
 	// End of appInit() with document ready call
 
@@ -2045,6 +2061,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//      after all other script tags.                                =======
 	//=========================================================================
 
+	//Note the default param value.  This function is also called with other templates as "url".
 	function loadTemplates(url = 'templates/templates.html') {
 		return fetch(url)
 			.then(response => response.text())
@@ -2062,9 +2079,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	
 
 //==================== New handling of the EventBus =======================
-
-import EventBus from './event-bus.js';
-
 
 function requestReloadTuningsDisplays() {
 	EventBus.trigger('ReloadTuningsDisplays');

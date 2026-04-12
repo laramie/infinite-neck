@@ -79,11 +79,11 @@
                     <nobr>
                         <label>Display Options:</label>
                         <span>
-                            <button id="btnControlsToDisplayOptions" class="displayOptionsButton" type="button" title="SAVE display options (this section
+                            <button id="btnControlsToDisplayOptions_Section" class="displayOptionsButton" type="button" title="SAVE display options (this section
                             forward)">S<small>ave</small></button>
                         </span>
                         <span>
-                            <button id="btnDeleteDisplayOptions" class="displayOptionsButton" type="button" title="CLEAR display options (this
+                            <button id="btnDeleteDisplayOptions_Section" class="displayOptionsButton" type="button" title="CLEAR display options (this
                             section)">C<small>lear</small></button>
                         </span>
                     </nobr>
@@ -97,16 +97,17 @@
                             title="SHALLOW CLONE (just namedNotes)">S<small>hallow</small></button>
                         <button id="btnAddDeepCloneSection" type="button"
                             title="CLONE, with all notes/beats">C<small>lone</small></button>
-                        <button id="btnSectionDrawerDeleteSection" type="button"
+                        <button id="btnDeleteSection" type="button"
                             title="DELETE CURRENT (This Section!)">D<small>elete</small></button>
                     </span>
                 </td>
                 <td>
                     <span >
                         <label>Beats:</label>
-                        <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat">^</button>
-                        <button id="btnAddBeat" type="button" tabindex="-1" title="Add Last Beat">+</button>
-                        <button id="btnDeleteBeat" type="button" tabindex="-1" title="Delete Current Beat">-</button>
+                        <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat"><span class="beat-icon">⮮</span></button>
+                        <button id="btnInsertBeat" type="button" tabindex="-1" title="Insert Beat"><span class="beat-icon"><b>+</b></span></button>
+                        <button id="btnDeleteBeat" type="button" tabindex="-1" title="Delete Current Beat"><span class="beat-icon"><b>x</b></span></button>
+                        <button id="btnAddBeat" type="button" tabindex="-1" title="Add Last Beat"><span class="beat-icon">⮭</span></button>
                     </span>
                 </td>
             </tr>

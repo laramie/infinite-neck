@@ -31,6 +31,7 @@ import {
 	toInt
 } from './utils.js';
 import EventBus from './event-bus.js';
+import { appInit_running } from './infinite-neck.js';
 
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
@@ -852,6 +853,9 @@ export function highlightOneNote(noteName){
 //=================================CLEARING========================================
 
 export function fullRepaint(){
+    if (appInit_running()){
+        return;
+    }
     clearAll();
     resetNoteNames();
     showBeats();
@@ -936,7 +940,7 @@ export function fillChord() {
     var scaleNotes = $('#dropDownScales').val();
     var scaleNotesArr = scaleNotes.split(',');
 
-    var rootID = parseInt($('#dropDownRoot').val());
+    var rootID = parseInt(getCurrentSection().rootID);
     var rootName = constNoteNamesArr[rootID];
     var rootClassName = ".note" + constNoteNamesArr[rootID];
 

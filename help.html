@@ -281,6 +281,44 @@
             margin-left: 6em;
 
         }
+        .redButton {
+            width: 1.6em;
+            height: 1.5em;
+            background: lightgreen;
+            box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
+            display: inline-block;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .ArmedButton {
+            background-color: green;
+            border-radius: 10%;
+            box-shadow: 0 0 3pt 3pt lightgreen;
+            padding: 0.2em;
+            font-size: 1em;
+        }
+        .beat-icon {
+            font-size: 1em;
+            line-height: 1;
+            vertical-align: middle;
+            display: inline-block;
+        }
+        #btnInsertFirstBeat {
+            color: blue;
+            box-shadow: 5px 2px 4px black;
+        }
+        #btnInsertBeat {
+            color: green;
+            box-shadow: 5px 2px 4px black;
+        }
+        #btnDeleteBeat {
+            color: red;
+            box-shadow: 5px 2px 4px black;
+        } 
+        #btnAddBeat {
+            color: blue;
+            box-shadow: 5px 2px 4px black;
+        }
 
             
 
@@ -640,12 +678,14 @@
                     </ul>
                 </li>
                 <li><a href="#usage">Usage</a></li>
+                <li><a href="#startup">Startup</a></li>
                 <li><a href="#copy-paste-delete-undo-o-my">Copy, Paste, Delete, Save, Versions, O My!</a></li>
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
                         <li><a href="#divFileControls">File</a></li>
-                        <li><a href="#divSectionControls">Section</a>
+                        <li><a href="#transport">Transport</a>
+                        <li><a href="#divSectionControls">Section Drawer</a>
                             <ul class="LinkList">
                                 <li><a href="#divSectionDestination">Section Destination</a></li>
                                 <li><a href="#divSectionTransposition">Transposition</a>
@@ -655,6 +695,7 @@
                                     </ul>
                                 </li>
                                 <li><a href="#divSectionKeyChange">Key Change</a></li>
+                                <li><a href="#SectionPrintTopic">Section Print</a></li>
                             </ul>
                         </li>
                         <li><a href="#divViewControls">View</a>
@@ -1010,7 +1051,43 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
  <p><img src="img/help/clear.png"></p>
 
-
+<a name="startup"></a>
+<h3>Startup</h3>
+<p><span class="productsmaller">infinite-neck</span> starts up with a blank song, and default instrument you
+    can just start putting notes on by clicking in the cells that represent fret positions.
+</p>
+<p>Once you have some notes you want to save as a song, use <span class="GUIReferenceInline">File | Download</span> to
+    save that song to your local computer. Later, you can open this song with <span class="GUIReferenceInline">File |
+        Choose File</span>.  All the Sections, Instruments, and Notes, as well as the preferences and choices you make are saved in that song file, 
+        such as Tunings, Themes, View Options, and the graveyard.
+</p>
+<p><span class="productsmaller">infinite-neck</span> remembers just a few things between sessions that are not in the
+    Default song.
+    These you can set with the buttons on the Desktop page: <span class="GUIReferenceInline">Desktop | Save Scaling
+        Prefs</span> and <span class="GUIReferenceInline">Desktop | Save Instrument Prefs</span> and apply to the Default song you get when you start up.  Opening a song
+        generally sets Scaling Prefs, and certainly has its own instruments displayed.
+    
+</p>
+<p><span class="productsmaller">infinite-neck</span> will also accept a few parameters from the URL:
+<table class="ExamplesTable">
+    <tr>
+        <th>Query Param
+        </th>
+        <th>Values
+        </th>
+        <th>Example
+        </th>
+    </tr>
+    <tr>
+        <td>tuning
+        </td>
+        <td><span class="GUIReferenceInline">Tunings | All Tunings :: ID</span> e.g. Bass4, P46, S6
+        </td>
+        <td>http://demo.laramiecrocker.com/infinite-neck?tuning=Bass4
+        </td>
+    </tr>
+</table>
+</p>
 <a name="copy-paste-delete-undo-o-my"></a>
 <h3>Copy, Paste, Delete, Save, Versions, O My!</h3>
 <p><span class="productsmaller">infinite-neck</span> doesn't have many of the things we associate with computer programs.  It doesn't 
@@ -1022,7 +1099,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     <tr><td>Graveyard</td><td>Use the Graveyard to revive things you delete: Sections, Stylesheets.  You can revive multiple times,
         so this can be used to copy/paste a Section.  You can also Clone a section.
     </td></tr>
-     <tr><td>Copy Section</td><td>Use Clone Deep or Clone Shallow on the Section page.  Deep copies all notes and Display Options.</td></tr>
+     <tr><td>Copy Section</td><td>Use Clone or Clone Shallow on the Section drawer in the Transport.  Clone copies all notes and Display Options.</td></tr>
     <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.</td></tr>
     <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/clone whole sections, and within that new section you can transpose. So the flow would be:
         <ul>
@@ -1035,11 +1112,11 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
             <li>Transpose up two half-steps with <b><u>u</u></b>p 2 times.  This gives you the V chord. 
             <li>Hit <b><u>l</u></b>oop!
             <li>Voila! The three-chord wonder.
-            <li>(Right now this only works with NamedNotes, but Transposing PlayedNotes is coming soon...)
+            <li>(This only works with NamedNotes.)
         </ul>
     </td></tr>
-    <tr><td>Open</td><td>File | Open Song | Choose File, or File | Open Song from [Song Library]   </td></tr>
-    <tr><td>Save</td><td>File | Song Name  then File | Download . This downloads the song to your computer.  To open it again later, use File | Open Song | Choose File.
+    <tr><td>Open</td><td><span class="GUIReferenceInline">File | Open Song | Choose File</span>, or <span class="GUIReferenceInline">File | Open Song from [Song Library]</span>   </td></tr>
+    <tr><td>Save</td><td><span class="GUIReferenceInline">File | Song Name</span>  then <span class="GUIReferenceInline">File | Download</span> . This downloads the song to your computer.  To open it again later, use <span class="GUIReferenceInline">File | Open Song | Choose File</span>.
         Since Undo/Redo is not available, save your file often so you have versioning.
            </td></tr>
     <tr><td>Version</td><td>Since you can download a song multiple times, your browser will likely add sequence numbers to the filename if
@@ -1103,37 +1180,111 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
  <p>
  </p>
 
-<a name="divSectionControls"></a>
-<h3>Section</h3>
- <p>The Section menu lets you:
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; create, delete, and reorder sections
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Clone sections (make a full copy)
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Shallow Clone sections (make a copy with NamedNotes, but not SingleNotes, TinyNotes or Highlights)
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; add a beat after the last beat [+]
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; delete the current beat [-]
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; add a beat before the existing first beat [^]
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; loop over the beats in just one section as you add notes to the beats (different from Loop Song on the Transport)
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; save DisplayOptions, which include the Root Key and Lead Root Key, plus all the items on the View menu, plus Theme and Stylesheets
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; transpose all NamedNotes in the Section
-      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; set the enharmonic choice of sharps or flats for the key of the Section. [See <a href="#divSectionKeyChange">Key Change</a> below]
+<a name="transport"></a>
+<h3>Transport</h3>
+<p>The Transport lets you:
+    <ul>
+    <li>View the key of the current Section.
+    <li>Navigate through Sections, and beats in each section.
+    <li>REC: Record notes in beats in the current section. These become RecordedNotes and show up when looping.
+    <li>LOOP over the beats in just one section, 
+    with the little infinity button: <button class="redButton" type="button" tabindex="-1">&infin;</button>.
+    <li>LOOP over the Song, all Sections.
+    <li>Open the Section Drawer with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button>
+    </ul>
+  </p>
+
+  <p><img src="img/help/context/transport.png">
+            <br><i>Transport showing Section 1 of 5, on Beat 3 of 4.</i></p>
+  <p><img src="img/help/context/transport-section-drawer-button.jpg">
+            <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the Section Drawer: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
  
-    <img class="floatingScreenshot" width="60%" src="img/help/section-table.png">
-    </p>
+
+<a name="divSectionControls"></a><!-- Section help link drops here, which is really part of Transport, which is good. -->
+  <p><img src="img/help/context/transport-w-section-drawer.png">
+            <br><i>On the transport, the Section Drawer is opened, giving you access to all the Section controls..</i></p>
+
+<h3>Section Drawer</h3>
+<p>The Section Drawer lets you:
+<ul>
+    <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> to show the Song
+        caption.)
+    <li>Set the <b>Key</b> of the current Section. (Also keyboard shortcut <span class="key">k</span> cycles through
+        these.)
+    <li>Set the <b>LeadKey</b> of the current Section (TinyNotes follow LeadKey) or "root" to follow the Key.
+    <li>Set the enharmonic choice of <b>Flats</b> or <b>Sharps</b> for the key of the Section. [See <a
+            href="#divSectionKeyChange">Key Change</a> below]
+    <li><b>Transpose</b> all NamedNotes in the Section. (Use keyboard shortcuts for these: <span
+            class="GUIReferenceInline">File | Allow transposition by keyboard shortcuts</span>)
+    <li><b>Add</b>, <b>Shallow</b> clone, <b>Clone</b>, and <b>Delete</b> Sections
+        <ul>
+            <li><b>Clone</b> makes a full copy of a Section with Display Options
+            <li> <b>Shallow</b> clone  makes a copy of a Section with NamedNotes, but not SingleNotes, TinyNotes or
+                Highlights, and no Display Options.
+        </ul>
+    <li> <b>Move</b> Sections to a Destination of a Section number or BEGIN or END, bumping any Sections there later.
+    <li><b>Save</b> and <b>Clear</b> the Display Options, which include the Root Key and Lead Root Key, plus all the
+        items on the View menu, plus Theme and Stylesheets.
+
+    <li>Add a beat before the existing first beat <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat"><span class="beat-icon">&#x2BAE;</span></button>
+
+    <li>Insert a beat, moving the current beat and all others later <button id="btnInsertBeat" type="button" tabindex="-1" title="Insert Beat"><span class="beat-icon"><b>+</b></span></button>
+                    
+    <li>Delete the current beat <button id="btnDeleteBeat" type="button" tabindex="-1" title="Delete Current Beat"><span class="beat-icon"><b>x</b></span></button>
+                        
+    <li>Add a beat after the last beat  <button id="btnAddBeat" type="button" tabindex="-1" title="Add Last Beat"><span class="beat-icon">&#x2BAD;</span></button>
+                    
+    <li>To <b>LOOP</b> over the beats in just one section as you add notes to the beats
+        use the Transport infinity button: <button class="redButton" type="button" tabindex="-1">&infin;</button>
+</ul>
+</p>
 
  <a name="divSectionDestination"></a>
 <h4>Section Destination</h4>
+<p>
+<img src="img/help/context/DestinationSection.png">
+<br>
+<span class="GUIReferenceInline">Destination &sect;</span> is a dropdown that gets updated as you navigate Sections.
+This is the <b><i>Destination</i></b> Section number of Move, Add, Shallow, and Clone.  There are some subtle differences.
+</p>
 
- <p>When moving, creating or cloning Sections, pay attention to the dropdown called "Destination after &sect;".  This is where
-     the new/moved Section ends up.  So chosing "Destination after &sect;" of 3 creates or moves to Section 4.  Chosing
-     "BEGIN" as the Destination creates or moves to Section 1, pushing the existing Section 1 to Section 2,
-     and bumping all other Sections later as well.
+ <p>When <i>moving</i> Sections, pay attention to the <b><i>Destination</i></b>.  It's just like a deck of 
+    cards: if you pull a card out of the middle, and put it in earlier or later in the stack, the cardinal number of the cards changes.
+    This is where the moved Section ends up.  
+    <ul>
+        <li>So chosing <b><i>Destination</i></b> of 3 moves the current Section to Section 3,
+            and Section 3 becomes Section 4, Section 4 becomes Section 5, and so on to the end of the Song. 
+            Also the Sections after the current Section get moved towards the beginning of the Song to close the gap.
+        <li>Chosing
+            "BEGIN" as the <b><i>Destination</i></b> moves to Section 1, pushing the existing Section 1 to Section 2,
+            and bumping all other Sections later as well, 
+        <li>Chosing
+            "END" as the <b><i>Destination</i></b> moves the current Section to the end, after all existing Sections, 
+            the Sections after the current Section being moved towards the beginning of the Song to close the gap.
+    </ul>
+ </p>
+
+ <p>When <i>Adding or Cloning</i> Sections, new Section goes after the <b><i>Destination</i></b>
+    which gets updated as you navigate Sections.  However, if you change the dropdown, 
+    the new Section will go after that Section number.  This is where
+     they end up:  
+    <ul>
+        <li>Add: creates a new Section after the current Section 
+            (or Section shown in <b><i>Destination</i></b>), bumping any existing later Sections later in the Song.
+        <li>Shallow, and Clone: clones the current Section, adding it after the existing Section  
+            (or Section shown in <b><i>Destination</i></b>), bumping existing Sections.
+        <li>Delete: deletes the current Section, (ignoring <b><i>Destination</i></b>), 
+            moving any following Sections towards the beginning of the Song to close the gap.
+    </ul>
  </p>
 
  <a name="divSectionTransposition"></a>
 <h4>Transposition</h4>
  <a name="allowTransposition"></a>
 <h5>Allow Transposition</h5>
- <p>If the "Allow transposition by keyboard shortcuts d, U, u, D,  j , & J" checkbox is checked, then these
+ <p>If the 
+        <span class="GUIReferenceInline">File | Allow transposition by keyboard shortcuts d, U, u, D, j, & J</span>
+    checkbox is checked, then these
      keyboard shortcuts work; otherwise they don't.
      This prevents you from inadvertently transposing a Section, which is confusing if you don't notice the transposition hint.
      The hint is that all the NamedNotes move (which you might miss),
@@ -1312,7 +1463,22 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     <img class="floatingScreenshot"  src="img/help/context/section-key-Gminor-sharps.png">
 </p>
 
-
+<a name="SectionPrintTopic"></a>
+<h4>Section Print</h4>
+<p>You can see three tabular views of the Sections and their Notes:
+</p>    
+<p>    
+    <span class="menuExampleLine">/spn</span> - Section Print Notes:
+    <br><br><img class="floatingScreenshot" width="90%" src="img/help/context/section-print-notes.png">
+</p>    
+<p>    
+    <span class="menuExampleLine">/spd</span> - Section Print Details:
+    <br><br><img class="floatingScreenshot" width="60%" src="img/help/context/section-print-details.png">
+</p>    
+<p>    
+    <span class="menuExampleLine">/sps</span> - Section Print Summary:
+    <br><br><img class="floatingScreenshot" width="60%" src="img/help/context/section-print-summary.png">
+</p>    
 
 
 <a name="divViewControls"></a>
@@ -1720,7 +1886,7 @@ Stylesheet order
 <p>Click "raise" to revive the object that was buried.  The "lastRevived" timestamp will be updated,
     and the object will be placed back into the song.</p>
 <p>In fact, you can revive an object more than once.  This makes clones, which is useful.
-    For Sections, there are more detailed cloning buttons on the Section menu page: Clone, and Shallow Clone.</p>
+    For Sections, there are more detailed cloning buttons on the Section drawer in the Transport: Clone, and Shallow Clone.</p>
 
 <p>You can delete all objects from the graveyard (and receive a download of the song just before the deletion) 
     by using the <a href="#commandline">command-line</a> <span class="menuExampleLine">/fC</span></span> documented
@@ -2538,7 +2704,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </tr>
                 <tr>
                     <td>/vdd</td>
-                    <td><b>v</b>iew | <b>d</b>iagnostics | <b>d</b>isplay options</td>
+                    <td><nobr><b>v</b>iew | <b>d</b>iagnostics | <b>d</b>isplay options</nobr></td>
                     <td>Prints out a table of Display options, which is useful for figuring out which options are saved in which Sections. The table will be empty of data rows until you save Display options in at least one Section.</td>
                 </tr>
                 <tr>
@@ -2554,9 +2720,25 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </tr>
                 <tr>
                     <td>/vdm</td>
-                    <td><b>v</b>iew | <b>d</b>iagnostics | <b>m</b>enu dump</td>
+                    <td><nobr><b>v</b>iew | <b>d</b>iagnostics | <b>m</b>enu dump</nobr></td>
                     <td>Prints out a plaintext listing of the entire command-line heirarchy. 
                 </tr>
+                <tr>
+                    <td>/sps</td>
+                    <td><b>s</b>ection | <b>p</b>rint | <b>s</b>ummary</td>
+                    <td>Prints out all Sections, no Notes. See <a href="#SectionPrintTopic">Section Print</a> 
+                </tr>
+                <tr>
+                    <td>/spd</td>
+                    <td><b>s</b>ection | <b>p</b>rint | <b>d</b>etails</td>
+                    <td>Prints out all Sections, all NamedNotes, summary of PlayedNotes and RecordedNotes.  See <a href="#SectionPrintTopic">Section Print</a>
+                </tr>
+                <tr>
+                    <td>/spn</td>
+                    <td><b>s</b>ection | <b>p</b>rint | <b>n</b>otes</td>
+                    <td>Prints out all Sections, all Instruments, all Notes. See <a href="#SectionPrintTopic">Section Print</a>
+                </tr>
+                
             </table>  
 
             

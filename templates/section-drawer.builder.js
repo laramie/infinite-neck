@@ -52,22 +52,23 @@ export class SectionDrawerBuilder {
 
 
         $("#btnInsertFirstBeat").click(function() {
-            getSong().moveBeatsLater();
+            getSong().insertFirstBeat();
         });
-        $("#btnAddBeat").click(function() {
-            InfiniteNeck.addBeat();
+        $("#btnInsertBeat").click(function() {
+            getSong().insertBeat(getSong().getBeat());
         });
         $("#btnDeleteBeat").click(function() {
             getSong().deleteBeat();
+        });
+        $("#btnAddBeat").click(function() {
+            InfiniteNeck.addBeat();
         });
 
         $("#txtCaption" ).on( "change", function() {
             var cap = $( this ).val();
             getCurrentSection().caption = cap;
-            $(".lblSectionCaption").html(cap);
-
+            InfiniteNeck.updateSectionsStatus();
         });
-
 
         $("#btnNewSection").click(function() {
             var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
@@ -94,13 +95,30 @@ export class SectionDrawerBuilder {
             InfiniteNeck.updateSectionsStatus();
             NoteTableController.fullRepaint();
         });
-        $("#btnControlsToDisplayOptions").click(function() {
+        $("#btnControlsToDisplayOptions_Section").click(function() {
 	        InfiniteNeck.handleBtnControlsToDisplayOptions();
 	    });
-		$("#btnDeleteDisplayOptions").click(function() {
+		$("#btnDeleteDisplayOptions_Section").click(function() {
 			InfiniteNeck.handleBtnDeleteDisplayOptions();
 	    });
 
+    }
+
+    //============= API =============================
+
+    static setDisplayOptionsPresent(enabled) {
+        $('#btnDeleteDisplayOptions_Section').prop("disabled", !enabled);
+    }
+    static sectionChanged(){
+        $("#lblBeats").html(getSong().getBeats());
+	    $("#lblBeat").html("1");
+        $("#txtCaption").val(getSong().getCurrentSection().caption);
+        $('#dropDownSectionOrder').html(InfiniteNeck.buildDropDownSectionOrderOptions());
+        $("#dropDownRoot").val(getCurrentSection().rootID);
+        $("#dropDownRootLead").val(getCurrentSection().rootIDLead);
+    }
+    static rootIDChanged(){
+        $("#dropDownRoot").val(getCurrentSection().rootID);
     }
 
 }

@@ -80,7 +80,7 @@ function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(..
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
-function printSectionNotes(...args) { return requireProvider('printSectionNotes')(...args); }
+function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
@@ -531,8 +531,12 @@ export function performCmdAction(menuItem, args){
 			getSong().deleteBeat();
 			actionResult.result = ""+getCurrentSection().beats;
 			break;
-        case "moveBeatsLater":
-			getSong().moveBeatsLater();
+        case "insertBeat":
+			getSong().insertBeat(getSong().getBeat());
+			actionResult.result = ""+getCurrentSection().beats;
+			break;
+		case "insertFirstBeat":
+			getSong().insertFirstBeat();
 			actionResult.result = ""+getCurrentSection().beats;
 			break;
 		case "showDialog-song":
@@ -607,16 +611,22 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "Messages hidden";
             break;
 
-		case "printSections":
+		case "printSectionsDetails":
 			$("#divMessageAndJsonTree").show()
             $("#divMessages").show();
-			$("#divMessages").html(printSections());
+			$("#divMessages").html(printSections(true));
 			hideCmdLine();
 			break;
-		case "printSectionNotes":
+		case "printSectionsSummary":
 			$("#divMessageAndJsonTree").show()
             $("#divMessages").show();
-			$("#divMessages").html(printSectionNotes());
+			$("#divMessages").html(printSections(false));
+			hideCmdLine();
+			break;
+		case "printSectionsNotes":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+			$("#divMessages").html(printSectionsNotes());
 			hideCmdLine();
 			break;
 		case "sectionDelete":

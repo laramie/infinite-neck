@@ -3,8 +3,10 @@ import {
 toInt
 } from './utils.js';
 
-export function printSections(theSong, theSections) {
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th><th>Details</th>";
+export function printSections(theSong, theSections, showDetails) {
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th>"
+        + (showDetails ? "<th>Details</th>" : "")
+        + "</tr>";
     let details;
     theSections.forEach((section, idx) => {
         details = "<pre style='margin:0'>" + getSectionNotesDisplayString(section) + "</pre>";
@@ -14,14 +16,14 @@ export function printSections(theSong, theSections) {
             + section.beats + SEP
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
-            + "<b style='font-size: 130%;'>" + section.caption + "</b>" + SEP
-            + details
+            + "<b style='font-size: 130%;'>" + section.caption + "</b>"
+            + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
     });
     return result + "</table>";
 }
 
-export function printSectionNotes(theSong, theSections){
+export function printSectionsNotes(theSong, theSections){
     const instrumentTableIDs = [];
     const seenTableIDs = new Set();
 

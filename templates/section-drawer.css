@@ -17,8 +17,7 @@
     font-size: 50%;
 }
 #sectionDrawer button{
-    display: inline-block;
-    margin-right: 6px;
+    margin-right: 2px;
     font-size: 80%;
     box-shadow: 5px 2px 4px black;
 }
@@ -28,6 +27,26 @@
 #sectionDrawer .displayOptionsButton {
     background-color: lightblue;
 }
-#btnSectionDrawerDeleteSection {
+#btnDeleteSection {
     background-color: rgb(253, 85, 59);
+}
+
+
+.beat-icon {
+    font-size: 1em;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-block;
+}
+#btnInsertFirstBeat {
+    color: blue;
+}
+#btnInsertBeat {
+    color: green;
+}
+#btnDeleteBeat {
+    color: red;
+} 
+#btnAddBeat {
+    color: blue;
 }

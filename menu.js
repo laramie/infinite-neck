@@ -489,9 +489,14 @@ export var gMenuFile =    {
               "action": "deleteBeat"
             },
             {
-              "caption": "<b>i</b>nsert first",
+              "caption": "insert <b>f</b>irst",
+              "trigger": "f",
+              "action": "insertFirstBeat"
+            },
+            {
+              "caption": "<b>i</b>nsert beat",
               "trigger": "i",
-              "action": "moveBeatsLater"
+              "action": "insertBeat"
             }
           ]
         },
@@ -502,12 +507,17 @@ export var gMenuFile =    {
             {
               "caption": "<b>s</b>ummary",
               "trigger": "s",
-              "action": "printSections"
+              "action": "printSectionsSummary"
+            },
+            {
+              "caption": "<b>d</b>etails",
+              "trigger": "d",
+              "action": "printSectionsDetails"
             },
             {
               "caption": "<b>n</b>otes",
               "trigger": "n",
-              "action": "printSectionNotes"
+              "action": "printSectionsNotes"
             }            
           ]
         },
