@@ -87,12 +87,10 @@ describe('looper looping-state providers', () => {
 
 	test('beatsLooping reflects loop-beats caption', () => {
 		setLooperProviders({
-			getLoopBeatsCaption: () => 'LOOPING...'
 		});
 		expect(beatsLooping()).toBe(true);
 
 		setLooperProviders({
-			getLoopBeatsCaption: () => 'LOOP BEATS'
 		});
 		expect(beatsLooping()).toBe(false);
 	});
@@ -121,14 +119,9 @@ function installHeadlessLoopState({ randomLoop = false } = {}) {
 		}),
 		getMillisForBeatClock: () => 125,
 		getLoopSectionsCaption: () => state.sectionsCaption,
-		getLoopBeatsCaption: () => state.beatsCaption,
 		setLoopSectionsButton: (caption, isOn) => {
 			state.sectionsCaption = caption;
 			state.sectionsOn = !!isOn;
-		},
-		setLoopBeatsButton: (caption, isOn) => {
-			state.beatsCaption = caption;
-			state.beatsOn = !!isOn;
 		},
 		setLoopBeatsTransportButton: (isOn) => {
 			state.transportOn = !!isOn;

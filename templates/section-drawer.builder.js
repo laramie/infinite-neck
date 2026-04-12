@@ -37,19 +37,16 @@ export class SectionDrawerBuilder {
                 InfiniteNeck.transpose(5);
         });
 
-        // CODE-EXAMPLE("SelectWidget", "Root")
         $('#dropDownRoot').change(function() {
             InfiniteNeck.getCurrentSection().rootID = $(this).val();
             NoteTableController.fullRepaint();
             InfiniteNeck.updateSectionsStatus();
         });
-        // END CODE-EXAMPLE("SelectWidget", "Root")
         $('#dropDownRootLead').change(function() {
             InfiniteNeck.getCurrentSection().rootIDLead = $('#dropDownRootLead').val();
             NoteTableController.fullRepaint();
             InfiniteNeck.updateSectionsStatus();
         });
-
 
         $("#btnInsertFirstBeat").click(function() {
             getSong().insertFirstBeat();
@@ -110,8 +107,6 @@ export class SectionDrawerBuilder {
         $('#btnDeleteDisplayOptions_Section').prop("disabled", !enabled);
     }
     static sectionChanged(){
-        $("#lblBeats").html(getSong().getBeats());
-	    $("#lblBeat").html("1");
         $("#txtCaption").val(getSong().getCurrentSection().caption);
         $('#dropDownSectionOrder').html(InfiniteNeck.buildDropDownSectionOrderOptions());
         $("#dropDownRoot").val(getCurrentSection().rootID);

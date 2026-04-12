@@ -325,7 +325,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var spans = $(".spanLeadDifferentFromRoot");
 	    
 		//These are in Transport:
-	    var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
+	    $("#lblBeats").html(getSong().getBeats());
+		$("#lblBeat").html("1");
+		
+		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
 	    $("#lblSectionsStatus2").html(txt);
 		
 		// .lblRootID and .lblRootIDLead have controls in 
@@ -892,8 +895,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var beats = getSong().getBeats();
 		beats++;
 		getSong().setBeats(beats);
-		$('#lblBeats').html(beats);
-		showBeats();
+		$('#lblBeats').html(beats);  //number of beats in Section
+		showBeats();  //updates #lblBeat  current beat in Section
     }
 
 	export function leaveFullscreen(){
@@ -1554,10 +1557,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnLoopSections").click(function() {
 		    toggleLoopSections();
 		});
-		$("#btnLoopBeats").click(function() {
-		    toggleLoopBeats();
-		});
 		$("#btnLoopBeatsTransport").click(function() {
+			debugger
 		    toggleLoopBeats();
 		});
 		$("#btnEditSection").click(function() {
