@@ -1331,6 +1331,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	}
 
+	function showLoopSectionsStarted(data){
+        const caption = (data && data.caption)
+            ? data.caption
+            : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
+        $('#btnLoopSections').html(caption).addClass('ButtonOn');
+        $('.LooperLight').addClass('LooperLightOn');
+    }
+
+    function showLoopSectionsStopped(){
+        $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
+        $('.LooperLight').removeClass('LooperLightOn');
+    }
+
 	export function transportResize(){
 		//if at top, use this: var left = $('#transportLeftPoint').position().left;
 		var tHeight = $('#transport').outerHeight()
@@ -2008,7 +2021,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$( window ).on( "resize", function() {
 			transportResize();
 		} );
-		debugger
 		transportResize();
         draggable(document.getElementById('transport'));
 		showTransport();
@@ -2020,8 +2032,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				getSong().getVisibleTuningIDs().forEach(tuningID => {
 					WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 				});
-				//EventBus.trigger('ReinstallAllTuningsTables');
-				//EventBus.trigger('UpdateAllWiringSelects');
 				setWiringOpenState(false);
 			}),
 
@@ -2128,6 +2138,12 @@ EventBus.on('Looper:OnLoopBeatsStart', function() {
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
 	$('#btnLoopBeatsTransport').removeClass('ButtonOn');
+});
+EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
+    showLoopSectionsStarted(data);
+});
+EventBus.on('Looper:OnLoopSectionsStop', function() {
+    showLoopSectionsStopped();
 });
 
 

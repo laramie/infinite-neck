@@ -1055,6 +1055,15 @@ EventBus.on('Note:colored', function(event, data) {
     song.wirings.forEach(wiring => {
         if (wiring.listenToTablename === sourceTableID && wiring.tablename !== sourceTableID) {
             // Prevent infinite loop: don't notify the source table
+            let relSection = song.getRelativeSectionWithWrap(wiring.relativeSection);
+            if ((song.getSections().length === 1)
+                   ||
+                (song.getSections().indexOf(getCurrentSection()) != song.getSections().indexOf(relSection)))
+                {
+                    return;
+                }
+
+            
             // Replay the listener table (full replay, as layouts may differ)
             clearAllForTable(wiring.tablename);
             replayTable({
@@ -1062,6 +1071,7 @@ EventBus.on('Note:colored', function(event, data) {
                 listenToTablename: sourceTableID,
                 currSection: getCurrentSection(),
                 sectionIndex: song.getSections().indexOf(getCurrentSection()),
+                relativeSection: wiring.relativeSection
             });
         }
     });

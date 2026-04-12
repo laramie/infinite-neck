@@ -11,7 +11,14 @@
     <div id="tabledest">
 		<div class="instrumentBackground" id="divDEV_1">
 			<div class="captionRow">
-				<button class="HamburgerInstrumentClass showsubcaption moveyButton" id="btnHamburgerDEV_1" tabindex="-1" type="button">≡</button><span class="captionRowInstrument"><span class="tuningIDCaption">DEV_1</span></span><span class="subcaption"><span class="tuningBaseIDCaption">Developer</span>1-string Guitar[F]<span class="joniTuning"><small>Joni:</small>[F]</span><span class="lblNoteClickedCaption" style="display: none;"></span><button class="showcolordict moveyButton" id="btnHamburgerColorDictDEV_1" tabindex="-1" type="button"><img src="img/colordictThumbnail.png"></button><button class="showWiringButton moveyButton ShowWiringButtonOpen" id="btnHamburgerShowWiringDEV_1" tabindex="-1" type="button">Wiring</button></span><span class="captionRowLiveInfo"><span class="lblRootID"></span><span class="spanLeadDifferentFromRoot"></span><span class="instrumentSectionBox LooperLight" id="relSec_tblDEV_1"><span class="instrumentSectionMark">§</span>1</span></span>
+				<button class="HamburgerInstrumentClass showsubcaption moveyButton" id="btnHamburgerDEV_1" tabindex="-1" type="button">≡</button>
+                <span class="captionRowInstrument"><span class="tuningIDCaption">DEV_1</span></span><span class="subcaption">
+                <span class="tuningBaseIDCaption">Developer</span>1-string Guitar[F]<span class="joniTuning"><small>Joni:</small>[F]</span>
+                <span class="lblNoteClickedCaption" style="display: none;"></span><button class="showcolordict moveyButton" id="btnHamburgerColorDictDEV_1" tabindex="-1" type="button">
+                <img src="img/colordictThumbnail.png"></button>
+                <button class="showWiringButton moveyButton ShowWiringButtonOpen" id="btnHamburgerShowWiringDEV_1" tabindex="-1" type="button">Wiring</button></span>
+                <span class="captionRowLiveInfo"><span class="lblRootID"></span><span class="spanLeadDifferentFromRoot"></span>
+                <span class="instrumentSectionBox LooperLight" id="relSec_tblDEV_1"><span class="instrumentSectionMark">§</span>1</span></span>
 				<div class="currentColorDict">
 				</div>
 			</div>

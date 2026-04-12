@@ -796,17 +796,31 @@ table.viewControls th {
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
     border-radius: 20%;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 #btnPrevSection, #btnNextSection{
     font-size:  150%;
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
     border-radius: 20%;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 #btnPrevBeat, #btnNextBeat {
     font-size:  100%;
     background-color: lightgreen;
+    border: 1px solid green;
+    transition: all 0.1s ease;
 }
+
+.downyButton:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+
+
 .ArmedButton {
   background-color: green;
   border-radius: 10%;
@@ -817,7 +831,11 @@ table.viewControls th {
 .ButtonOn {
     background-color: red !important;
 }
-#btnLoopSections.ButtonOn {
+#btnLoopBeatsTransport {
+    border: 1px solid green;
+}
+#btnLoopSections.ButtonOn,
+#btnLoopBeatsTransport.ButtonOn {
     background-color: magenta !important;
 }
 .LooperLight {
@@ -992,7 +1010,9 @@ table.viewControls th {
     box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
     display: inline-block;
     border-radius: 5px;
+    border: none;
     font-size: 0.7em;
+    transition: all 0.1s ease;
 }
 #btnPrevBeatTransport, #btnNextBeatTransport {
     margin: 0;

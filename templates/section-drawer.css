@@ -20,14 +20,22 @@
     margin-right: 2px;
     font-size: 80%;
     box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
+#sectionDrawer button:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
 #sectionDrawer small {
     font-size: 60%;
 } 
 #sectionDrawer .displayOptionsButton {
     background-color: lightblue;
 }
-#btnDeleteSection {
+#sectionDrawer #btnDeleteSection {
     background-color: rgb(253, 85, 59);
 }
 
