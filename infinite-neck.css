@@ -214,7 +214,7 @@ table {
     padding: 0.4em;
     color: black;
     font-family: Helvetica;
-    font-size: 120%;
+    FFfont-size: 120%;
     border: 1px solid black;
     border-radius: 4px;
 }
@@ -309,6 +309,13 @@ table {
     margin-left: 1em;
 }
 
+/***************************** dynamically generated in NoteTableController  *****************************/
+.relativeSectionLabel{
+    color: rgb(7, 164, 83);
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+
 /***************************** Messages Area *****************************/
 
 
@@ -329,7 +336,6 @@ table {
 
 /***************************** Section *****************************/
 
-
 .sectionPageControlsGroup,
 .sectionPageControlsGroupResize {
     background-color: cornsilk;
@@ -342,29 +348,6 @@ table {
     overflow: scroll;
 }
 
-
-#sectionBeatsCallout {
-    padding: 0.8em;
-    border: 1px double green;
-    box-sizing: border-box;
-    display: inline-block;
-    margin: 0.1em;
-}
-#sectionTransportButtons {
-    display: inline-block;
-    margin-left: 4.8em;
-    padding: 0.6em;
-    box-sizing: border-box;
-}
-#sectionSectionButtons  {
-    display: inline-block;
-    padding: 0.2em;
-}
-#sectionSectionButtons button {
-    margin: 0.2em;
-    margin-left: 1.2em;
-    background-color: lightgreen;
-}
 .safeButton{
     background-color: lightgreen !important;
 }
@@ -402,11 +385,7 @@ table.viewControls th {
 .divViewCard table{
     width: 100%;
 }
-.relativeSectionLabel{
-    color: rgb(7, 164, 83);
-    font-size: 80%;
-    padding-right: 0.5em;
-}
+
 #lblHideWarning {
     font-weight: bold;
     color: darkred;
@@ -710,8 +689,6 @@ table.viewControls th {
     display: inline-block;
 }
 
-
-
 #btnPrevSection2, #btnNextSection2, #btnFirstSection, #btnLastSection {
     font-size:  70%;
     background: #ffbf00;
@@ -740,10 +717,18 @@ table.viewControls th {
     transform: translateY(3px); /* Move the button down slightly */
 }
 
-
+#btnEditSection {
+  font-size: 0.8em !important;
+  padding: 0.1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  margin-bottom: 0;
+  margin-left: 0.7em;
+  margin-right: 0.7em;
+}
 
 .ArmedButton {
-  background-color: green;
+  background-color: #6faa09;
   border-radius: 10%;
   box-shadow: 0 0 3pt 3pt lightgreen;
   padding: 0.2em;

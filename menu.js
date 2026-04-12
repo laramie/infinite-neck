@@ -962,6 +962,11 @@ export var gMenuFile =    {
           "action": "toggleLoopBeats"
         },
         {
+          "caption": "<b>r</b>andom loop",
+          "trigger": "r",
+          "action": "toggleRandomLoop"
+        },
+        {
           "caption": "<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>",
           "vars": [
             "currentSectionCardinal",

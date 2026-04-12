@@ -537,7 +537,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		"#divThemeControls": "#btnThemeControls",
 		"#divFillNotes": "#btnFillNotes",
 		"#divTunings": "#btnTunings",
-		"#divDesktop": "#btnDesktop"
+		"#divDesktop": "#btnDesktop",
+		"#spanSectionDrawer": "#btnEditSection"
 	}
 
 	export function hideAllMenuDivs(){
@@ -1344,18 +1345,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         $('.LooperLight').removeClass('LooperLightOn');
     }
 
-	export function transportResizeOEM(parkAtBottom = false){
-		//if at top, use this: var left = $('#transportLeftPoint').position().left;
-		var tHeight = $('#transport').outerHeight()
-		var tWidth = $('#transport').outerWidth()
-		var wHeight = $(window).height();
-		var wWidth = $(window).width();
-		var left = (wWidth / 2) - (tWidth / 2);
-		var top = (wHeight-tHeight);
-
-		$('#transport').css({"left": left+"px", "top": top+"px"});
-	}
-
 	export function transportResize(parkAtBottom = false) {
 		var $transport = $('#transport');
 		var tHeight = $transport.outerHeight();
@@ -1383,16 +1372,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$transport.css({ "left": left + "px", "top": top + "px" });
 		}
 	}
-	export function toggleSectionDrawer(){
+	export function toggleSectionDrawer(forceShow = false){
 		var transportWasVisible =  $('#transport').is(':visible');
-		if (!transportWasVisible){
-			console.log("transport was not visible: showing transport and section drawer");
+		if (forceShow || !transportWasVisible){
 			$('#transport').show();
 			$('#spanSectionDrawer').show();
 		} else {
-			console.log("transport was visible: toggle section drawer"+$('#spanSectionDrawer').is(':visible'));
 			$('#spanSectionDrawer').toggle();
-			console.log("after toggle section drawer"+$('#spanSectionDrawer').is(':visible'));
+		}
+		var drawerIsVisible =  $('#spanSectionDrawer').is(':visible');
+		if (drawerIsVisible){
+			$("#btnEditSection").addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			$("#btnEditSection").addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
 		}
 		transportResize();
 	}
@@ -1421,6 +1413,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function handleBtnDeleteDisplayOptions() {
 		delete getCurrentSection().displayOptions;
 		showHideDisplayOptionsPresent();
+	}
+
+	export function toggleRandomLoop(){
+		getSong().randomLoop = ! getSong().randomLoop;
+		if (getSong().randomLoop){
+			$('#btnRandomLoop').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			$('#btnRandomLoop').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
+		}
+		if (sectionsLooping()){
+			restartLoopSections();
+		}
 	}
 
 	//==================== 4) UI event binding and control wiring =============
@@ -1523,15 +1527,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			showAllNoteNames($('#cbShowAllNoteNames').prop('checked'));
 		});
 		$("#btnRandomLoop").click(function() {
-			getSong().randomLoop = ! getSong().randomLoop;
-			if (getSong().randomLoop){
-				$('#btnRandomLoop').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-			} else {
-				$('#btnRandomLoop').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-			}
-			if (sectionsLooping()){
-				restartLoopSections();
-			}
+			toggleRandomLoop();
 		});
 		$("#btnNoteV").click(function() {
 			checkRB("#rbNotename");

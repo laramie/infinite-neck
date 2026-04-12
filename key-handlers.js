@@ -41,6 +41,7 @@ import {
 	toggleWiringOpenState,
 	toggleTransport,
 	toggleSectionDrawer,
+	toggleRandomLoop,
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
@@ -508,13 +509,20 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "toggleLoopSections":
 			toggleLoopSections();
-			actionResult.result = sectionsLooping() ? "ON" : "OFF";
+			let rls = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
+			let sls = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
+			actionResult.result = rls+sls;
 			break;
 		case "toggleLoopBeats":
 			toggleLoopBeats();
 			actionResult.result = beatsLooping() ? "ON" : "OFF";
 			break;
-			
+		case "toggleRandomLoop":
+			toggleRandomLoop();
+			let rl = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
+			let sl = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
+			actionResult.result = rl+sl;
+			break;
 		case "nextBeat":
 			getSong().nextBeat();
 			actionResult.result = ""+getCurrentSection().currentBeat;
@@ -543,7 +551,7 @@ export function performCmdAction(menuItem, args){
 			showOneMenu("#divFileControls");//file==song now.
 			break;
 		case "showDialog-section":
-			showOneMenu("#divSectionControls");
+			toggleSectionDrawer(true);
 			break;
 		case "showDialog-fill":
 			showOneMenu("#divFillNotes");

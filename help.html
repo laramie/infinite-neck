@@ -95,6 +95,11 @@
         border: 1px solid black;
         padding: 0.4em;
        }
+       .ExamplesTable  p {
+           margin: 0;
+           padding-left: 0;
+           margin-bottom: 0.4em;
+       }
        .CheatSheet td {
            padding: 0.3em;
        }
@@ -318,6 +323,23 @@
         #btnAddBeat {
             color: blue;
             box-shadow: 5px 2px 4px black;
+        }
+        .BtnPunchedOut {
+            box-shadow: inset 7px 7px 7px -4px #b1f53d;
+            border-radius: 4px;
+            background-color: #6faa09;
+            color: black;
+            cursor: pointer;
+            position: relative;
+        }
+        .BigMobileBtn {
+            padding: 1em;
+        }
+        .PunchedTogether {
+            border: 1px solid #578607;
+            border-radius: 4px;
+            display: inline-block;
+            padding: 2px;
         }
 
             
@@ -685,7 +707,7 @@
                     <ul class="LinkList">
                         <li><a href="#divFileControls">File</a></li>
                         <li><a href="#transport">Transport</a>
-                        <li><a href="#divSectionControls">Section Drawer</a>
+                        <li><a href="#spanSectionDrawer">Section Drawer</a>
                             <ul class="LinkList">
                                 <li><a href="#divSectionDestination">Section Destination</a></li>
                                 <li><a href="#divSectionTransposition">Transposition</a>
@@ -708,6 +730,8 @@
                         <li><a href="#divFillNotes">Fill</a></li>
                         <li><a href="#divTunings">Tunings</a></li>
                         <li><a href="#palette">Palette</a></li>
+                        <li><a href="#divDesktop">Desktop</a></li>
+                        <li><a href="#QuickMenu">Quick Menu</a></li>
                         <li><a href="#event-wiring">Event Wiring Controls</a></li> 
                         <ul class="LinkList">           
                             <li><a href="#relative-section-amount-values">Relative Section Amount Legal Values</a></li>            
@@ -1099,7 +1123,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     <tr><td>Graveyard</td><td>Use the Graveyard to revive things you delete: Sections, Stylesheets.  You can revive multiple times,
         so this can be used to copy/paste a Section.  You can also Clone a section.
     </td></tr>
-     <tr><td>Copy Section</td><td>Use Clone or Clone Shallow on the Section drawer in the Transport.  Clone copies all notes and Display Options.</td></tr>
+     <tr><td>Copy Section</td><td>Use Clone or Clone Shallow on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  Clone copies all notes and Display Options.</td></tr>
     <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.</td></tr>
     <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/clone whole sections, and within that new section you can transpose. So the flow would be:
         <ul>
@@ -1190,22 +1214,23 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     <li>LOOP over the beats in just one section, 
     with the little infinity button: <button class="redButton" type="button" tabindex="-1">&infin;</button>.
     <li>LOOP over the Song, all Sections.
-    <li>Open the Section Drawer with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button>
+    <li>Open the <a href="#spanSectionDrawer">Section Drawer</a> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button>
     </ul>
   </p>
 
   <p><img src="img/help/context/transport.png">
             <br><i>Transport showing Section 1 of 5, on Beat 3 of 4.</i></p>
   <p><img src="img/help/context/transport-section-drawer-button.jpg">
-            <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the Section Drawer: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
+            <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the <a href="#spanSectionDrawer">Section Drawer</a>: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
  
 
-<a name="divSectionControls"></a><!-- Section help link drops here, which is really part of Transport, which is good. -->
-  <p><img src="img/help/context/transport-w-section-drawer.png">
-            <br><i>On the transport, the Section Drawer is opened, giving you access to all the Section controls..</i></p>
-
+<a name="spanSectionDrawer"></a>
 <h3>Section Drawer</h3>
-<p>The Section Drawer lets you:
+  <p><img src="img/help/context/transport-w-section-drawer.png">
+            <br><i>On the transport, the <b>Section Drawer</b> is opened, giving you access to all the Section controls..</i></p>
+
+
+<p>The <a href="#spanSectionDrawer">Section Drawer</a> lets you:
 <ul>
     <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> to show the Song
         caption.)
@@ -1735,6 +1760,96 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
      because you are using color Roles, or are using Emboss.
  </p>
 
+<a name="divDesktop"></a>
+<h3>Desktop</h3>
+ <p> <span class="productsmaller">infinite-neck</span> has a menu called Desktop which provides some big buttons you can access from a phone
+    or tablet when you <i>don't</i> have a Desktop with a normal keyboard.
+ </p>  
+ <p>   
+    There are also useful functions when you are running on a Desktop, i.e. not a phone or tablet, such as 
+    Chrome Fullscreen, Scaling Prefs, and Instrument Prefs.  
+ </p>
+<p>
+    <ul>
+        <li><button class="BtnPunchedOut BigMobileBtn" type="button">Chrome Fullscreen</button> - normally burried in Chrome's menu. However, this version lets you out of Chrome fullscreen
+            with <span class="key">ESC</span>, which overrides the
+            behavior in <span class="productsmaller">infinite-neck</span> that <span class="key">ESC</span> gets you out of
+            <span class="productsmaller">infinite-neck</span><b>::fullscreen</b>.
+            However, you can also toggle <span class="productsmaller">infinite-neck</span><b>::fullscreen</b> with the <span
+                class="key">f</span> key so you don't need the <span class="key">ESC</span> key, since this hides all menus too.
+            If you want <span class="key">ESC</span> to only be <span
+                class="productsmaller">infinite-neck</span><b>::fullscreen</b> escape,
+            you have to dig into Chrome's menu and click the <span class="GUIReferenceInline">&vellip;</span> then <span
+                class="GUIReferenceInline">&#x26F6;</span> button next to <span class="GUIReferenceInline">Zoom</span>. You
+            can only get out of that Chrome fullscreen by hovering your mouse up at the top of the window so the Chrome menu
+            appears, then finding your way back to <span class="GUIReferenceInline">&vellip;</span> then <span
+                class="GUIReferenceInline">&#x26F6;</span>
+
+        <li><button class="BtnPunchedOut BigMobileBtn" type="button">Save Scaling Prefs</button> - This allows you to store your font and note sizes in the Browser's storage, so the next
+            time you come into
+            <span class="productsmaller">infinite-neck</span> you get those sizes back. Opening a Song file will generally
+            reset these, so these are really for blank songs.  You don't need the other buttons usually, as the browser calls these.
+
+        <li><button class="BtnPunchedOut BigMobileBtn" type="button">Save Instrument Prefs</button> - When opening <span class="productsmaller">infinite-neck</span> this defaults you to
+            the Instruments of your choice, so you could always start with a Bass4 or a P46 (P4 tuned six-string guitar), or both.  Open 
+            the Instruments of your choice, then mash on this button.
+            You will see the prefs below as a confirmation.
+            Opening a Song file
+            will override this.  Also, setting the URL query param <span class="GUIReferenceInline">tuning=</span> will override this.
+    </ul>
+</p>   
+
+<a name="QuickMenu"></a>
+<h3>Quick Menu</h3>
+<p>This is a row of buttons that are useful when running presentations:
+        <br>
+        <br>
+        <span id="divQuick">
+            <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note Names</button>
+            <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
+            <span class="PunchedTogether">
+                <button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">Func</button>
+                <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button>
+            </span>
+            <button class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
+        </span>
+
+</p>
+<p>All these functions found in the menus.  Access the Quick Menu with keyboard shortcut <span class="key">q</span> and it will appear above Instruments and below any pinned menus.
+
+
+<table class="ExamplesTable">
+  <tr>
+    <td><b>Show All Note Names</b></td>
+    <td>Found on View menu, shows note names in every cell.</td>
+  </tr>
+  <tr>
+    <td><b>Random Loop</b></td>
+    <td><p>Found also in command-line <span class="menuExampleLine">/rr</span> which 
+        turns on random looping, but doesn't start looping.
+    </p><p>When Section looping starts (or restarts if it is already running) each Section will be chosen randomly, not in Song order.
+           You can access the history of Sections played with <a href="#relative-section-amount-values">Relative Section Amount "@"</a>  
+    </p><p>Start Section looping with <span class="menuExampleLine">/rl</span>  
+    </p><p>Use <span class="menuExampleLine">/re</span> to start Beat looping, but Beats are not random looped, just Section looping.
+    </p>
+    </td>
+  </tr>
+  <tr>
+    <td><b>Func</b></td>
+    <td>Found on the View menu, this sets the Right Subscript to Function, (which may be shown in the Center if <span class="GUIReferenceInline">Show Right Subscript in Center</span> is checked).</td>
+  </tr>
+  <tr>
+    <td><b>Note</b></td>
+    <td>Found on the View menu, this sets the Right Subscript to Notename, (which may be shown in the Center if <span class="GUIReferenceInline">Show Right Subscript in Center</span> is checked).</td>
+  </tr>
+  <tr>
+    <td><b>AutoColor</b></td>
+    <td>Toggles the AutoColor checkbox on the Palette, which automatically colors all notes by function / scale degree using the Color Scheme "Cycle of Colors" or user-customized version of this.</td>
+  </tr>
+</table>
+
+</p>
+
 <a name="event-wiring"></a>
 <h3>Event Wiring Controls</h3>
  <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop, and (some day) on the MIDI bus.  
@@ -1886,7 +2001,7 @@ Stylesheet order
 <p>Click "raise" to revive the object that was buried.  The "lastRevived" timestamp will be updated,
     and the object will be placed back into the song.</p>
 <p>In fact, you can revive an object more than once.  This makes clones, which is useful.
-    For Sections, there are more detailed cloning buttons on the Section drawer in the Transport: Clone, and Shallow Clone.</p>
+    For Sections, there are more detailed cloning buttons on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport: Clone, and Shallow Clone.</p>
 
 <p>You can delete all objects from the graveyard (and receive a download of the song just before the deletion) 
     by using the <a href="#commandline">command-line</a> <span class="menuExampleLine">/fC</span></span> documented
@@ -2096,7 +2211,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>
                 </td>
-                <td>show/hide Quick menu button row
+                <td>show/hide <a href="#QuickMenu">Quick Menu</a> button row
                 </td>
             </tr>
             <tr id="showHideCommand">
