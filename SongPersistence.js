@@ -1,8 +1,6 @@
 import * as Constants from './Constants.js';
-import {Wiring} from './Wiring.js';
-import {
-    Graveyard
-} from './graveyard.js';
+import { Wiring } from './Wiring.js';
+import { Graveyard } from './graveyard.js';
 
 const songDefaults = {
     activeStylesheets: "Default",
@@ -43,6 +41,7 @@ export class SongPersistence {
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
         this.graveyard = new Graveyard(obj.graveyard);
+        this.graveyard.setSong(this);
     }
 
     static persistentSongFileReplacer(key, value){

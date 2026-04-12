@@ -1,5 +1,4 @@
 import EventBus from './event-bus.js';
-import { getSong } from './infinite-neck.js';
 import { chuseStylesheet } from './colorFunctions.js';
 import { Section } from './Section.js';
 
@@ -20,6 +19,16 @@ export class Graveyard {
     constructor(jsonObj){
         this.records = []; //just in case.
         Object.assign(this, jsonObj); //jsonObj.records is an array, no methods needed.   
+        this.song = null; //set by SongPersistence after construction.
+    }
+
+    setSong(song){
+        this.song = song;
+    }
+
+    toJSON() {
+        const { song, ...rest } = this;  // Exclude this.song from serialization
+        return rest;
     }
 
     getRecords(){
@@ -77,7 +86,7 @@ export class Graveyard {
             case GraveType.SECTION:
                 record.caption = record.caption + " raised from: "+record.context.SectionIndex +" at "+record.time;
                 //getSong().addSection(JSON.parse(record.json));
-                getSong().addSection(new Section(JSON.parse(record.json)));
+                this.song.addSection(new Section(JSON.parse(record.json)));
                 break;
             case GraveType.DISPLAY:
             case GraveType.BEAT:
@@ -86,10 +95,10 @@ export class Graveyard {
                 if (dictkey){
                     var base = dictkey;
                     var i = 1;
-                    while (getSong().colorDicts[dictkey]){
+                    while (this.song.colorDicts[dictkey]){
                         dictkey = base+'R'+(i++);
                     }
-                    getSong().colorDicts[dictkey] = JSON.parse(record.json);
+                    this.song.colorDicts[dictkey] = JSON.parse(record.json);
                     chuseStylesheet(dictkey);
                 }
                 break;

@@ -1344,7 +1344,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         $('.LooperLight').removeClass('LooperLightOn');
     }
 
-	export function transportResize(){
+	export function transportResizeOEM(parkAtBottom = false){
 		//if at top, use this: var left = $('#transportLeftPoint').position().left;
 		var tHeight = $('#transport').outerHeight()
 		var tWidth = $('#transport').outerWidth()
@@ -1354,6 +1354,34 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var top = (wHeight-tHeight);
 
 		$('#transport').css({"left": left+"px", "top": top+"px"});
+	}
+
+	export function transportResize(parkAtBottom = false) {
+		var $transport = $('#transport');
+		var tHeight = $transport.outerHeight();
+		var tWidth = $transport.outerWidth();
+		var wHeight = $(window).height();
+		var wWidth = $(window).width();
+	
+		if (parkAtBottom) {
+			// Center horizontally, park at bottom
+			var left = (wWidth / 2) - (tWidth / 2);
+			var top = wHeight - tHeight;
+			$transport.css({ "left": left + "px", "top": top + "px" });
+		} else {
+			// Ensure transport is fully in viewport, but don't move if already visible and not overlapping
+			var offset = $transport.offset();
+			var left = offset ? offset.left : (wWidth / 2) - (tWidth / 2);
+			var top = offset ? offset.top : wHeight - tHeight;
+	
+			// Clamp left and top to keep the transport fully in the viewport
+			if (left < 0) left = 0;
+			if (top < 0) top = 0;
+			if (left + tWidth > wWidth) left = wWidth - tWidth;
+			if (top + tHeight > wHeight) top = wHeight - tHeight;
+	
+			$transport.css({ "left": left + "px", "top": top + "px" });
+		}
 	}
 	export function toggleSectionDrawer(){
 		var transportWasVisible =  $('#transport').is(':visible');
@@ -2021,7 +2049,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$( window ).on( "resize", function() {
 			transportResize();
 		} );
-		transportResize();
+		transportResize(true);
         draggable(document.getElementById('transport'));
 		showTransport();
 		showDefaultTunings();

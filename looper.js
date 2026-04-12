@@ -1,8 +1,8 @@
 import EventBus from './event-bus.js';
 import * as InfiniteNeck from './infinite-neck.js';
 
-let isSectionsLooping = false;
-let isBeatsLooping = false;
+	let isSectionsLooping = false;
+	let isBeatsLooping = false;
 
     var showBeatsIntervalPointer = null;
 
@@ -69,7 +69,7 @@ let isBeatsLooping = false;
         if (song && song.randomLoop){
             caption = LOOPING_FRAMES_CAPTION_RANDOM;
         }
-	        EventBus.trigger('Looper:OnLoopSectionsStart', {
+	    EventBus.trigger('Looper:OnLoopSectionsStart', {
 			caption
 		});
     
@@ -82,8 +82,8 @@ let isBeatsLooping = false;
             });
         }
     
-	        var millisNextBeat = getMillisForBeatClock();
-	        showBeatsIntervalPointer = startLoopInterval(showBeatsIntervalHandler, millisNextBeat);
+		var millisNextBeat = getMillisForBeatClock();
+		showBeatsIntervalPointer = startLoopInterval(showBeatsIntervalHandler, millisNextBeat);
     }
 
 	function startLoopBeats(){

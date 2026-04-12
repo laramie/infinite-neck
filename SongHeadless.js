@@ -3,7 +3,6 @@ import path from 'path';
 
 
 import * as SectionPrinter from './section-printer.js';
-import { SongPersistence } from './SongPersistence.js';
 import { Song } from './Song.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 
