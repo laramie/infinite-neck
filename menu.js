@@ -952,6 +952,11 @@ export var gMenuFile =    {
           "action": "toggleTransport"
         },
         {
+          "caption": "<b>p</b>ark transport",
+          "trigger": "p",
+          "action": "parkTransport"
+        },
+        {
           "caption": "<b>l</b>oop",
           "trigger": "l",
           "action": "toggleLoopSections"

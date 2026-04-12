@@ -40,6 +40,7 @@ import {
 	getVersionObject,
 	toggleWiringOpenState,
 	toggleTransport,
+	showTransport,
 	toggleSectionDrawer,
 	toggleRandomLoop,
 	setSectionKeysFlats,
@@ -570,6 +571,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "toggleTransport":
 			toggleTransport();
+			break;
+		case "parkTransport":
+			showTransport(true);
 			break;
 		case "viewFullscreen":
 			enterFullscreen();

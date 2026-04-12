@@ -101,7 +101,7 @@ import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
-import { makeDivDockable, dockDivInPage } from './dockable.js';
+import { TransportBuilder } from './templates/transport.builder.js';
 
 // If running in a browser, call appInit() on DOM ready
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
@@ -542,12 +542,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function hideAllMenuDivs(){
-		for (const [key, value] of Object.entries(AllMenuDivs)){
-			$(key).hide();
+		for (const key of Object.keys(AllMenuDivs)){
+			if (key === "#spanSectionDrawer"){
+				TransportBuilder.hideSectionDrawer();
+			} else {
+				$(key).hide();
+			}
 		}
 		$('.MainMenuTabBtn').removeClass("BtnPunchedIn").addClass("BtnPunchedOut");
-	    //$("#topControlsCaptions").show();
+		//$("#topControlsCaptions").show();
 	}
+
 	export function isMenuShowing(strMenuDiv){
 		var jStrMenuDiv = $(strMenuDiv);
 		return jStrMenuDiv.is(":visible");
@@ -926,12 +931,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divESCAPE").hide();
 		}
 	}
-	export function showTransport() {
-		$('#transport').show();
+	export function showTransport(parkAtBottom = false) {
+		TransportBuilder.showTransport(parkAtBottom);
 	}
 	export function toggleTransport(){
-		//var wasVisible =  $('.transport').is(':visible');
-		$('#transport').toggle();
+		TransportBuilder.toggleTransport();
+	}
+	export function toggleSectionDrawer(){
+		TransportBuilder.toggleSectionDrawer();
 	}
 	export function toggleCaption(){
 		$('#topControlsCaptions').toggle();
@@ -1345,51 +1352,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         $('.LooperLight').removeClass('LooperLightOn');
     }
 
-	export function transportResize(parkAtBottom = false) {
-		var $transport = $('#transport');
-		var tHeight = $transport.outerHeight();
-		var tWidth = $transport.outerWidth();
-		var wHeight = $(window).height();
-		var wWidth = $(window).width();
-	
-		if (parkAtBottom) {
-			// Center horizontally, park at bottom
-			var left = (wWidth / 2) - (tWidth / 2);
-			var top = wHeight - tHeight;
-			$transport.css({ "left": left + "px", "top": top + "px" });
-		} else {
-			// Ensure transport is fully in viewport, but don't move if already visible and not overlapping
-			var offset = $transport.offset();
-			var left = offset ? offset.left : (wWidth / 2) - (tWidth / 2);
-			var top = offset ? offset.top : wHeight - tHeight;
-	
-			// Clamp left and top to keep the transport fully in the viewport
-			if (left < 0) left = 0;
-			if (top < 0) top = 0;
-			if (left + tWidth > wWidth) left = wWidth - tWidth;
-			if (top + tHeight > wHeight) top = wHeight - tHeight;
-	
-			$transport.css({ "left": left + "px", "top": top + "px" });
-		}
-	}
-	export function toggleSectionDrawer(forceShow = false){
-		var transportWasVisible =  $('#transport').is(':visible');
-		if (forceShow || !transportWasVisible){
-			$('#transport').show();
-			$('#spanSectionDrawer').show();
-		} else {
-			$('#spanSectionDrawer').toggle();
-		}
-		var drawerIsVisible =  $('#spanSectionDrawer').is(':visible');
-		if (drawerIsVisible){
-			$("#btnEditSection").addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-		} else {
-			$("#btnEditSection").addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-		}
-		transportResize();
-	}
-
-
 	export function toggleAutoColorCheckbox(){
 		var cbac = $("#cbAutomaticColor");
 		cbac.prop("checked", !cbac.prop("checked"));
@@ -1546,7 +1508,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 		$("#btnToggleTransport").click(function() {
-			$('#transport').toggle();
+			TransportBuilder.toggleTransport();
 		});
 		$("#btnToggleCmdLine").click(function() {
 			toggleCmdLine();
@@ -2043,11 +2005,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setWiringOpenState(false);
 
 		$( window ).on( "resize", function() {
-			transportResize();
+			TransportBuilder.transportResize();
 		} );
-		transportResize(true);
+		TransportBuilder.transportResize(true);
         draggable(document.getElementById('transport'));
-		showTransport();
+		TransportBuilder.showTransport();
+
 		showDefaultTunings();
 		scrollToTop();
 
