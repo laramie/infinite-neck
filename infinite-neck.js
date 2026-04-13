@@ -531,7 +531,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// List of menu divs, accessed through .entries(), and associated button names,
 	//  accessed through selectors stored in values with menu as key: AllMenuDivs[strMenuDiv]
 	const AllMenuDivs = {
-		"#divPalette": "#btnPalette",
+		"#palette": "#btnPalette",
 		"#divFileControls": "#btnFileControls",
 		"#divViewControls": "#btnViewControls",
 		"#divThemeControls": "#btnThemeControls",
@@ -1022,71 +1022,71 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideCmdLine();
 	}
 
-		export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
-	        //console.log("rangeSlide:"+element_id+" value: "+value);
-			setNamedNoteOpacity_inner(element_id, value);
-	    }
+	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
+		//console.log("rangeSlide:"+element_id+" value: "+value);
+		setNamedNoteOpacity_inner(element_id, value);
+	}
 
-		export function setNamedNoteOpacity_inner(element_id, newValue){
-			getSong().namedNoteOpacity = newValue;
-			//console.log("setNamedNoteOpacity_inner element_id:"+element_id+" value: "+newValue);
-			clearAll();
-		    replay();
-		    updateSectionsStatus();
-		}
+	export function setNamedNoteOpacity_inner(element_id, newValue){
+		getSong().namedNoteOpacity = newValue;
+		//console.log("setNamedNoteOpacity_inner element_id:"+element_id+" value: "+newValue);
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
 
-		export function getNamedNoteOpacity(){
-			return $("#rangeNamedNoteOpacity").val();
-		}
+	export function getNamedNoteOpacity(){
+		return $("#rangeNamedNoteOpacity").val();
+	}
 
-		export function setNamedNoteOpacity(newValue){
-			$("#rangeNamedNoteOpacity").val(newValue);
-			setNamedNoteOpacity_inner(null, newValue);
-		}
+	export function setNamedNoteOpacity(newValue){
+		$("#rangeNamedNoteOpacity").val(newValue);
+		setNamedNoteOpacity_inner(null, newValue);
+	}
 
-		//======== SingleNote opacity ==========
+	//======== SingleNote opacity ==========
 
-		export function getSingleNoteOpacity(){
-			return $("#rangeSingleNoteOpacity").val();
-		}
+	export function getSingleNoteOpacity(){
+		return $("#rangeSingleNoteOpacity").val();
+	}
 
-		export function setSingleNoteOpacity(newValue){
-			$("#rangeSingleNoteOpacity").val(newValue);
-			setSingleNoteOpacity_inner(null, newValue);
-		}
+	export function setSingleNoteOpacity(newValue){
+		$("#rangeSingleNoteOpacity").val(newValue);
+		setSingleNoteOpacity_inner(null, newValue);
+	}
 
-		export function setSingleNoteOpacity_inner(element_id, newValue){
-			getSong().singleNoteOpacity = newValue;
-			clearAll();
-		    replay();
-		    updateSectionsStatus();
-		}
+	export function setSingleNoteOpacity_inner(element_id, newValue){
+		getSong().singleNoteOpacity = newValue;
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
 
-		export function rangeSingleNoteOpacitySlide(element_id, value) {
-			setSingleNoteOpacity_inner(element_id, value);
-	    }
+	export function rangeSingleNoteOpacitySlide(element_id, value) {
+		setSingleNoteOpacity_inner(element_id, value);
+	}
 
-		//======== TinyNote opacity ==========
+	//======== TinyNote opacity ==========
 
-		export function getTinyNoteOpacity(){
-			return $("#rangeTinyNoteOpacity").val();
-		}
+	export function getTinyNoteOpacity(){
+		return $("#rangeTinyNoteOpacity").val();
+	}
 
-		export function setTinyNoteOpacity(newValue){
-			$("#rangeTinyNoteOpacity").val(newValue);
-			setTinyNoteOpacity_inner(null, newValue);
-		}
+	export function setTinyNoteOpacity(newValue){
+		$("#rangeTinyNoteOpacity").val(newValue);
+		setTinyNoteOpacity_inner(null, newValue);
+	}
 
-		export function setTinyNoteOpacity_inner(element_id, newValue){
-			getSong().tinyNoteOpacity = newValue;
-			clearAll();
-			replay();
-			updateSectionsStatus();
-		}
+	export function setTinyNoteOpacity_inner(element_id, newValue){
+		getSong().tinyNoteOpacity = newValue;
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
 
-		export function rangeTinyNoteOpacitySlide(element_id, value) {
-			setTinyNoteOpacity_inner(element_id, value);
-		}
+	export function rangeTinyNoteOpacitySlide(element_id, value) {
+		setTinyNoteOpacity_inner(element_id, value);
+	}
 
 	//==============  Other functions that set CSS vars but not in Themes (or themeFunctions.js) =====================
 
@@ -1423,7 +1423,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		$("#btnPalette").click(function() {
-			showOneMenu("#divPalette");
+			showOneMenu("#palette");
 		});
 		$("#btnDesktop").click(function() {
 		    showOneMenu("#divDesktop");

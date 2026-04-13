@@ -11,9 +11,6 @@ import {
 	GraveType
 } from './graveyard.js';
 import {
-	midinumToNoteName
-} from './TableBuilder.js';
-import {
 	gUserColorDict,
 	gUserColorDictOEM
 } from './userColors.js';
@@ -737,14 +734,20 @@ export function chuseStylesheet(dictkey){
 			default:
 				theRootID = getCurrentSection().rootID;
 		}
-		if (!note.noteName){  //for older files. :(
-			if (note.midinum){
-				note.noteName = midinumToNoteName(note.midinum);
-			} else {
-				if (note.noteNameClass){
-					note.noteName = note.noteNameClass.substring(".note".length);  //todo: change this when you fix noteNameClass to be not ".note" but "note"
-				}
-			}
+		if (!note.noteName){
+			return null;  
+			/*  Some cases leave notes such as this hanging around: 
+			"sectionNotesByTable": {
+				"tblMIDI_1": {
+				  "namedNotes": {
+					"F": {},
+					"Gb": {},
+					"Bb": {
+						"noteName": "Bb",
+						"styleNum": 0,
+						"colorClass": "noteTransparent"
+					}
+			*/
 		}
 		var noteNum = constNoteNamesArr.indexOf(note.noteName);  //   Bb ==> 1 (since A ==> 0)
 		var relNoteNum = (12 + noteNum - theRootID) % 12; //the function number: Tau is 1.  0-based: 0==first note of scale

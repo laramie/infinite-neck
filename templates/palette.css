@@ -2,6 +2,7 @@
 /***************************** Palette *****************************/
 
 #palette {
+    display: none;
   position: relative;
   z-index: 9;
   text-align: center;
