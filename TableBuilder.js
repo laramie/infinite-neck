@@ -164,23 +164,26 @@ export function buildNoteTable(options) {
 	instrumentBackground.addClass("instrumentBackground");
 	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
-	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' ><img src='img/colordictThumbnail.png'></button>";
-	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption moveyButton' type='button' >C</button>";
-	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark moveyButton' type='button' >S</button>";
+	//var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' ><img src='img/colordictThumbnail.png'></button>";
+	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict sectionDrawerButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
+	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption sectionDrawerButton' type='button' >C</button>";
+	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark sectionDrawerButton' type='button' >S</button>";
+	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails sectionDrawerButton' type='button' >T<small>uning</small></button>";
 	
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
-	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton moveyButton' type='button' tabindex='-1'>Wiring</button>";
+	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton sectionDrawerButton' type='button' tabindex='-1'>W<small>iring</small></button>";
 
-	var joniTuning = "<span class='joniTuning'><small>Joni:</small>" + getJoniTuning(options) + "</span>";
+	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
-	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>';
-	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>';
-	var sectionMark = '<span class="instrumentSectionBox LooperLight" id="relSec_'+tableID+'"></span>';
-	var sectionMark2 = '<span class="instrumentSectionBox LooperLight" id="relSec2_'+tableID+'"></span>';
+	var tuningBaseIDCaption = '<span>' + options.caption + '</span>';
+	var tuningIDCaption = '<span>' + options.baseID + '</span>';
+	var tuningIDnStrings = '<span>' + options.nStrings + '-string</span>';
+	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
+
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
-	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="moveyButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">Float</button>`;
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="sectionDrawerButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	captionRow.html(
 		hamburger 
@@ -188,28 +191,24 @@ export function buildNoteTable(options) {
 		+ tuningIDCaption
 		+ '</span>'
 		+ '<span class="subcaption">'
-		+ tuningBaseIDCaption
-		+ options.nStrings + '-string '
-		+ options.baseInstrument
-		+ '[' + rowRangeToNoteNames(options.rowRange, options) + ']'
-		+ joniTuning
-		+ reverse
-		+ noteClickedCaption
 		+ hamburgerLeftCaption
 		+ hamburgerLeftSectionMark 
 		+ hamburgerColorDict
 		+ btnShowWiring
 		+ btnPopOutDiv
+		+ hamburgerTuningDetails
+		+ '<span class="spanTuningDetails">'
+		+ tuningBaseIDCaption
+		+ tuningIDnStrings
+		+ tuningIDbaseInstrument
+		+ '<span>[' + rowRangeToNoteNames(options.rowRange, options) + ']</span>'
+		+ joniTuning
+		+ reverse
+		+ '</span>'
+		+ noteClickedCaption
 		+ '</span>'
 		+ '<span class="captionRowLiveInfo">'
-		+   '<span id="normalKeys_'+tableID+'">'
-		+ 		spanRootID
-		+ 		spanLeadDifferentFromRoot
-		+   '</span><span id="relativeKeys_'+tableID+'">'
-		+ 		relSecRootID
-		+ 		relSecLeadDifferentFromRoot
-		+   '</span>'
-		+   sectionMark 
+		+   formatKeyBoxes(tableID, "1", false)
 		+ '</span>'
 		+ "<div class='currentColorDict''></div>"
 	);
@@ -229,18 +228,13 @@ export function buildNoteTable(options) {
 	
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
-		var tblCaptionAndTable = $("<table><tr><td class='fretTableTDCaption'></td><td class='fretTableTDSectionMark'></td><td></td></tr></table>");
-			var td1 = tblCaptionAndTable.find('td:first');
-			var td2 = tblCaptionAndTable.find('td:nth-child(2)');
-			var td3 = tblCaptionAndTable.find('td:nth-child(3)');
+		var tbl = $("<table><tr><td class='fretTableTDCaption'></td><td class='fretTableTDSectionMark'></td><td></td></tr></table>");
 			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
 			fretTableLeftCaption.html(options.baseID);
-			td1.append(fretTableLeftCaption);
-			td2.append(sectionMark2);
-			td2.append(relSecRootID2);
-			td2.append(relSecLeadDifferentFromRoot2);
-			td3.append(table);
-	fretTableWrapper.append(tblCaptionAndTable);
+			tbl.find('td:first').append(fretTableLeftCaption);
+			tbl.find('td:nth-child(2)').append(formatKeyBoxes(tableID, "2", true));
+			tbl.find('td:nth-child(3)').append(table);
+	fretTableWrapper.append(tbl);
 	wiringAndFretTable.append(fretTableWrapper);
 
 	let instrumentBackgroundOuter = $("<div>");
@@ -250,19 +244,48 @@ export function buildNoteTable(options) {
 	return instrumentBackgroundOuter;
 }
 
-function formatKeyBoxes(idx,br){
-	var relSecLeadDifferentFromRoot2 = "<span class='lblRootIDLeadRelative' id='relSec2RootIDLead_"+tableID+"'></span>";
-	var relSecRootID2 = '<span class="lblRootIDRelative" id="relSec2RootID_'+tableID+'"></span>';
-	
-	return ` <span id='normalKeys${idx}_${tableID}'>
-		 		<span class='lblRootID'></span>${br}
-		 		<span class='spanLeadDifferentFromRoot'></span>
-		     </span><span id='relativeKeys${idx}_${tableID}'>
-		 		<span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>${br}
-		 		<span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>
-		     </span>
-		   `;
-
+function formatKeyBoxes(tableID, idx, vertical){
+	if (vertical){
+		return `<table>
+				  	<tr>
+						<td class="LooperLightTD">
+							<span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+						</td>
+					</tr>
+				  	<tr id='normalKeys${idx}_${tableID}'>
+						<td>
+							<span class='lblRootID'></span>&nbsp;
+						</td>
+					</tr>
+				  	<tr id='normalKeys${idx}_${tableID}'>
+						<td>
+							<span class='spanLeadDifferentFromRoot'></span>&nbsp;
+						</td>
+					</tr>
+					<tr id='relativeKeys${idx}_${tableID}'>
+						<td>				
+							<span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>&nbsp;
+							</td>
+					</tr>
+				  	<tr id='relativeKeys${idx}_${tableID}'>
+						<td>
+							<span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>&nbsp;
+						</td>
+					</tr>
+				</table>
+			`;
+	} else {
+		return ` 
+				 <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+				 <span id='normalKeys${idx}_${tableID}'>
+					<span class='lblRootID'></span>
+					<span class='spanLeadDifferentFromRoot'></span>
+				 </span><span id='relativeKeys${idx}_${tableID}'>
+					<span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>
+					<span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>
+				 </span>
+			`;	
+	}
 }
 
 export function getJoniTuning(options) {

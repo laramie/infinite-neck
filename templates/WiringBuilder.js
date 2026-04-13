@@ -39,7 +39,9 @@ function buildWiringWidget(tuningID, tablename) {
             $(controlsDiv).find('.editRelativeSection').val("");
         }
     });
-    $(controlsDiv).find('.editRelativeSection').on('change input', function() {
+    const edit = $(controlsDiv).find('.editRelativeSection');
+    edit.id = `${tablename}-edit-relative-section`;
+    edit.on('change input', function() {
         updateWiringButtonStatus(controlsDiv);
     });
 

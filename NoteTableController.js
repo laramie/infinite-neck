@@ -678,7 +678,7 @@ export function replayTable(replayOptions){
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
 
-    $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
+    $('#relSec1_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
     $('#relSec2_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
 
     let nnTablenameSelector = replayOptions.tablename
@@ -695,24 +695,28 @@ export function replayTable(replayOptions){
         relSectionOptions.rootIDLead = replayOptions.currSection.rootIDLead;
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
         
-        let relSecRootIDLead = "relSecRootIDLead_"+replayOptions.tablename;
-        let relSec2RootIDLead = "relSec2RootIDLead_"+replayOptions.tablename;
+        let relSecRootIDLead1 = "relSecRootIDLead1_"+replayOptions.tablename;
+        let relSecRootIDLead2 = "relSecRootIDLead2_"+replayOptions.tablename;
         if (relSectionOptions.rootIDLead > -1 ){
             var keynameLead = getSong().noteIDToNoteName(relSectionOptions.rootIDLead);
-            $('#'+relSecRootIDLead+',#'+relSec2RootIDLead).html(keynameLead).show();
+            $('#'+relSecRootIDLead1+',#'+relSecRootIDLead2).html(keynameLead).show();
         } else {
-            $('#'+relSecRootIDLead+',#'+relSec2RootIDLead).html("").hide();
+            $('#'+relSecRootIDLead1+',#'+relSecRootIDLead2).html("").hide();
         }
-        let relSecRootID = "relSecRootID_"+replayOptions.tablename;
-        let relSec2RootID = "relSec2RootID_"+replayOptions.tablename;
+        let relSecRootID1 = "relSecRootID1_"+replayOptions.tablename;
+        let relSecRootID2 = "relSecRootID2_"+replayOptions.tablename;
         var keyname = getSong().noteIDToNoteName(relSectionOptions.rootID);
-        $('#'+relSecRootID+',#'+relSec2RootID).html(keyname);
+        $('#'+relSecRootID1+',#'+relSecRootID2).html(keyname);
 
-        $('#normalKeys_'+replayOptions.tablename).hide();
-        $('#relativeKeys_'+replayOptions.tablename).show();
+        $('#normalKeys1_'+replayOptions.tablename).hide();
+        $('#normalKeys2_'+replayOptions.tablename).hide();
+        $('#relativeKeys1_'+replayOptions.tablename).show();
+        $('#relativeKeys2_'+replayOptions.tablename).show();
     } else {
-        $('#normalKeys_'+replayOptions.tablename).show();
-        $('#relativeKeys_'+replayOptions.tablename).hide();
+        $('#normalKeys1_'+replayOptions.tablename).show();
+        $('#relativeKeys1_'+replayOptions.tablename).hide();
+        $('#normalKeys2_'+replayOptions.tablename).show();
+        $('#relativeKeys2_'+replayOptions.tablename).hide();
     }
     
     if (!replayOptions.hideNamedNotes){

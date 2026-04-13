@@ -260,6 +260,19 @@ table {
     transform: translateY(3px); /* Move the button down slightly */
 }
 
+.sectionDrawerButton{
+    margin-right: 2px;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+.sectionDrawerButton:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
 .HamburgerClass {
     padding: 6pt;
     margin:0;
@@ -279,9 +292,9 @@ table {
     border-radius: 0.2em;
 }
 
-.floatDockableButton,
-.showcolordict, 
-.showWiringButton {
+.floatDockableButtonOLD,
+.showcolordictOLD, 
+.showWiringButtonOLD {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -297,7 +310,7 @@ table {
 
 .showcolordict img {
     display: block;
-    max-height: 1.2em; /* or adjust as needed for your line height */
+    max-height: 0.7em; /* or adjust as needed for your line height */
     width: auto;
 }
 
@@ -750,6 +763,10 @@ table.viewControls th {
 .LooperLightOn {
     border: 1px solid magenta !important; 
 }
+.LooperLightTD {
+    width: 3em;
+    FFFborder: 1px dashed darkblue;
+}
 
 /***************************** Caption Row Main Page *****************************/
 
@@ -861,6 +878,23 @@ table.viewControls th {
     width: 100%;
     color: gold;
 }
+
+.FOOspanLeadDifferentFromRoot {
+    display:inline;
+    display:none;
+    color: brown;
+    width: 4em;
+    height:2em;
+    padding: 0.2em;
+    font-size:  65%;
+    font-weight: bold;
+    background-color: aqua;
+    border: 1px solid orange;
+    border-radius: 6px;
+    text-align: center;
+    vertical-align: middle;
+}
+.spanLeadDifferentFromRoot,
 .lblRootID,
 .lblRootIDLead,
 .lblRootIDRelative,
@@ -871,20 +905,30 @@ table.viewControls th {
     background-color: #dfd;
     font-size:  75%;
     color: black;
-}
-.lblRootID {
     display: inline-block;
     height: 1.35em;
     width: 1.35em;
     padding-bottom: 0;
 }
-.lblRootIDLead {
+.FFFlblRootID {
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+.lblRootIDLead_active {
+    background-color: aqua;
+}
+.lblRootIDLead_OLD{
     background-color: aqua;
     color: brown;
     display: inline-block;
     height: 1.35em;
     width: 1.35em;
     padding-bottom: 0;
+}
+.spanLeadDifferentFromRoot{
+  background-color: aqua;
 }
 .lblRootIDRelative{
     background-color: rgb(142, 122, 216);
@@ -1038,41 +1082,6 @@ input:read-only,textarea:read-only {
     margin: 0;
 }
 
-
-.captionRow {
-    font-size:  140%;
-}
-.captionRow .tuningBaseIDCaption {
-    font-size: medium;
-    font-weight: normal;
-}
-.captionRow .tuningIDCaption {
-    font-size: inherit;
-    font-weight: bolder;
-}
-.captionRow .subcaption {
-    font-size:  80%;
-}
-.captionRow .lblRootID {
-    font-size:  110%;
-    text-align: center;
-    vertical-align: middle;
-}
-.captionRow .lblRootIDLead {
-    font-size:  110%;
-    text-align: center;
-    vertical-align: middle;
-}
-.tuningReverseCaption {
-    font-weight: bold;
-    border: 2px solid cyan;
-    color: brown;
-    background-color: lightgreen;
-}
-.fretTableLeftCaption {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-}
 
 small {
     font-size:  80%;
@@ -1499,21 +1508,6 @@ However, don't use for Root or other things.
     background-size: cover;
 }
 
-.spanLeadDifferentFromRoot, #lblRootIDLead {
-    display:inline;
-    display:none;
-    color: brown;
-    width: 4em;
-    height:2em;
-    padding: 0.2em;
-    font-size:  65%;
-    font-weight: bold;
-    background-color: aqua;
-    border: 1px solid orange;
-    border-radius: 6px;
-    text-align: center;
-    vertical-align: middle;
-}
 .semitone1, .semitone2, .semitone3, .prebend1, .prebend2, .prebend3, .updown1, .updown2, .updown3 {
    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
    -moz-box-sizing: border-box; /* Firefox, other Gecko */

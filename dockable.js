@@ -152,9 +152,10 @@ export function makeDivDockable(divId) {
     floatWin.style.zIndex = 200;
     //floatWin.style.background = '#96001c';
     floatWin.style.background = 'white';
-    floatWin.style.border = '2px solid #888';
+    floatWin.style.border = '2px solid #0b4803';
     floatWin.style.borderRadius = '12px';
-    floatWin.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';
+    //floatWin.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';
+    floatWin.style.boxShadow = '0 0 6pt 0 maroon';
     floatWin.style.padding = '0';
     floatWin.className = 'toolWindowRounded';
     floatWin.style.display = 'flex';
@@ -172,6 +173,7 @@ export function makeDivDockable(divId) {
     handle.style.background = '#5aff39';
     handle.style.cursor = 'grab';
     handle.style.userSelect = 'none';
+    handle.className = "dockable-handle";
 
     const contentHost = document.createElement('div');
     contentHost.style.flex = '1 1 auto';

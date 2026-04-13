@@ -328,12 +328,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//     Fill, Transport, and Song Caption:
 	    $(".lblRootID").html(keyname);
 		if (getSong().getCurrentSection().rootIDLead != "-1"){
-	        spans.html("lead key: "+keynameLead);
+	        spans.html(keynameLead);
 	        spans.show();
-	        $(".lblRootIDLead").html(keynameLead).show();
+	        $(".lblRootIDLead").html(keynameLead).addClass("lblRootIDLead_active");
 	    } else {
           spans.hide();
-          $(".lblRootIDLead").hide();
+          $(".lblRootIDLead").html("&nbsp;").removeClass("lblRootIDLead_active");
 	    }
 
 		showHideDisplayOptionsPresent();  //also calls SectionDrawerBuilder API.
@@ -924,12 +924,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var wasVisible =  $('.container').is(':visible');
 		$('.container').show();
 		$("#tabledestTopPad").hide();
+		$(".dockable-handle").show();
 		$("#divESCAPE").hide();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
 		$('.container').hide();
 		$("#tabledestTopPad").show();
+		$(".dockable-handle").hide();
 		if (showESCButton){ // undefined ==> false
 			$("#divESCAPE").show();
 		}
@@ -942,6 +944,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().captionsRowShowing = $('.captionRow').is(":visible");
 			$('.captionRow').hide();
 			$("#tabledestTopPad").show();
+			$(".dockable-handle").hide()
 			setWiringOpenState(false); //going fullscreen
 		} else {
 			if (getSong().captionsRowShowing){
@@ -949,6 +952,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			} else {
 				$('.captionRow').hide();
 			}
+			$(".dockable-handle").show()
 			$("#tabledestTopPad").hide();
 			$("#divESCAPE").hide();
 		}
@@ -1359,6 +1363,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$(".showLeftSectionMark").click(function() {
 			$(".fretTableTDSectionMark").toggle();
+		});
+		$(".showTuningDetails").click(function() {
+			$(".spanTuningDetails").toggle();
 		});
 		
 		
