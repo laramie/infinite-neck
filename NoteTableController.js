@@ -10,6 +10,7 @@
 */
 import * as Constants from './Constants.js';
 import {
+	createLookupContext,
     lookupClassForNote,
     lookupUserColorClass
 } from './colorFunctions.js';
@@ -56,6 +57,10 @@ function resetNoteNames() { return notetableProviders.resetNoteNames(); }
 function setNoteClickedCaption(...args) { return notetableProviders.setNoteClickedCaption(...args); }
 function showBeats() { return notetableProviders.showBeats(); }
 function turnOffHiding() { return notetableProviders.turnOffHiding(); }
+
+function createNotetableLookupContext(section = getCurrentSection()) {
+    return createLookupContext({ section });
+}
 
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
@@ -239,6 +244,7 @@ export function colorNote(cell) {
 }
 export function colorNoteInner(cell) {
     let result = {returnCause:Cause.ERROR, tableID: ""};
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -312,7 +318,7 @@ export function colorNoteInner(cell) {
                      "styleNum": styleNum};
 
     if (doIndividualAutomatic){
-        var lookupResult = lookupClassForNote(proxyNote);
+        var lookupResult = lookupClassForNote(proxyNote, lookupContext);
         theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
     }
 
@@ -330,7 +336,7 @@ export function colorNoteInner(cell) {
                 unRecordPlayedNote(tableID, sBeatNum, proxyNote);
                 cell.find('.'+className).attr("class", className).hide();
         } else {
-            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true);
+            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext);
             recordPlayedNote(tableID, sBeatNum, thatNote);
             cell.find('.'+className).addClass("Playback").show();
         }
@@ -355,11 +361,11 @@ export function colorNoteInner(cell) {
                                ||  styleNum == Note.STYLENUM_BEND){
                             handleRecordedNote(tableID, "tinyNote");
                         } else {
-                            colorSingleNotes(cell, theColorClass, styleNum, false);//no recording for namedNote.
+                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext);//no recording for namedNote.
                         }
                     }
                 } else {
-                    colorSingleNotes(cell, theColorClass, styleNum, false); //not sure why we want to drop in here with noteClear.... TODO!
+                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext); //not sure why we want to drop in here with noteClear.... TODO!
                 }
             }
             result.returnCause = Cause.PLAYEDNOTE;
@@ -422,7 +428,7 @@ export function colorNoteInner(cell) {
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
 
-            var automaticColorClass = lookupUserColorClass(note);
+            var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
             getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   
@@ -430,7 +436,7 @@ export function colorNoteInner(cell) {
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
-                styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
+		        styleNamedNote(noteNameElements, lookupUserColorClass(note, lookupContext), noteName);
     		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;
             }
 		}
@@ -489,7 +495,8 @@ export function clearNamedNoteDivs(namedNoteDivs){
 }
 
 
-export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray) {
+export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
+    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection());
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
         var isNut = cell.hasClass("nut") || cell.hasClass("nutR");
@@ -539,18 +546,18 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     var fingeringAlreadyPlayed = false;
     if (styleNum == Note.STYLENUM_TINY){
         textdiv =    jCell.find(".tinyNote");
-        tinyNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+        tinyNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("tinyNote");
         theMidiNotePlayedClass = "tinyNotePlayed";
     } else if (styleNum == Note.STYLENUM_SINGLE){
         textdiv =    jCell.find(".singleNote");
-        singleNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+        singleNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("singleNote");
         textdiv.css("opacity",  getSong().singleNoteOpacity);
         theMidiNotePlayedClass = "singleNotePlayed";
     } else if (styleNum == Note.STYLENUM_FINGERING){
 		textdiv =    jCell.find(".Fingering");
-		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("Fingering");
 		textdiv.show();
 		var radio = $("input:radio[name=rbHighlight]:checked");
@@ -561,7 +568,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 		theMidiNotePlayedClass = "FingeringPlayed";
     } else if (styleNum == Note.STYLENUM_BEND){
         textdiv =    jCell.find(".tinyNote");
-        bendAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+                bendAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("tinyNote");
         theMidiNotePlayedClass = "tinyNotePlayedBend";
         theBendClass = bendValue;
@@ -581,7 +588,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
                     tableArr.push(notePlayed);
                 }
 
-        		textdiv.addClass(lookupUserColorClass(notePlayed));
+	        		textdiv.addClass(lookupUserColorClass(notePlayed, lookupContext));
                 textdiv.addClass(theMidiNotePlayedClass);
                 textdiv.show();//Playback called .hide()
                 if (theBendClass){
@@ -662,6 +669,7 @@ export function replay(){
 }
 
 export function replayTable(replayOptions){
+    const lookupContext = createNotetableLookupContext(replayOptions.currSection);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -688,7 +696,7 @@ export function replayTable(replayOptions){
                     if (!theSelect){
                         console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
                     }
-                    var theColorClass = lookupUserColorClass(namedNote);
+                    var theColorClass = lookupUserColorClass(namedNote, lookupContext);
                     styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
                 });
             }
@@ -733,7 +741,7 @@ export function replayTable(replayOptions){
                     textdiv.show();
                 }
                 if (textdiv && script.colorClass) {
-                    textdiv.addClass(lookupUserColorClass(script));
+                    textdiv.addClass(lookupUserColorClass(script, lookupContext));
                 }
             });
         });
@@ -772,6 +780,7 @@ export function showHighlightsForBeat(nBeat){
 
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
+    const lookupContext = createNotetableLookupContext(options.currSection);
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';
@@ -813,7 +822,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .html(note.finger)  //finger (1234T) shown in cell here.
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_SINGLE){
@@ -821,14 +830,14 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .find("div.singleNote")
                         .addClass("singleNotePlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_TINY){
                     tdNote
                         .find("div.tinyNote")
                         .addClass("tinyNotePlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_BEND){
                     tdNote
@@ -836,7 +845,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass("tinyNotePlayedBend")
                         .addClass("Playback")
                         .addClass(note.bendValue)
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }
             });

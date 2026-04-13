@@ -49,6 +49,34 @@ function fullRepaint() {
 	return colorFunctionsProviders.fullRepaint();
 }
 
+export function createLookupContext({
+	section = getCurrentSection(),
+	autoColor = doingAutomaticColor(),
+	colorDict = gUserColorDict.dict
+} = {}) {
+	return {
+		section,
+		autoColor,
+		colorDict
+	};
+}
+
+function resolveLookupContext(lookupContext = {}) {
+	const context = createLookupContext(lookupContext);
+	if (!context.section) {
+		return {
+			...context,
+			rootID: null,
+			rootIDLead: null
+		};
+	}
+	return {
+		...context,
+		rootID: context.section.rootID,
+		rootIDLead: context.section.rootIDLead
+	};
+}
+
 
 //================== colorDicts ================================================
 
@@ -73,6 +101,7 @@ function fullRepaint() {
 
 	export function recordUserColorsBoth(doSampleSection, doPickerChoices){
 		debugger
+		const lookupContext = createLookupContext();
 		var colorSchemeName = $('#txtColorSchemeName').val();
 		var chosenSystemSchemeName = $('#txtColorSchemeName').attr('systemSchemeName');
 		var cleanResult = clean_ColorSchemeName(colorSchemeName);
@@ -103,7 +132,7 @@ function fullRepaint() {
 						if (cc) {
 							var noteClone = JSON.parse(JSON.stringify(note));
 							noteClone.colorClass = cc;
-							var res = lookupUserColor(noteClone);
+							var res = lookupUserColor(noteClone, lookupContext);
 							var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
 							defClone.colorClass = res.colorClass;
 							colorDict[noteKey] = defClone;
@@ -687,12 +716,13 @@ export function chuseStylesheet(dictkey){
      *       Source in "userColors.js" to get gUserColorDict.dict.
      *****/
 
-	export function lookupUserColorClass(note){  //automaticColorScheme
-		return lookupUserColor(note).colorClass;
+	export function lookupUserColorClass(note, lookupContext){  //automaticColorScheme
+		return lookupUserColor(note, lookupContext).colorClass;
 	}
-	export function lookupUserColor(note){  //automaticColorScheme
-		if (doingAutomaticColor()){
-			var res = lookupClassForNote(note);
+	export function lookupUserColor(note, lookupContext){  //automaticColorScheme
+		const context = resolveLookupContext(lookupContext);
+		if (context.autoColor){
+			var res = lookupClassForNote(note, context);
 			if (res) {
 				// console.log("automatic userColor["+note.colorClass+"] -->"+res.colorClass);
 				return res;
@@ -700,11 +730,12 @@ export function chuseStylesheet(dictkey){
 				// console.log("automatic userColor["+note.colorClass+"]not found.");
 			}
 		}
-		return {"colorClass":lookupUserColorClassByClass(note.colorClass), "functionNum":null};
+		return {"colorClass":lookupUserColorClassByClass(note.colorClass, context), "functionNum":null};
 	}
 
-	export function lookupUserColorClassByClass(theColorClass){
-		var userColor = gUserColorDict.dict[theColorClass];
+	export function lookupUserColorClassByClass(theColorClass, lookupContext){
+		const context = resolveLookupContext(lookupContext);
+		var userColor = context.colorDict[theColorClass];
 		if (!userColor){
 			//console.log("userColor["+theColorClass+"]==null -->"+theColorClass);
 			return theColorClass;
@@ -713,15 +744,16 @@ export function chuseStylesheet(dictkey){
 		return userColor.colorClass;
 	}
 
-	export function lookupClassForNote(note){
+	export function lookupClassForNote(note, lookupContext){
+		const context = resolveLookupContext(lookupContext);
 		var result = {};
 		var theRootID;
 		switch (note.styleNum){
 			case Note.STYLENUM_BEND:
 			case Note.STYLENUM_TINY:
-				theRootID = getCurrentSection().rootIDLead;
+				theRootID = context.rootIDLead;
 				if (!theRootID || theRootID == "-1"){
-					theRootID = getCurrentSection().rootID;
+					theRootID = context.rootID;
 				}
 				break;
 			case Note.STYLENUM_NAMED:
@@ -729,10 +761,10 @@ export function chuseStylesheet(dictkey){
 			case Note.STYLENUM_MIDIPITCHES:
 			case Note.STYLENUM_MIDIPITCHESSINGLE:
 			case Note.STYLENUM_FINGERING:
-				theRootID = getCurrentSection().rootID;
+				theRootID = context.rootID;
 				break;
 			default:
-				theRootID = getCurrentSection().rootID;
+				theRootID = context.rootID;
 		}
 		if (!note.noteName){
 			return null;  
@@ -753,7 +785,7 @@ export function chuseStylesheet(dictkey){
 		var relNoteNum = (12 + noteNum - theRootID) % 12; //the function number: Tau is 1.  0-based: 0==first note of scale
 
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
-		var userColor = gUserColorDict.dict[notePlusNumKey];
+		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
 			result.colorClass = userColor.colorClass;
 			result.functionNum = relNoteNum;
