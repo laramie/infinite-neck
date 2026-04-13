@@ -32,7 +32,11 @@ import {
 	toInt
 } from './utils.js';
 import EventBus from './event-bus.js';
-import { appInit_running } from './infinite-neck.js';
+import { 
+    appInit_running,
+    controlsToDisplayOptions,
+    buildCellsForTable
+} from './infinite-neck.js';
 
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
@@ -675,12 +679,41 @@ export function replayTable(replayOptions){
                                 : "";
 
     $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
+    $('#relSec2_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
 
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
     let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
+
+    if (replayOptions.type === ReplayOptions.RELATIVE){
+        let defaultDisplayOptions = controlsToDisplayOptions();
+        let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
+        relSectionOptions.sharps = replayOptions.currSection.sharps;
+        relSectionOptions.rootID = replayOptions.currSection.rootID;
+        relSectionOptions.rootIDLead = replayOptions.currSection.rootIDLead;
+        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
+        
+        let relSecRootIDLead = "relSecRootIDLead_"+replayOptions.tablename;
+        let relSec2RootIDLead = "relSec2RootIDLead_"+replayOptions.tablename;
+        if (relSectionOptions.rootIDLead > -1 ){
+            var keynameLead = getSong().noteIDToNoteName(relSectionOptions.rootIDLead);
+            $('#'+relSecRootIDLead+',#'+relSec2RootIDLead).html(keynameLead).show();
+        } else {
+            $('#'+relSecRootIDLead+',#'+relSec2RootIDLead).html("").hide();
+        }
+        let relSecRootID = "relSecRootID_"+replayOptions.tablename;
+        let relSec2RootID = "relSec2RootID_"+replayOptions.tablename;
+        var keyname = getSong().noteIDToNoteName(relSectionOptions.rootID);
+        $('#'+relSecRootID+',#'+relSec2RootID).html(keyname);
+
+        $('#normalKeys_'+replayOptions.tablename).hide();
+        $('#relativeKeys_'+replayOptions.tablename).show();
+    } else {
+        $('#normalKeys_'+replayOptions.tablename).show();
+        $('#relativeKeys_'+replayOptions.tablename).hide();
+    }
     
     if (!replayOptions.hideNamedNotes){
         if (replayOptions.currSection.sectionNotesByTable && replayOptions.currSection.sectionNotesByTable[listenToTablename]){

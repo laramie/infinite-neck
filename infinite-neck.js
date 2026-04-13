@@ -444,6 +444,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		resetFlatsControls();
 	}
 
+	/*******  Call Graph *******************
+	 
+	 NoteTableController.fullRepaint
+		resetNoteNames
+
+	 infinite-neck.setSectionKeysFlats
+	 	resetNoteNames
+	 
+	 clearAndReplaySection
+		resetNoteNames //also called by every GUI control...
+			options {rootID, rootIDLead, cellIsFunction
+			resetSharps(options)
+				buildCells
+					theVisibleNoteTables.forEach(tableID => {
+						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
+				resetSharpsControls
+			resetFlats(options)
+				buildCells
+					theVisibleNoteTables.forEach(tableID => {
+						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
+				resetFlatsControls
+			replay()	
+	**************************************/
 
 	export function resetNoteNames() {
 	    let options = {};
@@ -495,37 +518,36 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function buildCells(sharps, options) {
 		updateMemoryModelPreFileSave();
-		//console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
 		let theVisibleNoteTables = getSong().visibleNoteTables;
 		theVisibleNoteTables.forEach(tableID => {
-		    buildCellsForTable(sharps, options, `#${tableID}`);
+		    buildCellsForTable(sharps, options, tableID);
 		});
 	}
 	export function buildCellsForTable(sharps, options, tableID=""){
 		let tableID_prefix = "";
 		if (tableID){
-			tableID_prefix = tableID + ' ';
+			tableID_prefix = '#'+tableID + ' ';
 		}
 		if (sharps) {
 			buildCellsFromSelector(tableID_prefix+"td.noteAb", "G", SHARP, 11, options);
-			buildCellsFromSelector("td.noteBb", "A", SHARP, 1, options);
-			buildCellsFromSelector("td.noteDb", "C", SHARP, 4, options);
-			buildCellsFromSelector("td.noteEb", "D", SHARP, 6, options);
-			buildCellsFromSelector("td.noteGb", "F", SHARP, 9, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteBb", "A", SHARP, 1, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteDb", "C", SHARP, 4, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteEb", "D", SHARP, 6, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteGb", "F", SHARP, 9, options);
 		} else {
 			buildCellsFromSelector(tableID_prefix+"td.noteAb","A", FLAT, 11, options);
-			buildCellsFromSelector("td.noteBb","B", FLAT, 1, options);
-			buildCellsFromSelector("td.noteDb","D", FLAT, 4, options);
-			buildCellsFromSelector("td.noteEb","E", FLAT, 6, options);
-			buildCellsFromSelector("td.noteGb","G", FLAT, 9, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteBb","B", FLAT, 1, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteDb","D", FLAT, 4, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteEb","E", FLAT, 6, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteGb","G", FLAT, 9, options);
 		}
-		buildCellsFromSelector("td.noteA","A", NATURAL, 0, options);
-		buildCellsFromSelector("td.noteB","B", NATURAL, 2, options);
-		buildCellsFromSelector("td.noteC","C", NATURAL, 3, options);
-		buildCellsFromSelector("td.noteD","D", NATURAL, 5, options);
-		buildCellsFromSelector("td.noteE","E", NATURAL, 7, options);
-		buildCellsFromSelector("td.noteF","F", NATURAL, 8, options);
-		buildCellsFromSelector("td.noteG","G", NATURAL, 10, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteA","A", NATURAL, 0, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteB","B", NATURAL, 2, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteC","C", NATURAL, 3, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteD","D", NATURAL, 5, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteE","E", NATURAL, 7, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteF","F", NATURAL, 8, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteG","G", NATURAL, 10, options);
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,
@@ -1332,6 +1354,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$dicts.removeClass("largeColorDict").hide();
 			}
 		});
+		$(".showLeftCaption").click(function() {
+			$(".fretTableTDCaption").toggle();
+		});
+		$(".showLeftSectionMark").click(function() {
+			$(".fretTableTDSectionMark").toggle();
+		});
+		
+		
+
+
 		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
 		$(".showWiringButton").click(function() {
 			toggleWiringOpenState();

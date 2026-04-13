@@ -812,6 +812,23 @@ export class Song extends SongPersistence {
 
     //=============== Model Management/Cleanup Functions ==========================================
 
+    /** call with defaultDisplayOptions = infinite-neck:controlsToDisplayOptions() */
+    getDisplayOptionsInEffect(currSection, defaultDisplayOptions){
+        // Start at currSection and walk backwards through song.sections
+        let idx = this.sections.indexOf(currSection);
+        if (idx === -1) {
+            // currSection not found, fallback to default
+            return defaultDisplayOptions;
+        }
+        for (let i = idx; i >= 0; i--) {
+            const section = this.sections[i];
+            if (section && section.displayOptions) {
+                return section.displayOptions;
+            }
+        }
+        return defaultDisplayOptions;
+    }
+
     //This function works: it transposes every Section in a Song by 'amount', but I haven't installed it in the menu yet.
     cycleThruKeysAllSections(amount){
         var sections = this.getSections();

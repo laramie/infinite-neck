@@ -862,7 +862,9 @@ table.viewControls th {
     color: gold;
 }
 .lblRootID,
-.lblRootIDLead {
+.lblRootIDLead,
+.lblRootIDRelative,
+.lblRootIDLeadRelative {
     box-shadow: inset 2px 2px 5px 2px #555;
     border-radius: 4px;
     padding: 0.2em;
@@ -883,6 +885,12 @@ table.viewControls th {
     height: 1.35em;
     width: 1.35em;
     padding-bottom: 0;
+}
+.lblRootIDRelative{
+    background-color: rgb(142, 122, 216);
+}
+.lblRootIDLeadRelative {
+    background-color: aqua;
 }
 
 .toolWindowRounded {
@@ -1060,6 +1068,10 @@ input:read-only,textarea:read-only {
     border: 2px solid cyan;
     color: brown;
     background-color: lightgreen;
+}
+.fretTableLeftCaption {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
 }
 
 small {
