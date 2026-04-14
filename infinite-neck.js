@@ -291,8 +291,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			displayOptionsToControls(options);
 		}
 		showHideDisplayOptionsPresent();
-	    getSong().gotoFirstBeat();
-	    showHighlightsForBeat(getSong().getBeat());
+	    //getSong().gotoFirstBeat();
+		//replay();
+	    //showHighlightsForBeat(getSong().getBeat());
+		clearAndReplaySection()
 	    updateSectionsStatus();
 		SectionDrawerBuilder.sectionChanged();
 	}
@@ -1566,9 +1568,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		$("#btnDownload").click(function() {
 		    downloadPlayedNotes();
-		});
-		$("#btnReplay").click(function() {
-		    replay();
 		});
 		$("#btnPrevSection, #btnPrevSection2").click(function() {
 		    getSong().gotoPrevSection(false);
