@@ -12,7 +12,7 @@ For further details, please refer to the following documents:
 - [Command Menu Programmer's Reference](_doco/design/command-menu-programmers-reference.md)
 - [TODO](_doco/lifecycle/TODO.md)
 - [CHANGELOG](_doco/lifecycle/CHANGELOG.md)
-- Software Lifecycle](_doco/lifecycle/index.md)
+- [Software Lifecycle](_doco/lifecycle/index.md)
 
 
 ## Developer maintenance notes
