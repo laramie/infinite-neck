@@ -165,13 +165,13 @@ export function buildNoteTable(options) {
 	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
 	//var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' ><img src='img/colordictThumbnail.png'></button>";
-	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict sectionDrawerButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
-	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption sectionDrawerButton' type='button' >C</button>";
-	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark sectionDrawerButton' type='button' >S</button>";
-	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails sectionDrawerButton' type='button' >T<small>uning</small></button>";
+	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
+	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' >C</button>";
+	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' >S</button>";
+	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
 	
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
-	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton sectionDrawerButton' type='button' tabindex='-1'>W<small>iring</small></button>";
+	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton subcaptionButton' type='button' tabindex='-1'>W<small>iring</small></button>";
 
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
@@ -183,7 +183,7 @@ export function buildNoteTable(options) {
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
-	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="sectionDrawerButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	captionRow.html(
 		hamburger 

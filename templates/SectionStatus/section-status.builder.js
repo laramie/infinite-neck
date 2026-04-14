@@ -1,7 +1,6 @@
-// SectionStatus Widget Builder and Registry
-// Location: templates/SectionStatus/section-status.builder.js
+import EventBus from '../../event-bus.js';
 
-class SectionStatusBuilder {
+export class SectionStatusBuilder {
     static registry = new Map(); // ownerID -> array of widgets
 
     /**

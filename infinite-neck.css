@@ -260,19 +260,6 @@ table {
     transform: translateY(3px); /* Move the button down slightly */
 }
 
-.sectionDrawerButton{
-    margin-right: 2px;
-    font-size: 80%;
-    box-shadow: 5px 2px 4px black;
-    border-radius: 2px;
-    border: 1px solid gray;
-    transition: all 0.1s ease;
-}
-.sectionDrawerButton:active {
-    box-shadow: 5px 1px 3px rgb(31, 62, 0);
-    transform: translateY(3px); /* Move the button down slightly */
-}
-
 .HamburgerClass {
     padding: 6pt;
     margin:0;

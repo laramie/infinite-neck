@@ -102,6 +102,7 @@ import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
+import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 
 // If running in a browser, call appInit() on DOM ready
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
@@ -291,9 +292,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			displayOptionsToControls(options);
 		}
 		showHideDisplayOptionsPresent();
-	    //getSong().gotoFirstBeat();
-		//replay();
-	    //showHighlightsForBeat(getSong().getBeat());
 		clearAndReplaySection()
 	    updateSectionsStatus();
 		SectionDrawerBuilder.sectionChanged();
@@ -2069,6 +2067,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadTemplates('templates/section-drawer.html').then(() => {
 				SectionDrawerBuilder.addToDest("#spanSectionDrawer");
 				sectionChanged();
+			}),
+
+			loadTemplates('templates/SectionStatus/section-status.html').then(() => {
+				SectionStatusBuilder.addToDest('#divSectionStatus_LeadSheet', 'leadsheet', 'caption', 'horizontal');
 			})
 		];
 		Promise.all(promises).then(() => {

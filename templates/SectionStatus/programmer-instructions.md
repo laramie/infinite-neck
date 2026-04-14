@@ -1,10 +1,19 @@
 # SectionStatus Widget Programmer Instructions
 
+- see also: [Design discussion about templates, widgets, and SectionStatus widget](../../_doco/design/widget-design-SectionStatus.md)
+
 ## 1. CSS Inclusion
 Add this to your `<head>` in `index.html`:
 
 ```
 <link rel="stylesheet" type="text/css" href="templates/SectionStatus/section-status.css" />
+```
+
+## 1.5 Import
+Add import into `infinite-neck.js`
+
+```
+import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 ```
 
 ## 2. Template Loading (in your appInit or similar):

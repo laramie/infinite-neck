@@ -130,6 +130,20 @@ instrumentBackground .captionRow {
     padding-left: 0.5em;
 }
 
+.subcaptionButton{
+    margin-right: 2px;
+    font-size: 100%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+.subcaptionButton:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+
 .captionRow .lblRootID {
     font-size:  110%;
     text-align: center;
@@ -208,4 +222,8 @@ instrumentBackground .captionRow {
 /* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
 .leftmarginInstrument {
     margin-left: 110px; /* same as td.note */
+}
+
+.spanTuningDetails {
+    display: none;
 }
