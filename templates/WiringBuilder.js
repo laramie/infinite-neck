@@ -1,4 +1,4 @@
-import { 
+import {
     getSong,
     restoreWiringOpenState
 } from '../infinite-neck.js';
@@ -30,7 +30,7 @@ function buildWiringWidget(tuningID, tablename) {
         updateWiringButtonStatus(controlsDiv);
     });
 
-    $(controlsDiv).find('.selTablename').on('change', function() {
+    $(controlsDiv).find('.selTablename').on('change', function () {
         updateWiringButtonStatus(controlsDiv);
         // If the new value is "" (none), remove the wiring for thisTablename, and empty the Relative Section Amount.
         if ($(this).val() === "") {
@@ -41,7 +41,7 @@ function buildWiringWidget(tuningID, tablename) {
     });
     const edit = $(controlsDiv).find('.editRelativeSection');
     edit.id = `${tablename}-edit-relative-section`;
-    edit.on('change input', function() {
+    edit.on('change input', function () {
         updateWiringButtonStatus(controlsDiv);
     });
 
@@ -56,7 +56,7 @@ export function addWiringWidget(tuningID, tablename) {
 export function updateAllWiringSelects() {
     const tuningIDs = getSong().getVisibleTunings();
     const wirings = getSong().wirings;
-    $('.Wiring-controls').each(function() {
+    $('.Wiring-controls').each(function () {
         const thisTable = $(this).find('.thisTablename').data('tablename');
         const sel = $(this).find('.selTablename');
         const editRelativeSection = $(this).find('.editRelativeSection');

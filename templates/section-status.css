@@ -1,0 +1,48 @@
+/** TODO: move these out of infinite-neck.css before testing, after implementation. **/
+.LooperLight {
+    border: 1px solid green; 
+}
+.LooperLightOn {
+    border: 1px solid magenta !important; 
+}
+.LooperLightTD {
+    width: 3em;
+}
+
+.spanLeadDifferentFromRoot,
+.lblRootID,
+.lblRootIDLead,
+.lblRootIDRelative,
+.lblRootIDLeadRelative {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    padding: 0.2em;
+    background-color: #dfd;
+    font-size:  75%;
+    color: black;
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+
+.lblRootIDLead_active {
+    background-color: aqua;
+}
+.lblRootIDLead_OLD{
+    background-color: aqua;
+    color: brown;
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+.spanLeadDifferentFromRoot{
+  background-color: aqua;
+}
+.lblRootIDRelative{
+    background-color: rgb(142, 122, 216);
+}
+.lblRootIDLeadRelative {
+    background-color: aqua;
+}

@@ -1,0 +1,44 @@
+<template id="section-status-vertical-template">
+    <span class="section-status-vertical-widget" data-tablename="">
+        <table>
+            <tr>
+                <td class="LooperLightTD">
+                    <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+                </td>
+            </tr>
+            <tr id='normalKeys${idx}_${tableID}'>
+                <td>
+                    <span class='lblRootID'></span>&nbsp;
+                </td>
+            </tr>
+            <tr id='normalKeys${idx}_${tableID}'>
+                <td>
+                    <span class='spanLeadDifferentFromRoot'></span>&nbsp;
+                </td>
+            </tr>
+            <tr id='relativeKeys${idx}_${tableID}'>
+                <td>				
+                    <span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>&nbsp;
+                    </td>
+            </tr>
+            <tr id='relativeKeys${idx}_${tableID}'>
+                <td>
+                    <span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>&nbsp;
+                </td>
+            </tr>
+        </table>
+    </span>
+</template>
+
+<template id="section-status-horizontal-template">
+    <span class="section-status-horizontal-widget">
+        <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+        <span id='normalKeys${idx}_${tableID}'>
+            <span class='lblRootID'></span>
+            <span class='spanLeadDifferentFromRoot'></span>
+        </span><span id='relativeKeys${idx}_${tableID}'>
+            <span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>
+            <span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>
+        </span>
+    </span>
+</template>
