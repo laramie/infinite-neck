@@ -694,6 +694,24 @@ export function replayTable(replayOptions){
         relSectionOptions.rootID = replayOptions.currSection.rootID;
         relSectionOptions.rootIDLead = replayOptions.currSection.rootIDLead;
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
+
+        //Don't need to send looping status, since that is a css class broadcast through 
+        //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
+        let ssWidget = SectionStatusBuilder.lookupWidget(replayOptions.tablename);
+        // You could send message to tableID, because the widget knows if it is bound to a table that might be in "observer" mode.
+        EventBus.trigger("Widget:SectionStatus:sectionUpdate",
+                            {
+                                widgetID: ssWidget.ownerID,
+                                ownerID: replayOptions.tablename, 
+                                rootKey: getSong().noteIDToNoteName(relSectionOptions.rootID),
+                                rootKeyLead: getSong().noteIDToNoteName(relSectionOptions.rootIDLead),
+                                ReplayType: SectionStatusBuilder.ReplayOptions.RELATIVE,
+                                relativeSection: replayOptions.relativeSection,
+                                sectionNumber: replayOptions.sectionIndex+1
+                            }
+                        );
+
+
         
         let relSecRootIDLead1 = "relSecRootIDLead1_"+replayOptions.tablename;
         let relSecRootIDLead2 = "relSecRootIDLead2_"+replayOptions.tablename;

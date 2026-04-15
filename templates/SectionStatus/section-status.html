@@ -1,9 +1,9 @@
 <template id="section-status-vertical-template">
-    <span class="section-status-vertical-widget" data-tablename="">
+    <span id="${widgetID}" class="section-status-vertical-widget" data-tablename="${ownerID}">
         <table>
             <tr>
                 <td class="LooperLightTD">
-                    <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+                    <span class="instrumentSectionBox ${LooperLight}"'></span>
                 </td>
             </tr>
             <tr id='normalKeys${idx}_${tableID}'>
@@ -30,15 +30,23 @@
     </span>
 </template>
 
-<template id="section-status-horizontal-template">
-    <span class="section-status-horizontal-widget">
-        <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
-        <span id='normalKeys${idx}_${tableID}'>
-            <span class='lblRootID'></span>
-            <span class='spanLeadDifferentFromRoot'></span>
-        </span><span id='relativeKeys${idx}_${tableID}'>
-            <span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>
-            <span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>
+<!-- when we are done, kill these:
+ 
+    infinite-neck.css :: .lblSectionmark
+    index.html :: topControlsCaptions :: lblSectionmark, lblSectionsStatusSectionNo, lblSectionNumber
+    instrument.css :: instrumentSectionMark (this should now be in section-status.css)
+
+    infinite-neck.js ::
+      export function updateSectionsStatus(){
+		//These should be in #topControlsCaptions in index.html
+	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
+-->
+<template id="${widgetID}" class="section-status-horizontal-widget" data-tablename="${ownerID}">
+        <span class="instrumentSectionBox ${LooperLight}">
+            <span class='relativeSectionLabel'>${relativeSection}</span>
+            <span class="instrumentSectionMark">&sect;</span>
+            <span class="lblSectionsStatusSectionNo"></span>
         </span>
-    </span>
+        <span class='lblRootID'></span>
+        <span class='spanLeadDifferentFromRoot'></span>
 </template>

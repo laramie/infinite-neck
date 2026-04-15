@@ -3,6 +3,14 @@ import EventBus from '../../event-bus.js';
 export class SectionStatusBuilder {
     static registry = new Map(); // ownerID -> array of widgets
 
+    static ReplayOptions = Object.freeze({   //Keep in sync with NoteTableController.ReplayOptions to avoid an import.
+        RELATIVE: 'RELATIVE',
+        SELF: 'SELF',
+        LISTENER: 'LISTENER'
+    });
+
+    static MAGIC_BROADCAST_CSS_CLASS_LooperLight = "LooperLight"; //this is a broadcast from infinite-neck::showLoopSectionsStarted() and showLoopSectionsStopped() which sets css class "LooperLightOn"
+
     /**
      * Create and register a SectionStatusWidget.
      * @param {string} destSelector - CSS selector for destination element (must be unique)
@@ -54,6 +62,7 @@ class SectionStatusWidget {
         this.widgetID = `${ownerID}_${placementID}_SectionStatus`;
         this.container = document.querySelector(destSelector);
         this.eventHandlers = [];
+        debugger
         this.render();
         this.subscribeEvents();
     }
@@ -66,26 +75,26 @@ class SectionStatusWidget {
             : 'section-status-horizontal-template';
         const tpl = document.getElementById(tplId);
         if (!tpl) return;
-        const node = tpl.content.cloneNode(true);
-        // For now, idx is always 0; can be extended as needed
-        this.replaceTemplateVars(node, { idx: 0, tableID: this.ownerID });
-        this.container.appendChild(node);
+        const vars = {widgetID: this.widgetID, 
+            tableID: this.ownerID, 
+            placementID: this.placementID, 
+            idx: 0,
+            LooperLight: MAGIC_BROADCAST_CSS_CLASS_LooperLight
+        };
+        let replaced = this.expandTemplate(tpl.innerHTML, vars);
+        console.log("=====replaceTemplate innerHTML: "+tpl.innerHTML);
+        console.log("=====replaceTemplate replaced: "+replaced);
+        this.container.innerHTML = replaced;
         this.container.dataset.widgetId = this.widgetID;
     }
 
-    replaceTemplateVars(node, vars) {
-        // Recursively replace ${var} in all attributes and text nodes
-        const walk = (el) => {
-            if (el.nodeType === Node.ELEMENT_NODE) {
-                for (const attr of el.attributes) {
-                    attr.value = attr.value.replace(/\$\{(\w+)\}/g, (_, k) => vars[k] ?? '');
-                }
-                for (const child of el.childNodes) walk(child);
-            } else if (el.nodeType === Node.TEXT_NODE) {
-                el.textContent = el.textContent.replace(/\$\{(\w+)\}/g, (_, k) => vars[k] ?? '');
-            }
+    expandTemplate (templateString, vars){ 
+        const expandRuntime = (str, values) => {
+            const keys = Object.keys(values);
+            const vals = Object.values(values);
+            return new Function(...keys, `return \`${str}\`;`)(...vals);
         };
-        walk(node);
+        return expandRuntime(templateString, vars); 
     }
 
     subscribeEvents() {
