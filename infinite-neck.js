@@ -1358,7 +1358,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(".fretTableTDCaption").toggle();
 		});
 		$(".showLeftSectionMark").click(function() {
-			$(".fretTableTDSectionMark").toggle();
+			$(".LooperLightTD").toggle();
 		});
 		$(".showTuningDetails").click(function() {
 			$(".spanTuningDetails").toggle();
