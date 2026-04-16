@@ -1,29 +1,35 @@
 <template id="section-status-vertical-template">
     <span id="${widgetID}" class="section-status-vertical-widget" data-tablename="${ownerID}">
-        <table>
+        <table class="section-status-vertical-table">
             <tr>
-                <td class="LooperLightTD">
-                    <span class="instrumentSectionBox ${LooperLight}"'></span>
+                <td class="instrumentSectionBox ${LooperLight}">
+                    <table class="section-status-vertical-table-inner">
+                        <tr>
+                            <td class="LooperLightTD">
+                                <span class='SectionStatus_relativeSection'></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="instrumentSectionMark">&sect;</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="SectionsStatus_SectionNumber"></span>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
-            <tr id='normalKeys${idx}_${tableID}'>
+            <tr>
                 <td>
-                    <span class='lblRootID'></span>&nbsp;
+                    <span class='SectionStatus_rootKey'></span>
                 </td>
             </tr>
-            <tr id='normalKeys${idx}_${tableID}'>
+            <tr>
                 <td>
-                    <span class='spanLeadDifferentFromRoot'></span>&nbsp;
-                </td>
-            </tr>
-            <tr id='relativeKeys${idx}_${tableID}'>
-                <td>				
-                    <span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>&nbsp;
-                    </td>
-            </tr>
-            <tr id='relativeKeys${idx}_${tableID}'>
-                <td>
-                    <span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>&nbsp;
+                    <span class='SectionStatus_rootKeyLead'></span>
                 </td>
             </tr>
         </table>
@@ -41,12 +47,26 @@
 		//These should be in #topControlsCaptions in index.html
 	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 -->
-<template id="${widgetID}" class="section-status-horizontal-widget" data-tablename="${ownerID}">
+<template id="section-status-horizontal-template">
+    <span id="${widgetID}" class="section-status-horizontal-widget" data-tablename="${ownerID}">
         <span class="instrumentSectionBox ${LooperLight}">
-            <span class='relativeSectionLabel'>${relativeSection}</span>
+            <span class='SectionStatus_relativeSection'></span>
+            <span class="instrumentSectionMark">&sect;</span>
+            <span class="SectionsStatus_SectionNumber"></span>
+        </span>
+        <span class='SectionStatus_rootKey'></span>
+        <span class='SectionStatus_rootKeyLead'></span>
+    </span>
+</template>
+
+<template id="section-status-horizontal-template-WORKED_THE_OLD_WAY">
+    <span id="${widgetID}" class="section-status-horizontal-widget" data-tablename="${ownerID}">
+        <span class="instrumentSectionBox ${LooperLight}">
+            <span class='relativeSectionLabel'></span>
             <span class="instrumentSectionMark">&sect;</span>
             <span class="lblSectionsStatusSectionNo"></span>
         </span>
         <span class='lblRootID'></span>
         <span class='spanLeadDifferentFromRoot'></span>
+    </span>
 </template>

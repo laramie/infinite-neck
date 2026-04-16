@@ -473,10 +473,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    let rootID = getCurrentSection().rootID;
 		let rootIDLead = getCurrentSection().rootIDLead;
 	    getSong().sharps = getCurrentSection().sharps;
-		console.log("==================in resetNoteNames=================="
-					+ `rootID: ${rootID} rootIDLead: ${rootIDLead}`
-					+ (new Error('in resetNoteNames stack trace')).stack
-		);
 	    if (rootID!=null && ((""+rootID).length>0)) {
 	        options.rootID = rootID;
 			options.rootIDLead = rootIDLead;
@@ -680,7 +676,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function downloadBackupThenClearGraveyard(){
 		downloadPlayedNotes();
 		getSong().graveyard.clear();
-		showMessages(getSong().graveyard.buildGraveyardTable()); // No change: buildNoteTable is not a TableBuilder method here
+		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	//==================== 3) File open/save and persistence ==================
@@ -704,7 +700,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		const blob = new Blob([text], {type: "application/json"});
 		const url = URL.createObjectURL(blob);
-		a.setAttribute("href", url)
+		a.setAttribute("href", url);
 	    a.setAttribute("download", fname+".json");   // HTML5 property, to force browser to download it.
 	    a.click();
 	    hideAllMenuDivs();

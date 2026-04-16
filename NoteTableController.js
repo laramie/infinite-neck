@@ -10,6 +10,12 @@
 */
 import * as Constants from './Constants.js';
 import {
+	toInt
+} from './utils.js';
+import {
+	ReplayOptions
+} from './ReplayOptions.js';
+import {
 	createLookupContext,
     lookupClassForNote,
     lookupUserColorClass
@@ -28,9 +34,6 @@ import {
     unRecordPlayedNote
 } from './section-recorder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
-import {
-	toInt
-} from './utils.js';
 import EventBus from './event-bus.js';
 import { 
     appInit_running,
@@ -607,26 +610,29 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 //=================================REPLAY========================================
 
 
-export const ReplayOptions = Object.freeze({
-    RELATIVE: 'RELATIVE',
-    SELF: 'SELF',
-    LISTENER: 'LISTENER'
-});
+
 
 export function getReplayOptionsArray(){
-    let resultOptionsArray = [];
-    let baseopts = {};
-    baseopts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
-    baseopts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-    baseopts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-    baseopts.hideFingering   = $("#cbHideFingering").prop("checked");
-
     function freshOpts(baseopts, tablename){
         let opts = {};
         Object.assign(opts, baseopts);
         opts.tablename = tablename; //e.g. Constants.TABLE_ID_PREFIX+"S6_1";
         return opts;
     }
+    function applyCurrentSectionOpts(opts){
+        opts.sharps =      opts.currSection.sharps;
+        opts.rootID =      opts.currSection.rootID;
+        opts.rootIDLead =  opts.currSection.rootIDLead;
+        opts.rootKey =     getSong().noteIDToNoteName(opts.rootID);
+        opts.rootKeyLead = getSong().noteIDToNoteName(opts.rootIDLead);                         
+    }
+    
+    let resultOptionsArray = [];
+    let baseopts = {};
+    baseopts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
+    baseopts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+    baseopts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+    baseopts.hideFingering   = $("#cbHideFingering").prop("checked");
 
     let visibleTables = getSong().getVisibleTunings();
     visibleTables.forEach(tablename =>{
@@ -637,39 +643,44 @@ export function getReplayOptionsArray(){
             opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
-            opts.type = ReplayOptions.RELATIVE;
+            opts.type = ReplayOptions.Type.RELATIVE;
             opts.directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
+            applyCurrentSectionOpts(opts);
             resultOptionsArray.push(opts);
         } else {
+            let opts = freshOpts(baseopts, tablename);
+            opts.currSection = getCurrentSection();
+            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            opts.listenToTablename = tablename;
+            opts.type = ReplayOptions.Type.SELF;
+            applyCurrentSectionOpts(opts);
+            resultOptionsArray.push(opts);
+            //Now add a LISTENER if present on top of SELF, which means SectionStatus widgets show LISTENER values, and notes in SELF get clobbered and you see SELF notes only if listenTo is not playing them.
             if (wiring && wiring.listenToTablename) {
                 let listenerOpts = freshOpts(baseopts, tablename);
                 listenerOpts.currSection = getCurrentSection();
                 listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerOpts.currSection);
                 listenerOpts.listenToTablename = wiring.listenToTablename;
-                listenerOpts.type = ReplayOptions.LISTENER;
+                listenerOpts.type = ReplayOptions.Type.LISTENER;
+                applyCurrentSectionOpts(listenerOpts);
                 resultOptionsArray.push(listenerOpts);
             }
-            let opts = freshOpts(baseopts, tablename);
-            opts.currSection = getCurrentSection();
-            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
-            opts.listenToTablename = tablename;
-            opts.type = ReplayOptions.SELF;
-            resultOptionsArray.push(opts);
+ 
         }
     });
     return resultOptionsArray;
 }
 
+/** You will get back an array of opts:
+      if wiring.relativeSection, there will be one opts, meaning replay() will be called once.
+      if wiring. listenToTablename and not relativeSection, you will get two, 
+          meaning replay() will be called first for your listenToTablename, then once for your own tablename.
+*/    
 export function replay(){
     let optsArray = getReplayOptionsArray();
-    //You will get back an array of opts:
-    //  if wiring.relativeSection, there will be one opts, meaning replay() will be called once.
-    //  if wiring. listenToTablename and not relativeSection, you will get two, 
-    //      meaning replay() will be called first for your listenToTablename, then once for your own tablename.
     optsArray.forEach(opts => {
         replayTable(opts);
     });
-
 }
 
 export function replayTable(replayOptions){
@@ -687,33 +698,30 @@ export function replayTable(replayOptions){
     let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
 
-    if (replayOptions.type === ReplayOptions.RELATIVE){
+    if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
         let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
-        relSectionOptions.sharps = replayOptions.currSection.sharps;
-        relSectionOptions.rootID = replayOptions.currSection.rootID;
-        relSectionOptions.rootIDLead = replayOptions.currSection.rootIDLead;
+        //relSectionOptions.sharps = replayOptions.sharps;
+        //relSectionOptions.rootID = replayOptions.rootID;
+        //relSectionOptions.rootIDLead = replayOptions.rootIDLead;
+        // Merge replayOptions into relSectionOptions, warn if overwriting
+        /*Object.keys(replayOptions).forEach(key => {
+            if (Object.prototype.hasOwnProperty.call(relSectionOptions, key)) {
+                console.warn(`relSectionOptions property "${key}" will be overwritten by replayOptions value:`, replayOptions[key]);
+            }
+        });*/
+        Object.assign(relSectionOptions, replayOptions);
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
-
         //Don't need to send looping status, since that is a css class broadcast through 
         //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
-        let ssWidget = SectionStatusBuilder.lookupWidget(replayOptions.tablename);
-        // You could send message to tableID, because the widget knows if it is bound to a table that might be in "observer" mode.
-        EventBus.trigger("Widget:SectionStatus:sectionUpdate",
+        EventBus.trigger("Widget:SectionStatus:sectionChanged",
                             {
-                                widgetID: ssWidget.ownerID,
-                                ownerID: replayOptions.tablename, 
-                                rootKey: getSong().noteIDToNoteName(relSectionOptions.rootID),
-                                rootKeyLead: getSong().noteIDToNoteName(relSectionOptions.rootIDLead),
-                                ReplayType: SectionStatusBuilder.ReplayOptions.RELATIVE,
-                                relativeSection: replayOptions.relativeSection,
-                                sectionNumber: replayOptions.sectionIndex+1
+                                ownerID: replayOptions.tablename, //don't need widgetID, because widget is bound to tableID as ownerID.
+                                replayOptions: relSectionOptions
                             }
                         );
-
-
         
-        let relSecRootIDLead1 = "relSecRootIDLead1_"+replayOptions.tablename;
+        /*let relSecRootIDLead1 = "relSecRootIDLead1_"+replayOptions.tablename;
         let relSecRootIDLead2 = "relSecRootIDLead2_"+replayOptions.tablename;
         if (relSectionOptions.rootIDLead > -1 ){
             var keynameLead = getSong().noteIDToNoteName(relSectionOptions.rootIDLead);
@@ -730,11 +738,26 @@ export function replayTable(replayOptions){
         $('#normalKeys2_'+replayOptions.tablename).hide();
         $('#relativeKeys1_'+replayOptions.tablename).show();
         $('#relativeKeys2_'+replayOptions.tablename).show();
+        */
     } else {
-        $('#normalKeys1_'+replayOptions.tablename).show();
+        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+            {
+                ownerID: replayOptions.tablename,
+                replayOptions: replayOptions 
+            }
+            /*    tableID: replayOptions.tablename, 
+                rootKey: getSong().noteIDToNoteName(replayOptions.rootID),
+                rootKeyLead: getSong().noteIDToNoteName(replayOptions.rootIDLead),
+                replayOptionsType: replayOptions.type,
+                relativeSection: replayOptions.relativeSection,
+                sectionNumber: replayOptions.sectionIndex+1
+            } */
+        );
+        /*$('#normalKeys1_'+replayOptions.tablename).show();
         $('#relativeKeys1_'+replayOptions.tablename).hide();
         $('#normalKeys2_'+replayOptions.tablename).show();
         $('#relativeKeys2_'+replayOptions.tablename).hide();
+        */
     }
     
     if (!replayOptions.hideNamedNotes){
@@ -820,7 +843,7 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
-        if (opts.type === ReplayOptions.RELATIVE) {
+        if (opts.type === ReplayOptions.Type.RELATIVE) {
             //nBeat is 1-based.
             if (opts.directionType === Song.DirectionType.BACKWARD){
                 showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);

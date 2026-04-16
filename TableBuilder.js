@@ -19,6 +19,7 @@ export function buildNoteTable(options) {
 	var colDisplay = 0;
 	var numRows = options.rowRange.length;
 	const tableID = Constants.TABLE_ID_PREFIX + options.baseID;
+	console.log("================= TableBuilder building table: ==>"+tableID+"<=======");
 
 	var table = $('<table>');
 	table.attr("border", "0");
@@ -185,6 +186,12 @@ export function buildNoteTable(options) {
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
+	let spanCaptionRowLiveInfo = $('<span>');
+	spanCaptionRowLiveInfo.attr('id', tableID + '_captionRowLiveInfo');
+
+	SectionStatusBuilder.createWidget(spanCaptionRowLiveInfo, tableID, 'caption', 'horizontal');
+	
+				
 	captionRow.html(
 		hamburger 
 		+ '<span class="captionRowInstrument">'
@@ -207,11 +214,10 @@ export function buildNoteTable(options) {
 		+ '</span>'
 		+ noteClickedCaption
 		+ '</span>'
-		+ '<span class="captionRowLiveInfo">'
-		+   formatKeyBoxes(tableID, "1", false)
-		+ '</span>'
-		+ "<div class='currentColorDict''></div>"
 	);
+	captionRow.append(spanCaptionRowLiveInfo);
+	captionRow.append($("<div class='currentColorDict''></div>"));
+
 	instrumentBackground.append(captionRow);
 
 	let wiringAndFretTable = $("<div>");
@@ -225,16 +231,28 @@ export function buildNoteTable(options) {
 	
 	wiringAndFretTable.append(divWiring);
 	instrumentBackground.append(wiringAndFretTable);
-	
+
+	let widgetDest = $("<span>");
+	SectionStatusBuilder.createWidget(widgetDest, tableID, 'caption', 'vertical');
+
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
-		var tbl = $("<table><tr><td class='fretTableTDCaption'></td><td class='fretTableTDSectionMark'></td><td></td></tr></table>");
+		var table3 = $("<table>");
+		var row = $("<row>");
+		table3.append(row);
+		var td1 = $("<td class='fretTableTDCaption'>");
 			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
 			fretTableLeftCaption.html(options.baseID);
-			tbl.find('td:first').append(fretTableLeftCaption);
-			tbl.find('td:nth-child(2)').append(formatKeyBoxes(tableID, "2", true));
-			tbl.find('td:nth-child(3)').append(table);
-	fretTableWrapper.append(tbl);
+			td1.append(fretTableLeftCaption);
+			row.append(td1);
+		var td2 = $("<td class='tdSSLeft'>");
+			td2.append(widgetDest);
+			row.append(td2);
+		var td3 = $("<td>");
+			td3.append(table);
+			row.append(td3);
+
+	fretTableWrapper.append(table3);
 	wiringAndFretTable.append(fretTableWrapper);
 
 	let instrumentBackgroundOuter = $("<div>");

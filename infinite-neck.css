@@ -745,10 +745,12 @@ table.viewControls th {
     background-color: magenta !important;
 }
 .LooperLight {
-    border: 1px solid green; 
+    border: 2px solid green; 
+    padding: 0.18em;
+    border-radius: 10%;
 }
 .LooperLightOn {
-    border: 1px solid magenta !important; 
+    border: 2px solid magenta !important; 
 }
 .LooperLightTD {
     width: 3em;

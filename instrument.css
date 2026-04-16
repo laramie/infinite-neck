@@ -164,6 +164,7 @@ instrumentBackground .captionRow {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-size: 80%;
+    text-align: center;
 }
 
 
@@ -207,16 +208,7 @@ instrumentBackground .captionRow {
 
 
 
-/*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
-.instrumentSectionBox {
-   display: inline;
-}
-/* The section character: §    */
-.instrumentSectionMark {
-    color: green;
-    font-size: 80%;
-    padding-right: 0.5em;
-}
+
 
 
 /* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
