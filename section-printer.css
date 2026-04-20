@@ -66,14 +66,15 @@
  background-color: rgb(255, 209, 109);   
 }
 .SPN_NN{
-   overflow-wrap: break-word;
+    overflow-wrap: break-word;
 }
 .SPN_PN{
     overflow-wrap: break-word;
-    
 }
 .SPN_RN{
     overflow-wrap: break-word;
-
+}
+.SPN_CC{
+    overflow-wrap: break-word;
 }
 

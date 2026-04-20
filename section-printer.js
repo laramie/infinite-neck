@@ -12,7 +12,7 @@ const { Chord } = globalThis.Tonal?.Chord
     : await import('tonal');
 
 export function printSections(theSong, theSections, showDetails) {
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th>"
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";
     let details;
@@ -20,10 +20,11 @@ export function printSections(theSong, theSections, showDetails) {
         details = "<pre style='margin:0'>" + getSectionNotesDisplayString(section) + "</pre>";
         const SEP = "</td><td>";
         result += "<tr><td>"
-            + "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
+            + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
             + section.beats + SEP
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
+            + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
             + "<b style='font-size: 130%;'>" + section.caption + "</b>"
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
@@ -99,6 +100,7 @@ export function printSectionsNotes(theSong, theSections){
         + "<th class='SPN_TH' rowspan='2'>beats</th>"
         + "<th class='SPN_TH' rowspan='2'>KEY</th>"
         + "<th class='SPN_TH' rowspan='2'>&sharp;/&flat;</th>"
+        + "<th class='SPN_TH' rowspan='2'>Chord</th>"
         + "<th class='SPN_TH' rowspan='2'>Caption</th>";
 
     let colorAlt = true;  
@@ -112,17 +114,18 @@ export function printSectionsNotes(theSong, theSections){
     colorAlt = true;
     instrumentTableIDs.forEach(() => {
         theClass = colorAlt ? "SPN_evenCol" : "SPN_oddCol"; 
-        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"r'>rec</th><th class='"+theClass+"r'>Chords</th>";
+        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"'>rec</th><th class='"+theClass+"'>Chords</th>";
         colorAlt = !colorAlt;
     });
     result += "</tr>";
 
     theSections.forEach((section, idx) => {
         result += "<tr><td>"
-            + "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>"
+            + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>"
             + "</td><td>" + section.beats
             + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
+            + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
             + "</td><td><b style='font-size: 130%;'>" + section.caption + "</b></td>";
 
         instrumentTableIDs.forEach((tableID) => {
@@ -137,10 +140,10 @@ export function printSectionsNotes(theSong, theSections){
             
             let chartChordsResult = getChartChords(theSong, section);
             let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
-            let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-arg='${idx}:${ch}'>${ch}</a>`)
+            let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                                          .join('<br>');
            
-            result += "<td><div class='SPN_RN'>" +chartChordsNotes+'::'+ links + "</div></td>";
+            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "</div></td>";
         });
 
         result += "</tr>";

@@ -17,12 +17,6 @@ export function getChartChords(theSong, section){
     });
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
-    let chordsLinks = '';
-    if (Array.isArray(chords) && chords.length > 0) {
-        chordsLinks = chords.map(s => `<a href='#${s}'>${s}</a>`);
-    } else {
-        chordsLinks = 'none';
-    }
     result.normalizedNamedNotes = normalizedNamedNotes;
     result.chords = chords;
     return result;
@@ -40,13 +34,7 @@ export function getTonalForTable(theSong, section, tablename){
         }
     });
     let chords = Chord.detect(normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID)));
-    let chordsLinks = '';
-    if (Array.isArray(chords) && chords.length > 0) {
-        chordsLinks = chords
-            .map(s => `<a href='#${s}'>${s}</a>`)
-            .join('&nbsp;');
-    }
-    return chordsLinks;
+    return chords;
 }
 
 

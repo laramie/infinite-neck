@@ -250,9 +250,12 @@ export function colorNote(cell) {
             sourceTableID: res.tableID,
             colorNoteResult: res
         });
-        
-        let tonalString = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
-        $('#'+res.tableID+'_captionRowTonalInfo').html(tonalString); //from TableBuilder
+
+        let idx = getSong().sections.indexOf(getCurrentSection());
+        let chords = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
+        let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
+                          .join('&nbsp;');
+        $('#'+res.tableID+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder
     }
 }
 export function colorNoteInner(cell) {
@@ -691,8 +694,12 @@ export function replay(){
 
 export function replayTable(replayOptions){
     if (replayOptions.type === ReplayOptions.Type.SELF){
-        let tonalString = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
-        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalString); //from TableBuilder
+        let idx = getSong().sections.indexOf(getCurrentSection());
+        let chords = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
+                          .join('&nbsp;');
+        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder
+  
     }
 
     const lookupContext = createNotetableLookupContext(replayOptions.currSection);

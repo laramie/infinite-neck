@@ -775,6 +775,13 @@ table.viewControls th {
     font-weight: 200;
     font-size:  200%;
 }
+.lblSectionChartChord {
+    font-family: "Shadows Into Light", cursive;
+    color: #93ff41;
+    font-weight: 200;
+    font-size:  100%;
+    padding-right: 0.4em;
+}
 .lblSectionNumber {
     padding: 0.2em;
     margin-left: 1em;

@@ -304,6 +304,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = eval("\`"+rawCaption+"\`");
 	    $(".lblSectionCaption").html(caption);
 
+	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
+
 		var currentFilename = $("#txtFilename").val();
 	    $(".lblSongName").html(currentFilename);
 		//getSong().songName = currentFilename;
@@ -813,7 +815,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$.get( "songs/song-list.json", function(data){
 				var result = "";
 				Object.values(data.songs).forEach(song => {
-					result = result + "<a href='#' data-action='loadSong' data-action-arg='"+song+"'>"+song+"</a><br />";
+					result = result + "<a href='#' data-action='loadSong' data-action-args='["+song+"]'>"+song+"</a><br />";
 				});
 				$('#divSongList').html(result).show();
 			});
@@ -1044,7 +1046,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideCmdLine();
 	}
 	export function linkToSectionChartChord(idx, chartChord) {
-		getSong().getSection(idx).chartChord = chartChord;
+		getSong().sections[idx].chartChord = chartChord;
+		$("#divMessages").html(printSectionsNotes());
+		updateSectionsStatus();
 	}
 
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
@@ -1842,6 +1846,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearScalingPrefs,
 			loadSong,
 			linkToSection,
+			linkToSectionChartChord,
 			hideGraveyard,
 			saveInstrumentPrefs,
 			applyInstrumentPrefs,
@@ -1851,14 +1856,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(document).on('click', '[data-action]', function(e) {
 			e.preventDefault();
 			const action = $(this).data('action');
-			const arg = $(this).data('action-arg');
+			let args = $(this).data('action-args');
+			if (typeof args === 'string') {
+				try { args = JSON.parse(args); } catch { args = [args]; }
+			}
+			if (!Array.isArray(args)) args = args !== undefined ? [args] : [];
 			const handler = dataActionHandlers[action];
 			if (typeof handler === 'function') {
-				if (arg !== undefined) {
-					handler(arg);
-				} else {
-					handler();
-				}
+				handler(...args);
 			} else {
 				console.warn('No data-action handler registered for:', action);
 			}
