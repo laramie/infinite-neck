@@ -170,6 +170,8 @@ export function buildNoteTable(options) {
 	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' >C</button>";
 	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' >S</button>";
 	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
+	var hamburgerNoteDetails = "<button id='hamburgerNoteDetails" + options.baseID + "' class='showNoteDetails subcaptionButton' type='button' >N<small>ote</small></button>";
+	var hamburgerTonalDetails = "<button id='hamburgerTonalDetails" + options.baseID + "' class='showTonalDetails subcaptionButton' type='button' >T<small>onal</small></button>";
 	
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
 	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton subcaptionButton' type='button' tabindex='-1'>W<small>iring</small></button>";
@@ -186,6 +188,8 @@ export function buildNoteTable(options) {
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
+	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo'></span>";
+
 	let spanCaptionRowLiveInfo = $('<span>');
 	spanCaptionRowLiveInfo.attr('id', tableID + '_captionRowLiveInfo');
 
@@ -203,6 +207,7 @@ export function buildNoteTable(options) {
 		+ hamburgerColorDict
 		+ btnShowWiring
 		+ btnPopOutDiv
+		
 		+ hamburgerTuningDetails
 		+ '<span class="spanTuningDetails">'
 		+ tuningBaseIDCaption
@@ -212,7 +217,17 @@ export function buildNoteTable(options) {
 		+ joniTuning
 		+ reverse
 		+ '</span>'
+		
+		+ hamburgerNoteDetails
+		+ "<span class='spanNoteDetails'>"
 		+ noteClickedCaption
+		+"</span>"
+		
+		+ hamburgerTonalDetails
+		+ "<span class='spanTonalDetails'>"
+		+ tonalInfo
+		+"</span>"
+
 		+ '</span>'
 	);
 	captionRow.append(spanCaptionRowLiveInfo);

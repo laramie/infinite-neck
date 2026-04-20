@@ -20,6 +20,7 @@ function main(){
     song.getSections().forEach((s, idx) => {
         console.log(ANSIColors.red("Section["+idx+"]"));
         console.log(ANSIColors.cyan(SectionPrinter.getSectionNotesDisplayString(s)));
+        console.log(ANSIColors.yellow(SectionPrinter.getChartChords(s)));
     });
 
     //console.log(ANSIColors.green("Song round-trip w/replacer:"));

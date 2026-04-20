@@ -34,6 +34,9 @@ import {
     unRecordPlayedNote
 } from './section-recorder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
+import {
+    getTonalForTable
+} from './TonalFunctions.js';
 import EventBus from './event-bus.js';
 import { 
     appInit_running,
@@ -247,6 +250,9 @@ export function colorNote(cell) {
             sourceTableID: res.tableID,
             colorNoteResult: res
         });
+        
+        let tonalString = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
+        $('#'+res.tableID+'_captionRowTonalInfo').html(tonalString); //from TableBuilder
     }
 }
 export function colorNoteInner(cell) {
@@ -684,6 +690,11 @@ export function replay(){
 }
 
 export function replayTable(replayOptions){
+    if (replayOptions.type === ReplayOptions.Type.SELF){
+        let tonalString = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalString); //from TableBuilder
+    }
+
     const lookupContext = createNotetableLookupContext(replayOptions.currSection);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
@@ -701,15 +712,7 @@ export function replayTable(replayOptions){
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
         let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
-        //relSectionOptions.sharps = replayOptions.sharps;
-        //relSectionOptions.rootID = replayOptions.rootID;
-        //relSectionOptions.rootIDLead = replayOptions.rootIDLead;
-        // Merge replayOptions into relSectionOptions, warn if overwriting
-        /*Object.keys(replayOptions).forEach(key => {
-            if (Object.prototype.hasOwnProperty.call(relSectionOptions, key)) {
-                console.warn(`relSectionOptions property "${key}" will be overwritten by replayOptions value:`, replayOptions[key]);
-            }
-        });*/
+        
         Object.assign(relSectionOptions, replayOptions);
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
         //Don't need to send looping status, since that is a css class broadcast through 
@@ -720,44 +723,13 @@ export function replayTable(replayOptions){
                                 replayOptions: relSectionOptions
                             }
                         );
-        
-        /*let relSecRootIDLead1 = "relSecRootIDLead1_"+replayOptions.tablename;
-        let relSecRootIDLead2 = "relSecRootIDLead2_"+replayOptions.tablename;
-        if (relSectionOptions.rootIDLead > -1 ){
-            var keynameLead = getSong().noteIDToNoteName(relSectionOptions.rootIDLead);
-            $('#'+relSecRootIDLead1+',#'+relSecRootIDLead2).html(keynameLead).show();
-        } else {
-            $('#'+relSecRootIDLead1+',#'+relSecRootIDLead2).html("").hide();
-        }
-        let relSecRootID1 = "relSecRootID1_"+replayOptions.tablename;
-        let relSecRootID2 = "relSecRootID2_"+replayOptions.tablename;
-        var keyname = getSong().noteIDToNoteName(relSectionOptions.rootID);
-        $('#'+relSecRootID1+',#'+relSecRootID2).html(keyname);
-
-        $('#normalKeys1_'+replayOptions.tablename).hide();
-        $('#normalKeys2_'+replayOptions.tablename).hide();
-        $('#relativeKeys1_'+replayOptions.tablename).show();
-        $('#relativeKeys2_'+replayOptions.tablename).show();
-        */
     } else {
         EventBus.trigger("Widget:SectionStatus:sectionChanged",
             {
                 ownerID: replayOptions.tablename,
                 replayOptions: replayOptions 
             }
-            /*    tableID: replayOptions.tablename, 
-                rootKey: getSong().noteIDToNoteName(replayOptions.rootID),
-                rootKeyLead: getSong().noteIDToNoteName(replayOptions.rootIDLead),
-                replayOptionsType: replayOptions.type,
-                relativeSection: replayOptions.relativeSection,
-                sectionNumber: replayOptions.sectionIndex+1
-            } */
         );
-        /*$('#normalKeys1_'+replayOptions.tablename).show();
-        $('#relativeKeys1_'+replayOptions.tablename).hide();
-        $('#normalKeys2_'+replayOptions.tablename).show();
-        $('#relativeKeys2_'+replayOptions.tablename).hide();
-        */
     }
     
     if (!replayOptions.hideNamedNotes){

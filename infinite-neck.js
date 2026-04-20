@@ -1043,6 +1043,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().gotoSection(idx);
 		hideCmdLine();
 	}
+	export function linkToSectionChartChord(idx, chartChord) {
+		getSong().getSection(idx).chartChord = chartChord;
+	}
 
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
 		//console.log("rangeSlide:"+element_id+" value: "+value);
@@ -1363,9 +1366,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".showTuningDetails").click(function() {
 			$(".spanTuningDetails").toggle();
 		});
-		
-		
-
+		$(".showNoteDetails").click(function() {
+			$(".spanNoteDetails").toggle();
+		});
+		$(".showTonalDetails").click(function() {
+			$(".spanTonalDetails").toggle();
+		});
 
 		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
 		$(".showWiringButton").click(function() {

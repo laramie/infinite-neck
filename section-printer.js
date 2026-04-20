@@ -1,7 +1,15 @@
 import * as Constants from './Constants.js';
 import {
-toInt
-} from './utils.js';
+    toInt
+} from './utils.js';    
+import {
+    getChartChords
+} from './TonalFunctions.js';
+
+
+const { Chord } = globalThis.Tonal?.Chord
+    ? globalThis.Tonal
+    : await import('tonal');
 
 export function printSections(theSong, theSections, showDetails) {
     let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th>"
@@ -55,7 +63,7 @@ export function printSectionsNotes(theSong, theSections){
         return Object.entries(namedNotes || {})
             .filter(([_, v]) => v && Object.keys(v).length > 0)
             .map(([k]) => k)
-            .join(', ');
+            .join(',');
     }
     function formatPlayedNotes(playedNotes) {
         return (playedNotes || [])
@@ -97,14 +105,14 @@ export function printSectionsNotes(theSong, theSections){
     let theClass = "";  
     instrumentTableIDs.forEach((tableID) => {
         theClass = colorAlt ? "SPN_evenColn" : "SPN_oddColn"; 
-        result += "<th class='"+theClass+"' colspan='3'>" + stripTablePrefix(tableID) + "</th>";
+        result += "<th class='"+theClass+"' colspan='4'>" + stripTablePrefix(tableID) + "</th>";
         colorAlt = !colorAlt;
     });
     result += "</tr><tr>";
     colorAlt = true;
     instrumentTableIDs.forEach(() => {
         theClass = colorAlt ? "SPN_evenCol" : "SPN_oddCol"; 
-        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"r'>rec</th>";
+        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"r'>rec</th><th class='"+theClass+"r'>Chords</th>";
         colorAlt = !colorAlt;
     });
     result += "</tr>";
@@ -120,12 +128,19 @@ export function printSectionsNotes(theSong, theSections){
         instrumentTableIDs.forEach((tableID) => {
             const sn = section.sectionNotesByTable[tableID];
             if (!sn) {
-                result += "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
+                result += "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
                 return;
             }
             result += "<td><div class='SPN_NN'>" + (formatNamedNotes(sn.namedNotes) || "&nbsp;") + "</div></td>";
             result += "<td><div class='SPN_PN'>" + (formatPlayedNotes(sn.playedNotes) || "&nbsp;") + "</div></td>";
             result += "<td><div class='SPN_RN'>" + (formatRecordedNotes(sn.recordedNotes) || "&nbsp;") + "</div></td>";
+            
+            let chartChordsResult = getChartChords(theSong, section);
+            let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
+            let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-arg='${idx}:${ch}'>${ch}</a>`)
+                                         .join('<br>');
+           
+            result += "<td><div class='SPN_RN'>" +chartChordsNotes+'::'+ links + "</div></td>";
         });
 
         result += "</tr>";
@@ -169,3 +184,4 @@ export function getSectionNotesDisplayString(section) {
     const details = getSectionNotesDisplayData(section);
     return JSON.stringify(details, null, 4);
 }
+
