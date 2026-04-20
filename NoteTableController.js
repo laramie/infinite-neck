@@ -41,7 +41,8 @@ import EventBus from './event-bus.js';
 import { 
     appInit_running,
     controlsToDisplayOptions,
-    buildCellsForTable
+    buildCellsForTable,
+    turnOffAutoColorCheckbox
 } from './infinite-neck.js';
 
 var notetableProviders = {
@@ -436,7 +437,7 @@ export function colorNoteInner(cell) {
         var noteAlreadyColored = (lenOtherClasses>0);
 
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
-			getCurrentSection().namedNotes[noteName] = {};
+			getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
             result.returnCause = Cause.CLEAR;
@@ -464,24 +465,33 @@ export function colorNoteInner(cell) {
 
 export function dropper(cell, cellcol, cellrow, styleNum, noteName){
     var jCell = $(cell);
-    if (noteName && styleNum == 0){ //namedNote
-        var note = getCurrentSection().namedNotes[noteName];
-        if (note){
-            var foundColorClass = note.colorClass;
-            $("input[name=rbColor][value="+foundColorClass+"]")
-                .attr('checked', 'checked')
-                .css({"box-shadow": "0 0 10pt 20pt cyan"});
-            setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
-        }
-        return;
-    }
+    
     //else styleNum ==> Single,Tiny,Bend.
     var tableID = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
         tableID = jParentTable.attr("id");
+
+        if (noteName && styleNum == 0){ //namedNote
+            var note = getCurrentSection().getSectionNotes(tableID).namedNotes[noteName];
+            if (note){
+                turnOffAutoColorCheckbox();
+
+                $("input[name=rbColor]")
+                    .css({"box-shadow": "none"}); //clear any previously highlighted
+
+                var foundColorClass = note.colorClass;
+                $("input[name=rbColor][value="+foundColorClass+"]")
+                    .prop('checked', true)
+                    .css({"box-shadow": "0 0 10pt 20pt cyan"});
+
+                setNoteClickedCaption(cell, foundColorClass, styleNum);
+                $("td.note").css({"cursor": "auto"});
+            }
+            return;
+        }
+
         var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
         if (foundColorClass){
             $("input[name=rbColor][value="+foundColorClass+"]")
@@ -1002,6 +1012,7 @@ export function colorWhiteBlackKeys() {
 }
 
 export function fillChord() {
+    var listenToTablename = $('#fillVisibleTablesSelect').val();
     var chordFnNotes = $('#dropDownChords').val();
     var chordFnNotesArr = chordFnNotes.split(',');
 
@@ -1052,10 +1063,11 @@ export function fillChord() {
     var scaleClassNames = scaleClasses.join(', ');
     fillChord2(rootClassName, chordClassNames, scaleClassNames,
                rootName, chordNames, scaleNames,
-               rootColor, chordsColor, scaleColor);
+               rootColor, chordsColor, scaleColor,
+               listenToTablename);
 }
 
-export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor) {
+export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor, listenToTablename) {
     //the arguments <chordNoteNames> and <scaleNoteNames> are arrays of ".noteBb" etc.
 
 	/** EACH OF THESE IS A COLLECTION OF TD > DIV.NoteDisplay   **/
@@ -1068,16 +1080,16 @@ export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNo
         doFill(theRootClass, rootName, rootColor);
     }
     if ( chordsColor == "noteClear"){
-        doFill(theChordClass, chordNoteNames, chordsColor);
+        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
     }
 
     if ( scaleColor != "noteHighlightSingle"){
-        doFill(theScaleClass, scaleNoteNames, scaleColor);
+        doFill(theScaleClass, scaleNoteNames, scaleColor, listenToTablename);
     }
     if ( chordsColor != "noteClear" && chordsColor != "noteHighlightSingle"){
-        doFill(theChordClass, chordNoteNames, chordsColor);
+        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
     }
-    if (rootColor != "noteClear"){ doFill(theRootClass, rootName, rootColor); }
+    if (rootColor != "noteClear"){ doFill(theRootClass, rootName, rootColor, listenToTablename); }
 
 
     clearAll();
@@ -1089,24 +1101,36 @@ export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNo
         theScaleClass.parent("td.note").addClass("noteHighlightSingle");
     }
 }
-
-export function doFill(theClass, NoteNames, Color){
-    if (Color == "noteKeep"){
+export function doFill(theClass, NoteNames, Color, listenToTablename) {
+    if (Color == "noteKeep") {
         return;
     }
     var currSection = getCurrentSection();
+    // Ensure sectionNotesByTable exists
+    if (!currSection.sectionNotesByTable) {
+        currSection.sectionNotesByTable = {};
+    }
+    // Ensure the table for listenToTablename exists
+    if (!currSection.sectionNotesByTable[listenToTablename]) {
+        currSection.sectionNotesByTable[listenToTablename] = {};
+    }
+    // Ensure namedNotes exists for this table
+    if (!currSection.sectionNotesByTable[listenToTablename].namedNotes) {
+        currSection.sectionNotesByTable[listenToTablename].namedNotes = {};
+    }
+    let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
     if (Color != "noteClear") {
-        //NO: let replay color the notes.  We are just adding them to the model here.
-        //theClass.addClass(lookupUserColorClassByClass(Color))
-		//             .addClass("NoteActive");
+        // NO: let replay color the notes. We are just adding them to the model here.
+        // theClass.addClass(lookupUserColorClassByClass(Color))
+        //          .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};
+            namedNotes[noteName] = { "noteName": noteName, "colorClass": Color };
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            currSection.namedNotes[NoteNames[key]] = {};
+            namedNotes[NoteNames[key]] = {};
         });
     }
 }
