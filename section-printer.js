@@ -114,7 +114,7 @@ export function printSectionsNotes(theSong, theSections){
     colorAlt = true;
     instrumentTableIDs.forEach(() => {
         theClass = colorAlt ? "SPN_evenCol" : "SPN_oddCol"; 
-        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"'>rec</th><th class='"+theClass+"'>Chords</th>";
+        result += "<th class='"+theClass+"n'>named</th><th class='"+theClass+"p'>played</th><th class='"+theClass+"r'>rec</th><th class='"+theClass+"c'>Chords</th>";
         colorAlt = !colorAlt;
     });
     result += "</tr>";
@@ -143,7 +143,7 @@ export function printSectionsNotes(theSong, theSections){
             let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                                          .join('<br>');
            
-            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br>"+chartChordsResult.scale.join("<br>")+"</div></td>";
+            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br><b>modes:</b><br>"+chartChordsResult.scale.join("<br>")+"</div></td>";
         });
 
         result += "</tr>";

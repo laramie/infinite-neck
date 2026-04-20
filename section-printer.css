@@ -65,6 +65,12 @@
 .SPN_oddColr{
  background-color: rgb(255, 209, 109);   
 }
+.SPN_evenColc{
+    background-color: rgb(4, 4, 210);   
+}
+.SPN_oddColc{
+ background-color: rgb(239, 164, 1);   
+}
 .SPN_NN{
     overflow-wrap: break-word;
 }
