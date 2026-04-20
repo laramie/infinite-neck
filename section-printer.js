@@ -143,7 +143,7 @@ export function printSectionsNotes(theSong, theSections){
             let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                                          .join('<br>');
            
-            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "</div></td>";
+            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br>"+chartChordsResult.scale.join("<br>")+"</div></td>";
         });
 
         result += "</tr>";

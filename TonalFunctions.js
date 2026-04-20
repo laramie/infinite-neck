@@ -3,9 +3,13 @@ import * as Constants from './Constants.js';
 const { Chord } = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
+const { Scale } = globalThis.Tonal?.Scale
+    ? globalThis.Tonal
+    : await import('tonal');
 
 export function getTonal(theSong, section){
     let tablesResult = {};
+    let rootKey = theSong.noteIDToNoteName(section.rootID);
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
         let result = {};
         let namedNotes = [];
@@ -14,16 +18,18 @@ export function getTonal(theSong, section){
                 namedNotes.push(noteName);
             }
         });
-        let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
+        let normalizedNamedNotes = normalizeChord(namedNotes, rootKey);
         let chords = Chord.detect(normalizedNamedNotes);
         result.normalizedNamedNotes = normalizedNamedNotes;
         result.chords = chords;
+        result.scale = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
         tablesResult[tableID] = result;
     });
     return tablesResult;
 }
 
 export function getTonalForTable(theSong, section, tablename){
+    let rootKey = theSong.noteIDToNoteName(section.rootID);
     let result = {};
     let namedNotes = [];
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
@@ -38,6 +44,7 @@ export function getTonalForTable(theSong, section, tablename){
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
+    result.scale = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
     result.chords = chords;
     return result;
 }
