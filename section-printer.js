@@ -3,7 +3,7 @@ import {
     toInt
 } from './utils.js';    
 import {
-    getChartChords
+    getTonalForTable
 } from './TonalFunctions.js';
 
 
@@ -138,7 +138,7 @@ export function printSectionsNotes(theSong, theSections){
             result += "<td><div class='SPN_PN'>" + (formatPlayedNotes(sn.playedNotes) || "&nbsp;") + "</div></td>";
             result += "<td><div class='SPN_RN'>" + (formatRecordedNotes(sn.recordedNotes) || "&nbsp;") + "</div></td>";
             
-            let chartChordsResult = getChartChords(theSong, section);
+            let chartChordsResult = getTonalForTable(theSong, section, tableID);
             let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
             let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                                          .join('<br>');

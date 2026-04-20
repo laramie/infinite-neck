@@ -252,7 +252,8 @@ export function colorNote(cell) {
         });
 
         let idx = getSong().sections.indexOf(getCurrentSection());
-        let chords = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
+        let tonalResult = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
+        let chords = tonalResult.chords;
         let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                           .join('&nbsp;');
         $('#'+res.tableID+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder
@@ -695,7 +696,8 @@ export function replay(){
 export function replayTable(replayOptions){
     if (replayOptions.type === ReplayOptions.Type.SELF){
         let idx = getSong().sections.indexOf(getCurrentSection());
-        let chords = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        let tonalResult = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        let chords = tonalResult.chords;
         let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                           .join('&nbsp;');
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder

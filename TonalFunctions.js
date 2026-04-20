@@ -4,25 +4,27 @@ const { Chord } = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
 
-export function getChartChords(theSong, section){
-    let result = {};
-    let namedNotes = [];
+export function getTonal(theSong, section){
+    let tablesResult = {};
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
+        let result = {};
+        let namedNotes = [];
         Object.entries(sn?.namedNotes || {}).forEach(([noteName, noteObj]) => {
-            // Only include if noteObj is not empty (has at least one property)
             if (noteObj && Object.keys(noteObj).length > 0) {
                 namedNotes.push(noteName);
             }
         });
+        let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
+        let chords = Chord.detect(normalizedNamedNotes);
+        result.normalizedNamedNotes = normalizedNamedNotes;
+        result.chords = chords;
+        tablesResult[tableID] = result;
     });
-    let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
-    let chords = Chord.detect(normalizedNamedNotes);
-    result.normalizedNamedNotes = normalizedNamedNotes;
-    result.chords = chords;
-    return result;
+    return tablesResult;
 }
 
 export function getTonalForTable(theSong, section, tablename){
+    let result = {};
     let namedNotes = [];
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
         if (tablename === tableID){
@@ -33,8 +35,11 @@ export function getTonalForTable(theSong, section, tablename){
             });
         }
     });
-    let chords = Chord.detect(normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID)));
-    return chords;
+    let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
+    let chords = Chord.detect(normalizedNamedNotes);
+    result.normalizedNamedNotes = normalizedNamedNotes;
+    result.chords = chords;
+    return result;
 }
 
 
