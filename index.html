@@ -38,7 +38,6 @@
 
 <body>
     <div id="root"></div>
-    <script type="module" src="infinite-neck.js"></script>
     <style id="laramieStyle">
         .placeholder {
             color: red;
@@ -1094,6 +1093,8 @@
             <button type="button" data-action="leaveFullscreen">Exit Fullscreen</button>
         </div>
 
+    <!--Best to pull this main module in last, so DOM is fully loaded-->
+    <script type="module" src="infinite-neck.js"></script>
     </body>
 
 </html>
