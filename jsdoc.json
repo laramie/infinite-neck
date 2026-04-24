@@ -1,0 +1,15 @@
+{
+  "source": {
+    "include": [
+      "tagonomy/",
+      "bin/",
+      "./"
+    ],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "_doco/jsdoc",
+    "readme": "OVERVIEW.md"
+  }
+}

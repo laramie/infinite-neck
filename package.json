@@ -11,7 +11,8 @@
     "scan:babel": "node bin/babel-viability-scan.cjs",
     "scan:babel:all": "node bin/babel-viability-scan.cjs --include-generated",
     "scan:exports": "node bin/module-export-audit.cjs",
-    "scan:deps": "node bin/module-dependency-map.cjs"
+    "scan:deps": "node bin/module-dependency-map.cjs",
+    "jsdocs": "jsdoc ./ -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
     "@types/node": "^25.3.2",
     "jest": "^30.2.0",
     "jscodeshift": "^17.3.0",
+    "jsdoc": "^4.0.5",
     "knip": "^5.85.0",
     "typescript": "^5.9.3"
   },
