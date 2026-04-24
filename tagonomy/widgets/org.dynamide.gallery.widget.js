@@ -11,19 +11,22 @@ const WidgetDefaults = {
              "org.dynamide.gallery:AddImage"]
 };
 
-export function makeWidget(id, page){
-    return new GalleryWidget(id, page);
+export function makeWidget(type, id, dataAttributes, page){
+    return new GalleryWidget(type, id, dataAttributes, page);
 }
 
 export class GalleryWidget extends Widget {
-    constructor(id, page) {
-        super(id, page);
+    constructor(type, id, dataAttributes, page) {
+        super(type, id, dataAttributes, page);
         Object.assign(this, WidgetDefaults);
     }
     
     build(){
         let widgetRoot = $("<span>");
-        widgetRoot.html(this.chunks["html"]);
+        let htmlChunk = this.chunks["html"];
+        if (htmlChunk && htmlChunk.text) {
+            widgetRoot.html(htmlChunk.text);
+        }
         let $widgetElem = $(`widget#${this.id}`);
         let width = $widgetElem.data('width'); 
         let height = $widgetElem.data('height'); 

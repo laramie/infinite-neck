@@ -8,24 +8,12 @@
 <body>
     <h1>Chapter 1</h1>
     <p style="border: 1px solid green; padding: 0.5em; background-color: lightblue;">
-widget-1:
-        <widget id="org-dynamide-gallery-1" 
-                data-type="./widgets/org.dynamide.gallery.widget.js" 
-                data-width="300" 
-                data-height="400" >
-        </widget>
-widget-2:
-        <widget id="org-dynamide-gallery-2" 
-                data-type="./widgets/org.dynamide.gallery.widget.js"
-                data-width="400" 
-                data-height="120" >
+        
+        <widget id="org-dynamide-partial-standalone" 
+                data-type="./widgets/partial/partial.js"
+                data-includes='[{"id":"css","url":"partial-test-standalone.css"}]' > 
         </widget>
     </p>
-    <div style="padding: 10em; border: 1px solid blue;">
-        Some text 
-        <!--widget id="org-dynamide-callout-1" data-type="./widgets/org.dynamide.callout.widget.js" /-->
-    </div>
-
     <!--Pull this main module in last, so DOM is fully loaded-->
     <script type="module" src="tagonomy.js"></script>
 </body>

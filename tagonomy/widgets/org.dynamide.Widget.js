@@ -1,22 +1,23 @@
-const WidgetDefaults = {
-    type: "org.dynamide.Widget",
-    includes: [ 
-        {id: "css",  url: ""}, 
-        {id: "html", url: ""} 
-    ],
-    events: []
-};
+import EventBus from '../../event-bus.js';
 
-export function makeWidget(id, page){
-    return new Widget(id, page);
+export function makeWidget(type, id, dataAttributes, page){
+    return new Widget(type, id, dataAttributes, page);
 }
 
 export class Widget {
-    constructor(id, page) {
-        Object.assign(this, WidgetDefaults);
+    constructor(type, id, dataAttributes, page) {
         this.id = id;
+        this.type = type; //type is a path
         this.page = page;
+        this.dataAttributes = dataAttributes;
         this.chunks = {};    
+    }
+
+    static makeClassKey(type){
+        return type.replace(/[./]/g, "-");
+    }
+    getClassKey(){
+        return Widget.makeClassKey(this.type);
     }
     
     load(widgetLoader){
@@ -24,6 +25,7 @@ export class Widget {
     }
     
     loaded(chunks){
+        console.log("loaded for "+this.id+" chunks: "+JSON.stringify(chunks));
         this.chunks = chunks;
         this.page.widgetLoaded(this);
     }
@@ -32,18 +34,26 @@ export class Widget {
      * Registers CSS rules by appending a <style> element to the given head element.
      *
      * @param {jQuery} jHeadElement - jQuery object for the <head> element to append the style to.
-     * @param {string} [css=""] - CSS rules as a string. Subclasses will override this method and supply CSS internally, omitting this parameter from their API.
-     *
-     * Subclasses will override this method and provide CSS from an internal source (e.g., this.templates["css"]).
-     * Callers should generally use the subclass API, which do not require the css parameter.
      */
     registerCSS(jHeadElement){
-        let css = this.chunks["css"];
-        if (css){
-            let jStyle = $("<style>");
-            jStyle.text(css);
-            jHeadElement.append(jStyle);
+        let cssChunk = this.chunks["css"];
+        if (cssChunk && cssChunk.text) {
+            // Generate a unique id for the style tag based on the url of the stylesheet loaded
+            let styleId = (cssChunk.url || "widget").replace(/[./]/g, "-");
+            // Check if a style tag with this id already exists
+            if (jHeadElement.find('style#'+styleId).length === 0) {
+                let jStyle = $("<style>");
+                jStyle.attr("id", styleId);
+                jStyle.text(cssChunk.text);
+                jHeadElement.append(jStyle);
+            }
         }
+    }
+    /** This is the one chance for the widget to reliably get the contents from the page, 
+     *    after this we may remove the widget element and replace it with the results of build() 
+     *    with the widget.id as that element.
+     */
+    grabContents(jElement){
     }
     build(){
     }

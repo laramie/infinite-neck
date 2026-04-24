@@ -1,0 +1,6 @@
+.include-test {
+    background-color: pink;
+    border: 10px dotted rgb(120, 0, 56);
+    padding: 1em;
+    font-size: 18pt;
+}

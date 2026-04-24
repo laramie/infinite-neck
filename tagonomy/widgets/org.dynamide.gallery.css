@@ -1,6 +1,6 @@
 .gallery {
     display: inline-block; 
-    background-color: lightgreen;
+    background-color: blue;
     border: 10px dashed rgb(255, 140, 0); 
     padding: 1em; 
     margin: 2em;
