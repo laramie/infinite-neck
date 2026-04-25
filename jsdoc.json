@@ -2,11 +2,15 @@
   "source": {
     "include": [
       "tagonomy/",
+      "tagonomy/widgets",
+      "tagonomy/widgets/include",
+      "tagonomy/widgets/partial",
       "bin/",
       "./"
     ],
-    "includePattern": ".+\\.js(doc|x)?$",
-    "excludePattern": "(^|\\/|\\\\)_"
+    "includePattern": ".+\\.js$",
+    "excludePattern": "^(\\.git|_TEMP_ONLY|node_modules|_doco)/",
+    "recurse": true
   },
   "opts": {
     "destination": "_doco/jsdoc",

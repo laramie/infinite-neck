@@ -59,5 +59,21 @@ jsonpath-plus
 ============
 npm install jsonpath-plus
 
+============
+jsdoc
+============
+// 20260424
+laramie@penguin:
+cd ~/infinite-neck
+npm install --save-dev jsdoc
+
+=============
+documentation.js
+=============
+// jsdoc turns out to be crap.  Everyone is either using TypeDoc or documentation.js
+//   documentation.js looks beautiful and more mature.  Trying it.   20260424.
+npm install --save-dev documentation
+
+
 
 

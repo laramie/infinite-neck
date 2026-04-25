@@ -1,3 +1,7 @@
+/**
+ * @module tagonomy/widgets/include/include
+ */
+
 import { Widget } from '../org.dynamide.Widget.js';
 
 /**

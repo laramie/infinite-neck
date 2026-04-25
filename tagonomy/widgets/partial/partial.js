@@ -1,3 +1,7 @@
+/**
+ * @module tagonomy/widgets/partial/partial
+ */
+
 import { Widget } from '../org.dynamide.Widget.js';
 
 /**
