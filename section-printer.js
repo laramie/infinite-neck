@@ -5,6 +5,7 @@ import {
 import {
     getTonalForTable
 } from './TonalFunctions.js';
+import { getSong } from './infinite-neck.js';
 
 
 const { Chord } = globalThis.Tonal?.Chord
@@ -142,8 +143,9 @@ export function printSectionsNotes(theSong, theSections){
             let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
             let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                                          .join('<br>');
-           
-            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br><b>modes:</b><br>"+chartChordsResult.scale.join("<br>")+"</div></td>";
+            let modeLinks = buildModeLinksPicker(chartChordsResult.scale);
+            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br>"
+                     +"b>modes:</b><br>"+modeLinks+"</div></td>";
         });
 
         result += "</tr>";
@@ -186,5 +188,29 @@ export function getSectionNotesDisplayData(section) {
 export function getSectionNotesDisplayString(section) {
     const details = getSectionNotesDisplayData(section);
     return JSON.stringify(details, null, 4);
+}
+
+
+/* TODO: 
+    - make this a widget
+        - span should close up and have an edit/select button
+        - default to closed
+        - should register functions, hopefully not on window.* but on "on("click"....)"
+        - should ensure HEAD has functions under scrit tag <script id="widget.type"....>
+        - should ensure that DOM delete cleans up
+    - add column for mode, get value from song: see how chord column is refreshed by re-printing.
+    - fix /vdf and friends
+*/    
+window.setSectionMode = function(secIdx, mode) {
+    getSong().sections[secIdx].mode = mode;
+};
+
+function buildModeLinksPicker(scaleArray){
+    scaleArray.join("<br>")
+    let secIdx = getSong().sections.indexOf(getSong().getCurrentSection());
+        let html = scaleArray.map(mode => 
+        `<a href='javascript:setSectionMode(${secIdx}, "${mode}");'>${mode}</a>`
+    ).join('<br>');
+    return html;
 }
 

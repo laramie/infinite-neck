@@ -1,16 +1,23 @@
+import { widgetLoaderImport } from './WidgetLoaderImport.js';  //wrapper to avoid documentation.js not understanding the __import__ keyword.
+
+
+/** @class
+ */
 export class WidgetLoader {
     constructor(){
     }
 
-    /* widgetPath = './widgets/org.dynamide.gallery.widget.js'
+    /**
+     * Dynamically loads a widget module and initializes it.
      */
     loadWidget(widgetPath, id, dataAttributes, page, jWidget){
+        //widgetPath = './widgets/org.dynamide.gallery.widget.js'
         let widget;
         if (!widgetPath){
             console.log("Widgets without modules not supported: "+id);
             return;
-        } else {        
-            import(widgetPath).then(module => {
+        } else { 
+            widgetLoaderImport(widgetPath).then(module => {
                 widget = module.makeWidget(widgetPath, id, dataAttributes, page);
                 widget.grabContents(jWidget)
                 widget.load(this);
@@ -18,14 +25,16 @@ export class WidgetLoader {
         }
     }
 
+
+    /** Widget subclasses should call this in load() to pull in resources, but 
+     *  can also just set this.includes instead.
+     */
     fetchChunks(items, loadedFunction){
-        console.log("fetchChunks: "+JSON.stringify(items));
         if (!Array.isArray(items) || items.length === 0) {
             console.log("fetchChunks calling empty loadedFunction because no array of items");
             loadedFunction({});
             return;
         }
-        // items: [{id, url}, ...]
         Promise.all(
             items.map(item =>
                 fetch(item.url)

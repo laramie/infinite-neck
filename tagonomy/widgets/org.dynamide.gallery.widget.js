@@ -51,17 +51,18 @@ export function makeWidget(type, id, dataAttributes, page){
  * <p>The GalleryWidget implements {@link GalleryWidget#registerEvents} to register the events listed in WidgetDefaults,
  * using its handler methods {@link GalleryWidget#resize} and {@link GalleryWidget#addImage}, which you can override or call.
  * </p>
- * 
+ *
+ * Constructs a GalleryWidget instance.
+ * @param {string} type - The widget type.
+ * @param {string} id - The widget id.
+ * @param {Object} dataAttributes - Data attributes from the widget tag.
+ * @param {Object} page - The page context.
+ *  
  * @augments Widget
+ * 
+ * @class
  */
 export class GalleryWidget extends Widget {
-    /**
-     * Constructs a GalleryWidget instance.
-     * @param {string} type - The widget type.
-     * @param {string} id - The widget id.
-     * @param {Object} dataAttributes - Data attributes from the widget tag.
-     * @param {Object} page - The page context.
-     */
     constructor(type, id, dataAttributes, page) {
         super(type, id, dataAttributes, page);
         Object.assign(this, WidgetDefaults);

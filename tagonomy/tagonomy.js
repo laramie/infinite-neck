@@ -1,6 +1,5 @@
 import { Page } from './Page.js';
 import { WidgetLoader } from './WidgetLoader.js';
-import EventBus from '../event-bus.js';
 
 
 // Browser loads DOM, then script tag in index.html pulls in this module,
@@ -13,23 +12,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 function appInit(){
     let widgetLoader = new WidgetLoader();
-    let page = new Page(widgetLoader);
-    console.log("appInit::new Page::widgets:"+JSON.stringify(page.getWidgets(),null,2));
-}
-
-
-function test(){
-    let widgetLoader = new WidgetLoader();
-    //hardcode test.  Later, use ids from page, and partials urls from Widget.
-    widgetLoader.fetchChunks([ 
-            {id: "org-dynamide-calout-1",      url: "widgets/org.dynamide.callout.shtml"}, 
-            {id: "org-dynamide-gallery-1",     url: "widgets/org.dynamide.gallery.shtml"},
-            {id: "org-dynamide-gallery-1:css", url: "widgets/org.dynamide.gallery.css"}
-        ], 
-        allChunksReady
-    );
-}
-function allChunksReady(chunks, widgets){
-    $('#org-dynamide-gallery-1').html(chunks["org-dynamide-gallery-1"]);
-    $('#org-dynamide-callout-1').html(chunks["org-dynamide-callout-1"]);
+    let page = new Page(widgetLoader);  //rips through web page and loads all widgets.
+    page.whenAllWidgetsLoaded().then(() => {
+        // Custom replacer to remove 'page' property from Widget objects
+        function widgetReplacer(key, value) {
+            if (key === 'page') {
+                return undefined;
+            }
+            return value;
+        }
+        console.log("appInit::new Page::widgets:"+
+            JSON.stringify(page.getWidgets(), widgetReplacer, 2)
+        );
+    });
 }

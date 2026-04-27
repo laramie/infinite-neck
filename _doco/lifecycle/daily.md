@@ -4,6 +4,7 @@
     ```
         cd ~/infinite-neck
         bin/index.md-update-all.sh
+        bin/documentation.sh 
     ```
 
 ## Run Jest Tests

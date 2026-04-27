@@ -36,46 +36,61 @@ export function makeWidget(type, id, dataAttributes, page){
  *
  * After construction, loading, and DOM insertion, you may respond to any {@link EventBus} messages you have registered during {@link Widget#registerEvents}.
  *
- * @param {string} type - The relative path to the concrete Widget subclass.
- * @param {string} id - The id of the <widget> element.
- * @param {Object} dataAttributes - Dictionary of all "data-*" attributes on <widget>.
- * @param {Object} page - Reference to the {@link Page} instance containing this widget.
- */
-export class Widget {
-    /**
+     * constructor() 
+     *
      * Constructs a Widget instance.
+     * 
+     * Deals with includes by looking at "data-includes" attribute on the widget element.
+     * If present, creates a dictionary of this shape:
+     * 
+     *   ```
+     *   "includes": [
+     *    {
+     *      "id": "css",
+     *      "url": "widgets/org.dynamide.gallery.css"
+     *    },
+     *    {
+     *      "id": "html",
+     *      "url": "widgets/org.dynamide.gallery.shtml"
+     *    }
+     *  ]
+     *  ```
+     * 
+     * and passes that to WidgetLoader.fetch... which returns `chunks` which is of this shape:
+     * 
+     * 
+     *  ```
+     *  "chunks": {
+     *    "css": {
+     *      "id": "css",
+     *      "url": "widgets/org.dynamide.gallery.css",
+     *      "text": ".gallery {display: inline-block; background-color: blue;}"
+     *    },
+     *    "html": {
+     *      "id": "html",
+     *      "url": "widgets/org.dynamide.gallery.shtml",
+     *      "text": "<p class=\"gallery\">....</p>"
+     *    }
+     *  }
+     *  ```
      * 
      * @param {string} type - The relative path to the concrete Widget subclass. Use {@link Widget.makeClassKey} or {@link Widget#getClassKey} for CSS keys.
      * @param {string} id - The id of the <widget> element and any root element containing the result of build().
      * @param {Object} dataAttributes - Dictionary of all "data-*" attributes on <widget> (e.g., dataAttributes["data-includes"]).
      * @param {Object} page - Reference to the {@link Page} instance containing this widget.
-     */
+     * @property {Object} chunks - Dictionary of loaded resource chunks (e.g., "css", "html").
+     * @property {Object} includes - Dictionary of resources to fetch, loaded automatically from "data-includes" (e.g., "css", "html").
+    * 
+    * @class
+    */
+export class Widget {
     constructor(type, id, dataAttributes, page) {
-        /**
-         * The id of the <widget> element and any root element containing the result of build().
-         * @type {string}
-         */
         this.id = id;
-        /**
-         * The widget type, as a relative path to the concrete Widget subclass.
-         * @type {string}
-         */
         this.type = type;
-        /**
-         * Reference to the {@link Page} instance containing this widget.
-         * @type {Object}
-         */
         this.page = page;
-        /**
-         * Dictionary of all "data-*" attributes on <widget>.
-         * @type {Object}
-         */
         this.dataAttributes = dataAttributes;
-        /**
-         * Dictionary of loaded resource chunks (e.g., "css", "html").
-         * @type {Object}
-         */
         this.chunks = {};    
+        this.includes = JSON.parse(dataAttributes["data-includes"]||"{}");
     }
 
     /**
@@ -102,6 +117,9 @@ export class Widget {
      * Generally, you do not need to override this method; simply ensure this.includes is properly filled out.
      * If you do override this method, follow the pattern in Widget.load() and pass your loaded() function pointer with an arrow function so "this" is bound.
      * When those resources have been loaded, {@link Widget#loaded} will be called.
+     * If you do not call super.loaded(widgetLoader), you'll break the includes, but also your
+     * loaded() function will never be called, which breaks how Page loads all Widgets, 
+     * causing it to never return from the Promise in whenAllWidgetsLoaded().
      * 
      * @param {Object} widgetLoader - The WidgetLoader instance.
      */
@@ -127,7 +145,6 @@ export class Widget {
      * @param {Object} chunks - Dictionary of loaded resource chunks.
      */
     loaded(chunks){
-        console.log("loaded for "+this.id+" chunks: "+JSON.stringify(chunks));
         this.chunks = chunks;
         this.page.widgetLoaded(this);
     }

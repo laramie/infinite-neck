@@ -9,11 +9,19 @@
  * Cleanup is by jQuery.remove() which detaches from DOM and allows garbage collection, 
  * but does not call widget.destroy() or anything fancy.  Therefore, until any fancy registry is in place, 
  * store data on data- attributes.
+ * 
+ * @class
  */
 
 export class Page {
     constructor(widgetLoader){
         this.widgets = {};  //keyed by widget.id, which will be page-unique.  So this is the registry.
+        this._expectedWidgetCount = 0;
+        this._loadedWidgetCount = 0;
+        this._allWidgetsLoadedResolver = null;
+        this._allWidgetsLoadedPromise = new Promise((resolve) => {
+            this._allWidgetsLoadedResolver = resolve;
+        });
         this.loadAllWidgetsInPage(widgetLoader);
     }
     
@@ -21,10 +29,24 @@ export class Page {
         return this.widgets;
     }
 
+    /**
+     * Returns a Promise that resolves when all widgets have been loaded and built.
+     * Usage: await page.whenAllWidgetsLoaded();
+     */
+    whenAllWidgetsLoaded() {
+        return this._allWidgetsLoadedPromise;
+    }
+
     //look for all widgets like this: 
     //      <widget id="org-dynamide-gallery-1" data-type="org.dynamide.gallery" />
     loadAllWidgetsInPage(widgetLoader){
-        $("widget").each((index, widgetElement) => {
+        const widgetElements = $("widget");
+        this._expectedWidgetCount = widgetElements.length;
+        if (this._expectedWidgetCount === 0 && this._allWidgetsLoadedResolver) {
+            // No widgets, resolve immediately
+            this._allWidgetsLoadedResolver();
+        }
+        widgetElements.each((index, widgetElement) => {
             let dataAttributes = {};
             $.each(widgetElement.attributes, function() {
                 if(this.name.startsWith('data-')) {
@@ -47,22 +69,24 @@ export class Page {
         let built = widget.build();
         if (built === undefined || built === null){
             jWidget.remove();
-            return;
+        } else {
+            let jElement = $(built);
+            if (jElement.length === 0){
+                jWidget.remove();
+            } else if (jElement.length === 1){
+                jWidget.replaceWith(jElement);
+                jElement.attr("id", widget.id);
+            } else {
+                let jWrapper = $("<span>");
+                jWrapper.append(jElement);
+                jWidget.replaceWith(jWrapper);
+                jWrapper.attr("id", widget.id);
+            }
         }
-        let jElement = $(built);
-        if (jElement.length === 0){
-            jWidget.remove();
-            return;
+        this._loadedWidgetCount++;
+        if (this._loadedWidgetCount === this._expectedWidgetCount && this._allWidgetsLoadedResolver) {
+            this._allWidgetsLoadedResolver();
         }
-        if (jElement.length === 1){
-            jWidget.replaceWith(jElement);
-            jElement.attr("id", widget.id);
-            return;
-        }
-        let jWrapper = $("<span>");
-        jWrapper.append(jElement);
-        jWidget.replaceWith(jWrapper);
-        jWrapper.attr("id", widget.id);
     }
 
 }

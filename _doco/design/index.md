@@ -17,3 +17,4 @@ Below is a list of documentation files in this directory. Add or edit notes afte
 - [recommended-architecture.md](recommended-architecture.md)
 - [song-refactor-chat-full.md](song-refactor-chat-full.md)
 - [widget-design-SectionStatus.md](widget-design-SectionStatus.md)
+- [widget-sequence-diagram.md](widget-sequence-diagram.md)

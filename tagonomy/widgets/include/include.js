@@ -41,15 +41,16 @@ export function makeWidget(type, id, dataAttributes, page){
  * The {@link IncludeWidget#build} method returns `undefined` if no "html" include is specified,
  * so the widget will emit no block element and disappear from the DOM, but any "css" will still be appended to HEAD.
  *
+ * @param {string} type - The widget type.
+ * @param {string} id - The widget id.
+ * @param {Object} dataAttributes - Data attributes from the widget tag.
+ * @param {Object} page - The page context.
+
  * @augments Widget
+ * 
+ * @class
  */
 export class IncludeWidget extends Widget {
-    /**
-     * @param {string} type - The widget type.
-     * @param {string} id - The widget id.
-     * @param {Object} dataAttributes - Data attributes from the widget tag.
-     * @param {Object} page - The page context.
-     */
     constructor(type, id, dataAttributes, page) {
         super(type, id, dataAttributes, page);
     }
@@ -63,7 +64,6 @@ export class IncludeWidget extends Widget {
     grabContents(jElement){
         let contents = (jElement.html()||"");
         let obj = JSON.parse(contents);
-        console.log("obj[0].url: "+JSON.stringify(obj[0].url));
         this.includes = obj;
         jElement.empty();
     }
@@ -76,7 +76,6 @@ export class IncludeWidget extends Widget {
      */
     build(){
         let htmlChunk = this.chunks["html"];
-        console.log(`htmlChunk in ${this.id}: ${htmlChunk}`);
         if (htmlChunk && htmlChunk.text) {
             let widgetRoot = $("<span>");
             widgetRoot.html(htmlChunk.text);
