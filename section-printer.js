@@ -146,8 +146,8 @@ export function printSectionsNotes(theSong, theSections){
             let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
             //let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
             //                             .join('<br>');
-            let chordLinks = buildTonalPicker(idx, "chord", chartChordsResult.chords, section.chartChord)                                         
-            let modeLinks = buildTonalPicker(idx, "mode", chartChordsResult.scale, section.mode);
+            let chordLinks = buildTonalPicker(idx, "chords", chartChordsResult.chords, section.chartChord)                                         
+            let modeLinks = buildTonalPicker(idx, "modes", chartChordsResult.scale, section.mode);
             result += "<td><div class='SPN_CC'>" 
                      +chartChordsNotes+':'
                      +chordLinks

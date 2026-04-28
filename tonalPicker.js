@@ -26,6 +26,7 @@ const CSS_TEXT = `
     border: 1px solid green;
     FOOwidth: 100%;
     FOOmin-width: 0;
+    background-color: #fbd094;
 }
 .tonalPicker-row {
     display: flex;
@@ -54,8 +55,10 @@ ul.tonalMode-list {
     white-space: normal; /* allow normal wrapping in the list */
 }
 ul.tonalMode-list li {
+    border: 1px dotted gray;
     margin: 0;
-    padding: 0;
+    margin-left: 1em;
+    padding: 0.3em;
     line-height: 1.2;
     font-size: 70%;
     white-space: nowrap; /* prevent wrapping and ignore template whitespace */
@@ -63,6 +66,13 @@ ul.tonalMode-list li {
 ul.tonalMode-list li a {
     white-space: nowrap; /* also ensure link text doesn't wrap */
     display: inline-block; /* optional, for more control */
+}
+ul.tonalMode-list li:nth-child(odd) {
+    background-color: #89f9ff;
+}
+
+ul.tonalMode-list li:nth-child(even) {
+    background-color: #fff42b;
 }
 `;
 
@@ -83,15 +93,16 @@ function registerCSS(){
 export function buildTonalPicker(sectionIdx, dest, valueArray, currentValue){
     currentValue = currentValue || "&lt;choose&gt;";
     registerCSS();
-    let linksList = valueArray.map(val => 
-        `<li><a href="javascript:pickTonal(${sectionIdx}, '${dest}', '${val}');">${val}</a></li>`
-    ).join('\n');
+    let linksList = valueArray
+        .map(val => `<li><a href="javascript:pickTonal(${sectionIdx}, '${dest}', '${val}');">${val}</a></li>`);
+    linksList.push(`<li><a href="javascript:pickTonal(${sectionIdx}, '${dest}', 'clear');">&lt;clear&gt;</a></li>`);
+    linksList = linksList.join('\n');
 
     return `
     <span class="tonalPicker" id="tonalPicker-${dest}-${sectionIdx}">
         <span class="tonalPicker-row">
             <span class="spanTonalMode" id="spanTonalMode-${dest}-${sectionIdx}">${currentValue}</span>
-            <button onclick="$('#tonalMode-list-${dest}-${sectionIdx}').show()">modes</button>
+            <button onclick="$('#tonalMode-list-${dest}-${sectionIdx}').toggle()">${dest}</button>
         </span>
         <ul class="tonalMode-list" id="tonalMode-list-${dest}-${sectionIdx}" style="display:none;">
             ${linksList}
@@ -103,11 +114,14 @@ export function buildTonalPicker(sectionIdx, dest, valueArray, currentValue){
 window.pickTonal = function pickTonal(sectionIdx, dest, val){
     $(`#tonalPicker-${dest}-${sectionIdx} > span.spanTonalMode`).text(val);
     $(`#tonalPicker-${dest}-${sectionIdx} > ul`).hide();
+    if (val === 'clear'){
+        val = "";
+    }
     switch (dest) {
-        case "chord":
+        case "chords":
             linkToSectionChartChord(sectionIdx, val);
             break;
-        case "mode":
+        case "modes":
             linkToSectionChartMode(sectionIdx, val);
             break;
     }
