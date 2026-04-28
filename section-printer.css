@@ -82,5 +82,6 @@
 }
 .SPN_CC{
     overflow-wrap: break-word;
+    white-space: normal;
 }
 

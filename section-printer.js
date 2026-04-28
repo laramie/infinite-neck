@@ -5,7 +5,8 @@ import {
 import {
     getTonalForTable
 } from './TonalFunctions.js';
-import { getSong } from './infinite-neck.js';
+
+import { buildTonalPicker } from './tonalPicker.js';
 
 
 const { Chord } = globalThis.Tonal?.Chord
@@ -102,6 +103,7 @@ export function printSectionsNotes(theSong, theSections){
         + "<th class='SPN_TH' rowspan='2'>KEY</th>"
         + "<th class='SPN_TH' rowspan='2'>&sharp;/&flat;</th>"
         + "<th class='SPN_TH' rowspan='2'>Chord</th>"
+        + "<th class='SPN_TH' rowspan='2'>Mode</th>"
         + "<th class='SPN_TH' rowspan='2'>Caption</th>";
 
     let colorAlt = true;  
@@ -127,6 +129,7 @@ export function printSectionsNotes(theSong, theSections){
             + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
             + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
+            + "</td><td>" + (section.mode ? section.mode : "&nbsp;") 
             + "</td><td><b style='font-size: 130%;'>" + section.caption + "</b></td>";
 
         instrumentTableIDs.forEach((tableID) => {
@@ -141,11 +144,14 @@ export function printSectionsNotes(theSong, theSections){
             
             let chartChordsResult = getTonalForTable(theSong, section, tableID);
             let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
-            let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
-                                         .join('<br>');
-            let modeLinks = buildModeLinksPicker(chartChordsResult.scale);
-            result += "<td><div class='SPN_CC'>" +chartChordsNotes+':<br>'+ links + "<br>"
-                     +"b>modes:</b><br>"+modeLinks+"</div></td>";
+            //let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
+            //                             .join('<br>');
+            let chordLinks = buildTonalPicker(idx, "chord", chartChordsResult.chords, section.chartChord)                                         
+            let modeLinks = buildTonalPicker(idx, "mode", chartChordsResult.scale, section.mode);
+            result += "<td><div class='SPN_CC'>" 
+                     +chartChordsNotes+':'
+                     +chordLinks
+                     +modeLinks+"</div></td>";
         });
 
         result += "</tr>";
@@ -190,27 +196,4 @@ export function getSectionNotesDisplayString(section) {
     return JSON.stringify(details, null, 4);
 }
 
-
-/* TODO: 
-    - make this a widget
-        - span should close up and have an edit/select button
-        - default to closed
-        - should register functions, hopefully not on window.* but on "on("click"....)"
-        - should ensure HEAD has functions under scrit tag <script id="widget.type"....>
-        - should ensure that DOM delete cleans up
-    - add column for mode, get value from song: see how chord column is refreshed by re-printing.
-    - fix /vdf and friends
-*/    
-window.setSectionMode = function(secIdx, mode) {
-    getSong().sections[secIdx].mode = mode;
-};
-
-function buildModeLinksPicker(scaleArray){
-    scaleArray.join("<br>")
-    let secIdx = getSong().sections.indexOf(getSong().getCurrentSection());
-        let html = scaleArray.map(mode => 
-        `<a href='javascript:setSectionMode(${secIdx}, "${mode}");'>${mode}</a>`
-    ).join('<br>');
-    return html;
-}
 

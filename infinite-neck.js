@@ -1054,6 +1054,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divMessages").html(printSectionsNotes());
 		updateSectionsStatus();
 	}
+	export function linkToSectionChartMode(idx, mode) {
+		getSong().sections[idx].mode = mode;
+		$("#divMessages").html(printSectionsNotes());
+		updateSectionsStatus();
+	}
 
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
 		//console.log("rangeSlide:"+element_id+" value: "+value);
@@ -1868,6 +1873,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadSong,
 			linkToSection,
 			linkToSectionChartChord,
+			linkToSectionChartMode,
 			hideGraveyard,
 			saveInstrumentPrefs,
 			applyInstrumentPrefs,
