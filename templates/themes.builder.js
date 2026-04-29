@@ -27,7 +27,6 @@ export class ThemesBuilder {
     }
 
     static selThemesChange(){
-        console.log("#selThemes::change");
         var id = this.id;
         var val =  this.value;
         var selectedTheme = ThemeFunctions.getThemes()[val];

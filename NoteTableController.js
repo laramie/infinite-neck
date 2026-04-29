@@ -261,7 +261,8 @@ export function colorNote(cell) {
         let idx = getSong().sections.indexOf(theCurrentSection);
         let tonalResult = getTonalForTable(getSong(), theCurrentSection, res.tableID);
 
-        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, idx, 
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
+                                                 res.tableID, idx, 
                                                  tonalResult.chords, theCurrentSection.chartChord, 
                                                  tonalResult.scale,  theCurrentSection.mode);
         
@@ -286,7 +287,6 @@ export function colorNoteInner(cell) {
         tableID = jParentTable.attr("id");
         result.tableID = tableID;
         parentTableSel = '#'+tableID+' ';
-        console.log("==== colorNote ==tableID====>>>>>>>"+tableID);
     }
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
@@ -716,17 +716,10 @@ export function replayTable(replayOptions){
         let idx = getSong().sections.indexOf(getCurrentSection());
         let tonalResult = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
         let chords = tonalResult.chords;
-        let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
-                          .join('&nbsp;');
-
-        //let chordLinks = buildTonalPicker(idx, "chords", tonalResult.chords, replayOptions.currSection.chartChord)                                         
-        //let modeLinks =  buildTonalPicker(idx, "modes",  tonalResult.scale,  replayOptions.currSection.mode);
-        //'<table><tr><td>'+links+'</td><td>'+chordLinks+'</td><td>'+modeLinks+'</td></tr></table>'); //"_captionRowTonalInfo" from TableBuilder
-  
-        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, idx, 
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
+                                                 replayOptions.listenToTablename, idx, 
                                                  tonalResult.chords, replayOptions.currSection.chartChord, 
                                                  tonalResult.scale,  replayOptions.currSection.mode);
-
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 

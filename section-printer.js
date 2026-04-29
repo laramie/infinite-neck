@@ -147,24 +147,14 @@ export function printSectionsNotes(theSong, theSections){
             
             let tonalResult = getTonalForTable(theSong, section, tableID);
             let chartChordsNotes = tonalResult.normalizedNamedNotes.join(',');
-            //let links = tonalResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
-            //                             .join('<br>');
-            /*let chordLinks = buildTonalPicker(idx, "chords", tonalResult.chords, section.chartChord)                                         
-            let modeLinks = buildTonalPicker(idx, "modes", tonalResult.scale, section.mode);
-            result += "<td><div class='SPN_CC'>" 
-                     +chartChordsNotes+':'
-                     +chordLinks
-                     +modeLinks+"</div></td>";
-            */
-            let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, idx, 
+            let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, 
+                                                        tableID, idx, 
                                                         tonalResult.chords, section.chartChord, 
                                                         tonalResult.scale,  section.mode);
             result += "<td><div class='SPN_CC'>" 
                             +chartChordsNotes+':'
                             +tonalPickerSet
                             +"</div></td>";
-
-                
         });
 
         result += "</tr>";

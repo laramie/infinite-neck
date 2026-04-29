@@ -19,7 +19,6 @@ export function buildNoteTable(options) {
 	var colDisplay = 0;
 	var numRows = options.rowRange.length;
 	const tableID = Constants.TABLE_ID_PREFIX + options.baseID;
-	console.log("================= TableBuilder building table: ==>"+tableID+"<=======");
 
 	var table = $('<table>');
 	table.attr("border", "0");
@@ -188,7 +187,7 @@ export function buildNoteTable(options) {
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
-	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo'></span>";
+	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo' class='captionRowTonalInfo'></span>";
 
 	let spanCaptionRowLiveInfo = $('<span>');
 	spanCaptionRowLiveInfo.attr('id', tableID + '_captionRowLiveInfo');

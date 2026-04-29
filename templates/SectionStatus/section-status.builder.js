@@ -89,8 +89,6 @@ class SectionStatusWidget {
             LooperLight: SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight
         };
         let replaced = this.expandTemplate(tpl.innerHTML, vars);
-        console.log("=====replaceTemplate innerHTML: "+tpl.innerHTML);
-        console.log("=====replaceTemplate replaced: "+replaced);
         /* So jQuery does some magic here.
          *   Normal DOM API behavior is that if you set innerHTML before being attached to the DOM, the browser throws
          *      plain text innerHTML away upon attachment.
@@ -165,7 +163,6 @@ class SectionStatusWidget {
     handleSectionChanged(data) {
         if (!data.replayOptions) return;
         const opts = data.replayOptions;
-        console.log("======opts======\n" + JSON.stringify(opts, (key, value) => key === "currSection" ? undefined : value, 2));
         function updateIfChanged($el, val, isHtml = false) {
             if (!$el.length) return;
             if (isHtml) {
