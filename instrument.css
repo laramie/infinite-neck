@@ -76,16 +76,11 @@
     border-image: var(--instrument-border-image) 30 / 19px round;
     border-width: var(--instrument-border-thickness);
 }
-.dontDoTheseOnInstrumentBackground {
-    margin: 1em;
-    margin-bottom: var(--instrument-margin-tb);
-    margin-left: 1.5em;
-    padding: 8pt;
-}
 
-instrumentBackground .captionRow {
+.instrumentBackground .captionRow {
     width: 100%;
 }
+
 .captionRowInstrument {
     display: inline;
 }
@@ -125,7 +120,7 @@ instrumentBackground .captionRow {
     padding: 0.4em;
     display: inline-block;
 }
-.subcaption span {
+.subcaption .lblNoteClickedCaption {
     font-size: 80%;
     padding-left: 0.5em;
 }
@@ -165,6 +160,10 @@ instrumentBackground .captionRow {
     transform: rotate(180deg);
     font-size: 80%;
     text-align: center;
+}
+
+.spanTonalDetails {
+    display: none;
 }
 
 

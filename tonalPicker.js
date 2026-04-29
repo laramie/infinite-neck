@@ -36,8 +36,9 @@ const CSS_TEXT = `
     white-space: nowrap;
     gap: 0.5em;
 }
-.spanTonalMode {
-    font-size: 80%;
+.spanTonal_modes, 
+.spanTonal_chords {
+    font-size: 70%;
     padding: 0.4em;
     flex: 1 1 auto;
     overflow: hidden;
@@ -45,7 +46,6 @@ const CSS_TEXT = `
     white-space: nowrap;
 }
 .tonalPicker button {
-    font-size: 60%;
     flex: 0 0 auto;
 }
 ul.tonalMode-list {
@@ -60,7 +60,6 @@ ul.tonalMode-list li {
     margin-left: 1em;
     padding: 0.3em;
     line-height: 1.2;
-    font-size: 70%;
     white-space: nowrap; /* prevent wrapping and ignore template whitespace */
 }
 ul.tonalMode-list li a {
@@ -73,6 +72,17 @@ ul.tonalMode-list li:nth-child(odd) {
 
 ul.tonalMode-list li:nth-child(even) {
     background-color: #fff42b;
+}
+.TonalPickerAllChords span:nth-child(odd) {
+     background-color: #fe9054;
+}
+.TonalPickerAllChords span:nth-child(even) {
+    background-color: #e9fe45;
+}
+
+.spanTonal_chords_all {
+    background-color: #acfe75;
+    margin-left: 0.2em;
 }
 `;
 
@@ -90,38 +100,77 @@ function registerCSS(){
 }
 
 // dest is either "mode" or "chord".
-export function buildTonalPicker(sectionIdx, dest, valueArray, currentValue){
+export function buildTonalPicker(ownerID, sectionIdx, dest, valueArray, currentValue){
     currentValue = currentValue || "&lt;choose&gt;";
     registerCSS();
     let linksList = valueArray
-        .map(val => `<li><a href="javascript:pickTonal(${sectionIdx}, '${dest}', '${val}');">${val}</a></li>`);
-    linksList.push(`<li><a href="javascript:pickTonal(${sectionIdx}, '${dest}', 'clear');">&lt;clear&gt;</a></li>`);
+        .map(val => `<li><a href="javascript:pickTonal('${ownerID}', ${sectionIdx}, '${dest}', '${val}');">${val}</a></li>`);
+    linksList.push(`<li><a href="javascript:pickTonal('${ownerID}', ${sectionIdx}, '${dest}', 'clear');">&lt;clear&gt;</a></li>`);
     linksList = linksList.join('\n');
 
+    let allChordsList = "";
+    let allChordsArray = [];
+    if (dest === "chords"){
+        let strike = "";
+        allChordsArray.push("<span class='TonalPickerAllChords'>");
+        valueArray.forEach(val => {
+            console.log(`val:${val}, currentValue:${currentValue},`);
+            val = (val === currentValue) ? `<b>${val}</b>` : val;
+            allChordsArray.push(`<span>${val}</span>`);
+        })
+        allChordsArray.push("</span>");
+        allChordsList = allChordsArray.join("&nbsp;");    
+    }
+
     return `
-    <span class="tonalPicker" id="tonalPicker-${dest}-${sectionIdx}">
+    <span class="tonalPicker" id="tonalPicker-${ownerID}-${dest}-${sectionIdx}">
         <span class="tonalPicker-row">
-            <span class="spanTonalMode" id="spanTonalMode-${dest}-${sectionIdx}">${currentValue}</span>
-            <button onclick="$('#tonalMode-list-${dest}-${sectionIdx}').toggle()">${dest}</button>
+            <span class="spanTonal_chords_all">${allChordsList}</span>
+            <span class="spanTonal_${dest}">${currentValue}</span>
+            <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${sectionIdx}').toggle()">${dest}</button>
         </span>
-        <ul class="tonalMode-list" id="tonalMode-list-${dest}-${sectionIdx}" style="display:none;">
+        <ul class="tonalMode-list" id="tonalMode-list-${ownerID}-${dest}-${sectionIdx}" style="display:none;">
             ${linksList}
         </ul>
     </span>
     `;
 }
 
-window.pickTonal = function pickTonal(sectionIdx, dest, val){
-    $(`#tonalPicker-${dest}-${sectionIdx} > span.spanTonalMode`).text(val);
-    $(`#tonalPicker-${dest}-${sectionIdx} > ul`).hide();
+export const TonalPickerOrientation = Object.freeze({
+    VERTICAL: "vertical", 
+    HORIZONTAL: "horizontal"
+});
+
+/** 
+ *  @param orientation is one of TonalPickerOrientation.VERTICAL or TonalPickerOrientation.HORIZONTAL .
+ *  @param ownerID is a string to differntiate multiple picker sets on one page, it is not used to find the owner. 
+ */
+export function buildTonalPickerSet(ownerID, orientation, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue){
+    let chordPicker = buildTonalPicker(ownerID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue)                                         
+    let modePicker =  buildTonalPicker(ownerID, sectionIdx, "modes",  modeValueArray,  modeCurrentValue);
+    
+    let tbl;
+    if  (orientation === TonalPickerOrientation.HORIZONTAL){
+        tbl = `<table class='TonalPickerHoriz'><tr><td>${chordPicker}</td><td>${modePicker}</td></tr></table>`;
+    } else {
+        tbl = `<table class='TonalPickerVert'><tr><td>${chordPicker}</td></tr><tr><td>${modePicker}</td></tr></table>`;
+    }
+    return tbl;
+}
+
+window.pickTonal = function pickTonal(ownerID, sectionIdx, dest, val){
+    //$(`#tonalPicker-${ownerID}-${dest}-${sectionIdx} > span.spanTonalMode`).text(val);
+    $(`#tonalPicker-${ownerID}-${dest}-${sectionIdx} > ul`).hide();
     if (val === 'clear'){
         val = "";
     }
     switch (dest) {
         case "chords":
+            $(`span.spanTonal_${dest}`).text(val);
             linkToSectionChartChord(sectionIdx, val);
             break;
         case "modes":
+            $(`span.spanTonal_${dest}`).text(val);
             linkToSectionChartMode(sectionIdx, val);
             break;
     }

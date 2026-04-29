@@ -6,7 +6,10 @@ import {
     getTonalForTable
 } from './TonalFunctions.js';
 
-import { buildTonalPicker } from './tonalPicker.js';
+import { 
+    buildTonalPickerSet, 
+    TonalPickerOrientation 
+} from './tonalPicker.js';
 
 
 const { Chord } = globalThis.Tonal?.Chord
@@ -142,16 +145,26 @@ export function printSectionsNotes(theSong, theSections){
             result += "<td><div class='SPN_PN'>" + (formatPlayedNotes(sn.playedNotes) || "&nbsp;") + "</div></td>";
             result += "<td><div class='SPN_RN'>" + (formatRecordedNotes(sn.recordedNotes) || "&nbsp;") + "</div></td>";
             
-            let chartChordsResult = getTonalForTable(theSong, section, tableID);
-            let chartChordsNotes = chartChordsResult.normalizedNamedNotes.join(',');
-            //let links = chartChordsResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
+            let tonalResult = getTonalForTable(theSong, section, tableID);
+            let chartChordsNotes = tonalResult.normalizedNamedNotes.join(',');
+            //let links = tonalResult.chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
             //                             .join('<br>');
-            let chordLinks = buildTonalPicker(idx, "chords", chartChordsResult.chords, section.chartChord)                                         
-            let modeLinks = buildTonalPicker(idx, "modes", chartChordsResult.scale, section.mode);
+            /*let chordLinks = buildTonalPicker(idx, "chords", tonalResult.chords, section.chartChord)                                         
+            let modeLinks = buildTonalPicker(idx, "modes", tonalResult.scale, section.mode);
             result += "<td><div class='SPN_CC'>" 
                      +chartChordsNotes+':'
                      +chordLinks
                      +modeLinks+"</div></td>";
+            */
+            let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, idx, 
+                                                        tonalResult.chords, section.chartChord, 
+                                                        tonalResult.scale,  section.mode);
+            result += "<td><div class='SPN_CC'>" 
+                            +chartChordsNotes+':'
+                            +tonalPickerSet
+                            +"</div></td>";
+
+                
         });
 
         result += "</tr>";

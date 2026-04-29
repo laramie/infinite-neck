@@ -44,7 +44,8 @@ export function getTonalForTable(theSong, section, tablename){
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
-    result.scale = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+    let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+    result.scale = filterWesternScales(worldScales);
     result.chords = chords;
     return result;
 }
@@ -62,3 +63,27 @@ function normalizeChord(arr, rootKey) {
   if (idx === -1) return sorted; // rootKey not found
   return sorted.slice(idx).concat(sorted.slice(0, idx));
 }
+
+//========== Scale.detect has a silly amount of scales from around the world.  Filter it for Western. ==========
+
+// Define your allowed Western scale types
+const westernScales = [
+  "major", "minor", 
+  "ionian", "dorian", "phrygian", "lydian", "mixolydian", "aeolian", "locrian",
+  "major pentatonic", "minor pentatonic", "blues",
+  "harmonic minor", "melodic minor"
+];
+
+/** 
+ * @param detections is the result of Scale.detect()
+ */
+function filterWesternScales(detections) {
+  return detections.filter(detection => {
+    // Extract the scale type (everything after the tonic name)
+    const type = detection.split(" ").slice(1).join(" ");
+    return westernScales.includes(type);
+  });
+}
+
+//==============================================================
+

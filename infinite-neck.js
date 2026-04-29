@@ -306,6 +306,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    $(".lblSectionCaption").html(caption);
 
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
+	    $(".lblSectionMode").html( getSong().getCurrentSection().mode);
 
 		var currentFilename = $("#txtFilename").val();
 	    $(".lblSongName").html(currentFilename);

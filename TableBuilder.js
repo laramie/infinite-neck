@@ -195,13 +195,16 @@ export function buildNoteTable(options) {
 
 	SectionStatusBuilder.createWidget(spanCaptionRowLiveInfo, tableID, 'caption', 'horizontal');
 	
-				
+		
+	const TDTD = "</td><td>";
+
 	captionRow.html(
 		hamburger 
 		+ '<span class="captionRowInstrument">'
 		+ tuningIDCaption
 		+ '</span>'
 		+ '<span class="subcaption">'
+		+ '<table id="captionRowTable"><tr><td>'
 		+ hamburgerLeftCaption
 		+ hamburgerLeftSectionMark 
 		+ hamburgerColorDict
@@ -218,17 +221,22 @@ export function buildNoteTable(options) {
 		+ reverse
 		+ '</span>'
 		
+		+TDTD
 		+ hamburgerNoteDetails
 		+ "<span class='spanNoteDetails'>"
 		+ noteClickedCaption
 		+"</span>"
 		
+		+TDTD
 		+ hamburgerTonalDetails
+		+TDTD
 		+ "<span class='spanTonalDetails'>"
 		+ tonalInfo
 		+"</span>"
+		+TDTD
 
-		+ '</span>'
+		+'</td></tr></table>' //end table captionRowTable
+		+ '</span>' //end span subcaption
 	);
 	captionRow.append(spanCaptionRowLiveInfo);
 	captionRow.append($("<div class='currentColorDict''></div>"));

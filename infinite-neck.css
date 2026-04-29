@@ -782,6 +782,13 @@ table.viewControls th {
     font-size:  100%;
     padding-right: 0.4em;
 }
+.lblSectionMode {
+    font-family: "Shadows Into Light", cursive;
+    color: #41c6ff;
+    font-weight: 200;
+    font-size:  100%;
+    padding-right: 0.4em;
+}
 .lblSectionNumber {
     padding: 0.2em;
     margin-left: 1em;

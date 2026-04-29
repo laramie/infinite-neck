@@ -44,6 +44,10 @@ import {
     buildCellsForTable,
     turnOffAutoColorCheckbox
 } from './infinite-neck.js';
+import { 
+    buildTonalPickerSet, 
+    TonalPickerOrientation 
+} from './tonalPicker.js';
 
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
@@ -252,12 +256,16 @@ export function colorNote(cell) {
             colorNoteResult: res
         });
 
-        let idx = getSong().sections.indexOf(getCurrentSection());
-        let tonalResult = getTonalForTable(getSong(), getCurrentSection(), res.tableID);
-        let chords = tonalResult.chords;
-        let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
-                          .join('&nbsp;');
-        $('#'+res.tableID+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder
+        let theCurrentSection = getCurrentSection();
+
+        let idx = getSong().sections.indexOf(theCurrentSection);
+        let tonalResult = getTonalForTable(getSong(), theCurrentSection, res.tableID);
+
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, idx, 
+                                                 tonalResult.chords, theCurrentSection.chartChord, 
+                                                 tonalResult.scale,  theCurrentSection.mode);
+        
+        $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
     }
 }
 export function colorNoteInner(cell) {
@@ -710,8 +718,16 @@ export function replayTable(replayOptions){
         let chords = tonalResult.chords;
         let links = chords.map(ch => `<a href='#' data-action='linkToSectionChartChord' data-action-args='["${idx}","${ch}"]'>${ch}</a>`)
                           .join('&nbsp;');
-        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(links); //"_captionRowTonalInfo" from TableBuilder
+
+        //let chordLinks = buildTonalPicker(idx, "chords", tonalResult.chords, replayOptions.currSection.chartChord)                                         
+        //let modeLinks =  buildTonalPicker(idx, "modes",  tonalResult.scale,  replayOptions.currSection.mode);
+        //'<table><tr><td>'+links+'</td><td>'+chordLinks+'</td><td>'+modeLinks+'</td></tr></table>'); //"_captionRowTonalInfo" from TableBuilder
   
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, idx, 
+                                                 tonalResult.chords, replayOptions.currSection.chartChord, 
+                                                 tonalResult.scale,  replayOptions.currSection.mode);
+
+        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
     const lookupContext = createNotetableLookupContext(replayOptions.currSection);
