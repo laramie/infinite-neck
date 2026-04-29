@@ -18,14 +18,12 @@ import {
 
 const CSS_TEXT = `
 .tonalPicker {
+    font-size: 70%;
     display: block;
     margin:0;
     padding: 0;
     white-space: normal;
-    FOOflex-direction: column;
     border: 1px solid green;
-    FOOwidth: 100%;
-    FOOmin-width: 0;
     background-color: #fbd094;
 }
 .tonalPicker-row {
@@ -35,11 +33,11 @@ const CSS_TEXT = `
     justify-content: space-between;
     white-space: nowrap;
     gap: 0.5em;
+    padding: 0.1em;
 }
 .spanTonal_modes, 
 .spanTonal_chords {
-    font-size: 70%;
-    padding: 0.4em;
+    padding: 0.01em;
     flex: 1 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -73,17 +71,32 @@ ul.tonalMode-list li:nth-child(odd) {
 ul.tonalMode-list li:nth-child(even) {
     background-color: #fff42b;
 }
+
+
+.TonalPickerAllChords {
+   
+}
+    
 .TonalPickerAllChords span:nth-child(odd) {
-     background-color: #fe9054;
+    border: 1px solid black;
+    background-color: #fe9054;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
 }
 .TonalPickerAllChords span:nth-child(even) {
+    border: 1px solid black;
+    background-color: #fd6765;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+}
+.TonalPickerAllChords span.selectedChord {
+    border: 1px solid black;
     background-color: #e9fe45;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    font-weight: bold;
 }
 
-.spanTonal_chords_all {
-    background-color: #acfe75;
-    margin-left: 0.2em;
-}
 `;
 
 const TONAL_PICKER_STYLE_ID = "tonalPicker";
@@ -99,35 +112,59 @@ function registerCSS(){
     }
 }
 
-// dest is either "mode" or "chord".
-export function buildTonalPicker(ownerID, sectionIdx, dest, valueArray, currentValue){
-    currentValue = currentValue || "&lt;choose&gt;";
-    registerCSS();
-    let linksList = valueArray
-        .map(val => `<li><a href="javascript:pickTonal('${ownerID}', ${sectionIdx}, '${dest}', '${val}');">${val}</a></li>`);
-    linksList.push(`<li><a href="javascript:pickTonal('${ownerID}', ${sectionIdx}, '${dest}', 'clear');">&lt;clear&gt;</a></li>`);
-    linksList = linksList.join('\n');
-
-    let allChordsList = "";
-    let allChordsArray = [];
+export function format_allChordsButton(ownerID, sectionIdx, dest){
     if (dest === "chords"){
-        let strike = "";
+        return `<button style="padding:0;font-size:60%;" onclick="$('#spanTonal_chords_all-${ownerID}-${sectionIdx}').toggle()">&#x2505;</button>`;
+    }
+    return "";
+}
+export function format_allChords(ownerID, sectionIdx, dest, valueArray, currentValue){
+    let allChordsHTML = "";
+    if (dest === "chords"){
+        let allChordsArray = [];
+        let allChordsList = "";
         allChordsArray.push("<span class='TonalPickerAllChords'>");
         valueArray.forEach(val => {
             console.log(`val:${val}, currentValue:${currentValue},`);
-            val = (val === currentValue) ? `<b>${val}</b>` : val;
-            allChordsArray.push(`<span>${val}</span>`);
+            let span;
+            if (val === currentValue) {
+                span = `<span class="selectedChord">${val}</span>`;
+            } else { 
+                span =  `<span>${val}</span>`;
+            }
+            allChordsArray.push(span);
         })
         allChordsArray.push("</span>");
-        allChordsList = allChordsArray.join("&nbsp;");    
+        allChordsList = allChordsArray.join("");   
+        allChordsHTML = `<span class="spanTonal_chords_all" id="spanTonal_chords_all-${ownerID}-${sectionIdx}">${allChordsList}</span>`;
     }
+    return allChordsHTML;
+}
+
+
+// dest is either "mode" or "chord".
+export function buildTonalPicker(ownerID, sectionIdx, dest, valueArray, currentValue){
+    if (!currentValue){
+        currentValue = "&lt;choose&gt;";
+    } else {
+        currentValue = '<b>'+currentValue+'</b>';
+    }
+    registerCSS();
+    let valueArrayString = JSON.stringify(valueArray);
+    let linksList = valueArray
+        .map(val => `<li><a href='javascript:pickTonal("${ownerID}", ${sectionIdx}, "${dest}", "${val}", ${valueArrayString});'>${val}</a></li>`);
+    linksList.push(`<li><a href='javascript:pickTonal("${ownerID}", ${sectionIdx}, "${dest}", "clear", ${valueArrayString});'>&lt;clear&gt;</a></li>`);
+    linksList = linksList.join('\n');
+
+    let allChordsHTML = format_allChords(ownerID, sectionIdx, dest, valueArray, currentValue);
+    let allChordsButton = format_allChordsButton(ownerID, sectionIdx, dest);
 
     return `
     <span class="tonalPicker" id="tonalPicker-${ownerID}-${dest}-${sectionIdx}">
         <span class="tonalPicker-row">
-            <span class="spanTonal_chords_all">${allChordsList}</span>
+            ${allChordsButton}${allChordsHTML}
             <span class="spanTonal_${dest}">${currentValue}</span>
-            <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${sectionIdx}').toggle()">${dest}</button>
+            <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${sectionIdx}').toggle()">${dest}:${valueArray.length}</button>
         </span>
         <ul class="tonalMode-list" id="tonalMode-list-${ownerID}-${dest}-${sectionIdx}" style="display:none;">
             ${linksList}
@@ -158,7 +195,7 @@ export function buildTonalPickerSet(ownerID, orientation, sectionIdx, chordValue
     return tbl;
 }
 
-window.pickTonal = function pickTonal(ownerID, sectionIdx, dest, val){
+window.pickTonal = function pickTonal(ownerID, sectionIdx, dest, val, valueArrayString){
     //$(`#tonalPicker-${ownerID}-${dest}-${sectionIdx} > span.spanTonalMode`).text(val);
     $(`#tonalPicker-${ownerID}-${dest}-${sectionIdx} > ul`).hide();
     if (val === 'clear'){
@@ -166,8 +203,15 @@ window.pickTonal = function pickTonal(ownerID, sectionIdx, dest, val){
     }
     switch (dest) {
         case "chords":
-            $(`span.spanTonal_${dest}`).text(val);
+            if (!val) {
+                $(`span.spanTonal_${dest}`).html('&lt;choose&gt;');
+            } else {
+                $(`span.spanTonal_${dest}`).html('<b>'+val+'</b>');
+            }
             linkToSectionChartChord(sectionIdx, val);
+            //let valueArray = JSON.parse(valueArrayString);
+            let allChords = format_allChords(ownerID, sectionIdx, dest, valueArrayString, val);
+            $(`#spanTonal_chords_all-${ownerID}-${sectionIdx}`).html(allChords);
             break;
         case "modes":
             $(`span.spanTonal_${dest}`).text(val);
