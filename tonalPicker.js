@@ -26,7 +26,7 @@ const CSS_TEXT = `
     justify-content: space-between;
     white-space: nowrap;
     gap: 0.5em;
-    padding: 0.1em;
+    padding: 0.4em;
 }
 .spanTonal_modes, 
 .spanTonal_chords {
@@ -39,10 +39,22 @@ const CSS_TEXT = `
 .spanTonal_modes{
     padding-left: 0.4em;
 }
+
 .tonalPicker button {
     flex: 0 0 auto;
-    padding: 0;
+    padding: 0.2em;
+    border-radius: 1px;
+    border: 1px solid gray;
+    box-shadow: 2px 1px 4px black;
+    transition: all 0.1s ease;
 }
+.tonalPicker button:active {
+    flex: 0 0 auto;
+    box-shadow: 2px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+
 ul.tonalMode-list {
     margin: 0;
     padding: 0;
