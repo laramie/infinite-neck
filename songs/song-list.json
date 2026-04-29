@@ -1,39 +1,20 @@
 {
-    "songs": [
-       
-         "All-Chords-A.json",
-         "All-Chords-Ab.json",    
-         "All-Chords-B.json",
-         "All-Chords-Bb.json",
-         "All-Chords-C.json",
-         "All-Chords-D.json",
-         "All-Chords-Db.json",
-         "All-Chords-E.json",
-         "All-Chords-Eb.json",
-         "All-Chords-F.json",
-         "All-Chords-G.json",
-         "All-Chords-Gb.json",
-         "All-Chords.json",
-         "All-Chords-in-C-old-file-format.json",
-         "All-Chords-All-Keys.json",
-         "All-Chords-All-Keys-w-highlights.json",
-         "All-Keys-Maj7-Chords-Piano.json",
-         "colors-march-through-12-semitones.json",
-         "Diatonic-Scales-Piano.json",
-         "maj-pentatonic-practice.json",
-         "name-that-note-game.json",
-         "name-that-note-sharps.json",
-         "name-that-note-Bass.json",
-         "name-that-note-Bass-0-7.json",
-         "name-that-note-Bass-0-7-sharps.json",
-         "perfect-4ths-calc.json",
-         "pretty-lights-more-bling.json",
-         "progression-on-strat.json",
-         "snake.json",
-         "three-chord-wonder.json"
-    
-    ],
-    "ignoredSongs": [
-        
-    ]
+  "songs": [
+    "All-Chords.json",
+    "All-Keys-Maj7-Chords-Piano.json",
+    "colors-march-through-12-semitones.json",
+    "Diatonic-Scales-Piano.json",
+    "name-that-note-game.json",
+    "name-that-note-sharps.json",
+    "name-that-note-Bass.json",
+    "name-that-note-Bass-0-7.json",
+    "name-that-note-Bass-0-7-sharps.json",
+    "perfect-4ths-calc.json",
+    "progression-on-strat.json",
+    "snake.json",
+    "three-chord-wonder.json"
+  ],
+  "ignoredSongs": [],
+  "sections": [],
+  "songfileVersion": "V2"
 }

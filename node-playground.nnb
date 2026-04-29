@@ -1,0 +1,24 @@
+{
+    "cells": [
+        {
+            "language": "javascript",
+            "source": [
+                "import Song from './Song.js';\nimport fs from 'node:fs';\n\nconst allChordsFile = fs.readFileSync('./songs/All-Chords.js', 'utf8');\n\nconst allChordsJsonString = allChordsFile\n    .replace(/^\\s*export\\s+default\\s+/, '')\n    .replace(/;\\s*$/, '');\n\nconst allChords = JSON.parse(allChordsJsonString);\n\n// expose for other cells\nglobalThis.namedNotes =\n    allChords.sections?.[0]?.namedNotes ?? allChords.Sections?.[0]?.namedNotes;\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.error",
+                            "value": {
+                                "name": "Error",
+                                "message": "Cannot find module './Song.js'\nRequire stack:\n- <repl>",
+                                "stack": "node:internal/modules/cjs/loader:1459\n  throw err;\n  ^\n\n    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)\n    at Module._resolveFilename.sharedData.moduleResolveFilenameHook.installedValue [as _resolveFilename] (/home/laramie/.vscode/extensions/donjayamanne.typescript-notebook-2.0.6/resources/scripts/node_modules/@cspotcode/source-map-support/source-map-support.js:679:30)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)\n    at Module.<anonymous> (node:internal/modules/cjs/loader:1242:25)\n    at Module._._load (/home/laramie/.vscode/extensions/donjayamanne.typescript-notebook-2.0.6/out/extension/server/index.js:2:115372)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.require (node:internal/modules/cjs/loader:1556:12)\n    at require (node:internal/modules/helpers:152:16)\n    at <Cell 1> [1, 46]"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

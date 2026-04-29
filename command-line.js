@@ -8,6 +8,7 @@ import {
     peekParentMenu,
     printMenuStack,
     printMenuStackBreadcrumbs,
+    resolveMenuValue,
     setMenuAtRoot,
     surfaceOneMenu
 } from './menu.js';
@@ -41,6 +42,28 @@ export function toggleCmdLine(){
 
 function clearCmdLine(){
     $("#txtCmdLine").val('');
+}
+
+function preloadCmdLineFromInputMenu(inputMenu) {
+    if (!inputMenu) {
+        return;
+    }
+    let inputMenuDefaultStr = "";
+    let inputMenuDefault = inputMenu.default;
+    if (inputMenuDefault && typeof inputMenuDefault === 'object'){
+        inputMenuDefaultStr = JSON.stringify(inputMenuDefault);
+    } else {
+        inputMenuDefaultStr = inputMenuDefault;
+    }
+    const defaultText = resolveMenuValue(inputMenuDefaultStr);
+    const jInput = $("#txtCmdLine");
+    jInput.val(defaultText);
+
+    const inputEl = jInput.get(0);
+    if (inputEl && defaultText.length > 0) {
+        inputEl.focus();
+        inputEl.setSelectionRange(0, defaultText.length);
+    }
 }
 
 export function updateCmdLineView(addedCrumb){
@@ -155,28 +178,27 @@ export function txtCmdLine_keypress(e) {
         if (child.trigger == e.key){
             if (child.action && hasNoChildMenus(child)){
                 diveMenu(child,"showing-list-menu");
-                if(child.input){
-                    addCmdResults(printMenuStackBreadcrumbs()+"==>"+child.action+" :: "+child.input.caption+" : ");
-                    diveMenu(child.input,"");
+                if (child.input) {
+                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + child.input.caption + " : ");
+                    diveMenu(child.input, "");
+                    updateCmdLineView();
+                    preloadCmdLineFromInputMenu(child.input);
+                    e.preventDefault();
+                    return;
                 } else {
                     var actionResult = gCmdActionRunner(child);
                     child.bang = true;
                     surfaceOneMenu();
-                    if (actionResult.popOnBang){
+                    if (actionResult.popOnBang) {
                         surfaceOneMenu();
                     }
-                    addCmdResults(printMenuStackBreadcrumbs()+"->"+child.trigger+"==>"+child.action+" >> "+actionResult.result);
+                    addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
                     clearCmdLine();
                     updateCmdLineView(child.trigger);
                     child.bang = false;
                     event.preventDefault();
                     return;
-
                 }
-                e.preventDefault();
-                clearCmdLine();
-                updateCmdLineView();
-                return;
             } else {
                 var noChildren = hasNoChildMenus(child);
                 var noAction = true;

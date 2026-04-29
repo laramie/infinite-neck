@@ -1,0 +1,118 @@
+<template id='section-drawer-template'>
+    <span id="sectionDrawer">
+    <form id="frmSectionDrawer" onsubmit="return false;">
+        <table id="tableSectionDrawerLayout">
+            <tr>
+                <td colspan='2'>
+                    <label for="txtCaption">Caption:
+                        <nobr><input type="text" name="txtCaption" id="txtCaption" value="" size="60"><button
+                                type="button">&check;</button></nobr>
+                    </label>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <nobr>
+                        <label for="dropDownRoot">
+                            <u>K</u>ey:
+                        </label>
+                        <select id="dropDownRoot">
+                            <option value="0">A</option>
+                            <option class="ddnBb" value="1">Bb</option>
+                            <option value="2">B</option>
+                            <option value="3" selected>C</option>
+                            <option class="ddnDb" value="4">Db</option>
+                            <option value="5">D</option>
+                            <option class="ddnEb" value="6">Eb</option>
+                            <option value="7">E</option>
+                            <option value="8">F</option>
+                            <option class="ddnGb" value="9">Gb</option>
+                            <option value="10">G</option>
+                            <option class="ddnAb" value="11">Ab</option>
+                        </select>
+
+                        <label for="dropDownRootLead">
+                            LeadKey:
+                        </label>
+                        <select id="dropDownRootLead">
+                            <option value="-1">root</option>
+                            <option value="0">A</option>
+                            <option class="ddnBb" value="1">Bb</option>
+                            <option value="2">B</option>
+                            <option value="3" checked>C</option>
+                            <option class="ddnDb" value="4">Db</option>
+                            <option value="5">D</option>
+                            <option class="ddnEb" value="6">Eb</option>
+                            <option value="7">E</option>
+                            <option value="8">F</option>
+                            <option class="ddnGb" value="9">Gb</option>
+                            <option value="10">G</option>
+                            <option class="ddnAb" value="11">Ab</option>
+                        </select>
+                        &nbsp;&nbsp;<button id="btnFlats" type="button">F<small>lats</small></button>
+                        <button id="btnSharps" type="button">S<small>harps</small></button>&nbsp;&nbsp;
+                </td>
+                <td>
+                   
+
+                    <label>Transpose:</label>
+                    <button id="btnTransposeUp" type="button" class="transposeButton" title="transpose up">t</button>
+                    <button id="btnTransposeDown" type="button" class="transposeButton" title="Transpose down">T</button>
+                    <button id="btnTransposeJumpUp" type="button" class="transposeButton" title="jump up">j</button>
+                    <button id="btnTransposeJumpDown" type="button" class="transposeButton" title="Jump down">J</button>
+                                        
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>
+                        <button id="btnMoveSectionOrder" type="button"
+                            title="Move Section">M<small>ove</small></button>
+                        <label>Destination &sect;:</label>
+                        <select id="dropDownSectionOrder">
+                            <option value="1" selected>1</option>
+                            <option value="END">END</option>
+                        </select>
+                    </span>
+                </td>
+                <td>
+                    <nobr>
+                        <label>Display Options:</label>
+                        <span>
+                            <button id="btnControlsToDisplayOptions_Section" class="displayOptionsButton" type="button" title="SAVE display options (this section
+                            forward)">S<small>ave</small></button>
+                        </span>
+                        <span>
+                            <button id="btnDeleteDisplayOptions_Section" class="displayOptionsButton" type="button" title="CLEAR display options (this
+                            section)">C<small>lear</small></button>
+                        </span>
+                    </nobr>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>
+                        <button id="btnNewSection" type="button" title="NEW SECTION (blank)">A<small>dd</small></button>
+                        <button id="btnAddShallowCloneSection" type="button"
+                            title="SHALLOW CLONE (just namedNotes)">S<small>hallow</small></button>
+                        <button id="btnAddDeepCloneSection" type="button"
+                            title="CLONE, with all notes/beats">C<small>lone</small></button>
+                        <button id="btnDeleteSection" type="button"
+                            title="DELETE CURRENT (This Section!)">D<small>elete</small></button>
+                    </span>
+                </td>
+                <td>
+                    <span >
+                        <label>Beats:</label>
+                        <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat"><span class="beat-icon">⮮</span></button>
+                        <button id="btnInsertBeat" type="button" tabindex="-1" title="Insert Beat"><span class="beat-icon"><b>+</b></span></button>
+                        <button id="btnDeleteBeat" type="button" tabindex="-1" title="Delete Current Beat"><span class="beat-icon"><b>x</b></span></button>
+                        <button id="btnAddBeat" type="button" tabindex="-1" title="Add Last Beat"><span class="beat-icon">⮭</span></button>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </form>
+    </span>
+</template>

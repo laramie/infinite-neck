@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  -->
+<head>
+    <!--script src="https://code.jquery.com/jquery-3.7.1.min.js"></script-->
+    <script src="../jquery-3.7.1.js"></script>
+</head>
+<body>
+    <h1>Chapter 1</h1>
+    <p style="border: 1px solid green; padding: 0.5em; background-color: lightblue;">
+        
+        <widget id="org-dynamide-partial-standalone" 
+                data-type="./widgets/partial/partial.js"
+                data-includes='[{"id":"css","url":"partial-test-standalone.css"}]' > 
+        </widget>
+    </p>
+    <!--Pull this main module in last, so DOM is fully loaded-->
+    <script type="module" src="tagonomy.js"></script>
+</body>
+</html>

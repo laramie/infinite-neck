@@ -1,0 +1,87 @@
+
+.sectionPrintNotes {
+  background-color: rgb(247, 247, 247);
+  border: 1px solid black;
+  box-shadow: 4pt 4pt 2pt 0.2pt gray;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.sectionPrintNotes th {
+  border: 1px solid gray;
+  padding: 0.4em;
+}
+.SPN_TH {
+  background-color: rgb(245, 209, 64);
+}
+
+.sectionPrintNotes td {
+  border: 1px solid gray;
+  padding: 0.2em;
+  line-height: 1;
+  vertical-align: top;
+}
+
+.sectionPrintNotes td .beats {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.sectionPrintNotes td .beat {
+    display: flex;
+    align-items: center;
+  margin: 0;
+  padding: 0.2em;
+  line-height: 1;
+}
+
+.sectionPrintNotes td .beat + .beat {
+  border-top: 0;
+}
+
+.sectionPrintNotes td .beatNum {
+  border: 1px solid rgb(52, 108, 47);
+  color: rgb(52, 108, 47);
+  padding: 0;
+  line-height: 1;
+}
+
+.SPN_evenColn{
+    background-color: rgb(36, 36, 251);   
+}
+.SPN_oddColn{
+ background-color: rgb(255, 209, 109);   
+}
+.SPN_evenColp{
+    background-color: rgb(79, 79, 250);   
+}
+.SPN_oddColp{
+ background-color: rgb(248, 193, 76);   
+}
+.SPN_evenColr{
+    background-color: rgb(36, 36, 251);   
+}
+.SPN_oddColr{
+ background-color: rgb(255, 209, 109);   
+}
+.SPN_evenColc{
+    background-color: rgb(4, 4, 210);   
+}
+.SPN_oddColc{
+ background-color: rgb(239, 164, 1);   
+}
+.SPN_NN{
+    overflow-wrap: break-word;
+}
+.SPN_PN{
+    overflow-wrap: break-word;
+}
+.SPN_RN{
+    overflow-wrap: break-word;
+}
+.SPN_CC{
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+

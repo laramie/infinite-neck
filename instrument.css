@@ -1,0 +1,220 @@
+/*
+   Some CSS rules come in at runtime, inserted into:
+   <script id="laramieStyle">
+       table.fretTable {border-spacing: 5pt; }
+       .instrumentBackground {background-color: black; }
+       .....
+   </script>
+
+   The basic layout as of 20260330 is: 
+
+    <div id="tabledest">
+		<div class="instrumentBackground" id="divDEV_1">
+			<div class="captionRow">
+				<button class="HamburgerInstrumentClass showsubcaption moveyButton" id="btnHamburgerDEV_1" tabindex="-1" type="button">≡</button>
+                <span class="captionRowInstrument"><span class="tuningIDCaption">DEV_1</span></span><span class="subcaption">
+                <span class="tuningBaseIDCaption">Developer</span>1-string Guitar[F]<span class="joniTuning"><small>Joni:</small>[F]</span>
+                <span class="lblNoteClickedCaption" style="display: none;"></span><button class="showcolordict moveyButton" id="btnHamburgerColorDictDEV_1" tabindex="-1" type="button">
+                <img src="img/colordictThumbnail.png"></button>
+                <button class="showWiringButton moveyButton ShowWiringButtonOpen" id="btnHamburgerShowWiringDEV_1" tabindex="-1" type="button">Wiring</button></span>
+                <span class="captionRowLiveInfo"><span class="lblRootID"></span><span class="spanLeadDifferentFromRoot"></span>
+                <span class="instrumentSectionBox LooperLight" id="relSec_tblDEV_1"><span class="instrumentSectionMark">§</span>1</span></span>
+				<div class="currentColorDict">
+				</div>
+			</div>
+			<div class="wiringAndFretTable">
+				<div class="divWiring" id="divDEV_1_wiring">
+					<div class="Wiring-controls" data-tablename="tblDEV_1" data-tuning-i-d="DEV_1" data-tuningid="" id="tblDEV_1-Wiring-controls">
+					</div>
+				</div>
+				<div class="fretTableWrapper">
+					<table border="0" cellpadding="0" cellspacing="4" class="fretTable" id="tblDEV_1">
+					</table>
+				</div>
+			</div>
+		</div>
+        <div class="instrumentBackground" id="divP46_1">
+           Another instrument...
+        </div>
+	</div>
+        */
+        
+
+
+#tabledestTopPad {
+    height: 5em;
+}
+#tabledest {
+    display: inline-block;
+}
+
+.instrumentBackgroundOuter {
+  box-sizing: border-box;
+  padding: 1em; /* or whatever you want for box-shadow space */
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: auto; /* allow scrolling if needed */
+  background: transparent;
+}
+
+.instrumentBackground {
+    display: flex;
+    flex-direction: column;
+    width: 100%;      /* was 99% -- use 100% for full constraint */
+    max-width: 100%; /* prevent overflow past viewport */
+    min-width: 0;     /* allow shrinking in flex context */
+    overflow: visible;
+    box-sizing: border-box;
+    padding: 0.5em;
+    color: gold;
+    background-color: #0aa; 
+    border: 1px solid rgb(0, 0, 0);
+    box-shadow: 0 0 6pt 3pt maroon;
+    border-radius: 0.3em;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-image: var(--instrument-border-image) 30 / 19px round;
+    border-width: var(--instrument-border-thickness);
+}
+
+.instrumentBackground .captionRow {
+    width: 100%;
+}
+
+.captionRowInstrument {
+    display: inline;
+}
+
+.spanLeadDifferentFromRoot,
+.lblNoteClickedCaption,
+.instrumentSectionBox,
+.captionRowInstrument {
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+}
+.captionRowLiveInfo {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    height: 1em;
+    width: 1.8em;
+}
+.captionRow .lblRootID {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60%;
+    padding-bottom: 0.01em;
+}
+
+.captionRow .subcaption {
+    color: black;   
+    background-color: #dfd;
+    font-size:  100%;
+    border: 1px solid green;
+    padding: 0.2em;
+    text-align: center;
+    vertical-align: middle;
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 5px;
+    padding: 0.4em;
+    display: inline-block;
+}
+.subcaption .lblNoteClickedCaption {
+    font-size: 80%;
+    padding-left: 0.5em;
+}
+
+.subcaptionButton{
+    margin-right: 2px;
+    font-size: 100%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+.subcaptionButton:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+
+.captionRow .lblRootID {
+    font-size:  110%;
+    text-align: center;
+    vertical-align: middle;
+}
+.captionRow .lblRootIDLead {
+    font-size:  110%;
+    text-align: center;
+    vertical-align: middle;
+}
+.tuningReverseCaption {
+    font-weight: bold;
+    border: 2px solid cyan;
+    color: brown;
+    background-color: lightgreen;
+}
+.fretTableLeftCaption {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 80%;
+    text-align: center;
+}
+
+.spanTonalDetails {
+    display: none;
+}
+
+
+.wiringAndFretTable {
+    display: flex;
+    flex-direction: row;
+    min-width: 0;     /* critical for flexbox overflow */
+    width: 100%;      /* ensure it doesn't overflow parent */
+    max-width: 100vw; /* prevent overflow past viewport */
+}
+
+.fretTableWrapper {
+    flex: 1 1 0;
+    min-width: 0;     /* prevents overflow issues */
+    max-width: 100vw;
+    overflow-x: auto; /* enables horizontal scrolling for the table only */
+    padding-right: var(--instrument-border-thickness);
+}
+
+.fretTableWrapper table.fretTable {
+    width: max-content; /* table can be as wide as needed */
+    min-width: 10%;    /* at 100% it was hogging and resizing cells when it had to fill the width.  This is better 20260410 */
+}
+
+
+.nonDraggyFretTableWBorder {
+    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
+    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
+}
+
+.divWiring {
+    width: 250px;      /* fixed width */
+    flex-shrink: 0;
+    /* No overflow or scroll here */
+    /* Stays visible while table scrolls */
+}
+.divWiring input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+
+
+
+
+/* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
+.leftmarginInstrument {
+    margin-left: 110px; /* same as td.note */
+}
+
+.spanTuningDetails {
+    display: none;
+}

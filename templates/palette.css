@@ -1,0 +1,328 @@
+
+/***************************** Palette *****************************/
+
+#palette {
+    display: none;
+  position: relative;
+  z-index: 9;
+  text-align: center;
+  padding: 0; /*.1em;*/
+  width: 100%;
+  left: 0;
+}
+table.organizer td {
+    margin:0;
+    padding: 0;
+    vertical-align: top;
+    text-align: left;
+}
+#paletteheader {
+  padding: 10px;
+  margin: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: lightgreen;
+}
+#divPaletteDraggable {
+   padding: 3em;
+   position: fixed;
+}
+
+.fingeringRBBackground,
+.paletteRBBackground,
+.chooseNoteStyleRBBackground,
+.fingeringRBBackground {
+    background-color: white;
+    border-radius: 0.2em;
+    border: 1px solid black;
+    box-shadow:  2pt 2pt 4pt 1pt  black;
+    margin: 0.2em;
+}
+.paletteRBBackground {
+    margin-bottom: 0.4em;
+}
+#divPaletteDraggable {
+   padding: 3em;
+   position: fixed;
+}
+
+#palette label {
+    margin: 1px;
+    padding: 0.4em;
+    height: 1.6em;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size:  100%;
+}
+#palette label.chooseHighlight {
+    margin: 0.1em;
+    width: 5em;
+    font-weight: bold;
+    border: 1px solid gray;
+    background-color: buttercup;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+#chooseHighlightNamed,
+#chooseHighlightSingle,
+#chooseHighlightTiny {
+    padding: 0.85em;
+}
+#chooseHighlightBend {
+    padding: 0.2em;
+}
+
+#palette label.chooseFinger {
+    padding: 0.4em;
+    width: 3em;
+}
+
+#palette label.chooseKeep,
+#palette label.chooseClear {
+    padding: 0.8em;
+    height: 1.4em;
+    width: 8em;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    color: black;
+    font-weight: bold;
+    border: 1px solid gray;
+    background-color: buttercup;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+
+/*
+    #palette label.chooseKeep:checked,
+    #palette label.chooseClear:checked {
+    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
+    }
+*/
+label.chooseHighlight#idMidiPitchesLbl {
+    outline: 6px solid yellow ;
+    outline-offset: -8px;
+    padding: 0.4em;
+}
+label.chooseHighlight#idMidiPitchesSingleLbl {
+    outline: 6px solid chartreuse;
+    outline-offset: -8px;
+    padding: 0.4em;
+}
+#selBend {
+    font-size:  100%;
+}
+
+#palette label.userColorRB {
+  margin: 4px;
+  text-align: left;
+  padding: 0.4em;
+  padding-left: 5px;
+  font-weight: bold;
+  font-size: 100%;
+  font-family: sans-serif;
+  border: 1px solid gray;
+  box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+
+.radioFillChooser {
+    background-color: white;
+    display: inline-block;
+    border: 1px solid black;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+    padding: 0.3em;
+    margin: 0.2em;
+    width: 6em;
+}
+
+/***************************** Palette::Stylesheets/ColorDict *****************************/
+
+
+.ActiveStylesheets {
+    text-align: left;
+    font-weight: bold;
+    margin-left: 2em;
+}
+.ActiveStylesheets td {
+    border: 1px solid gray;
+}
+
+.colorDictTransparent {
+    border: 1px solid #555;
+    border-radius: 3px;
+}
+
+.tblColorDicts td {
+    width: 2em;
+}
+
+.tblColorDictOneRow{
+    border: 1px solid #555;
+}
+.tblColorDictOneRow td {
+    min-width: 1em;
+    text-align: center;
+}
+.tblColorDictOneRow td:first-child {
+   background-color: #222;
+   border: 1px solid #777;
+}
+.tblColorDictOneRow td:first-child {
+    font-size: 60%;
+    font-weight: normal;
+}
+
+/* currentColorDict: a div around our table of user colors: tblColorDictOneRow */
+.currentColorDict {
+    display: none;
+    height: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.4em;
+}
+.currentColorDict a {
+   pointer-events: none;
+   cursor: default;
+   color: gold;
+   font-weight: normal;
+}
+.currentColorDict a:link {
+  text-decoration: none;
+}
+.currentColorDict a:visited {
+  text-decoration: none;
+}
+.currentColorDict a:hover {
+  text-decoration: none;
+}
+.currentColorDict a:active {
+  text-decoration: none;
+}
+.largeColorDict {
+    font-size: 130%;
+}
+.largeColorDict td {
+    padding: 0.2em;
+}
+
+.userColorResultCaption {
+    font-weight: bold;
+    background-color: lightgray;
+}
+.userColorResultLinks {
+    font-weight: bold;
+    background-color: lightgray;
+    text-align: left;
+}
+.userColorResultRow td {
+    border: 2px solid black;
+}
+
+
+/*****************************  More Palette and Color Picker Colors *****************************/
+
+
+#colorPicker, #hatchPicker {
+    background-color: lightgray;
+    
+}
+.colorPickerCell {
+    width: 2em;
+    background-color: gray;
+}
+.hatchPickerCell {
+    width: 4em;
+    background-color: gray;
+}
+.pickerButton {
+    box-shadow: 2pt 2pt 2pt 0.01pt gray;
+    padding: 2pt;
+    margin: 4pt;
+    display: inline-block;
+    
+    border: 2px solid darkolivegreen;
+}
+
+/*****************************  Color Picker Colors *****************************/
+
+.noteRed1 { color: orange; background-color:#4d0000;  }
+.noteRed2 { color: orange; background-color:maroon;  }
+.noteRed3 { color: yellow; background-color:chocolate;  }
+.noteRed4 { color: orange; background-color:firebrick;  }
+.noteRed5 { color: yellow; background-color:crimson;  }
+.noteRed6 { color: orange; background-color:orangered;  }
+.noteRed7 { color: orange; background-color:DeepPink;  }
+
+.noteBrown1 { color: orange; background-color: #160000; }
+.noteBrown2 { color: darkorange; background-color:#321414; }
+.noteBrown3 { color: yellow; background-color:sienna; }
+.noteBrown4 { color: yellow; background-color:coral; }
+.noteBrown5 { color: yellow; background-color:darkorange; }
+.noteBrown6 { color: yellow; background-color:darkgoldenrod; }
+.noteBrown7 { color: yellow; background-color:goldenrod; }
+
+.LOVELY-BUT-SLIGHTLY-ORANGE-notePink3 { color: black; background-color:violet;  }
+
+.notePink1 { color: lightblue; background-color:indigo;  }
+.notePink2 { color: black; background-color:mediumslateblue;  }
+.notePink3 { color: lightblue; background-color:#1D0075;  }
+.notePink4 { color: yellow; background-color:purple;  }
+.notePink5 { color: black; background-color:magenta;  }
+.notePink6 { color: black; background-color:pink;  }
+.notePink7 { color: black; background-color:RosyBrown;  }
+
+.noteBlue1 { color: Wheat; background-color:Navy; }
+.noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
+.noteBlue3 { color: black; background-color:cornflowerblue; }
+.noteBlue4 { color: black; background-color:dodgerblue; }
+.noteBlue5 { color: black; background-color:deepskyblue; }
+.noteBlue6 { color: black; background-color:aqua; }
+.noteBlue7 { color: black; background-color:aquamarine; }
+
+.noteGreen1 { color: white; background-color: #002d04;  }
+.noteGreen2 { color: white; background-color:#06402B;  }
+.noteGreen3 { color: black;  background-color: green;}
+.noteGreen4 { color: black; background-color:darkolivegreen;  }
+.noteGreen5 { color: black; background-color:darkgreen;  }
+.noteGreen6 { color: black; background-color:greenyellow;  }
+.noteGreen7 { color: black; background-color:chartreuse;  }
+
+.noteYellow1 { color: black; background-color: #737000; }
+.noteYellow2 { color: black; background-color:GoldenRod;  }
+.noteYellow3 { color: black; background-color:Gold;  }
+.noteYellow4 { color: black; background-color:Yellow;  }
+.noteYellow5 { color: black; background-color: #ffff33;  }
+.noteYellow6 { color: black; background-color: #ffff66;  }
+.noteYellow7 { color: black; background-color: #ffff99; }
+
+.noteLightBlue1 { color: black; background-color:#aaf; }
+.noteLightGreen1 { color: black; background-color:Blue; }
+.noteGray { color: black; background-color:#ddd; }
+.noteDarkGray { color: black; background-color:#999; }
+.noteAnthraciteBlue { background-color: #293133;  color: white; }
+.noteAnthracite     { background-color: #191919;  color: lightblue; }
+.noteBlack {
+    background-color: black;
+    color: darkorange;
+}
+.noteWhite { background-color: white; color: black; }
+
+.noteBlackout1 {
+    background-color: #222;
+    color: #222;
+}
+.noteBlackout1Caption {
+    background-color: #222;
+    color: #BBB;
+}
+.noteBlackout2 {
+    background-color: #555;
+    color: #555;
+}
+.noteBlackout2Caption {
+    background-color: #555;
+    color: #BBB;
+}
+
+
+
+
+

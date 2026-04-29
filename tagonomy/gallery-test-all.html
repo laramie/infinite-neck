@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  -->
+<head>
+    <!--script src="https://code.jquery.com/jquery-3.7.1.min.js"></script-->
+    <script src="../jquery-3.7.1.js"></script>
+</head>
+<body>
+    <h1>Chapter 1</h1>
+    <p style="border: 1px solid green; padding: 0.5em; background-color: lightblue;">
+widget-1:
+        <widget id="org-dynamide-gallery-1" 
+                data-type="./widgets/org.dynamide.gallery.widget.js" 
+                data-width="300" 
+                data-height="400" >
+        </widget>
+widget-2:
+        <widget id="org-dynamide-gallery-2" 
+                data-type="./widgets/org.dynamide.gallery.widget.js"
+                data-width="400" 
+                data-height="120" >
+        </widget>
+   
+        <div class="partial-test-standalone">I'm a .partial-test-standalone div</div>
+
+        <widget id="org-dynamide-partial-standalone" 
+                data-type="./widgets/partial/partial.js"
+                data-includes='[{"id":"css","url":"partial-test-standalone.css"}]' > 
+        </widget>
+        <widget id="org-dynamide-partial-1" 
+                data-type="./widgets/partial/partial.js"
+                data-includes='[{"id":"html","url":"partial-test.shtml"},{"id":"css","url":"partial-test.css"}]' >
+        </widget>
+        <widget id="org-dynamide-include-1" 
+                data-type="./widgets/include/include.js">
+                [
+                 {"id":"html","url":"include-test.shtml"},
+                 {"id":"css","url":"include-test.css"}
+                ]
+        </widget>
+    </p>
+    <!--
+        <div style="padding: 10em; border: 1px solid blue;">
+            Some text 
+            <widget id="org-dynamide-callout-1" data-type="./widgets/org.dynamide.callout.widget.js" ></widget>
+        </div>
+    -->
+
+    <!--Pull this main module in last, so DOM is fully loaded-->
+    <script type="module" src="tagonomy.js"></script>
+</body>
+</html>

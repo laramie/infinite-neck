@@ -4,11 +4,21 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-
-        
-
-
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug SongHeadless.js",
+            "program": "${workspaceFolder}/SongHeadless.js",
+            "args": ["./songs/persistence/forward-backward-observers.json"],
+            "cwd": "${workspaceFolder}/",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"],
+            "runtimeExecutable": "node",
+            "outputCapture": "std",
+            "env": {
+                "NO_COLOR": "0"
+            }
+        },        
         {
             "type": "node",
             "request": "launch",
@@ -24,15 +34,6 @@
                 "INFINITE_NECK_SONG": "",
                 "INFINITE_NECK_SONGLIST": "tests/test-song-list-harsh-test.json"
             }
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/infinite-neck.js"
         },
         {
             "type": "node",

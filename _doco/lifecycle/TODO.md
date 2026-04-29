@@ -3,25 +3,60 @@
 ## Inbox / Unassigned
 
 - place new TODOs here...
-- 
+- doing noteTables the old way: 
+  - printSections() in infinite-neck.js is 
+  - export function printTablesStats(noteTables)
+  - export function dropper(cell, cellcol, cellrow, styleNum, noteName)
+
+
 
 ## Outstanding Tasks
 
+### Make Themes apply to one table
+
+- Whack, but this actually works, and applies changes to *just* that table, not the others.
+  Could wire this up with per-table themes.  Here's an example of hacking in just one table (tblS6_1) into the rule.
+
+  `themeFunctions.js :: theme()` :
+  ```
+    var styleBody = "#tblS6_1 td.note {"
+            +rule("padding", "notePadding")
+            +rule("border-radius", "noteRadius")
+            +"}"
+        +"#tblS6_1 .namedNote, .NoteDisplay {"
+            +rule("border-radius", "namedNoteRadius")
+        +"}"
+  ```
+### Migrating songs to V2 and deleting songs obviated by DaCapo
+
+- `All-Chords.json` The original.  12 Sections In C, 12 chords Maj9, min9, min7b5, dim, 6-9, SusII, SusIV, dom7, min7, 13/dom7-add6, min-maj, . Just wire it to DaCapo.
+
+- `name-that-note-game.json`  works: 144 sections, just plays a highlight, then shows a SingleNote.  Better than writing a plugin.
+- `name-that-note-game-sharps.json`  works: same song, just with sharps.  Could have a plugin to change sharps to flats, but why bother.
+- `name-that-note-Bass.json
+name-that-note-Bass-0-7.json
+name-that-note-Bass-0-7-sharps.json` Same deal, but in the bass range.
+
+- `perfect-4ths-calc.json` just shows a perfect-4ths calculator, which is built in now, and probably should be available on a left-side layout in future.
+
+- `Diatonic-scales-piano.json` works: 13 sections, shows the Diatonic scale in each key around the cycle of 4ths, adds highlight on each Beat 1 showing the black keys used.
+
+- `pretty-lights-more-bling.json` nuke.  Just a demo of MIDI Highlights.
+
+- `three-chord-wonder.json` Basic demo song, has some TinyNotes, but no RecordedNotes.  Just a demo, not worth much.
+
+- `snake.json`  Valuable as a GUI tester.
+
+- `progression-on-strat.json` Just a song I recorded one day.  Try the progression, then ditch the song.
+
 ## Bugs
 
-## Save Path / Model-Controller Separation
 
 ## TODOs about migrating to a pure Model architecture
 
 ### Architecture Principle
 The Song model (`song.js`) must never touch the DOM or jQuery.
 UI state is gathered by the controller (`infinite-neck.js`) and passed into the model via `prepareForSave()` or direct field assignment.
-
-### Code Sections to Know
-- `song.js` — `prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning })` — the pure model entry point for all save-path state
-- `song.js` — `markVisibleTablesForFileSave(visibleTableIds)` — accepts the array, sets `visibleNoteTables` + `tunings`
-- `infinite-neck.js` — `updateMemoryModelPreFileSave()` — the controller-layer DOM snapshot; the only place that reads DOM values for save
-- `infinite-neck.js` — `exportFromTable()` — also computes `visibleTableIds` for cross-table note export
 
 ### TODOs — Wire UI change events directly into the model
 

@@ -1,0 +1,6 @@
+.partial-test-standalone {
+    background-color: lightblue;
+    border: 10px dotted orange;
+    padding: 2em;
+    font-size: 10pt;
+}

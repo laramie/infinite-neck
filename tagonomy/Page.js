@@ -1,0 +1,92 @@
+/** Represents a web page html file that has widget elements: 
+ *    <widget id="theID" type="org.dynamide.WidgetOne" />
+ *  Knows how to find those widgets, load them, 
+ * and insert their build() result into the slot of the widget tag.
+ * Each widget.id is provided by the designer of the html file, 
+ * who can then expect that after loading, each widget may be found by id in the DOM and also 
+ * reference its javascript class registered by id from javascript.
+ * 
+ * Cleanup is by jQuery.remove() which detaches from DOM and allows garbage collection, 
+ * but does not call widget.destroy() or anything fancy.  Therefore, until any fancy registry is in place, 
+ * store data on data- attributes.
+ * 
+ * @class
+ */
+
+export class Page {
+    constructor(widgetLoader){
+        this.widgets = {};  //keyed by widget.id, which will be page-unique.  So this is the registry.
+        this._expectedWidgetCount = 0;
+        this._loadedWidgetCount = 0;
+        this._allWidgetsLoadedResolver = null;
+        this._allWidgetsLoadedPromise = new Promise((resolve) => {
+            this._allWidgetsLoadedResolver = resolve;
+        });
+        this.loadAllWidgetsInPage(widgetLoader);
+    }
+    
+    getWidgets(){
+        return this.widgets;
+    }
+
+    /**
+     * Returns a Promise that resolves when all widgets have been loaded and built.
+     * Usage: await page.whenAllWidgetsLoaded();
+     */
+    whenAllWidgetsLoaded() {
+        return this._allWidgetsLoadedPromise;
+    }
+
+    //look for all widgets like this: 
+    //      <widget id="org-dynamide-gallery-1" data-type="org.dynamide.gallery" />
+    loadAllWidgetsInPage(widgetLoader){
+        const widgetElements = $("widget");
+        this._expectedWidgetCount = widgetElements.length;
+        if (this._expectedWidgetCount === 0 && this._allWidgetsLoadedResolver) {
+            // No widgets, resolve immediately
+            this._allWidgetsLoadedResolver();
+        }
+        widgetElements.each((index, widgetElement) => {
+            let dataAttributes = {};
+            $.each(widgetElement.attributes, function() {
+                if(this.name.startsWith('data-')) {
+                    dataAttributes[this.name] = this.value;
+                }
+            });
+            let jWidget = $(widgetElement);
+            let id = jWidget.attr("id");
+            let type = jWidget.attr("data-type");
+            widgetLoader.loadWidget(type, id, dataAttributes, this, jWidget);//don't let callees hang onto this after widget.grabContents().
+        });
+    }
+    
+    widgetLoaded(widget){
+        this.widgets[widget.id] = widget;
+        let jWidget = $(`widget#${widget.id}`);
+        //widget.grabContents(jWidget);//This is the one chance for the widget to reliably get the contents from the page, after this we may remove the widget element and replace it with the results of build() with the widget.id as that element.
+        let jHeadElement = $('head');
+        widget.registerCSS(jHeadElement);
+        let built = widget.build();
+        if (built === undefined || built === null){
+            jWidget.remove();
+        } else {
+            let jElement = $(built);
+            if (jElement.length === 0){
+                jWidget.remove();
+            } else if (jElement.length === 1){
+                jWidget.replaceWith(jElement);
+                jElement.attr("id", widget.id);
+            } else {
+                let jWrapper = $("<span>");
+                jWrapper.append(jElement);
+                jWidget.replaceWith(jWrapper);
+                jWrapper.attr("id", widget.id);
+            }
+        }
+        this._loadedWidgetCount++;
+        if (this._loadedWidgetCount === this._expectedWidgetCount && this._allWidgetsLoadedResolver) {
+            this._allWidgetsLoadedResolver();
+        }
+    }
+
+}

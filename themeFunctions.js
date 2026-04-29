@@ -109,6 +109,11 @@ import { gThemes } from './themes.js';
 			setVal('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
 			setVal('#dropDownBorderImageBlackKey', 'borderImageBlackKey');
 			setVal('#dropDownInstrumentBorderImage', 'instrumentBorderImage');
+			if (theme["instrumentBorderImage"]){
+				setOneCssVar('--instrument-border-thickness', '1.4em');
+			} else {
+				setOneCssVar('--instrument-border-thickness', '0');
+			}
 		}
 		setThemeControlValues();
 	}
@@ -151,6 +156,15 @@ import { gThemes } from './themes.js';
 			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey').val();
 			options.borderImageBlackKey = $('#dropDownBorderImageBlackKey').val();
 			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage').val();
+
+			if (options.instrumentBorderImage && options.instrumentBorderImage !== "none"){
+				options.instrumentBorderThickness = '1.4em'; 
+				setOneCssVar('--instrument-border-thickness', '1.4em');
+			} else {
+				options.instrumentBorderThickness = '0.2em'; 
+				setOneCssVar('--instrument-border-thickness', '0');
+			}
+    
 		}
 		overwriteDefaultWithThemeValue(options, origThemeOptions);
 		overwriteDefaultWithControlValue(options);
@@ -262,6 +276,7 @@ import { gThemes } from './themes.js';
 									+rule("--border-image-black-key", "borderImageBlackKey")
 									+rule("--border-image-white-key", "borderImageWhiteKey")
 									+rule("--instrument-border-image", "instrumentBorderImage")
+									+rule("--instrument-border-thickness", "instrumentBorderThickness")
 									//+rule("--td-note-font-family", "tdNoteFontFamily")
 									//+rule("--right-subscript-font-size", "rightSubscriptFontSize")
 
@@ -270,13 +285,13 @@ import { gThemes } from './themes.js';
 		var style = $("style#laramieStyle");    //looking for <style id='laramieStyle'>
 		style.html(styleBody);  //you can check that document.styleSheets will not have gotten any longer.
 		themeResults(JSON.stringify(themeOptions, null, 2));
-		INFO("style sent to DOM: <br>"+styleBody);
+		THEME_INFO("style sent to DOM: <br>"+styleBody);
 	}
 
 	function WARN(message){
 		warny("WARNING: "+message, true);
 	}
-	export function INFO(message){
+	export function THEME_INFO(message){
 		warny("INFO: "+message, false);
 	}
 	function warny(message, logToConsole){
@@ -326,7 +341,7 @@ import { gThemes } from './themes.js';
 		}	
 		auditThemesShowOptions();
 
-		INFO("auditThemes result <br>"+table[0].outerHTML);
+		THEME_INFO("auditThemes result <br>"+table[0].outerHTML);
 	}
 
 	function showSelectOptions(selector, delimeter){

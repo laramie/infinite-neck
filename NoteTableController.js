@@ -10,15 +10,22 @@
 */
 import * as Constants from './Constants.js';
 import {
+	toInt
+} from './utils.js';
+import {
+	ReplayOptions
+} from './ReplayOptions.js';
+import {
+	createLookupContext,
     lookupClassForNote,
     lookupUserColorClass
 } from './colorFunctions.js';
 import {
     Note
-} from './note.js';
+} from './Note.js';
 import {
-    constNoteNamesArr
-} from './song.js';
+    Song} from './Song.js';
+import { constNoteNamesArr } from './Constants.js';
 import {
     recordHighlight,
     recordHighlightSingle,
@@ -28,8 +35,19 @@ import {
 } from './section-recorder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
 import {
-	toInt
-} from './utils.js';
+    getTonalForTable
+} from './TonalFunctions.js';
+import EventBus from './event-bus.js';
+import { 
+    appInit_running,
+    controlsToDisplayOptions,
+    buildCellsForTable,
+    turnOffAutoColorCheckbox
+} from './infinite-neck.js';
+import { 
+    buildTonalPickerSet, 
+    TonalPickerOrientation 
+} from './tonalPicker.js';
 
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
@@ -54,6 +72,10 @@ function resetNoteNames() { return notetableProviders.resetNoteNames(); }
 function setNoteClickedCaption(...args) { return notetableProviders.setNoteClickedCaption(...args); }
 function showBeats() { return notetableProviders.showBeats(); }
 function turnOffHiding() { return notetableProviders.turnOffHiding(); }
+
+function createNotetableLookupContext(section = getCurrentSection()) {
+    return createLookupContext({ section });
+}
 
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
@@ -211,8 +233,45 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 
 //=================================CLICK HANDLING===============================
 
+export const Cause = Object.freeze({
+    ERROR: "ERROR", 
+    DEFAULT: "default",
+    DROPPER: "dropper",
+    KEEP: "keep",
+    CLEAR: "clear",
+    NAMEDNOTE: "NamedNote",
+    PLAYEDNOTE: "PlayedNote",
+    HIGHLIGHT: "HighlightPitch", // a MIDI highlight, not multi because one MIDI pitch is global.
+    HIGHLIGHTMULTI: "HighlightMulti" // for historical reasons, HighlightSingle==HighlightMulti
+});
+
 // td.note click calls just this from infinite-neck.js::installTDNoteClick()
 export function colorNote(cell) {
+    let res = {returnCause: Cause.ERROR};
+    try {
+        res = colorNoteInner(cell);
+    } finally {
+        EventBus.trigger('Note:colored', {
+            sourceTableID: res.tableID,
+            colorNoteResult: res
+        });
+
+        let theCurrentSection = getCurrentSection();
+
+        let idx = getSong().sections.indexOf(theCurrentSection);
+        let tonalResult = getTonalForTable(getSong(), theCurrentSection, res.tableID);
+
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
+                                                 res.tableID, idx, 
+                                                 tonalResult.chords, theCurrentSection.chartChord, 
+                                                 tonalResult.scale,  theCurrentSection.mode);
+        
+        $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
+    }
+}
+export function colorNoteInner(cell) {
+    let result = {returnCause:Cause.ERROR, tableID: ""};
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -220,12 +279,24 @@ export function colorNote(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
+    let tableID = "";
+    let parentTableSel = "";
+    var parentTable = cell.closest("table");
+    if (parentTable){
+        var jParentTable =  $(parentTable);
+        tableID = jParentTable.attr("id");
+        result.tableID = tableID;
+        parentTableSel = '#'+tableID+' ';
+    }
+
     $("td.note.noteHighlight").removeClass("noteHighlight");
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
 
     if (  theHighlight != "MidiPitchesSingle" ){
-        $("td.note.noteHighlightSingle").removeClass("noteHighlightSingle");
+        $(parentTableSel+"td.note.noteHighlightSingle").removeClass("noteHighlightSingle");
     }
+
+    result.NoteType = theHighlight;
     switch (theHighlight){
         case "Named":
             styleNum = Note.STYLENUM_NAMED;
@@ -257,6 +328,7 @@ export function colorNote(cell) {
         default:
             styleNum = Note.STYLENUM_NAMED;
     }
+    result.styleNum = styleNum;
 
     var theColorClass = $("input:radio[name=rbColor]:checked").val();
     var doKeep = "noteKeep" === theColorClass;
@@ -272,7 +344,7 @@ export function colorNote(cell) {
                      "styleNum": styleNum};
 
     if (doIndividualAutomatic){
-        var lookupResult = lookupClassForNote(proxyNote);
+        var lookupResult = lookupClassForNote(proxyNote, lookupContext);
         theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
     }
 
@@ -285,13 +357,13 @@ export function colorNote(cell) {
     //  1) if the user clicks twice whilst recording, remove that note from recording and display.
     //  2) we hose the existing classes on notes being removed, and add back in the essential class.
     //       e.g. cell.find(".singleNote").attr("class", ".singleNote").hide();
-    function handleRecordedNote(className){
-        if (recordingHasPlayedNote(sBeatNum, proxyNote)){
-                unRecordPlayedNote(sBeatNum, proxyNote);
+    function handleRecordedNote(tableID, className){
+        if (recordingHasPlayedNote(tableID, sBeatNum, proxyNote)){
+                unRecordPlayedNote(tableID, sBeatNum, proxyNote);
                 cell.find('.'+className).attr("class", className).hide();
         } else {
-            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true);
-            recordPlayedNote(sBeatNum, thatNote);
+            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext);
+            recordPlayedNote(tableID, sBeatNum, thatNote);
             cell.find('.'+className).addClass("Playback").show();
         }
     }
@@ -301,52 +373,56 @@ export function colorNote(cell) {
        if (doPlayedNotes) {
             if(doDropper) {
                 dropper(cell, cellcol, cellrow, styleNum, noteName);
-                return;
+                result.returnCause = Cause.DROPPER;
+                return result;
             }
             if (!doKeep) {
                 if (isRecording()){
                     if (theColorClass != "noteClear"){
                         if (styleNum == Note.STYLENUM_FINGERING){
-                            handleRecordedNote("Fingering");
+                            handleRecordedNote(tableID, "Fingering");
                         } else if (styleNum == Note.STYLENUM_SINGLE){
-                            handleRecordedNote("singleNote");
+                            handleRecordedNote(tableID, "singleNote");
                         } else if (styleNum == Note.STYLENUM_TINY
                                ||  styleNum == Note.STYLENUM_BEND){
-                            handleRecordedNote("tinyNote");
+                            handleRecordedNote(tableID, "tinyNote");
                         } else {
-                            colorSingleNotes(cell, theColorClass, styleNum, false);//no recording for namedNote.
+                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext);//no recording for namedNote.
                         }
                     }
                 } else {
-                    colorSingleNotes(cell, theColorClass, styleNum, false); //not sure why we want to drop in here with noteClear.... TODO!
+                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext); //not sure why we want to drop in here with noteClear.... TODO!
                 }
             }
-            return;
+            result.returnCause = Cause.PLAYEDNOTE;
+            return result;
         } else if (doHighlight){
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
+                $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
             } else {
                 cell.addClass("noteHighlight");
-                $("td.note[midinum='"+midinum+"']").addClass("noteHighlight");
+                $(parentTableSel+"td.note[midinum='"+midinum+"']").addClass("noteHighlight");
             }
             if (isRecording()){
-              	recordHighlight(doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
+              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
             }
-           return;
+            result.returnCause = Cause.HIGHLIGHT;
+           return result;
        } else if (doHighlightSingle){
            if (doEraseHighlightSingle){
                cell.removeClass("noteHighlightSingle");
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
                tdn.removeClass("noteHighlightSingle");
            } else {
-               var tdn = $("td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
                tdn.addClass("noteHighlightSingle");
            }
            if (isRecording()){
-               recordHighlightSingle(doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
+               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
            }
-           return;
+           result.returnCause = Cause.HIGHLIGHTMULTI;
+           return result;
         } else {
             cell.css("outline", "");
             cell.removeClass("noteHighlight");
@@ -354,74 +430,77 @@ export function colorNote(cell) {
 
         if(doDropper) {
             dropper(cell, cellcol, cellrow, styleNum, noteName);
-            return;
+            result.returnCause = Cause.DROPPER;
+            return result;
         }
         if (doKeep) {
-            return;
+            result.returnCause = Cause.KEEP;
+            return result;
         }
-        var noteNameElements = $('.note' + noteName); // G --> .noteG
+        var noteNameElements = $(parentTableSel+'.note' + noteName); // G --> .noteG
         var namedNoteDiv = noteNameElements.find(".namedNote");
 
         // NOTE: this is a little brittle: if you add any other structural classes besides "namedNote", this breaks.
         var lenOtherClasses = namedNoteDiv.prop("className").replace('namedNote','').length; // .trim()???deal with spaces
         var noteAlreadyColored = (lenOtherClasses>0);
-        /*
-        console.log("  note: "
-                    +"\r\n   theColorClass:"+theColorClass
-                    +"\r\n   lookupUserColorClassByClass:"+lookupUserColorClassByClass(theColorClass)
-                    //+"\r\n   lookupUserColorClass(note):"+lookupUserColorClass(note)
-                    +"\r\n   namedNoteDiv-->className:"+namedNoteDiv.prop("className")
-                    );
-        */
-
 
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
-			getCurrentSection().namedNotes[noteName] = {};
+			getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};
             clearNamedNoteDivs(namedNoteDiv);
-            noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");;
+            noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+            result.returnCause = Cause.CLEAR;
 		} else {
-
+            result.returnCause = Cause.NAMEDNOTE;
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
 
-            var automaticColorClass = lookupUserColorClass(note);
+            var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().namedNotes[noteName] = {};   //V2-storage
+            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
-                styleNamedNote(noteNameElements, lookupUserColorClass(note), noteName);
-    		    getCurrentSection().namedNotes[noteName] = note;   //V2-storage
+		        styleNamedNote(noteNameElements, lookupUserColorClass(note, lookupContext), noteName);
+    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;
             }
 		}
-        //console.log("  namedNoteDiv-->className:"+namedNoteDiv.prop("className"));
-        return;
+        
+        return result;
     }
 }
 
 export function dropper(cell, cellcol, cellrow, styleNum, noteName){
     var jCell = $(cell);
-    if (noteName && styleNum == 0){ //namedNote
-        var note = getCurrentSection().namedNotes[noteName];
-        if (note){
-            var foundColorClass = note.colorClass;
-            $("input[name=rbColor][value="+foundColorClass+"]")
-                .attr('checked', 'checked')
-                .css({"box-shadow": "0 0 10pt 20pt cyan"});
-            setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
-        }
-        return;
-    }
+    
     //else styleNum ==> Single,Tiny,Bend.
-    var parentTableID = "";
+    var tableID = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
-        parentTableID = jParentTable.attr("id");
-        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+parentTableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
+        tableID = jParentTable.attr("id");
+
+        if (noteName && styleNum == 0){ //namedNote
+            var note = getCurrentSection().getSectionNotes(tableID).namedNotes[noteName];
+            if (note){
+                turnOffAutoColorCheckbox();
+
+                $("input[name=rbColor]")
+                    .css({"box-shadow": "none"}); //clear any previously highlighted
+
+                var foundColorClass = note.colorClass;
+                $("input[name=rbColor][value="+foundColorClass+"]")
+                    .prop('checked', true)
+                    .css({"box-shadow": "0 0 10pt 20pt cyan"});
+
+                setNoteClickedCaption(cell, foundColorClass, styleNum);
+                $("td.note").css({"cursor": "auto"});
+            }
+            return;
+        }
+
+        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
         if (foundColorClass){
             $("input[name=rbColor][value="+foundColorClass+"]")
                 .attr('checked', 'checked')
@@ -451,7 +530,8 @@ export function clearNamedNoteDivs(namedNoteDivs){
 }
 
 
-export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray) {
+export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
+    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection());
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
         var isNut = cell.hasClass("nut") || cell.hasClass("nutR");
@@ -461,12 +541,12 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     }
     var clear = (theColorClass == "noteClear");
     var jCell = $(cell);
-    var parentTableID = "";
+    var tableID = "";
     var reversed = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
-        parentTableID = jParentTable.attr("id");
+        tableID = jParentTable.attr("id");
         reversed = jParentTable.attr("reversed");
         if (reversed === "true"){
             bendValue = bendValue+"LH";
@@ -501,18 +581,18 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     var fingeringAlreadyPlayed = false;
     if (styleNum == Note.STYLENUM_TINY){
         textdiv =    jCell.find(".tinyNote");
-        tinyNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+        tinyNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("tinyNote");
         theMidiNotePlayedClass = "tinyNotePlayed";
     } else if (styleNum == Note.STYLENUM_SINGLE){
         textdiv =    jCell.find(".singleNote");
-        singleNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+        singleNoteAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("singleNote");
         textdiv.css("opacity",  getSong().singleNoteOpacity);
         theMidiNotePlayedClass = "singleNotePlayed";
     } else if (styleNum == Note.STYLENUM_FINGERING){
 		textdiv =    jCell.find(".Fingering");
-		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("Fingering");
 		textdiv.show();
 		var radio = $("input:radio[name=rbHighlight]:checked");
@@ -523,12 +603,12 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 		theMidiNotePlayedClass = "FingeringPlayed";
     } else if (styleNum == Note.STYLENUM_BEND){
         textdiv =    jCell.find(".tinyNote");
-        bendAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed));
+                bendAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("tinyNote");
         theMidiNotePlayedClass = "tinyNotePlayedBend";
         theBendClass = bendValue;
     }
-    getSong().removeNotePlayedFromTable(notePlayed, parentTableID);  //V2-storage
+    getSong().removeNotePlayedFromTable(notePlayed, tableID);
     if (!clear){
         if (    !singleNoteAlreadyPlayed
              && !tinyNoteAlreadyPlayed
@@ -536,14 +616,14 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
              && !fingeringAlreadyPlayed
              && !bendAlreadyPlayed
            ){
-                var tableArr = getSong().getTableArrInCurrentSection(parentTableID);  //V2-storage
+                var tableArr = getSong().getTableArrInCurrentSection(tableID);
                 if (dontAddToTableArray){  //because recording has already added the note to beats in recordedNotes.
                     //console.log("Not adding note to tablearray:"+JSON.stringify(notePlayed));
                 } else {
-                    tableArr.push(notePlayed);  //V2-storage
+                    tableArr.push(notePlayed);
                 }
 
-        		textdiv.addClass(lookupUserColorClass(notePlayed));
+	        		textdiv.addClass(lookupUserColorClass(notePlayed, lookupContext));
                 textdiv.addClass(theMidiNotePlayedClass);
                 textdiv.show();//Playback called .hide()
                 if (theBendClass){
@@ -556,78 +636,162 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 
 
 //=================================REPLAY========================================
-export function replay(){
-    let replayOptions = {};
-    replayOptions.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
-    replayOptions.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-    replayOptions.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-    replayOptions.hideFingering   = $("#cbHideFingering").prop("checked");
+
+
+
+
+export function getReplayOptionsArray(){
+    function freshOpts(baseopts, tablename){
+        let opts = {};
+        Object.assign(opts, baseopts);
+        opts.tablename = tablename; //e.g. Constants.TABLE_ID_PREFIX+"S6_1";
+        return opts;
+    }
+    function applyCurrentSectionOpts(opts){
+        opts.sharps =      opts.currSection.sharps;
+        opts.rootID =      opts.currSection.rootID;
+        opts.rootIDLead =  opts.currSection.rootIDLead;
+        opts.rootKey =     getSong().noteIDToNoteName(opts.rootID);
+        opts.rootKeyLead = getSong().noteIDToNoteName(opts.rootIDLead);                         
+    }
+    
+    let resultOptionsArray = [];
+    let baseopts = {};
+    baseopts.hideNamedNotes  = $("#cbHideNamedNotes").prop("checked");
+    baseopts.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+    baseopts.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+    baseopts.hideFingering   = $("#cbHideFingering").prop("checked");
 
     let visibleTables = getSong().getVisibleTunings();
     visibleTables.forEach(tablename =>{
-        replayOptions.tablename = tablename; //Constants.TABLE_ID_PREFIX+"S6_1";
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
-            replayOptions.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
-            replayOptions.listenToTablename = wiring.listenToTablename;
-            replayOptions.relativeSection = wiring.relativeSection;
-            return;
+            let opts = freshOpts(baseopts, tablename);
+            opts.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
+            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            opts.listenToTablename = wiring.listenToTablename;
+            opts.relativeSection = wiring.relativeSection;
+            opts.type = ReplayOptions.Type.RELATIVE;
+            opts.directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
+            applyCurrentSectionOpts(opts);
+            resultOptionsArray.push(opts);
         } else {
+            let opts = freshOpts(baseopts, tablename);
+            opts.currSection = getCurrentSection();
+            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            opts.listenToTablename = tablename;
+            opts.type = ReplayOptions.Type.SELF;
+            applyCurrentSectionOpts(opts);
+            resultOptionsArray.push(opts);
+            //Now add a LISTENER if present on top of SELF, which means SectionStatus widgets show LISTENER values, and notes in SELF get clobbered and you see SELF notes only if listenTo is not playing them.
             if (wiring && wiring.listenToTablename) {
-                replayOptions.currSection = getCurrentSection();
-                replayOptions.listenToTablename = wiring.listenToTablename;
-                replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
-                replayTable(replayOptions);
+                let listenerOpts = freshOpts(baseopts, tablename);
+                listenerOpts.currSection = getCurrentSection();
+                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerOpts.currSection);
+                listenerOpts.listenToTablename = wiring.listenToTablename;
+                listenerOpts.type = ReplayOptions.Type.LISTENER;
+                applyCurrentSectionOpts(listenerOpts);
+                resultOptionsArray.push(listenerOpts);
             }
-            replayOptions.currSection = getCurrentSection();
-            replayOptions.listenToTablename = tablename;
-            replayOptions.sectionIndex =  getSong().getSections().indexOf(replayOptions.currSection);
-            replayTable(replayOptions);
+ 
         }
-        
+    });
+    return resultOptionsArray;
+}
+
+/** You will get back an array of opts:
+      if wiring.relativeSection, there will be one opts, meaning replay() will be called once.
+      if wiring. listenToTablename and not relativeSection, you will get two, 
+          meaning replay() will be called first for your listenToTablename, then once for your own tablename.
+*/    
+export function replay(){
+    let optsArray = getReplayOptionsArray();
+    optsArray.forEach(opts => {
+        replayTable(opts);
     });
 }
 
 export function replayTable(replayOptions){
+    if (replayOptions.type === ReplayOptions.Type.SELF){
+        let idx = getSong().sections.indexOf(getCurrentSection());
+        let tonalResult = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        let chords = tonalResult.chords;
+        let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
+                                                 replayOptions.listenToTablename, idx, 
+                                                 tonalResult.chords, replayOptions.currSection.chartChord, 
+                                                 tonalResult.scale,  replayOptions.currSection.mode);
+        $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
+    }
+
+    const lookupContext = createNotetableLookupContext(replayOptions.currSection);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
 
-
-    $('#relSec_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+replayOptions.sectionIndex);
+    $('#relSec1_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
+    $('#relSec2_'+replayOptions.tablename).html(relativeSectionText+'<span class="instrumentSectionMark">§</span>'+(replayOptions.sectionIndex+1));
 
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
+    let tablename = replayOptions.tablename;
+    let listenToTablename = replayOptions.listenToTablename;
+
+    if (replayOptions.type === ReplayOptions.Type.RELATIVE){
+        let defaultDisplayOptions = controlsToDisplayOptions();
+        let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
+        
+        Object.assign(relSectionOptions, replayOptions);
+        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
+        //Don't need to send looping status, since that is a css class broadcast through 
+        //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
+        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+                            {
+                                ownerID: replayOptions.tablename, //don't need widgetID, because widget is bound to tableID as ownerID.
+                                replayOptions: relSectionOptions
+                            }
+                        );
+    } else {
+        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+            {
+                ownerID: replayOptions.tablename,
+                replayOptions: replayOptions 
+            }
+        );
+    }
     
     if (!replayOptions.hideNamedNotes){
-        Object.keys(replayOptions.currSection.namedNotes).forEach(noteName => {  //V2-storage
-            var namedNote = replayOptions.currSection.namedNotes[noteName];     //V2-storage
-            var theSelect;
-            if (namedNote.noteName){
-                theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+        if (replayOptions.currSection.sectionNotesByTable && replayOptions.currSection.sectionNotesByTable[listenToTablename]){
+            let namedNotes = replayOptions.currSection.sectionNotesByTable[listenToTablename].namedNotes;
+            if (namedNotes){
+                Object.keys(namedNotes).forEach(noteName => {
+                    var namedNote = namedNotes[noteName];
+                    var theSelect;
+                    if (namedNote.noteName){
+                        theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                    }
+                    var theClass = $(theSelect);
+                    if (!theSelect){
+                        console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
+                    }
+                    var theColorClass = lookupUserColorClass(namedNote, lookupContext);
+                    styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+                });
             }
-            var theClass = $(theSelect);
-            if (!theSelect){
-                console.log("undef:"+JSON.stringify(namedNote));
-            }
-            var theColorClass = lookupUserColorClass(namedNote);
-            styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-        });
+        }
     } else {
         $(nnTablenameSelector+'.namedNote').hide();
     }
 
-    let tablename = replayOptions.tablename;
-    let listenToTablename = replayOptions.listenToTablename;
-    var tablearr = replayOptions.currSection.noteTables[listenToTablename];      //V2-storage
-    //console.log("tablearr[listenToTablename:"+listenToTablename+"]: "+JSON.stringify(tablearr));
+    var tablearr = null;
+    let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
+    if (sn){
+        tablearr = sn.playedNotes;
+    }
     if (tablearr){
         tablearr.forEach(script => {
-            console.log("replay===tablename==>"+tablename+"===listenToTablename===>"+listenToTablename+"<===");
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
             var jtd = $(jtdselector);
-            console.log("select:"+jtdselector+":"+jtd.length);
             jtd.each(function(i, obj){
                 var textdiv;
                 if (script.styleNum == undefined){
@@ -655,14 +819,14 @@ export function replayTable(replayOptions){
                     textdiv.show();
                 }
                 if (textdiv && script.colorClass) {
-                    textdiv.addClass(lookupUserColorClass(script));
+                    textdiv.addClass(lookupUserColorClass(script, lookupContext));
                 }
             });
         });
     }
 }
 
-//=================================REPLAY========================================
+//=================================END REPLAY========================================
 
 
 
@@ -677,30 +841,56 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
 }
 
 export function showHighlightsForBeat(nBeat){
-    var dict = getCurrentSection().recordedNotes;
+    let optsArray = getReplayOptionsArray();
+    optsArray.forEach(opts => {
+        if (opts.type === ReplayOptions.Type.RELATIVE) {
+            //nBeat is 1-based.
+            if (opts.directionType === Song.DirectionType.BACKWARD){
+                showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);
+            } else if (opts.directionType === Song.DirectionType.FORWARD){
+                showHighlightsForBeatForOptions(1, opts);    
+            }
+        } else {
+            showHighlightsForBeatForOptions(nBeat, opts);
+        }
+    });
+}
+
+//This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
+export function showHighlightsForBeatForOptions(nBeat, options){
+    const lookupContext = createNotetableLookupContext(options.currSection);
+    let tableSelector = '';
+    if (options.tablename){
+        tableSelector = '#'+options.tablename+' ';
+    }
+    let sn = options.currSection.sectionNotesByTable[options.listenToTablename];
+    let dict = null;
+    if (sn) {
+        dict = sn.recordedNotes;
+    }
     if (dict){
-        $("td.note").removeClass("noteHighlight");
+        $(tableSelector+"td.note").removeClass("noteHighlight");
 
-        $("td.note").removeClass("noteHighlightSingle");
+        $(tableSelector+"td.note").removeClass("noteHighlightSingle");
 
-		$("div.Fingering.Playback")
+		$(tableSelector+"div.Fingering.Playback")
 			.attr("class", "Fingering")    //remove marker classes: FingeringPlayed Playback, and any color
 			.hide();
 
-		$("div.singleNote.Playback")
+		$(tableSelector+"div.singleNote.Playback")
 		    .attr("class", "singleNote")  //remove marker classes: singleNote singleNotePlayed Playback, and any color
 			.hide();
 
-		$("div.tinyNote.Playback")
+		$(tableSelector+"div.tinyNote.Playback")
 			.attr("class", "tinyNote")   //remove marker classes: [tinyNotePlayed tinyNotePlayedBend Playback] and any color
 		 	.hide();
 
 		var arrForBeat = dict[""+nBeat];
         if (arrForBeat) {
             arrForBeat.forEach(note => {
-                var tdNote = $("td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
+                var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $("td.note[midinum='"+note.midinum+"']")
+                    $(tableSelector+"td.note[midinum='"+note.midinum+"']")
                         .addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     tdNote
@@ -710,7 +900,7 @@ export function showHighlightsForBeat(nBeat){
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .html(note.finger)  //finger (1234T) shown in cell here.
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_SINGLE){
@@ -718,14 +908,14 @@ export function showHighlightsForBeat(nBeat){
                         .find("div.singleNote")
                         .addClass("singleNotePlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_TINY){
                     tdNote
                         .find("div.tinyNote")
                         .addClass("tinyNotePlayed")
                         .addClass("Playback")
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }  else if (note.styleNum == Note.STYLENUM_BEND){
                     tdNote
@@ -733,7 +923,7 @@ export function showHighlightsForBeat(nBeat){
                         .addClass("tinyNotePlayedBend")
                         .addClass("Playback")
                         .addClass(note.bendValue)
-                        .addClass(lookupUserColorClass(note))
+                        .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
                 }
             });
@@ -745,33 +935,51 @@ export function showHighlightsForBeat(nBeat){
 export function highlightOneNote(noteName){
 	var selector = "td.note"+noteName;
       $(selector).addClass("noteHighlight");
-	  //console.log("Highlighting:"+noteName+" :: "+selector);
 }
-
-
 
 //=================================CLEARING========================================
 
 export function fullRepaint(){
+    if (appInit_running()){
+        return;
+    }
     clearAll();
     resetNoteNames();
     showBeats();
+    // After resizing cells
+    const wrapper = document.querySelector('.fretTableWrapper');
+    if (wrapper) {
+        // Force reflow
+        void wrapper.offsetWidth;
+    }
 }
 
 export function clearAll() {
+    let visibleTables = getSong().getVisibleTunings();
+    visibleTables.forEach(tablename =>{
+        clearAllForTable(tablename);
+    });
+}
+export function clearAllForTable(tablename) {
+
+    let tableSelector = '';
+    if (tablename){
+        tableSelector = '#'+tablename+' ';
+    }
+
     hideNoteClickedCaption();
-    var tdNote = $("td.note");
+    var tdNote = $(tableSelector+"td.note");
     tdNote.children(".NoteDisplay").removeClass("NoteActive");
 
     var namedNoteDiv = tdNote.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
 
-    var tdNoteTinyNote = $("td.note .tinyNote");
+    var tdNoteTinyNote = $(tableSelector+"td.note .tinyNote");
     tdNoteTinyNote.removeClass().addClass("tinyNote");
 
-    $("td.note .singleNote").removeClass().addClass("singleNote");
+    $(tableSelector+"td.note .singleNote").removeClass().addClass("singleNote");
 
-    $("td.note .Fingering").removeClass().addClass("Fingering");
+    $(tableSelector+"td.note .Fingering").removeClass().addClass("Fingering");
 
     $(".noteHighlight").css("outline", "");
     clearHighlights();
@@ -779,10 +987,21 @@ export function clearAll() {
 }
 
 export function clearHighlights(){
-    $("td.note").removeClass("noteHighlight");
-    $("td.note").removeClass("noteHighlightSingle");
-}
+    let visibleTables = getSong().getVisibleTunings();
+    visibleTables.forEach(tablename =>{
+        clearHighlightsForTable(tablename);
+    });
 
+}
+export function clearHighlightsForTable(tablename){
+    let tableSelector = '';
+    if (tablename){
+        tableSelector = '#'+tablename+' ';
+    }
+
+    $(tableSelector+"td.note").removeClass("noteHighlight");
+    $(tableSelector+"td.note").removeClass("noteHighlightSingle");
+}
 
 //==================FILLING=====================================================
 
@@ -802,23 +1021,20 @@ export function colorWhiteBlackKeys() {
 }
 
 export function fillChord() {
+    var listenToTablename = $('#fillVisibleTablesSelect').val();
     var chordFnNotes = $('#dropDownChords').val();
     var chordFnNotesArr = chordFnNotes.split(',');
 
     var scaleNotes = $('#dropDownScales').val();
     var scaleNotesArr = scaleNotes.split(',');
 
-    var rootID = parseInt($('#dropDownRoot').val());
+    var rootID = parseInt(getCurrentSection().rootID);
     var rootName = constNoteNamesArr[rootID];
     var rootClassName = ".note" + constNoteNamesArr[rootID];
 
     var scaleColor = $("input:radio[name=rbnFillNoteScale]:checked").val()
     var chordsColor = $("input:radio[name=rbnFillNoteChord]:checked").val()
     var rootColor = $("input:radio[name=rbnFillNoteRoot]:checked").val()
-
-    //var scaleColor = $('#dropDownScalesColors option:selected').val();
-    //var chordsColor = $('#dropDownChordsColors option:selected').val();
-    //var rootColor = $('#dropDownRootColors option:selected').val();
 
     var keepRoot = (rootColor == "noteKeep");
     var keepChords = (chordsColor == "noteKeep");
@@ -856,10 +1072,11 @@ export function fillChord() {
     var scaleClassNames = scaleClasses.join(', ');
     fillChord2(rootClassName, chordClassNames, scaleClassNames,
                rootName, chordNames, scaleNames,
-               rootColor, chordsColor, scaleColor);
+               rootColor, chordsColor, scaleColor,
+               listenToTablename);
 }
 
-export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor) {
+export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor, listenToTablename) {
     //the arguments <chordNoteNames> and <scaleNoteNames> are arrays of ".noteBb" etc.
 
 	/** EACH OF THESE IS A COLLECTION OF TD > DIV.NoteDisplay   **/
@@ -872,16 +1089,16 @@ export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNo
         doFill(theRootClass, rootName, rootColor);
     }
     if ( chordsColor == "noteClear"){
-        doFill(theChordClass, chordNoteNames, chordsColor);
+        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
     }
 
     if ( scaleColor != "noteHighlightSingle"){
-        doFill(theScaleClass, scaleNoteNames, scaleColor);
+        doFill(theScaleClass, scaleNoteNames, scaleColor, listenToTablename);
     }
     if ( chordsColor != "noteClear" && chordsColor != "noteHighlightSingle"){
-        doFill(theChordClass, chordNoteNames, chordsColor);
+        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
     }
-    if (rootColor != "noteClear"){ doFill(theRootClass, rootName, rootColor); }
+    if (rootColor != "noteClear"){ doFill(theRootClass, rootName, rootColor, listenToTablename); }
 
 
     clearAll();
@@ -893,26 +1110,95 @@ export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNo
         theScaleClass.parent("td.note").addClass("noteHighlightSingle");
     }
 }
-
-export function doFill(theClass, NoteNames, Color){
-    if (Color == "noteKeep"){
+export function doFill(theClass, NoteNames, Color, listenToTablename) {
+    if (Color == "noteKeep") {
         return;
     }
     var currSection = getCurrentSection();
+    // Ensure sectionNotesByTable exists
+    if (!currSection.sectionNotesByTable) {
+        currSection.sectionNotesByTable = {};
+    }
+    // Ensure the table for listenToTablename exists
+    if (!currSection.sectionNotesByTable[listenToTablename]) {
+        currSection.sectionNotesByTable[listenToTablename] = {};
+    }
+    // Ensure namedNotes exists for this table
+    if (!currSection.sectionNotesByTable[listenToTablename].namedNotes) {
+        currSection.sectionNotesByTable[listenToTablename].namedNotes = {};
+    }
+    let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
     if (Color != "noteClear") {
-        //NO: let replay color the notes.  We are just adding them to the model here.
-        //theClass.addClass(lookupUserColorClassByClass(Color))
-		//             .addClass("NoteActive");
+        // NO: let replay color the notes. We are just adding them to the model here.
+        // theClass.addClass(lookupUserColorClassByClass(Color))
+        //          .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            currSection.namedNotes[noteName] = {"noteName": noteName, "colorClass": Color};    //V2-storage
+            namedNotes[noteName] = { "noteName": noteName, "colorClass": Color };
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            currSection.namedNotes[NoteNames[key]] = {};   //V2-storage
+            namedNotes[NoteNames[key]] = {};
         });
     }
 }
 
+//================================= EventBus handling ========================================
+
+// Listen for note creation events and update listener tables
+EventBus.on('Note:colored', function(event, data) {
+    const { sourceTableID } = data;
+    const song = getSong();
+    if (!song || !song.wirings) return;
+
+    // Find all wirings where listenToTablename matches the source
+    song.wirings.forEach(wiring => {
+        if (wiring.listenToTablename === sourceTableID && wiring.tablename !== sourceTableID) {
+            // Prevent infinite loop: don't notify the source table
+            let relSection = song.getRelativeSectionWithWrap(wiring.relativeSection);
+            if ((song.getSections().length === 1)
+                   ||
+                (song.getSections().indexOf(getCurrentSection()) != song.getSections().indexOf(relSection)))
+                {
+                    return;
+                }
+
+            
+            // Replay the listener table (full replay, as layouts may differ)
+            clearAllForTable(wiring.tablename);
+            replayTable({
+                tablename: wiring.tablename,
+                listenToTablename: sourceTableID,
+                currSection: getCurrentSection(),
+                sectionIndex: song.getSections().indexOf(getCurrentSection()),
+                relativeSection: wiring.relativeSection
+            });
+        }
+    });
+});
+EventBus.on('Wiring:removed', function(event, data) {
+    const { tablename } = data;
+    const song = getSong();
+    if (!song) return;
+    clearAllForTable(tablename);
+    replayTable({
+        tablename: tablename,
+        listenToTablename: tablename,
+        currSection: getCurrentSection(),
+        sectionIndex: song.getSections().indexOf(getCurrentSection()),
+    });
+});
+EventBus.on('Wiring:added', function(event, data) {
+    const song = getSong();
+    if (!song) return;
+    // EventBus.trigger("Wiring:added", {tablename:tablename, listenToTablename: listenToTablename});
+    //clearAllForTable(tablename);
+    replayTable({
+        tablename: data.tablename,
+        listenToTablename: data.listenToTablename,
+        currSection: getCurrentSection(),
+        sectionIndex: song.getSections().indexOf(getCurrentSection()),
+    });
+});
 //=================================END-of-FILE========================================

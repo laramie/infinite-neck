@@ -18,12 +18,13 @@ export function buildNoteTable(options) {
 	var noteName = "";
 	var colDisplay = 0;
 	var numRows = options.rowRange.length;
+	const tableID = Constants.TABLE_ID_PREFIX + options.baseID;
 
 	var table = $('<table>');
 	table.attr("border", "0");
 	table.attr("cellpadding", "0");
 	table.attr("cellspacing", "4");
-	table.attr("id", Constants.TABLE_ID_PREFIX + options.baseID);
+	table.attr("id", tableID);
 	table.attr("rowRange", '[' + options.rowRange.toString() + ']');
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
@@ -104,7 +105,7 @@ export function buildNoteTable(options) {
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);
 			cell.attr("cellcol", colDisplay);
-			cell.attr("celltable", Constants.TABLE_ID_PREFIX + options.baseID);
+			cell.attr("celltable", tableID);
 			cell.html("" + noteName);
 			if (deadCell) {
 				cell = $('<td class="note" style="min-width: 1em; background-color: #222;">');
@@ -159,57 +160,172 @@ export function buildNoteTable(options) {
 		}
 	}
 
-	var div = $('<div>');
-	div.addClass("instrumentBackground");
-	div.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
-	var exportButton = "&nbsp;&nbsp;<button class='exportButton moveyButton' tabindex='-1' data-export-tableid='" + Constants.TABLE_ID_PREFIX + options.baseID + "'>Export Highlights</button>";
-	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' tabindex='-1'>&equiv;</button>";
-	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' tabindex='-1'><img src='img/colordictThumbnail.png' style='width:35px;height:15px;'></button>";
+	var instrumentBackground = $('<div>');
+	instrumentBackground.addClass("instrumentBackground");
+	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
+	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
+	//var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict moveyButton' type='button' ><img src='img/colordictThumbnail.png'></button>";
+	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
+	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' >C</button>";
+	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' >S</button>";
+	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
+	var hamburgerNoteDetails = "<button id='hamburgerNoteDetails" + options.baseID + "' class='showNoteDetails subcaptionButton' type='button' >N<small>ote</small></button>";
+	var hamburgerTonalDetails = "<button id='hamburgerTonalDetails" + options.baseID + "' class='showTonalDetails subcaptionButton' type='button' >T<small>onal</small></button>";
 	
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
-	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton moveyButton' type='button' tabindex='-1'>Wiring</button>";
+	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton subcaptionButton' type='button' tabindex='-1'>W<small>iring</small></button>";
 
-	var spanLeadDifferentFromRoot = "&nbsp;<span class='spanLeadDifferentFromRoot'></span>";
-	var spanRootID = "&nbsp;&nbsp;&nbsp;<span class='lblRootID'></span>";
-	var joniTuning = "<span class='joniTuning'><small>Joni:</small>" + getJoniTuning(options) + "</span>";
+	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
-	var tuningBaseIDCaption = '<span class="tuningBaseIDCaption">' + options.caption + '</span>&nbsp;&nbsp;&nbsp;';
-	var tuningIDCaption = '<span class="tuningIDCaption">' + options.baseID + '</span>&nbsp;&nbsp;&nbsp;';
-	var sectionMark = '<span class="instrumentSectionBox" id="relSec_'+Constants.TABLE_ID_PREFIX+options.baseID+'"></span>';
-	var p = $("<p>");
-	p.addClass("captionRow");
+	var tuningBaseIDCaption = '<span>' + options.caption + '</span>';
+	var tuningIDCaption = '<span>' + options.baseID + '</span>';
+	var tuningIDnStrings = '<span>' + options.nStrings + '-string</span>';
+	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
+
+	var captionRow = $("<div>");
+	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
-	var S = "&nbsp;&nbsp;";
-	p.html(tuningBaseIDCaption
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
+	
+	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo' class='captionRowTonalInfo'></span>";
+
+	let spanCaptionRowLiveInfo = $('<span>');
+	spanCaptionRowLiveInfo.attr('id', tableID + '_captionRowLiveInfo');
+
+	SectionStatusBuilder.createWidget(spanCaptionRowLiveInfo, tableID, 'caption', 'horizontal');
+	
+		
+	const TDTD = "</td><td>";
+
+	captionRow.html(
+		hamburger 
+		+ '<span class="captionRowInstrument">'
 		+ tuningIDCaption
+		+ '</span>'
 		+ '<span class="subcaption">'
-		+ options.nStrings + '-string '
-		+ options.baseInstrument
-		+ '&nbsp;&nbsp;&nbsp;[' + rowRangeToNoteNames(options.rowRange, options) + ']' + S
+		+ '<table id="captionRowTable"><tr><td>'
+		+ hamburgerLeftCaption
+		+ hamburgerLeftSectionMark 
+		+ hamburgerColorDict
+		+ btnShowWiring
+		+ btnPopOutDiv
+		
+		+ hamburgerTuningDetails
+		+ '<span class="spanTuningDetails">'
+		+ tuningBaseIDCaption
+		+ tuningIDnStrings
+		+ tuningIDbaseInstrument
+		+ '<span>[' + rowRangeToNoteNames(options.rowRange, options) + ']</span>'
 		+ joniTuning
 		+ reverse
-		+ exportButton + S
-		+ spanRootID
-		+ spanLeadDifferentFromRoot + S
-		+ noteClickedCaption
-		+ hamburgerColorDict + S + S
-		+ btnShowWiring + S + S
 		+ '</span>'
-		+ hamburger + S + S + sectionMark  +S
-		+ "<div class='currentColorDict''></div>" + S
+		
+		+TDTD
+		+ hamburgerNoteDetails
+		+ "<span class='spanNoteDetails'>"
+		+ noteClickedCaption
+		+"</span>"
+		
+		+TDTD
+		+ hamburgerTonalDetails
+		+TDTD
+		+ "<span class='spanTonalDetails'>"
+		+ tonalInfo
+		+"</span>"
+		+TDTD
 
+		+'</td></tr></table>' //end table captionRowTable
+		+ '</span>' //end span subcaption
 	);
-	div.append(p);
+	captionRow.append(spanCaptionRowLiveInfo);
+	captionRow.append($("<div class='currentColorDict''></div>"));
+
+	instrumentBackground.append(captionRow);
+
+	let wiringAndFretTable = $("<div>");
+	wiringAndFretTable.addClass("wiringAndFretTable");
 
 	let divWiring = $("<div>");
 	divWiring.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
 	divWiring.addClass("divWiring");
 	divWiring.html("Wiring for "+Constants.TABLEDIV_ID_PREFIX + options.baseID+" goes here.");
-	div.append(divWiring);
 	
 	
-	div.append(table);
-	return div;
+	wiringAndFretTable.append(divWiring);
+	instrumentBackground.append(wiringAndFretTable);
+
+	let widgetDest = $("<span>");
+	SectionStatusBuilder.createWidget(widgetDest, tableID, 'caption', 'vertical');
+
+	let fretTableWrapper = $("<div>");
+	fretTableWrapper.addClass("fretTableWrapper");
+		var table3 = $("<table>");
+		var row = $("<row>");
+		table3.append(row);
+		var td1 = $("<td class='fretTableTDCaption'>");
+			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
+			fretTableLeftCaption.html(options.baseID);
+			td1.append(fretTableLeftCaption);
+			row.append(td1);
+		var td2 = $("<td class='tdSSLeft'>");
+			td2.append(widgetDest);
+			row.append(td2);
+		var td3 = $("<td>");
+			td3.append(table);
+			row.append(td3);
+
+	fretTableWrapper.append(table3);
+	wiringAndFretTable.append(fretTableWrapper);
+
+	let instrumentBackgroundOuter = $("<div>");
+	instrumentBackgroundOuter.addClass("instrumentBackgroundOuter");
+	instrumentBackgroundOuter.append(instrumentBackground);
+
+	return instrumentBackgroundOuter;
+}
+
+function formatKeyBoxes(tableID, idx, vertical){
+	if (vertical){
+		return `<table>
+				  	<tr>
+						<td class="LooperLightTD">
+							<span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+						</td>
+					</tr>
+				  	<tr id='normalKeys${idx}_${tableID}'>
+						<td>
+							<span class='lblRootID'></span>&nbsp;
+						</td>
+					</tr>
+				  	<tr id='normalKeys${idx}_${tableID}'>
+						<td>
+							<span class='spanLeadDifferentFromRoot'></span>&nbsp;
+						</td>
+					</tr>
+					<tr id='relativeKeys${idx}_${tableID}'>
+						<td>				
+							<span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>&nbsp;
+							</td>
+					</tr>
+				  	<tr id='relativeKeys${idx}_${tableID}'>
+						<td>
+							<span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>&nbsp;
+						</td>
+					</tr>
+				</table>
+			`;
+	} else {
+		return ` 
+				 <span class="instrumentSectionBox LooperLight" id='relSec${idx}_${tableID}'></span>
+				 <span id='normalKeys${idx}_${tableID}'>
+					<span class='lblRootID'></span>
+					<span class='spanLeadDifferentFromRoot'></span>
+				 </span><span id='relativeKeys${idx}_${tableID}'>
+					<span class='lblRootIDRelative' id='relSecRootID${idx}_${tableID}'></span>
+					<span class='lblRootIDLeadRelative' id='relSecRootIDLead${idx}_${tableID}'></span>
+				 </span>
+			`;	
+	}
 }
 
 export function getJoniTuning(options) {

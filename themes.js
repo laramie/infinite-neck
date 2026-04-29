@@ -19,7 +19,7 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt cornflowerblue", 
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "#555",
-        "noteWhiteKeySpecialColor": "#f5e0c4",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
         "noteBlackKeySpecialColor": "#191919",
         "noteWhiteKeyFontColor": "transparent",
         "noteBlackKeyFontColor": "transparent",
@@ -60,7 +60,8 @@ export const gThemes = {
         "diamondsSize": "0.6em",
         "diamondsColor": "red",
         "doubleDiamondsColor": "orange",
-        "diamondsBackgroundColor":"black"
+        "diamondsBackgroundColor":"black",
+        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "Autobahn" : {
         "id": "Autobahn",
@@ -74,7 +75,7 @@ export const gThemes = {
         "diamondsColor": "green",
         "doubleDiamondsColor": "red",
         "noteWhiteShadowColor": "black",
-        "noteBlackShadowColor": "black"
+        "noteBlackShadowColor": "black",
     },
     "LateNite" : {
         "id": "LateNite",
@@ -195,7 +196,8 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "white",
         "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey":  "url('img/blade.png')",
-        "borderImageBlackKey":  "none"
+        "borderImageBlackKey":  "none",
+        "instrumentBorderImage": "url('img/blade-border.png')"
     },
     "Piano" : {
         "id": "Piano",

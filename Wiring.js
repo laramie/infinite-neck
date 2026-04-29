@@ -1,7 +1,10 @@
+const wiringDefaults  = {
+    tablename: "",
+    relativeSection: "",
+    listenToTablename: ""
+};
 export class Wiring {
-    constructor(tablename = "", relativeSection = "", listenToTablename = ""){
-        this.tablename = tablename;
-        this.relativeSection = relativeSection;
-        this.listenToTablename = listenToTablename;
+    constructor(obj = {}) {
+         Object.assign(this, wiringDefaults, obj);
     }
 }

@@ -4,17 +4,12 @@ import {
 } from './colorPickerColors.js';
 import {
 	Note
-} from './note.js';
-import {
-	constNoteNamesArr,
-	noteNameToNoteID
-} from './song.js';
+} from './Note.js';
+import { noteNameToNoteID } from './Constants.js';
+import { constNoteNamesArr } from './Constants.js';
 import {
 	GraveType
 } from './graveyard.js';
-import {
-	midinumToNoteName
-} from './TableBuilder.js';
 import {
 	gUserColorDict,
 	gUserColorDictOEM
@@ -54,6 +49,34 @@ function fullRepaint() {
 	return colorFunctionsProviders.fullRepaint();
 }
 
+export function createLookupContext({
+	section = getCurrentSection(),
+	autoColor = doingAutomaticColor(),
+	colorDict = gUserColorDict.dict
+} = {}) {
+	return {
+		section,
+		autoColor,
+		colorDict
+	};
+}
+
+function resolveLookupContext(lookupContext = {}) {
+	const context = createLookupContext(lookupContext);
+	if (!context.section) {
+		return {
+			...context,
+			rootID: null,
+			rootIDLead: null
+		};
+	}
+	return {
+		...context,
+		rootID: context.section.rootID,
+		rootIDLead: context.section.rootIDLead
+	};
+}
+
 
 //================== colorDicts ================================================
 
@@ -77,6 +100,8 @@ function fullRepaint() {
 	}
 
 	export function recordUserColorsBoth(doSampleSection, doPickerChoices){
+		debugger
+		const lookupContext = createLookupContext();
 		var colorSchemeName = $('#txtColorSchemeName').val();
 		var chosenSystemSchemeName = $('#txtColorSchemeName').attr('systemSchemeName');
 		var cleanResult = clean_ColorSchemeName(colorSchemeName);
@@ -90,25 +115,35 @@ function fullRepaint() {
 	    var rootIndexLead = toInt(getCurrentSection().rootIDLead, 0);
 
 		var colorDict = {};
-		var notes = getCurrentSection().namedNotes;
-		var keys = Object.keys(notes);
 
 		if (doSampleSection){
-			keys.forEach(noteName => {
-				var noteFnNum = noteNameToNoteID(noteName);
-				var rel = (12 + noteFnNum - rootIndex) % 12;
-				var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
-				var note = notes[noteName];
-				var cc = note.colorClass;
-				if (cc) {
-					var noteClone = JSON.parse(JSON.stringify(note));
-					noteClone.colorClass = cc;
-					var res = lookupUserColor(noteClone);
-					var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
-					defClone.colorClass = res.colorClass;
-					colorDict[noteKey] = defClone;
+			let tunings = getSong().getVisibleTunings();
+			if (tunings.length>0){
+				let firstTableID = tunings[0];
+				var notes = getCurrentSection().getSectionNotes(firstTableID).namedNotes;
+				if (notes){
+					var keys = Object.keys(notes);
+					keys.forEach(noteName => {
+						var noteFnNum = noteNameToNoteID(noteName);
+						var rel = (12 + noteFnNum - rootIndex) % 12;
+						var noteKey = "note" + (rel + 1); // Use 1-based for note1, note2, etc.
+						var note = notes[noteName];
+						var cc = note.colorClass;
+						if (cc) {
+							var noteClone = JSON.parse(JSON.stringify(note));
+							noteClone.colorClass = cc;
+							var res = lookupUserColor(noteClone, lookupContext);
+							var defClone = JSON.parse(JSON.stringify(gUserColorDictOEM.dict[noteKey]));
+							defClone.colorClass = res.colorClass;
+							colorDict[noteKey] = defClone;
+						}
+					});
+				} else {
+					console.log("didn't find notes for firstTableID["+firstTableID+"] when doSampleSection in colorFunctions::recordUserColorsBoth()");
 				}
-			});
+			} else {
+				console.log("No visible tunings for doSampleSection in colorFunctions::recordUserColorsBoth()");
+			}
 		}
 
 		if (doPickerChoices){
@@ -398,7 +433,7 @@ function fullRepaint() {
 		getSong().colorDicts = temp;
 	}
 
-	export function chuseStylesheet(dictkey){
+export function chuseStylesheet(dictkey){
 		var colorScheme = getSong().colorDicts[dictkey];
 		if (colorScheme){
 			getSong().currentColorDict = dictkey;
@@ -681,12 +716,13 @@ function fullRepaint() {
      *       Source in "userColors.js" to get gUserColorDict.dict.
      *****/
 
-	export function lookupUserColorClass(note){  //automaticColorScheme
-		return lookupUserColor(note).colorClass;
+	export function lookupUserColorClass(note, lookupContext){  //automaticColorScheme
+		return lookupUserColor(note, lookupContext).colorClass;
 	}
-	export function lookupUserColor(note){  //automaticColorScheme
-		if (doingAutomaticColor()){
-			var res = lookupClassForNote(note);
+	export function lookupUserColor(note, lookupContext){  //automaticColorScheme
+		const context = resolveLookupContext(lookupContext);
+		if (context.autoColor){
+			var res = lookupClassForNote(note, context);
 			if (res) {
 				// console.log("automatic userColor["+note.colorClass+"] -->"+res.colorClass);
 				return res;
@@ -694,11 +730,12 @@ function fullRepaint() {
 				// console.log("automatic userColor["+note.colorClass+"]not found.");
 			}
 		}
-		return {"colorClass":lookupUserColorClassByClass(note.colorClass), "functionNum":null};
+		return {"colorClass":lookupUserColorClassByClass(note.colorClass, context), "functionNum":null};
 	}
 
-	export function lookupUserColorClassByClass(theColorClass){
-		var userColor = gUserColorDict.dict[theColorClass];
+	export function lookupUserColorClassByClass(theColorClass, lookupContext){
+		const context = resolveLookupContext(lookupContext);
+		var userColor = context.colorDict[theColorClass];
 		if (!userColor){
 			//console.log("userColor["+theColorClass+"]==null -->"+theColorClass);
 			return theColorClass;
@@ -707,15 +744,16 @@ function fullRepaint() {
 		return userColor.colorClass;
 	}
 
-	export function lookupClassForNote(note){
+	export function lookupClassForNote(note, lookupContext){
+		const context = resolveLookupContext(lookupContext);
 		var result = {};
 		var theRootID;
 		switch (note.styleNum){
 			case Note.STYLENUM_BEND:
 			case Note.STYLENUM_TINY:
-				theRootID = getCurrentSection().rootIDLead;
+				theRootID = context.rootIDLead;
 				if (!theRootID || theRootID == "-1"){
-					theRootID = getCurrentSection().rootID;
+					theRootID = context.rootID;
 				}
 				break;
 			case Note.STYLENUM_NAMED:
@@ -723,25 +761,31 @@ function fullRepaint() {
 			case Note.STYLENUM_MIDIPITCHES:
 			case Note.STYLENUM_MIDIPITCHESSINGLE:
 			case Note.STYLENUM_FINGERING:
-				theRootID = getCurrentSection().rootID;
+				theRootID = context.rootID;
 				break;
 			default:
-				theRootID = getCurrentSection().rootID;
+				theRootID = context.rootID;
 		}
-		if (!note.noteName){  //for older files. :(
-			if (note.midinum){
-				note.noteName = midinumToNoteName(note.midinum);
-			} else {
-				if (note.noteNameClass){
-					note.noteName = note.noteNameClass.substring(".note".length);  //todo: change this when you fix noteNameClass to be not ".note" but "note"
-				}
-			}
+		if (!note.noteName){
+			return null;  
+			/*  Some cases leave notes such as this hanging around: 
+			"sectionNotesByTable": {
+				"tblMIDI_1": {
+				  "namedNotes": {
+					"F": {},
+					"Gb": {},
+					"Bb": {
+						"noteName": "Bb",
+						"styleNum": 0,
+						"colorClass": "noteTransparent"
+					}
+			*/
 		}
 		var noteNum = constNoteNamesArr.indexOf(note.noteName);  //   Bb ==> 1 (since A ==> 0)
 		var relNoteNum = (12 + noteNum - theRootID) % 12; //the function number: Tau is 1.  0-based: 0==first note of scale
 
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
-		var userColor = gUserColorDict.dict[notePlusNumKey];
+		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
 			result.colorClass = userColor.colorClass;
 			result.functionNum = relNoteNum;

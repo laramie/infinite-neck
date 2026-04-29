@@ -1,63 +1,6 @@
 {
   "sections": [
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "49",
-            "row": "5",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "59",
-            "row": "3",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "68",
-            "row": "1",
-            "col": "8",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          }
-        ]
-      },
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
       "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
       "rootID": 7,
       "rootIDLead": "-1",
@@ -83,66 +26,68 @@
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
+      },
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "playedNotes": [
+            {
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            },
+            {
+              "midinum": "59",
+              "row": "3",
+              "col": "9",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            },
+            {
+              "midinum": "68",
+              "row": "1",
+              "col": "8",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            }
+          ],
+          "namedNotes": {
+            "E": {
+              "colorClass": "noteBlue1",
+              "noteName": "E"
+            },
+            "Gb": {
+              "colorClass": "noteScale",
+              "noteName": "Gb"
+            },
+            "Ab": {
+              "colorClass": "noteScale",
+              "noteName": "Ab"
+            },
+            "B": {
+              "colorClass": "noteScale",
+              "noteName": "B"
+            },
+            "Db": {
+              "colorClass": "noteScale",
+              "noteName": "Db"
+            },
+            "Eb": {
+              "colorClass": "noteColornote2",
+              "noteName": "Eb"
+            },
+            "Bb": {},
+            "A": {
+              "colorClass": "noteChord3",
+              "noteName": "A"
+            }
+          },
+          "recordedNotes": {}
+        }
       }
     },
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "49",
-            "row": "5",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "59",
-            "row": "3",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "68",
-            "row": "1",
-            "col": "8",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          }
-        ]
-      },
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
       "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
       "rootID": "7",
       "rootIDLead": "-1",
@@ -168,42 +113,68 @@
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
+      },
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "playedNotes": [
+            {
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            },
+            {
+              "midinum": "59",
+              "row": "3",
+              "col": "9",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            },
+            {
+              "midinum": "68",
+              "row": "1",
+              "col": "8",
+              "colorClass": "noteGreen7",
+              "styleNum": 2
+            }
+          ],
+          "namedNotes": {
+            "E": {
+              "colorClass": "noteBlue1",
+              "noteName": "E"
+            },
+            "Gb": {
+              "colorClass": "noteScale",
+              "noteName": "Gb"
+            },
+            "Ab": {
+              "colorClass": "noteScale",
+              "noteName": "Ab"
+            },
+            "B": {
+              "colorClass": "noteScale",
+              "noteName": "B"
+            },
+            "Db": {
+              "colorClass": "noteScale",
+              "noteName": "Db"
+            },
+            "Eb": {
+              "colorClass": "noteColornote2",
+              "noteName": "Eb"
+            },
+            "Bb": {},
+            "A": {
+              "colorClass": "noteChord3",
+              "noteName": "A"
+            }
+          },
+          "recordedNotes": {}
+        }
       }
     },
     {
-      "noteTables": {},
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
       "caption": "In E maj, but playing MODE: G",
       "rootID": "7",
       "rootIDLead": "-1",
@@ -229,11 +200,12 @@
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1"
-      }
+      },
+      "sectionNotesByTable": {}
     }
   ],
   "visibleNoteTables": [
-    "tblP46"
+    "tblP46_1"
   ],
   "defaultBPM": "333",
   "rootID": "3",
@@ -243,7 +215,7 @@
   "tinyNoteOpacity": "1",
   "tunings": [
     {
-      "baseID": "P46",
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,
@@ -353,5 +325,6 @@
       "colorClass": "FingerT",
       "caption": "Thumb"
     }
-  }
+  },
+  "songfileVersion": "V2"
 }

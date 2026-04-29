@@ -2,6 +2,7 @@
 
 
 import * as Constants from './Constants.js';
+import EventBus from './event-bus.js';
 import {
 	chuseStylesheet,
 	deleteUserStylesheet,
@@ -9,8 +10,6 @@ import {
 	showHatchPicker,
 	colorPickerClicked,
 	hatchPickerClicked,
-	recordUserColors,
-	recordUserColorsFromSection,
 	applyStylesheetsTo_gUserColorDict,
 	buildColorDicts,
 	buildUserColors,
@@ -28,18 +27,12 @@ import {
 	draggable
 } from './drag.js';
 import {
-	makeGraveyard,
-	setGraveyardProviders
-} from './graveyard.js';
-import {
 	getFontSize,
 	getUIFontSize,
 	hideGraveyard,
 	getNoteFontSize,
 	setUIFontSize,
 	setNoteFontSize,
-	setSectionKeysFlats,
-	setSectionKeysSharps,
 	setKeyHandlerProviders,
 	showMessages,
 	hideMessages,
@@ -47,7 +40,6 @@ import {
 	document_keyup
 } from './key-handlers.js';
 import {
-	setLooperProviders,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -70,27 +62,22 @@ import {
 } from './NoteTableController.js';
 import {
 	Note
-} from './note.js'; 
+} from './Note.js'; 
 import {
 	Song
-} from './song.js';
+} from './Song.js';
 import {
 	clearRecordedNotes,
 	setSectionRecorderProviders
 } from './section-recorder.js';
 import './svgLines.js';
 import {
-	controlsToTheme,
-	auditThemes,
-	clearThemeDiffResults,
 	getDefaultTheme,
 	getThemes,
-	getWidget_SelectThemes,
-	INFO,
-	setOneCssVar,
-	theme,
-	themeToControls
+	THEME_INFO,
+	setOneCssVar
 } from './themeFunctions.js';
+import * as SectionPrinter from './section-printer.js';
 import * as TableBuilder from './TableBuilder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
 import {
@@ -111,8 +98,14 @@ import {
 	toInt
 } from './utils.js';
 import * as WiringBuilder from './templates/WiringBuilder.js';
+import { ThemesBuilder }  from './templates/themes.builder.js';
+import { PaletteBuilder } from './templates/palette.builder.js';
+import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
+import { TransportBuilder } from './templates/transport.builder.js';
+import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 
-// If running in a browser, call appInit() on DOM ready
+// If running in a browser, call appInit() on DOM ready.  Browser loads DOM, then since index.html pulls in this module, this module is run after DOM loaded.  
+// This top-level code runs first, which calls appInit().
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	$(function() {
 		if (typeof appInit === 'function') appInit();
@@ -137,6 +130,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// 5) App init and EventBus integration
 
 	//==================== 1) Core providers and accessors ====================
+	
+	var gAppInit_running = false; //set in appInit() and cleared when done and Promises from loadTemplate() have returned..
+	export function appInit_running(){
+		return gAppInit_running;
+	}
 
 	var gSong = null;  //constructed in document ready.
 	export function getSong(){
@@ -157,7 +155,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(".showWiringButton").removeClass("ShowWiringButtonOpen");
 		}
 	}
-	
 	export function toggleWiringOpenState() {
 		setWiringOpenState(!WIRING_OPEN);
 	}
@@ -166,16 +163,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setDisplayOptionsProviders({
 			getSong,
 			controlsToDisplayOptions
-		});
-		setGraveyardProviders({
-			getSong,
-			applyStylesheet: chuseStylesheet
-		});
-		setLooperProviders({
-			getSong,
-			getMillisForBeatClock,
-			showBeats,
-			showBPM
 		});
 		setNotetableProviders({
 			getBeatNumber,
@@ -202,12 +189,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			enterFullscreen,
 			getBPM,
 			getCurrentSection,
+			getPersistentSongFile,
 			getSectionsCurrentIndex,
 			getSong,
 			hideAllMenuDivs,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
+			printSectionsNotes,
 			resetNoteNames,
 			sectionChanged,
 			setBPM,
@@ -215,16 +204,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setSingleNoteOpacity,
 			setTinyNoteOpacity,
 			showOneMenu,
-			skipColorDictsReplacer,
 			toggleCaption,
 			toggleFullscreen,
 			toggleInstrumentCaptionRow,
-			toggleTransport,
 			transpose,
 			transposeSong,
 			transposeSongKeys,
 			updateFontLabel,
-			updateMemoryModelPreFileSave,
 			updateSectionsStatus
 		});
 		setColorFunctionsProviders({
@@ -297,44 +283,30 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showHideDisplayOptionsPresent(){
 		var options = getCurrentSection().displayOptions;
-		if (options){
-			$('#btnDeleteDisplayOptions,#btnDeleteDisplayOptions2').prop("disabled",false);
-		} else {
-			$('#btnDeleteDisplayOptions,#btnDeleteDisplayOptions2').prop("disabled",true);
-		}
+		$('#btnDeleteDisplayOptions_View').prop("disabled", !options);
+		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
 	export function sectionChanged(){
-		$('#dropDownSectionOrder').html(buildDropDownSectionOrderOptions());
-		$("#dropDownRoot").val(getCurrentSection().rootID);
-	    $("#dropDownRootLead").val(getCurrentSection().rootIDLead);
 		var options = getCurrentSection().displayOptions;
 		if (options){
 			displayOptionsToControls(options);
 		}
 		showHideDisplayOptionsPresent();
-	    getSong().gotoFirstBeat();
-	    showHighlightsForBeat(getSong().getBeat());
+		clearAndReplaySection()
 	    updateSectionsStatus();
+		SectionDrawerBuilder.sectionChanged();
 	}
 
 	export function updateSectionsStatus(){
-		$(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
-	    var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
-	    $("#lblSectionsStatus").html(txt);
-	    $("#lblSectionsStatus2").html(txt);
-	    $("#txtBeatsPer" ).val(getSong().getBeats());
-		$("#lblBeats").html(getSong().getBeats());
-	    var jLblCurrentBeat = $("#lblCurrentBeat");
-	    jLblCurrentBeat.text("1");
-	    $("#lblBeat").html("1");
-
-	    //clearRecordedNotes();
-	    $("#txtCaption").val(getSong().getCurrentSection().caption);
-	    var key =  getSong().getCurrentSection().rootID;
+		//These should be in #topControlsCaptions in index.html
+	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var rawCaption = getSong().getCurrentSection().caption;
 		var caption = eval("\`"+rawCaption+"\`");
 	    $(".lblSectionCaption").html(caption);
+
+	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
+	    $(".lblSectionMode").html( getSong().getCurrentSection().mode);
 
 		var currentFilename = $("#txtFilename").val();
 	    $(".lblSongName").html(currentFilename);
@@ -345,18 +317,30 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var keyname = getSong().noteIDToNoteName(rootIndex);
 		var keynameLead = getSong().noteIDToNoteName(rootIndexLead);
 
+		
+		//This is in Instrument Caption row:
+		var spans = $(".spanLeadDifferentFromRoot");
+	    
+		//These are in Transport:
+	    $("#lblBeats").html(getSong().getBeats());
+		$("#lblBeat").html("1");
+		
+		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
+	    $("#lblSectionsStatus2").html(txt);
+		
+		// .lblRootID and .lblRootIDLead have controls in 
+		//     Fill, Transport, and Song Caption:
 	    $(".lblRootID").html(keyname);
-
-	    var spans = $(".spanLeadDifferentFromRoot");
-	    if (getSong().getCurrentSection().rootIDLead != "-1"){
-	        spans.html("lead key: "+keynameLead);
+		if (getSong().getCurrentSection().rootIDLead != "-1"){
+	        spans.html(keynameLead);
 	        spans.show();
-	        $(".lblRootIDLead").html(keynameLead).show();
+	        $(".lblRootIDLead").html(keynameLead).addClass("lblRootIDLead_active");
 	    } else {
           spans.hide();
-          $(".lblRootIDLead").hide();//zanzibar
+          $(".lblRootIDLead").html("&nbsp;").removeClass("lblRootIDLead_active");
 	    }
-		showHideDisplayOptionsPresent();
+
+		showHideDisplayOptionsPresent();  //also calls SectionDrawerBuilder API.
 	}
 
 	export function clearAndReplaySection(){
@@ -372,7 +356,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function showBeats(){
 		var beat = getSong().getBeat();
 		$("#lblBeat").html(""+beat);
-		$("#lblCurrentBeat").text(""+beat);
 		showHighlightsForBeat(beat);
 	}
 
@@ -414,111 +397,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
-		function cloneTuningForSong(tuning) {
-			return JSON.parse(JSON.stringify(tuning));
-		}
-
-		export function collectSongOwnedTunings(song) {
-			if (!song) {
-				return [];
-			}
-			var builtInBaseIDs = new Set(allTunings.tunings.map(function(tuning) {
-				return tuning.baseID;
-			}));
-			var customTunings = [];
-			var seenBaseIDs = new Set();
-			var addCustomTuning = function(tuning) {
-				if (!tuning || !tuning.baseID || tuning.baseID === "USER") {
-					return;
-				}
-				if (builtInBaseIDs.has(tuning.baseID) || seenBaseIDs.has(tuning.baseID)) {
-					return;
-				}
-				seenBaseIDs.add(tuning.baseID);
-				customTunings.push(cloneTuningForSong(tuning));
-			};
-
-			if (Array.isArray(song.myTunings)) {
-				song.myTunings.forEach(addCustomTuning);
-			}
-			if (Array.isArray(song.tunings)) {
-				song.tunings.forEach(addCustomTuning);
-			}
-			return customTunings;
-		}
-
-		function loadSongOwnedTunings() {
-			getSong().myTunings = collectSongOwnedTunings(getSong());
-		}
-
-		function getStartupTuningBaseID(defaultBaseID) {
-			var fallback = defaultBaseID || 'S6';
-			if (typeof window === 'undefined' || !window.location || typeof URLSearchParams === 'undefined') {
-				return fallback;
-			}
-
-			var raw = new URLSearchParams(window.location.search || '').get('tuning');
-			if (!raw) {
-				return fallback;
-			}
-
-			var requested = raw.trim();
-			if (!requested) {
-				return fallback;
-			}
-
-			var variants = [];
-			var addVariant = function(value) {
-				if (!value) {
-					return;
-				}
-				if (!variants.includes(value)) {
-					variants.push(value);
-				}
-			};
-
-			addVariant(requested);
-			addVariant(requested.toUpperCase());
-			if (requested.startsWith(Constants.TABLE_ID_PREFIX)) {
-				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length));
-			}
-			if (requested.toUpperCase().startsWith(Constants.TABLE_ID_PREFIX.toUpperCase())) {
-				addVariant(requested.substring(Constants.TABLE_ID_PREFIX.length).toUpperCase());
-			}
-
-			for (var i = 0; i < variants.length; i++) {
-				var candidate = variants[i];
-				if (!candidate) {
-					continue;
-				}
-				var byID = TuningsLibrary.findTuningForID(candidate);
-				if (byID && byID.baseID !== 'USER') {
-					return byID.baseID;
-				}
-				if (candidate.includes('_')) {
-					var baseCandidate = candidate.split('_')[0];
-					var byBase = TuningsLibrary.findTuningForID(baseCandidate);
-					if (byBase && byBase.baseID !== 'USER') {
-						return byBase.baseID;
-					}
-				}
-			}
-
-			return fallback;
-		}
-
-	function showTuningsTab(which) {
-		var showMy = which !== 'all';
-		$('#divMyTuningsTab').toggle(showMy);
-		$('#divAllTuningsTab').toggle(!showMy);
-		$('#btnMyTuningsTab')
-			.toggleClass('BtnPunchedIn', showMy)
-			.toggleClass('BtnPunchedOut', !showMy);
-		$('#btnAllTuningsTab')
-			.toggleClass('BtnPunchedIn', !showMy)
-			.toggleClass('BtnPunchedOut', showMy);
-	}
-
 	export function showMessagesTab(which) {
 		var showMsgs = which !== 'JsonTree';
 		   $('#divMessages').toggle(showMsgs);
@@ -537,31 +415,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideMessages();
 	}
 
-	export function reloadAllTuningsDisplay(){
-		    var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
-			var myTuningsDiv = $('#divMyTuningsTab');
-			var allTuningsDiv = $('#divAllTuningsTab');
-			var myTunings = getSong().myTunings || [];
-			var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
-			myTuningsDiv.empty();
-			allTuningsDiv.empty();
-			myTuningsDiv
-				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
-					tableID: Constants.MY_TUNINGS_TABLE_ID,
-					primaryControl: 'visibility'
-				}));
-			allTuningsDiv
-				.append($("<p><b>All Tunings</b></p>"))
-				.append(TuningsLibrary.dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
-					tableID: Constants.ALL_TUNINGS_TABLE_ID,
-					primaryControl: 'clone'
-				}));
-			if (userControls.length > 0) {
-				allTuningsDiv.append(userControls);
-			}
-		TuningsLibrary.bindFormTuningsEvents();
-	}
-
+	
 	function updateAllWiringSelects() {
 		WiringBuilder.updateAllWiringSelects();
 	}
@@ -594,21 +448,45 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		resetFlatsControls();
 	}
 
+	/*******  Call Graph *******************
+	 
+	 NoteTableController.fullRepaint
+		resetNoteNames
+
+	 infinite-neck.setSectionKeysFlats
+	 	resetNoteNames
+	 
+	 clearAndReplaySection
+		resetNoteNames //also called by every GUI control...
+			options {rootID, rootIDLead, cellIsFunction
+			resetSharps(options)
+				buildCells
+					theVisibleNoteTables.forEach(tableID => {
+						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
+				resetSharpsControls
+			resetFlats(options)
+				buildCells
+					theVisibleNoteTables.forEach(tableID => {
+						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
+				resetFlatsControls
+			replay()	
+	**************************************/
 
 	export function resetNoteNames() {
-	    var options = {};
-	    var rootID = getCurrentSection().rootID;
+	    let options = {};
+	    let rootID = getCurrentSection().rootID;
+		let rootIDLead = getCurrentSection().rootIDLead;
 	    getSong().sharps = getCurrentSection().sharps;
 	    if (rootID!=null && ((""+rootID).length>0)) {
 	        options.rootID = rootID;
-			options.rootIDLead = getCurrentSection().rootIDLead;//20240423
-	        //console.log("=========Using rootID from getCurrentSection(): "+rootID+" ");
+			options.rootIDLead = rootIDLead;
 	    } else {
+			alert('rootID not in current section');
+			debugger
 	        var optVal = $('#dropDownRoot').val();
-			var rootIDLead = $("#dropDownRootLead").val();
+			rootIDLead = $("#dropDownRootLead").val();
 	        options.rootID = parseInt(optVal);
 			options.rootIDLead = toInt(rootIDLead, -2);
-	        //console.log("==========NOT Using rootID:"+rootID+", using dropDownRoot value instead: "+optVal+" options.rootID: "+options.rootID);
 	        getCurrentSection().rootID = options.rootID;
 	        getCurrentSection().rootIDLead = options.rootIDLead;
 	    }
@@ -640,37 +518,36 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function buildCells(sharps, options) {
 		updateMemoryModelPreFileSave();
-		//console.log("############# getSong().visibleNoteTables: "+JSON.stringify(getSong().visibleNoteTables));
 		let theVisibleNoteTables = getSong().visibleNoteTables;
 		theVisibleNoteTables.forEach(tableID => {
-		    buildCellsForTable(sharps, options, `#${tableID}`);
+		    buildCellsForTable(sharps, options, tableID);
 		});
 	}
 	export function buildCellsForTable(sharps, options, tableID=""){
 		let tableID_prefix = "";
 		if (tableID){
-			tableID_prefix = tableID + ' ';
+			tableID_prefix = '#'+tableID + ' ';
 		}
 		if (sharps) {
 			buildCellsFromSelector(tableID_prefix+"td.noteAb", "G", SHARP, 11, options);
-			buildCellsFromSelector("td.noteBb", "A", SHARP, 1, options);
-			buildCellsFromSelector("td.noteDb", "C", SHARP, 4, options);
-			buildCellsFromSelector("td.noteEb", "D", SHARP, 6, options);
-			buildCellsFromSelector("td.noteGb", "F", SHARP, 9, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteBb", "A", SHARP, 1, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteDb", "C", SHARP, 4, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteEb", "D", SHARP, 6, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteGb", "F", SHARP, 9, options);
 		} else {
 			buildCellsFromSelector(tableID_prefix+"td.noteAb","A", FLAT, 11, options);
-			buildCellsFromSelector("td.noteBb","B", FLAT, 1, options);
-			buildCellsFromSelector("td.noteDb","D", FLAT, 4, options);
-			buildCellsFromSelector("td.noteEb","E", FLAT, 6, options);
-			buildCellsFromSelector("td.noteGb","G", FLAT, 9, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteBb","B", FLAT, 1, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteDb","D", FLAT, 4, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteEb","E", FLAT, 6, options);
+			buildCellsFromSelector(tableID_prefix+"td.noteGb","G", FLAT, 9, options);
 		}
-		buildCellsFromSelector("td.noteA","A", NATURAL, 0, options);
-		buildCellsFromSelector("td.noteB","B", NATURAL, 2, options);
-		buildCellsFromSelector("td.noteC","C", NATURAL, 3, options);
-		buildCellsFromSelector("td.noteD","D", NATURAL, 5, options);
-		buildCellsFromSelector("td.noteE","E", NATURAL, 7, options);
-		buildCellsFromSelector("td.noteF","F", NATURAL, 8, options);
-		buildCellsFromSelector("td.noteG","G", NATURAL, 10, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteA","A", NATURAL, 0, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteB","B", NATURAL, 2, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteC","C", NATURAL, 3, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteD","D", NATURAL, 5, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteE","E", NATURAL, 7, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteF","F", NATURAL, 8, options);
+		buildCellsFromSelector(tableID_prefix+"td.noteG","G", NATURAL, 10, options);
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,
@@ -678,23 +555,32 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const AllMenuDivs = {
 		"#palette": "#btnPalette",
 		"#divFileControls": "#btnFileControls",
-		"#divSectionControls": "#btnSectionControls",
 		"#divViewControls": "#btnViewControls",
 		"#divThemeControls": "#btnThemeControls",
 		"#divFillNotes": "#btnFillNotes",
 		"#divTunings": "#btnTunings",
-		"#divDesktop": "#btnDesktop"
+		"#divDesktop": "#btnDesktop",
+		"#spanSectionDrawer": "#btnEditSection"
 	}
 
 	export function hideAllMenuDivs(){
-		for (const [key, value] of Object.entries(AllMenuDivs)){
-			$(key).hide();
+		for (const key of Object.keys(AllMenuDivs)){
+			if (key === "#spanSectionDrawer"){
+				TransportBuilder.hideSectionDrawer();
+			} else {
+				$(key).hide();
+			}
 		}
 		$('.MainMenuTabBtn').removeClass("BtnPunchedIn").addClass("BtnPunchedOut");
-	    //$("#topControlsCaptions").show();
-	 }
+		//$("#topControlsCaptions").show();
+	}
 
-	 export function showOneMenu(strMenuDiv){
+	export function isMenuShowing(strMenuDiv){
+		var jStrMenuDiv = $(strMenuDiv);
+		return jStrMenuDiv.is(":visible");
+	}
+
+	export function showOneMenu(strMenuDiv){
 		 var wasFull = leaveFullscreen();
 		 var jStrMenuDiv = $(strMenuDiv);
 		 if (wasFull){
@@ -711,9 +597,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		 }
 		 //$("#topControlsCaptions").hide();
 		 scrollToTop();
-	 }
+	}
 
-	 export function getHelpTopic(){
+	export function getHelpTopic(){
 		 var anchor = "";
 		 for (const [key, value] of Object.entries(AllMenuDivs)){
 			 var jStrMenuDiv = $(key);
@@ -723,42 +609,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
  			 }
  		 }
 		 return  'help.html'+anchor;
-	 }
-
-	export function exportFromTable(tblSource){
-		const visibleTableIds = TuningsLibrary.getAllTunings()
-		    .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-		    .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
-		getSong().markVisibleTablesForFileSave(visibleTableIds);
-		Object.entries(getSong().visibleNoteTables).forEach(([tableDestKey, tableDest]) => {
-			if (tblSource != tableDest){
-				//console.log("src:"+tblSource+", dest:"+tableDest);
-				exportPlayedNotesToOtherTable(tblSource, tableDest);
-			}
-		});
 	}
-
-	export function exportPlayedNotesToOtherTable(tblSource, tblDest){
-	  var noteArr = getSong().getTableArrInCurrentSection(tblSource);
-	  noteArr.forEach(noteCell => {
-		  //console.log("exportPlayedNotesToOtherTable "+noteCell.midinum+","+noteCell.row);
-		  var jtd = showMidiNotesInTable(tblDest, noteCell.midinum, noteCell.row);
-		  //colorNote(jtd);
-		  colorSingleNotes(jtd, noteCell.colorClass, noteCell.styleNum, false);
-	  });
-	}
-
-
 
 	export function turnOnKeep(){
-      $("#idKeep").prop("checked", true);
-  }
+		$("#idKeep").prop("checked", true);
+	}
 
-  export function hideNoteClickedCaption(){
-     $(".lblNoteClickedCaption").hide();
-  }
+	export function hideNoteClickedCaption(){
+		$(".lblNoteClickedCaption").hide();
+	}
 
-  export function setNoteClickedCaption(cell, theColorClass, styleNum){
+    export function setNoteClickedCaption(cell, theColorClass, styleNum){
       var caption = "";
       if (cell.attr('midinum')){
           $(".lblNoteClickedCaption").show();
@@ -774,10 +635,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					 +'&nbsp;<small>'+Note.styleNumToCaption(styleNum)+':'+theColorClass+'</small>' ;
 	    }
       $(".lblNoteClickedCaption").html(caption);
-   }
+    }
 
   	export function getBeatNumber(){
-		return $("#lblCurrentBeat").text();
+		return getSong().getBeat();
 	}
 
 	export function doingAutomaticColor(){
@@ -819,33 +680,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function downloadBackupThenClearGraveyard(){
 		downloadPlayedNotes();
 		getSong().graveyard.clear();
-		showMessages(getSong().graveyard.buildNoteTable()); // No change: buildNoteTable is not a TableBuilder method here
+		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	//==================== 3) File open/save and persistence ==================
 
-	//Use this function to skip saving the ColorDics, because they get generated anyway.
-	// Ultimately, only user-customized dicts should be saved, but right now it is doing 
-	// all the default run-time generated dicts, bloating the file.
-	// And other run-time props are removed.
-	export function skipColorDictsReplacer(key, value){
-		if (   key === 'userColors' 
-			|| key === 'colorDicts' 
-			|| key === 'fretLengths' 
-			|| key === 'noteNamesFuncArr' ) {
-			return undefined;
-		}
-		return value;
+	export function getPersistentSongFile(){
+		updateMemoryModelPreFileSave(); //last-minute sync of stuff that should have been done before like 
+		                                // song name, bpm, myTunings, Theme, userColors, USERTuning, visibleTableIDs
+	    var text = getSong().getPersistentSongFile();
+		return text;
 	}
 
     // file save / save file / saveFile event
 	export function downloadPlayedNotes(){
-	    updateMemoryModelPreFileSave();
-	    //var text = JSON.stringify(getSong(), null, 2); // Create element. (with 2 spaces indentation)
-	    var text = JSON.stringify(getSong(), skipColorDictsReplacer, 2); // Create element. (with 2 spaces indentation)
-	    //console.log("saved file:\r\n"+text);
-		var a = document.createElement('a'); // Attach href attribute with value of your file.
-	    //a.setAttribute("href", "data:application/xml;charset=utf-8," + text);
+		var text = getPersistentSongFile();
+	    var a = document.createElement('a'); // Attach href attribute with value of your file.
 	    var fname = "";
 	    fname = $("#txtFilename").val().trim();
 	    if (fname==""){
@@ -854,7 +704,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		const blob = new Blob([text], {type: "application/json"});
 		const url = URL.createObjectURL(blob);
-		a.setAttribute("href", url)
+		a.setAttribute("href", url);
 	    a.setAttribute("download", fname+".json");   // HTML5 property, to force browser to download it.
 	    a.click();
 	    hideAllMenuDivs();
@@ -869,7 +719,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (file.type.match(textType)) {
 				var reader = new FileReader();
 				reader.onload = function(e) {
-					var str = JSON.stringify(reader.result, null, 2); // spacing level = 2
+					var str = JSON.stringify(reader.result, null, 2);
 					openSong(reader.result);
 				}
 				hideAllMenuDivs();
@@ -881,55 +731,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function openSong(str){
-		var numFoundBeforeFileLoad = TuningsLibrary.showTuningsForTablesInFile();
-		if (numFoundBeforeFileLoad==0){
-			TuningsLibrary.hideAllTunings();
-		}
 		var jsonObj = JSON.parse(str);
-		Object.assign(gSong, jsonObj);
-		loadSongOwnedTunings();
-		getSong().fixupCurrentIndexForLoadedSong();
-
-		if (getSong().userInstrumentTuning){
-			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
-			if (theUSERTuning){
-				TuningsLibrary.hideAllTunings();
-				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
-			}
-		}
-
-		var frs = [];
-		Object.values(jsonObj.sections).forEach(section => {
-			var replacementSection = getSong().constructSection();
-			section = Object.assign(replacementSection, section);
-			frs.push(section);
-		});
-		jsonObj.sections = frs;
-		if (!getSong().isEmpty(getSong().getCurrentSection())){
-
-			var yes = $("#cbAppendSections").prop("checked");
-			if (!yes){
-				getSong().removeAllSections();
-			}
-		}
-		getSong().addSections(jsonObj);
-		getSong().graveyard = makeGraveyard(getSong().graveyard);
-
-		var userTheme = getSong().userTheme;
-		if (userTheme){
-			userTheme["id"] = "USER";
-			getThemes()["USER"] = userTheme;
-			getSong().theme = "USER";
-		}
-		rebuildThemesDropdown();
-
-		
-
+		gSong = new Song(jsonObj);
+		gSong.ensureDefaultSection();
 		updateAfterOpenSong();
 	}
 
-
 	export function updateAfterOpenSong(){
+		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
 		installDefaultColorDicts();
 		
@@ -937,7 +746,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!songTheme){
 			songTheme = getDefaultTheme().id;
 		}
-		$('#mySelect').val(songTheme).change();
+		$('#selThemes').val(songTheme).change();
 
 		$("#txtFilename").val(getSong().songName).change();
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
@@ -946,15 +755,37 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
-
+		
+		if (getSong().userInstrumentTuning){
+			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
+			if (theUSERTuning){
+				TuningsLibrary.hideAllTunings();
+				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
+			}
+		}
 
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
-			TuningsLibrary.showDefaultTuning();
+			showDefaultTunings();
 		}
 
 		replay();
 		sectionChanged();
+	}
+
+	function showDefaultTunings(){
+		let preferredTuningArray = applyInstrumentPrefs();
+		const params = new URLSearchParams(window.location.search);
+		const tuning = params.get('tuning');
+		if (tuning){
+			TuningsLibrary.showDefaultTuning(tuning);
+		} else if ( Array.isArray(preferredTuningArray) && preferredTuningArray.length>0 ){
+			preferredTuningArray.forEach(baseID => {
+				TuningsLibrary.showDefaultTuning(baseID);//calls showHideTunings and shows S6 if none found.
+			});
+		} else {
+			TuningsLibrary.showDefaultTuning();
+		}
 	}
 
 	export function installDefaultColorDicts(){
@@ -986,7 +817,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$.get( "songs/song-list.json", function(data){
 				var result = "";
 				Object.values(data.songs).forEach(song => {
-					result = result + "<a href='#' data-action='loadSong' data-action-arg='"+song+"'>"+song+"</a><br />";
+					result = result + "<a href='#' data-action='loadSong' data-action-args='["+song+"]'>"+song+"</a><br />";
 				});
 				$('#divSongList').html(result).show();
 			});
@@ -995,7 +826,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showGraveyard(){
 		hideAllMenuDivs();
-		showMessages(getSong().graveyard.buildNoteTable());
+		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	export function increaseUIFont(){
@@ -1022,8 +853,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		for (let i = 0; i < tunings.length; i++) {
 			var div = TableBuilder.buildNoteTable(tunings[i]);
 			if (div){
-		        $('#tabledest')
-				    .append(div)
+				$('#tabledest')
+				.append(div);
+				/* This has been commented out 20260420 because it was potentially weird and didn't seem to do anything any more,
+				   and may register this function too many times, e.g. once per loop.
 				    .on("click", "td", function() { // This function will execute when any td inside #container is clicked
 					    var noteRole = $(this).attr('noteRole'); 
 						$("input[name=rbColor][value="+noteRole+"]")
@@ -1031,8 +864,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 							//this div has a ColorDict generated by buildColorDicts 
 							// and then we click on the TDs in there, 
 							// and the role has been stored in the td attr "noteRole"
-						turnOffAutoColorCheckbox();	
-					});
+						//turnOffAutoColorCheckbox();	
+					});*/
 				count++;
 			}
 	    }
@@ -1044,6 +877,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		buildColorDicts();
 	}
 
+	//TODO: make this targeted, especially watching out for un-docked tables.
 	export function reinstallAllTuningsTables(){
 			var target = $("#tabledest");
 			target.empty();
@@ -1053,6 +887,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearAll();
 			resetNoteNames();
 			TuningsLibrary.showHideTunings();
+			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
 	}
 
 	export function installTDNoteClick(){
@@ -1079,59 +914,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 
-  export function addBeat(){
-          clearHighlights();
-          var jLblCurrentBeat = $("#lblCurrentBeat");
-	        var sBeats = $("#txtBeatsPer").val();
-	        if (sBeats == ""){
-	            $("#txtBeatsPer").val("1");
-	            sBeats = $("#txtBeatsPer").val();
-	            jLblCurrentBeat.text("1");
-	            $("#lblBeat").html("1");
-				$("#lblBeats").html(sBeats);
-	            return;
-	        }
-	        var sCurrBeat = jLblCurrentBeat.text();
-	        var currBeat = parseInt(sCurrBeat);
-	        var beats = parseInt(sBeats);
-	        if (currBeat == beats){
-	                beats++;
-	                currBeat++;
-	                $("#txtBeatsPer").val(beats);
-					$("#lblBeats").html(beats);
-	                jLblCurrentBeat.text(currBeat);
-	                $("#lblBeat").html(currBeat);
-	        } else if (currBeat < beats) {
-	                beats++;
-	                $("#txtBeatsPer").val(beats);
-					$("#lblBeats").html(beats);
-	        }
-			getCurrentSection().beats = beats;
-			$('#lblBeats').html(beats);
-			showBeats();
-  }
-
-	// see also: song.js :: cycleThruKeysAllSections()
-	export function cycleThruKeys(amount){
-		var curr = toInt(getCurrentSection().rootID, 0);
-		curr=(12+curr + amount) % 12;
-		getCurrentSection().rootID = curr;
-		$("#dropDownRoot").val(getCurrentSection().rootID);
-		resetNoteNames();
-		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
-		updateSectionsStatus();
-	}
+    export function addBeat(){
+		clearHighlights();
+		var beats = getSong().getBeats();
+		beats++;
+		getSong().setBeats(beats);
+		$('#lblBeats').html(beats);  //number of beats in Section
+		showBeats();  //updates #lblBeat  current beat in Section
+    }
 
 	export function leaveFullscreen(){
 		var wasVisible =  $('.container').is(':visible');
 		$('.container').show();
 		$("#tabledestTopPad").hide();
+		$(".dockable-handle").show();
 		$("#divESCAPE").hide();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
 		$('.container').hide();
 		$("#tabledestTopPad").show();
+		$(".dockable-handle").hide();
 		if (showESCButton){ // undefined ==> false
 			$("#divESCAPE").show();
 		}
@@ -1144,22 +947,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().captionsRowShowing = $('.captionRow').is(":visible");
 			$('.captionRow').hide();
 			$("#tabledestTopPad").show();
+			$(".dockable-handle").hide()
+			setWiringOpenState(false); //going fullscreen
 		} else {
 			if (getSong().captionsRowShowing){
 				$('.captionRow').show();
 			} else {
 				$('.captionRow').hide();
 			}
+			$(".dockable-handle").show()
 			$("#tabledestTopPad").hide();
 			$("#divESCAPE").hide();
 		}
 	}
-	export function showTransport() {
-		$('#transport').show();
+	export function showTransport(parkAtBottom = false) {
+		TransportBuilder.showTransport(parkAtBottom);
 	}
 	export function toggleTransport(){
-		//var wasVisible =  $('.transport').is(':visible');
-		$('#transport').toggle();
+		TransportBuilder.toggleTransport();
+	}
+	export function toggleSectionDrawer(){
+		TransportBuilder.toggleSectionDrawer();
 	}
 	export function toggleCaption(){
 		$('#topControlsCaptions').toggle();
@@ -1168,31 +976,59 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('.captionRow').toggle();
 	}
 
+	export function setSectionKeysFlats(){
+		getSong().sharps = false;
+		getCurrentSection().sharps = false;
+		resetNoteNames();
+		updateSectionsStatus();
+	}
 	
-	
+	export function setSectionKeysSharps(){
+		getSong().sharps = true;
+		getCurrentSection().sharps = true;
+		resetNoteNames();
+		updateSectionsStatus();
+	}
+	// see also: song.js :: cycleThruKeysAllSections()
+	export function cycleThruKeys(amount){
+		var curr = toInt(getCurrentSection().rootID, 0);
+		curr=(12+curr + amount) % 12;
+		getCurrentSection().rootID = curr;
+		SectionDrawerBuilder.rootIDChanged();
+		resetNoteNames();
+		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
+		updateSectionsStatus();
+	}
 
 	export function transpose(amount){
 		cycleThruKeys(amount);
-		var namedNoteName = getSong().moveNamedNotes(amount);
+		getSong().moveNamedNotes(amount); //operates on getCurrentSection().
 
 		//fullRepaint();//Don't do this, it is a bit slow because it rebuilds.
 		clearAll();
 		replay();
 		showBeats();
-
+		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
 		highlightOneNote(namedNoteName);
 	}
 
-	export function transposeSong(amount){
+	export function transposeSong(amount, options){
+		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true}
 		getSong().cycleThruKeysAllSections(amount);
-		var namedNoteName = getSong().moveNamedNotesAllSections(amount);
+		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
+		if (options.NamedNotes){
+			getSong().moveNamedNotesAllSections(amount);
+		}
+		if (options.PlayedNotes){
+			getSong().movePlayedNotesAllSections(amount);
+		}
+		if (options.RecordedNotes){
+			getSong().moveRecordedNotesAllSections(amount);
+		}
 		fullRepaint();
-		/*clearAll();
-		replay();
-		showBeats();
-
+		//Did the whole song, but at least give visual cue that we did something by highlighting current section:
+		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
 		highlightOneNote(namedNoteName);
-		*/
 	}
 
 	export function transposeSongKeys(amount){
@@ -1201,107 +1037,95 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showBeats();
 	}
 
-		export function printTablesStats(noteTables){
-			let result = "";
-			const B = "<br />";
-			Object.entries(noteTables).forEach(([key, tableArr]) => {
-				result += B + key + ":" + tableArr.length;
-			});
-			return result;
-		}
+	export function printSections(showDetail) {
+		return SectionPrinter.printSections(getSong(), getSections(), showDetail);
+	}
 
-		export function printSections(){
-			const sections = getSections();
-			const B = "<br />";
-			let result = "<table border='1' cellspacing='0'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Caption</th><th>Details</th>";
-			let namedNotes, specialNotes;
-			sections.forEach((section, idx) => {
-				namedNotes = (section.namedNotes && Object.keys(section.namedNotes).length > 0) ? "namedNotes: " + JSON.stringify(Object.keys(section.namedNotes)) : "";
-				specialNotes = (section.noteTables && Object.keys(section.noteTables).length > 0) ? "<br />SpecialNotes: " + printTablesStats(section.noteTables) : "";
-				const SEP = "</td><td>";
-				result += "<tr><td>"
-					+ "<a href='#' data-action='linkToSection' data-action-arg='" + idx + "'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
-					+ section.beats + SEP
-					+ "<B style='font-size: 130%;'>" + getSong().noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + getSong().noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
-					+ (section.sharps ? " &sharp; " : " &flat; ") + SEP
-					+ "<b style='font-size: 130%;'>" + section.caption + "</b>" + SEP
-					+ namedNotes
-					+ specialNotes
-					+ "</td></tr>";
-			});
-			return result + "</table>";
-		}
+	export function printSectionsNotes(){
+		return SectionPrinter.printSectionsNotes(getSong(), getSections());
+	}
 
-		export function linkToSection(idx){
-			getSong().gotoSection(idx);
-			hideCmdLine();
-		}
 
-		export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
-	        //console.log("rangeSlide:"+element_id+" value: "+value);
-			setNamedNoteOpacity_inner(element_id, value);
-	    }
+	export function linkToSection(idx) {
+		getSong().gotoSection(idx);
+		hideCmdLine();
+	}
+	export function linkToSectionChartChord(idx, chartChord) {
+		getSong().sections[idx].chartChord = chartChord;
+		$("#divMessages").html(printSectionsNotes());
+		updateSectionsStatus();
+	}
+	export function linkToSectionChartMode(idx, mode) {
+		getSong().sections[idx].mode = mode;
+		$("#divMessages").html(printSectionsNotes());
+		updateSectionsStatus();
+	}
 
-		export function setNamedNoteOpacity_inner(element_id, newValue){
-			getSong().namedNoteOpacity = newValue;
-			//console.log("setNamedNoteOpacity_inner element_id:"+element_id+" value: "+newValue);
-			clearAll();
-		    replay();
-		    updateSectionsStatus();
-		}
+	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
+		//console.log("rangeSlide:"+element_id+" value: "+value);
+		setNamedNoteOpacity_inner(element_id, value);
+	}
 
-		export function getNamedNoteOpacity(){
-			return $("#rangeNamedNoteOpacity").val();
-		}
+	export function setNamedNoteOpacity_inner(element_id, newValue){
+		getSong().namedNoteOpacity = newValue;
+		//console.log("setNamedNoteOpacity_inner element_id:"+element_id+" value: "+newValue);
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
 
-		export function setNamedNoteOpacity(newValue){
-			$("#rangeNamedNoteOpacity").val(newValue);
-			setNamedNoteOpacity_inner(null, newValue);
-		}
+	export function getNamedNoteOpacity(){
+		return $("#rangeNamedNoteOpacity").val();
+	}
 
-		//======== SingleNote opacity ==========
+	export function setNamedNoteOpacity(newValue){
+		$("#rangeNamedNoteOpacity").val(newValue);
+		setNamedNoteOpacity_inner(null, newValue);
+	}
 
-		export function getSingleNoteOpacity(){
-			return $("#rangeSingleNoteOpacity").val();
-		}
+	//======== SingleNote opacity ==========
 
-		export function setSingleNoteOpacity(newValue){
-			$("#rangeSingleNoteOpacity").val(newValue);
-			setSingleNoteOpacity_inner(null, newValue);
-		}
+	export function getSingleNoteOpacity(){
+		return $("#rangeSingleNoteOpacity").val();
+	}
 
-		export function setSingleNoteOpacity_inner(element_id, newValue){
-			getSong().singleNoteOpacity = newValue;
-			clearAll();
-		    replay();
-		    updateSectionsStatus();
-		}
+	export function setSingleNoteOpacity(newValue){
+		$("#rangeSingleNoteOpacity").val(newValue);
+		setSingleNoteOpacity_inner(null, newValue);
+	}
 
-		export function rangeSingleNoteOpacitySlide(element_id, value) {
-			setSingleNoteOpacity_inner(element_id, value);
-	    }
+	export function setSingleNoteOpacity_inner(element_id, newValue){
+		getSong().singleNoteOpacity = newValue;
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
 
-		//======== TinyNote opacity ==========
+	export function rangeSingleNoteOpacitySlide(element_id, value) {
+		setSingleNoteOpacity_inner(element_id, value);
+	}
 
-		export function getTinyNoteOpacity(){
-			return $("#rangeTinyNoteOpacity").val();
-		}
+	//======== TinyNote opacity ==========
 
-		export function setTinyNoteOpacity(newValue){
-			$("#rangeTinyNoteOpacity").val(newValue);
-			setTinyNoteOpacity_inner(null, newValue);
-		}
+	export function getTinyNoteOpacity(){
+		return $("#rangeTinyNoteOpacity").val();
+	}
 
-		export function setTinyNoteOpacity_inner(element_id, newValue){
-			getSong().tinyNoteOpacity = newValue;
-			clearAll();
-			replay();
-			updateSectionsStatus();
-		}
+	export function setTinyNoteOpacity(newValue){
+		$("#rangeTinyNoteOpacity").val(newValue);
+		setTinyNoteOpacity_inner(null, newValue);
+	}
 
-		export function rangeTinyNoteOpacitySlide(element_id, value) {
-			setTinyNoteOpacity_inner(element_id, value);
-		}
+	export function setTinyNoteOpacity_inner(element_id, newValue){
+		getSong().tinyNoteOpacity = newValue;
+		clearAll();
+		replay();
+		updateSectionsStatus();
+	}
+
+	export function rangeTinyNoteOpacitySlide(element_id, value) {
+		setTinyNoteOpacity_inner(element_id, value);
+	}
 
 	//==============  Other functions that set CSS vars but not in Themes (or themeFunctions.js) =====================
 
@@ -1352,6 +1176,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (show){
 			var LastBlackBackgroundColor = $('.noteBlackKey').css("background-color");
 			var LastWhiteBackgroundColor  = $('.noteWhiteKey').css("background-color");
+			if (!LastBlackBackgroundColor || !LastWhiteBackgroundColor){
+				return;
+			}
 			var hexbb = convertRGB_to_HEX(LastBlackBackgroundColor);
 			var hexww = convertRGB_to_HEX(LastWhiteBackgroundColor);
 			var bw = false; //false is cooler. //force choice of Black/White color for all background colors.  mid-tone colors don't work so well.
@@ -1373,10 +1200,25 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
+	export function getVisibleTablesSelect() {
+		const tableIds = getSong().getVisibleTunings();
+		const prefix = Constants.TABLE_ID_PREFIX;
+		let html = '<select id="fillVisibleTablesSelect">';
+		tableIds.forEach(tableId => {
+			// Remove the prefix from the tableId for display
+			let displayText = tableId.startsWith(prefix) ? tableId.slice(prefix.length) : tableId;
+			html += `<option value="${tableId}">${displayText}</option>`;
+		});
+		html += '</select>';
+		return html;
+	}
+
 
 	export function automateDisplay(){
 
 	}
+
+	//=========================================================================
 
 	export function displayOptionsToControls(options){
 
@@ -1527,6 +1369,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return options;
 	}
 
+	//================================================================
+
 	export function installBtnHamburgerClicks(){
 		$(".showsubcaption").click(function() {
 			$(".subcaption").toggle();
@@ -1544,6 +1388,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$dicts.removeClass("largeColorDict").hide();
 			}
 		});
+		$(".showLeftCaption").click(function() {
+			$(".fretTableTDCaption").toggle();
+		});
+		$(".showLeftSectionMark").click(function() {
+			$(".LooperLightTD").toggle();
+		});
+		$(".showTuningDetails").click(function() {
+			$(".spanTuningDetails").toggle();
+		});
+		$(".showNoteDetails").click(function() {
+			$(".spanNoteDetails").toggle();
+		});
+		$(".showTonalDetails").click(function() {
+			$(".spanTonalDetails").toggle();
+		});
+
 		//This should become an id not a class, when the button just affect one instrument.  For now, it shows all wirings.
 		$(".showWiringButton").click(function() {
 			toggleWiringOpenState();
@@ -1551,17 +1411,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	}
 
-	export function transportResize(){
-		//if at top, use this: var left = $('#transportLeftPoint').position().left;
-		var tHeight = $('#transport').outerHeight()
-		var tWidth = $('#transport').outerWidth()
-		var wHeight = $(window).height();
-		var wWidth = $(window).width();
-		var left = (wWidth / 2) - (tWidth / 2);
-		var top = (wHeight-tHeight);
+	function showLoopSectionsStarted(data){
+        const caption = (data && data.caption)
+            ? data.caption
+            : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
+        $('#btnLoopSections').html(caption).addClass('ButtonOn');
+        $('.LooperLight').addClass('LooperLightOn');
+    }
 
-		$('#transport').css({"left": left+"px", "top": top+"px"});
-	}
+    function showLoopSectionsStopped(){
+        $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
+        $('.LooperLight').removeClass('LooperLightOn');
+    }
 
 	export function toggleAutoColorCheckbox(){
 		var cbac = $("#cbAutomaticColor");
@@ -1576,56 +1437,35 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		resetNoteNames();
 	}
 
+	export function handleBtnControlsToDisplayOptions() {
+		var options = controlsToDisplayOptions();
+		getCurrentSection().displayOptions = options;
+		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
+		showHideDisplayOptionsPresent();
+	}
+	
+	export function handleBtnDeleteDisplayOptions() {
+		delete getCurrentSection().displayOptions;
+		showHideDisplayOptionsPresent();
+	}
 
-
+	export function toggleRandomLoop(){
+		getSong().randomLoop = ! getSong().randomLoop;
+		if (getSong().randomLoop){
+			$('#btnRandomLoop').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			$('#btnRandomLoop').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
+		}
+		if (sectionsLooping()){
+			restartLoopSections();
+		}
+	}
 
 	//==================== 4) UI event binding and control wiring =============
 
 	export function bindDesktopEvents(){
 
-		// Event delegation for stylesheet selection and deletion links
-		$(document).on('click', 'a.choose-stylesheet', function(e) {
-			e.preventDefault();
-			const dictkey = $(this).data('dictkey');
-			chuseStylesheet(dictkey);
-		});
-
-		$(document).on('click', 'a.delete-stylesheet', function(e) {
-			e.preventDefault();
-			const dictkey = $(this).data('dictkey');
-			deleteUserStylesheet(dictkey);
-		});
-
-		$(document).on('click', 'span.choose-color-picker', function(e) {
-			e.preventDefault();
-			const target = $(this).data('target');
-			showColorPicker(this, target);
-		});
-
-		$(document).on('click', 'span.choose-hatch-picker', function(e) {
-			e.preventDefault();
-			const target = $(this).data('target');
-			showHatchPicker(this, target);
-		});
-
-		$(document).on('click', 'td.colorPickerCell', function(e) {
-			e.preventDefault();
-			colorPickerClicked(this);
-		});
-
-		$(document).on('click', 'td.hatchPickerCell', function(e) {
-			e.preventDefault();
-			hatchPickerClicked(this);
-		});
-
-		$(document).on('click', 'button.exportButton', function(e) {
-			e.preventDefault();
-			const tableId = $(this).data('export-tableid');
-			if (tableId) {
-				exportFromTable(tableId);
-			}
-		});
-
+		
 		$(document).on('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
 			const index = toInt($(this).data('grave-index'), -1);
@@ -1661,7 +1501,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    showOneMenu("#divDesktop");
 		});
 
-
 		$("#btnHelp").click(function() {
 
 		});
@@ -1671,49 +1510,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		   hideAllMenuDivs();
 		});
 
-
 		$("#cbPresentationMode").change(function(){
 			getSong().presentationMode = this.checked;
 		});
 
-
-
-		$("#showHideExtraColors").click(function(event) {
-			$("#extraColors").toggle();
-			if ($("#extraColors").is(":visible")){
-				$("#showHideExtraColors")
-					.html("Less...")
-					.removeClass("BtnPunchedOut")
-					.addClass("BtnPunchedIn");
-			} else {
-				$("#showHideExtraColors")
-				    .html("More...")
-					.removeClass("BtnPunchedIn")
-					.addClass("BtnPunchedOut");
-			}
-			event.stopPropagation();
-		});
-
-		$("#showHideCustomColorEditors").click(function(event) {
-			$("#CustomColorEditors").toggle();
-			if ($("#CustomColorEditors").is(":visible")){
-				$("#showHideCustomColorEditors").html("Customize Less ...");
-			} else {
-				$("#showHideCustomColorEditors").html("Customize ...");
-			}
-			event.stopPropagation();
-		});
-
-		$("#showHideCustomColorLinks").click(function() {
-			$('#divColorDicts').toggle();
-		});
-
-		$('#btnMyTuningsTab').click(function() {
-			showTuningsTab('my');
-		});
-		$('#btnAllTuningsTab').click(function() {
-			showTuningsTab('all');
-		});
 		$('#btnMessagesTab').click(function() {
 			showMessagesTab('Messages');
 		});
@@ -1724,16 +1524,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hideMessages_KeyHandler();
 		});
 
-		$("#btnSectionControls").click(function() {
-		    showOneMenu("#divSectionControls");
-		});
 		$("#btnFileControls").click(function() {
 		    showOneMenu("#divFileControls")
 		});
 		$("#btnTunings").click(function() {
-		    reloadAllTuningsDisplay();
-			showTuningsTab('my');
-		    showOneMenu("#divTunings");
+			showOneMenu("#divTunings");//toggles on
+			requestReloadTuningsDisplays();//sets MyTunings button to PunchedIn, so has to go last.
 		});
 		$("#btnFillNotes").click(function() {
 		    showOneMenu("#divFillNotes");
@@ -1765,15 +1561,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			showAllNoteNames($('#cbShowAllNoteNames').prop('checked'));
 		});
 		$("#btnRandomLoop").click(function() {
-			getSong().randomLoop = ! getSong().randomLoop;
-			if (getSong().randomLoop){
-				$('#btnRandomLoop').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-			} else {
-				$('#btnRandomLoop').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-			}
-			if (sectionsLooping()){
-				restartLoopSections();
-			}
+			toggleRandomLoop();
 		});
 		$("#btnNoteV").click(function() {
 			checkRB("#rbNotename");
@@ -1792,7 +1580,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 
 		$("#btnToggleTransport").click(function() {
-			$('#transport').toggle();
+			TransportBuilder.toggleTransport();
 		});
 		$("#btnToggleCmdLine").click(function() {
 			toggleCmdLine();
@@ -1812,9 +1600,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnDownload").click(function() {
 		    downloadPlayedNotes();
 		});
-		$("#btnReplay").click(function() {
-		    replay();
-		});
 		$("#btnPrevSection, #btnPrevSection2").click(function() {
 		    getSong().gotoPrevSection(false);
 		});
@@ -1830,40 +1615,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearAndReplaySection();
 		});
 
-		$("#btnNewSection").click(function() {
-		    var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().newSection(newIndex);
-		});
-		$("#btnDeleteSection").click(function() {
-		    getSong().deleteCurrentSection();
-		});
-		$("#btnAddShallowCloneSection").click(function() {
-			var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().addShallowCloneSection(newIndex);
-		});
-		$("#btnAddDeepCloneSection").click(function() {
-		    var newIndex = $('#dropDownSectionOrder').val();//might include pseudo-value "END".
-		    getSong().addDeepCloneSection(newIndex);
-		});
-		$('#btnMoveSectionOrder').click(function(){
-			var newIndex = $('#dropDownSectionOrder').val();
-			if (newIndex == "END"){
-				getSong().moveSectionToEND();
-			} else {
-				getSong().moveSectionTo(newIndex);
-			}
-			updateSectionsStatus();
-			fullRepaint();
-		});
 		$("#btnLoopSections").click(function() {
 		    toggleLoopSections();
-		});
-		$("#btnLoopBeats").click(function() {
-		    toggleLoopBeats();
 		});
 		$("#btnLoopBeatsTransport").click(function() {
 		    toggleLoopBeats();
 		});
+		$("#btnEditSection").click(function() {
+			toggleSectionDrawer();
+		});
+
 
 		$("#cbShowAllNoteNames").click(function() {
 			var show = $("#cbShowAllNoteNames").prop("checked");
@@ -1901,10 +1662,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$("#txtBeatsPer" ).on( "change", function() {
-		 getCurrentSection().beats = $( this ).val();
-		});
-
 		$("#btnPrevBeat").click(function() {
 		    getSong().prevBeat();
 		    showHighlightsForBeat(getSong().getBeat());
@@ -1918,23 +1675,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnNextBeatTransport").click(function() {
 		  	getSong().nextBeat();
 		});
-
-		$("#btnInsertFirstBeat").click(function() {
-		    getSong().moveBeatsLater();
-		});
-		$("#btnAddBeat").click(function() {
-		    addBeat();
-		});
-		$("#btnDeleteBeat").click(function() {
-			getSong().deleteBeat();
-		});
-
-		$("#txtCaption" ).on( "change", function() {
-		 var cap = $( this ).val();
-		 getCurrentSection().caption = cap;
-		 $(".lblSectionCaption").html(cap);
-
-		});
 		$("#txtFilename" ).on( "change", function() {
 		 $(".lblSongName").html($( this ).val());
 		});
@@ -1943,38 +1683,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		 setBPM($(this).val());  //interestingly, this does NOT cause jQuery to call ".change()" again.
 		});
 
-		$("#btnSharps").click(function() {
-	        setSectionKeysSharps();
-	    });
-	    $("#btnFlats").click(function() {
-	       setSectionKeysFlats();
-	    });
 
-		$("#btnTransposeDown").click(function() {
-			 transpose(-1);
-	    });
-	    $("#btnTransposeUp").click(function() {
-			 transpose(1);
-	    });
-		$("#btnTransposeJumpDown").click(function() {
-			 transpose(-5);
-	    });
-	    $("#btnTransposeJumpUp").click(function() {
-			 transpose(5);
-	    });
 
-		// CODE-EXAMPLE("SelectWidget", "Root")
-	    $('#dropDownRoot').change(function() {
-	        getCurrentSection().rootID = $(this).val();
-	        fullRepaint();
-	        updateSectionsStatus();
-	    });
-		// END CODE-EXAMPLE("SelectWidget", "Root")
-		$('#dropDownRootLead').change(function() {
-            getCurrentSection().rootIDLead = $('#dropDownRootLead').val();
-            fullRepaint();
-	        updateSectionsStatus();
-	    });
 
 		$("#btnRowRangeReset").click(function() {
 			//$('#textareaRowRange').val(JSON.stringify(noteNamesRowRangeArr));
@@ -2034,42 +1744,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			//short-circuit and set it now, it is in mem for next time.
 			var margin = this.value;
 			$('.instrumentBackground').css({"margin-top": margin, "margin-bottom": +margin });
-		});
-
-	    $('#selBend').click(function() {
-	        $("#rbBend").prop("checked", true);
-	    });
-
-		$("#rbFinger0").click(function(){
-            checkRB("#idRFinger0");
-        });
-		$("#rbFinger1").click(function(){
-			checkRB("#idRFinger1");
-		});
-		$("#rbFinger2").click(function(){
-			checkRB("#idRFinger2");
-		});
-		$("#rbFinger3").click(function(){
-			checkRB("#idRFinger3");
-		});
-		$("#rbFinger4").click(function(){
-			checkRB("#idRFinger4");
-		});
-		$("#rbFingerT").click(function(){
-			checkRB("#idRFingerT");
-		});
-
-		$("#cbAutomaticColor").change(function() {
-			if (this.checked) {
-				//console.log("cbAutomaticColor was checked--hiding");
-				$('#manualColors').hide();
-				$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-			} else {
-				//console.log("cbAutomaticColor was not checked--showing");
-				$('#manualColors').show();
-				$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-			}
-			fullRepaint();
 		});
 
 		$('#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering').change(function() {
@@ -2145,6 +1819,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			fullRepaint();
 		});
 		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
+		// CODE-EXAMPLE("TextAreaWButtonWidget", "BanjoNut")
+		$("#btnBanjoNutExamples").click(function() {
+			$("#divBanjoNutExamples").toggle();
+		});
+
+		$("#divBanjoNutExamples tr[data-banjo-nut-value]").click(function() {
+			$("#textareaBanjoNut").val($(this).attr("data-banjo-nut-value")).trigger("change");
+			$("#divBanjoNutExamples").hide();
+		});
+		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
 		$('#dropDownFunctionSymbols').change(function() {
             var value = $('#dropDownFunctionSymbols').val();
 			getSong().noteNamesFuncArr = JSON.parse(value);  //this one is safe--comes from our built SELECT.
@@ -2158,54 +1842,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        fillChord();
 	    });
 
-		$("#btnControlsToDisplayOptions, #btnControlsToDisplayOptions2").click(function() {
-	        var options = controlsToDisplayOptions();
-			getCurrentSection().displayOptions = options;
-			INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
-			showHideDisplayOptionsPresent();
+		$("#btnControlsToDisplayOptions_View").click(function() {
+	        handleBtnControlsToDisplayOptions();
 	    });
-		$("#btnDeleteDisplayOptions, #btnDeleteDisplayOptions2").click(function() {
-			delete getCurrentSection().displayOptions;
-			showHideDisplayOptionsPresent();
+		$("#btnDeleteDisplayOptions_View").click(function() {
+			handleBtnDeleteDisplayOptions();
 	    });
 
-		$("#btnRecordUserColors").click(function() {
-			recordUserColors();
-		});
-		$("#btnRecordUserColorsFromSection").click(function() {
-			recordUserColorsFromSection();
-		});
+		
 	}
 
-	export function bindThemeEvents(){
-		//======= themes  =======
-		$('#btnTheme').click(function() {
-			var newTheme = controlsToTheme();
-			theme(newTheme);
-			getSong().userTheme = newTheme;
-			getThemes()["USER"] = newTheme;
-		});
-		$('#btnToggleThemeTableResults').click(function() {
-			$('#themeTableResults').toggle();
-		});
-		$('#selThemes').change(function() {
-			var id = this.id;
-			var val =  this.value;
-			var selectedTheme = getThemes()[val];
-			theme(selectedTheme);
-			themeToControls(getDefaultTheme());  //Not all themes have all values, so reset all the dropdowns with theme "Default" first.
-			themeToControls(selectedTheme);
-			clearThemeDiffResults();
-			refreshShowAllNoteNames();
-		});
-		$('#warny').click(function(){
-			$(this).hide();
-		});
-		$('#btnShowWarny').click(function(){
-			$('#warny').show();
-		});
-	}
-
+	
 	export function bindDataActionHandlers(){
 		const dataActionHandlers = {
 			help: () => window.open(getHelpTopic(), 'infinitehelp'),
@@ -2224,22 +1871,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			saveScalingPrefs,
 			applyScalingPrefs,
 			clearScalingPrefs,
-				loadSong,
-				linkToSection,
-				hideGraveyard
+			loadSong,
+			linkToSection,
+			linkToSectionChartChord,
+			linkToSectionChartMode,
+			hideGraveyard,
+			saveInstrumentPrefs,
+			applyInstrumentPrefs,
+			clearInstrumentPrefs
 		};
 
 		$(document).on('click', '[data-action]', function(e) {
 			e.preventDefault();
 			const action = $(this).data('action');
-			const arg = $(this).data('action-arg');
+			let args = $(this).data('action-args');
+			if (typeof args === 'string') {
+				try { args = JSON.parse(args); } catch { args = [args]; }
+			}
+			if (!Array.isArray(args)) args = args !== undefined ? [args] : [];
 			const handler = dataActionHandlers[action];
 			if (typeof handler === 'function') {
-				if (arg !== undefined) {
-					handler(arg);
-				} else {
-					handler();
-				}
+				handler(...args);
 			} else {
 				console.warn('No data-action handler registered for:', action);
 			}
@@ -2252,6 +1904,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function ChromeFullscreen() {
 	  document.documentElement.webkitRequestFullScreen();
 	}
+
+	//============= Scaling Prefs in localStorage ==========================
 
 	const SCALING_PREFS = "ScalingPrefs";
 
@@ -2289,13 +1943,44 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divScalingPrefs").html("ScalingPrefs: "+JSON.stringify(localStorage.getItem(SCALING_PREFS)));
 	}
 
+	//============= Instrument Prefs in localStorage ==========================
+
+	const INSTRUMENT_PREFS = "InstrumentPrefs";
+
+	export function saveInstrumentPrefs(){
+		let baseIDArray = TuningsLibrary.getMyTunings().map(tuning => tuning.fromBaseID)
+		let instrumentPrefs = {baseIDArray: baseIDArray};
+
+		localStorage.setItem(INSTRUMENT_PREFS, JSON.stringify(instrumentPrefs));
+		$("#divInstrumentPrefs").html(JSON.stringify(instrumentPrefs));
+
+	}
+
+	export function applyInstrumentPrefs(){
+		$("#divInstrumentPrefs").html("");
+		var instrumentPrefsStr = localStorage.getItem(INSTRUMENT_PREFS);
+		if (instrumentPrefsStr){
+			var instrumentPrefs = JSON.parse(instrumentPrefsStr);
+			if (instrumentPrefs){
+				$("#divInstrumentPrefs").html(JSON.stringify(instrumentPrefs));
+				if (instrumentPrefs.baseIDArray){
+					return instrumentPrefs.baseIDArray;
+				}
+			}
+		}
+		return "";
+	}
+
+	export function clearInstrumentPrefs(){
+		localStorage.removeItem(INSTRUMENT_PREFS);
+		$("#divInstrumentPrefs").html("");
+	}
+
+	//========================================================================
+
 	/** After calling this, choose a theme either by default or by looking in song you just opened for USER theme. */
 	export function rebuildThemesDropdown(){
-		$('#SelectThemesDest').html(getWidget_SelectThemes());  //must come before bindThemeEvents()
-		bindThemeEvents();
-		auditThemes();//sends WARN messages, so hide after.
-		$('#warny').hide();
-		$('#themeTableResults').hide();
+		ThemesBuilder.rebuildThemesDropdown();
 	}
 
 	//==================== 5) App init and EventBus integration ===============
@@ -2306,7 +1991,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		installModuleProviders();
 		
-		getSong().graveyard = makeGraveyard();
+		//getSong().graveyard = makeGraveyard();
 		installDefaultColorDicts();
 		applyStylesheetsTo_gUserColorDict();
 		TuningsLibrary.ensureDefaultMyTuning('S6');
@@ -2317,6 +2002,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// appInit() called by document.ready
 	// File-level appInit for browser startup
 	export function appInit() {
+		gAppInit_running = true;
+
 		window.onerror = function (message, url, lineNo, colno, error){
 			let logString = 'window.onerror: ' + message
 				+ '\r\n URL:'+url
@@ -2331,21 +2018,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		fetchVersionInBrowser();
 
-		
-
-
-		//gSong = makeSong();  //var song global in this file (at top).
 		gSong = new Song();
+		gSong.ensureDefaultSection();
+
 		
-		getSong().graveyard = makeGraveyard();
-
-		installDefaultColorDicts();
-		applyStylesheetsTo_gUserColorDict();
-		buildColorDicts();
-		$('#divColorDicts').hide();
-		$("#CustomColorEditors").hide();
-
-		TuningsLibrary.ensureDefaultMyTuning(getStartupTuningBaseID('S6'));
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();
@@ -2353,13 +2029,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installTDNoteClick();
 		bindDesktopEvents();
 		applyScalingPrefs(true);
-
-		rebuildThemesDropdown();
-		$('#selThemes').val("Autobahn").change();
-		//will get picked up in open file, but here is the default theme,
-		//    which isn't "Default", although it should be.
-		//$('#selThemes').val("PoolShark").change();
-
+		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 
 		var currentFilename = $("#txtFilename").val();
@@ -2367,19 +2037,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().songName = currentFilename;
 		$('.topControlsCaptions').show();
 
-		$('#cbHighlight').prop('checked', false);
-		//NOTE: "checked" is done in buildUserColors, so you don't need to check any rb colors here.
+		
+      	$("#lblHideWarning").hide(); //in divViewControls
 
-		$("#palette").show();
-		$('#cbAutomaticColor').prop('checked', true);
-		$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
-
-		$("#dropDownRootColors").val("noteKeep");
-	    $("#dropDownChordsColors").val("noteKeep");
-	    $("#dropDownScalesColors").val("noteKeep");
-      	$("#lblHideWarning").hide();
-
-		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions etc.
+		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions_* etc.
  		hideAllMenuDivs();
 		$("#divQuick").hide();
 		$("#tabledestTopPad").hide();
@@ -2387,38 +2048,75 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		updateFontLabel();
 
-		buildUserColors();
-		installRBColorChangeEvents();
+		loadTemplates('templates/palette.html').then(() => {
+			PaletteBuilder.addToDest("#divPalette");
+			installDefaultColorDicts();
+			applyStylesheetsTo_gUserColorDict();
+			buildColorDicts();
+			$('#divColorDicts').hide();
+			$("#CustomColorEditors").hide();
 
-		reloadAllTuningsDisplay();
-		TuningsLibrary.showDefaultTuning();//calls showHideTunings and shows S6 if none found.
-		TuningsLibrary.bindFormTuningsEvents();
-		bindDataActionHandlers();
+			//in palette div: 
+			$('#cbAutomaticColor').prop('checked', true);
+			$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
 
-		loadTemplates().then(() => {
-    		getSong().getVisibleTuningIDs().forEach(tuningID => {
-				WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
-			});
-			setWiringOpenState(false)
+			buildUserColors();
+			installRBColorChangeEvents();
 		});
-		setWiringOpenState(false)
 
 
-
-		$("#btnFlats").click();  //calls resetNoteNames();
+		bindDataActionHandlers();
+		TuningsLibrary.bindFormTuningsEvents();
+		
 
 		$(document).on('keypress', document_keypress);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);
 
-		$( window ).on( "resize", function() {
-			transportResize();
-		} );
-		transportResize();
-        draggable(document.getElementById('transport'));
-		showTransport();
+		setWiringOpenState(false);
 
+		$( window ).on( "resize", function() {
+			TransportBuilder.transportResize();
+		} );
+		TransportBuilder.transportResize(true);
+        draggable(document.getElementById('transport'));
+		TransportBuilder.showTransport();
+
+		showDefaultTunings();
 		scrollToTop();
+
+		const promises = [
+			loadTemplates().then(() => {
+				getSong().getVisibleTuningIDs().forEach(tuningID => {
+					WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
+				});
+				setWiringOpenState(false);
+			}),
+
+			loadTemplates('templates/themes.html').then(() => {
+				ThemesBuilder.addToDest('#divThemeControls');
+				rebuildThemesDropdown();
+				$('#selThemes').val("Autobahn").change();
+			}),
+			
+			loadTemplates('templates/section-drawer.html').then(() => {
+				SectionDrawerBuilder.addToDest("#spanSectionDrawer");
+				sectionChanged();
+			}),
+
+			loadTemplates('templates/SectionStatus/section-status.html').then(() => {
+				SectionStatusBuilder.addToDest('#divSectionStatus_LeadSheet', 'leadsheet', 'caption', 'horizontal');
+			})
+		];
+		Promise.all(promises).then(() => {
+			setSectionKeysFlats();  //The default. Calls resetNoteNames();
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
+			setWiringOpenState(false);
+			gAppInit_running = false;
+			fullRepaint();
+			scrollToTop();
+		});
 	}
 	// End of appInit() with document ready call
 
@@ -2428,6 +2126,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//      after all other script tags.                                =======
 	//=========================================================================
 
+	//Note the default param value.  This function is also called with other templates as "url".
 	function loadTemplates(url = 'templates/templates.html') {
 		return fetch(url)
 			.then(response => response.text())
@@ -2444,18 +2143,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	
 
-	//==================== New handling of the EventBus =======================
-	//Uncaught SyntaxError: Unexpected token 'export' (at event-bus.js:18:1)
+//==================== New handling of the EventBus =======================
 
-import EventBus from './event-bus.js';
+function requestReloadTuningsDisplays() {
+	EventBus.trigger('ReloadTuningsDisplays');
+}
 
-EventBus.on('UpdateSectionStatus', function(data) {
+EventBus.on('UpdateSectionStatus', function(event, data) {
   updateSectionsStatus();
 });
-EventBus.on('SectionChanged', function(data) {
+EventBus.on('SectionChanged', function(event, data) {
   sectionChanged();
 });
-EventBus.on('SectionMoved', function(data) {
+EventBus.on('SectionMoved', function(event, data) {
   updateSectionsStatus();
   fullRepaint();
 });
@@ -2480,14 +2180,11 @@ EventBus.on('SongUiShowBeats', function() {
 EventBus.on('SongUiClearAndReplaySection', function() {
 	clearAndReplaySection();
 });
-EventBus.on('ShowMessages', function(data) {
+EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
 });
 EventBus.on('ReinstallAllTuningsTables', function() {
 	reinstallAllTuningsTables();
-});
-EventBus.on('ReloadAllTuningsDisplay', function() {
-	reloadAllTuningsDisplay();
 });
 EventBus.on('UpdateAllWiringSelects', function() {
 	getSong().getVisibleTuningIDs().forEach(tuningID => {
@@ -2497,6 +2194,18 @@ EventBus.on('UpdateAllWiringSelects', function() {
 });
 EventBus.on('InstrumentAdded', function() {
 	setWiringOpenState(true);  // to open
+});
+EventBus.on('Looper:OnLoopBeatsStart', function() {
+	$('#btnLoopBeatsTransport').addClass('ButtonOn');
+});
+EventBus.on('Looper:OnLoopBeatsStop', function() {
+	$('#btnLoopBeatsTransport').removeClass('ButtonOn');
+});
+EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
+    showLoopSectionsStarted(data);
+});
+EventBus.on('Looper:OnLoopSectionsStop', function() {
+    showLoopSectionsStopped();
 });
 
 

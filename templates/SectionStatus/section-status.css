@@ -1,0 +1,82 @@
+/** TODO: move these out of infinite-neck.css before testing, after implementation. **/
+.LooperLight {
+    border: 2px solid green; 
+    padding: 0.18em;
+    border-radius: 10%;
+}
+.LooperLightOn {
+    border: 2px solid magenta !important; 
+}
+.LooperLightTD {
+    width: 3em;
+}
+
+/* Use class selectors for correct cascade */
+.SectionStatus_rootKey,
+.SectionStatus_rootKeyLead {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    padding: 0.2em;
+    font-size:  100%;
+    color: black;
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.SectionStatus_rootKey {
+    background-color: white;
+}
+.SectionStatus_rootKeyLead {
+    background-color: aqua;
+}
+.SectionStatus_rootKey.ssKey_relative {
+    background-color: rgb(159, 107, 255);
+}
+.SectionStatus_rootKeyLead.ssKey_relative {
+    background-color: rgb(99, 18, 249);
+}
+.SectionStatus_rootKey.ssKey_listener {
+    background-color: rgb(255, 216, 77);
+}
+.SectionStatus_rootKeyLead.ssKey_listener {
+    background-color: rgb(252, 197, 0);
+}
+/*
+.section-status-vertical-table {
+    border: 1px dashed blue;
+}
+
+.section-status-vertical-table tr td {
+    border: 1px dashed lightblue;
+}
+
+.section-status-vertical-table-inner {
+    border: 1px dashed green;
+}
+
+.section-status-vertical-table-inner tr td {
+    border: 1px dashed orange;
+}
+.fretTableWrapper td {
+    border: 1px solid red;
+}
+*/
+
+/*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
+.instrumentSectionBox {
+   FOOdisplay: inline;
+}
+/* The section character: §    */
+.instrumentSectionMark {
+    color: green;
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+.tdSSLeft {
+    vertical-align: top;
+    width: 1.5em;
+}

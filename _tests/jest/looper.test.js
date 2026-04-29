@@ -1,23 +1,40 @@
 import { jest } from '@jest/globals';
-import {
-	setLooperProviders,
+import EventBus from '../../event-bus.js';
+
+const mockRuntime = {
+	song: null,
+	millisForBeatClock: 125,
+	showBeats: jest.fn(),
+	showBPM: jest.fn()
+};
+
+jest.unstable_mockModule('../../infinite-neck.js', () => ({
+	getSong: () => mockRuntime.song,
+	getMillisForBeatClock: () => mockRuntime.millisForBeatClock,
+	showBeats: () => mockRuntime.showBeats(),
+	showBPM: () => mockRuntime.showBPM()
+}));
+
+const {
 	sectionsLooping,
 	beatsLooping,
 	tickBeat,
 	toggleLoopSections,
 	toggleLoopBeats,
 	restartLoopSections,
-	__resetLooperForTests,
-	__resetLooperProvidersForTests
-} from '../../looper.js';
+	__resetLooperForTests
+} = await import('../../looper.js');
 
-function makeMockSong({ beat = 1, beats = 4 } = {}) {
+function makeMockSong({ beat = 1, beats = 4, randomLoop = false } = {}) {
 	const s = {
 		_beat: beat,
 		_beats: beats,
+		randomLoop
 	};
 	s.getBeat = jest.fn(() => s._beat);
 	s.getBeats = jest.fn(() => s._beats);
+	s.getSectionsCurrentIndex = jest.fn(() => 0);
+	s.getSections = jest.fn(() => [{ caption: 'One' }, { caption: 'Two' }]);
 	s.incBeatLoop = jest.fn();
 	s.gotoNextSection = jest.fn();
 	return s;
@@ -61,143 +78,108 @@ describe('looper tickBeat', () => {
 	});
 });
 
-describe('looper looping-state providers', () => {
-	test('sectionsLooping true for LOOPING... caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'LOOPING...'
-		});
-		expect(sectionsLooping()).toBe(true);
-	});
+describe('looper looping state', () => {
+	let triggerSpy;
+	let setIntervalSpy;
+	let clearIntervalSpy;
 
-	test('sectionsLooping true for RANDOM.... caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'RANDOM....'
-		});
-		expect(sectionsLooping()).toBe(true);
-	});
-
-	test('sectionsLooping false for non-loop caption', () => {
-		setLooperProviders({
-			getLoopSectionsCaption: () => 'LOOP'
-		});
-		expect(sectionsLooping()).toBe(false);
-	});
-
-	test('beatsLooping reflects loop-beats caption', () => {
-		setLooperProviders({
-			getLoopBeatsCaption: () => 'LOOPING...'
-		});
-		expect(beatsLooping()).toBe(true);
-
-		setLooperProviders({
-			getLoopBeatsCaption: () => 'LOOP BEATS'
-		});
-		expect(beatsLooping()).toBe(false);
-	});
-});
-
-function installHeadlessLoopState({ randomLoop = false } = {}) {
-	const state = {
-		sectionsCaption: 'LOOP',
-		beatsCaption: 'LOOP BEATS',
-		sectionsOn: false,
-		beatsOn: false,
-		transportOn: false,
-		lastIntervalMs: null,
-		setIntervalCalls: 0,
-		clearIntervalCalls: 0,
-		showBPMCalls: 0,
-	};
-
-	setLooperProviders({
-		getSong: () => ({ randomLoop }),
-		getMillisForBeatClock: () => 125,
-		getLoopSectionsCaption: () => state.sectionsCaption,
-		getLoopBeatsCaption: () => state.beatsCaption,
-		setLoopSectionsButton: (caption, isOn) => {
-			state.sectionsCaption = caption;
-			state.sectionsOn = !!isOn;
-		},
-		setLoopBeatsButton: (caption, isOn) => {
-			state.beatsCaption = caption;
-			state.beatsOn = !!isOn;
-		},
-		setLoopBeatsTransportButton: (isOn) => {
-			state.transportOn = !!isOn;
-		},
-		setLoopInterval: (_handler, millis) => {
-			state.lastIntervalMs = millis;
-			state.setIntervalCalls += 1;
-			return 99;
-		},
-		clearLoopInterval: () => {
-			state.clearIntervalCalls += 1;
-		},
-		showBPM: () => {
-			state.showBPMCalls += 1;
-		}
-	});
-
-	return state;
-}
-
-describe('looper toggles and restart', () => {
 	beforeEach(() => {
 		__resetLooperForTests();
+		mockRuntime.song = null;
+		mockRuntime.millisForBeatClock = 125;
+		mockRuntime.showBeats = jest.fn();
+		mockRuntime.showBPM = jest.fn();
+		triggerSpy = jest.spyOn(EventBus, 'trigger');
+		setIntervalSpy = jest.spyOn(global, 'setInterval').mockImplementation(() => 99);
+		clearIntervalSpy = jest.spyOn(global, 'clearInterval').mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		triggerSpy.mockRestore();
+		setIntervalSpy.mockRestore();
+		clearIntervalSpy.mockRestore();
+	});
+
+	test('looping state defaults to false', () => {
+		expect(sectionsLooping()).toBe(false);
+		expect(beatsLooping()).toBe(false);
 	});
 
 	test('toggleLoopSections turns sections looping on when off', () => {
-		const state = installHeadlessLoopState();
+		mockRuntime.song = makeMockSong();
 		toggleLoopSections();
-		expect(state.sectionsCaption).toBe('LOOPING...');
-		expect(state.sectionsOn).toBe(true);
-		expect(state.setIntervalCalls).toBe(1);
-		expect(state.lastIntervalMs).toBe(125);
-		expect(state.showBPMCalls).toBe(1);
+		expect(sectionsLooping()).toBe(true);
+		expect(beatsLooping()).toBe(false);
+		expect(mockRuntime.showBPM).toHaveBeenCalledTimes(1);
+		expect(setIntervalSpy).toHaveBeenCalledTimes(1);
+		expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 125);
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
+	});
+
+	test('toggleLoopSections emits random caption when randomLoop is enabled', () => {
+		mockRuntime.song = makeMockSong({ randomLoop: true });
+		toggleLoopSections();
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'RANDOM....' });
 	});
 
 	test('toggleLoopSections turns sections looping off when on', () => {
-		const state = installHeadlessLoopState();
+		mockRuntime.song = makeMockSong();
 		toggleLoopSections();
+		triggerSpy.mockClear();
 		toggleLoopSections();
-		expect(state.sectionsCaption).toBe('LOOP');
-		expect(state.sectionsOn).toBe(false);
-		expect(state.beatsCaption).toBe('LOOP BEATS');
-		expect(state.transportOn).toBe(false);
-		expect(state.clearIntervalCalls).toBe(1);
+		expect(sectionsLooping()).toBe(false);
+		expect(beatsLooping()).toBe(false);
+		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStop');
 	});
 
 	test('toggleLoopBeats turns beats looping on then off', () => {
-		const state = installHeadlessLoopState();
+		mockRuntime.song = makeMockSong();
 		toggleLoopBeats();
-		expect(state.beatsCaption).toBe('LOOPING...');
-		expect(state.beatsOn).toBe(true);
-		expect(state.transportOn).toBe(true);
+		expect(beatsLooping()).toBe(true);
+		expect(sectionsLooping()).toBe(false);
+		expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 125);
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStart', { caption: 'LOOPING...' });
+
+		triggerSpy.mockClear();
 		toggleLoopBeats();
-		expect(state.beatsCaption).toBe('LOOP BEATS');
-		expect(state.beatsOn).toBe(false);
-		expect(state.transportOn).toBe(false);
+		expect(beatsLooping()).toBe(false);
+		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStop');
+	});
+
+	test('switching from beat loop to section loop emits stop then start', () => {
+		mockRuntime.song = makeMockSong();
+		toggleLoopBeats();
+		triggerSpy.mockClear();
+		toggleLoopSections();
+		expect(triggerSpy.mock.calls).toEqual([
+			['Looper:OnLoopBeatsStop'],
+			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
+			['DaCapo:OnSongBegin', expect.any(Object)]
+		]);
 	});
 
 	test('restartLoopSections keeps sections looping active', () => {
-		const state = installHeadlessLoopState();
+		mockRuntime.song = makeMockSong();
 		restartLoopSections();
-		expect(state.sectionsCaption).toBe('LOOPING...');
+		expect(sectionsLooping()).toBe(true);
+		triggerSpy.mockClear();
 		restartLoopSections();
-		expect(state.sectionsCaption).toBe('LOOPING...');
-		expect(state.sectionsOn).toBe(true);
-		expect(state.setIntervalCalls).toBe(2);
-		expect(state.clearIntervalCalls).toBe(1);
+		expect(sectionsLooping()).toBe(true);
+		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
+		expect(setIntervalSpy).toHaveBeenCalledTimes(2);
+		expect(triggerSpy.mock.calls).toEqual([
+			['Looper:OnLoopSectionsStop'],
+			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
+			['DaCapo:OnSongBegin', expect.any(Object)]
+		]);
 	});
-});
 
-describe('looper default provider safety', () => {
-	test('sectionsLooping/beatsLooping are safe without jquery', () => {
-		__resetLooperForTests();
-		__resetLooperProvidersForTests();
-		expect(() => sectionsLooping()).not.toThrow();
-		expect(() => beatsLooping()).not.toThrow();
-		expect(sectionsLooping()).toBe(false);
-		expect(beatsLooping()).toBe(false);
+	test('toggleLoopSections is safe without a song', () => {
+		mockRuntime.song = null;
+		expect(() => toggleLoopSections()).not.toThrow();
+		expect(sectionsLooping()).toBe(true);
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
 	});
 });

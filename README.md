@@ -8,9 +8,11 @@ For further details, please refer to the following documents:
 
 ## Software development documents
 - [Design Notes](_doco/design/index.md)
+- [Command Menu Quick Start](_doco/design/command-menu-authoring-quick-start.md)
+- [Command Menu Programmer's Reference](_doco/design/command-menu-programmers-reference.md)
 - [TODO](_doco/lifecycle/TODO.md)
 - [CHANGELOG](_doco/lifecycle/CHANGELOG.md)
-- Software Lifecycle](_doco/lifecycle/index.md)
+- [Software Lifecycle](_doco/lifecycle/index.md)
 
 
 ## Developer maintenance notes
@@ -18,6 +20,10 @@ For further details, please refer to the following documents:
    ```
    cd infinite-neck
    bin/index.md-update-all.sh 
+   ```
+- command-menu validation:
+   ```
+   npm run validate:cmdmenu
    ```
 
 ## Copilot Notes and Scripts

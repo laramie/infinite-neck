@@ -4,6 +4,7 @@
     ```
         cd ~/infinite-neck
         bin/index.md-update-all.sh
+        bin/documentation.sh 
     ```
 
 ## Run Jest Tests
@@ -69,5 +70,11 @@ git checkout fix/attr-value
 git fetch origin
 git rebase origin/master
 git push --force-with-lease
+```
+
+### To validate the command-line menu
+
+```
+npm run validate:cmdmenu
 ```
      

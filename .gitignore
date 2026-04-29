@@ -28,3 +28,4 @@ coverage/
 bin/namespacer/data/src
 bin/namespacer/data/plans
 bin/namespacer/data/out
+_doco/documentation

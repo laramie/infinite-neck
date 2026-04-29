@@ -1,64 +1,13 @@
 {
   "sections": [
     {
-      "noteTables": {},
-      "namedNotes": {
-        "Ab": {
-          "colorClass": "noteBass",
-          "noteName": "Ab"
-        },
-        "Db": {
-          "colorClass": "noteBass",
-          "noteName": "Db"
-        },
-        "Gb": {
-          "colorClass": "noteBass",
-          "noteName": "Gb"
-        },
-        "Eb": {
-          "colorClass": "noteBass",
-          "noteName": "Eb"
-        },
-        "Bb": {
-          "colorClass": "noteBass",
-          "noteName": "Bb"
-        },
-        "D": {
-          "colorClass": "noteBrown7",
-          "noteName": "D"
-        },
-        "A": {
-          "colorClass": "noteBrown4",
-          "noteName": "A"
-        },
-        "E": {
-          "colorClass": "noteBrown1",
-          "noteName": "E"
-        },
-        "B": {
-          "colorClass": "noteRed1",
-          "noteName": "B"
-        },
-        "F": {
-          "colorClass": "noteBlue4",
-          "noteName": "F"
-        },
-        "G": {
-          "colorClass": "noteBrown5",
-          "noteName": "G"
-        },
-        "C": {
-          "colorClass": "noteGreen4",
-          "noteName": "C"
-        }
-      },
-      "recordedNotes": {},
       "caption": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": "4",
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "sectionNotesByTable": {}
     }
   ],
   "gSectionsCurrentIndex": 0,
@@ -235,5 +184,6 @@
       "caption": "&Delta;"
     }
   },
-  "theme": "Autobahn"
+  "theme": "Autobahn",
+  "songfileVersion": "V2"
 }

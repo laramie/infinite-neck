@@ -1,0 +1,63 @@
+
+#sectionDrawer {
+   font-size: 80%;  
+}
+#tableSectionDrawerLayout td {
+    padding-bottom: 0.4em;
+}
+
+#sectionDrawer select {
+    font-size: 70%;
+    box-shadow: 5px 2px 4px black;
+}
+#sectionDrawer option {
+    font-size: 70%;
+}
+#sectionDrawer label {
+    font-size: 50%;
+}
+#sectionDrawer button{
+    margin-right: 2px;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+#sectionDrawer button:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+#sectionDrawer small {
+    font-size: 60%;
+} 
+#sectionDrawer .displayOptionsButton {
+    background-color: lightblue;
+}
+#sectionDrawer #btnDeleteSection {
+    background-color: rgb(253, 85, 59);
+}
+#sectionDrawer .transposeButton {
+    background-color: pink;
+}
+
+
+.beat-icon {
+    font-size: 1em;
+    line-height: 1;
+    vertical-align: middle;
+    display: inline-block;
+}
+#btnInsertFirstBeat {
+    color: blue;
+}
+#btnInsertBeat {
+    color: green;
+}
+#btnDeleteBeat {
+    color: red;
+} 
+#btnAddBeat {
+    color: blue;
+}

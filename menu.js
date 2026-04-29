@@ -8,6 +8,19 @@ export function setMenuValueResolver(resolverFn) {
   }
 }
 
+export function resolveMenuValue(value) {
+    if (value === undefined || value === null) {
+        return "";
+    }
+
+    const resolved = gMenuValueResolver(value);
+    if (resolved === undefined || resolved === null) {
+        return "" + value;
+    }
+
+    return "" + resolved;
+}
+
 export var gMenuFile =    {
   "name": "root",
   "parent": null,
@@ -135,6 +148,32 @@ export var gMenuFile =    {
                 "id": "transposeSongKeys"
               }
           }
+          ]
+        },
+        {
+          "caption": "<b>p</b>lugins",
+          "trigger": "p",
+          "children": [
+            {
+              "name": "inputsDaCapo",
+              "caption": "<b>i</b>nputs to DaCapo",
+              "trigger": "i",
+              "action": "pluginDaCapoWInput",
+              "input": {
+                "type": "input",
+                "caption": "JSON config",
+                "defaultWorked": "{'named':true,'played':true}",
+                "default": {'amount': 1, 'NamedNotes':true, 'PlayedNotes':true, 'RecordedNotes':true},
+                "datatype": "json",
+                "id": "daCapoInput"
+              }
+            },
+            {
+                "name": "daCapo",
+                "caption": "<b>d</b>aCapo",
+                "trigger": "d",
+                "action": "pluginDaCapo"
+            }
           ]
         },
         {
@@ -450,16 +489,37 @@ export var gMenuFile =    {
               "action": "deleteBeat"
             },
             {
-              "caption": "<b>i</b>nsert first",
+              "caption": "insert <b>f</b>irst",
+              "trigger": "f",
+              "action": "insertFirstBeat"
+            },
+            {
+              "caption": "<b>i</b>nsert beat",
               "trigger": "i",
-              "action": "moveBeatsLater"
+              "action": "insertBeat"
             }
           ]
         },
         {
-          "caption": "<b>p</b>rint",
-          "trigger": "p",
-          "action": "printSections"
+        "caption": "<b>p</b>rint",
+        "trigger": "p",
+        "children": [
+            {
+              "caption": "<b>s</b>ummary",
+              "trigger": "s",
+              "action": "printSectionsSummary"
+            },
+            {
+              "caption": "<b>d</b>etails",
+              "trigger": "d",
+              "action": "printSectionsDetails"
+            },
+            {
+              "caption": "<b>n</b>otes",
+              "trigger": "n",
+              "action": "printSectionsNotes"
+            }            
+          ]
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
@@ -639,6 +699,32 @@ export var gMenuFile =    {
           "caption": "<b>t</b>oggle fullscreen",
           "trigger": "t",
           "action": "toggleFullscreen"
+        },
+        {
+          "caption": "<b>w</b>indow",
+          "trigger": "w",
+          "children": [
+            {
+              "caption": "<b>c</b>leanup",
+              "trigger": "c",
+              "action": "disposeAllDockables"
+            },
+            {
+              "caption": "<b>d</b>ock all",
+              "trigger": "d",
+              "action": "dockAllDockables"
+            },
+            {
+              "caption": "<b>g</b>ather",
+              "trigger": "g",
+              "action": "gatherAllDockables"
+            },
+            {
+              "caption": "<b>v</b>iewport",
+              "trigger": "v",
+              "action": "clampAllDockablesToViewport"
+            }
+          ]
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
@@ -866,6 +952,11 @@ export var gMenuFile =    {
           "action": "toggleTransport"
         },
         {
+          "caption": "<b>p</b>ark transport",
+          "trigger": "p",
+          "action": "parkTransport"
+        },
+        {
           "caption": "<b>l</b>oop",
           "trigger": "l",
           "action": "toggleLoopSections"
@@ -874,6 +965,11 @@ export var gMenuFile =    {
           "caption": "loop b<b>e</b>ats",
           "trigger": "e",
           "action": "toggleLoopBeats"
+        },
+        {
+          "caption": "<b>r</b>andom loop",
+          "trigger": "r",
+          "action": "toggleRandomLoop"
         },
         {
           "caption": "<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>",

@@ -32,12 +32,56 @@
   --debug-border: 0;  /* just the border thickness */
 }
 
+
+/***************************** HTML Basics *****************************/
+
+
+html {
+  overflow-x: hidden;
+}
+
 body {
+    overflow-x: hidden;
     background-color: #1a0e03;
     font-size: 10pt;
     font-family: Helvetica;
     margin: 0;
     padding: 0;
+}
+P {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    font-size: 100%;
+}
+select {
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 100%;
+}
+button {
+    font-size: 100%;
+}
+
+table {
+    border: 0;
+}
+
+/***************************** CSS Basics *****************************/
+
+.right {
+    float: right;
+}
+.left{
+    float: left;
+}
+.clearBoth {
+    /* container of .left and .right might should have this. */
+    clear: both;
 }
 
 .basicBackground {
@@ -54,7 +98,30 @@ body {
     transition: background-color 1000ms linear;
 }
 
-/*****************************************************************/
+
+/* Prevents inconsistent highlighting of element while being dragged
+   Copied from https://stackoverflow.com/questions/826782 */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.vertical-header {
+  text-align: left;
+  vertical-align: bottom;
+  background-color: #ddd;
+}
+.vertical-header span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/***************************** Fonts *****************************/
 
 .vollkorn {
   font-family: "Vollkorn", serif;
@@ -94,7 +161,8 @@ body {
   font-style: normal;
 }
 
-/*****************************************************************/
+
+/***************************** SVG *****************************/
 
 /* experimental: for drawLine() */
 #fullsvg {
@@ -103,6 +171,83 @@ body {
   position: fixed;
   margin: 0;
   pointer-events: none;
+}
+
+
+/***************************** Buttons *****************************/
+
+
+.BtnPunchedIn {
+    box-shadow: inset 2px 2px 5px 2px #555;
+    border-radius: 4px;
+    background-color: #dfd;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease;
+}
+.BtnPunchedIn:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+.BtnPunchedOut {
+	box-shadow: inset 7px 7px 7px -4px #b1f53d;
+    border-radius: 4px;
+    background-color: #6faa09;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease;
+}
+.BtnPunchedOut:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+.PunchedTogether {
+    border: 1px solid #578607;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 2px;
+}
+
+.MainMenuTabBtn, .MenuButton {
+    padding: 0.4em;
+    color: black;
+    font-family: Helvetica;
+    FFfont-size: 120%;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+.BigMobileBtn {
+    padding: 1em;
+}
+
+
+.btnMoveTuningDown {
+    background-color: #5084ff;
+    font-weight: bold;
+    font-size: 120%;
+}
+.btnMoveTuningDown:disabled {
+    background-color: #ababab;
+    font-weight: normal;
+    font-size: 120%;
+}
+.btnMoveTuningUp {
+    background-color: #87fc59;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+.btnMoveTuningUp:disabled {
+    background-color: #ababab;
+    font-weight: normal;
+    font-size: 120%;
+}
+
+.btnRemoveTuning {
+    background-color: #e45724;
+    font-size: 120%;
 }
 
 .moveyButton{
@@ -115,17 +260,6 @@ body {
     transform: translateY(3px); /* Move the button down slightly */
 }
 
-.exportButton {
-    padding: 6pt;
-    margin-bottom: 2pt;
-    font-size:  70%;
-    background-color: 578607;
-    color: black;
-    box-shadow: inset 0 0 2pt 2pt  black;
-    border-radius: 0.2em;
-    border: 1px solid black;
-    
-}   
 .HamburgerClass {
     padding: 6pt;
     margin:0;
@@ -144,28 +278,27 @@ body {
     background-color: darkseagreen;
     border-radius: 0.2em;
 }
-.showcolordict {
-    padding: 8px;
-    padding-top: 11px;
+
+.floatDockableButtonOLD,
+.showcolordictOLD, 
+.showWiringButtonOLD {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    font-size: 80%; /* match .showWiringButton for consistency */
+    padding: 0.4em;
     box-shadow: inset 0 0 2pt 2pt  black;
     border: 3px solid black;
     background-color: darkseagreen;
     border-radius: 0.2em;
-}
-.showWiringButton {
-    padding: 8px;
-    padding-top: 11px;
-    box-shadow: inset 0 0 2pt 2pt  black;
-    border: 3px solid black;
-    background-color: darkseagreen;
-    border-radius: 0.2em;
+    font-size: 80%;
 }
 
-
-
-
-#btnShowWarny {
-    font-size: 70%;
+.showcolordict img {
+    display: block;
+    max-height: 0.7em; /* or adjust as needed for your line height */
+    width: auto;
 }
 
 #divQuick {
@@ -175,6 +308,16 @@ body {
 #divControls {
     margin-left: 1em;
 }
+
+/***************************** dynamically generated in NoteTableController  *****************************/
+.relativeSectionLabel{
+    color: rgb(7, 164, 83);
+    font-size: 80%;
+    padding-right: 0.5em;
+}
+
+/***************************** Messages Area *****************************/
+
 
 #divMessageAndJsonTree {
     font-size: 120%; 
@@ -190,29 +333,9 @@ body {
     margin-bottom: 12em;
 }
 
-#divSongList {
-    background-color: white;
-    display: block;
-    width: 90%;
-    height: 90%;
-    left: 5%;
-    top: 5%;
-    columns: 4;
-}
 
-.fingeringRBBackground,
-.paletteRBBackground,
-.chooseNoteStyleRBBackground,
-.fingeringRBBackground {
-    background-color: white;
-    border-radius: 0.2em;
-    border: 1px solid black;
-    box-shadow:  2pt 2pt 4pt 1pt  black;
-    margin: 0.2em;
-}
-.paletteRBBackground {
-    margin-bottom: 0.4em;
-}
+/***************************** Section *****************************/
+
 .sectionPageControlsGroup,
 .sectionPageControlsGroupResize {
     background-color: cornsilk;
@@ -224,33 +347,7 @@ body {
     resize: both;
     overflow: scroll;
 }
-#divPaletteDraggable {
-   padding: 3em;
-   position: fixed;
-}
 
-#sectionBeatsCallout {
-    padding: 0.8em;
-    border: 1px double green;
-    box-sizing: border-box;
-    display: inline-block;
-    margin: 0.1em;
-}
-#sectionTransportButtons {
-    display: inline-block;
-    margin-left: 4.8em;
-    padding: 0.6em;
-    box-sizing: border-box;
-}
-#sectionSectionButtons  {
-    display: inline-block;
-    padding: 0.2em;
-}
-#sectionSectionButtons button {
-    margin: 0.2em;
-    margin-left: 1.2em;
-    background-color: lightgreen;
-}
 .safeButton{
     background-color: lightgreen !important;
 }
@@ -258,67 +355,10 @@ body {
     background-color: pink !important;
 }
 
-input {
-    font-size: 100%;
-}
-select {
-    font-size: 100%;
-}
+/***************************** View *****************************/
 
-textarea {
-    font-size: 100%;
-}
-button {
-    font-size: 100%;
-}
-#selThemes {
-    font-size: 100%;
-    color: black;
-    background-color: #6faa09;
-    width: 8em;
-    height: 2.0em;
-    box-shadow:  0 0 6pt 2pt  black;
-}
-
-table {
-    border: 0;
-}
-table.organizer td {
-    margin:0;
-    padding: 0;
-    vertical-align: top;
-    text-align: left;
-}
-
-table.controls {
-    margin: 0.3em;
-    margin-left: 1em;
-    padding: 0;
-    border-width: 0;
-    background-color: #eee;
-}
-table.controls  {
-    padding: 0.4em;
-    background-color: lightgray;
-    font-size:  100%;
-}
-
-table.controls2 {
-    margin: 0.3em;
-    padding: 0.6em;
-    border-width: 0;
-    background-color: white;
-}
-table.controls2 td {
-    padding: 0.6em;
-    background-color: lightgray;
-}
-table.controls2 select {
-    margin: 0.3em;
-}
 table.viewControls{
-border-collapse: collapse; 
-    
+    border-collapse: collapse; 
 }
 table.viewControls td,
 table.viewControls th {
@@ -345,58 +385,14 @@ table.viewControls th {
 .divViewCard table{
     width: 100%;
 }
-.instrumentBackground {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
-    height: 100%; /* optional, for full height */
-    gap: 0;       /* adjust as needed */
-    color: gold;
-    background-color: #0aa; /*working default greenish*/
-    margin: 1em;
-    margin-bottom: var(--instrument-margin-tb);
-    margin-left: 1.5em;
-    border: 1px solid black;
-    box-shadow: 0 0 6pt 3pt maroon;
-    border-radius: 0.3em;
-    padding: 8pt;
-    /*background-image: url('img/celtic-background-2.png');*/
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    border-image: var(--instrument-border-image) 30 / 19px round;
+
+#lblHideWarning {
+    font-weight: bold;
+    color: darkred;
 }
 
-.captionRow {
-  grid-column: 1 / span 2;
-  grid-row: 1;
-}
-.instrumentSectionBox {
-   border: 1px solid green; 
-   padding: 0.3em;
-}
-.instrumentSectionMark {
-    
-    color: green;
-    font-size: 80%;
-    padding-right: 0.5em;
-}
-.relativeSectionLabel{
-    color: rgb(7, 164, 83);
-    font-size: 80%;
-    padding-right: 0.5em;
-}
+/***************************** View Sliders *****************************/
 
-
-
-.fretTable {
-  grid-column: 2;
-  grid-row: 2;
-  height: 100%;
-}
-table.fretTable {
-    border-spacing: var(--cell-spacing);  /*** this is the space between table cells ****/
-    user-select: none; /*prevent folks from drag selecting through cells, which highlights all the hidden notes.*/
-}
 
 .sliderTable td:nth-child(2),
 .sliderTable th:nth-child(2) {
@@ -460,106 +456,40 @@ table.fretTable {
 }
 
 
+/***************************** Themes *****************************/
+/*              All done in ./templates/themes.css                */
 
+/***************************** palette *****************************/
+/*              All done in ./templates/palette.css                */
 
-#divThemeControlsFlex {
-    display: flex;       /* Creates the flexbox context */
-    flex-wrap: wrap;     /* Allows cards to move to the next row */
-    gap: 2em;           /* Sets spacing between cards */
-    justify-content: space-around; 
-    background-color: white;
-    margin: 1em;
-}
-.themeTableControls {
-    flex: 1 0 200px; 
-    background-color: rgb(249, 201, 98);
-    border: 1px solid black;
-    box-shadow: 4pt 4pt  2pt 0.2pt gray;
-}
-.themeTableControls td {
-  border: 1px solid gray;
-  padding-left: 0.8em;
+/***************************** Tunings / My Tunings *****************************/
+
+#divMyTuningsTab {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: auto;
 }
 
-.tblDisplayOptions {
-    border: 2px solid black;
-}
-.ActiveStylesheets td {
-    border: 1px solid gray;
-}
-.tblDisplayOptions th {
-    border: 1px solid gray;
+#myTuningsTable {
+    width: max-content;
+    min-width: 100%;
+    margin-right: 3em;
+    margin-bottom: 1em;
 }
 
-
-.vertical-header {
-  text-align: left;
-  vertical-align: bottom;
-  background-color: #ddd;
-}
-.vertical-header span {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-}
-.userColorResultCaption {
-    font-weight: bold;
-    background-color: lightgray;
-}
-.userColorResultLinks {
-    font-weight: bold;
-    background-color: lightgray;
-    text-align: left;
-}
-.userColorResultRow td {
-    border: 2px solid black;
-}
-.tblColorDictOneRow td:first-child {
-    font-size: 60%;
-    font-weight: normal;
+#divAllTuningsTab {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: auto;
 }
 
-
-
-#themeTableResults {
-    width: 45%;
-    float: left;
-    border: 1px solid green;
-    background-color: cornsilk;
-    white-space: pre;
-}
-
-#themeDiff {
-    border: 1px solid green;
-    border-collapse: collapse;
-}
-#themeDiff td {
-    padding: 0.2em;
-}
-#themeDiff caption {
-    padding: 1em;
-}
-#themeDiff caption span {
-    padding: 0.5em;
-    margin: 2px;
-    border: 2px solid black;
-}
-.themeDiff_Changed {
-    background-color: orange;
-}
-.themeDiff_NotDefault {
-    background-color: white;
-}
-.themeDiff_Default {
-    background-color: pink;
-}
-.undefThemeOption {
-    font-size: 80%;
-    font-style: italic;
-}
-
-
-#divViewControls {
-    width: 90%;
+#allTuningsTable {
+    width: max-content;
+    min-width: 100%;
+    margin-right: 3em;
+    margin-bottom: 1em;
 }
 
 #allTuningsTable,
@@ -592,6 +522,49 @@ table.fretTable {
     background-color: Khaki;
 }
 
+.userInstrumentControlsGroup {
+    background-color: cornsilk;
+    padding: 1em;
+    margin: 0;
+    margin-left: 4em;
+    width: 65%;
+}
+#tblUserInstrumentEditor{
+    border-spacing: 20px; 
+}
+
+.BanjoNutExamplesPanel {
+    display: none;
+    margin-top: 0.5em;
+    border: 1px solid #aaa;
+    border-radius: 0.3em;
+    max-width: 900px;
+}
+
+.BanjoNutExamplesTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.BanjoNutExamplesRow {
+    cursor: pointer;
+}
+
+.BanjoNutExamplesRow:nth-child(odd) {
+    background: #f4f4f4;
+}
+
+.BanjoNutExamplesRow:nth-child(even) {
+    background: #e9f7ff;
+}
+
+.BanjoNutExamplesCodeCell {
+    width: 40%;
+    font-family: monospace;
+}
+
+/***************************** Graveyard *****************************/
+
 .tblGraveyard {
     margin: 0.3em;
     padding: 0.6em;
@@ -618,6 +591,7 @@ table.fretTable {
     font-weight: bold;
 }
 
+/***************************** Menu *****************************/
 
 .menuTable {
     border: 0;
@@ -673,9 +647,6 @@ table.fretTable {
 #divFileControls {
     display: none;
 }
-#divSongControls {
-    display: none;
-}
 #divSectionControls {
     display: none;
 }
@@ -685,213 +656,79 @@ table.fretTable {
 #divTunings {
     display: none;
 }
-.userInstrumentControlsGroup {
-    background-color: cornsilk;
-    padding: 1em;
-    margin: 0;
-    margin-left: 4em;
-    width: 65%;
-}
-#tblUserInstrumentEditor{
-    border-spacing: 20px; 
-}
 
-
-#palette {
-  display: none;
-  position: relative;
-  z-index: 9;
-  text-align: center;
-  padding: 0; /*.1em;*/
-  /*
-    FOR-DRAG position: absolute;
-    FOR-DRAG width: 400px;
-    FOR-DRAG padding-top: 0.4em;
-    FOR-DRAG background-color: #dfd;
-    FOR-DRAG box-shadow: inset 0 0 10pt 2pt  black;
-    FOR-DRAG border-radius: 4pt;
-    FOR-DRAG left: 5%;
-    FOR-DRAG width: 90%;
-    FOR-DRAG height: 20em;
-  */
-  width: 100%;
-  left: 0;
+/***************************** key-handlers: display-options *****************************/
+.tblDisplayOptions {
+    border: 2px solid black;
 }
-
-#paletteheader {
-  padding: 10px;
-  margin: 10px;
-  cursor: move;
-  z-index: 10;
-  background-color: lightgreen;
-}
-
-#palette label {
-    margin: 1px;
-    padding: 0.4em;
-    height: 1.6em;
-    display: inline-block;
-    border: 1px solid black;
-    border-radius: 2px;
-    cursor: pointer;
-    font-size:  100%;
-}
-#palette label.chooseHighlight {
-    margin: 0.1em;
-    width: 5em;
-    font-weight: bold;
+.tblDisplayOptions th {
     border: 1px solid gray;
-    background-color: buttercup;
-    box-shadow: 2pt 2pt  2pt 0.01pt gray;
-}
-#chooseHighlightNamed,
-#chooseHighlightSingle,
-#chooseHighlightTiny {
-    padding: 0.85em;
-}
-#chooseHighlightBend {
-    padding: 0.2em;
 }
 
-#palette label.chooseFinger {
-    padding: 0.4em;
-    width: 3em;
+/***************************** Transport *****************************/
+
+#transport {
+    font-size: 200%;
+    z-index: 1000;
+    /* could also do this dynamically: document.getElementById('transport').style.zIndex = 1000; */
 }
 
-#palette label.chooseKeep,
-#palette label.chooseClear {
-    padding: 0.8em;
-    height: 1.4em;
-    width: 8em;
-    margin-right: 0.5em;
-    margin-bottom: 0.5em;
-    color: black;
-    font-weight: bold;
-    border: 1px solid gray;
-    background-color: buttercup;
-    box-shadow: 2pt 2pt  2pt 0.01pt gray;
-}
-
-/*
-    #palette label.chooseKeep:checked,
-    #palette label.chooseClear:checked {
-    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
-    }
-*/
-label.chooseHighlight#idMidiPitchesLbl {
-    outline: 6px solid yellow ;
-    outline-offset: -8px;
-    padding: 0.4em;
-}
-label.chooseHighlight#idMidiPitchesSingleLbl {
-    outline: 6px solid chartreuse;
-    outline-offset: -8px;
-    padding: 0.4em;
-}
-#selBend {
-    font-size:  100%;
-}
-
-#palette label.userColorRB {
-  margin: 4px;
-  text-align: left;
-  padding: 0.4em;
-  padding-left: 5px;
-  font-weight: bold;
-  font-size: 100%;
-  font-family: sans-serif;
-  border: 1px solid gray;
-  box-shadow: 2pt 2pt  2pt 0.01pt gray;
-}
-
-.radioFillChooser {
-    background-color: white;
+/* contains #transport */
+.topControlsSections  {
     display: inline-block;
-    border: 1px solid black;
-    box-shadow: 2pt 2pt  2pt 0.01pt gray;
-    padding: 0.3em;
-    margin: 0.2em;
-    width: 6em;
+    min-width: 24em;  /* when transport grows, this must be changed */
+    position: fixed;
+    left: 10em;/* set programmatically, so this is default in case js fails.*/
+    z-index: 30;
 }
 
-.ActiveStylesheets {
-    text-align: left;
-    font-weight: bold;
-    margin-left: 2em;
+.insetTransportBeat {
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 5px;
+    padding: 0.1em;
+    display: inline-block;
 }
-.tblColorDicts td {
-    width: 2em;
-}
-.colorDictTransparent {
-    border: 1px solid #555;
-    border-radius: 3px;
-}
-.tblColorDictOneRow{
-    border: 1px solid #555;
-}
-.tblColorDictOneRow td {
-    min-width: 1em;
-    text-align: center;
-}
-.tblColorDictOneRow td:first-child {
-   background-color: #222;
-   border: 1px solid #777;
-}
-/* currentColorDict: a div around our table of user colors: tblColorDictOneRow */
-.currentColorDict {
-    display: none;
-    height: 1em;
-    margin-top: 0.5em;
-    margin-bottom: 0.4em;
-}
-.currentColorDict a {
-   pointer-events: none;
-   cursor: default;
-   color: gold;
-   font-weight: normal;
-}
-.currentColorDict a:link {
-  text-decoration: none;
-}
-.currentColorDict a:visited {
-  text-decoration: none;
-}
-.currentColorDict a:hover {
-  text-decoration: none;
-}
-.currentColorDict a:active {
-  text-decoration: none;
-}
-.largeColorDict {
-    font-size: 130%;
-}
-.largeColorDict td {
-    padding: 0.2em;
-}
-
 
 #btnPrevSection2, #btnNextSection2, #btnFirstSection, #btnLastSection {
     font-size:  70%;
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
     border-radius: 20%;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 #btnPrevSection, #btnNextSection{
     font-size:  150%;
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
     border-radius: 20%;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 #btnPrevBeat, #btnNextBeat {
     font-size:  100%;
     background-color: lightgreen;
+    border: 1px solid green;
+    transition: all 0.1s ease;
 }
-/*
-    #btnPrevBeatTransport, #btnNextBeatTransport {
-    }
-*/
+
+.downyButton:active {
+    box-shadow: inset 0 0 2pt 2pt #6faa09;
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
+#btnEditSection {
+  font-size: 0.8em !important;
+  padding: 0.1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  margin-bottom: 0;
+  margin-left: 0.7em;
+  margin-right: 0.7em;
+}
+
 .ArmedButton {
-  background-color: green;
+  background-color: #6faa09;
   border-radius: 10%;
   box-shadow: 0 0 3pt 3pt lightgreen;
   padding: 0.2em;
@@ -900,59 +737,27 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .ButtonOn {
     background-color: red !important;
 }
-#btnLoopSections.ButtonOn {
+#btnLoopBeatsTransport {
+    border: 1px solid green;
+}
+#btnLoopSections.ButtonOn,
+#btnLoopBeatsTransport.ButtonOn {
     background-color: magenta !important;
 }
-
-.BtnPunchedIn {
-    box-shadow: inset 2px 2px 5px 2px #555;
-    border-radius: 4px;
-    background-color: #dfd;
-    color: black;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease;
+.LooperLight {
+    border: 2px solid green; 
+    padding: 0.18em;
+    border-radius: 10%;
 }
-.BtnPunchedIn:active {
-    box-shadow: inset 0 0 2pt 2pt #6faa09;
-    transform: translateY(3px); /* Move the button down slightly */
+.LooperLightOn {
+    border: 2px solid magenta !important; 
 }
-.BtnPunchedOut {
-	box-shadow: inset 7px 7px 7px -4px #b1f53d;
-    border-radius: 4px;
-    background-color: #6faa09;
-    color: black;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease;
-}
-.BtnPunchedOut:active {
-    box-shadow: inset 0 0 2pt 2pt #6faa09;
-    transform: translateY(3px); /* Move the button down slightly */
-}
-.PunchedTogether {
-    border: 1px solid #578607;
-    border-radius: 4px;
-    display: inline-block;
-    padding: 2px;
-}
-/*
-    #divControls button {
-    }
-*/
-
-.MainMenuTabBtn, .MenuButton {
-    padding: 0.4em;
-    color: black;
-    font-family: Helvetica;
-    font-size: 120%;
-    border: 1px solid black;
-    border-radius: 4px;
-}
-.BigMobileBtn {
-    padding: 1em;
+.LooperLightTD {
+    width: 3em;
+    FFFborder: 1px dashed darkblue;
 }
 
+/***************************** Caption Row Main Page *****************************/
 
 .lblSongName {
     color: darkred;
@@ -962,10 +767,6 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     font-style: normal;
     margin-left: 1em;
 }
-#lblCurrentBeat {
-    font-size: 150%;
-    font-weight: bold;
-}
 /* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
  *  so it inherits font-size, etc. */
 .lblSectionCaption {
@@ -974,12 +775,26 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     font-weight: 200;
     font-size:  200%;
 }
+.lblSectionChartChord {
+    font-family: "Shadows Into Light", cursive;
+    color: #93ff41;
+    font-weight: 200;
+    font-size:  100%;
+    padding-right: 0.4em;
+}
+.lblSectionMode {
+    font-family: "Shadows Into Light", cursive;
+    color: #41c6ff;
+    font-weight: 200;
+    font-size:  100%;
+    padding-right: 0.4em;
+}
 .lblSectionNumber {
-    border: 1px solid  darkolivegreen;
     padding: 0.2em;
     margin-left: 1em;
     margin-right: 1em;
 }
+
 .lblSectionmark {
     color: darkolivegreen;
     font-size: 60%;
@@ -1009,6 +824,17 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     vertical-align: middle;
 }
 
+/***************************** File *****************************/
+
+#divSongList {
+    background-color: white;
+    display: block;
+    width: 90%;
+    height: 90%;
+    left: 5%;
+    top: 5%;
+    columns: 4;
+}
 
 .bpm {
     font-size:  80%;
@@ -1023,14 +849,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     color:black;
     border: none;
 }
-#lblHideWarning {
-    font-weight: bold;
-    color: darkred;
-}
-P {
-    margin: 0;
-    padding: 0;
-}
+
+
+/***************************** Un-organized *****************************/
+
 .tbodyMIDI  td {
     padding: 0.5em;
     vertical-align: middle;
@@ -1043,13 +865,6 @@ P {
     height: 10;
     padding: 0;
     margin: 0;
-}
-
-#tabledestTopPad {
-    height: 5em;
-}
-#tabledest {
-    display: inline-block;
 }
 
 .container {
@@ -1066,22 +881,48 @@ P {
     width: 100%;
     color: gold;
 }
+
+.FOOspanLeadDifferentFromRoot {
+    display:inline;
+    display:none;
+    color: brown;
+    width: 4em;
+    height:2em;
+    padding: 0.2em;
+    font-size:  65%;
+    font-weight: bold;
+    background-color: aqua;
+    border: 1px solid orange;
+    border-radius: 6px;
+    text-align: center;
+    vertical-align: middle;
+}
+.spanLeadDifferentFromRoot,
 .lblRootID,
-.lblRootIDLead {
+.lblRootIDLead,
+.lblRootIDRelative,
+.lblRootIDLeadRelative {
     box-shadow: inset 2px 2px 5px 2px #555;
     border-radius: 4px;
     padding: 0.2em;
     background-color: #dfd;
     font-size:  75%;
     color: black;
-}
-.lblRootID {
     display: inline-block;
     height: 1.35em;
     width: 1.35em;
     padding-bottom: 0;
 }
-.lblRootIDLead {
+.FFFlblRootID {
+    display: inline-block;
+    height: 1.35em;
+    width: 1.35em;
+    padding-bottom: 0;
+}
+.lblRootIDLead_active {
+    background-color: aqua;
+}
+.lblRootIDLead_OLD{
     background-color: aqua;
     color: brown;
     display: inline-block;
@@ -1089,17 +930,14 @@ P {
     width: 1.35em;
     padding-bottom: 0;
 }
-
-/* Prevents inconsistent highlighting of element while being dragged
-   Copied from https://stackoverflow.com/questions/826782 */
-.noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
+.spanLeadDifferentFromRoot{
+  background-color: aqua;
+}
+.lblRootIDRelative{
+    background-color: rgb(142, 122, 216);
+}
+.lblRootIDLeadRelative {
+    background-color: aqua;
 }
 
 .toolWindowRounded {
@@ -1111,25 +949,6 @@ P {
     background-color: #dfd;
     font-size:  100%;
     box-shadow: inset 0 0 10pt 4pt  black;
-}
-
-/* contains #transport */
-.topControlsSections  {
-    display: inline-block;
-    min-width: 24em;  /* when transport grows, this must be changed */
-    position: fixed;
-    left: 10em;/* set programmatically, so this is default in case js fails.*/
-    z-index: 30;
-}
-#transport {
-    font-size: 200%;
-    z-index: 50;
-}
-.insetTransportBeat {
-    box-shadow: inset 2px 5px 20px black;
-    border-radius: 5px;
-    padding: 0.1em;
-    display: inline-block;
 }
 #lblSectionsStatus2 {
     display: inline-block;
@@ -1152,7 +971,9 @@ P {
     box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
     display: inline-block;
     border-radius: 5px;
+    border: none;
     font-size: 0.7em;
+    transition: all 0.1s ease;
 }
 #btnPrevBeatTransport, #btnNextBeatTransport {
     margin: 0;
@@ -1227,6 +1048,8 @@ input:read-only,textarea:read-only {
     background-color: coral;
 }
 
+/***************************** Instrument / NoteTable / FretTable *****************************/
+
 
 .diamondsRow td {
     background-color: var(--diamonds-background-color);
@@ -1263,37 +1086,6 @@ input:read-only,textarea:read-only {
 }
 
 
-.captionRow {
-    font-size:  140%;
-}
-.captionRow .tuningBaseIDCaption {
-    font-size: medium;
-    font-weight: normal;
-}
-.captionRow .tuningIDCaption {
-    font-size: inherit;
-    font-weight: bolder;
-}
-.captionRow .subcaption {
-    font-size:  80%;
-}
-.captionRow .lblRootID {
-    font-size:  110%;
-    text-align: center;
-    vertical-align: middle;
-}
-.captionRow .lblRootIDLead {
-    font-size:  110%;
-    text-align: center;
-    vertical-align: middle;
-}
-.tuningReverseCaption {
-    font-weight: bold;
-    border: 2px solid cyan;
-    color: brown;
-    background-color: lightgreen;
-}
-
 small {
     font-size:  80%;
 }
@@ -1303,10 +1095,7 @@ small {
     display: none;
 }
 
-/* leftmargin is used instead of a nut in the case of a MIDI8x8 controller */
-.leftmarginInstrument {
-    margin-left: 110px; /* same as td.note */
-}
+
 
 #EXAMPLECmdMenuOptionsTable  td:nth-child(2) {width: 100pt;}
 
@@ -1314,8 +1103,8 @@ small {
 
 
 
+/*****************************  Now all the display note cells *****************************/
 
-/************ Now all the display note cells ***************/
 
 .stringDividerTD {
     background-color: black;
@@ -1722,21 +1511,6 @@ However, don't use for Root or other things.
     background-size: cover;
 }
 
-.spanLeadDifferentFromRoot, #lblRootIDLead {
-    display:inline;
-    display:none;
-    color: brown;
-    width: 4em;
-    height:2em;
-    padding: 0.2em;
-    font-size:  75%;
-    font-weight: bold;
-    background-color: aqua;
-    border: 1px solid orange;
-    border-radius: 6px;
-    text-align: center;
-    vertical-align: middle;
-}
 .semitone1, .semitone2, .semitone3, .prebend1, .prebend2, .prebend3, .updown1, .updown2, .updown3 {
    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
    -moz-box-sizing: border-box; /* Firefox, other Gecko */
@@ -1916,133 +1690,4 @@ However, don't use for Root or other things.
     mix-blend-mode: difference;
 }
 
-#colorPicker, #hatchPicker {
-     background-color: lightgray;
-
-}
-.colorPickerCell {
-    width: 2em;
-    background-color: gray;
-}
-.hatchPickerCell {
-    width: 4em;
-    background-color: gray;
-}
-.pickerButton {
-    box-shadow: 2pt 2pt 2pt 0.01pt gray;
-    padding: 2pt;
-    margin: 4pt;
-    display: inline-block;
-
-    border: 2px solid darkolivegreen;
-}
-/*
-.noteRed1 { color: orange; background-color:darkred;  }
-.noteRed2 { color: orange; background-color:crimson;  }
-.noteRed3 { color: orange; background-color:firebrick;  }
-.noteRed4 { color: orange; background-color:maroon;  }
-.noteRed5 { color: orange; background-color:red;  }
-.noteRed6 { color: orange; background-color:mediumvioletred;  }
-.noteRed7 { color: orange; background-color:orangered;  }
-*/
-.noteRed1 { color: orange; background-color:#4d0000;  }
-.noteRed2 { color: orange; background-color:maroon;  }
-.noteRed3 { color: yellow; background-color:chocolate;  }
-.noteRed4 { color: orange; background-color:firebrick;  }
-.noteRed5 { color: yellow; background-color:crimson;  }
-.noteRed6 { color: orange; background-color:orangered;  }
-.noteRed7 { color: orange; background-color:DeepPink;  }
-
-
-
-
-.noteBrown1 { color: orange; background-color: #160000; }
-.noteBrown2 { color: darkorange; background-color:#321414; }
-.noteBrown3 { color: yellow; background-color:sienna; }
-.noteBrown4 { color: yellow; background-color:coral; }
-.noteBrown5 { color: yellow; background-color:darkorange; }
-.noteBrown6 { color: yellow; background-color:darkgoldenrod; }
-.noteBrown7 { color: yellow; background-color:goldenrod; }
-
-
-.LOVELY-BUT-SLIGHTLY-ORANGE-notePink3 { color: black; background-color:violet;  }
-
-
-.notePink1 { color: lightblue; background-color:indigo;  }
-.notePink2 { color: black; background-color:mediumslateblue;  }
-.notePink3 { color: lightblue; background-color:#1D0075;  }
-.notePink4 { color: yellow; background-color:purple;  }
-.notePink5 { color: black; background-color:magenta;  }
-.notePink6 { color: black; background-color:pink;  }
-.notePink7 { color: black; background-color:RosyBrown;  }
-
-
-.noteBlue1 { color: Wheat; background-color:Navy; }
-.noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
-.noteBlue3 { color: black; background-color:cornflowerblue; }
-.noteBlue4 { color: black; background-color:dodgerblue; }
-.noteBlue5 { color: black; background-color:deepskyblue; }
-.noteBlue6 { color: black; background-color:aqua; }
-.noteBlue7 { color: black; background-color:aquamarine; }
-
-
-
-
-.noteGreen1 { color: white; background-color: #002d04;  }
-.noteGreen2 { color: white; background-color:#06402B;  }
-.noteGreen3 { color: black;  background-color: green;}
-.noteGreen4 { color: black; background-color:darkolivegreen;  }
-.noteGreen5 { color: black; background-color:darkgreen;  }
-.noteGreen6 { color: black; background-color:greenyellow;  }
-.noteGreen7 { color: black; background-color:chartreuse;  }
-
-.noteYellow1 { color: black; background-color: #737000; }
-.noteYellow2 { color: black; background-color:GoldenRod;  }
-.noteYellow3 { color: black; background-color:Gold;  }
-.noteYellow4 { color: black; background-color:Yellow;  }
-.noteYellow5 { color: black; background-color: #ffff33;  }
-.noteYellow6 { color: black; background-color: #ffff66;  }
-.noteYellow7 { color: black; background-color: #ffff99; }
-
-
-
-.noteLightBlue1 { color: black; background-color:#aaf; }
-.noteLightGreen1 { color: black; background-color:Blue; }
-.noteGray { color: black; background-color:#ddd; }
-.noteDarkGray { color: black; background-color:#999; }
-.noteAnthraciteBlue { background-color: #293133;  color: white; }
-.noteAnthracite     { background-color: #191919;  color: lightblue; }
-.noteBlack {
-    background-color: black;
-    color: darkorange;
-}
-.noteWhite { background-color: white; color: black; }
-
-.noteBlackout1 {
-    background-color: #222;
-    color: #222;
-}
-.noteBlackout1Caption {
-    background-color: #222;
-    color: #BBB;
-}
-.noteBlackout2 {
-    background-color: #555;
-    color: #555;
-}
-.noteBlackout2Caption {
-    background-color: #555;
-    color: #BBB;
-}
-
-.right {
-    float: right;
-}
-.left{
-    float: left;
-}
-.clearBoth {
-    /* container of .left and .right might should have this. */
-    clear: both;
-}
 

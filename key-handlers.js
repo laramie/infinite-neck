@@ -38,8 +38,16 @@ import {
 	showMessagesTab,
 	getVersionString,
 	getVersionObject,
-	toggleWiringOpenState
+	toggleWiringOpenState,
+	toggleTransport,
+	showTransport,
+	toggleSectionDrawer,
+	toggleRandomLoop,
+	setSectionKeysFlats,
+	setSectionKeysSharps
 } from './infinite-neck.js';
+import DaCapo from './plugins/DaCapo.js';
+import EventBus from './event-bus.js';
 
 export { document_keypress, document_keyup };
 
@@ -67,12 +75,14 @@ function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNo
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
 function getCurrentSection(...args) { return requireProvider('getCurrentSection')(...args); }
+function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
+function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
@@ -80,16 +90,13 @@ function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpac
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
-function skipColorDictsReplacer(...args) { return requireProvider('skipColorDictsReplacer')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
-function toggleTransport(...args) { return requireProvider('toggleTransport')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
 function updateFontLabel(...args) { return requireProvider('updateFontLabel')(...args); }
-function updateMemoryModelPreFileSave(...args) { return requireProvider('updateMemoryModelPreFileSave')(...args); }
 function updateSectionsStatus(...args) { return requireProvider('updateSectionsStatus')(...args); }
 
 
@@ -201,7 +208,7 @@ function document_keypress(e) {
                 break;
             case "s":
             case "S":
-                showOneMenu("#divSectionControls");
+                toggleSectionDrawer();
                 break;
             case "t":
                 toggleTransport();
@@ -307,10 +314,14 @@ function document_keypress(e) {
                 updateFontLabel();
                 break;
             case "<":
+				getSong().firstSection(false);
+                break;
             case ",":
                 getSong().gotoPrevSection(false);
                 break;
             case ">":
+				getSong().lastSection(false);
+                break;
             case ".":
                 getSong().gotoNextSection(false);
                 break;
@@ -441,7 +452,7 @@ export function performCmdAction(menuItem, args){
 			break;
         case "transposeSong":
             if (argByInputID){
-				var amount = toInt(argByInputID, 0);
+				let amount = toInt(argByInputID, 0);
 				if (amount != 0){
 				    transposeSong(amount);
                     actionResult.result = "transposed "+amount;
@@ -450,7 +461,7 @@ export function performCmdAction(menuItem, args){
             break;
         case "transposeSongKeys":
             if (argByInputID){
-				var amount = toInt(argByInputID, 0);
+				let amount = toInt(argByInputID, 0);
 				if (amount != 0){
 				    transposeSongKeys(amount);
                     actionResult.result = "transposed keys "+amount;
@@ -499,13 +510,20 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "toggleLoopSections":
 			toggleLoopSections();
-			actionResult.result = sectionsLooping() ? "ON" : "OFF";
+			let rls = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
+			let sls = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
+			actionResult.result = rls+sls;
 			break;
 		case "toggleLoopBeats":
 			toggleLoopBeats();
 			actionResult.result = beatsLooping() ? "ON" : "OFF";
 			break;
-			
+		case "toggleRandomLoop":
+			toggleRandomLoop();
+			let rl = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
+			let sl = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
+			actionResult.result = rl+sl;
+			break;
 		case "nextBeat":
 			getSong().nextBeat();
 			actionResult.result = ""+getCurrentSection().currentBeat;
@@ -522,15 +540,19 @@ export function performCmdAction(menuItem, args){
 			getSong().deleteBeat();
 			actionResult.result = ""+getCurrentSection().beats;
 			break;
-        case "moveBeatsLater":
-			getSong().moveBeatsLater();
+        case "insertBeat":
+			getSong().insertBeat(getSong().getBeat());
+			actionResult.result = ""+getCurrentSection().beats;
+			break;
+		case "insertFirstBeat":
+			getSong().insertFirstBeat();
 			actionResult.result = ""+getCurrentSection().beats;
 			break;
 		case "showDialog-song":
 			showOneMenu("#divFileControls");//file==song now.
 			break;
 		case "showDialog-section":
-			showOneMenu("#divSectionControls");
+			toggleSectionDrawer(true);
 			break;
 		case "showDialog-fill":
 			showOneMenu("#divFillNotes");
@@ -549,6 +571,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "toggleTransport":
 			toggleTransport();
+			break;
+		case "parkTransport":
+			showTransport(true);
 			break;
 		case "viewFullscreen":
 			enterFullscreen();
@@ -587,8 +612,7 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "DisplayOptions sent to Messages";
             break;
         case "showViewDiagnosticsSongFileFormat":
-			updateMemoryModelPreFileSave();
-			showMessagesJSON(JSON.stringify(getSong(), skipColorDictsReplacer, 2));
+			showMessagesJSON(getPersistentSongFile());
 			break;
 		case "showGraveyard":
 			showGraveyard();
@@ -599,10 +623,22 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "Messages hidden";
             break;
 
-		case "printSections":
+		case "printSectionsDetails":
 			$("#divMessageAndJsonTree").show()
             $("#divMessages").show();
-			$("#divMessages").html(printSections());
+			$("#divMessages").html(printSections(true));
+			hideCmdLine();
+			break;
+		case "printSectionsSummary":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+			$("#divMessages").html(printSections(false));
+			hideCmdLine();
+			break;
+		case "printSectionsNotes":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+			$("#divMessages").html(printSectionsNotes());
 			hideCmdLine();
 			break;
 		case "sectionDelete":
@@ -734,6 +770,35 @@ export function performCmdAction(menuItem, args){
 			$("#selBend").val(menuItem.name);
 			$("#rbBend").prop("checked", true);
 			break;
+		case "pluginDaCapoWInput":
+			console.log("pluginDaCapoWInput: "+stringifyMenuItem(menuItem));
+			console.log("pluginDaCapoWInput inputs: "+JSON.stringify(argByInputID));
+			let daCapoOptWI = JSON.parse(argByInputID);
+			let daCapoWI = new DaCapo();
+			daCapoWI.installHook(DaCapo.ON_SONG_END, daCapoOptWI);
+			restartLoopSections(); 
+			break;
+		case "pluginDaCapo":
+			console.log("pluginDaCapo: "+stringifyMenuItem(menuItem));
+			let daCapo = new DaCapo();
+			let daCapoOpt = {'amount':1, 'NamedNotes':true};
+			daCapo.installHook(DaCapo.ON_SONG_END, daCapoOpt);
+			restartLoopSections(); 
+			break;
+		case "disposeAllDockables":
+			disposeAllDockables();
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
+			break;		
+		case "dockAllDockables":
+			dockAllDockables();
+			break;		
+		case "gatherAllDockables":
+			gatherAllDockables();
+			break;		
+		case "clampAllDockablesToViewport":
+			clampAllDockablesToViewport();
+			break;		
 		case "noAction":
 			console.log("noAction=====!");
 			actionResult.result = "none";
@@ -770,7 +835,7 @@ export function hideMessages(){
 }
 function showGraveyard(){
     hideAllMenuDivs();
-    showMessages(getSong().graveyard.buildNoteTable());
+    showMessages(getSong().graveyard.buildGraveyardTable());
 }
 export function hideGraveyard(){
     $("#divMessages").hide();
@@ -825,19 +890,7 @@ export function setNoteFontSize(newValue){
     updateNoteFont();
 }
 
-export function setSectionKeysFlats(){
-    getSong().sharps = false;
-    getCurrentSection().sharps = false;
-    resetNoteNames();
-    updateSectionsStatus();
-}
 
-export function setSectionKeysSharps(){
-    getSong().sharps = true;
-    getCurrentSection().sharps = true;
-    resetNoteNames();
-    updateSectionsStatus();
-}
 
 
 export function getValue(what){

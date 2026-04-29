@@ -1,9 +1,10 @@
 
 
-export function draggable(el) {
-  el.addEventListener('mousedown', function(e) {
-    var offsetX = e.clientX - parseInt(window.getComputedStyle(this).left);
-    var offsetY = e.clientY - parseInt(window.getComputedStyle(this).top);
+export function draggable(el, handle) {
+  handle = handle || el;
+  handle.addEventListener('mousedown', function (e) {
+    var offsetX = e.clientX - parseInt(window.getComputedStyle(el).left);
+    var offsetY = e.clientY - parseInt(window.getComputedStyle(el).top);
 
     function mouseMoveHandler(e) {
       el.style.top = (e.clientY - offsetY) + 'px';
@@ -17,9 +18,9 @@ export function draggable(el) {
 
     window.addEventListener('mousemove', mouseMoveHandler);
     window.addEventListener('mouseup', reset);
+    //e.preventDefault();
   });
 }
-
 
 function dontDragElement(elmnt){
     if (document.getElementById(elmnt.id + "header")) {

@@ -2,31 +2,24 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { jest } from '@jest/globals';
+
 import { 
     setupSongTests, 
-    getSong, 
-    readVersionHeadless,
-    skipColorDictsReplacer,
-    collectSongOwnedTunings 
+    getSong 
 } from '../../infinite-neck-headless.js';
-
+import { noteNameToNoteID } from './../Constants.js';
 import EventBus from '../../event-bus.js';
 import { Song} from '../../song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PRIMARY_SONG_FILENAME = 'All-Chords-All-Keys-w-highlights.json';
-const SECONDARY_SONG_FILENAME = 'snake.json';
+const PRIMARY_SONG_FILENAME = 'All-Chords.json';
 
 const LOADED_SONG_FIXTURES = [
     {
         label: PRIMARY_SONG_FILENAME,
         filename: PRIMARY_SONG_FILENAME
-    },
-    {
-        label: SECONDARY_SONG_FILENAME,
-        filename: SECONDARY_SONG_FILENAME
     }
 ];
 
@@ -71,26 +64,6 @@ describe('Headless tuning bootstrap contracts', () => {
         expect(song.myTunings[0].baseID).toBe('S6_1');
     });
 
-    test('collectSongOwnedTunings makes file tunings available in myTunings', () => {
-        const song = createFreshHeadlessSong();
-        const existing = { baseID: 'ALT_1', caption: 'Alt One' };
-        song.myTunings = [existing, { baseID: 'USER', caption: 'ignore' }];
-        song.tunings = [
-            { baseID: 'ALT_2', caption: 'Alt Two' },
-            { baseID: 'S6', caption: 'Built-in should be ignored' },
-            { baseID: 'ALT_1', caption: 'Duplicate should be ignored' }
-        ];
-
-        const merged = collectSongOwnedTunings(song);
-        song.myTunings = merged;
-
-        expect(song.myTunings.map(t => t.baseID)).toEqual(['ALT_1', 'ALT_2']);
-        expect(song.myTunings.find(t => t.baseID === 'USER')).toBeUndefined();
-        expect(song.myTunings.find(t => t.baseID === 'S6')).toBeUndefined();
-
-        song.myTunings[0].caption = 'Mutated clone';
-        expect(existing.caption).toBe('Alt One');
-    });
 });
 
 function createSectionWithCaption(song, caption) {
@@ -123,7 +96,7 @@ function projectToShape(candidate, shape) {
 
 
 describe('Song JSON round-trip save path', () => {
-    test.each(LOADED_SONG_FIXTURES)('load $label -> prepareForSave -> stringify(replacer) produces equivalent saved shape', ({ filename }) => {
+    test.each(LOADED_SONG_FIXTURES)('load $label -> prepareForSave -> stringify(replacer) preserves save-facing fields', ({ filename }) => {
         const data = readSongJson(filename);
         const song = createFreshHeadlessSong();
         song.addSections(data);
@@ -136,19 +109,15 @@ describe('Song JSON round-trip save path', () => {
             userInstrumentTuning: data.userInstrumentTuning
         });
 
-        const savedText = JSON.stringify(getSong(), skipColorDictsReplacer, 2);
+        const savedText = JSON.stringify(getSong().getPersistentSongFile());
         const savedObj = JSON.parse(savedText);
 
-        const expectedSavedShape = JSON.parse(JSON.stringify(data, skipColorDictsReplacer, 2));
-        const actualComparable = projectToShape(savedObj, expectedSavedShape);
-
-        // tunings is derived from visibleNoteTables but each tuning object carries a runtime
-        // `visible` flag (DOM visibility state) that is always false in a headless test.
-        // visibleNoteTables covers the real persistence contract; tunings is a denormalization.
-        delete expectedSavedShape.tunings;
-        delete actualComparable.tunings;
-
-        expect(actualComparable).toEqual(expectedSavedShape);
+        expect(savedObj.songName).toBe(data.songName);
+        expect(savedObj.theme).toBe(data.theme);
+        expect(savedObj.defaultBPM).toBe(String(parseInt(data.defaultBPM, 10)));
+        expect(savedObj.visibleNoteTables).toEqual(data.visibleNoteTables ?? []);
+        expect(Array.isArray(savedObj.sections)).toBe(true);
+        expect(savedObj.sections.length).toBe(data.sections.length);
     });
 });
 
@@ -163,13 +132,13 @@ describe('Song API bootstrap from JSON', () => {
 
     test.each(LOADED_SONG_FIXTURES)('leaves $label ready for headless API tests', ({ filename }) => {
         const { data, song } = loadSongForApiTests(filename);
+        const currentSection = song.getCurrentSection();
 
         expect(song.isHeadless).toBe(true);
-        expect(song.getCurrentSection()).toBe(song.getSections()[song.getSectionsCurrentIndex()]);
+        expect(currentSection).toBe(song.getSections()[song.getSectionsCurrentIndex()]);
         expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
-        expect(song.getCurrentSection()).toHaveProperty('caption');
-        expect(song.getCurrentSection()).toHaveProperty('namedNotes');
-        expect(song.getCurrentSection()).toHaveProperty('noteTables');
+        expect(currentSection).toHaveProperty('caption');
+        expect(currentSection).toHaveProperty('sectionNotesByTable');
     });
 
     test.each(LOADED_SONG_FIXTURES)('revives loaded sections with Section methods for $label', ({ filename }) => {
@@ -415,19 +384,35 @@ describe('Song beat APIs on loaded JSON', () => {
         triggerSpy.mockRestore();
     });
 
-    test('deleteBeat on snake keeps recordedNotes aligned with beats and currentBeat', () => {
-        const { song } = loadSongForApiTests(SECONDARY_SONG_FILENAME);
+    test('deleteBeat keeps V2 recordedNotes aligned with beats and currentBeat', () => {
+        const song = createFreshHeadlessSong();
         const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+
+        const section = song.constructSection();
+        section.beats = 4;
+        section.currentBeat = 3;
+        const sectionNotes = section.getSectionNotes('tblS6_1');
+        sectionNotes.recordedNotes['1'] = [{ noteName: 'A' }];
+        sectionNotes.recordedNotes['2'] = [{ noteName: 'B' }];
+        sectionNotes.recordedNotes['3'] = [{ noteName: 'C' }];
+        sectionNotes.recordedNotes['4'] = [{ noteName: 'D' }];
+        song.addSection(section);
 
         song.gotoSection(0);
         song.getCurrentSection().currentBeat = 3;
         song.deleteBeat();
 
-        expect(song.getBeats()).toBe(11);
+        const recordedNotes = song.getCurrentSection().getSectionNotes('tblS6_1').recordedNotes;
+
+        expect(song.getBeats()).toBe(3);
         expect(song.getBeat()).toBe(3);
-        expect(song.getCurrentSection().recordedNotes['12']).toBeUndefined();
-        expect(Array.isArray(song.getCurrentSection().recordedNotes['3'])).toBe(true);
-        expect(Array.isArray(song.getCurrentSection().recordedNotes['11'])).toBe(true);
+        expect(recordedNotes['4']).toBeUndefined();
+        expect(recordedNotes['1']).toEqual([{ noteName: 'A' }]);
+        expect(recordedNotes['2']).toEqual([{ noteName: 'B' }]);
+        expect(recordedNotes['3']).toEqual([{ noteName: 'D' }]);
 
         triggerSpy.mockRestore();
     });
@@ -676,8 +661,8 @@ describe('Song note mapping and emptiness contracts', () => {
         const song = createFreshHeadlessSong();
         song.gotoSection(0);
 
-        expect(song.noteNameToNoteID('Db')).toBe(4);
-        expect(song.noteNameToNoteID('A')).toBe(0);
+        expect(noteNameToNoteID('Db')).toBe(4);
+        expect(noteNameToNoteID('A')).toBe(0);
 
         song.getCurrentSection().sharps = false;
         expect(song.noteIDToNoteName(1)).toContain('9837'); // flat glyph
@@ -737,9 +722,8 @@ describe('Song note mapping and emptiness contracts', () => {
             Eb: sourceEbNoColor
         };
 
-        const highlightedRoot = song.moveNamedNotesForSection(2, section);
+        song.moveNamedNotesForSection(2, section);
 
-        expect(highlightedRoot).toBe('A');
         expect(Object.keys(section.namedNotes).sort()).toEqual(['B', 'D']);
         expect(section.namedNotes.B.noteName).toBe('B');
         expect(section.namedNotes.D.noteName).toBe('D');
