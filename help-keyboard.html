@@ -8,10 +8,14 @@
            margin: 2em;
            font-weight: normal;
        }
-       #alphaCheatSheetLinks {
+       .alphaCheatSheetLinks {
             padding-left: 4em;
        }
-        #alphaCheatSheetLinks a {
+       .alphaCheatSheetLinks table tr td {
+            padding: 0;
+            margin: 0;
+       }
+        .alphaCheatSheetLinks a {
             display: inline-block; 
             text-decoration: none;
             color: #010321;
@@ -21,7 +25,7 @@
             background-color: orange;
         }
 
-        #alphaCheatSheetLinks a:hover {
+        .alphaCheatSheetLinks a:hover {
             display: inline-block; 
             text-decoration: underline;
             color: #ffdd01;
@@ -39,59 +43,65 @@
 </head>
 <body>
 
-<table id="BasicTable" border="1" cellpadding="5" cellspacing="0" style="font-family: monospace; text-align: center;">
-  <!-- Row 1: Numbers & Symbols -->
-  <tr>
-    <td>` ~</td><td>1 !</td><td>2 @</td><td>3 #</td><td>4 $</td><td>5 %</td><td>6 ^</td><td>7 &</td><td>8 *</td><td>9 (</td><td>0 )</td><td>- _</td><td>= +</td><td>Backspace</td>
-  </tr>
-  <!-- Row 2: QWERTY -->
-  <tr>
-    <td>Tab</td><td>Q</td><td>W</td><td>E</td><td>R</td><td>T</td><td>Y</td><td>U</td><td>I</td><td>O</td><td>P</td><td>[ {</td><td>] }</td><td>\ |</td>
-  </tr>
-  <!-- Row 3: ASDF -->
-  <tr>
-    <td>Caps Lock</td><td>A</td><td>S</td><td>D</td><td>F</td><td>G</td><td>H</td><td>J</td><td>K</td><td>L</td><td>; :</td><td>' "</td><td>Enter</td>
-  </tr>
-  <!-- Row 4: ZXCV -->
-  <tr>
-    <td>Shift</td><td>Z</td><td>X</td><td>C</td><td>V</td><td>B</td><td>N</td><td>M</td><td>, <</td><td>. ></td><td>/ ?</td><td>Shift</td>
-  </tr>
-  <!-- Row 5: Bottom -->
-  <tr>
-    <td>Ctrl</td><td>Win</td><td>Alt</td><td colspan="5">Spacebar</td><td>Alt</td><td>Win</td><td>Menu</td><td>Ctrl</td>
-  </tr>
-</table>
+    <p id="Instructions">
+We want a table of all the keymap keys we have in our app.  The links are all in div#keymap
 
+The stylesheet already wraps each "<a>" tag in a visual box, 
+    so all we need is to copy the full "<a>" tag with link into its corresponding cell 
+    into the destination keyboard layout table with id="MergedTable".  
+    
+Replace the letters in the cell with the links.  
+
+Ensure every cell has the same letter value as when it started, so "j" and "J" links should end up in the cell that just had "J" at the start.
+
+Please make the order so that lower case comes before Uppercase in each cell.  So "j" precedes "J".  
+
+Please change the case of any letters that are not links (unused) to lowercase.
+
+Leave letters in the cells when you don't find links whose text node matches the existing uppercase letter in the MergedTable cell.  
+
+When you find two links for a letter that has its lowercase and its uppercase letter, 
+put those both into the same table cell with a space between.  So just like the MergedTable has two values in one cell for  "2" and "@" :
+
+<td>2 @</td>
+
+we will end up with two values in one cell for "j" and "J"  :
+
+<td><a href="#transposeNamedNotesUp">j</a><a href="#transposeNamedNotesDown">J</a></td>
+
+</p>
+
+<div class="alphaCheatSheetLinks">
 <table id="MergedTable" border="1" cellpadding="5" cellspacing="0" style="font-family: monospace; text-align: center;">
+  <tr>
+    <td><a href="#hideMenusBlurFocus">ESC</a></td><td colspan="10"></td><td><a href="#learnHowToBrowser"><small>Ctrl</small> -</a></td><td><a href="#learnHowToBrowser"><small>Ctrl</small> +</a></td><td></td>
+  </tr>
+  
   <!-- Row 1: Numbers & Symbols -->
   <tr>
-    <td>` ~</td><td>1 !</td><td>2 @</td><td>3 #</td><td>4 $</td><td>5 %</td><td>6 ^</td><td>7 &</td><td>8 *</td><td>9 (</td><td>0 )</td><td>- _</td><td>= +</td><td>Backspace</td>
+    <td>` ~</td><td><a href="#useAFingeringIndex">1</a> !</td><td><a href="#useAFingeringMiddle">2</a> @</td><td><a href="#usesAFingeringRing">3</a> #</td><td><a href="#useFingeringNoteFourth">4</a> $</td><td><a href="#userFingeringNoteThumb">5</a> %</td><td><a href="#useNamedNotes">6</a> ^</td><td><a href="#useSingleNotes">7</a> &</td><td><a href="#useTinyNotes">8</a> *</td><td><a href="#useBendNotes">9</a> (</td><td><a href="#cycleThroughDisplay">0</a><a href="#resetCellNoteFont">)</a></td><td><a href="#decreaseUserInterfaceFont">-</a><a href="#decreaseCellNoteFont">_</a></td><td><a href="#increaseUserInterfaceFont">=</a><a href="#increaseCellNoteFont">+</a></td><td>Backspace</td>
   </tr>
   <!-- Row 2: QWERTY -->
   <tr>
-    <td>Tab</td><td>Q</td><td>W</td><td>E</td><td>R</td><td>T</td><td>Y</td><td>U</td><td>I</td><td>O</td><td>P</td><td>[ {</td><td>] }</td><td>\ |</td>
+    <td>Tab</td><td>q</td><td><a href="#changeWidthOfCells">w</a><a href="#changeWidthOfCells">W</a></td><td><a href="#toggleWiringOpenState">e</a></td><td>r</td><td><a href="#showHideTransport">t</a></td><td>y</td><td><a href="#raiseRootKeyAnd">u</a><a href="#lowerRootKeyAnd">U</a></td><td><a href="#showHideFill">i</a></td><td><a href="#useAFingeringOpen">o</a></td><td><a href="#showHidePalette">p</a><a href="#showHidePalette">P</a></td><td><a href="#usethePitchHighlighter">[</a> {</td><td><a href="#usetheMultiHighlighter">]</a> }</td><td>\ |</td>
   </tr>
   <!-- Row 3: ASDF -->
   <tr>
-    <td>Caps Lock</td><td>A</td><td>S</td><td>D</td><td>F</td><td>G</td><td>H</td><td>J</td><td>K</td><td>L</td><td>; :</td><td>' "</td><td>Enter</td>
+    <td>Caps Lock</td><td><a href="#showHideSongTitle">a</a><a href="#showHideSongTitle">A</a></td><td><a href="#showHideSection">s</a><a href="#showHideSection">S</a></td><td><a href="#lowerRootKeyAnd">d</a><a href="#raiseRootKeyAnd">D</a></td><td><a href="#toggleFullscreenMode">f</a><a href="#toggleFullscreenMode">F</a></td><td>g</td><td><a href="#changeHeightOfCells">h</a><a href="#changeHeightOfCells">H</a></td><td><a href="#transposeNamedNotesUp">j</a><a href="#transposeNamedNotesDown">J</a></td><td><a href="#raiseRootKey">k</a><a href="#lowerRootKey">K</a></td><td><a href="#loop">l</a><a href="#loop">L</a></td><td>; :</td><td>' "</td><td colspan="2">Enter</td>
   </tr>
   <!-- Row 4: ZXCV -->
   <tr>
-    <td>Shift</td><td>Z</td><td>X</td><td>C</td><td>V</td><td>B</td><td>N</td><td>M</td><td>, <</td><td>. ></td><td>/ ?</td><td>Shift</td>
+    <td>Shift</td><td>z</td><td>x</td><td><a href="#toggleAutoColor">c</a></td><td><a href="#showHideView">v</a></td><td><a href="#previousBeat">b</a><a href="#previousBeat">B</a></td><td><a href="#nextBeat">n</a><a href="#nextBeat">N</a></td><td><a href="#showHideCommand">m</a><a href="#showHideCommand">M</a></td><td><a href="#previousSection">,</a><a href="#firstSection">&lt;</a></td><td><a href="#nextSection">.</a><a href="#lastSection">&gt;</a></td><td><a href="#launchCommandLine">/</a> ?</td><td colspan="3">Shift</td>
   </tr>
   <!-- Row 5: Bottom -->
   <tr>
-    <td>Ctrl</td><td>Win</td><td>Alt</td><td colspan="5">Spacebar</td><td>Alt</td><td>Win</td><td>Menu</td><td>Ctrl</td>
+    <td>Ctrl</td><td>Alt</td><td></td><td colspan="5">Spacebar</td><td> </td><td> </td><td>Alt</td><td>Ctrl</td>
   </tr>
 </table>
+</div>
 
 
-<a name="keymap"></a>
-    <h1>Keymap</h1>
-    <p>These keys can be pressed at any time.  If you have other menus up,
-    or the <a href="#commandline">command-line</a>, keystrokes may go to those.  Just hit <span class="key">ESC</span> first,
-to hide menus and the <a href="#commandline">command-line</a>.</p>
-<div id="alphaCheatSheetLinks">
+<div class="alphaCheatSheetLinks" id="keymap">
      <a href="#showHideSongTitle">a</a> 
     <a href="#showHideSongTitle">A</a>
      <a href="#previousBeat">b</a> 

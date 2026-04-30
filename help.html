@@ -232,10 +232,18 @@
            box-shadow: 4pt 4pt 6pt 2pt gray;
 
        }
-       #alphaCheatSheetLinks {
+       .alphaCheatSheetLinks {
+        font-size: 80%;
+       }
+       .alphaCheatSheetLinks table tr td {
+            padding: 0;
+            margin: 0;
+       }
+       
+       #alphaCheatSheetLinks_ALL {
             padding-left: 4em;
        }
-        #alphaCheatSheetLinks a {
+        .alphaCheatSheetLinks a {
             display: inline-block; 
             text-decoration: none;
             color: #010321;
@@ -245,7 +253,7 @@
             background-color: orange;
         }
 
-        #alphaCheatSheetLinks a:hover {
+        .alphaCheatSheetLinks a:hover {
             display: inline-block; 
             text-decoration: underline;
             color: #ffdd01;
@@ -2082,76 +2090,119 @@ in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>
     <p>These keys can be pressed at any time.  If you have other menus up,
     or the <a href="#commandline">command-line</a>, keystrokes may go to those.  Just hit <span class="key">ESC</span> first,
 to hide menus and the <a href="#commandline">command-line</a>.</p>
-<div id="alphaCheatSheetLinks">
+
+<p>The button links go to the table of definitions below.</p>
+
+<h5 style="color: black;" >Here are the keys in alphabetical order:</h5>
+
+<div class="alphaCheatSheetLinks" id="alphaCheatSheetLinks_ALL">
      <a href="#showHideSongTitle">a</a> 
-    <a href="#showHideSongTitle">A</a></li>
+    <a href="#showHideSongTitle">A</a>
      <a href="#previousBeat">b</a> 
-    <a href="#previousBeat">B</a></li>
-     <a href="#toggleAutoColor">c</a></li>
+    <a href="#previousBeat">B</a>
+     <a href="#toggleAutoColor">c</a>
      <a href="#lowerRootKeyAnd">d</a> 
-    <a href="#raiseRootKeyAnd">D</a></li>
+    <a href="#raiseRootKeyAnd">D</a>
      <a href="#toggleWiringOpenState">e</a> 
      <a href="#toggleFullscreenMode">f</a> 
-    <a href="#toggleFullscreenMode">F</a></li>
+    <a href="#toggleFullscreenMode">F</a>
      <a href="#changeHeightOfCells">h</a> 
-    <a href="#changeHeightOfCells">H</a></li>
-     <a href="#showHideFill">i</a></li>
-     <a href="#transposeNamedNotesUp">j</a></li>
-     <a href="#transposeNamedNotesDown">J</a></li>
-     <a href="#raiseRootKey">k</a></li>
-     <a href="#lowerRootKey">K</a></li>
+    <a href="#changeHeightOfCells">H</a>
+     <a href="#showHideFill">i</a>
+     <a href="#showHideChart">r</a>
+     <a href="#transposeNamedNotesUp">j</a>
+     <a href="#transposeNamedNotesDown">J</a>
+     <a href="#raiseRootKey">k</a>
+     <a href="#lowerRootKey">K</a>
      <a href="#loop">l</a> 
-    <a href="#loop">L</a></li>
+    <a href="#loop">L</a>
      <a href="#showHideCommand">m</a> 
-    <a href="#showHideCommand">M</a></li>
+    <a href="#showHideCommand">M</a>
      <a href="#nextBeat">n</a> 
-    <a href="#nextBeat">N</a></li>
-     <a href="#useAFingeringOpen">o</a></li>
+    <a href="#nextBeat">N</a>
+     <a href="#useAFingeringOpen">o</a>
      <a href="#showHidePalette">p</a> 
-    <a href="#showHidePalette">P</a></li>
-     <a href="#showHideQuick">q</a></li>
+    <a href="#showHidePalette">P</a>
+     <a href="#showHideQuick">q</a>
      <a href="#showHideSection">s</a> 
-    <a href="#showHideSection">S</a></li>
-     <a href="#showHideTransport">t</a></li>
+    <a href="#showHideSection">S</a>
+     <a href="#showHideTransport">t</a>
      <a href="#raiseRootKeyAnd">u</a> 
-     <a href="#lowerRootKeyAnd">U</a></li>
-     <a href="#showHideView">v</a></li>
+     <a href="#lowerRootKeyAnd">U</a>
+     <a href="#showHideView">v</a>
      <a href="#changeWidthOfCells">w</a> 
-    <a href="#changeWidthOfCells">W</a></li>
+    <a href="#changeWidthOfCells">W</a>
 
     <br />
-     <a href="#cycleThroughDisplay">0</a></li>
-     <a href="#useAFingeringIndex">1</a></li>
-     <a href="#useAFingeringMiddle">2</a></li>
-     <a href="#usesAFingeringRing">3</a></li>
-     <a href="#useFingeringNoteFourth">4</a></li>
-     <a href="#userFingeringNoteThumb">5</a></li>
-     <a href="#useNamedNotes">6</a></li>
-     <a href="#useSingleNotes">7</a></li>
-     <a href="#useTinyNotes">8</a></li>
-     <a href="#useBendNotes">9</a></li>
+     <a href="#cycleThroughDisplay">0</a>
+     <a href="#useAFingeringIndex">1</a>
+     <a href="#useAFingeringMiddle">2</a>
+     <a href="#usesAFingeringRing">3</a>
+     <a href="#useFingeringNoteFourth">4</a>
+     <a href="#userFingeringNoteThumb">5</a>
+     <a href="#useNamedNotes">6</a>
+     <a href="#useSingleNotes">7</a>
+     <a href="#useTinyNotes">8</a>
+     <a href="#useBendNotes">9</a>
     <br />
      <a href="#previousSection">,</a> 
      <a href="#nextSection">.</a> 
-     <a href="#firstSection">&lt;</a></li>
-     <a href="#lastSection">&gt;</a></li>
+     <a href="#firstSection">&lt;</a>
+     <a href="#lastSection">&gt;</a>
      
-     <a href="#launchCommandLine">/</a></li>
+     <a href="#launchCommandLine">/</a>
     
 
-     <a href="#usethePitchHighlighter">[</a></li>
-     <a href="#usetheMultiHighlighter">]</a></li>
-     <a href="#resetCellNoteFont">)</a></li>
-     <a href="#decreaseCellNoteFont">_</a></li>
-     <a href="#decreaseUserInterfaceFont">-</a></li>
-     <a href="#increaseCellNoteFont">+</a></li>
-     <a href="#increaseUserInterfaceFont">=</a></li>
+     <a href="#usethePitchHighlighter">[</a>
+     <a href="#usetheMultiHighlighter">]</a>
+     <a href="#resetCellNoteFont">)</a>
+     <a href="#decreaseCellNoteFont">_</a>
+     <a href="#decreaseUserInterfaceFont">-</a>
+     <a href="#increaseCellNoteFont">+</a>
+     <a href="#increaseUserInterfaceFont">=</a>
     <br />
-     <a href="#hideMenusBlurFocus">ESC</a></li>
+     <a href="#hideMenusBlurFocus">ESC</a>
      <a href="#learnHowToBrowser">Cmd -/+</a> 
-    <a href="#learnHowToBrowser">Ctrl -/+</a></li>
+    <a href="#learnHowToBrowser">Ctrl -/+</a>
     
 </div>
+
+<h5  style="color: black;" >Here are the keys in a U.S. standard keyboard layout:</h5>
+
+
+<div class="alphaCheatSheetLinks">
+<table id="MergedTable" border="1" cellpadding="5" cellspacing="0" style="font-family: monospace; text-align: center;">
+  <tr>
+    <td><a href="#hideMenusBlurFocus">ESC</a></td><td colspan="10"></td><td><a href="#learnHowToBrowser"><small>Ctrl</small> -</a></td><td><a href="#learnHowToBrowser"><small>Ctrl</small> +</a></td><td></td>
+  </tr>
+  
+  <!-- Row 1: Numbers & Symbols -->
+  <tr>
+    <td>` ~</td><td><a href="#useAFingeringIndex">1</a> !</td><td><a href="#useAFingeringMiddle">2</a> @</td><td><a href="#usesAFingeringRing">3</a> #</td><td><a href="#useFingeringNoteFourth">4</a> $</td><td><a href="#userFingeringNoteThumb">5</a> %</td><td><a href="#useNamedNotes">6</a> ^</td><td><a href="#useSingleNotes">7</a> &</td><td><a href="#useTinyNotes">8</a> *</td><td><a href="#useBendNotes">9</a> (</td><td><a href="#cycleThroughDisplay">0</a><a href="#resetCellNoteFont">)</a></td><td><a href="#decreaseUserInterfaceFont">-</a><a href="#decreaseCellNoteFont">_</a></td><td><a href="#increaseUserInterfaceFont">=</a><a href="#increaseCellNoteFont">+</a></td><td>Backspace</td>
+  </tr>
+  <!-- Row 2: QWERTY -->
+  <tr>
+    <td>Tab</td><td>q</td><td><a href="#changeWidthOfCells">w</a><a href="#changeWidthOfCells">W</a></td><td><a href="#toggleWiringOpenState">e</a></td><td><a href="#showHideChart">r</a></td><td><a href="#showHideTransport">t</a></td><td>y</td><td><a href="#raiseRootKeyAnd">u</a><a href="#lowerRootKeyAnd">U</a></td><td><a href="#showHideFill">i</a></td><td><a href="#useAFingeringOpen">o</a></td><td><a href="#showHidePalette">p</a><a href="#showHidePalette">P</a></td><td><a href="#usethePitchHighlighter">[</a> {</td><td><a href="#usetheMultiHighlighter">]</a> }</td><td>\ |</td>
+  </tr>
+  <!-- Row 3: ASDF -->
+  <tr>
+    <td>Caps Lock</td><td><a href="#showHideSongTitle">a</a><a href="#showHideSongTitle">A</a></td><td><a href="#showHideSection">s</a><a href="#showHideSection">S</a></td><td><a href="#lowerRootKeyAnd">d</a><a href="#raiseRootKeyAnd">D</a></td><td><a href="#toggleFullscreenMode">f</a><a href="#toggleFullscreenMode">F</a></td><td>g</td><td><a href="#changeHeightOfCells">h</a><a href="#changeHeightOfCells">H</a></td><td><a href="#transposeNamedNotesUp">j</a><a href="#transposeNamedNotesDown">J</a></td><td><a href="#raiseRootKey">k</a><a href="#lowerRootKey">K</a></td><td><a href="#loop">l</a><a href="#loop">L</a></td><td>; :</td><td>' "</td><td colspan="2">Enter</td>
+  </tr>
+  <!-- Row 4: ZXCV -->
+  <tr>
+    <td>Shift</td><td>z</td><td>x</td><td><a href="#toggleAutoColor">c</a></td><td><a href="#showHideView">v</a></td><td><a href="#previousBeat">b</a><a href="#previousBeat">B</a></td><td><a href="#nextBeat">n</a><a href="#nextBeat">N</a></td><td><a href="#showHideCommand">m</a><a href="#showHideCommand">M</a></td><td><a href="#previousSection">,</a><a href="#firstSection">&lt;</a></td><td><a href="#nextSection">.</a><a href="#lastSection">&gt;</a></td><td><a href="#launchCommandLine">/</a> ?</td><td colspan="3">Shift</td>
+  </tr>
+  <!-- Row 5: Bottom -->
+  <tr>
+    <td>Ctrl</td><td>Alt</td><td></td><td colspan="5">Spacebar</td><td> </td><td> </td><td>Alt</td><td>Ctrl</td>
+  </tr>
+</table>
+</div>
+
+<br>
+
+
+<h5  style="color: black;" >Here are the definitions of what the keys map to:</h5>
        
 
         <!-- new table -->
@@ -2204,6 +2255,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>show/hide Fill menu
+                </td>
+            </tr>
+            <tr id="showHideChart">
+                <td><span class="key">r</span>
+                </td>
+                <td>
+                </td>
+                <td>show/hide Chart menu
                 </td>
             </tr>
             <tr id="showHideQuick">
