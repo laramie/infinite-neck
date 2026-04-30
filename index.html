@@ -58,16 +58,18 @@
                     <span id="divControls">
                         <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1">File</button>
+                        <button id="btnChart" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                            tabindex="-1">Cha<b><u>r</u></b>t</button>
+                        <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                            tabindex="-1">F<b><u>i</u></b>ll</button>
+                        <button id="btnTunings" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                            tabindex="-1">Tunings</button>
+                        <button id="btnPalette" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                            tabindex="-1"><b><u>P</u></b>alette</button>
                         <button id="btnViewControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1"><b><u>V</u></b>iew</button>
                         <button id="btnThemeControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1">Themes</button>
-                        <button id="btnTunings" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Tunings</button>
-                        <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">F<b><u>i</u></b>ll</button>
-                        <button id="btnPalette" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1"><b><u>P</u></b>alette</button>
                         <button id="btnDesktop" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1">Desktop</button>
                         <button data-action="help" class="MainMenuTabBtn" tabindex="-1">Help</button>
@@ -82,9 +84,6 @@
                 <div id="divFileControls">
                     <table class="menuTable">
                         <tr>
-                            <td class="menuCaption">
-                                <span class="menuCaption">File</span>
-                            </td>
                             <td class="menuPage">
                                 <div class="sectionPageControlsGroup">
                                     <label for="fileInput">Open Song from Local Files:
@@ -139,9 +138,6 @@
                 <form id="frmFillNotes">
                     <table class="menuTable">
                         <tr>
-                            <td class="menuCaption">
-                                <span class="menuCaption">Fill</span>
-                            </td>
                             <td class="menuPage">
                                 <div class="sectionPageControlsGroup">
                                     <table id="controlTable2">
@@ -285,7 +281,7 @@
                                                 <span id="spanFillVisibleTablesSelect"></span>
                                                 <br>
                                                 <br>
-                                                <button id="btnFillChord" class="MainMenuTabBtn"
+                                                <button id="btnFillChord" class="MenuButton BtnPunchedOut"  
                                                     type="button">Fill<br />&nbsp;Notes</button>
                                                 <br>
                                                 <br>
@@ -767,15 +763,12 @@
                 <form id="frmTunings" onsubmit="return false;">
                     <table class="menuTable">
                         <tr>
-                            <td class="menuCaption">
-                                <span class="menuCaption">Tunings</span>
-                            </td>
                             <td class="menuPage">
                                 <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
                                     <span style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
                                         <span style="display: flex; gap: 0; align-items: flex-end;">
-                                            <button id="btnMyTuningsTab" type="button" class="MainMenuTabBtn BtnPunchedIn">My Tunings</button>
-                                            <button id="btnAllTuningsTab" type="button" class="MainMenuTabBtn BtnPunchedOut">All Tunings</button>
+                                            <button id="btnMyTuningsTab" type="button" class="MenuTabBtn BtnPunchedIn">My Tunings</button>
+                                            <button id="btnAllTuningsTab" type="button" class="MenuTabBtn BtnPunchedOut">All Tunings</button>
                                         </span>
                                     </span>
                                     <span style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
@@ -785,7 +778,7 @@
                                     <div id="divAllTuningsTab" style="display: none;">
                                         <div class="userInstrumentControlsGroup">
                                             <button id="btnShowHideEditUserTuning" type="button"
-                                                class="MainMenuTabBtn BtnPunchedOut">Customize USER Tuning</button>
+                                                class="MenuTabBtn BtnPunchedOut">Customize USER Tuning</button>
                                             <div id="divEditUserTuning" class="paletteRBBackground"
                                                 style="display: none;">
                                                 <table id="tblUserInstrumentEditor" class="menuTable">
@@ -897,12 +890,9 @@
             </div>
 
             <div id="divDesktop" style="display: none;">
-                <form id="frmDesktop">
+                <form id="frmDesktop" onsubmit="return false;">
                     <table class="menuTable">
                         <tr>
-                            <td class="menuCaption">
-                                <span class="menuCaption">Desktop</span>
-                            </td>
                             <td class="menuPage">
                                 <div style="float: left;" class="sectionPageControlsGroup">
                                     <p>Buttons for Mobile instead of keyboard shortcuts. </p>
@@ -978,6 +968,38 @@
                 </form>
             </div>
 
+            <!-- BEGIN Chart menu page -->
+             <div id="divChart" style="display: none;">
+                <form id="frmSectionPrinter" onsubmit="return false;">
+                    <table class="menuTable">
+                        <tr>
+                            <td class="menuPage">
+                                        <!-- Chart tab group buttons-->
+                                        <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
+                                            <span style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
+                                                <span style="display: flex; gap: 0; align-items: flex-end;">
+                                                    <button id="btnChartSummaryTab" type="button" class="MenuTabBtn BtnPunchedIn">Chart Summary</button>
+                                                    <button id="btnChartNotesTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Notes</button>
+                                                    <button id="btnChartDetailsTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Details</button>
+                                                </span>
+                                            </span>
+                                            <span style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
+                                        </div>
+                                         <!-- Chart tab group tabs-->
+                                        <div style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
+                                            <div id="divChartSummaryTab" style="display: none;"></div>
+                                            <div id="divChartNotesTab"></div>
+                                            <div id="divChartDetailsTab" style="display: none;"></div>
+                                        </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--end menuTable-->
+                </form>
+            </div>
+
+            <!-- END Chart menu page -->
+
 
         </div><!--end div: class=container-->
 
@@ -1012,7 +1034,7 @@
                 <span class="bpm"></span>&nbsp;<button id="btnRecord" class="RecordButton ArmedButton" type="button"
                     tabindex="-1">REC</button>
                 <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>
-                <button id="btnEditSection" class="MainMenuTabBtn BtnPunchedOut" type="button" tabindex="-1">&sect;</button>
+                <button id="btnEditSection" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">&sect;</button>
             </span>
         <!--/span-->
 
@@ -1078,11 +1100,11 @@
             </table>
         </div>
         <div id="divMessageAndJsonTree" style="display:none">
-            <button id="btnMessagesTab" type="button" class="MainMenuTabBtn BtnPunchedIn"
+            <button id="btnMessagesTab" type="button" class="MenuTabBtn BtnPunchedIn"
                 style="display: none">Messages</button>
-            <button id="btnJsonTreeTab" type="button" class="MainMenuTabBtn BtnPunchedOut" style="display: none">JSON
+            <button id="btnJsonTreeTab" type="button" class="MenuTabBtn BtnPunchedOut" style="display: none">JSON
                 Tree</button>
-            <button id="btnHideMessagesJsonTree" type="button" class="MainMenuTabBtn BtnPunchedOut"
+            <button id="btnHideMessagesJsonTree" type="button" class="MenuTabBtn BtnPunchedOut"
                 style="display: none">Hide</button>
             <div id="divMessages"></div>
             <div id="divJsonTree" data-json></div>

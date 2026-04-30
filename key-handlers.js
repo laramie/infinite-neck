@@ -206,6 +206,9 @@ function document_keypress(e) {
             case "q":
                 $('#divQuick').toggle();
                 break;
+			case "r":
+                showOneMenu("#divChart");
+                break;
             case "s":
             case "S":
                 toggleSectionDrawer();
@@ -624,21 +627,15 @@ export function performCmdAction(menuItem, args){
             break;
 
 		case "printSectionsDetails":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSections(true));
+			printSections(true);
 			hideCmdLine();
 			break;
 		case "printSectionsSummary":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSections(false));
+			printSections(false);
 			hideCmdLine();
 			break;
 		case "printSectionsNotes":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSectionsNotes());
+			printSectionsNotes();
 			hideCmdLine();
 			break;
 		case "sectionDelete":

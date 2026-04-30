@@ -77,15 +77,31 @@ export class PaletteBuilder {
         $("#showHideCustomColorEditors").click(function(event) {
             $("#CustomColorEditors").toggle();
             if ($("#CustomColorEditors").is(":visible")){
-                $("#showHideCustomColorEditors").html("Customize Less ...");
+                $("#showHideCustomColorEditors")
+                     .html("Customize Less ...")
+                     .removeClass("BtnPunchedOut")
+                     .addClass("BtnPunchedIn");
             } else {
-                $("#showHideCustomColorEditors").html("Customize ...");
+                $("#showHideCustomColorEditors")
+                     .html("Customize ...")
+                     .removeClass("BtnPunchedIn")
+                     .addClass("BtnPunchedOut");
             }
             event.stopPropagation();
         });
 
-        $("#showHideCustomColorLinks").click(function() {
+        $("#showHideCustomColorLinks").click(function(event) {
             $('#divColorDicts').toggle();
+            if ($("#divColorDicts").is(":visible")){
+                $("#showHideCustomColorLinks")
+                    .removeClass("BtnPunchedOut")
+                    .addClass("BtnPunchedIn");
+            } else {
+                $("#showHideCustomColorLinks")
+                    .removeClass("BtnPunchedIn")
+                    .addClass("BtnPunchedOut");
+            }
+            event.stopPropagation();
         });
 
         $("#btnRecordUserColors").click(function() {

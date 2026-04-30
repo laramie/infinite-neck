@@ -17,7 +17,7 @@ const { Chord } = globalThis.Tonal?.Chord
     : await import('tonal');
 
 export function printSections(theSong, theSections, showDetails) {
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Caption</th>"
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th><th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";
     let details;
@@ -30,6 +30,7 @@ export function printSections(theSong, theSections, showDetails) {
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
             + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
+            + (section.mode ? section.mode : "&nbsp;") + SEP
             + "<b style='font-size: 130%;'>" + section.caption + "</b>"
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";

@@ -255,7 +255,6 @@ function resolveLookupContext(lookupContext = {}) {
 
 
 		$('#divColorDictsDest').empty().append(tbl);
-		$('#divColorDicts').show();
 
 		var activeStylesheets = calculateActiveStylesheets();
 		$('.ActiveStylesheets').html("Active Stylesheets: "+activeStylesheets);

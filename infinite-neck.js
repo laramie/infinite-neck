@@ -341,6 +341,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    }
 
 		showHideDisplayOptionsPresent();  //also calls SectionDrawerBuilder API.
+		updatePrintSections();
 	}
 
 	export function clearAndReplaySection(){
@@ -560,6 +561,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		"#divFillNotes": "#btnFillNotes",
 		"#divTunings": "#btnTunings",
 		"#divDesktop": "#btnDesktop",
+		"#divChart": "#btnChart",
 		"#spanSectionDrawer": "#btnEditSection"
 	}
 
@@ -580,23 +582,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return jStrMenuDiv.is(":visible");
 	}
 
-	export function showOneMenu(strMenuDiv){
-		 var wasFull = leaveFullscreen();
-		 var jStrMenuDiv = $(strMenuDiv);
-		 if (wasFull){
-			 hideAllMenuDivs();
-			 jStrMenuDiv.show();
-		 } else {
-		     if (jStrMenuDiv.is(":visible") ){
-				 hideAllMenuDivs();
-		     } else {
-				 hideAllMenuDivs();
-		         jStrMenuDiv.show();
-				 $(AllMenuDivs[strMenuDiv]).addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-		     }
-		 }
-		 //$("#topControlsCaptions").hide();
-		 scrollToTop();
+	export function showOneMenu(strMenuDiv, forceOpen = false) {
+		var wasFull = leaveFullscreen();
+		var jStrMenuDiv = $(strMenuDiv);
+		if (wasFull) {
+			hideAllMenuDivs();
+			jStrMenuDiv.show();
+		} else if (forceOpen) {
+			hideAllMenuDivs();
+			jStrMenuDiv.show();
+			$(AllMenuDivs[strMenuDiv]).addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+		} else {
+			if (jStrMenuDiv.is(":visible")) {
+				hideAllMenuDivs();
+			} else {
+				hideAllMenuDivs();
+				jStrMenuDiv.show();
+				$(AllMenuDivs[strMenuDiv]).addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+			}
+		}
+		//$("#topControlsCaptions").hide();
+		scrollToTop();
 	}
 
 	export function getHelpTopic(){
@@ -1037,14 +1043,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showBeats();
 	}
 
+	export function updatePrintSections(){
+		$("#divChartSummaryTab").html(SectionPrinter.printSections(getSong(), getSections(), false));
+		$("#divChartDetailsTab").html(SectionPrinter.printSections(getSong(), getSections(), true));
+		$("#divChartNotesTab")  .html(SectionPrinter.printSectionsNotes(getSong(), getSections()));
+	}
+
 	export function printSections(showDetail) {
-		return SectionPrinter.printSections(getSong(), getSections(), showDetail);
+		updatePrintSections();
+		if (showDetail) {
+			showChartTab("Details");
+		} else {
+			showChartTab("Summary");
+		}
+		showOneMenu("#divChart", true);
 	}
 
 	export function printSectionsNotes(){
-		return SectionPrinter.printSectionsNotes(getSong(), getSections());
+		updatePrintSections();
+		showChartTab("Notes");
+		showOneMenu("#divChart", true);
 	}
-
 
 	export function linkToSection(idx) {
 		getSong().gotoSection(idx);
@@ -1052,13 +1071,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	export function linkToSectionChartChord(idx, chartChord) {
 		getSong().sections[idx].chartChord = chartChord;
-		$("#divMessages").html(printSectionsNotes());
-		updateSectionsStatus();
+		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 	}
 	export function linkToSectionChartMode(idx, mode) {
 		getSong().sections[idx].mode = mode;
-		$("#divMessages").html(printSectionsNotes());
-		updateSectionsStatus();
+		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 	}
 
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
@@ -1463,8 +1480,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	//==================== 4) UI event binding and control wiring =============
 
-	export function bindDesktopEvents(){
+	function showChartTab(which) {
+		var showNotesTab = which === "Notes";
+		var showSummaryTab = which === "Summary";
+		var showDetailsTab = which === "Details";
+		
+		$('#divChartSummaryTab').toggle(showSummaryTab);
+		$('#divChartNotesTab').toggle(showNotesTab);
+		$('#divChartDetailsTab').toggle(showDetailsTab);
 
+		$('#btnChartSummaryTab')
+			.toggleClass('BtnPunchedIn', showSummaryTab)
+			.toggleClass('BtnPunchedOut', !showSummaryTab);
+		$('#btnChartNotesTab')
+			.toggleClass('BtnPunchedIn', showNotesTab)
+			.toggleClass('BtnPunchedOut', !showNotesTab);
+		$('#btnChartDetailsTab')
+			.toggleClass('BtnPunchedIn', showDetailsTab)
+			.toggleClass('BtnPunchedOut', !showDetailsTab);	
+	}
+
+	export function bindDesktopEvents(){
 		
 		$(document).on('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
@@ -1500,16 +1536,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnDesktop").click(function() {
 		    showOneMenu("#divDesktop");
 		});
-
+		//======= Chart TabGroup buttons ========
+		$("#btnChart").click(function() {
+		    showOneMenu("#divChart");
+		});
+		$('#btnChartSummaryTab').click(function() {
+			showChartTab("Summary");
+		});
+		$('#btnChartNotesTab').click(function() {
+			showChartTab("Notes");
+		});
+		$('#btnChartDetailsTab').click(function() {
+			showChartTab("Details");
+		});
+		//=========================================
 		$("#btnHelp").click(function() {
 
 		});
-
 		$("#btnHamburger").click(function() {
 		   $("#divControls").toggle();
 		   hideAllMenuDivs();
 		});
-
 		$("#cbPresentationMode").change(function(){
 			getSong().presentationMode = this.checked;
 		});
@@ -1540,6 +1587,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnThemeControls").click(function() {
 		    showOneMenu("#divThemeControls");
 		});
+
 
 		// ======== BEGIN "Quick" Menu: ==========
 		function linkButtonToCB(btnSelector, cbSelector){
@@ -1576,9 +1624,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		// ========== END "Quick" Menu ==========
 
-
-
-
 		$("#btnToggleTransport").click(function() {
 			TransportBuilder.toggleTransport();
 		});
@@ -1588,10 +1633,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnToggleQuick").click(function() {
 			$('#divQuick').toggle();
 		});
-
-
-
-
 
 		$("#btnClear").click(function() {
 		    resetNoteNames();
@@ -1682,9 +1723,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#txtBPM" ).on( "change", function() {
 		 setBPM($(this).val());  //interestingly, this does NOT cause jQuery to call ".change()" again.
 		});
-
-
-
 
 		$("#btnRowRangeReset").click(function() {
 			//$('#textareaRowRange').val(JSON.stringify(noteNamesRowRangeArr));
@@ -1836,8 +1874,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
             fullRepaint();
 	    });
 
-
-
 		$("#btnFillChord").click(function() {
 	        fillChord();
 	    });
@@ -1848,10 +1884,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#btnDeleteDisplayOptions_View").click(function() {
 			handleBtnDeleteDisplayOptions();
 	    });
-
-		
 	}
-
 	
 	export function bindDataActionHandlers(){
 		const dataActionHandlers = {
@@ -1896,7 +1929,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				console.warn('No data-action handler registered for:', action);
 			}
 		});
-
 	}
 
 	//==================== document.ready helper functions =====================
@@ -2083,6 +2115,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TransportBuilder.showTransport();
 
 		showDefaultTunings();
+		showChartTab("Summary"); //choose tab but don't show Chart menu yet.
 		scrollToTop();
 
 		const promises = [

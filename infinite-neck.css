@@ -210,14 +210,18 @@ table {
     padding: 2px;
 }
 
-.MainMenuTabBtn, .MenuButton {
+.MainMenuTabBtn, .MenuButton, .MenuTabBtn {
     padding: 0.4em;
     color: black;
     font-family: Helvetica;
-    FFfont-size: 120%;
     border: 1px solid black;
     border-radius: 4px;
 }
+.MenuTabBtn {
+     border-bottom-left-radius: 0; 
+     border-bottom-right-radius: 0;
+}
+
 .BigMobileBtn {
     padding: 1em;
 }
@@ -599,15 +603,6 @@ table.viewControls th {
     margin-left: 0.4em;
 }
 
-.menuCaption {    /* this was the spacer every menu page had.  I pulled them out because you can see which button is clickd.
-                     But now you can hide the buttons, so might want something like this back.
-                     */
-    font-size: 1pt;  /*just so I don't have to delete the html right now.*/
-    font-weight: bold;
-    color: transparent;/*just so I don't have to delete the html right now.  */
-    text-align: center;
-    vertical-align: middle;
-}
 .productsmall {
     font-size:  70%;
     color: orange;
@@ -654,6 +649,9 @@ table.viewControls th {
     display: none;
 }
 #divTunings {
+    display: none;
+}
+#divChart {
     display: none;
 }
 
