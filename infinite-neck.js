@@ -306,7 +306,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    $(".lblSectionCaption").html(caption);
 
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
-	    $(".lblSectionMode").html( getSong().getCurrentSection().mode);
+	    $(".lblSectionMode").html( getSong().getCurrentSection().chartMode);
 
 		var currentFilename = $("#txtFilename").val();
 	    $(".lblSongName").html(currentFilename);
@@ -1073,8 +1073,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().sections[idx].chartChord = chartChord;
 		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 	}
-	export function linkToSectionChartMode(idx, mode) {
-		getSong().sections[idx].mode = mode;
+	export function linkToSectionChartMode(idx, chartMode) {
+		getSong().sections[idx].chartMode = chartMode;
 		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 	}
 

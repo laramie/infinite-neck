@@ -1,6 +1,7 @@
 const sectionDefaults = {
       "caption": "",
       "chartChord": "",
+      "chartMode": "",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,

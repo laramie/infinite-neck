@@ -30,7 +30,7 @@ export function printSections(theSong, theSections, showDetails) {
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
             + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
-            + (section.mode ? section.mode : "&nbsp;") + SEP
+            + (section.chartMode ? section.chartMode : "&nbsp;") + SEP
             + "<b style='font-size: 130%;'>" + section.caption + "</b>"
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
@@ -133,7 +133,7 @@ export function printSectionsNotes(theSong, theSections){
             + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
             + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
-            + "</td><td>" + (section.mode ? section.mode : "&nbsp;") 
+            + "</td><td>" + (section.chartMode ? section.chartMode : "&nbsp;") 
             + "</td><td><b style='font-size: 130%;'>" + section.caption + "</b></td>";
 
         instrumentTableIDs.forEach((tableID) => {
@@ -151,7 +151,7 @@ export function printSectionsNotes(theSong, theSections){
             let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, 
                                                         tableID, idx, 
                                                         tonalResult.chords, section.chartChord, 
-                                                        tonalResult.scale,  section.mode);
+                                                        tonalResult.scale,  section.chartMode);
             result += "<td><div class='SPN_CC'>" 
                             +chartChordsNotes+':'
                             +tonalPickerSet

@@ -7,6 +7,8 @@ export class SectionNotesPersistence {
     constructor(obj = {}, Note_Class){
         this.namedNotes = {};
         this.recordedNotes = {};
+        this.chord = "";
+        this.mode = "";
         
         Object.assign(this, sectionNotesDefaults, obj);
 
