@@ -1078,6 +1078,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 	}
 
+	export function linkToSectionChangedTonal(){
+		sectionChanged();
+	}
+
+	export function linkToSectionTableChord(idx, tableID, chord) {
+		getSong().sections[idx].sectionNotesByTable[tableID].chord = chord;
+		sectionChanged();
+	}
+
+	export function linkToSectionTableMode(idx, tableID, mode) {
+		getSong().sections[idx].sectionNotesByTable[tableID].mode = mode;
+		sectionChanged();
+	}
+
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.
 		//console.log("rangeSlide:"+element_id+" value: "+value);
 		setNamedNoteOpacity_inner(element_id, value);

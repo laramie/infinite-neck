@@ -1,6 +1,9 @@
 import { 
     linkToSectionChartChord,
-    linkToSectionChartMode
+    linkToSectionChartMode,
+    linkToSectionTableChord,
+    linkToSectionTableMode,
+    linkToSectionChangedTonal
 } from './infinite-neck.js';
 
 const CSS_TEXT = `
