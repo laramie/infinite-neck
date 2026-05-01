@@ -151,7 +151,8 @@ export function printSectionsNotes(theSong, theSections){
             let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, 
                                                         tableID, idx, 
                                                         tonalResult.chords, section.chartChord, 
-                                                        tonalResult.scale,  section.chartMode);
+                                                        tonalResult.scale,  section.chartMode,
+                                                        tonalResult.chord, tonalResult.mode);
             result += "<td><div class='SPN_CC'>" 
                             +chartChordsNotes+':'
                             +tonalPickerSet

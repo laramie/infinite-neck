@@ -1071,11 +1071,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	export function linkToSectionChartChord(idx, chartChord) {
 		getSong().sections[idx].chartChord = chartChord;
-		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
+		}
 	}
 	export function linkToSectionChartMode(idx, chartMode) {
 		getSong().sections[idx].chartMode = chartMode;
-		sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
+		}
 	}
 
 	export function linkToSectionChangedTonal(){
@@ -1084,12 +1090,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function linkToSectionTableChord(idx, tableID, chord) {
 		getSong().sections[idx].sectionNotesByTable[tableID].chord = chord;
-		sectionChanged();
+		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
+		if (doSectionChanged){
+			sectionChanged();
+		}
 	}
 
 	export function linkToSectionTableMode(idx, tableID, mode) {
 		getSong().sections[idx].sectionNotesByTable[tableID].mode = mode;
-		sectionChanged();
+		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
+		if (doSectionChanged){
+			sectionChanged();
+		}
 	}
 
 	export function rangeNamedNoteSlide(element_id, value) {  //called when someone drags the slider--fires javascript onChange from html.

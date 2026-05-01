@@ -264,7 +264,8 @@ export function colorNote(cell) {
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  res.tableID, idx, 
                                                  tonalResult.chords, theCurrentSection.chartChord, 
-                                                 tonalResult.scale,  theCurrentSection.chartMode);
+                                                 tonalResult.scale,  theCurrentSection.chartMode,
+                                                 tonalResult.chord, tonalResult.mode);
         
         $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
     }
@@ -719,7 +720,8 @@ export function replayTable(replayOptions){
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  replayOptions.listenToTablename, idx, 
                                                  tonalResult.chords, replayOptions.currSection.chartChord, 
-                                                 tonalResult.scale,  replayOptions.currSection.chartMode);
+                                                 tonalResult.scale,  replayOptions.currSection.chartMode,
+                                                 tonalResult.chord, tonalResult.mode);
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 

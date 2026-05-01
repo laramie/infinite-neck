@@ -169,33 +169,54 @@ export function format_allChords(dest, valueArray, currentValue){
     return allChordsList;
 }
 
+function formatTonalCurrentValue(chartCurrentValue, tableCurrentValue){
+    if (!tableCurrentValue){
+        return "&lt;choose&gt;";
+    }
+    if (!chartCurrentValue){
+        return tableCurrentValue;
+    }
+    if (tableCurrentValue === chartCurrentValue){
+        return '<b>' + tableCurrentValue + '</b>';
+    }
+    return '<s>' + tableCurrentValue + '</s>';
+}
+
+function format_saveToChartButton(ownerID, tableID, sectionIdx, dest){
+    return `<button onclick="saveTonalToChart('${ownerID}', '${tableID}', ${sectionIdx}, '${dest}')">save to chart</button>`;
+}
+
+function getSpanTonalSelector(ownerID, tableID, sectionIdx, dest){
+    return `#spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}`;
+}
+
+function getCurrentTonalRawValue(ownerID, tableID, sectionIdx, dest){
+    return $(getSpanTonalSelector(ownerID, tableID, sectionIdx, dest)).attr('data-tonal-raw-value') || "";
+}
+
 
 // dest is either "mode" or "chord".
-export function buildTonalPicker(ownerID, tableID, sectionIdx, dest, valueArray, currentValue){
-    if (!currentValue){
-        currentValue = "&lt;choose&gt;";
-    } else {
-         if (valueArray.includes(currentValue)) {
-            currentValue = '<b>' + currentValue + '</b>';
-        } else {
-            currentValue = '<s>' + currentValue + '</s>';
-        }
-    }
+export function buildTonalPicker(ownerID, tableID, sectionIdx, dest, valueArray, chartCurrentValue, tableCurrentValue){
     registerCSS();
     let valueArrayString = JSON.stringify(valueArray);
+    let chartCurrentValueString = JSON.stringify(chartCurrentValue || "");
+    let displayCurrentValue = formatTonalCurrentValue(chartCurrentValue, tableCurrentValue);
+    let rawCurrentValue = tableCurrentValue || "";
     let linksList = valueArray
-        .map(val => `<li><a href='javascript:pickTonal("${ownerID}", "${tableID}", ${sectionIdx}, "${dest}", "${val}", ${valueArrayString});'>${val}</a></li>`);
-    linksList.push(`<li><a href='javascript:pickTonal("${ownerID}",  "${tableID}", ${sectionIdx}, "${dest}", "clear", ${valueArrayString});'>&lt;clear&gt;</a></li>`);
+        .map(val => `<li><a href='javascript:pickTonal("${ownerID}", "${tableID}", ${sectionIdx}, "${dest}", ${JSON.stringify(val)}, ${valueArrayString}, ${chartCurrentValueString});'>${val}</a></li>`);
+    linksList.push(`<li><a href='javascript:pickTonal("${ownerID}",  "${tableID}", ${sectionIdx}, "${dest}", "clear", ${valueArrayString}, ${chartCurrentValueString});'>&lt;clear&gt;</a></li>`);
     linksList = linksList.join('\n');
 
-    let allChordsHTML =   format_allChordsSpan  (ownerID, tableID, sectionIdx, dest, valueArray, currentValue);
+    let allChordsHTML =   format_allChordsSpan  (ownerID, tableID, sectionIdx, dest, valueArray, rawCurrentValue);
     let allChordsButton = format_allChordsButton(ownerID, tableID, sectionIdx, dest);
+    let saveToChartButton = format_saveToChartButton(ownerID, tableID, sectionIdx, dest);
 
     return `
     <span class="tonalPicker" id="tonalPicker-${ownerID}-${dest}-${tableID}-${sectionIdx}">
         <span class="tonalPicker-row">
             ${allChordsButton}${allChordsHTML}
-            <span class="spanTonal_${dest}" id="spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}">${currentValue}</span>
+            <span class="spanTonal_${dest}" id="spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}" data-tonal-raw-value="${rawCurrentValue}">${displayCurrentValue}</span>
+            ${saveToChartButton}
             <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}').toggle()">${dest}:${valueArray.length}</button>
         </span>
         <ul class="tonalMode-list" id="tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}" style="display:none;">
@@ -214,9 +235,9 @@ export const TonalPickerOrientation = Object.freeze({
  *  @param orientation is one of TonalPickerOrientation.VERTICAL or TonalPickerOrientation.HORIZONTAL .
  *  @param ownerID is a string to differntiate multiple picker sets on one page, it is not used to find the owner. 
  */
-export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue){
-    let chordPicker = buildTonalPicker(ownerID, tableID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue)                                         
-    let modePicker =  buildTonalPicker(ownerID, tableID, sectionIdx, "modes",  modeValueArray,  modeCurrentValue);
+export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue, tableChordCurrentValue, tableModeCurrentValue){
+    let chordPicker = buildTonalPicker(ownerID, tableID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue, tableChordCurrentValue)                                         
+    let modePicker =  buildTonalPicker(ownerID, tableID, sectionIdx, "modes",  modeValueArray,  modeCurrentValue, tableModeCurrentValue);
     
     let tbl;
     if  (orientation === TonalPickerOrientation.HORIZONTAL){
@@ -227,38 +248,51 @@ export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, c
     return tbl;
 }
 
-window.pickTonal = function pickTonal(ownerID, tableID, sectionIdx, dest, val, valueArray){
+globalThis.pickTonal = function pickTonal(ownerID, tableID, sectionIdx, dest, val, valueArray, chartCurrentValue){
     //$(`#tonalPicker-${ownerID}-${dest}-${sectionIdx} > span.spanTonalMode`).text(val);
     $(`#tonalPicker-${ownerID}-${dest}-${tableID}-${sectionIdx} > ul`).hide();
     if (val === 'clear'){
         val = "";
     }
-    let valHTML;
-    if (!val) {
-        valHTML = '&lt;choose&gt;';
-    } else {
-        if (valueArray.includes(val)) {
-            valHTML = '<b>' + val + '</b>';
-        } else {
-            valHTML = '<s>' + val + '</s>';
-        }
-    }
-     $(`#spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}`).html(valHTML); 
+    let nextChartCurrentValue = chartCurrentValue;
     switch (dest) {
         case "chords":
-            linkToSectionChartChord(sectionIdx, val);
-            let allChords = format_allChords(dest, valueArray, val);
-            $(`#spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}`).html(allChords);
+            linkToSectionTableChord(sectionIdx, tableID, val, false);
+            if (!chartCurrentValue){
+                linkToSectionChartChord(sectionIdx, val, false);
+                nextChartCurrentValue = val;
+            }
+            $(`#spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}`).html(format_allChords(dest, valueArray, val));
             break;
         case "modes":
-            linkToSectionChartMode(sectionIdx, val);
+            linkToSectionTableMode(sectionIdx, tableID, val, false);
+            if (!chartCurrentValue){
+                linkToSectionChartMode(sectionIdx, val, false);
+                nextChartCurrentValue = val;
+            }
+            break;
+    }
+    $(getSpanTonalSelector(ownerID, tableID, sectionIdx, dest))
+        .attr('data-tonal-raw-value', val)
+        .html(formatTonalCurrentValue(nextChartCurrentValue, val));
+    linkToSectionChangedTonal();
+}
+
+globalThis.saveTonalToChart = function saveTonalToChart(ownerID, tableID, sectionIdx, dest){
+    let rawValue = getCurrentTonalRawValue(ownerID, tableID, sectionIdx, dest);
+    switch (dest) {
+        case "chords":
+            linkToSectionChartChord(sectionIdx, rawValue);
+            break;
+        case "modes":
+            linkToSectionChartMode(sectionIdx, rawValue);
             break;
     }
 }
 
-window.toggleAllChordsButtonState = function(ownerID, tableID, sectionIdx){
-    console.log("toggleAllChordsButtonState:"+JSON.stringify(window.tonalChordsButtonStates));
-    let state = window.getTonalAllChordsButtonState(tableID);
+globalThis.toggleAllChordsButtonState = function(ownerID, tableID, sectionIdx){
+    console.log("toggleAllChordsButtonState:"+JSON.stringify(globalThis.tonalChordsButtonStates));
+    let state = globalThis.getTonalAllChordsButtonState(tableID);
     if (state === "show"){
         $(`#spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}`).hide();
         setTonalAllChordsButtonState(tableID, "hide");
@@ -271,18 +305,18 @@ window.toggleAllChordsButtonState = function(ownerID, tableID, sectionIdx){
 }
 
 /** @param state === "show" | "hide" */
-window.setTonalAllChordsButtonState = function(tableID, state){
-    if (!window.tonalChordsButtonStates){
-        window.tonalChordsButtonStates = {};
+globalThis.setTonalAllChordsButtonState = function(tableID, state){
+    if (!globalThis.tonalChordsButtonStates){
+        globalThis.tonalChordsButtonStates = {};
     }
-    window.tonalChordsButtonStates[tableID] = state;
+    globalThis.tonalChordsButtonStates[tableID] = state;
 }
 
-window.getTonalAllChordsButtonState = function(tableID){
-    if (!window.tonalChordsButtonStates){
+globalThis.getTonalAllChordsButtonState = function(tableID){
+    if (!globalThis.tonalChordsButtonStates){
         return "show";
     }
-    let oneState = window.tonalChordsButtonStates[tableID];
+    let oneState = globalThis.tonalChordsButtonStates[tableID];
     if (!oneState){
         return "show";
     }
