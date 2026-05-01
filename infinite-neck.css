@@ -121,6 +121,16 @@ table {
   transform: rotate(180deg);
 }
 
+.obvious-underline {
+    text-decoration: underline;
+    text-decoration-color: black;      
+    text-decoration-thickness: 1px;    
+    text-underline-offset: 3px;        /* Move line down below 'g' */
+    text-decoration-skip-ink: none; /* Prevents breaking around 'g' */
+}
+
+
+
 /***************************** Fonts *****************************/
 
 .vollkorn {

@@ -1089,7 +1089,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSectionTableChord(idx, tableID, chord) {
-		getSong().sections[idx].sectionNotesByTable[tableID].chord = chord;
+		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		if (!sn){
+			return;	
+		}
+		sn.chord = chord;
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();
@@ -1097,7 +1101,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSectionTableMode(idx, tableID, mode) {
-		getSong().sections[idx].sectionNotesByTable[tableID].mode = mode;
+		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		if (!sn){
+			return;	
+		}
+		sn.mode = mode;
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();

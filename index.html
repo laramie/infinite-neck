@@ -34,19 +34,15 @@
     <script src="jsonpath-0.8.0.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tonal@6.4.3/browser/tonal.min.js"></script>
     <script type="module" src="dockable.js"></script>
-</head>
-
-<body>
-    <div id="root"></div>
     <style id="laramieStyle">
         .placeholder {
             color: red;
         }
     </style>
-    </head>
-
-    <body>
-        <div class="container">
+</head>
+<body>
+    <div id="root"></div>
+            <div class="container">
 
             <form id="frmTopControls" onsubmit="return false;">
                 <div id="divTopCaptions">
@@ -57,13 +53,13 @@
                     <span id="transportLeftPoint"></span>
                     <span id="divControls">
                         <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">File</button>
+                            tabindex="-1"><b><u>F</u></b>ile</button>
                         <button id="btnChart" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1">Cha<b><u>r</u></b>t</button>
                         <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1">F<b><u>i</u></b>ll</button>
                         <button id="btnTunings" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Tunings</button>
+                            tabindex="-1">Tunin<b><u class='obvious-underline'>g</u></b>s</button>
                         <button id="btnPalette" type="button" class="MainMenuTabBtn BtnPunchedOut"
                             tabindex="-1"><b><u>P</u></b>alette</button>
                         <button id="btnViewControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
@@ -86,6 +82,8 @@
                         <tr>
                             <td class="menuPage">
                                 <div class="sectionPageControlsGroup">
+                                    <span>Tunin<u class='obvious-underline'>g</u>s</span>
+                        
                                     <label for="fileInput">Open Song from Local Files:
                                         <input type="file" id="fileInput">
                                     </label>

@@ -406,3 +406,4 @@ These are the only issues I still see that need confirmation before implementati
 - The new plan is narrower than the first-round plan because the table-level link functions already exist.
 - The raw-value DOM attribute is the smallest reliable way to support save-to-chart without reaching into the model from picker code.
 - The core architectural constraint remains intact: TonalPicker receives state through arguments and updates state through exported link functions.
+    

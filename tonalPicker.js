@@ -45,16 +45,26 @@ const CSS_TEXT = `
 
 .tonalPicker button {
     flex: 0 0 auto;
-    padding: 0.2em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
     border-radius: 1px;
     border: 1px solid gray;
     box-shadow: 2px 1px 4px black;
     transition: all 0.1s ease;
+    
 }
 .tonalPicker button:active {
     flex: 0 0 auto;
     box-shadow: 2px 1px 3px rgb(31, 62, 0);
     transform: translateY(3px); /* Move the button down slightly */
+}
+.tonalPicker button.AllChordsBtn {
+    padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
+}
+.tonalPicker button.SaveToChartBtn {
+    padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
 }
 
 
@@ -124,10 +134,13 @@ function registerCSS(){
     }
 }
 
+
+function format_saveToChartButton(ownerID, tableID, sectionIdx, dest){
+    return `<button class="SaveToChartBtn" title="Save to chart" onclick="saveTonalToChart('${ownerID}', '${tableID}', ${sectionIdx}, '${dest}')">&#x56F3;</button>`;  //&#x56F3; Kanji means "Map, Drawing, Plan, Diagram, Picture, Illustration", which we use to mean "Chart".
+}
 export function format_allChordsButton(ownerID, tableID, sectionIdx, dest){
     if (dest === "chords"){
-        let style = "style='padding:0;font-size:60%;'"
-        let btn = `<button ${style} onclick="toggleAllChordsButtonState('${ownerID}', '${tableID}', '${sectionIdx}');">&#x2505;</button>`;
+        let btn = `<button class="AllChordsBtn" onclick="toggleAllChordsButtonState('${ownerID}', '${tableID}', '${sectionIdx}');">&#x53EF;</button>`;   // &#x53EF; mean "possible,feasable,good", pronounced kě. was &#x2505;
         return btn;
     }
     return "";
@@ -182,9 +195,6 @@ function formatTonalCurrentValue(chartCurrentValue, tableCurrentValue){
     return '<s>' + tableCurrentValue + '</s>';
 }
 
-function format_saveToChartButton(ownerID, tableID, sectionIdx, dest){
-    return `<button onclick="saveTonalToChart('${ownerID}', '${tableID}', ${sectionIdx}, '${dest}')">save to chart</button>`;
-}
 
 function getSpanTonalSelector(ownerID, tableID, sectionIdx, dest){
     return `#spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}`;
@@ -216,8 +226,7 @@ export function buildTonalPicker(ownerID, tableID, sectionIdx, dest, valueArray,
         <span class="tonalPicker-row">
             ${allChordsButton}${allChordsHTML}
             <span class="spanTonal_${dest}" id="spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}" data-tonal-raw-value="${rawCurrentValue}">${displayCurrentValue}</span>
-            ${saveToChartButton}
-            <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}').toggle()">${dest}:${valueArray.length}</button>
+            <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}').toggle()">${dest}:${valueArray.length}</button>${saveToChartButton}
         </span>
         <ul class="tonalMode-list" id="tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}" style="display:none;">
             ${linksList}

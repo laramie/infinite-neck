@@ -48,8 +48,14 @@ export function getTonalForTable(theSong, section, tablename){
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
-    let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-    result.scale = filterWesternScales(worldScales);
+    result.scale = [];
+    console.log("result.normalizedNamedNotes: "+result.normalizedNamedNotes);
+    if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
+        let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+        console.log("worldScales: "+worldScales);
+        result.scale = filterWesternScales(worldScales);
+        console.log("result.scale: "+result.scale);
+    }
     result.chords = chords;
     result.chord = tableSectionNotes ? tableSectionNotes.chord : "";
     result.mode = tableSectionNotes ? tableSectionNotes.mode : "";

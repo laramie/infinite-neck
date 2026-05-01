@@ -177,8 +177,13 @@ function document_keypress(e) {
                 toggleWiringOpenState();
                 break;
             case "f":
-            case "F":
                 toggleFullscreen();
+                break;
+			case "F":
+                showOneMenu("#divFileControls");
+                break;
+            case "g":
+                showOneMenu("#divTunings");
                 break;
             case "i":
                 showOneMenu("#divFillNotes");
