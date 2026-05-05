@@ -459,7 +459,7 @@ export var gMenuFile =    {
               "action": "prevBeat"
             },
             {
-              "caption": "<b>a</b>dd",
+              "caption": "<b>a</b>dd (last)",
               "trigger": "a",
               "action": "addBeat"
             },
@@ -481,8 +481,8 @@ export var gMenuFile =    {
           ]
         },
         {
-        "caption": "<b>p</b>rint",
-        "trigger": "p",
+        "caption": "cha<b>r</b>t",
+        "trigger": "r",
         "children": [
             {
               "caption": "<b>s</b>ummary",
@@ -490,14 +490,14 @@ export var gMenuFile =    {
               "action": "printSectionsSummary"
             },
             {
-              "caption": "<b>d</b>etails",
-              "trigger": "d",
-              "action": "printSectionsDetails"
-            },
-            {
               "caption": "<b>n</b>otes",
               "trigger": "n",
               "action": "printSectionsNotes"
+            },
+            {
+              "caption": "<b>d</b>etails",
+              "trigger": "d",
+              "action": "printSectionsDetails"
             }            
           ]
         },
