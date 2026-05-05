@@ -1,6 +1,9 @@
 {
   "songs": [
     "persistence/All-Chords.json",
+    "persistence/forward-backward-observers.json",
+    "persistence/3-chord-3keys-S6-Bass.json",
+    "persistence/3-chord-3keys-S6-Bass-observers-highlights.json",
     "All-Chords.json",
     "All-Keys-Maj7-Chords-Piano.json",
     "colors-march-through-12-semitones.json",
