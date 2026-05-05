@@ -99,7 +99,7 @@ describe('generateNextTuningID', () => {
 // Clone → seed notes → rename: pure model path
 // ---------------------------------------------------------------------------
 
-describe.skip('renameTuningIDInModel: pure model rename', () => {
+describe('renameTuningIDInModel: pure model rename', () => {
     let song;
 
     beforeEach(() => {
@@ -184,7 +184,7 @@ describe.skip('renameTuningIDInModel: pure model rename', () => {
 // End-to-end headless scenario: Clone → seed notes → rename → JSON round-trip
 // ---------------------------------------------------------------------------
 
-describe.skip('headless Clone → use → rename scenario', () => {
+describe('headless Clone → use → rename scenario', () => {
     let song;
 
     beforeEach(() => {
