@@ -840,12 +840,123 @@ These do not block the plan, but they may need confirmation when we touch the co
 
 None of these questions require revisiting the design direction before starting implementation.
 
-## Addenda
+## Addenda / Questions Answered
 
-Persistence in songfile should be:
+SongPersistence.js is the preferred place to add persistence.  Song.js is all the business rules.
+
+Plugin subtree refresh after each property change is not necessary immediately.
+
+Persistence in songfile should be, in path-like syntax in JSON:
+```
 ./plugins/transpose/
 ./plugins/arpeggio/
+```
+In other words, "plugins" at the Song level, with plugins keyed/named by physical repository directory name, e.g. "transpose" and "arpeggio" since these are guaranteed to be unique.  All future plugins will also have their own directories.   
 
-e.g. 
+We have been frustrated with the "providers" style of injecting dependencies.  EventBus, for one, doesn't import anything.  Where possible, prefer direct imports over "providers".
+
+"help" as a menu item sounds very useful.
+
+A "properties.json" file as source of property metadata rather than forming these in code would be very useful, and simplify plugin development.
+
+Re: "3. whether centralized enabled-state should be shown in the menu in phase one, or remain runtime/persistence-only until a later pass".  Unless we are misunderstanding something, we'd think the two managed properties, "enabled" and "enableOnSongLoad" would be the first two properties shown for every plugin, so the menus are consistent.  That is, they would be provided first, then the Plugin would add items.  And this is how the user would set these two values, since the User needs to decide if the plugin is "on", i.e. "enabled", and the User is in control of how the Song comes up from disk in this application.  Between 1) wanting to load a practice file and  have it loop with a plugin the very first thing, or not if 2) the User is still authoring the song; also 3) Users set up songs for "Presentation Mode" where they may be loading a Presentation for an audience, so they want the file to load up either with plugins on or off based on their rehearsal.
+
+## Implementation Notes by Copilot after Code Generation
+
+Implemented the runtime plugin menu system and persistence path.
+
+What changed
+
+- Added the shared plugin runtime pieces:
+  - plugins/pluginRuntime.js
+  - plugins/MenuItemProxy.js
+  - plugins/PluginProperty.js
+
+- Reworked the plugin manager into the real coordinator for:
+  - registration
+  - runtime `/file/plugins` subtree generation
+  - centralized `enabled` / `enableOnSongLoad`
+  - generic menu action routing
+  - token-based value resolution
+  - Song save/load export/import
+  - plugins/PluginManager.js
+
+- Reworked plugin registration to use plugin instances instead of loose config objects:
+  - plugins/registerPlugins.js
+
+- Implemented both plugins with authored metadata coming from `properties.json`:
+  - plugins/transpose/TransposePlugin.js
+  - plugins/transpose/properties.json
+  - plugins/arpeggio/ArpeggioPlugin.js
+  - plugins/arpeggio/properties.json
+
+- Wired the menu marker and runtime actions:
+  - menu.js
+  - key-handlers.js
+  - command-line.js
+
+- Wired plugin state into save/load:
+  - SongPersistence.js
+  - Song.js
+  - infinite-neck.js
+
+Implemented behavior
+
+- `/file/plugins` is now a runtime-populated subtree driven by `PluginManager`.
+- Every plugin menu starts with centralized:
+  - `enabled`
+  - `enableOnSongLoad`
+- `TransposePlugin` now supports:
+  - `intervals` as JSON integer array
+  - `NamedNotes`
+  - `PlayedNotes`
+  - `RecordedNotes`
+  - `apply`
+  - `help`
+- `ArpeggioPlugin` now supports:
+  - `minFret`
+  - `maxFret`
+  - `lowToHigh`
+  - `upOnly`
+  - `style` as menu-choice select
+  - `apply`
+  - `help`
+- Plugin values resolve through `plugin:{pluginId}:{fieldName}` tokens.
+- Song persistence now stores plugin state under `song.plugins` keyed by directory/plugin id such as `transpose` and `arpeggio`.
+
+Validation
+
+- Editor diagnostics: no file errors reported on the changed implementation files.
+- Headless runtime sanity checks passed:
+  - both plugins register
+  - the runtime plugins marker expands to 2 children
+  - property set/select routing works
+  - exported plugin persistence state matches the expected shape
+- `npm run validate:cmdmenu` completed with `0 error(s)`.
+
+Residual warnings
+
+The command-menu validator still reports warnings, not errors, for the runtime plugin integration:
+
+- the static `/fp` plugins marker has no authored static children
+- the static validator cannot “see” the runtime-only action strings:
+  - `pluginProperty:set`
+  - `pluginProperty:select`
+  - `pluginAction:invoke`
+
+That is expected with the current validator because the plugin subtree is generated at runtime rather than authored statically in menu.js.
+
+One existing repo behavior also showed up during validation:
+- constructing a raw `Song` in a plain Node snippet and calling `ensureDefaultSection()` can still hit old UI/EventBus assumptions if you bypass the repo’s headless setup.
+- the supported headless path via `setupSongTests()` works correctly with this plugin implementation.
+
+Natural next steps
+
+1. Exercise the new `/file/plugins` menu in the browser and confirm the interaction flow feels right, especially after input-backed property edits.
+2. If you want the command-menu validator to go fully quiet, I can teach it about the runtime plugin marker and the runtime action names.
+
+Made changes.
+
+
 
 

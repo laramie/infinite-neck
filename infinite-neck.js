@@ -104,7 +104,8 @@ import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 
-import pluginManager from './plugins/registerPlugins.js';
+import './plugins/registerPlugins.js';
+import pluginManager from './plugins/pluginRuntime.js';
 
 // If running in a browser, call appInit() on DOM ready.  Browser loads DOM, then since index.html pulls in this module, this module is run after DOM loaded.  
 // This top-level code runs first, which calls appInit().
@@ -684,7 +685,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        theme: $('#selThemes').val(),
 	        bpm,
 	        userColors: gUserColorDict.dict,
-	        userInstrumentTuning: TuningsLibrary.findTuningForID("USER")  //Persistence only. allTunings.tunings with id="USER" is the live object used at runtime.
+	        userInstrumentTuning: TuningsLibrary.findTuningForID("USER"),  //Persistence only. allTunings.tunings with id="USER" is the live object used at runtime.
+	        plugins: pluginManager.exportSongPluginState()
 	    });
 	}
 
@@ -745,6 +747,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var jsonObj = JSON.parse(str);
 		gSong = new Song(jsonObj);
 		gSong.ensureDefaultSection();
+		pluginManager.loadSongPluginState(gSong);
 		updateAfterOpenSong();
 	}
 
@@ -2061,6 +2064,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		gSong = new Song();   //var song global in this file (at top).
 		gSong.setHeadless(true, true);
 		gSong.ensureDefaultSection();
+		pluginManager.loadSongPluginState(gSong);
 
 		installModuleProviders();
 		
@@ -2093,6 +2097,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		gSong = new Song();
 		gSong.ensureDefaultSection();
+		pluginManager.loadSongPluginState(gSong);
 
 		
 		installAllTuningsTables();

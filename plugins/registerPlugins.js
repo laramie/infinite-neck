@@ -1,15 +1,9 @@
-// plugins/registerPlugins.js
-import { PluginManager } from './PluginManager.js';
+import pluginManager from './pluginRuntime.js';
 import { TransposePlugin } from './transpose/TransposePlugin.js';
 import { ArpeggioPlugin } from './arpeggio/ArpeggioPlugin.js';
-import EventBus from '../event-bus.js';
 
-const transposeConfig = { amount: 1, NamedNotes: true, PlayedNotes: false, RecordedNotes: false };
-const arpeggioConfig = { /* future: chord/scale/root options */ };
+pluginManager.register(new TransposePlugin());
+pluginManager.register(new ArpeggioPlugin());
+pluginManager.refreshPluginsMenuNode();
 
-const pluginManager = new PluginManager(EventBus);
-pluginManager.register(TransposePlugin, transposeConfig);
-pluginManager.register(ArpeggioPlugin, arpeggioConfig);
-
-// Export for use elsewhere
 export default pluginManager;

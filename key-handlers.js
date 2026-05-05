@@ -48,6 +48,7 @@ import {
 	setSectionKeysSharps
 } from './infinite-neck.js';
 import EventBus from './event-bus.js';
+import pluginManager from './plugins/pluginRuntime.js';
 
 export { document_keypress, document_keyup };
 
@@ -792,6 +793,16 @@ export function performCmdAction(menuItem, args){
 			console.log("noAction=====!");
 			actionResult.result = "none";
 			break;
+		case "pluginProperty:set":
+		case "pluginProperty:select":
+		case "pluginAction:invoke": {
+			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
+			actionResult.result = pluginResult.result || '';
+			if (pluginResult.message) {
+				showMessages(pluginResult.message);
+			}
+			break;
+		}
 		
 		default:
 			break;
@@ -883,6 +894,12 @@ export function setNoteFontSize(newValue){
 
 
 export function getValue(what){
+	if (typeof what === 'string' && what.startsWith('plugin:')) {
+		const pluginValue = pluginManager.resolveValue(what);
+		if (pluginValue !== undefined) {
+			return pluginValue;
+		}
+	}
 	switch (what){
 		case "currentSectionNumber":
 		case "currentSectionIndex":

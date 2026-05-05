@@ -1,0 +1,72 @@
+[
+  {
+    "name": "minFret",
+    "caption": "min fret",
+    "trigger": "m",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": true
+  },
+  {
+    "name": "maxFret",
+    "caption": "max fret",
+    "trigger": "x",
+    "datatype": "Number",
+    "value": 12,
+    "defaultValue": 12,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": true
+  },
+  {
+    "name": "lowToHigh",
+    "caption": "low to high",
+    "trigger": "o",
+    "datatype": "boolean",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "upOnly",
+    "caption": "up only",
+    "trigger": "u",
+    "datatype": "boolean",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "style",
+    "caption": "style",
+    "trigger": "s",
+    "datatype": "org.dynamide.Select",
+    "value": "alternate",
+    "defaultValue": "alternate",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "every", "caption": "every", "trigger": "e" },
+      { "value": "alternate", "caption": "alternate", "trigger": "a" },
+      { "value": "random", "caption": "random", "trigger": "r" }
+    ]
+  },
+  {
+    "name": "apply",
+    "caption": "apply",
+    "trigger": "a",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  }
+]

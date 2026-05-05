@@ -151,6 +151,8 @@ export var gMenuFile =    {
           ]
         },
         {
+          "name": "pluginsRuntime",
+          "runtimeChildren": "pluginManager",
           "caption": "<b>p</b>lugins",
           "trigger": "p"
         },

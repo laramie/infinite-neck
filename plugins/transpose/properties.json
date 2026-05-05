@@ -1,0 +1,59 @@
+[
+  {
+    "name": "intervals",
+    "caption": "intervals",
+    "trigger": "i",
+    "datatype": "org.dynamide.IntegerArray",
+    "value": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "defaultValue": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "inputCaption": "JSON integer array",
+    "visibleInMenu": true,
+    "help": "Array of transposition intervals. The first value represents the current Song state when playback starts."
+  },
+  {
+    "name": "NamedNotes",
+    "caption": "named notes",
+    "trigger": "n",
+    "datatype": "boolean",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "PlayedNotes",
+    "caption": "played notes",
+    "trigger": "p",
+    "datatype": "boolean",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "RecordedNotes",
+    "caption": "recorded notes",
+    "trigger": "r",
+    "datatype": "boolean",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "apply",
+    "caption": "apply",
+    "trigger": "a",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  }
+]

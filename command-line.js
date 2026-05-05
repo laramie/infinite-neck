@@ -146,8 +146,13 @@ export function txtCmdLine_keypress(e) {
         if (doingInput) {
             var args = {};
             args[targetMenu.input.id] = inputval;
-            gCmdActionRunner(targetMenu, args);
-            addCmdResults(targetMenu.input.caption+": "+inputval);
+            var actionResult = gCmdActionRunner(targetMenu, args) || {};
+            if (targetMenu.popOnBang || actionResult.popOnBang) {
+                surfaceOneMenu();
+                surfaceOneMenu();
+            }
+            var resultSuffix = actionResult.result ? " >> " + actionResult.result : "";
+            addCmdResults(targetMenu.input.caption+": "+inputval+resultSuffix);
             clearCmdLine();
             updateCmdLineView(inputval);
             return;

@@ -38,11 +38,13 @@ export class SongPersistence {
         this.myTunings = [];
         this.visibleNoteTables = [];
         this.colorDicts = {};
+        this.plugins = {};
 
         Object.assign(this, songDefaults, obj);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
+        this.plugins = obj.plugins && typeof obj.plugins === 'object' ? { ...obj.plugins } : {};
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
     }
