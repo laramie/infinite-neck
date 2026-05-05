@@ -84,4 +84,7 @@
     overflow-wrap: break-word;
     white-space: normal;
 }
+.sectionPrinterCurrentSectionRow {
+  background-color: #fad55b;
+}
 

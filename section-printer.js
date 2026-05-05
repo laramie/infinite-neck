@@ -126,8 +126,14 @@ export function printSectionsNotes(theSong, theSections){
     });
     result += "</tr>";
 
+    
+    let currentSection = theSong.getCurrentSection();
     theSections.forEach((section, idx) => {
-        result += "<tr><td>"
+        let rowClass = "";
+        if (currentSection === section){
+            rowClass = "class='sectionPrinterCurrentSectionRow'";
+        }
+        result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>"
             + "</td><td>" + section.beats
             + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
