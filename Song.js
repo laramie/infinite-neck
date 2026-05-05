@@ -855,19 +855,55 @@ export class Song extends SongPersistence {
     renameTuningIDInModel(oldID, newID) {
         var oldKey =  Constants.TABLE_ID_PREFIX + oldID;
         var newKey =  Constants.TABLE_ID_PREFIX + newID;
-        // Rename in each section's noteTables
+        if (oldKey === newKey) {
+            return;
+        }
+
         this.sections.forEach(function(section) {
-            if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
-                section.noteTables[newKey] = section.noteTables[oldKey];
-                delete section.noteTables[oldKey];
+            if (!section || !section.sectionNotesByTable || !Object.prototype.hasOwnProperty.call(section.sectionNotesByTable, oldKey)) {
+                return;
             }
+
+            const oldSectionNotes = section.sectionNotesByTable[oldKey];
+            const newSectionNotes = section.sectionNotesByTable[newKey];
+
+            if (newSectionNotes) {
+                newSectionNotes.playedNotes = [
+                    ...(Array.isArray(newSectionNotes.playedNotes) ? newSectionNotes.playedNotes : []),
+                    ...(Array.isArray(oldSectionNotes.playedNotes) ? oldSectionNotes.playedNotes : [])
+                ];
+                newSectionNotes.namedNotes = {
+                    ...(oldSectionNotes.namedNotes || {}),
+                    ...(newSectionNotes.namedNotes || {})
+                };
+                newSectionNotes.recordedNotes = {
+                    ...(oldSectionNotes.recordedNotes || {}),
+                    ...(newSectionNotes.recordedNotes || {})
+                };
+                if (!newSectionNotes.chord && oldSectionNotes.chord) {
+                    newSectionNotes.chord = oldSectionNotes.chord;
+                }
+                if (!newSectionNotes.mode && oldSectionNotes.mode) {
+                    newSectionNotes.mode = oldSectionNotes.mode;
+                }
+            } else {
+                section.sectionNotesByTable[newKey] = oldSectionNotes;
+            }
+
+            delete section.sectionNotesByTable[oldKey];
         });
-        // Rename in visibleNoteTables array
-        if (this.visibleNoteTables) {
-            var idx = this.visibleNoteTables.indexOf(oldKey);
-            if (idx >= 0) {
-                this.visibleNoteTables[idx] = newKey;
-            }
+
+        if (Array.isArray(this.visibleNoteTables)) {
+            const seen = new Set();
+            this.visibleNoteTables = this.visibleNoteTables
+                .map((tableID) => tableID === oldKey ? newKey : tableID)
+                .filter((tableID) => {
+                    if (seen.has(tableID)) {
+                        return false;
+                    }
+                    seen.add(tableID);
+                    return true;
+                });
         }
     }
 
