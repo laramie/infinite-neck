@@ -7,7 +7,7 @@ import {
     setupSongTests, 
     getSong 
 } from '../../infinite-neck-headless.js';
-import { noteNameToNoteID } from './../Constants.js';
+import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
 import { Song} from '../../song.js';
 

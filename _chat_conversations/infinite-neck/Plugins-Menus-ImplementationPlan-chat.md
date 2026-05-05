@@ -839,3 +839,13 @@ These do not block the plan, but they may need confirmation when we touch the co
 3. whether centralized enabled-state should be shown in the menu in phase one, or remain runtime/persistence-only until a later pass
 
 None of these questions require revisiting the design direction before starting implementation.
+
+## Addenda
+
+Persistence in songfile should be:
+./plugins/transpose/
+./plugins/arpeggio/
+
+e.g. 
+
+

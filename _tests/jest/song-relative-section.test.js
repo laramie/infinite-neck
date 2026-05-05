@@ -1,5 +1,5 @@
 // Import the real function from the main codebase
-import { Song } from '../../song.js';
+import { Song } from '../../Song.js';
 import { setupSongTests, getSong } from '../../infinite-neck.js';
 
 
