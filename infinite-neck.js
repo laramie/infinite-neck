@@ -301,6 +301,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function updateSectionsStatus(){
+		if (getSong().isHeadless){
+            return;
+        }
 		//These should be in #topControlsCaptions in index.html
 	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var rawCaption = getSong().getCurrentSection().caption;
@@ -825,7 +828,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$.get( "songs/song-list.json", function(data){
 				var result = "";
 				Object.values(data.songs).forEach(song => {
-					result = result + "<a href='#' data-action='loadSong' data-action-args='["+song+"]'>"+song+"</a><br />";
+					result = result + "<a href='#' data-action='loadSong' data-action-args='"+song+"'>"+song+"</a><br />";
 				});
 				$('#divSongList').html(result).show();
 			});
@@ -2056,6 +2059,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// Headless replacement for document.ready for testing
 	export function setupSongTests() {
 		gSong = new Song();   //var song global in this file (at top).
+		gSong.setHeadless(true, true);
+		gSong.ensureDefaultSection();
 
 		installModuleProviders();
 		

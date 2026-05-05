@@ -9,12 +9,12 @@ import {
 } from '../../infinite-neck-headless.js';
 import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
-import { Song} from '../../song.js';
+import { Song} from '../../Song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PRIMARY_SONG_FILENAME = 'All-Chords.json';
+const PRIMARY_SONG_FILENAME = 'persistence/All-Chords.json';
 
 const LOADED_SONG_FIXTURES = [
     {
@@ -35,7 +35,6 @@ function loadSongForApiTests(songFilename = PRIMARY_SONG_FILENAME) {
     const data = readSongJson(songFilename);
 
     setupSongTests();
-    getSong().setHeadless(true, true);
     getSong().addSections(data);
 
     return {

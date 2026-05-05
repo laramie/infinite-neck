@@ -214,5 +214,7 @@ class SectionStatusWidget {
     }
 }
 
-// Export for global use
-window.SectionStatusBuilder = SectionStatusBuilder;
+// Export for browser-global use when available.
+if (typeof window !== 'undefined') {
+    window.SectionStatusBuilder = SectionStatusBuilder;
+}
