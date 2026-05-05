@@ -3,20 +3,24 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { jest } from '@jest/globals';
 
-import { 
-    setupSongTests, 
-    getSong 
+import {
+    setupSongTests,
+    getSong
 } from '../../infinite-neck-headless.js';
 import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
-import { Song} from '../../Song.js';
+import { Song } from '../../Song.js';
+import { Section } from '../../Section.js';
+import { SectionNotes } from '../../SectionNotes.js';
+import { Note } from '../../Note.js';
+import { Wiring } from '../../Wiring.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//const PRIMARY_SONG_FILENAME = 'persistence/All-Chords.json';
 const PRIMARY_SONG_FILENAME = 'persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
-
+const PRIMARY_TABLE_ID = 'tblS6_1';
+const AUX_TABLE_ID = 'tblP46_1';
 
 const LOADED_SONG_FIXTURES = [
     {
@@ -35,13 +39,15 @@ function readSongJson(songFilename = PRIMARY_SONG_FILENAME) {
 
 function loadSongForApiTests(songFilename = PRIMARY_SONG_FILENAME) {
     const data = readSongJson(songFilename);
+    const song = new Song(data);
 
-    setupSongTests();
-    getSong().addSections(data);
+    song.setHeadless(true, true);
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
 
     return {
         data,
-        song: getSong()
+        song
     };
 }
 
@@ -55,21 +61,6 @@ function createFreshHeadlessSong() {
     return getSong();
 }
 
-describe('Headless tuning bootstrap contracts', () => {
-    test('setupSongTests seeds at least one myTuning in the model', () => {
-        const song = createFreshHeadlessSong();
-        expect(Array.isArray(song.myTunings)).toBe(true);
-        expect(song.myTunings.length).toBeGreaterThan(0);
-        expect(song.myTunings[0]).toHaveProperty('baseID');
-        expect(song.myTunings[0].baseID).toMatch(/^S6_\d+$/);
-        expect(song.myTunings[0].baseID).toBe('S6_1');
-    });
-
-});
-
-//const describeNonCanonicalSongApiLoad = describe.skip;
-const describeNonCanonicalSongApiLoad = describe;
-
 function createSectionWithCaption(song, caption) {
     const section = song.constructSection();
     section.caption = caption;
@@ -82,13 +73,26 @@ function seedSongWithCaptionedSections(song, captions) {
     captions.forEach((caption) => song.addSection(createSectionWithCaption(song, caption)));
 }
 
-describeNonCanonicalSongApiLoad('Song API bootstrap from JSON', () => {
+describe('Headless tuning bootstrap contracts', () => {
+    test('setupSongTests seeds at least one myTuning in the model', () => {
+        const song = createFreshHeadlessSong();
+
+        expect(Array.isArray(song.myTunings)).toBe(true);
+        expect(song.myTunings.length).toBeGreaterThan(0);
+        expect(song.myTunings[0]).toHaveProperty('baseID');
+        expect(song.myTunings[0].baseID).toMatch(/^S6_\d+$/);
+        expect(song.myTunings[0].baseID).toBe('S6_1');
+    });
+});
+
+describe('Song API bootstrap from JSON', () => {
     test.each(LOADED_SONG_FIXTURES)('loads $label into the Song model', ({ filename }) => {
         const { data, song } = loadSongForApiTests(filename);
 
         expect(Array.isArray(data.sections)).toBe(true);
         expect(data.sections.length).toBeGreaterThan(0);
         expect(song.getSections().length).toBe(data.sections.length);
+        expect(song.songfileVersion).toBe('V2');
     });
 
     test.each(LOADED_SONG_FIXTURES)('leaves $label ready for headless API tests', ({ filename }) => {
@@ -97,37 +101,43 @@ describeNonCanonicalSongApiLoad('Song API bootstrap from JSON', () => {
 
         expect(song.isHeadless).toBe(true);
         expect(currentSection).toBe(song.getSections()[song.getSectionsCurrentIndex()]);
-        expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
-        expect(currentSection).toHaveProperty('caption');
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(currentSection.caption).toBe(data.sections[0].caption);
     });
 
-    test.each(LOADED_SONG_FIXTURES)('revives loaded sections with Section methods for $label', ({ filename }) => {
+    test.each(LOADED_SONG_FIXTURES)('revives loaded sections with V2 model instances for $label', ({ filename }) => {
         const { song } = loadSongForApiTests(filename);
         const section = song.getSections()[0];
+        const sectionNotes = section.getSectionNotes(PRIMARY_TABLE_ID);
 
+        expect(section).toBeInstanceOf(Section);
         expect(typeof section.getRootKey).toBe('function');
         expect(typeof section.getRootNoteName).toBe('function');
         expect(typeof section.getTableArr).toBe('function');
         expect(typeof section.isEmpty).toBe('function');
+        expect(sectionNotes).toBeInstanceOf(SectionNotes);
+        expect(sectionNotes.recordedNotes['1'][0]).toBeInstanceOf(Note);
+        expect(song.wirings[0]).toBeInstanceOf(Wiring);
     });
 
-    test.each(LOADED_SONG_FIXTURES)('Song constructor loads $label through canonical factory path', ({ filename }) => {
+    test.each(LOADED_SONG_FIXTURES)('Song constructor loads $label through the canonical V2 path', ({ filename }) => {
         const data = readSongJson(filename);
-        const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
-        //const song = makeSongFromData(data,              { headless: true, quiet: true, fixIndex: true });
+        const song = new Song(data);
+
+        song.setHeadless(true, true);
+        song.ensureDefaultSection();
+        song.fixupCurrentIndexForLoadedSong();
 
         expect(song.isHeadless).toBe(true);
         expect(song.getSections().length).toBe(data.sections.length);
-        expect(song.getSectionsCurrentIndex()).toBe(data.sections.length - 1);
+        expect(song.getSectionsCurrentIndex()).toBe(0);
     });
-
 
     test('Song callers can clamp out-of-range gSectionsCurrentIndex via fixupCurrentIndexForLoadedSong', () => {
         const data = readSongJson(PRIMARY_SONG_FILENAME);
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const song = new Song(data);
 
-        const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
-        //const song =  makeSongFromData(data,             { headless: true, quiet: true, fixIndex: false });
         song.gSectionsCurrentIndex = 99999;
         song.fixupCurrentIndexForLoadedSong();
 
@@ -138,20 +148,20 @@ describeNonCanonicalSongApiLoad('Song API bootstrap from JSON', () => {
     });
 });
 
-describeNonCanonicalSongApiLoad('Song API on loaded JSON', () => {
+describe('Song API on loaded JSON', () => {
     test.each(LOADED_SONG_FIXTURES)('getCurrentSection returns the section at the current index after loading $label', ({ filename }) => {
         const { data, song } = loadSongForApiTests(filename);
-        const lastIndex = getLastSectionIndex(song);
 
-        expect(song.getSectionsCurrentIndex()).toBe(lastIndex);
-        expect(song.getCurrentSection()).toBe(song.getSections()[lastIndex]);
-        expect(song.getCurrentSection()).toBe(data.sections[lastIndex]);
+        expect(song.getSectionsCurrentIndex()).toBe(0);
+        expect(song.getCurrentSection()).toBe(song.getSections()[0]);
+        expect(song.getCurrentSection()).toBeInstanceOf(Section);
+        expect(song.getCurrentSection().caption).toBe(data.sections[0].caption);
     });
 
     test.each(LOADED_SONG_FIXTURES)('gotoSection selects a valid section and ignores an invalid one for $label', ({ filename }) => {
         const { song } = loadSongForApiTests(filename);
         const targetIndex = 1;
-        const originalLastIndex = getLastSectionIndex(song);
+        const originalIndex = song.getSectionsCurrentIndex();
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
         song.gotoSection(targetIndex);
@@ -162,8 +172,8 @@ describeNonCanonicalSongApiLoad('Song API on loaded JSON', () => {
         expect(song.getSectionsCurrentIndex()).toBe(targetIndex);
         expect(warnSpy).toHaveBeenCalled();
 
-        song.gotoSection(originalLastIndex);
-        expect(song.getSectionsCurrentIndex()).toBe(originalLastIndex);
+        song.gotoSection(originalIndex);
+        expect(song.getSectionsCurrentIndex()).toBe(originalIndex);
 
         warnSpy.mockRestore();
     });
@@ -180,12 +190,9 @@ describeNonCanonicalSongApiLoad('Song API on loaded JSON', () => {
         expect(song.getBeat()).toBe(1);
         expect(song.getCurrentSection().currentBeat).toBe(1);
     });
-
-
-
 });
 
-describeNonCanonicalSongApiLoad('Song beat APIs on loaded JSON', () => {
+describe('Song beat APIs on loaded JSON', () => {
     test.each(LOADED_SONG_FIXTURES)('getBeats and setBeats round-trip through current section for $label', ({ filename }) => {
         const { song } = loadSongForApiTests(filename);
 
@@ -236,7 +243,7 @@ describeNonCanonicalSongApiLoad('Song beat APIs on loaded JSON', () => {
         const section = song.constructSection();
         section.beats = 4;
         section.currentBeat = 3;
-        const sectionNotes = section.getSectionNotes('tblS6_1');
+        const sectionNotes = section.getSectionNotes(PRIMARY_TABLE_ID);
         sectionNotes.recordedNotes['1'] = [{ noteName: 'A' }];
         sectionNotes.recordedNotes['2'] = [{ noteName: 'B' }];
         sectionNotes.recordedNotes['3'] = [{ noteName: 'C' }];
@@ -247,7 +254,7 @@ describeNonCanonicalSongApiLoad('Song beat APIs on loaded JSON', () => {
         song.getCurrentSection().currentBeat = 3;
         song.deleteBeat();
 
-        const recordedNotes = song.getCurrentSection().getSectionNotes('tblS6_1').recordedNotes;
+        const recordedNotes = song.getCurrentSection().getSectionNotes(PRIMARY_TABLE_ID).recordedNotes;
 
         expect(song.getBeats()).toBe(3);
         expect(song.getBeat()).toBe(3);
@@ -260,7 +267,7 @@ describeNonCanonicalSongApiLoad('Song beat APIs on loaded JSON', () => {
     });
 });
 
-describeNonCanonicalSongApiLoad('Song section navigation APIs on loaded JSON', () => {
+describe('Song section navigation APIs on loaded JSON', () => {
     test.each(LOADED_SONG_FIXTURES)('firstSection, lastSection, prevSection, and nextSection update index deterministically for $label', ({ filename }) => {
         const { song } = loadSongForApiTests(filename);
         const lastIndex = getLastSectionIndex(song);
@@ -301,7 +308,7 @@ describeNonCanonicalSongApiLoad('Song section navigation APIs on loaded JSON', (
     });
 });
 
-describeNonCanonicalSongApiLoad('Song section mutation APIs', () => {
+describe('Song section mutation APIs', () => {
     test('insertSectionAtDest honors BEGIN, END, and numeric insertion-after behavior', () => {
         const song = createFreshHeadlessSong();
         seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
@@ -326,21 +333,21 @@ describeNonCanonicalSongApiLoad('Song section mutation APIs', () => {
         const song = createFreshHeadlessSong();
         seedSongWithCaptionedSections(song, ['A', 'B', 'C', 'D']);
 
-        song.gotoSection(1); // B
+        song.gotoSection(1);
         const movingSection = song.getCurrentSection();
         song.moveSectionTo(3);
 
         expect(song.getSectionsCurrentIndex()).toBe(3);
         expect(song.getCurrentSection()).toBe(movingSection);
-        expect(song.getSections().map((s) => s.caption)).toEqual(['A', 'C', 'D', 'B']);
+        expect(song.getSections().map((section) => section.caption)).toEqual(['A', 'C', 'D', 'B']);
 
-        song.gotoSection(0); // A
+        song.gotoSection(0);
         const sectionToEnd = song.getCurrentSection();
         song.moveSectionToEND();
 
         expect(song.getSectionsCurrentIndex()).toBe(song.getSections().length - 1);
         expect(song.getCurrentSection()).toBe(sectionToEnd);
-        expect(song.getSections().map((s) => s.caption)).toEqual(['C', 'D', 'B', 'A']);
+        expect(song.getSections().map((section) => section.caption)).toEqual(['C', 'D', 'B', 'A']);
     });
 
     test('deleteCurrentSection removes one section, updates current index, and keeps remaining order', () => {
@@ -348,19 +355,19 @@ describeNonCanonicalSongApiLoad('Song section mutation APIs', () => {
         seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
         const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
 
-        song.gotoSection(1); // B
+        song.gotoSection(1);
         const didDelete = song.deleteCurrentSection();
 
         expect(didDelete).toBe(true);
         expect(song.getSections().length).toBe(2);
-        expect(song.getSections().map((s) => s.caption)).toEqual(['A', 'C']);
+        expect(song.getSections().map((section) => section.caption)).toEqual(['A', 'C']);
         expect(song.getSectionsCurrentIndex()).toBe(0);
         expect(song.getCurrentSection().caption).toBe('A');
 
         triggerSpy.mockRestore();
     });
 
-    test('addDeepCloneSection deep-clones noteTables and recordedNotes', () => {
+    test('addDeepCloneSection deep-clones V2 sectionNotesByTable data', () => {
         const song = createFreshHeadlessSong();
         song.sections = [];
         song.gSectionsCurrentIndex = 0;
@@ -370,27 +377,43 @@ describeNonCanonicalSongApiLoad('Song section mutation APIs', () => {
         source.rootID = '7';
         source.rootIDLead = '9';
         source.beats = '3';
-        source.namedNotes = { A: true, C: true };
-        source.noteTables.tblP46 = [{ midinum: 60, row: 1, colorClass: 'c1', styleNum: 1 }];
-        source.recordedNotes = { '1': [{ midinum: 60, row: 1 }], '2': [], '3': [] };
+
+        const sourceNotes = source.getSectionNotes(AUX_TABLE_ID);
+        sourceNotes.namedNotes = {
+            A: new Note({ noteName: 'A', colorClass: 'noteScale', styleNum: 1 }),
+            C: new Note({ noteName: 'C', colorClass: 'noteChord', styleNum: 2 })
+        };
+        sourceNotes.playedNotes = [new Note({ noteName: 'C', midinum: 60, row: 1, colorClass: 'c1', styleNum: 1 })];
+        sourceNotes.recordedNotes = {
+            '1': [new Note({ noteName: 'C', midinum: 60, row: 1 })],
+            '2': [],
+            '3': []
+        };
+
         song.addSection(source);
         song.gotoSection(0);
 
         const cloned = song.addDeepCloneSection();
+        const clonedNotes = cloned.getSectionNotes(AUX_TABLE_ID);
 
         expect(song.getSections().length).toBe(2);
         expect(song.getCurrentSection()).toBe(cloned);
         expect(cloned).not.toBe(source);
-        expect(cloned.noteTables).toEqual(source.noteTables);
-        expect(cloned.recordedNotes).toEqual(source.recordedNotes);
-        expect(cloned.noteTables).not.toBe(source.noteTables);
-        expect(cloned.recordedNotes).not.toBe(source.recordedNotes);
+        expect(cloned).toBeInstanceOf(Section);
+        expect(cloned.sectionNotesByTable).toEqual(source.sectionNotesByTable);
+        expect(cloned.sectionNotesByTable).not.toBe(source.sectionNotesByTable);
+        expect(clonedNotes).toBeInstanceOf(SectionNotes);
+        expect(clonedNotes).not.toBe(sourceNotes);
+        expect(clonedNotes.playedNotes).toEqual(sourceNotes.playedNotes);
+        expect(clonedNotes.playedNotes).not.toBe(sourceNotes.playedNotes);
+        expect(clonedNotes.recordedNotes).toEqual(sourceNotes.recordedNotes);
+        expect(clonedNotes.recordedNotes).not.toBe(sourceNotes.recordedNotes);
         expect(cloned.currentBeat).toBe(1);
 
         triggerSpy.mockRestore();
     });
 
-    test('addShallowCloneSection clones namedNotes but leaves noteTables and recordedNotes empty', () => {
+    test('addShallowCloneSection clones V2 namedNotes but empties playedNotes and recordedNotes', () => {
         const song = createFreshHeadlessSong();
         song.sections = [];
         song.gSectionsCurrentIndex = 0;
@@ -400,28 +423,37 @@ describeNonCanonicalSongApiLoad('Song section mutation APIs', () => {
         source.rootID = '5';
         source.rootIDLead = '7';
         source.beats = '6';
-        source.namedNotes = { A: { colorClass: 'noteScale' }, C: { colorClass: 'noteChord' } };
-        source.noteTables.tblP46 = [{ midinum: 61, row: 1, colorClass: 'c2', styleNum: 2 }];
-        source.recordedNotes = { '1': [{ midinum: 61, row: 1 }] };
+
+        const sourceNotes = source.getSectionNotes(AUX_TABLE_ID);
+        sourceNotes.namedNotes = {
+            A: new Note({ noteName: 'A', colorClass: 'noteScale', styleNum: 1 }),
+            C: new Note({ noteName: 'C', colorClass: 'noteChord', styleNum: 2 })
+        };
+        sourceNotes.playedNotes = [new Note({ noteName: 'Db', midinum: 61, row: 1, colorClass: 'c2', styleNum: 2 })];
+        sourceNotes.recordedNotes = {
+            '1': [new Note({ noteName: 'Db', midinum: 61, row: 1 })]
+        };
+
         song.addSection(source);
         song.gotoSection(0);
 
         const cloned = song.addShallowCloneSection();
+        const clonedNotes = cloned.getSectionNotes(AUX_TABLE_ID);
 
         expect(song.getSections().length).toBe(2);
         expect(song.getCurrentSection()).toBe(cloned);
         expect(cloned).not.toBe(source);
-        expect(cloned.namedNotes).toEqual(source.namedNotes);
-        expect(cloned.namedNotes).not.toBe(source.namedNotes);
-        expect(cloned.noteTables).toEqual({});
-        expect(cloned.recordedNotes).toEqual({});
+        expect(clonedNotes.namedNotes).toEqual(sourceNotes.namedNotes);
+        expect(clonedNotes.namedNotes).not.toBe(sourceNotes.namedNotes);
+        expect(clonedNotes.playedNotes).toEqual([]);
+        expect(clonedNotes.recordedNotes).toEqual({});
         expect(cloned.currentBeat).toBe(1);
 
         triggerSpy.mockRestore();
     });
 });
 
-describeNonCanonicalSongApiLoad('Song index and table accessor contracts', () => {
+describe('Song index and table accessor contracts', () => {
     test('fixupCurrentIndexForLoadedSong clamps out-of-range high and low values', () => {
         const song = createFreshHeadlessSong();
         seedSongWithCaptionedSections(song, ['A', 'B', 'C']);
@@ -438,10 +470,9 @@ describeNonCanonicalSongApiLoad('Song index and table accessor contracts', () =>
 
         warnSpy.mockRestore();
     });
-
 });
 
-describeNonCanonicalSongApiLoad('Song note mapping and emptiness contracts', () => {
+describe('Song note mapping and emptiness contracts', () => {
     test('noteNameToNoteID, noteIDToNoteName, and root name getters are consistent', () => {
         const song = createFreshHeadlessSong();
         song.gotoSection(0);
@@ -450,10 +481,10 @@ describeNonCanonicalSongApiLoad('Song note mapping and emptiness contracts', () 
         expect(noteNameToNoteID('A')).toBe(0);
 
         song.getCurrentSection().sharps = false;
-        expect(song.noteIDToNoteName(1)).toContain('9837'); // flat glyph
+        expect(song.noteIDToNoteName(1)).toContain('9837');
 
         song.getCurrentSection().sharps = true;
-        expect(song.noteIDToNoteName(1)).toContain('9839'); // sharp glyph
+        expect(song.noteIDToNoteName(1)).toContain('9839');
 
         song.getCurrentSection().rootID = '3';
         song.getCurrentSection().rootIDLead = '-1';
@@ -465,8 +496,7 @@ describeNonCanonicalSongApiLoad('Song note mapping and emptiness contracts', () 
     });
 });
 
-describeNonCanonicalSongApiLoad('Song construction and section add APIs', () => {
-
+describe('Song construction and section add APIs', () => {
     test('fresh song initialization keeps expected defaults and starting section state', () => {
         const song = createFreshHeadlessSong();
 
@@ -479,16 +509,18 @@ describeNonCanonicalSongApiLoad('Song construction and section add APIs', () => 
         expect(song.getCurrentSection()).toHaveProperty('rootID');
     });
 
-    test('constructSection returns a section-shaped object with default song rootID', () => {
+    test('constructSection returns a V2 section object with default song rootID', () => {
         const song = createFreshHeadlessSong();
         const section = song.constructSection();
 
-        expect(section).toHaveProperty('noteTables');
-        expect(section).toHaveProperty('namedNotes');
-        expect(section).toHaveProperty('recordedNotes');
+        expect(section).toBeInstanceOf(Section);
+        expect(section).toHaveProperty('sectionNotesByTable');
         expect(section).toHaveProperty('beats');
         expect(section).toHaveProperty('currentBeat');
         expect(section).toHaveProperty('rootID');
+        expect(typeof section.getTableArr).toBe('function');
+        expect(typeof section.getSectionNotes).toBe('function');
+        expect(typeof section.isEmpty).toBe('function');
         expect(section.rootID).toBe(song.rootID);
     });
 
