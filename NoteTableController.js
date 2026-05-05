@@ -42,7 +42,8 @@ import {
     appInit_running,
     controlsToDisplayOptions,
     buildCellsForTable,
-    turnOffAutoColorCheckbox
+    turnOffAutoColorCheckbox,
+    updatePrintSections
 } from './infinite-neck.js';
 import { 
     buildTonalPickerSet, 
@@ -268,6 +269,7 @@ export function colorNote(cell) {
                                                  tonalResult.chord, tonalResult.mode);
         
         $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
+        updatePrintSections(); //infinite-neck, rather than updateSectionStatus, which is too heavy.
     }
 }
 export function colorNoteInner(cell) {
