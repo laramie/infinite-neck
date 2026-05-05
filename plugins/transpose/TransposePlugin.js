@@ -13,9 +13,8 @@ function formatOptions(propertiesByName) {
 export class TransposePlugin {
   constructor() {
     this.id = 'transpose';
-    this.registeredName = 'Transpose';
+    this.registeredName = 'transpose';
     this.menuTrigger = 't';
-    //this.eventNames = ['DaCapo:OnSongEnd', 'DaCapo:OnSectionBegin'];
     this.eventNames = ['DaCapo:OnSongEnd'];
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));

@@ -24,9 +24,9 @@ function readSongJson(songFilename = FIXTURE_FILENAME) {
 function loadSongCanonical(songFilename = FIXTURE_FILENAME) {
     const data = readSongJson(songFilename);
     const song = new Song(data);
+    song.setHeadless(true, true);
     song.ensureDefaultSection();
     song.fixupCurrentIndexForLoadedSong();
-    song.setHeadless(true, true);
     return { data, song };
 }
 

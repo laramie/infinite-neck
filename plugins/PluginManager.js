@@ -132,7 +132,7 @@ export class PluginManager {
   buildManagedPropertyNodes(pluginId) {
     return [
       this.buildManagedBooleanNode(pluginId, 'enabled', 'enabled', 'e'),
-      this.buildManagedBooleanNode(pluginId, 'enableOnSongLoad', 'enable on load', 'l')
+      this.buildManagedBooleanNode(pluginId, 'enableOnSongLoad', 'load enabled', 'l')
     ];
   }
 

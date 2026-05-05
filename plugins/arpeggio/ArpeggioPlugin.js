@@ -5,7 +5,7 @@ import { getSong } from '../../infinite-neck.js';
 export class ArpeggioPlugin {
   constructor() {
     this.id = 'arpeggio';
-    this.registeredName = 'Arpeggio';
+    this.registeredName = 'arpeggio';
     this.menuTrigger = 'a';
     this.eventNames = ['DaCapo:OnSongEnd', 'DaCapo:OnSectionBegin'];
     this.properties = properties.map((spec) => new PluginProperty(spec));

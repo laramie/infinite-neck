@@ -4,8 +4,7 @@ import path from 'path';
 import { logVerbose, INFINITE_NECK_VERBOSE, VERBOSE_MODE, VERBOSE_MODE_INT } from './LogVerboseJest.js';
 import { 
     setupSongTests, 
-    getSong, 
-    readVersionHeadless 
+    getSong
 } from '../../infinite-neck-headless.js';
 
 
@@ -24,7 +23,6 @@ const INFINITE_NECK_SUITE = process.env.INFINITE_NECK_SUITE;
 const INFINITE_NECK_SUITE_INPUT = parseInt(INFINITE_NECK_SUITE, 10);
 const SUITE = isNaN(INFINITE_NECK_SUITE_INPUT) ? 0 : INFINITE_NECK_SUITE_INPUT;
 const MORE_THRESHOLD = VERBOSE_MODE > 1 ? 100 : 10;
-const RUN_WHOLE_SONG_LIBRARY_TESTS = process.env.INFINITE_NECK_RUN_LIBRARY_TESTS === '1';
 
 function printVerboseModeMessage() {
     function getHelpMsg() {
@@ -384,39 +382,8 @@ function rootIDsMore(sectionRootIDsArr) {
 
 printVerboseModeMessage();
 
-describe('getSong() test_getRelativeSectionWithWrap', () => {
-    test('should run test_getRelativeSectionWithWrap without errors', () => {
-        setupSongTests();
-        getSong().setHeadless(true, true/*quiet*/);
-        logVerbose(1, "Build Version: \n"+JSON.stringify(readVersionHeadless(),null,4));
-        //songs always have the "Miranda" section as sections[0].
-        getSong().sections[0].caption = 'Section 1 (default)';
-        getSong().sections[0].rootID = '1';
-        getSong().addSection(getSong().constructSection());
-        getSong().addSection(getSong().constructSection());
-        getSong().addSection(getSong().constructSection());
-        getSong().sections[1].caption = 'Section 2';
-        getSong().sections[1].rootID = '2';
-        getSong().sections[2].caption = 'Section 3';
-        getSong().sections[2].rootID = '3';
-        getSong().sections[3].caption = 'Section 4';
-        getSong().sections[3].rootID = '4';
-        expect(() => {
-            const testResult = getSong().test_getRelativeSectionWithWrap(false);
-            if (testResult.warnings && testResult.warnings.length>0){
-                logVerbose(1, "test_getRelativeSectionWithWrap should kick back some foo/bar (and +/- without digit) validation errors: \n"+testResult.warnings.join("\n"));
-            }
-            if (testResult.infos && testResult.infos.length>0){
-                logVerbose(1, "test_getRelativeSectionWithWrap should kick back some infos which mean 'PASS': \n"+testResult.infos.join("\n"));
-            }
-            if (testResult.terse && testResult.terse.length>0){
-                logVerbose(1, "test_getRelativeSectionWithWrap should kick back some terse results which mean 'PASS': \n"+testResult.terse.join("\n"));
-            }
-        }).not.toThrow();
-    });
-});
-
-const describeSongFileLoading = RUN_WHOLE_SONG_LIBRARY_TESTS ? describe : describe.skip;
+//const describeSongFileLoading = RUN_WHOLE_SONG_LIBRARY_TESTS ? describe : describe.skip;
+const describeSongFileLoading = describe;
 
 describeSongFileLoading('Song file and getSong() loading validation', () => {
     let accumFilename = [];

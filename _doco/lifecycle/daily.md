@@ -13,6 +13,23 @@
         export INFINITE_NECK_VERBOSE=-1
         node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
     ```
+### Run Jest Tests with more output
+
+    - This gives a quiet output.
+    - The Jest flag --verbose gives some test details.  
+    - Use INFINITE_NECK_VERBOSE=1 etc. for even more.
+    - To see a Jest list of songs loaded: 
+        ```
+        export INFINITE_NECK_VERBOSE=-1 ;      node --experimental-vm-modules node_modules/.bin/jest _tests/jest/song-load-new.test.js --verbose
+        ```
+    - To really see the details on loading songs:
+        ```
+        export INFINITE_NECK_VERBOSE=2 ;      node --experimental-vm-modules node_modules/.bin/jest _tests/jest/song-load-new.test.js
+        ```
+    - To see the version info: 
+        ```
+        export INFINITE_NECK_VERBOSE=1 ; node --experimental-vm-modules node_modules/.bin/jest _tests/jest/version.test.js
+        ```    
 
 ## Push new version
     - [Run Jest Tests](#run-jest-tests)
@@ -35,6 +52,11 @@
         node bin/version-update.js ./version.json
         node bin/version-read.js
         ```
+
+    - To see the version info in the Jest test: 
+        ```
+        export INFINITE_NECK_VERBOSE=1 ; node --experimental-vm-modules node_modules/.bin/jest _tests/jest/version.test.js
+        ```        
 
     - In general, we want pushed versions to be equal to the TAG:
 

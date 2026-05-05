@@ -515,7 +515,7 @@ table.viewControls th {
 }
 #allTuningsTable tr:nth-child(odd),
 #myTuningsTable tr:nth-child(odd) {
-  background-color: lightgreen;
+  background-color: Khaki;
 }
 #allTuningsTable select,
 #myTuningsTable select {
@@ -533,7 +533,7 @@ table.viewControls th {
 }
 #allTuningsTable tr:hover,
 #myTuningsTable tr:hover {
-    background-color: Khaki;
+    background-color: lightgreen;
 }
 
 .userInstrumentControlsGroup {

@@ -17,14 +17,19 @@ const { Chord } = globalThis.Tonal?.Chord
     : await import('tonal');
 
 export function printSections(theSong, theSections, showDetails) {
+    let currentSection = theSong.getCurrentSection();
     let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th><th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";
     let details;
     theSections.forEach((section, idx) => {
+        let rowClass = "";
+        if (currentSection === section){
+            rowClass = "class='sectionPrinterCurrentSectionRow'";
+        }
         details = "<pre style='margin:0'>" + getSectionNotesDisplayString(section) + "</pre>";
         const SEP = "</td><td>";
-        result += "<tr><td>"
+        result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
             + section.beats + SEP
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP

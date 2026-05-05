@@ -601,7 +601,7 @@
 
         <p class="bigpoint">You can then loop over the Beats in one Section, or in all Sections.</p>
 
-            <p><img src="img/help/transport.png">
+            <p><img src="img/help/context/transport.png">
             <br><i>Transport showing Section 1 of 5, on Beat 3 of 4.</i></p>
 
         <p  class="bigpoint">You can save your songs to share with someone or to come back and practice them later.</p>
@@ -709,7 +709,7 @@
                  <li>Watch lead patterns moving against patterns of comping, and practice improvising over the patterns and changes.
                  <li>See the difference between tunings in real time
              (pull up two tunings and press Ctrl-minus in your browser to make them both fit).
-                 <li>Practice a song someone has saved in some other tuning, by switching it to your tuning.
+                 <li>Practice a song someone has saved in some other tuning, by observing it to your tuning (see <a href="#event-wiring">listeners</a>).
              </ul>
              </p>
        <p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions, comments, or gripes.  </p>
@@ -1270,7 +1270,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  This file is in JSON format, which is readable in any text editor.
      <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;  Click the "Download Song" button.
      <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  Affirm the system dialog, choosing a location for your file.
-     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  From here, you can archive it, share it, and upload it later to view it again.
+     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp;  From here, you can archive it, share it, and open it later to view it again.
 
  </p>
 
@@ -1398,9 +1398,9 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, Shallow, and 
 
 <a name="transposing"></a>
 <h5>Transposing</h5>
-<p>Transposing "Up" moves the notes and the Root Key up the scale one half-step.  Transposing with the "j" key ("Jump") moves the notes
-    and the Root up a fourth, which is up one string on a P4 instrument.  Remember that Jumping up a fourth from the G string
-    to the B string in Standard guitar tuning will not be on the same fret.
+<p>Transposing "<b>u</b>p" moves the notes and the Root Key up the scale one half-step. (<i>Uppercase matters: <b>u</b> goes up, <b>U</b> goes down. <b>d</b> goes down, <b>D</b> goes up.</i>)  Transposing with the "j" key ("<b>j</b>ump") moves the notes
+    and the Root up a fourth, which <b>j</b>umps up one string on a P4 instrument.  Remember that <b>j</b>umping up a fourth from the G string
+    to the B string in Standard guitar tuning will not be on the same fret. (<i>Uppercase matters: <b>j</b> jumps up, <b>J</b> jumps down.</i>)
 </p>
 <p>
     Here we show a Section with a C major chord shown in NamedNotes (all legal notes on the neck) which <i>will</i> move
@@ -1428,7 +1428,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, Shallow, and 
  <p>Notice that the C major chord is now a D-flat major chord, that all D-flats are highlighted with a fat, yellow Highlight to show you the new Root,
      and that the B-flat SingleNote is still a B-flat, but its Note Function has changed from the dominant seven to the six,
      since its relative position to the Root has changed (it was two strings up from the Root, same fret; now it
-     is still two strings up, but one fret back).
+     is still two strings up, but the Root has moved one fret up the neck).
      You can see the new Root key in the caption bar of the instrument: a small, sunken box has a D-flat where before it had a C.
      You can also see that AutoColor has shown the Note Functions being the same in the new key, since AutoColor assigns colors
      to Note Function, regardless of NoteName or Root Key.  In this AutoColor ColorScheme ("CycleOfColors2020"), the Root is black, the V is red,
@@ -1928,19 +1928,29 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
  <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop, and (some day) on the MIDI bus.  
     The Event Wiring Controls (toggle with keyboard shortcut <span class="key">e</span> or with the "Wiring" buttons) let you map these events to each instrument.  Here are the main controls:
             <ul> 
-                <li><b>Relative Section Amount</b>: a string with a direction and an integer, giving a number of Sections to "look-ahead" or "look-behind" for notes to display in this table.
-                    The default is the empty string, which means "Current Section".  Going +1 (ahead) means look-ahead to the next Section and show those notes in this table/instrument, so that
-                    this table is a preview of the coming Section. Going -1 (behind) means look-behind to the previous Section and show what you just played.
-                    In this way, you can place a look-behind instrument just above your instrument, and a look-ahead instrument just below your instrument,
-                    and you have a three paned view of (1) past notes, (2) notes in this Section, and (3) notes coming up, 
-                    otherwise known as a "Piano Roll" or similar to what you 
-                    coud see in a score, or chart, or Guitar-Hero, or Synthesia, or Tetris.
+                <li><b>Relative Section Amount</b>: a text-string with a direction and an integer, giving a number of Sections to "look-ahead" or "look-behind" for notes to display in this table.
+                    <ul>
+                        <li>The default is the empty string, which means "Current Section".  
+                        <li>Going +1 (ahead) means look-ahead to the next Section and show those notes in this 
+                            table/instrument, so that this table is a preview of the coming Section. 
+                        <li>Going -1 (behind) means look-behind to the previous Section and show what you just played.
+                        <li>In this way, you can place a look-behind instrument just above your instrument, and a look-ahead instrument just below your instrument,
+                            and you have a three paned view of (1) past notes, (2) notes in this Section, and (3) notes coming up, 
+                            otherwise known as a "Piano Roll" or similar to what you 
+                            coud see in a score, or chart, or Guitar-Hero, or Synthesia, or Tetris.
+                    </ul>
                 </li>
-                <li><b>Instrument</b>: a dropdown list of other instruments, so you can "listen" to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  Notes you "listen" to 
-                    will be replayed in your instrument but not recorded in your instrument (unless you turn on recording for your instrument).
-                    You can only listen to one instrument, and you can't listen to your own instrument.  
-                    If you chose "Relative Section" in a clone of your instrument, you can have the clones listen to your instrument,
+                <li><b>Instrument</b>: a dropdown list of other instruments, so you can "listen" to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  
+                    <ul>
+                        <li>Notes you "listen" to 
+                    will be replayed in your instrument but not recorded in your instrument <!-- some day: (unless you turn on recording for your instrument)-->.
+
+                        <li>This is useful if you want to see the notes of a standard tuning song on the neck of your P4 turning, for example.
+
+                        <li>You can only listen to one instrument, and you can't listen to your own instrument.
+                        <li>If you chose "Relative Section" in a clone of your instrument, you can have the clones listen to your instrument,
                      in which case you have look-ahead and look-behind of other Sections.
+                        </ul>
                 </li>
                 <li><b>Wiring button</b>: shows various states: <b>[<s>No Instrument</s>]</b>, <b>[Add Wiring]</b>, <b>[Wired]</b>.  
                     <ul>
@@ -2118,7 +2128,7 @@ in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>
     <a name="landau-top"></a>
     <h3>Landau Top</h3>
     <p>For those of you who didn't live through the 70's
-        a "Landau Top" was an interpretation of old carriage option from Laundau, Germany,
+        a "Landau Top" was an interpretation of an old carriage option from Laundau, Germany,
          which was implemented in Pleather (Vinyl) in the stock 1978 Chevy Monte Carlo,
         with these hip-daddy colors. 
         <br><img src="img/help/monte-carlo-78.png" width="500"></li>
@@ -3567,8 +3577,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr>
             <td>Special Rows (SR)
             </td>
-            <td>In Tunings, "Special Rows" showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
-                first two rows of the instrument to be shown in different background colors, to distinguish them from P4 tunings.
+            <td>In Tunings, "Special Rows" checkboxes, showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
+                special rows of the instrument to be shown in different background colors, to distinguish them from P4 tunings.
+                For Standard tuning 6-string guitar, the "Special Rows" are the first two rows. 
                         See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
 
             </td>
@@ -3583,8 +3594,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 fretboard of guitars, and sometimes on the top edge of the neck, too.
                 Each Tuning in the Tunings Library may have "diamonds" property and a "doubleDiamonds" property which give the 
                 fret locations for instruments
-                that have them (e.g. a Uke has different positions that guitars, and some guitars have diamonds on the first fret 
-                while many don't).  Instruments such as Cellos don't have them in <span class="productsmaller">infinite-neck</span>.
+                that have them (e.g. a Uke has different positions than guitars, and some guitars have diamonds on the first fret 
+                while many don't). DoubleDiamonds on guitars usually mark the twelth fret (octave).  Instruments such as Cellos don't have them in <span class="productsmaller">infinite-neck</span>.
                 Diamonds and DoubleDiamonds are styled differently in Themes. 
 
             </td>
@@ -3622,7 +3633,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr>
             <td>Cell
             </td>
-            <td>One spot on the neck -- one string at one fret.  The term comes from spreadsheets, since we use HTML noteTables to model the fretboard.
+            <td>One spot on the neck -- one string at one fret.  The term comes from spreadsheets, since we use HTML tables to model the fretboard.
             </td>
         </tr>
         <tr>
