@@ -43,7 +43,7 @@ import * as InfiniteNeck from './infinite-neck.js';
 		}
 	}
 
-	function clearBeatAndSectionLooping(){
+	export function clearBeatAndSectionLooping(){
 		const wasSectionsLooping = isSectionsLooping;
 		const wasBeatsLooping = isBeatsLooping;
 		isSectionsLooping = false;

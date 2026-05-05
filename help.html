@@ -2397,7 +2397,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#changeHeightOfCells"><b>H</b> shorter</a> <a href="#changeHeightOfCells"><b>h</b>eight</a></td>
         <td><a href="#transposeNamedNotesDown"><b>J</b>ump down</a> <a href="#transposeNamedNotesUp"><b>j</b>ump up</a></td>
         <td><a href="#lowerRootKey"><b>K</b>ey<br> down</a> <a href="#raiseRootKey"><b>k</b>ey up</a> </td>
-        <td><a href="#loop"><b>l</b>oop</a></td>
+        <td><a href="#loop"><b>L</b>oop stop</a><br><a href="#loop"><b>l</b>oop [toggle]</a></td>
         <td>:<br>;</td>
         <td>"<br>'</td>
         <td colspan="2">Enter</td>
@@ -2553,7 +2553,11 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td><span class="key">L</span>
                 </td>
-                <td>Loop
+                <td><span class="key">l</span> toggles looping, starting from the beat and section where you are, or stopping at the current beat if you are currently looping.
+                    <br>
+                    <br><span class="key">L</span> stops beat and Section looping. 
+                    <br>
+                    <br>Turn on with <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button> from the the Quick Menu <span class="key">Q</span>, or from the command-line toggle: <span class="menuExampleLine"><b>/rr</b> (<b>r</b>un <b>r</b>andom)</span>, looking for "RANDOM ON" at the top of the command-line menu results display. 
                 </td>
             </tr>
             <tr id="previousBeat">

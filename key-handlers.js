@@ -17,7 +17,8 @@ import {
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
-	toggleLoopSections
+	toggleLoopSections,
+	clearBeatAndSectionLooping
 } from './looper.js';
 import {
 	buildChildMenuCaptionsRow,
@@ -196,9 +197,11 @@ function document_keypress(e) {
                 cycleThruKeys(-1);
                 highlightOneNote(getSong().getRootNoteName());
                 break;
-            case "l":
-            case "L":
+			case "l":
                 toggleLoopSections();
+                break;
+            case "L":
+                clearBeatAndSectionLooping();
                 break;
             case "n":
             case "N":

@@ -140,7 +140,7 @@ function format_saveToChartButton(ownerID, tableID, sectionIdx, dest){
 }
 export function format_allChordsButton(ownerID, tableID, sectionIdx, dest){
     if (dest === "chords"){
-        let btn = `<button class="AllChordsBtn" onclick="toggleAllChordsButtonState('${ownerID}', '${tableID}', '${sectionIdx}');">&#x53EF;</button>`;   // &#x53EF; mean "possible,feasable,good", pronounced kě. was &#x2505;
+        let btn = `<button class="AllChordsBtn" title="Possible chords" onclick="toggleAllChordsButtonState('${ownerID}', '${tableID}', '${sectionIdx}');">&#x53EF;</button>`;   // &#x53EF; mean "possible,feasable,good", pronounced kě. was &#x2505;
         return btn;
     }
     return "";
@@ -300,16 +300,16 @@ globalThis.saveTonalToChart = function saveTonalToChart(ownerID, tableID, sectio
 }
 
 globalThis.toggleAllChordsButtonState = function(ownerID, tableID, sectionIdx){
-    console.log("toggleAllChordsButtonState:"+JSON.stringify(globalThis.tonalChordsButtonStates));
+    //console.log("toggleAllChordsButtonState:"+JSON.stringify(globalThis.tonalChordsButtonStates));
     let state = globalThis.getTonalAllChordsButtonState(tableID);
     if (state === "show"){
         $(`#spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}`).hide();
         setTonalAllChordsButtonState(tableID, "hide");
-        console.log("toggleAllChordsButtonState:hide");
+        //console.log("toggleAllChordsButtonState:hide");
     } else if (state === "hide"){
         $(`#spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}`).show();
         setTonalAllChordsButtonState(tableID, "show");
-        console.log("toggleAllChordsButtonState:show");
+        //console.log("toggleAllChordsButtonState:show");
     }
 }
 

@@ -104,6 +104,8 @@ import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
 
+import pluginManager from './plugins/registerPlugins.js';
+
 // If running in a browser, call appInit() on DOM ready.  Browser loads DOM, then since index.html pulls in this module, this module is run after DOM loaded.  
 // This top-level code runs first, which calls appInit().
 if (typeof window !== 'undefined' && typeof $ !== 'undefined') {

@@ -29,6 +29,9 @@ const songDefaults = {
 };
 
 export class SongPersistence {
+    //TODO: add arg gSongPreferences so that colorDicts, and others can be set from preferences/template song.
+    //SEE: chat conversation about what is safe/unsafe to access here: 
+    //        _chat_conversations/infinite-neck/gSongPreferences-chat.md
     constructor(obj = {}, Section_Class) {
         //do these first for non-null defaults, though they may get overwritten by obj.
         this.randomSectionHistory = [];

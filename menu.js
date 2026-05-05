@@ -152,29 +152,7 @@ export var gMenuFile =    {
         },
         {
           "caption": "<b>p</b>lugins",
-          "trigger": "p",
-          "children": [
-            {
-              "name": "inputsDaCapo",
-              "caption": "<b>i</b>nputs to DaCapo",
-              "trigger": "i",
-              "action": "pluginDaCapoWInput",
-              "input": {
-                "type": "input",
-                "caption": "JSON config",
-                "defaultWorked": "{'named':true,'played':true}",
-                "default": {'amount': 1, 'NamedNotes':true, 'PlayedNotes':true, 'RecordedNotes':true},
-                "datatype": "json",
-                "id": "daCapoInput"
-              }
-            },
-            {
-                "name": "daCapo",
-                "caption": "<b>d</b>aCapo",
-                "trigger": "d",
-                "action": "pluginDaCapo"
-            }
-          ]
+          "trigger": "p"
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
