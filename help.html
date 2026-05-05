@@ -6,6 +6,7 @@
        body {
            font-size: 14pt;
            margin: 2em;
+           margin-bottom: 0;
            font-weight: normal;
        }
        a {
@@ -263,66 +264,66 @@
             background-color: rgb(25, 6, 0);
         }
 
-#KeymapActions a.Fingering {
-    background-color: white;
-    border: none;
-}
-#KeymapActions i {
-    color: dodgerblue;
-    background-color: black;
-    padding: 0;
-    padding-bottom: 0.1em;
-    font-weight: normal;
-    font-family: monospace;
-    font-size: 130%;
-    text-align: center;
-    box-shadow: 0 0 4pt 4pt cornflowerblue;
-    border: 1px solid darkblue;
-    border-radius: 50%;
-}
+        #KeymapActions a.Fingering {
+            background-color: white;
+            border: none;
+        }
+        #KeymapActions i {
+            color: dodgerblue;
+            background-color: black;
+            padding: 0;
+            padding-bottom: 0.1em;
+            font-weight: normal;
+            font-family: monospace;
+            font-size: 130%;
+            text-align: center;
+            box-shadow: 0 0 4pt 4pt cornflowerblue;
+            border: 1px solid darkblue;
+            border-radius: 50%;
+        }
 
-#KeymapActions a {
-    margin-right: 2px;
-    font-size: 80%;
-    box-shadow: 5px 2px 4px black;
-    border-radius: 2px;
-    border: 1px solid gray;
-    transition: all 0.1s ease;
-}
-#KeymapActions a.Fingering {
-    background-color: white;
-    border: none;
-    box-shadow: none;
-}
-#KeymapActions a:active {
-    box-shadow: 5px 1px 3px rgb(31, 62, 0);
-    transform: translateY(3px); /* Move the button down slightly */
-}
-#KeymapActions b {
-    font-size: 130%;
-}
-#KeymapActions a.Note {
-    font-size: 80%;
-    box-shadow: 5px 2px 4px black;
-    border-radius: 2px;
-    background-color: white;
-    border: 6px groove lightgreen;
-}
-#KeymapActions a.MBtn {
-    font-size: 80%;
-    box-shadow: 5px 2px 4px black;
-    border-radius: 2px;
-    border-radius: 4px;
-    background-color: #6faa09;
-    color: black;
-    border: 1px solid black;
-    margin-left: 0.3em;
-    margin-right: 0.6em;
-}
+        #KeymapActions a {
+            margin-right: 2px;
+            font-size: 80%;
+            box-shadow: 5px 2px 4px black;
+            border-radius: 2px;
+            border: 1px solid gray;
+            transition: all 0.1s ease;
+        }
+        #KeymapActions a.Fingering {
+            background-color: white;
+            border: none;
+            box-shadow: none;
+        }
+        #KeymapActions a:active {
+            box-shadow: 5px 1px 3px rgb(31, 62, 0);
+            transform: translateY(3px); /* Move the button down slightly */
+        }
+        #KeymapActions b {
+            font-size: 130%;
+        }
+        #KeymapActions a.Note {
+            font-size: 80%;
+            box-shadow: 5px 2px 4px black;
+            border-radius: 2px;
+            background-color: white;
+            border: 6px groove lightgreen;
+        }
+        #KeymapActions a.MBtn {
+            font-size: 80%;
+            box-shadow: 5px 2px 4px black;
+            border-radius: 2px;
+            border-radius: 4px;
+            background-color: #6faa09;
+            color: black;
+            border: 1px solid black;
+            margin-left: 0.3em;
+            margin-right: 0.6em;
+        }
 
-#sectioKeymapActionsnDrawer small {
-    font-size: 60%;
-}
+        #sectioKeymapActionsnDrawer small {
+            font-size: 60%;
+        }
 
 
         #tblCheatSheet tr {
@@ -411,6 +412,43 @@
             border-radius: 4px;
             display: inline-block;
             padding: 2px;
+        }
+
+        table.helpPageEnd {
+            font-family: Arial;
+            width: calc(100% + 4em);
+            margin: 0 -2em;
+            border-collapse: collapse;
+            background-color:#ff0;
+            border: 2px solid black;
+        }
+        
+        table.helpPageEnd td {
+            padding: 2em;
+            border: 1px solid black;
+        }
+        
+        table.helpPageEnd td:first-child {
+            width: 40%;
+            background-color: orange;
+        }
+
+        table.helpPageEnd  button{
+            padding: 0.5em;
+            margin-right: 2px;
+            font-size: 100%;
+            box-shadow: 5px 2px 4px black;
+            border-radius: 2px;
+            border: 1px solid gray;
+            transition: all 0.1s ease;
+        }
+        table.helpPageEnd  button:active {
+            box-shadow: 5px 1px 3px rgb(31, 62, 0);
+            transform: translateY(3px); /* Move the button down slightly */
+        }
+
+        table.helpPageEnd  small {
+            font-size: 60%;
         }
 
             
@@ -1154,7 +1192,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 <p>Once you have some notes you want to save as a song, use <span class="GUIReferenceInline">File | Download</span> to
     save that song to your local computer. Later, you can open this song with <span class="GUIReferenceInline">File |
         Choose File</span>.  All the Sections, Instruments, and Notes, as well as the preferences and choices you make are saved in that song file, 
-        such as Tunings, Themes, View Options, and the graveyard.
+        such as Tunings, Themes, View Options, and the <a href='#graveyard'>Graveyard</a>.
 </p>
 <p><span class="productsmaller">infinite-neck</span> remembers just a few things between sessions that are not in the
     Default song.
@@ -1191,12 +1229,12 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 <p>
 <table class="ExamplesTable">
     <tr><th>Idiom</th><th>What to do</th></tr>        
-    <tr><td>Graveyard</td><td>Use the Graveyard to revive things you delete: Sections, Stylesheets.  You can revive multiple times,
-        so this can be used to copy/paste a Section.  You can also Clone a section.
+    <tr><td>Undo/Redo</td><td>Use the <a href="#graveyard">Graveyard</a> to revive things you delete: Sections, Stylesheets.  You can revive multiple times,
+        so this can be used to copy/paste a Section.  You can also <a href='#glossaryClone'>Clone</a> a section.
     </td></tr>
-     <tr><td>Copy Section</td><td>Use Clone or Clone Shallow on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  Clone copies all notes and Display Options.</td></tr>
+     <tr><td>Copy Section</td><td>Use <a href='#glossaryClone'>Clone</a> or <a href='#glossaryShallowClone'>Shallow</a> clone on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  <a href='#glossaryClone'>Clone</a> copies all notes and Display Options.</td></tr>
     <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.</td></tr>
-    <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/clone whole sections, and within that new section you can transpose. So the flow would be:
+    <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/<a href='#glossaryClone'>Clone</a> whole sections, and within that new section you can transpose. So the flow would be:
         <ul>
             <li>Unlock the Song so Transposition works <span class="menuExampleLine"><b><small>/fu</small></b></span>
             <li>In Section 1, place notes for the I chord.
@@ -1316,8 +1354,8 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
             class="GUIReferenceInline">File | Allow transposition by keyboard shortcuts</span>)
     <li><b>Add</b>, <b>Shallow</b> clone, <b>Clone</b>, and <b>Delete</b> Sections
         <ul>
-            <li><b>Clone</b> makes a full copy of a Section with Display Options
-            <li> <b>Shallow</b> clone  makes a copy of a Section with NamedNotes, but not SingleNotes, TinyNotes or
+            <li><b><a href='#glossaryClone'>Clone</a></b> makes a full copy of a Section with Display Options
+            <li><a href='#glossaryShallowClone'>Shallow</a> clone  makes a copy of a Section with NamedNotes, but not SingleNotes, TinyNotes or
                 Highlights, and no Display Options.
         </ul>
     <li> <b>Move</b> Sections to a Destination of a Section number or BEGIN or END, bumping any Sections there later.
@@ -1343,7 +1381,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 <img src="img/help/context/DestinationSection.png">
 <br>
 <span class="GUIReferenceInline">Destination &sect;</span> is a dropdown that gets updated as you navigate Sections.
-This is the <b><i>Destination</i></b> Section number of Move, Add, Shallow, and Clone.  There are some subtle differences.
+This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glossaryShallowClone'>Shallow</a>, and <a href='#glossaryClone'>Clone</a>.  There are some subtle differences.
 </p>
 
  <p>When <i>moving</i> Sections, pay attention to the <b><i>Destination</i></b>.  It's just like a deck of 
@@ -1362,7 +1400,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, Shallow, and 
     </ul>
  </p>
 
- <p>When <i>Adding or Cloning</i> Sections, new Section goes after the <b><i>Destination</i></b>
+ <p>When <i>Adding or <a href='#glossaryClone'>Cloning</a></i> Sections, new Section goes after the <b><i>Destination</i></b>
     which gets updated as you navigate Sections.  However, if you change the dropdown, 
     the new Section will go after that Section number.  This is where
      they end up:  
@@ -2086,7 +2124,7 @@ Stylesheet order
 <p>In fact, you can revive an object more than once.  This makes clones, which is useful.
     For Sections, there are more detailed cloning buttons on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport: Clone, and Shallow Clone.</p>
 
-<p>You can delete all objects from the graveyard (and receive a download of the song just before the deletion) 
+<p>You can delete all objects from the Graveyard (and receive a download of the song just before the deletion) 
     by using the <a href="#commandline">command-line</a> <span class="menuExampleLine">/fC</span></span> documented
 in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>    
 
@@ -3108,12 +3146,12 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <tr>
                     <td>/fg</td>
                     <td><b>f</b>ile | <b>g</b>raveyard</td>
-                    <td>Shows the graveyard</td>
+                    <td>Shows the <a href='#graveyard'>Graveyard</a></td>
                 </tr>
                 <tr>
                     <td>/fC</td>
                     <td><b>f</b>ile | <b>C</b>lear graveyard</td>
-                    <td>[<i>note the captial 'C'</i>] Clears the graveyard, but first downloads a copy of the song to your machine.  If you delete a bunch of Sections, and you don't want them anymore, and you want to share the file with someone, cleaning the graveyard can make for a cleaner file, and reduces file size.  The capital C means you have to intentionally hit this menu item, and the confirmation prompt which follows also asks Y/n so that a capital Y must be typed to confirm.</td>
+                    <td>[<i>note the captial 'C'</i>] Clears the <a href='#graveyard'>Graveyard</a>, but first downloads a copy of the song to your machine.  If you delete a bunch of Sections, and you don't want them anymore, and you want to share the file with someone, cleaning the <a href='#graveyard'>Graveyard</a> can make for a cleaner file, and reduces file size.  The capital C means you have to intentionally hit this menu item, and the confirmation prompt which follows also asks Y/n so that a capital Y must be typed to confirm.</td>
                 </tr>
                 <tr>
                     <td>/fb</td>
@@ -3690,16 +3728,20 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <br>
                 <br>
                 See more info in the <a href="#displayOptionsTopic">Display Options</a> context help topic.
+                
             </td>
         </tr>
         <tr>
-            <td>Clone
+            <td>
+                <a name="glossaryClone"></a>
+                <br>
+                Clone
             </td>
             <td>Sections may be Cloned with either "Clone" or "Shallow Clone".  "Clone" copies everything about the Section,
                 including all Notes.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryShallowClone">
             <td>Shallow Clone
             </td>
             <td>Sections may be Cloned with either "Clone" or "Shallow Clone".  "Shallow Clone" copies everything about the Section,
@@ -3709,16 +3751,48 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </tr>
     </table>
 </p>
-
-
- <div class="AppLink">
- The Help link creates this page in a new tab/window, so you can close this window.
- But here's a link to the application page: <a href="index.html">Infinite Neck</a>
- </div>
-
-
-<p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions, comments, or gripes.  </p>
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 </div from="helpBody">
+
+
+
+<table class="helpPageEnd">
+    <tr>
+        <td>
+            <button onclick="window.location.href='http://LaramieCrocker.com/contact.html'">Contact Laramie</button>
+            &nbsp;with any questions, comments, or gripes.
+        </td>
+        <td>
+            <button onclick="window.location.href='index.html'">Infinite Neck</button> 
+            &nbsp;&nbsp;<small>(The App creates this page in a new tab/window, so you can just close this window if you came from there.)</small>
+            
+        </td>
+    </tr>
+</table>
+
 </body>
 </html>
