@@ -3,12 +3,9 @@
         "expectedFailure":           true,
         "strictFile_styleNum":       true,
         "reason":                   "harsh-mode-songs👍fail"
-        
     },
     "songs": [
-        "old-file-format-styleNum-missing.json",
-        "empty-song-missing-noteTables.json"
-        
+        "old-file-format-styleNum-missing.json"
      ],
     "ignoredSongs": [
        
@@ -40,6 +37,5 @@
          "progression-on-strat.json",
          "snake.json",
          "three-chord-wonder.json"
-    
     ]
 }

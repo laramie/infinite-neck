@@ -44,7 +44,17 @@
     {
       "sectionNotesByTable": {
         "tblPiano_1": {
-          "playedNotes": [],
+          "playedNotes": [
+            {
+              "midinum": "58",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteBlue1",
+              "styleNum": 5,
+              "bendValue": "updown2",
+              "noteName": "Bb"
+            }
+          ],
           "namedNotes": {
             "G": {
               "noteNameClass": ".noteG",
@@ -85,7 +95,17 @@
     {
       "sectionNotesByTable": {
         "tblPiano_1": {
-          "playedNotes": [],
+          "playedNotes": [
+            {
+              "midinum": "58",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteBlue1",
+              "styleNum": 5,
+              "bendValue": "updown2",
+              "noteName": "Bb"
+            }
+          ],
           "namedNotes": {
             "C": {
               "noteNameClass": ".noteC",
@@ -157,7 +177,17 @@
     {
       "sectionNotesByTable": {
         "tblPiano_1": {
-          "playedNotes": [],
+          "playedNotes": [
+            {
+              "midinum": "58",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteBlue1",
+              "styleNum": 5,
+              "bendValue": "updown2",
+              "noteName": "Bb"
+            }
+          ],
           "namedNotes": {
             "G": {
               "noteName": "G",
@@ -407,10 +437,28 @@
       "sharps": false
     }
   ],
+  "gSectionsCurrentIndex": 0,
+  "gFirstBeatSeen": false,
   "userInstrumentTuning": null,
+  "gSongModelListener": null,
+  "noteNamesFuncArrDEFAULT": [
+    "I",
+    "&tau;",
+    "II",
+    "m",
+    "III",
+    "IV",
+    "&Theta;",
+    "V",
+    "&sigma;",
+    "6",
+    "&delta;",
+    "&Delta;"
+  ],
   "sharps": false,
   "captionsRowShowing": true,
   "presentationMode": false,
+  "randomSectionHistory": [],
   "wirings": [
     {
       "tablename": "tblP46_1",
@@ -418,6 +466,7 @@
       "listenToTablename": "tblPiano_1"
     }
   ],
+  "isHeadless": false,
   "myTunings": [
     {
       "instance": true,
@@ -471,6 +520,11 @@
       "fixedFretWidthMult": 1
     }
   ],
+  "tunings": [],
+  "visibleNoteTables": [
+    "tblP46_1",
+    "tblPiano_1"
+  ],
   "defaultBPM": "120",
   "rootID": "3",
   "namedNoteOpacity": "1.00",
@@ -480,6 +534,6 @@
     "records": []
   },
   "activeStylesheets": "Default",
-  "songName": "All-Chords",
+  "songName": "All-Chords-resaved",
   "theme": "Default"
 }
