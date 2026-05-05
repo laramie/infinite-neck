@@ -31,9 +31,19 @@ test('getSectionNotesDisplayString consolidates notes for display', () => {
 
 	expect(getSectionNotesDisplayString(section)).toBe([
 		'{',
-		'    namedNotes: ["C","E","G"],',
-		'    playedNotes: ["tblS6_1:2","tblP4_2:1"],',
-		'    recordedNotes: ["tblS6_1:3","tblP4_1:7"]',
+		'    "namedNotes": [',
+		'        "C",',
+		'        "E",',
+		'        "G"',
+		'    ],',
+		'    "playedNotes": [',
+		'        "tblS6_1:2",',
+		'        "tblP4_2:1"',
+		'    ],',
+		'    "recordedNotes": [',
+		'        "tblS6_1:3",',
+		'        "tblP4_1:7"',
+		'    ]',
 		'}'
 	].join('\n'));
 });

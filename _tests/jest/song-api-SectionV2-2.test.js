@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { jest } from '@jest/globals';
+import { Song } from '../../Song.js';
 import {
     setupSongTests,
     getSong
@@ -24,9 +25,10 @@ function loadPrimarySongForApiTests() {
     const data = readSongJson(PRIMARY_SONG_FILENAME);
 
     setupSongTests();
-    const song = getSong();
+    const song = new Song(data);
     song.setHeadless(true, true);
-    song.addSections(data);
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
 
     return { data, song };
 }

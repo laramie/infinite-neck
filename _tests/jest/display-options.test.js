@@ -13,7 +13,11 @@ function readFixture() {
 }
 
 function makeHeadlessSongFromFixture() {
-    return new Song( {legacy: false, headless: true, fileObj: readFixture(), quiet: true, fixIndex: true });
+    const song = new Song(readFixture());
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
+    song.setHeadless(true, true);
+    return song;
 }
 
 function clone(value) {
