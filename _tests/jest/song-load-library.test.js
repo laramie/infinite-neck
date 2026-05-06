@@ -2,6 +2,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { logVerbose, INFINITE_NECK_VERBOSE, VERBOSE_MODE, VERBOSE_MODE_INT } from './LogVerboseJest.js';
+import { validateSongFileSchema } from './SongFileV2Schema.js';
 import { 
     setupSongTests, 
     getSong
@@ -69,7 +70,6 @@ function printVerboseModeMessage() {
     }
 }
 
-const ALLOWED_NOTE_NAMES = ["A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"];
 const SONGS_DIR = path.join(__dirname, '../../songs');
 const SONGSDIR = 'songs/';
 const SONGSTEST_RELDIR = 'tests/';
@@ -216,89 +216,33 @@ if (INFINITE_NECK_SONG) {
     songFiles = songFiles.filter(entry => entry.file === INFINITE_NECK_SONG);
 }
 
-function getNoteTableSummary(noteTables) {
-    if (!noteTables) return 'null';
-    if (typeof noteTables !== 'object') return 'not-an-object';
-    const keys = Object.keys(noteTables);
-    if (keys.length === 0) return ':0';
-    return (
-        '[' +
-        keys.map(key => `${key}:${Array.isArray(noteTables[key]) ? noteTables[key].length : 0}`).join(',') +
-        ']'
-    );
-}
-
-function getNamedNotesCount(namedNotes) {
-    if (!namedNotes || typeof namedNotes !== 'object') return 0;
-    return Object.keys(namedNotes).length;
-}
-
-function validateNamedNotes(namedNotes, songTestOptions = {}, summaryInfo) {
-    for (const key of Object.keys(namedNotes)) {
-        summaryInfo.namedNoteKey = key;
-        expect(ALLOWED_NOTE_NAMES).toContain(key);
-        const note = namedNotes[key];
-        if (Object.keys(note).length === 0) {  // allow empty note entries like "G":{}
-            continue;
-        }
-        summaryInfo.note = VERBOSE_MODE > 1 ? note : JSON.stringify(note);
-        expect(note).toHaveProperty('noteName');
-        expect(note).toHaveProperty('colorClass');
-        validateStyleNum(note, songTestOptions);
-        expect(note.noteName).toBe(key);
-        expect(typeof note.colorClass === 'string' && note.colorClass.length > 0).toBe(true);
-    }
-    summaryInfo.note = "";
-    summaryInfo.namedNoteKey = "";
-}
-
-function validateNoteTables(noteTables, songTestOptions = {}, summaryInfo) {
-    expect(typeof noteTables).toBe('object');
-    for (const tblnameKey of Object.keys(noteTables)) {
-        summaryInfo.tableName = tblnameKey;
-        const oneTable = noteTables[tblnameKey];
-        if (!Array.isArray(oneTable)) continue;
-        oneTable.forEach((note, idx) => {
-            summaryInfo.noteTableIndex = idx;
-            summaryInfo.note = VERBOSE_MODE > 1 ? note : JSON.stringify(note);
-            expect(note).toHaveProperty('noteName');
-            expect(note).toHaveProperty('colorClass');
-            validateStyleNum(note, songTestOptions);
-            expect(typeof note.colorClass === 'string' && note.colorClass.length > 0).toBe(true);
-        });
-        summaryInfo.noteTableIndex = "";
-        summaryInfo.note = "";
-    }
-    summaryInfo.tableName = "";
-}
-
-function validateStyleNum(obj, songTestOptions = {}) {
-    if (songTestOptions.strictFile_styleNum) {
-        expect(obj).toHaveProperty('styleNum');
-        expect(typeof obj.styleNum === 'number' && Number.isInteger(obj.styleNum)).toBe(true);
-    } else {
-        if (obj.hasOwnProperty('styleNum')) {
-            expect(typeof obj.styleNum === 'number' && Number.isInteger(obj.styleNum)).toBe(true);
-        }
-    }
-}
-
-function validateSectionDictionaries(data) {
-    if (!Array.isArray(data.sections)) return;
-    data.sections.forEach((section, idx) => {
-        expect(section).toHaveProperty('namedNotes');
-        expect(typeof section.namedNotes).toBe('object');
-        expect(section).toHaveProperty('noteTables');
-        expect(typeof section.noteTables).toBe('object');
-    });
-}
-
 function getSectionRootIDs(data) {
     if (!Array.isArray(data.sections)) return [];
     return data.sections.map(section => {
         expect(section).toHaveProperty('rootID');
         return section.rootID;
     });
+}
+
+function getSectionNotesByTableSummary(sectionNotesByTable) {
+    if (!sectionNotesByTable || typeof sectionNotesByTable !== 'object') return 'null';
+    const tableKeys = Object.keys(sectionNotesByTable);
+    if (tableKeys.length === 0) return ':0';
+    return (
+        '['
+        + tableKeys.map((tableKey) => {
+            const sectionNotes = sectionNotesByTable[tableKey] || {};
+            const played = Array.isArray(sectionNotes.playedNotes) ? sectionNotes.playedNotes.length : 0;
+            const named = sectionNotes.namedNotes && typeof sectionNotes.namedNotes === 'object'
+                ? Object.keys(sectionNotes.namedNotes).length
+                : 0;
+            const recorded = sectionNotes.recordedNotes && typeof sectionNotes.recordedNotes === 'object'
+                ? Object.values(sectionNotes.recordedNotes).reduce((count, notes) => count + (Array.isArray(notes) ? notes.length : 0), 0)
+                : 0;
+            return `${tableKey}:p${played}/n${named}/r${recorded}`;
+        }).join(',')
+        + ']'
+    );
 }
 
 function runSongValidation(file, data, songTestOptions = {}) {
@@ -316,23 +260,26 @@ function runSongValidation(file, data, songTestOptions = {}) {
             + LF + "    • expectedFailure:" + songTestOptions.expectedFailure
             + LF + "    • summary:" + JSON.stringify({ expectedSections, sectionRootIDs, song_rootID: data.rootID })
             + LF + "    • songTestOptions:" + JSON.stringify(songTestOptions));
+
+        const schemaResult = validateSongFileSchema(data);
+        summaryInfo.schemaValid = schemaResult.valid;
+        summaryInfo.schemaErrors = schemaResult.errors.length;
+        if (!schemaResult.valid) {
+            throw new Error(`Song file does not match V2 schema:\n${schemaResult.errors.join('\n')}`);
+        }
+
         setupSongTests();
         getSong().addSections(data);
         expect(getSong().getSections().length).toBe(expectedSections);
         expect(data).toHaveProperty('rootID');
-        validateSectionDictionaries(data, file);
         if (Array.isArray(data.sections)) {
             data.sections.forEach((section, i) => {
                 currentSectionIndex = i;
                 summaryInfo.currentSectionIndex = i;
                 currentObjectDump = JSON.stringify(section, null, 4);
-                expect(section).toHaveProperty('noteTables');
-                expect(section).toHaveProperty('namedNotes');
-                validateNoteTables(section.noteTables, songTestOptions, summaryInfo);
-                validateNamedNotes(section.namedNotes, songTestOptions, summaryInfo);
-                const noteTableSummary = getNoteTableSummary(section.noteTables);
-                const namedNotesCount = getNamedNotesCount(section.namedNotes);
-                logVerbose(3, `sections[${i}]➝  noteTables${noteTableSummary}  •  namedNotes:${namedNotesCount}  •  《${sectionRootIDs}》 `);
+                expect(section).toHaveProperty('sectionNotesByTable');
+                const sectionNotesSummary = getSectionNotesByTableSummary(section.sectionNotesByTable);
+                logVerbose(3, `sections[${i}]➝  sectionNotesByTable${sectionNotesSummary}  •  《${sectionRootIDs}》 `);
             });
         }
         logVerbose(3, '👉   leaving test block ⠶ ' + file
@@ -345,7 +292,7 @@ function runSongValidation(file, data, songTestOptions = {}) {
         failed = true;
         const summaryStr = VERBOSE_MODE > 1 ? JSON.stringify(summaryInfo, null, 4) : JSON.stringify(summaryInfo);
         const jestException = VERBOSE_MODE > 1 ? `${e.message}\n${e.stack}` : `${e.message}\n`;
-        errorMsg = `\n🛑 Failure in file: ${file} :: sections[${currentSectionIndex}]\n    • Summary: ${summaryStr}`
+        const errorMsg = `\n🛑 Failure in file: ${file} :: sections[${currentSectionIndex}]\n    • Summary: ${summaryStr}`
             + LF + "    • expectedFailure:" + songTestOptions.expectedFailure
             + LF + `    • failed: ${failed}`
             + `\n✴   Jest Exception: \n❮❮❮\n ${jestException}\n❯❯❯\n\n`;
@@ -387,10 +334,10 @@ const describeSongFileLoading = describe;
 
 describeSongFileLoading('Song file and getSong() loading validation', () => {
     let accumFilename = [];
-    let data = null;
     logVerbose(2, "🛈  Song Files to be tested with songTestOptions: " + LF + JSON.stringify(songFiles, null, 4));
     songFiles.forEach(({ file, songTestOptions }) => {
         const filePath = path.join(__dirname, '../../songs', file);
+        let data;
         accumFilename.push(`${filePath}`);
         logVerbose(3, "  🦊 atempting to read song: "+filePath);
         logVerbose(3, "  🦊 with options: "+LF+JSON.stringify(songTestOptions,null,4));
@@ -404,11 +351,13 @@ describeSongFileLoading('Song file and getSong() loading validation', () => {
         const sectionCount = Array.isArray(data.sections) ? data.sections.length : 0;
         const rootIDs = Array.isArray(data.sections) ? rootIDsMore(data.sections.map(s => s.rootID)) : '';
         const strictMode = songTestOptions.strictFile_styleNum ? '| fmt:strict🧐' : '';
+        const schemaMode = '| schema:V2';
         const rootIDsLabel = (VERBOSE_MODE > 0) ? `${rootIDs}` : '';
         const testLabel = `${SONGSDIR}${file}`
             + ` | list:${songTestOptions.list}`
             + ` | sections:${sectionCount}${rootIDsLabel}`
             + ` ${strictMode}`
+            + ` ${schemaMode}`
             + (songTestOptions.expectedFailure ? ' (expected failure🍌)' : '')
             + ` | reason:${songTestOptions.reason}`;
         test(testLabel, () => {

@@ -3,9 +3,6 @@
         "all-note-types-2tunings.json",
         "all-note-types.json",
         "display-options.json",
-        "empty-song.json",
-        "forward-and-backward-observers.json",
-        "forward-backward-observers-2.json",
         "old-file-format-styleNum-missing.json"        
      ],
     "ignoredSongs": [
