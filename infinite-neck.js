@@ -504,7 +504,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.useCenterForRightFunction = $("#cbCenterForRightFunction").prop("checked");
 		options.NoteDisplaySizes = {"width":$("#dropDownCellWidth").val(),"height":$("#dropDownCellHeight").val()};
 		options.naturalFretWidths = $("#cbNaturalFretWidths").prop("checked");
-		options.naturaFontScaling = toInt($('#selNaturaFontScaling').val(), 60);
+		options.naturalFontScaling = toInt($('#selNaturalFontScaling').val(), 60);
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -760,10 +760,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!songTheme){
 			songTheme = getDefaultTheme().id;
 		}
-		$('#selThemes').val(songTheme).change();
+		$('#selThemes').val(songTheme).trigger('change');
 
-		$("#txtFilename").val(getSong().songName).change();
-		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).change();
+		$("#txtFilename").val(getSong().songName).trigger('change');
+		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).trigger('change');
 
 		setBPM(getSong().defaultBPM);
 
@@ -1288,14 +1288,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//=========================================================================
 
 	export function displayOptionsToControls(options){
+		const sizesObj = options.NoteDisplaySizes || {};
+		const naturalFontScaling = options.naturalFontScaling;
+		const functionSymbolsValue = options.dropDownFunctionSymbols?.value;
 
-		if (getSong().presentationMode){
-			var sizesObj = options.NoteDisplaySizes;
-		 	$("#dropDownCellWidth").val(sizesObj.width);
-		 	$("#dropDownCellHeight").val(sizesObj.height);	 // e.g. {"width": 120,"height": 60};
-			if (sizesObj.NoteFontSize){
-				setNoteFontSize(sizesObj.NoteFontSize);
-			}
+		if (sizesObj.width != null){
+		 	$("#dropDownCellWidth").val(String(sizesObj.width));
+		}
+		if (sizesObj.height != null){
+		 	$("#dropDownCellHeight").val(String(sizesObj.height));
+		}
+		if (sizesObj.NoteFontSize){
+			setNoteFontSize(sizesObj.NoteFontSize);
 		}
 
 		if (options.showAllNoteNames){
@@ -1332,7 +1336,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    $("#cbHideSingleNotes").prop("checked", options.hideSingleNotes);
 	    $("#cbHideFingering").prop("checked", options.hideFingering);
 
-		$("#lblHideWarning").hide();
+		if (options.hideNamedNotes || options.hideTinyNotes || options.hideSingleNotes || options.hideFingering){
+			turnOnKeep();
+			$("#lblHideWarning").show();
+		} else {
+			$("#lblHideWarning").hide();
+		}
 
 		getSong().namedNoteOpacity = options.namedNoteOpacity;
 		getSong().singleNoteOpacity = options.singleNoteOpacity;
@@ -1341,14 +1350,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
 		$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
 
-		$('#textareaFunctionSymbols').val(options.dropDownFunctionSymbols.value);
+		if (functionSymbolsValue != null){
+			$('#dropDownFunctionSymbols').val(functionSymbolsValue);
+			$('#textareaFunctionSymbols').val(functionSymbolsValue);
+		}
 		try {
-			getSong().noteNamesFuncArr = JSON.parse(options.dropDownFunctionSymbols.value);
+			getSong().noteNamesFuncArr = JSON.parse(functionSymbolsValue ?? $('#dropDownFunctionSymbols').val());
 		} catch (error) {
 			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
 				? [...getSong().noteNamesFuncArrDEFAULT]
 				: JSON.parse($('#dropDownFunctionSymbols').val());
 			getSong().noteNamesFuncArr = fallback;
+			$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 		}
 
 
@@ -1368,7 +1381,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
-		$("#selNaturaFontScaling").val(options.naturalFontScaling);
+		if (naturalFontScaling != null){
+			$("#selNaturalFontScaling").val(String(naturalFontScaling));
+		}
 		$("#selNoteFont").val(options.noteFont);
 		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
 		$("#selRightSubscriptFontSize").val(options.rightSubscriptFontSize);
@@ -1422,7 +1437,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 										"caption":	$("#dropDownFunctionSymbols option:selected").text(),
 										"value":  $("#dropDownFunctionSymbols").val()
 									};
-		options.naturalFontScaling = $("#selNaturaFontScaling").val();
+		options.naturalFontScaling = $("#selNaturalFontScaling").val();
 		options.noteFont = $("#selNoteFont").val();
 		options.leftSubscriptFontSize = $("#selLeftSubscriptFontSize").val();
 		options.rightSubscriptFontSize = $("#selRightSubscriptFontSize").val();
@@ -1570,10 +1585,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function bindDesktopEvents(){
 		const eventNamespace = '.bindDesktopEvents';
+
+		function namespaceEvents(events){
+			return events
+				.split(' ')
+				.map((eventName) => `${eventName}${eventNamespace}`)
+				.join(' ');
+		}
+
+		function bindEvent(events, selector, handler){
+			const namespacedEvents = namespaceEvents(events);
+			$(selector)
+				.off(namespacedEvents)
+				.on(namespacedEvents, handler);
+		}
+
+		function bindDelegatedEvent(events, selector, handler){
+			const namespacedEvents = namespaceEvents(events);
+			$(document)
+				.off(namespacedEvents, selector)
+				.on(namespacedEvents, selector, handler);
+		}
 		
-		$(document)
-			.off(`click${eventNamespace}`, '.graveyard-raise-link')
-			.on(`click${eventNamespace}`, '.graveyard-raise-link', function(e) {
+		bindDelegatedEvent('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
 			const index = toInt($(this).data('grave-index'), -1);
 			if (index >= 0) {
@@ -1581,9 +1615,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$(document)
-			.off(`click${eventNamespace}`, '.graveyard-toggle-json')
-			.on(`click${eventNamespace}`, '.graveyard-toggle-json', function(e) {
+		bindDelegatedEvent('click', '.graveyard-toggle-json', function(e) {
 			e.preventDefault();
 			const target = $(this).data('target');
 			if (target) {
@@ -1591,9 +1623,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$(document)
-			.off(`input${eventNamespace} change${eventNamespace}`, '#rangeNamedNoteOpacity, #rangeSingleNoteOpacity, #rangeTinyNoteOpacity')
-			.on(`input${eventNamespace} change${eventNamespace}`, '#rangeNamedNoteOpacity, #rangeSingleNoteOpacity, #rangeTinyNoteOpacity', function() {
+		bindDelegatedEvent('input change', '#rangeNamedNoteOpacity, #rangeSingleNoteOpacity, #rangeTinyNoteOpacity', function() {
 			const id = this.id;
 			const value = this.value;
 			if (id === 'rangeNamedNoteOpacity') {
@@ -1605,61 +1635,61 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$("#btnPalette").click(function() {
+		bindEvent('click', '#btnPalette', function() {
 			showOneMenu("#palette");
 		});
-		$("#btnDesktop").click(function() {
+		bindEvent('click', '#btnDesktop', function() {
 		    showOneMenu("#divDesktop");
 		});
 		//======= Chart TabGroup buttons ========
-		$("#btnChart").click(function() {
+		bindEvent('click', '#btnChart', function() {
 		    showOneMenu("#divChart");
 		});
-		$('#btnChartSummaryTab').click(function() {
+		bindEvent('click', '#btnChartSummaryTab', function() {
 			showChartTab("Summary");
 		});
-		$('#btnChartNotesTab').click(function() {
+		bindEvent('click', '#btnChartNotesTab', function() {
 			showChartTab("Notes");
 		});
-		$('#btnChartDetailsTab').click(function() {
+		bindEvent('click', '#btnChartDetailsTab', function() {
 			showChartTab("Details");
 		});
 		//=========================================
-		$("#btnHelp").click(function() {
+		bindEvent('click', '#btnHelp', function() {
 
 		});
-		$("#btnHamburger").click(function() {
+		bindEvent('click', '#btnHamburger', function() {
 		   $("#divControls").toggle();
 		   hideAllMenuDivs();
 		});
-		$("#cbPresentationMode").change(function(){
+		bindEvent('change', '#cbPresentationMode', function(){
 			getSong().presentationMode = this.checked;
 		});
 
-		$('#btnMessagesTab').click(function() {
+		bindEvent('click', '#btnMessagesTab', function() {
 			showMessagesTab('Messages');
 		});
-		$('#btnJsonTreeTab').click(function() {
+		bindEvent('click', '#btnJsonTreeTab', function() {
 			showMessagesTab('JsonTree');
 		});
-		$('#btnHideMessagesJsonTree').click(function() {
+		bindEvent('click', '#btnHideMessagesJsonTree', function() {
 			hideMessages_KeyHandler();
 		});
 
-		$("#btnFileControls").click(function() {
+		bindEvent('click', '#btnFileControls', function() {
 		    showOneMenu("#divFileControls")
 		});
-		$("#btnTunings").click(function() {
+		bindEvent('click', '#btnTunings', function() {
 			showOneMenu("#divTunings");//toggles on
 			requestReloadTuningsDisplays();//sets MyTunings button to PunchedIn, so has to go last.
 		});
-		$("#btnFillNotes").click(function() {
+		bindEvent('click', '#btnFillNotes', function() {
 		    showOneMenu("#divFillNotes");
 		});
-		$("#btnViewControls").click(function() {
+		bindEvent('click', '#btnViewControls', function() {
 		    showOneMenu("#divViewControls");
 		});
-		$("#btnThemeControls").click(function() {
+		bindEvent('click', '#btnThemeControls', function() {
 		    showOneMenu("#divThemeControls");
 		});
 
@@ -1679,70 +1709,70 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				cb.prop('checked', true);
 			}
 		}
-		$("#btnShowAllNoteNames").click(function() {
+		bindEvent('click', '#btnShowAllNoteNames', function() {
 			linkButtonToCB('#btnShowAllNoteNames', '#cbShowAllNoteNames');
 			showAllNoteNames($('#cbShowAllNoteNames').prop('checked'));
 		});
-		$("#btnRandomLoop").click(function() {
+		bindEvent('click', '#btnRandomLoop', function() {
 			toggleRandomLoop();
 		});
-		$("#btnNoteV").click(function() {
+		bindEvent('click', '#btnNoteV', function() {
 			checkRB("#rbNotename");
 			resetNoteNames();
 		});
-		$("#btnFuncV").click(function() {
+		bindEvent('click', '#btnFuncV', function() {
 			checkRB("#rbFunction");
 			resetNoteNames();
 		});
-		$("#btnAutoColor,#btnAutoColor2").click(function() {
+		bindEvent('click', '#btnAutoColor,#btnAutoColor2', function() {
 			toggleAutoColorCheckbox();
 		});
 		// ========== END "Quick" Menu ==========
 
-		$("#btnToggleTransport").click(function() {
+		bindEvent('click', '#btnToggleTransport', function() {
 			TransportBuilder.toggleTransport();
 		});
-		$("#btnToggleCmdLine").click(function() {
+		bindEvent('click', '#btnToggleCmdLine', function() {
 			toggleCmdLine();
 		});
-		$("#btnToggleQuick").click(function() {
+		bindEvent('click', '#btnToggleQuick', function() {
 			$('#divQuick').toggle();
 		});
 
-		$("#btnClear").click(function() {
+		bindEvent('click', '#btnClear', function() {
 		    resetNoteNames();
 		    clearAll();
 		});
-		$("#btnDownload").click(function() {
+		bindEvent('click', '#btnDownload', function() {
 		    downloadPlayedNotes();
 		});
-		$("#btnPrevSection, #btnPrevSection2").click(function() {
+		bindEvent('click', '#btnPrevSection, #btnPrevSection2', function() {
 		    getSong().gotoPrevSection(false);
 		});
-		$("#btnNextSection, #btnNextSection2").click(function() {
+		bindEvent('click', '#btnNextSection, #btnNextSection2', function() {
 		    getSong().gotoNextSection(false);
 		});
-		$("#btnFirstSection").click(function() {
+		bindEvent('click', '#btnFirstSection', function() {
 			getSong().firstSection();
 			clearAndReplaySection();
 		});
-		$("#btnLastSection").click(function() {
+		bindEvent('click', '#btnLastSection', function() {
 		    getSong().lastSection();
 			clearAndReplaySection();
 		});
 
-		$("#btnLoopSections").click(function() {
+		bindEvent('click', '#btnLoopSections', function() {
 		    toggleLoopSections();
 		});
-		$("#btnLoopBeatsTransport").click(function() {
+		bindEvent('click', '#btnLoopBeatsTransport', function() {
 		    toggleLoopBeats();
 		});
-		$("#btnEditSection").click(function() {
+		bindEvent('click', '#btnEditSection', function() {
 			toggleSectionDrawer();
 		});
 
 
-		$("#cbShowAllNoteNames").click(function() {
+		bindEvent('click', '#cbShowAllNoteNames', function() {
 			var show = $("#cbShowAllNoteNames").prop("checked");
 			if (show){
 				$('#btnShowAllNoteNames')
@@ -1756,7 +1786,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			showAllNoteNames(show);
 		});
 
-		$(".RecordButton").click(function() {
+		bindEvent('click', '.RecordButton', function() {
 			var btn = $("#btnRecord");
 			var recording = btn.attr("recording");
 			if (recording === undefined) {
@@ -1778,88 +1808,88 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		$("#btnPrevBeat").click(function() {
+		bindEvent('click', '#btnPrevBeat', function() {
 		    getSong().prevBeat();
 		    showHighlightsForBeat(getSong().getBeat());
 		});
-		$("#btnNextBeat").click(function() {
+		bindEvent('click', '#btnNextBeat', function() {
 		    getSong().nextBeat();
 		});
-		$("#btnPrevBeatTransport").click(function() {
+		bindEvent('click', '#btnPrevBeatTransport', function() {
 		    getSong().prevBeat();
 		});
-		$("#btnNextBeatTransport").click(function() {
+		bindEvent('click', '#btnNextBeatTransport', function() {
 		  	getSong().nextBeat();
 		});
-		$("#txtFilename" ).on( "change", function() {
+		bindEvent('change', '#txtFilename', function() {
 		 $(".lblSongName").html($( this ).val());
 		});
 
-		$("#txtBPM" ).on( "change", function() {
+		bindEvent('change', '#txtBPM', function() {
 		 setBPM($(this).val());  //interestingly, this does NOT cause jQuery to call ".change()" again.
 		});
 
-		$("#btnRowRangeReset").click(function() {
+		bindEvent('click', '#btnRowRangeReset', function() {
 			//$('#textareaRowRange').val(JSON.stringify(noteNamesRowRangeArr));
 			fullRepaint();
 		});
 
-		$('#dropDownBaseInstrument').change(function() {
+		bindEvent('change', '#dropDownBaseInstrument', function() {
 			var baseInstrumentID = $(this).val();
 			fullRepaint();
 			updateSectionsStatus();
 		});
 
-		$('#dropDownCellHeight').change(function() {
+		bindEvent('change', '#dropDownCellHeight', function() {
 			fullRepaint();
 	    });
-		$('#dropDownCellWidth').change(function() {
+		bindEvent('change', '#dropDownCellWidth', function() {
 			fullRepaint();
 		});
-		$("#cbNaturalFretWidths,#selNaturaFontScaling").change(function(){
+		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling', function(){
 			fullRepaint();
 		});
-		$("#selNoteFont").change(function(){
+		bindEvent('change', '#selNoteFont', function(){
 			setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
 			fullRepaint();
 		});
-		$("#selLeftSubscriptFontSize").change(function(){
+		bindEvent('change', '#selLeftSubscriptFontSize', function(){
 			setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
 			fullRepaint();
 		});
-		$("#selRightSubscriptFontSize").change(function(){
+		bindEvent('change', '#selRightSubscriptFontSize', function(){
 			setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
 			fullRepaint();
 		});
-		$("#selTinyNoteMaxHeight").change(function(){
+		bindEvent('change', '#selTinyNoteMaxHeight', function(){
 			setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
 			fullRepaint();
 		});
-		$("#selTinyNoteFontSize").change(function(){
+		bindEvent('change', '#selTinyNoteFontSize', function(){
 			setOneCssVar("--tiny-note-font-size", $("#selTinyNoteFontSize").val());
 			fullRepaint();
 		});
 
 
-		$("#selMidiFontSize").change(function(){
+		bindEvent('change', '#selMidiFontSize', function(){
 			setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
 			fullRepaint();
 		});
-		$("#selFingeringFontSize").change(function(){
+		bindEvent('change', '#selFingeringFontSize', function(){
 			setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
 			fullRepaint();
 		});
-		$("#selFingeringPosition").change(function(){
+		bindEvent('change', '#selFingeringPosition', function(){
 			setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
 			fullRepaint();
 		});
-		$('#dropDownInstrumentMargins').change(function() {
+		bindEvent('change', '#dropDownInstrumentMargins', function() {
 			//short-circuit and set it now, it is in mem for next time.
 			var margin = this.value;
 			$('.instrumentBackground').css({"margin-top": margin, "margin-bottom": +margin });
 		});
 
-		$('#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering').change(function() {
+		bindEvent('change', '#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering', function() {
 				var hnchecked = $('#cbHideNamedNotes').prop("checked");
 				var hschecked = $('#cbHideSingleNotes').prop("checked");
 				var htchecked = $('#cbHideTinyNotes').prop("checked");
@@ -1875,31 +1905,31 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				replay();
 	    });
 
-		$('#cbShowCellNotes').change(function() {
+		bindEvent('change', '#cbShowCellNotes', function() {
 
 			if ( ! this.checked ) {
 				$("#cbCenterForRightFunction").prop("checked", false);
 			}
 			resetNoteNames();
 	    });
-		$('#cbCenterForRightFunction').change(function() {
+		bindEvent('change', '#cbCenterForRightFunction', function() {
 
 			if ( this.checked ) {
 				$("#cbShowCellNotes").prop("checked", true);
 			}
 			resetNoteNames();
 	    });
-	    $('input[type=radio][name=rbnFunctionNotename]').change(function() {
+		bindEvent('change', 'input[type=radio][name=rbnFunctionNotename]', function() {
 	        resetNoteNames();
 	    });
 
-	    $('#cbShowSubscriptFunctions').change(function() {
+		bindEvent('change', '#cbShowSubscriptFunctions', function() {
 	        resetNoteNames();
 	    });
-	    $('#cbMidiNum').change(function() {
+		bindEvent('change', '#cbMidiNum', function() {
 	        resetNoteNames();
 	    });
-		$("#textareaFunctionSymbols" ).on( "change", function() {
+		bindEvent('change', '#textareaFunctionSymbols', function() {
 			var txtVal = $('#textareaFunctionSymbols').val();
 		    try {
 				//Since we are allowing the user to put something in, validate before accepting.
@@ -1923,7 +1953,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			fullRepaint();
 		});
 		// CODE-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols")
-		$("#btnFunctionSymbolsReset").click(function() {
+		bindEvent('click', '#btnFunctionSymbolsReset', function() {
 			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
 				? [...getSong().noteNamesFuncArrDEFAULT]
 				: JSON.parse($('#dropDownFunctionSymbols').val());
@@ -1933,30 +1963,30 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
 		// CODE-EXAMPLE("TextAreaWButtonWidget", "BanjoNut")
-		$("#btnBanjoNutExamples").click(function() {
+		bindEvent('click', '#btnBanjoNutExamples', function() {
 			$("#divBanjoNutExamples").toggle();
 		});
 
-		$("#divBanjoNutExamples tr[data-banjo-nut-value]").click(function() {
+		bindEvent('click', '#divBanjoNutExamples tr[data-banjo-nut-value]', function() {
 			$("#textareaBanjoNut").val($(this).attr("data-banjo-nut-value")).trigger("change");
 			$("#divBanjoNutExamples").hide();
 		});
 		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
-		$('#dropDownFunctionSymbols').change(function() {
+		bindEvent('change', '#dropDownFunctionSymbols', function() {
             var value = $('#dropDownFunctionSymbols').val();
 			getSong().noteNamesFuncArr = JSON.parse(value);  //this one is safe--comes from our built SELECT.
 			$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
             fullRepaint();
 	    });
 
-		$("#btnFillChord").click(function() {
+		bindEvent('click', '#btnFillChord', function() {
 	        fillChord();
 	    });
 
-		$("#btnControlsToDisplayOptions_View").click(function() {
+		bindEvent('click', '#btnControlsToDisplayOptions_View', function() {
 	        handleBtnControlsToDisplayOptions();
 	    });
-		$("#btnDeleteDisplayOptions_View").click(function() {
+		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
 	}
@@ -2034,8 +2064,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (scalingPrefs.UIFontSize){
 				setUIFontSize(scalingPrefs.UIFontSize);
 				setNoteFontSize(scalingPrefs.NoteFontSize);
-				$("#dropDownCellWidth").val(scalingPrefs.CellWidth).change();
-				$("#dropDownCellHeight").val(scalingPrefs.CellHeight).change();
+				$("#dropDownCellWidth").val(scalingPrefs.CellWidth).trigger('change');
+				$("#dropDownCellHeight").val(scalingPrefs.CellHeight).trigger('change');
 				$("#divScalingPrefs").html(JSON.stringify(scalingPrefs));
 			}
 		} else {
@@ -2208,7 +2238,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadTemplates('templates/themes.html').then(() => {
 				ThemesBuilder.addToDest('#divThemeControls');
 				rebuildThemesDropdown();
-				$('#selThemes').val("Autobahn").change();
+				$('#selThemes').val("Autobahn").trigger('change');
 			}),
 			
 			loadTemplates('templates/section-drawer.html').then(() => {

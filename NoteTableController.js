@@ -201,8 +201,8 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
 				multiplier = getSong().fretLengths[cellcol];
                 let mellowNormieRadical = 60;
-                if (options.naturaFontScaling){
-                    mellowNormieRadical = options.naturaFontScaling;
+                if (options.naturalFontScaling){
+                    mellowNormieRadical = options.naturalFontScaling;
                 }
 				fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
 			}
@@ -211,7 +211,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             }
             const sW = fretWidth+"pt";
 
-            var fontMultiplier = Math.pow(multiplier, options.naturaFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
+            var fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
             cell.attr("fontMultiplier", fontMultiplier);
 
             var newTDSizes;

@@ -132,7 +132,7 @@ function document_keyup(evt) {
         leaveFullscreen();
         hideCmdLine();
         hideAllMenuDivs();
-        $("#btnLoopSections").focus();
+		$("#btnLoopSections").trigger('focus');
     }
 }
 
@@ -172,7 +172,7 @@ function document_keypress(e) {
                 getSong().prevBeat();
                 break;
             case "c": //"_C_olor"
-                $("#cbAutomaticColor").click();
+				$("#cbAutomaticColor").trigger('click');
                 break;
             case "e":
                 toggleWiringOpenState();
@@ -394,7 +394,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "setSongName":
 			if (argByInputID){
-				$("#txtFilename").val(argByInputID).change();
+				$("#txtFilename").val(argByInputID).trigger('change');
 			}
 			break;
 		case "setSectionCaption":
@@ -675,28 +675,28 @@ export function performCmdAction(menuItem, args){
 			window.open('help.html','_blank');
 			break;
 		case "showNamedNotes":
-			$("#cbHideNamedNotes").prop("checked", false).change();
+			$("#cbHideNamedNotes").prop("checked", false).trigger('change');
 			break;
 		case "showSingleNotes":
-			$("#cbHideSingleNotes").prop("checked", false).change();
+			$("#cbHideSingleNotes").prop("checked", false).trigger('change');
 			break;
 		case "showTinyNotes":
-			$("#cbHideTinyNotes").prop("checked", false).change();
+			$("#cbHideTinyNotes").prop("checked", false).trigger('change');
 			break;
 		case "showFingering":
-			$("#cbHideFingering").prop("checked", false).change();
+			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
 		case "hideNamedNotes":
-			$("#cbHideNamedNotes").prop("checked", true).change();
+			$("#cbHideNamedNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideSingleNotes":
-			$("#cbHideSingleNotes").prop("checked", true).change();
+			$("#cbHideSingleNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideTinyNotes":
-			$("#cbHideTinyNotes").prop("checked", true).change();
+			$("#cbHideTinyNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideFingering":
-			$("#cbHideFingering").prop("checked", true).change();
+			$("#cbHideFingering").prop("checked", true).trigger('change');
 			break;
 		case "selectFingering":
 			if (args){
@@ -764,7 +764,7 @@ export function performCmdAction(menuItem, args){
 						break;
                     case "f":
 						check("#idDropper");
-                        $("#idDropper").change();
+						$("#idDropper").trigger('change');
                         //$("#idDropper").prop("checked", true);
 						break;
 				}
