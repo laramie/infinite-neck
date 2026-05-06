@@ -5,6 +5,7 @@ export class PaletteBuilder {
     // #divPalette is our dest in index.html, 
     // #palette is the top div in the template.
     static div_palette = null; //Singleton.   
+    static eventNamespace = '.paletteBuilder';
     static addToDest(divDestSelector) {
         if (!PaletteBuilder.div_palette){
             const template = document.getElementById('palette-template');
@@ -17,34 +18,28 @@ export class PaletteBuilder {
     }
 
     static bindEvents(){
+        const eventNamespace = PaletteBuilder.eventNamespace;
+
         function checkRB(id){
             $(id).prop("checked", true);
         }
         
-        $('#selBend').click(function() {
-            $("#rbBend").prop("checked", true);
-        });
+        $('#selBend')
+            .off(`click${eventNamespace}`)
+            .on(`click${eventNamespace}`, function() {
+                $("#rbBend").prop("checked", true);
+            });
 
-        $("#rbFinger0").click(function(){
-            checkRB("#idRFinger0");
-        });
-        $("#rbFinger1").click(function(){
-            checkRB("#idRFinger1");
-        });
-        $("#rbFinger2").click(function(){
-            checkRB("#idRFinger2");
-        });
-        $("#rbFinger3").click(function(){
-            checkRB("#idRFinger3");
-        });
-        $("#rbFinger4").click(function(){
-            checkRB("#idRFinger4");
-        });
-        $("#rbFingerT").click(function(){
-            checkRB("#idRFingerT");
-        });
+        $('#rbFinger0, #rbFinger1, #rbFinger2, #rbFinger3, #rbFinger4, #rbFingerT')
+            .off(`click${eventNamespace}`)
+            .on(`click${eventNamespace}`, function() {
+                const suffix = this.id.replace('rbFinger', '');
+                checkRB(`#idRFinger${suffix}`);
+            });
 
-        $("#cbAutomaticColor").change(function() {
+        $("#cbAutomaticColor")
+            .off(`change${eventNamespace}`)
+            .on(`change${eventNamespace}`, function() {
             if (this.checked) {
                 //console.log("cbAutomaticColor was checked--hiding");
                 $('#manualColors').hide();
@@ -58,7 +53,9 @@ export class PaletteBuilder {
         });
 
 
-        $("#showHideExtraColors").click(function(event) {
+        $("#showHideExtraColors")
+            .off(`click${eventNamespace}`)
+            .on(`click${eventNamespace}`, function(event) {
             $("#extraColors").toggle();
             if ($("#extraColors").is(":visible")){
                 $("#showHideExtraColors")
@@ -74,7 +71,9 @@ export class PaletteBuilder {
             event.stopPropagation();
         });
 
-        $("#showHideCustomColorEditors").click(function(event) {
+        $("#showHideCustomColorEditors")
+            .off(`click${eventNamespace}`)
+            .on(`click${eventNamespace}`, function(event) {
             $("#CustomColorEditors").toggle();
             if ($("#CustomColorEditors").is(":visible")){
                 $("#showHideCustomColorEditors")
@@ -90,7 +89,9 @@ export class PaletteBuilder {
             event.stopPropagation();
         });
 
-        $("#showHideCustomColorLinks").click(function(event) {
+        $("#showHideCustomColorLinks")
+            .off(`click${eventNamespace}`)
+            .on(`click${eventNamespace}`, function(event) {
             $('#divColorDicts').toggle();
             if ($("#divColorDicts").is(":visible")){
                 $("#showHideCustomColorLinks")
@@ -104,44 +105,60 @@ export class PaletteBuilder {
             event.stopPropagation();
         });
 
-        $("#btnRecordUserColors").click(function() {
-			ColorFunctions.recordUserColors();
-		});
-		$("#btnRecordUserColorsFromSection").click(function() {
-			ColorFunctions.recordUserColorsFromSection();
-		});
+        $("#btnRecordUserColors")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.recordUserColors();
+			});
+		$("#btnRecordUserColorsFromSection")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				ColorFunctions.recordUserColorsFromSection();
+			});
 
         // Event delegation for stylesheet selection and deletion links
-        $(document).on('click', 'a.choose-stylesheet', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'a.choose-stylesheet')
+            .on(`click${eventNamespace}`, 'a.choose-stylesheet', function(e) {
             e.preventDefault();
             const dictkey = $(this).data('dictkey');
             ColorFunctions.chuseStylesheet(dictkey);
         });
 
-        $(document).on('click', 'a.delete-stylesheet', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'a.delete-stylesheet')
+            .on(`click${eventNamespace}`, 'a.delete-stylesheet', function(e) {
             e.preventDefault();
             const dictkey = $(this).data('dictkey');
             ColorFunctions.deleteUserStylesheet(dictkey);
         });
 
-        $(document).on('click', 'span.choose-color-picker', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'span.choose-color-picker')
+            .on(`click${eventNamespace}`, 'span.choose-color-picker', function(e) {
             e.preventDefault();
             const target = $(this).data('target');
             ColorFunctions.showColorPicker(this, target);
         });
 
-        $(document).on('click', 'span.choose-hatch-picker', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'span.choose-hatch-picker')
+            .on(`click${eventNamespace}`, 'span.choose-hatch-picker', function(e) {
             e.preventDefault();
             const target = $(this).data('target');
             ColorFunctions.showHatchPicker(this, target);
         });
 
-        $(document).on('click', 'td.colorPickerCell', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'td.colorPickerCell')
+            .on(`click${eventNamespace}`, 'td.colorPickerCell', function(e) {
             e.preventDefault();
             ColorFunctions.colorPickerClicked(this);
         });
 
-        $(document).on('click', 'td.hatchPickerCell', function(e) {
+        $(document)
+            .off(`click${eventNamespace}`, 'td.hatchPickerCell')
+            .on(`click${eventNamespace}`, 'td.hatchPickerCell', function(e) {
             e.preventDefault();
             ColorFunctions.hatchPickerClicked(this);
         });

@@ -268,28 +268,28 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-                $("#rbFinger0").attr('checked', 'checked');
+				$("#rbFinger0").prop('checked', true);
                 checkRB("#idRFinger0");
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-                $("#rbFinger1").attr('checked', 'checked');
+				$("#rbFinger1").prop('checked', true);
                 checkRB("#idRFinger1");
                 break;
             case "2":
-                $("#rbFinger2").attr('checked', 'checked');
+				$("#rbFinger2").prop('checked', true);
                 checkRB("#idRFinger2");
                 break;
             case "3":
-                $("#rbFinger3").attr('checked', 'checked');
+				$("#rbFinger3").prop('checked', true);
                 checkRB("#idRFinger3");
                 break;
             case "4":
-                $("#rbFinger4").attr('checked', 'checked');
+				$("#rbFinger4").prop('checked', true);
                 checkRB("#idRFinger4");
                 break;
             case "5":
-                $("#rbFingerT").attr('checked', 'checked');
+				$("#rbFingerT").prop('checked', true);
                 checkRB("#idRFingerT");
                 break;
             case "6":
