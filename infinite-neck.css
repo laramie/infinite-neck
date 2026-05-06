@@ -844,6 +844,17 @@ table.viewControls th {
     columns: 4;
 }
 
+#divSongList a {
+    display: inline-block;
+    padding: 0.4em;
+}
+#divSongList a:nth-of-type(odd) {
+    background-color: rgb(177, 255, 255);
+}
+#divSongList a:nth-of-type(even) {
+    background-color: rgb(235, 253, 148);
+}
+
 .bpm {
     font-size:  80%;
     margin: 0;

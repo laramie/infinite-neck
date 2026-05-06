@@ -724,9 +724,9 @@ export function replay(){
 export function replayTable(replayOptions){
     const currSection = getReplaySection(replayOptions);
     if (replayOptions.type === ReplayOptions.Type.SELF){
+        console.log("replayOptions for SELF: "+JSON.stringify(replayOptions));
         let idx = getSong().sections.indexOf(getCurrentSection());
         let tonalResult = getTonalForTable(getSong(), currSection, replayOptions.listenToTablename);
-        let chords = tonalResult.chords;
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  replayOptions.listenToTablename, idx, 
                                                  tonalResult.chords, currSection.chartChord, 
@@ -735,7 +735,8 @@ export function replayTable(replayOptions){
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    const lookupContext = createNotetableLookupContext(currSection);
+    //const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -751,9 +752,12 @@ export function replayTable(replayOptions){
 
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
-        let relSectionOptions = getSong().getDisplayOptionsInEffect(currSection, defaultDisplayOptions);
+        //let relSectionOptions = getSong().getDisplayOptionsInEffect(currSection, defaultDisplayOptions);
+        let relSectionOptions = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
+        console.log("relSectionOptions before assign: "+JSON.stringify(relSectionOptions));
         
         Object.assign(relSectionOptions, replayOptions);
+        console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
         //Don't need to send looping status, since that is a css class broadcast through 
         //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
@@ -872,7 +876,8 @@ export function showHighlightsForBeat(nBeat){
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
     const currSection = getReplaySection(options);
-    const lookupContext = createNotetableLookupContext(currSection);
+    //const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';
