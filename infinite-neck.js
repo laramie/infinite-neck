@@ -1292,14 +1292,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const naturalFontScaling = options.naturalFontScaling;
 		const functionSymbolsValue = options.dropDownFunctionSymbols?.value;
 
-		if (sizesObj.width != null){
-		 	$("#dropDownCellWidth").val(String(sizesObj.width));
-		}
-		if (sizesObj.height != null){
-		 	$("#dropDownCellHeight").val(String(sizesObj.height));
-		}
-		if (sizesObj.NoteFontSize){
-			setNoteFontSize(sizesObj.NoteFontSize);
+		if (getSong().presentationMode){
+			if (sizesObj.width != null){
+				$("#dropDownCellWidth").val(String(sizesObj.width));
+			}
+			if (sizesObj.height != null){
+				$("#dropDownCellHeight").val(String(sizesObj.height));
+			}
+			if (sizesObj.NoteFontSize){
+				setNoteFontSize(sizesObj.NoteFontSize);
+			}
 		}
 
 		if (options.showAllNoteNames){
