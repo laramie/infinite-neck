@@ -537,16 +537,22 @@ describe('Song construction and section add APIs', () => {
         expect(song.getCurrentSection()).toBe(section);
     });
 
-    test('addSections replaces default empty section and sets current index to last added', () => {
-        const song = createFreshHeadlessSong();
-        const incoming = {
-            sections: [song.constructSection(), song.constructSection(), song.constructSection()]
-        };
+    test('Song constructor hydrates persisted sections through the canonical V2 path', () => {
+        const sourceSong = createFreshHeadlessSong();
+        sourceSong.sections = [];
+        sourceSong.gSectionsCurrentIndex = 0;
+        sourceSong.addSection(sourceSong.constructSection());
+        sourceSong.addSection(sourceSong.constructSection());
+        sourceSong.addSection(sourceSong.constructSection());
 
-        song.addSections(incoming);
+        const persistedSong = JSON.parse(sourceSong.getPersistentSongFile());
+        const loadedSong = new Song(persistedSong);
+        loadedSong.setHeadless(true, true);
+        loadedSong.ensureDefaultSection();
+        loadedSong.fixupCurrentIndexForLoadedSong();
 
-        expect(song.getSections().length).toBe(3);
-        expect(song.getSectionsCurrentIndex()).toBe(2);
+        expect(loadedSong.getSections().length).toBe(3);
+        expect(loadedSong.getSectionsCurrentIndex()).toBe(0);
     });
 
     test('cycleThruKeysAllSections transposes each section rootID with wrap', () => {

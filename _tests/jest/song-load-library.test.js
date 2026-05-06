@@ -3,10 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { logVerbose, INFINITE_NECK_VERBOSE, VERBOSE_MODE, VERBOSE_MODE_INT } from './LogVerboseJest.js';
 import { validateSongFileSchema } from './SongFileV2Schema.js';
-import { 
-    setupSongTests, 
-    getSong
-} from '../../infinite-neck-headless.js';
+import { Song } from '../../Song.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -268,9 +265,12 @@ function runSongValidation(file, data, songTestOptions = {}) {
             throw new Error(`Song file does not match V2 schema:\n${schemaResult.errors.join('\n')}`);
         }
 
-        setupSongTests();
-        getSong().addSections(data);
-        expect(getSong().getSections().length).toBe(expectedSections);
+        const song = new Song(data);
+        song.setHeadless(true, true);
+        song.ensureDefaultSection();
+        song.fixupCurrentIndexForLoadedSong();
+
+        expect(song.getSections().length).toBe(expectedSections);
         expect(data).toHaveProperty('rootID');
         if (Array.isArray(data.sections)) {
             data.sections.forEach((section, i) => {

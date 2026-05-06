@@ -8,8 +8,9 @@ For further details, please refer to the following documents:
 
 ## Software development documents
 - [Design Notes](_doco/design/index.md)
-- [Command Menu Quick Start](_doco/design/command-menu-authoring-quick-start.md)
-- [Command Menu Programmer's Reference](_doco/design/command-menu-programmers-reference.md)
+- [Command Menu Quick Start](_doco/developer/command-menu-authoring-quick-start.md)
+- [Command Menu Programmer's Reference](_doco/developer/command-menu-programmers-reference.md)
+- [Schema Programmer's Reference](_doco/developer/schema-programmers-reference.md)
 - [TODO](_doco/lifecycle/TODO.md)
 - [CHANGELOG](_doco/lifecycle/CHANGELOG.md)
 - [Software Lifecycle](_doco/lifecycle/index.md)
@@ -24,6 +25,11 @@ For further details, please refer to the following documents:
 - command-menu validation:
    ```
    npm run validate:cmdmenu
+   ```
+- songfile schema validation:
+   ```
+   npm run validate:song-schema
+   npm run validate:song-schema:strict
    ```
 
 ## Copilot Notes and Scripts

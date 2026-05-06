@@ -440,15 +440,6 @@ export class Song extends SongPersistence {
 	getSections(){
 	    return this.sections;
 	}
-	addSections(fileObj){
-	    if (this.sections.length==1 && this.isEmpty(this.sections[0])){
-	        //special case: file open is adding sections, but default section is empty, so delete it.
-	        this.sections = [];
-	    }
-        var normalizedSections = fileObj.sections.map(section => section);
-        var count = Array.prototype.push.apply(this.sections, normalizedSections);
-        this.gSectionsCurrentIndex = count - 1;
-	}
 
     //these two return an html string that is either sharps or flats, depending on section.
     getRootKey(){

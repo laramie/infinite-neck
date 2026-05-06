@@ -310,39 +310,6 @@
   "singleNoteOpacity": "1.00",
   "songName": "name-that-note-Bass-0-7-sharps",
   "randomLoop": true,
-  "tunings": [
-    {
-      "baseID": "Bass4",
-      "baseInstrument": "Bass",
-      "caption": "Bass",
-      "nStrings": 4,
-      "rowRange": [
-        43,
-        38,
-        33,
-        28
-      ],
-      "diamonds": [
-        3,
-        5,
-        7,
-        9,
-        15,
-        17,
-        19,
-        21
-      ],
-      "doubleDiamonds": [
-        12,
-        24
-      ],
-      "stringDividerHeight": "0.6em",
-      "frets": 15,
-      "nut": true,
-      "reverse": false,
-      "visible": true
-    }
-  ],
   "userColors": {
     "noteTransparent": {
       "colorClass": "noteTransparent",
@@ -481,5 +448,38 @@
     }
   },
   "theme": "LandauTop",
-  "songfileVersion": "V2"
+  "songfileVersion": "V2",
+  "myTunings": [
+    {
+      "baseID": "Bass4",
+      "baseInstrument": "Bass",
+      "caption": "Bass",
+      "nStrings": 4,
+      "rowRange": [
+        43,
+        38,
+        33,
+        28
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0.6em",
+      "frets": 15,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ]
 }
