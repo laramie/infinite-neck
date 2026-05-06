@@ -142,18 +142,10 @@ export class PluginManager {
       name: propertyName,
       caption: `${buildCaption(caption, trigger)} [$${token}]`,
       trigger,
-      action: 'pluginProperty:set',
+      action: 'pluginProperty:toggle',
       pluginId,
       propertyName,
-      vars: [token],
-      popOnBang: true,
-      input: {
-        type: 'input',
-        caption: 'true|false',
-        default: token,
-        datatype: 'boolean',
-        id: 'value'
-      }
+      vars: [token]
     });
   }
 
@@ -205,6 +197,22 @@ export class PluginManager {
   }
 
   togglePropertyValue(entry, propertyName) {
+    if (propertyName === 'enabled') {
+      const nextValue = !entry.enabled;
+      entry.enabled = nextValue;
+      if (nextValue) {
+        this.enablePluginEntry(entry);
+      } else {
+        this.disablePluginEntry(entry);
+      }
+      return { result: `enabled=${nextValue}` };
+    }
+
+    if (propertyName === 'enableOnSongLoad') {
+      entry.enableOnSongLoad = !entry.enableOnSongLoad;
+      return { result: `enableOnSongLoad=${entry.enableOnSongLoad}` };
+    }
+
     const property = entry.plugin.getProperty(propertyName);
     if (!property) {
       throw new Error(`Unknown plugin property: ${propertyName}`);
