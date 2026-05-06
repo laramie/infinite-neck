@@ -18,7 +18,7 @@ import { Wiring } from '../../Wiring.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PRIMARY_SONG_FILENAME = 'persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
+const PRIMARY_SONG_FILENAME = 'tests/persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
 const PRIMARY_TABLE_ID = 'tblS6_1';
 const AUX_TABLE_ID = 'tblP46_1';
 

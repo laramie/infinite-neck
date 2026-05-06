@@ -11,9 +11,14 @@
     width: 3em;
 }
 
-/* Use class selectors for correct cascade */
+/* Use class selectors for correct cascade.
+ * Base/mode classes set the idle color.
+ * The ssKey_hasValue class switches to the text-present color.
+ */
 .SectionStatus_rootKey,
 .SectionStatus_rootKeyLead {
+    --section-status-key-idle-bg: white;
+    --section-status-key-live-bg: var(--section-status-key-idle-bg);
     box-shadow: inset 2px 2px 5px 2px #555;
     border-radius: 4px;
     padding: 0.2em;
@@ -25,25 +30,34 @@
     padding-bottom: 0;
     text-align: center;
     vertical-align: middle;
+    background-color: var(--section-status-key-idle-bg);
 }
 
 .SectionStatus_rootKey {
-    background-color: white;
+    --section-status-key-idle-bg: white;
 }
 .SectionStatus_rootKeyLead {
-    background-color: aqua;
+    --section-status-key-idle-bg: white;
+    --section-status-key-live-bg: aqua;
 }
 .SectionStatus_rootKey.ssKey_relative {
-    background-color: rgb(159, 107, 255);
+    --section-status-key-idle-bg: rgb(182, 147, 249);
 }
 .SectionStatus_rootKeyLead.ssKey_relative {
-    background-color: rgb(99, 18, 249);
+    color: rgb(254, 254, 32);
+    --section-status-key-idle-bg: rgb(182, 147, 249);
+    --section-status-key-live-bg: rgb(52, 2, 146);
 }
 .SectionStatus_rootKey.ssKey_listener {
-    background-color: rgb(255, 216, 77);
+    --section-status-key-idle-bg: rgb(254, 219, 90);
 }
 .SectionStatus_rootKeyLead.ssKey_listener {
-    background-color: rgb(252, 197, 0);
+    --section-status-key-idle-bg: rgb(254, 219, 90);
+    --section-status-key-live-bg: rgb(252, 172, 0);
+}
+.SectionStatus_rootKey.ssKey_hasValue,
+.SectionStatus_rootKeyLead.ssKey_hasValue {
+    background-color: var(--section-status-key-live-bg);
 }
 /*
 .section-status-vertical-table {
@@ -68,7 +82,7 @@
 
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
 .instrumentSectionBox {
-   FOOdisplay: inline;
+   font-size: 100%;
 }
 /* The section character: §    */
 .instrumentSectionMark {

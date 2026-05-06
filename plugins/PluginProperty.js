@@ -97,6 +97,7 @@ export class PluginProperty {
       case 'Number':
         return normalizeIntegerString(rawValue);
       case 'boolean':
+      case 'org.dynamide.toggle':
         return normalizeBoolean(rawValue);
       case 'org.dynamide.IntegerArray':
         return normalizeIntegerArray(rawValue);
@@ -144,6 +145,18 @@ export class PluginProperty {
         action: 'pluginAction:invoke',
         pluginId,
         actionName: this.actionName
+      });
+    }
+
+    if (this.datatype === 'org.dynamide.toggle') {
+      return new MenuItemProxy(plugin, {
+        name: this.name,
+        caption: captionWithValue,
+        trigger: this.trigger,
+        action: 'pluginProperty:toggle',
+        pluginId,
+        propertyName: this.name,
+        vars
       });
     }
 

@@ -169,6 +169,8 @@ export class PluginManager {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.setPropertyValue(entry, menuItem.propertyName, rawValue);
       }
+      case 'pluginProperty:toggle':
+        return this.togglePropertyValue(entry, menuItem.propertyName);
       case 'pluginProperty:select':
         return this.setPropertyValue(entry, menuItem.propertyName, menuItem.value);
       case 'pluginAction:invoke':
@@ -196,6 +198,19 @@ export class PluginManager {
     }
 
     const nextValue = entry.plugin.setPropertyValue(propertyName, rawValue, {
+      song: this.song,
+      pluginManager: this
+    });
+    return { result: `${propertyName}=${formatValue(nextValue)}` };
+  }
+
+  togglePropertyValue(entry, propertyName) {
+    const property = entry.plugin.getProperty(propertyName);
+    if (!property) {
+      throw new Error(`Unknown plugin property: ${propertyName}`);
+    }
+    const currentValue = !!property.getValue();
+    const nextValue = entry.plugin.setPropertyValue(propertyName, !currentValue, {
       song: this.song,
       pluginManager: this
     });

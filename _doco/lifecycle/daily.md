@@ -13,8 +13,8 @@
         export INFINITE_NECK_VERBOSE=-1
         node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
     ```
+    
 ### Run Jest Tests with more output
-
     - This gives a quiet output.
     - The Jest flag --verbose gives some test details.  
     - Use INFINITE_NECK_VERBOSE=1 etc. for even more.

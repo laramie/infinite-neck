@@ -650,10 +650,10 @@ export function getReplayOptionsArray(){
         opts.tablename = tablename; //e.g. Constants.TABLE_ID_PREFIX+"S6_1";
         return opts;
     }
-    function applyCurrentSectionOpts(opts){
-        opts.sharps =      opts.currSection.sharps;
-        opts.rootID =      opts.currSection.rootID;
-        opts.rootIDLead =  opts.currSection.rootIDLead;
+    function applySectionOpts(opts, section){
+        opts.sharps =      section.sharps;
+        opts.rootID =      section.rootID;
+        opts.rootIDLead =  section.rootIDLead;
         opts.rootKey =     getSong().noteIDToNoteName(opts.rootID);
         opts.rootKeyLead = getSong().noteIDToNoteName(opts.rootIDLead);                         
     }
@@ -670,36 +670,43 @@ export function getReplayOptionsArray(){
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
             let opts = freshOpts(baseopts, tablename);
-            opts.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
-            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            let section = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
+            opts.sectionIndex =  getSong().getSections().indexOf(section);
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
             opts.type = ReplayOptions.Type.RELATIVE;
             opts.directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
-            applyCurrentSectionOpts(opts);
+            applySectionOpts(opts, section);
             resultOptionsArray.push(opts);
         } else {
             let opts = freshOpts(baseopts, tablename);
-            opts.currSection = getCurrentSection();
-            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            let section = getCurrentSection();
+            opts.sectionIndex =  getSong().getSections().indexOf(section);
             opts.listenToTablename = tablename;
             opts.type = ReplayOptions.Type.SELF;
-            applyCurrentSectionOpts(opts);
+            applySectionOpts(opts, section);
             resultOptionsArray.push(opts);
             //Now add a LISTENER if present on top of SELF, which means SectionStatus widgets show LISTENER values, and notes in SELF get clobbered and you see SELF notes only if listenTo is not playing them.
             if (wiring && wiring.listenToTablename) {
                 let listenerOpts = freshOpts(baseopts, tablename);
-                listenerOpts.currSection = getCurrentSection();
-                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerOpts.currSection);
+                let listenerSection = getCurrentSection();
+                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerSection);
                 listenerOpts.listenToTablename = wiring.listenToTablename;
                 listenerOpts.type = ReplayOptions.Type.LISTENER;
-                applyCurrentSectionOpts(listenerOpts);
+                applySectionOpts(listenerOpts, listenerSection);
                 resultOptionsArray.push(listenerOpts);
             }
  
         }
     });
     return resultOptionsArray;
+}
+
+function getReplaySection(replayOptions){
+    if (replayOptions.type === ReplayOptions.Type.RELATIVE){
+        return getSong().getRelativeSectionWithWrap(replayOptions.relativeSection);
+    }
+    return getCurrentSection();
 }
 
 /** You will get back an array of opts:
@@ -715,19 +722,20 @@ export function replay(){
 }
 
 export function replayTable(replayOptions){
+    const currSection = getReplaySection(replayOptions);
     if (replayOptions.type === ReplayOptions.Type.SELF){
         let idx = getSong().sections.indexOf(getCurrentSection());
-        let tonalResult = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
+        let tonalResult = getTonalForTable(getSong(), currSection, replayOptions.listenToTablename);
         let chords = tonalResult.chords;
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  replayOptions.listenToTablename, idx, 
-                                                 tonalResult.chords, replayOptions.currSection.chartChord, 
-                                                 tonalResult.scale,  replayOptions.currSection.chartMode,
+                                                 tonalResult.chords, currSection.chartChord, 
+                                                 tonalResult.scale,  currSection.chartMode,
                                                  tonalResult.chord, tonalResult.mode);
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    const lookupContext = createNotetableLookupContext(replayOptions.currSection);
+    const lookupContext = createNotetableLookupContext(currSection);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -743,7 +751,7 @@ export function replayTable(replayOptions){
 
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
-        let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
+        let relSectionOptions = getSong().getDisplayOptionsInEffect(currSection, defaultDisplayOptions);
         
         Object.assign(relSectionOptions, replayOptions);
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
@@ -765,8 +773,8 @@ export function replayTable(replayOptions){
     }
     
     if (!replayOptions.hideNamedNotes){
-        if (replayOptions.currSection.sectionNotesByTable && replayOptions.currSection.sectionNotesByTable[listenToTablename]){
-            let namedNotes = replayOptions.currSection.sectionNotesByTable[listenToTablename].namedNotes;
+        if (currSection.sectionNotesByTable && currSection.sectionNotesByTable[listenToTablename]){
+            let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
             if (namedNotes){
                 Object.keys(namedNotes).forEach(noteName => {
                     var namedNote = namedNotes[noteName];
@@ -788,7 +796,7 @@ export function replayTable(replayOptions){
     }
 
     var tablearr = null;
-    let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
+    let sn = currSection.sectionNotesByTable[listenToTablename];
     if (sn){
         tablearr = sn.playedNotes;
     }
@@ -848,9 +856,10 @@ export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
         if (opts.type === ReplayOptions.Type.RELATIVE) {
+            let currSection = getReplaySection(opts);
             //nBeat is 1-based.
             if (opts.directionType === Song.DirectionType.BACKWARD){
-                showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);
+                showHighlightsForBeatForOptions(currSection.getBeatCount(), opts);
             } else if (opts.directionType === Song.DirectionType.FORWARD){
                 showHighlightsForBeatForOptions(1, opts);    
             }
@@ -862,12 +871,13 @@ export function showHighlightsForBeat(nBeat){
 
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
-    const lookupContext = createNotetableLookupContext(options.currSection);
+    const currSection = getReplaySection(options);
+    const lookupContext = createNotetableLookupContext(currSection);
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';
     }
-    let sn = options.currSection.sectionNotesByTable[options.listenToTablename];
+    let sn = currSection.sectionNotesByTable[options.listenToTablename];
     let dict = null;
     if (sn) {
         dict = sn.recordedNotes;

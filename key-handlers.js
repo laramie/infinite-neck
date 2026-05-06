@@ -794,6 +794,7 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = "none";
 			break;
 		case "pluginProperty:set":
+		case "pluginProperty:toggle":
 		case "pluginProperty:select":
 		case "pluginAction:invoke": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});

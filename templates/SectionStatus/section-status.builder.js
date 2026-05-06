@@ -161,8 +161,9 @@ class SectionStatusWidget {
     }
 
     handleSectionChanged(data) {
-        if (!data.replayOptions) return;
+        if (!data.replayOptions || !this.container) return;
         const opts = data.replayOptions;
+        const $container = $(this.container);
         function updateIfChanged($el, val, isHtml = false) {
             if (!$el.length) return;
             if (isHtml) {
@@ -171,15 +172,28 @@ class SectionStatusWidget {
                 if ($el.text() !== (val || '')) $el.text(val || '');
             }
         }
+        function setActiveIfChanged($el, val) {
+            if (!$el.length) return;
+            const isActive = String(val ?? '').trim() !== '';
+            if ($el.hasClass('ssKey_hasValue') !== isActive) {
+                $el.toggleClass('ssKey_hasValue', isActive);
+            }
+        }
 
-        updateIfChanged(this.container.find('.SectionStatus_relativeSection'), opts.relativeSection || '');
-        updateIfChanged(this.container.find('.SectionsStatus_SectionNumber'), (opts.sectionIndex !== undefined) ? (opts.sectionIndex + 1) : '');
-        updateIfChanged(this.container.find('.SectionStatus_rootKey'), opts.rootKey || '', true);
-        updateIfChanged(this.container.find('.SectionStatus_rootKeyLead'), opts.rootKeyLead || '', true);
+        updateIfChanged($container.find('.SectionStatus_relativeSection'), opts.relativeSection || '');
+        updateIfChanged($container.find('.SectionsStatus_SectionNumber'), (opts.sectionIndex !== undefined) ? (opts.sectionIndex + 1) : '');
+
+        const rootKey = opts.rootKey || '';
+        const rootKeyLead = opts.rootKeyLead || '';
+        const $rootKey = $container.find('.SectionStatus_rootKey');
+        const $rootKeyLead = $container.find('.SectionStatus_rootKeyLead');
+
+        updateIfChanged($rootKey, rootKey, true);
+        updateIfChanged($rootKeyLead, rootKeyLead, true);
+        setActiveIfChanged($rootKey, rootKey);
+        setActiveIfChanged($rootKeyLead, rootKeyLead);
 
         // jQuery and DOM both do class changes efficiently, no need to optimize the following:
-        const $rootKey = this.container.find('.SectionStatus_rootKey');
-        const $rootKeyLead = this.container.find('.SectionStatus_rootKeyLead');
         //These are all defined in section-status.css
         $rootKey.removeClass('ssKey_relative ssKey_listener');
         $rootKeyLead.removeClass('ssKey_relative ssKey_listener');

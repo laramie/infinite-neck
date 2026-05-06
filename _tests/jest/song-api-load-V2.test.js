@@ -11,7 +11,7 @@ import { Wiring } from '../../Wiring.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const FIXTURE_FILENAME = 'persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
+const FIXTURE_FILENAME = 'tests/persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
 
 function getSongPath(songFilename = FIXTURE_FILENAME) {
     return path.join(__dirname, '../../songs', songFilename);
