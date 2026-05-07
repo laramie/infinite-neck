@@ -97,6 +97,9 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+
+import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
+
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
@@ -2171,6 +2174,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 		installTDNoteClick();
 		bindDesktopEvents();
+		installLoopTimingModeControls();
 		applyScalingPrefs(true);
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));

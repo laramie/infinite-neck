@@ -1,5 +1,6 @@
 import EventBus from './event-bus.js';
 import * as InfiniteNeck from './infinite-neck.js';
+import { createLooperTransportTimingProviders } from './looper-transport-timing.js';
 
 	let isSectionsLooping = false;
 	let isBeatsLooping = false;
@@ -12,6 +13,7 @@ import * as InfiniteNeck from './infinite-neck.js';
 	});
 
 	const defaultTimingProviders = Object.freeze({
+		resetTimingState() {},
 		beforeScheduleNextTick() {},
 		afterScheduleNextTick() {},
 		beforeBeatTick() {},
@@ -61,6 +63,16 @@ import * as InfiniteNeck from './infinite-neck.js';
 		looperTimingProviders = { ...looperTimingProviders, ...nextProviders };
 	}
 
+	export function installTransportTiming(options = {}) {
+		const providers = createLooperTransportTimingProviders({
+			getMillisForBeatClock,
+			...options
+		});
+		setLooperTimingProviders(providers);
+		setLoopTimingMode(LoopTimingMode.TRANSPORT);
+		return providers;
+	}
+
 	function startLoopTimer(handler, millis){
 		if (typeof setTimeout !== 'function') return null;
 		return setTimeout(handler, millis);
@@ -103,12 +115,31 @@ import * as InfiniteNeck from './infinite-neck.js';
 		};
 	}
 
+	function providerSupportsTimingMode(timingMode = looperTimingMode) {
+		const supportedTimingModes = looperTimingProviders.supportedTimingModes;
+		if (!Array.isArray(supportedTimingModes) || supportedTimingModes.length === 0) {
+			return true;
+		}
+		return supportedTimingModes.includes(timingMode);
+	}
+
+	function callTimingHook(hookName, context, { ignoreTimingMode = false } = {}) {
+		if (!ignoreTimingMode && !providerSupportsTimingMode(context?.timingMode || looperTimingMode)) {
+			return undefined;
+		}
+		const hook = looperTimingProviders[hookName];
+		if (typeof hook !== 'function') {
+			return undefined;
+		}
+		return hook(context);
+	}
+
 	function getEffectiveBeatDelayMillis(context) {
 		const defaultDelayMillis = context.defaultDelayMillis;
 		const providerName = looperTimingMode === LoopTimingMode.TRANSPORT
 			? 'getTransportDelayMillis'
 			: 'getVisualDelayMillis';
-		const candidate = looperTimingProviders[providerName]?.(context);
+		const candidate = callTimingHook(providerName, context);
 		if (Number.isFinite(candidate) && candidate >= 0) {
 			return candidate;
 		}
@@ -126,9 +157,9 @@ import * as InfiniteNeck from './infinite-neck.js';
 			defaultDelayMillis: getMillisForBeatClock()
 		});
 		const delayMillis = getEffectiveBeatDelayMillis(timingContext);
-		looperTimingProviders.beforeScheduleNextTick(timingContext);
+		callTimingHook('beforeScheduleNextTick', timingContext);
 		showBeatsTimerPointer = startLoopTimer(() => runScheduledBeatTick(loopKind), delayMillis);
-		looperTimingProviders.afterScheduleNextTick({ ...timingContext, scheduledDelayMillis: delayMillis });
+		callTimingHook('afterScheduleNextTick', { ...timingContext, scheduledDelayMillis: delayMillis });
 		return showBeatsTimerPointer;
 	}
 
@@ -142,12 +173,12 @@ import * as InfiniteNeck from './infinite-neck.js';
 			return;
 		}
 		const timingContext = buildTimingContext({ loopKind, song });
-		looperTimingProviders.beforeBeatTick(timingContext);
+		callTimingHook('beforeBeatTick', timingContext);
 		const tickResult = tickBeat(song, {
 			sectionsLooping: loopKind === 'sections',
 			showBeats
 		});
-		looperTimingProviders.afterBeatTick({ ...timingContext, tickResult });
+		callTimingHook('afterBeatTick', { ...timingContext, tickResult });
 		if (isLoopKindActive(loopKind)) {
 			scheduleNextBeatTick(loopKind);
 		}
@@ -156,12 +187,14 @@ import * as InfiniteNeck from './infinite-neck.js';
 	export function clearBeatAndSectionLooping(){
 		const wasSectionsLooping = isSectionsLooping;
 		const wasBeatsLooping = isBeatsLooping;
+		const loopKind = getLoopKind();
 		isSectionsLooping = false;
 		isBeatsLooping = false;
 		if (showBeatsTimerPointer !== null) {
 			stopLoopTimer(showBeatsTimerPointer);
 		}
 		showBeatsTimerPointer = null;
+		callTimingHook('resetTimingState', { reason: 'stop-loop', loopKind }, { ignoreTimingMode: true });
 		if (wasSectionsLooping) {
 			EventBus.trigger('Looper:OnLoopSectionsStop');
 		}
@@ -173,6 +206,7 @@ import * as InfiniteNeck from './infinite-neck.js';
     function startLoopSections(){
 		isSectionsLooping = true;
 		isBeatsLooping = false;
+		callTimingHook('resetTimingState', { reason: 'start-loop', loopKind: 'sections' }, { ignoreTimingMode: true });
 	        showBPM();
         var caption = LOOPING_FRAMES_CAPTION;
         var song = getSong();
@@ -204,6 +238,7 @@ import * as InfiniteNeck from './infinite-neck.js';
 	function startLoopBeats(){
 		isSectionsLooping = false;
 		isBeatsLooping = true;
+		callTimingHook('resetTimingState', { reason: 'start-loop', loopKind: 'beats' }, { ignoreTimingMode: true });
 		EventBus.trigger('Looper:OnLoopBeatsStart', {
 			caption: LOOPING_BEATS_CAPTION
 		});
@@ -271,12 +306,12 @@ import * as InfiniteNeck from './infinite-neck.js';
             });
     
             if (sectionsLooping) {
-					looperTimingProviders.beforeSectionTransition({
+						callTimingHook('beforeSectionTransition', {
 						...result,
 						song,
 						sectionIndex: currentSectionIndex,
 						sectionCount
-					});
+						});
                 if (isLastSection) {
 						result.songEnd = true;
                     EventBus.trigger('DaCapo:OnSongEnd', {
@@ -296,7 +331,7 @@ import * as InfiniteNeck from './infinite-neck.js';
                     beat: song.getBeat(),
                     beats: song.getBeats()
                 });
-				looperTimingProviders.afterSectionTransition({
+				callTimingHook('afterSectionTransition', {
 					...result,
 					song,
 					nextSectionIndex: song.getSectionsCurrentIndex(),

@@ -869,6 +869,14 @@ table.viewControls th {
     border: none;
 }
 
+.transportTimingModeGroup {
+
+    display: inline-block;
+    margin: 0;
+    padding: 0.1em;
+    font-size: 60%;
+}
+
 
 /***************************** Un-organized *****************************/
 

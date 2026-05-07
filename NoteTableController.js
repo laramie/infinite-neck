@@ -724,7 +724,7 @@ export function replay(){
 export function replayTable(replayOptions){
     const currSection = getReplaySection(replayOptions);
     if (replayOptions.type === ReplayOptions.Type.SELF){
-        console.log("replayOptions for SELF: "+JSON.stringify(replayOptions));
+        //console.log("replayOptions for SELF: "+JSON.stringify(replayOptions));
         let idx = getSong().sections.indexOf(getCurrentSection());
         let tonalResult = getTonalForTable(getSong(), currSection, replayOptions.listenToTablename);
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 

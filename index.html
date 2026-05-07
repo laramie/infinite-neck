@@ -113,6 +113,30 @@
                                     <label for="txtBPM">BPM:&nbsp;</label>
                                     <input type="text" name="txtBPM" id="txtBPM" size="4" value="80"><button
                                         type="button">&check;</button>
+
+                                    <span id="loopTimingModeGroup" class="transportTimingModeGroup">
+                                          <label for="rbLoopTimingVisual">
+                                            <input
+                                              type="radio"
+                                              id="rbLoopTimingVisual"
+                                              name="rbLoopTimingMode"
+                                              value="visual"
+                                              checked
+                                            >
+                                            Visual Timing
+                                          </label>
+                                          <br>
+                                          <label for="rbLoopTimingTransport">
+                                            <input
+                                              type="radio"
+                                              id="rbLoopTimingTransport"
+                                              name="rbLoopTimingMode"
+                                              value="transport"
+                                            >
+                                            Transport Timing
+                                          </label>
+                                        </span>
+
                                     &nbsp;&nbsp;&nbsp;<button id="btnGraveyard" type="button"
                                         data-action="showGraveyard">View Graveyard</button>
                                         &nbsp;&nbsp;&nbsp;<label for="cbTransposeNotes"><input id="cbTransposeNotes" type="checkbox"
