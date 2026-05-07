@@ -6,7 +6,7 @@ import {
 	Note
 } from './Note.js';
 import { noteNameToNoteID } from './Constants.js';
-import { constNoteNamesArr } from './Constants.js';
+import { NOTE_NAMES_ARRAY } from './Constants.js';
 import {
 	GraveType
 } from './graveyard.js';
@@ -780,7 +780,7 @@ export function chuseStylesheet(dictkey){
 					}
 			*/
 		}
-		var noteNum = constNoteNamesArr.indexOf(note.noteName);  //   Bb ==> 1 (since A ==> 0)
+		var noteNum = NOTE_NAMES_ARRAY.indexOf(note.noteName);  //   Bb ==> 1 (since A ==> 0)
 		var relNoteNum = (12 + noteNum - theRootID) % 12; //the function number: Tau is 1.  0-based: 0==first note of scale
 
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.

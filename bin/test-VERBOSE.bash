@@ -1,4 +1,6 @@
 export INFINITE_NECK_VERBOSE=3
 clear
 
-npx jest _tests/jest/song-load.test.js
+pushd ~/infinite-neck
+node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
+popd

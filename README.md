@@ -11,13 +11,20 @@ For further details, please refer to the following documents:
 - [Command Menu Quick Start](_doco/developer/command-menu-authoring-quick-start.md)
 - [Command Menu Programmer's Reference](_doco/developer/command-menu-programmers-reference.md)
 - [Schema Programmer's Reference](_doco/developer/schema-programmers-reference.md)
+- [Core songfile schema lives here](bin/song-file-schema.js)
 - [TODO](_doco/lifecycle/TODO.md)
 - [CHANGELOG](_doco/lifecycle/CHANGELOG.md)
 - [Software Lifecycle](_doco/lifecycle/index.md)
 
 
 ## Developer maintenance notes
-- how we run jest tests:
+- test shell scripts (choose one)
+```
+   bin/test.bash           ## run Jest test suite
+   bin/test-VERBOSE.bash   ## run with debug output
+   bin/test-songs.bash     ## run just the song library test with song schema validation
+```
+- how we run Jest tests:
 ```
    cd infinite-neck
    export INFINITE_NECK_VERBOSE=-1

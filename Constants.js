@@ -7,16 +7,7 @@ export const MY_TUNINGS_TABLE_ID = "myTuningsTable";
 export const DEFAULT_BEATS = 4;
 export const RANDOM_SECTION_HISTORY_MAX = 16;
 
-/* VSCode search replace examples:
-(?<!\.)\bNUM_FRETS_MAX\b
-(?<!\.)\bTABLEDIV_ID_PREFIX\b
-(?<!\.)\bTABLE_ID_PREFIX\b
-(?<!\.)\bALL_TUNINGS_TABLE_ID\b
-(?<!\.)\bMY_TUNINGS_TABLE_ID\b
-*/
-
 export function calcFretLengths() {
-    var width = 60;
     var L0 = 1;
     const MAGIC_RATIO = 0.9438743;
     const FIRSTFRET_LENGTH = 0.05297;
@@ -44,12 +35,22 @@ export const noteNamesFuncArrDEFAULT = [
     "&delta;", // 11 - dom
     "&Delta;" // 12 - I
 ];
-export const constNoteNamesArr = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+
 
 export function noteIDToNoteNameRaw(noteIndex) {
-    return constNoteNamesArr[noteIndex];
+    return NOTE_NAMES_ARRAY[noteIndex];
 }
 export function noteNameToNoteID(noteName) {
-    return constNoteNamesArr.indexOf(noteName);
+    return NOTE_NAMES_ARRAY.indexOf(noteName);
 }
 
+export function midinumToNoteName(midinum) {
+    if (midinum <= 9) {
+        midinum += 12;
+    }
+    var index = (midinum - 9) % 12;
+    return NOTE_NAMES_ARRAY[index];
+    // 21 == A0
+    // 9 == A, 8 Ab, 7 G, 6 Gb, 5 F, 4 E, 3 Eb, 2 D, 1 Db, 0 C
+}

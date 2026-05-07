@@ -77,6 +77,17 @@ const valueCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSourc
 
 const errors = [];
 const warnings = [];
+let runtimeChildrenCount = 0;
+const runtimeActionRefs = new Set();
+
+const runtimeChildrenActionMap = new Map([
+    ['pluginManager', [
+        'pluginAction:invoke',
+        'pluginProperty:select',
+        'pluginProperty:set',
+        'pluginProperty:toggle'
+    ]]
+]);
 
 function addError(message) {
     errors.push(message);
@@ -186,13 +197,19 @@ function validateChildren(node, nodePath) {
 
         const noChildren = !Array.isArray(child.children) || child.children.length === 0;
         const noAction = !child.action;
-        if (noChildren && noAction && !node.action) {
+        const hasRuntimeChildren = typeof child.runtimeChildren === 'string' && child.runtimeChildren.length > 0;
+        if (noChildren && noAction && !node.action && !hasRuntimeChildren) {
             addWarning(childPath + ': selector-style leaf has no action, and parent also has no action');
         }
     });
 }
 
 function walk(node, nodePath = '/') {
+    if (typeof node.runtimeChildren === 'string' && node.runtimeChildren.length > 0) {
+        runtimeChildrenCount += 1;
+        const impliedActions = runtimeChildrenActionMap.get(node.runtimeChildren) || [];
+        impliedActions.forEach((action) => runtimeActionRefs.add(action));
+    }
     validateVisibleNode(node, nodePath);
     validateVars(node, nodePath);
     validateAction(node, nodePath);
@@ -221,6 +238,8 @@ function collectActions(node) {
 }
 collectActions(gMenuFile);
 
+runtimeActionRefs.forEach((action) => actionRefs.add(action));
+
 const unusedActionCases = Array.from(actionCases)
     .filter((action) => !actionRefs.has(action))
     .sort();
@@ -234,6 +253,7 @@ console.log('======================');
 console.log('Menu actions referenced: ' + actionRefs.size);
 console.log('performCmdAction cases: ' + actionCases.size);
 console.log('getValue tokens: ' + valueCases.size);
+console.log('runtimeChildren menuItems: ' + runtimeChildrenCount);
 console.log('');
 
 if (errors.length === 0 && warnings.length === 0) {

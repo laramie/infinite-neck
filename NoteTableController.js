@@ -25,7 +25,7 @@ import {
 } from './Note.js';
 import {
     Song} from './Song.js';
-import { constNoteNamesArr } from './Constants.js';
+import { NOTE_NAMES_ARRAY } from './Constants.js';
 import {
     recordHighlight,
     recordHighlightSingle,
@@ -91,7 +91,7 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
     var song = getSong() || {};
     var relNoteNum = (12 + noteNum - options.rootID) % 12; //0-based: 0==first note of scale
     var fnArr = Array.isArray(song.noteNamesFuncArr) ? song.noteNamesFuncArr : [];
-    var importFallback = Array.isArray(constNoteNamesArr) ? constNoteNamesArr : LOCAL_FALLBACK_NOTE_FUNCTIONS;
+    var importFallback = Array.isArray(NOTE_NAMES_ARRAY) ? NOTE_NAMES_ARRAY : LOCAL_FALLBACK_NOTE_FUNCTIONS;
     var noteFnBase = fnArr[relNoteNum] || importFallback[relNoteNum] || "";
     var noteFn = noteFnBase;
     var displayPitch = relNoteNum + 1; //1-based: 1==first note of scale.
@@ -1048,8 +1048,8 @@ export function fillChord() {
     var scaleNotesArr = scaleNotes.split(',');
 
     var rootID = parseInt(getCurrentSection().rootID);
-    var rootName = constNoteNamesArr[rootID];
-    var rootClassName = ".note" + constNoteNamesArr[rootID];
+    var rootName = NOTE_NAMES_ARRAY[rootID];
+    var rootClassName = ".note" + NOTE_NAMES_ARRAY[rootID];
 
     var scaleColor = $("input:radio[name=rbnFillNoteScale]:checked").val()
     var chordsColor = $("input:radio[name=rbnFillNoteChord]:checked").val()
@@ -1066,7 +1066,7 @@ export function fillChord() {
 
     for (let i = 0; i < chordFnNotesArr.length; i++) {
         var noteID = (parseInt(chordFnNotesArr[i]) + rootID) % 12;
-        var noteName = constNoteNamesArr[noteID];
+        var noteName = NOTE_NAMES_ARRAY[noteID];
         if (keepRoot && rootName==noteName){
             console.log("NOT hosing root note by chord: "+noteName);
         } else {
@@ -1077,7 +1077,7 @@ export function fillChord() {
 
     for (let i = 0; i < scaleNotesArr.length; i++) {
         var noteID = (parseInt(scaleNotesArr[i]) + rootID) % 12;
-        var noteName = constNoteNamesArr[noteID];
+        var noteName = NOTE_NAMES_ARRAY[noteID];
         if (   (keepChords && chordNames.includes(noteName))
             || (keepRoot   && rootName==noteName)            ){
             console.log("NOT hosing root/chord note by scale: "+noteName);

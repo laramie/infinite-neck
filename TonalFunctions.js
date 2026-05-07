@@ -61,11 +61,9 @@ export function getTonalForTable(theSong, section, tablename){
 
 
 function normalizeChord(arr, rootKey) {
-  // Remove duplicates
   const unique = [...new Set(arr)];
-  // Sort by constNoteNamesArr order
   const sorted = unique.slice().sort(
-    (a, b) => Constants.constNoteNamesArr.indexOf(a) - Constants.constNoteNamesArr.indexOf(b)
+    (a, b) => Constants.NOTE_NAMES_ARRAY.indexOf(a) - Constants.NOTE_NAMES_ARRAY.indexOf(b)
   );
   // Rotate so rootKey is first
   const idx = sorted.indexOf(rootKey);

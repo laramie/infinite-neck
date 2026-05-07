@@ -74,6 +74,23 @@ documentation.js
 //   documentation.js looks beautiful and more mature.  Trying it.   20260424.
 npm install --save-dev documentation
 
+documentation.js works.  I have an output folder now:
+  _doco/documentation/ 
+To run it: 
+  bin/documentation.sh
+
+=============
+Using Node REPL
+=============
+run:
+  node
+Here is how you import:
+  const Constants = await import('./Constants.js');
+  Constants.midinumToNoteName(2)
+
+Here is how you exit: 
+.exit
+or, press Ctrl+D
 
 
 
