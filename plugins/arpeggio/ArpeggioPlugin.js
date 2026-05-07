@@ -153,12 +153,12 @@ export class ArpeggioPlugin {
 
   validateValues(values) {
     const maxAllowedFret = this.getMaxAllowedFret();
-    if (values.minFret < 0 || values.minFret > maxAllowedFret) {
+    //throw means you can't open the song file. :(  Just do console.warn for now.
+      if (values.minFret < 0 || values.minFret > maxAllowedFret) {
       //throw new Error(`minFret must be between 0 and ${maxAllowedFret}`);
       console.warn(`minFret must be between 0 and ${maxAllowedFret}`);
     }
     if (values.maxFret < 0 || values.maxFret > maxAllowedFret) {
-      //throw means you can't open the song file. :(
       //throw new Error(`maxFret must be between 0 and ${maxAllowedFret}`);
       console.warn(`maxFret must be between 0 and ${maxAllowedFret}`);
     }
