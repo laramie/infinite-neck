@@ -22,6 +22,8 @@ const {
 	toggleLoopSections,
 	toggleLoopBeats,
 	restartLoopSections,
+	getLoopTimingMode,
+	LoopTimingMode,
 	__resetLooperForTests
 } = await import('../../looper.js');
 
@@ -80,8 +82,8 @@ describe('looper tickBeat', () => {
 
 describe('looper looping state', () => {
 	let triggerSpy;
-	let setIntervalSpy;
-	let clearIntervalSpy;
+	let setTimeoutSpy;
+	let clearTimeoutSpy;
 
 	beforeEach(() => {
 		__resetLooperForTests();
@@ -90,14 +92,14 @@ describe('looper looping state', () => {
 		mockRuntime.showBeats = jest.fn();
 		mockRuntime.showBPM = jest.fn();
 		triggerSpy = jest.spyOn(EventBus, 'trigger');
-		setIntervalSpy = jest.spyOn(global, 'setInterval').mockImplementation(() => 99);
-		clearIntervalSpy = jest.spyOn(global, 'clearInterval').mockImplementation(() => {});
+		setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(() => 99);
+		clearTimeoutSpy = jest.spyOn(global, 'clearTimeout').mockImplementation(() => {});
 	});
 
 	afterEach(() => {
 		triggerSpy.mockRestore();
-		setIntervalSpy.mockRestore();
-		clearIntervalSpy.mockRestore();
+		setTimeoutSpy.mockRestore();
+		clearTimeoutSpy.mockRestore();
 	});
 
 	test('looping state defaults to false', () => {
@@ -110,9 +112,10 @@ describe('looper looping state', () => {
 		toggleLoopSections();
 		expect(sectionsLooping()).toBe(true);
 		expect(beatsLooping()).toBe(false);
+		expect(getLoopTimingMode()).toBe(LoopTimingMode.VISUAL);
 		expect(mockRuntime.showBPM).toHaveBeenCalledTimes(1);
-		expect(setIntervalSpy).toHaveBeenCalledTimes(1);
-		expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 125);
+		expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
 	});
 
@@ -129,7 +132,7 @@ describe('looper looping state', () => {
 		toggleLoopSections();
 		expect(sectionsLooping()).toBe(false);
 		expect(beatsLooping()).toBe(false);
-		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
+		expect(clearTimeoutSpy).toHaveBeenCalledWith(99);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStop');
 	});
 
@@ -138,13 +141,13 @@ describe('looper looping state', () => {
 		toggleLoopBeats();
 		expect(beatsLooping()).toBe(true);
 		expect(sectionsLooping()).toBe(false);
-		expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 125);
+		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStart', { caption: 'LOOPING...' });
 
 		triggerSpy.mockClear();
 		toggleLoopBeats();
 		expect(beatsLooping()).toBe(false);
-		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
+		expect(clearTimeoutSpy).toHaveBeenCalledWith(99);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStop');
 	});
 
@@ -156,7 +159,8 @@ describe('looper looping state', () => {
 		expect(triggerSpy.mock.calls).toEqual([
 			['Looper:OnLoopBeatsStop'],
 			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
-			['DaCapo:OnSongBegin', expect.any(Object)]
+			['DaCapo:OnSongBegin', expect.any(Object)],
+			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
 	});
 
@@ -167,12 +171,13 @@ describe('looper looping state', () => {
 		triggerSpy.mockClear();
 		restartLoopSections();
 		expect(sectionsLooping()).toBe(true);
-		expect(clearIntervalSpy).toHaveBeenCalledWith(99);
-		expect(setIntervalSpy).toHaveBeenCalledTimes(2);
+		expect(clearTimeoutSpy).toHaveBeenCalledWith(99);
+		expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
 		expect(triggerSpy.mock.calls).toEqual([
 			['Looper:OnLoopSectionsStop'],
 			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
-			['DaCapo:OnSongBegin', expect.any(Object)]
+			['DaCapo:OnSongBegin', expect.any(Object)],
+			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
 	});
 
