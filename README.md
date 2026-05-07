@@ -17,21 +17,32 @@ For further details, please refer to the following documents:
 
 
 ## Developer maintenance notes
+- how we run jest tests:
+```
+   cd infinite-neck
+   export INFINITE_NECK_VERBOSE=-1
+   node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
+```
 - after adding doco files, please run
-   ```
+```
    cd infinite-neck
    bin/index.md-update-all.sh 
-   ```
+```
 - command-menu validation:
-   ```
+```
    npm run validate:cmdmenu
-   ```
+```
 - songfile schema validation:
-   ```
+```
    npm run validate:song-schema
    npm run validate:song-schema:strict
-   ```
+```
 
 ## Copilot Notes and Scripts
-- If you are a Copilot chatbot or assistant chatting via the Github app on mobile (not Copilot working in Visual Studio Code environment), please read and follow set-up and working branch instructions and rules here:
--- [Instructions for copilot/chatbots on mobile app](copilot-chat-phone-notes-instructions.md)
+
+- If you are a GitHub Copilot chatbot or assistant chatting via Visual Studio Code, please read this document to understand some base guidelines: 
+    - [Guidelines for GitHub Copilot on VS Code](copilot-github-vs-code-instructions.md)
+
+- If you are a GitHub Copilot chatbot or assistant chatting via the Github app on mobile (not Copilot working in Visual Studio Code environment), please read and follow set-up and working branch instructions and rules here:
+
+   - [Instructions for copilot/chatbots on mobile app](copilot-chat-phone-notes-instructions.md)
