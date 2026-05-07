@@ -74,7 +74,7 @@ export function updateCmdLineView(addedCrumb){
 
 var gCmdResultsCount = 0;
 
-function addCmdResults(newResultsLine){
+export function addCmdResults(newResultsLine){
     var jO = $(new Option("", gCmdResultsCount++));
     jO.html(newResultsLine);
     $("#dropDownCmdResults").prepend(jO);

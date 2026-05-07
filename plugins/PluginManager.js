@@ -30,6 +30,19 @@ function stripHtml(value) {
   return `${value || ''}`.replace(/<[^>]+>/g, '');
 }
 
+function normalizePluginResponse(response, fallbackResult) {
+  if (typeof response === 'string') {
+    return { result: response, message: '' };
+  }
+  if (response && typeof response === 'object') {
+    return {
+      result: response.result || fallbackResult,
+      message: response.message || ''
+    };
+  }
+  return { result: fallbackResult, message: '' };
+}
+
 export class PluginManager {
   constructor(eventBus) {
     this.eventBus = eventBus;
@@ -230,16 +243,7 @@ export class PluginManager {
       song: this.song,
       pluginManager: this
     });
-    if (typeof response === 'string') {
-      return { result: response };
-    }
-    if (response && typeof response === 'object') {
-      return {
-        result: response.result || `${actionName}`,
-        message: response.message || ''
-      };
-    }
-    return { result: `${actionName}` };
+    return normalizePluginResponse(response, `${actionName}`);
   }
 
   resolveValue(token) {
@@ -335,10 +339,19 @@ export class PluginManager {
         if (!entry.enabled) {
           return;
         }
-        entry.plugin.handleEvent(busEventName, payload, {
+        const response = entry.plugin.handleEvent(busEventName, payload, {
           song: this.song,
           pluginManager: this
         });
+        const normalized = normalizePluginResponse(response, `${entry.plugin.getId()}:${busEventName}`);
+        if (normalized.result || normalized.message) {
+          this.eventBus.trigger('PluginManager:ShowResult', {
+            pluginId: entry.plugin.getId(),
+            eventName: busEventName,
+            result: normalized.result,
+            message: normalized.message
+          });
+        }
       };
       entry.handlers.set(eventName, handler);
       this.eventBus.on(eventName, handler);

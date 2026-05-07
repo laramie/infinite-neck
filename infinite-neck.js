@@ -16,6 +16,7 @@ import {
 	setColorFunctionsProviders
 } from './colorFunctions.js';
 import {
+	addCmdResults,
 	hideCmdLine,
 	toggleCmdLine,
 	txtCmdLine_keypress 
@@ -2330,6 +2331,14 @@ EventBus.on('SongUiClearAndReplaySection', function() {
 });
 EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
+});
+EventBus.on('PluginManager:ShowResult', function(event, data) {
+	if (data && data.result) {
+		addCmdResults(`${data.pluginId}:${data.eventName} >> ${data.result}`);
+	}
+	if (data && data.message) {
+		showMessages(data.message);
+	}
 });
 EventBus.on('ReinstallAllTuningsTables', function() {
 	reinstallAllTuningsTables();
