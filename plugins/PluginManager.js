@@ -298,12 +298,9 @@ export class PluginManager {
       }
 
       if (persisted) {
-        entry.enabled = !!persisted.enabled;
         entry.enableOnSongLoad = !!persisted.enableOnSongLoad;
       }
-      if (entry.enableOnSongLoad) {
-        entry.enabled = true;
-      }
+      entry.enabled = !!entry.enableOnSongLoad;
       if (entry.enabled) {
         this.enablePluginEntry(entry);
       }

@@ -51,6 +51,7 @@ const placedNoteSchema = {
         midinum: integerLikeSchema,
         row: integerLikeSchema,
         col: integerLikeSchema,
+        owner: { type: 'string', minLength: 1 },
         bendValue: { type: 'string', minLength: 1 },
         noteNameClass: { type: 'string', minLength: 1 },
         finger: { type: 'string', minLength: 1 },

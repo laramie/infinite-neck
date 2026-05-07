@@ -80,6 +80,12 @@ import * as InfiniteNeck from './infinite-neck.js';
                 beat: song.getBeat(),
                 beats: song.getBeats()
             });
+			EventBus.trigger('DaCapo:OnSectionBegin', {
+				sectionIndex: song.getSectionsCurrentIndex(),
+				sectionCount: song.getSections().length,
+				beat: song.getBeat(),
+				beats: song.getBeats()
+			});
         }
     
 		var millisNextBeat = getMillisForBeatClock();

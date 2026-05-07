@@ -179,6 +179,16 @@ On DaCapo:OnSectionBegin
 
     However, if the user stops Looping before coming around to a new Section, they should be able to save the song since all recordedNotes so far are in the model.  If they then set "enabled" to false, they can play the song at any time and still have all the note ArpeggioPlugin has calculated and placed.
 
+## Answers to iteration 1, with numbers matching points in "Findings" : 
+
+1. fix looper.js to emit DaCapo:OnSectionBegin at loop start as part of the implementation iteration.  This was an oversight and will not break existing clients.
+2. emit the pattern of ArpeggioPlugin :: invokeAction :: help with a message saying that set of choices is not implemented yet.  For this iteration, User must know the magic combination, which you can document in the message. So "3." and not "4."
+5. action "clear" should clean up all generated notes in the whole song.  The ArpeggioPlugin does cleanup-one-Section-only when coming to a new Section while looping.  So not "6." but yes "7."
+8. For this iteration, choose the instrument that is the first in myTunings that is not wired as a Listener or Observer.  Thus we do one table/instrument only.
+13. For this iteration, if upOnly is false, then continue in reverse, skipping the last note highlighted so it is not a double-play.  So if the logical sequence of notes played was 1,2,3 but we had six beats, the sequence would be 1,2,3,2,1,2.   if upOnly is true, the sequence would be 1,2,3,1,2,3.
+17. Yes, please add to the schema with optional.  We want the schema to represent optional properties for documentation purposes so no one creates a property with another meaning.
+
+
   ## Request
 
     I think we have specified enough to allow you to make the algorithm work. If you need additional midi/note-name functions because our existing set doesn't give the information needed for calculation, please let us know.  In this iteration, please let us know any question you have, or any holes in our specification.
