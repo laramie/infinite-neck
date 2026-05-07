@@ -353,6 +353,9 @@ function document_keypress(e) {
    	//  getValue :: turn a string Get request from a menu into a value.
 	//
 
+function check(id){
+	$(id).prop("checked", true);
+}
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
 export function performCmdAction(menuItem, args){
@@ -770,6 +773,90 @@ export function performCmdAction(menuItem, args){
 				}
 			}
 			break;
+		case "selectRole":
+			if (args) {
+				switch (args["key"]) {
+					case "t":
+						check("#idRTransparent");
+						break;
+					case "a":
+						check("#idRAutomatic");
+						break;
+					case "s":
+						check("#idRScale");
+						break;
+					case "r":
+						check("#idRRoot");
+						break;
+					case "c":
+						check("#idRChromatic");
+						break;
+					case "p":
+						check("#idRPassing");
+						break;
+					case "b":
+						check("#idRBass");
+						break;
+				}
+			}
+			break;
+		case "selectRoleChord":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						check("#idRChord");
+						break;
+					case "2":
+						check("#idRChord2");
+						break;
+					case "3":
+						check("#idRChord3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleColornote":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						check("#idRColornote");
+						break;
+					case "2":
+						check("#idRColornote2");
+						break;
+					case "3":
+						check("#idRColornote3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleAvoid":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						check("#idRAvoid");
+						break;
+					case "2":
+						check("#idRAvoid2");
+						break;
+					case "3":
+						check("#idRAvoid3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleLead":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						check("#idRLead");
+						break;
+					case "2":
+						check("#idRLead2");
+						break;
+				}
+			}
+			break;		
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
