@@ -391,7 +391,22 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     if (bachCycle.length === 0) {
       return [];
     }
-    return Array.from({ length: beatCount }, (_, idx) => bachCycle[idx % bachCycle.length]);
+
+    const firstKey = this.getCandidatePositionKey(bachCycle[0]);
+    const lastKey = this.getCandidatePositionKey(bachCycle[bachCycle.length - 1]);
+    const repeatCycle = firstKey === lastKey ? bachCycle.slice(1) : bachCycle;
+    const sequence = [];
+
+    while (sequence.length < beatCount) {
+      const source = sequence.length === 0 ? bachCycle : repeatCycle;
+      if (source.length === 0) {
+        break;
+      }
+      const remaining = beatCount - sequence.length;
+      sequence.push(...source.slice(0, remaining));
+    }
+
+    return sequence;
   }
 
   buildBachCycle(candidates, section, song = getSong()) {

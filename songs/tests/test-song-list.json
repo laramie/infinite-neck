@@ -4,6 +4,7 @@
          "persistence/forward-backward-observers.json",
          "persistence/3-chord-3keys-S6-Bass.json",
          "persistence/3-chord-3keys-S6-Bass-observers-highlights.json",
+         "arpeggio-bach-sec2-manual.json",
          "empty-song.json"
     ],
     "ignoredSongs": [

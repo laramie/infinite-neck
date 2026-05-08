@@ -13,7 +13,8 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 const Constants = await import('../../Constants.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 
-const MANUAL_BACH_FIXTURE = path.resolve(process.cwd(), 'songs/arpeggio-bach-sec2-manual.json');
+const MANUAL_BACH_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-sec2-manual.json');
+const DUPLICATE_END_NOTE_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-sec2-manual-duplicate-end-note.json');
 
 function makeNamedNotesForRange(rowRange, minFret, maxFret) {
 	const namedNotes = {};
@@ -74,10 +75,17 @@ function loadManualBachFixture() {
 	return JSON.parse(fs.readFileSync(MANUAL_BACH_FIXTURE, 'utf8'));
 }
 
-function extractRecordedSequence(sectionNotes, beatCount) {
+function loadDuplicateEndNoteFixture() {
+	return JSON.parse(fs.readFileSync(DUPLICATE_END_NOTE_FIXTURE, 'utf8'));
+}
+
+function extractRecordedSequence(sectionNotes, beatCount, owner = null) {
 	return Array.from({ length: beatCount }, (_, idx) => {
 		const beatKey = `${idx + 1}`;
-		const note = sectionNotes.recordedNotes[beatKey]?.[0] || null;
+		const notesInBeat = sectionNotes.recordedNotes[beatKey] || [];
+		const note = owner
+			? (notesInBeat.find((candidate) => candidate.owner === owner) || null)
+			: (notesInBeat[0] || null);
 		return note
 			? {
 				noteName: note.noteName,
@@ -198,6 +206,30 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(result.result).toContain('generated=24');
 		expect(actualSequence).toEqual(expectedSequence);
+	});
+
+	test('style=bach does not repeat the actingRoot at the cycle boundary', () => {
+		const fixture = loadDuplicateEndNoteFixture();
+		const plugin = new ArpeggioPlugin();
+		const song = {
+			...fixture,
+			getCurrentSection: jest.fn(() => fixture.sections[0])
+		};
+		const section = fixture.sections[0];
+		const tuning = fixture.myTunings[0];
+		const tableID = plugin.getTableID(tuning);
+		section.getSectionNotes = jest.fn((requestedTableID) => section.sectionNotesByTable[requestedTableID]);
+		mockRuntime.song = song;
+		plugin.loadSongState(fixture.plugins.arpeggio.properties);
+
+		const result = plugin.applyToSection({ song, clearSectionFirst: true });
+		const actualSequence = extractRecordedSequence(section.sectionNotesByTable[tableID], 32, 'ArpeggioPlugin');
+		const expectedSequence = extractRecordedSequence(fixture.sections[1].sectionNotesByTable[tableID], 32, 'manualExample');
+
+		expect(result.result).toContain('generated=32');
+		expect(actualSequence).toEqual(expectedSequence);
+		expect(actualSequence[28]).toMatchObject({ noteName: 'C', midinum: 48 });
+		expect(actualSequence[29]).toMatchObject({ noteName: 'E', midinum: 52 });
 	});
 
 	test('style=bach with lowToHigh=false rotates the same cycle to the second octave hit', () => {
