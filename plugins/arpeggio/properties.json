@@ -1,7 +1,7 @@
 [
   {
     "name": "minFret",
-    "caption": "min fret position",
+    "caption": "minFret position",
     "trigger": "m",
     "datatype": "Number",
     "value": 0,
@@ -11,7 +11,7 @@
   },
   {
     "name": "maxFret",
-    "caption": "top fret position",
+    "caption": "maxFret position",
     "trigger": "t",
     "datatype": "Number",
     "value": 12,

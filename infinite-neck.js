@@ -27,6 +27,10 @@ import {
 import {
 	draggable
 } from './drag.js';
+import { 
+	gPresentation, 
+	PalettePresentation 
+} from './presentation.js';
 import {
 	getFontSize,
 	getUIFontSize,
@@ -81,9 +85,6 @@ import {
 import * as SectionPrinter from './section-printer.js';
 import * as TableBuilder from './TableBuilder.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
-import {
-	allTunings
-} from './tunings.js';
 import {
 	gUserColorDict,
 	gUserColorDictRolesDefault,
@@ -628,7 +629,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function turnOnKeep(){
-		$("#idKeep").prop("checked", true);
+		PalettePresentation.selectRbColorById("#idKeep", {
+			remember: false,
+			forcedKeep: true
+		});
+	}
+	
+	export function turnOffKeep(){
+		if (!gPresentation.palette.keepWasForced) {
+			return;
+		}
+		gPresentation.palette.keepWasForced = false;
+		PalettePresentation.restoreLastRbColor();
 	}
 
 	export function hideNoteClickedCaption(){
@@ -662,20 +674,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function turnOffHiding(){
-	    var hideNamedNotes = $("#cbHideNamedNotes").prop("checked");
-	    var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-	    var hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-	    var hideFingering = $("#cbHideFingering").prop("checked");
-	    $("#cbHideNamedNotes").prop("checked", false);
-	    $("#cbHideTinyNotes").prop("checked", false);
-	    $("#cbHideSingleNotes").prop("checked", false);
-	    $("#cbHideFingering").prop("checked", false);
-	    $("#lblHideWarning").hide();
-	    if (hideNamedNotes || hideTinyNotes || hideSingleNotes || hideFingering){
-	        clearAll();
-	        replay();
-	    }
-  	}
+		var hideNamedNotes = $("#cbHideNamedNotes").prop("checked");
+		var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
+		var hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
+		var hideFingering = $("#cbHideFingering").prop("checked");
+	
+		$("#cbHideNamedNotes").prop("checked", false);
+		$("#cbHideTinyNotes").prop("checked", false);
+		$("#cbHideSingleNotes").prop("checked", false);
+		$("#cbHideFingering").prop("checked", false);
+		$("#lblHideWarning").hide();
+	
+		turnOffKeep();
+	
+		if (hideNamedNotes || hideTinyNotes || hideSingleNotes || hideFingering){
+			clearAll();
+			replay();
+		}
+	}
 
 	export function updateMemoryModelPreFileSave(){
 	    const visibleTableIds = TuningsLibrary.getMyTunings()
@@ -920,25 +936,32 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installRBColorChangeEvents(){
 		const eventNamespace = '.installRBColorChangeEvents';
-		$( 'input[name="rbColor"]:radio' )
+	
+		$('input[name="rbColor"]:radio')
 			.off(`change${eventNamespace}`)
 			.on(`change${eventNamespace}`, function() {
-			if ("noteKeep" === $(this).val()){
-			} else if ("noteDropper" === $(this).val()){
-				$("td.note").css({"cursor": "zoom-in"});
-			} else {
-				$("td.note").css({"cursor": "pointer"});
-				turnOffHiding();
-			}
-		});
-		$( 'input[name="rbColor"]' )
+				if ($(this).is(":checked") && !gPresentation.palette.suppressRbColorRemember) {
+					PalettePresentation.rememberRestorableRbColor(this);
+				}
+	
+				if ("noteKeep" === $(this).val()) {
+				} else if ("noteDropper" === $(this).val()) {
+					$("td.note").css({"cursor": "zoom-in"});
+				} else {
+					$("td.note").css({"cursor": "pointer"});
+					turnOffHiding();
+				}
+			});
+	
+		$('input[name="rbColor"]')
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-			$('input[name="rbColor"]').css({"box-shadow": "none"});
-			$("td.note").css({"cursor": "auto"});
-		});
+				$('input[name="rbColor"]').css({"box-shadow": "none"});
+				$("td.note").css({"cursor": "auto"});
+			});
+	
+		PalettePresentation.initializePalettePresentation();
 	}
-
 
     export function addBeat(){
 		clearHighlights();
@@ -1347,6 +1370,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#lblHideWarning").show();
 		} else {
 			$("#lblHideWarning").hide();
+			turnOffKeep();
 		}
 
 		getSong().namedNoteOpacity = options.namedNoteOpacity;
@@ -1896,21 +1920,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('change', '#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering', function() {
-				var hnchecked = $('#cbHideNamedNotes').prop("checked");
-				var hschecked = $('#cbHideSingleNotes').prop("checked");
-				var htchecked = $('#cbHideTinyNotes').prop("checked");
-				var hfchecked = $('#cbHideFingering').prop("checked");
+			var hnchecked = $('#cbHideNamedNotes').prop("checked");
+			var hschecked = $('#cbHideSingleNotes').prop("checked");
+			var htchecked = $('#cbHideTinyNotes').prop("checked");
+			var hfchecked = $('#cbHideFingering').prop("checked");
+		
+			if (htchecked || hschecked || hfchecked || hnchecked){
+				turnOnKeep();
+				$("#lblHideWarning").show();
+			} else {
+				$("#lblHideWarning").hide();
+				turnOffKeep();
+			}
+			clearAll();
+			replay();
+		});
 
-				if (htchecked || hschecked || hfchecked || hnchecked){
-					turnOnKeep();
-					$("#lblHideWarning").show();
-				} else {
-					$("#lblHideWarning").hide();
-				}
-				clearAll();
-				replay();
-	    });
-
+		
 		bindEvent('change', '#cbShowCellNotes', function() {
 
 			if ( ! this.checked ) {

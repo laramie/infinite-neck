@@ -495,6 +495,7 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
                 var foundColorClass = note.colorClass;
                 $("input[name=rbColor][value="+foundColorClass+"]")
                     .prop('checked', true)
+                    .trigger('change')
                     .css({"box-shadow": "0 0 10pt 20pt cyan"});
 
                 setNoteClickedCaption(cell, foundColorClass, styleNum);
@@ -505,8 +506,9 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
 
         var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
         if (foundColorClass){
-            $("input[name=rbColor][value="+foundColorClass+"]")
-                .attr('checked', 'checked')
+        $("input[name=rbColor][value="+foundColorClass+"]")
+                .prop('checked', true)
+                .trigger('change')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
             setNoteClickedCaption(cell, foundColorClass, styleNum);
             $("td.note").css({"cursor": "auto"});

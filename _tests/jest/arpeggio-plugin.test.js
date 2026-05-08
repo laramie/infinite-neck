@@ -15,6 +15,7 @@ const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.j
 
 const MANUAL_BACH_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-sec2-manual.json');
 const DUPLICATE_END_NOTE_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-sec2-manual-duplicate-end-note.json');
+const LOW_TO_HIGH_FALSE_DUPLICATE_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-lowToHigh-false-repeats-C.json');
 
 function makeNamedNotesForRange(rowRange, minFret, maxFret) {
 	const namedNotes = {};
@@ -57,7 +58,8 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 		myTunings: [tuning],
 		wirings: [],
 		sections: [section],
-		getCurrentSection: jest.fn(() => section)
+		getCurrentSection: jest.fn(() => section),
+		requestUiShowBeats: jest.fn()
 	};
 	mockRuntime.song = song;
 	plugin.setPropertyValue('maxFret', frets, { song });
@@ -77,6 +79,10 @@ function loadManualBachFixture() {
 
 function loadDuplicateEndNoteFixture() {
 	return JSON.parse(fs.readFileSync(DUPLICATE_END_NOTE_FIXTURE, 'utf8'));
+}
+
+function loadLowToHighFalseDuplicateFixture() {
+	return JSON.parse(fs.readFileSync(LOW_TO_HIGH_FALSE_DUPLICATE_FIXTURE, 'utf8'));
 }
 
 function extractRecordedSequence(sectionNotes, beatCount, owner = null) {
@@ -208,6 +214,14 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(actualSequence).toEqual(expectedSequence);
 	});
 
+	test('applyToSection requests a current-beat highlight refresh for the visible section', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+
+		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+	});
+
 	test('style=bach does not repeat the actingRoot at the cycle boundary', () => {
 		const fixture = loadDuplicateEndNoteFixture();
 		const plugin = new ArpeggioPlugin();
@@ -254,11 +268,53 @@ describe('ArpeggioPlugin sequencing', () => {
 			.map((candidate, idx) => ({ candidate, idx }))
 			.filter(({ candidate }) => plugin.getCandidatePositionKey(candidate) === octaveKey)
 			.map(({ idx }) => idx)[1];
+		const rotatedTail = canonicalCycle.slice(secondOctaveIndex);
+		const rotatedHead = canonicalCycle.slice(0, secondOctaveIndex);
+		const expectedRotatedCycle = plugin.getCandidatePositionKey(rotatedTail[rotatedTail.length - 1]) === plugin.getCandidatePositionKey(rotatedHead[0])
+			? [...rotatedTail, ...rotatedHead.slice(1)]
+			: [...rotatedTail, ...rotatedHead];
 
-		expect(rotatedCycle).toEqual([
-			...canonicalCycle.slice(secondOctaveIndex),
-			...canonicalCycle.slice(0, secondOctaveIndex)
+		expect(rotatedCycle).toEqual(expectedRotatedCycle);
+	});
+
+	test('style=bach with lowToHigh=false does not repeat the rotated seam note', () => {
+		const fixture = loadLowToHighFalseDuplicateFixture();
+		const plugin = new ArpeggioPlugin();
+		const song = {
+			...fixture,
+			getCurrentSection: jest.fn(() => fixture.sections[0])
+		};
+		const section = fixture.sections[0];
+		const tuning = fixture.myTunings[0];
+		const tableID = plugin.getTableID(tuning);
+		section.getSectionNotes = jest.fn((requestedTableID) => section.sectionNotesByTable[requestedTableID]);
+		mockRuntime.song = song;
+		plugin.loadSongState(fixture.plugins.arpeggio.properties);
+
+		const result = plugin.applyToSection({ song, clearSectionFirst: true });
+		const actualSequence = extractRecordedSequence(section.sectionNotesByTable[tableID], 32, 'ArpeggioPlugin');
+
+		expect(result.result).toContain('generated=32');
+		expect(actualSequence.slice(14, 18)).toEqual([
+			{ noteName: 'C', midinum: 48, row: 4 },
+			{ noteName: 'E', midinum: 52, row: 3 },
+			{ noteName: 'D', midinum: 50, row: 4 },
+			{ noteName: 'F', midinum: 53, row: 3 }
 		]);
+		expect(actualSequence[14]).not.toEqual(actualSequence[15]);
+	});
+
+	test('clearGeneratedNotesInSong requests a current-beat highlight refresh when it clears the visible section', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		song.requestUiShowBeats.mockClear();
+		expect(Object.keys(sectionNotes.recordedNotes).length).toBeGreaterThan(0);
+
+		const result = plugin.clearGeneratedNotesInSong(song);
+
+		expect(result.result).toContain('removed');
+		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+		expect(sectionNotes.recordedNotes).toEqual({});
 	});
 
 	test('bach builds its actingRoot, octave, and terminal note from concrete traversal order', () => {

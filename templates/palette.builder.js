@@ -1,5 +1,9 @@
 import * as NoteTableController from '../NoteTableController.js';
 import * as ColorFunctions from '../colorFunctions.js';
+import { 
+	PalettePresentation 
+} from '../presentation.js';
+
 
 export class PaletteBuilder {
     // #divPalette is our dest in index.html, 
@@ -115,6 +119,13 @@ export class PaletteBuilder {
 			.on(`click${eventNamespace}`, function() {
 				ColorFunctions.recordUserColorsFromSection();
 			});
+
+        $("#btnRestoreRbColor")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {    
+			PalettePresentation.restoreLastRbColor();
+		});
+
 
         // Event delegation for stylesheet selection and deletion links
         $(document)

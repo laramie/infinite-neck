@@ -142,14 +142,19 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `min=${this.getProperty('minFret')?.getValue()} max=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()}`;
+    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()}`;
   }
 
   buildHelpMessage(song) {
     const unsupportedMessage = this.getUnsupportedConfigurationMessage();
     const targetTuning = this.getTargetTuning(song);
     const tableID = targetTuning ? this.getTableID(targetTuning) : '<none>';
-    return `<pre>Arpeggio plugin
+    return `<pre><b><u>Arpeggio plugin:</u> ${this.buildSummary()}</b>
+
+Current settings:
+- ${this.buildSummary()}
+- targetTable = ${tableID}
+- maxAllowedFret = ${this.getMaxAllowedFret(song)}
 
 Implemented in this iteration for:
 - style = every
@@ -163,11 +168,6 @@ Implemented in this iteration for:
 - random avoids replaying the same string/fret until its unique position set is exhausted
 - bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
 - target instrument = first myTunings entry not wired as a Listener or Observer
-
-Current settings:
-- ${this.buildSummary()}
-- targetTable = ${tableID}
-- maxAllowedFret = ${this.getMaxAllowedFret(song)}
 
 ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
   }
@@ -236,6 +236,18 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       return song.getCurrentSection();
     }
     return song.sections?.[0] || null;
+  }
+
+  requestCurrentBeatRefresh(song, section = null) {
+    if (!song || song.isHeadless || typeof song.requestUiShowBeats !== 'function') {
+      return;
+    }
+
+    if (section && typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== section) {
+      return;
+    }
+
+    song.requestUiShowBeats();
   }
 
   collectCandidatesForSection(section, tuning, options = {}) {
@@ -618,7 +630,17 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       .filter(({ candidate }) => this.getCandidatePositionKey(candidate) === octaveKey)
       .map(({ idx }) => idx);
     const rotationIndex = octaveIndexes[1] ?? octaveIndexes[0] ?? 0;
-    return [...cycle.slice(rotationIndex), ...cycle.slice(0, rotationIndex)];
+    const rotatedTail = cycle.slice(rotationIndex);
+    const rotatedHead = cycle.slice(0, rotationIndex);
+    if (rotatedTail.length === 0 || rotatedHead.length === 0) {
+      return [...rotatedTail, ...rotatedHead];
+    }
+
+    const seamMatches = this.getCandidatePositionKey(rotatedTail[rotatedTail.length - 1])
+      === this.getCandidatePositionKey(rotatedHead[0]);
+    return seamMatches
+      ? [...rotatedTail, ...rotatedHead.slice(1)]
+      : [...rotatedTail, ...rotatedHead];
   }
 
   hasEquivalentRecordedNote(notesInBeat, candidate) {
@@ -668,13 +690,22 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
 
     let removedCount = 0;
     let sectionCount = 0;
+    const currentSection = typeof song.getCurrentSection === 'function' ? song.getCurrentSection() : null;
+    let removedFromCurrentSection = 0;
     song.sections.forEach((section) => {
       const sectionRemoved = this.clearGeneratedNotesInSection(section);
       if (sectionRemoved > 0) {
         sectionCount += 1;
         removedCount += sectionRemoved;
       }
+      if (currentSection && section === currentSection) {
+        removedFromCurrentSection = sectionRemoved;
+      }
     });
+
+    if (removedFromCurrentSection > 0) {
+      this.requestCurrentBeatRefresh(song, currentSection);
+    }
 
     return { result: `Arpeggio cleared: removed ${removedCount} generated notes in ${sectionCount} sections` };
   }
@@ -711,6 +742,9 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh()
     });
     if (candidates.length === 0) {
+      if (removedCount > 0) {
+        this.requestCurrentBeatRefresh(song, section);
+      }
       return {
         result: `Arpeggio applied: no matching named notes for ${this.getTableID(tuning)}; removed=${removedCount}`
       };
@@ -734,6 +768,8 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       sectionNotes.recordedNotes[beatKey].push(this.makeRecordedNote(candidate));
       generatedCount += 1;
     });
+
+    this.requestCurrentBeatRefresh(song, section);
 
     return {
       result: `Arpeggio applied: table=${tableID} event=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`

@@ -78,6 +78,21 @@ table.organizer td {
     width: 3em;
 }
 
+#palette button.chooseLastColor {
+    display: inline-block;
+    padding: 0.8em;
+    margin-top: 0;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    color: black;
+    font-weight: bold;
+    border: 1px solid gray;
+    background-color: white;
+    box-shadow: 2pt 2pt  2pt 0.01pt gray;
+
+
+
+}
 #palette label.chooseKeep,
 #palette label.chooseClear {
     padding: 0.8em;

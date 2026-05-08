@@ -354,7 +354,11 @@ function document_keypress(e) {
 	//
 
 function check(id){
-	$(id).prop("checked", true);
+    $(id).prop("checked", true);
+}
+
+function checkAndTrigger(id){
+    $(id).prop("checked", true).trigger('change');
 }
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
@@ -737,9 +741,6 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRadioNoteType":
 			if (args){
-				function check(id){
-					$(id).prop("checked", true);
-				}
 				switch (args["key"]){
 					case "n":
 					    check("#idNamedNotes");
@@ -760,15 +761,13 @@ export function performCmdAction(menuItem, args){
 						check("#idMidiPitchesSingle");
 						break;
 					case "k":
-						check("#idKeep");
+						checkAndTrigger("#idKeep");
 						break;
 					case "c":
-						check("#idClear");
+						checkAndTrigger("#idClear");
 						break;
-                    case "f":
-						check("#idDropper");
-						$("#idDropper").trigger('change');
-                        //$("#idDropper").prop("checked", true);
+					case "f":
+						checkAndTrigger("#idDropper");
 						break;
 				}
 			}
@@ -777,25 +776,25 @@ export function performCmdAction(menuItem, args){
 			if (args) {
 				switch (args["key"]) {
 					case "t":
-						check("#idRTransparent");
+						checkAndTrigger("#idRTransparent");
 						break;
 					case "a":
-						check("#idRAutomatic");
+						checkAndTrigger("#idRAutomatic");
 						break;
 					case "s":
-						check("#idRScale");
+						checkAndTrigger("#idRScale");
 						break;
 					case "r":
-						check("#idRRoot");
+						checkAndTrigger("#idRRoot");
 						break;
 					case "c":
-						check("#idRChromatic");
+						checkAndTrigger("#idRChromatic");
 						break;
 					case "p":
-						check("#idRPassing");
+						checkAndTrigger("#idRPassing");
 						break;
 					case "b":
-						check("#idRBass");
+						checkAndTrigger("#idRBass");
 						break;
 				}
 			}
@@ -804,13 +803,13 @@ export function performCmdAction(menuItem, args){
 			if (args) {
 				switch (args["key"]) {
 					case "1":
-						check("#idRChord");
+						checkAndTrigger("#idRChord");
 						break;
 					case "2":
-						check("#idRChord2");
+						checkAndTrigger("#idRChord2");
 						break;
 					case "3":
-						check("#idRChord3");
+						checkAndTrigger("#idRChord3");
 						break;
 				}
 			}
@@ -819,13 +818,13 @@ export function performCmdAction(menuItem, args){
 			if (args) {
 				switch (args["key"]) {
 					case "1":
-						check("#idRColornote");
+						checkAndTrigger("#idRColornote");
 						break;
 					case "2":
-						check("#idRColornote2");
+						checkAndTrigger("#idRColornote2");
 						break;
 					case "3":
-						check("#idRColornote3");
+						checkAndTrigger("#idRColornote3");
 						break;
 				}
 			}
@@ -834,13 +833,13 @@ export function performCmdAction(menuItem, args){
 			if (args) {
 				switch (args["key"]) {
 					case "1":
-						check("#idRAvoid");
+						checkAndTrigger("#idRAvoid");
 						break;
 					case "2":
-						check("#idRAvoid2");
+						checkAndTrigger("#idRAvoid2");
 						break;
 					case "3":
-						check("#idRAvoid3");
+						checkAndTrigger("#idRAvoid3");
 						break;
 				}
 			}
@@ -849,10 +848,10 @@ export function performCmdAction(menuItem, args){
 			if (args) {
 				switch (args["key"]) {
 					case "1":
-						check("#idRLead");
+						checkAndTrigger("#idRLead");
 						break;
 					case "2":
-						check("#idRLead2");
+						checkAndTrigger("#idRLead2");
 						break;
 				}
 			}
