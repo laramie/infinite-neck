@@ -865,6 +865,111 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
   }
 }
 
+function normalizeDisplayPartClass(partClass = 'namedNote') {
+    return `${partClass || 'namedNote'}`.replace(/^\./, '');
+}
+
+const TRANSIENT_NAMED_NOTE_OWNER_ATTR = 'data-transient-named-note-owner';
+const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-class';
+const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
+
+function rememberTransientNamedNoteState(part, owner = '') {
+    if (!owner || part.length === 0) {
+        return;
+    }
+    if (!part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR)) {
+        part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR, part.attr('class') || 'namedNote');
+    }
+    if (!part.is(`[${TRANSIENT_NAMED_NOTE_STYLE_ATTR}]`)) {
+        const originalStyle = part.attr('style');
+        part.attr(TRANSIENT_NAMED_NOTE_STYLE_ATTR, typeof originalStyle === 'string' ? originalStyle : '');
+    }
+    part.attr(TRANSIENT_NAMED_NOTE_OWNER_ATTR, owner);
+}
+
+function restoreTransientNamedNoteState(part) {
+    if (part.length === 0) {
+        return;
+    }
+
+    const originalClass = part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR) || 'namedNote';
+    const originalStyle = part.attr(TRANSIENT_NAMED_NOTE_STYLE_ATTR);
+    part.attr('class', originalClass);
+    if (typeof originalStyle === 'string' && originalStyle.length > 0) {
+        part.attr('style', originalStyle);
+    } else {
+        part.removeAttr('style');
+    }
+    part.removeAttr(TRANSIENT_NAMED_NOTE_OWNER_ATTR);
+    part.removeAttr(TRANSIENT_NAMED_NOTE_CLASS_ATTR);
+    part.removeAttr(TRANSIENT_NAMED_NOTE_STYLE_ATTR);
+}
+
+export function clearTransientNamedNotes(owner = '') {
+    const selector = owner
+        ? `.namedNote[${TRANSIENT_NAMED_NOTE_OWNER_ATTR}='${owner}']`
+        : `.namedNote[${TRANSIENT_NAMED_NOTE_OWNER_ATTR}]`;
+    $(selector).each(function() {
+        restoreTransientNamedNoteState($(this));
+    });
+}
+
+export function findNoteCell(tableID, cellrow, cellcol) {
+    return $("table[id='"+tableID+"'] td.note[cellrow='"+cellrow+"'][cellcol='"+cellcol+"']").first();
+}
+
+export function findNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote') {
+    const cell = findNoteCell(tableID, cellrow, cellcol);
+    if (cell.length === 0) {
+        return $();
+    }
+    const normalizedPartClass = normalizeDisplayPartClass(partClass);
+    return cell.children('.NoteDisplay').children('.' + normalizedPartClass).first();
+}
+
+export function showNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote', extraClass = '') {
+    const part = findNoteDisplayPart(tableID, cellrow, cellcol, partClass);
+    if (part.length === 0) {
+        return false;
+    }
+    if (extraClass) {
+        part.addClass(extraClass);
+    }
+    part.show();
+    return true;
+}
+
+export function showNamedNoteAtCell(tableID, cellrow, cellcol, colorClass = 'noteTransparent', owner = '') {
+    const part = findNoteDisplayPart(tableID, cellrow, cellcol, 'namedNote');
+    if (part.length === 0) {
+        return false;
+    }
+    rememberTransientNamedNoteState(part, owner);
+    clearNamedNoteDivs(part);
+    part.addClass(colorClass).show();
+    if (getSong() && getSong().namedNoteOpacity != null) {
+        part.css('opacity', getSong().namedNoteOpacity);
+    }
+    return true;
+}
+
+export function showNamedNotesAtCells(cells = [], options = {}) {
+    const clearExisting = !!options.clearExisting;
+    const owner = options.owner || '';
+
+    if (clearExisting) {
+        clearTransientNamedNotes(owner);
+    }
+
+    let shownCount = 0;
+    (cells || []).forEach(({ tableID, cellrow, cellcol, colorClass }) => {
+        if (showNamedNoteAtCell(tableID, cellrow, cellcol, colorClass || 'noteTransparent', owner)) {
+            shownCount += 1;
+        }
+    });
+    return shownCount;
+}
+
 export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
@@ -1227,6 +1332,12 @@ EventBus.on('Wiring:added', function(event, data) {
         listenToTablename: data.listenToTablename,
         currSection: getCurrentSection(),
         sectionIndex: song.getSections().indexOf(getCurrentSection()),
+    });
+});
+EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {
+    showNamedNotesAtCells(data && Array.isArray(data.cells) ? data.cells : [], {
+        clearExisting: !!(data && data.clearExisting),
+        owner: data && data.owner ? data.owner : ''
     });
 });
 //=================================END-of-FILE========================================

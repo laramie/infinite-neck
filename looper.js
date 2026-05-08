@@ -41,6 +41,11 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 	}
 
 	function showBeats(){
+		const song = getSong();
+		if (song && typeof song.requestUiShowBeats === 'function') {
+			song.requestUiShowBeats();
+			return;
+		}
 		InfiniteNeck.showBeats();
 	}
 

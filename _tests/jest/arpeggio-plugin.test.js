@@ -10,7 +10,14 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	getSong: () => mockRuntime.song
 }));
 
+jest.unstable_mockModule('../../event-bus.js', () => ({
+	default: {
+		trigger: jest.fn()
+	}
+}));
+
 const Constants = await import('../../Constants.js');
+const EventBus = (await import('../../event-bus.js')).default;
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 
 const MANUAL_BACH_FIXTURE = path.resolve(process.cwd(), 'songs/tests/arpeggio-bach-sec2-manual.json');
@@ -33,7 +40,7 @@ function makeNamedNotesFromNames(noteNames) {
 	return Object.fromEntries(noteNames.map((noteName) => [noteName, { enabled: true }]));
 }
 
-function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, rootID = 3 } = {}) {
+function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, rootID = 3, currentBeat = 1 } = {}) {
 	const plugin = new ArpeggioPlugin();
 	const tuning = {
 		baseID: 'ARP',
@@ -48,6 +55,7 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	const section = {
 		beats,
 		rootID,
+		currentBeat,
 		sectionNotesByTable: {
 			[tableID]: sectionNotes
 		},
@@ -59,11 +67,16 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 		wirings: [],
 		sections: [section],
 		getCurrentSection: jest.fn(() => section),
+		getBeat: jest.fn(() => section.currentBeat),
 		requestUiShowBeats: jest.fn()
 	};
 	mockRuntime.song = song;
 	plugin.setPropertyValue('maxFret', frets, { song });
 	return { plugin, song, sectionNotes };
+}
+
+function expectNamedNoteEvent(payload) {
+	expect(EventBus.trigger).toHaveBeenCalledWith('NoteTable:ShowNamedNotesAtCells', payload);
 }
 
 function getBeatMidinums(sectionNotes, beatCount) {
@@ -103,6 +116,10 @@ function extractRecordedSequence(sectionNotes, beatCount, owner = null) {
 }
 
 describe('ArpeggioPlugin sequencing', () => {
+	beforeEach(() => {
+		EventBus.trigger.mockClear();
+	});
+
 	test('style=random excludes duplicate string/fret positions before repeating the cycle', () => {
 		const { plugin } = makeContext();
 		const duplicateCandidates = [
@@ -220,6 +237,73 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.applyToSection({ song, clearSectionFirst: true });
 
 		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+	});
+
+	test('applyToSection requests named-note display for the current beat cell', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 2 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '1', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('SongUiShowBeats advances one-mode named-note display to the current beat', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(3);
+		song.getCurrentSection().currentBeat = 3;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('applyToSection shows all generated note names when showNoteName=all', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 2 });
+		plugin.setPropertyValue('showNoteName', 'all', { song });
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '0', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '1', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }
+			]
+		});
+	});
+
+	test('SongUiShowBeats accumulates current-beat note names when showNoteName=played', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'played', { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(3);
+		song.getCurrentSection().currentBeat = 3;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: false,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
 	});
 
 	test('style=bach does not repeat the actingRoot at the cycle boundary', () => {

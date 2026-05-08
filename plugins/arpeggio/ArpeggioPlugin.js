@@ -2,6 +2,7 @@ import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
+import EventBus from '../../event-bus.js';
 import { getSong } from '../../infinite-neck.js';
 
 const ARPEGGIO_OWNER = 'ArpeggioPlugin';
@@ -9,15 +10,20 @@ const STYLE_EVERY = 'every';
 const STYLE_ALTERNATE = 'alternate';
 const STYLE_RANDOM = 'random';
 const STYLE_BACH = 'bach';
+const SHOW_NOTE_NAME_OFF = 'off';
+const SHOW_NOTE_NAME_ONE = 'one';
+const SHOW_NOTE_NAME_ALL = 'all';
+const SHOW_NOTE_NAME_PLAYED = 'played';
 
 export class ArpeggioPlugin {
   constructor() {
     this.id = 'arpeggio';
     this.registeredName = 'arpeggio';
     this.menuTrigger = 'a';
-    this.eventNames = ['DaCapo:OnSectionBegin'];
+    this.eventNames = ['DaCapo:OnSectionBegin', 'SongUiShowBeats'];
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
+    this.skipNextSongUiShowBeats = false;
   }
 
   setManager(manager) {
@@ -116,6 +122,19 @@ export class ArpeggioPlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'SongUiShowBeats') {
+      if (this.skipNextSongUiShowBeats) {
+        this.skipNextSongUiShowBeats = false;
+        return {};
+      }
+      this.refreshNamedNoteDisplay({
+        song: context.song || getSong(),
+        payload,
+        eventName
+      });
+      return {};
+    }
+
     return this.applyToSection({
       song: context.song || getSong(),
       payload,
@@ -142,7 +161,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()}`;
+    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()} showNoteName=${this.getShowNoteNameMode()}`;
   }
 
   buildHelpMessage(song) {
@@ -164,6 +183,7 @@ Implemented in this iteration for:
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
+- showNoteName = off, one, all, or played
 - random ignores lowToHigh and upOnly
 - random avoids replaying the same string/fret until its unique position set is exhausted
 - bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
@@ -204,6 +224,10 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return this.getProperty('style')?.getValue() || STYLE_EVERY;
   }
 
+  getShowNoteNameMode() {
+    return this.getProperty('showNoteName')?.getValue() || SHOW_NOTE_NAME_OFF;
+  }
+
   isLowToHigh() {
     return !!this.getProperty('lowToHigh')?.getValue();
   }
@@ -238,6 +262,108 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return song.sections?.[0] || null;
   }
 
+  requestCurrentBeatNumber(song, section = null) {
+    if (song && typeof song.getBeat === 'function') {
+      return Number.parseInt(song.getBeat(), 10) || 1;
+    }
+    return Number.parseInt(section?.currentBeat, 10) || 1;
+  }
+
+  buildNamedNoteCell(candidate, tableID) {
+    if (!candidate) {
+      return null;
+    }
+
+    return {
+      tableID,
+      cellrow: `${candidate.row}`,
+      cellcol: `${candidate.col}`,
+      colorClass: 'noteTransparent'
+    };
+  }
+
+  dedupeNamedNoteCells(cells = []) {
+    const seen = new Set();
+    return (cells || []).filter((cell) => {
+      if (!cell) {
+        return false;
+      }
+      const key = `${cell.tableID}:${cell.cellrow}:${cell.cellcol}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  }
+
+  getCurrentBeatNamedNoteCells(sequence, song, section, tableID, beatNumber = null) {
+    const currentBeat = beatNumber || this.requestCurrentBeatNumber(song, section);
+    const currentCandidate = sequence[currentBeat - 1];
+    if (!currentCandidate) {
+      return [];
+    }
+
+    return [this.buildNamedNoteCell(currentCandidate, tableID)].filter(Boolean);
+  }
+
+  getAllNamedNoteCells(sequence, tableID) {
+    return this.dedupeNamedNoteCells((sequence || []).map((candidate) => this.buildNamedNoteCell(candidate, tableID)));
+  }
+
+  getNamedNoteDisplayPayload(sequence, song, section, tableID, eventName = 'manual') {
+    const mode = this.getShowNoteNameMode();
+    const currentBeat = this.requestCurrentBeatNumber(song, section);
+
+    switch (mode) {
+      case SHOW_NOTE_NAME_ONE:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells: this.getCurrentBeatNamedNoteCells(sequence, song, section, tableID, currentBeat)
+        };
+      case SHOW_NOTE_NAME_ALL:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells: this.getAllNamedNoteCells(sequence, tableID)
+        };
+      case SHOW_NOTE_NAME_PLAYED:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: currentBeat <= 1 || eventName !== 'SongUiShowBeats',
+          cells: this.getCurrentBeatNamedNoteCells(sequence, song, section, tableID, currentBeat)
+        };
+      case SHOW_NOTE_NAME_OFF:
+      default:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells: []
+        };
+    }
+  }
+
+  emitNamedNoteDisplay(payload = {}) {
+    EventBus.trigger('NoteTable:ShowNamedNotesAtCells', {
+      owner: ARPEGGIO_OWNER,
+      clearExisting: !!payload.clearExisting,
+      cells: Array.isArray(payload.cells) ? payload.cells : []
+    });
+  }
+
+  syncNamedNoteDisplay({ song = getSong(), section = null, tableID = '', sequence = [], eventName = 'manual' } = {}) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    if (section && typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== section) {
+      return;
+    }
+
+    this.emitNamedNoteDisplay(this.getNamedNoteDisplayPayload(sequence, song, section, tableID, eventName));
+  }
+
   requestCurrentBeatRefresh(song, section = null) {
     if (!song || song.isHeadless || typeof song.requestUiShowBeats !== 'function') {
       return;
@@ -247,7 +373,36 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       return;
     }
 
+    this.skipNextSongUiShowBeats = true;
     song.requestUiShowBeats();
+  }
+
+  refreshNamedNoteDisplay({ song = getSong(), payload = {}, eventName = 'SongUiShowBeats' } = {}) {
+    if (!song) {
+      return;
+    }
+
+    const section = this.getTargetSection(song, payload);
+    const tuning = this.getTargetTuning(song);
+    if (!section || !tuning) {
+      this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
+      return;
+    }
+
+    const beatCount = typeof section.getBeats === 'function'
+      ? section.getBeats()
+      : (Number.parseInt(section?.beats, 10) || 0);
+    const candidates = this.collectCandidatesForSection(section, tuning, {
+      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh()
+    });
+    const sequence = this.expandCandidateSequence(candidates, beatCount, { song, section });
+    this.syncNamedNoteDisplay({
+      song,
+      section,
+      tableID: this.getTableID(tuning),
+      sequence,
+      eventName
+    });
   }
 
   collectCandidatesForSection(section, tuning, options = {}) {
@@ -655,6 +810,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     const note = Note.newNote(candidate.noteName, Note.STYLENUM_MIDIPITCHESSINGLE);
     note.midinum = `${candidate.midinum}`;
     note.row = `${candidate.row}`;
+    note.col = `${candidate.col}`;
     note.owner = ARPEGGIO_OWNER;
     return note;
   }
@@ -705,6 +861,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
 
     if (removedFromCurrentSection > 0) {
       this.requestCurrentBeatRefresh(song, currentSection);
+      this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
     }
 
     return { result: `Arpeggio cleared: removed ${removedCount} generated notes in ${sectionCount} sections` };
@@ -770,6 +927,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     });
 
     this.requestCurrentBeatRefresh(song, section);
+    this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
 
     return {
       result: `Arpeggio applied: table=${tableID} event=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`

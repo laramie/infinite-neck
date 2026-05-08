@@ -55,6 +55,21 @@
     ]
   },
   {
+    "name": "showNoteName",
+    "caption": "show note name",
+    "trigger": "n",
+    "datatype": "org.dynamide.Select",
+    "value": "off",
+    "defaultValue": "off",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "off", "caption": "off", "trigger": "f" },
+      { "value": "one", "caption": "one", "trigger": "o" },
+      { "value": "all", "caption": "all", "trigger": "a" },
+      { "value": "played", "caption": "played", "trigger": "p" }
+    ]
+  },
+  {
     "name": "apply",
     "caption": "apply",
     "trigger": "a",

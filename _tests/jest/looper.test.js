@@ -39,6 +39,7 @@ function makeMockSong({ beat = 1, beats = 4, randomLoop = false } = {}) {
 	s.getSections = jest.fn(() => [{ caption: 'One' }, { caption: 'Two' }]);
 	s.incBeatLoop = jest.fn();
 	s.gotoNextSection = jest.fn();
+	s.requestUiShowBeats = jest.fn();
 	return s;
 }
 
@@ -186,5 +187,16 @@ describe('looper looping state', () => {
 		expect(() => toggleLoopSections()).not.toThrow();
 		expect(sectionsLooping()).toBe(true);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
+	});
+
+	test('scheduled loop beat uses song.requestUiShowBeats when available', () => {
+		mockRuntime.song = makeMockSong({ beat: 1, beats: 4 });
+		toggleLoopBeats();
+
+		const scheduledHandler = setTimeoutSpy.mock.calls[0][0];
+		scheduledHandler();
+
+		expect(mockRuntime.song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+		expect(mockRuntime.showBeats).not.toHaveBeenCalled();
 	});
 });
