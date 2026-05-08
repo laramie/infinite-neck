@@ -17,6 +17,7 @@ jest.unstable_mockModule('../../event-bus.js', () => ({
 }));
 
 const Constants = await import('../../Constants.js');
+const { createLookupContext, lookupClassForNote } = await import('../../colorFunctions.js');
 const EventBus = (await import('../../event-bus.js')).default;
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 
@@ -252,6 +253,29 @@ describe('ArpeggioPlugin sequencing', () => {
 		});
 	});
 
+	test('colorNotes=true uses the AutoColor class instead of noteTransparent', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 2 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('colorNotes', true, { song });
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+
+		const expectedColorClass = lookupClassForNote({
+			noteName: 'F',
+			styleNum: 0,
+			midinum: '41',
+			row: '0'
+		}, createLookupContext({ section: song.getCurrentSection(), autoColor: true }))?.colorClass;
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '1', colorClass: expectedColorClass }]
+		});
+		expect(expectedColorClass).toBeTruthy();
+		expect(expectedColorClass).not.toBe('noteTransparent');
+	});
+
 	test('SongUiShowBeats advances one-mode named-note display to the current beat', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
 		plugin.setPropertyValue('showNoteName', 'one', { song });
@@ -267,6 +291,61 @@ describe('ArpeggioPlugin sequencing', () => {
 			owner: 'ArpeggioPlugin',
 			clearExisting: true,
 			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('flashcard one-mode hides note-name display on the first beat', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: []
+		});
+	});
+
+	test('flashcard one-mode reveals the previous beat on SongUiShowBeats', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(3);
+		song.getCurrentSection().currentBeat = 3;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '1', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('flashcard one-mode reveals previous and current notes on the last beat', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(4);
+		song.getCurrentSection().currentBeat = 4;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }
+			]
 		});
 	});
 
@@ -303,6 +382,52 @@ describe('ArpeggioPlugin sequencing', () => {
 			owner: 'ArpeggioPlugin',
 			clearExisting: false,
 			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('flashcard all-mode reveals all notes starting on beat two', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'all', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(2);
+		song.getCurrentSection().currentBeat = 2;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '0', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '1', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }
+			]
+		});
+	});
+
+	test('flashcard played-mode accumulates previous beats and reveals the last beat note', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'played', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(4);
+		song.getCurrentSection().currentBeat = 4;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: false,
+			cells: [
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' },
+				{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }
+			]
 		});
 	});
 

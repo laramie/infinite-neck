@@ -872,10 +872,22 @@ function normalizeDisplayPartClass(partClass = 'namedNote') {
 const TRANSIENT_NAMED_NOTE_OWNER_ATTR = 'data-transient-named-note-owner';
 const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-class';
 const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
+const TRANSIENT_NOTE_DISPLAY_CLASS_ATTR = 'data-transient-note-display-original-class';
+const TRANSIENT_NOTE_DISPLAY_STYLE_ATTR = 'data-transient-note-display-original-style';
 
 function rememberTransientNamedNoteState(part, owner = '') {
     if (!owner || part.length === 0) {
         return;
+    }
+    const noteDisplay = part.parent('.NoteDisplay');
+    if (noteDisplay.length > 0) {
+        if (!noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR)) {
+            noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR, noteDisplay.attr('class') || 'NoteDisplay');
+        }
+        if (!noteDisplay.is(`[${TRANSIENT_NOTE_DISPLAY_STYLE_ATTR}]`)) {
+            const originalStyle = noteDisplay.attr('style');
+            noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR, typeof originalStyle === 'string' ? originalStyle : '');
+        }
     }
     if (!part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR)) {
         part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR, part.attr('class') || 'namedNote');
@@ -890,6 +902,20 @@ function rememberTransientNamedNoteState(part, owner = '') {
 function restoreTransientNamedNoteState(part) {
     if (part.length === 0) {
         return;
+    }
+
+    const noteDisplay = part.parent('.NoteDisplay');
+    if (noteDisplay.length > 0) {
+        const originalDisplayClass = noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR) || 'NoteDisplay';
+        const originalDisplayStyle = noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR);
+        noteDisplay.attr('class', originalDisplayClass);
+        if (typeof originalDisplayStyle === 'string' && originalDisplayStyle.length > 0) {
+            noteDisplay.attr('style', originalDisplayStyle);
+        } else {
+            noteDisplay.removeAttr('style');
+        }
+        noteDisplay.removeAttr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR);
+        noteDisplay.removeAttr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR);
     }
 
     const originalClass = part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR) || 'namedNote';
@@ -945,6 +971,7 @@ export function showNamedNoteAtCell(tableID, cellrow, cellcol, colorClass = 'not
         return false;
     }
     rememberTransientNamedNoteState(part, owner);
+    part.parent('.NoteDisplay').addClass('NoteActive');
     clearNamedNoteDivs(part);
     part.addClass(colorClass).show();
     if (getSong() && getSong().namedNoteOpacity != null) {

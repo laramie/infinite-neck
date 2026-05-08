@@ -70,9 +70,29 @@
     ]
   },
   {
+    "name": "colorNotes",
+    "caption": "color notes",
+    "trigger": "c",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "flashcard",
+    "caption": "flashcard",
+    "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
     "name": "apply",
-    "caption": "apply",
-    "trigger": "a",
+    "caption": "Apply",
+    "trigger": "A",
     "datatype": "org.dynamide.Action",
     "actionName": "apply",
     "visibleInMenu": true
@@ -87,8 +107,8 @@
   },
   {
     "name": "clear",
-    "caption": "clear",
-    "trigger": "c",
+    "caption": "Clear",
+    "trigger": "C",
     "datatype": "org.dynamide.Action",
     "actionName": "clear",
     "visibleInMenu": true

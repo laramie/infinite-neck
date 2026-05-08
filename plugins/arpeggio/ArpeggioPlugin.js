@@ -2,6 +2,7 @@ import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
+import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import EventBus from '../../event-bus.js';
 import { getSong } from '../../infinite-neck.js';
 
@@ -161,7 +162,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()} showNoteName=${this.getShowNoteNameMode()}`;
+    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()} showNoteName=${this.getShowNoteNameMode()} colorNotes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
@@ -184,6 +185,8 @@ Implemented in this iteration for:
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
 - showNoteName = off, one, all, or played
+- colorNotes = true or false
+- flashcard = true or false
 - random ignores lowToHigh and upOnly
 - random avoids replaying the same string/fret until its unique position set is exhausted
 - bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
@@ -228,6 +231,14 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return this.getProperty('showNoteName')?.getValue() || SHOW_NOTE_NAME_OFF;
   }
 
+  getColorNotesEnabled() {
+    return !!this.getProperty('colorNotes')?.getValue();
+  }
+
+  getFlashcardEnabled() {
+    return !!this.getProperty('flashcard')?.getValue();
+  }
+
   isLowToHigh() {
     return !!this.getProperty('lowToHigh')?.getValue();
   }
@@ -269,7 +280,22 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return Number.parseInt(section?.currentBeat, 10) || 1;
   }
 
-  buildNamedNoteCell(candidate, tableID) {
+  resolveNamedNoteDisplayColorClass(candidate, section) {
+    if (!this.getColorNotesEnabled()) {
+      return 'noteTransparent';
+    }
+
+    const lookupResult = lookupClassForNote({
+      noteName: candidate?.noteName,
+      styleNum: Note.STYLENUM_NAMED,
+      midinum: `${candidate?.midinum ?? ''}`,
+      row: `${candidate?.row ?? ''}`
+    }, createLookupContext({ section, autoColor: true }));
+
+    return lookupResult?.colorClass || 'noteTransparent';
+  }
+
+  buildNamedNoteCell(candidate, tableID, section = null) {
     if (!candidate) {
       return null;
     }
@@ -278,7 +304,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       tableID,
       cellrow: `${candidate.row}`,
       cellcol: `${candidate.col}`,
-      colorClass: 'noteTransparent'
+      colorClass: this.resolveNamedNoteDisplayColorClass(candidate, section)
     };
   }
 
@@ -304,14 +330,82 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       return [];
     }
 
-    return [this.buildNamedNoteCell(currentCandidate, tableID)].filter(Boolean);
+    return [this.buildNamedNoteCell(currentCandidate, tableID, section)].filter(Boolean);
   }
 
-  getAllNamedNoteCells(sequence, tableID) {
-    return this.dedupeNamedNoteCells((sequence || []).map((candidate) => this.buildNamedNoteCell(candidate, tableID)));
+  getAllNamedNoteCells(sequence, tableID, section = null) {
+    return this.dedupeNamedNoteCells((sequence || []).map((candidate) => this.buildNamedNoteCell(candidate, tableID, section)));
+  }
+
+  getBeatNamedNoteCells(sequence, tableID, section, beatNumber) {
+    return this.getCurrentBeatNamedNoteCells(sequence, null, section, tableID, beatNumber);
+  }
+
+  getFlashcardNamedNoteDisplayPayload(sequence, song, section, tableID, eventName = 'manual') {
+    const mode = this.getShowNoteNameMode();
+    const currentBeat = this.requestCurrentBeatNumber(song, section);
+    const lastBeat = sequence.length;
+    const isLastBeat = currentBeat >= lastBeat && lastBeat > 0;
+    const previousBeat = currentBeat - 1;
+
+    switch (mode) {
+      case SHOW_NOTE_NAME_ONE: {
+        let cells = [];
+        if (previousBeat >= 1) {
+          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat);
+        }
+        if (isLastBeat) {
+          cells = this.dedupeNamedNoteCells([
+            ...cells,
+            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat)
+          ]);
+        }
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells
+        };
+      }
+      case SHOW_NOTE_NAME_ALL:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells: currentBeat >= 2 || isLastBeat
+            ? this.getAllNamedNoteCells(sequence, tableID, section)
+            : []
+        };
+      case SHOW_NOTE_NAME_PLAYED: {
+        let cells = [];
+        if (previousBeat >= 1) {
+          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat);
+        }
+        if (isLastBeat) {
+          cells = this.dedupeNamedNoteCells([
+            ...cells,
+            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat)
+          ]);
+        }
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: currentBeat <= 1 || eventName !== 'SongUiShowBeats',
+          cells
+        };
+      }
+      case SHOW_NOTE_NAME_OFF:
+      default:
+        return {
+          owner: ARPEGGIO_OWNER,
+          clearExisting: true,
+          cells: []
+        };
+    }
   }
 
   getNamedNoteDisplayPayload(sequence, song, section, tableID, eventName = 'manual') {
+    if (this.getFlashcardEnabled()) {
+      return this.getFlashcardNamedNoteDisplayPayload(sequence, song, section, tableID, eventName);
+    }
+
     const mode = this.getShowNoteNameMode();
     const currentBeat = this.requestCurrentBeatNumber(song, section);
 
@@ -326,7 +420,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
         return {
           owner: ARPEGGIO_OWNER,
           clearExisting: true,
-          cells: this.getAllNamedNoteCells(sequence, tableID)
+          cells: this.getAllNamedNoteCells(sequence, tableID, section)
         };
       case SHOW_NOTE_NAME_PLAYED:
         return {
