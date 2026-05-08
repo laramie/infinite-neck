@@ -943,7 +943,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				if ($(this).is(":checked") && !gPresentation.palette.suppressRbColorRemember) {
 					PalettePresentation.rememberRestorableRbColor(this);
 				}
-	
+				PalettePresentation.updateRestoreRbColorButton();
 				if ("noteKeep" === $(this).val()) {
 				} else if ("noteDropper" === $(this).val()) {
 					$("td.note").css({"cursor": "zoom-in"});

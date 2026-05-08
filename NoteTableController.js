@@ -344,11 +344,18 @@ export function colorNoteInner(cell) {
 
     var proxyNote = {"midinum": midinum,
                      "row": cellrow,
-                     "styleNum": styleNum};
+                     "styleNum": styleNum,
+                     "noteName": cell.attr("noteName")};
 
     if (doIndividualAutomatic){
         var lookupResult = lookupClassForNote(proxyNote, lookupContext);
-        theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
+        if (lookupResult && lookupResult.functionNum != null) {
+            theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
+        } else if (lookupResult && lookupResult.colorClass) {
+            theColorClass = lookupResult.colorClass;
+        } else {
+            theColorClass = "noteTransparent";
+        }
     }
 
     if (!doKeep){

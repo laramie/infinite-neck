@@ -25,14 +25,12 @@ export class PalettePresentation {
         if ($btn.length === 0) {
             return;
         }
-
+    
         const remembered = gPresentation.palette.lastRestorableColor;
-        if (!remembered || !remembered.caption) {
-            $btn.text("Color: Emboss");
-            return;
-        }
-
-        $btn.text("Color: " + remembered.caption);
+        const caption = remembered && remembered.caption ? remembered.caption : "Emboss";
+        const prefix = PalettePresentation.isRestoreButtonAligned() ? "\u2713 " : "";
+    
+        $btn.text(prefix + "Color: " + caption);
     }
 
     static rememberRestorableRbColor(radioEl) {
@@ -121,5 +119,26 @@ export class PalettePresentation {
         }
 
         PalettePresentation.updateRestoreRbColorButton();
+    }
+
+    static isRestoreButtonAligned() {
+        const remembered = gPresentation.palette.lastRestorableColor;
+        if (!remembered) {
+            return false;
+        }
+    
+        const $checked = $('input[name="rbColor"]:checked').first();
+        if ($checked.length === 0) {
+            return false;
+        }
+    
+        if (PalettePresentation.isSpecialRbColorValue($checked.val())) {
+            return false;
+        }
+    
+        const checkedId = $checked.attr("id");
+        const checkedValue = $checked.val();
+    
+        return checkedId === remembered.id || checkedValue === remembered.value;
     }
 }

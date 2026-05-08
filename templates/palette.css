@@ -79,6 +79,7 @@ table.organizer td {
 }
 
 #palette button.chooseLastColor {
+    width:20em;    
     display: inline-block;
     padding: 0.8em;
     margin-top: 0;
