@@ -703,6 +703,11 @@ export var gMenuFile =    {
               "caption": "<b>v</b>iewport",
               "trigger": "v",
               "action": "clampAllDockablesToViewport"
+            },
+            {
+              "caption": "<b>p</b>ark transport",
+              "trigger": "p",
+              "action": "parkTransport"
             }
           ]
         },

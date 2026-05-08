@@ -79,7 +79,7 @@ table.organizer td {
 }
 
 #palette button.chooseLastColor {
-    width:20em;    
+    width:15em;    
     display: inline-block;
     padding: 0.8em;
     margin-top: 0;
@@ -90,15 +90,13 @@ table.organizer td {
     border: 1px solid gray;
     background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
-
-
-
 }
 #palette label.chooseKeep,
 #palette label.chooseClear {
     padding: 0.8em;
     height: 1.4em;
     width: 8em;
+    margin-top: 0.3em;
     margin-right: 0.5em;
     margin-bottom: 0.5em;
     color: black;
@@ -126,6 +124,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 #selBend {
     font-size:  100%;
+}
+#lblAutomaticColor {
+   padding: 0.7em !important;
+   box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 
 #palette label.userColorRB {
