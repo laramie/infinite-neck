@@ -1,5 +1,3 @@
-// Import the real function from the main codebase
-import { Song } from '../../Song.js';
 import { setupSongTests, getSong } from '../../infinite-neck.js';
 
 
@@ -100,7 +98,7 @@ describe('Relative Section Navigation Rules', () => {
 		});
 	});
     if (logVerboseTrue() && warnings_getRelSec.length>0){
-       logVerbose(1, warnings_getRelSec.join('\n'));
+       logVerbose(2, warnings_getRelSec.join('\n'));
     }
 });
 
@@ -124,13 +122,13 @@ describe('getSong() test_getRelativeSectionWithWrap', () => {
 		expect(() => {
 			const testResult = getSong().test_getRelativeSectionWithWrap(false);
 			if (testResult.warnings && testResult.warnings.length>0){
-				logVerbose(1, "test_getRelativeSectionWithWrap should kick back some foo/bar (and +/- without digit) validation errors: \n"+testResult.warnings.join("\n"));
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some foo/bar (and +/- without digit) validation errors: \n"+testResult.warnings.join("\n"));
 			}
 			if (testResult.infos && testResult.infos.length>0){
-				logVerbose(1, "test_getRelativeSectionWithWrap should kick back some infos which mean 'PASS': \n"+testResult.infos.join("\n"));
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some infos which mean 'PASS': \n"+testResult.infos.join("\n"));
 			}
 			if (testResult.terse && testResult.terse.length>0){
-				logVerbose(1, "test_getRelativeSectionWithWrap should kick back some terse results which mean 'PASS': \n"+testResult.terse.join("\n"));
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some terse results which mean 'PASS': \n"+testResult.terse.join("\n"));
 			}
 		}).not.toThrow();
 	});

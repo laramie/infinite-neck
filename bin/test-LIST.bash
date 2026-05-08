@@ -1,4 +1,4 @@
-export INFINITE_NECK_VERBOSE=2
+export INFINITE_NECK_VERBOSE=1
 clear
 
 pushd ~/infinite-neck

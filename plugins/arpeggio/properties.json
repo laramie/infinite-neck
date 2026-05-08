@@ -50,7 +50,8 @@
     "options": [
       { "value": "every", "caption": "every", "trigger": "e" },
       { "value": "alternate", "caption": "alternate", "trigger": "a" },
-      { "value": "random", "caption": "random", "trigger": "r" }
+      { "value": "random", "caption": "random", "trigger": "r" },
+      { "value": "bach", "caption": "bach", "trigger": "b" }
     ]
   },
   {

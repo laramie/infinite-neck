@@ -5,7 +5,10 @@ import { Note } from '../../Note.js';
 import { getSong } from '../../infinite-neck.js';
 
 const ARPEGGIO_OWNER = 'ArpeggioPlugin';
-const SUPPORTED_STYLE = 'every';
+const STYLE_EVERY = 'every';
+const STYLE_ALTERNATE = 'alternate';
+const STYLE_RANDOM = 'random';
+const STYLE_BACH = 'bach';
 
 export class ArpeggioPlugin {
   constructor() {
@@ -148,16 +151,18 @@ export class ArpeggioPlugin {
     const tableID = targetTuning ? this.getTableID(targetTuning) : '<none>';
     return `<pre>Arpeggio plugin
 
-Implemented in this iteration only for:
+Implemented in this iteration for:
 - style = every
-- lowToHigh = true
-- upOnly = true or false
-- target instrument = first myTunings entry not wired as a Listener or Observer
-
-Not implemented yet:
 - style = alternate
 - style = random
-- lowToHigh = false
+- style = bach
+- lowToHigh = true or false for every and alternate
+- lowToHigh = true or false for bach
+- upOnly = true or false for every, alternate, and bach
+- random ignores lowToHigh and upOnly
+- random avoids replaying the same string/fret until its unique position set is exhausted
+- bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
+- target instrument = first myTunings entry not wired as a Listener or Observer
 
 Current settings:
 - ${this.buildSummary()}
@@ -188,13 +193,35 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
   }
 
   getUnsupportedConfigurationMessage() {
-    if (this.getProperty('style')?.getValue() !== SUPPORTED_STYLE) {
-      return 'This iteration supports only style=every. Use help for the implemented combination.';
-    }
-    if (this.getProperty('lowToHigh')?.getValue() !== true) {
-      return 'This iteration supports only lowToHigh=true. Use help for the implemented combination.';
+    const style = this.getProperty('style')?.getValue();
+    if (![STYLE_EVERY, STYLE_ALTERNATE, STYLE_RANDOM, STYLE_BACH].includes(style)) {
+      return `Unknown style=${style}. Use help for the implemented combinations.`;
     }
     return '';
+  }
+
+  getStyle() {
+    return this.getProperty('style')?.getValue() || STYLE_EVERY;
+  }
+
+  isLowToHigh() {
+    return !!this.getProperty('lowToHigh')?.getValue();
+  }
+
+  getRandomNumber() {
+    return Math.random();
+  }
+
+  getCandidatePositionKey(candidate) {
+    return `${candidate?.row}:${candidate?.col}`;
+  }
+
+  getRootNoteName(section, song = getSong()) {
+    const rootID = Number.parseInt(section?.rootID ?? song?.rootID, 10);
+    if (!Number.isInteger(rootID) || rootID < 0 || rootID >= Constants.NOTE_NAMES_ARRAY.length) {
+      return Constants.NOTE_NAMES_ARRAY[0];
+    }
+    return Constants.NOTE_NAMES_ARRAY[rootID];
   }
 
   getTargetSection(song, payload = {}) {
@@ -211,7 +238,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return song.sections?.[0] || null;
   }
 
-  collectCandidatesForSection(section, tuning) {
+  collectCandidatesForSection(section, tuning, options = {}) {
     const tableID = this.getTableID(tuning);
     const sectionNotes = section?.sectionNotesByTable?.[tableID];
     const namedNotes = sectionNotes?.namedNotes || {};
@@ -230,13 +257,20 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     const maxFret = Math.min(maxAllowedFret, Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0);
     const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
     const candidates = [];
+    const lowToHigh = options.lowToHigh ?? this.isLowToHigh();
+    const rowIndexes = lowToHigh
+      ? Array.from({ length: rowRange.length }, (_, idx) => rowRange.length - 1 - idx)
+      : Array.from({ length: rowRange.length }, (_, idx) => idx);
+    const frets = lowToHigh
+      ? Array.from({ length: Math.max(0, maxFret - minFret + 1) }, (_, idx) => minFret + idx)
+      : Array.from({ length: Math.max(0, maxFret - minFret + 1) }, (_, idx) => maxFret - idx);
 
-    for (let row = rowRange.length - 1; row >= 0; row -= 1) {
+    for (const row of rowIndexes) {
       const openMidi = Number.parseInt(rowRange[row], 10);
       if (!Number.isFinite(openMidi)) {
         continue;
       }
-      for (let fret = minFret; fret <= maxFret; fret += 1) {
+      for (const fret of frets) {
         const midinum = openMidi + fret;
         const noteName = Constants.midinumToNoteName(midinum);
         if (!targetNoteNames.has(noteName)) {
@@ -249,21 +283,327 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     return candidates;
   }
 
-  expandCandidateSequence(candidates, beatCount) {
+  expandCandidateSequence(candidates, beatCount, context = {}) {
     if (!Array.isArray(candidates) || candidates.length === 0 || beatCount <= 0) {
       return [];
     }
 
+    const style = this.getStyle();
+    switch (style) {
+      case STYLE_RANDOM:
+        return this.expandRandomSequence(candidates, beatCount);
+      case STYLE_BACH:
+        return this.expandBachSequence(candidates, beatCount, context);
+      case STYLE_ALTERNATE:
+        return this.expandAlternateSequence(candidates, beatCount);
+      case STYLE_EVERY:
+      default:
+        return this.expandEverySequence(candidates, beatCount);
+    }
+  }
+
+  expandEverySequence(candidates, beatCount) {
     if (candidates.length === 1) {
       return Array.from({ length: beatCount }, () => candidates[0]);
     }
-
     const upOnly = !!this.getProperty('upOnly')?.getValue();
     const cycle = upOnly
       ? [...candidates]
       : [...candidates, ...candidates.slice(1, -1).reverse()];
 
     return Array.from({ length: beatCount }, (_, idx) => cycle[idx % cycle.length]);
+  }
+
+  expandRandomSequence(candidates, beatCount) {
+    const uniqueCandidates = this.dedupeCandidatesByPosition(candidates);
+    if (uniqueCandidates.length === 1) {
+      return Array.from({ length: beatCount }, () => uniqueCandidates[0]);
+    }
+
+    const remaining = [...uniqueCandidates];
+    const randomizedCycle = [];
+    while (remaining.length > 0) {
+      const randomIndex = Math.floor(this.getRandomNumber() * remaining.length);
+      randomizedCycle.push(remaining.splice(randomIndex, 1)[0]);
+    }
+
+    return Array.from({ length: beatCount }, (_, idx) => randomizedCycle[idx % randomizedCycle.length]);
+  }
+
+  dedupeCandidatesByPosition(candidates) {
+    const seen = new Set();
+    return (candidates || []).filter((candidate) => {
+      const positionKey = this.getCandidatePositionKey(candidate);
+      if (seen.has(positionKey)) {
+        return false;
+      }
+      seen.add(positionKey);
+      return true;
+    });
+  }
+
+  expandAlternateSequence(candidates, beatCount) {
+    if (candidates.length === 1) {
+      return Array.from({ length: beatCount }, () => candidates[0]);
+    }
+
+    const ascendingOddPositions = candidates.filter((candidate, idx) => idx % 2 === 0);
+    const descendingEvenPositions = candidates.filter((candidate, idx) => idx % 2 === 1).reverse();
+    const upOnly = !!this.getProperty('upOnly')?.getValue();
+    const cycle = upOnly
+      ? this.buildAlternateUpOnlyCycle(candidates)
+      : [...ascendingOddPositions, ...descendingEvenPositions];
+
+    return Array.from({ length: beatCount }, (_, idx) => cycle[idx % cycle.length]);
+  }
+
+  buildAlternateUpOnlyCycle(candidates) {
+    if (candidates.length <= 2) {
+      return candidates.length === 2
+        ? [candidates[0], candidates[1], candidates[0]]
+        : [...candidates];
+    }
+
+    const ascending = [];
+    if (candidates.length % 2 === 0) {
+      for (let idx = 0; idx <= candidates.length - 4; idx += 1) {
+        ascending.push(candidates[idx], candidates[idx + 2]);
+      }
+      ascending.push(candidates[candidates.length - 1]);
+    } else {
+      for (let idx = 0; idx <= candidates.length - 3; idx += 1) {
+        ascending.push(candidates[idx], candidates[idx + 2]);
+      }
+    }
+
+    const descendingTail = [];
+    const descendingStartIndex = candidates.length % 2 === 0 ? candidates.length - 3 : candidates.length - 2;
+    for (let idx = descendingStartIndex; idx >= 1; idx -= 1) {
+      descendingTail.push(candidates[idx], candidates[idx + 1]);
+    }
+    descendingTail.push(candidates[0]);
+
+    return [...ascending, ...descendingTail];
+  }
+
+  expandBachSequence(candidates, beatCount, context = {}) {
+    const bachCycle = this.buildBachCycle(candidates, context.section, context.song);
+    if (bachCycle.length === 0) {
+      return [];
+    }
+    return Array.from({ length: beatCount }, (_, idx) => bachCycle[idx % bachCycle.length]);
+  }
+
+  buildBachCycle(candidates, section, song = getSong()) {
+    const bachContext = this.buildBachContext(candidates, section, song);
+    if (!bachContext) {
+      return [];
+    }
+
+    const {
+      actingRoot,
+      aboveActingRoot,
+      belowActingRoot,
+      octave,
+      belowOctave,
+      aboveOctave,
+      ascentCandidates
+    } = bachContext;
+    if (!octave) {
+      return this.buildCanonicalBachUpCycle(ascentCandidates);
+    }
+
+    const upSequence = this.buildCanonicalBachUpCycle(ascentCandidates);
+    if (belowOctave) {
+      upSequence.push(octave, belowOctave);
+    } else {
+      upSequence.push(octave);
+    }
+    if (aboveOctave) {
+      upSequence.push(aboveOctave);
+    }
+    upSequence.push(octave);
+
+    if (!!this.getProperty('upOnly')?.getValue()) {
+      return this.isLowToHigh()
+        ? upSequence
+        : this.rotateBachCycleToSecondOctave(upSequence, octave);
+    }
+
+    const downwardCandidates = [octave, ...ascentCandidates.slice().reverse()];
+    const downwardSequence = this.buildCanonicalBachDownCycle(downwardCandidates);
+    const downClosed = this.closeBachDownSequence({
+      downwardSequence,
+      actingRoot,
+      aboveActingRoot,
+      belowActingRoot
+    });
+
+    const cycle = [...upSequence, ...downClosed];
+    return this.isLowToHigh()
+      ? cycle
+      : this.rotateBachCycleToSecondOctave(cycle, octave);
+  }
+
+  buildCanonicalBachUpCycle(ascentCandidates) {
+    if (!Array.isArray(ascentCandidates) || ascentCandidates.length === 0) {
+      return [];
+    }
+    if (ascentCandidates.length === 1) {
+      return [...ascentCandidates];
+    }
+
+    const result = [];
+    for (let idx = 0; idx <= ascentCandidates.length - 3; idx += 1) {
+      result.push(ascentCandidates[idx], ascentCandidates[idx + 2]);
+    }
+    result.push(ascentCandidates[ascentCandidates.length - 2]);
+    return result;
+  }
+
+  buildBachContext(candidates, section, song = getSong()) {
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return null;
+    }
+
+    const rootNoteName = this.getRootNoteName(section, song);
+    const rootIndex = Constants.noteNameToNoteID(rootNoteName);
+    const noteOrder = Array.from({ length: Constants.NOTE_NAMES_ARRAY.length }, (_, offset) =>
+      Constants.NOTE_NAMES_ARRAY[(rootIndex + offset) % Constants.NOTE_NAMES_ARRAY.length]
+    );
+    const actingRootName = noteOrder.find((noteName) => candidates.some((candidate) => candidate.noteName === noteName));
+    if (!actingRootName) {
+      return null;
+    }
+
+    const actingRootIndex = candidates.findIndex((candidate) => candidate.noteName === actingRootName);
+    if (actingRootIndex < 0) {
+      return null;
+    }
+
+    const orderedFromRoot = candidates.slice(actingRootIndex);
+    const actingRoot = orderedFromRoot[0];
+    const aboveActingRoot = orderedFromRoot[1] || null;
+    const belowActingRoot = actingRootIndex > 0 ? candidates[actingRootIndex - 1] : null;
+    const octaveRelativeIndex = orderedFromRoot.findIndex((candidate, idx) => idx > 0
+      && candidate.noteName === actingRoot.noteName
+      && (candidate.midinum - actingRoot.midinum) >= 12);
+    const octave = octaveRelativeIndex >= 0 ? orderedFromRoot[octaveRelativeIndex] : null;
+    const ascentCandidates = octaveRelativeIndex >= 0
+      ? orderedFromRoot.slice(0, octaveRelativeIndex)
+      : orderedFromRoot;
+    const belowOctave = octaveRelativeIndex > 0
+      ? orderedFromRoot[octaveRelativeIndex - 1]
+      : null;
+    const aboveOctave = octaveRelativeIndex >= 0
+      ? (orderedFromRoot[octaveRelativeIndex + 1] || null)
+      : null;
+
+    return {
+      actingRoot,
+      aboveActingRoot,
+      belowActingRoot,
+      octave,
+      belowOctave,
+      aboveOctave,
+      ascentCandidates
+    };
+  }
+
+  buildAlternatingAscentPattern(candidates) {
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return [];
+    }
+    if (candidates.length <= 2) {
+      return [...candidates];
+    }
+
+    const result = [];
+    if (candidates.length % 2 === 0) {
+      for (let idx = 0; idx <= candidates.length - 4; idx += 1) {
+        result.push(candidates[idx], candidates[idx + 2]);
+      }
+      result.push(candidates[candidates.length - 1]);
+      return result;
+    }
+
+    for (let idx = 0; idx <= candidates.length - 3; idx += 1) {
+      result.push(candidates[idx], candidates[idx + 2]);
+    }
+    return result;
+  }
+
+  buildAlternatingDescentPattern(candidates) {
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return [];
+    }
+    if (candidates.length <= 2) {
+      return [...candidates];
+    }
+
+    const result = [candidates[0]];
+    for (let idx = 0; idx <= candidates.length - 3; idx += 1) {
+      result.push(candidates[idx + 2], candidates[idx + 1]);
+    }
+    return result;
+  }
+
+  buildCanonicalBachDownCycle(downwardCandidates) {
+    if (!Array.isArray(downwardCandidates) || downwardCandidates.length < 3) {
+      return [];
+    }
+    const result = [];
+    for (let idx = 0; idx <= downwardCandidates.length - 3; idx += 1) {
+      result.push(downwardCandidates[idx + 2], downwardCandidates[idx + 1]);
+    }
+    return result;
+  }
+
+  closeBachDownSequence({ downwardSequence, actingRoot, aboveActingRoot, belowActingRoot }) {
+    const result = [...(downwardSequence || [])];
+    const actingRootKey = this.getCandidatePositionKey(actingRoot);
+    const aboveActingRootKey = this.getCandidatePositionKey(aboveActingRoot);
+    const lastRootIndex = result.findLastIndex((candidate) => this.getCandidatePositionKey(candidate) === actingRootKey);
+
+    if (lastRootIndex >= 0) {
+      const hasAboveAfterRoot = aboveActingRoot && result.slice(lastRootIndex + 1)
+        .some((candidate) => this.getCandidatePositionKey(candidate) === aboveActingRootKey);
+      if (hasAboveAfterRoot) {
+        if (belowActingRoot) {
+          result.push(belowActingRoot);
+        }
+        result.push(actingRoot);
+        return result;
+      }
+
+      if (aboveActingRoot) {
+        result.push(aboveActingRoot);
+      }
+      if (belowActingRoot) {
+        result.push(belowActingRoot);
+      }
+      result.push(actingRoot);
+      return result;
+    }
+
+    if (belowActingRoot) {
+      const lastCandidate = result[result.length - 1];
+      if (!lastCandidate || this.getCandidatePositionKey(lastCandidate) !== this.getCandidatePositionKey(belowActingRoot)) {
+        result.push(belowActingRoot);
+      }
+    }
+    result.push(actingRoot);
+    return result;
+  }
+
+  rotateBachCycleToSecondOctave(cycle, octave) {
+    const octaveKey = this.getCandidatePositionKey(octave);
+    const octaveIndexes = cycle
+      .map((candidate, idx) => ({ candidate, idx }))
+      .filter(({ candidate }) => this.getCandidatePositionKey(candidate) === octaveKey)
+      .map(({ idx }) => idx);
+    const rotationIndex = octaveIndexes[1] ?? octaveIndexes[0] ?? 0;
+    return [...cycle.slice(rotationIndex), ...cycle.slice(0, rotationIndex)];
   }
 
   hasEquivalentRecordedNote(notesInBeat, candidate) {
@@ -352,14 +692,16 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     const beatCount = typeof section.getBeats === 'function'
       ? section.getBeats()
       : (Number.parseInt(section?.beats, 10) || 0);
-    const candidates = this.collectCandidatesForSection(section, tuning);
+    const candidates = this.collectCandidatesForSection(section, tuning, {
+      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh()
+    });
     if (candidates.length === 0) {
       return {
         result: `Arpeggio applied: no matching named notes for ${this.getTableID(tuning)}; removed=${removedCount}`
       };
     }
 
-    const sequence = this.expandCandidateSequence(candidates, beatCount);
+    const sequence = this.expandCandidateSequence(candidates, beatCount, { song, section });
     const tableID = this.getTableID(tuning);
     const sectionNotes = section.getSectionNotes(tableID);
     let generatedCount = 0;

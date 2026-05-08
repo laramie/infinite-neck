@@ -189,8 +189,54 @@ On DaCapo:OnSectionBegin
 17. Yes, please add to the schema with optional.  We want the schema to represent optional properties for documentation purposes so no one creates a property with another meaning.
 
 
-  ## Request
+  ## First Request
 
     I think we have specified enough to allow you to make the algorithm work. If you need additional midi/note-name functions because our existing set doesn't give the information needed for calculation, please let us know.  In this iteration, please let us know any question you have, or any holes in our specification.
 
-    Please do this one iteration of planning the algorithm and give us a minimal report before doing code changes in the next iteration.  We will review the report and then request code changes in the next iteration.  
+    Please do this one iteration of planning the algorithm and give us a minimal report before doing code changes in the next iteration.  We will review the report and then request code changes in the next iteration. 
+
+  ## Full Chat after that
+
+  _chat_conversations/infinite-neck/arpeggio-plugin-design-chat-full.md
+
+  ## Defining "bach" better.
+This is tricky!  Body memory is very different from logical thinking for us humans!  I have fixed the rules to handle the case that is wrong.  You can compare it to the previous rules if that helps, but I think I have made a consistent rule set.
+
+Logical assertion: Since we are using namedNotes, if a note was found near the bottom of the octave range, it is guaranteed to be found near the top of the octave range. This would be true for any namedNote, but is useful to remember when calculating actingRoot and notes just above and below it.  So if the sequence started with C because C was found at the bottom, there is guaranteed to be a C at the top.  (Later we will add a use-case where we don't use namedNotes, but for that case, we won't use "bach".)
+
+
+  0) "bach" is the same logic as "alternate" with a few more rules.
+
+  1) start on the tonic, the namedNote of the key.  Find the key, find the first note of that key, else use the next available note of that key.  Call this the actingRoot.  In general, the actingRoot should be the first note in rootKey, but that's why we are saying "actingRoot", because a musician can play in other "modes" where the second note in the scale acts as the first note in the scale.  They would signal this by ommitting the tonic.  Since you can't find it, you can find the next note and call it the actingRoot.
+
+  2) find the next note to play by using the "alternate" algorithm.  Continue with "alternate".  
+
+  3) At the top.
+  
+    a) Here is a definition of "octave": when we have traversed one full "octave", we would be playing the actingRoot+12 calculated in midi distances.  Let us use the synonym actingRoot+12 to be the actingRoot at the octave.   If {"noteName": "C", "midinum": "48"} is the actingRoot, then actingRoot+12 === {"noteName": "C", "midinum": "60"}.
+    b) But do not consider this actingRoot+12 just played to be "At the top".  Instead, we will continue the "alternate" algorithm three more notes: 
+        1) the note just below the actingRoot+12
+        2) then the note just above the actingRoot+12
+        3) then the actingRoot+12. This is the second time we have played the actingRoot in the octave position, which we are calling actingRoot+12
+    c) We are now done with the sequence "up".
+    d) We now commence the "down" sequence, starting from sitting on actingRoot+12.
+    
+  4) when we go back down, we are sitting on the actingRoot+12 already. It does not get repeated on the way down, but counts as the first note in the down sequence.
+
+  5) the next note down follows the "alternate" algorith.
+
+  6) when we get to the actingRoot at the bottom on the way down, we are not done: we have three more notes to play: 
+      1) the note just above the actingRoot
+      2) the note just below the actingRoot
+      3) the actingRoot
+  Now we are done with the "down" sequence.
+
+  7) if we miss the actingRoot on the way down because of even/odd mismatch, then the note just below the actingRoot that we do hit becomes the penultimate note. After this, play the actingRoot, and the "down" sequence is done. 
+
+  8) if more beats are available, continue with "alternate" in the "up" direction as though we just played the actingRoot as the first note in the sequence.
+
+  9) Just like "alternate", if you run out of beats, just quit.
+
+  10) upOnly means we hit actingRoot+12 twice to end the sequence, then jump to the begining of the sequence at actingRoot if we have more beats available.
+
+  1) lowToHigh: false should be implemented as the exact same sequence, just starting at the actingRoot+12 the second time, or at the end of "up" and the beginning of "down".  Its the same sequence, we just start later at actingRoot+12.
