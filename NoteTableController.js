@@ -455,7 +455,7 @@ export function colorNoteInner(cell) {
         var noteAlreadyColored = (lenOtherClasses>0);
 
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
-			getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};
+			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
             result.returnCause = Cause.CLEAR;
@@ -467,13 +467,13 @@ export function colorNoteInner(cell) {
             var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   
+			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
 		        styleNamedNote(noteNameElements, lookupUserColorClass(note, lookupContext), noteName);
-    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;
+	    		    getCurrentSection().getSectionNotes(tableID).setNamedNote(noteName, note);
             }
 		}
         
@@ -1294,12 +1294,12 @@ export function doFill(theClass, NoteNames, Color, listenToTablename) {
         //          .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            namedNotes[noteName] = { "noteName": noteName, "colorClass": Color };
+            currSection.sectionNotesByTable[listenToTablename].setNamedNote(noteName, { "noteName": noteName, "colorClass": Color });
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            namedNotes[NoteNames[key]] = {};
+            currSection.sectionNotesByTable[listenToTablename].clearNamedNote(NoteNames[key]);
         });
     }
 }

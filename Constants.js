@@ -33,7 +33,7 @@ export const noteNamesFuncArrDEFAULT = [
     "&sigma;", // 9 - Sigma
     "6", // 10 - VI
     "&delta;", // 11 - dom
-    "&Delta;" // 12 - I
+    "&Delta;" // 12 - say 
 ];
 export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 

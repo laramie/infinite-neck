@@ -27,15 +27,16 @@ For further details, please refer to the following documents:
    bin/test-VERBOSE.bash   ## run with debug output
    bin/test-songs.bash     ## run just the song library test with song schema validation
 ```
+- We install the repository from git clone in `~/infinite-neck` .  So `~/infinite-neck` means repository root directory.
 - how we run Jest tests:
 ```
-   cd infinite-neck
+   cd ~/infinite-neck
    export INFINITE_NECK_VERBOSE=-1
    node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
 ```
 - after adding doco files, please run
 ```
-   cd infinite-neck
+   cd ~/infinite-neck
    bin/index.md-update-all.sh 
 ```
 - command-menu validation:

@@ -30,6 +30,10 @@ function stripHtml(value) {
   return `${value || ''}`.replace(/<[^>]+>/g, '');
 }
 
+function valuesEqual(leftValue, rightValue) {
+  return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
 function normalizePluginResponse(response, fallbackResult) {
   if (typeof response === 'string') {
     return { result: response, message: '' };
@@ -316,6 +320,9 @@ export class PluginManager {
   exportSongPluginState() {
     const result = {};
     this.plugins.forEach((entry, pluginId) => {
+      if (!this.shouldPersistPluginEntry(entry)) {
+        return;
+      }
       result[pluginId] = {
         enabled: !!entry.enabled,
         enableOnSongLoad: !!entry.enableOnSongLoad,
@@ -323,6 +330,34 @@ export class PluginManager {
       };
     });
     return result;
+  }
+
+  shouldPersistPluginEntry(entry) {
+    if (entry.enableOnSongLoad) {
+      return true;
+    }
+
+    const exportedProperties = entry.plugin.exportSongState();
+    const properties = typeof entry.plugin.getProperties === 'function'
+      ? entry.plugin.getProperties().filter((property) => property.datatype !== 'org.dynamide.Action')
+      : [];
+
+    if (properties.length === 0) {
+      return Object.keys(exportedProperties).length > 0;
+    }
+
+    const propertyNames = new Set(properties.map((property) => property.name));
+    const hasExtraPersistedKeys = Object.keys(exportedProperties).some((name) => !propertyNames.has(name));
+    if (hasExtraPersistedKeys) {
+      return true;
+    }
+
+    return properties.some((property) => {
+      const exportedValue = Object.prototype.hasOwnProperty.call(exportedProperties, property.name)
+        ? exportedProperties[property.name]
+        : property.getDefaultValue();
+      return !valuesEqual(exportedValue, property.getDefaultValue());
+    });
   }
 
   enablePluginEntry(entry) {

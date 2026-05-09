@@ -30,6 +30,19 @@ export class SectionNotesPersistence {
     emptyRecordedNotes(){
         this.recordedNotes = {}
     }
+
+    setNamedNote(noteName, note){
+        if (!note || (typeof note === 'object' && Object.keys(note).length === 0)) {
+            delete this.namedNotes[noteName];
+            return;
+        }
+
+        this.namedNotes[noteName] = note;
+    }
+
+    clearNamedNote(noteName){
+        delete this.namedNotes[noteName];
+    }
     
 
 }
