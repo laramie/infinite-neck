@@ -1275,31 +1275,19 @@ export function doFill(theClass, NoteNames, Color, listenToTablename) {
         return;
     }
     var currSection = getCurrentSection();
-    // Ensure sectionNotesByTable exists
-    if (!currSection.sectionNotesByTable) {
-        currSection.sectionNotesByTable = {};
-    }
-    // Ensure the table for listenToTablename exists
-    if (!currSection.sectionNotesByTable[listenToTablename]) {
-        currSection.sectionNotesByTable[listenToTablename] = {};
-    }
-    // Ensure namedNotes exists for this table
-    if (!currSection.sectionNotesByTable[listenToTablename].namedNotes) {
-        currSection.sectionNotesByTable[listenToTablename].namedNotes = {};
-    }
-    let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
+    const sectionNotes = currSection.getSectionNotes(listenToTablename);
     if (Color != "noteClear") {
         // NO: let replay color the notes. We are just adding them to the model here.
         // theClass.addClass(lookupUserColorClassByClass(Color))
         //          .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            currSection.sectionNotesByTable[listenToTablename].setNamedNote(noteName, { "noteName": noteName, "colorClass": Color });
+            sectionNotes.setNamedNote(noteName, { "noteName": noteName, "colorClass": Color });
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            currSection.sectionNotesByTable[listenToTablename].clearNamedNote(NoteNames[key]);
+            sectionNotes.clearNamedNote(NoteNames[key]);
         });
     }
 }

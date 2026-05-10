@@ -42,8 +42,8 @@
   },
   {
     "name": "apply",
-    "caption": "apply",
-    "trigger": "a",
+    "caption": "Apply",
+    "trigger": "A",
     "datatype": "org.dynamide.Action",
     "actionName": "apply",
     "visibleInMenu": true
