@@ -1,5 +1,6 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
+import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
@@ -192,7 +193,9 @@ Implemented in this iteration for:
 - bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
 - target instrument = first myTunings entry not wired as a Listener or Observer
 
-${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
+${unsupportedMessage || 'Current settings are implemented.'}
+
+${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   getTableID(tuning) {

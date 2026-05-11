@@ -167,7 +167,9 @@ describe('PluginManager plugin persistence', () => {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
           PlayedNotes: true,
-          RecordedNotes: false
+          RecordedNotes: false,
+          autoSharpsFlats: false,
+          doLeadKey: false
         }
       }
     });
@@ -187,7 +189,9 @@ describe('PluginManager plugin persistence', () => {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
           PlayedNotes: false,
-          RecordedNotes: false
+          RecordedNotes: false,
+          autoSharpsFlats: false,
+          doLeadKey: false
         }
       }
     });

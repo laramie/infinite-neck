@@ -42,7 +42,7 @@
   {
     "name": "maxFret",
     "caption": "maxFret position",
-    "trigger": "t",
+    "trigger": "f",
     "datatype": "Number",
     "value": 4,
     "defaultValue": 4,
@@ -122,6 +122,42 @@
     "value": "noteScale",
     "defaultValue": "noteScale",
     "visibleInMenu": false
+  },
+  {
+    "name": "tinyNotes",
+    "caption": "tiny notes",
+    "trigger": "t",
+    "datatype": "org.dynamide.Select",
+    "value": "none",
+    "defaultValue": "none",
+    "visibleInMenu": false,
+    "options": [
+      {
+        "value": "none",
+        "caption": "none",
+        "trigger": "n"
+      },
+      {
+        "value": "noteTransparent",
+        "caption": "emboss - noteTransparent",
+        "trigger": "e"
+      },
+      {
+        "value": "noteAutomatic",
+        "caption": "noteAutomatic",
+        "trigger": "a"
+      },
+      {
+        "value": "noteLead",
+        "caption": "noteLead",
+        "trigger": "1"
+      },
+      {
+        "value": "noteLead2",
+        "caption": "noteLead2",
+        "trigger": "2"
+      }
+    ]
   },
   {
     "name": "apply",

@@ -1,12 +1,15 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
-import { transposeSong } from '../../infinite-neck.js';
+import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
+import * as Constants from '../../Constants.js';
+import { getSong, transposeSong } from '../../infinite-neck.js';
 
 function formatOptions(propertiesByName) {
   return {
     NamedNotes: !!propertiesByName.get('NamedNotes')?.getValue(),
     PlayedNotes: !!propertiesByName.get('PlayedNotes')?.getValue(),
-    RecordedNotes: !!propertiesByName.get('RecordedNotes')?.getValue()
+    RecordedNotes: !!propertiesByName.get('RecordedNotes')?.getValue(),
+    doKeyLead: !!propertiesByName.get('doLeadKey')?.getValue()
   };
 }
 
@@ -102,6 +105,9 @@ export class TransposePlugin {
     if (fieldName === 'currentInterval') {
       return this.currentAppliedInterval;
     }
+    if (fieldName === 'currentOffset') {
+      return this.currentNetOffset;
+    }
     return undefined;
   }
 
@@ -114,22 +120,42 @@ export class TransposePlugin {
     return 'Transpose disabled';
   }
 
-  handleEvent(eventName) {
-    return this.advanceInterval(`event ${eventName}`);
+  handleEvent(eventName, payload = {}, context = {}) {
+    return this.advanceInterval(`event ${eventName}`, context.song || this.manager?.song || getSong());
   }
 
-  invokeAction(actionName) {
+  invokeAction(actionName, context = {}) {
+    const song = context.song || this.manager?.song || getSong();
     switch (actionName) {
       case 'apply':
-        return { result: this.advanceInterval('manual apply') };
+        return { result: this.advanceInterval('manual apply', song) };
+      case 'reset':
+        return { result: this.resetTranspose(song) };
       case 'help':
         return {
           result: 'Transpose help shown',
-          message: '<pre>Transpose plugin\n\n- intervals: JSON array of integers\n- first interval represents the starting Song state\n- each trigger advances to the next interval\n- NamedNotes / PlayedNotes / RecordedNotes control which layers move</pre>'
+          message: this.buildHelpMessage()
         };
       default:
         return { result: `Unknown transpose action: ${actionName}` };
     }
+  }
+
+  buildSummary() {
+    return `current interval=${this.currentAppliedInterval} offset=${this.currentNetOffset} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} played notes=${this.getPlayedNotesEnabled()} recorded notes=${this.getRecordedNotesEnabled()}`;
+  }
+
+  buildHelpMessage() {
+    return `<pre><b><u>Transpose plugin:</u> ${this.buildSummary()}</b>
+
+Current settings:
+- ${this.buildSummary()}
+- intervals = ${JSON.stringify(this.getIntervals())}
+- first interval represents the starting Song state
+- each trigger advances to the next interval
+- Reset returns the plugin-managed transpose offset to zero
+
+${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   getIntervals() {
@@ -137,13 +163,34 @@ export class TransposePlugin {
     return Array.isArray(value) ? value : [];
   }
 
+  getNamedNotesEnabled() {
+    return !!this.getProperty('NamedNotes')?.getValue();
+  }
+
+  getPlayedNotesEnabled() {
+    return !!this.getProperty('PlayedNotes')?.getValue();
+  }
+
+  getRecordedNotesEnabled() {
+    return !!this.getProperty('RecordedNotes')?.getValue();
+  }
+
+  getAutoSharpsFlatsEnabled() {
+    return !!this.getProperty('autoSharpsFlats')?.getValue();
+  }
+
+  getDoLeadKeyEnabled() {
+    return !!this.getProperty('doLeadKey')?.getValue();
+  }
+
   resetIntervalState() {
     const intervals = this.getIntervals();
     this.currentIntervalIndex = 0;
     this.currentAppliedInterval = intervals.length > 0 ? intervals[0] : 0;
+    this.currentNetOffset = 0;
   }
 
-  advanceInterval(sourceLabel) {
+  advanceInterval(sourceLabel, song = this.manager?.song || getSong()) {
     const intervals = this.getIntervals();
     if (intervals.length === 0) {
       return 'No intervals configured';
@@ -157,9 +204,44 @@ export class TransposePlugin {
 
     if (delta !== 0) {
       transposeSong(delta, formatOptions(this.propertyMap));
+      this.currentNetOffset += delta;
+      if (this.getAutoSharpsFlatsEnabled()) {
+        this.applyAutoSharpsFlats(song);
+      }
     }
 
     return `${sourceLabel}: interval ${nextInterval} (delta ${delta})`;
+  }
+
+  resetTranspose(song = this.manager?.song || getSong()) {
+    if (this.currentNetOffset !== 0) {
+      transposeSong(-this.currentNetOffset, formatOptions(this.propertyMap));
+      if (this.getAutoSharpsFlatsEnabled()) {
+        this.applyAutoSharpsFlats(song);
+      }
+    }
+    this.resetIntervalState();
+    return 'manual reset: offset 0';
+  }
+
+  applyAutoSharpsFlats(song = this.manager?.song || getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return;
+    }
+
+    song.sections.forEach((section) => {
+      const rootID = Number.parseInt(section?.rootID, 10) || 0;
+      section.sharps = Constants.noteIdPrefersSharps(rootID);
+    });
+
+    const currentSection = typeof song.getCurrentSection === 'function' ? song.getCurrentSection() : null;
+    if (currentSection) {
+      song.sharps = !!currentSection.sharps;
+    }
+
+    if (!song.isHeadless && typeof song.requestUiFullRepaint === 'function') {
+      song.requestUiFullRepaint();
+    }
   }
 }
 

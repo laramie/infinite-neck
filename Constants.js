@@ -37,6 +37,7 @@ export const noteNamesFuncArrDEFAULT = [
     "&Delta;" // 12 - say 
 ];
 export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+export const SHARP_IDS = ['A', 'B', 'C', 'D', 'E', 'G'];
 
 export const FILL_CHORD_OPTIONS = [
     { value: '4,7', caption: 'Maj', trigger: 'm' },
@@ -79,6 +80,12 @@ export const FILL_SCALE_OPTIONS = [
 export function noteIDToNoteNameRaw(noteIndex) {
     return NOTE_NAMES_ARRAY[noteIndex];
 }
+
+export function noteIdPrefersSharps(noteIndex) {
+    const normalizedIndex = ((Number.parseInt(noteIndex, 10) || 0) % NOTE_NAMES_ARRAY.length + NOTE_NAMES_ARRAY.length) % NOTE_NAMES_ARRAY.length;
+    return SHARP_IDS.includes(noteIDToNoteNameRaw(normalizedIndex));
+}
+
 export function noteNameToNoteID(noteName) {
     return NOTE_NAMES_ARRAY.indexOf(noteName);
 }

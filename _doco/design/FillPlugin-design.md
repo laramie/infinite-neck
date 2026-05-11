@@ -357,7 +357,35 @@ For now, we prefer a simple array in Constants.js
 - flat IDs are everything else in Constants.NOTE_NAMES_ARRAY
 
 
+### Iteration 5
 
+#### transpose API changes
 
+Implement the changes based on the intention in the name changes.
+
+add to options::options.doKeyLead
+infinite-neck.js::transposeSong(amount, options)
+
+add parameter, default to false:
+infinite-neck.js::transposeSongKeys(amount, doKeyLead=false)
+
+add new, additional, optional param default to false:
+Song.cycleThruKeysAllSections(amount, doKeyLead=false)
+calls the additional, parallel function transposeRootLead when calling transposeRoot.
+
+Section.transposeRoot(amount) should have a new, parallel function:
+Section.transposeRootLead(amount)
+
+When doKeyLead is true, do to rootIDLead what you do to rootID, same interval change.
+
+Important: ensure that default args and implications are such that current code outside of TransposePlugin behaves identically.
+
+#### Use new API for transpose in TransposePlugin
+
+Using the new API changes, let TransposePlugin allow the User the option of transposing rootIDLead when it transposes the song.
+
+Let the menu item be:
+
+`d) do lead key`
 
 

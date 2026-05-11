@@ -51,3 +51,23 @@ test('cycleThruKeysAllSections transposes each section rootID with wrap', () => 
 
     expect(after).toEqual(expected);
 });
+
+test('cycleThruKeysAllSections leaves rootIDLead unchanged by default and transposes it when requested', () => {
+    const { song } = loadPrimarySongForApiTests();
+    const sections = song.getSections();
+
+    sections[0].rootID = 0;
+    sections[0].rootIDLead = '7';
+    sections[1].rootID = 3;
+    sections[1].rootIDLead = '-1';
+
+    song.cycleThruKeysAllSections(2);
+
+    expect(sections[0].rootIDLead).toBe('7');
+    expect(sections[1].rootIDLead).toBe('-1');
+
+    song.cycleThruKeysAllSections(3, true);
+
+    expect(sections[0].rootIDLead).toBe(10);
+    expect(sections[1].rootIDLead).toBe('-1');
+});

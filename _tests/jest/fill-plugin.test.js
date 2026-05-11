@@ -190,18 +190,20 @@ describe('FillPlugin', () => {
       'root',
       'chord',
       'scale',
+      'tinyNotes',
       'apply'
     ]);
     expect(optionsNode.children.map((child) => child.trigger)).toEqual([
       'd',
       'g',
       'm',
-      't',
+      'f',
       'u',
       'l',
       'r',
       'c',
       's',
+      't',
       'A'
     ]);
     expect(optionsNode.children[4].name).toBe('minRow');
@@ -303,9 +305,12 @@ describe('FillPlugin', () => {
     expect(plugin.buildSummary(song)).toContain('target table=P46_1');
     expect(plugin.buildSummary(song)).toContain(`fret range=0..${Constants.FIRST_POSITION_MAX_FRET}`);
     expect(plugin.buildSummary(song)).toContain('upper/lower string limit=1..6');
+    expect(plugin.buildSummary(song)).toContain('tiny notes=none');
     expect(help).toContain('target table = P46_1');
     expect(help).toContain('upper/lower string limit = 1..6');
     expect(help).toContain('root color = noteRoot');
+    expect(help).toContain('Events handled:');
+    expect(help).toContain('DaCapo:OnSectionBegin');
   });
 
   test('apply fills SingleNotes, preserves precedence, and skips occupied user SingleNotes', () => {
@@ -337,7 +342,7 @@ describe('FillPlugin', () => {
     const playedNotes = getPlayedNotes(section, targetTable);
     const noteByCell = Object.fromEntries(playedNotes.map((note) => [`${note.row}:${note.col}`, note]));
 
-    expect(result.result).toBe('Fill applied: added 2, skipped 1');
+    expect(result.result).toBe('Fill applied: added 2, tiny 0, skipped 1');
     expect(playedNotes.every((note) => note.styleNum === Note.STYLENUM_SINGLE)).toBe(true);
     expect(noteByCell['0:0'].colorClass).toBe('noteRoot');
     expect(noteByCell['0:2'].colorClass).toBe('noteScale');
@@ -374,7 +379,7 @@ describe('FillPlugin', () => {
 
     const result = plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 1 }, { song });
 
-    expect(result.result).toBe('Fill applied: added 5, skipped 0');
+  expect(result.result).toBe('Fill applied: added 5, tiny 0, skipped 0');
     expect(getPlayedNotes(firstSection, targetTable)).toHaveLength(0);
     expect(getPlayedNotes(secondSection, targetTable)).toHaveLength(5);
     expect(plugin.getProperty('targetTable').getValue()).toBe(beforeOptions.targetTable);
@@ -434,6 +439,7 @@ describe('FillPlugin', () => {
       [targetTable]: {
         playedNotes: [
           new Note({ noteName: 'C', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 0, owner: 'FillPlugin' }),
+          new Note({ noteName: 'C', styleNum: Note.STYLENUM_TINY, row: 0, col: 0, owner: 'FillPlugin' }),
           new Note({ noteName: 'D', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 2 })
         ]
       },
@@ -446,7 +452,8 @@ describe('FillPlugin', () => {
     const secondSection = makeSection({
       [targetTable]: {
         playedNotes: [
-          new Note({ noteName: 'F', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 5, owner: 'FillPlugin' })
+          new Note({ noteName: 'F', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 5, owner: 'FillPlugin' }),
+          new Note({ noteName: 'F', styleNum: Note.STYLENUM_TINY, row: 0, col: 5, owner: 'FillPlugin' })
         ]
       }
     });
@@ -462,10 +469,11 @@ describe('FillPlugin', () => {
 
     expect(plugin.clearCurrentSection(song).result).toBe('Fill cleared current section');
     expect(getPlayedNotes(firstSection, targetTable).map((note) => note.noteName)).toEqual(['D']);
-    expect(getPlayedNotes(secondSection, targetTable).map((note) => note.noteName)).toEqual(['F']);
+    expect(getPlayedNotes(secondSection, targetTable).map((note) => note.noteName)).toEqual(['F', 'F']);
     expect(getPlayedNotes(firstSection, otherTable).map((note) => note.noteName)).toEqual(['E']);
 
     firstSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'C', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 0, owner: 'FillPlugin' }));
+    firstSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'C', styleNum: Note.STYLENUM_TINY, row: 0, col: 0, owner: 'FillPlugin' }));
 
     expect(plugin.commitNotes(song).result).toBe('Fill committed generated notes');
     expect(getPlayedNotes(firstSection, targetTable).some((note) => note.owner === 'FillPlugin')).toBe(false);
@@ -473,11 +481,84 @@ describe('FillPlugin', () => {
     expect(getPlayedNotes(firstSection, otherTable)[0].owner).toBe('FillPlugin');
 
     firstSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'G', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 7, owner: 'FillPlugin' }));
+    firstSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'G', styleNum: Note.STYLENUM_TINY, row: 0, col: 7, owner: 'FillPlugin' }));
     secondSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'A', styleNum: Note.STYLENUM_SINGLE, row: 0, col: 9, owner: 'FillPlugin' }));
+    secondSection.getSectionNotes(targetTable).playedNotes.push(new Note({ noteName: 'A', styleNum: Note.STYLENUM_TINY, row: 0, col: 9, owner: 'FillPlugin' }));
 
     expect(plugin.clearSong(song).result).toBe('Fill cleared all sections');
     expect(getPlayedNotes(firstSection, targetTable).every((note) => note.owner !== 'FillPlugin')).toBe(true);
     expect(getPlayedNotes(secondSection, targetTable).every((note) => note.owner !== 'FillPlugin')).toBe(true);
     expect(getPlayedNotes(firstSection, otherTable)[0].owner).toBe('FillPlugin');
+  });
+
+  test('scale keep is no longer offered and legacy scale keep normalizes to role', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+    const scaleNode = optionsNode.children.find((child) => child.name === 'scale');
+
+    expect(scaleNode.children.map((child) => child.name)).toEqual(['scale:none', 'scale:roleMenu']);
+
+    plugin.setPropertyValue('scaleMode', 'keep', { song });
+    expect(plugin.getProperty('scaleMode').getValue()).toBe('role');
+  });
+
+  test('root none suppresses lower-priority notes at root positions while chord keep preserves scale notes', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('rootMode', 'none', { song });
+    plugin.setPropertyValue('chordMode', 'keep', { song });
+    plugin.setPropertyValue('scaleMode', 'role', { song });
+
+    plugin.applyToCurrentSection(song);
+
+    const noteByCell = Object.fromEntries(getPlayedNotes(section, targetTable).map((note) => [`${note.row}:${note.col}`, note]));
+    expect(noteByCell['0:0']).toBeUndefined();
+    expect(noteByCell['0:2'].colorClass).toBe('noteScale');
+    expect(noteByCell['0:4'].colorClass).toBe('noteScale');
+  });
+
+  test('tiny notes mirror emitted FillPlugin SingleNotes only', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('rootMode', 'role', { song });
+    plugin.setPropertyValue('chordMode', 'none', { song });
+    plugin.setPropertyValue('scaleMode', 'none', { song });
+    plugin.setPropertyValue('tinyNotes', 'noteLead', { song });
+
+    const result = plugin.applyToCurrentSection(song);
+    const playedNotes = getPlayedNotes(section, targetTable);
+    const singleNotes = playedNotes.filter((note) => note.styleNum === Note.STYLENUM_SINGLE);
+    const tinyNotes = playedNotes.filter((note) => note.styleNum === Note.STYLENUM_TINY);
+
+    expect(result.result).toBe('Fill applied: added 1, tiny 1, skipped 0');
+    expect(singleNotes).toHaveLength(1);
+    expect(tinyNotes).toHaveLength(1);
+    expect(tinyNotes[0].row).toBe(singleNotes[0].row);
+    expect(tinyNotes[0].col).toBe(singleNotes[0].col);
+    expect(tinyNotes[0].colorClass).toBe('noteLead');
   });
 });

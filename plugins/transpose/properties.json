@@ -41,11 +41,39 @@
     "visibleInMenu": true
   },
   {
+    "name": "autoSharpsFlats",
+    "caption": "auto sharps/flats",
+    "trigger": "a",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "doLeadKey",
+    "caption": "do lead key",
+    "trigger": "d",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
     "name": "apply",
     "caption": "Apply",
     "trigger": "A",
     "datatype": "org.dynamide.Action",
     "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "reset",
+    "caption": "Reset",
+    "trigger": "S",
+    "datatype": "org.dynamide.Action",
+    "actionName": "reset",
     "visibleInMenu": true
   },
   {

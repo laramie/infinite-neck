@@ -1068,27 +1068,41 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		highlightOneNote(namedNoteName);
 	}
 
-	export function transposeSong(amount, options){
-		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true}
-		getSong().cycleThruKeysAllSections(amount);
+	export function transposeSong(amount, options = {}){
+		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true, doKeyLead:false}
+		const song = getSong();
+		const normalizedOptions = {
+			NamedNotes: options.NamedNotes !== false,
+			PlayedNotes: !!options.PlayedNotes,
+			RecordedNotes: !!options.RecordedNotes,
+			doKeyLead: !!options.doKeyLead
+		};
+		song.cycleThruKeysAllSections(amount, normalizedOptions.doKeyLead);
 		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
-		if (options.NamedNotes){
-			getSong().moveNamedNotesAllSections(amount);
+		if (normalizedOptions.NamedNotes){
+			song.moveNamedNotesAllSections(amount);
 		}
-		if (options.PlayedNotes){
-			getSong().movePlayedNotesAllSections(amount);
+		if (normalizedOptions.PlayedNotes){
+			song.movePlayedNotesAllSections(amount);
 		}
-		if (options.RecordedNotes){
-			getSong().moveRecordedNotesAllSections(amount);
+		if (normalizedOptions.RecordedNotes){
+			song.moveRecordedNotesAllSections(amount);
+		}
+		if (song.isHeadless){
+			return;
 		}
 		fullRepaint();
 		//Did the whole song, but at least give visual cue that we did something by highlighting current section:
-		var namedNoteName =  getSong().getCurrentSection().getRootNoteName();
+		var namedNoteName =  song.getCurrentSection().getRootNoteName();
 		highlightOneNote(namedNoteName);
 	}
 
-	export function transposeSongKeys(amount){
-		getSong().cycleThruKeysAllSections(amount);
+	export function transposeSongKeys(amount, doKeyLead=false){
+		const song = getSong();
+		song.cycleThruKeysAllSections(amount, doKeyLead);
+		if (song.isHeadless){
+			return;
+		}
 		fullRepaint();
 		showBeats();
 	}

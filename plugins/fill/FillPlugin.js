@@ -1,6 +1,7 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
+import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
@@ -12,6 +13,8 @@ const MODE_NONE = 'none';
 const MODE_KEEP = 'keep';
 const MODE_ROLE = 'role';
 const SINGLE_STYLE = Note.STYLENUM_SINGLE;
+const TINY_STYLE = Note.STYLENUM_TINY;
+const TINY_NONE = 'none';
 
 const ROLE_CONFIG = {
   root: {
@@ -36,6 +39,8 @@ const ROLE_CONFIG = {
     canonicalCaption: 'noteScale'
   }
 };
+
+const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 
 function stripHtml(text) {
   return `${text || ''}`.replace(/<[^>]+>/g, '');
@@ -221,7 +226,7 @@ export class FillPlugin {
 
     const persistedKeys = Object.keys(persistedProperties);
     const legacyKeys = Object.keys(legacyStub);
-    if (persistedKeys.length !== legacyKeys.length) {
+    if (!persistedKeys.every((key) => key === 'tinyNotes' || legacyKeys.includes(key))) {
       return false;
     }
 
@@ -323,6 +328,7 @@ export class FillPlugin {
         this.buildRoleMenuNode('root'),
         this.buildRoleMenuNode('chord'),
         this.buildRoleMenuNode('scale'),
+        this.getProperty('tinyNotes').getMenuNodeSpec(this),
         this.getProperty('apply').getMenuNodeSpec(this)
       ]
     });
@@ -340,7 +346,7 @@ export class FillPlugin {
       vars: [displayToken],
       children: [
         this.buildRoleModeChild(roleName, MODE_NONE, 'none', 'n'),
-        this.buildRoleModeChild(roleName, MODE_KEEP, 'keep', 'k'),
+        ...(roleName === 'scale' ? [] : [this.buildRoleModeChild(roleName, MODE_KEEP, 'keep', 'k')]),
         new MenuItemProxy(this, {
           name: `${roleName}:roleMenu`,
           caption: `${buildCaption('role', 'r')} [$${colorToken}]`,
@@ -437,6 +443,10 @@ export class FillPlugin {
       if (![MODE_NONE, MODE_KEEP, MODE_ROLE].includes(normalized)) {
         throw new Error(`FillPlugin invalid mode for ${name}: ${rawValue}`);
       }
+      if (name === 'scaleMode' && normalized === MODE_KEEP) {
+        property.value = MODE_ROLE;
+        return property.getValue();
+      }
       property.value = normalized;
       return property.getValue();
     }
@@ -481,6 +491,9 @@ export class FillPlugin {
     }
     if (fieldName === 'scaleDisplay') {
       return this.resolveRoleDisplay('scale');
+    }
+    if (fieldName === 'tinyNotes') {
+      return this.resolveTinyDisplay();
     }
     if (this.isStringLimitProperty(fieldName)) {
       return this.toDisplayStringNumber(this.getProperty(fieldName)?.getValue() || 0, song);
@@ -572,13 +585,22 @@ SingleNote fill only.
 - root color = ${this.resolveValue('rootDisplay', { song })}
 - chord color = ${this.resolveValue('chordDisplay', { song })}
 - scale color = ${this.resolveValue('scaleDisplay', { song })}
+- tiny notes = ${this.resolveValue('tinyNotes', { song })}
 
 Apply and Clear affect only the current section in the selected table.
-Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
+Clear Song and Commit Notes affect all sections in the selected table.
+
+Role pass order: scale, then chord, then root.
+${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildSummary(song = getSong()) {
-    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord formula=${this.resolveValue('chordFormula', { song })} scale formula=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}`;
+    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord formula=${this.resolveValue('chordFormula', { song })} scale formula=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} tiny notes=${this.resolveValue('tinyNotes', { song })}`;
+  }
+
+  resolveTinyDisplay() {
+    const tinyValue = `${this.getProperty('tinyNotes')?.getValue() || TINY_NONE}`;
+    return tinyValue;
   }
 
   buildTargetTableOptions(song = getSong()) {
@@ -644,30 +666,15 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
   computeRoleNoteSets(section) {
     const rootName = this.getCurrentRootNoteName(section);
     const rootID = Number.parseInt(section?.rootID, 10) || 0;
-    const keepRoot = this.getProperty('rootMode')?.getValue() === MODE_KEEP;
-    const keepChord = this.getProperty('chordMode')?.getValue() === MODE_KEEP;
-
-    const chordNames = [];
-    this.parseFormulaValues('chordFormula').forEach((interval) => {
-      const noteName = Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12];
-      if (!(keepRoot && noteName === rootName)) {
-        chordNames.push(noteName);
-      }
-    });
-
-    const scaleNames = [];
-    this.parseFormulaValues('scaleFormula').forEach((interval) => {
-      const noteName = Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12];
-      if ((keepRoot && noteName === rootName) || (keepChord && chordNames.includes(noteName))) {
-        return;
-      }
-      scaleNames.push(noteName);
-    });
 
     return {
-      root: [rootName],
-      chord: chordNames,
-      scale: scaleNames
+      root: new Set([rootName]),
+      chord: new Set(
+        this.parseFormulaValues('chordFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
+      ),
+      scale: new Set(
+        this.parseFormulaValues('scaleFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
+      )
     };
   }
 
@@ -717,31 +724,52 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
     const maxFret = Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0;
     const upperRowLimit = Number.parseInt(this.getProperty('minRow')?.getValue(), 10) || 0;
     const lowerRowLimit = Number.parseInt(this.getProperty('maxRow')?.getValue(), 10) || 0;
-    const cellMap = new Map();
+    const plan = [];
 
-    ['scale', 'chord', 'root'].forEach((roleName) => {
-      const config = ROLE_CONFIG[roleName];
-      const mode = this.getProperty(config.modeProperty)?.getValue();
-      if (mode !== MODE_ROLE) {
+    candidates.forEach((candidate) => {
+      if (candidate.row < upperRowLimit || candidate.row > lowerRowLimit || candidate.col < minFret || candidate.col > maxFret) {
         return;
       }
 
-      const roleColorValue = `${this.getProperty(config.colorProperty)?.getValue() || config.canonicalColor}`;
-      const roleNoteNames = new Set(roleNoteSets[roleName] || []);
-      candidates.forEach((candidate) => {
-        if (candidate.row < upperRowLimit || candidate.row > lowerRowLimit || candidate.col < minFret || candidate.col > maxFret) {
-          return;
-        }
-        if (!roleNoteNames.has(candidate.noteName)) {
-          return;
-        }
+      const decision = this.resolveCellDecision(candidate, roleNoteSets);
+      if (!decision) {
+        return;
+      }
 
-        const note = this.buildSingleNote(candidate, roleColorValue, section);
-        cellMap.set(`${candidate.row}:${candidate.col}`, note);
+      plan.push({
+        singleNote: this.buildSingleNote(candidate, decision.colorValue, section),
+        tinyNote: this.buildTinyNote(candidate, section)
       });
     });
 
-    return Array.from(cellMap.values());
+    return plan;
+  }
+
+  resolveCellDecision(candidate, roleNoteSets) {
+    let selectedRole = null;
+
+    ROLE_PASS_ORDER.forEach((roleName) => {
+      const noteSet = roleNoteSets[roleName];
+      if (!noteSet?.has(candidate.noteName)) {
+        return;
+      }
+
+      const config = ROLE_CONFIG[roleName];
+      const mode = `${this.getProperty(config.modeProperty)?.getValue() || MODE_ROLE}`;
+      if (mode === MODE_ROLE) {
+        selectedRole = {
+          roleName,
+          colorValue: `${this.getProperty(config.colorProperty)?.getValue() || config.canonicalColor}`
+        };
+        return;
+      }
+
+      if (mode === MODE_NONE) {
+        selectedRole = null;
+      }
+    });
+
+    return selectedRole;
   }
 
   buildSingleNote(candidate, colorValue, section) {
@@ -754,6 +782,24 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
       owner: FILL_OWNER
     });
     note.colorClass = this.resolvePersistedColorValue(colorValue, note, section);
+    return note;
+  }
+
+  buildTinyNote(candidate, section) {
+    const tinyValue = `${this.getProperty('tinyNotes')?.getValue() || TINY_NONE}`;
+    if (tinyValue === TINY_NONE) {
+      return null;
+    }
+
+    const note = new Note({
+      noteName: candidate.noteName,
+      styleNum: TINY_STYLE,
+      midinum: candidate.midinum,
+      row: candidate.row,
+      col: candidate.col,
+      owner: FILL_OWNER
+    });
+    note.colorClass = this.resolvePersistedColorValue(tinyValue, note, section);
     return note;
   }
 
@@ -784,7 +830,7 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
     }
 
     const sectionNotes = section.getSectionNotes(tableID);
-    this.clearOwnedSingleNotesInSection(sectionNotes);
+    this.clearOwnedFillNotesInSection(sectionNotes);
 
     const occupiedCells = new Set(
       (sectionNotes.playedNotes || [])
@@ -794,25 +840,30 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
 
     const plan = this.buildFillPlan(song, section, tuning);
     let addedCount = 0;
+    let tinyAddedCount = 0;
     let skippedCount = 0;
 
-    plan.forEach((note) => {
-      const key = `${note.row}:${note.col}`;
+    plan.forEach(({ singleNote, tinyNote }) => {
+      const key = `${singleNote.row}:${singleNote.col}`;
       if (occupiedCells.has(key)) {
         skippedCount += 1;
         return;
       }
-      sectionNotes.playedNotes.push(note);
+      sectionNotes.playedNotes.push(singleNote);
+      if (tinyNote) {
+        sectionNotes.playedNotes.push(tinyNote);
+        tinyAddedCount += 1;
+      }
       occupiedCells.add(key);
       addedCount += 1;
     });
 
     this.refreshCurrentSectionUi(song);
-    return { result: `Fill applied: added ${addedCount}, skipped ${skippedCount}` };
+    return { result: `Fill applied: added ${addedCount}, tiny ${tinyAddedCount}, skipped ${skippedCount}` };
   }
 
-  clearOwnedSingleNotesInSection(sectionNotes) {
-    sectionNotes.removePlayedNotesWhere((note) => this.isOwnedSingleNote(note));
+  clearOwnedFillNotesInSection(sectionNotes) {
+    sectionNotes.removePlayedNotesWhere((note) => this.isOwnedFillNote(note));
   }
 
   clearCurrentSection(song = getSong()) {
@@ -821,7 +872,7 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
     if (!section || !tableID) {
       return { result: 'Fill clear skipped: no target table selected' };
     }
-    this.clearOwnedSingleNotesInSection(section.getSectionNotes(tableID));
+    this.clearOwnedFillNotesInSection(section.getSectionNotes(tableID));
     this.refreshCurrentSectionUi(song);
     return { result: 'Fill cleared current section' };
   }
@@ -832,7 +883,7 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
       return { result: 'Fill clear song skipped: no target table selected' };
     }
     (song.sections || []).forEach((section) => {
-      this.clearOwnedSingleNotesInSection(section.getSectionNotes(tableID));
+      this.clearOwnedFillNotesInSection(section.getSectionNotes(tableID));
     });
     this.refreshCurrentSectionUi(song);
     return { result: 'Fill cleared all sections' };
@@ -845,7 +896,7 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
     }
     (song.sections || []).forEach((section) => {
       section.getSectionNotes(tableID).forEachPlayedNoteWhere(
-        (note) => this.isOwnedSingleNote(note),
+        (note) => this.isOwnedFillNote(note),
         (note) => { delete note.owner; }
       );
     });
@@ -853,8 +904,9 @@ Clear Song and Commit Notes affect all sections in the selected table.</pre>`;
     return { result: 'Fill committed generated notes' };
   }
 
-  isOwnedSingleNote(note) {
-    return Number.parseInt(note?.styleNum, 10) === SINGLE_STYLE && note?.owner === FILL_OWNER;
+  isOwnedFillNote(note) {
+    const styleNum = Number.parseInt(note?.styleNum, 10);
+    return note?.owner === FILL_OWNER && (styleNum === SINGLE_STYLE || styleNum === TINY_STYLE);
   }
 
   refreshCurrentSectionUi(song = getSong()) {

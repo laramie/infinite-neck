@@ -820,11 +820,14 @@ export class Song extends SongPersistence {
         return defaultDisplayOptions;
     }
 
-    //This function works: it transposes every Section in a Song by 'amount', but I haven't installed it in the menu yet.
-    cycleThruKeysAllSections(amount){
+    //This function works: it transposes every Section in a Song by 'amount'.
+    cycleThruKeysAllSections(amount, doKeyLead = false){
         var sections = this.getSections();
         sections.forEach(section => {
             section.transposeRoot(amount);
+            if (doKeyLead) {
+                section.transposeRootLead(amount);
+            }
         });
 	}
 

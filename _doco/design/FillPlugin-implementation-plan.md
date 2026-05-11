@@ -897,3 +897,54 @@ The main intentional limits are:
 - same-event plugin ordering remains whatever the existing enable / handler-registration order produces
 - the auto spelling policy is intentionally simple and not music-theory complete
 - `Reset` is defined against plugin-managed transpose offset, not full historical reconstruction of original section spelling
+
+## Iteration 5 Implementation Notes
+
+This iteration extended the transpose API so lead-key transposition can be requested explicitly while preserving the previous behavior everywhere else by default.
+
+### Implemented API Changes
+
+- `infinite-neck.js :: transposeSong(amount, options = {})`
+  - now accepts `options.doKeyLead`
+  - now safely normalizes missing options so legacy callers of `transposeSong(amount)` continue to behave the same way
+- `infinite-neck.js :: transposeSongKeys(amount, doKeyLead = false)`
+  - now accepts an optional lead-key transpose flag
+- `Song.cycleThruKeysAllSections(amount, doKeyLead = false)`
+  - still transposes `rootID` in all sections
+  - now also transposes `rootIDLead` only when `doKeyLead` is true
+- `Section.transposeRootLead(amount)`
+  - added as a parallel API to `transposeRoot(amount)`
+  - leaves `rootIDLead = -1` untouched so "follow root" semantics remain intact
+
+### Implemented TransposePlugin Changes
+
+- added toggle property `d) do lead key`
+- TransposePlugin now passes `doKeyLead` through its transpose options
+- help summary now reports the current `do lead key` state
+
+### Compatibility Rule Kept
+
+Current code outside of TransposePlugin continues to behave identically unless it explicitly opts in to lead-key transposition.
+
+That is the main compatibility guarantee for this iteration.
+
+### Files Updated In Iteration 5
+
+- `Section.js`
+- `Song.js`
+- `infinite-neck.js`
+- `plugins/transpose/TransposePlugin.js`
+- `plugins/transpose/properties.json`
+- `_tests/jest/transpose-plugin.test.js`
+- `_tests/jest/plugin-manager-persistence.test.js`
+- `_tests/jest/song-api-Section.test.js`
+- `_tests/jest/song-api-load-V2.test.js`
+
+### Iteration 5 Validation
+
+Focused Jest coverage was extended to verify:
+
+- default no-lead-key behavior is unchanged
+- explicit lead-key transposition updates `rootIDLead`
+- `rootIDLead = -1` remains unchanged
+- TransposePlugin persists and reports the new `do lead key` toggle

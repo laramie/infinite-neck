@@ -1,4 +1,4 @@
-import { setupSongTests, getSong } from '../../infinite-neck.js';
+import { setupSongTests, getSong, transposeSongKeys } from '../../infinite-neck.js';
 
 
 import { logVerbose, logVerboseTrue } from './LogVerboseJest.js';
@@ -131,6 +131,40 @@ describe('getSong() test_getRelativeSectionWithWrap', () => {
 				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some terse results which mean 'PASS': \n"+testResult.terse.join("\n"));
 			}
 		}).not.toThrow();
+	});
+});
+
+describe('transposeSongKeys API', () => {
+	test('transposeSongKeys can also transpose rootIDLead when requested', () => {
+		setupSongTests();
+		getSong().setHeadless(true, true/*quiet*/);
+		const song = getSong();
+
+		song.sections = [];
+		song.gSectionsCurrentIndex = 0;
+
+		const firstSection = song.constructSection();
+		const secondSection = song.constructSection();
+		firstSection.rootID = 0;
+		firstSection.rootIDLead = '7';
+		secondSection.rootID = 3;
+		secondSection.rootIDLead = '-1';
+		song.addSection(firstSection);
+		song.addSection(secondSection);
+
+		transposeSongKeys(2);
+
+		expect(song.getSections()[0].rootID).toBe(2);
+		expect(song.getSections()[0].rootIDLead).toBe('7');
+		expect(song.getSections()[1].rootID).toBe(5);
+		expect(song.getSections()[1].rootIDLead).toBe('-1');
+
+		transposeSongKeys(3, true);
+
+		expect(song.getSections()[0].rootID).toBe(5);
+		expect(song.getSections()[0].rootIDLead).toBe(10);
+		expect(song.getSections()[1].rootID).toBe(8);
+		expect(song.getSections()[1].rootIDLead).toBe('-1');
 	});
 });
 

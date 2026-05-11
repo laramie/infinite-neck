@@ -186,6 +186,18 @@ describe('Song V2 headless operations on a loaded song', () => {
         const expected = before.map((rootID) => (12 + rootID + 2) % 12);
         expect(after).toEqual(expected);
     });
+
+    test('cycleThruKeysAllSections can also transpose rootIDLead when requested', () => {
+        const { song } = loadSongCanonical();
+        const [firstSection, secondSection] = song.getSections();
+        firstSection.rootIDLead = '4';
+        secondSection.rootIDLead = '-1';
+
+        song.cycleThruKeysAllSections(2, true);
+
+        expect(firstSection.rootIDLead).toBe(6);
+        expect(secondSection.rootIDLead).toBe('-1');
+    });
 });
 
 describe('Song V2 save path from a loaded song', () => {

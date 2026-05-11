@@ -171,6 +171,15 @@ export class Section extends SectionPersistence {
 		return this.rootID;
 	}
 
+	transposeRootLead(amount) {
+		const curr = toInt(this.rootIDLead, -1);
+		if (curr < 0) {
+			return curr;
+		}
+		this.rootIDLead = (12 + curr + amount) % 12;
+		return this.rootIDLead;
+	}
+
 	
 	//================= New V2 Methods =========================================
 
