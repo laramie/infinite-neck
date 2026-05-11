@@ -99,6 +99,7 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 
@@ -529,8 +530,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function buildCells(sharps, options) {
-		updateMemoryModelPreFileSave();
-		let theVisibleNoteTables = getSong().visibleNoteTables;
+		let theVisibleNoteTables = updateVisibleTablesInMemoryModel();
 		theVisibleNoteTables.forEach(tableID => {
 		    buildCellsForTable(sharps, options, tableID);
 		});
@@ -693,10 +693,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
-	export function updateMemoryModelPreFileSave(){
+	function updateVisibleTablesInMemoryModel(){
 	    const visibleTableIds = TuningsLibrary.getMyTunings()
 	        .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
 	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
+	    getSong().markVisibleTablesForFileSave(visibleTableIds);
+	    return visibleTableIds;
+	}
+
+	export function updateMemoryModelPreFileSave(){
+	    const visibleTableIds = updateVisibleTablesInMemoryModel();
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({
@@ -909,6 +915,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#tabledest').append(warning);
 		}
 		buildColorDicts();
+		installFillPageSelects();
 	}
 
 	//TODO: make this targeted, especially watching out for un-docked tables.

@@ -121,6 +121,25 @@ describe('ArpeggioPlugin sequencing', () => {
 		EventBus.trigger.mockClear();
 	});
 
+	test('help and summary use user-facing table and fret terminology', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+		plugin.setPropertyValue('showNoteName', 'played', { song });
+
+		const help = plugin.buildHelpMessage(song);
+
+		expect(plugin.buildSummary()).toContain('fret range=0..3');
+		expect(plugin.buildSummary()).toContain('show note names=played');
+		expect(help).toContain('target table = tblARP');
+		expect(help).toContain('max fret limit = 3');
+	});
+
+	test('result strings use user-facing skip terminology', () => {
+		const plugin = new ArpeggioPlugin();
+
+		expect(plugin.clearGeneratedNotesInSong(null).result).toBe('Arpeggio clear skipped: no song loaded');
+		expect(plugin.applyToSection({ song: null }).result).toBe('Arpeggio skipped: no song loaded');
+	});
+
 	test('style=random excludes duplicate string/fret positions before repeating the cycle', () => {
 		const { plugin } = makeContext();
 		const duplicateCandidates = [

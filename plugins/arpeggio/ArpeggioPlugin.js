@@ -153,7 +153,7 @@ export class ArpeggioPlugin {
         return this.clearGeneratedNotesInSong(song);
       case 'help':
         return {
-          result: 'Arpeggio help shown',
+          result: 'Arpeggio help opened',
           message: this.buildHelpMessage(song)
         };
       default:
@@ -162,7 +162,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `minFret=${this.getProperty('minFret')?.getValue()} maxFret=${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} lowToHigh=${this.getProperty('lowToHigh')?.getValue()} upOnly=${this.getProperty('upOnly')?.getValue()} showNoteName=${this.getShowNoteNameMode()} colorNotes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
@@ -173,8 +173,8 @@ export class ArpeggioPlugin {
 
 Current settings:
 - ${this.buildSummary()}
-- targetTable = ${tableID}
-- maxAllowedFret = ${this.getMaxAllowedFret(song)}
+- target table = ${tableID}
+- max fret limit = ${this.getMaxAllowedFret(song)}
 
 Implemented in this iteration for:
 - style = every
@@ -218,7 +218,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
   getUnsupportedConfigurationMessage() {
     const style = this.getProperty('style')?.getValue();
     if (![STYLE_EVERY, STYLE_ALTERNATE, STYLE_RANDOM, STYLE_BACH].includes(style)) {
-      return `Unknown style=${style}. Use help for the implemented combinations.`;
+      return `Unknown style: ${style}. Use help for the implemented combinations.`;
     }
     return '';
   }
@@ -935,7 +935,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
 
   clearGeneratedNotesInSong(song = getSong()) {
     if (!song || !Array.isArray(song.sections)) {
-      return { result: 'Arpeggio clear skipped: no song' };
+      return { result: 'Arpeggio clear skipped: no song loaded' };
     }
 
     let removedCount = 0;
@@ -958,17 +958,17 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
       this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
     }
 
-    return { result: `Arpeggio cleared: removed ${removedCount} generated notes in ${sectionCount} sections` };
+    return { result: `Arpeggio cleared: removed ${removedCount} generated notes across ${sectionCount} sections` };
   }
 
   applyToSection({ song = getSong(), payload = {}, eventName = 'manual', clearSectionFirst = true } = {}) {
     if (!song) {
-      return { result: 'Arpeggio skipped: no song' };
+      return { result: 'Arpeggio skipped: no song loaded' };
     }
 
     const section = this.getTargetSection(song, payload);
     if (!section) {
-      return { result: 'Arpeggio skipped: no current section' };
+      return { result: 'Arpeggio skipped: no current section selected' };
     }
 
     const removedCount = clearSectionFirst ? this.clearGeneratedNotesInSection(section) : 0;
@@ -983,7 +983,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
 
     const tuning = this.getTargetTuning(song);
     if (!tuning) {
-      return { result: 'Arpeggio skipped: no unwired instrument found in myTunings' };
+      return { result: 'Arpeggio skipped: no target instrument available in myTunings' };
     }
 
     const beatCount = typeof section.getBeats === 'function'
@@ -997,7 +997,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
         this.requestCurrentBeatRefresh(song, section);
       }
       return {
-        result: `Arpeggio applied: no matching named notes for ${this.getTableID(tuning)}; removed=${removedCount}`
+        result: `Arpeggio applied: no matching named notes on target table ${this.getTableID(tuning)}; removed=${removedCount}`
       };
     }
 
@@ -1024,7 +1024,7 @@ ${unsupportedMessage || 'Current settings are implemented.'}</pre>`;
     this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
 
     return {
-      result: `Arpeggio applied: table=${tableID} event=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`
+      result: `Arpeggio applied: target table=${tableID} source=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`
     };
   }
 

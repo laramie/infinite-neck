@@ -245,3 +245,119 @@ Plan on a tiny builder for the select HTML elements on the Fill page, and wire i
 - Approved: "PalettePresentation.getLastRestorableRbColor() returning { id, value, caption }"
 
 
+### Iteration 4
+
+This Iteration picks up after previous iterations have been implemented as planned and documented here:
+
+`_doco/design/FillPlugin-implementation-plan.md`
+
+Several off-document chat conversations fixed some bugs and implementation details.  Let those be called Iteration 3.
+
+We now have further features to add documented as Iteration 4.
+
+#### Implementation Plan
+
+Yes, please produce a concise implementation plan grouping these changes which we'll approve and have you then move to code changes. Your output should be in: 
+
+      `_doco/design/FillPlugin-implementation-plan.md`
+
+in stubbed out Section: "## Iteration 4 Implementation Plan" 
+
+For the plan, we agree with everything in the recent chat, and add the following clarifications:
+
+#### FillPlugin root/chord/note painting rules
+
+Let's see if we can nail down how FillPlugin should work.
+
+This is based on how Fill page is supposed to work, which has a few holes.  In fact, the Fill page may do this incorrectly as well, but this design goal of FillPlugin is the only thing we are fixing right now.
+
+Quick comment about how you may have seen this implemented elsewhere or how Tonal.js implements it.  Since most chords are by usual Western music theory definition built as scale notes layered over the root, this means there is a natural hierarchy.  When we get to implementing Tonal.js's take on this, some weird cases come in, such as chords that have no root.  We aren't dealing with that here.  In our model, all chords have roots that are the note at the rootKey, although painting that note may be suppressed by our algorithm.  And for our implementation, chords are *not* built from scales.  Scales of one note family may be layered on chords of a different note family, which is not how Tonal.js works.  It is how Fill page works.  And it is the model we are using.
+
+So in our implementation, we have a set of note for a scale.  We have a different set of notes for chord, though they may share some, none, or all members with scale.  And we have a root note, which may or may not be in the scale set or the chord set given by the definition arrays.
+
+The big difference in this implementation is FillPlugin has already a special rule that it doesn't hose SingleNotes that are User-authored.  So "keep" is semantically different, but we will redefine it here in a way that is conceptually consistent, and implementable.
+
+"none" - always means no FillPlugin emitted note at that position, with root taking precedence over chord, taking precedence over scale.
+
+"role" - always means root, chord, or note does the role lookup, and places the note at the position, unless the following rules prevent it.
+
+The conceptual model the User can keep in mind, and thus the algorithm operates under, is that the notes are filled in order: scale first, then chord, then root.
+
+So we start off with placing all scale notes in scale color (role).
+
+Then we place all chord notes in chord color (role).
+
+Then we place the root note in root color (role).
+
+That is the basis.  So in the base case, you get scale colors, overwritten by chord colors, overwritten by root color.
+
+Then we modify whether we actually place those notes keeping the already placed note if "keep" , or remove all coloring instead for "none".
+
+If root is "keep" we leave chord notes in chord color, and place no root note.
+If root is "keep" we leave scale notes in scale color, and place no root note.
+If root is "none" we delete chord and scale note from that position, and place no root note.
+
+
+if chord is "keep" we leave scale notes in scale color, and place no chord note.
+If chord is "none" we delete scale note from that position, and place no chord.
+
+If scale is none, we place no scale note.
+
+Scale is "keep" is irrelevant to FillPlugin and should be removed from options, since we always keep User-authored notes.
+
+
+#### Tiny notes
+
+Accepted: "Tiny mirrors emitted Single notes only; it does not independently select notes"
+
+So given the above rules which determine if any SingleNotes is placed, everywhere a SingleNote actually gets placed, place a Tiny note, using the role in the Tiny note menu.
+
+#### Events
+
+Accepted: there is no change in event ordering or any attempt at implementing event ordering or dependence on event ordering in any of the Plugin implementations.  Transpose works on Song events, Arpeggio works on Section events, Fill works on Section events.  Problem solved.  If future case prove to need event ordering, we'll take it up then.
+
+Plugins will emit *which* events they handle in the help footer.
+
+#### noteLead*
+
+We incorrectly stated that there was a noteLead3.  There is not one, and we won't add one. As defined i userColors.js, noteLead and noteLead2 are sufficient, and the menus would be:
+
+```
+1) noteLead
+2) noteLead2
+```
+
+The whole Tiny note menu would thus be:
+
+```
+t) tiny notes
+    n) none
+    e) emboss - noteTransparent
+    a) noteAutomatic
+    1) noteLead
+    2) noteLead2
+```
+
+#### noteTransparent for Tiny
+
+It should remain true that "Emboss" or noteTransparent for Tiny allows the Tiny note to participate in the AutoColor scheme, which respects rootKeyLead today.  That is noteTransparent's function, and its use as an option for Tiny in FillPlugin.  noteAutomatic allows the user to cement this in notes to be committed, though it is up to the User to understand that then changing keys leaves the notes painted thus.  This is to be considered a feature, and will be documented in the application help file later.
+
+#### transpose
+
+transposeSong() should remain the same.  FillPlugin should transpose the song, then apply the rule to each Section based on the array and any lookup helper function installed.
+
+We will need a way to reset to the Section.sharps values before transposeSong is called.  Since the User is allowed to move and reset Sections during looping, this is a bit tricky.  We think a basic approach would be for TransposePlugin to keep track of how many steps it has moved at all times.  Then, TransposePlugin would then have the ability to roll back by Transposing back to 0 when its action "Reset" was called.  This would mean any new Sections added would also get moved the right amount, since if they are added, the User will take care to place them in a key relative to the other keys.  Undefined is how to deal with Section.sharps since TransposePlugin will hose original choices. For now, we leave that as the peril of running TransposePlugin with the key-respelling option, rather than trying to track how to deal with added Sections.
+
+Since we don't deal with all the enharmonic rules, or even deal with major and minor keys, let the option be simply called:
+  "Auto sharps/flats" 
+
+For now, we prefer a simple array in Constants.js
+
+- Constants.SHARP_IDS = A, B, C, D, E, G
+- flat IDs are everything else in Constants.NOTE_NAMES_ARRAY
+
+
+
+
+
+

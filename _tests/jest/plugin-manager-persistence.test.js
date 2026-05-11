@@ -22,7 +22,9 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 
 const { PluginManager } = await import('../../plugins/PluginManager.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
+const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
+const Constants = await import('../../Constants.js');
 
 describe('PluginManager plugin persistence', () => {
   beforeEach(() => {
@@ -36,14 +38,110 @@ describe('PluginManager plugin persistence', () => {
   function createManagerWithPlugins() {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
+    manager.register(new FillPlugin());
     manager.register(new TransposePlugin());
     return manager;
+  }
+
+  function createSongWithTunings() {
+    const section = {
+      rootID: 3,
+      sectionNotesByTable: {},
+      getSectionNotes(tableID) {
+        if (!this.sectionNotesByTable[tableID]) {
+          this.sectionNotesByTable[tableID] = { playedNotes: [], namedNotes: {}, recordedNotes: {} };
+        }
+        return this.sectionNotesByTable[tableID];
+      }
+    };
+
+    return {
+      myTunings: [
+        {
+          baseID: 'P46_1',
+          frets: 24,
+          rowRange: [64, 59, 55, 50, 45, 40],
+          nut: true,
+          reverse: false
+        }
+      ],
+      wirings: [],
+      sections: [section],
+      getCurrentSection() {
+        return section;
+      }
+    };
   }
 
   test('omits untouched plugins from song persistence', () => {
     const manager = createManagerWithPlugins();
 
     expect(manager.exportSongPluginState()).toEqual({});
+  });
+
+  test('does not persist FillPlugin after dynamic defaults initialize on song load', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+
+    manager.loadSongPluginState(song);
+
+    expect(manager.exportSongPluginState()).toEqual({});
+  });
+
+  test('does not persist FillPlugin after opening its options menu on an untouched song', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+
+    manager.loadSongPluginState(song);
+    manager.getPluginById('fill').getVisibleMenuChildren();
+
+    expect(manager.exportSongPluginState()).toEqual({});
+  });
+
+  test('does not persist FillPlugin after an early refresh before any target tuning exists', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    const [primaryTuning] = song.myTunings;
+    song.myTunings = [];
+
+    manager.loadSongPluginState(song);
+    manager.getPluginById('fill').getVisibleMenuChildren();
+
+    song.myTunings = [primaryTuning];
+
+    expect(manager.exportSongPluginState()).toEqual({});
+    expect(manager.getPluginById('fill').getProperty('maxFret').getValue()).toBe(Constants.FIRST_POSITION_MAX_FRET);
+  });
+
+  test('ignores the legacy empty Fill stub on song load', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    song.plugins = {
+      fill: {
+        enabled: false,
+        enableOnSongLoad: false,
+        properties: {
+          targetTable: '',
+          chordFormula: '4,7',
+          scaleFormula: '0,2,4,5,7,9,11',
+          minFret: 0,
+          maxFret: 0,
+          minRow: 0,
+          maxRow: 0,
+          rootMode: 'role',
+          rootColor: 'noteRoot',
+          chordMode: 'role',
+          chordColor: 'noteChord',
+          scaleMode: 'role',
+          scaleColor: 'noteScale'
+        }
+      }
+    };
+
+    manager.loadSongPluginState(song);
+
+    expect(manager.exportSongPluginState()).toEqual({});
+    expect(manager.getPluginById('fill').getProperty('maxFret').getValue()).toBe(Constants.FIRST_POSITION_MAX_FRET);
   });
 
   test('does not persist a plugin that was only manually enabled for the current session', () => {

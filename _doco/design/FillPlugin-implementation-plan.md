@@ -547,3 +547,353 @@ Important maintenance decisions from this sprint:
 - command-menu submenu hopping into `/pr` is intentionally not part of this sprint
 - `last` palette behavior depends on `PalettePresentation.getLastRestorableRbColor()`
 - `noteAutomatic` remains a menu-time symbolic value but becomes a concrete persisted note color at fill time
+
+
+# FillPlugin Implementation Plan Extensions for Iteration 4
+
+## Timeline and Scope
+
+This section documents work done in the next iteration after the above sections were described and completed 20260510.
+
+## Iteration 4 Implementation Plan
+
+This iteration extends the now-working FillPlugin and related plugin help / transpose behavior.
+
+The scope here is intentionally incremental.
+
+It does not replace the first sprint plan above.
+
+It adds the next approved behaviors on top of the completed implementation.
+
+### Iteration 4 Scope
+
+This iteration includes:
+
+- refine FillPlugin role-painting semantics to match the newly approved overwrite model
+- remove `scale keep` from FillPlugin options because it has no meaningful effect in the plugin model
+- add optional Tiny companion notes that mirror emitted FillPlugin `SingleNote` placements
+- expose handled EventBus events in plugin help output
+- align TransposePlugin help formatting with the current ArpeggioPlugin / FillPlugin summary style
+- add a TransposePlugin `Auto sharps/flats` option based on a simple key-spelling policy in `Constants.js`
+- add a TransposePlugin `Reset` action based on tracked transpose offset
+
+Out of scope for this iteration:
+
+- any generalized event ordering system
+- any FillPlugin support for highlight / recorded-note families
+- any new `noteLead3` color role
+- full enharmonic-key theory or major/minor key-signature modeling
+- preserving original `Section.sharps` history across arbitrary song edits after transpose
+
+### Approved FillPlugin Role Model For Iteration 4
+
+The approved conceptual fill order is now:
+
+1. scale pass
+2. chord pass
+3. root pass
+
+Base behavior:
+
+- scale role paints all scale notes first
+- chord role overwrites scale-role notes where chord-note positions overlap
+- root role overwrites chord-role and scale-role notes where root positions overlap
+
+This defines the default visual precedence:
+
+- root wins over chord
+- chord wins over scale
+- scale is the fallback layer
+
+### Revised Meaning Of `none`, `keep`, And `role`
+
+For Iteration 4, the role modes are interpreted as placement rules inside the ordered pass model above.
+
+- `role`
+  - emit that role normally during its pass using the configured role color source
+- `keep`
+  - emit nothing for that role and preserve whatever lower-priority role result is already present at that position
+- `none`
+  - emit nothing for that role and suppress any lower-priority FillPlugin result at that position
+
+This yields the approved examples:
+
+- if root is `role`, root notes are painted in root color
+- if root is `keep`, overlapping chord or scale notes remain visible and no root note is emitted
+- if root is `none`, no note remains at root positions, even if chord or scale would otherwise place one there
+- if chord is `role`, chord notes overwrite scale notes at overlapping positions
+- if chord is `keep`, overlapping scale notes remain visible and no chord note is emitted
+- if chord is `none`, no note remains at chord positions unless a later root pass overwrites that position
+- if scale is `role`, scale notes provide the base layer
+- if scale is `none`, scale emits nothing
+
+Because FillPlugin already preserves user-authored `SingleNote` cells, `scale keep` has no useful plugin meaning and should be removed from the menu.
+
+### Recommended Implementation Shape For Role Semantics
+
+Do not treat role processing as three independent note sets that are later merged by simple overwrite.
+
+Instead, build a per-cell fill decision in pass order.
+
+Recommended helper direction:
+
+- compute root / chord / scale membership sets for pitch classes as before
+- collect candidate cells in the selected row / fret range
+- for each candidate cell, evaluate scale pass, then chord pass, then root pass
+- store one Fill decision object per cell, carrying:
+  - whether FillPlugin should emit a `SingleNote`
+  - the resolved note color for that `SingleNote`
+  - whether lower-priority roles are suppressed at that cell
+
+This keeps `keep` and `none` semantics explicit and testable.
+
+### FillPlugin Tiny Notes
+
+Approved rule:
+
+- Tiny notes mirror emitted FillPlugin `SingleNote` notes only
+- Tiny notes do not independently select or suppress cells
+- if no FillPlugin `SingleNote` is emitted at a cell, no FillPlugin Tiny note is emitted there
+
+Approved Tiny menu:
+
+```text
+t) tiny notes
+    n) none
+    e) emboss - noteTransparent
+    a) noteAutomatic
+    1) noteLead
+    2) noteLead2
+```
+
+Approved Tiny semantics:
+
+- `none`
+  - do not emit Tiny notes
+- `noteTransparent`
+  - emit Tiny notes using emboss behavior so AutoColor continues to respect lead-key behavior
+- `noteAutomatic`
+  - emit Tiny notes whose stored color is resolved at apply time for the concrete cell
+- `noteLead`
+  - emit Tiny notes in `noteLead`
+- `noteLead2`
+  - emit Tiny notes in `noteLead2`
+
+Important constraint:
+
+- there is no `noteLead3` in this iteration
+
+### Tiny Color Resolution Rule
+
+The Tiny option values should be persisted as property values, but concrete note colors should be written into emitted notes using the existing color-resolution rules for Tiny notes.
+
+Implications:
+
+- `noteTransparent` remains a valid Tiny option because emboss behavior is intentional and dynamic
+- `noteAutomatic` remains valid and is resolved at apply time to a concrete stored note color
+- Tiny AutoColor behavior should continue to honor the current lead-key semantics already used elsewhere in the app
+
+### FillPlugin Reconciliation For Tiny Notes
+
+The existing FillPlugin ownership and cleanup model should extend to Tiny notes emitted by the plugin.
+
+Recommended rule:
+
+- plugin-owned Tiny notes should also carry `owner: "FillPlugin"`
+- `Apply` should reconcile plugin-owned Tiny notes in the same current-section / selected-table scope as plugin-owned `SingleNote` notes
+- `Clear`, `ClearSong`, and `Commit Notes` should apply to both plugin-owned Fill `SingleNote` and plugin-owned Fill Tiny notes for the selected table
+
+Placement blocking should remain unchanged for `SingleNote` fill:
+
+- only an existing `SingleNote` blocks FillPlugin `SingleNote` placement at that `row + col`
+
+Tiny emission is downstream of that decision and should not introduce a new occupancy rule.
+
+### Plugin Help Footer And Event Disclosure
+
+Approved direction:
+
+- plugins should disclose which EventBus events they handle in their help output
+- this is informational only and does not imply event ordering guarantees beyond the existing event bus behavior
+
+Recommended implementation shape:
+
+- add a small shared helper used by plugin help rendering to append an events footer
+- footer should list the plugin's current `getEventNames()` values
+- if a plugin handles no events, the footer may say that explicitly or omit the section
+
+This work should be applied at least to:
+
+- FillPlugin
+- ArpeggioPlugin
+- TransposePlugin
+
+### TransposePlugin Help Parity
+
+Approved direction:
+
+- TransposePlugin help should match the stronger summary style already used by the other plugins
+
+Recommended behavior:
+
+- first line should summarize the current transpose state in the same bold / summary-oriented manner used elsewhere
+- help output should also include the new events footer
+- help should include the current `Auto sharps/flats` state and the tracked transpose offset
+
+### Transpose Auto Sharps/Flats
+
+Approved option name:
+
+- `Auto sharps/flats`
+
+This option should not modify `transposeSong()` itself.
+
+The implementation should:
+
+1. transpose the song using the existing transpose path
+2. then apply a simple spelling-policy pass to section spelling state
+
+Approved first-pass policy source:
+
+- add `Constants.SHARP_IDS`
+- flat IDs are all note IDs not in that list
+
+Approved first-pass contents:
+
+- `Constants.SHARP_IDS = [A, B, C, D, E, G]`
+
+Operational interpretation:
+
+- if a section root lands on an ID in `SHARP_IDS`, prefer sharp spelling for that section
+- otherwise prefer flat spelling for that section
+
+This intentionally mirrors the simple command-menu grouping behavior rather than attempting a richer music-theory model.
+
+### Transpose Reset
+
+Approved direction:
+
+- TransposePlugin should track how many steps it has moved from its baseline state
+- add a `Reset` action that transposes back to zero net offset
+
+Recommended behavior:
+
+- maintain a running transpose-offset property or internal state value
+- normal transpose actions increment or decrement that offset
+- `Reset` applies the inverse transpose needed to return the song to zero net plugin offset
+- after reset, offset returns to `0`
+
+Known limitation retained by design:
+
+- this does not attempt to preserve original `Section.sharps` history across later song edits or inserted sections
+- if the user changes the song structure after transposition, spelling recovery remains best-effort only
+
+### Expected File Touch Points For Iteration 4
+
+Likely files to modify:
+
+- `plugins/fill/FillPlugin.js`
+  - revise role-pass algorithm
+  - remove `scale keep`
+  - add Tiny-note property and emit / cleanup logic
+  - include event footer in help
+- `plugins/fill/properties.json`
+  - update role menus
+  - add Tiny-note menu options
+- `plugins/arpeggio/ArpeggioPlugin.js`
+  - include event footer in help
+- `plugins/transpose/TransposePlugin.js`
+  - add summary-style help output
+  - add `Auto sharps/flats`
+  - add `Reset`
+  - track transpose offset
+  - include event footer in help
+- `plugins/transpose/properties.json`
+  - add `Auto sharps/flats`
+  - add `Reset`
+- `Constants.js`
+  - add `SHARP_IDS`
+  - possibly add a small helper around spelling-policy lookup if that reads more clearly than raw array checks
+- shared plugin-help utility location if a common helper is introduced
+- `_tests/jest/fill-plugin.test.js`
+  - add role-pass and Tiny tests
+- `_tests/jest/arpeggio-plugin.test.js`
+  - update help expectations if needed
+- `_tests/jest/transpose-plugin.test.js`
+  - add help, spelling-policy, and reset tests
+
+Files not expected to need structural changes:
+
+- `event-bus.js`
+- `PluginManager.js`
+- `transposeSong()` core algorithm
+
+### Ordered Implementation Steps For Iteration 4
+
+#### Phase 1: Fill Role Semantics
+
+1. Update FillPlugin menu definitions to remove `scale keep`.
+2. Replace the current role-resolution path with a pass-ordered per-cell decision model.
+3. Preserve existing ownership cleanup and user-`SingleNote` protection.
+4. Update Fill help text to describe the new pass order and include events handled.
+
+#### Phase 2: Tiny Companion Notes
+
+1. Add the Tiny property and menu options.
+2. Extend Fill apply logic so each emitted plugin-owned `SingleNote` may also emit one plugin-owned Tiny note.
+3. Extend clear / clearSong / commit paths to include plugin-owned Tiny notes.
+4. Ensure Tiny color resolution follows the approved rules for `noteTransparent`, `noteAutomatic`, `noteLead`, and `noteLead2`.
+
+#### Phase 3: Shared Help Footer
+
+1. Add a small help-footer helper or equivalent shared pattern.
+2. Apply it to FillPlugin, ArpeggioPlugin, and TransposePlugin.
+3. Keep help output concise and deterministic for tests.
+
+#### Phase 4: Transpose Enhancements
+
+1. Add `Auto sharps/flats` property to TransposePlugin.
+2. Add `SHARP_IDS` spelling policy in `Constants.js`.
+3. After normal transposition, apply section spelling from the simple policy when the option is enabled.
+4. Track net transpose offset.
+5. Add `Reset` action that returns the plugin-managed offset to zero.
+6. Update Transpose help summary to show current interval, auto-spelling state, offset, and handled events.
+
+#### Phase 5: Tests
+
+1. Add Fill tests for root / chord / scale pass precedence.
+2. Add Fill tests for `root none`, `root keep`, `chord none`, `chord keep`, and `scale none`.
+3. Add Fill tests confirming `scale keep` is no longer offered.
+4. Add Fill tests for Tiny mirroring behavior.
+5. Add Fill tests for Tiny cleanup and commit behavior.
+6. Add Transpose tests for help formatting and event disclosure.
+7. Add Transpose tests for `Auto sharps/flats` policy.
+8. Add Transpose tests for tracked offset and `Reset`.
+
+### Iteration 4 Acceptance Criteria
+
+This iteration is complete when all of the following are true.
+
+1. FillPlugin role painting follows the approved pass order: scale, then chord, then root.
+2. `root keep` preserves lower-priority color at root positions and emits no root note.
+3. `root none` suppresses lower-priority FillPlugin output at root positions.
+4. `chord keep` preserves scale output at chord positions and emits no chord note.
+5. `chord none` suppresses scale output at chord positions unless a later root pass overwrites that cell.
+6. `scale keep` is no longer present in FillPlugin options.
+7. FillPlugin can optionally emit one plugin-owned Tiny note for each emitted plugin-owned `SingleNote`.
+8. FillPlugin never emits a Tiny note where it did not emit the corresponding `SingleNote`.
+9. FillPlugin `Clear`, `ClearSong`, and `Commit Notes` handle plugin-owned Tiny notes consistently with plugin-owned `SingleNote` notes.
+10. FillPlugin, ArpeggioPlugin, and TransposePlugin help output discloses their handled events.
+11. TransposePlugin help uses the current summary style rather than the old static format.
+12. TransposePlugin can optionally apply the simple `Auto sharps/flats` policy after transposition.
+13. TransposePlugin tracks its net transpose offset and can `Reset` back to zero plugin-managed offset.
+
+### Remaining Known Limits
+
+I do not see a blocking design hole for this iteration.
+
+The main intentional limits are:
+
+- same-event plugin ordering remains whatever the existing enable / handler-registration order produces
+- the auto spelling policy is intentionally simple and not music-theory complete
+- `Reset` is defined against plugin-managed transpose offset, not full historical reconstruction of original section spelling

@@ -6,6 +6,7 @@ export const MY_TUNINGS_TABLE_ID = "myTuningsTable";
 
 export const DEFAULT_BEATS = 4;
 export const RANDOM_SECTION_HISTORY_MAX = 16;
+export const FIRST_POSITION_MAX_FRET = 4;
 
 export function calcFretLengths() {
     var L0 = 1;
@@ -36,6 +37,43 @@ export const noteNamesFuncArrDEFAULT = [
     "&Delta;" // 12 - say 
 ];
 export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+
+export const FILL_CHORD_OPTIONS = [
+    { value: '4,7', caption: 'Maj', trigger: 'm' },
+    { value: '3,7', caption: 'Min', trigger: 'n' },
+    { value: '4,8', caption: 'Aug', trigger: 'a' },
+    { value: '3,6', caption: 'Dim&nbsp;&nbsp;&nbsp;&ordm;', trigger: 'd' },
+    { value: '3,6,9', caption: 'Dim7', trigger: '7' },
+    { value: '3,6,10', caption: 'm7b5&nbsp;&nbsp;&nbsp;&oslash;', trigger: 'b' },
+    { value: '2,7', caption: 'Sus2', trigger: '2' },
+    { value: '5,7', caption: 'Sus4', trigger: '4' },
+    { value: '4,7,11', caption: 'Maj7&nbsp;&nbsp;&nbsp;&Delta;', trigger: 'j' },
+    { value: '3,7,10', caption: 'Min7', trigger: 'i' },
+    { value: '4,7,10', caption: 'Dom7', trigger: 'o' },
+    { value: '3,7,11', caption: 'MinMaj', trigger: 'x' },
+    { value: '3,7,10,14', caption: 'Min9', trigger: '9' },
+    { value: '4,7,9,14', caption: '6/9', trigger: '6' }
+];
+
+export const FILL_SCALE_OPTIONS = [
+    { value: '0,2,4,6,8,10', caption: 'WholeTone', trigger: 'w' },
+    { value: '0,3,6,9', caption: 'Diminished', trigger: 'd' },
+    { value: '0,3,5,7,10', caption: 'MinPentatonic', trigger: 'p' },
+    { value: '0,2,4,7,9', caption: 'MajPentatonic', trigger: 't' },
+    { value: '0,2,4,5,7,9,11', caption: 'Ionian/Major', trigger: 'i' },
+    { value: '0,2,3,5,7,9,10', caption: 'Dorian', trigger: 'o' },
+    { value: '0,1,3,5,7,8,10', caption: 'Phrygian', trigger: 'h' },
+    { value: '0,2,4,6,7,9,11', caption: 'Lydian', trigger: 'l' },
+    { value: '0,2,4,6,7,9,10', caption: 'LydianDominant', trigger: 'y' },
+    { value: '0,2,4,5,7,9,10', caption: 'Mixolydian', trigger: 'x' },
+    { value: '0,2,3,5,7,8,10', caption: 'Aeolian/Natural', trigger: 'a' },
+    { value: '0,1,3,5,6,8,10', caption: 'Locrian', trigger: 'c' },
+    { value: '0,2,3,5,7,8,11', caption: 'HarmonicMinor', trigger: 'r' },
+    { value: '0,2,3,5,7,9,11', caption: 'MelodicMinor', trigger: 'm' },
+    { value: '0,1,4,5,7,8,10', caption: 'Gypsy', trigger: 'g' },
+    { value: '0,1,3,5,7,9,11', caption: 'NeopolitanMaj', trigger: 'n' },
+    { value: '0,1,3,5,7,8,11', caption: 'NeopolitanMin', trigger: 'e' }
+];
 
 
 export function noteIDToNoteNameRaw(noteIndex) {

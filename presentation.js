@@ -7,6 +7,20 @@ export const gPresentation = {
 };
 
 export class PalettePresentation {
+    static getLastRestorableRbColor() {
+        if (!gPresentation.palette.lastRestorableColor) {
+            PalettePresentation.initializePalettePresentation();
+        }
+
+        const remembered = gPresentation.palette.lastRestorableColor || {
+            id: 'idRTransparent',
+            value: 'noteTransparent',
+            caption: 'Emboss'
+        };
+
+        return { ...remembered };
+    }
+
     static isSpecialRbColorValue(value) {
         return value === "noteKeep" || value === "noteClear" || value === "noteDropper";
     }
