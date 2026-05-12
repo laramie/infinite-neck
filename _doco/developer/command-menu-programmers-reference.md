@@ -104,7 +104,7 @@ The following properties appear directly in `menu.js` and define command behavio
 | `children` | Optional | Branch nodes | Array of submenu nodes. Presence normally means navigation rather than immediate execution. |
 | `action` | Optional | Executable nodes and selector parents | Action name dispatched to `performCmdAction(menuItem, args)`. |
 | `input` | Optional | Action nodes that collect text or numbers | Embedded input descriptor. The runtime treats this as a pseudo-child prompt. |
-| `vars` | Optional | Any captioned node | List of tokens to resolve through `getValue()` and substitute into `$token` placeholders in `caption`. |
+| `vars` | Optional | Any captioned node | List of tokens to resolve through `getValue()` and substitute into `${token}` placeholders in `caption`. |
 | `name` | Optional | Nodes whose action needs a semantic identifier | Stable semantic value distinct from `caption` and `trigger`. Currently important for bend-type selection. |
 | `popOnBang` | Optional | Action leaves, usually confirmation answers | Requests an extra menu pop after action execution. Used to return from a confirmation submenu to the menu that asked the question. |
 | `tall` | Optional, effectively root-only | Root menu | Global display preference for vertical versus horizontal child layout. |
@@ -271,7 +271,7 @@ There is no dedicated `confirm: true` syntax. Confirmation is authored as an ord
   "trigger": "C",
   "children": [
     {
-      "caption": "<b>Y</b>es: CLEAR $graveyardRecordCount graveyard records !",
+      "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
       "trigger": "Y",
       "action": "downloadBackupThenClearGraveyard",
       "vars": ["graveyardRecordCount"],
@@ -403,7 +403,7 @@ The menu system supports two distinct kinds of dynamic value insertion.
 
 ### 1. Caption variables via `vars`
 
-`expandCaption(menuItem)` replaces `$token` placeholders in `caption` by calling `gMenuValueResolver(token)` for each token listed in `vars`.
+`expandCaption(menuItem)` replaces `${token}` placeholders in `caption` by calling `gMenuValueResolver(token)` for each token listed in `vars`.
 
 Important details:
 
@@ -502,11 +502,11 @@ Maintainer notes:
 
 | Path | Caption state |
 | --- | --- |
-| `/se` | `[$currentSectionCardinal/$sectionCount]` |
-| `/sb` | `[$currentBeat/$beats]` |
-| `/rs` | `[$currentSectionCardinal/$sectionCount]` |
-| `/rb` | `[$currentBeat/$beats]` |
-| `/fC/Y` | `$graveyardRecordCount` in confirmation caption |
+| `/se` | `[${currentSectionCardinal}/${sectionCount}]` |
+| `/sb` | `[${currentBeat}/${beats}]` |
+| `/rs` | `[${currentSectionCardinal}/${sectionCount}]` |
+| `/rb` | `[${currentBeat}/${beats}]` |
+| `/fC/Y` | `${graveyardRecordCount}` in confirmation caption |
 | `/sed/Y` | Current section position in confirmation caption |
 
 ### Known edge cases in the current tree
@@ -561,16 +561,16 @@ This means a new command often needs wiring in two places, not one:
 
 - Below are lists of vars used.  This list will get out of date, but will show you how to find the vars and see how they are used.
 
-- Here is a list of every current caption-level `$token` expansion from the menu definition.
+- Here is a list of every current caption-level `${token}` expansion from the menu definition.
 
 | Command path | Raw string to expand | Vars names available on this menu item | menu.js line |
 | --- | --- | --- | --- |
-| `/fCY` | `<b>Y</b>es: CLEAR $graveyardRecordCount graveyard records !` | `graveyardRecordCount` | menu.js |
-| `/se` | `<b>e</b>dit<small>[$currentSectionCardinal/$sectionCount]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/sedY` | `<b>Y</b>es: DELETE section $currentSectionCardinal/$sectionCount !` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/sb` | `<b>b</b>eats<small>[$currentBeat/$beats]</small>` | `currentBeat`, `beats` | menu.js |
-| `/rs` | `<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/rb` | `<b>b</b>eats<small>[$currentBeat/$beats]</small>` | `currentBeat`, `beats` | menu.js |
+| `/fCY` | `<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !` | `graveyardRecordCount` | menu.js |
+| `/se` | `<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/sedY` | `<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/sb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | menu.js |
+| `/rs` | `<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/rb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | menu.js |
 
 - Here is a list of current expansions used in the current `input.default` sites from menu.js. Note that they don't use `vars`.
 

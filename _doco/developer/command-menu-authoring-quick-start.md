@@ -110,7 +110,7 @@ case "setMenuPrefs":
   "trigger": "d",
   "children": [
     {
-      "caption": "<b>Y</b>es: DELETE section $currentSectionCardinal/$sectionCount !",
+      "caption": "<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !",
       "trigger": "Y",
       "action": "sectionDelete",
       "vars": ["currentSectionCardinal", "sectionCount"],
@@ -175,7 +175,7 @@ case "selectBendType":
 
 ### Dynamic caption reality check
 
-If you use `$token` in a caption, you must also:
+If you use `${token}` in a caption, you must also:
 
 1. list the token in `vars`, and
 2. add the token to the registry in `approved-values.js`.

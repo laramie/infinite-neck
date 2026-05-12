@@ -78,7 +78,7 @@ export var gMenuFile =    {
           "trigger": "C",
           "children": [
                 {
-                  "caption": "<b>Y</b>es: CLEAR $graveyardRecordCount graveyard records !",
+                  "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
                   "trigger": "Y",
                   "action": "downloadBackupThenClearGraveyard",
                   "vars": [
@@ -199,7 +199,7 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>e</b>dit<small>[$currentSectionCardinal/$sectionCount]</small>",
+          "caption": "<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>",
           "trigger": "e",
           "vars": [
             "currentSectionCardinal",
@@ -211,7 +211,7 @@ export var gMenuFile =    {
               "trigger": "d",
               "children": [
                 {
-                  "caption": "<b>Y</b>es: DELETE section $currentSectionCardinal/$sectionCount !",
+                  "caption": "<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !",
                   "trigger": "Y",
                   "action": "sectionDelete",
                   "vars": [
@@ -441,7 +441,7 @@ export var gMenuFile =    {
 
 
         {
-          "caption": "<b>b</b>eats<small>[$currentBeat/$beats]</small>",
+          "caption": "<b>b</b>eats<small>[${currentBeat}/${beats}]</small>",
           "trigger": "b",
           "vars": [
             "currentBeat",
@@ -1065,7 +1065,7 @@ export var gMenuFile =    {
           "action": "toggleRandomLoop"
         },
         {
-          "caption": "<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>",
+          "caption": "<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>",
           "vars": [
             "currentSectionCardinal",
             "sectionCount"
@@ -1095,7 +1095,7 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>b</b>eats<small>[$currentBeat/$beats]</small>",
+          "caption": "<b>b</b>eats<small>[${currentBeat}/${beats}]</small>",
           "trigger": "b",
           "vars": [
             "currentBeat",
@@ -1340,7 +1340,7 @@ export function hasNoChildMenus(menu){
 }
 
 function expandCaption(menuItem){
-    //   "caption": "<b>Y</b>es: DELETE section $currentSectionIndex/$sectionCount !"
+    //   "caption": "<b>Y</b>es: DELETE section ${currentSectionIndex}/${sectionCount} !"
     //   "vars": ["currentSectionIndex","sectionCount"]
     var caption = menuItem.caption;
     var vars = menuItem.vars;
@@ -1348,7 +1348,7 @@ function expandCaption(menuItem){
       vars.forEach(str => {
         var strValue = gMenuValueResolver(str);
         if (strValue != undefined){
-          caption = caption.replaceAll("$"+str, ""+strValue);
+          caption = caption.replaceAll("${"+str+"}", ""+strValue);
         }
       });
     }

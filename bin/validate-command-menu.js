@@ -138,7 +138,7 @@ function validateVars(node, nodePath) {
         if (!valueCases.has(token)) {
             addError(nodePath + ': unresolved vars token "' + token + '" in approved-values registry');
         }
-        if (node.caption && !node.caption.includes('$' + token)) {
+        if (node.caption && !node.caption.includes('${' + token + '}')) {
             addWarning(nodePath + ': vars token "' + token + '" is listed but not referenced in caption');
         }
     });

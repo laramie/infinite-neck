@@ -53,7 +53,7 @@ function formatSampleValue(value) {
 
 function renderPatternHtml(name) {
 	const escapedName = escapeHtml(name);
-	return `<code>$${escapedName}</code><br><code>\${${escapedName}}</code>`;
+	return `<code>\${${escapedName}}</code>`;
 }
 
 const approvedValueEntries = [
@@ -146,7 +146,7 @@ export function listApprovedValues(options = {}) {
 		return {
 			name: entry.name,
 			description: entry.description,
-			menuPattern: '$' + entry.name,
+			menuPattern: '${' + entry.name + '}',
 			templatePattern: '${' + entry.name + '}',
 			sampleValue,
 			sampleError
@@ -183,7 +183,7 @@ export function renderApprovedValuesReferenceHtml(options = {}) {
 		: '<p><i>Run <code>/vdv</code> in the app to see live sample values for the current song and section.</i></p>';
 	return [
 		`<h4>${escapeHtml(title)}</h4>`,
-		'<p>Use <code>$name</code> in command-menu captions and input defaults. Use <code>${name}</code> in section-caption templates. Run <code>/vdv</code> to open this reference in Messages.</p>',
+		'<p>Use <code>${name}</code> in command-menu captions and section-caption templates. Input defaults still use bare token names such as <code>getBPM</code>. Run <code>/vdv</code> to open this reference in Messages.</p>',
 		sampleNote,
 		'<table style="border-collapse: collapse; margin-left: 4em;">',
 		'<thead><tr><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Name</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th>' + sampleHeader + '</tr></thead>',
