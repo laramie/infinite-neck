@@ -7,6 +7,10 @@
   - printSections() in infinite-neck.js is 
   - export function printTablesStats(noteTables)
   - export function dropper(cell, cellcol, cellrow, styleNum, noteName)
+- /fak does not seem to be transposing the keys, just the namedNotes.
+- ENTER key in caption and song name really should do what TAB etc. do: save the value and hit the trigger, but unlike TAB, stay in that edit box.  
+- /vot :: tiny note opacity is NaN
+
 
 
 

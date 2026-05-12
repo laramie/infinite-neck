@@ -3555,6 +3555,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     This is better seen graphically in Palette | Stylesheets
                 displayOptions: <span class="menuExampleLine">/vdd</span>
                     all the DisplayOptions stored for each Section
+                variables: <span class="menuExampleLine">/vdv</span>
+                    approved $name and ${name} interpolation variables
 
         In the object model, and therefore the file format, here are the objects:
             sections - An array of section objects in song order.
@@ -3589,6 +3591,29 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 </pre>
 </div>
 </p>
+
+<!-- BEGIN GENERATED APPROVED VALUES -->
+<h4>Approved Variable Names</h4>
+<p>Use <code>$name</code> in command-menu captions and input defaults. Use <code>${name}</code> in section-caption templates. Run <code>/vdv</code> to open this reference in Messages.</p>
+<p><i>Run <code>/vdv</code> in the app to see live sample values for the current song and section.</i></p>
+<table style="border-collapse: collapse; margin-left: 4em;">
+<thead><tr><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Name</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th></tr></thead>
+<tbody><tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionNumber</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$currentSectionNumber</code><br><code>${currentSectionNumber}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionIndex</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$currentSectionIndex</code><br><code>${currentSectionIndex}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionCardinal</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$currentSectionCardinal</code><br><code>${currentSectionCardinal}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section number, one-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>sectionCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$sectionCount</code><br><code>${sectionCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Total number of sections</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>graveyardRecordCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$graveyardRecordCount</code><br><code>${graveyardRecordCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Record count in the graveyard</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>beats</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$beats</code><br><code>${beats}</code></td><td style="border: 1px solid black; padding: 0.4em;">Beat count in the current section</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>beatCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$beatCount</code><br><code>${beatCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Alias of beats</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentBeat</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$currentBeat</code><br><code>${currentBeat}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current beat in the current section</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getBPM</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getBPM</code><br><code>${getBPM}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current BPM</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getNamedNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getNamedNoteOpacity</code><br><code>${getNamedNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Named-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSingleNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getSingleNoteOpacity</code><br><code>${getSingleNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Single-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getTinyNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getTinyNoteOpacity</code><br><code>${getTinyNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Tiny-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSongName</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getSongName</code><br><code>${getSongName}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current song name</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSectionCaption</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>$getSectionCaption</code><br><code>${getSectionCaption}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section caption</td></tr></tbody>
+</table>
+<!-- END GENERATED APPROVED VALUES -->
 
 <br />
 <br />

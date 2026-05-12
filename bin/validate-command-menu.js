@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { listApprovedValues } from '../approved-values.js';
 import { gMenuFile } from '../menu.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -73,7 +74,7 @@ function collectTopLevelCaseLabels(switchBody) {
 }
 
 const actionCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSource, 'switch (menuItem.action){'));
-const valueCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSource, 'switch (what){'));
+const valueCases = new Set(listApprovedValues({ includeSamples: false }).map((entry) => entry.name));
 
 const errors = [];
 const warnings = [];
@@ -135,7 +136,7 @@ function validateVars(node, nodePath) {
     }
     node.vars.forEach((token) => {
         if (!valueCases.has(token)) {
-            addError(nodePath + ': unresolved vars token "' + token + '" in getValue()');
+            addError(nodePath + ': unresolved vars token "' + token + '" in approved-values registry');
         }
         if (node.caption && !node.caption.includes('$' + token)) {
             addWarning(nodePath + ': vars token "' + token + '" is listed but not referenced in caption');
@@ -169,7 +170,7 @@ function validateInput(node, nodePath) {
         addWarning(nodePath + ': input.caption is missing');
     }
     if (typeof node.input.default === 'string' && isLikelyResolverToken(node.input.default) && !valueCases.has(node.input.default)) {
-        addWarning(nodePath + ': input.default token "' + node.input.default + '" is not handled by getValue()');
+        addWarning(nodePath + ': input.default token "' + node.input.default + '" is not handled by approved-values registry');
     }
     if (typeof node.input.default !== 'undefined' && node.input.default === '') {
         addWarning(nodePath + ': input.default is empty');
@@ -252,7 +253,7 @@ console.log('Command Menu Validator');
 console.log('======================');
 console.log('Menu actions referenced: ' + actionRefs.size);
 console.log('performCmdAction cases: ' + actionCases.size);
-console.log('getValue tokens: ' + valueCases.size);
+console.log('approved-values tokens: ' + valueCases.size);
 console.log('runtimeChildren menuItems: ' + runtimeChildrenCount);
 console.log('');
 

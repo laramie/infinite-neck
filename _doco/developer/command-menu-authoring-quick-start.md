@@ -11,7 +11,8 @@ Most command-menu work touches these files:
 | File | Why you edit it |
 | --- | --- |
 | `menu.js` | Add or change the declarative menu node structure. |
-| `key-handlers.js` | Add or update the `performCmdAction()` case and possibly `getValue()`. |
+| `key-handlers.js` | Add or update the `performCmdAction()` case. |
+| `approved-values.js` | Add or update live `$name` and `${name}` tokens for menu captions, input defaults, and section-caption templates. |
 | `infinite-neck.js` | Only if your new action needs a provider that `key-handlers.js` does not already expose. |
 | `index.html` | Only if the command launches a dialog or panel that does not already exist. |
 
@@ -177,9 +178,11 @@ case "selectBendType":
 If you use `$token` in a caption, you must also:
 
 1. list the token in `vars`, and
-2. implement the token in `getValue()`.
+2. add the token to the registry in `approved-values.js`.
 
 Otherwise the placeholder text will stay in the rendered caption.
+
+If you need a current-value reference while authoring or testing these tokens, use the diagnostics command <span class="menuExampleLine"><b>/vdv</b></span>. It lists every approved variable name, both supported patterns, and a live sample value from the current song and section.
 
 ## Good Existing Exemplars
 
@@ -201,7 +204,7 @@ When adding one new command, the usual sequence is:
 
 1. Add the menu node in `menu.js`.
 2. Add the matching `case` in `key-handlers.js::performCmdAction()`.
-3. Add or extend `getValue()` only if you need dynamic caption variables or input defaults.
+3. Add or extend `approved-values.js` only if you need dynamic caption variables, input defaults, or section-caption templates.
 4. Add provider wiring only if your new action needs a helper that `key-handlers.js` does not already wrap.
 5. Run the validator:
 
@@ -209,7 +212,8 @@ When adding one new command, the usual sequence is:
 npm run validate:cmdmenu
 ```
 
-6. Manual test the trigger path in the browser.
+6. Use <span class="menuExampleLine"><b>/vdv</b></span> if you changed approved variable names and want to verify the live values.
+7. Manual test the trigger path in the browser.
 
 ## Fast Failure Checklist
 
@@ -219,7 +223,7 @@ If a command does not work, check these first:
 2. Action string typo versus `performCmdAction()`.
 3. Missing parent action for a selector-style child.
 4. Missing `input.id` for an input command.
-5. Missing `getValue()` token for `vars` or `input.default`.
+5. Missing `approved-values.js` token for `vars` or `input.default`.
 6. Chosen trigger accidentally collides with reserved navigation like `x` or `/`.
 
 ## Validator
@@ -234,9 +238,15 @@ It currently checks for:
 
 - duplicate sibling triggers,
 - actions referenced in `menu.js` but missing in `performCmdAction()`,
-- `vars` tokens missing from `getValue()`,
+- `vars` and `input.default` tokens missing from `approved-values.js`,
 - malformed input descriptors,
 - selector leaves whose parent has no action,
 - and a few common authoring warnings such as reserved triggers.
 
 If you are doing command-menu maintenance regularly, run it before and after browser testing.
+
+If you are changing the approved-variable list shown in static help, also run:
+
+```bash
+npm run update:help
+```

@@ -39,6 +39,11 @@ For further details, please refer to the following documents:
    cd ~/infinite-neck
    bin/index.md-update-all.sh 
 ```
+- after changing approved interpolation variables or the generated help block, please run
+```
+   cd ~/infinite-neck
+   npm run update:help
+```
 - command-menu validation:
 ```
    npm run validate:cmdmenu

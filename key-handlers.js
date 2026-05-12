@@ -29,7 +29,10 @@ import {
 	setMenuAtRoot,
 	gMenuLoaded
 } from './menu.js';
-import { resolveApprovedValue } from './approved-values.js';
+import {
+	renderApprovedValuesReferenceHtml,
+	resolveApprovedValue
+} from './approved-values.js';
 import {
 	gUserColorDict
 } from './userColors.js';
@@ -630,6 +633,10 @@ export function performCmdAction(menuItem, args){
             showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
+		case "showViewDiagnosticsVariables":
+			showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
+			actionResult.result = "Approved variables sent to Messages";
+			break;
         case "showViewDiagnosticsSongFileFormat":
 			showMessagesJSON(getPersistentSongFile());
 			break;

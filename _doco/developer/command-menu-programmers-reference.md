@@ -408,7 +408,8 @@ The menu system supports two distinct kinds of dynamic value insertion.
 Important details:
 
 - Replacement only happens for tokens explicitly listed in `vars`.
-- If the resolver returns `undefined` or an empty string, the placeholder remains unchanged.
+- If the resolver returns `undefined`, the placeholder remains unchanged.
+- If the resolver returns an empty string, the placeholder is replaced by that empty string.
 - This affects only the rendered caption, not the data passed to the action.
 
 ### 2. Input defaults via `input.default`
@@ -428,7 +429,7 @@ Important details:
 
 ### Current resolver tokens
 
-These tokens are currently implemented in `key-handlers.js::getValue()`.
+These tokens are currently defined in `approved-values.js` and resolved through `key-handlers.js::getValue()`.
 
 | Token | Meaning |
 | --- | --- |
@@ -463,7 +464,7 @@ These tokens are currently implemented in `key-handlers.js::getValue()`.
 
 Maintainer notes:
 
-- Add a new `getValue()` case whenever a menu caption or input default needs live application state.
+- Add a new `approved-values.js` registry entry whenever a menu caption, input default, or section-caption template needs live application state.
 - Keep display tokens and action logic separate. `getValue()` is for rendering, not for performing side effects.
 
 ## Current Menu Inventory
@@ -550,6 +551,40 @@ This means a new command often needs wiring in two places, not one:
 
 - the `performCmdAction()` switch branch,
 - and the provider registration path if the needed helper is new to `key-handlers.js`.
+
+
+## Maintenance
+
+### Expansion of vars and getValue() in menus
+
+- the menus support expanding vars explicitly set in menu items.  See menu.js for the `vars` elements.
+
+- Below are lists of vars used.  This list will get out of date, but will show you how to find the vars and see how they are used.
+
+- Here is a list of every current caption-level `$token` expansion from the menu definition.
+
+| Command path | Raw string to expand | Vars names available on this menu item | menu.js line |
+| --- | --- | --- | --- |
+| `/fCY` | `<b>Y</b>es: CLEAR $graveyardRecordCount graveyard records !` | `graveyardRecordCount` | menu.js |
+| `/se` | `<b>e</b>dit<small>[$currentSectionCardinal/$sectionCount]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/sedY` | `<b>Y</b>es: DELETE section $currentSectionCardinal/$sectionCount !` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/sb` | `<b>b</b>eats<small>[$currentBeat/$beats]</small>` | `currentBeat`, `beats` | menu.js |
+| `/rs` | `<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
+| `/rb` | `<b>b</b>eats<small>[$currentBeat/$beats]</small>` | `currentBeat`, `beats` | menu.js |
+
+- Here is a list of current expansions used in the current `input.default` sites from menu.js. Note that they don't use `vars`.
+
+| Command path | Raw input.default string | menu.js line |
+| --- | --- | --- |
+| `/fn` | `getSongName` | menu.js |
+| `/fb` | `getBPM` | menu.js |
+| `/fat` | `0` | menu.js |
+| `/fak` | `0` | menu.js |
+| `/sc` | `getSectionCaption` | menu.js |
+| `/von` | `getNamedNoteOpacity` | menu.js |
+| `/vos` | `getSingleNoteOpacity` | menu.js |
+| `/vot` | `getTinyNoteOpacity` | menu.js |
+
 
 ### Maintainer notes
 

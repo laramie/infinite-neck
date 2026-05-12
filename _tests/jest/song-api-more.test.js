@@ -504,6 +504,7 @@ describe('Song construction and section add APIs', () => {
         expect(song.rootID).toBe('3');
         expect(song.namedNoteOpacity).toBe('1.00');
         expect(song.singleNoteOpacity).toBe('1.00');
+        expect(song.tinyNoteOpacity).toBe('1.00');
         expect(song.getSections().length).toBe(1);
         expect(song.getSectionsCurrentIndex()).toBe(0);
         expect(song.getCurrentSection()).toHaveProperty('rootID');

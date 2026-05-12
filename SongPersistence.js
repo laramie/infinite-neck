@@ -11,6 +11,7 @@ const songDefaults = {
     rootID: "3",
     sharps: false,
     singleNoteOpacity: "1.00",
+    tinyNoteOpacity: "1.00",
     songfileVersion: "V2",
     songName: "RoundMidnight",
     theme: "Snow",

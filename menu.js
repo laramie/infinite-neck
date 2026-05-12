@@ -664,6 +664,11 @@ export var gMenuFile =    {
               "action": "showViewDiagnosticsDisplayOptions"
             },
             {
+              "caption": "<b>v</b>ariables",
+              "trigger": "v",
+              "action": "showViewDiagnosticsVariables"
+            },
+            {
               "caption": "<b>h</b>ide",
               "trigger": "h",
               "action": "hideViewMessages"
