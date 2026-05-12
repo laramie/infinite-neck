@@ -1,5 +1,29 @@
 [
   {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "reset",
+    "caption": "Reset",
+    "trigger": "R",
+    "datatype": "org.dynamide.Action",
+    "actionName": "reset",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  },
+  {
     "name": "intervals",
     "caption": "intervals",
     "trigger": "i",
@@ -58,30 +82,6 @@
     "value": false,
     "defaultValue": false,
     "inputCaption": "true|false",
-    "visibleInMenu": true
-  },
-  {
-    "name": "apply",
-    "caption": "Apply",
-    "trigger": "A",
-    "datatype": "org.dynamide.Action",
-    "actionName": "apply",
-    "visibleInMenu": true
-  },
-  {
-    "name": "reset",
-    "caption": "Reset",
-    "trigger": "S",
-    "datatype": "org.dynamide.Action",
-    "actionName": "reset",
-    "visibleInMenu": true
-  },
-  {
-    "name": "help",
-    "caption": "help",
-    "trigger": "h",
-    "datatype": "org.dynamide.Action",
-    "actionName": "help",
     "visibleInMenu": true
   }
 ]

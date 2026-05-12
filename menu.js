@@ -1342,7 +1342,7 @@ function expandCaption(menuItem){
     if (vars && caption){
       vars.forEach(str => {
         var strValue = gMenuValueResolver(str);
-        if ((strValue != undefined) && (""+strValue).length>0){
+        if (strValue != undefined){
           caption = caption.replaceAll("$"+str, ""+strValue);
         }
       });

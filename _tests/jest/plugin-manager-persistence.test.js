@@ -8,11 +8,20 @@ const mockEventBus = {
 
 const mockGetSong = jest.fn(() => null);
 const mockTransposeSong = jest.fn();
+const mockClearBeatAndSectionLooping = jest.fn();
+const mockSectionsLooping = jest.fn(() => false);
+const mockBeatsLooping = jest.fn(() => false);
 
 jest.unstable_mockModule('../../menu.js', () => ({
   gMenuFile: {
     children: []
   }
+}));
+
+jest.unstable_mockModule('../../looper.js', () => ({
+  clearBeatAndSectionLooping: mockClearBeatAndSectionLooping,
+  sectionsLooping: mockSectionsLooping,
+  beatsLooping: mockBeatsLooping
 }));
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
@@ -33,6 +42,11 @@ describe('PluginManager plugin persistence', () => {
     mockEventBus.trigger.mockClear();
     mockGetSong.mockClear();
     mockTransposeSong.mockClear();
+    mockClearBeatAndSectionLooping.mockClear();
+    mockSectionsLooping.mockReset();
+    mockSectionsLooping.mockReturnValue(false);
+    mockBeatsLooping.mockReset();
+    mockBeatsLooping.mockReturnValue(false);
   });
 
   function createManagerWithPlugins() {
@@ -69,6 +83,24 @@ describe('PluginManager plugin persistence', () => {
       sections: [section],
       getCurrentSection() {
         return section;
+      },
+      graveyard: {
+        records: [],
+        buryReplacing(graveType, obj, context, predicate) {
+          const record = {
+            type: graveType,
+            context,
+            json: JSON.stringify(obj),
+            lastRevived: null
+          };
+          const idx = this.records.findIndex((candidate) => predicate(candidate));
+          if (idx >= 0) {
+            this.records.splice(idx, 1, record);
+          } else {
+            this.records.push(record);
+          }
+          return record;
+        }
       }
     };
   }
@@ -163,6 +195,7 @@ describe('PluginManager plugin persistence', () => {
       transpose: {
         enabled: false,
         enableOnSongLoad: false,
+        graveyardKey: 'USER',
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
@@ -185,6 +218,7 @@ describe('PluginManager plugin persistence', () => {
       transpose: {
         enabled: false,
         enableOnSongLoad: true,
+        graveyardKey: 'USER',
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
@@ -195,5 +229,108 @@ describe('PluginManager plugin persistence', () => {
         }
       }
     });
+  });
+
+  test('stores graveyardKey with persisted plugin state', () => {
+    const manager = createManagerWithPlugins();
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'graveyardKey', "Bob's I-IV-V Blues Practice");
+
+    expect(manager.exportSongPluginState().transpose.graveyardKey).toBe("Bob's I-IV-V Blues Practice");
+  });
+
+  test('bury stores plugin snapshot, resets entry, and keeps persisted load-enabled value in snapshot', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'enableOnSongLoad', true);
+    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    const result = manager.buryPluginEntry(entry, 'Blues A');
+
+    expect(result.result).toBe('buried transpose as Blues A');
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.graveyard.records[0].type).toBe('PLUGIN');
+    expect(song.graveyard.records[0].context.pluginId).toBe('transpose');
+    expect(song.graveyard.records[0].context.userKey).toBe('Blues A');
+    expect(JSON.parse(song.graveyard.records[0].json)).toEqual({
+      enabled: false,
+      enableOnSongLoad: true,
+      graveyardKey: 'Blues A',
+      properties: {
+        intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        NamedNotes: true,
+        PlayedNotes: true,
+        RecordedNotes: false,
+        autoSharpsFlats: false,
+        doLeadKey: false
+      }
+    });
+    expect(entry.enabled).toBe(false);
+    expect(entry.enableOnSongLoad).toBe(false);
+    expect(entry.graveyardKey).toBe('Blues A');
+  });
+
+  test('bury stops looping when needed', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+    mockSectionsLooping.mockReturnValue(true);
+
+    manager.buryPluginEntry(entry, 'USER');
+
+    expect(mockClearBeatAndSectionLooping).toHaveBeenCalledTimes(1);
+  });
+
+  test('importPluginSnapshot auto-buries current state to USER before restore', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'graveyardKey', 'Current');
+
+    manager.importPluginSnapshot('transpose', {
+      enabled: false,
+      enableOnSongLoad: true,
+      graveyardKey: 'Revived Config',
+      properties: {
+        intervals: [0, 2, 4],
+        NamedNotes: true,
+        PlayedNotes: false,
+        RecordedNotes: false,
+        autoSharpsFlats: false,
+        doLeadKey: true
+      }
+    });
+
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.graveyard.records[0].context.userKey).toBe('USER');
+    expect(entry.enableOnSongLoad).toBe(true);
+    expect(entry.enabled).toBe(true);
+    expect(entry.graveyardKey).toBe('Revived Config');
+    expect(entry.plugin.getProperty('doLeadKey').getValue()).toBe(true);
+  });
+
+  test('same-key bury replaces earlier snapshot', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.buryPluginEntry(entry, 'Preset');
+    manager.setPropertyValue(entry, 'RecordedNotes', true);
+    manager.buryPluginEntry(entry, 'Preset');
+
+    expect(song.graveyard.records).toHaveLength(1);
+    const payload = JSON.parse(song.graveyard.records[0].json);
+    expect(payload.properties.PlayedNotes).toBe(false);
+    expect(payload.properties.RecordedNotes).toBe(true);
   });
 });

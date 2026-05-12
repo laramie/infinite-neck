@@ -110,3 +110,21 @@
 #dropDownCmdResults {
     background-color: green;
 }
+.pluginHelpValue {
+    color: darkgreen;
+    font-size: 120%;
+    font-weight: bold;
+}
+.graveyard-context-cell {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.graveyard-context-more {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.graveyard-context-toggle {
+    white-space: nowrap;
+}

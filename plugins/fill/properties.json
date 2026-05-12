@@ -1,13 +1,53 @@
 [
   {
     "name": "targetTable",
-    "caption": "target table",
-    "trigger": "t",
+    "caption": "Target table",
+    "trigger": "T",
     "datatype": "org.dynamide.Select",
     "value": "",
     "defaultValue": "",
     "visibleInMenu": false,
     "options": []
+  },
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": false
+  },
+  {
+    "name": "clear",
+    "caption": "Clear",
+    "trigger": "C",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clear",
+    "visibleInMenu": false
+  },
+  {
+    "name": "clearSong",
+    "caption": "ClearSong",
+    "trigger": "S",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clearSong",
+    "visibleInMenu": false
+  },
+  {
+    "name": "commitNotes",
+    "caption": "Commit Notes",
+    "trigger": "M",
+    "datatype": "org.dynamide.Action",
+    "actionName": "commitNotes",
+    "visibleInMenu": false
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": false
   },
   {
     "name": "chordFormula",
@@ -158,45 +198,5 @@
         "trigger": "2"
       }
     ]
-  },
-  {
-    "name": "apply",
-    "caption": "Apply",
-    "trigger": "A",
-    "datatype": "org.dynamide.Action",
-    "actionName": "apply",
-    "visibleInMenu": false
-  },
-  {
-    "name": "clear",
-    "caption": "Clear",
-    "trigger": "C",
-    "datatype": "org.dynamide.Action",
-    "actionName": "clear",
-    "visibleInMenu": false
-  },
-  {
-    "name": "clearSong",
-    "caption": "ClearSong",
-    "trigger": "S",
-    "datatype": "org.dynamide.Action",
-    "actionName": "clearSong",
-    "visibleInMenu": false
-  },
-  {
-    "name": "commitNotes",
-    "caption": "Commit Notes",
-    "trigger": "M",
-    "datatype": "org.dynamide.Action",
-    "actionName": "commitNotes",
-    "visibleInMenu": false
-  },
-  {
-    "name": "help",
-    "caption": "help",
-    "trigger": "h",
-    "datatype": "org.dynamide.Action",
-    "actionName": "help",
-    "visibleInMenu": false
   }
 ]

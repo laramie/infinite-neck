@@ -1670,7 +1670,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			e.preventDefault();
 			const target = $(this).data('target');
 			if (target) {
-				$(target).toggle();
+				const jTarget = $(target);
+				jTarget.toggle();
+				const moreText = $(this).data('more-text');
+				const lessText = $(this).data('less-text');
+				if (moreText && lessText) {
+					const nextText = jTarget.is(':visible') ? lessText : moreText;
+					$(this).empty().append($('<u></u>').text(nextText));
+				}
 			}
 		});
 
@@ -2387,17 +2394,31 @@ EventBus.on('PluginManager:ShowResult', function(event, data) {
 		showMessages(data.message);
 	}
 });
+
+function refreshPluginMenus() {
+	pluginManager.refreshPluginsMenuNode();
+}
+
 EventBus.on('ReinstallAllTuningsTables', function() {
 	reinstallAllTuningsTables();
+	refreshPluginMenus();
 });
 EventBus.on('UpdateAllWiringSelects', function() {
 	getSong().getVisibleTuningIDs().forEach(tuningID => {
 		WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 	});
 	updateAllWiringSelects();
+	refreshPluginMenus();
 });
 EventBus.on('InstrumentAdded', function() {
 	setWiringOpenState(true);  // to open
+	refreshPluginMenus();
+});
+EventBus.on('Wiring:added', function() {
+	refreshPluginMenus();
+});
+EventBus.on('Wiring:removed', function() {
+	refreshPluginMenus();
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
 	$('#btnLoopBeatsTransport').addClass('ButtonOn');

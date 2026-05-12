@@ -178,6 +178,7 @@ const pluginSchema = {
     properties: {
         enabled: { type: 'boolean' },
         enableOnSongLoad: { type: 'boolean' },
+        graveyardKey: { type: 'string' },
         properties: { type: 'object' }
     },
     required: ['enabled', 'enableOnSongLoad', 'properties'],

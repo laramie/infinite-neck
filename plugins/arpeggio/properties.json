@@ -1,5 +1,39 @@
 [
   {
+    "name": "targetTable",
+    "caption": "Target table",
+    "trigger": "T",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": true,
+    "options": []
+  },
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "clear",
+    "caption": "Clear",
+    "trigger": "C",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clear",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  },
+  {
     "name": "minFret",
     "caption": "minFret position",
     "trigger": "m",
@@ -87,30 +121,6 @@
     "value": false,
     "defaultValue": false,
     "inputCaption": "true|false",
-    "visibleInMenu": true
-  },
-  {
-    "name": "apply",
-    "caption": "Apply",
-    "trigger": "A",
-    "datatype": "org.dynamide.Action",
-    "actionName": "apply",
-    "visibleInMenu": true
-  },
-  {
-    "name": "help",
-    "caption": "help",
-    "trigger": "h",
-    "datatype": "org.dynamide.Action",
-    "actionName": "help",
-    "visibleInMenu": true
-  },
-  {
-    "name": "clear",
-    "caption": "Clear",
-    "trigger": "C",
-    "datatype": "org.dynamide.Action",
-    "actionName": "clear",
     "visibleInMenu": true
   }
 ]

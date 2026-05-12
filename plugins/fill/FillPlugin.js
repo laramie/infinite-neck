@@ -1,7 +1,7 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
-import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
+import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
@@ -54,23 +54,7 @@ function valuesEqual(leftValue, rightValue) {
   return JSON.stringify(leftValue) === JSON.stringify(rightValue);
 }
 
-function nextTrigger(displayText, used) {
-  const candidates = `${displayText || ''}`.toLowerCase().replace(/[^a-z0-9]/g, '');
-  for (const candidate of candidates) {
-    if (!used.has(candidate)) {
-      used.add(candidate);
-      return candidate;
-    }
-  }
-  const fallback = '1234567890abcdefghijklmnopqrstuvwxyz';
-  for (const candidate of fallback) {
-    if (!used.has(candidate)) {
-      used.add(candidate);
-      return candidate;
-    }
-  }
-  return '';
-}
+const TARGET_TABLE_OPTION_LIMIT = 9;
 
 export class FillPlugin {
   constructor() {
@@ -573,7 +557,7 @@ export class FillPlugin {
   }
 
   buildHelpMessage(song = getSong()) {
-    return `<pre><b><u>Fill plugin:</u> ${this.buildSummary(song)}</b>
+    return `<pre>${buildPluginHelpHeader(this, 'Fill plugin:', this.buildSummary(song))}
 
 SingleNote fill only.
 
@@ -604,12 +588,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildTargetTableOptions(song = getSong()) {
-    const tunings = this.getEligibleTargetTunings(song);
-    const usedTriggers = new Set();
-    return tunings.map((tuning) => ({
+    const tunings = this.getEligibleTargetTunings(song).slice(0, TARGET_TABLE_OPTION_LIMIT);
+    return tunings.map((tuning, index) => ({
       value: `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`,
-      caption: tuning.baseID,
-      trigger: nextTrigger(tuning.baseID, usedTriggers)
+      caption: `${index + 1}) ${tuning.baseID}`,
+      trigger: `${index + 1}`
     }));
   }
 

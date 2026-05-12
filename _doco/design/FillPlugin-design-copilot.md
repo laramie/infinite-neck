@@ -826,4 +826,313 @@ So my recommendation is:
 - let FillPlugin read the remembered palette value through a small `PalettePresentation` getter
 - expose FillPlugin's own `root/chord/scale` menu choices directly rather than trying to reuse `/pr` interactively
 
+## Iteration 6 : *Bury* design discussion
+
+### Summary
+
+The proposed *Bury* feature is viable and fits the current plugin architecture better than inventing a separate plugin-config store.
+
+The strongest design direction is:
+
+- keep `Song.plugins` as the authoritative live plugin state
+- treat Graveyard `PLUGIN` records as JSON snapshots of one plugin's persisted song state
+- make revive import that JSON back into the plugin manager through a narrow plugin-specific restore path, rather than treating plugin revive as a generic object resurrection
+- standardize the plugin menus now, because that is low-risk and improves consistency regardless of the final Graveyard workflow
+
+In short: the product idea is strong, but the safest implementation is not "plugins are just another deleted object." The safer model is "Graveyard stores plugin-state snapshots, and revive imports one snapshot back into the manager."
+
+### What The Current Codebase Suggests
+
+The current codebase already gives you two important building blocks.
+
+- live plugin user state is already persisted under `Song.plugins`
+- Graveyard records already persist JSON snapshots with `type`, `context`, `json`, and `lastRevived`
+
+That is good news, because it means *Bury* does not need a second persistence model.
+
+However, the current Graveyard implementation also makes the main risk clear:
+
+- `Graveyard.raise()` is a switch over concrete record types
+- revive is not passive data access; it mutates the song, emits UI events, and requests repaint work
+- Graveyard keeps a live back-reference to its owning song
+
+That means plugin revive should not be implemented by loosely shoving plugin JSON through the current generic raise logic and hoping the plugin manager notices. That would be brittle.
+
+### Why The Core Idea Is Good
+
+The product goal is sound.
+
+- users already understand the Graveyard as a place for recoverable things
+- plugin configurations are natural candidates for snapshot-and-revive workflows
+- user-supplied names make plugin state much more reusable than the current one-state-per-song model
+- using the song's Graveyard gives you a lightweight way to move plugin setups between songs through existing save/load flows
+
+This is especially strong for plugins such as Transpose, Arpeggio, and Fill, where users will likely want to flip between a few stable practice configurations rather than edit many individual properties every time.
+
+### Recommended Mental Model
+
+I recommend treating *Bury* as "save this plugin's current song-persisted state under a named Graveyard snapshot" rather than as deletion in the ordinary object-model sense.
+
+That means:
+
+- live plugin state remains in `Song.plugins[pluginId]`
+- bury copies that state into a Graveyard record of type `PLUGIN`
+- reset-to-default happens after the snapshot is stored
+- revive loads the stored state into the plugin manager, replacing the live state for that plugin
+
+This distinction matters because Sections and Stylesheets are raised as objects. Plugins are different: the runtime owner of plugin state is the plugin manager, not the Graveyard.
+
+### Recommended Graveyard Record Shape
+
+The current Graveyard structure is sufficient if the `context` and `json` payload are made explicit.
+
+I recommend:
+
+- `type: GraveType.PLUGIN`
+- `context.pluginId`
+- `context.userKey`
+- `context.caption` or `context.displayName`
+- `context.schemaVersion`
+- `json` containing exactly the same JSON shape as one entry under `Song.plugins[pluginId]`
+
+So the buried JSON payload should look like the existing plugin persistence shape, for example:
+
+```json
+{
+  "enabled": false,
+  "enableOnSongLoad": true,
+  "properties": {
+    "transposeIntervals": [2, 2, 1, 2, 2, 2, 1],
+    "doLeadKey": true
+  }
+}
+```
+
+I do not recommend storing live menu nodes, plugin metadata, or any schema copied from `properties.json`. The plugin code should remain the source of truth for schema and defaults.
+
+### Feasibility Of The Menu Changes
+
+The menu standardization part is low risk and should be considered independently feasible.
+
+- standardizing `E) Enable` and `L) Load enabled` is straightforward
+- adding `B) Bury` to each plugin is also straightforward
+- adding `B) Bury all` at the plugins root is conceptually clean
+- showing a checkmark on enabled plugins is feasible because plugin menu captions are already generated dynamically by the manager
+
+This is the easy part of the design.
+
+The only caution is trigger allocation.
+
+Because `B` becomes globally meaningful in plugin menus, each plugin's own action list should avoid collisions and preserve a predictable action order. That argues for the manager owning these shared top-level plugin actions rather than each plugin hand-authoring them.
+
+### Main Design Holes And Risks
+
+These are the main issues I would tighten before implementation.
+
+#### 1. Revive semantics need a hard overwrite contract
+
+The most important open question is what exactly happens when reviving onto a plugin that already has live non-default state.
+
+Your current proposal says:
+
+- first auto-bury current state as `USER`
+- then revive the chosen state
+
+That is reasonable, but it needs one exact rule:
+
+- if `USER` already exists, does auto-bury overwrite it every time, or preserve the older `USER` and mint another key?
+
+My recommendation is:
+
+- auto-bury to `USER`, overwriting the prior `USER`
+
+Reason:
+
+- `USER` then means "the state that was live immediately before the last revive/import"
+- this keeps the rule simple and predictable
+- users who want durable named variants can explicitly bury with a custom key
+
+#### 2. Bury should define what counts as "non-default"
+
+`B) Bury all` depends on a precise definition of whether a plugin has meaningful state.
+
+You already have a good conceptual rule available from current plugin persistence:
+
+- if a plugin would be persisted in `Song.plugins`, then it is meaningful enough to bury
+
+I recommend reusing that exact notion rather than inventing a second test.
+
+So:
+
+- `Bury all` should operate on the same set of plugin entries that song persistence would export
+
+That avoids divergence between "persists in song" and "eligible for burial."
+
+#### 3. Revive should restore only persisted user state, not plugin code/schema
+
+This is a key architectural boundary.
+
+Do not treat a buried plugin record as a full plugin definition. It should restore only:
+
+- `enabled`
+- `enableOnSongLoad`
+- persisted `properties`
+
+It should not restore:
+
+- menu trigger
+- help text
+- event names
+- property schema
+- plugin class identity beyond `pluginId`
+
+Those belong in code, not in buried data.
+
+This keeps schema evolution manageable when plugin properties change later.
+
+#### 4. Graveyard context should not become an ad hoc hierarchy store
+
+The idea of `Graveyard > "transpose" > "USER"` is good as a user mental model, but I would not literally force the Graveyard to become a tree data structure for this iteration.
+
+The current Graveyard is an append-only flat record list with context metadata.
+
+Recommendation:
+
+- keep the Graveyard flat
+- encode hierarchy in `context.pluginId` and `context.userKey`
+- let the Graveyard table filter, sort, or display those fields later if needed
+
+That is much cheaper than redesigning the Graveyard storage model up front.
+
+#### 5. User-supplied keys need normalization rules, not just stripping
+
+The proposal says illegal characters should be stripped. That is acceptable, but stripping alone can create collisions that are surprising.
+
+Examples:
+
+- `A/B` and `AB` collapse to the same normalized key
+- repeated spaces may create visually different but logically similar names
+
+Recommendation:
+
+- trim leading and trailing spaces
+- collapse internal whitespace to a single space
+- remove disallowed characters
+- if the result is empty, use `USER`
+- keep comparisons case-sensitive unless you explicitly want deduplication across case
+
+That gives stable visible names while staying simple.
+
+#### 6. Generic Graveyard `raise()` is likely the wrong long-term restore hook
+
+Today `raise()` directly knows how to recreate supported record types. Plugins are different because applying plugin state should probably go through the plugin manager, which already knows how to:
+
+- reset plugins to defaults
+- load song plugin state
+- enable or disable handlers safely
+
+So I recommend a plugin-specific restore path inside `Graveyard.raise()` or a small delegated helper, not a broad attempt to make Graveyard itself understand plugin runtime internals.
+
+Conceptually:
+
+1. parse the buried plugin JSON
+2. identify `pluginId`
+3. ask the plugin manager to import that one plugin state
+4. refresh UI and mark record as revived
+
+That is much safer than mutating `song.plugins` directly and hoping runtime state stays synchronized.
+
+### Complexity Concerns
+
+The main complexity is not storage. The main complexity is state transition.
+
+You are crossing three layers:
+
+- persisted song JSON
+- live plugin manager state
+- Graveyard UI and revive workflow
+
+That means the risky cases are:
+
+- bury while plugin is enabled and actively handling events
+- revive while a different config is already enabled
+- revive a config for a plugin that has changed schema since the record was buried
+- bury all while multiple plugins are enabled and have side effects on the current song state
+
+None of these are blockers, but they argue for a narrow first implementation.
+
+### Recommended Simplifications
+
+These simplifications would preserve the product value while reducing risk.
+
+#### 1. Start with one-plugin-at-a-time bury and revive semantics
+
+Implement `B) Bury` first with a precise overwrite rule.
+
+Then add `B) Bury all` only after the one-plugin flow is proven.
+
+`Bury all` is useful, but it multiplies the edge cases around reset ordering and UI refresh.
+
+#### 2. Keep the Graveyard storage flat in iteration one
+
+Do not redesign the Graveyard into a nested structure.
+
+Use:
+
+- `type`
+- `context.pluginId`
+- `context.userKey`
+- `json`
+
+That is enough to deliver the feature.
+
+#### 3. Use plugin-manager import/export helpers as the only live boundary
+
+The plugin manager should own:
+
+- export one plugin's persisted state
+- import one plugin's persisted state
+- reset one plugin to defaults
+
+This keeps Graveyard dumb and reduces coupling.
+
+#### 4. Prefer overwrite-on-same-key over version stacks for now
+
+Your proposal already leans this way, and I agree.
+
+If a user buries `transpose / Bob's I-IV-V Blues Practice` twice, the second should replace the first.
+
+That keeps retrieval simple and matches the mental model of "save over this named preset."
+
+#### 5. Add schema versioning to context now, even if unused at first
+
+A small `schemaVersion` field in plugin Graveyard context is cheap insurance.
+
+Even if revive initially just trusts the payload, version tagging will help later if property names or value formats change.
+
+### Recommended Iteration 6 Direction
+
+My recommendation for this iteration is:
+
+1. Approve *Bury* as a Graveyard-backed snapshot/import feature for plugin state.
+2. Keep `Song.plugins` as the authoritative live source of plugin state.
+3. Introduce a new Graveyard record type `PLUGIN` whose payload is one plugin's persisted state JSON.
+4. Keep the Graveyard storage flat and encode `pluginId` plus user key in record context.
+5. Route revive through the plugin manager rather than directly mutating plugin internals.
+6. Standardize plugin menu items now: `E) Enable`, `L) Load enabled`, `B) Bury`, `h) help`.
+7. Define `USER` as the overwriteable emergency snapshot key used by auto-bury before revive.
+8. Use the same "should this persist?" rule for `Bury all` that song persistence already uses.
+
+### Bottom Line
+
+The feature is feasible and worth doing.
+
+The main design trap would be to overgeneralize the Graveyard and make it responsible for plugin runtime behavior. The cleaner boundary is:
+
+- Graveyard stores named plugin-state snapshots
+- plugin manager imports and applies them
+- plugin code remains the source of truth for behavior and schema
+
+If you keep that boundary, the design stays coherent and the later cross-song reuse story remains open.
+
 

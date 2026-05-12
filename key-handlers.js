@@ -882,7 +882,8 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:set":
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
-		case "pluginAction:invoke": {
+		case "pluginAction:invoke":
+		case "pluginAction:bury": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
 			if (pluginResult.message) {

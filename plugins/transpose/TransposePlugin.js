@@ -1,6 +1,6 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
-import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
+import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { getSong, transposeSong } from '../../infinite-neck.js';
 
@@ -120,6 +120,16 @@ export class TransposePlugin {
     return 'Transpose disabled';
   }
 
+  beforeBury() {
+    if (this.currentNetOffset === 0) {
+      return { proceed: true };
+    }
+    return {
+      proceed: true,
+      warning: `Transpose is currently offset by ${this.currentNetOffset}. Continuing will bury the current settings, but Reset will no longer be able to restore the prior plugin-managed baseline from this live transposed state. Continue?`
+    };
+  }
+
   handleEvent(eventName, payload = {}, context = {}) {
     return this.advanceInterval(`event ${eventName}`, context.song || this.manager?.song || getSong());
   }
@@ -146,11 +156,13 @@ export class TransposePlugin {
   }
 
   buildHelpMessage() {
-    return `<pre><b><u>Transpose plugin:</u> ${this.buildSummary()}</b>
+    const graveyardKey = this.manager?.resolveValue(`plugin:${this.getId()}:graveyardKey`) || 'USER';
+    return `<pre>${buildPluginHelpHeader(this, 'Transpose plugin:', this.buildSummary())}
 
 Current settings:
 - ${this.buildSummary()}
 - intervals = ${JSON.stringify(this.getIntervals())}
+- graveyard key = ${graveyardKey}
 - first interval represents the starting Song state
 - each trigger advances to the next interval
 - Reset returns the plugin-managed transpose offset to zero

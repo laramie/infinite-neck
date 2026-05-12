@@ -948,3 +948,252 @@ Focused Jest coverage was extended to verify:
 - explicit lead-key transposition updates `rootIDLead`
 - `rootIDLead = -1` remains unchanged
 - TransposePlugin persists and reports the new `do lead key` toggle
+
+## Iteration 6 Implementation Notes for *Bury* feature
+
+This iteration adds named plugin-configuration snapshots using the Graveyard as a JSON snapshot store, while preserving the current ownership boundaries:
+
+- `Song.plugins` remains the authoritative live plugin state
+- plugin code remains the source of truth for behavior, menu structure, and property schema
+- Graveyard stores named plugin-state snapshots and revive imports them back through the plugin runtime
+
+This is intentionally a conceptual reuse of Graveyard, not a redesign of Graveyard into a general plugin manager.
+
+### Scope Approved For This Iteration
+
+The approved scope for this iteration is:
+
+1. add a new plugin snapshot workflow called `Bury`
+2. standardize shared plugin menu actions and labels
+3. support one-plugin-at-a-time bury and revive
+4. add the required safety behavior around looping and enabled plugins
+5. defer `B) Bury all` to a later iteration
+
+### Shared Menu Standardization
+
+All plugin menus should begin with the same shared actions in this order:
+
+- `E) Enable`
+- `L) Load enabled`
+- `B) Bury`
+
+All plugin menus should still end with:
+
+- `h) help`
+
+The plugin list should also show an enabled checkmark for enabled plugins at menu-text generation time.
+
+This standardization should remain manager-owned rather than plugin-authored so:
+
+- action order stays consistent across all plugins
+- trigger collisions are reduced
+- plugin-specific code remains focused on plugin-specific properties and actions
+
+### Storage Model
+
+The live state model remains unchanged:
+
+- plugin state is still stored in `Song.plugins[pluginId]`
+
+The new Graveyard snapshot model should add a new record type:
+
+- `GraveType.PLUGIN`
+
+Each buried plugin record should store:
+
+- `context.pluginId`
+- `context.userKey`
+- `context.schemaVersion`
+- optional user-facing caption metadata if helpful for display
+- `json` equal to one plugin's persisted `Song.plugins[pluginId]` JSON payload
+
+The buried payload should contain only persisted user state:
+
+- `enabled`
+- `enableOnSongLoad`
+- `properties`
+
+It should not contain:
+
+- menu nodes
+- action definitions
+- event names
+- property schema definitions
+- runtime-only plugin objects
+
+### Keying And Overwrite Rules
+
+The visible user mental model remains:
+
+- plugin id + user key
+
+Examples:
+
+- `transpose / USER`
+- `transpose / Bob's I-IV-V Blues Practice`
+
+The physical Graveyard storage may remain flat. The hierarchy is represented in record context, not by introducing a nested Graveyard data structure.
+
+Normalization rule for the user-entered key:
+
+- trim leading and trailing whitespace
+- collapse internal whitespace to a single space
+- remove disallowed characters
+- allow alphanumeric, hyphen, underscore, spaces, leading digits, and single quote
+- if the normalized result is empty, use `USER`
+
+Overwrite rule:
+
+- burying the same `pluginId + userKey` again replaces the earlier snapshot at that logical key
+
+### Bury Workflow
+
+The bury flow for one plugin should be:
+
+1. determine the plugin's current exported persisted state
+2. if the plugin is currently enabled, disable it immediately before any reset work
+3. if section or beat looping is active, stop looping before proceeding
+4. if the plugin needs to warn or veto before burial, do that before final snapshot/reset
+5. prompt for the user key
+6. normalize the key, defaulting to `USER`
+7. write or replace the `PLUGIN` record in the Graveyard
+8. reset that plugin to defaults
+9. leave `enabled = false` and `enableOnSongLoad = false`
+10. refresh plugin menu state and any related UI summaries
+
+Two safety rules are intentional here:
+
+- disable first
+- stop looping first
+
+These reduce race-like behavior where a plugin is still reacting to loop events while its state is being buried and reset.
+
+### Looping Safety Rule
+
+For this iteration, the safest approved behavior is:
+
+- if loop playback is active, stop it when bury begins
+
+This is preferable to trying to support hot-swapping plugin state mid-loop.
+
+The repository already has a simple stop-loop helper path, so the implementation should use the existing loop-stop behavior rather than inventing a new paused or suspended plugin mode.
+
+This rule should apply before resetting plugin state, not afterward.
+
+### Revive Workflow
+
+Revive should be treated as import of one plugin snapshot, not generic object resurrection.
+
+The revive flow should be:
+
+1. identify the Graveyard record and confirm it is `GraveType.PLUGIN`
+2. parse `context.pluginId` and the record JSON payload
+3. stop looping before changing live plugin state
+4. if the target plugin currently has meaningful non-default state, auto-bury that state under `USER`
+5. ask the plugin manager to import the revived state for that one plugin
+6. refresh plugin menu state and any related UI summaries
+7. mark the Graveyard record as revived
+
+Revive should go through plugin-manager import helpers rather than mutating `song.plugins` directly. That preserves synchronization between:
+
+- persisted plugin JSON
+- live manager flags such as `enabled`
+- registered event handlers
+- plugin-specific reset/default logic
+
+### TransposePlugin Safety Exception
+
+TransposePlugin has one special safety case:
+
+- it tracks a live transpose offset used by `Reset`
+
+If TransposePlugin is buried after it has moved the song away from its baseline state, then resetting the plugin to defaults means that plugin-managed reset history is lost.
+
+For this reason, TransposePlugin should be allowed a pre-bury warning or veto hook.
+
+Approved behavior:
+
+- if TransposePlugin has a non-zero tracked transpose offset, it may warn before burial that continuing will lose plugin-managed resetability for that transposed state
+- this warning should happen at or before key entry, not after the snapshot is committed
+
+This does not require a generalized modal framework. A simple plugin-level pre-bury hook that returns either:
+
+- proceed
+- proceed with warning text
+- veto with reason
+
+is sufficient for this iteration.
+
+The warning text should make clear that the song's current transposed model state remains as-is, but the plugin will no longer know how to roll back to the previous baseline using its own `Reset` action.
+
+### Manager And Graveyard Responsibilities
+
+The clean boundary for this iteration is:
+
+- Graveyard owns record storage and display
+- PluginManager owns plugin export/import/reset/enable coordination
+- each plugin may optionally contribute a small pre-bury safety hook
+
+Recommended new PluginManager responsibilities:
+
+- export one plugin entry in persisted-song shape
+- import one plugin entry in persisted-song shape
+- reset one plugin to defaults and managed booleans
+- report whether a plugin currently has meaningful persisted state
+- support shared `Bury` menu actions
+
+Recommended Graveyard responsibility changes:
+
+- add `PLUGIN` to `GraveType`
+- add one `raise()` case that delegates plugin restore to the plugin runtime boundary
+- keep Graveyard otherwise flat and data-oriented
+
+### Deferred Items
+
+These items are explicitly deferred to a later iteration:
+
+- `B) Bury all`
+- bulk revive/import flows
+- richer Graveyard filtering or grouping UI for plugin records
+- cross-song or browser-global preset libraries outside song Graveyard
+- hot-start or hot-revive behavior while looping continues uninterrupted
+
+Deferring `Bury all` is the correct tradeoff for this iteration because one-plugin bury/revive already covers the core product value while keeping reset ordering and safety rules understandable.
+
+### Implementation Sequence
+
+Recommended implementation order:
+
+1. extend `GraveType` with `PLUGIN`
+2. add PluginManager helpers for export/import/reset of a single plugin entry
+3. standardize shared plugin menu items and enabled-check display
+4. add the `Bury` action path with user-key prompt and overwrite behavior
+5. add the looping safety stop at bury and revive entry points
+6. add TransposePlugin pre-bury warning/veto support for non-zero offset
+7. add Graveyard revive delegation for plugin records
+8. add focused validation and Jest coverage
+
+### Validation Targets
+
+Focused validation for this iteration should cover:
+
+1. bury stores one plugin snapshot in Graveyard with `type = PLUGIN`
+2. bury resets the target plugin to defaults and leaves it disabled
+3. bury stops active looping before reset work
+4. revive imports one buried plugin snapshot back into the plugin manager
+5. revive auto-buries current meaningful plugin state to `USER` before overwrite
+6. same-key bury overwrites the logical prior snapshot
+7. plugin menu labels are standardized as approved
+8. enabled plugins show the checkmark in the plugins menu
+9. TransposePlugin warns or vetoes when bury is attempted with non-zero offset
+10. legacy song save/load behavior for `Song.plugins` remains unchanged outside the new bury/revive workflow
+
+### Compatibility Goal
+
+The compatibility goal for this iteration is:
+
+- songs that never use `Bury` continue to behave exactly as they do today
+- `Song.plugins` save/load remains the primary persistence mechanism
+- Graveyard plugin records add a new optional workflow without changing existing plugin semantics
+
+That is the key constraint for implementing the feature safely.

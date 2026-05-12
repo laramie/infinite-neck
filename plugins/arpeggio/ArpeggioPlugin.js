@@ -1,6 +1,6 @@
 import properties from './properties.json' with { type: 'json' };
 import { PluginProperty } from '../PluginProperty.js';
-import { buildPluginEventsHelpFooter } from '../pluginHelp.js';
+import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
@@ -16,6 +16,7 @@ const SHOW_NOTE_NAME_OFF = 'off';
 const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
 const SHOW_NOTE_NAME_PLAYED = 'played';
+const TARGET_TABLE_OPTION_LIMIT = 9;
 
 export class ArpeggioPlugin {
   constructor() {
@@ -57,24 +58,62 @@ export class ArpeggioPlugin {
   }
 
   getVisibleMenuChildren() {
+    this.refreshDynamicPropertyOptions(this.manager?.song || getSong());
     return this.properties
       .filter((property) => property.visibleInMenu)
       .map((property) => property.getMenuNodeSpec(this));
+  }
+
+  updatePropertyOptions(propertyName, options = []) {
+    const property = this.getProperty(propertyName);
+    if (!property) {
+      return;
+    }
+    property.options = options.map((option) => ({ ...option }));
+  }
+
+  refreshDynamicPropertyOptions(song = getSong()) {
+    this.updatePropertyOptions('targetTable', this.buildTargetTableOptions(song));
+    this.ensureTargetTableSelection(song);
+  }
+
+  ensureTargetTableSelection(song = getSong()) {
+    const property = this.getProperty('targetTable');
+    if (!property) {
+      return;
+    }
+    const options = property.options || [];
+    if (options.length === 0) {
+      property.value = '';
+      property.defaultValue = '';
+      return;
+    }
+    const fallbackValue = `${options[0].value}`;
+    const currentDefaultValue = `${property.getDefaultValue() || ''}`;
+    if (!options.some((option) => `${option.value}` === currentDefaultValue)) {
+      property.defaultValue = fallbackValue;
+    }
+    const currentValue = `${property.getValue() || ''}`;
+    if (!options.some((option) => `${option.value}` === currentValue)) {
+      property.value = property.getDefaultValue();
+    }
   }
 
   resetToDefaults() {
     this.properties.forEach((property) => property.reset());
   }
 
-  loadSongState(persistedProperties = {}) {
+  loadSongState(persistedProperties = {}, context = {}) {
     this.resetToDefaults();
+    this.refreshDynamicPropertyOptions(context.song || getSong());
     Object.entries(persistedProperties).forEach(([name, value]) => {
       const property = this.getProperty(name);
       if (!property || property.datatype === 'org.dynamide.Action') {
         return;
       }
-      this.setPropertyValue(name, value);
+      this.setPropertyValue(name, value, context);
     });
+    this.refreshDynamicPropertyOptions(context.song || getSong());
   }
 
   exportSongState() {
@@ -94,6 +133,9 @@ export class ArpeggioPlugin {
       throw new Error(`ArpeggioPlugin unknown property: ${name}`);
     }
 
+    const song = context.song || getSong();
+    this.refreshDynamicPropertyOptions(song);
+
     const candidateValue = property.normalize(rawValue);
     const nextValues = {
       minFret: this.getProperty('minFret')?.getValue(),
@@ -104,13 +146,21 @@ export class ArpeggioPlugin {
       [name]: candidateValue
     };
 
-    this.validateValues(nextValues, context.song || getSong());
+    this.validateValues(nextValues, song);
     return property.setValue(rawValue);
   }
 
   resolveValue(fieldName, context = {}) {
+    const song = context.song || getSong();
+    if (fieldName === 'targetTable' || fieldName === 'maxAllowedFret') {
+      this.refreshDynamicPropertyOptions(song);
+    }
+    if (fieldName === 'targetTable') {
+      const value = this.getProperty('targetTable')?.getValue() || '';
+      return value.startsWith(Constants.TABLE_ID_PREFIX) ? value.slice(Constants.TABLE_ID_PREFIX.length) : value;
+    }
     if (fieldName === 'maxAllowedFret') {
-      return this.getMaxAllowedFret(context.song || getSong());
+      return this.getMaxAllowedFret(song);
     }
     return undefined;
   }
@@ -163,14 +213,14 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
     const unsupportedMessage = this.getUnsupportedConfigurationMessage();
     const targetTuning = this.getTargetTuning(song);
     const tableID = targetTuning ? this.getTableID(targetTuning) : '<none>';
-    return `<pre><b><u>Arpeggio plugin:</u> ${this.buildSummary()}</b>
+    return `<pre>${buildPluginHelpHeader(this, 'Arpeggio plugin:', this.buildSummary())}
 
 Current settings:
 - ${this.buildSummary()}
@@ -202,12 +252,34 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
   }
 
-  getTargetTuning(song = getSong()) {
+  buildTargetTableOptions(song = getSong()) {
+    const tunings = this.getEligibleTargetTunings(song).slice(0, TARGET_TABLE_OPTION_LIMIT);
+    return tunings.map((tuning, index) => ({
+      value: this.getTableID(tuning),
+      caption: `${index + 1}) ${tuning.baseID}`,
+      trigger: `${index + 1}`
+    }));
+  }
+
+  getEligibleTargetTunings(song = getSong()) {
     if (!song || !Array.isArray(song.myTunings)) {
-      return null;
+      return [];
     }
     const wiredTableNames = new Set((song.wirings || []).map((wiring) => wiring?.tablename).filter(Boolean));
-    return song.myTunings.find((tuning) => !wiredTableNames.has(this.getTableID(tuning))) || null;
+    return song.myTunings.filter((tuning) => !wiredTableNames.has(this.getTableID(tuning)));
+  }
+
+  getSelectedTargetTableID() {
+    return `${this.getProperty('targetTable')?.getValue() || ''}`;
+  }
+
+  getTargetTuning(song = getSong()) {
+    const eligibleTunings = this.getEligibleTargetTunings(song);
+    if (eligibleTunings.length === 0) {
+      return null;
+    }
+    const selectedTableID = this.getSelectedTargetTableID();
+    return eligibleTunings.find((tuning) => this.getTableID(tuning) === selectedTableID) || eligibleTunings[0] || null;
   }
 
   getMaxAllowedFret(song = getSong()) {

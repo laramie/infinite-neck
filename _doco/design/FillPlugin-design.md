@@ -388,4 +388,88 @@ Let the menu item be:
 
 `d) do lead key`
 
+### Iteration 6 : *Bury* design
 
+We'd like to have all the plugins participate in a "poor man's import" persistence scheme.  To make this work and be consistent, we also have some changes to all plugin menus.
+
+#### All plugins - menu changes
+
+
+##### enabled plugins show CHECK
+
+We'd like the Plugin manager or correct entity to place a checkmark after the plugin name on the plugin menu, showing whether it is active at the time of menu-item text generation.
+
+&nbsp;&nbsp;&#x1F5F9;
+
+( BOLD CHECK, U+1F5F9 )
+
+Other, not-enabled plugins will simply be blank at the end of the menu item string as they are today.
+
+##### plugins menu actions standardized
+
+
+First, all plugins should have "enable" menu item be renamed and re-triggered as  "E) Enable" case-sensitive.
+
+All plugins should have "load enabled" be "L) Load enabled" case-sensitive.
+
+Thus, all actions on plugins should be upper-case triggers, except "h) help" which remains lower case.
+
+Then, we'd like all plugins to have a third shared first-listed action: 
+
+"B) Bury"
+
+So every plugin's menu starts with 
+```
+E) Enable
+L) Load enabled
+B) Bury
+```
+
+and ends with 
+h) help
+
+##### new shared plugin action: *Bury*
+
+The new action "B) Bury" will take all the plugin persistence data that normally goes into Song.plugins{} and put it instead into a record, keyed by plugin name in the Context field with necessary properties, in the Graveyard.
+
+On Burying the plugin, the user will provide an additional key for the Context for finding it again: the User-supplied identifier which allows identifier characters (alphanumeric, hyphen, underscore) plus internal spaces and allows leading numbers, plus the single quote character (').  Thus when reviving from the graveyard, the User can see the name they chose, e.g. "Bob's I-IV-V Blues Practice".
+
+Reviving the plugin would reset the plugin defaults etc. as though the user had opened a song with the plugin's persistence taken from the songfile JSON saved when the plugin options chosen by the User were in effect.  Reviving over a plugin that already has options different than default would first cause the system to auto-Bury a version called "USER". 
+
+For all plugins, "USER" and any User-supplied key is always under the plugin name.  The plugin name is the short name that is the directory name and the menu name: "transpose", "arpeggio", "fill".  So 
+    Graveyard > "transpose" > "USER"
+and 
+    Graveyard > "transpose" > "Bob's I-IV-V Blues Practice"
+would be valid keys and locations. 
+
+Burying a plugin's settings when the user has supplied the same key twice overwrites the original value at that key in the Graveyard.
+
+On entering the Bury menu, a value field is prompted for the User-supplied key.  Upon hiting ENTER, the action is invoked with the User-supplied key, which should simply be stripped of illegal characters and used.  The user can always find the row in the Graveyard by name and date.
+
+Probably the correct place to stash the User-supplied key is in Context field in the Graveyard.  ID may have to be system generated.  Today it is a sequential integer.  
+
+Hitting ESC from within that value field should escape from that action as it does globally in the command-menu today.
+
+Burying a plugin without providing a key by immediately hitting ENTER saves it under "USER".
+
+Burying all plugins with "B) Bury all" saves all non-default-option plugins under "USER".
+
+The plugins menu
+    /fp
+Should end with action 
+    "B) Bury all"
+as described above, which runs Bury for all plugins with persistence data, saving them all under their respective locations with key "USER", replacing any "USER" key already there.  This action should then reset all plugins to defaults, and set enabled to false, and "Load enabled" to false.  Effectively like reloading the app, but saving any state in the plugins by cutting rows in the Graveyard.
+
+This will need a new Graveyard record type, probably `PLUGIN`.
+
+#### More design goal discussion
+
+Since the User can supply keys (plugin config names), this becomes a lightweight management scheme for plugin values.  The user can have multiple config names per Song.  Also, the user could use a feature of infinite-neck, which is that if you open a song, you get its graveyard, and you can then open a song with "append" checkbox and pull in Sections.  This is a little buggy right now, but this UI path fullfils the design intention of being able to move plugin configs to another song.  Eventually we will have a template song that the User either loads first, or we will use browser persistent storage, so the configs become part of the options available across songs.  We'll work on that in a later sprint.  For now, simply getting the configs into the Graveyard, getting Graveyard to persist (as it does today), and reviving plugin setting from the Graveyard, will be considered success for Iteration 5 design goals.
+
+#### Request
+
+Please provide analysis of feasibility, design holes, potential problems, and complexity problems along with simplification suggestions in a report in a new section of
+
+  `_doco/design/FillPlugin-design-copilot.md`
+
+called `## Iteration 6 : *Bury* design discussion`.  We will put an implementation plan in the implementation plan document after we have hashed out the design with you.
