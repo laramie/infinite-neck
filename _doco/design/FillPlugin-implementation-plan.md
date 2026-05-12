@@ -1197,3 +1197,169 @@ The compatibility goal for this iteration is:
 - Graveyard plugin records add a new optional workflow without changing existing plugin semantics
 
 That is the key constraint for implementing the feature safely.
+
+## Iteration 6
+
+This iteration collected the follow-on UX and plugin-menu work completed after the bury/revive flow stabilized.
+
+The implemented scope in this iteration is:
+
+- plugin status markers in the plugins menu and plugin help headers
+- an expandable Graveyard Context cell using inline more/less links
+- dynamic per-plugin target-table selection for FillPlugin and ArpeggioPlugin
+
+### Plugin Status Markers
+
+Two independent runtime markers are now displayed for plugins.
+
+- `🗹` (`U+1F5F9`, CHECK) means the plugin is currently enabled
+- `🖺` (`U+1F5BA`, TEXT AND PICTURE) means the plugin currently has persisted state in `Song.plugins`
+
+These markers are shown in two places:
+
+- after the plugin name in the `/fp` plugins menu
+- on the first bold status line of plugin help output
+
+Examples of the intended meanings:
+
+- `transpose 🗹` means enabled but no meaningful persisted song state yet
+- `transpose 🗹 🖺` means enabled and also currently persisted into `Song.plugins`
+- `transpose 🖺` means not enabled, but the plugin still has song-level persisted state
+
+The important design point is that these two markers are not aliases for one another.
+
+- enablement is runtime behavior
+- persisted state is song-model state
+
+To support this cleanly, the plugin manager now keeps `Song.plugins` synchronized with the live plugin runtime state when managed booleans or plugin properties change.
+
+### Plugin Help Status Line
+
+Plugin help now starts with a standardized bold status line:
+
+- plugin name
+- plugin status markers
+- compact summary of active values
+
+For example:
+
+- `Fill plugin: 🗹 🖺 target table=P46_1 chord formula=Maj ...`
+
+On that first bold line only, the value side of `name=value` pairs is wrapped for styling using:
+
+- `<em class='pluginHelpValue'>...</em>`
+
+This keeps the status line readable while letting the CSS distinguish labels from current values.
+
+Plugin help also now includes a legend describing the two plugin status markers so the symbols are self-explanatory in the UI.
+
+### Graveyard Context Expansion
+
+The Graveyard Context column no longer truncates long `record.context` values to a fixed short string only.
+
+Instead, when the serialized context exceeds the compact preview length:
+
+- the first portion is shown inline in the table cell
+- an inline link appears at the end of the preview
+- clicking `more...` expands the remainder of the context inside the same table cell
+- clicking again switches the same control to `less...`
+
+This uses the same delegated `data-target` toggle mechanism already used by the existing Graveyard `show/hide` JSON row control.
+
+The intended layout behavior is:
+
+- the Graveyard table should not grow wider because of expanded context text
+- the Context cell should instead wrap and grow vertically as needed
+
+The inline control is now implemented as a real anchor, not a span pretending to be a link. That is the more normal browser behavior and preserves standard link affordances such as link color, underline, and pointer cursor.
+
+### FillPlugin Target Table Select
+
+FillPlugin now exposes a dynamic `target table` select menu under `/fpf` and `/fpft`.
+
+The option list is populated at runtime from the currently eligible tables, using the approved rule:
+
+- candidate tables must not themselves be wired display tables
+- if another table listens to a candidate table, that candidate is still allowed
+- this remains a plugin-level choice, not a song-level choice
+
+The menu is intentionally capped at the first nine valid tables for this iteration.
+
+- triggers are `1` through `9`
+- captions are shown as `1) S6_1`, `2) P46_1`, `3) Bass_1`, and so on
+
+This list is rebuilt dynamically when tunings or wirings change, so FillPlugin sees newly eligible tables without needing a page reload.
+
+### ArpeggioPlugin Target Table Select
+
+ArpeggioPlugin now participates in the same user-facing target-table selection model as FillPlugin.
+
+This was the correct parallel change because ArpeggioPlugin previously used the same conceptual rule as FillPlugin:
+
+- choose the first eligible table in `myTunings`
+- ignore tables that are themselves wired display tables
+
+ArpeggioPlugin now has its own runtime-populated `target table` select with the same behavior as FillPlugin:
+
+- first nine eligible tables only
+- numbered `1..9` triggers and `1)..9)` captions
+- current selection stored in plugin persistence
+- help/status summary reflects the selected target table
+
+The trigger used for the ArpeggioPlugin property is capital `T`, as approved in chat, to avoid colliding with its existing lowercase menu keys.
+
+### Non-Participation Of TransposePlugin
+
+TransposePlugin does not participate in the target-table chooser work.
+
+That is intentional and should remain explicit in the design notes:
+
+- TransposePlugin is designed to operate at the song level
+- FillPlugin and ArpeggioPlugin are designed to operate at the table level
+
+Because of that design split, target-table lookup has not been centralized into a shared plugin helper in this iteration.
+
+That is an acceptable tradeoff for now because:
+
+- only FillPlugin and ArpeggioPlugin need this field today
+- their user-facing behavior is now parallel
+- TransposePlugin would not consume the abstraction
+
+If a later plugin also needs per-table targeting, extracting the common chooser logic can be reconsidered then.
+
+### Implementation Notes
+
+The implementation boundary for this iteration is:
+
+- PluginManager owns status-marker resolution and song-plugin synchronization
+- plugin help helpers own the shared help-header and legend formatting
+- Graveyard owns inline context expansion markup in its table renderer
+- FillPlugin and ArpeggioPlugin each own their own eligible-table discovery and select-option generation
+
+The last point is important: the runtime menu shape is parallel across Fill and Arpeggio, but the target-table chooser remains per-plugin implementation, not a shared central service.
+
+### Validation Targets
+
+Focused validation for this iteration should cover:
+
+1. plugin menu rows show `🗹` only when the plugin is enabled
+2. plugin menu rows show `🖺` only when the plugin has persisted state in `Song.plugins`
+3. plugin help headers show the same status markers and include a legend explaining them
+4. Graveyard context cells expand with `more...` and collapse with `less...`
+5. expanded Graveyard context wraps vertically without forcing the table wider
+6. FillPlugin `/fpft` opens a numbered target-table submenu rather than behaving as a bang node
+7. FillPlugin target-table options update when tunings or wirings change
+8. ArpeggioPlugin target-table selection behaves the same way from the user perspective
+9. ArpeggioPlugin persists and restores the selected target table through normal plugin song persistence
+10. TransposePlugin remains unchanged with respect to target-table selection
+
+### Compatibility Goal
+
+The compatibility goal for this iteration is:
+
+- existing songs continue to load even if they predate the new plugin status markers or target-table chooser work
+- plugin status display adds visibility only; it does not alter plugin behavior on its own
+- the Graveyard still renders compactly by default, with expansion only on demand
+- TransposePlugin remains song-scoped and unaffected by per-table chooser work
+
+That keeps this iteration additive and user-facing, rather than changing the underlying plugin ownership model.
