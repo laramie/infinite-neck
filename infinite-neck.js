@@ -4,6 +4,10 @@
 import * as Constants from './Constants.js';
 import EventBus from './event-bus.js';
 import {
+	expandApprovedTemplate,
+	setApprovedValueProviders
+} from './approved-values.js';
+import {
 	chuseStylesheet,
 	deleteUserStylesheet,
 	showColorPicker,
@@ -173,6 +177,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			controlsToDisplayOptions
 		});
+		setApprovedValueProviders({
+			getBPM,
+			getCurrentSection,
+			getSectionsCurrentIndex,
+			getSong
+		});
 		setNotetableProviders({
 			getBeatNumber,
 			getCurrentSection,
@@ -314,7 +324,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//These should be in #topControlsCaptions in index.html
 	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var rawCaption = getSong().getCurrentSection().caption;
-		var caption = eval("\`"+rawCaption+"\`");
+		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);

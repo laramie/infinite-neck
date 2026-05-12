@@ -1357,7 +1357,7 @@ Focused validation for this iteration should cover:
 
 The compatibility goal for this iteration is:
 
-- existing songs continue to load even if they predate the new plugin status markers or target-table chooser work
+- existing songs continue to load even if they pre-date the new plugin status markers or target-table chooser work
 - plugin status display adds visibility only; it does not alter plugin behavior on its own
 - the Graveyard still renders compactly by default, with expansion only on demand
 - TransposePlugin remains song-scoped and unaffected by per-table chooser work

@@ -29,6 +29,7 @@ import {
 	setMenuAtRoot,
 	gMenuLoaded
 } from './menu.js';
+import { resolveApprovedValue } from './approved-values.js';
 import {
 	gUserColorDict
 } from './userColors.js';
@@ -988,49 +989,12 @@ export function getValue(what){
 			return pluginValue;
 		}
 	}
-	switch (what){
-		case "currentSectionNumber":
-		case "currentSectionIndex":
-			return getSectionsCurrentIndex();
-		case "currentSectionCardinal":
-			return getSectionsCurrentIndex()+1;
-		case "sectionCount":
-			return getSong().sections.length;
-		case "graveyardRecordCount":
-			return getSong().graveyard.getRecordCount();
-		case "beats":
-		case "beatCount":
-			return getCurrentSection().beats;
-		case "currentBeat":
-			return getCurrentSection().currentBeat;
-		case "getBPM":
-			return getBPM();
-		case "getNamedNoteOpacity":
-			var op = parseFloat(getSong().namedNoteOpacity);
-			if (isNaN(op)){
-				return "NaN";
-			}
-			return ""+(op*100);
-        case "getSingleNoteOpacity":
-            var op = parseFloat(getSong().singleNoteOpacity);
-            if (isNaN(op)){
-                return "NaN";
-            }
-            return ""+(op*100);
-		case "getTinyNoteOpacity":
-            var op = parseFloat(getSong().tinyNoteOpacity);
-            if (isNaN(op)){
-                return "NaN";
-            }
-            return ""+(op*100);
-		case "getSongName":
-			return getSong().songName;
-		case "getSectionCaption":
-			return getCurrentSection().caption;
-		default:
-            console.log("key-handler.js::getValue::no-value-found::default:"+what);
-			return what;
+	const resolved = resolveApprovedValue(what, { logUnknown: false });
+	if (resolved !== undefined) {
+		return resolved;
 	}
+	console.log("key-handler.js::getValue::no-value-found::default:"+what);
+	return what;
 }
 
 setMenuValueResolver(getValue);
