@@ -333,4 +333,17 @@ describe('PluginManager plugin persistence', () => {
     expect(payload.properties.PlayedNotes).toBe(false);
     expect(payload.properties.RecordedNotes).toBe(true);
   });
+
+  test('runtime plugin menu captions use ${plugin:...} value references', () => {
+    const manager = createManagerWithPlugins();
+    const transposeNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'transpose');
+    const enabledNode = transposeNode.children.find((child) => child.name === 'enabled');
+    const loadEnabledNode = transposeNode.children.find((child) => child.name === 'enableOnSongLoad');
+    const intervalsNode = transposeNode.children.find((child) => child.name === 'intervals');
+
+    expect(transposeNode.caption).toContain('${plugin:transpose:statusSuffix}');
+    expect(enabledNode.caption).toContain('[${plugin:transpose:enabled}]');
+    expect(loadEnabledNode.caption).toContain('[${plugin:transpose:enableOnSongLoad}]');
+    expect(intervalsNode.caption).toContain('[${plugin:transpose:intervals}]');
+  });
 });

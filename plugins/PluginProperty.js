@@ -30,6 +30,10 @@ export function buildCaption(caption, trigger) {
   return `${text.slice(0, idx)}<b>${text.slice(idx, idx + key.length)}</b>${text.slice(idx + key.length)}`;
 }
 
+export function buildValueReference(token) {
+  return '${' + token + '}';
+}
+
 function normalizeIntegerString(rawValue) {
   const text = `${rawValue}`.trim();
   if (!/^-?\d+$/.test(text)) {
@@ -134,7 +138,7 @@ export class PluginProperty {
   getMenuNodeSpec(plugin) {
     const pluginId = plugin.getId();
     const token = this.getResolverToken(pluginId);
-    const captionWithValue = `${buildCaption(this.caption, this.trigger)} [$${token}]`;
+    const captionWithValue = `${buildCaption(this.caption, this.trigger)} [${buildValueReference(token)}]`;
     const vars = [token];
 
     if (this.datatype === 'org.dynamide.Action') {

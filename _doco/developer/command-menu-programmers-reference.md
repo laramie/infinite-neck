@@ -557,33 +557,34 @@ This means a new command often needs wiring in two places, not one:
 
 ### Expansion of vars and getValue() in menus
 
-- the menus support expanding vars explicitly set in menu items.  See menu.js for the `vars` elements.
+- Caption expansion only happens for menu items that declare a `vars` array.
+- Caption placeholders now use `${token}` syntax only. There is no legacy `$token` handling in the menu runtime.
+- `input.default` uses the same resolver path but stays as a bare token or literal such as `getBPM` or `0`; it does not use `vars`.
+- The lists below are manual baselines captured from the current `menu.js` and should be updated when menu text or line numbers move.
 
-- Below are lists of vars used.  This list will get out of date, but will show you how to find the vars and see how they are used.
-
-- Here is a list of every current caption-level `${token}` expansion from the menu definition.
+- Here is the current caption-level `${token}` baseline from the menu definition.
 
 | Command path | Raw string to expand | Vars names available on this menu item | menu.js line |
 | --- | --- | --- | --- |
-| `/fCY` | `<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !` | `graveyardRecordCount` | menu.js |
-| `/se` | `<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/sedY` | `<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/sb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | menu.js |
-| `/rs` | `<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | menu.js |
-| `/rb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | menu.js |
+| `/fCY` | `<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !` | `graveyardRecordCount` | `81` |
+| `/se` | `<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | `202` |
+| `/sedY` | `<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !` | `currentSectionCardinal`, `sectionCount` | `214` |
+| `/sb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | `444` |
+| `/rs` | `<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>` | `currentSectionCardinal`, `sectionCount` | `1068` |
+| `/rb` | `<b>b</b>eats<small>[${currentBeat}/${beats}]</small>` | `currentBeat`, `beats` | `1098` |
 
-- Here is a list of current expansions used in the current `input.default` sites from menu.js. Note that they don't use `vars`.
+- Here is the current `input.default` baseline from `menu.js`. These do not use `vars`; they resolve through the same menu value resolver when the input prompt renders.
 
 | Command path | Raw input.default string | menu.js line |
 | --- | --- | --- |
-| `/fn` | `getSongName` | menu.js |
-| `/fb` | `getBPM` | menu.js |
-| `/fat` | `0` | menu.js |
-| `/fak` | `0` | menu.js |
-| `/sc` | `getSectionCaption` | menu.js |
-| `/von` | `getNamedNoteOpacity` | menu.js |
-| `/vos` | `getSingleNoteOpacity` | menu.js |
-| `/vot` | `getTinyNoteOpacity` | menu.js |
+| `/fn` | `getSongName` | `53` |
+| `/fb` | `getBPM` | `66` |
+| `/fat` | `0` | `133` |
+| `/fak` | `0` | `146` |
+| `/sc` | `getSectionCaption` | `256` |
+| `/von` | `getNamedNoteOpacity` | `594` |
+| `/vos` | `getSingleNoteOpacity` | `607` |
+| `/vot` | `getTinyNoteOpacity` | `620` |
 
 
 ### Maintainer notes

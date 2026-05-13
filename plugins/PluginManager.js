@@ -1,7 +1,7 @@
 import { gMenuFile } from '../menu.js';
 import { clearBeatAndSectionLooping, beatsLooping, sectionsLooping } from '../looper.js';
 import { MenuItemProxy } from './MenuItemProxy.js';
-import { buildCaption } from './PluginProperty.js';
+import { buildCaption, buildValueReference } from './PluginProperty.js';
 
 const DEFAULT_GRAVEYARD_KEY = 'USER';
 const ENABLED_CHECKMARK = '&#x1F5F9;';
@@ -156,7 +156,7 @@ export class PluginManager {
     ];
     return new MenuItemProxy(plugin, {
       name: pluginId,
-      caption: `${buildCaption(plugin.getRegisteredName(), plugin.getMenuTrigger())}$${statusToken}`,
+      caption: `${buildCaption(plugin.getRegisteredName(), plugin.getMenuTrigger())}${buildValueReference(statusToken)}`,
       trigger: plugin.getMenuTrigger(),
       vars: [statusToken],
       pluginId,
@@ -176,7 +176,7 @@ export class PluginManager {
     const token = `plugin:${pluginId}:${propertyName}`;
     return new MenuItemProxy(this, {
       name: propertyName,
-      caption: `${buildCaption(caption, trigger)} [$${token}]`,
+      caption: `${buildCaption(caption, trigger)} [${buildValueReference(token)}]`,
       trigger,
       action: 'pluginProperty:toggle',
       pluginId,
