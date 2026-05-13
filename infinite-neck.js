@@ -181,7 +181,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getBPM,
 			getCurrentSection,
 			getSectionsCurrentIndex,
-			getSong
+			getSong,
+			getRootKey: () => getCurrentSection().getRootKey(),
+			getRootKeyLead: () => getCurrentSection().getRootKeyLead(),
+			getTransposeCaptionValue: (tokenName) => {
+				const plugin = pluginManager.getPluginById('transpose');
+				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
+					return '';
+				}
+				return plugin.getApprovedCaptionValue(tokenName, {
+					song: getSong(),
+					section: getCurrentSection()
+				});
+			}
 		});
 		setNotetableProviders({
 			getBeatNumber,

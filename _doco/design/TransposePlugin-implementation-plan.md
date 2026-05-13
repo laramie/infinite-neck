@@ -88,13 +88,14 @@ The beginning of plugin reality is:
 1. when the user enables the plugin, or
 2. when the user changes any plugin property other than the passive act of merely viewing menus, or
 3. when the plugin is loaded on song open with `enableOnSongLoad=true`, or
-4. when the plugin is revived from graveyard state and then first acts under that revived state
+4. when the plugin is revived from graveyard state
 
 Important consequence:
 
 - simply opening the plugin menu does not capture a baseline
 - simply existing in registered runtime does not capture a baseline
 - changing even a non-transposing property such as `doLeadKey` is considered sufficient to wake the plugin and establish its baseline
+- revive establishes the baseline immediately and produces an already-awake plugin runtime state
 
 The default from song load/startup is that the live song state is both original zero and current zero once the plugin becomes active for that session.
 
@@ -131,6 +132,21 @@ Example:
 - next Apply moves to `5`
 - next Apply moves to `7`
 - next Apply moves back to `0`
+
+### Intervals canonicalization
+
+The interval list must quietly enforce a `0` home position.
+
+Implementation rule:
+
+1. if the user inputs an interval list that does not contain `0`, the plugin silently inserts `0`
+2. the implementation should canonicalize the list so that `0` is the starting interval used for restart/apply semantics
+3. Apply and reset logic may then assume that the sequence starts from `0`
+
+Rationale:
+
+- interval lists without `0` produced counter-intuitive behavior during testing
+- the user mental model is that the plugin restarts from home, then advances through progression intervals from there
 
 ### Intervals editing semantics
 
@@ -271,6 +287,35 @@ Implementation may take either of these approaches:
 
 The recommended approach is option 1 to minimize churn.
 
+The intended top-level menu order under TransposePlugin is:
+
+1. Enable
+2. Load
+3. Bury
+4. Apply
+5. Reset
+6. help
+7. intervals
+8. remaining non-action properties
+
+The top-level triggers for the plugin-owned portion are:
+
+1. `A` for Apply
+2. `R` for Reset
+3. `h` for help
+4. `i` for intervals
+5. then the existing remaining property triggers
+
+`Reset` is not itself the old direct reset action after this change. Choosing `Reset` enters a submenu.
+
+The Reset submenu order is:
+
+1. `o` original
+2. `c` current interval
+3. `s` set original to current
+
+Those lower-case submenu items are the real actions.
+
 ### Behavioral examples
 
 #### Example A: accept a new home key
@@ -318,39 +363,9 @@ The implementation should include focused Jest coverage for at least these cases
 9. summary/help strings expose both reset concepts
 10. bury warning includes useful offset context without blocking existing flow
 
-### Open questions and possible inconsistencies
+### Remaining implementation note
 
-These are the remaining places where the design may still need explicit confirmation before coding.
-
-#### 1. Exact wake-up moment versus passive property edits
-
-The current answer says the plugin wakes when the user enables it or sets any other property. That is coherent, but it means a user can establish session baseline by changing a non-transposing property such as `doLeadKey` or `NamedNotes` before ever transposing anything.
-
-Question:
-
-- do we explicitly want that behavior, or do we want wake-up only on the first action that could affect transposition flow such as enable, apply, reset, intervals change, or event-driven apply?
-
-Current plan assumes the broader rule: any property set wakes the plugin.
-
-#### 2. What exactly counts as revived but asleep
-
-The chat says graveyard revive resets position and makes the monster alive but asleep. The earlier clarification also says revive from graveyard makes the current state the zero/original state.
-
-Those are mostly compatible, but implementation needs one precise rule:
-
-- does revive itself capture the baseline immediately, or does revive merely clear prior session state and wait until the first subsequent enable/property/action step to capture baseline?
-
-Current plan assumes: revive discards prior offset history and the revived state becomes the effective zero/original state for the new session.
-
-#### 3. Apply semantics when the interval list does not contain zero
-
-The chat notes current behavior is a bit weird when the list lacks `0`, and suggests the intended behavior should be defined relative to wherever offset zero currently is.
-
-Question:
-
-- do we want to require that interval lists include `0`, or explicitly support interval lists without `0` by treating the first list item as the first target reached from the current zero baseline?
-
-Current plan assumes no hard requirement that the list include `0`.
+The resolved design intentionally treats all property writes as wake-up events for baseline capture. That includes non-transposing properties. This is broader than a strictly musical-action-only rule, but it is consistent with the chosen session model and with immediate awake-on-revive behavior.
 
 ### Recommended coding order
 
@@ -362,5 +377,220 @@ Current plan assumes no hard requirement that the list include `0`.
 6. add Jest coverage for the new state transitions
 
 This plan should be sufficient to drive the next coding pass once the open questions above are confirmed or accepted as written.
+
+## Implementation plan for new feature: TransposePlugin allowed-variables
+
+- The above sections were implemented 20260512.
+- This section describes work planned on 20260513.
+- This section describes an implementation plan called `TransposePlugin allowed-variables`
+
+### Goal
+
+Expose a very small, allowlisted set of caption-safe variables for TransposePlugin state and current-section key state.
+
+This work is not intended to expose arbitrary plugin internals. It is intended to promote a few high-value derived values into the same approved-values pipeline already used for safe `${name}` expansion in section captions.
+
+### Scope
+
+This plan covers only:
+
+1. variable naming
+2. value meanings
+3. empty-string gating rules
+4. provider wiring strategy
+5. implications for future implementation
+
+This plan does not include code changes yet.
+
+### Core design decision
+
+The approved-values allowlist remains the publication boundary.
+
+That means:
+
+1. every new caption-safe token must have an explicit entry in `approved-values.js`
+2. `rootKey` and `rootKeyLead` are general approved values and do not depend on any plugin
+3. transpose-derived values are also explicit approved values, but their `resolve()` functions may delegate to a provider that reads TransposePlugin state
+
+The earlier idea of a single monolithic TransposePlugin resolver function is now considered stale. The preferred design is:
+
+1. explicit approved token names in `approved-values.js`
+2. provider-backed resolution from bootstrap
+3. implementation detail hidden behind small, read-only helper methods in TransposePlugin or a narrowly scoped transpose-caption helper
+
+### Why this is the preferred shape
+
+This keeps the safe-expansion contract intact:
+
+1. section captions still expand only allowlisted names
+2. `/vdv` and help generation still discover the same list automatically
+3. values remain pull-based and therefore do not drift out of sync with plugin state
+4. advanced users and programmers see exact published names rather than implicit plugin internals
+
+### Naming alignment rule
+
+Names that reuse the word `offset` should align with the TransposePlugin runtime meanings wherever practical.
+
+Current plugin runtime meanings are:
+
+1. `currentInterval`: current interval in the active interval list
+2. `currentOffset`: offset from the current sequence baseline
+3. `originalOffset`: offset from the original baseline
+
+Therefore the approved caption tokens should:
+
+1. reuse those names when they mean the same thing
+2. avoid inventing new `offset` names when the concept is actually a root key or a formatted display string
+3. use `total` only when explicitly describing a sum of distances not already named by the plugin
+
+### General variables independent of TransposePlugin
+
+These should be promoted as always-available approved values because they are properties of the current Section, not of TransposePlugin.
+
+| User-facing token | Meaning | Source | Empty when |
+| --- | --- | --- | --- |
+| `rootKey` | Current section root key using section display naming | `Section.getRootKey()` | Never during normal song runtime |
+| `rootKeyLead` | Current section lead key using section display naming | `Section.getRootKeyLead()` | Never during normal song runtime |
+
+Notes:
+
+1. these values should resolve independently of plugin enable state
+2. these values should use section display naming, not raw note-name arrays, so sharps/flats stay aligned with the current section
+
+### Proposed transpose-derived approved tokens
+
+The table below separates user-facing token names from their internal meaning. The goal is programmer clarity first and caption usefulness second.
+
+| User-facing token | Meaning | Suggested source concept | Empty when |
+| --- | --- | --- | --- |
+| `transposeCurrentInterval` | Current interval in the active TransposePlugin interval list | existing plugin `currentInterval` | plugin not enabled, not awake, or not musically meaningful yet |
+| `transposeCurrentOffset` | Current offset from the current sequence baseline | existing plugin `currentOffset` | plugin not enabled, not awake, or current transpose state not musically meaningful |
+| `transposeOriginalOffset` | Current offset from the original baseline | existing plugin `originalOffset` | plugin not enabled, not awake, or current transpose state not musically meaningful |
+| `transposeOriginalRootKey` | Root key implied by undoing the original baseline offset from the current section root | derived from `rootKey` and `transposeOriginalOffset` | plugin not enabled, not awake, or original offset not musically meaningful |
+| `transposeSequenceRootKey` | Root key implied by undoing the current sequence offset from the current section root | derived from `rootKey` and `transposeCurrentOffset` | plugin not enabled, not awake, or current offset not musically meaningful |
+| `transposeFunctionSteps` | Comma-separated emphasized function-symbol steps for the currently active transpose chain | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+| `transposeDistanceSteps` | Comma-separated emphasized numeric distances for the currently active transpose chain | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+| `transposeFunctionDistanceSteps` | Comma-separated emphasized `Function+distance` steps for the currently active transpose chain | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+| `transposeProgressionFunctions` | Full caption fragment combining root keys with emphasized function steps | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+| `transposeProgressionDistances` | Full caption fragment combining root keys with emphasized numeric distances | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+| `transposeProgressionFunctionDistances` | Full caption fragment combining root keys with emphasized `Function+distance` steps | derived formatted display | plugin not enabled, not awake, or chain would be empty |
+
+### Naming recommendations
+
+These are the recommended names to review and either accept or adjust before coding.
+
+1. prefer `transposeCurrentOffset` over new invented variants because it matches the plugin runtime meaning
+2. prefer `transposeOriginalOffset` as the single published total-from-original offset name
+3. do not publish a `transposeTotalOffset` alias in this sprint
+4. prefer `transposeSequenceRootKey` over `transposeOffsetRootKey` because it aligns with the plugin term `current sequence baseline`
+5. prefer `transposeProgressionFunctionDistances` over shorter but less clear spellings because this token is user-facing and should be understandable in `/vdv`
+
+### Tokens not recommended
+
+These proposed names are intentionally not recommended because they risk semantic drift from the plugin model.
+
+| Proposed name to avoid | Reason |
+| --- | --- |
+| `transposeOffsetRootKey` | `offset` is ambiguous next to the plugin’s existing offset meanings |
+| `transposeTotalOffset` | redundant with `transposeOriginalOffset` and adds another “total” concept |
+| `transposeTotalDistance` | likely duplicates `transposeOriginalOffset` or a formatted step and adds another “total” concept |
+| `transposeCurrentRootKey` | redundant with general `rootKey` |
+
+### Derived musical chain
+
+The planned transpose-derived caption values are based on this read-only chain:
+
+1. `rootKey` is the current displayed section root key now
+2. `transposeCurrentOffset` is the distance from sequence baseline root to current root
+3. `transposeOriginalOffset` is the distance from original baseline root to current root
+4. `transposeSequenceRootKey` is the root implied by subtracting `transposeCurrentOffset` from the current section root
+5. `transposeOriginalRootKey` is the root implied by subtracting `transposeOriginalOffset` from the current section root
+
+That gives a stable way to derive the display chain without introducing new persisted plugin state.
+
+### Formatting model
+
+The design calls for a small number of caption-ready formatted strings, not a generic report engine.
+
+The emphasized wrapper is planned as:
+
+1. prefix: `<em class="transposeProg">`
+2. suffix: `</em>`
+
+The function symbol vocabulary should reuse the existing function-symbol source rather than duplicating a second musical table.
+
+Implementation note:
+
+1. if `Function+distance` strings are needed, they should be derived from the function-symbol source plus the numeric distance
+2. raw root keys should use section display naming so sharps/flats remain correct for the current section
+
+### Empty-string gating rule
+
+Transpose-derived approved values should return the empty string when the transpose state is not both available and meaningful.
+
+Planned gating rule:
+
+1. if TransposePlugin is not registered, return `''`
+2. if TransposePlugin is not enabled, return `''`
+3. if TransposePlugin is not awake, return `''`
+4. if the requested display would be musically empty or trivial for the intended token, return `''`
+
+This allows captions to stay visually clean when the plugin is idle.
+
+General values `rootKey` and `rootKeyLead` are not subject to transpose-plugin gating.
+
+### Provider strategy
+
+The recommended strategy is:
+
+1. add general providers in `approved-values.js` for `rootKey` and `rootKeyLead`
+2. add one transpose-specific provider entry from bootstrap, but do not expose a generic plugin-value bridge for captions
+3. keep each approved token explicit in `approvedValueEntries`
+
+The transpose-specific provider may internally call narrowly scoped helper methods on TransposePlugin, but the public approved-values surface should remain a fixed allowlist.
+
+This gives:
+
+1. no stale push-synchronization problem
+2. no widening of caption expansion to arbitrary plugin state
+3. one published list for `/vdv`, help generation, and section-caption expansion
+
+### Suggested implementation shape
+
+When this is coded, the likely shape is:
+
+1. `approved-values.js` gains approved entries for `rootKey` and `rootKeyLead`
+2. `approved-values.js` also gains explicit approved entries for the accepted transpose-derived names
+3. bootstrap installs a transpose-caption provider function alongside the existing approved-value providers
+4. the provider reads TransposePlugin state and returns primitive or formatted values for those specific names only
+
+This is preferred over:
+
+1. pushing values from TransposePlugin into approved-values state
+2. exposing generic `${plugin:...}` resolution in section captions
+3. storing a second mirrored caption-state cache inside the plugin runtime
+
+### Review questions before coding
+
+These review decisions are now resolved for this sprint.
+
+1. `transposeTotalOffset` will not be published; `transposeOriginalOffset` is the single total-from-original offset name
+2. the derived root token name is `transposeSequenceRootKey`
+3. all approved formatted transpose display values listed above are in scope for publication in this sprint
+4. trivial transpose state should return `''`
+
+### Recommendation summary
+
+The recommended review baseline is:
+
+1. publish `rootKey` and `rootKeyLead` as general approved values
+2. publish `transposeCurrentInterval`, `transposeCurrentOffset`, and `transposeOriginalOffset` as the primary atomic transpose values
+3. publish all approved formatted transpose display values listed in the table, except any removed `total` aliases
+4. avoid introducing new offset names unless they align directly with existing plugin meanings
+5. keep all published names explicit in `approvedValueEntries`
+
+
+
+
 
 

@@ -20,6 +20,9 @@ function getBPM(...args) { return requireProvider('getBPM')(...args); }
 function getCurrentSection(...args) { return requireProvider('getCurrentSection')(...args); }
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
+function getRootKey(...args) { return requireProvider('getRootKey')(...args); }
+function getRootKeyLead(...args) { return requireProvider('getRootKeyLead')(...args); }
+function getTransposeCaptionValue(...args) { return requireProvider('getTransposeCaptionValue')(...args); }
 
 function escapeHtml(text) {
 	return `${text}`
@@ -126,6 +129,71 @@ const approvedValueEntries = [
 		name: 'getSectionCaption',
 		description: 'Current section caption',
 		resolve: () => getCurrentSection().caption
+	},
+	{
+		name: 'rootKey',
+		description: 'Current section root key using section display naming',
+		resolve: () => getRootKey()
+	},
+	{
+		name: 'rootKeyLead',
+		description: 'Current section lead key using section display naming',
+		resolve: () => getRootKeyLead()
+	},
+	{
+		name: 'transposeCurrentInterval',
+		description: 'Current interval in the active TransposePlugin interval list',
+		resolve: () => getTransposeCaptionValue('transposeCurrentInterval')
+	},
+	{
+		name: 'transposeCurrentOffset',
+		description: 'Current offset from the current sequence baseline',
+		resolve: () => getTransposeCaptionValue('transposeCurrentOffset')
+	},
+	{
+		name: 'transposeOriginalOffset',
+		description: 'Current offset from the original baseline',
+		resolve: () => getTransposeCaptionValue('transposeOriginalOffset')
+	},
+	{
+		name: 'transposeOriginalRootKey',
+		description: 'Root key minus original baseline offset from the current section root',
+		resolve: () => getTransposeCaptionValue('transposeOriginalRootKey')
+	},
+	{
+		name: 'transposeSequenceRootKey',
+		description: 'Root key minus current sequence offset from the current section root',
+		resolve: () => getTransposeCaptionValue('transposeSequenceRootKey')
+	},
+	{
+		name: 'transposeFunctionSteps',
+		description: 'function-symbol steps for the active transpose chain',
+		resolve: () => getTransposeCaptionValue('transposeFunctionSteps')
+	},
+	{
+		name: 'transposeDistanceSteps',
+		description: 'numeric distances for the active transpose chain',
+		resolve: () => getTransposeCaptionValue('transposeDistanceSteps')
+	},
+	{
+		name: 'transposeFunctionDistanceSteps',
+		description: 'Function+distance steps for the active transpose chain',
+		resolve: () => getTransposeCaptionValue('transposeFunctionDistanceSteps')
+	},
+	{
+		name: 'transposeProgressionFunctions',
+		description: 'root keys with emphasized function steps',
+		resolve: () => getTransposeCaptionValue('transposeProgressionFunctions')
+	},
+	{
+		name: 'transposeProgressionDistances',
+		description: 'root keys with emphasized numeric distances',
+		resolve: () => getTransposeCaptionValue('transposeProgressionDistances')
+	},
+	{
+		name: 'transposeProgressionFunctionDistances',
+		description: 'root keys with emphasized Function+distance steps',
+		resolve: () => getTransposeCaptionValue('transposeProgressionFunctionDistances')
 	}
 ];
 
@@ -171,7 +239,7 @@ export function renderApprovedValuesReferenceHtml(options = {}) {
 	const tableRows = rows.map(row => {
 		return [
 			'<tr>',
-			`<td style="border: 1px solid black; padding: 0.4em;"><code>${escapeHtml(row.name)}</code></td>`,
+			//`<td style="border: 1px solid black; padding: 0.4em;"><code>${escapeHtml(row.name)}</code></td>`,
 			`<td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;">${renderPatternHtml(row.name)}</td>`,
 			`<td style="border: 1px solid black; padding: 0.4em;">${escapeHtml(row.description)}</td>`,
 			sampleCells(row),
@@ -183,10 +251,12 @@ export function renderApprovedValuesReferenceHtml(options = {}) {
 		: '<p><i>Run <code>/vdv</code> in the app to see live sample values for the current song and section.</i></p>';
 	return [
 		`<h4>${escapeHtml(title)}</h4>`,
-		'<p>Use <code>${name}</code> in command-menu captions and section-caption templates. Input defaults still use bare token names such as <code>getBPM</code>. Run <code>/vdv</code> to open this reference in Messages.</p>',
+		'<p>Use <code>${name}</code> patterns listed in command-menu captions and section-caption templates. Input defaults still use bare token names such as <code>getBPM</code>. Run <code>/vdv</code> to open this reference in Messages.</p>',
 		sampleNote,
 		'<table style="border-collapse: collapse; margin-left: 4em;">',
-		'<thead><tr><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Name</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th>' + sampleHeader + '</tr></thead>',
+		'<thead><tr>'
+		//+'<th style="border: 1px solid black; padding: 0.4em; text-align: left;">Name</th>'
+		+'<th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th>' + sampleHeader + '</tr></thead>',
 		`<tbody>${tableRows}</tbody>`,
 		'</table>'
 	].join('\n');

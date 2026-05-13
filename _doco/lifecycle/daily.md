@@ -32,6 +32,20 @@ export INFINITE_NECK_VERBOSE=1 ; node --experimental-vm-modules node_modules/.bi
 ```
 
 
+## Jest test script rewrite: 
+with args:
+node --experimental-vm-modules jest "$@"
+without args:
+node --experimental-vm-modules jest _tests/jest/ --verbose
+Validation
+
+Targeted invocation:
+.run-jest.sh --listTests _tests/jest/transpose-plugin.test.js
+returned only transpose-plugin.test.js
+Default invocation:
+.run-jest.sh --listTests
+returned the broader test list under jest
+
 ## Push new version
 
  - [Run Jest Tests](#run-jest-tests)

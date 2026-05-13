@@ -832,6 +832,13 @@ table.viewControls th {
     vertical-align: middle;
 }
 
+.transposeProg{
+    color: red;
+    margin-left: 1em;
+    margin-right: 1em;
+    font-weight: bold;
+}
+
 /***************************** File *****************************/
 
 #divSongList {
