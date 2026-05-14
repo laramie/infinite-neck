@@ -249,7 +249,7 @@ describe('TransposePlugin', () => {
     expect(plugin.getApprovedCaptionValue('transposeFunctionDistanceSteps', { song, section: song.getCurrentSection() })).toBe('<em class="transposeProg">II+2</em>');
     expect(plugin.getApprovedCaptionValue('transposeProgressionFunctions', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">II</em>D');
     expect(plugin.getApprovedCaptionValue('transposeProgressionDistances', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">2</em>D');
-    expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">II+2</em>D');
+    expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc"><sup><small>+</small>II</sup></span><span class="transposeProgOffset"><sub><small>+</small>2</sub></span><span class="transposeArrow">&Rang;</span></span>D');
   });
 
   test('approved caption values expose the two-step transpose chain after interval reset', () => {
@@ -280,7 +280,7 @@ describe('TransposePlugin', () => {
     expect(plugin.getApprovedCaptionValue('transposeFunctionDistanceSteps', { song, section: song.getCurrentSection() })).toBe('<em class="transposeProg">II+2</em>,<em class="transposeProg">m+3</em>');
     expect(plugin.getApprovedCaptionValue('transposeProgressionFunctions', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">II</em>D<em class="transposeProg">m</em>F');
     expect(plugin.getApprovedCaptionValue('transposeProgressionDistances', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">2</em>D<em class="transposeProg">3</em>F');
-    expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('C<em class="transposeProg">II+2</em>D<em class="transposeProg">m+3</em>F');
+    expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc"><sup><small>+</small>II</sup></span><span class="transposeProgOffset"><sub><small>+</small>2</sub></span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc"><sup><small>+</small>m</sup></span><span class="transposeProgOffset"><sub><small>+</small>3</sub></span><span class="transposeArrow">&Rang;</span></span>F');
   });
 
   test('auto sharps/flats applies the simple section spelling policy after transpose', () => {

@@ -366,6 +366,24 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return output;
   }
 
+  buildFunctionDistanceWidget(distance) {
+    const functionSymbol = this.getFunctionSymbol(distance);
+    const normalizedDistance = normalizeNoteIndex(distance);
+    return `<span class="transposeCaptionBox"><span class="transposeProgFunc"><sup><small>+</small>${functionSymbol}</sup></span><span class="transposeProgOffset"><sub><small>+</small>${normalizedDistance}</sub></span><span class="transposeArrow">&Rang;</span></span>`;
+  }
+
+  buildApprovedProgressionFunctionDistanceWidgets(state) {
+    if (!state.meaningful || state.steps.length === 0) {
+      return '';
+    }
+    let output = state.steps[0].fromKey;
+    state.steps.forEach((step) => {
+      output += this.buildFunctionDistanceWidget(step.distance);
+      output += step.toKey;
+    });
+    return output;
+  }
+
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
     const formatDistance = (distance) => `${normalizeNoteIndex(distance)}`;
@@ -398,7 +416,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       case 'transposeProgressionDistances':
         return this.buildApprovedProgression(state, formatDistance);
       case 'transposeProgressionFunctionDistances':
-        return this.buildApprovedProgression(state, formatFunctionDistance);
+        return this.buildApprovedProgressionFunctionDistanceWidgets(state);
       default:
         return '';
     }
