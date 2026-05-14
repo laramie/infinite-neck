@@ -224,7 +224,7 @@ export function listApprovedValues(options = {}) {
 
 export function renderApprovedValuesReferenceHtml(options = {}) {
 	const includeSamples = options.includeSamples === true;
-	const title = options.title || 'Approved Variable Names';
+	const title = options.title || 'Variables for Captions';
 	const rows = listApprovedValues({ includeSamples });
 	const sampleHeader = includeSamples ? '<th style="border: 1px solid black; padding: 0.4em; text-align: left;">Current sample</th>' : '';
 	const sampleCells = row => {

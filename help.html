@@ -903,6 +903,11 @@
                     </ul>
                 </li>
                 <li><a href="#techie">Techie Bits</a></li>
+                <ul class="LinkList">
+                    <li><a href="#variableNames">Variables for Captions</a></li>
+                    <li><a href="#transposeProgression">transposeProgression Family of Variables</a></li>
+
+                </ul>
                 <li><a href="#glossary">Glossary</a></li>
             </ul>
         </li>
@@ -3592,44 +3597,76 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 </div>
 </p>
 
+<a name="variableNames"></a>
 <!-- BEGIN GENERATED APPROVED VALUES -->
-<h4>Approved Variable Names</h4>
-<p>Use <code>${name}</code> in command-menu captions and section-caption templates. Input defaults still use bare token names such as <code>getBPM</code>. Run <code>/vdv</code> to open this reference in Messages.</p>
+<h4>Variables for Captions</h4>
+<p>Use <code>${name}</code> patterns listed in command-menu captions and section-caption templates. Input defaults still use bare token names such as <code>getBPM</code>. Run <code>/vdv</code> to open this reference in Messages.</p>
 <p><i>Run <code>/vdv</code> in the app to see live sample values for the current song and section.</i></p>
 <table style="border-collapse: collapse; margin-left: 4em;">
-<thead><tr><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Name</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th></tr></thead>
-<tbody><tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionNumber</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionNumber}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionIndex</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionIndex}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentSectionCardinal</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionCardinal}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section number, one-based</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>sectionCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${sectionCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Total number of sections</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>graveyardRecordCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${graveyardRecordCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Record count in the graveyard</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>beats</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${beats}</code></td><td style="border: 1px solid black; padding: 0.4em;">Beat count in the current section</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>beatCount</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${beatCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Alias of beats</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>currentBeat</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentBeat}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current beat in the current section</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getBPM</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getBPM}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current BPM</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getNamedNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getNamedNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Named-note opacity as percent string</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSingleNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSingleNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Single-note opacity as percent string</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getTinyNoteOpacity</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getTinyNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Tiny-note opacity as percent string</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSongName</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSongName}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current song name</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>getSectionCaption</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSectionCaption}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section caption</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>rootKey</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${rootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section root key using section display naming</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>rootKeyLead</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${rootKeyLead}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section lead key using section display naming</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeCurrentInterval</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeCurrentInterval}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current interval in the active TransposePlugin interval list</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeCurrentOffset</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeCurrentOffset}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current offset from the current sequence baseline</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeOriginalOffset</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeOriginalOffset}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current offset from the original baseline</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeOriginalRootKey</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeOriginalRootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Root key implied by undoing the original baseline offset from the current section root</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeSequenceRootKey</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeSequenceRootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Root key implied by undoing the current sequence offset from the current section root</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeFunctionSteps</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">Comma-separated emphasized function-symbol steps for the active transpose chain</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeDistanceSteps</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">Comma-separated emphasized numeric distances for the active transpose chain</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeFunctionDistanceSteps</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">Comma-separated emphasized Function+distance steps for the active transpose chain</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeProgressionFunctions</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctions}</code></td><td style="border: 1px solid black; padding: 0.4em;">Caption fragment combining root keys with emphasized function steps</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeProgressionDistances</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">Caption fragment combining root keys with emphasized numeric distances</td></tr>
-<tr><td style="border: 1px solid black; padding: 0.4em;"><code>transposeProgressionFunctionDistances</code></td><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">Caption fragment combining root keys with emphasized Function+distance steps</td></tr></tbody>
+<thead><tr><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Patterns</th><th style="border: 1px solid black; padding: 0.4em; text-align: left;">Meaning</th></tr></thead>
+<tbody><tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionNumber}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionIndex}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section index, zero-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentSectionCardinal}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section number, one-based</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${sectionCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Total number of sections</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${graveyardRecordCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Record count in the graveyard</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${beats}</code></td><td style="border: 1px solid black; padding: 0.4em;">Beat count in the current section</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${beatCount}</code></td><td style="border: 1px solid black; padding: 0.4em;">Alias of beats</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${currentBeat}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current beat in the current section</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getBPM}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current BPM</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getNamedNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Named-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSingleNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Single-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getTinyNoteOpacity}</code></td><td style="border: 1px solid black; padding: 0.4em;">Tiny-note opacity as percent string</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSongName}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current song name</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${getSectionCaption}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section caption</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${rootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section root key using section display naming</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${rootKeyLead}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current section lead key using section display naming</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeCurrentInterval}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current interval in the active TransposePlugin interval list</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeCurrentOffset}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current offset from the current sequence baseline</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeOriginalOffset}</code></td><td style="border: 1px solid black; padding: 0.4em;">Current offset from the original baseline</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeOriginalRootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Root key minus original baseline offset from the current section root</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeSequenceRootKey}</code></td><td style="border: 1px solid black; padding: 0.4em;">Root key minus current sequence offset from the current section root</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">function-symbol steps for the active transpose chain</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">numeric distances for the active transpose chain</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">Function+distance steps for the active transpose chain</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctions}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized function steps</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized numeric distances</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized Function+distance steps</td></tr></tbody>
 </table>
 <!-- END GENERATED APPROVED VALUES -->
 
 <br />
 <br />
+<a name="transposeProgression"></a>
+<h4>transposeProgression* Family of Variables</h4>
+<p>This family of variables shows the transposition in effect while looping.  Since you can change intervals while the TransposePlugin is enabled or looping, you 
+    can get a transposition of a transposition.  These variables spit out a widget that displays the 
+    Function offset steps that get you from the original key you were in, to the first transposition in effect, and thence to the second 
+    transposition in effect, if any.  These are shown with an additive function interval, and an additive integer offset interval, as shown in the examples below.
+</p>
+<p>    
+    In the pictured examples, +II means the plugin transposed the song a major Second, or two semitones, then
+    transposed the song the interval &sigma;, which is 8 semitones.  
+</p>
+<p>
+    Similarly, +IV would mean the plugin transposed the song up a perfect fourth.  +5 would then mean the plugin transposed the song up
+    5 semitones, which equal a perfect fourth.  The two representations are the same interval, and don't add to each other.
+</p>
+<p>
+    ${transposeProgressionFunctionDistances}
+    <br>
+    <img src="img/help/transposeProgressionFunctionDistances.png">
+</p>
+<p>
+    ${transposeProgressionFunctions}
+    <br>
+    <img src="img/help/transposeProgressionFunctions.png">
+</p>
+<p>
+    ${transposeProgressionDistances}
+    <br>
+    <img src="img/help/transposeProgressionDistances.png">
+</p>
+
 
 
 <hr>
