@@ -3645,11 +3645,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 </p>
 <p>    
     In the pictured examples, +II means the plugin transposed the song a major Second, or two semitones, then
-    transposed the song the interval &sigma;, which is 8 semitones.  
-</p>
-<p>
-    Similarly, +IV would mean the plugin transposed the song up a perfect fourth.  +5 would then mean the plugin transposed the song up
-    5 semitones, which equal a perfect fourth.  The two representations are the same interval, and don't add to each other.
+    transposed the song the interval &sigma;, which is 8 semitones.  The two representations (+II and +2) are the same interval, and don't add to each other.
 </p>
 <p>
     ${transposeProgressionFunctionDistances}
@@ -3665,6 +3661,43 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     ${transposeProgressionDistances}
     <br>
     <img src="img/help/transposeProgressionDistances.png">
+</p>
+<p>
+    Similarly, +IV would mean the plugin transposed the song up a perfect fourth.  +5 would then mean the plugin transposed the song up
+    5 semitones, which equal a perfect fourth.  The two representations, (+IV and +5) in the first transposition, and the second transposition (+II and +2), are the same interval, and don't add to each other.
+    </p>
+<p>
+    ${transposeProgressionDistances}
+    <br>
+    <img src="img/help/transposeProgressionFunctionDistances-cfg.png">
+</p>
+<p>
+    In the example, we have then transposed to G, with a transposition of +II or two semitones, taking us to the II of the IV, which is the V of the I.  But since we are now in the key of G, if you had a NamedNote on 
+    G with function symbols showing, it would show you that the G was now the I.  That's why this display is useful.
+    <br>
+    <img width="40%" src="img/help/transpose-home-C.png">
+    <br>
+    <img width="40%" src="img/help/transpose+5-F.png">
+    <br>
+    <img width="40%" src="img/help/transpose+5+2-G.png">
+
+</p>
+<p>
+    The Transpose Plugin, and menu item <span class="menuExampleLine"><b><small>/fat</small></b></span> do "transpose song", so each chord change goes with a key change.
+    <br>
+    <br>
+    But you could also leave the key in C, and just move the notes with "transpose notes" via <a href="#keymap">keyboard shortcuts</a> <span class="key">j</span>, <span class="key">u</span> etc.  
+    <br>
+    <br>
+    
+    Here is the same song, in C, with a chord progression of C-F-G, or I-IV-V<br>
+    <br>
+    <img width="30%" src="img/help/transpose-home-C.png">
+    <br>
+    <img width="30%" src="img/help/F-maj-in-C.png">
+    <br>
+    <img width="30%" src="img/help/G-maj-in-C.png">
+
 </p>
 
 
