@@ -27,6 +27,20 @@ function canonicalizeIntervals(rawIntervals) {
   return [0, ...parsed.filter((value) => value !== 0)];
 }
 
+function normalizeIntervalsInput(rawValue) {
+  if (Array.isArray(rawValue)) {
+    return rawValue;
+  }
+
+  const text = `${rawValue}`.trim();
+  if (text.length === 0) {
+    throw new Error('intervals must contain at least one integer');
+  }
+
+  const normalizedJson = text.startsWith('[') ? text : `[${text}]`;
+  return JSON.parse(normalizedJson);
+}
+
 function normalizeNoteIndex(noteIndex) {
   const normalized = Number.parseInt(noteIndex, 10);
   if (!Number.isInteger(normalized)) {
@@ -159,7 +173,7 @@ export class TransposePlugin {
     this.wakeAtCurrentPosition();
 
     const nextValue = name === 'intervals'
-      ? property.setValue(canonicalizeIntervals(property.normalize(rawValue)))
+      ? property.setValue(canonicalizeIntervals(property.normalize(normalizeIntervalsInput(rawValue))))
       : property.setValue(rawValue);
 
     if (name === 'intervals') {
@@ -354,31 +368,25 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return state.steps.map((step) => this.wrapTransposeProg(formatter(step.distance))).join(',');
   }
 
-  buildApprovedProgression(state, formatter) {
+  buildProgressionWidget(distance, { includeFunction = true, includeDistance = true } = {}) {
+    const parts = [];
+    if (includeFunction) {
+      parts.push(`<span class="transposeProgFunc">+${this.getFunctionSymbol(distance)}</span>`);
+    }
+    if (includeDistance) {
+      parts.push(`<span class="transposeProgOffset">+${normalizeNoteIndex(distance)}</span>`);
+    }
+    parts.push('<span class="transposeArrow">&Rang;</span>');
+    return `<span class="transposeCaptionBox">${parts.join('')}</span>`;
+  }
+
+  buildApprovedProgressionWidgets(state, options = {}) {
     if (!state.meaningful || state.steps.length === 0) {
       return '';
     }
     let output = state.steps[0].fromKey;
     state.steps.forEach((step) => {
-      output += this.wrapTransposeProg(formatter(step.distance));
-      output += step.toKey;
-    });
-    return output;
-  }
-
-  buildFunctionDistanceWidget(distance) {
-    const functionSymbol = this.getFunctionSymbol(distance);
-    const normalizedDistance = normalizeNoteIndex(distance);
-    return `<span class="transposeCaptionBox"><span class="transposeProgFunc"><sup><small>+</small>${functionSymbol}</sup></span><span class="transposeProgOffset"><sub><small>+</small>${normalizedDistance}</sub></span><span class="transposeArrow">&Rang;</span></span>`;
-  }
-
-  buildApprovedProgressionFunctionDistanceWidgets(state) {
-    if (!state.meaningful || state.steps.length === 0) {
-      return '';
-    }
-    let output = state.steps[0].fromKey;
-    state.steps.forEach((step) => {
-      output += this.buildFunctionDistanceWidget(step.distance);
+      output += this.buildProgressionWidget(step.distance, options);
       output += step.toKey;
     });
     return output;
@@ -412,11 +420,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       case 'transposeFunctionDistanceSteps':
         return this.buildApprovedStepList(state, formatFunctionDistance);
       case 'transposeProgressionFunctions':
-        return this.buildApprovedProgression(state, formatFunction);
+        return this.buildApprovedProgressionWidgets(state, { includeFunction: true, includeDistance: false });
       case 'transposeProgressionDistances':
-        return this.buildApprovedProgression(state, formatDistance);
+        return this.buildApprovedProgressionWidgets(state, { includeFunction: false, includeDistance: true });
       case 'transposeProgressionFunctionDistances':
-        return this.buildApprovedProgressionFunctionDistanceWidgets(state);
+        return this.buildApprovedProgressionWidgets(state, { includeFunction: true, includeDistance: true });
       default:
         return '';
     }

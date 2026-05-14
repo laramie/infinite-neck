@@ -27,9 +27,9 @@ describe('approved values', () => {
         transposeFunctionSteps: '<em class="transposeProg">II</em>,<em class="transposeProg">m</em>',
         transposeDistanceSteps: '<em class="transposeProg">2</em>,<em class="transposeProg">3</em>',
         transposeFunctionDistanceSteps: '<em class="transposeProg">II+2</em>,<em class="transposeProg">m+3</em>',
-        transposeProgressionFunctions: 'C<em class="transposeProg">II</em>D<em class="transposeProg">m</em>F',
-        transposeProgressionDistances: 'C<em class="transposeProg">2</em>D<em class="transposeProg">3</em>F',
-        transposeProgressionFunctionDistances: 'C<em class="transposeProg">II+2</em>D<em class="transposeProg">m+3</em>F'
+        transposeProgressionFunctions: 'C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F',
+        transposeProgressionDistances: 'C<span class="transposeCaptionBox"><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F',
+        transposeProgressionFunctionDistances: 'C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F'
       }[tokenName] || '')
     });
   });
@@ -41,10 +41,10 @@ describe('approved values', () => {
 
   test('resolves transpose caption approved values through the dedicated provider', () => {
     expect(approvedValues.resolveApprovedValue('transposeCurrentOffset')).toBe('3');
-    expect(approvedValues.resolveApprovedValue('transposeProgressionFunctionDistances')).toBe('C<em class="transposeProg">II+2</em>D<em class="transposeProg">m+3</em>F');
+    expect(approvedValues.resolveApprovedValue('transposeProgressionFunctionDistances')).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F');
   });
 
   test('expandApprovedTemplate interpolates general and transpose caption values', () => {
-    expect(approvedValues.expandApprovedTemplate('${rootKey} ${transposeCurrentOffset} ${transposeProgressionFunctions}')).toBe('F 3 C<em class="transposeProg">II</em>D<em class="transposeProg">m</em>F');
+    expect(approvedValues.expandApprovedTemplate('${rootKey} ${transposeCurrentOffset} ${transposeProgressionFunctions}')).toBe('F 3 C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F');
   });
 });
