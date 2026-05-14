@@ -832,8 +832,15 @@ table.viewControls th {
     vertical-align: middle;
 }
 
-.transposeProg{
+.lblSectionCaption .transposeProg:nth-child(odd) {
     color: red;
+    margin-left: 1em;
+    margin-right: 1em;
+    font-weight: bold;
+}
+
+.lblSectionCaption .transposeProg:nth-child(even) {
+    color: blue;
     margin-left: 1em;
     margin-right: 1em;
     font-weight: bold;
