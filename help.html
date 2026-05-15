@@ -209,6 +209,27 @@
             font-weight: bold;
             font-size: 130%;
        }
+
+       .menuExamplePrompt {
+            font-family: "Kode Mono", monospace;
+            display: inline-block;
+            padding: 0.3em;
+            border: 1px solid black;
+            font-weight: normal;
+            background-color: lightgreen;
+            color: black;
+            padding-left: 1em;
+            margin-left:0;
+        }
+        .menuExamplePrompt b {
+            font-family: "Kode Mono", monospace;
+            color: #ffaa00;
+            font-weight: bold;
+            font-size: 130%;
+            -webkit-text-stroke: 1px black;
+        }
+
+
        .helpButton {
            background-color: orange;
            box-shadow: 1pt 1pt 2pt 0.5pt gray;
@@ -3425,7 +3446,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li>TransposePlugin</li>
     </ul>
 
-    <p>In the command-line menu, plugins live under <span class="menuExampleLine"><b>p</b> plugins</span>. Each plugin also has a help action that shows its current settings and the events it handles.</p>
+    <p>In the command-line menu, plugins live under 
+        
+        <span class="menuExampleLine"><b>/fp</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>p</b>lugins </span>.
+
+        Each plugin also has a 
+        <span class="menuExampleLine"><b>h</b></span><span class="menuExamplePrompt"><b>h</b>elp</span>
+         action that shows its current settings and the events it handles.</p>
 
     <a name="plugin-arpeggio"></a>
     <h2>ArpeggioPlugin</h2>
@@ -3433,29 +3460,112 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="plugin-arpeggio-what"></a>
     <h3>What It Does</h3>
 
-    <p>ArpeggioPlugin generates played-note prompts from the named notes already present in the current Section. It is used for drills, fret-range practice, key practice, and flashcard-style note recall.</p>
+    <p>ArpeggioPlugin generates played-note prompts from the named notes already present in the current Section. It is used for drills, fret-range/neck-position practice, learning keys, and flashcard-style note recall.</p>
+
+        <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Practice one chord or arpeggio shape in many keys without having to author a separate songfile for each key.</li>
+        <li>Limit practice to a small region of the neck by setting minFret and maxFret.</li>
+        <li>Hide all normal named notes on the neck, then let ArpeggioPlugin reveal only the current notes you want to practice.</li>
+        <li>Use flashcard mode so you guess first, then see the answer on the next beat.</li>
+        <li>Combine ArpeggioPlugin with TransposePlugin so one Song becomes a multi-key practice tool or game.</li>
+    </ul>
+
+
 
     <a name="plugin-arpeggio-options"></a>
     <h3>Main Options</h3>
 
     <ul>
-        <li><b>m</b> minFret and <b>t</b> maxFret limit the generated pattern to a fret range.</li>
-        <li><b>o</b> lowToHigh and <b>u</b> upOnly control traversal direction.</li>
+        <li><b>m</b> minFret: lowest fret considered by the generated pattern.</li>
+        <li><b>t</b> maxFret: highest fret considered by the generated pattern.</li>
+        <li><b>o</b> lowToHigh: control whether the candidate traversal starts from lower strings and lower frets or the reverse logical order.</li>
+        <li><b>u</b> upOnly: keep the pattern moving upward instead of bouncing back.</li>
         <li><b>s</b> style chooses every, alternate, random, or bach.</li>
         <li><b>n</b> show note name chooses off, one, all, or played.</li>
-        <li><b>c</b> color notes chooses Emboss or AutoColor-style prompt text.</li>
+        <li><b>c</b> color notes chooses Emboss or AutoColor-style.</li>
         <li><b>f</b> flashcard delays note-name reveal by one beat.</li>
     </ul>
 
+        <h4>Show Note Name Modes</h4>
+
+    <ul>
+        <li>off: show only highlights, with no note-name text.</li>
+        <li>one: show only one beat's note-name text at a time.</li>
+        <li>all: show note-name text for all generated beats in the current Section.</li>
+        <li>played: accumulate note-name text beat by beat as the pass continues.</li>
+    </ul>
+
+    <h4>Flashcard Mode</h4>
+
+    <p>Flashcard mode changes the timing of note-name reveal, not the highlight itself.</p>
+
+    <ul>
+        <li>On beat 1 you see the highlight only.</li>
+        <li>You guess, say the name or function out loud, and play the note on your physical instrument. </li>
+        <li>On the next beat, the previous note's information is revealed.</li>
+        <li>On the final beat, the current note is also revealed because there is no later beat to show it.</li>
+        <li>This ties visually seeing the note position with hearing the note name and training your body memory to play that note along with hearing or seeing the note name or function.</li>
+    </ul>
+
+    <p>This creates a simple rhythm for practice:</p>
+
+    <ul>
+        <li>see the highlight</li>
+        <li>guess and play</li>
+        <li>see the answer on the next beat</li>
+    </ul>
+
+    <h3>Practical Practice Flows</h3>
+
+    <h4>Highlight Only</h4>
+
+    <p>Set <span class="menuExampleLine"><b>n</b> show note name</span> to off. This is the most demanding mode. You see fretboard position only.</p>
+
+    <h4>Embossed Prompt Notes</h4>
+
+    <p>Hide normal named notes through the View controls, then set Arpeggio's note-name mode to one, all, or played with <span class="menuExampleLine"><b>c</b> color notes</span> off. The generated prompts stand out from the rest of the neck without using the full AutoColor palette.</p>
+
+    <h4>AutoColored Prompt Notes</h4>
+
+    <p>Leave the rest of the neck visually plain or hidden, then set <span class="menuExampleLine"><b>c</b> color notes</span> on. Arpeggio's prompt notes will use the current AutoColor mapping and can stand out strongly inside the selected fret range.</p>
+
+    <h4>Flashcard Drill</h4>
+
+    <p>Set <span class="menuExampleLine"><b>f</b> flashcard</span> on and choose a note-name mode. This is useful when you want a short delay between the guess and the reveal.</p>
+
+    
+
+
     <a name="plugin-arpeggio-actions"></a>
-    <h3>Actions And Events</h3>
+    <h3>Actions</h3>
 
     <ul>
         <li><b>A</b> Apply regenerates the current Section immediately.</li>
         <li><b>C</b> Clear removes Arpeggio-generated notes without touching user-authored notes.</li>
         <li><b>h</b> help shows a summary of current settings.</li>
-        <li>When enabled, ArpeggioPlugin handles <b>DaCapo:OnSectionBegin</b> and <b>SongUiShowBeats</b>.</li>
     </ul>
+
+    <h3>Events</h3>
+
+    <ul>
+        <li>When enabled, ArpeggioPlugin handles <b>DaCapo:OnSectionBegin</b>.</li>
+    </ul>
+
+     <h3>Example Command-Line Flow</h3>
+
+    <p>One possible command-line rhythm is:</p>
+
+    <ul>
+        <li><span class="menuExampleLine"><b>p</b> plugins</span></li>
+        <li><span class="menuExampleLine"><b>a</b> arpeggio</span></li>
+        <li><span class="menuExampleLine"><b>m</b> minFret</span> and <span class="menuExampleLine"><b>t</b> maxFret</span></li>
+        <li><span class="menuExampleLine"><b>n</b> show note name</span></li>
+        <li><span class="menuExampleLine"><b>c</b> color notes</span></li>
+        <li><span class="menuExampleLine"><b>A</b> Apply</span></li>
+    </ul>
+
 
     <a name="plugin-fill"></a>
     <h2>FillPlugin</h2>
@@ -3498,7 +3608,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="plugin-transpose-what"></a>
     <h3>What It Does</h3>
 
-    <p>TransposePlugin moves one Song through a programmed interval cycle. The first interval is the starting state. Each apply advances to the next interval and uses only the difference from the currently applied interval.</p>
+    <p>TransposePlugin moves one Song through a programmed interval cycle. The first interval is the starting state. Each <b>Apply</b> advances to the next interval and uses only the difference from the currently applied interval.  Looping when the plugin is enabled applies the transposition every loop, at song begin.  Since the first interval is always 0, the transposition is noticable on the second loop.</p>
 
     <a name="plugin-transpose-options"></a>
     <h3>Main Options</h3>
@@ -3508,21 +3618,43 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><b>n</b> named notes chooses whether named notes move.</li>
         <li><b>p</b> played notes chooses whether played-note layers are included in the transpose request.</li>
         <li><b>r</b> recorded notes chooses whether recorded-note layers are included in the transpose request.</li>
-        <li><b>a</b> auto sharps/flats applies a simple spelling policy after transposition.</li>
-            <li><b>d</b> do lead key also transposes the Section lead key when keys move.</li>
+        <li><b>a</b> auto sharps/flats applies the same key spelling after transposition as found in the menu /sc (section key).</li>
+        <li><b>d</b> do lead key also transposes the Section lead key when keys move.</li>
     </ul>
 
     <a name="plugin-transpose-actions"></a>
-    <h3>Actions And Events</h3>
+    <h3>Actions</h3>
 
     <ul>
         <li><b>A</b> Apply advances to the next configured interval.</li>
         <li><b>S</b> Reset returns the plugin-managed transpose offset to zero.</li>
         <li><b>h</b> help shows current interval, offset, options, and handled events.</li>
+    </ul>
+
+    <h3>Events</h3>
+
+    <ul>
         <li>When enabled, TransposePlugin handles <b>DaCapo:OnSongEnd</b>.</li>
     </ul>
 
-    <p>Auto sharps/flats is intentionally simple. It applies the same sharp-vs-flat grouping used by the command menu key groups, rather than a full enharmonic theory model.</p>
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Take one authored Song such as a chord or scale drill and practice it in all 12 keys.</li>
+        <li>Pair with ArpeggioPlugin so the same authored practice pattern can move across keys automatically.</li>
+        <li>Reduce maintenance of many nearly identical Song files that only differ by key.</li>
+    </ul>
+
+    <h3>Arpeggio And Transpose Together</h3>
+
+    <p>The two plugins are especially useful together.</p>
+
+    <ul>
+        <li>TransposePlugin changes the key progression over time.</li>
+        <li>ArpeggioPlugin regenerates and displays practice prompts inside the current fret range and display mode.</li>
+        <li>The user can choose whether the neck is fully labeled, mostly hidden, color-coded, or used in flashcard style.</li>
+    </ul>
+
 
     <a name="plugins-keyboard-menu"></a>
     <h2>Keyboard And Menu Reminders</h2>

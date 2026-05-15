@@ -181,6 +181,11 @@ const approvedValueEntries = [
 		resolve: () => getTransposeCaptionValue('transposeFunctionDistanceSteps')
 	},
 	{
+		name: 'transposeIntervalsStatus',
+		description: 'widget of active transpose chain',
+		resolve: () => getTransposeCaptionValue('transposeIntervalsStatus')
+	},
+	{
 		name: 'transposeProgressionFunctions',
 		description: 'root keys with emphasized function steps',
 		resolve: () => getTransposeCaptionValue('transposeProgressionFunctions')

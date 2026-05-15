@@ -392,6 +392,14 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return output;
   }
 
+  buildIntervalsStatusWidget(state){
+    if (!state.meaningful || state.steps.length === 0) {
+      return '';
+    }
+    return `${this.currentAppliedInterval} ${JSON.stringify(this.getIntervals())}`;
+  
+  }
+
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
     const formatDistance = (distance) => `${normalizeNoteIndex(distance)}`;
@@ -419,6 +427,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         return this.buildApprovedStepList(state, formatDistance);
       case 'transposeFunctionDistanceSteps':
         return this.buildApprovedStepList(state, formatFunctionDistance);
+      case 'transposeIntervalsStatus':
+        return this.buildIntervalsStatusWidget(state);  
       case 'transposeProgressionFunctions':
         return this.buildApprovedProgressionWidgets(state, { includeFunction: true, includeDistance: false });
       case 'transposeProgressionDistances':
