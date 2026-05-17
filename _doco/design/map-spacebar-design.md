@@ -61,26 +61,114 @@ FillPlugin also plays well at going to the beginning of the song because it just
 ## Table of all Looper states, as seen by User
 
 - This should be edited to align with the reality of the code.
-| state | avail | notes |Cmd | Key| UI |
-| --- | --- | --- | --- | --- | --- |
+- *TODO: add column for key-handler mappings.*
+
+| state | avail | menu | UI | notes |
+| --- | --- | --- | --- | --- | 
+| LoopSong       | 🗹 | /rl  | #transport:btnLoopSections ||
+| SongBegin      | 🗹 | /rsf | #transport:btnFirstSection ||
+| SectionBegin   |    |     |                           | works for sections[0] when btnPrevSection or btnFirstSection|
+| FirstBeat      |    |     |                           | default spot, but no direct call |
+| FirstSection   | 🗹 | /rsf | #transport:btnFirstSection ||
+| PrevBeat       | 🗹 | /rbp | #transport:btnPrevBeat ||
+| LastBeat       |    | /rbn | #transport:btnNextBeat ||
+| PrevSection    | 🗹 | /rsp | #transport:btnPrevSection | |
+| NextSection    | 🗹 | /rsn | #transport:btnNextSection ||
+| LastSection    | 🗹 | /rsl | #transport:btnLastSection |  first beat of|
+| LoopSection    |    |       |                        ||
+| LoopBeats      | 🗹 | /re  | #transport:btnLoopBeats  | |
+| RestartSection |    |      |                        | (plugins work because they work today when you do first section and you are already in first section) |
+| RestartSong    | 🗹 | /rsf  | #transport:FirstSection | FirstSection works, but not dedicated |
+| NextSongLoop   |    |       |                        | skips ahead, fires OnSongEnd |
+
+## States grouped by object
+
+Entries followed by \* are not implemented.
+
+- Song
+    -   Loop
+    -   Restart *
+    -   Begin
+    -   LastBeat *
+    -   NextSongLoop *
+ 
+- Section
+    -   First
+    -   Next
+    -   Prev
+    -   Last
+    -   Restart *
+    -   LoopSection *
+ 
+- Beat
+    -   First *
+    -   Next
+    -   Prev
+    -   Last *
+    -   LoopBeats
 
 
-| LoopSong     | 🗹 | | Transport:btnLoopSections
-| SongBegin    | 🗹 | | Transport:btnFirstSection |
-| SectionBegin |    | 
-| FirstBeat    |    | default spot, but no direct call |
-| FirstSection | 🗹 | Transport:btnFirstSection
-| PrevBeat     | 🗹 | Transport:btnPrevBeat |
-| LastBeat     |   | Transport:btnNextBeat |
-| PrevSection  | 🗹 | Transport:btnPrevSection | 
-| NextSection  | 🗹 | Transport:btnNextSection |
-| LoopSection  |   | Transport:btnLastSection |
-| LoopBeats    | 🗹 | Transport:btnLoopBeats | 
-| RestartSection |    | (plugins work because they work today when you do first section and you are already in first section) 
-| NextSection  | 🗹 | 
-| RestartSong  | 🗹 | works | Transport:FirstSection works|
-| NextSongLoop |   | skips ahead, fires OnSongEnd |
-| LastSection  | 🗹 | first beat of|
+## Command-line menu additions
+
+- Functions (make available through /run/section or /run/beats and /section/nav or /section/beats with user input value "n")
+  - gotoBeat n
+  - gotoSection n
+
+- new Song Looper events
+  - restart (goto sections[0] beat[0] does not fire DaCapo:OnSongEnd)
+  - reset (go to sections[0] beat[0] and Clear any plugin values added, such as owner: items, Transport only does reset current.)
+  - reset hard (mostly for Transpose which will implement event with resetting to original)
+
+
+First menu item is mounted here as "/", "file", "map spacebar": /fm
+
+- f) file
+  - m) map spacerbar
+    - R) restart song (w/o DaCapo:OnSongEnd)
+    - r) restart Section (begin Section / firstBeat)
+    - z) reset song
+    - Z) reset song hard
+    - u) unset spacebar
+
+These menus under "/" should be updated
+
+- r) run
+  - s) section
+    - f) first
+    - p) prev
+    - n) next
+    - l) last
+    - g) goto
+      - input) n 
+  - b) beats
+    - f) first
+    - p) prev
+    - n) next
+    - l) last
+    - g) goto
+      - input) n  
+
+- s) section
+  - n) nav
+    - f) first
+    - p) prev
+    - n) next
+    - l) last
+    - g) goto
+      - input) n 
+  - b) beats
+    - f) first
+    - p) prev
+    - n) next
+    - l) last
+    - g) goto
+      - input) n 
+    - a) add
+    - d) delete
+    - '0') insert first
+    - i) insert beat   
+
+
 
 
 
