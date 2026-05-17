@@ -360,7 +360,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#lblBeat").html("1");
 		
 		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
-	    $("#lblSectionsStatus2").html(txt);
+	    $("#lblSectionsStatus").html(txt);
 		
 		// .lblRootID and .lblRootIDLead have controls in 
 		//     Fill, Transport, and Song Caption:
@@ -1826,10 +1826,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDownload', function() {
 		    downloadPlayedNotes();
 		});
-		bindEvent('click', '#btnPrevSection, #btnPrevSection2', function() {
+		bindEvent('click', '#btnPrevSection', function() {
 		    getSong().gotoPrevSection(false);
 		});
-		bindEvent('click', '#btnNextSection, #btnNextSection2', function() {
+		bindEvent('click', '#btnNextSection', function() {
 		    getSong().gotoNextSection(false);
 		});
 		bindEvent('click', '#btnFirstSection', function() {
@@ -1844,7 +1844,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnLoopSections', function() {
 		    toggleLoopSections();
 		});
-		bindEvent('click', '#btnLoopBeatsTransport', function() {
+		bindEvent('click', '#btnLoopBeats', function() {
 		    toggleLoopBeats();
 		});
 		bindEvent('click', '#btnEditSection', function() {
@@ -1894,12 +1894,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnNextBeat', function() {
 		    getSong().nextBeat();
-		});
-		bindEvent('click', '#btnPrevBeatTransport', function() {
-		    getSong().prevBeat();
-		});
-		bindEvent('click', '#btnNextBeatTransport', function() {
-		  	getSong().nextBeat();
 		});
 		bindEvent('change', '#txtFilename', function() {
 		 $(".lblSongName").html($( this ).val());
@@ -2443,10 +2437,10 @@ EventBus.on('Wiring:removed', function() {
 	refreshPluginMenus();
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
-	$('#btnLoopBeatsTransport').addClass('ButtonOn');
+	$('#btnLoopBeats').addClass('ButtonOn');
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
-	$('#btnLoopBeatsTransport').removeClass('ButtonOn');
+	$('#btnLoopBeats').removeClass('ButtonOn');
 });
 EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
     showLoopSectionsStarted(data);

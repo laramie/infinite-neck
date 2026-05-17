@@ -350,6 +350,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     return {
+      enabled,
+      hasSection: true,
       meaningful: meaningful && steps.length > 0,
       currentInterval,
       currentOffset,
@@ -392,12 +394,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return output;
   }
 
-  buildIntervalsStatusWidget(state){
-    if (!state.meaningful || state.steps.length === 0) {
+  buildIntervalsStatusWidget(state) {
+    if (!state.enabled || !state.hasSection) {
       return '';
     }
-    return `${this.currentAppliedInterval} ${JSON.stringify(this.getIntervals())}`;
-  
+    const intervals = this.getIntervals();
+    if (intervals.length === 0) {
+      return '';
+    }
+    const current = this.currentAppliedInterval;
+    const tds = intervals.map((val) => {
+      const tdClass = val === current ? ' class="transposeCurrentAppliedInterval"' : '';
+      return `<td${tdClass}>${val}</td>`;
+    }).join('');
+    return `<span class="transposeIntervalsStatus"><table><tr>${tds}</tr></table></span>`;
   }
 
   getApprovedCaptionValue(tokenName, context = {}) {
@@ -405,6 +415,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const formatDistance = (distance) => `${normalizeNoteIndex(distance)}`;
     const formatFunction = (distance) => this.getFunctionSymbol(distance);
     const formatFunctionDistance = (distance) => `${this.getFunctionSymbol(distance)}+${normalizeNoteIndex(distance)}`;
+
+    if (tokenName === 'transposeIntervalsStatus') {
+      return this.buildIntervalsStatusWidget(state);
+    }
 
     if (!state.meaningful) {
       return '';
@@ -427,8 +441,6 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         return this.buildApprovedStepList(state, formatDistance);
       case 'transposeFunctionDistanceSteps':
         return this.buildApprovedStepList(state, formatFunctionDistance);
-      case 'transposeIntervalsStatus':
-        return this.buildIntervalsStatusWidget(state);  
       case 'transposeProgressionFunctions':
         return this.buildApprovedProgressionWidgets(state, { includeFunction: true, includeDistance: false });
       case 'transposeProgressionDistances':

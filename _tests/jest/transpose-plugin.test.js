@@ -222,6 +222,21 @@ describe('TransposePlugin', () => {
 
     expect(plugin.getApprovedCaptionValue('transposeCurrentOffset', { song, section: song.getCurrentSection() })).toBe('');
     expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('');
+    expect(plugin.getApprovedCaptionValue('transposeIntervalsStatus', { song, section: song.getCurrentSection() })).toBe('');
+  });
+
+  test('transposeIntervalsStatus shows while enabled at the zero interval', () => {
+    const song = makeSong({ sections: [makeCaptionSection(3)] });
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setManager({
+      song,
+      getPluginEntry: () => ({ enabled: true })
+    });
+    plugin.setPropertyValue('intervals', [0, 2, 5]);
+
+    expect(plugin.getApprovedCaptionValue('transposeIntervalsStatus', { song, section: song.getCurrentSection() })).toBe('<span class="transposeIntervalsStatus"><table><tr><td class="transposeCurrentAppliedInterval">0</td><td>2</td><td>5</td></tr></table></span>');
   });
 
   test('approved caption values expose a one-step transpose chain', () => {
@@ -248,6 +263,7 @@ describe('TransposePlugin', () => {
     expect(plugin.getApprovedCaptionValue('transposeFunctionSteps', { song, section: song.getCurrentSection() })).toBe('<em class="transposeProg">II</em>');
     expect(plugin.getApprovedCaptionValue('transposeDistanceSteps', { song, section: song.getCurrentSection() })).toBe('<em class="transposeProg">2</em>');
     expect(plugin.getApprovedCaptionValue('transposeFunctionDistanceSteps', { song, section: song.getCurrentSection() })).toBe('<em class="transposeProg">II+2</em>');
+    expect(plugin.getApprovedCaptionValue('transposeIntervalsStatus', { song, section: song.getCurrentSection() })).toBe('<span class="transposeIntervalsStatus"><table><tr><td>0</td><td class="transposeCurrentAppliedInterval">2</td></tr></table></span>');
     expect(plugin.getApprovedCaptionValue('transposeProgressionFunctions', { song, section: song.getCurrentSection() })).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D');
     expect(plugin.getApprovedCaptionValue('transposeProgressionDistances', { song, section: song.getCurrentSection() })).toBe('C<span class="transposeCaptionBox"><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D');
     expect(plugin.getApprovedCaptionValue('transposeProgressionFunctionDistances', { song, section: song.getCurrentSection() })).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D');
