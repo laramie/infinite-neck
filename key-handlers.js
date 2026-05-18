@@ -640,6 +640,9 @@ export function performCmdAction(menuItem, args){
         case "showViewDiagnosticsSongFileFormat":
 			showMessagesJSON(getPersistentSongFile());
 			break;
+        case "showViewDiagnosticsLogEvents":
+			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents());
+			break;
 		case "showGraveyard":
 			showGraveyard();
 			break;

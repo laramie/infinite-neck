@@ -629,6 +629,11 @@ export var gMenuFile =    {
           "trigger": "d",
           "children": [
             {
+              "caption": "<b>e</b>vent log to console",
+              "trigger": "e",
+              "action": "showViewDiagnosticsLogEvents"
+            },
+            {
               "caption": "song <b>f</b>ile format",
               "trigger": "f",
               "action": "showViewDiagnosticsSongFileFormat"

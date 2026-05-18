@@ -206,11 +206,54 @@ These menus under "/" should be updated
     - '0') insert first
     - i) insert beat   
 
-## Request
+## Iteration 2 Copilot Request
 
 Copilot, please process Iteration 2, and put a report in `_doco/design/map-spacebar-design-copilot-2.md`
 
 Please ditch most assumptions from Iteration 1 as clarified in our Iteration 2 in this document.  Your report can assume that the Iteration 2 document is how we want things, and only refer to features in Iteration 1 if they seem truly missing from what is needed by Iteration 2, or if the danger exposed in Iteration 1 persists in Iteration 2.
+
+# Iteration 3: Locking in Design Choices for Implementation Plan
+
+## Use-Cases
+
+We should describe the driving use-cases for this feature sprint.
+
+These center around a session where the User is looping with combinations of plugins that present chords, arpeggios, and note choices and advance through beats and Sections with transpositions through various keys, either for practice, or composition.
+
+There is a practice called "The Pencil Rule" where the User places a pencil between the black keys of a piano high in the range where we almost never play so the pencil is not in the way, then practices a musical section or sequence, and advances the pencil down to the next slot.  After ten pencil placements, the excercise is considered sufficient, and the User can switch to the next musical phrase or section, which may correspond to a Section in infinite-neck, or a Song in one transposition interval, or even a User-tracked group of Sections.  But if the User plays the sequence incorrectly (as judged by the User, since we don't have MIDI mapping yet), the User can restart the sequence, which might be restarting the Section, the Song, or even restarting the TransposePlugin with the current/soft-reset. So we need to support various resets to let the user jump forward or backward with one spacebar hit, to the amount or semantic the user has chosen for this session.  That is why there is not a current requirement to persist the spacebar map.
+
+Similarly, in composition, a user may want to see/hear loops and adjust the constituent notes or Section order in real-time.  Given a User's inspiration to repeat or sequence musical notes and passages, we need to provide the looping composer/DJ with as many jump semantics as infinite-neck provides.
+
+
+
+## Design Choices
+
+1) We have decided to try using "loop beats" as our implementation of `LoopSection`.  Currently, LoopSong fires DaCapo:OnSectionBegin and DaCapo:OnSectionEnd while looping, but "loop beats" only fires DaCapo:OnSectionEnd.  If "loop beats" were fixed to also fire both events, this requirement is probably complete.  We would test it against authoring beats while plugins are active and looping. If this works, we would consider `LoopSection` to be implemented by "loop beats", and would remove `LoopSection` from requirements.
+
+2) We have decided that `NextSongLoop` can be dropped for the next best option: a transport action that effectively clicks LastSection then LastBeat (except implemented in a single-verb action, called "gotoLastBeatInSong").  This would leave the User on the last beat of the last Section, and if the Looper were looping, the Song would naturally turn over into the next loop and all events would fire normally.  This satisfies the use-case: when practicing, the User decides to restart practice at the next loop.  Except for the extra time of waiting for the beat to complete, this is functionally the same, and works for practice sessions, where a little time before the first beat drop could even be considered a feature.  This use case is not for real-time synchronization of the next loop anyway.
+
+3) From a programming point of view, we'd like all the bindings in the menu for "map spacebar" to wire to single-verb actions available, so there's not another layer of dispatch or action id's.  Once we ensure that any new actions are handled by single-verb key-handler actions, this should be straightforward.
+
+4) We do not need an OnSongRestart event.  It will be sufficient to use RestartSong navigation, which is probably just FirstSection. RestartSong can probably be dropped entirely as long as FirstSection transport navigation still satisfies the use cases in testing.
+
+5) Looper:OnSongReset may be the only event needed. It would be paired with single-verb actions "songReset" and "songResetHard".  Still open to the idea of two events instead, if that is simpler. The plugins will need the event with the optional "hard" data property as you outlined.  We decided this event was needed because it is obviously preferable than having the Transport or Looper know about plugins.
+
+6) FillPlugin with TransposePlugin behaves as expected when using FirstSection, firstBeat, nextSection, prevSection, etc.  This means that for this sprint, FirstSection can be considered RestartSong.
+
+7) ArpeggioPlugin with TransposePlugin behaves as expected when using FirstSection, LoopBeats, prevBeat.  For this sprint, FirstSection can be considered RestartSong.
+
+
+8) We have updated the table and renamed it  TransportNavigationTable.  Please use this in your Implementation Plan, updating and changing as needed.
+`_doco/design/TransportNavigationTable.md`
+
+
+## Iteration 3 Request
+
+Copilot, please produce an Implementation Plan, based on our design so far, with the restrictions and clarifications in this iteration above.
+
+Please put your plan in 
+`_doco/design/map-spacebar-implementation-plan.md`
+
 
 
 
