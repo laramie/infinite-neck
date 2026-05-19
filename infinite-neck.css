@@ -825,7 +825,9 @@ table.viewControls th {
     vertical-align: middle;
 }
 
-.lblSectionCaption .transposeProgFunc {
+/***************************** Transpose Widgets *****************************/
+
+.transposeProgFunc {
     font-size: 40%;
     font-family: Georgia, 'Times New Roman', Times, serif;
     color: rgb(15, 0, 0);
@@ -838,7 +840,7 @@ table.viewControls th {
     font-weight: bold;
 }
 
-.lblSectionCaption .transposeProgOffset {
+.transposeProgOffset {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 30%;
     color: red;
@@ -851,25 +853,34 @@ table.viewControls th {
     margin-right: 0.1em;
     font-weight: bold;
 }
-.lblSectionCaption .transposeArrow {
+.transposeArrow {
     display: inline-block;
     font-size: 50%;
     line-height: 1;
     color: rgb(58, 22, 0);
     margin-right: 0.2em;
 }
-.lblSectionCaption .transposeCaptionBox {
+.transposeCaptionBox {
     display: inline-flex;
     align-items: flex-start;
     white-space: nowrap;
     line-height: 1.4;
     padding: 0.1em 0.08em;
+    margin-left: 0.2em;
     margin-right: 0.2em;
     border: 1px solid rgb(13, 6, 6);
     background-color: rgb(252, 202, 86);
     border-radius: 0.2em;
-    box-shadow: 3px 3px 0px gray;
+    box-shadow: 2px 2px 3px 1px maroon;
     vertical-align: middle;
+}
+.transposeKey {
+    font-size: 60%;
+}
+.transposeProgressionFunctionDistances {
+    color: gold;
+    font-family: 'Volkkorn', serif;
+    font-size: 120%;
 }
 
 .transposeIntervalsStatus{

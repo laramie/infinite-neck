@@ -339,6 +339,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
+		var pluginWidgets = expandApprovedTemplate("${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
+	    $(".lblLeadSheetWidgets").html(pluginWidgets);
+
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
 	    $(".lblSectionMode").html( getSong().getCurrentSection().chartMode);
 
@@ -1004,14 +1007,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function leaveFullscreen(){
 		var wasVisible =  $('.container').is(':visible');
 		$('.container').show();
-		$("#tabledestTopPad").hide();
 		$(".dockable-handle").show();
 		$("#divESCAPE").hide();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
 		$('.container').hide();
-		$("#tabledestTopPad").show();
 		$(".dockable-handle").hide();
 		if (showESCButton){ // undefined ==> false
 			$("#divESCAPE").show();
@@ -1024,7 +1025,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (wasVisible){
 			getSong().captionsRowShowing = $('.captionRow').is(":visible");
 			$('.captionRow').hide();
-			$("#tabledestTopPad").show();
 			$(".dockable-handle").hide()
 			setWiringOpenState(false); //going fullscreen
 		} else {
@@ -1034,7 +1034,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$('.captionRow').hide();
 			}
 			$(".dockable-handle").show()
-			$("#tabledestTopPad").hide();
 			$("#divESCAPE").hide();
 		}
 	}
@@ -2261,7 +2260,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showHideDisplayOptionsPresent();  //enables and disables btnDeleteDisplayOptions_* etc.
  		hideAllMenuDivs();
 		$("#divQuick").hide();
-		$("#tabledestTopPad").hide();
 		$("#CmdMenu").hide();
 
 		updateFontLabel();
@@ -2324,7 +2322,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}),
 
 			loadTemplates('templates/SectionStatus/section-status.html').then(() => {
-				SectionStatusBuilder.addToDest('#divSectionStatus_LeadSheet', 'leadsheet', 'caption', 'horizontal');
+				//Neither of these work because table and replayOptions are not passed:
+				//SectionStatusBuilder.addToDest('#divSectionStatus_LeadSheet', 'leadsheet', 'caption', 'horizontal');
+				//.createWidget($('#divSectionStatus_LeadSheet'), 'leadsheet1', 'caption', 'horizontal');
+	
 			})
 		];
 		Promise.all(promises).then(() => {

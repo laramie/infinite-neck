@@ -386,12 +386,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!state.meaningful || state.steps.length === 0) {
       return '';
     }
-    let output = state.steps[0].fromKey;
+    let output = '<span class="transposeKey">'+state.steps[0].fromKey+'</span>';
     state.steps.forEach((step) => {
       output += this.buildProgressionWidget(step.distance, options);
-      output += step.toKey;
+      output += '<span class="transposeKey">'+step.toKey+'</span>';
     });
-    return output;
+    return '<span class="transposeProgressionFunctionDistances">'+output+'</span>';
   }
 
   buildIntervalsStatusWidget(state) {
