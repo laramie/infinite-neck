@@ -49,6 +49,7 @@ import {
 	document_keyup
 } from './key-handlers.js';
 import {
+	notifySectionRestartIfLooping,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -384,6 +385,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function clearAndReplaySection(){
 		getSong().gotoFirstBeat();
 		clearAll();
+		notifySectionRestartIfLooping();
 		resetNoteNames(); //calls replay()
 		updateSectionsStatus();
 		showBeats();

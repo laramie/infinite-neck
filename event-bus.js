@@ -14,7 +14,11 @@ const EventBus = {
   },
   trigger(event, data) {
     if (this._logEvents){
-      console.log("EventBus.trigger:"+JSON.stringify(event)+" data:"+JSON.stringify(data));
+      //if (  event.startsWith("DaCapo")
+      //   || event.startsWith("Looper")){
+      let stack = getStack();
+        console.log("EventBus.trigger:"+JSON.stringify(event)+" data:"+JSON.stringify(data)+stack);
+      //}
     }
     if (!this._events[event]) return;
     this._events[event].forEach(handler => handler(event, data));
@@ -28,6 +32,17 @@ const EventBus = {
     return val;    
   }
 };
+
+function getStack(){
+  try {
+    let ls = new Error("EventBus Location");
+    ls.name = "LocationStack";
+    throw ls;
+  } catch (e) {
+    return `\n${e.stack}`;
+  }
+
+}
 
 export default EventBus;
 

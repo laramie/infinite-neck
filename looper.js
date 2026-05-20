@@ -53,6 +53,18 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		InfiniteNeck.showBPM();
 	}
 
+	function emitSectionBeginForCurrentSong(song){
+		if (!song) {
+			return;
+		}
+		EventBus.trigger('DaCapo:OnSectionBegin', {
+			sectionIndex: song.getSectionsCurrentIndex(),
+			sectionCount: song.getSections().length,
+			beat: song.getBeat(),
+			beats: song.getBeats()
+		});
+	}
+
 	export function getLoopTimingMode() {
 		return looperTimingMode;
 	}
@@ -229,12 +241,7 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
                 beat: song.getBeat(),
                 beats: song.getBeats()
             });
-			EventBus.trigger('DaCapo:OnSectionBegin', {
-				sectionIndex: song.getSectionsCurrentIndex(),
-				sectionCount: song.getSections().length,
-				beat: song.getBeat(),
-				beats: song.getBeats()
-			});
+			emitSectionBeginForCurrentSong(song);
         }
 
 		scheduleNextBeatTick('sections');
@@ -259,12 +266,7 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 					beats: song.getBeats()
 				});
 			}
-			EventBus.trigger('DaCapo:OnSectionBegin', {
-				sectionIndex: song.getSectionsCurrentIndex(),
-				sectionCount: song.getSections().length,
-				beat: song.getBeat(),
-				beats: song.getBeats()
-			});
+			emitSectionBeginForCurrentSong(song);
 		}
 
 		scheduleNextBeatTick('beats');
@@ -314,6 +316,13 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		return isBeatsLooping;
 	}
 
+	export function notifySectionRestartIfLooping(){
+		if (!sectionsLooping() && !beatsLooping()) {
+			return;
+		}
+		emitSectionBeginForCurrentSong(getSong());
+	}
+
     export function tickBeat(song, { sectionsLooping, showBeats }) {
         var beat = song.getBeat();
         var beats = song.getBeats();
@@ -358,12 +367,7 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
                 song.gotoNextSection(true);  //calls showBeats()
 				result.sectionTransition = true;
     
-                EventBus.trigger('DaCapo:OnSectionBegin', {
-                    sectionIndex: song.getSectionsCurrentIndex(),
-                    sectionCount: song.getSections().length,
-                    beat: song.getBeat(),
-                    beats: song.getBeats()
-                });
+				emitSectionBeginForCurrentSong(song);
 				callTimingHook('afterSectionTransition', {
 					...result,
 					song,
@@ -373,12 +377,7 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 				});
             } else {
                 song.incBeatLoop();
-				EventBus.trigger('DaCapo:OnSectionBegin', {
-					sectionIndex: song.getSectionsCurrentIndex(),
-					sectionCount: song.getSections().length,
-					beat: song.getBeat(),
-					beats: song.getBeats()
-				});
+				emitSectionBeginForCurrentSong(song);
                 showBeats();
             }
         } else {
