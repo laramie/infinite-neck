@@ -23,7 +23,7 @@ export class ArpeggioPlugin {
     this.id = 'arpeggio';
     this.registeredName = 'arpeggio';
     this.menuTrigger = 'a';
-    this.eventNames = ['DaCapo:OnSectionBegin', 'SongUiShowBeats'];
+    this.eventNames = ['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong'];
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.skipNextSongUiShowBeats = false;
@@ -174,6 +174,10 @@ export class ArpeggioPlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'Looper:OnResetSong') {
+      return this.clearGeneratedNotesInSong(context.song || getSong());
+    }
+
     if (eventName === 'SongUiShowBeats') {
       if (this.skipNextSongUiShowBeats) {
         this.skipNextSongUiShowBeats = false;

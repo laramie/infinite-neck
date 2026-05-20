@@ -14,6 +14,7 @@ import {
 } from './display-options.js';
 import {
 	beatsLooping,
+	restartLoopBeats,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -57,6 +58,7 @@ import pluginManager from './plugins/pluginRuntime.js';
 export { document_keypress, document_keyup };
 
 let keyHandlerProviders = {};
+let spacebarActionName = '';
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -108,6 +110,75 @@ function updateSectionsStatus(...args) { return requireProvider('updateSectionsS
 const FONT_INCREMENT = 1;
 const DEFAULT_FONT_SIZE = 10;  
 const DEFAULT_NOTE_FONT_SIZE = 22;  // Keep in sync with infinite-neck.css :root --named-note-font-size: 22pt;  Here "pt" is glued on by code below.
+
+function makeSyntheticMenuItem(actionName) {
+	return {
+		action: actionName,
+		popOnBang: false
+	};
+}
+
+function runActionByName(actionName, args) {
+	if (!actionName) {
+		return { result: '' };
+	}
+	return performCmdAction(makeSyntheticMenuItem(actionName), args);
+}
+
+function refreshBeatUi(song = getSong()) {
+	if (!song) {
+		return;
+	}
+	if (typeof song.publish_UpdateSectionStatus === 'function') {
+		song.publish_UpdateSectionStatus();
+	} else {
+		updateSectionsStatus();
+	}
+	if (typeof song.requestUiShowBeats === 'function') {
+		song.requestUiShowBeats();
+	}
+}
+
+function getActiveLoopState() {
+	return {
+		sections: sectionsLooping(),
+		beats: beatsLooping()
+	};
+}
+
+function restartCapturedLoopState(loopState) {
+	if (loopState.sections) {
+		restartLoopSections();
+	} else if (loopState.beats) {
+		restartLoopBeats();
+	}
+}
+
+function performResetSong(hard = false) {
+	const song = getSong();
+	if (!song) {
+		return hard ? 'reset song (hard) skipped: no song loaded' : 'reset song skipped: no song loaded';
+	}
+
+	const loopState = getActiveLoopState();
+	if (loopState.sections || loopState.beats) {
+		clearBeatAndSectionLooping();
+	}
+
+	song.firstSection();
+	song.gotoFirstBeat();
+	EventBus.trigger('Looper:OnResetSong', {
+		hard,
+		sectionIndex: 0,
+		sectionCount: Array.isArray(song.sections) ? song.sections.length : 0,
+		beat: 1,
+		beats: typeof song.getBeats === 'function' ? song.getBeats() : undefined
+	});
+	clearAndReplaySection();
+	restartCapturedLoopState(loopState);
+
+	return hard ? 'reset song (hard)' : 'reset song';
+}
 
 
 function moveSelectByClampedStep(selectSelector, delta) {
@@ -346,6 +417,12 @@ function document_keypress(e) {
             case "]":
                 checkRB('#idMidiPitchesSingle');
                 break;
+			case " ":
+				if (spacebarActionName) {
+					e.preventDefault();
+					runActionByName(spacebarActionName);
+				}
+				break;
             default:
         }
     }
@@ -471,6 +548,102 @@ export function performCmdAction(menuItem, args){
 			getSong().lastSection();
             clearAndReplaySection();
 			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			break;
+		case "gotoSection":
+			if (argByInputID){
+				const targetSectionCardinal = toInt(argByInputID, 0);
+				if (targetSectionCardinal > 0){
+					getSong().gotoSection(targetSectionCardinal - 1);
+					actionResult.result = ""+(getSectionsCurrentIndex()+1);
+				}
+			}
+			break;
+		case "gotoFirstBeat":
+			clearAndReplaySection();
+			actionResult.result = ""+getCurrentSection().currentBeat;
+			break;
+		case "gotoLastBeat": {
+			const song = getSong();
+			song.gotoLastBeat();
+			refreshBeatUi(song);
+			actionResult.result = ""+getCurrentSection().currentBeat;
+			break;
+		}
+		case "gotoLastBeatInSong": {
+			const song = getSong();
+			song.gotoLastBeatInSong();
+			refreshBeatUi(song);
+			actionResult.result = ""+(getSectionsCurrentIndex()+1)+":"+getCurrentSection().currentBeat;
+			break;
+		}
+		case "gotoBeat":
+			if (argByInputID){
+				const targetBeat = toInt(argByInputID, 0);
+				if (targetBeat > 0){
+					const song = getSong();
+					song.gotoBeat(Math.min(targetBeat, song.getBeats()));
+					refreshBeatUi(song);
+					actionResult.result = ""+getCurrentSection().currentBeat;
+				}
+			}
+			break;
+		case "resetSong":
+			actionResult.result = performResetSong(false);
+			break;
+		case "resetSongHard":
+			actionResult.result = performResetSong(true);
+			break;
+		case "mapSpacebar_firstSection":
+			spacebarActionName = 'firstSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_prevSection":
+			spacebarActionName = 'prevSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_nextSection":
+			spacebarActionName = 'nextSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_lastSection":
+			spacebarActionName = 'lastSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_nextBeat":
+			spacebarActionName = 'nextBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_prevBeat":
+			spacebarActionName = 'prevBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoFirstBeat":
+			spacebarActionName = 'gotoFirstBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoLastBeat":
+			spacebarActionName = 'gotoLastBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoLastBeatInSong":
+			spacebarActionName = 'gotoLastBeatInSong';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_restartSong":
+			spacebarActionName = 'firstSection';
+			actionResult.result = `spacebar mapped: restartSong using ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_resetSong":
+			spacebarActionName = 'resetSong';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_resetSongHard":
+			spacebarActionName = 'resetSongHard';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_unsetSpacebarAction":
+			spacebarActionName = '';
+			actionResult.result = 'spacebar unmapped';
 			break;
         case "transposeSong":
             if (argByInputID){

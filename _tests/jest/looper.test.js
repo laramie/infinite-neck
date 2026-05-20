@@ -56,10 +56,16 @@ describe('looper tickBeat', () => {
 	test('end-of-beat tick without section loop: wraps beat and shows beats', () => {
 		const song = makeMockSong({ beat: 4, beats: 4 });
 		const showBeats = jest.fn();
+		const triggerSpy = jest.spyOn(EventBus, 'trigger');
 		tickBeat(song, { sectionsLooping: false, showBeats });
 		expect(song.incBeatLoop).toHaveBeenCalledTimes(1);
 		expect(showBeats).toHaveBeenCalledTimes(1);
 		expect(song.gotoNextSection).not.toHaveBeenCalled();
+		expect(triggerSpy.mock.calls).toEqual([
+			['DaCapo:OnSectionEnd', expect.any(Object)],
+			['DaCapo:OnSectionBegin', expect.any(Object)]
+		]);
+		triggerSpy.mockRestore();
 	});
 
 	test('end-of-beat tick with section loop: advances section (gotoNextSection calls showBeats internally)', () => {
@@ -143,7 +149,11 @@ describe('looper looping state', () => {
 		expect(beatsLooping()).toBe(true);
 		expect(sectionsLooping()).toBe(false);
 		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
-		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStart', { caption: 'LOOPING...' });
+		expect(triggerSpy.mock.calls).toEqual([
+			['Looper:OnLoopBeatsStart', { caption: 'LOOPING...' }],
+			['DaCapo:OnSongBegin', expect.any(Object)],
+			['DaCapo:OnSectionBegin', expect.any(Object)]
+		]);
 
 		triggerSpy.mockClear();
 		toggleLoopBeats();

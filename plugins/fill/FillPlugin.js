@@ -61,7 +61,7 @@ export class FillPlugin {
     this.id = 'fill';
     this.registeredName = 'fill';
     this.menuTrigger = 'f';
-    this.eventNames = ['DaCapo:OnSectionBegin'];
+    this.eventNames = ['DaCapo:OnSectionBegin', 'Looper:OnResetSong'];
     this.rowBoundsInitialized = false;
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
@@ -505,6 +505,10 @@ export class FillPlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'Looper:OnResetSong') {
+      return this.clearSong(context.song || getSong());
+    }
+
     if (eventName !== 'DaCapo:OnSectionBegin') {
       return {};
     }

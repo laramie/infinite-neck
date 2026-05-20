@@ -74,6 +74,94 @@ export var gMenuFile =    {
           "action": "showGraveyard"
         },
         {
+          "caption": "<b>m</b>ap spacebar",
+          "trigger": "m",
+          "children": [
+            {
+              "caption": "<b>R</b>estart song",
+              "trigger": "R",
+              "action": "mapSpacebar_restartSong"
+            },
+            {
+              "caption": "<b>r</b>estart section",
+              "trigger": "r",
+              "action": "mapSpacebar_gotoFirstBeat"
+            },
+            {
+              "caption": "<b>z</b> reset song",
+              "trigger": "z",
+              "action": "mapSpacebar_resetSong"
+            },
+            {
+              "caption": "<b>Z</b> reset song hard",
+              "trigger": "Z",
+              "action": "mapSpacebar_resetSongHard"
+            },
+            {
+              "caption": "<b>u</b>nset spacebar",
+              "trigger": "u",
+              "action": "mapSpacebar_unsetSpacebarAction"
+            },
+            {
+              "caption": "<b>s</b>ection",
+              "trigger": "s",
+              "children": [
+                {
+                  "caption": "<b>f</b>irst",
+                  "trigger": "f",
+                  "action": "mapSpacebar_firstSection"
+                },
+                {
+                  "caption": "<b>p</b>rev",
+                  "trigger": "p",
+                  "action": "mapSpacebar_prevSection"
+                },
+                {
+                  "caption": "<b>n</b>ext",
+                  "trigger": "n",
+                  "action": "mapSpacebar_nextSection"
+                },
+                {
+                  "caption": "<b>l</b>ast",
+                  "trigger": "l",
+                  "action": "mapSpacebar_lastSection"
+                },
+                {
+                  "caption": "<b>L</b>ast beat in song",
+                  "trigger": "L",
+                  "action": "mapSpacebar_gotoLastBeatInSong"
+                }
+              ]
+            },
+            {
+              "caption": "<b>b</b>eats",
+              "trigger": "b",
+              "children": [
+                {
+                  "caption": "<b>f</b>irst",
+                  "trigger": "f",
+                  "action": "mapSpacebar_gotoFirstBeat"
+                },
+                {
+                  "caption": "<b>p</b>rev",
+                  "trigger": "p",
+                  "action": "mapSpacebar_prevBeat"
+                },
+                {
+                  "caption": "<b>n</b>ext",
+                  "trigger": "n",
+                  "action": "mapSpacebar_nextBeat"
+                },
+                {
+                  "caption": "<b>l</b>ast",
+                  "trigger": "l",
+                  "action": "mapSpacebar_gotoLastBeat"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "caption": "<b>C</b>lear graveyard, with backup",
           "trigger": "C",
           "children": [
@@ -195,6 +283,18 @@ export var gMenuFile =    {
               "caption": "<b>l</b>ast",
               "trigger": "l",
               "action": "lastSection"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoSection",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentSectionCardinal",
+                "datatype": "int",
+                "id": "sectionNumber"
+              }
             }
           ]
         },
@@ -449,6 +549,11 @@ export var gMenuFile =    {
           ],
           "children": [
             {
+              "caption": "<b>f</b>irst",
+              "trigger": "f",
+              "action": "gotoFirstBeat"
+            },
+            {
               "caption": "<b>n</b>ext",
               "trigger": "n",
               "action": "nextBeat"
@@ -464,13 +569,30 @@ export var gMenuFile =    {
               "action": "addBeat"
             },
             {
+              "caption": "<b>l</b>ast",
+              "trigger": "l",
+              "action": "gotoLastBeat"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoBeat",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentBeat",
+                "datatype": "int",
+                "id": "beatNumber"
+              }
+            },
+            {
               "caption": "<b>d</b>elete",
               "trigger": "d",
               "action": "deleteBeat"
             },
             {
-              "caption": "insert <b>f</b>irst",
-              "trigger": "f",
+              "caption": "insert <b>0</b> first",
+              "trigger": "0",
               "action": "insertFirstBeat"
             },
             {
@@ -1096,6 +1218,38 @@ export var gMenuFile =    {
               "caption": "<b>l</b>ast",
               "trigger": "l",
               "action": "lastSection"
+            },
+            {
+              "caption": "<b>L</b>ast beat in song",
+              "trigger": "L",
+              "action": "gotoLastBeatInSong"
+            },
+            {
+              "caption": "<b>0</b> restart song",
+              "trigger": "0",
+              "action": "firstSection"
+            },
+            {
+              "caption": "<b>r</b>eset song",
+              "trigger": "r",
+              "action": "resetSong"
+            },
+            {
+              "caption": "<b>R</b>eset song hard",
+              "trigger": "R",
+              "action": "resetSongHard"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoSection",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentSectionCardinal",
+                "datatype": "int",
+                "id": "sectionNumber"
+              }
             }
           ]
         },
@@ -1108,6 +1262,11 @@ export var gMenuFile =    {
           ],
           "children": [
             {
+              "caption": "<b>f</b>irst",
+              "trigger": "f",
+              "action": "gotoFirstBeat"
+            },
+            {
               "caption": "<b>n</b>ext",
               "trigger": "n",
               "action": "nextBeat"
@@ -1116,6 +1275,23 @@ export var gMenuFile =    {
               "caption": "<b>p</b>rev",
               "trigger": "p",
               "action": "prevBeat"
+            },
+            {
+              "caption": "<b>l</b>ast",
+              "trigger": "l",
+              "action": "gotoLastBeat"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoBeat",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentBeat",
+                "datatype": "int",
+                "id": "beatNumber"
+              }
             }
           ]
         }

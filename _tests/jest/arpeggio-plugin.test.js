@@ -133,6 +133,12 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(help).toContain('max fret limit = 3');
 	});
 
+	test('registers reset event alongside section-begin and beat display events', () => {
+		const plugin = new ArpeggioPlugin();
+
+		expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong']);
+	});
+
 	test('result strings use user-facing skip terminology', () => {
 		const plugin = new ArpeggioPlugin();
 
@@ -539,6 +545,18 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(Object.keys(sectionNotes.recordedNotes).length).toBeGreaterThan(0);
 
 		const result = plugin.clearGeneratedNotesInSong(song);
+
+		expect(result.result).toContain('removed');
+		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+		expect(sectionNotes.recordedNotes).toEqual({});
+	});
+
+	test('Looper:OnResetSong clears generated notes in song', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		song.requestUiShowBeats.mockClear();
+
+		const result = plugin.handleEvent('Looper:OnResetSong', { hard: false }, { song });
 
 		expect(result.result).toContain('removed');
 		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);

@@ -108,6 +108,10 @@ export class Section extends SectionPersistence {
 		this.currentBeat = 1;
 	}
 
+	gotoLastBeat() {
+		this.currentBeat = this.getBeats();
+	}
+
 	gotoBeat(oneBasedIndex){
 		this.currentBeat = oneBasedIndex;
 	}

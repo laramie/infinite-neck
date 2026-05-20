@@ -257,7 +257,7 @@ describe('FillPlugin', () => {
   test('registers the same section-begin event used by looper and arpeggio', () => {
     const plugin = new FillPlugin();
 
-    expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin']);
+    expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'Looper:OnResetSong']);
   });
 
   test('ignores the legacy empty persisted Fill stub and restores runtime defaults', () => {
@@ -387,6 +387,32 @@ describe('FillPlugin', () => {
     expect(plugin.getProperty('maxFret').getValue()).toBe(beforeOptions.maxFret);
     expect(plugin.getProperty('minRow').getValue()).toBe(beforeOptions.minRow);
     expect(plugin.getProperty('maxRow').getValue()).toBe(beforeOptions.maxRow);
+  });
+
+  test('Looper:OnResetSong clears Fill-generated notes across the song', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const firstSection = makeSection({ [targetTable]: {} });
+    const secondSection = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+        sections: [firstSection, secondSection],
+        isHeadless: false
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.applyToSection(song, firstSection);
+    plugin.applyToSection(song, secondSection);
+    song.requestUiShowBeats.mockClear();
+
+    const result = plugin.handleEvent('Looper:OnResetSong', { hard: false }, { song });
+
+    expect(result.result).toBe('Fill cleared all sections');
+    expect(getPlayedNotes(firstSection, targetTable)).toHaveLength(0);
+    expect(getPlayedNotes(secondSection, targetTable)).toHaveLength(0);
+    expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
   });
 
   test('apply resolves noteAutomatic to a concrete note* color at fill time', () => {

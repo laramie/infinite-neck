@@ -243,10 +243,29 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 	function startLoopBeats(){
 		isSectionsLooping = false;
 		isBeatsLooping = true;
+		const song = getSong();
 		callTimingHook('resetTimingState', { reason: 'start-loop', loopKind: 'beats' }, { ignoreTimingMode: true });
 		EventBus.trigger('Looper:OnLoopBeatsStart', {
 			caption: LOOPING_BEATS_CAPTION
 		});
+
+		if (song) {
+			const isSongBegin = song.getSectionsCurrentIndex() === 0 && song.getBeat() === 1;
+			if (isSongBegin) {
+				EventBus.trigger('DaCapo:OnSongBegin', {
+					sectionIndex: song.getSectionsCurrentIndex(),
+					sectionCount: song.getSections().length,
+					beat: song.getBeat(),
+					beats: song.getBeats()
+				});
+			}
+			EventBus.trigger('DaCapo:OnSectionBegin', {
+				sectionIndex: song.getSectionsCurrentIndex(),
+				sectionCount: song.getSections().length,
+				beat: song.getBeat(),
+				beats: song.getBeats()
+			});
+		}
 
 		scheduleNextBeatTick('beats');
 	}
@@ -267,6 +286,15 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 			startLoopSections();
 		} else {
 			startLoopSections();
+		}
+	}
+
+	export function restartLoopBeats(){
+		if (beatsLooping()){
+			clearBeatAndSectionLooping();
+			startLoopBeats();
+		} else {
+			startLoopBeats();
 		}
 	}
 
@@ -345,6 +373,12 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 				});
             } else {
                 song.incBeatLoop();
+				EventBus.trigger('DaCapo:OnSectionBegin', {
+					sectionIndex: song.getSectionsCurrentIndex(),
+					sectionCount: song.getSections().length,
+					beat: song.getBeat(),
+					beats: song.getBeats()
+				});
                 showBeats();
             }
         } else {

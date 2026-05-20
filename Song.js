@@ -488,8 +488,17 @@ export class Song extends SongPersistence {
 	    this.gFirstBeatSeen = false;
 	}
 
+    gotoLastBeat(){
+        this.getCurrentSection().gotoLastBeat();
+    }
+
     gotoBeat(oneBasedIndex){
         this.getCurrentSection().gotoBeat(oneBasedIndex);
+    }
+
+    gotoLastBeatInSong(){
+        this.lastSection();
+        this.gotoLastBeat();
     }
 
     moveBeatsLaterForTable(tableID, beatCount, oneBasedIndex){

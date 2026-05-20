@@ -837,6 +837,10 @@
                     <ul class="LinkList">
                         <li><a href="#divFileControls">File</a></li>
                         <li><a href="#transport">Transport</a>
+                            <ul class="LinkList">
+                                <li><a href="#mapSpacebar">Map Spacebar</a></li>
+                                <li><a href="#transportNavigationTable">Transport Navigation Table</a></li>
+                            </ul>
                         <li><a href="#spanSectionDrawer">Section Drawer</a>
                             <ul class="LinkList">
                                 <li><a href="#divSectionDestination">Section Destination</a></li>
@@ -1386,6 +1390,168 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
             <br><i>Transport showing Section 1 of 5, on Beat 3 of 4.</i></p>
   <p><img src="img/help/context/transport-section-drawer-button.jpg">
             <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the <a href="#spanSectionDrawer">Section Drawer</a>: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
+
+<a name="mapSpacebar"></a>
+<h4>Map Spacebar</h4>
+<p>You can map the spacebar to one transport action at a time. Use the File menu path <span class="menuExampleLine"><b><small>/fm</small></b></span> to choose what the spacebar should do.</p>
+
+<p>The top-level spacebar mappings are:</p>
+<ul>
+    <li>Restart song: <span class="menuExampleLine"><b><small>/fmR</small></b></span></li>
+    <li>Restart section: <span class="menuExampleLine"><b><small>/fmr</small></b></span></li>
+    <li>Reset song: <span class="menuExampleLine"><b><small>/fmz</small></b></span></li>
+    <li>Reset song hard: <span class="menuExampleLine"><b><small>/fmZ</small></b></span></li>
+    <li>Unset the spacebar mapping: <span class="menuExampleLine"><b><small>/fmu</small></b></span></li>
+</ul>
+
+<p>You can also map the spacebar to section navigation with <span class="menuExampleLine"><b><small>/fms</small></b></span> or beat navigation with <span class="menuExampleLine"><b><small>/fmb</small></b></span>.</p>
+
+<p>Once mapped, pressing <span class="key">SPACE</span> runs that transport action directly. This is useful for hands-on practice when you want one repeatable motion under your picking hand or your foot pedal keyboard.</p>
+
+<p><b>Reset song</b> returns you to Section 1, Beat 1 and preserves the active loop mode if one was already running. <b>Reset song hard</b> does the same repositioning, but also triggers the stronger reset behavior used by plugins that need to clear generated state.</p>
+
+<a name="transportNavigationTable"></a>
+<h4>Transport Navigation Table</h4>
+<p>This table summarizes the transport navigation commands available in the app. The Menu column shows the command-line path, and the UI column names the related transport control when one exists.</p>
+
+<table class="ExamplesTable">
+    <tr>
+        <th>Navigation</th>
+        <th>Avail</th>
+        <th>Key</th>
+        <th>Menu</th>
+        <th>Action</th>
+        <th>UI</th>
+    </tr>
+    <tr>
+        <td>LoopSong</td>
+        <td>&check;</td>
+        <td>l</td>
+        <td><span class="menuExampleLine"><b><small>/rl</small></b></span></td>
+        <td>toggleLoopSections</td>
+        <td>Loop Song button</td>
+    </tr>
+    <tr>
+        <td>SectionBegin</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
+        <td>gotoFirstBeat</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>FirstBeat</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
+        <td>gotoFirstBeat</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>FirstSection</td>
+        <td>&check;</td>
+        <td>&lt;</td>
+        <td><span class="menuExampleLine"><b><small>/rsf</small></b></span></td>
+        <td>firstSection</td>
+        <td>First Section button</td>
+    </tr>
+    <tr>
+        <td>PrevBeat</td>
+        <td>&check;</td>
+        <td>b</td>
+        <td><span class="menuExampleLine"><b><small>/rbp</small></b></span></td>
+        <td>prevBeat</td>
+        <td>Previous Beat button</td>
+    </tr>
+    <tr>
+        <td>NextBeat</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbn</small></b></span></td>
+        <td>nextBeat</td>
+        <td>Next Beat button</td>
+    </tr>
+    <tr>
+        <td>LastBeat</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbl</small></b></span></td>
+        <td>gotoLastBeat</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>PrevSection</td>
+        <td>&check;</td>
+        <td>,</td>
+        <td><span class="menuExampleLine"><b><small>/rsp</small></b></span></td>
+        <td>prevSection</td>
+        <td>Previous Section button</td>
+    </tr>
+    <tr>
+        <td>NextSection</td>
+        <td>&check;</td>
+        <td>.</td>
+        <td><span class="menuExampleLine"><b><small>/rsn</small></b></span></td>
+        <td>nextSection</td>
+        <td>Next Section button</td>
+    </tr>
+    <tr>
+        <td>LastSection</td>
+        <td>&check;</td>
+        <td>&gt;</td>
+        <td><span class="menuExampleLine"><b><small>/rsl</small></b></span></td>
+        <td>lastSection</td>
+        <td>Last Section button</td>
+    </tr>
+    <tr>
+        <td>LoopBeats</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/re</small></b></span></td>
+        <td>toggleLoopBeats</td>
+        <td>Loop Beats button</td>
+    </tr>
+    <tr>
+        <td>RestartSection</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
+        <td>gotoFirstBeat</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>RestartSong</td>
+        <td>&check;</td>
+        <td>&lt;</td>
+        <td><span class="menuExampleLine"><b><small>/rs0</small></b></span></td>
+        <td>firstSection</td>
+        <td>First Section button</td>
+    </tr>
+    <tr>
+        <td>ResetSong</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rsr</small></b></span></td>
+        <td>resetSong</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>ResetSongHard</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rsR</small></b></span></td>
+        <td>resetSongHard</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>LastBeatInSong</td>
+        <td>&check;</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rsL</small></b></span></td>
+        <td>gotoLastBeatInSong</td>
+        <td></td>
+    </tr>
+</table>
  
 
 <a name="spanSectionDrawer"></a>

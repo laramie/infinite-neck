@@ -63,7 +63,7 @@ export class TransposePlugin {
     this.id = 'transpose';
     this.registeredName = 'transpose';
     this.menuTrigger = 't';
-    this.eventNames = ['DaCapo:OnSongEnd'];
+    this.eventNames = ['DaCapo:OnSongEnd', 'Looper:OnResetSong'];
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.canonicalizeIntervalsProperty();
@@ -218,6 +218,12 @@ export class TransposePlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'Looper:OnResetSong') {
+      const song = context.song || this.manager?.song || getSong();
+      return {
+        result: payload?.hard ? this.resetOriginal(song) : this.resetCurrentInterval(song)
+      };
+    }
     return this.advanceInterval(`event ${eventName}`, context.song || this.manager?.song || getSong());
   }
 
