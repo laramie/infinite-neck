@@ -14,9 +14,8 @@ import {
 } from './display-options.js';
 import {
 	beatsLooping,
-	restartLoopBeats,
-	restartLoopSections,
 	sectionsLooping,
+	restartLoopSections,
 	toggleLoopBeats,
 	toggleLoopSections,
 	clearBeatAndSectionLooping
@@ -55,7 +54,7 @@ import {
 import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
 
-export { document_keypress, document_keyup };
+export { document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
@@ -85,6 +84,7 @@ function getCurrentSection(...args) { return requireProvider('getCurrentSection'
 function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
+function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
@@ -138,48 +138,6 @@ function refreshBeatUi(song = getSong()) {
 		song.requestUiShowBeats();
 	}
 }
-
-function getActiveLoopState() {
-	return {
-		sections: sectionsLooping(),
-		beats: beatsLooping()
-	};
-}
-
-function restartCapturedLoopState(loopState) {
-	if (loopState.sections) {
-		restartLoopSections();
-	} else if (loopState.beats) {
-		restartLoopBeats();
-	}
-}
-
-function performResetSong(hard = false) {
-	const song = getSong();
-	if (!song) {
-		return hard ? 'reset song (hard) skipped: no song loaded' : 'reset song skipped: no song loaded';
-	}
-
-	const loopState = getActiveLoopState();
-	if (loopState.sections || loopState.beats) {
-		clearBeatAndSectionLooping();
-	}
-
-	song.firstSection();
-	song.gotoFirstBeat();
-	EventBus.trigger('Looper:OnResetSong', {
-		hard,
-		sectionIndex: 0,
-		sectionCount: Array.isArray(song.sections) ? song.sections.length : 0,
-		beat: 1,
-		beats: typeof song.getBeats === 'function' ? song.getBeats() : undefined
-	});
-	clearAndReplaySection();
-	restartCapturedLoopState(loopState);
-
-	return hard ? 'reset song (hard)' : 'reset song';
-}
-
 
 function moveSelectByClampedStep(selectSelector, delta) {
 	var jSelect = $(selectSelector);
@@ -532,9 +490,7 @@ export function performCmdAction(menuItem, args){
 			break;
 
 		case "firstSection":
-			getSong().firstSection();
-            clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().goFirstSection());
 			break;
 		case "prevSection":
 			getSong().gotoPrevSection(false);  //calls clearAndReplaySection();
@@ -559,8 +515,7 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "gotoFirstBeat":
-			clearAndReplaySection();
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().restartSection());
 			break;
 		case "gotoLastBeat": {
 			const song = getSong();
@@ -588,10 +543,10 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "resetSong":
-			actionResult.result = performResetSong(false);
+			Object.assign(actionResult, getTransportController().resetSong(false));
 			break;
 		case "resetSongHard":
-			actionResult.result = performResetSong(true);
+			Object.assign(actionResult, getTransportController().resetSong(true));
 			break;
 		case "mapSpacebar_firstSection":
 			spacebarActionName = 'firstSection';
@@ -704,14 +659,10 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "toggleLoopSections":
-			toggleLoopSections();
-			let rls = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
-			let sls = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
-			actionResult.result = rls+sls;
+			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;
 		case "toggleLoopBeats":
-			toggleLoopBeats();
-			actionResult.result = beatsLooping() ? "ON" : "OFF";
+			Object.assign(actionResult, getTransportController().toggleLoopBeats());
 			break;
 		case "toggleRandomLoop":
 			toggleRandomLoop();

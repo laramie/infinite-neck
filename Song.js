@@ -640,8 +640,12 @@ export class Song extends SongPersistence {
     
     //============== Section handling =====================================
 
+    firstSectionStateOnly(){
+        this.gSectionsCurrentIndex = 0;
+    }
+
 	firstSection(){
-	    this.gSectionsCurrentIndex = 0;
+        this.firstSectionStateOnly();
         this.publish_SectionChanged();
 	}
 

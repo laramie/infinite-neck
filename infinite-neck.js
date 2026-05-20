@@ -40,6 +40,7 @@ import {
 	getUIFontSize,
 	hideGraveyard,
 	getNoteFontSize,
+	runActionByName,
 	setUIFontSize,
 	setNoteFontSize,
 	setKeyHandlerProviders,
@@ -49,7 +50,6 @@ import {
 	document_keyup
 } from './key-handlers.js';
 import {
-	notifySectionRestartIfLooping,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -117,6 +117,7 @@ import { SectionStatusBuilder } from './templates/SectionStatus/section-status.b
 
 import './plugins/registerPlugins.js';
 import pluginManager from './plugins/pluginRuntime.js';
+import { TransportController } from './transport-controller.js';
 
 // If running in a browser, call appInit() on DOM ready.  Browser loads DOM, then since index.html pulls in this module, this module is run after DOM loaded.  
 // This top-level code runs first, which calls appInit().
@@ -153,6 +154,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	var gSong = null;  //constructed in document ready.
 	export function getSong(){
 		return gSong;
+	}
+
+	const transportController = new TransportController();
+	export function getTransportController() {
+		return transportController;
 	}
 
 	let WIRING_OPEN = false;
@@ -224,6 +230,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getPersistentSongFile,
 			getSectionsCurrentIndex,
 			getSong,
+			getTransportController,
 			hideAllMenuDivs,
 			highlightOneNote,
 			leaveFullscreen,
@@ -250,6 +257,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getCurrentSection,
 			doingAutomaticColor: (...args) => doingAutomaticColor(...args),
 			fullRepaint
+		});
+		transportController.setProviders({
+			getCurrentSection,
+			getSectionsCurrentIndex,
+			getSong,
+			replayCurrentSectionView,
+			syncSectionUi
 		});
 	}
 
@@ -319,15 +333,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
-	export function sectionChanged(){
+	function syncSectionUi(){
 		var options = getCurrentSection().displayOptions;
 		if (options){
 			displayOptionsToControls(options);
 		}
 		showHideDisplayOptionsPresent();
-		clearAndReplaySection()
-	    updateSectionsStatus();
 		SectionDrawerBuilder.sectionChanged();
+	}
+
+	export function sectionChanged(){
+		syncSectionUi();
+		clearAndReplaySection()
 	}
 
 	export function updateSectionsStatus(){
@@ -384,13 +401,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function clearAndReplaySection(){
 		getSong().gotoFirstBeat();
+		replayCurrentSectionView();
+	}
+
+	export function replayCurrentSectionView(){
 		clearAll();
-		notifySectionRestartIfLooping();
 		resetNoteNames(); //calls replay()
 		updateSectionsStatus();
 		showBeats();
 		//prevSection calls this: updateSectionsStatus();
-
 	}
 
 	export function showBeats(){
@@ -1834,8 +1853,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    getSong().gotoNextSection(false);
 		});
 		bindEvent('click', '#btnFirstSection', function() {
-			getSong().firstSection();
-			clearAndReplaySection();
+			runActionByName('firstSection');
 		});
 		bindEvent('click', '#btnLastSection', function() {
 		    getSong().lastSection();
@@ -1843,10 +1861,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('click', '#btnLoopSections', function() {
-		    toggleLoopSections();
+		    runActionByName('toggleLoopSections');
 		});
 		bindEvent('click', '#btnLoopBeats', function() {
-		    toggleLoopBeats();
+		    runActionByName('toggleLoopBeats');
 		});
 		bindEvent('click', '#btnEditSection', function() {
 			toggleSectionDrawer();

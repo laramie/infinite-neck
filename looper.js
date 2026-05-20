@@ -316,13 +316,6 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		return isBeatsLooping;
 	}
 
-	export function notifySectionRestartIfLooping(){
-		if (!sectionsLooping() && !beatsLooping()) {
-			return;
-		}
-		emitSectionBeginForCurrentSong(getSong());
-	}
-
     export function tickBeat(song, { sectionsLooping, showBeats }) {
         var beat = song.getBeat();
         var beats = song.getBeats();

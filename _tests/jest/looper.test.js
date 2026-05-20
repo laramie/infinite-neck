@@ -18,7 +18,6 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 const {
 	sectionsLooping,
 	beatsLooping,
-	notifySectionRestartIfLooping,
 	tickBeat,
 	toggleLoopSections,
 	toggleLoopBeats,
@@ -198,46 +197,6 @@ describe('looper looping state', () => {
 		expect(() => toggleLoopSections()).not.toThrow();
 		expect(sectionsLooping()).toBe(true);
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
-	});
-
-	test('notifySectionRestartIfLooping emits nothing when loop modes are idle', () => {
-		mockRuntime.song = makeMockSong();
-
-		notifySectionRestartIfLooping();
-
-		expect(triggerSpy).not.toHaveBeenCalled();
-	});
-
-	test('notifySectionRestartIfLooping emits section begin when section looping is active', () => {
-		mockRuntime.song = makeMockSong();
-		toggleLoopSections();
-		triggerSpy.mockClear();
-
-		notifySectionRestartIfLooping();
-
-		expect(triggerSpy).toHaveBeenCalledTimes(1);
-		expect(triggerSpy).toHaveBeenCalledWith('DaCapo:OnSectionBegin', expect.objectContaining({
-			sectionIndex: 0,
-			sectionCount: 2,
-			beat: 1,
-			beats: 4
-		}));
-	});
-
-	test('notifySectionRestartIfLooping emits section begin when beat looping is active', () => {
-		mockRuntime.song = makeMockSong();
-		toggleLoopBeats();
-		triggerSpy.mockClear();
-
-		notifySectionRestartIfLooping();
-
-		expect(triggerSpy).toHaveBeenCalledTimes(1);
-		expect(triggerSpy).toHaveBeenCalledWith('DaCapo:OnSectionBegin', expect.objectContaining({
-			sectionIndex: 0,
-			sectionCount: 2,
-			beat: 1,
-			beats: 4
-		}));
 	});
 
 	test('scheduled loop beat uses song.requestUiShowBeats when available', () => {

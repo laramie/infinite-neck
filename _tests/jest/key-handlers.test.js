@@ -93,7 +93,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 	default: {}
 }));
 
-const { performCmdAction, document_keypress, setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { performCmdAction, document_keypress, runActionByName, setKeyHandlerProviders } = await import('../../key-handlers.js');
 
 function createSong() {
 	const sections = [{ currentBeat: 1 }, { currentBeat: 1 }];
@@ -135,6 +135,9 @@ function createSong() {
 describe('key-handlers spacebar mapping', () => {
 	let song;
 	let clearAndReplaySection;
+	let mockTransportController;
+	let mockSetBPM;
+	let mockGetBPM;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -142,6 +145,15 @@ describe('key-handlers spacebar mapping', () => {
 		clearAndReplaySection = jest.fn(() => {
 			song.gotoFirstBeat();
 		});
+		mockTransportController = {
+			goFirstSection: jest.fn(() => ({ result: '1' })),
+			restartSection: jest.fn(() => ({ result: '1' })),
+			resetSong: jest.fn((hard) => ({ result: hard ? 'reset song (hard)' : 'reset song' })),
+			toggleLoopSections: jest.fn(() => ({ result: 'RANDOM OFF, LOOP OFF' })),
+			toggleLoopBeats: jest.fn(() => ({ result: 'OFF' }))
+		};
+		mockSetBPM = jest.fn();
+		mockGetBPM = jest.fn(() => 120);
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -160,11 +172,12 @@ describe('key-handlers spacebar mapping', () => {
 			downloadBackupThenClearGraveyard: jest.fn(),
 			downloadPlayedNotes: jest.fn(),
 			enterFullscreen: jest.fn(),
-			getBPM: jest.fn(() => 120),
+			getBPM: mockGetBPM,
 			getCurrentSection: () => song.getCurrentSection(),
 			getPersistentSongFile: jest.fn(() => ({})),
 			getSectionsCurrentIndex: () => song.gSectionsCurrentIndex,
 			getSong: () => song,
+			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
@@ -172,7 +185,7 @@ describe('key-handlers spacebar mapping', () => {
 			printSectionsNotes: jest.fn(),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
-			setBPM: jest.fn(),
+			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
 			setSingleNoteOpacity: jest.fn(),
 			setTinyNoteOpacity: jest.fn(),
@@ -211,37 +224,58 @@ describe('key-handlers spacebar mapping', () => {
 		expect(clearAndReplaySection).toHaveBeenCalledTimes(1);
 	});
 
-	test('resetSong preserves active section-loop mode', () => {
-		looperState.sections = true;
-
+	test('resetSong delegates to the transport controller', () => {
 		const result = performCmdAction({ action: 'resetSong' });
 
 		expect(result.result).toBe('reset song');
-		expect(clearBeatAndSectionLooping).toHaveBeenCalledTimes(1);
-		expect(song.firstSection).toHaveBeenCalledTimes(1);
-		expect(mockEventBus.trigger).toHaveBeenCalledWith('Looper:OnResetSong', expect.objectContaining({ hard: false, beat: 1 }));
-		expect(restartLoopSections).toHaveBeenCalledTimes(1);
-		expect(restartLoopBeats).not.toHaveBeenCalled();
+		expect(mockTransportController.resetSong).toHaveBeenCalledWith(false);
 	});
 
-	test('resetSongHard preserves active beat-loop mode', () => {
-		looperState.beats = true;
-
+	test('resetSongHard delegates to the transport controller', () => {
 		const result = performCmdAction({ action: 'resetSongHard' });
 
 		expect(result.result).toBe('reset song (hard)');
-		expect(clearBeatAndSectionLooping).toHaveBeenCalledTimes(1);
-		expect(mockEventBus.trigger).toHaveBeenCalledWith('Looper:OnResetSong', expect.objectContaining({ hard: true, beat: 1 }));
-		expect(restartLoopBeats).toHaveBeenCalledTimes(1);
-		expect(restartLoopSections).not.toHaveBeenCalled();
+		expect(mockTransportController.resetSong).toHaveBeenCalledWith(true);
 	});
 
-	test('resetSong does not start looping if no loop was active', () => {
-		const result = performCmdAction({ action: 'resetSong' });
+	test('gotoFirstBeat delegates to the transport controller', () => {
+		const result = performCmdAction({ action: 'gotoFirstBeat' });
 
-		expect(result.result).toBe('reset song');
-		expect(clearBeatAndSectionLooping).not.toHaveBeenCalled();
-		expect(restartLoopSections).not.toHaveBeenCalled();
-		expect(restartLoopBeats).not.toHaveBeenCalled();
+		expect(result.result).toBe('1');
+		expect(mockTransportController.restartSection).toHaveBeenCalledTimes(1);
+	});
+
+	test('firstSection delegates to the transport controller', () => {
+		const result = performCmdAction({ action: 'firstSection' });
+
+		expect(result.result).toBe('1');
+		expect(mockTransportController.goFirstSection).toHaveBeenCalledTimes(1);
+	});
+
+	test('runActionByName routes firstSection through the same transport action path', () => {
+		const result = runActionByName('firstSection');
+
+		expect(result.result).toBe('1');
+		expect(mockTransportController.goFirstSection).toHaveBeenCalledTimes(1);
+	});
+
+	test('runActionByName routes toggleLoopSections through the same transport action path', () => {
+		const result = runActionByName('toggleLoopSections');
+
+		expect(result.result).toBe('RANDOM OFF, LOOP OFF');
+		expect(mockTransportController.toggleLoopSections).toHaveBeenCalledTimes(1);
+	});
+
+	test('setBPM restarts section looping after updating the bpm', () => {
+		looperState.sections = false;
+
+		const result = performCmdAction(
+			{ action: 'setBPM', input: { id: 'bpm' } },
+			{ bpm: '140' }
+		);
+
+		expect(mockSetBPM).toHaveBeenCalledWith(140);
+		expect(restartLoopSections).toHaveBeenCalledTimes(1);
+		expect(result.result).toBe(120);
 	});
 });
