@@ -1,8 +1,33 @@
 # Feature: ArpeggioPlugin position Option
 
-We would like to add an option to ArpeggioPlugin `style` menu.  This style would be `position`.  It will be a sibling to every, alternate, random, and bach.  The menu item would be `position` and the trigger would be `p`.  It would have a child input menu item, with caption `positions`, default `[[0,3],[4,7],[5,]]`, prompt "arrays of positions".  There are no other child menus yet, but we expect some as we refine the behavior in testing.  `position` is the name of the `style` child.  `positions` is the Array-of-Arrays input child of `position`.
+## Description
 
-It will be the first style that will keep track of its state in the Section object.  Previous plugins have kept state in the standard Song.sections[n].SectionNotes as Note object with  "owner:" properties.  This will be different because it will involve a new property tree of Section, which should be added to the Song/Section schema as well, documented in our root `README.md`.
+We would like to add an option to ArpeggioPlugin `style` menu.  This style would be `position`.  It will be a sibling to `every`, `alternate`, `random`, and `bach`.  The menu item would be `position` and the trigger would be `p`.  
+
+To support the current menu structure, it would contain no children, just be Select item like `bach`, `every`, `alternate` and `random`.
+
+There would be another option at the same menu level as `style`, with caption `positions`, default `[[0,3],[4,7],[5,]]`, prompt "arrays of positions".  The other styles will not share use of `positions` at this time, but they may in the future.  Implementation of `position` should be separate from other style algorithms.
+
+## Menu
+
+- p) plugins
+  - a) arpeggio
+    - style
+      - ....
+      - every
+      - position
+    - positions
+      - Clear all sections
+      - Copy to unset sections
+      - Copy to all sections
+      - Refresh values
+      - values this section [[[3,5],[5,9]]]  
+
+## Properties and storage
+
+`position` is the first `style` to use the property `positions`.  All other styles will ignore it.  `positions` should be considered to work with minFret and maxFret eventually.  In this implementation, `positions` is a parallel data structure that will side-step use of minFret and maxFret, but only for style==position at this point, so we can nail down the behavior without breaking other styles.
+
+`style`:`position` will be the first style that will keep track of its state in the Section object.  Previous plugins have kept state in the standard Song.sections[n].SectionNotes as Note object with  "owner:" properties.  This will be different because it will involve a new property tree of Section, which should be added to the Song/Section schema as well, documented in our root `README.md`.
 
 - Song
   - Section
