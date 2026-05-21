@@ -63,6 +63,9 @@ const CSS_TEXT = `
 .tonalPicker button.AllChordsBtn {
     padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
 }
+.tonalPicker button.AllModesBtn {
+    padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
+}
 .tonalPicker button.SaveToChartBtn {
     padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
 }
@@ -119,6 +122,30 @@ ul.tonalMode-list li:nth-child(even) {
     font-weight: bold;
 }
 
+.TonalPickerAllModes {
+   
+}
+    
+.TonalPickerAllModes span:nth-child(odd) {
+    border: 1px solid black;
+    background-color: #fe9054;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+}
+.TonalPickerAllModes span:nth-child(even) {
+    border: 1px solid black;
+    background-color: #fd6765;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+}
+.TonalPickerAllModes span.selectedMode {
+    border: 1px solid black;
+    background-color: #e9fe45;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    font-weight: bold;
+}
+
 `;
 
 const TONAL_PICKER_STYLE_ID = "tonalPicker";
@@ -145,6 +172,13 @@ export function format_allChordsButton(ownerID, tableID, sectionIdx, dest){
     }
     return "";
 }
+export function format_allModesButton(ownerID, tableID, sectionIdx, dest){
+    if (dest === "modes"){
+        let btn = `<button class="AllModesBtn" title="Possible modes" onclick="toggleAllModesButtonState('${ownerID}', '${tableID}', '${sectionIdx}');">&#x53EF;</button>`;   // &#x53EF; mean "possible,feasable,good", pronounced kě. was &#x2505;
+        return btn;
+    }
+    return "";
+}
 export function format_allChordsSpan(ownerID, tableID, sectionIdx, dest, valueArray, currentValue){
     let allChordsHTML = "";
     if (dest === "chords"){
@@ -160,6 +194,23 @@ export function format_allChordsSpan(ownerID, tableID, sectionIdx, dest, valueAr
         allChordsHTML = `<span ${style} class="spanTonal_chords_all" id="spanTonal_chords_all-${ownerID}-${tableID}-${sectionIdx}">${allChordsList}</span>`;
     }
     return allChordsHTML;
+
+}
+export function format_allModesSpan(ownerID, tableID, sectionIdx, dest, valueArray, currentValue){
+    let allModesHTML = "";
+    if (dest === "modes"){
+        let state = getTonalAllModesButtonState(tableID);
+        let style = "";
+        if (state === "hide"){
+            style = "style='display:none;'";
+        } else {
+            style = "style='display:inline;'";
+        }
+        let allModesList = format_allModes(dest, valueArray, currentValue);
+        //TODO: add class for spanTonal_modes_all-${ownerID}-${tableID} so you can turn off all in /spn for that column of table.
+        allModesHTML = `<span ${style} class="spanTonal_modes_all" id="spanTonal_modes_all-${ownerID}-${tableID}-${sectionIdx}">${allModesList}</span>`;
+    }
+    return allModesHTML;
 
 }
 export function format_allChords(dest, valueArray, currentValue){
@@ -180,6 +231,25 @@ export function format_allChords(dest, valueArray, currentValue){
         allChordsList = allChordsArray.join("");   
     }
     return allChordsList;
+}
+export function format_allModes(dest, valueArray, currentValue){
+    let allModesList = "";
+    if (dest === "modes"){
+        let allModesArray = [];
+        allModesArray.push("<span class='TonalPickerAllModes'>");
+        valueArray.forEach(val => {
+            let span;
+            if (val === currentValue) {
+                span = `<span class="selectedMode">${val}</span>`;
+            } else { 
+                span =  `<span>${val}</span>`;
+            }
+            allModesArray.push(span);
+        })
+        allModesArray.push("</span>");
+        allModesList = allModesArray.join("");   
+    }
+    return allModesList;
 }
 
 function formatTonalCurrentValue(chartCurrentValue, tableCurrentValue){
@@ -219,12 +289,14 @@ export function buildTonalPicker(ownerID, tableID, sectionIdx, dest, valueArray,
 
     let allChordsHTML =   format_allChordsSpan  (ownerID, tableID, sectionIdx, dest, valueArray, rawCurrentValue);
     let allChordsButton = format_allChordsButton(ownerID, tableID, sectionIdx, dest);
+    let allModesHTML =    format_allModesSpan   (ownerID, tableID, sectionIdx, dest, valueArray, rawCurrentValue);
+    let allModesButton =  format_allModesButton (ownerID, tableID, sectionIdx, dest);
     let saveToChartButton = format_saveToChartButton(ownerID, tableID, sectionIdx, dest);
 
     return `
     <span class="tonalPicker" id="tonalPicker-${ownerID}-${dest}-${tableID}-${sectionIdx}">
         <span class="tonalPicker-row">
-            ${allChordsButton}${allChordsHTML}
+            ${allChordsButton}${allChordsHTML}${allModesButton}${allModesHTML}
             <span class="spanTonal_${dest}" id="spanTonal_${ownerID}-${dest}-${tableID}-${sectionIdx}" data-tonal-raw-value="${rawCurrentValue}">${displayCurrentValue}</span>
             <button onclick="$('#tonalMode-list-${ownerID}-${dest}-${tableID}-${sectionIdx}').toggle()">${dest}:${valueArray.length}</button>${saveToChartButton}
         </span>
@@ -279,6 +351,7 @@ globalThis.pickTonal = function pickTonal(ownerID, tableID, sectionIdx, dest, va
                 linkToSectionChartMode(sectionIdx, val, false);
                 nextChartCurrentValue = val;
             }
+            $(`#spanTonal_modes_all-${ownerID}-${tableID}-${sectionIdx}`).html(format_allModes(dest, valueArray, val));
             break;
     }
     $(getSpanTonalSelector(ownerID, tableID, sectionIdx, dest))
@@ -313,6 +386,20 @@ globalThis.toggleAllChordsButtonState = function(ownerID, tableID, sectionIdx){
     }
 }
 
+globalThis.toggleAllModesButtonState = function(ownerID, tableID, sectionIdx){
+    //console.log("toggleAllModesButtonState:"+JSON.stringify(globalThis.tonalModesButtonStates));
+    let state = globalThis.getTonalAllModesButtonState(tableID);
+    if (state === "show"){
+        $(`#spanTonal_modes_all-${ownerID}-${tableID}-${sectionIdx}`).hide();
+        setTonalAllModesButtonState(tableID, "hide");
+        //console.log("toggleAllModesButtonState:hide");
+    } else if (state === "hide"){
+        $(`#spanTonal_modes_all-${ownerID}-${tableID}-${sectionIdx}`).show();
+        setTonalAllModesButtonState(tableID, "show");
+        //console.log("toggleAllModesButtonState:show");
+    }
+}
+
 /** @param state === "show" | "hide" */
 globalThis.setTonalAllChordsButtonState = function(tableID, state){
     if (!globalThis.tonalChordsButtonStates){
@@ -326,6 +413,25 @@ globalThis.getTonalAllChordsButtonState = function(tableID){
         return "show";
     }
     let oneState = globalThis.tonalChordsButtonStates[tableID];
+    if (!oneState){
+        return "show";
+    }
+    return oneState;
+}
+
+/** @param state === "show" | "hide" */
+globalThis.setTonalAllModesButtonState = function(tableID, state){
+    if (!globalThis.tonalModesButtonStates){
+        globalThis.tonalModesButtonStates = {};
+    }
+    globalThis.tonalModesButtonStates[tableID] = state;
+}
+
+globalThis.getTonalAllModesButtonState = function(tableID){
+    if (!globalThis.tonalModesButtonStates){
+        return "show";
+    }
+    let oneState = globalThis.tonalModesButtonStates[tableID];
     if (!oneState){
         return "show";
     }

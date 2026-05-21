@@ -206,6 +206,7 @@ export function buildNoteTable(options) {
 
 function buildCaptionRow(options, tableID) {
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
+	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
 	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' title='Show left side caption'>C</button>";
 	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' title='Show left side Section info'>S</button>";
@@ -245,6 +246,9 @@ function buildCaptionRow(options, tableID) {
 		+ '</span>'
 		+ '<span class="subcaption">'
 		+ '<table id="captionRowTable"><tr><td>'
+
+		+ hamburgerCaptionRowButtons
+		+ '<span class="captionRowButtons">'
 		+ hamburgerLeftCaption
 		+ hamburgerLeftSectionMark 
 		+ hamburgerColorDict
@@ -260,11 +264,14 @@ function buildCaptionRow(options, tableID) {
 		+ joniTuning
 		+ reverse
 		+ '</span>'
+		+' </span>'
 		
 		+TDTD
+		+ "<span class='captionRowNoteCell'>"
 		+ hamburgerNoteDetails
 		+ "<span class='spanNoteDetails'>"
 		+ noteClickedCaption
+		+"</span>"
 		+"</span>"
 		
 		+TDTD

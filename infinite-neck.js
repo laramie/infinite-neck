@@ -1569,6 +1569,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.on(`click${eventNamespace}`, function() {
 			$(".subcaption").toggle();
 		});
+		$(".showCaptionRowButtons")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+			$(".captionRowNoteCell").toggle();
+			$(".captionRowButtons").toggle();
+		});
 		$(".showcolordict")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
