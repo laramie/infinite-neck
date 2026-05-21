@@ -112,6 +112,7 @@ import { installLoopTimingModeControls } from './looper-timing-select-handler.js
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
+import { InfoBuilder } from './templates/info/info.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
@@ -253,6 +254,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setNamedNoteOpacity,
 			setSingleNoteOpacity,
 			setTinyNoteOpacity,
+			showInfoDialog,
 			showOneMenu,
 			toggleCaption,
 			toggleFullscreen,
@@ -627,6 +629,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//  accessed through selectors stored in values with menu as key: AllMenuDivs[strMenuDiv]
 	const AllMenuDivs = {
 		"#palette": "#btnPalette",
+		"#info": "#btnInfo",
 		"#divFileControls": "#btnFileControls",
 		"#divViewControls": "#btnViewControls",
 		"#divThemeControls": "#btnThemeControls",
@@ -641,6 +644,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		for (const key of Object.keys(AllMenuDivs)){
 			if (key === "#spanSectionDrawer"){
 				TransportBuilder.hideSectionDrawer();
+			} else if (key === "#info") {
+				InfoBuilder.hide();
 			} else {
 				$(key).hide();
 			}
@@ -675,6 +680,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		//$("#topControlsCaptions").hide();
 		scrollToTop();
+	}
+
+	export function showInfoDialog(forceMode = 'parked', forceOpen = false) {
+		if (!forceOpen && InfoBuilder.isVisible()) {
+			hideAllMenuDivs();
+			return;
+		}
+		InfoBuilder.show(forceMode);
 	}
 
 	export function getHelpTopic(){
@@ -872,6 +885,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		replay();
 		sectionChanged();
+		InfoBuilder.renderFromSong(getSong());
+		InfoBuilder.handleSongLoaded(getSong());
 	}
 
 	function showDefaultTunings(){
@@ -1827,6 +1842,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnFileControls', function() {
 		    showOneMenu("#divFileControls")
 		});
+		bindEvent('click', '#btnInfo', function() {
+			showInfoDialog();
+		});
 		bindEvent('click', '#btnTunings', function() {
 			showOneMenu("#divTunings");//toggles on
 			requestReloadTuningsDisplays();//sets MyTunings button to PunchedIn, so has to go last.
@@ -2376,6 +2394,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					WiringBuilder.addWiringWidget(tuningID, Constants.TABLE_ID_PREFIX+tuningID);
 				});
 				setWiringOpenState(false);
+			}),
+
+			loadTemplates('templates/info/info.html').then(() => {
+				InfoBuilder.addToDest('#divInfo');
+				InfoBuilder.renderFromSong(getSong());
 			}),
 
 			loadTemplates('templates/themes.html').then(() => {

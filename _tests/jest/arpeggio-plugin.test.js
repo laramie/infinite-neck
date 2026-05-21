@@ -582,6 +582,15 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5], [5, 9]]);
 	});
 
+	test('positions odd-count boundary shorthand normalizes to adjacent ranges', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 12 });
+
+		const result = plugin.setPositionsForCurrentSection(song, '0,3,5');
+
+		expect(result.result).toBe('positions=[[0,3],[3,5]]');
+		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5]]);
+	});
+
 	test('positions reject out-of-range values and preserve the prior section value', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 5 });
 		plugin.setPositionsForCurrentSection(song, '0,3;4,5');

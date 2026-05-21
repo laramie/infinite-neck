@@ -558,7 +558,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         throw new Error(`Invalid positions input: ${rawValue}`);
       }
       const numbers = parts.map((part) => this.parsePositionInteger(part, rawValue));
-      if (numbers.length % 2 === 0) {
+      if (numbers.length >= 2) {
         return Array.from({ length: numbers.length - 1 }, (_, idx) => [numbers[idx], numbers[idx + 1]]);
       }
     }

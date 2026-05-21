@@ -96,6 +96,7 @@ function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
+function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
@@ -686,6 +687,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showDialog-song":
 			showOneMenu("#divFileControls");//file==song now.
+			break;
+		case "showDialog-info":
+			showInfoDialog();
 			break;
 		case "showDialog-section":
 			toggleSectionDrawer(true);

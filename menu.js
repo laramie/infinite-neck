@@ -43,6 +43,11 @@ export var gMenuFile =    {
           "action": "downloadPlayedNotes"
         },
         {
+          "caption": "<b>i</b>nfo",
+          "trigger": "i",
+          "action": "showDialog-info"
+        },
+        {
           "name": "name",
           "caption": "<b>n</b>ame",
           "trigger": "n",

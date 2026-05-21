@@ -1,0 +1,117 @@
+#info {
+    width: 100%;
+}
+
+.infoMenuTable {
+    width: 100%;
+}
+
+.infoActionRow {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-bottom: 0.6em;
+}
+
+.infoCloseCaption {
+    font-size: 90%;
+}
+
+.infoTabsShell {
+    width: 100%;
+}
+
+.infoTabsTop {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 0.2em;
+}
+
+.infoTabsButtons {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    background-color: lightblue;
+    border-top-left-radius: 0.4em;
+    border-top-right-radius: 0.4em;
+    padding: 0.5em 2em 0 2em;
+    min-height: 3em;
+}
+
+.infoTabsFill {
+    flex: 1 1 auto;
+    display: inline-block;
+    height: 1em;
+    background-color: lightblue;
+    border-top-right-radius: 0.4em;
+}
+
+.infoTabsBody {
+    background-color: lightblue;
+    border-bottom-left-radius: 0.4em;
+    border-bottom-right-radius: 0.4em;
+    padding: 0.75em;
+}
+
+.infoTabPanel {
+    min-height: 18em;
+}
+
+.infoRendered {
+    min-height: 16em;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 0.4em;
+    box-shadow: inset 0 0 8pt 0 #777;
+    padding: 1em;
+    overflow: auto;
+}
+
+.infoRendered table {
+    border-collapse: collapse;
+}
+
+.infoRendered th,
+.infoRendered td {
+    border: 1px solid #666;
+    padding: 0.3em 0.5em;
+}
+
+.infoRendered pre,
+.infoRendered code {
+    white-space: pre-wrap;
+}
+
+.infoEditControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    margin-bottom: 0.6em;
+}
+
+.infoEditControls select,
+.infoEditControls button {
+    box-shadow: 5px 2px 4px black;
+}
+
+.infoTextarea {
+    width: 100%;
+    min-height: 18em;
+    resize: vertical;
+    box-sizing: border-box;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .infoActionRow,
+    .infoEditControls {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .infoTabsButtons {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+}
