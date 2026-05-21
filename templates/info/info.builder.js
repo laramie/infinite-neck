@@ -66,7 +66,7 @@ export class InfoBuilder {
 			.off(`change${eventNamespace}`)
 			.on(`change${eventNamespace}`, function () {
 				InfoBuilder.persistInfo();
-				InfoBuilder.persistOpenInfo();
+				InfoBuilder.persistOpenInfo(this.value);
 			});
 	}
 
@@ -151,11 +151,8 @@ export class InfoBuilder {
 		}
 
 		InfoBuilder.currentTab = tabName === 'edit' ? 'edit' : 'info';
+		InfoBuilder.renderFromSong(getSong());
 		const showInfoTab = InfoBuilder.currentTab === 'info';
-
-		if (showInfoTab) {
-			InfoBuilder.renderFromSong(getSong());
-		}
 
 		$('#divInfoTabInfo').toggle(showInfoTab);
 		$('#divInfoTabEdit').toggle(!showInfoTab);
@@ -180,20 +177,20 @@ export class InfoBuilder {
 		}
 
 		$('#textareaSongInfo').val(song.info);
-		$('#selOpenInfo').val(song.openInfo);
 		$('#divInfoRendered').html(song.info || '');
 
 		return song.info;
 	}
 
-	static persistOpenInfo() {
+	static persistOpenInfo(nextValue = null) {
 		const song = getSong();
 		if (!song) {
 			return 'none';
 		}
 
 		const hasInfo = Boolean(song.info && song.info.trim().length > 0);
-		song.openInfo = InfoBuilder.normalizeOpenInfoValue($('#selOpenInfo').val(), hasInfo);
+		const selectedValue = nextValue === null ? $('#selOpenInfo').val() : nextValue;
+		song.openInfo = InfoBuilder.normalizeOpenInfoValue(selectedValue, hasInfo);
 		$('#selOpenInfo').val(song.openInfo);
 		return song.openInfo;
 	}
