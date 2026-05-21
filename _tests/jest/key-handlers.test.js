@@ -21,6 +21,8 @@ const restartLoopSections = jest.fn(() => {
 const restartLoopBeats = jest.fn(() => {
 	looperState.beats = true;
 });
+const mockToggleTransport = jest.fn();
+const mockShowTransport = jest.fn();
 
 jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 	jsonTree: jest.fn()
@@ -77,8 +79,8 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	getVersionString: jest.fn(() => 'vtest'),
 	getVersionObject: jest.fn(() => ({ README: 'README.md' })),
 	toggleWiringOpenState: jest.fn(),
-	toggleTransport: jest.fn(),
-	showTransport: jest.fn(),
+	toggleTransport: mockToggleTransport,
+	showTransport: mockShowTransport,
 	toggleSectionDrawer: jest.fn(),
 	toggleRandomLoop: jest.fn(),
 	setSectionKeysFlats: jest.fn(),
@@ -93,7 +95,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 	default: {}
 }));
 
-const { performCmdAction, document_keypress, runActionByName, setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders } = await import('../../key-handlers.js');
 
 function createSong() {
 	const sections = [{ currentBeat: 1 }, { currentBeat: 1 }];
@@ -147,7 +149,17 @@ describe('key-handlers spacebar mapping', () => {
 		});
 		mockTransportController = {
 			goFirstSection: jest.fn(() => ({ result: '1' })),
+			prevSection: jest.fn(() => ({ result: '1' })),
+			nextSection: jest.fn(() => ({ result: '2' })),
+			lastSection: jest.fn(() => ({ result: '2' })),
 			restartSection: jest.fn(() => ({ result: '1' })),
+			gotoLastBeat: jest.fn(() => ({ result: '4' })),
+			gotoLastBeatInSong: jest.fn(() => ({ result: '2:4' })),
+			prevBeat: jest.fn(() => ({ result: '1' })),
+			nextBeat: jest.fn(() => ({ result: '2' })),
+			gotoSection: jest.fn(() => ({ result: '1', didNavigate: true })),
+			gotoBeat: jest.fn(() => ({ result: '1' })),
+			setBPM: jest.fn(() => ({ result: 120 })),
 			resetSong: jest.fn((hard) => ({ result: hard ? 'reset song (hard)' : 'reset song' })),
 			toggleLoopSections: jest.fn(() => ({ result: 'RANDOM OFF, LOOP OFF' })),
 			toggleLoopBeats: jest.fn(() => ({ result: 'OFF' }))
@@ -161,6 +173,8 @@ describe('key-handlers spacebar mapping', () => {
 		clearBeatAndSectionLooping.mockClear();
 		restartLoopSections.mockClear();
 		restartLoopBeats.mockClear();
+		mockToggleTransport.mockClear();
+		mockShowTransport.mockClear();
 		mockEventBus.trigger.mockClear();
 
 		setKeyHandlerProviders({
@@ -209,19 +223,37 @@ describe('key-handlers spacebar mapping', () => {
 		expect(result.result).toBe('spacebar mapped: restartSong using firstSection');
 	});
 
-	test('spacebar executes the mapped transport action', () => {
+	test('spacebar executes the mapped transport action on keydown', () => {
 		performCmdAction({ action: 'mapSpacebar_lastSection' });
 		const event = {
 			key: ' ',
+			code: 'Space',
 			target: { tagName: 'BODY' },
 			preventDefault: jest.fn()
 		};
 
-		document_keypress(event);
+		document_keydown(event);
 
 		expect(event.preventDefault).toHaveBeenCalledTimes(1);
-		expect(song.lastSection).toHaveBeenCalledTimes(1);
-		expect(clearAndReplaySection).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.lastSection).toHaveBeenCalledTimes(1);
+		expect(song.lastSection).not.toHaveBeenCalled();
+		expect(clearAndReplaySection).not.toHaveBeenCalled();
+	});
+
+	test('mapped spacebar ignores text inputs', () => {
+		performCmdAction({ action: 'mapSpacebar_lastSection' });
+		const event = {
+			key: ' ',
+			code: 'Space',
+			target: { tagName: 'INPUT' },
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(event);
+
+		expect(event.preventDefault).not.toHaveBeenCalled();
+		expect(song.lastSection).not.toHaveBeenCalled();
+		expect(clearAndReplaySection).not.toHaveBeenCalled();
 	});
 
 	test('resetSong delegates to the transport controller', () => {
@@ -266,16 +298,53 @@ describe('key-handlers spacebar mapping', () => {
 		expect(mockTransportController.toggleLoopSections).toHaveBeenCalledTimes(1);
 	});
 
-	test('setBPM restarts section looping after updating the bpm', () => {
-		looperState.sections = false;
+	test('runActionByName routes remaining navigation verbs through the transport controller', () => {
+		expect(runActionByName('prevSection').result).toBe('1');
+		expect(runActionByName('nextSection').result).toBe('2');
+		expect(runActionByName('lastSection').result).toBe('2');
+		expect(runActionByName('prevBeat').result).toBe('1');
+		expect(runActionByName('nextBeat').result).toBe('2');
+		expect(runActionByName('gotoLastBeat').result).toBe('4');
+		expect(runActionByName('gotoLastBeatInSong').result).toBe('2:4');
+
+		expect(mockTransportController.prevSection).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.nextSection).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.lastSection).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.prevBeat).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.nextBeat).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.gotoLastBeat).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.gotoLastBeatInSong).toHaveBeenCalledTimes(1);
+	});
+
+	test('keypress < routes through the firstSection transport action', () => {
+		const event = {
+			key: '<',
+			keyCode: 60,
+			target: { tagName: 'BODY' },
+			preventDefault: jest.fn()
+		};
+
+		document_keypress(event);
+
+		expect(mockTransportController.goFirstSection).toHaveBeenCalledTimes(1);
+		expect(song.firstSection).not.toHaveBeenCalled();
+	});
+
+	test('setBPM delegates to the transport controller', () => {
 
 		const result = performCmdAction(
 			{ action: 'setBPM', input: { id: 'bpm' } },
 			{ bpm: '140' }
 		);
 
-		expect(mockSetBPM).toHaveBeenCalledWith(140);
-		expect(restartLoopSections).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.setBPM).toHaveBeenCalledWith('140');
+		expect(mockSetBPM).not.toHaveBeenCalled();
 		expect(result.result).toBe(120);
+	});
+
+	test('parkTransportTopRight delegates to showTransport with top-right mode', () => {
+		performCmdAction({ action: 'parkTransportTopRight' });
+
+		expect(mockShowTransport).toHaveBeenCalledWith('top-right');
 	});
 });

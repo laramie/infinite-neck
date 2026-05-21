@@ -100,7 +100,6 @@ function resolveLookupContext(lookupContext = {}) {
 	}
 
 	export function recordUserColorsBoth(doSampleSection, doPickerChoices){
-		debugger
 		const lookupContext = createLookupContext();
 		var colorSchemeName = $('#txtColorSchemeName').val();
 		var chosenSystemSchemeName = $('#txtColorSchemeName').attr('systemSchemeName');

@@ -1185,6 +1185,11 @@ export var gMenuFile =    {
           "action": "parkTransport"
         },
         {
+          "caption": "<b>P</b>ark transport top right",
+          "trigger": "P",
+          "action": "parkTransportTopRight"
+        },
+        {
           "caption": "<b>l</b>oop",
           "trigger": "l",
           "action": "toggleLoopSections"

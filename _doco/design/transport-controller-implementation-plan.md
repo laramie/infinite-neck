@@ -340,9 +340,16 @@ The later repaint-focused sprint should address broader duplicate paint behavior
 
 ## TODO / After Sprint
 
-- Audit remaining direct looper calls in command handlers and UI handlers, but defer any migration unless they are already part of the approved transport verb set.
-- Revisit whether BPM-change loop restarts belong under `TransportController` once the sprint-scoped transport ownership work is complete.
-- Do a focused cleanup pass on replay/view helper duplication only after the transport-ownership iterations are finished.
+Completed post-sprint follow-up:
+
+- Remaining transport-navigation verbs from `TransportNavigationTable.md` are routed through `TransportController`, including section navigation, beat navigation, and last-beat-in-song navigation.
+- Equivalent transport buttons and command/menu actions now use the same transport front door for the navigations covered in the table.
+
+Remaining follow-up work:
+
+- Audit remaining direct looper calls in command handlers and UI handlers outside the navigation surface.
+- Revisit whether BPM-change loop restarts belong under `TransportController` now that navigation coverage is broader.
+- Do a focused cleanup pass on replay/view helper duplication after the expanded transport-ownership pass.
 
 ## Likely Risks
 

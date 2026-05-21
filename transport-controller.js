@@ -42,12 +42,44 @@ export class TransportController {
 		return this.requireProvider('getCurrentSection')();
 	}
 
+	getBPM() {
+		return this.requireProvider('getBPM')();
+	}
+
+	setBPMValue(nextBpm) {
+		return this.requireProvider('setBPM')(nextBpm);
+	}
+
 	replayCurrentSectionView() {
 		return this.requireProvider('replayCurrentSectionView')();
 	}
 
 	syncSectionUi() {
 		return this.requireProvider('syncSectionUi')();
+	}
+
+	refreshBeatUi(song = this.getSong()) {
+		if (!song) {
+			return;
+		}
+		if (typeof song.publish_UpdateSectionStatus === 'function') {
+			song.publish_UpdateSectionStatus();
+		}
+		if (typeof song.requestUiShowBeats === 'function') {
+			song.requestUiShowBeats();
+		}
+	}
+
+	clearHighlights(song = this.getSong()) {
+		if (song && typeof song.requestUiClearHighlights === 'function') {
+			song.requestUiClearHighlights();
+		}
+	}
+
+	replaySectionFromStart(song = this.getSong()) {
+		song.gotoFirstBeat();
+		this.syncSectionUi();
+		this.replayCurrentSectionView();
 	}
 
 	emitSongBegin(song = this.getSong()) {
@@ -85,6 +117,13 @@ export class TransportController {
 		return this.emitSectionBegin(song);
 	}
 
+	emitSongBeginIfSectionLooping(song = this.getSong()) {
+		if (!sectionsLooping()) {
+			return false;
+		}
+		return this.emitSongBegin(song);
+	}
+
 	getActiveLoopState() {
 		return {
 			sections: sectionsLooping(),
@@ -113,14 +152,115 @@ export class TransportController {
 	goFirstSection() {
 		const song = this.getSong();
 		song.firstSectionStateOnly();
-		song.gotoFirstBeat();
-		this.syncSectionUi();
-		this.replayCurrentSectionView();
-		const didEmitSongBegin = this.emitSongBegin(song);
+		this.replaySectionFromStart(song);
+		const didEmitSongBegin = this.emitSongBeginIfSectionLooping(song);
 		return {
 			result: '' + (this.getSectionsCurrentIndex() + 1),
 			didEmitSongBegin,
-			didEmitSectionBegin: this.emitSectionBegin(song)
+			didEmitSectionBegin: this.emitSectionBeginIfLooping(song)
+		};
+	}
+
+	prevSection() {
+		const song = this.getSong();
+		song.gotoPrevSectionStateOnly(false);
+		this.replaySectionFromStart(song);
+		return {
+			result: '' + (this.getSectionsCurrentIndex() + 1)
+		};
+	}
+
+	nextSection() {
+		const song = this.getSong();
+		song.gotoNextSectionStateOnly(false);
+		this.replaySectionFromStart(song);
+		return {
+			result: '' + (this.getSectionsCurrentIndex() + 1)
+		};
+	}
+
+	lastSection() {
+		const song = this.getSong();
+		song.lastSectionStateOnly();
+		this.replaySectionFromStart(song);
+		return {
+			result: '' + (this.getSectionsCurrentIndex() + 1)
+		};
+	}
+
+	gotoSection(sectionIndex) {
+		const song = this.getSong();
+		if (!song.gotoSectionStateOnly(sectionIndex)) {
+			return { result: '' + (this.getSectionsCurrentIndex() + 1), didNavigate: false };
+		}
+		this.replaySectionFromStart(song);
+		return {
+			result: '' + (this.getSectionsCurrentIndex() + 1),
+			didNavigate: true
+		};
+	}
+
+	prevBeat() {
+		const song = this.getSong();
+		this.clearHighlights(song);
+		if (song.getBeat() > 1) {
+			song.decBeat();
+		}
+		this.refreshBeatUi(song);
+		return {
+			result: '' + this.getCurrentSection().currentBeat
+		};
+	}
+
+	nextBeat() {
+		const song = this.getSong();
+		this.clearHighlights(song);
+		if (song.getBeat() < song.getBeats()) {
+			song.incBeat();
+		}
+		this.refreshBeatUi(song);
+		return {
+			result: '' + this.getCurrentSection().currentBeat
+		};
+	}
+
+	gotoLastBeat() {
+		const song = this.getSong();
+		song.gotoLastBeat();
+		this.refreshBeatUi(song);
+		return {
+			result: '' + this.getCurrentSection().currentBeat
+		};
+	}
+
+	gotoLastBeatInSong() {
+		const song = this.getSong();
+		song.lastSectionStateOnly();
+		song.gotoLastBeat();
+		this.syncSectionUi();
+		this.replayCurrentSectionView();
+		return {
+			result: '' + (this.getSectionsCurrentIndex() + 1) + ':' + this.getCurrentSection().currentBeat
+		};
+	}
+
+	gotoBeat(targetBeat) {
+		const song = this.getSong();
+		song.gotoBeat(Math.min(targetBeat, song.getBeats()));
+		this.refreshBeatUi(song);
+		return {
+			result: '' + this.getCurrentSection().currentBeat
+		};
+	}
+
+	setBPM(nextBpm) {
+		const bpm = Number.parseInt(nextBpm, 10);
+		if (!Number.isNaN(bpm) && bpm > 0) {
+			this.setBPMValue(bpm);
+			this.restartCapturedLoopState(this.getActiveLoopState());
+		}
+		return {
+			result: this.getBPM()
 		};
 	}
 

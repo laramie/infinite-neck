@@ -46,6 +46,7 @@ import {
 	setKeyHandlerProviders,
 	showMessages,
 	hideMessages,
+	document_keydown,
 	document_keypress,
 	document_keyup
 } from './key-handlers.js';
@@ -259,10 +260,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			fullRepaint
 		});
 		transportController.setProviders({
+			getBPM,
 			getCurrentSection,
 			getSectionsCurrentIndex,
 			getSong,
 			replayCurrentSectionView,
+			setBPM,
 			syncSectionUi
 		});
 	}
@@ -363,9 +366,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
 	    $(".lblSectionMode").html( getSong().getCurrentSection().chartMode);
 
-		var currentFilename = $("#txtFilename").val();
+		var currentFilename = getSong().songName;
+		if (currentFilename === undefined || currentFilename === null || currentFilename === '') {
+			currentFilename = $("#txtFilename").val();
+		}
 	    $(".lblSongName").html(currentFilename);
-		//getSong().songName = currentFilename;
 
 		var rootIndex = toInt(getSong().getCurrentSection().rootID, 0);
 	    var rootIndexLead = toInt(getSong().getCurrentSection().rootIDLead, 0);
@@ -1058,8 +1063,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divESCAPE").hide();
 		}
 	}
-	export function showTransport(parkAtBottom = false) {
-		TransportBuilder.showTransport(parkAtBottom);
+	export function showTransport(parkMode = false) {
+		TransportBuilder.showTransport(parkMode);
 	}
 	export function toggleTransport(){
 		TransportBuilder.toggleTransport();
@@ -1699,6 +1704,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				.off(namespacedEvents, selector)
 				.on(namespacedEvents, selector, handler);
 		}
+
+		function isPlainEnterKey(e) {
+			return e.key === 'Enter'
+				&& !e.shiftKey
+				&& !e.ctrlKey
+				&& !e.altKey
+				&& !e.metaKey
+				&& !e.isComposing;
+		}
+
+		function commitFieldOnEnter(e) {
+			if (!isPlainEnterKey(e)) {
+				return;
+			}
+			e.preventDefault();
+			this.blur();
+		}
 		
 		bindDelegatedEvent('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
@@ -1721,6 +1743,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					$(this).empty().append($('<u></u>').text(nextText));
 				}
 			}
+		});
+
+		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtCaption, .inputTuningID', commitFieldOnEnter);
+		bindDelegatedEvent('keydown', '#txtColorSchemeName', function(e) {
+			if (!isPlainEnterKey(e)) {
+				return;
+			}
+			e.preventDefault();
+			$('#btnRecordUserColors').trigger('click');
+			$(this).trigger('blur');
 		});
 
 		bindDelegatedEvent('input change', '#rangeNamedNoteOpacity, #rangeSingleNoteOpacity, #rangeTinyNoteOpacity', function() {
@@ -1847,17 +1879,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    downloadPlayedNotes();
 		});
 		bindEvent('click', '#btnPrevSection', function() {
-		    getSong().gotoPrevSection(false);
+			runActionByName('prevSection');
 		});
 		bindEvent('click', '#btnNextSection', function() {
-		    getSong().gotoNextSection(false);
+			runActionByName('nextSection');
 		});
 		bindEvent('click', '#btnFirstSection', function() {
 			runActionByName('firstSection');
 		});
 		bindEvent('click', '#btnLastSection', function() {
-		    getSong().lastSection();
-			clearAndReplaySection();
+			runActionByName('lastSection');
 		});
 
 		bindEvent('click', '#btnLoopSections', function() {
@@ -1908,18 +1939,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('click', '#btnPrevBeat', function() {
-		    getSong().prevBeat();
-		    showHighlightsForBeat(getSong().getBeat());
+			runActionByName('prevBeat');
 		});
 		bindEvent('click', '#btnNextBeat', function() {
-		    getSong().nextBeat();
+			runActionByName('nextBeat');
 		});
 		bindEvent('change', '#txtFilename', function() {
-		 $(".lblSongName").html($( this ).val());
+			getSong().songName = $(this).val();
+			$(".lblSongName").html(getSong().songName);
 		});
 
 		bindEvent('change', '#txtBPM', function() {
-		 setBPM($(this).val());  //interestingly, this does NOT cause jQuery to call ".change()" again.
+			getTransportController().setBPM($(this).val());
 		});
 
 		bindEvent('click', '#btnRowRangeReset', function() {
@@ -2305,6 +2336,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TuningsLibrary.bindFormTuningsEvents();
 		
 
+		$(document).on('keydown', document_keydown);
 		$(document).on('keypress', document_keypress);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);

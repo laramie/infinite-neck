@@ -178,7 +178,6 @@ describe('looper looping state', () => {
 		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
 		expect(triggerSpy.mock.calls).toEqual([
 			['Looper:OnLoopBeatsStart', { caption: 'LOOPING...' }],
-			['DaCapo:OnSongBegin', expect.any(Object)],
 			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
 

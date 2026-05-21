@@ -1,6 +1,10 @@
 export class TransportBuilder {
     //static span_transport = null; //Singleton.
 
+    static PARK_BOTTOM_CENTER = 'bottom-center';
+    static PARK_TOP_RIGHT = 'top-right';
+    static PARK_TOP_RIGHT_INSET_PX = 100;
+
     static getViewportSize() {
         return {
             width: $(window).width(),
@@ -178,10 +182,14 @@ export class TransportBuilder {
         TransportBuilder.setDrawerSession($transport, null);
     }
 
-    static showTransport(parkAtBottom = false) {
+
+    static showTransport(parkMode = false) {
 		var $transport = $('#transport');
 		$transport.show();
-		TransportBuilder.transportResize(parkAtBottom);
+        if (parkMode === TransportBuilder.PARK_TOP_RIGHT) {
+            TransportBuilder.hideSectionDrawer();
+        }
+        TransportBuilder.transportResize(parkMode);
 	}
 	static toggleTransport(){
 		var $transport = $('#transport');
@@ -195,17 +203,22 @@ export class TransportBuilder {
 		TransportBuilder.transportResize();
 	}
 
-    static transportResize(parkAtBottom = false) {
+    static transportResize(parkMode = false) {
         var $transport = $('#transport');
         var $drawer = $('#spanSectionDrawer');
         var rect = TransportBuilder.getTransportRect($transport);
         var left = rect.left;
         var top = rect.top;
+        var viewport;
 
-        if (parkAtBottom) {
-            var viewport = TransportBuilder.getViewportSize();
+        if (parkMode === true || parkMode === TransportBuilder.PARK_BOTTOM_CENTER) {
+            viewport = TransportBuilder.getViewportSize();
             left = (viewport.width / 2) - (rect.width / 2);
             top = viewport.height - rect.height;
+        } else if (parkMode === TransportBuilder.PARK_TOP_RIGHT) {
+            viewport = TransportBuilder.getViewportSize();
+            left = viewport.width - rect.width - TransportBuilder.PARK_TOP_RIGHT_INSET_PX;
+            top = 0;
         }
 
         var clampedPosition = TransportBuilder.clampPosition(left, top, rect.width, rect.height);

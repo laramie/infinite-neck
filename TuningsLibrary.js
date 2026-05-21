@@ -638,6 +638,7 @@ export function bindFormTuningsEvents() {
         }
 
         if (newID === oldID) {
+            $(this).val(oldID);
             return; // No change
         }
 

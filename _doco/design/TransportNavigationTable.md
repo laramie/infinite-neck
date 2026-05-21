@@ -1,6 +1,6 @@
 # Transport Navigation Table
 
-- This version should be true after map-spacebar-implementation-plan-3.md is implemented.
+- Current controller-backed navigation coverage after the post-sprint transport follow-up.
 
 | navigation | avail | Key | menu | action | UI | notes |
 | --- | --- | --- | --- | --- | --- | --- |

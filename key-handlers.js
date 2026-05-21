@@ -54,7 +54,7 @@ import {
 import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
 
-export { document_keypress, document_keyup, runActionByName };
+export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
@@ -125,20 +125,6 @@ function runActionByName(actionName, args) {
 	return performCmdAction(makeSyntheticMenuItem(actionName), args);
 }
 
-function refreshBeatUi(song = getSong()) {
-	if (!song) {
-		return;
-	}
-	if (typeof song.publish_UpdateSectionStatus === 'function') {
-		song.publish_UpdateSectionStatus();
-	} else {
-		updateSectionsStatus();
-	}
-	if (typeof song.requestUiShowBeats === 'function') {
-		song.requestUiShowBeats();
-	}
-}
-
 function moveSelectByClampedStep(selectSelector, delta) {
 	var jSelect = $(selectSelector);
 	if (jSelect.length === 0) {
@@ -159,6 +145,30 @@ function moveSelectByClampedStep(selectSelector, delta) {
 	jSelect.prop('selectedIndex', nextIndex).trigger('change');
 }
 
+function isTextEditingTarget(target) {
+	if (!target) {
+		return false;
+	}
+	var tagName = typeof target.tagName === 'string' ? target.tagName.toLowerCase() : '';
+	return tagName === 'input'
+		|| tagName === 'textarea'
+		|| tagName === 'select'
+		|| target.isContentEditable === true;
+}
+
+function isMappedSpacebarEvent(evt) {
+	return Boolean(spacebarActionName)
+		&& !isTextEditingTarget(evt?.target)
+		&& (evt.key === ' ' || evt.key === 'Spacebar' || evt.code === 'Space');
+}
+
+function document_keydown(e) {
+	if (isMappedSpacebarEvent(e)) {
+		e.preventDefault();
+		runActionByName(spacebarActionName);
+	}
+}
+
 
 function document_keyup(evt) {
     if (evt.keyCode == 27) {  // ESC key
@@ -172,6 +182,10 @@ function document_keyup(evt) {
 
 
 function document_keypress(e) {
+	if (isMappedSpacebarEvent(e)) {
+		e.preventDefault();
+		return;
+	}
 
     if (e.keyCode == 13) {
         //alert(this.value);
@@ -358,7 +372,7 @@ function document_keypress(e) {
                 updateFontLabel();
                 break;
             case "<":
-				getSong().firstSection(false);
+				runActionByName('firstSection');
                 break;
             case ",":
                 getSong().gotoPrevSection(false);
@@ -375,12 +389,6 @@ function document_keypress(e) {
             case "]":
                 checkRB('#idMidiPitchesSingle');
                 break;
-			case " ":
-				if (spacebarActionName) {
-					e.preventDefault();
-					runActionByName(spacebarActionName);
-				}
-				break;
             default:
         }
     }
@@ -493,24 +501,19 @@ export function performCmdAction(menuItem, args){
 			Object.assign(actionResult, getTransportController().goFirstSection());
 			break;
 		case "prevSection":
-			getSong().gotoPrevSection(false);  //calls clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().prevSection());
 			break;
 		case "nextSection":
-			getSong().gotoNextSection(false);  //calls clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().nextSection());
 			break;
 		case "lastSection":
-			getSong().lastSection();
-            clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().lastSection());
 			break;
 		case "gotoSection":
 			if (argByInputID){
 				const targetSectionCardinal = toInt(argByInputID, 0);
 				if (targetSectionCardinal > 0){
-					getSong().gotoSection(targetSectionCardinal - 1);
-					actionResult.result = ""+(getSectionsCurrentIndex()+1);
+					Object.assign(actionResult, getTransportController().gotoSection(targetSectionCardinal - 1));
 				}
 			}
 			break;
@@ -518,27 +521,18 @@ export function performCmdAction(menuItem, args){
 			Object.assign(actionResult, getTransportController().restartSection());
 			break;
 		case "gotoLastBeat": {
-			const song = getSong();
-			song.gotoLastBeat();
-			refreshBeatUi(song);
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().gotoLastBeat());
 			break;
 		}
 		case "gotoLastBeatInSong": {
-			const song = getSong();
-			song.gotoLastBeatInSong();
-			refreshBeatUi(song);
-			actionResult.result = ""+(getSectionsCurrentIndex()+1)+":"+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().gotoLastBeatInSong());
 			break;
 		}
 		case "gotoBeat":
 			if (argByInputID){
 				const targetBeat = toInt(argByInputID, 0);
 				if (targetBeat > 0){
-					const song = getSong();
-					song.gotoBeat(Math.min(targetBeat, song.getBeats()));
-					refreshBeatUi(song);
-					actionResult.result = ""+getCurrentSection().currentBeat;
+					Object.assign(actionResult, getTransportController().gotoBeat(targetBeat));
 				}
 			}
 			break;
@@ -620,13 +614,11 @@ export function performCmdAction(menuItem, args){
             break;
 		case "setBPM":
 			if (argByInputID){
-				var bpm = toInt(argByInputID, 0);
-				if (bpm > 0){
-					setBPM(bpm);
-					restartLoopSections();
-				}
+				Object.assign(actionResult, getTransportController().setBPM(argByInputID));
 			}
-			actionResult.result = getBPM();
+			if (!argByInputID) {
+				actionResult.result = getBPM();
+			}
 			break;
 		case "setNamedNoteOpacity":
 			actionResult.result = "ERROR";
@@ -671,12 +663,10 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = rl+sl;
 			break;
 		case "nextBeat":
-			getSong().nextBeat();
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().nextBeat());
 			break;
 		case "prevBeat":
-			getSong().prevBeat();
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().prevBeat());
 			break;
 		case "addBeat":
 			addBeat();
@@ -720,6 +710,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "parkTransport":
 			showTransport(true);
+			break;
+		case "parkTransportTopRight":
+			showTransport('top-right');
 			break;
 		case "viewFullscreen":
 			enterFullscreen();

@@ -257,15 +257,6 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		});
 
 		if (song) {
-			const isSongBegin = song.getSectionsCurrentIndex() === 0 && song.getBeat() === 1;
-			if (isSongBegin) {
-				EventBus.trigger('DaCapo:OnSongBegin', {
-					sectionIndex: song.getSectionsCurrentIndex(),
-					sectionCount: song.getSections().length,
-					beat: song.getBeat(),
-					beats: song.getBeats()
-				});
-			}
 			emitSectionBeginForCurrentSong(song);
 		}
 
