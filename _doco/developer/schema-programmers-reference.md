@@ -161,6 +161,26 @@ Examples of base-schema checks:
 - `songfileVersion === "V2"`
 - `myTunings` present
 - section shape is `sectionNotesByTable`, not legacy `noteTables` / `namedNotes` / `recordedNotes`
+- optional Section-local plugin state may appear under `section.pluginData.*`
+
+### Current optional Section plugin state
+
+The base V2 schema now explicitly allows optional Section-local plugin state for Arpeggio under:
+
+- `section.pluginData.arpeggio.positions`
+- `section.pluginData.arpeggio.lastPositionIndex`
+
+Current intended shape:
+
+- `positions` is an array of `[minFret,maxFret]` pairs
+- `lastPositionIndex` is an integer-like value
+
+Important notes:
+
+- both fields are optional
+- `pluginData` itself is optional
+- the schema leaves `pluginData.arpeggio` open to future sibling keys
+- runtime load normalization may clear empty `positions` arrays and reset `lastPositionIndex` to `-1`
 
 ### Be conservative with note-level tightening
 

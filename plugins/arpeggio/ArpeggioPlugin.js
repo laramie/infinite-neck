@@ -1,5 +1,7 @@
 import properties from './properties.json' with { type: 'json' };
+import { MenuItemProxy } from '../MenuItemProxy.js';
 import { PluginProperty } from '../PluginProperty.js';
+import { buildCaption, buildValueReference } from '../PluginProperty.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
@@ -17,6 +19,10 @@ const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
 const SHOW_NOTE_NAME_PLAYED = 'played';
 const TARGET_TABLE_OPTION_LIMIT = 9;
+const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
+const POSITIONS_UNSET_DISPLAY = '<unset>';
+const POSITIONS_MENU_DEFAULT = '[[0,3],[4,7],[8,12]]';
+const POSITION_NOT_PLAYED_YET = -1;
 
 export class ArpeggioPlugin {
   constructor() {
@@ -59,9 +65,16 @@ export class ArpeggioPlugin {
 
   getVisibleMenuChildren() {
     this.refreshDynamicPropertyOptions(this.manager?.song || getSong());
-    return this.properties
+    const visibleProperties = this.properties
       .filter((property) => property.visibleInMenu)
       .map((property) => property.getMenuNodeSpec(this));
+    const targetTableNode = visibleProperties.find((node) => node?.name === 'targetTable');
+    const otherNodes = visibleProperties.filter((node) => node?.name !== 'targetTable');
+    return [
+      targetTableNode,
+      this.buildPositionsMenuNode(),
+      ...otherNodes
+    ].filter(Boolean);
   }
 
   updatePropertyOptions(propertyName, options = []) {
@@ -105,7 +118,8 @@ export class ArpeggioPlugin {
 
   loadSongState(persistedProperties = {}, context = {}) {
     this.resetToDefaults();
-    this.refreshDynamicPropertyOptions(context.song || getSong());
+    const song = context.song || getSong();
+    this.refreshDynamicPropertyOptions(song);
     Object.entries(persistedProperties).forEach(([name, value]) => {
       const property = this.getProperty(name);
       if (!property || property.datatype === 'org.dynamide.Action') {
@@ -113,7 +127,8 @@ export class ArpeggioPlugin {
       }
       this.setPropertyValue(name, value, context);
     });
-    this.refreshDynamicPropertyOptions(context.song || getSong());
+    this.normalizeSectionPositionsOnLoad(song);
+    this.refreshDynamicPropertyOptions(song);
   }
 
   exportSongState() {
@@ -162,6 +177,9 @@ export class ArpeggioPlugin {
     if (fieldName === 'maxAllowedFret') {
       return this.getMaxAllowedFret(song);
     }
+    if (fieldName === POSITIONS_VALUE_TOKEN) {
+      return this.getCurrentSectionPositionsDisplay(song);
+    }
     return undefined;
   }
 
@@ -175,7 +193,9 @@ export class ArpeggioPlugin {
 
   handleEvent(eventName, payload = {}, context = {}) {
     if (eventName === 'Looper:OnResetSong') {
-      return this.clearGeneratedNotesInSong(context.song || getSong());
+      const song = context.song || getSong();
+      this.resetAllSectionPositionIndexes(song);
+      return this.clearGeneratedNotesInSong(song);
     }
 
     if (eventName === 'SongUiShowBeats') {
@@ -201,11 +221,24 @@ export class ArpeggioPlugin {
 
   invokeAction(actionName, context = {}) {
     const song = context.song || getSong();
+    const args = context.args || {};
     switch (actionName) {
       case 'apply':
         return this.applyToSection({ song, clearSectionFirst: true });
       case 'clear':
         return this.clearGeneratedNotesInSong(song);
+      case 'positions:setCurrentSection':
+        return this.setPositionsForCurrentSection(song, args?.value);
+      case 'positions:clearCurrentSection':
+        return this.clearPositionsForCurrentSection(song);
+      case 'positions:clearAllSections':
+        return this.clearPositionsForAllSections(song);
+      case 'positions:copyToAllSections':
+        return this.copyPositionsToSections(song, { onlyUnset: false });
+      case 'positions:copyToUnsetSections':
+        return this.copyPositionsToSections(song, { onlyUnset: true });
+      case 'positions:refreshCurrentSection':
+        return { result: `positions=${this.getCurrentSectionPositionsDisplay(song)}` };
       case 'help':
         return {
           result: 'Arpeggio help opened',
@@ -254,6 +287,447 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getTableID(tuning) {
     return `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+  }
+
+  buildPositionsMenuNode() {
+    const token = `plugin:${this.id}:${POSITIONS_VALUE_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'positions',
+      caption: buildCaption('positions', 'p'),
+      trigger: 'p',
+      children: [
+        new MenuItemProxy(this, {
+          name: 'positions:clearAllSections',
+          caption: buildCaption('cLear all sections', 'L'),
+          trigger: 'L',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:clearAllSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:clearCurrentSection',
+          caption: buildCaption('clear This section', 'T'),
+          trigger: 'T',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:clearCurrentSection',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:copyToAllSections',
+          caption: buildCaption('Copy to all sections', 'C'),
+          trigger: 'C',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:copyToAllSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:copyToUnsetSections',
+          caption: buildCaption('copy to Unset sections', 'U'),
+          trigger: 'U',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:copyToUnsetSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:refreshCurrentSection',
+          caption: buildCaption('Refresh values', 'R'),
+          trigger: 'R',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:refreshCurrentSection',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:setCurrentSection',
+          caption: `${buildCaption('values this section', 'v')} [${buildValueReference(token)}]`,
+          trigger: 'v',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:setCurrentSection',
+          vars: [token],
+          popOnBang: true,
+          input: {
+            type: 'input',
+            caption: 'arrays of positions',
+            default: token,
+            datatype: 'String',
+            id: 'value'
+          }
+        })
+      ]
+    });
+  }
+
+  getApprovedCaptionState(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    const section = context.section || this.getTargetSection(song);
+    const positions = this.getSectionPositions(section);
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    const currentIndex = this.getLastPositionIndex(section);
+    return {
+      enabled,
+      hasSection: !!section,
+      positions,
+      currentIndex
+    };
+  }
+
+  buildPositionsStatusWidget(state) {
+    if (!state.enabled || !state.hasSection || !Array.isArray(state.positions) || state.positions.length === 0) {
+      return '';
+    }
+    const tds = state.positions.map((position, index) => {
+      const tdClass = index === state.currentIndex ? ' class="arpeggioCurrentPositionPair"' : '';
+      return `<td${tdClass}>${position[0]}</td><td${tdClass}>${position[1]}</td>`;
+    }).join('');
+    return `<span class="arpeggioPositionsStatus"><table><tr>${tds}</tr></table></span>`;
+  }
+
+  getApprovedCaptionValue(tokenName, context = {}) {
+    const state = this.getApprovedCaptionState(context);
+
+    if (tokenName === 'arpeggioPositionsStatus') {
+      return this.buildPositionsStatusWidget(state);
+    }
+
+    return '';
+  }
+
+  getArpeggioSectionData(section) {
+    if (!section || typeof section !== 'object') {
+      return null;
+    }
+    const pluginData = section.pluginData;
+    if (!pluginData || typeof pluginData !== 'object') {
+      return null;
+    }
+    const arpeggio = pluginData.arpeggio;
+    return arpeggio && typeof arpeggio === 'object' ? arpeggio : null;
+  }
+
+  ensureArpeggioSectionData(section) {
+    if (!section || typeof section !== 'object') {
+      return null;
+    }
+    if (!section.pluginData || typeof section.pluginData !== 'object') {
+      section.pluginData = {};
+    }
+    if (!section.pluginData.arpeggio || typeof section.pluginData.arpeggio !== 'object') {
+      section.pluginData.arpeggio = {};
+    }
+    return section.pluginData.arpeggio;
+  }
+
+  pruneEmptyArpeggioSectionData(section) {
+    if (!section || !section.pluginData || typeof section.pluginData !== 'object') {
+      return;
+    }
+    const arpeggio = section.pluginData.arpeggio;
+    if (arpeggio && typeof arpeggio === 'object' && Object.keys(arpeggio).length === 0) {
+      delete section.pluginData.arpeggio;
+    }
+  }
+
+  clonePositions(positions = []) {
+    return (positions || []).map((position) => [...position]);
+  }
+
+  getSectionPositions(section) {
+    const arpeggio = this.getArpeggioSectionData(section);
+    if (!Array.isArray(arpeggio?.positions) || arpeggio.positions.length === 0) {
+      return null;
+    }
+    return arpeggio.positions
+      .filter((position) => Array.isArray(position) && position.length === 2)
+      .map((position) => position.map((value) => Number.parseInt(value, 10)));
+  }
+
+  setSectionPositions(section, positions) {
+    if (!Array.isArray(positions) || positions.length === 0) {
+      this.clearSectionPositions(section);
+      return;
+    }
+    const arpeggio = this.ensureArpeggioSectionData(section);
+    arpeggio.positions = this.clonePositions(positions);
+  }
+
+  clearSectionPositions(section) {
+    const arpeggio = this.getArpeggioSectionData(section);
+    if (!arpeggio) {
+      return;
+    }
+    delete arpeggio.positions;
+    delete arpeggio.lastPositionIndex;
+    this.pruneEmptyArpeggioSectionData(section);
+  }
+
+  getLastPositionIndex(section) {
+    const arpeggio = this.getArpeggioSectionData(section);
+    if (!arpeggio || arpeggio.lastPositionIndex === undefined || arpeggio.lastPositionIndex === null || arpeggio.lastPositionIndex === '') {
+      return null;
+    }
+    const value = Number.parseInt(arpeggio.lastPositionIndex, 10);
+    return Number.isInteger(value) ? value : null;
+  }
+
+  setLastPositionIndex(section, index) {
+    const arpeggio = this.ensureArpeggioSectionData(section);
+    arpeggio.lastPositionIndex = Number.parseInt(index, 10);
+  }
+
+  resetSectionPositionIndex(section) {
+    const positions = this.getSectionPositions(section);
+    if (!positions) {
+      this.clearSectionPositions(section);
+      return;
+    }
+    this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+  }
+
+  resetAllSectionPositionIndexes(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return 0;
+    }
+    let count = 0;
+    song.sections.forEach((section) => {
+      const positions = this.getSectionPositions(section);
+      if (!positions) {
+        this.clearSectionPositions(section);
+        return;
+      }
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      count += 1;
+    });
+    return count;
+  }
+
+  normalizeSectionPositionsOnLoad(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return;
+    }
+    song.sections.forEach((section) => {
+      const positions = this.getSectionPositions(section);
+      if (!positions) {
+        this.clearSectionPositions(section);
+        return;
+      }
+      this.setSectionPositions(section, positions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+    });
+  }
+
+  getSectionPositionsDisplay(section) {
+    const positions = this.getSectionPositions(section);
+    return positions ? this.formatPositionsValue(positions) : POSITIONS_UNSET_DISPLAY;
+  }
+
+  getCurrentSectionPositionsDisplay(song = getSong()) {
+    return this.getSectionPositionsDisplay(this.getTargetSection(song));
+  }
+
+  parsePositionsInput(rawValue) {
+    const text = `${rawValue ?? ''}`.trim();
+    if (text === '') {
+      return [];
+    }
+
+    if (text.includes(';')) {
+      return text.split(';')
+        .map((segment) => segment.trim())
+        .filter(Boolean)
+        .map((segment) => {
+          const parts = segment.split(',').map((part) => part.trim()).filter(Boolean);
+          if (parts.length === 1) {
+            const start = this.parsePositionInteger(parts[0], rawValue);
+            return [start, start + 4];
+          }
+          if (parts.length === 2) {
+            return [this.parsePositionInteger(parts[0], rawValue), this.parsePositionInteger(parts[1], rawValue)];
+          }
+          throw new Error(`Invalid positions segment: ${segment}`);
+        });
+    }
+
+    if (!text.startsWith('[')) {
+      const parts = text.split(',').map((part) => part.trim()).filter(Boolean);
+      if (parts.length < 2) {
+        throw new Error(`Invalid positions input: ${rawValue}`);
+      }
+      const numbers = parts.map((part) => this.parsePositionInteger(part, rawValue));
+      if (numbers.length % 2 === 0) {
+        return Array.from({ length: numbers.length - 1 }, (_, idx) => [numbers[idx], numbers[idx + 1]]);
+      }
+    }
+
+    const parsed = JSON.parse(text);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Expected positions array');
+    }
+    return parsed;
+  }
+
+  parsePositionInteger(value, rawValue) {
+    const text = `${value}`.trim();
+    if (!/^-?\d+$/.test(text)) {
+      throw new Error(`Expected integer in positions input: ${rawValue}`);
+    }
+    return Number.parseInt(text, 10);
+  }
+
+  normalizePositionsValue(rawValue, tuning) {
+    const parsed = this.parsePositionsInput(rawValue);
+    const normalized = this.validatePositionsValue(parsed, tuning);
+    return this.clonePositions(normalized);
+  }
+
+  validatePositionsValue(positions, tuning) {
+    if (!Array.isArray(positions)) {
+      throw new Error('Expected positions array');
+    }
+    return positions.map((position) => {
+      if (!Array.isArray(position) || position.length !== 2) {
+        throw new Error(`Invalid position pair: ${JSON.stringify(position)}`);
+      }
+      const minFret = this.parsePositionInteger(position[0], JSON.stringify(position));
+      const maxFret = this.parsePositionInteger(position[1], JSON.stringify(position));
+      if (minFret < 0 || maxFret < 0) {
+        throw new Error(`Negative frets are not allowed: ${JSON.stringify(position)}`);
+      }
+      if (minFret > maxFret) {
+        throw new Error(`Reversed position pair: ${JSON.stringify(position)}`);
+      }
+      const maxAllowedFret = Number.parseInt(tuning?.frets, 10);
+      if (Number.isInteger(maxAllowedFret) && maxFret > maxAllowedFret) {
+        throw new Error(`Position exceeds target tuning fret range 0..${maxAllowedFret}: ${JSON.stringify(position)}`);
+      }
+      return [minFret, maxFret];
+    });
+  }
+
+  formatPositionsValue(positions) {
+    return JSON.stringify(this.clonePositions(positions));
+  }
+
+  buildPositionsRejectResponse(reason, rawValue) {
+    return {
+      result: 'positions rejected',
+      message: `Arpeggio positions rejected: ${reason}. Attempted: ${rawValue}`
+    };
+  }
+
+  resolveEffectiveFretWindow(section, tuning, options = {}) {
+    const positions = this.getSectionPositions(section);
+    const defaultMinFret = Math.max(0, Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0);
+    const maxAllowedFret = this.getMaxAllowedFret({ myTunings: [tuning], wirings: [] });
+    const defaultMaxFret = Math.min(maxAllowedFret, Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0);
+
+    if (!positions) {
+      return {
+        minFret: defaultMinFret,
+        maxFret: defaultMaxFret,
+        positionsUsed: false,
+        appliedIndex: null
+      };
+    }
+
+    const lastIndex = this.getLastPositionIndex(section);
+    const hasPlayedBefore = lastIndex !== null && lastIndex >= 0;
+    let appliedIndex = hasPlayedBefore ? lastIndex : 0;
+    if (options.advance) {
+      appliedIndex = hasPlayedBefore ? (lastIndex + 1) % positions.length : 0;
+    }
+    if (options.advance) {
+      this.setLastPositionIndex(section, appliedIndex);
+    }
+    const [minFret, maxFret] = positions[appliedIndex];
+    return {
+      minFret,
+      maxFret,
+      positionsUsed: true,
+      appliedIndex
+    };
+  }
+
+  setPositionsForCurrentSection(song = getSong(), rawValue = '') {
+    const section = this.getTargetSection(song);
+    if (!section) {
+      return { result: 'positions skipped: no current section selected' };
+    }
+    const tuning = this.getTargetTuning(song);
+    if (!tuning) {
+      return { result: 'positions skipped: no target instrument available in myTunings' };
+    }
+    if (`${rawValue ?? ''}`.trim() === '') {
+      this.clearSectionPositions(section);
+      return { result: 'positions cleared for current section' };
+    }
+    try {
+      const positions = this.normalizePositionsValue(rawValue, tuning);
+      if (positions.length === 0) {
+        this.clearSectionPositions(section);
+        return { result: 'positions cleared for current section' };
+      }
+      this.setSectionPositions(section, positions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      return { result: `positions=${this.formatPositionsValue(positions)}` };
+    } catch (error) {
+      return this.buildPositionsRejectResponse(error?.message || 'invalid positions', rawValue);
+    }
+  }
+
+  clearPositionsForCurrentSection(song = getSong()) {
+    const section = this.getTargetSection(song);
+    if (!section) {
+      return { result: 'positions skipped: no current section selected' };
+    }
+    this.clearSectionPositions(section);
+    return { result: 'positions cleared for current section' };
+  }
+
+  clearPositionsForAllSections(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return { result: 'positions skipped: no song loaded' };
+    }
+    let clearedCount = 0;
+    song.sections.forEach((section) => {
+      if (this.getSectionPositions(section) || this.getLastPositionIndex(section) !== null) {
+        this.clearSectionPositions(section);
+        clearedCount += 1;
+      }
+    });
+    return { result: `positions cleared across ${clearedCount} sections` };
+  }
+
+  copyPositionsToSections(song = getSong(), { onlyUnset = false } = {}) {
+    if (!song || !Array.isArray(song.sections)) {
+      return { result: 'positions skipped: no song loaded' };
+    }
+    const currentSection = this.getTargetSection(song);
+    const sourcePositions = this.getSectionPositions(currentSection);
+    if (!sourcePositions) {
+      return { result: 'positions copy skipped: current section unset' };
+    }
+    let copiedCount = 0;
+    song.sections.forEach((section) => {
+      if (section === currentSection) {
+        return;
+      }
+      if (onlyUnset && this.getSectionPositions(section)) {
+        return;
+      }
+      this.setSectionPositions(section, sourcePositions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      copiedCount += 1;
+    });
+    return {
+      result: onlyUnset
+        ? `positions copied to ${copiedCount} unset sections`
+        : `positions copied to ${copiedCount} sections`
+    };
   }
 
   buildTargetTableOptions(song = getSong()) {
@@ -550,6 +1024,17 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     song.requestUiShowBeats();
   }
 
+  requestSectionStatusRefresh(song = getSong()) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+    EventBus.trigger('UpdateSectionStatus', {
+      sectionIndex: typeof song.getSectionsCurrentIndex === 'function'
+        ? song.getSectionsCurrentIndex()
+        : undefined
+    });
+  }
+
   refreshNamedNoteDisplay({ song = getSong(), payload = {}, eventName = 'SongUiShowBeats' } = {}) {
     if (!song) {
       return;
@@ -565,8 +1050,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const beatCount = typeof section.getBeats === 'function'
       ? section.getBeats()
       : (Number.parseInt(section?.beats, 10) || 0);
+    const fretWindow = this.resolveEffectiveFretWindow(section, tuning, { advance: false });
     const candidates = this.collectCandidatesForSection(section, tuning, {
-      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh()
+      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh(),
+      minFret: fretWindow.minFret,
+      maxFret: fretWindow.maxFret
     });
     const sequence = this.expandCandidateSequence(candidates, beatCount, { song, section });
     this.syncNamedNoteDisplay({
@@ -592,9 +1080,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return [];
     }
 
-    const minFret = Math.max(0, Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0);
+    const minFret = Math.max(0, Number.parseInt(options.minFret ?? this.getProperty('minFret')?.getValue(), 10) || 0);
     const maxAllowedFret = this.getMaxAllowedFret({ myTunings: [tuning], wirings: [] });
-    const maxFret = Math.min(maxAllowedFret, Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0);
+    const maxFret = Math.min(maxAllowedFret, Number.parseInt(options.maxFret ?? this.getProperty('maxFret')?.getValue(), 10) || 0);
     const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
     const candidates = [];
     const lowToHigh = options.lowToHigh ?? this.isLowToHigh();
@@ -1068,8 +1556,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const beatCount = typeof section.getBeats === 'function'
       ? section.getBeats()
       : (Number.parseInt(section?.beats, 10) || 0);
+    const fretWindow = this.resolveEffectiveFretWindow(section, tuning, {
+      advance: eventName === 'DaCapo:OnSectionBegin'
+    });
     const candidates = this.collectCandidatesForSection(section, tuning, {
-      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh()
+      lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh(),
+      minFret: fretWindow.minFret,
+      maxFret: fretWindow.maxFret
     });
     if (candidates.length === 0) {
       if (removedCount > 0) {
@@ -1100,6 +1593,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     });
 
     this.requestCurrentBeatRefresh(song, section);
+    this.requestSectionStatusRefresh(song);
     this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
 
     return {

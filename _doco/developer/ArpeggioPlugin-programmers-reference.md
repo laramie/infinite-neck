@@ -19,6 +19,11 @@ The current design separates four concerns:
 3. `NoteTableController.js` owns transient DOM display for named-note reveal.
 4. `looper.js` and `Song.requestUiShowBeats()` provide the beat-driven refresh path that keeps Arpeggio's transient display synchronized while looping.
 
+Arpeggio now also owns one Section-local state tree for its `positions` feature:
+
+- `section.pluginData.arpeggio.positions`
+- `section.pluginData.arpeggio.lastPositionIndex`
+
 ## Core Runtime Model
 
 At runtime Arpeggio does two different jobs that are easy to confuse if you only skim the file.
@@ -74,20 +79,79 @@ The sequence path inside `applyToSection()` is:
 1. resolve target section
 2. optionally clear existing generated notes in that section
 3. resolve target tuning and table ID
-4. collect candidate positions from named notes within the configured fret range
-5. expand those candidates into a beat-count-length sequence using the selected style
-6. write generated recorded notes into beat arrays
-7. request UI beat refresh
-8. emit transient named-note display intent if enabled
+4. resolve the effective fret window for this pass
+5. collect candidate positions from named notes within that effective fret range
+6. expand those candidates into a beat-count-length sequence using the selected style
+7. write generated recorded notes into beat arrays
+8. request UI beat refresh
+9. emit transient named-note display intent if enabled
 
 The important sequence helpers are:
 
+- `resolveEffectiveFretWindow()`
 - `collectCandidatesForSection()`
 - `expandCandidateSequence()`
 - `expandEverySequence()`
 - `expandAlternateSequence()`
 - `expandRandomSequence()`
 - `expandBachSequence()`
+
+## Section-local positions
+
+Arpeggio now supports a custom `p) positions` submenu in the plugin menu.
+
+That feature is intentionally not modeled as a flat persisted plugin property in `properties.json`.
+
+Reason:
+
+- positions are Section-local, not Song-plugin-global
+- copy/clear/edit actions operate on Section state, not on plugin defaults
+
+### Storage model
+
+Positions are stored per Section under:
+
+- `section.pluginData.arpeggio.positions`
+- `section.pluginData.arpeggio.lastPositionIndex`
+
+Plugin-level `minFret` and `maxFret` remain the default fallback values when a Section has no positions.
+
+### Advancement rule
+
+Positions advance only on `DaCapo:OnSectionBegin`.
+
+Current state machine:
+
+- if a Section has no positions, use plugin defaults and do not touch `lastPositionIndex`
+- if a Section has positions and no stored index, or `lastPositionIndex === -1`, apply index `0`
+- after applying index `i`, persist `lastPositionIndex = i`
+- next qualifying section-begin applies `(i + 1) % positions.length`
+
+Manual `apply` does not advance positions.
+
+`SongUiShowBeats` must remain read-only with respect to `lastPositionIndex`; it uses the current stored position for transient display refresh.
+
+### Input formats
+
+The `values this section` menu item accepts:
+
+- canonical JSON such as `[[0,3],[4,7]]`
+- semicolon shorthand such as `0,3;2,5;6,9`
+- semicolon shorthand with trailing implied width such as `0,3;2,5;6`
+- boundary shorthand such as `0,3,5,9`
+
+Stored and displayed values are normalized back to canonical JSON.
+
+### Reset and load normalization
+
+Arpeggio resets every Section's `lastPositionIndex` to `-1` when:
+
+- `loadSongState(...)` runs
+- `Looper:OnResetSong` is received
+
+`-1` means "positions exist for this Section, but no position has been played yet." That preserves `positions[0]` as the first played position after reset or load.
+
+Empty or missing positions are treated as unset and do not participate in advancement.
 
 The `bach` helpers are intentionally more specialized than the others and should be treated as their own algorithm family, not as a trivial variant of `every` or `alternate`.
 
@@ -253,6 +317,7 @@ Check:
 - `Song.requestUiShowBeats()`
 - `looper.js`
 - `ArpeggioPlugin.handleEvent('SongUiShowBeats', ...)`
+- `ArpeggioPlugin.resolveEffectiveFretWindow(...)`
 
 The transient overlay path depends on that event chain remaining intact.
 

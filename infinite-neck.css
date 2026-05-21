@@ -910,6 +910,33 @@ td.transposeCurrentAppliedInterval {
     text-align: center;
 }
 
+.arpeggioPositionsStatus{
+    font-family: "Kode Mono", monospace;
+    font-size: 60%;
+}
+.arpeggioPositionsStatus table {
+  display: inline-table;
+  vertical-align: middle;
+  margin: 0;
+}
+.arpeggioPositionsStatus td {
+    padding: 0 2px;
+    background-color: #ffd39a;
+    font-weight: normal;
+    color: black;
+    min-width: 1em;
+    text-align: center;
+}
+
+td.arpeggioCurrentPositionPair {
+    background-color: #ff7f50;
+    font-weight: bold;
+    color: black;
+    border: 1px solid black;
+    min-width: 1em;
+    text-align: center;
+}
+
 
 
 

@@ -160,6 +160,28 @@ const sectionSchema = {
             type: 'object',
             additionalProperties: sectionNotesSchema
         },
+        pluginData: {
+            type: 'object',
+            properties: {
+                arpeggio: {
+                    type: 'object',
+                    properties: {
+                        positions: {
+                            type: 'array',
+                            items: {
+                                type: 'array',
+                                minItems: 2,
+                                maxItems: 2,
+                                items: integerLikeSchema
+                            }
+                        },
+                        lastPositionIndex: integerLikeSchema
+                    },
+                    additionalProperties: true
+                }
+            },
+            additionalProperties: true
+        },
         caption: { type: 'string' },
         chartChord: { type: 'string' },
         chartMode: { type: 'string' },

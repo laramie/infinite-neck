@@ -201,6 +201,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					song: getSong(),
 					section: getCurrentSection()
 				});
+			},
+			getArpeggioCaptionValue: (tokenName) => {
+				const plugin = pluginManager.getPluginById('arpeggio');
+				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
+					return '';
+				}
+				return plugin.getApprovedCaptionValue(tokenName, {
+					song: getSong(),
+					section: getCurrentSection()
+				});
 			}
 		});
 		setNotetableProviders({
@@ -360,7 +370,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
-		var pluginWidgets = expandApprovedTemplate("${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
+		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);

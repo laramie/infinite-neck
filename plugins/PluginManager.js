@@ -220,7 +220,7 @@ export class PluginManager {
       case 'pluginProperty:select':
         return this.setPropertyValue(entry, menuItem.propertyName, menuItem.value);
       case 'pluginAction:invoke':
-        return this.invokePluginAction(entry, menuItem.actionName);
+        return this.invokePluginAction(entry, menuItem.actionName, args);
       case 'pluginAction:bury': {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.buryPluginEntry(entry, rawValue);
@@ -299,10 +299,11 @@ export class PluginManager {
     return { result: `${propertyName}=${formatValue(nextValue)}` };
   }
 
-  invokePluginAction(entry, actionName) {
+  invokePluginAction(entry, actionName, args = {}) {
     const response = entry.plugin.invokeAction(actionName, {
       song: this.song,
-      pluginManager: this
+      pluginManager: this,
+      args
     });
     this.syncSongPlugins();
     return normalizePluginResponse(response, `${actionName}`);

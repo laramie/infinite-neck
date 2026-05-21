@@ -30,6 +30,9 @@ describe('approved values', () => {
         transposeProgressionFunctions: 'C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F',
         transposeProgressionDistances: 'C<span class="transposeCaptionBox"><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F',
         transposeProgressionFunctionDistances: 'C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F'
+      }[tokenName] || ''),
+      getArpeggioCaptionValue: (tokenName) => ({
+        arpeggioPositionsStatus: '<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span>'
       }[tokenName] || '')
     });
   });
@@ -42,9 +45,10 @@ describe('approved values', () => {
   test('resolves transpose caption approved values through the dedicated provider', () => {
     expect(approvedValues.resolveApprovedValue('transposeCurrentOffset')).toBe('3');
     expect(approvedValues.resolveApprovedValue('transposeProgressionFunctionDistances')).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F');
+    expect(approvedValues.resolveApprovedValue('arpeggioPositionsStatus')).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span>');
   });
 
   test('expandApprovedTemplate interpolates general and transpose caption values', () => {
-    expect(approvedValues.expandApprovedTemplate('${rootKey} ${transposeCurrentOffset} ${transposeProgressionFunctions}')).toBe('F 3 C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F');
+    expect(approvedValues.expandApprovedTemplate('${arpeggioPositionsStatus} ${rootKey} ${transposeCurrentOffset} ${transposeProgressionFunctions}')).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span> F 3 C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F');
   });
 });

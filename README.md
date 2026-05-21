@@ -19,6 +19,11 @@ For further details, please refer to the following documents:
 - [CHANGELOG](_doco/lifecycle/CHANGELOG.md)
 - [Software Lifecycle](_doco/lifecycle/index.md)
 
+Songfile schema note:
+
+- V2 Sections may now carry optional plugin-local Section state under `section.pluginData.*`
+- the current concrete use is `section.pluginData.arpeggio.positions` and `section.pluginData.arpeggio.lastPositionIndex`
+
 
 ## Developer maintenance notes
 - test shell scripts (choose one)

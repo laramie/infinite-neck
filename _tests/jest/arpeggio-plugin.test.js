@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
+import { validateSongFileSchema } from './SongFileV2Schema.js';
 
 const mockRuntime = {
 	song: null
@@ -73,7 +74,7 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	};
 	mockRuntime.song = song;
 	plugin.setPropertyValue('maxFret', frets, { song });
-	return { plugin, song, sectionNotes };
+	return { plugin, song, section, sectionNotes, tuning };
 }
 
 function expectNamedNoteEvent(payload) {
@@ -561,6 +562,190 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(result.result).toContain('removed');
 		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
 		expect(sectionNotes.recordedNotes).toEqual({});
+	});
+
+	test('positions semicolon shorthand normalizes and resets current-section index to zero', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 12 });
+
+		const result = plugin.setPositionsForCurrentSection(song, '0,3;2,5;6');
+
+		expect(result.result).toBe('positions=[[0,3],[2,5],[6,10]]');
+		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [2, 5], [6, 10]]);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+	});
+
+	test('positions boundary shorthand normalizes to adjacent ranges', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 12 });
+
+		plugin.setPositionsForCurrentSection(song, '0,3,5,9');
+
+		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5], [5, 9]]);
+	});
+
+	test('positions reject out-of-range values and preserve the prior section value', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 5 });
+		plugin.setPositionsForCurrentSection(song, '0,3;4,5');
+
+		const result = plugin.setPositionsForCurrentSection(song, '0,6');
+
+		expect(result.result).toBe('positions rejected');
+		expect(result.message).toContain('Attempted: 0,6');
+		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [4, 5]]);
+	});
+
+	test('DaCapo section-begin advances positions from index zero and wraps', () => {
+		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
+		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+		let beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
+	});
+
+	test('manual apply uses the current resolved position and does not advance the index', () => {
+		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
+		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
+		plugin.setLastPositionIndex(section, 1);
+
+		plugin.invokeAction('apply', { song });
+
+		const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
+	});
+
+	test('SongUiShowBeats uses the stored position without advancing it', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 4, currentBeat: 1 });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
+		plugin.setLastPositionIndex(section, 1);
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+	});
+
+	test('loadSongState resets persisted section position indexes to not-played-yet', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		section.pluginData = {
+			arpeggio: {
+				positions: [[0, 2], [3, 5]],
+				lastPositionIndex: 7
+			}
+		};
+
+		plugin.loadSongState({}, { song });
+
+		expect(section.pluginData.arpeggio.positions).toEqual([[0, 2], [3, 5]]);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+	});
+
+	test('Looper:OnResetSong resets section position indexes to not-played-yet', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setPositionsForCurrentSection(song, '0,2;3,5');
+		plugin.setLastPositionIndex(section, 1);
+
+		plugin.handleEvent('Looper:OnResetSong', { hard: false }, { song });
+
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+	});
+
+	test('positions current-section display resolves to canonical JSON or unset', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+
+		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('<unset>');
+		plugin.setPositionsForCurrentSection(song, '0,2;3,5');
+		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('[[0,2],[3,5]]');
+	});
+
+	test('arpeggioPositionsStatus shows the current-section pairs and highlights the active pair', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		plugin.setSectionPositions(section, [[0, 2], [3, 5]]);
+		plugin.setLastPositionIndex(section, 1);
+
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>2</td><td class="arpeggioCurrentPositionPair">3</td><td class="arpeggioCurrentPositionPair">5</td></tr></table></span>');
+	});
+
+	test('DaCapo section-begin requests a section-status refresh after advancing the position index', () => {
+		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
+		EventBus.trigger.mockClear();
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">0</td><td>2</td><td>2</td></tr></table></span>');
+	});
+
+	test('arpeggioPositionsStatus is empty when Arpeggio is not enabled', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: false })
+		});
+		plugin.setSectionPositions(section, [[0, 2], [3, 5]]);
+
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('');
+	});
+
+	test('song file schema accepts optional section.pluginData.arpeggio positions data', () => {
+		const songJson = {
+			myTunings: [{
+				baseID: 'ARP',
+				baseInstrument: 'guitar',
+				caption: 'ARP',
+				nStrings: 1,
+				rowRange: [40],
+				frets: 12,
+				nut: true,
+				reverse: false,
+				visible: true
+			}],
+			rootID: 3,
+			sections: [{
+				sectionNotesByTable: {},
+				pluginData: {
+					arpeggio: {
+						positions: [[0, 3], [4, 7]],
+						lastPositionIndex: 0
+					}
+				},
+				beats: 4,
+				currentBeat: 1,
+				rootID: 3,
+				sharps: false
+			}],
+			songName: 'positions schema',
+			songfileVersion: 'V2'
+		};
+
+		expect(validateSongFileSchema(songJson)).toEqual({ valid: true, errors: [] });
 	});
 
 	test('bach builds its actingRoot, octave, and terminal note from concrete traversal order', () => {

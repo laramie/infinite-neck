@@ -23,6 +23,7 @@ function getSong(...args) { return requireProvider('getSong')(...args); }
 function getRootKey(...args) { return requireProvider('getRootKey')(...args); }
 function getRootKeyLead(...args) { return requireProvider('getRootKeyLead')(...args); }
 function getTransposeCaptionValue(...args) { return requireProvider('getTransposeCaptionValue')(...args); }
+function getArpeggioCaptionValue(...args) { return requireProvider('getArpeggioCaptionValue')(...args); }
 
 function escapeHtml(text) {
 	return `${text}`
@@ -199,6 +200,11 @@ const approvedValueEntries = [
 		name: 'transposeProgressionFunctionDistances',
 		description: 'root keys with emphasized Function+distance steps',
 		resolve: () => getTransposeCaptionValue('transposeProgressionFunctionDistances')
+	},
+	{
+		name: 'arpeggioPositionsStatus',
+		description: 'widget of current-section Arpeggio positions',
+		resolve: () => getArpeggioCaptionValue('arpeggioPositionsStatus')
 	}
 ];
 

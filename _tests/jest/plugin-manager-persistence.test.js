@@ -346,4 +346,23 @@ describe('PluginManager plugin persistence', () => {
     expect(loadEnabledNode.caption).toContain('[${plugin:transpose:enableOnSongLoad}]');
     expect(intervalsNode.caption).toContain('[${plugin:transpose:intervals}]');
   });
+
+  test('pluginAction:invoke passes menu input args through to the plugin action', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    const section = song.sections[0];
+    section.beats = 4;
+    section.currentBeat = 1;
+    section.sharps = false;
+    manager.loadSongPluginState(song);
+    const arpeggioNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'arpeggio');
+    const positionsNode = arpeggioNode.children.find((child) => child.name === 'positions');
+    const valueNode = positionsNode.children.find((child) => child.name === 'positions:setCurrentSection');
+
+    const result = manager.invokeMenuAction(valueNode, { value: '0,3;5,9' });
+
+    expect(result.result).toBe('positions=[[0,3],[5,9]]');
+    expect(song.sections[0].pluginData.arpeggio.positions).toEqual([[0, 3], [5, 9]]);
+    expect(song.sections[0].pluginData.arpeggio.lastPositionIndex).toBe(-1);
+  });
 });
