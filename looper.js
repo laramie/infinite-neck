@@ -359,6 +359,14 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
     
                 song.gotoNextSection(true);  //calls showBeats()
 				result.sectionTransition = true;
+				if (isLastSection) {
+					EventBus.trigger('DaCapo:OnSongBegin', {
+						sectionIndex: song.getSectionsCurrentIndex(),
+						sectionCount: song.getSections().length,
+						beat: song.getBeat(),
+						beats: song.getBeats()
+					});
+				}
     
 				emitSectionBeginForCurrentSong(song);
 				callTimingHook('afterSectionTransition', {

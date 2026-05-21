@@ -765,7 +765,11 @@ export function performCmdAction(menuItem, args){
 			showMessagesJSON(getPersistentSongFile());
 			break;
         case "showViewDiagnosticsLogEvents":
-			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents());
+			let obj = {};
+			if (argByInputID){
+				obj = JSON.parse(argByInputID);
+			}
+			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
 		case "showGraveyard":
 			showGraveyard();

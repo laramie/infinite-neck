@@ -27,18 +27,27 @@ const {
 	__resetLooperForTests
 } = await import('../../looper.js');
 
-function makeMockSong({ beat = 1, beats = 4, randomLoop = false } = {}) {
+function makeMockSong({ beat = 1, beats = 4, randomLoop = false, sectionIndex = 0, sectionCount = 2 } = {}) {
 	const s = {
 		_beat: beat,
 		_beats: beats,
-		randomLoop
+		randomLoop,
+		_sectionIndex: sectionIndex,
+		_sectionCount: sectionCount
 	};
 	s.getBeat = jest.fn(() => s._beat);
 	s.getBeats = jest.fn(() => s._beats);
-	s.getSectionsCurrentIndex = jest.fn(() => 0);
-	s.getSections = jest.fn(() => [{ caption: 'One' }, { caption: 'Two' }]);
+	s.getSectionsCurrentIndex = jest.fn(() => s._sectionIndex);
+	s.getSections = jest.fn(() => Array.from({ length: s._sectionCount }, (_, idx) => ({ caption: `Section ${idx + 1}` })));
 	s.incBeatLoop = jest.fn();
-	s.gotoNextSection = jest.fn();
+	s.gotoNextSection = jest.fn((orGotoFirst) => {
+		if (s._sectionIndex + 1 >= s._sectionCount) {
+			s._sectionIndex = orGotoFirst ? 0 : s._sectionIndex;
+		} else {
+			s._sectionIndex += 1;
+		}
+		s._beat = 1;
+	});
 	s.requestUiShowBeats = jest.fn();
 	return s;
 }
@@ -75,6 +84,24 @@ describe('looper tickBeat', () => {
 		expect(song.gotoNextSection).toHaveBeenCalledWith(true);
 		expect(song.incBeatLoop).not.toHaveBeenCalled();
 		expect(showBeats).not.toHaveBeenCalled();
+	});
+
+	test('end-of-song section-loop wrap emits song end, song begin, then section begin', () => {
+		const song = makeMockSong({ beat: 4, beats: 4, sectionIndex: 1, sectionCount: 2 });
+		const showBeats = jest.fn();
+		const triggerSpy = jest.spyOn(EventBus, 'trigger');
+
+		tickBeat(song, { sectionsLooping: true, showBeats });
+
+		expect(song.gotoNextSection).toHaveBeenCalledWith(true);
+		expect(song.getSectionsCurrentIndex()).toBe(0);
+		expect(triggerSpy.mock.calls).toEqual([
+			['DaCapo:OnSectionEnd', expect.objectContaining({ sectionIndex: 1, sectionCount: 2, beat: 4, beats: 4 })],
+			['DaCapo:OnSongEnd', expect.objectContaining({ sectionIndex: 1, sectionCount: 2, beat: 4, beats: 4 })],
+			['DaCapo:OnSongBegin', expect.objectContaining({ sectionIndex: 0, sectionCount: 2, beat: 1, beats: 4 })],
+			['DaCapo:OnSectionBegin', expect.objectContaining({ sectionIndex: 0, sectionCount: 2, beat: 1, beats: 4 })]
+		]);
+		triggerSpy.mockRestore();
 	});
 
 	test('beat past end treated same as at-end (beat > beats)', () => {

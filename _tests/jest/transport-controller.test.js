@@ -121,25 +121,39 @@ describe('TransportController', () => {
 		}));
 	});
 
-	test('goFirstSection emits section begin once while looping', () => {
-		looperState.sections = true;
+	test('goFirstSection emits song begin and section begin once', () => {
 		song.gSectionsCurrentIndex = 1;
 
 		const result = controller.goFirstSection();
 
 		expect(result.result).toBe('1');
+		expect(result.didEmitSongBegin).toBe(true);
 		expect(song.firstSectionStateOnly).toHaveBeenCalledTimes(1);
 		expect(song.firstSection).not.toHaveBeenCalled();
 		expect(song.gotoFirstBeat).toHaveBeenCalledTimes(1);
 		expect(syncSectionUi).toHaveBeenCalledTimes(1);
 		expect(replayCurrentSectionView).toHaveBeenCalledTimes(1);
-		expect(mockEventBus.trigger).toHaveBeenCalledTimes(1);
-		expect(mockEventBus.trigger).toHaveBeenCalledWith('DaCapo:OnSectionBegin', expect.objectContaining({
+		expect(mockEventBus.trigger).toHaveBeenCalledTimes(2);
+		expect(mockEventBus.trigger).toHaveBeenNthCalledWith(1, 'DaCapo:OnSongBegin', expect.objectContaining({
 			sectionIndex: 0,
 			sectionCount: 2,
 			beat: 1,
 			beats: 4
 		}));
+		expect(mockEventBus.trigger).toHaveBeenNthCalledWith(2, 'DaCapo:OnSectionBegin', expect.objectContaining({
+			sectionIndex: 0,
+			sectionCount: 2,
+			beat: 1,
+			beats: 4
+		}));
+	});
+
+	test('restartSection does not emit song begin', () => {
+		looperState.sections = true;
+
+		controller.restartSection();
+
+		expect(mockEventBus.trigger).not.toHaveBeenCalledWith('DaCapo:OnSongBegin', expect.anything());
 	});
 
 	test('resetSong preserves active section loop mode', () => {
@@ -157,6 +171,17 @@ describe('TransportController', () => {
 		expect(mockEventBus.trigger).toHaveBeenCalledWith('Looper:OnResetSong', expect.objectContaining({ hard: false, beat: 1 }));
 		expect(restartLoopSections).toHaveBeenCalledTimes(1);
 		expect(restartLoopBeats).not.toHaveBeenCalled();
+	});
+
+	test('resetSong emits reset before replay/view refresh', () => {
+		controller.resetSong(false);
+
+		const resetCallOrder = mockEventBus.trigger.mock.invocationCallOrder[0];
+		const syncCallOrder = syncSectionUi.mock.invocationCallOrder[0];
+		const replayCallOrder = replayCurrentSectionView.mock.invocationCallOrder[0];
+
+		expect(resetCallOrder).toBeLessThan(syncCallOrder);
+		expect(resetCallOrder).toBeLessThan(replayCallOrder);
 	});
 
 	test('resetSongHard preserves active beat loop mode', () => {

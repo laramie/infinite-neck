@@ -753,7 +753,15 @@ export var gMenuFile =    {
             {
               "caption": "<b>e</b>vent log to console",
               "trigger": "e",
-              "action": "showViewDiagnosticsLogEvents"
+              "action": "showViewDiagnosticsLogEvents",
+              "input": {
+                "type": "input",
+                "caption": "JSON",
+                "default": "{\"stack\":false, \"data\":false, \"filter\":[\"DaCapo\", \"Looper\"]}",
+                "datatype": "string",
+                "id": "eventLogToConsoleOptions"
+              },
+              "popOnBang": true 
             },
             {
               "caption": "song <b>f</b>ile format",

@@ -50,6 +50,20 @@ export class TransportController {
 		return this.requireProvider('syncSectionUi')();
 	}
 
+	emitSongBegin(song = this.getSong()) {
+		if (!song) {
+			return false;
+		}
+		const sections = typeof song.getSections === 'function' ? song.getSections() : song.sections;
+		EventBus.trigger('DaCapo:OnSongBegin', {
+			sectionIndex: song.getSectionsCurrentIndex(),
+			sectionCount: Array.isArray(sections) ? sections.length : 0,
+			beat: song.getBeat(),
+			beats: song.getBeats()
+		});
+		return true;
+	}
+
 	emitSectionBegin(song = this.getSong()) {
 		if (!song) {
 			return false;
@@ -102,9 +116,11 @@ export class TransportController {
 		song.gotoFirstBeat();
 		this.syncSectionUi();
 		this.replayCurrentSectionView();
+		const didEmitSongBegin = this.emitSongBegin(song);
 		return {
 			result: '' + (this.getSectionsCurrentIndex() + 1),
-			didEmitSectionBegin: this.emitSectionBeginIfLooping(song)
+			didEmitSongBegin,
+			didEmitSectionBegin: this.emitSectionBegin(song)
 		};
 	}
 
@@ -123,8 +139,6 @@ export class TransportController {
 
 		song.firstSectionStateOnly();
 		song.gotoFirstBeat();
-		this.syncSectionUi();
-		this.replayCurrentSectionView();
 		EventBus.trigger('Looper:OnResetSong', {
 			hard,
 			sectionIndex: 0,
@@ -132,6 +146,8 @@ export class TransportController {
 			beat: 1,
 			beats: typeof song.getBeats === 'function' ? song.getBeats() : undefined
 		});
+		this.syncSectionUi();
+		this.replayCurrentSectionView();
 		this.restartCapturedLoopState(loopState);
 
 		return {
