@@ -32,6 +32,7 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 const { PluginManager } = await import('../../plugins/PluginManager.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
+const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
 const Constants = await import('../../Constants.js');
 
@@ -53,6 +54,7 @@ describe('PluginManager plugin persistence', () => {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
     manager.register(new FillPlugin());
+    manager.register(new MovePlugin());
     manager.register(new TransposePlugin());
     return manager;
   }
