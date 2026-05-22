@@ -1,6 +1,6 @@
 <template id="info-template">
-<div id="info" style="display: none;" class="sectionPageControlsGroup">
-<!--    <table class="menuTable infoMenuTable">
+    <div id="info" style="display: none;" class="sectionPageControlsGroup">
+        <!--    <table class="menuTable infoMenuTable">
         <tr>
             <td class="menuPage">
                 <div class="infoActionRow sectionPageControlsGroup">
@@ -15,34 +15,49 @@
                 </div>
                 <div class="infoTabsShell">
                 -->
-                    <div class="infoTabsTop">
-                        <span class="infoTabsButtons">
-                            <button id="btnInfoTabInfo" type="button" class="MenuTabBtn BtnPunchedIn">Info</button>
-                            <button id="btnInfoTabEdit" type="button" class="MenuTabBtn BtnPunchedOut">Edit</button>
-                        </span>
-                        <span class="infoTabsFill"></span>
-                    </div>
+        <div class="infoTabsTop">
+            <span class="infoTabsButtons">
+                <button id="btnInfoTabInfo" type="button" class="MenuTabBtn BtnPunchedIn">Info</button>
+                <button id="btnInfoTabEdit" type="button" class="MenuTabBtn BtnPunchedOut">Edit</button>
+            </span>
+            <span class="infoTabsFill"></span>
+        </div>
 
-                    <div class="infoTabsBody">
-                        <div id="divInfoTabInfo" class="infoTabPanel">
-                            <div id="divInfoRendered" class="infoRendered"></div>
+        <div class="infoTabsBody">
+            <div class="infoTabsPaper">
+                <div class="infoEditControls">
+                    <div class="infoActionRow">
+                        <div class="infoActionLeft">
+                            <span class="infoTitle">Song Info</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="selOpenInfo">show on open:</label>
+                            <select id="selOpenInfo">
+                                <option value="none">none</option>
+                                <option value="parked">parked</option>
+                                <option value="float">float</option>
+                            </select>
+                            <span class="infoSaveCaption">&nbsp;&nbsp;Save:</span>
+                            <button id="btnSaveInfo" type="button">&check;</button>
                         </div>
-
-                        <div id="divInfoTabEdit" class="infoTabPanel" style="display: none;">
-                            <div class="infoEditControls">
-                                <label for="selOpenInfo">Show info on opening Song:</label>
-                                <select id="selOpenInfo">
-                                    <option value="none">none</option>
-                                    <option value="parked">parked</option>
-                                    <option value="float">float</option>
-                                </select>
-                                <span class="infoSaveCaption">&nbsp;&nbsp;Save:</span>
-                                <button id="btnSaveInfo" type="button">&check;</button>
-                            </div>
-                            <textarea id="textareaSongInfo" class="scalingTextarea infoTextarea"></textarea>
+                        <div class="infoActionRight">
+                            <button id="btnFloatSection_info" type="button"
+                                class="moveyButton floatDockableButton">Float</button>
+                            <span class="infoCloseCaption">ESC or</span>
+                            <button id="btnCloseInfo" type="button" class="MenuButton BtnPunchedOut">Close</button>
                         </div>
                     </div>
-                    <!--
+                </div>
+
+                <div id="divInfoTabInfo" class="infoTabPanel">
+                    <div id="divInfoRendered" class="infoRendered"></div>
+                </div>
+
+                <div id="divInfoTabEdit" class="infoTabPanel" style="display: none;">
+
+                    <textarea id="textareaSongInfo" class="scalingTextarea infoTextarea"></textarea>
+                </div>
+            </div>
+        </div>
+        <!--
                 </div>
             </td>
         </tr>

@@ -16,6 +16,7 @@
 }
 
 .infoActionRow {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -38,10 +39,16 @@
 .infoTitle {
     font-size: 120%;
     font-weight: bold;
+    margin-left: 1em;
 }
 
 .infoCloseCaption {
     font-size: 90%;
+    margin-right: 0;
+    margin-left: 1em;
+}
+.infoSaveCaption {
+    margin-left: 2em;
 }
 
 .infoTabsShell {
@@ -77,6 +84,13 @@
     background-color: lightblue;
     border-bottom-left-radius: 0.4em;
     border-bottom-right-radius: 0.4em;
+    padding: 1em;
+    padding-top: 0;
+}
+
+.infoTabsPaper {
+    background-color: rgb(251, 185, 99);
+    border: 1px solid brown;
     padding: 0.75em;
 }
 
@@ -86,13 +100,17 @@
 
 .infoRendered {
     min-height: 16em;
-    background-color: white;
+    background-color:  rgb(255, 235, 156);
     border: 1px solid gray;
     border-radius: 0;
-    box-shadow: 0.35em 0.45em 0.7em rgba(0, 0, 0, 0.28);
+    fooobox-shadow: 0.35em 0.45em 0.7em rgba(0, 0, 0, 0.28);
+
+-webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3); 
+box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
     padding: 1em;
     overflow: auto;
 }
+
 
 .infoRendered table {
     border-collapse: collapse;
@@ -127,7 +145,10 @@
     min-height: 18em;
     resize: vertical;
     box-sizing: border-box;
+    border: 2px solid green;
+
     display: block;
+    background-color: white;
 }
 
 @media (max-width: 900px) {
