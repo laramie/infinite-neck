@@ -18,7 +18,7 @@
 .infoActionRow {
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1em;
     margin-bottom: 0.6em;
@@ -26,6 +26,10 @@
 
 .infoActionLeft {
     flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
 }
 
 .infoActionRight {
@@ -34,21 +38,50 @@
     justify-content: flex-end;
     gap: 0.6em;
     flex: 0 0 auto;
+    align-self: flex-start;
 }
 
 .infoTitle {
     font-size: 120%;
     font-weight: bold;
-    margin-left: 1em;
+    margin-left: 0;
 }
 
 .infoCloseCaption {
     font-size: 90%;
-    margin-right: 0;
+    margin: 0;
     margin-left: 1em;
 }
+
+.infoEditControlsInner {
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.infoEditGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.infoEditGroupOpen {
+    margin-right: 2em;
+}
+
+.infoEditControlsInner label,
+.infoEditControlsInner select,
+.infoEditControlsInner button,
 .infoSaveCaption {
-    margin-left: 2em;
+    flex: 0 0 auto;
+}
+
+.infoSaveCaption {
+    margin: 0;
 }
 
 .infoTabsShell {
@@ -103,10 +136,8 @@
     background-color:  rgb(255, 235, 156);
     border: 1px solid gray;
     border-radius: 0;
-    fooobox-shadow: 0.35em 0.45em 0.7em rgba(0, 0, 0, 0.28);
-
--webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3); 
-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
+    -webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3); 
+    box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
     padding: 1em;
     overflow: auto;
 }
@@ -146,9 +177,11 @@ box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
     resize: vertical;
     box-sizing: border-box;
     border: 2px solid green;
-
+padding: 0.5em; 
     display: block;
     background-color: white;
+    -webkit-box-shadow: inset 1px 0px 13px -3px #000000; 
+    box-shadow: inset 1px 0px 13px -3px #000000;
 }
 
 @media (max-width: 900px) {
@@ -165,6 +198,19 @@ box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
     .infoActionRight {
         justify-content: flex-start;
         flex-wrap: wrap;
+    }
+
+    .infoEditControlsInner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .infoEditGroup {
+        align-items: flex-start;
+    }
+
+    .infoEditGroupOpen {
+        margin-right: 0;
     }
 
     .infoTabsButtons {

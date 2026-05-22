@@ -155,14 +155,16 @@ export class InfoBuilder {
 		InfoBuilder.currentTab = tabName === 'edit' ? 'edit' : 'info';
 		InfoBuilder.renderFromSong(getSong());
 		const showInfoTab = InfoBuilder.currentTab === 'info';
+		const showEditTab = !showInfoTab;
 
 		$('#divInfoTabInfo').toggle(showInfoTab);
-		$('#divInfoTabEdit').toggle(!showInfoTab);
+		$('#divInfoTabEdit').toggle(showEditTab);
+		$('#infoEditControlsInner').toggle(showEditTab);
 		$('#btnInfoTabInfo')
 			.toggleClass('BtnPunchedIn', showInfoTab)
 			.toggleClass('BtnPunchedOut', !showInfoTab);
 		$('#btnInfoTabEdit')
-			.toggleClass('BtnPunchedIn', !showInfoTab)
+			.toggleClass('BtnPunchedIn', showEditTab)
 			.toggleClass('BtnPunchedOut', showInfoTab);
 	}
 
