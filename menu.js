@@ -83,6 +83,12 @@ export var gMenuFile =    {
           "trigger": "m",
           "children": [
             {
+              "caption": "current: [${spacebarActionName}]",
+              "vars": [
+                    "spacebarActionName"
+              ]
+            },
+            {
               "caption": "<b>R</b>estart song",
               "trigger": "R",
               "action": "mapSpacebar_restartSong"

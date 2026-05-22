@@ -1117,6 +1117,9 @@ export function setNoteFontSize(newValue){
 
 
 export function getValue(what){
+	if (what === 'spacebarActionName'){
+		return spacebarActionName;
+	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);
 		if (pluginValue !== undefined) {
