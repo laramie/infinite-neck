@@ -155,7 +155,12 @@
                                 <input type="radio" id="idDropper" name="rbColor"
                                     value="noteDropper">Find Color
                             </label>
-                            <label for="cbAutomaticColor"><input id="cbAutomaticColor" type="checkbox"
+
+                            <button id="btnRestoreRbColor" type="button" class="chooseLastColor" tabindex="-1">
+                                Color: Emboss
+                            </button>
+                            
+                            <label for="cbAutomaticColor" id="lblAutomaticColor"><input id="cbAutomaticColor" type="checkbox"
                                     name="cbnAutomaticColor" value="1">AutoColor
                             </label>
                             <span id="manualColors">
@@ -163,7 +168,7 @@
                                 <span id="idRoleButtonsDest"></span>
 
                                 <button id="showHideExtraColors" type="button"
-                                    class="MainMenuTabBtn BtnPunchedOut">More...</button>
+                                    class="MenuButton BtnPunchedOut">More...</button>
 
                                 <span id="extraColors" style="display: none;">
                                     <label class="notePink1" title="notePink1">
@@ -345,9 +350,9 @@
 
                             </span from="manualColors">
                             <button id="showHideCustomColorLinks" type="button"
-                                class="MainMenuTabBtn BtnPunchedOut">Stylesheets</button>
+                                class="MenuButton BtnPunchedOut">Stylesheets</button>
                             <button id="showHideCustomColorEditors" type="button"
-                                class="MainMenuTabBtn BtnPunchedOut">Customize ...</button>
+                                class="MenuButton BtnPunchedOut">Customize ...</button>
 
 
                         </td>
@@ -363,9 +368,9 @@
                             name="txtnColorSchemeName" id="txtColorSchemeName" size="20" value=""
                             placeholder="sheet-name"></label>
                     <button id="btnRecordUserColors" type="button" tabindex="-1"
-                        class="MainMenuTabBtn BtnPunchedOut">Record Stylesheet</button>
+                        class="MenuButton BtnPunchedOut">Record Stylesheet</button>
                     <button id="btnRecordUserColorsFromSection" type="button" tabindex="-1"
-                        class="MainMenuTabBtn BtnPunchedOut">FirstInstrument:NamedNotes => Stylesheet</button>
+                        class="MenuButton BtnPunchedOut">FirstInstrument:NamedNotes => Stylesheet</button>
 
                     <br />
 

@@ -4,10 +4,9 @@ then grep that file using -f flag  : Find all identifiers listed in identifiers.
 
 find . -maxdepth 1 -type f -name "*.js" -exec sh -c 'echo "$1"; grep -f identifiers.txt "$1"' _ {} \; >> foo.txt
 
+find . -maxdepth 1 -type f -name "*.js" -exec sh -c 'echo "$1"; ./grepit "$1"' _ {} \;
 
- find . -maxdepth 1 -type f -name "*.js" -exec sh -c 'echo "$1"; ./grepit "$1"' _ {} \;
-
- laramie@penguin:~/infinite-neck$ find . -maxdepth 1 -type f -name "*.js" -exec sh -c 'echo "$1"; ./grepit "$1"' _ {} \;c^C
+laramie@penguin:~/infinite-neck$ find . -maxdepth 1 -type f -name "*.js" -exec sh -c 'echo "$1"; ./grepit "$1"' _ {} \;c^C
 laramie@penguin:~/infinite-neck$ cat grepit
 echo "===========$1"
 grep -o   -f identifiers.txt "$*"  | sort | uniq
@@ -23,3 +22,13 @@ then in vs code, To find the function identifier:
   search: ^(\s*)(export function) (\w*)(.*)
   replace: $3
 
+VSCode search replace examples:
+    (?<!\.)\bNUM_FRETS_MAX\b
+    (?<!\.)\bTABLEDIV_ID_PREFIX\b
+    (?<!\.)\bTABLE_ID_PREFIX\b
+    (?<!\.)\bALL_TUNINGS_TABLE_ID\b
+    (?<!\.)\bMY_TUNINGS_TABLE_ID\b
+  
+VSCode simple search-n-replace: 
+    search:   (\w+)
+    replace:  $1

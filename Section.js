@@ -108,6 +108,10 @@ export class Section extends SectionPersistence {
 		this.currentBeat = 1;
 	}
 
+	gotoLastBeat() {
+		this.currentBeat = this.getBeats();
+	}
+
 	gotoBeat(oneBasedIndex){
 		this.currentBeat = oneBasedIndex;
 	}
@@ -169,6 +173,15 @@ export class Section extends SectionPersistence {
 		const curr = toInt(this.rootID, 0);
 		this.rootID = (12 + curr + amount) % 12;
 		return this.rootID;
+	}
+
+	transposeRootLead(amount) {
+		const curr = toInt(this.rootIDLead, -1);
+		if (curr < 0) {
+			return curr;
+		}
+		this.rootIDLead = (12 + curr + amount) % 12;
+		return this.rootIDLead;
 	}
 
 	

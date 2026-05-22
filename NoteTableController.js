@@ -25,7 +25,7 @@ import {
 } from './Note.js';
 import {
     Song} from './Song.js';
-import { constNoteNamesArr } from './Constants.js';
+import { NOTE_NAMES_ARRAY } from './Constants.js';
 import {
     recordHighlight,
     recordHighlightSingle,
@@ -42,7 +42,8 @@ import {
     appInit_running,
     controlsToDisplayOptions,
     buildCellsForTable,
-    turnOffAutoColorCheckbox
+    turnOffAutoColorCheckbox,
+    updatePrintSections
 } from './infinite-neck.js';
 import { 
     buildTonalPickerSet, 
@@ -90,7 +91,7 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
     var song = getSong() || {};
     var relNoteNum = (12 + noteNum - options.rootID) % 12; //0-based: 0==first note of scale
     var fnArr = Array.isArray(song.noteNamesFuncArr) ? song.noteNamesFuncArr : [];
-    var importFallback = Array.isArray(constNoteNamesArr) ? constNoteNamesArr : LOCAL_FALLBACK_NOTE_FUNCTIONS;
+    var importFallback = Array.isArray(NOTE_NAMES_ARRAY) ? NOTE_NAMES_ARRAY : LOCAL_FALLBACK_NOTE_FUNCTIONS;
     var noteFnBase = fnArr[relNoteNum] || importFallback[relNoteNum] || "";
     var noteFn = noteFnBase;
     var displayPitch = relNoteNum + 1; //1-based: 1==first note of scale.
@@ -200,8 +201,8 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
 				multiplier = getSong().fretLengths[cellcol];
                 let mellowNormieRadical = 60;
-                if (options.naturaFontScaling){
-                    mellowNormieRadical = options.naturaFontScaling;
+                if (options.naturalFontScaling){
+                    mellowNormieRadical = options.naturalFontScaling;
                 }
 				fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
 			}
@@ -210,7 +211,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             }
             const sW = fretWidth+"pt";
 
-            var fontMultiplier = Math.pow(multiplier, options.naturaFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
+            var fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
             cell.attr("fontMultiplier", fontMultiplier);
 
             var newTDSizes;
@@ -264,9 +265,11 @@ export function colorNote(cell) {
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  res.tableID, idx, 
                                                  tonalResult.chords, theCurrentSection.chartChord, 
-                                                 tonalResult.scale,  theCurrentSection.mode);
+                                                 tonalResult.scale,  theCurrentSection.chartMode,
+                                                 tonalResult.chord, tonalResult.mode);
         
         $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
+        updatePrintSections(); //infinite-neck, rather than updateSectionStatus, which is too heavy.
     }
 }
 export function colorNoteInner(cell) {
@@ -341,11 +344,18 @@ export function colorNoteInner(cell) {
 
     var proxyNote = {"midinum": midinum,
                      "row": cellrow,
-                     "styleNum": styleNum};
+                     "styleNum": styleNum,
+                     "noteName": cell.attr("noteName")};
 
     if (doIndividualAutomatic){
         var lookupResult = lookupClassForNote(proxyNote, lookupContext);
-        theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
+        if (lookupResult && lookupResult.functionNum != null) {
+            theColorClass = "note"+(lookupResult.functionNum+1);   //Use 1-based for note1, note2, etc.
+        } else if (lookupResult && lookupResult.colorClass) {
+            theColorClass = lookupResult.colorClass;
+        } else {
+            theColorClass = "noteTransparent";
+        }
     }
 
     if (!doKeep){
@@ -445,7 +455,7 @@ export function colorNoteInner(cell) {
         var noteAlreadyColored = (lenOtherClasses>0);
 
 		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
-			getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};
+			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
             result.returnCause = Cause.CLEAR;
@@ -457,13 +467,13 @@ export function colorNoteInner(cell) {
             var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
-            getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = {};   
+			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
 
             if ( ! noteAlreadyColoredWithCurrent){
 		        styleNamedNote(noteNameElements, lookupUserColorClass(note, lookupContext), noteName);
-    		    getCurrentSection().getSectionNotes(tableID).namedNotes[noteName] = note;
+	    		    getCurrentSection().getSectionNotes(tableID).setNamedNote(noteName, note);
             }
 		}
         
@@ -492,6 +502,7 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
                 var foundColorClass = note.colorClass;
                 $("input[name=rbColor][value="+foundColorClass+"]")
                     .prop('checked', true)
+                    .trigger('change')
                     .css({"box-shadow": "0 0 10pt 20pt cyan"});
 
                 setNoteClickedCaption(cell, foundColorClass, styleNum);
@@ -502,8 +513,9 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
 
         var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
         if (foundColorClass){
-            $("input[name=rbColor][value="+foundColorClass+"]")
-                .attr('checked', 'checked')
+        $("input[name=rbColor][value="+foundColorClass+"]")
+                .prop('checked', true)
+                .trigger('change')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
             setNoteClickedCaption(cell, foundColorClass, styleNum);
             $("td.note").css({"cursor": "auto"});
@@ -647,10 +659,10 @@ export function getReplayOptionsArray(){
         opts.tablename = tablename; //e.g. Constants.TABLE_ID_PREFIX+"S6_1";
         return opts;
     }
-    function applyCurrentSectionOpts(opts){
-        opts.sharps =      opts.currSection.sharps;
-        opts.rootID =      opts.currSection.rootID;
-        opts.rootIDLead =  opts.currSection.rootIDLead;
+    function applySectionOpts(opts, section){
+        opts.sharps =      section.sharps;
+        opts.rootID =      section.rootID;
+        opts.rootIDLead =  section.rootIDLead;
         opts.rootKey =     getSong().noteIDToNoteName(opts.rootID);
         opts.rootKeyLead = getSong().noteIDToNoteName(opts.rootIDLead);                         
     }
@@ -667,36 +679,43 @@ export function getReplayOptionsArray(){
         let wiring = getSong().wirings.find(w => (w.tablename === tablename)); 
         if (wiring && wiring.relativeSection){
             let opts = freshOpts(baseopts, tablename);
-            opts.currSection = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
-            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            let section = getSong().getRelativeSectionWithWrap(wiring.relativeSection);
+            opts.sectionIndex =  getSong().getSections().indexOf(section);
             opts.listenToTablename = wiring.listenToTablename;
             opts.relativeSection = wiring.relativeSection;
             opts.type = ReplayOptions.Type.RELATIVE;
             opts.directionType = getSong().getRelativeSectionDirection(opts.relativeSection);
-            applyCurrentSectionOpts(opts);
+            applySectionOpts(opts, section);
             resultOptionsArray.push(opts);
         } else {
             let opts = freshOpts(baseopts, tablename);
-            opts.currSection = getCurrentSection();
-            opts.sectionIndex =  getSong().getSections().indexOf(opts.currSection);
+            let section = getCurrentSection();
+            opts.sectionIndex =  getSong().getSections().indexOf(section);
             opts.listenToTablename = tablename;
             opts.type = ReplayOptions.Type.SELF;
-            applyCurrentSectionOpts(opts);
+            applySectionOpts(opts, section);
             resultOptionsArray.push(opts);
             //Now add a LISTENER if present on top of SELF, which means SectionStatus widgets show LISTENER values, and notes in SELF get clobbered and you see SELF notes only if listenTo is not playing them.
             if (wiring && wiring.listenToTablename) {
                 let listenerOpts = freshOpts(baseopts, tablename);
-                listenerOpts.currSection = getCurrentSection();
-                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerOpts.currSection);
+                let listenerSection = getCurrentSection();
+                listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerSection);
                 listenerOpts.listenToTablename = wiring.listenToTablename;
                 listenerOpts.type = ReplayOptions.Type.LISTENER;
-                applyCurrentSectionOpts(listenerOpts);
+                applySectionOpts(listenerOpts, listenerSection);
                 resultOptionsArray.push(listenerOpts);
             }
  
         }
     });
     return resultOptionsArray;
+}
+
+function getReplaySection(replayOptions){
+    if (replayOptions.type === ReplayOptions.Type.RELATIVE){
+        return getSong().getRelativeSectionWithWrap(replayOptions.relativeSection);
+    }
+    return getCurrentSection();
 }
 
 /** You will get back an array of opts:
@@ -712,18 +731,21 @@ export function replay(){
 }
 
 export function replayTable(replayOptions){
+    const currSection = getReplaySection(replayOptions);
     if (replayOptions.type === ReplayOptions.Type.SELF){
+        //console.log("replayOptions for SELF: "+JSON.stringify(replayOptions));
         let idx = getSong().sections.indexOf(getCurrentSection());
-        let tonalResult = getTonalForTable(getSong(), replayOptions.currSection, replayOptions.listenToTablename);
-        let chords = tonalResult.chords;
+        let tonalResult = getTonalForTable(getSong(), currSection, replayOptions.listenToTablename);
         let tonalPickerSet = buildTonalPickerSet("CaptionRowTonal", TonalPickerOrientation.HORIZONTAL, 
                                                  replayOptions.listenToTablename, idx, 
-                                                 tonalResult.chords, replayOptions.currSection.chartChord, 
-                                                 tonalResult.scale,  replayOptions.currSection.mode);
+                                                 tonalResult.chords, currSection.chartChord, 
+                                                 tonalResult.scale,  currSection.chartMode,
+                                                 tonalResult.chord, tonalResult.mode);
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    const lookupContext = createNotetableLookupContext(replayOptions.currSection);
+    //const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -739,9 +761,12 @@ export function replayTable(replayOptions){
 
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
-        let relSectionOptions = getSong().getDisplayOptionsInEffect(replayOptions.currSection, defaultDisplayOptions);
+        //let relSectionOptions = getSong().getDisplayOptionsInEffect(currSection, defaultDisplayOptions);
+        let relSectionOptions = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
+        console.log("relSectionOptions before assign: "+JSON.stringify(relSectionOptions));
         
         Object.assign(relSectionOptions, replayOptions);
+        console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
         //Don't need to send looping status, since that is a css class broadcast through 
         //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
@@ -761,8 +786,8 @@ export function replayTable(replayOptions){
     }
     
     if (!replayOptions.hideNamedNotes){
-        if (replayOptions.currSection.sectionNotesByTable && replayOptions.currSection.sectionNotesByTable[listenToTablename]){
-            let namedNotes = replayOptions.currSection.sectionNotesByTable[listenToTablename].namedNotes;
+        if (currSection.sectionNotesByTable && currSection.sectionNotesByTable[listenToTablename]){
+            let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
             if (namedNotes){
                 Object.keys(namedNotes).forEach(noteName => {
                     var namedNote = namedNotes[noteName];
@@ -784,7 +809,7 @@ export function replayTable(replayOptions){
     }
 
     var tablearr = null;
-    let sn = replayOptions.currSection.sectionNotesByTable[listenToTablename];
+    let sn = currSection.sectionNotesByTable[listenToTablename];
     if (sn){
         tablearr = sn.playedNotes;
     }
@@ -840,13 +865,146 @@ export function showMidiNotesInTable(tableID, midinum, preferredRow){
   }
 }
 
+function normalizeDisplayPartClass(partClass = 'namedNote') {
+    return `${partClass || 'namedNote'}`.replace(/^\./, '');
+}
+
+const TRANSIENT_NAMED_NOTE_OWNER_ATTR = 'data-transient-named-note-owner';
+const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-class';
+const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
+const TRANSIENT_NOTE_DISPLAY_CLASS_ATTR = 'data-transient-note-display-original-class';
+const TRANSIENT_NOTE_DISPLAY_STYLE_ATTR = 'data-transient-note-display-original-style';
+
+function rememberTransientNamedNoteState(part, owner = '') {
+    if (!owner || part.length === 0) {
+        return;
+    }
+    const noteDisplay = part.parent('.NoteDisplay');
+    if (noteDisplay.length > 0) {
+        if (!noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR)) {
+            noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR, noteDisplay.attr('class') || 'NoteDisplay');
+        }
+        if (!noteDisplay.is(`[${TRANSIENT_NOTE_DISPLAY_STYLE_ATTR}]`)) {
+            const originalStyle = noteDisplay.attr('style');
+            noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR, typeof originalStyle === 'string' ? originalStyle : '');
+        }
+    }
+    if (!part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR)) {
+        part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR, part.attr('class') || 'namedNote');
+    }
+    if (!part.is(`[${TRANSIENT_NAMED_NOTE_STYLE_ATTR}]`)) {
+        const originalStyle = part.attr('style');
+        part.attr(TRANSIENT_NAMED_NOTE_STYLE_ATTR, typeof originalStyle === 'string' ? originalStyle : '');
+    }
+    part.attr(TRANSIENT_NAMED_NOTE_OWNER_ATTR, owner);
+}
+
+function restoreTransientNamedNoteState(part) {
+    if (part.length === 0) {
+        return;
+    }
+
+    const noteDisplay = part.parent('.NoteDisplay');
+    if (noteDisplay.length > 0) {
+        const originalDisplayClass = noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR) || 'NoteDisplay';
+        const originalDisplayStyle = noteDisplay.attr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR);
+        noteDisplay.attr('class', originalDisplayClass);
+        if (typeof originalDisplayStyle === 'string' && originalDisplayStyle.length > 0) {
+            noteDisplay.attr('style', originalDisplayStyle);
+        } else {
+            noteDisplay.removeAttr('style');
+        }
+        noteDisplay.removeAttr(TRANSIENT_NOTE_DISPLAY_CLASS_ATTR);
+        noteDisplay.removeAttr(TRANSIENT_NOTE_DISPLAY_STYLE_ATTR);
+    }
+
+    const originalClass = part.attr(TRANSIENT_NAMED_NOTE_CLASS_ATTR) || 'namedNote';
+    const originalStyle = part.attr(TRANSIENT_NAMED_NOTE_STYLE_ATTR);
+    part.attr('class', originalClass);
+    if (typeof originalStyle === 'string' && originalStyle.length > 0) {
+        part.attr('style', originalStyle);
+    } else {
+        part.removeAttr('style');
+    }
+    part.removeAttr(TRANSIENT_NAMED_NOTE_OWNER_ATTR);
+    part.removeAttr(TRANSIENT_NAMED_NOTE_CLASS_ATTR);
+    part.removeAttr(TRANSIENT_NAMED_NOTE_STYLE_ATTR);
+}
+
+export function clearTransientNamedNotes(owner = '') {
+    const selector = owner
+        ? `.namedNote[${TRANSIENT_NAMED_NOTE_OWNER_ATTR}='${owner}']`
+        : `.namedNote[${TRANSIENT_NAMED_NOTE_OWNER_ATTR}]`;
+    $(selector).each(function() {
+        restoreTransientNamedNoteState($(this));
+    });
+}
+
+export function findNoteCell(tableID, cellrow, cellcol) {
+    return $("table[id='"+tableID+"'] td.note[cellrow='"+cellrow+"'][cellcol='"+cellcol+"']").first();
+}
+
+export function findNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote') {
+    const cell = findNoteCell(tableID, cellrow, cellcol);
+    if (cell.length === 0) {
+        return $();
+    }
+    const normalizedPartClass = normalizeDisplayPartClass(partClass);
+    return cell.children('.NoteDisplay').children('.' + normalizedPartClass).first();
+}
+
+export function showNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote', extraClass = '') {
+    const part = findNoteDisplayPart(tableID, cellrow, cellcol, partClass);
+    if (part.length === 0) {
+        return false;
+    }
+    if (extraClass) {
+        part.addClass(extraClass);
+    }
+    part.show();
+    return true;
+}
+
+export function showNamedNoteAtCell(tableID, cellrow, cellcol, colorClass = 'noteTransparent', owner = '') {
+    const part = findNoteDisplayPart(tableID, cellrow, cellcol, 'namedNote');
+    if (part.length === 0) {
+        return false;
+    }
+    rememberTransientNamedNoteState(part, owner);
+    part.parent('.NoteDisplay').addClass('NoteActive');
+    clearNamedNoteDivs(part);
+    part.addClass(colorClass).show();
+    if (getSong() && getSong().namedNoteOpacity != null) {
+        part.css('opacity', getSong().namedNoteOpacity);
+    }
+    return true;
+}
+
+export function showNamedNotesAtCells(cells = [], options = {}) {
+    const clearExisting = !!options.clearExisting;
+    const owner = options.owner || '';
+
+    if (clearExisting) {
+        clearTransientNamedNotes(owner);
+    }
+
+    let shownCount = 0;
+    (cells || []).forEach(({ tableID, cellrow, cellcol, colorClass }) => {
+        if (showNamedNoteAtCell(tableID, cellrow, cellcol, colorClass || 'noteTransparent', owner)) {
+            shownCount += 1;
+        }
+    });
+    return shownCount;
+}
+
 export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
         if (opts.type === ReplayOptions.Type.RELATIVE) {
+            let currSection = getReplaySection(opts);
             //nBeat is 1-based.
             if (opts.directionType === Song.DirectionType.BACKWARD){
-                showHighlightsForBeatForOptions(opts.currSection.getBeatCount(), opts);
+                showHighlightsForBeatForOptions(currSection.getBeatCount(), opts);
             } else if (opts.directionType === Song.DirectionType.FORWARD){
                 showHighlightsForBeatForOptions(1, opts);    
             }
@@ -858,12 +1016,14 @@ export function showHighlightsForBeat(nBeat){
 
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
-    const lookupContext = createNotetableLookupContext(options.currSection);
+    const currSection = getReplaySection(options);
+    //const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(getCurrentSection());
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';
     }
-    let sn = options.currSection.sectionNotesByTable[options.listenToTablename];
+    let sn = currSection.sectionNotesByTable[options.listenToTablename];
     let dict = null;
     if (sn) {
         dict = sn.recordedNotes;
@@ -1029,8 +1189,8 @@ export function fillChord() {
     var scaleNotesArr = scaleNotes.split(',');
 
     var rootID = parseInt(getCurrentSection().rootID);
-    var rootName = constNoteNamesArr[rootID];
-    var rootClassName = ".note" + constNoteNamesArr[rootID];
+    var rootName = NOTE_NAMES_ARRAY[rootID];
+    var rootClassName = ".note" + NOTE_NAMES_ARRAY[rootID];
 
     var scaleColor = $("input:radio[name=rbnFillNoteScale]:checked").val()
     var chordsColor = $("input:radio[name=rbnFillNoteChord]:checked").val()
@@ -1047,7 +1207,7 @@ export function fillChord() {
 
     for (let i = 0; i < chordFnNotesArr.length; i++) {
         var noteID = (parseInt(chordFnNotesArr[i]) + rootID) % 12;
-        var noteName = constNoteNamesArr[noteID];
+        var noteName = NOTE_NAMES_ARRAY[noteID];
         if (keepRoot && rootName==noteName){
             console.log("NOT hosing root note by chord: "+noteName);
         } else {
@@ -1058,7 +1218,7 @@ export function fillChord() {
 
     for (let i = 0; i < scaleNotesArr.length; i++) {
         var noteID = (parseInt(scaleNotesArr[i]) + rootID) % 12;
-        var noteName = constNoteNamesArr[noteID];
+        var noteName = NOTE_NAMES_ARRAY[noteID];
         if (   (keepChords && chordNames.includes(noteName))
             || (keepRoot   && rootName==noteName)            ){
             console.log("NOT hosing root/chord note by scale: "+noteName);
@@ -1115,31 +1275,19 @@ export function doFill(theClass, NoteNames, Color, listenToTablename) {
         return;
     }
     var currSection = getCurrentSection();
-    // Ensure sectionNotesByTable exists
-    if (!currSection.sectionNotesByTable) {
-        currSection.sectionNotesByTable = {};
-    }
-    // Ensure the table for listenToTablename exists
-    if (!currSection.sectionNotesByTable[listenToTablename]) {
-        currSection.sectionNotesByTable[listenToTablename] = {};
-    }
-    // Ensure namedNotes exists for this table
-    if (!currSection.sectionNotesByTable[listenToTablename].namedNotes) {
-        currSection.sectionNotesByTable[listenToTablename].namedNotes = {};
-    }
-    let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
+    const sectionNotes = currSection.getSectionNotes(listenToTablename);
     if (Color != "noteClear") {
         // NO: let replay color the notes. We are just adding them to the model here.
         // theClass.addClass(lookupUserColorClassByClass(Color))
         //          .addClass("NoteActive");
         Object.keys(NoteNames).forEach(key => {
             var noteName = NoteNames[key];
-            namedNotes[noteName] = { "noteName": noteName, "colorClass": Color };
+            sectionNotes.setNamedNote(noteName, { "noteName": noteName, "colorClass": Color });
         });
     } else {
         eraseNamedNote(theClass);
         Object.keys(NoteNames).forEach(key => {
-            namedNotes[NoteNames[key]] = {};
+            sectionNotes.clearNamedNote(NoteNames[key]);
         });
     }
 }
@@ -1199,6 +1347,12 @@ EventBus.on('Wiring:added', function(event, data) {
         listenToTablename: data.listenToTablename,
         currSection: getCurrentSection(),
         sectionIndex: song.getSections().indexOf(getCurrentSection()),
+    });
+});
+EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {
+    showNamedNotesAtCells(data && Array.isArray(data.cells) ? data.cells : [], {
+        clearExisting: !!(data && data.clearExisting),
+        owner: data && data.owner ? data.owner : ''
     });
 });
 //=================================END-of-FILE========================================

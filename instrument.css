@@ -41,9 +41,6 @@
         
 
 
-#tabledestTopPad {
-    height: 5em;
-}
 #tabledest {
     display: inline-block;
 }
@@ -216,5 +213,9 @@
 }
 
 .spanTuningDetails {
+    display: none;
+}
+
+.spanNoteDetails {
     display: none;
 }

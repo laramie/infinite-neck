@@ -1,0 +1,57 @@
+
+
+
+Later sprints
+  Raise plugin in plugin menu by Select of saved keys
+  Bury All
+  Floating windows and panels
+  ENTER key in edit boxes accepts like TAB does.
+  Comment field for song, accepts html, displays in messages with /fc : file, comments.
+  ArpeggioPlugin should have low String and high String limits
+  ArpeggioPlugin should be able to select for flashcard mode those single notes that FillPlugin has placed.
+
+TODO
+  write demo songs for library that show plugin features, and companion doco.
+  
+MovePlugin design
+  Veto "enable" menu because doesn't listen to events. (Is that the thing that makes PluginManager give you enable? So MovePlugin could simply not have events.)
+ Algorithms 
+  By shape
+  By midi
+    Drop
+    Hide
+    AllowOctaveSub
+    AllowSub
+  By chord notes
+Will need min/max frets and strings. 
+
+Will need multi toogle for notes types to include in move.
+
+Need to have it out of the way so you can navigate to next section and hit apply. 
+
+Ideal would be numbered macros that you bind to any plugin verb.
+/fpmA
+--> file, plugins, move, Apply
+/fptA
+--> file, plugins, transpose, Apply
+
+Then
+/m1 --> /fpmAx
+/m2 --> /fmptAx
+
+Then nav works because x is stored, thus menu closes. 
+
+/snf (section, nav, first)
+/m1
+>
+/m1
+>
+/m1
+
+--> first three sections moved.
+
+
+
+
+
+

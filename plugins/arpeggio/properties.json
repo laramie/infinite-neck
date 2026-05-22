@@ -1,0 +1,126 @@
+[
+  {
+    "name": "targetTable",
+    "caption": "Target table",
+    "trigger": "T",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": true,
+    "options": []
+  },
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "clear",
+    "caption": "Clear",
+    "trigger": "C",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clear",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  },
+  {
+    "name": "minFret",
+    "caption": "minFret position",
+    "trigger": "m",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": true
+  },
+  {
+    "name": "maxFret",
+    "caption": "maxFret position",
+    "trigger": "t",
+    "datatype": "Number",
+    "value": 12,
+    "defaultValue": 12,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": true
+  },
+  {
+    "name": "lowToHigh",
+    "caption": "low to high",
+    "trigger": "o",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "upOnly",
+    "caption": "up only",
+    "trigger": "u",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "style",
+    "caption": "style",
+    "trigger": "s",
+    "datatype": "org.dynamide.Select",
+    "value": "every",
+    "defaultValue": "every",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "every", "caption": "every", "trigger": "e" },
+      { "value": "alternate", "caption": "alternate", "trigger": "a" },
+      { "value": "random", "caption": "random", "trigger": "r" },
+      { "value": "bach", "caption": "bach", "trigger": "b" }
+    ]
+  },
+  {
+    "name": "showNoteName",
+    "caption": "show note name",
+    "trigger": "n",
+    "datatype": "org.dynamide.Select",
+    "value": "off",
+    "defaultValue": "off",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "off", "caption": "off", "trigger": "f" },
+      { "value": "one", "caption": "one", "trigger": "o" },
+      { "value": "all", "caption": "all", "trigger": "a" },
+      { "value": "played", "caption": "played", "trigger": "p" }
+    ]
+  },
+  {
+    "name": "colorNotes",
+    "caption": "color notes",
+    "trigger": "c",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "flashcard",
+    "caption": "flashcard",
+    "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  }
+]

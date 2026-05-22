@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Song } from '../../song.js';
+import { Song } from '../../Song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +13,11 @@ function readFixture() {
 }
 
 function makeHeadlessSongFromFixture() {
-    return new Song( {legacy: false, headless: true, fileObj: readFixture(), quiet: true, fixIndex: true });
+    const song = new Song(readFixture());
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
+    song.setHeadless(true, true);
+    return song;
 }
 
 function clone(value) {

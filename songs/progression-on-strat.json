@@ -262,40 +262,6 @@
   "songName": "progression-on-strat",
   "namedNoteOpacity": "1.00",
   "singleNoteOpacity": "1.00",
-  "tunings": [
-    {
-      "baseID": "P46_1_1",
-      "baseInstrument": "Guitar",
-      "caption": "P4",
-      "nStrings": 6,
-      "rowRange": [
-        65,
-        60,
-        55,
-        50,
-        45,
-        40
-      ],
-      "diamonds": [
-        3,
-        5,
-        7,
-        9,
-        15,
-        17,
-        19,
-        21
-      ],
-      "doubleDiamonds": [
-        12,
-        24
-      ],
-      "frets": 24,
-      "nut": true,
-      "reverse": false,
-      "visible": true
-    }
-  ],
   "userColors": {
     "noteRoot": {
       "colorClass": "noteGreen1",
@@ -375,5 +341,39 @@
       "caption": "F4"
     }
   },
-  "songfileVersion": "V2"
+  "songfileVersion": "V2",
+  "myTunings": [
+    {
+      "baseID": "P46_1_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true
+    }
+  ]
 }

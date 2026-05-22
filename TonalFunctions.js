@@ -23,6 +23,8 @@ export function getTonal(theSong, section){
         result.normalizedNamedNotes = normalizedNamedNotes;
         result.chords = chords;
         result.scale = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+        result.chord = sn.chord;
+        result.mode = sn.mode;
         tablesResult[tableID] = result;
     });
     return tablesResult;
@@ -32,8 +34,10 @@ export function getTonalForTable(theSong, section, tablename){
     let rootKey = theSong.noteIDToNoteName(section.rootID);
     let result = {};
     let namedNotes = [];
+    let tableSectionNotes = null;
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
         if (tablename === tableID){
+            tableSectionNotes = sn;
             Object.entries(sn?.namedNotes || {}).forEach(([noteName, noteObj]) => {
                 if (noteObj && Object.keys(noteObj).length > 0) {
                     namedNotes.push(noteName);
@@ -44,19 +48,22 @@ export function getTonalForTable(theSong, section, tablename){
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
-    let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-    result.scale = filterWesternScales(worldScales);
+    result.scale = [];
+    if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
+        let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+        result.scale = filterWesternScales(worldScales);
+    }
     result.chords = chords;
+    result.chord = tableSectionNotes ? tableSectionNotes.chord : "";
+    result.mode = tableSectionNotes ? tableSectionNotes.mode : "";
     return result;
 }
 
 
 function normalizeChord(arr, rootKey) {
-  // Remove duplicates
   const unique = [...new Set(arr)];
-  // Sort by constNoteNamesArr order
   const sorted = unique.slice().sort(
-    (a, b) => Constants.constNoteNamesArr.indexOf(a) - Constants.constNoteNamesArr.indexOf(b)
+    (a, b) => Constants.NOTE_NAMES_ARRAY.indexOf(a) - Constants.NOTE_NAMES_ARRAY.indexOf(b)
   );
   // Rotate so rootKey is first
   const idx = sorted.indexOf(rootKey);

@@ -1,0 +1,51 @@
+<template id="info-template">
+    <div id="info" style="display: none;" class="sectionPageControlsGroup">
+        <div class="infoTabsTop">
+            <span class="infoTabsButtons">
+                <button id="btnInfoTabInfo" type="button" class="MenuTabBtn BtnPunchedIn">Info</button>
+                <button id="btnInfoTabEdit" type="button" class="MenuTabBtn BtnPunchedOut">Edit</button>
+            </span>
+            <span class="infoTabsFill"></span>
+        </div>
+
+        <div class="infoTabsBody">
+            <div class="infoTabsPaper">
+                <div class="infoEditControls">
+                    <div class="infoActionRow">
+                        <div class="infoActionLeft">
+                            <div class="infoTitle">Song Info</div>
+                            <div id="infoEditControlsInner" class="infoEditControlsInner">
+                                <span class="infoEditGroup infoEditGroupOpen">
+                                    <label for="selOpenInfo">show on open:</label>
+                                    <select id="selOpenInfo" title="You must have some text in the edit box, then you can choose to show the message on song open as 'float' or 'parked'.">
+                                        <option value="none">none</option>
+                                        <option value="parked">parked</option>
+                                        <option value="float">float</option>
+                                    </select>
+                                </span>
+                                <span class="infoEditGroup infoEditGroupSave">
+                                    <span class="infoSaveCaption">save:</span>
+                                    <button id="btnSaveInfo" type="button" title="Closing, tabbing away or clicking on Info tab also saves.">&check;</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="infoActionRight">
+                            <button id="btnFloatSection_info" type="button"
+                                class="moveyButton floatDockableButton">Float</button>
+                            <span class="infoCloseCaption">ESC or</span>
+                            <button id="btnCloseInfo" type="button" class="MenuButton BtnPunchedOut">Close</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divInfoTabInfo" class="infoTabPanel">
+                    <div id="divInfoRendered" class="infoRendered"></div>
+                </div>
+
+                <div id="divInfoTabEdit" class="infoTabPanel" style="display: none;">
+                    <textarea id="textareaSongInfo" class="scalingTextarea infoTextarea"></textarea>
+                </div>
+            </div>
+        </div>
+</div>
+</template>

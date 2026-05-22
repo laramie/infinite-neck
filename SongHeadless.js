@@ -16,7 +16,7 @@ function loadSong(songFileRelPath){
 }
 
 function main(){
-    const SONGFILE = './songs/persistence/forward-backward-observers.json';
+    const SONGFILE = './songs/tests/persistence/forward-backward-observers.json';
     let song = loadSong(SONGFILE);
     //console.log("Song round-trip: \n"+JSON.stringify(song, null, 4));
     console.log(JSON.stringify(song, null, 4));

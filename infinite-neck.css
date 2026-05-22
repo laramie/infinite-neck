@@ -121,6 +121,16 @@ table {
   transform: rotate(180deg);
 }
 
+.obvious-underline {
+    text-decoration: underline;
+    text-decoration-color: black;      
+    text-decoration-thickness: 1px;    
+    text-underline-offset: 3px;        /* Move line down below 'g' */
+    text-decoration-skip-ink: none; /* Prevents breaking around 'g' */
+}
+
+
+
 /***************************** Fonts *****************************/
 
 .vollkorn {
@@ -210,14 +220,18 @@ table {
     padding: 2px;
 }
 
-.MainMenuTabBtn, .MenuButton {
+.MainMenuTabBtn, .MenuButton, .MenuTabBtn {
     padding: 0.4em;
     color: black;
     font-family: Helvetica;
-    FFfont-size: 120%;
     border: 1px solid black;
     border-radius: 4px;
 }
+.MenuTabBtn {
+     border-bottom-left-radius: 0; 
+     border-bottom-right-radius: 0;
+}
+
 .BigMobileBtn {
     padding: 1em;
 }
@@ -501,7 +515,7 @@ table.viewControls th {
 }
 #allTuningsTable tr:nth-child(odd),
 #myTuningsTable tr:nth-child(odd) {
-  background-color: lightgreen;
+  background-color: Khaki;
 }
 #allTuningsTable select,
 #myTuningsTable select {
@@ -519,7 +533,7 @@ table.viewControls th {
 }
 #allTuningsTable tr:hover,
 #myTuningsTable tr:hover {
-    background-color: Khaki;
+    background-color: lightgreen;
 }
 
 .userInstrumentControlsGroup {
@@ -599,15 +613,6 @@ table.viewControls th {
     margin-left: 0.4em;
 }
 
-.menuCaption {    /* this was the spacer every menu page had.  I pulled them out because you can see which button is clickd.
-                     But now you can hide the buttons, so might want something like this back.
-                     */
-    font-size: 1pt;  /*just so I don't have to delete the html right now.*/
-    font-weight: bold;
-    color: transparent;/*just so I don't have to delete the html right now.  */
-    text-align: center;
-    vertical-align: middle;
-}
 .productsmall {
     font-size:  70%;
     color: orange;
@@ -656,6 +661,9 @@ table.viewControls th {
 #divTunings {
     display: none;
 }
+#divChart {
+    display: none;
+}
 
 /***************************** key-handlers: display-options *****************************/
 .tblDisplayOptions {
@@ -689,7 +697,7 @@ table.viewControls th {
     display: inline-block;
 }
 
-#btnPrevSection2, #btnNextSection2, #btnFirstSection, #btnLastSection {
+#btnPrevSection, #btnNextSection, #btnFirstSection, #btnLastSection {
     font-size:  70%;
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
@@ -697,20 +705,14 @@ table.viewControls th {
     border: 1px solid gray;
     transition: all 0.1s ease;
 }
-#btnPrevSection, #btnNextSection{
-    font-size:  150%;
-    background: #ffbf00;
-    box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
-    border-radius: 20%;
-    border: 1px solid gray;
-    transition: all 0.1s ease;
-}
 #btnPrevBeat, #btnNextBeat {
-    font-size:  100%;
     background-color: lightgreen;
     border: 1px solid green;
     transition: all 0.1s ease;
+    margin: 0;
+    padding: 0;
 }
+
 
 .downyButton:active {
     box-shadow: inset 0 0 2pt 2pt #6faa09;
@@ -737,11 +739,11 @@ table.viewControls th {
 .ButtonOn {
     background-color: red !important;
 }
-#btnLoopBeatsTransport {
+#btnLoopBeats {
     border: 1px solid green;
 }
 #btnLoopSections.ButtonOn,
-#btnLoopBeatsTransport.ButtonOn {
+#btnLoopBeats.ButtonOn {
     background-color: magenta !important;
 }
 .LooperLight {
@@ -754,7 +756,6 @@ table.viewControls th {
 }
 .LooperLightTD {
     width: 3em;
-    FFFborder: 1px dashed darkblue;
 }
 
 /***************************** Caption Row Main Page *****************************/
@@ -824,6 +825,121 @@ table.viewControls th {
     vertical-align: middle;
 }
 
+/***************************** Transpose Widgets *****************************/
+
+.transposeProgFunc {
+    font-size: 40%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgb(15, 0, 0);
+    display: inline-block;
+    line-height: 1;
+    position: relative;
+    top: -0.25em;
+    margin-left: 0.1em;
+    margin-right: 0;
+    font-weight: bold;
+}
+
+.transposeProgOffset {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30%;
+    color: red;
+    display: inline-block;
+    line-height: 1;
+    position: relative;
+    top: 0.55em;
+    margin-top: 0.1em;
+    margin-left: 0;
+    margin-right: 0.1em;
+    font-weight: bold;
+}
+.transposeArrow {
+    display: inline-block;
+    font-size: 50%;
+    line-height: 1;
+    color: rgb(58, 22, 0);
+    margin-right: 0.2em;
+}
+.transposeCaptionBox {
+    display: inline-flex;
+    align-items: flex-start;
+    white-space: nowrap;
+    line-height: 1.4;
+    padding: 0.1em 0.08em;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    border: 1px solid rgb(13, 6, 6);
+    background-color: rgb(252, 202, 86);
+    border-radius: 0.2em;
+    box-shadow: 2px 2px 3px 1px maroon;
+    vertical-align: middle;
+}
+.transposeKey {
+    font-size: 60%;
+}
+.transposeProgressionFunctionDistances {
+    color: gold;
+    font-family: 'Volkkorn', serif;
+    font-size: 120%;
+}
+
+.transposeIntervalsStatus{
+    font-family: "Kode Mono", monospace;
+    font-size: 60%;
+}
+.transposeIntervalsStatus table {
+  display: inline-table;
+  vertical-align: middle;
+  margin: 0;
+}
+.transposeIntervalsStatus td {
+    padding: 0 2px;
+    background-color: #fcd704;
+    font-weight: normal;
+    color: black;
+    min-width: 1em;
+    text-align: center;
+}
+
+td.transposeCurrentAppliedInterval {
+    background-color:#6faa09;
+    font-weight: bold;
+    color: black;
+    border: 1px solid black;
+    min-width: 1em;
+    text-align: center;
+}
+
+.arpeggioPositionsStatus{
+    font-family: "Kode Mono", monospace;
+    font-size: 60%;
+}
+.arpeggioPositionsStatus table {
+  display: inline-table;
+  vertical-align: middle;
+  margin: 0;
+}
+.arpeggioPositionsStatus td {
+    padding: 0 2px;
+    background-color: #ffd39a;
+    font-weight: normal;
+    color: black;
+    min-width: 1em;
+    text-align: center;
+}
+
+td.arpeggioCurrentPositionPair {
+    background-color: #ff7f50;
+    font-weight: bold;
+    color: black;
+    border: 1px solid black;
+    min-width: 1em;
+    text-align: center;
+}
+
+
+
+
 /***************************** File *****************************/
 
 #divSongList {
@@ -834,6 +950,17 @@ table.viewControls th {
     left: 5%;
     top: 5%;
     columns: 4;
+}
+
+#divSongList a {
+    display: inline-block;
+    padding: 0.4em;
+}
+#divSongList a:nth-of-type(odd) {
+    background-color: rgb(177, 255, 255);
+}
+#divSongList a:nth-of-type(even) {
+    background-color: rgb(235, 253, 148);
 }
 
 .bpm {
@@ -848,6 +975,14 @@ table.viewControls th {
 #divFileControls label {
     color:black;
     border: none;
+}
+
+.transportTimingModeGroup {
+
+    display: inline-block;
+    margin: 0;
+    padding: 0.1em;
+    font-size: 60%;
 }
 
 
@@ -882,21 +1017,6 @@ table.viewControls th {
     color: gold;
 }
 
-.FOOspanLeadDifferentFromRoot {
-    display:inline;
-    display:none;
-    color: brown;
-    width: 4em;
-    height:2em;
-    padding: 0.2em;
-    font-size:  65%;
-    font-weight: bold;
-    background-color: aqua;
-    border: 1px solid orange;
-    border-radius: 6px;
-    text-align: center;
-    vertical-align: middle;
-}
 .spanLeadDifferentFromRoot,
 .lblRootID,
 .lblRootIDLead,
@@ -908,12 +1028,6 @@ table.viewControls th {
     background-color: #dfd;
     font-size:  75%;
     color: black;
-    display: inline-block;
-    height: 1.35em;
-    width: 1.35em;
-    padding-bottom: 0;
-}
-.FFFlblRootID {
     display: inline-block;
     height: 1.35em;
     width: 1.35em;
@@ -950,14 +1064,11 @@ table.viewControls th {
     font-size:  100%;
     box-shadow: inset 0 0 10pt 4pt  black;
 }
-#lblSectionsStatus2 {
+#lblSectionsStatus {
     display: inline-block;
     width: 2.4em;
     text-align: left;
     color: black;
-}
-#lblSectionsStatus {
-    font-size: 120%;
 }
 #sectionOrder{
     margin-left: 1em;
@@ -974,11 +1085,6 @@ table.viewControls th {
     border: none;
     font-size: 0.7em;
     transition: all 0.1s ease;
-}
-#btnPrevBeatTransport, #btnNextBeatTransport {
-    margin: 0;
-    padding: 0;
-    border: none;
 }
 .lblNoteClickedCaption {
     font-size:  100%;

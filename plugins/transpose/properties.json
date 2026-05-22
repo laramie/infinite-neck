@@ -1,0 +1,87 @@
+[
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": true
+  },
+  {
+    "name": "reset",
+    "caption": "Reset",
+    "trigger": "R",
+    "datatype": "org.dynamide.Action",
+    "actionName": "reset",
+    "visibleInMenu": true
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": true
+  },
+  {
+    "name": "intervals",
+    "caption": "intervals",
+    "trigger": "i",
+    "datatype": "org.dynamide.IntegerArray",
+    "value": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "defaultValue": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "inputCaption": "JSON integer array or comma-separated integers",
+    "visibleInMenu": true,
+    "help": "Array of transposition intervals. The first value represents the current Song state when playback starts. Brackets are optional when entering comma-separated integers."
+  },
+  {
+    "name": "NamedNotes",
+    "caption": "named notes",
+    "trigger": "n",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "PlayedNotes",
+    "caption": "played notes",
+    "trigger": "p",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "RecordedNotes",
+    "caption": "recorded notes",
+    "trigger": "r",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "autoSharpsFlats",
+    "caption": "auto sharps/flats",
+    "trigger": "a",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "doLeadKey",
+    "caption": "do lead key",
+    "trigger": "d",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  }
+]

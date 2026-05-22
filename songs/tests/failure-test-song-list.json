@@ -1,11 +1,11 @@
 {
     "songs": [
+        "all-note-types-2tunings.json",
+        "all-note-types.json",
+        "display-options.json",
         "old-file-format-styleNum-missing.json"
-        
      ],
     "ignoredSongs": [
-        "empty-song-missing-noteTables.json",
-        "empty-song-missing-namedNotes.json"
     
     ]
 }

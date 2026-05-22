@@ -440,15 +440,6 @@ export class Song extends SongPersistence {
 	getSections(){
 	    return this.sections;
 	}
-	addSections(fileObj){
-	    if (this.sections.length==1 && this.isEmpty(this.sections[0])){
-	        //special case: file open is adding sections, but default section is empty, so delete it.
-	        this.sections = [];
-	    }
-        var normalizedSections = fileObj.sections.map(section => section);
-        var count = Array.prototype.push.apply(this.sections, normalizedSections);
-        this.gSectionsCurrentIndex = count - 1;
-	}
 
     //these two return an html string that is either sharps or flats, depending on section.
     getRootKey(){
@@ -497,8 +488,17 @@ export class Song extends SongPersistence {
 	    this.gFirstBeatSeen = false;
 	}
 
+    gotoLastBeat(){
+        this.getCurrentSection().gotoLastBeat();
+    }
+
     gotoBeat(oneBasedIndex){
         this.getCurrentSection().gotoBeat(oneBasedIndex);
+    }
+
+    gotoLastBeatInSong(){
+        this.lastSection();
+        this.gotoLastBeat();
     }
 
     moveBeatsLaterForTable(tableID, beatCount, oneBasedIndex){
@@ -640,42 +640,66 @@ export class Song extends SongPersistence {
     
     //============== Section handling =====================================
 
+    firstSectionStateOnly(){
+        this.gSectionsCurrentIndex = 0;
+    }
+
 	firstSection(){
-	    this.gSectionsCurrentIndex = 0;
+        this.firstSectionStateOnly();
         this.publish_SectionChanged();
 	}
 
+    lastSectionStateOnly() {
+        this.gSectionsCurrentIndex = this.sections.length-1;
+    }
+
 	lastSection() {
-		 this.gSectionsCurrentIndex = this.sections.length-1;
+         this.lastSectionStateOnly();
          this.publish_SectionChanged();
 	}
 
-	prevSection(){
-	    if (this.gSectionsCurrentIndex > 0){
-	        this.gSectionsCurrentIndex--;
-	    }
-        this.publish_SectionChanged();
-	}
-	nextSection(){
-	    if (this.gSectionsCurrentIndex < (this.sections.length-1)){
-	        this.gSectionsCurrentIndex++;
-	    }
-        this.publish_SectionChanged();
-	}
-    gotoSection(idx){
-        var sectionIdx = toInt(idx, -1);
-        if (sectionIdx > -1 && sectionIdx < this.sections.length){
-            this.gSectionsCurrentIndex = sectionIdx;
-            if (!this.isHeadless){
-				this.requestUiClearAndReplaySection();
-                this.publish_SectionChanged();
-            }
-        } else {
-            console.warn("############### bad sectionIdx:"+sectionIdx+" gotoSection("+idx+") len:"+this.sections.length);
+    prevSectionStateOnly(){
+        if (this.gSectionsCurrentIndex > 0){
+            this.gSectionsCurrentIndex--;
         }
     }
 
-    gotoNextSection(orGotoFirst){
+	prevSection(){
+        this.prevSectionStateOnly();
+        this.publish_SectionChanged();
+	}
+
+    nextSectionStateOnly(){
+        if (this.gSectionsCurrentIndex < (this.sections.length-1)){
+            this.gSectionsCurrentIndex++;
+        }
+    }
+
+	nextSection(){
+        this.nextSectionStateOnly();
+        this.publish_SectionChanged();
+	}
+
+    gotoSectionStateOnly(idx){
+        var sectionIdx = toInt(idx, -1);
+        if (sectionIdx > -1 && sectionIdx < this.sections.length){
+            this.gSectionsCurrentIndex = sectionIdx;
+            return true;
+        }
+        console.warn("############### bad sectionIdx:"+sectionIdx+" gotoSection("+idx+") len:"+this.sections.length);
+        return false;
+    }
+
+    gotoSection(idx){
+        if (this.gotoSectionStateOnly(idx)){
+            if (!this.isHeadless){
+                this.requestUiClearAndReplaySection();
+                this.publish_SectionChanged();
+            }
+        }
+    }
+
+    gotoNextSectionStateOnly(orGotoFirst){
         var isRandom = this.randomLoop == true;
         if (isRandom) {
             var prevSectionIdx = this.gSectionsCurrentIndex;
@@ -693,19 +717,29 @@ export class Song extends SongPersistence {
             this.pushRandomSectionHistory(prevSectionIdx);
             this.gSectionsCurrentIndex = randSection;
         } else if (this.getSectionsCurrentIndex()+1 >= this.sections.length){
-            if( orGotoFirst ) this.firstSection();
-		} else {
-			this.nextSection();
-		}
+            if( orGotoFirst ) this.firstSectionStateOnly();
+        } else {
+            this.nextSectionStateOnly();
+        }
+    }
+
+    gotoNextSection(orGotoFirst){
+        this.gotoNextSectionStateOnly(orGotoFirst);
+        this.publish_SectionChanged();
         this.requestUiClearAndReplaySection();
 	}
 
+    gotoPrevSectionStateOnly(orGotoLast){
+        if (this.getSectionsCurrentIndex()==0){
+            if( orGotoLast ) this.lastSectionStateOnly();
+        } else {
+            this.prevSectionStateOnly();
+        }
+    }
+
 	gotoPrevSection(orGotoLast){
-		if (this.getSectionsCurrentIndex()==0){
-			if( orGotoLast ) this.lastSection();
-		} else {
-			this.prevSection();
-		}
+        this.gotoPrevSectionStateOnly(orGotoLast);
+        this.publish_SectionChanged();
         this.requestUiClearAndReplaySection();
 	}
 
@@ -829,11 +863,14 @@ export class Song extends SongPersistence {
         return defaultDisplayOptions;
     }
 
-    //This function works: it transposes every Section in a Song by 'amount', but I haven't installed it in the menu yet.
-    cycleThruKeysAllSections(amount){
+    //This function works: it transposes every Section in a Song by 'amount'.
+    cycleThruKeysAllSections(amount, doKeyLead = false){
         var sections = this.getSections();
         sections.forEach(section => {
             section.transposeRoot(amount);
+            if (doKeyLead) {
+                section.transposeRootLead(amount);
+            }
         });
 	}
 
@@ -855,19 +892,55 @@ export class Song extends SongPersistence {
     renameTuningIDInModel(oldID, newID) {
         var oldKey =  Constants.TABLE_ID_PREFIX + oldID;
         var newKey =  Constants.TABLE_ID_PREFIX + newID;
-        // Rename in each section's noteTables
+        if (oldKey === newKey) {
+            return;
+        }
+
         this.sections.forEach(function(section) {
-            if (section.noteTables && section.noteTables.hasOwnProperty(oldKey)) {
-                section.noteTables[newKey] = section.noteTables[oldKey];
-                delete section.noteTables[oldKey];
+            if (!section || !section.sectionNotesByTable || !Object.prototype.hasOwnProperty.call(section.sectionNotesByTable, oldKey)) {
+                return;
             }
+
+            const oldSectionNotes = section.sectionNotesByTable[oldKey];
+            const newSectionNotes = section.sectionNotesByTable[newKey];
+
+            if (newSectionNotes) {
+                newSectionNotes.playedNotes = [
+                    ...(Array.isArray(newSectionNotes.playedNotes) ? newSectionNotes.playedNotes : []),
+                    ...(Array.isArray(oldSectionNotes.playedNotes) ? oldSectionNotes.playedNotes : [])
+                ];
+                newSectionNotes.namedNotes = {
+                    ...(oldSectionNotes.namedNotes || {}),
+                    ...(newSectionNotes.namedNotes || {})
+                };
+                newSectionNotes.recordedNotes = {
+                    ...(oldSectionNotes.recordedNotes || {}),
+                    ...(newSectionNotes.recordedNotes || {})
+                };
+                if (!newSectionNotes.chord && oldSectionNotes.chord) {
+                    newSectionNotes.chord = oldSectionNotes.chord;
+                }
+                if (!newSectionNotes.mode && oldSectionNotes.mode) {
+                    newSectionNotes.mode = oldSectionNotes.mode;
+                }
+            } else {
+                section.sectionNotesByTable[newKey] = oldSectionNotes;
+            }
+
+            delete section.sectionNotesByTable[oldKey];
         });
-        // Rename in visibleNoteTables array
-        if (this.visibleNoteTables) {
-            var idx = this.visibleNoteTables.indexOf(oldKey);
-            if (idx >= 0) {
-                this.visibleNoteTables[idx] = newKey;
-            }
+
+        if (Array.isArray(this.visibleNoteTables)) {
+            const seen = new Set();
+            this.visibleNoteTables = this.visibleNoteTables
+                .map((tableID) => tableID === oldKey ? newKey : tableID)
+                .filter((tableID) => {
+                    if (seen.has(tableID)) {
+                        return false;
+                    }
+                    seen.add(tableID);
+                    return true;
+                });
         }
     }
 
@@ -875,13 +948,16 @@ export class Song extends SongPersistence {
         this.visibleNoteTables = visibleTableIds;
     }
 
-    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning }){
+    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning, plugins }){
         this.markVisibleTablesForFileSave(visibleTableIds);
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;
         this.defaultBPM = "" + bpm;
         this.userColors = userColors;
         this.theme = theme;
+        if (plugins && typeof plugins === 'object') {
+            this.plugins = { ...plugins };
+        }
     }
 
   getTuningHashInMemoryModel(){

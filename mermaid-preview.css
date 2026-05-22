@@ -1,0 +1,11 @@
+.mermaid svg {
+  font-size: 48px !important;
+}
+
+.mermaid .messageText,
+.mermaid .noteText,
+.mermaid .actor,
+.mermaid .actor-box,
+.mermaid .labelText {
+  font-size: 48px !important;
+}

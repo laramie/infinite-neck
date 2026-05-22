@@ -17,19 +17,25 @@ const { Chord } = globalThis.Tonal?.Chord
     : await import('tonal');
 
 export function printSections(theSong, theSections, showDetails) {
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Caption</th>"
+    let currentSection = theSong.getCurrentSection();
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th><th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";
     let details;
     theSections.forEach((section, idx) => {
+        let rowClass = "";
+        if (currentSection === section){
+            rowClass = "class='sectionPrinterCurrentSectionRow'";
+        }
         details = "<pre style='margin:0'>" + getSectionNotesDisplayString(section) + "</pre>";
         const SEP = "</td><td>";
-        result += "<tr><td>"
+        result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
             + section.beats + SEP
             + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
             + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
+            + (section.chartMode ? section.chartMode : "&nbsp;") + SEP
             + "<b style='font-size: 130%;'>" + section.caption + "</b>"
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
@@ -125,14 +131,20 @@ export function printSectionsNotes(theSong, theSections){
     });
     result += "</tr>";
 
+    
+    let currentSection = theSong.getCurrentSection();
     theSections.forEach((section, idx) => {
-        result += "<tr><td>"
+        let rowClass = "";
+        if (currentSection === section){
+            rowClass = "class='sectionPrinterCurrentSectionRow'";
+        }
+        result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>"
             + "</td><td>" + section.beats
             + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
             + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
-            + "</td><td>" + (section.mode ? section.mode : "&nbsp;") 
+            + "</td><td>" + (section.chartMode ? section.chartMode : "&nbsp;") 
             + "</td><td><b style='font-size: 130%;'>" + section.caption + "</b></td>";
 
         instrumentTableIDs.forEach((tableID) => {
@@ -150,7 +162,8 @@ export function printSectionsNotes(theSong, theSections){
             let tonalPickerSet = buildTonalPickerSet("SectionPrinterTonal", TonalPickerOrientation.VERTICAL, 
                                                         tableID, idx, 
                                                         tonalResult.chords, section.chartChord, 
-                                                        tonalResult.scale,  section.mode);
+                                                        tonalResult.scale,  section.chartMode,
+                                                        tonalResult.chord, tonalResult.mode);
             result += "<td><div class='SPN_CC'>" 
                             +chartChordsNotes+':'
                             +tonalPickerSet

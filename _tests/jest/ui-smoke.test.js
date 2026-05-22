@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Song } from '../../song.js';
+import { Song } from '../../Song.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,7 +18,10 @@ describe('Headless UI smoke contracts', () => {
     test('display-options fixture can navigate sections, loop, and save without throwing', () => {
         expect(() => {
             const data = readFixture();
-            const song = new Song({fileObj: data, legacy: false, headless: true, quiet: true, fixIndex: true });
+            const song = new Song(data);
+            song.ensureDefaultSection();
+            song.fixupCurrentIndexForLoadedSong();
+            song.setHeadless(true, true);
 
             song.gotoSection(0);
             song.gotoNextSection(true);

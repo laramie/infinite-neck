@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { listApprovedValues } from '../approved-values.js';
 import { gMenuFile } from '../menu.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -73,10 +74,21 @@ function collectTopLevelCaseLabels(switchBody) {
 }
 
 const actionCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSource, 'switch (menuItem.action){'));
-const valueCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSource, 'switch (what){'));
+const valueCases = new Set(listApprovedValues({ includeSamples: false }).map((entry) => entry.name));
 
 const errors = [];
 const warnings = [];
+let runtimeChildrenCount = 0;
+const runtimeActionRefs = new Set();
+
+const runtimeChildrenActionMap = new Map([
+    ['pluginManager', [
+        'pluginAction:invoke',
+        'pluginProperty:select',
+        'pluginProperty:set',
+        'pluginProperty:toggle'
+    ]]
+]);
 
 function addError(message) {
     errors.push(message);
@@ -124,9 +136,9 @@ function validateVars(node, nodePath) {
     }
     node.vars.forEach((token) => {
         if (!valueCases.has(token)) {
-            addError(nodePath + ': unresolved vars token "' + token + '" in getValue()');
+            addError(nodePath + ': unresolved vars token "' + token + '" in approved-values registry');
         }
-        if (node.caption && !node.caption.includes('$' + token)) {
+        if (node.caption && !node.caption.includes('${' + token + '}')) {
             addWarning(nodePath + ': vars token "' + token + '" is listed but not referenced in caption');
         }
     });
@@ -158,7 +170,7 @@ function validateInput(node, nodePath) {
         addWarning(nodePath + ': input.caption is missing');
     }
     if (typeof node.input.default === 'string' && isLikelyResolverToken(node.input.default) && !valueCases.has(node.input.default)) {
-        addWarning(nodePath + ': input.default token "' + node.input.default + '" is not handled by getValue()');
+        addWarning(nodePath + ': input.default token "' + node.input.default + '" is not handled by approved-values registry');
     }
     if (typeof node.input.default !== 'undefined' && node.input.default === '') {
         addWarning(nodePath + ': input.default is empty');
@@ -186,13 +198,19 @@ function validateChildren(node, nodePath) {
 
         const noChildren = !Array.isArray(child.children) || child.children.length === 0;
         const noAction = !child.action;
-        if (noChildren && noAction && !node.action) {
+        const hasRuntimeChildren = typeof child.runtimeChildren === 'string' && child.runtimeChildren.length > 0;
+        if (noChildren && noAction && !node.action && !hasRuntimeChildren) {
             addWarning(childPath + ': selector-style leaf has no action, and parent also has no action');
         }
     });
 }
 
 function walk(node, nodePath = '/') {
+    if (typeof node.runtimeChildren === 'string' && node.runtimeChildren.length > 0) {
+        runtimeChildrenCount += 1;
+        const impliedActions = runtimeChildrenActionMap.get(node.runtimeChildren) || [];
+        impliedActions.forEach((action) => runtimeActionRefs.add(action));
+    }
     validateVisibleNode(node, nodePath);
     validateVars(node, nodePath);
     validateAction(node, nodePath);
@@ -221,6 +239,8 @@ function collectActions(node) {
 }
 collectActions(gMenuFile);
 
+runtimeActionRefs.forEach((action) => actionRefs.add(action));
+
 const unusedActionCases = Array.from(actionCases)
     .filter((action) => !actionRefs.has(action))
     .sort();
@@ -233,7 +253,8 @@ console.log('Command Menu Validator');
 console.log('======================');
 console.log('Menu actions referenced: ' + actionRefs.size);
 console.log('performCmdAction cases: ' + actionCases.size);
-console.log('getValue tokens: ' + valueCases.size);
+console.log('approved-values tokens: ' + valueCases.size);
+console.log('runtimeChildren menuItems: ' + runtimeChildrenCount);
 console.log('');
 
 if (errors.length === 0 && warnings.length === 0) {

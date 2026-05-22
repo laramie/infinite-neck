@@ -1,6 +1,4 @@
-// Import the real function from the main codebase
-import { Song } from '../../song.js';
-import { setupSongTests, getSong } from '../../infinite-neck.js';
+import { setupSongTests, getSong, transposeSongKeys } from '../../infinite-neck.js';
 
 
 import { logVerbose, logVerboseTrue } from './LogVerboseJest.js';
@@ -72,18 +70,6 @@ const testCases = [
 	{ currentIdx: 1, sAmount: "", expectedIdx: 1, ruleSymbol: "malformed" },
 ];
 
-// Minimal mock Song for testing getRelativeSectionWithWrap
-function makeMockSong(numSections) {
-	return {
-		sections: Array.from({ length: numSections }, (_, i) => ({ idx: i })),
-		gSectionsCurrentIndex: 0,
-		getRelativeSectionWithWrap: null, // to be injected
-		getCurrentSection() { return this.sections[this.gSectionsCurrentIndex]; },
-	};
-}
-
-
-
 describe('Relative Section Navigation Rules', () => {
 	// For help popups: export rulesDescription if needed
 	test('rulesDescription is self-documenting', () => {
@@ -112,6 +98,73 @@ describe('Relative Section Navigation Rules', () => {
 		});
 	});
     if (logVerboseTrue() && warnings_getRelSec.length>0){
-       logVerbose(1, warnings_getRelSec.join('\n'));
+       logVerbose(2, warnings_getRelSec.join('\n'));
     }
 });
+
+
+describe('getSong() test_getRelativeSectionWithWrap', () => {
+	test('should run test_getRelativeSectionWithWrap without errors', () => {
+		setupSongTests();
+		getSong().setHeadless(true, true/*quiet*/);
+		//songs always have the "Miranda" section as sections[0].
+		getSong().sections[0].caption = 'Section 1 (default)';
+		getSong().sections[0].rootID = '1';
+		getSong().addSection(getSong().constructSection());
+		getSong().addSection(getSong().constructSection());
+		getSong().addSection(getSong().constructSection());
+		getSong().sections[1].caption = 'Section 2';
+		getSong().sections[1].rootID = '2';
+		getSong().sections[2].caption = 'Section 3';
+		getSong().sections[2].rootID = '3';
+		getSong().sections[3].caption = 'Section 4';
+		getSong().sections[3].rootID = '4';
+		expect(() => {
+			const testResult = getSong().test_getRelativeSectionWithWrap(false);
+			if (testResult.warnings && testResult.warnings.length>0){
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some foo/bar (and +/- without digit) validation errors: \n"+testResult.warnings.join("\n"));
+			}
+			if (testResult.infos && testResult.infos.length>0){
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some infos which mean 'PASS': \n"+testResult.infos.join("\n"));
+			}
+			if (testResult.terse && testResult.terse.length>0){
+				logVerbose(2, "test_getRelativeSectionWithWrap should kick back some terse results which mean 'PASS': \n"+testResult.terse.join("\n"));
+			}
+		}).not.toThrow();
+	});
+});
+
+describe('transposeSongKeys API', () => {
+	test('transposeSongKeys can also transpose rootIDLead when requested', () => {
+		setupSongTests();
+		getSong().setHeadless(true, true/*quiet*/);
+		const song = getSong();
+
+		song.sections = [];
+		song.gSectionsCurrentIndex = 0;
+
+		const firstSection = song.constructSection();
+		const secondSection = song.constructSection();
+		firstSection.rootID = 0;
+		firstSection.rootIDLead = '7';
+		secondSection.rootID = 3;
+		secondSection.rootIDLead = '-1';
+		song.addSection(firstSection);
+		song.addSection(secondSection);
+
+		transposeSongKeys(2);
+
+		expect(song.getSections()[0].rootID).toBe(2);
+		expect(song.getSections()[0].rootIDLead).toBe('7');
+		expect(song.getSections()[1].rootID).toBe(5);
+		expect(song.getSections()[1].rootIDLead).toBe('-1');
+
+		transposeSongKeys(3, true);
+
+		expect(song.getSections()[0].rootID).toBe(5);
+		expect(song.getSections()[0].rootIDLead).toBe(10);
+		expect(song.getSections()[1].rootID).toBe(8);
+		expect(song.getSections()[1].rootIDLead).toBe('-1');
+	});
+});
+

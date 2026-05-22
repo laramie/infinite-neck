@@ -43,6 +43,11 @@ export var gMenuFile =    {
           "action": "downloadPlayedNotes"
         },
         {
+          "caption": "<b>i</b>nfo",
+          "trigger": "i",
+          "action": "showDialog-info"
+        },
+        {
           "name": "name",
           "caption": "<b>n</b>ame",
           "trigger": "n",
@@ -74,11 +79,105 @@ export var gMenuFile =    {
           "action": "showGraveyard"
         },
         {
+          "caption": "<b>m</b>ap spacebar",
+          "trigger": "m",
+          "children": [
+            {
+              "caption": "current: [${spacebarActionName}]",
+              "vars": [
+                    "spacebarActionName"
+              ]
+            },
+            {
+              "caption": "<b>R</b>estart song",
+              "trigger": "R",
+              "action": "mapSpacebar_restartSong"
+            },
+            {
+              "caption": "<b>r</b>estart section",
+              "trigger": "r",
+              "action": "mapSpacebar_gotoFirstBeat"
+            },
+            {
+              "caption": "<b>z</b> reset song",
+              "trigger": "z",
+              "action": "mapSpacebar_resetSong"
+            },
+            {
+              "caption": "<b>Z</b> reset song hard",
+              "trigger": "Z",
+              "action": "mapSpacebar_resetSongHard"
+            },
+            {
+              "caption": "<b>u</b>nset spacebar",
+              "trigger": "u",
+              "action": "mapSpacebar_unsetSpacebarAction"
+            },
+            {
+              "caption": "<b>s</b>ection",
+              "trigger": "s",
+              "children": [
+                {
+                  "caption": "<b>f</b>irst",
+                  "trigger": "f",
+                  "action": "mapSpacebar_firstSection"
+                },
+                {
+                  "caption": "<b>p</b>rev",
+                  "trigger": "p",
+                  "action": "mapSpacebar_prevSection"
+                },
+                {
+                  "caption": "<b>n</b>ext",
+                  "trigger": "n",
+                  "action": "mapSpacebar_nextSection"
+                },
+                {
+                  "caption": "<b>l</b>ast",
+                  "trigger": "l",
+                  "action": "mapSpacebar_lastSection"
+                },
+                {
+                  "caption": "<b>L</b>ast beat in song",
+                  "trigger": "L",
+                  "action": "mapSpacebar_gotoLastBeatInSong"
+                }
+              ]
+            },
+            {
+              "caption": "<b>b</b>eats",
+              "trigger": "b",
+              "children": [
+                {
+                  "caption": "<b>f</b>irst",
+                  "trigger": "f",
+                  "action": "mapSpacebar_gotoFirstBeat"
+                },
+                {
+                  "caption": "<b>p</b>rev",
+                  "trigger": "p",
+                  "action": "mapSpacebar_prevBeat"
+                },
+                {
+                  "caption": "<b>n</b>ext",
+                  "trigger": "n",
+                  "action": "mapSpacebar_nextBeat"
+                },
+                {
+                  "caption": "<b>l</b>ast",
+                  "trigger": "l",
+                  "action": "mapSpacebar_gotoLastBeat"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "caption": "<b>C</b>lear graveyard, with backup",
           "trigger": "C",
           "children": [
                 {
-                  "caption": "<b>Y</b>es: CLEAR $graveyardRecordCount graveyard records !",
+                  "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
                   "trigger": "Y",
                   "action": "downloadBackupThenClearGraveyard",
                   "vars": [
@@ -151,30 +250,10 @@ export var gMenuFile =    {
           ]
         },
         {
+          "name": "pluginsRuntime",
+          "runtimeChildren": "pluginManager",
           "caption": "<b>p</b>lugins",
-          "trigger": "p",
-          "children": [
-            {
-              "name": "inputsDaCapo",
-              "caption": "<b>i</b>nputs to DaCapo",
-              "trigger": "i",
-              "action": "pluginDaCapoWInput",
-              "input": {
-                "type": "input",
-                "caption": "JSON config",
-                "defaultWorked": "{'named':true,'played':true}",
-                "default": {'amount': 1, 'NamedNotes':true, 'PlayedNotes':true, 'RecordedNotes':true},
-                "datatype": "json",
-                "id": "daCapoInput"
-              }
-            },
-            {
-                "name": "daCapo",
-                "caption": "<b>d</b>aCapo",
-                "trigger": "d",
-                "action": "pluginDaCapo"
-            }
-          ]
+          "trigger": "p"
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
@@ -215,11 +294,23 @@ export var gMenuFile =    {
               "caption": "<b>l</b>ast",
               "trigger": "l",
               "action": "lastSection"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoSection",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentSectionCardinal",
+                "datatype": "int",
+                "id": "sectionNumber"
+              }
             }
           ]
         },
         {
-          "caption": "<b>e</b>dit<small>[$currentSectionCardinal/$sectionCount]</small>",
+          "caption": "<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>",
           "trigger": "e",
           "vars": [
             "currentSectionCardinal",
@@ -231,7 +322,7 @@ export var gMenuFile =    {
               "trigger": "d",
               "children": [
                 {
-                  "caption": "<b>Y</b>es: DELETE section $currentSectionCardinal/$sectionCount !",
+                  "caption": "<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !",
                   "trigger": "Y",
                   "action": "sectionDelete",
                   "vars": [
@@ -461,13 +552,18 @@ export var gMenuFile =    {
 
 
         {
-          "caption": "<b>b</b>eats<small>[$currentBeat/$beats]</small>",
+          "caption": "<b>b</b>eats<small>[${currentBeat}/${beats}]</small>",
           "trigger": "b",
           "vars": [
             "currentBeat",
             "beats"
           ],
           "children": [
+            {
+              "caption": "<b>f</b>irst",
+              "trigger": "f",
+              "action": "gotoFirstBeat"
+            },
             {
               "caption": "<b>n</b>ext",
               "trigger": "n",
@@ -479,9 +575,26 @@ export var gMenuFile =    {
               "action": "prevBeat"
             },
             {
-              "caption": "<b>a</b>dd",
+              "caption": "<b>a</b>dd (last)",
               "trigger": "a",
               "action": "addBeat"
+            },
+            {
+              "caption": "<b>l</b>ast",
+              "trigger": "l",
+              "action": "gotoLastBeat"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoBeat",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentBeat",
+                "datatype": "int",
+                "id": "beatNumber"
+              }
             },
             {
               "caption": "<b>d</b>elete",
@@ -489,8 +602,8 @@ export var gMenuFile =    {
               "action": "deleteBeat"
             },
             {
-              "caption": "insert <b>f</b>irst",
-              "trigger": "f",
+              "caption": "insert <b>0</b> first",
+              "trigger": "0",
               "action": "insertFirstBeat"
             },
             {
@@ -501,8 +614,8 @@ export var gMenuFile =    {
           ]
         },
         {
-        "caption": "<b>p</b>rint",
-        "trigger": "p",
+        "caption": "cha<b>r</b>t",
+        "trigger": "r",
         "children": [
             {
               "caption": "<b>s</b>ummary",
@@ -510,14 +623,14 @@ export var gMenuFile =    {
               "action": "printSectionsSummary"
             },
             {
-              "caption": "<b>d</b>etails",
-              "trigger": "d",
-              "action": "printSectionsDetails"
-            },
-            {
               "caption": "<b>n</b>otes",
               "trigger": "n",
               "action": "printSectionsNotes"
+            },
+            {
+              "caption": "<b>d</b>etails",
+              "trigger": "d",
+              "action": "printSectionsDetails"
             }            
           ]
         },
@@ -649,6 +762,19 @@ export var gMenuFile =    {
           "trigger": "d",
           "children": [
             {
+              "caption": "<b>e</b>vent log to console",
+              "trigger": "e",
+              "action": "showViewDiagnosticsLogEvents",
+              "input": {
+                "type": "input",
+                "caption": "JSON",
+                "default": "{\"stack\":false, \"data\":false, \"filter\":[\"DaCapo\", \"Looper\"]}",
+                "datatype": "string",
+                "id": "eventLogToConsoleOptions"
+              },
+              "popOnBang": true 
+            },
+            {
               "caption": "song <b>f</b>ile format",
               "trigger": "f",
               "action": "showViewDiagnosticsSongFileFormat"
@@ -682,6 +808,11 @@ export var gMenuFile =    {
               "caption": "<b>d</b>isplayOptions",
               "trigger": "d",
               "action": "showViewDiagnosticsDisplayOptions"
+            },
+            {
+              "caption": "<b>v</b>ariables",
+              "trigger": "v",
+              "action": "showViewDiagnosticsVariables"
             },
             {
               "caption": "<b>h</b>ide",
@@ -723,6 +854,11 @@ export var gMenuFile =    {
               "caption": "<b>v</b>iewport",
               "trigger": "v",
               "action": "clampAllDockablesToViewport"
+            },
+            {
+              "caption": "<b>p</b>ark transport",
+              "trigger": "p",
+              "action": "parkTransport"
             }
           ]
         },
@@ -933,7 +1069,110 @@ export var gMenuFile =    {
         },
         {
           "caption": "<b>r</b>ole",
-          "trigger": "r"
+          "trigger": "r",
+          "action": "selectRole",
+          "children": [
+            {
+              "caption": "<b>t</b>ransparent",
+              "trigger": "t"
+            },
+            {
+              "caption": "<b>a</b>utomatic",
+              "trigger": "a"
+            },
+            {
+              "caption": "<b>s</b>cale",
+              "trigger": "s"
+            },
+            {
+              "caption": "<b>r</b>oot",
+              "trigger": "r"
+            },
+            {
+              "caption": "<b>c</b>hord",
+              "trigger": "c",
+              "action": "selectRoleChord",
+              "children": [
+                {
+                  "caption": "<b>1</b> - Chord",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>2</b> - Ch2",
+                  "trigger": "2"
+                },
+                {
+                  "caption": "<b>3</b> - Ch3",
+                  "trigger": "3"
+                }
+              ]
+            },
+            {
+              "caption": "c<b>h</b>romatic",
+              "trigger": "h"
+            },
+            {
+              "caption": "<b>p</b>assing",
+              "trigger": "p"
+            },
+            {
+              "caption": "c<b>o</b>lornote",
+              "trigger": "o",
+              "action": "selectRoleColornote",
+              "children": [
+                {
+                  "caption": "<b>1</b> - Colornote",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>2</b> - C2",
+                  "trigger": "2"
+                },
+                {
+                  "caption": "<b>3</b> - C3",
+                  "trigger": "3"
+                }
+              ]
+            },
+            {
+              "caption": "a<b>v</b>oid",
+              "trigger": "v",
+              "action": "selectRoleAvoid",
+              "children": [
+                {
+                  "caption": "<b>1</b> - Avoid",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>2</b> - Avoid",
+                  "trigger": "2"
+                },
+                {
+                  "caption": "<b>3</b> - Avoid",
+                  "trigger": "3"
+                }
+              ]
+            },
+            {
+              "caption": "<b>b</b>ass",
+              "trigger": "b"
+            },
+            {
+              "caption": "<b>l</b>ead",
+              "trigger": "l",
+              "action": "selectRoleLead",
+              "children": [
+                {
+                  "caption": "<b>1</b> - Lead",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>2</b> - Lead 2",
+                  "trigger": "2"
+                }
+              ]
+            }
+          ]
         },
         {
           "caption": "<b>;</b>&nbsp;dialog",
@@ -957,6 +1196,11 @@ export var gMenuFile =    {
           "action": "parkTransport"
         },
         {
+          "caption": "<b>P</b>ark transport top right",
+          "trigger": "P",
+          "action": "parkTransportTopRight"
+        },
+        {
           "caption": "<b>l</b>oop",
           "trigger": "l",
           "action": "toggleLoopSections"
@@ -972,7 +1216,7 @@ export var gMenuFile =    {
           "action": "toggleRandomLoop"
         },
         {
-          "caption": "<b>s</b>ection<small>[$currentSectionCardinal/$sectionCount]</small>",
+          "caption": "<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>",
           "vars": [
             "currentSectionCardinal",
             "sectionCount"
@@ -998,17 +1242,54 @@ export var gMenuFile =    {
               "caption": "<b>l</b>ast",
               "trigger": "l",
               "action": "lastSection"
+            },
+            {
+              "caption": "<b>L</b>ast beat in song",
+              "trigger": "L",
+              "action": "gotoLastBeatInSong"
+            },
+            {
+              "caption": "<b>0</b> restart song",
+              "trigger": "0",
+              "action": "firstSection"
+            },
+            {
+              "caption": "<b>r</b>eset song",
+              "trigger": "r",
+              "action": "resetSong"
+            },
+            {
+              "caption": "<b>R</b>eset song hard",
+              "trigger": "R",
+              "action": "resetSongHard"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoSection",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentSectionCardinal",
+                "datatype": "int",
+                "id": "sectionNumber"
+              }
             }
           ]
         },
         {
-          "caption": "<b>b</b>eats<small>[$currentBeat/$beats]</small>",
+          "caption": "<b>b</b>eats<small>[${currentBeat}/${beats}]</small>",
           "trigger": "b",
           "vars": [
             "currentBeat",
             "beats"
           ],
           "children": [
+            {
+              "caption": "<b>f</b>irst",
+              "trigger": "f",
+              "action": "gotoFirstBeat"
+            },
             {
               "caption": "<b>n</b>ext",
               "trigger": "n",
@@ -1018,6 +1299,23 @@ export var gMenuFile =    {
               "caption": "<b>p</b>rev",
               "trigger": "p",
               "action": "prevBeat"
+            },
+            {
+              "caption": "<b>l</b>ast",
+              "trigger": "l",
+              "action": "gotoLastBeat"
+            },
+            {
+              "caption": "<b>g</b>oto",
+              "trigger": "g",
+              "action": "gotoBeat",
+              "input": {
+                "type": "input",
+                "caption": "n+1",
+                "default": "currentBeat",
+                "datatype": "int",
+                "id": "beatNumber"
+              }
             }
           ]
         }
@@ -1247,15 +1545,15 @@ export function hasNoChildMenus(menu){
 }
 
 function expandCaption(menuItem){
-    //   "caption": "<b>Y</b>es: DELETE section $currentSectionIndex/$sectionCount !"
+    //   "caption": "<b>Y</b>es: DELETE section ${currentSectionIndex}/${sectionCount} !"
     //   "vars": ["currentSectionIndex","sectionCount"]
     var caption = menuItem.caption;
     var vars = menuItem.vars;
     if (vars && caption){
       vars.forEach(str => {
         var strValue = gMenuValueResolver(str);
-        if ((strValue != undefined) && (""+strValue).length>0){
-          caption = caption.replaceAll("$"+str, ""+strValue);
+        if (strValue != undefined){
+          caption = caption.replaceAll("${"+str+"}", ""+strValue);
         }
       });
     }

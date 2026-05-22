@@ -1,0 +1,202 @@
+[
+  {
+    "name": "targetTable",
+    "caption": "Target table",
+    "trigger": "T",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": false
+  },
+  {
+    "name": "clear",
+    "caption": "Clear",
+    "trigger": "C",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clear",
+    "visibleInMenu": false
+  },
+  {
+    "name": "clearSong",
+    "caption": "ClearSong",
+    "trigger": "S",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clearSong",
+    "visibleInMenu": false
+  },
+  {
+    "name": "commitNotes",
+    "caption": "Commit Notes",
+    "trigger": "M",
+    "datatype": "org.dynamide.Action",
+    "actionName": "commitNotes",
+    "visibleInMenu": false
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": false
+  },
+  {
+    "name": "chordFormula",
+    "caption": "chord formula",
+    "trigger": "d",
+    "datatype": "org.dynamide.Select",
+    "value": "4,7",
+    "defaultValue": "4,7",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "scaleFormula",
+    "caption": "scale formula",
+    "trigger": "g",
+    "datatype": "org.dynamide.Select",
+    "value": "0,2,4,5,7,9,11",
+    "defaultValue": "0,2,4,5,7,9,11",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "minFret",
+    "caption": "minFret position",
+    "trigger": "m",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": false
+  },
+  {
+    "name": "maxFret",
+    "caption": "maxFret position",
+    "trigger": "f",
+    "datatype": "Number",
+    "value": 4,
+    "defaultValue": 4,
+    "inputCaption": "0..max fret",
+    "visibleInMenu": false
+  },
+  {
+    "name": "minRow",
+    "caption": "upper string limit",
+    "trigger": "u",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "1..max string",
+    "visibleInMenu": false
+  },
+  {
+    "name": "maxRow",
+    "caption": "lower string limit",
+    "trigger": "l",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "1..max string",
+    "visibleInMenu": false
+  },
+  {
+    "name": "rootMode",
+    "caption": "root mode",
+    "trigger": "r",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "rootColor",
+    "caption": "root color",
+    "trigger": "R",
+    "datatype": "String",
+    "value": "noteRoot",
+    "defaultValue": "noteRoot",
+    "visibleInMenu": false
+  },
+  {
+    "name": "chordMode",
+    "caption": "chord mode",
+    "trigger": "c",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "chordColor",
+    "caption": "chord color",
+    "trigger": "C",
+    "datatype": "String",
+    "value": "noteChord",
+    "defaultValue": "noteChord",
+    "visibleInMenu": false
+  },
+  {
+    "name": "scaleMode",
+    "caption": "scale mode",
+    "trigger": "s",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "scaleColor",
+    "caption": "scale color",
+    "trigger": "S",
+    "datatype": "String",
+    "value": "noteScale",
+    "defaultValue": "noteScale",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyNotes",
+    "caption": "tiny notes",
+    "trigger": "t",
+    "datatype": "org.dynamide.Select",
+    "value": "none",
+    "defaultValue": "none",
+    "visibleInMenu": false,
+    "options": [
+      {
+        "value": "none",
+        "caption": "none",
+        "trigger": "n"
+      },
+      {
+        "value": "noteTransparent",
+        "caption": "emboss - noteTransparent",
+        "trigger": "e"
+      },
+      {
+        "value": "noteAutomatic",
+        "caption": "noteAutomatic",
+        "trigger": "a"
+      },
+      {
+        "value": "noteLead",
+        "caption": "noteLead",
+        "trigger": "1"
+      },
+      {
+        "value": "noteLead2",
+        "caption": "noteLead2",
+        "trigger": "2"
+      }
+    ]
+  }
+]

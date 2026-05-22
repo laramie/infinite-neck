@@ -1,0 +1,222 @@
+/** Note: some of these are for User input inside the HTML, so that Users don't need CSS, 
+ *  because they are disallowed from including CSS or stylesheets.
+ *  So while some of these rules, like
+ *        .infoRendered table
+ *        .infoRendered th, .infoRendered td
+ *        .infoRendered pre, .infoRendered code
+ *  are not used in info.html, 
+ *  the html tags [table, th, td, pre, code], etc. 
+ *  might be and get basic styling.
+ */
+
+#info {
+    width: 95%;
+    box-sizing: border-box;
+    min-width: 0;
+    position: static;
+    left: auto;
+    z-index: auto;
+    background-color: transparent;
+    padding: 0;
+    margin: 0.6em;
+}   
+
+.infoActionRow {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 0.6em;
+}
+
+.infoActionLeft {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+}
+
+.infoActionRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6em;
+    flex: 0 0 auto;
+    align-self: flex-start;
+}
+
+.infoTitle {
+    font-size: 120%;
+    font-weight: bold;
+    margin-left: 0;
+}
+
+.infoCloseCaption {
+    font-size: 90%;
+    margin: 0;
+    margin-left: 1em;
+}
+
+.infoEditControlsInner {
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.infoEditGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.infoEditGroupOpen {
+    margin-right: 2em;
+}
+
+.infoEditControlsInner label,
+.infoEditControlsInner select,
+.infoEditControlsInner button,
+.infoSaveCaption {
+    flex: 0 0 auto;
+}
+
+.infoSaveCaption {
+    margin: 0;
+}
+
+.infoTabsTop {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 0.2em;
+}
+
+.infoTabsButtons {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    background-color: lightblue;
+    border-top-left-radius: 0.4em;
+    border-top-right-radius: 0.4em;
+    padding: 0.5em 2em 0 2em;
+    min-height: 3em;
+}
+
+.infoTabsFill {
+    flex: 1 1 auto;
+    display: inline-block;
+    height: 1em;
+    background-color: lightblue;
+    border-top-right-radius: 0.4em;
+}
+
+.infoTabsBody {
+    background-color: lightblue;
+    border-bottom-left-radius: 0.4em;
+    border-bottom-right-radius: 0.4em;
+    padding: 1em;
+    padding-top: 0;
+}
+
+.infoTabsPaper {
+    background-color: rgb(251, 185, 99);
+    border: 1px solid brown;
+    padding: 0.75em;
+}
+
+.infoTabPanel {
+    min-height: 18em;
+}
+
+.infoRendered {
+    min-height: 16em;
+    background-color:  rgb(255, 235, 156);
+    border: 1px solid gray;
+    border-radius: 0;
+    -webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3); 
+    box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
+    padding: 1em;
+    overflow: auto;
+}
+
+
+.infoRendered table {
+    border-collapse: collapse;
+}
+
+.infoRendered th,
+.infoRendered td {
+    border: 1px solid #666;
+    padding: 0.3em 0.5em;
+}
+
+.infoRendered pre,
+.infoRendered code {
+    white-space: pre-wrap;
+}
+
+.infoEditControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    margin-bottom: 0.6em;
+}
+
+.infoEditControls select,
+.infoEditControls button {
+    box-shadow: 5px 2px 4px black;
+}
+
+.infoTextarea {
+    width: 100%;
+    min-height: 18em;
+    resize: vertical;
+    box-sizing: border-box;
+    border: 2px solid green;
+    padding: 0.5em; 
+    display: block;
+    background-color: white;
+    -webkit-box-shadow: inset 1px 0px 13px -3px #000000; 
+    box-shadow: inset 1px 0px 13px -3px #000000;
+}
+
+@media (max-width: 900px) {
+    .infoEditControls {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .infoActionRow {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .infoActionRight {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .infoEditControlsInner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .infoEditGroup {
+        align-items: flex-start;
+    }
+
+    .infoEditGroupOpen {
+        margin-right: 0;
+    }
+
+    .infoTabsButtons {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+}

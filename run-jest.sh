@@ -2,4 +2,8 @@
 
 
 #node --experimental-vm-modules node_modules/.bin/jest "$@"
-node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+if [ "$#" -gt 0 ]; then
+	node --experimental-vm-modules node_modules/.bin/jest "$@"
+else
+	node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose
+fi

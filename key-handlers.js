@@ -14,10 +14,11 @@ import {
 } from './display-options.js';
 import {
 	beatsLooping,
-	restartLoopSections,
 	sectionsLooping,
+	restartLoopSections,
 	toggleLoopBeats,
-	toggleLoopSections
+	toggleLoopSections,
+	clearBeatAndSectionLooping
 } from './looper.js';
 import {
 	buildChildMenuCaptionsRow,
@@ -28,6 +29,10 @@ import {
 	setMenuAtRoot,
 	gMenuLoaded
 } from './menu.js';
+import {
+	renderApprovedValuesReferenceHtml,
+	resolveApprovedValue
+} from './approved-values.js';
 import {
 	gUserColorDict
 } from './userColors.js';
@@ -46,12 +51,13 @@ import {
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
-import DaCapo from './plugins/DaCapo.js';
 import EventBus from './event-bus.js';
+import pluginManager from './plugins/pluginRuntime.js';
 
-export { document_keypress, document_keyup };
+export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
+let spacebarActionName = '';
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -78,6 +84,7 @@ function getCurrentSection(...args) { return requireProvider('getCurrentSection'
 function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
+function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
@@ -89,6 +96,7 @@ function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
+function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
@@ -104,6 +112,19 @@ const FONT_INCREMENT = 1;
 const DEFAULT_FONT_SIZE = 10;  
 const DEFAULT_NOTE_FONT_SIZE = 22;  // Keep in sync with infinite-neck.css :root --named-note-font-size: 22pt;  Here "pt" is glued on by code below.
 
+function makeSyntheticMenuItem(actionName) {
+	return {
+		action: actionName,
+		popOnBang: false
+	};
+}
+
+function runActionByName(actionName, args) {
+	if (!actionName) {
+		return { result: '' };
+	}
+	return performCmdAction(makeSyntheticMenuItem(actionName), args);
+}
 
 function moveSelectByClampedStep(selectSelector, delta) {
 	var jSelect = $(selectSelector);
@@ -125,25 +146,52 @@ function moveSelectByClampedStep(selectSelector, delta) {
 	jSelect.prop('selectedIndex', nextIndex).trigger('change');
 }
 
+function isTextEditingTarget(target) {
+	if (!target) {
+		return false;
+	}
+	var tagName = typeof target.tagName === 'string' ? target.tagName.toLowerCase() : '';
+	return tagName === 'input'
+		|| tagName === 'textarea'
+		|| tagName === 'select'
+		|| target.isContentEditable === true;
+}
+
+function isMappedSpacebarEvent(evt) {
+	return Boolean(spacebarActionName)
+		&& !isTextEditingTarget(evt?.target)
+		&& (evt.key === ' ' || evt.key === 'Spacebar' || evt.code === 'Space');
+}
+
+function document_keydown(e) {
+	if (isMappedSpacebarEvent(e)) {
+		e.preventDefault();
+		runActionByName(spacebarActionName);
+	}
+}
+
 
 function document_keyup(evt) {
     if (evt.keyCode == 27) {  // ESC key
         leaveFullscreen();
         hideCmdLine();
         hideAllMenuDivs();
-        $("#btnLoopSections").focus();
+		$("#btnLoopSections").trigger('focus');
     }
 }
 
 
 
 function document_keypress(e) {
+	if (isMappedSpacebarEvent(e)) {
+		e.preventDefault();
+		return;
+	}
 
-    if (e.keyCode == 13) {
-        //alert(this.value);
-        e.preventDefault();
-    }
     var tag = e.target.tagName.toLowerCase();
+	if (e.keyCode == 13 && tag != 'textarea') {
+		e.preventDefault();
+	}
     if ( tag != 'input' && tag != 'textarea'){
         switch (e.key){
             case "m":
@@ -171,14 +219,19 @@ function document_keypress(e) {
                 getSong().prevBeat();
                 break;
             case "c": //"_C_olor"
-                $("#cbAutomaticColor").click();
+				$("#cbAutomaticColor").trigger('click');
                 break;
             case "e":
                 toggleWiringOpenState();
                 break;
             case "f":
-            case "F":
                 toggleFullscreen();
+                break;
+			case "F":
+                showOneMenu("#divFileControls");
+                break;
+            case "g":
+                showOneMenu("#divTunings");
                 break;
             case "i":
                 showOneMenu("#divFillNotes");
@@ -191,9 +244,11 @@ function document_keypress(e) {
                 cycleThruKeys(-1);
                 highlightOneNote(getSong().getRootNoteName());
                 break;
-            case "l":
-            case "L":
+			case "l":
                 toggleLoopSections();
+                break;
+            case "L":
+                clearBeatAndSectionLooping();
                 break;
             case "n":
             case "N":
@@ -205,6 +260,9 @@ function document_keypress(e) {
                 break;
             case "q":
                 $('#divQuick').toggle();
+                break;
+			case "r":
+                showOneMenu("#divChart");
                 break;
             case "s":
             case "S":
@@ -257,28 +315,28 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-                $("#rbFinger0").attr('checked', 'checked');
+				$("#rbFinger0").prop('checked', true);
                 checkRB("#idRFinger0");
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-                $("#rbFinger1").attr('checked', 'checked');
+				$("#rbFinger1").prop('checked', true);
                 checkRB("#idRFinger1");
                 break;
             case "2":
-                $("#rbFinger2").attr('checked', 'checked');
+				$("#rbFinger2").prop('checked', true);
                 checkRB("#idRFinger2");
                 break;
             case "3":
-                $("#rbFinger3").attr('checked', 'checked');
+				$("#rbFinger3").prop('checked', true);
                 checkRB("#idRFinger3");
                 break;
             case "4":
-                $("#rbFinger4").attr('checked', 'checked');
+				$("#rbFinger4").prop('checked', true);
                 checkRB("#idRFinger4");
                 break;
             case "5":
-                $("#rbFingerT").attr('checked', 'checked');
+				$("#rbFingerT").prop('checked', true);
                 checkRB("#idRFingerT");
                 break;
             case "6":
@@ -314,7 +372,7 @@ function document_keypress(e) {
                 updateFontLabel();
                 break;
             case "<":
-				getSong().firstSection(false);
+				runActionByName('firstSection');
                 break;
             case ",":
                 getSong().gotoPrevSection(false);
@@ -342,6 +400,13 @@ function document_keypress(e) {
    	//  getValue :: turn a string Get request from a menu into a value.
 	//
 
+function check(id){
+    $(id).prop("checked", true);
+}
+
+function checkAndTrigger(id){
+    $(id).prop("checked", true).trigger('change');
+}
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
 export function performCmdAction(menuItem, args){
@@ -383,7 +448,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "setSongName":
 			if (argByInputID){
-				$("#txtFilename").val(argByInputID).change();
+				$("#txtFilename").val(argByInputID).trigger('change');
 			}
 			break;
 		case "setSectionCaption":
@@ -433,22 +498,101 @@ export function performCmdAction(menuItem, args){
 			break;
 
 		case "firstSection":
-			getSong().firstSection();
-            clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().goFirstSection());
 			break;
 		case "prevSection":
-			getSong().gotoPrevSection(false);  //calls clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().prevSection());
 			break;
 		case "nextSection":
-			getSong().gotoNextSection(false);  //calls clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().nextSection());
 			break;
 		case "lastSection":
-			getSong().lastSection();
-            clearAndReplaySection();
-			actionResult.result = ""+(getSectionsCurrentIndex()+1);
+			Object.assign(actionResult, getTransportController().lastSection());
+			break;
+		case "gotoSection":
+			if (argByInputID){
+				const targetSectionCardinal = toInt(argByInputID, 0);
+				if (targetSectionCardinal > 0){
+					Object.assign(actionResult, getTransportController().gotoSection(targetSectionCardinal - 1));
+				}
+			}
+			break;
+		case "gotoFirstBeat":
+			Object.assign(actionResult, getTransportController().restartSection());
+			break;
+		case "gotoLastBeat": {
+			Object.assign(actionResult, getTransportController().gotoLastBeat());
+			break;
+		}
+		case "gotoLastBeatInSong": {
+			Object.assign(actionResult, getTransportController().gotoLastBeatInSong());
+			break;
+		}
+		case "gotoBeat":
+			if (argByInputID){
+				const targetBeat = toInt(argByInputID, 0);
+				if (targetBeat > 0){
+					Object.assign(actionResult, getTransportController().gotoBeat(targetBeat));
+				}
+			}
+			break;
+		case "resetSong":
+			Object.assign(actionResult, getTransportController().resetSong(false));
+			break;
+		case "resetSongHard":
+			Object.assign(actionResult, getTransportController().resetSong(true));
+			break;
+		case "mapSpacebar_firstSection":
+			spacebarActionName = 'firstSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_prevSection":
+			spacebarActionName = 'prevSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_nextSection":
+			spacebarActionName = 'nextSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_lastSection":
+			spacebarActionName = 'lastSection';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_nextBeat":
+			spacebarActionName = 'nextBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_prevBeat":
+			spacebarActionName = 'prevBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoFirstBeat":
+			spacebarActionName = 'gotoFirstBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoLastBeat":
+			spacebarActionName = 'gotoLastBeat';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_gotoLastBeatInSong":
+			spacebarActionName = 'gotoLastBeatInSong';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_restartSong":
+			spacebarActionName = 'firstSection';
+			actionResult.result = `spacebar mapped: restartSong using ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_resetSong":
+			spacebarActionName = 'resetSong';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_resetSongHard":
+			spacebarActionName = 'resetSongHard';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_unsetSpacebarAction":
+			spacebarActionName = '';
+			actionResult.result = 'spacebar unmapped';
 			break;
         case "transposeSong":
             if (argByInputID){
@@ -470,13 +614,11 @@ export function performCmdAction(menuItem, args){
             break;
 		case "setBPM":
 			if (argByInputID){
-				var bpm = toInt(argByInputID, 0);
-				if (bpm > 0){
-					setBPM(bpm);
-					restartLoopSections();
-				}
+				Object.assign(actionResult, getTransportController().setBPM(argByInputID));
 			}
-			actionResult.result = getBPM();
+			if (!argByInputID) {
+				actionResult.result = getBPM();
+			}
 			break;
 		case "setNamedNoteOpacity":
 			actionResult.result = "ERROR";
@@ -509,14 +651,10 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "toggleLoopSections":
-			toggleLoopSections();
-			let rls = getSong().randomLoop ?  "RANDOM ON, " : "RANDOM OFF, ";
-			let sls = sectionsLooping() ? "LOOP ON" : "LOOP OFF";
-			actionResult.result = rls+sls;
+			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;
 		case "toggleLoopBeats":
-			toggleLoopBeats();
-			actionResult.result = beatsLooping() ? "ON" : "OFF";
+			Object.assign(actionResult, getTransportController().toggleLoopBeats());
 			break;
 		case "toggleRandomLoop":
 			toggleRandomLoop();
@@ -525,12 +663,10 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = rl+sl;
 			break;
 		case "nextBeat":
-			getSong().nextBeat();
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().nextBeat());
 			break;
 		case "prevBeat":
-			getSong().prevBeat();
-			actionResult.result = ""+getCurrentSection().currentBeat;
+			Object.assign(actionResult, getTransportController().prevBeat());
 			break;
 		case "addBeat":
 			addBeat();
@@ -550,6 +686,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showDialog-song":
 			showOneMenu("#divFileControls");//file==song now.
+			break;
+		case "showDialog-info":
+			showInfoDialog();
 			break;
 		case "showDialog-section":
 			toggleSectionDrawer(true);
@@ -574,6 +713,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "parkTransport":
 			showTransport(true);
+			break;
+		case "parkTransportTopRight":
+			showTransport('top-right');
 			break;
 		case "viewFullscreen":
 			enterFullscreen();
@@ -611,8 +753,19 @@ export function performCmdAction(menuItem, args){
             showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
+		case "showViewDiagnosticsVariables":
+			showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
+			actionResult.result = "Approved variables sent to Messages";
+			break;
         case "showViewDiagnosticsSongFileFormat":
 			showMessagesJSON(getPersistentSongFile());
+			break;
+        case "showViewDiagnosticsLogEvents":
+			let obj = {};
+			if (argByInputID){
+				obj = JSON.parse(argByInputID);
+			}
+			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
 		case "showGraveyard":
 			showGraveyard();
@@ -624,21 +777,15 @@ export function performCmdAction(menuItem, args){
             break;
 
 		case "printSectionsDetails":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSections(true));
+			printSections(true);
 			hideCmdLine();
 			break;
 		case "printSectionsSummary":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSections(false));
+			printSections(false);
 			hideCmdLine();
 			break;
 		case "printSectionsNotes":
-			$("#divMessageAndJsonTree").show()
-            $("#divMessages").show();
-			$("#divMessages").html(printSectionsNotes());
+			printSectionsNotes();
 			hideCmdLine();
 			break;
 		case "sectionDelete":
@@ -670,28 +817,28 @@ export function performCmdAction(menuItem, args){
 			window.open('help.html','_blank');
 			break;
 		case "showNamedNotes":
-			$("#cbHideNamedNotes").prop("checked", false).change();
+			$("#cbHideNamedNotes").prop("checked", false).trigger('change');
 			break;
 		case "showSingleNotes":
-			$("#cbHideSingleNotes").prop("checked", false).change();
+			$("#cbHideSingleNotes").prop("checked", false).trigger('change');
 			break;
 		case "showTinyNotes":
-			$("#cbHideTinyNotes").prop("checked", false).change();
+			$("#cbHideTinyNotes").prop("checked", false).trigger('change');
 			break;
 		case "showFingering":
-			$("#cbHideFingering").prop("checked", false).change();
+			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
 		case "hideNamedNotes":
-			$("#cbHideNamedNotes").prop("checked", true).change();
+			$("#cbHideNamedNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideSingleNotes":
-			$("#cbHideSingleNotes").prop("checked", true).change();
+			$("#cbHideSingleNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideTinyNotes":
-			$("#cbHideTinyNotes").prop("checked", true).change();
+			$("#cbHideTinyNotes").prop("checked", true).trigger('change');
 			break;
 		case "hideFingering":
-			$("#cbHideFingering").prop("checked", true).change();
+			$("#cbHideFingering").prop("checked", true).trigger('change');
 			break;
 		case "selectFingering":
 			if (args){
@@ -729,9 +876,6 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRadioNoteType":
 			if (args){
-				function check(id){
-					$(id).prop("checked", true);
-				}
 				switch (args["key"]){
 					case "n":
 					    check("#idNamedNotes");
@@ -752,38 +896,105 @@ export function performCmdAction(menuItem, args){
 						check("#idMidiPitchesSingle");
 						break;
 					case "k":
-						check("#idKeep");
+						checkAndTrigger("#idKeep");
 						break;
 					case "c":
-						check("#idClear");
+						checkAndTrigger("#idClear");
 						break;
-                    case "f":
-						check("#idDropper");
-                        $("#idDropper").change();
-                        //$("#idDropper").prop("checked", true);
+					case "f":
+						checkAndTrigger("#idDropper");
 						break;
 				}
 			}
 			break;
+		case "selectRole":
+			if (args) {
+				switch (args["key"]) {
+					case "t":
+						checkAndTrigger("#idRTransparent");
+						break;
+					case "a":
+						checkAndTrigger("#idRAutomatic");
+						break;
+					case "s":
+						checkAndTrigger("#idRScale");
+						break;
+					case "r":
+						checkAndTrigger("#idRRoot");
+						break;
+					case "c":
+						checkAndTrigger("#idRChromatic");
+						break;
+					case "p":
+						checkAndTrigger("#idRPassing");
+						break;
+					case "b":
+						checkAndTrigger("#idRBass");
+						break;
+				}
+			}
+			break;
+		case "selectRoleChord":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						checkAndTrigger("#idRChord");
+						break;
+					case "2":
+						checkAndTrigger("#idRChord2");
+						break;
+					case "3":
+						checkAndTrigger("#idRChord3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleColornote":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						checkAndTrigger("#idRColornote");
+						break;
+					case "2":
+						checkAndTrigger("#idRColornote2");
+						break;
+					case "3":
+						checkAndTrigger("#idRColornote3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleAvoid":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						checkAndTrigger("#idRAvoid");
+						break;
+					case "2":
+						checkAndTrigger("#idRAvoid2");
+						break;
+					case "3":
+						checkAndTrigger("#idRAvoid3");
+						break;
+				}
+			}
+			break;
+		case "selectRoleLead":
+			if (args) {
+				switch (args["key"]) {
+					case "1":
+						checkAndTrigger("#idRLead");
+						break;
+					case "2":
+						checkAndTrigger("#idRLead2");
+						break;
+				}
+			}
+			break;		
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
 			$("#rbBend").prop("checked", true);
-			break;
-		case "pluginDaCapoWInput":
-			console.log("pluginDaCapoWInput: "+stringifyMenuItem(menuItem));
-			console.log("pluginDaCapoWInput inputs: "+JSON.stringify(argByInputID));
-			let daCapoOptWI = JSON.parse(argByInputID);
-			let daCapoWI = new DaCapo();
-			daCapoWI.installHook(DaCapo.ON_SONG_END, daCapoOptWI);
-			restartLoopSections(); 
-			break;
-		case "pluginDaCapo":
-			console.log("pluginDaCapo: "+stringifyMenuItem(menuItem));
-			let daCapo = new DaCapo();
-			let daCapoOpt = {'amount':1, 'NamedNotes':true};
-			daCapo.installHook(DaCapo.ON_SONG_END, daCapoOpt);
-			restartLoopSections(); 
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();
@@ -803,6 +1014,18 @@ export function performCmdAction(menuItem, args){
 			console.log("noAction=====!");
 			actionResult.result = "none";
 			break;
+		case "pluginProperty:set":
+		case "pluginProperty:toggle":
+		case "pluginProperty:select":
+		case "pluginAction:invoke":
+		case "pluginAction:bury": {
+			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
+			actionResult.result = pluginResult.result || '';
+			if (pluginResult.message) {
+				showMessages(pluginResult.message);
+			}
+			break;
+		}
 		
 		default:
 			break;
@@ -894,49 +1117,21 @@ export function setNoteFontSize(newValue){
 
 
 export function getValue(what){
-	switch (what){
-		case "currentSectionNumber":
-		case "currentSectionIndex":
-			return getSectionsCurrentIndex();
-		case "currentSectionCardinal":
-			return getSectionsCurrentIndex()+1;
-		case "sectionCount":
-			return getSong().sections.length;
-		case "graveyardRecordCount":
-			return getSong().graveyard.getRecordCount();
-		case "beats":
-		case "beatCount":
-			return getCurrentSection().beats;
-		case "currentBeat":
-			return getCurrentSection().currentBeat;
-		case "getBPM":
-			return getBPM();
-		case "getNamedNoteOpacity":
-			var op = parseFloat(getSong().namedNoteOpacity);
-			if (isNaN(op)){
-				return "NaN";
-			}
-			return ""+(op*100);
-        case "getSingleNoteOpacity":
-            var op = parseFloat(getSong().singleNoteOpacity);
-            if (isNaN(op)){
-                return "NaN";
-            }
-            return ""+(op*100);
-		case "getTinyNoteOpacity":
-            var op = parseFloat(getSong().tinyNoteOpacity);
-            if (isNaN(op)){
-                return "NaN";
-            }
-            return ""+(op*100);
-		case "getSongName":
-			return getSong().songName;
-		case "getSectionCaption":
-			return getCurrentSection().caption;
-		default:
-            console.log("key-handler.js::getValue::no-value-found::default:"+what);
-			return what;
+	if (what === 'spacebarActionName'){
+		return spacebarActionName;
 	}
+	if (typeof what === 'string' && what.startsWith('plugin:')) {
+		const pluginValue = pluginManager.resolveValue(what);
+		if (pluginValue !== undefined) {
+			return pluginValue;
+		}
+	}
+	const resolved = resolveApprovedValue(what, { logUnknown: false });
+	if (resolved !== undefined) {
+		return resolved;
+	}
+	console.log("key-handler.js::getValue::no-value-found::default:"+what);
+	return what;
 }
 
 setMenuValueResolver(getValue);
