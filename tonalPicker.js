@@ -14,7 +14,7 @@ const CSS_TEXT = `
     margin: 0;
 }
 .tonalPicker {
-    font-size: 70%;
+    font-size: 90%;
     display: block;
     margin:0;
     padding: 0;

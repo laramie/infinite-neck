@@ -1,3 +1,14 @@
+/** Note: some of these are for User input inside the HTML, so that Users don't need CSS, 
+ *  because they are disallowed from including CSS or stylesheets.
+ *  So while some of these rules, like
+ *        .infoRendered table
+ *        .infoRendered th, .infoRendered td
+ *        .infoRendered pre, .infoRendered code
+ *  are not used in info.html, 
+ *  the html tags [table, th, td, pre, code], etc. 
+ *  might be and get basic styling.
+ */
+
 #info {
     width: 95%;
     box-sizing: border-box;
@@ -9,11 +20,6 @@
     padding: 0;
     margin: 0.6em;
 }   
-
-.infoMenuTable {
-    width: 100%;
-    margin-left: 0;
-}
 
 .infoActionRow {
     width: 100%;
@@ -82,10 +88,6 @@
 
 .infoSaveCaption {
     margin: 0;
-}
-
-.infoTabsShell {
-    width: 100%;
 }
 
 .infoTabsTop {

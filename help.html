@@ -835,7 +835,11 @@
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
-                        <li><a href="#divFileControls">File</a></li>
+                        <li><a href="#divFileControls">File</a>
+                            <ul class="LinkList">
+                                <li><a href="#songfileInfo">Songfile Info</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#transport">Transport</a>
                             <ul class="LinkList">
                                 <li><a href="#mapSpacebar">Map Spacebar</a></li>
@@ -1371,6 +1375,49 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 
  <p>
  </p>
+
+<a name="songfileInfo"></a>
+<h4>Songfile Info</h4>
+
+<p>The Songfile Info page lets you keep notes right in the song file itself.  This is handy for things like tuning reminders, setup notes, fingering hints, rehearsal directions, or a short formatted description of the song.</p>
+
+<p>You can open Songfile Info in any of these ways:
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click the <span class="GUIReferenceInline">Info</span> button in the top menu button row.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Use the File menu command <span class="menuExampleLine"><b><small>/fi</small></b></span>.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Some songs may also open it automatically when the song is loaded.
+</p>
+
+<p>The page has two tabs:
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>Info</b> shows the stored content as rendered HTML.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>Edit</b> shows the raw HTML in a textarea, so you can type or change it directly.
+</p>
+
+<p>To close Songfile Info, click <span class="GUIReferenceInline">Close</span> or press <span class="key">ESC</span>.</p>
+
+<p>There is no separate Save dialog.  Changes are kept when you:
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; leave the textarea,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; switch away from the Edit tab,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; change the "show on open" selector,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; or click the little Save checkmark button.
+</p>
+
+<p>Allowed HTML is intentionally limited to simple formatting.  Think of it as safe document markup such as:
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; paragraphs and line breaks,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; headings,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; lists,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; emphasis such as bold and italics,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; code/preformatted text,
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; and simple tables.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Scripts, links, forms, images, styles, and other active or external content are stripped out.
+</p>
+
+<p>The <b>show on open</b> selector has three meanings:
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>none</b> means do not automatically show Songfile Info when the song opens.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>parked</b> means open it in its normal parked place in the app.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>float</b> means open it as a floating window.
+</p>
+
+<p>If the Songfile Info content is empty, the app treats that as no Info and will not auto-open it, even if the selector had been set earlier.</p>
 
 <a name="transport"></a>
 <h3>Transport</h3>
