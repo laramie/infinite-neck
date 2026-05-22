@@ -188,11 +188,10 @@ function document_keypress(e) {
 		return;
 	}
 
-    if (e.keyCode == 13) {
-        //alert(this.value);
-        e.preventDefault();
-    }
     var tag = e.target.tagName.toLowerCase();
+	if (e.keyCode == 13 && tag != 'textarea') {
+		e.preventDefault();
+	}
     if ( tag != 'input' && tag != 'textarea'){
         switch (e.key){
             case "m":

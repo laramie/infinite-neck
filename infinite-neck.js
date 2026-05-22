@@ -682,7 +682,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		scrollToTop();
 	}
 
-	export function showInfoDialog(forceMode = 'parked', forceOpen = false) {
+	export function showInfoDialog(forceMode = null, forceOpen = false) {
 		if (!forceOpen && InfoBuilder.isVisible()) {
 			hideAllMenuDivs();
 			return;

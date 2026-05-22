@@ -7,6 +7,7 @@ export class InfoBuilder {
 	static currentTab = 'info';
 	static firstShowAfterSongLoad = true;
 	static eventNamespace = '.infoBuilder';
+	static reopenMode = 'parked';
 
 	static addToDest(divDestSelector) {
 		if (!InfoBuilder.div_info) {
@@ -44,6 +45,7 @@ export class InfoBuilder {
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function () {
 				if (!InfoBuilder.isFloated()) {
+					InfoBuilder.reopenMode = 'float';
 					makeDivDockable('info');
 				}
 			});
@@ -203,17 +205,21 @@ export class InfoBuilder {
 
 		InfoBuilder.renderFromSong(song);
 		const desiredTab = InfoBuilder.firstShowAfterSongLoad ? 'info' : InfoBuilder.currentTab;
-		const mode = forceMode || 'parked';
+		const mode = forceMode || InfoBuilder.reopenMode || 'parked';
 
 		showOneMenu('#info', true);
 		InfoBuilder.activateTab(desiredTab);
 
 		if (mode === 'float') {
+			InfoBuilder.reopenMode = 'float';
 			if (!InfoBuilder.isFloated()) {
 				makeDivDockable('info');
 			}
 		} else if (InfoBuilder.isFloated()) {
+			InfoBuilder.reopenMode = 'parked';
 			InfoBuilder.cleanupFloatingInfo();
+		} else {
+			InfoBuilder.reopenMode = 'parked';
 		}
 
 		InfoBuilder.firstShowAfterSongLoad = false;
@@ -225,6 +231,7 @@ export class InfoBuilder {
 			return;
 		}
 
+		InfoBuilder.reopenMode = InfoBuilder.isFloated() ? 'float' : 'parked';
 		InfoBuilder.persistInfo();
 		InfoBuilder.persistOpenInfo();
 		InfoBuilder.cleanupFloatingInfo();
@@ -235,6 +242,7 @@ export class InfoBuilder {
 	static handleSongLoaded(song = getSong()) {
 		InfoBuilder.firstShowAfterSongLoad = true;
 		InfoBuilder.currentTab = 'info';
+		InfoBuilder.reopenMode = 'parked';
 		InfoBuilder.renderFromSong(song);
 		InfoBuilder.applyOpenInfoOnSongLoad(song);
 	}
@@ -252,6 +260,7 @@ export class InfoBuilder {
 		}
 
 		if (song.openInfo === 'parked' || song.openInfo === 'float') {
+			InfoBuilder.reopenMode = song.openInfo;
 			InfoBuilder.show(song.openInfo);
 		}
 	}
