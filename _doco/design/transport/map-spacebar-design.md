@@ -244,7 +244,7 @@ Similarly, in composition, a user may want to see/hear loops and adjust the cons
 
 
 8) We have updated the table and renamed it  TransportNavigationTable.  Please use this in your Implementation Plan, updating and changing as needed.
-`_doco/design/TransportNavigationTable.md`
+`TransportNavigationTable.md`
 
 
 ## Iteration 3 Request

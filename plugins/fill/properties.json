@@ -52,7 +52,7 @@
   {
     "name": "chordFormula",
     "caption": "chord formula",
-    "trigger": "d",
+    "trigger": "c",
     "datatype": "org.dynamide.Select",
     "value": "4,7",
     "defaultValue": "4,7",
@@ -72,7 +72,7 @@
   {
     "name": "minFret",
     "caption": "minFret position",
-    "trigger": "m",
+    "trigger": "i",
     "datatype": "Number",
     "value": 0,
     "defaultValue": 0,
@@ -82,7 +82,7 @@
   {
     "name": "maxFret",
     "caption": "maxFret position",
-    "trigger": "f",
+    "trigger": "a",
     "datatype": "Number",
     "value": 4,
     "defaultValue": 4,
@@ -110,8 +110,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "rootMode",
-    "caption": "root mode",
+    "name": "namedRootMode",
+    "caption": "NamedNote root mode",
     "trigger": "r",
     "datatype": "String",
     "value": "role",
@@ -119,8 +119,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "rootColor",
-    "caption": "root color",
+    "name": "namedRootColor",
+    "caption": "NamedNote root color",
     "trigger": "R",
     "datatype": "String",
     "value": "noteRoot",
@@ -128,8 +128,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "chordMode",
-    "caption": "chord mode",
+    "name": "namedChordMode",
+    "caption": "NamedNote chord mode",
     "trigger": "c",
     "datatype": "String",
     "value": "role",
@@ -137,8 +137,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "chordColor",
-    "caption": "chord color",
+    "name": "namedChordColor",
+    "caption": "NamedNote chord color",
     "trigger": "C",
     "datatype": "String",
     "value": "noteChord",
@@ -146,8 +146,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "scaleMode",
-    "caption": "scale mode",
+    "name": "namedScaleMode",
+    "caption": "NamedNote scale mode",
     "trigger": "s",
     "datatype": "String",
     "value": "role",
@@ -155,8 +155,8 @@
     "visibleInMenu": false
   },
   {
-    "name": "scaleColor",
-    "caption": "scale color",
+    "name": "namedScaleColor",
+    "caption": "NamedNote scale color",
     "trigger": "S",
     "datatype": "String",
     "value": "noteScale",
@@ -164,9 +164,117 @@
     "visibleInMenu": false
   },
   {
-    "name": "tinyNotes",
-    "caption": "tiny notes",
-    "trigger": "t",
+    "name": "singleRootMode",
+    "caption": "SingleNote root mode",
+    "trigger": "r",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleRootColor",
+    "caption": "SingleNote root color",
+    "trigger": "R",
+    "datatype": "String",
+    "value": "noteRoot",
+    "defaultValue": "noteRoot",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleChordMode",
+    "caption": "SingleNote chord mode",
+    "trigger": "c",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleChordColor",
+    "caption": "SingleNote chord color",
+    "trigger": "C",
+    "datatype": "String",
+    "value": "noteChord",
+    "defaultValue": "noteChord",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleScaleMode",
+    "caption": "SingleNote scale mode",
+    "trigger": "s",
+    "datatype": "String",
+    "value": "role",
+    "defaultValue": "role",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleScaleColor",
+    "caption": "SingleNote scale color",
+    "trigger": "S",
+    "datatype": "String",
+    "value": "noteScale",
+    "defaultValue": "noteScale",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyRootMode",
+    "caption": "TinyNote root mode",
+    "trigger": "r",
+    "datatype": "String",
+    "value": "none",
+    "defaultValue": "none",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyRootColor",
+    "caption": "TinyNote root color",
+    "trigger": "R",
+    "datatype": "String",
+    "value": "noteRoot",
+    "defaultValue": "noteRoot",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyChordMode",
+    "caption": "TinyNote chord mode",
+    "trigger": "c",
+    "datatype": "String",
+    "value": "none",
+    "defaultValue": "none",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyChordColor",
+    "caption": "TinyNote chord color",
+    "trigger": "C",
+    "datatype": "String",
+    "value": "noteChord",
+    "defaultValue": "noteChord",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyScaleMode",
+    "caption": "TinyNote scale mode",
+    "trigger": "s",
+    "datatype": "String",
+    "value": "none",
+    "defaultValue": "none",
+    "visibleInMenu": false
+  },
+  {
+    "name": "tinyScaleColor",
+    "caption": "TinyNote scale color",
+    "trigger": "S",
+    "datatype": "String",
+    "value": "noteScale",
+    "defaultValue": "noteScale",
+    "visibleInMenu": false
+  },
+  {
+    "name": "singleAddTiny",
+    "caption": "add TinyNote",
+    "trigger": "a",
     "datatype": "org.dynamide.Select",
     "value": "none",
     "defaultValue": "none",
@@ -185,7 +293,7 @@
       {
         "value": "noteAutomatic",
         "caption": "noteAutomatic",
-        "trigger": "a"
+        "trigger": "o"
       },
       {
         "value": "noteLead",

@@ -38,7 +38,7 @@ As our first design iteration, please provide a high-level discussion of feature
 
 We will review and refine our design in the next few iterations.  No code changes this iteration, except that we'd like your report in this document, which you'll create now and refine in the next iterations: 
 
-`_doco/design/FillPlugin-design-copilot.md`
+`_doco/design/plugins/fill/FillPlugin-design-copilot.md`
 
 
 ## Iteration 2 : refinements
@@ -150,13 +150,13 @@ We will return to getting a final design spec for the whole plugin in Iteration 
 Here are our answers and choices to open questions from Iterations 2 and 3.
 
 Please produce a design document and implementation plan in new file:
-`_doco/design/FillPlugin-implementation-plan.md`
+`_doco/design/plugins/fill/FillPlugin-implementation-plan.md`
 For that file, we will share ownership and make any minor edits there, and asking you to edit it as needed.  Thus, FillPlugin-implementation-plan.md can be considered a stable document for implementation and for future reference. That document should contain the affirmed design recommendations you have accumulated, as answered by our responses.  If there are any holes, please let us know.
 
 We will keep our conversation going as we have been in: 
-`_doco/design/FillPlugin-design.md`
+`_doco/design/plugins/fill/FillPlugin-design.md`
 and 
-`_doco/design/FillPlugin-design-copilot.md`
+`_doco/design/plugins/fill/FillPlugin-design-copilot.md`
 as we do more iterations. 
 
 Here, now, are our answers and choices.
@@ -249,7 +249,7 @@ Plan on a tiny builder for the select HTML elements on the Fill page, and wire i
 
 This Iteration picks up after previous iterations have been implemented as planned and documented here:
 
-`_doco/design/FillPlugin-implementation-plan.md`
+`_doco/design/plugins/fill/FillPlugin-implementation-plan.md`
 
 Several off-document chat conversations fixed some bugs and implementation details.  Let those be called Iteration 3.
 
@@ -259,7 +259,7 @@ We now have further features to add documented as Iteration 4.
 
 Yes, please produce a concise implementation plan grouping these changes which we'll approve and have you then move to code changes. Your output should be in: 
 
-      `_doco/design/FillPlugin-implementation-plan.md`
+      `_doco/design/plugins/fill/FillPlugin-implementation-plan.md`
 
 in stubbed out Section: "## Iteration 4 Implementation Plan" 
 
@@ -470,6 +470,6 @@ Since the User can supply keys (plugin config names), this becomes a lightweight
 
 Please provide analysis of feasibility, design holes, potential problems, and complexity problems along with simplification suggestions in a report in a new section of
 
-  `_doco/design/FillPlugin-design-copilot.md`
+  `_doco/design/plugins/fill/FillPlugin-design-copilot.md`
 
 called `## Iteration 6 : *Bury* design discussion`.  We will put an implementation plan in the implementation plan document after we have hashed out the design with you.

@@ -3794,21 +3794,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="plugin-fill-what"></a>
     <h3>What It Does</h3>
 
-    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It is used to fill a fret and string range with root, chord, and scale notes, and it can optionally add matching Tiny notes over the same emitted Single notes.</p>
+    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It can fill NamedNotes, SingleNotes, and TinyNotes from the current Section root, chord formula, and scale formula.</p>
 
-    <p>FillPlugin currently writes Single notes, and optionally one Tiny note per emitted Single note. It does not overwrite a user-authored Single note that already owns the same cell.</p>
+    <p>NamedNote ignores fret and string limits. SingleNote and standalone TinyNote obey the configured fret and string limits. SingleNote can also add an overlay TinyNote in the same cell, but that overlay is ignored whenever standalone TinyNote is active and emits notes.</p>
 
     <a name="plugin-fill-options"></a>
     <h3>Main Options</h3>
 
     <ul>
         <li><b>t</b> target table chooses the main table to fill. By default it is the first table that is not wired to display another table.</li>
-        <li><b>d</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
-        <li><b>m</b> minFret and <b>f</b> maxFret limit the fret range.</li>
+        <li><b>c</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
+        <li><b>i</b> minFret and <b>a</b> maxFret limit the fret range.</li>
         <li><b>u</b> upper string limit and <b>l</b> lower string limit limit the string range.</li>
-        <li><b>r</b> root, <b>c</b> chord, and <b>s</b> scale each choose whether that role is none, keep, or role, and which color source to use.</li>
+        <li><b>n</b> NamedNote, <b>s</b> SingleNote, and <b>t</b> TinyNote each have root, chord, and scale submenus with none, keep, and role modes.</li>
+        <li>NamedNote and TinyNote include <b>C</b> Copy from SingleNote to copy the SingleNote root, chord, and scale settings once.</li>
         <li>Fill pass order is scale, then chord, then root.</li>
-        <li><b>t</b> tiny notes chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for Tiny companions.</li>
+        <li>Inside <b>SingleNote</b>, <b>a</b> add TinyNote chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for overlay Tiny companions.</li>
     </ul>
 
     <a name="plugin-fill-actions"></a>

@@ -8,8 +8,8 @@ It records the approved product behavior, the recommended implementation shape, 
 
 This document intentionally focuses on the chosen design for the current sprint. Rejected alternatives and earlier exploratory discussion remain in:
 
-- `_doco/design/FillPlugin-design.md`
-- `_doco/design/FillPlugin-design-copilot.md`
+- `_doco/design/plugins/fill/FillPlugin-design.md`
+- `_doco/design/plugins/fill/FillPlugin-design-copilot.md`
 
 ## Scope
 
@@ -352,7 +352,7 @@ This should stay generic enough to avoid marrying the persistence layer to plugi
 - `plugins/fill/FillPlugin.js`
 - `plugins/fill/properties.json`
 - `_tests/jest/fill-plugin.test.js`
-- `_doco/design/FillPlugin-implementation-plan.md`
+- `_doco/design/plugins/fill/FillPlugin-implementation-plan.md`
 
 ### Existing Files Likely To Change
 

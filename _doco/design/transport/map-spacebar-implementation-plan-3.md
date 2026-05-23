@@ -15,7 +15,7 @@ The guiding rule for the sprint should be:
 - "map spacebar" action names which create actions that map the concrete menu.js to do the remapping.
 - mappings use real action names, not a second enum or a parallel action-id system, except that some mappings may use action names that seem different than the implied action, particularly `mapSpacebar_restartSong` is an action that maps the User-facing "restart song" to actual existing action `firstSection` and does *not* introduce an action `restartSong`.
 - keep existing navigation actions semantically unchanged
-- add only the missing transport verbs needed by the updated [TransportNavigationTable](/home/laramie/infinite-neck/_doco/design/TransportNavigationTable.md) which is the table after this plan is implemented
+- add only the missing transport verbs needed by the updated [TransportNavigationTable](TransportNavigationTable.md) which is the table after this plan is implemented
 - use one new reset event, `Looper:OnResetSong`, for plugin state clearing
 
 If implemented that way, the plan stays aligned with the current command-menu architecture and should be directly actionable after plan approval.
@@ -423,7 +423,7 @@ Therefore, the full menus (without triggers) should be:
 
 The Transport table has two versions now: 
 - Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
+- Planned version: `TransportNavigationTable.md`
 After implementation, the Planned version should be true.
 
 Add or extend command-menu coverage for the updated, Planned version Transport table:
@@ -659,7 +659,7 @@ These are in scope for this implementation.
 
 The Transport table has two versions now: 
 - Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
+- Planned version: `TransportNavigationTable.md`
 The Planned version has the cleaned up terminology, including `LastBeatInSong`.
 
 ## Bottom Line

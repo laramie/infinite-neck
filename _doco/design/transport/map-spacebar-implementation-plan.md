@@ -10,7 +10,7 @@ The guiding rule for the sprint should be:
 
 - store and dispatch real action names, not a second enum or a parallel action-id system
 - keep existing navigation actions semantically unchanged
-- add only the missing transport verbs needed by the updated [TransportNavigationTable](/home/laramie/infinite-neck/_doco/design/TransportNavigationTable.md)
+- add only the missing transport verbs needed by the updated [TransportNavigationTable](TransportNavigationTable.md)
 - use one new reset event, `Looper:OnSongReset`, for plugin state clearing
 
 If implemented that way, the plan stays aligned with the current command-menu architecture and should be directly actionable after plan approval.
