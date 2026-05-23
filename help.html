@@ -921,6 +921,13 @@
                                 <li><a href="#plugin-fill-actions">Actions And Events</a></li>
                             </ul>
                         </li>
+                        <li><a href="#plugin-move">MovePlugin</a>
+                            <ul class="LinkList">
+                                <li><a href="#plugin-move-what">What It Does</a></li>
+                                <li><a href="#plugin-move-options">Main Options</a></li>
+                                <li><a href="#plugin-move-actions">Actions And Events</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#plugin-transpose">TransposePlugin</a>
                             <ul class="LinkList">
                                 <li><a href="#plugin-transpose-what">What It Does</a></li>
@@ -3656,6 +3663,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li>ArpeggioPlugin</li>
         <li>FillPlugin</li>
+        <li>MovePlugin</li>
         <li>TransposePlugin</li>
     </ul>
 
@@ -3815,6 +3823,51 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li>When enabled, FillPlugin handles <b>DaCapo:OnSectionBegin</b> and applies to the section that just began.</li>
     </ul>
 
+    <a name="plugin-move"></a>
+    <h2>MovePlugin</h2>
+
+    <a name="plugin-move-what"></a>
+    <h3>What It Does</h3>
+
+    <p>MovePlugin moves existing user-authored played notes and recorded notes inside the current Section and one selected target table. It is used to shift practice material up or down, jump it to adjacent strings, or re-voice an authored pattern without rebuilding it note by note.</p>
+
+    <p>It works on Single notes, Tiny notes, bends in the Tiny lane, and recorded highlight styles. Named notes are not moved by this plugin.</p>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Move a phrase or drill up or down by one semitone with <span class="menuExampleLine"><b>m</b> motions</span> set to <span class="menuExampleLine"><b>u</b> up</span> or <span class="menuExampleLine"><b>d</b> down</span>.</li>
+        <li>Jump a line to a neighboring string with <span class="menuExampleLine"><b>j</b> jump up</span> or <span class="menuExampleLine"><b>J</b> jump down</span>.</li>
+        <li>Move only played notes, only recorded notes, or both, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles.</li>
+        <li>Reposition recorded highlights in a looping beat without rewriting the beat from scratch.</li>
+        <li>Try a move, inspect <span class="menuExampleLine"><b>s</b> show dropped notes</span>, then use <span class="menuExampleLine"><b>c</b> clear/backup</span> to arm a fresh graveyard backup before the next pass.</li>
+    </ul>
+
+    <a name="plugin-move-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>T</b> target table chooses which current-section instrument table to move.</li>
+        <li><b>a</b> algorithm chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
+        <li><b>m</b> motions chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
+        <li><b>i</b> include opens toggles for <b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights, <b>p</b> played notes, and <b>r</b> recorded notes.</li>
+        <li>The include caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
+    </ul>
+
+    <a name="plugin-move-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>A</b> Apply moves the selected note layers in the current Section and selected table.</li>
+        <li><b>s</b> show dropped notes opens the current dropped-notes log as JSON in Messages.</li>
+        <li><b>c</b> clear/backup clears the dropped-notes log and arms a fresh section backup before the next Apply.</li>
+        <li><b>h</b> help shows the current MovePlugin settings and summary.</li>
+    </ul>
+
+    <p>Before the first Apply in a run, MovePlugin buries the current Section in the graveyard. If a move lands badly or you simply want the older state back, revive that Section from the graveyard.</p>
+
+    <p>MovePlugin does not currently handle plugin events. It runs only when you invoke its actions from the command-line menu.</p>
+
     <a name="plugin-transpose"></a>
     <h2>TransposePlugin</h2>
 
@@ -3878,6 +3931,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><span class="menuExampleLine"><b>p</b> plugins</span></li>
         <li><span class="menuExampleLine"><b>a</b> arpeggio</span></li>
         <li><span class="menuExampleLine"><b>f</b> fill</span></li>
+        <li><span class="menuExampleLine"><b>m</b> move</span></li>
         <li><span class="menuExampleLine"><b>t</b> transpose</span></li>
         <li><span class="menuExampleLine"><b>h</b> help</span></li>
     </ul>
