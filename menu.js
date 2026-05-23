@@ -263,6 +263,27 @@ export var gMenuFile =    {
       ]
     },
     {
+    "caption": "<b>c</b>hart",
+    "trigger": "c",
+    "children": [
+        {
+          "caption": "<b>s</b>ummary",
+          "trigger": "s",
+          "action": "printSectionsSummary"
+        },
+        {
+          "caption": "<b>n</b>otes",
+          "trigger": "n",
+          "action": "printSectionsNotes"
+        },
+        {
+          "caption": "<b>d</b>etails",
+          "trigger": "d",
+          "action": "printSectionsDetails"
+        }            
+      ]
+    },
+    {
       "caption": "<b>s</b>ection",
       "trigger": "s",
       "children": [
@@ -611,27 +632,6 @@ export var gMenuFile =    {
               "trigger": "i",
               "action": "insertBeat"
             }
-          ]
-        },
-        {
-        "caption": "cha<b>r</b>t",
-        "trigger": "r",
-        "children": [
-            {
-              "caption": "<b>s</b>ummary",
-              "trigger": "s",
-              "action": "printSectionsSummary"
-            },
-            {
-              "caption": "<b>n</b>otes",
-              "trigger": "n",
-              "action": "printSectionsNotes"
-            },
-            {
-              "caption": "<b>d</b>etails",
-              "trigger": "d",
-              "action": "printSectionsDetails"
-            }            
           ]
         },
         {

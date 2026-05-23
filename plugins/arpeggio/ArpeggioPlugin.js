@@ -30,6 +30,7 @@ export class ArpeggioPlugin {
     this.registeredName = 'arpeggio';
     this.menuTrigger = 'a';
     this.eventNames = ['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong'];
+    this.rowBoundsInitialized = false;
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.skipNextSongUiShowBeats = false;
@@ -87,7 +88,85 @@ export class ArpeggioPlugin {
 
   refreshDynamicPropertyOptions(song = getSong()) {
     this.updatePropertyOptions('targetTable', this.buildTargetTableOptions(song));
+    this.initializeStringLimitDefaults(song);
     this.ensureTargetTableSelection(song);
+    this.normalizeRangeValues(song);
+  }
+
+  initializeStringLimitDefaults(song = getSong()) {
+    if (this.rowBoundsInitialized) {
+      return;
+    }
+
+    const tuning = this.getTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
+    if (!tuning) {
+      return;
+    }
+
+    const upperStringProperty = this.getProperty('minRow');
+    const lowerStringProperty = this.getProperty('maxRow');
+    const upperStringDefault = 0;
+    const lowerStringDefault = this.getMaxAllowedRow(tuning);
+
+    upperStringProperty.value = upperStringDefault;
+    upperStringProperty.defaultValue = upperStringDefault;
+    lowerStringProperty.value = lowerStringDefault;
+    lowerStringProperty.defaultValue = lowerStringDefault;
+    this.rowBoundsInitialized = true;
+  }
+
+  normalizeRangeValues(song = getSong()) {
+    const tuning = this.getTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
+    if (!tuning) {
+      return;
+    }
+
+    const maxAllowedFret = this.getMaxAllowedFret(song);
+    const maxAllowedRow = this.getMaxAllowedRow(tuning);
+    const minFretProperty = this.getProperty('minFret');
+    const maxFretProperty = this.getProperty('maxFret');
+    const minRowProperty = this.getProperty('minRow');
+    const maxRowProperty = this.getProperty('maxRow');
+
+    minFretProperty.value = this.clampNumber(minFretProperty.getValue(), 0, maxAllowedFret);
+    maxFretProperty.value = this.clampNumber(maxFretProperty.getValue(), 0, maxAllowedFret);
+    if (minFretProperty.getValue() > maxFretProperty.getValue()) {
+      maxFretProperty.value = minFretProperty.getValue();
+    }
+
+    minRowProperty.value = this.clampNumber(minRowProperty.getValue(), 0, maxAllowedRow);
+    maxRowProperty.value = this.clampNumber(maxRowProperty.getValue(), 0, maxAllowedRow);
+    if (minRowProperty.getValue() > maxRowProperty.getValue()) {
+      maxRowProperty.value = minRowProperty.getValue();
+    }
+  }
+
+  clampNumber(value, minValue, maxValue) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) {
+      return minValue;
+    }
+    return Math.min(maxValue, Math.max(minValue, parsed));
+  }
+
+  isStringLimitProperty(propertyName) {
+    return propertyName === 'minRow' || propertyName === 'maxRow';
+  }
+
+  toDisplayStringNumber(rowIndex, song = getSong()) {
+    const maxAllowedRow = this.getMaxAllowedRow(this.getTargetTuning(song));
+    const clampedRowIndex = this.clampNumber(rowIndex, 0, Math.max(0, maxAllowedRow));
+    return clampedRowIndex + 1;
+  }
+
+  toStoredRowIndex(rawValue, song = getSong()) {
+    const parsed = Number.parseInt(rawValue, 10);
+    if (!Number.isFinite(parsed)) {
+      throw new Error(`Expected string number, received: ${rawValue}`);
+    }
+    const maxStringNumber = this.getMaxAllowedRow(this.getTargetTuning(song)) + 1;
+    const clampedStringNumber = this.clampNumber(parsed, 1, Math.max(1, maxStringNumber));
+    return clampedStringNumber - 1;
   }
 
   ensureTargetTableSelection(song = getSong()) {
@@ -114,6 +193,7 @@ export class ArpeggioPlugin {
 
   resetToDefaults() {
     this.properties.forEach((property) => property.reset());
+    this.rowBoundsInitialized = false;
   }
 
   loadSongState(persistedProperties = {}, context = {}) {
@@ -125,7 +205,7 @@ export class ArpeggioPlugin {
       if (!property || property.datatype === 'org.dynamide.Action') {
         return;
       }
-      this.setPropertyValue(name, value, context);
+      this.setPropertyValue(name, value, { ...context, persistedLoad: true });
     });
     this.normalizeSectionPositionsOnLoad(song);
     this.refreshDynamicPropertyOptions(song);
@@ -152,22 +232,36 @@ export class ArpeggioPlugin {
     this.refreshDynamicPropertyOptions(song);
 
     const candidateValue = property.normalize(rawValue);
+    const normalizedValue = this.isStringLimitProperty(name)
+      ? (context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song))
+      : candidateValue;
     const nextValues = {
       minFret: this.getProperty('minFret')?.getValue(),
       maxFret: this.getProperty('maxFret')?.getValue(),
+      minRow: this.getProperty('minRow')?.getValue(),
+      maxRow: this.getProperty('maxRow')?.getValue(),
       lowToHigh: this.getProperty('lowToHigh')?.getValue(),
       upOnly: this.getProperty('upOnly')?.getValue(),
       style: this.getProperty('style')?.getValue(),
-      [name]: candidateValue
+      [name]: normalizedValue
     };
 
     this.validateValues(nextValues, song);
-    return property.setValue(rawValue);
+    if (this.isStringLimitProperty(name)) {
+      property.value = context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song);
+      this.rowBoundsInitialized = true;
+      this.normalizeRangeValues(song);
+      return property.getValue();
+    }
+
+    const nextValue = property.setValue(rawValue);
+    this.normalizeRangeValues(song);
+    return nextValue;
   }
 
   resolveValue(fieldName, context = {}) {
     const song = context.song || getSong();
-    if (fieldName === 'targetTable' || fieldName === 'maxAllowedFret') {
+    if (fieldName === 'targetTable' || fieldName === 'maxAllowedFret' || fieldName === 'maxAllowedRow' || this.isStringLimitProperty(fieldName)) {
       this.refreshDynamicPropertyOptions(song);
     }
     if (fieldName === 'targetTable') {
@@ -176,6 +270,12 @@ export class ArpeggioPlugin {
     }
     if (fieldName === 'maxAllowedFret') {
       return this.getMaxAllowedFret(song);
+    }
+    if (fieldName === 'maxAllowedRow') {
+      return this.getMaxAllowedRow(this.getTargetTuning(song)) + 1;
+    }
+    if (this.isStringLimitProperty(fieldName)) {
+      return this.toDisplayStringNumber(this.getProperty(fieldName)?.getValue() || 0, song);
     }
     if (fieldName === POSITIONS_VALUE_TOKEN) {
       return this.getCurrentSectionPositionsDisplay(song);
@@ -250,7 +350,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
@@ -263,6 +363,7 @@ Current settings:
 - ${this.buildSummary()}
 - target table = ${tableID}
 - max fret limit = ${this.getMaxAllowedFret(song)}
+- upper/lower string limit = ${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}
 
 Implemented in this iteration for:
 - style = every
@@ -372,7 +473,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       enabled,
       hasSection: !!section,
       positions,
-      currentIndex
+      currentIndex,
+      lowerString: this.resolveValue('minRow', { song }),
+      upperString: this.resolveValue('maxRow', { song })
     };
   }
 
@@ -380,11 +483,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!state.enabled || !state.hasSection || !Array.isArray(state.positions) || state.positions.length === 0) {
       return '';
     }
+    const rangeCell = `<td class="arpeggioStringRange"><span class="arpeggioLowerString">${state.lowerString}</span>:<span class="arpeggioUpperString">${state.upperString}</span></td>`;
     const tds = state.positions.map((position, index) => {
       const tdClass = index === state.currentIndex ? ' class="arpeggioCurrentPositionPair"' : '';
       return `<td${tdClass}>${position[0]}</td><td${tdClass}>${position[1]}</td>`;
     }).join('');
-    return `<span class="arpeggioPositionsStatus"><table><tr>${tds}</tr></table></span>`;
+    return `<span class="arpeggioPositionsStatus"><table><tr>${rangeCell}${tds}</tr></table></span>`;
   }
 
   getApprovedCaptionValue(tokenName, context = {}) {
@@ -768,6 +872,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return Number.parseInt(targetTuning.frets, 10) || 0;
   }
 
+  getMaxAllowedRow(tuning = this.getTargetTuning(getSong())) {
+    return Math.max(0, (Array.isArray(tuning?.rowRange) ? tuning.rowRange.length : 1) - 1);
+  }
+
   getUnsupportedConfigurationMessage() {
     const style = this.getProperty('style')?.getValue();
     if (![STYLE_EVERY, STYLE_ALTERNATE, STYLE_RANDOM, STYLE_BACH].includes(style)) {
@@ -1086,9 +1194,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
     const candidates = [];
     const lowToHigh = options.lowToHigh ?? this.isLowToHigh();
+    const maxAllowedRow = Math.max(0, rowRange.length - 1);
+    const minRow = this.clampNumber(options.minRow ?? this.getProperty('minRow')?.getValue(), 0, maxAllowedRow);
+    const maxRow = this.clampNumber(options.maxRow ?? this.getProperty('maxRow')?.getValue(), 0, maxAllowedRow);
     const rowIndexes = lowToHigh
-      ? Array.from({ length: rowRange.length }, (_, idx) => rowRange.length - 1 - idx)
-      : Array.from({ length: rowRange.length }, (_, idx) => idx);
+      ? Array.from({ length: Math.max(0, maxRow - minRow + 1) }, (_, idx) => maxRow - idx)
+      : Array.from({ length: Math.max(0, maxRow - minRow + 1) }, (_, idx) => minRow + idx);
     const frets = lowToHigh
       ? Array.from({ length: Math.max(0, maxFret - minFret + 1) }, (_, idx) => minFret + idx)
       : Array.from({ length: Math.max(0, maxFret - minFret + 1) }, (_, idx) => maxFret - idx);
@@ -1615,6 +1726,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (values.minFret > values.maxFret) {
       //throw new Error('minFret must be less than or equal to maxFret');
       console.warn('minFret must be less than or equal to maxFret');
+    }
+    const maxAllowedRow = this.getMaxAllowedRow(this.getTargetTuning(song));
+    if (values.minRow < 0 || values.minRow > maxAllowedRow) {
+      console.warn(`minRow must be between 0 and ${maxAllowedRow}`);
+    }
+    if (values.maxRow < 0 || values.maxRow > maxAllowedRow) {
+      console.warn(`maxRow must be between 0 and ${maxAllowedRow}`);
+    }
+    if (values.minRow > values.maxRow) {
+      console.warn('minRow must be less than or equal to maxRow');
     }
   }
 }

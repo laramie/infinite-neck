@@ -129,9 +129,61 @@ describe('ArpeggioPlugin sequencing', () => {
 		const help = plugin.buildHelpMessage(song);
 
 		expect(plugin.buildSummary()).toContain('fret range=0..3');
+		expect(plugin.buildSummary()).toContain('upper/lower string limit=1..1');
 		expect(plugin.buildSummary()).toContain('show note names=played');
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
+		expect(help).toContain('upper/lower string limit = 1..1');
+	});
+
+	test('menu includes upper/lower string limits before low to high', () => {
+		const { plugin } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
+
+		const names = plugin.getVisibleMenuChildren().map((child) => child.name);
+
+		expect(names).toEqual([
+			'targetTable',
+			'positions',
+			'apply',
+			'clear',
+			'help',
+			'minFret',
+			'maxFret',
+			'minRow',
+			'maxRow',
+			'lowToHigh',
+			'upOnly',
+			'style',
+			'showNoteName',
+			'colorNotes',
+			'flashcard'
+		]);
+	});
+
+	test('string limits display as 1-based values while persisting zero-based rows', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
+
+		expect(plugin.resolveValue('minRow', { song })).toBe(1);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(6);
+
+		plugin.setPropertyValue('minRow', 2, { song });
+		plugin.setPropertyValue('maxRow', 5, { song });
+
+		expect(plugin.getProperty('minRow').getValue()).toBe(1);
+		expect(plugin.getProperty('maxRow').getValue()).toBe(4);
+		expect(plugin.resolveValue('minRow', { song })).toBe(2);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(5);
+	});
+
+	test('loadSongState preserves persisted zero-based string limits', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
+
+		plugin.loadSongState({ minRow: 1, maxRow: 4 }, { song });
+
+		expect(plugin.getProperty('minRow').getValue()).toBe(1);
+		expect(plugin.getProperty('maxRow').getValue()).toBe(4);
+		expect(plugin.resolveValue('minRow', { song })).toBe(2);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(5);
 	});
 
 	test('registers reset event alongside section-begin and beat display events', () => {
@@ -177,6 +229,20 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(result.result).toContain('generated=6');
 		expect(getBeatMidinums(sectionNotes, 6)).toEqual([42, 41, 40, 47, 46, 45]);
+	});
+
+	test('string limits restrict candidate rows inclusively', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 4, rowRange: [40, 45, 50], frets: 1 });
+		plugin.setPropertyValue('minRow', 2, { song });
+		plugin.setPropertyValue('maxRow', 3, { song });
+		plugin.setPropertyValue('style', 'every', { song });
+		plugin.setPropertyValue('lowToHigh', true, { song });
+		plugin.setPropertyValue('upOnly', true, { song });
+
+		const result = plugin.applyToSection({ song, clearSectionFirst: true });
+
+		expect(result.result).toContain('generated=4');
+		expect(getBeatMidinums(sectionNotes, 4)).toEqual([50, 51, 45, 46]);
 	});
 
 	test('style=random ignores lowToHigh and repeats the chosen random order after exhaustion', () => {
@@ -694,7 +760,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.setSectionPositions(section, [[0, 2], [3, 5]]);
 		plugin.setLastPositionIndex(section, 1);
 
-		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>2</td><td class="arpeggioCurrentPositionPair">3</td><td class="arpeggioCurrentPositionPair">5</td></tr></table></span>');
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td>0</td><td>2</td><td class="arpeggioCurrentPositionPair">3</td><td class="arpeggioCurrentPositionPair">5</td></tr></table></span>');
 	});
 
 	test('DaCapo section-begin requests a section-status refresh after advancing the position index', () => {
@@ -709,7 +775,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 
 		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
-		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">0</td><td>2</td><td>2</td></tr></table></span>');
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">0</td><td>2</td><td>2</td></tr></table></span>');
 	});
 
 	test('arpeggioPositionsStatus is empty when Arpeggio is not enabled', () => {

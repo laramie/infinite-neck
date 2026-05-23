@@ -54,6 +54,26 @@
     "visibleInMenu": true
   },
   {
+    "name": "minRow",
+    "caption": "upper string limit",
+    "trigger": "U",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "1..max string",
+    "visibleInMenu": true
+  },
+  {
+    "name": "maxRow",
+    "caption": "lower string limit",
+    "trigger": "L",
+    "datatype": "Number",
+    "value": 0,
+    "defaultValue": 0,
+    "inputCaption": "1..max string",
+    "visibleInMenu": true
+  },
+  {
     "name": "lowToHigh",
     "caption": "low to high",
     "trigger": "o",
