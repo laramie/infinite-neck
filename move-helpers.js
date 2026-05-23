@@ -527,6 +527,19 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
     return { cell: directCell };
   }
 
+  if (algorithm === 'string') {
+    const wrappedRow = motion === 'j' ? layout.rows.length - 1 : 0;
+    const wrappedOnlyBecauseOfOverflow = (motion === 'j' && targetRow < 0)
+      || (motion === 'J' && targetRow >= layout.rows.length);
+    if (wrappedOnlyBecauseOfOverflow) {
+      const wrappedCell = getCellByRowCol(layout, wrappedRow, candidate.sourceCol);
+      if (wrappedCell) {
+        return { cell: wrappedCell };
+      }
+    }
+    return { drop: true, reason: buildDropReason(candidate, motion) };
+  }
+
   const failedDirectMidi = sourceMidinum + getJumpDelta(layout, sourceRow, motion === 'j' ? 'up' : 'down');
   if (algorithm !== 'octave') {
     return { drop: true, reason: buildDropReason(candidate, motion) };

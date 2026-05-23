@@ -3661,10 +3661,10 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <p>The current plugins are:</p>
 
     <ul>
-        <li>ArpeggioPlugin</li>
-        <li>FillPlugin</li>
-        <li>MovePlugin</li>
-        <li>TransposePlugin</li>
+        <li><a href="#plugin-arpeggio">ArpeggioPlugin</a>
+        <li><a href="#plugin-fill">FillPlugin</a>
+        <li><a href="#plugin-move">MovePlugin</a>
+        <li><a href="#plugin-transpose">TransposePlugin</a>
     </ul>
 
     <p>In the command-line menu, plugins live under 
@@ -3829,17 +3829,27 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="plugin-move-what"></a>
     <h3>What It Does</h3>
 
-    <p>MovePlugin moves existing user-authored played notes and recorded notes inside the current Section and one selected target table. It is used to shift practice material up or down, jump it to adjacent strings, or re-voice an authored pattern without rebuilding it note by note.</p>
+    <p>MovePlugin moves <a href="#glossary">PlayedNotes</a> and <a href="#glossary">RecordedNotes</a> inside the current Section and one selected target table (Instrument). It is used to shift chords or patterns up or down the neck, or "jump" them up or down strings, similar to how <a href="#divSectionTransposition">Transposition</a> works. But <a href="#divSectionTransposition">Transposition</a> only works on <a href="#glossary">NamedNotes</a>.  (See: <a href="#plugin-transpose">TransposePlugin</a> which also transposes the whole Song with lots of options, specifically geared to transposing while looping, and only does NamedNotes currently.)  With MovePlugin you can transpose <a href="#glossary">PlayedNotes</a> and
+    <a href="#glossary">RecordedNotes</a> for <a href="#glossary">SingleNotes</a>, <a href="#glossary">TinyNotes</a>, and <a href="#glossary">Highlights</a>, individually or in groups, i.e. <i>"all SingleNote PlayedNotes"</i>, or <i>"all SingleNotes, TinyNotes and Highlights in RecordedNotes"</i>.</p>
 
-    <p>It works on Single notes, Tiny notes, bends in the Tiny lane, and recorded highlight styles. Named notes are not moved by this plugin.</p>
+    <p>Named notes are not moved by this plugin.</p>
+
+    <p>Since you can move notes right off the neck in all directions, the plugin deals with this by giving you three "algorithms".
+        <ul>
+            <li><b>octave:</b> Attempts to replace a shifted-off note by an octave down if you are going up, and and octave up if you are going down.  Leads to unplayable chords such as two notes on one string, but they might still be played as arpeggios.  So you can adjust the notes manually after moving (in the normal way: with the note type selected, click once on an existing note to clear it, then click once in a different cell to place a note.</li>
+            <li><b>string: </b>Attempts to replace shifted off notes by wrapping them an octave down towards the bottom of the fretboard on the same string if you are going up, and towards the top of the fretboard if you are going down.  For <b>j</b> jump up, and <b>J</b> jump down, wraps the chord or pattern around to the string on the opposite side of the neck.</li>
+            <li><b>drop:</b> Does not attempt to replace notes, simply drops them.</b></li>
+        </ul> 
+    </p>
 
     <h3>Typical Use Cases</h3>
 
     <ul>
         <li>Move a phrase or drill up or down by one semitone with <span class="menuExampleLine"><b>m</b> motions</span> set to <span class="menuExampleLine"><b>u</b> up</span> or <span class="menuExampleLine"><b>d</b> down</span>.</li>
         <li>Jump a line to a neighboring string with <span class="menuExampleLine"><b>j</b> jump up</span> or <span class="menuExampleLine"><b>J</b> jump down</span>.</li>
-        <li>Move only played notes, only recorded notes, or both, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles.</li>
-        <li>Reposition recorded highlights in a looping beat without rewriting the beat from scratch.</li>
+        <li>Move only PlayedNotes, only RecordedNotes, or both, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles.</li>
+        <li>Reposition SingleNotes or Tiny notes in beat looping.</li>
+        <li>Reposition recorded Highlights in beat looping.</li>
         <li>Try a move, inspect <span class="menuExampleLine"><b>s</b> show dropped notes</span>, then use <span class="menuExampleLine"><b>c</b> clear/backup</span> to arm a fresh graveyard backup before the next pass.</li>
     </ul>
 
@@ -3851,22 +3861,23 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><b>a</b> algorithm chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
         <li><b>m</b> motions chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
         <li><b>i</b> include opens toggles for <b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights, <b>p</b> played notes, and <b>r</b> recorded notes.</li>
-        <li>The include caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
+        <li>You must select one of <b>played notes</b> or <b>recorded notes</b> or both, plus at least one note type for anything to happen.</li>
+        <li>The <b>include</b> caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
     </ul>
 
     <a name="plugin-move-actions"></a>
     <h3>Actions And Events</h3>
 
     <ul>
-        <li><b>A</b> Apply moves the selected note layers in the current Section and selected table.</li>
-        <li><b>s</b> show dropped notes opens the current dropped-notes log as JSON in Messages.</li>
-        <li><b>c</b> clear/backup clears the dropped-notes log and arms a fresh section backup before the next Apply.</li>
-        <li><b>h</b> help shows the current MovePlugin settings and summary.</li>
+        <li><b>A</b> <b>Apply</b> moves the selected note layers in the current Section and selected table.</li>
+        <li><b>s</b> <b>show dropped notes</b> opens the current dropped-notes log as JSON in Messages.</li>
+        <li><b>c</b> <b>clear/backup</b> clears the dropped-notes log and arms a fresh section backup before the next Apply.  The backup is not put in the Graveyard until Apply is hit.</li>
+        <li><b>h</b> <b>help</b> shows the current MovePlugin settings and summary.</li>
     </ul>
 
-    <p>Before the first Apply in a run, MovePlugin buries the current Section in the graveyard. If a move lands badly or you simply want the older state back, revive that Section from the graveyard.</p>
+    <p>Before the first Apply in a run, MovePlugin buries a copy of the current Section in the graveyard, which is a backup, but does not delete the Section. If a move lands badly or you simply want the older state back, revive that Section from the graveyard.  The bury happens on Apply after selecting <b>clear/backup</b>.</p>
 
-    <p>MovePlugin does not currently handle plugin events. It runs only when you invoke its actions from the command-line menu.</p>
+    <p>MovePlugin does not handle DaCapo events, and so does nothing in response to looping. It runs only when you invoke its actions from the command-line menu.  However, you can keep looping or beat looping while using <b>Apply</b>.  In fact, this is the best way to see how it moves RecordedNotes, since only the first beat will render after an Apply if you aren't looping</p>
 
     <a name="plugin-transpose"></a>
     <h2>TransposePlugin</h2>
@@ -4144,13 +4155,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <span class="productsmaller">infinite-neck</span> shows the MIDI Number, not the names such as C3, C4 or c&#96;&#96;.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryNamedNote">
             <td>NamedNote
             </td>
-            <td>Display of all notes with the same Note Name.  Placing a NamedNote such as "F" on the neck marks all F's.
+            <td>Display of all notes with the same Note Name.  Placing a NamedNote such as "F" on the neck marks all F's.  A NamedNote is its own class of note, the three classes being NamedNotes, PlayedNotes, and RecordedNotes.
             </td>
         </tr>
-        <tr>
+        <tr id="glossarySingleNote">
             <td>SingleNote
             </td>
             <td>Display of one note on the neck.  Placing a SingleNote such as "F" on the neck marks one F -- the one you clicked.
@@ -4158,13 +4169,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 SingleNotes have one rounded corner so you can see if a NamedNote is present.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryTinyNote">
             <td>TinyNote
             </td>
-            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is also a TinyNote, so you can't use both in one cell.)
+            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is a special type of TinyNote, so you can't use both in one cell.)  TinyNotes (including Bends) are special in that they follow LeadKey (set on the SectionDrawer) in coloring and Function.  If you have LeadKey set to G and Key set to C, the TinyNote at G will display Function I, but the NamedNote at G will display V. But if you have LeadKey set to "root", which is the default, then the TinyNote will display the Function V, the same as a NamedNote or SingleNote in that same cell.  
             </td>
         </tr>
-        <tr>
+        <tr  id="glossaryBend">
             <td>Bend
             </td>
             <td>A special type of TinyNote, which shows the range of notes that bending (stretching) a string moves through.
@@ -4176,6 +4187,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 plucking the string, and then release the tension so that the pitch drops--the destination is then A.
                 <span class="productsmaller">infinite-neck</span> calls it an "up-down" bend where you start off relaxed, sound the note, then bend up
                 and then release the tension so the pitch comes back down.
+            </td>
+        </tr>
+        <tr id="glossaryPlayedNote">
+            <td>PlayedNote
+            </td>
+            <td>Any SingleNote, TinyNote, or Bend that is placed when <span class="GUIReferenceInline">REC</span> is <u>not</u> in effect, that is, when <u>not recording</u>, is a PlayedNote.  NamedNotes are never PlayedNotes. Highlights cannot be PlayedNotes, only RecordedNotes. (But a Highlight will work when not recording for demonstration purposes and will simply not be saved.  So if you are leading a presentation or class, you can highlight all notes with the same MIDI pitch number with Pitch, or can highlight multiple single notes with Multi.  When you place any other kind of note or Highlight, or change Sections, your Highlight disappears.)  Except for NamedNotes, any note placed while recording is a RecordedNote.
+            </td>
+        </tr>
+        <tr id="glossaryRecordedNote">
+            <td>RecordedNote
+            </td>
+            <td>Any SingleNote, TinyNote, Bend, or Highlight (Pitch or Multi), that is placed when <span class="GUIReferenceInline">REC</span> is in effect, that is, when <u>recording</u>, are RecordedNotes.  NamedNotes are never RecordedNotes.  Any note placed while not recording is either a NamedNote or a PlayedNote.
             </td>
         </tr>
         <tr>
@@ -4348,23 +4371,28 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 by editing the JSON text file themes.js.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryHighlight">
+            <td>Highlight
+            </td>
+            <td>Highlights are note types that come in two flavors: <a href="#glossaryMulti">Multi</a> and <a href="#glossaryPitch">Pitch</a>.  They highlight a note or set of notes with a bright glowing border. 
+            </td>
+        </tr>
+        <tr id="glossaryPitch">
             <td>Pitch
             </td>
-            <td>1) A setting for Highlights that displays a highlight around all notes with the same MIDI pitch, since a middle C appears
-                in multiple spots across strings on a guitar, for example.
+            <td>1) A setting for Highlight that displays a Highlight around all notes with the same MIDI pitch on the Instrument. Since a middle C appears
+                in multiple spots across strings on a guitar, for example, clicking Pitch as the note type, then clicking a C will highlight all C's on the neck with that same MIDI number.  Middle C with MIDI number 60 appears on a Standard tuning 6-string guitar on the second string, first fret; on the third string, fifth fret; on the fourth string, tenth fret; and on the fifth string, thirteenth fret. These would all be highlighted. But other C notes with different MIDI numbers would not be highlighted. For example, the C with MIDI number 48 at the fifth string, third fret would not be highlighted. Pitch can also be used to highlight notes for demonstration purposes when not recording.  Click a note and a Highlight will appear on each note on the neck that shares MIDI pitch number, but will disappear when you navigate Sections or place another note type.
                 <br>
                 <br>
-                2) A specific frequency of note, e.g. a 440Hz Concert A.  The MIDI spec defines default frequencies of pitch
-                for each named note.  In <span class="productsmaller">infinite-neck</span> we simply use one MIDI number for each note,
+                2) A specific frequency of note, e.g. a 440Hz Concert A.  The MIDI spec defines default frequencies of pitch for each named note.  In <span class="productsmaller">infinite-neck</span> we simply use one MIDI number for each note,
                 so pitches here are standardized on the MIDI default pitch spec, and we allow display of the MIDI pitch number
                 for each cell.  That is, we don't show microtonal pitches, or alternative pitch-tunings.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryMulti">
             <td>Multi
             </td>
-            <td>Highlight style that lets you highlight multiple notes on one Beat.
+            <td>Highlight style that lets you highlight multiple notes on one Beat.    Multi can also be used to highlight multiple notes for demonstration purposes when not recording.  Click the notes and a highlight will appear on each, but will disappear when you navigate Sections or place another note type.
             </td>
         </tr>
         <tr id="glossaryDisplayOptions">

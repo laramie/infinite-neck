@@ -124,6 +124,86 @@ describe('Move helpers', () => {
     expect(result.recordedNotes['1']).toBeUndefined();
     expect(result.droppedEntries[0].reason).toBe('played note takes precedence');
   });
+
+  test('string algorithm wraps jump up from the first row to the last row at the same fret', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'F', styleNum: Note.STYLENUM_SINGLE, midinum: '65', row: '0', col: '3', colorClass: 'noteTransparent' }
+      ]
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'j',
+      algorithm: 'string',
+      include: { single: true, tiny: false, highlights: false, played: true, recorded: false },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'string', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.playedNotes).toHaveLength(1);
+    expect(result.playedNotes[0].row).toBe('4');
+    expect(result.playedNotes[0].col).toBe('3');
+    expect(result.droppedEntries).toHaveLength(0);
+  });
+
+  test('string algorithm wraps jump down from the last row to the first row at the same fret', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'A', styleNum: Note.STYLENUM_SINGLE, midinum: '67', row: '4', col: '3', colorClass: 'noteTransparent' }
+      ]
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'J',
+      algorithm: 'string',
+      include: { single: true, tiny: false, highlights: false, played: true, recorded: false },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'string', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.playedNotes).toHaveLength(1);
+    expect(result.playedNotes[0].row).toBe('0');
+    expect(result.playedNotes[0].col).toBe('3');
+    expect(result.droppedEntries).toHaveLength(0);
+  });
+
+  test('string algorithm wrapped jump still drops when the wrapped row has no legal BanjoNut cell', () => {
+    const tuning = createTuning();
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'F', styleNum: Note.STYLENUM_SINGLE, midinum: '65', row: '0', col: '3', colorClass: 'noteTransparent' }
+      ]
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'j',
+      algorithm: 'string',
+      include: { single: true, tiny: false, highlights: false, played: true, recorded: false },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'string', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.playedNotes).toHaveLength(0);
+    expect(result.droppedEntries).toHaveLength(1);
+    expect(result.droppedEntries[0].reason).toBe('no string above row 0');
+  });
 });
 
 describe('MovePlugin', () => {
