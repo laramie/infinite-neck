@@ -1012,13 +1012,6 @@ export class Song extends SongPersistence {
     moveNamedNotesForSection(amount, section){
 	    section.moveNamedNotes(amount);
   	}
-
-    movePlayedNotesAllSections(amount){
-        console.log("movePlayedNotesAllSections not implemented");
-    }
-    moveRecordedNotesAllSections(amount){
-        console.log("moveRecordedNotesAllSections not implemented");
-    }
     
     //============= EventBus =========================
 

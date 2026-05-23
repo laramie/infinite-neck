@@ -1155,24 +1155,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function transposeSong(amount, options = {}){
-		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true, doKeyLead:false}
+		//options is {amount: 1, NamedNotes: true, doKeyLead:false}
 		const song = getSong();
 		const normalizedOptions = {
 			NamedNotes: options.NamedNotes !== false,
-			PlayedNotes: !!options.PlayedNotes,
-			RecordedNotes: !!options.RecordedNotes,
 			doKeyLead: !!options.doKeyLead
 		};
 		song.cycleThruKeysAllSections(amount, normalizedOptions.doKeyLead);
-		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
 		if (normalizedOptions.NamedNotes){
 			song.moveNamedNotesAllSections(amount);
-		}
-		if (normalizedOptions.PlayedNotes){
-			song.movePlayedNotesAllSections(amount);
-		}
-		if (normalizedOptions.RecordedNotes){
-			song.moveRecordedNotesAllSections(amount);
 		}
 		if (song.isHeadless){
 			return;

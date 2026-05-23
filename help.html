@@ -3893,11 +3893,11 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li><b>i</b> intervals is a JSON array of target intervals.</li>
         <li><b>n</b> named notes chooses whether named notes move.</li>
-        <li><b>p</b> played notes chooses whether played-note layers are included in the transpose request.</li>
-        <li><b>r</b> recorded notes chooses whether recorded-note layers are included in the transpose request.</li>
         <li><b>a</b> auto sharps/flats applies the same key spelling after transposition as found in the menu /sc (section key).</li>
         <li><b>d</b> do lead key also transposes the Section lead key when keys move.</li>
     </ul>
+
+    <p>TransposePlugin does not move PlayedNotes or RecordedNotes. Use MovePlugin when you want to move those layers deterministically.</p>
 
     <a name="plugin-transpose-actions"></a>
     <h3>Actions</h3>

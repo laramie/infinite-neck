@@ -325,7 +325,7 @@ export class FillPlugin {
 
     return new MenuItemProxy(this, {
       name: roleName,
-      caption: `${buildCaption(roleName, config.trigger)} [$${displayToken}]`,
+      caption: `${buildCaption(roleName, config.trigger)} [\${${displayToken}}]`,
       trigger: config.trigger,
       vars: [displayToken],
       children: [
@@ -333,7 +333,7 @@ export class FillPlugin {
         ...(roleName === 'scale' ? [] : [this.buildRoleModeChild(roleName, MODE_KEEP, 'keep', 'k')]),
         new MenuItemProxy(this, {
           name: `${roleName}:roleMenu`,
-          caption: `${buildCaption('role', 'r')} [$${colorToken}]`,
+          caption: `${buildCaption('role', 'r')} [\${${colorToken}}]`,
           trigger: 'r',
           vars: [colorToken],
           children: [

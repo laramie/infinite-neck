@@ -99,6 +99,8 @@ describe('TransposePlugin', () => {
     const resetNode = children.find((child) => child.name === 'resetMenu');
     const autoNode = children.find((child) => child.name === 'autoSharpsFlats');
     const leadNode = children.find((child) => child.name === 'doLeadKey');
+    const playedNode = children.find((child) => child.name === 'PlayedNotes');
+    const recordedNode = children.find((child) => child.name === 'RecordedNotes');
 
     expect(children.map((child) => child.name).slice(0, 4)).toEqual(['apply', 'resetMenu', 'help', 'intervals']);
     expect(resetNode).toBeTruthy();
@@ -113,6 +115,8 @@ describe('TransposePlugin', () => {
     expect(autoNode.trigger).toBe('a');
     expect(leadNode).toBeTruthy();
     expect(leadNode.trigger).toBe('d');
+    expect(playedNode).toBeUndefined();
+    expect(recordedNode).toBeUndefined();
   });
 
   test('apply advances interval, tracks sequence offset, and reset current interval returns to zero', () => {
@@ -125,8 +129,6 @@ describe('TransposePlugin', () => {
     expect(plugin.invokeAction('apply', { song }).result).toBe('manual apply: interval 2 (delta 2)');
     expect(mockTransposeSong).toHaveBeenNthCalledWith(1, 2, {
       NamedNotes: true,
-      PlayedNotes: false,
-      RecordedNotes: false,
       doKeyLead: false
     });
     expect(plugin.resolveValue('currentOffset')).toBe(2);
@@ -134,8 +136,6 @@ describe('TransposePlugin', () => {
     expect(plugin.invokeAction('apply', { song }).result).toBe('manual apply: interval 5 (delta 3)');
     expect(mockTransposeSong).toHaveBeenNthCalledWith(2, 3, {
       NamedNotes: true,
-      PlayedNotes: false,
-      RecordedNotes: false,
       doKeyLead: false
     });
     expect(plugin.resolveValue('currentOffset')).toBe(5);
@@ -144,8 +144,6 @@ describe('TransposePlugin', () => {
     expect(plugin.invokeAction('reset', { song }).result).toBe('reset current interval: sequence offset 0');
     expect(mockTransposeSong).toHaveBeenNthCalledWith(3, -5, {
       NamedNotes: true,
-      PlayedNotes: false,
-      RecordedNotes: false,
       doKeyLead: false
     });
     expect(plugin.resolveValue('currentOffset')).toBe(0);
@@ -214,8 +212,6 @@ describe('TransposePlugin', () => {
     expect(plugin.resolveValue('originalOffset')).toBe(5);
     expect(mockTransposeSong).toHaveBeenNthCalledWith(3, 5, {
       NamedNotes: true,
-      PlayedNotes: false,
-      RecordedNotes: false,
       doKeyLead: false
     });
   });
@@ -350,8 +346,6 @@ describe('TransposePlugin', () => {
     expect(plugin.invokeAction('apply', { song }).result).toBe('manual apply: interval 4 (delta 4)');
     expect(mockTransposeSong).toHaveBeenNthCalledWith(1, 4, {
       NamedNotes: true,
-      PlayedNotes: false,
-      RecordedNotes: false,
       doKeyLead: true
     });
   });

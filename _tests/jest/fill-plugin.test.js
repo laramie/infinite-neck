@@ -254,6 +254,24 @@ describe('FillPlugin', () => {
     expect(plugin.resolveValue('scaleDisplay', { song })).toBe('noteScale');
   });
 
+  test('role menu captions use ${plugin:...} value references', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+    const scaleNode = optionsNode.children.find((child) => child.name === 'scale');
+    const scaleRoleNode = scaleNode.children.find((child) => child.name === 'scale:roleMenu');
+
+    expect(scaleNode.caption).toContain('[${plugin:fill:scaleDisplay}]');
+    expect(scaleRoleNode.caption).toContain('[${plugin:fill:scaleColor}]');
+  });
+
   test('registers the same section-begin event used by looper and arpeggio', () => {
     const plugin = new FillPlugin();
 

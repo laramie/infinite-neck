@@ -191,7 +191,7 @@ describe('PluginManager plugin persistence', () => {
     const manager = createManagerWithPlugins();
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
 
     expect(manager.exportSongPluginState()).toEqual({
       transpose: {
@@ -201,10 +201,8 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          PlayedNotes: true,
-          RecordedNotes: false,
           autoSharpsFlats: false,
-          doLeadKey: false
+          doLeadKey: true
         }
       }
     });
@@ -224,8 +222,6 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          PlayedNotes: false,
-          RecordedNotes: false,
           autoSharpsFlats: false,
           doLeadKey: false
         }
@@ -237,7 +233,7 @@ describe('PluginManager plugin persistence', () => {
     const manager = createManagerWithPlugins();
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.setPropertyValue(entry, 'graveyardKey', "Bob's I-IV-V Blues Practice");
 
     expect(manager.exportSongPluginState().transpose.graveyardKey).toBe("Bob's I-IV-V Blues Practice");
@@ -250,7 +246,7 @@ describe('PluginManager plugin persistence', () => {
     const entry = manager.getPluginEntry('transpose');
 
     manager.setPropertyValue(entry, 'enableOnSongLoad', true);
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     const result = manager.buryPluginEntry(entry, 'Blues A');
 
     expect(result.result).toBe('buried transpose as Blues A');
@@ -265,10 +261,8 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         NamedNotes: true,
-        PlayedNotes: true,
-        RecordedNotes: false,
         autoSharpsFlats: false,
-        doLeadKey: false
+        doLeadKey: true
       }
     });
     expect(entry.enabled).toBe(false);
@@ -294,7 +288,7 @@ describe('PluginManager plugin persistence', () => {
     manager.loadSongPluginState(song);
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.setPropertyValue(entry, 'graveyardKey', 'Current');
 
     manager.importPluginSnapshot('transpose', {
@@ -304,8 +298,6 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 2, 4],
         NamedNotes: true,
-        PlayedNotes: false,
-        RecordedNotes: false,
         autoSharpsFlats: false,
         doLeadKey: true
       }
@@ -325,15 +317,15 @@ describe('PluginManager plugin persistence', () => {
     manager.loadSongPluginState(song);
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'NamedNotes', false);
     manager.buryPluginEntry(entry, 'Preset');
-    manager.setPropertyValue(entry, 'RecordedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.buryPluginEntry(entry, 'Preset');
 
     expect(song.graveyard.records).toHaveLength(1);
     const payload = JSON.parse(song.graveyard.records[0].json);
-    expect(payload.properties.PlayedNotes).toBe(false);
-    expect(payload.properties.RecordedNotes).toBe(true);
+    expect(payload.properties.NamedNotes).toBe(true);
+    expect(payload.properties.doLeadKey).toBe(true);
   });
 
   test('runtime plugin menu captions use ${plugin:...} value references', () => {

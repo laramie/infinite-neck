@@ -52,8 +52,6 @@ function normalizeNoteIndex(noteIndex) {
 function formatOptions(propertiesByName) {
   return {
     NamedNotes: !!propertiesByName.get('NamedNotes')?.getValue(),
-    PlayedNotes: !!propertiesByName.get('PlayedNotes')?.getValue(),
-    RecordedNotes: !!propertiesByName.get('RecordedNotes')?.getValue(),
     doKeyLead: !!propertiesByName.get('doLeadKey')?.getValue()
   };
 }
@@ -103,7 +101,7 @@ export class TransposePlugin {
       this.getProperty('apply')?.getMenuNodeSpec(this),
       this.buildResetMenuNode(),
       this.getProperty('help')?.getMenuNodeSpec(this),
-      ...['intervals', 'NamedNotes', 'PlayedNotes', 'RecordedNotes', 'autoSharpsFlats', 'doLeadKey']
+      ...['intervals', 'NamedNotes', 'autoSharpsFlats', 'doLeadKey']
         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
     ].filter(Boolean);
   }
@@ -250,7 +248,7 @@ export class TransposePlugin {
   }
 
   buildSummary() {
-    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} played notes=${this.getPlayedNotesEnabled()} recorded notes=${this.getRecordedNotesEnabled()}`;
+    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()}`;
   }
 
   buildHelpMessage() {
@@ -277,14 +275,6 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getNamedNotesEnabled() {
     return !!this.getProperty('NamedNotes')?.getValue();
-  }
-
-  getPlayedNotesEnabled() {
-    return !!this.getProperty('PlayedNotes')?.getValue();
-  }
-
-  getRecordedNotesEnabled() {
-    return !!this.getProperty('RecordedNotes')?.getValue();
   }
 
   getAutoSharpsFlatsEnabled() {
