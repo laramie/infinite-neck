@@ -27,7 +27,7 @@
   },
   {
     "name": "clearDroppedNotes",
-    "caption": "clear dropped notes",
+    "caption": "clear/backup",
     "trigger": "c",
     "datatype": "org.dynamide.Action",
     "actionName": "clearDroppedNotes",
@@ -67,7 +67,7 @@
       { "value": "u", "caption": "up", "trigger": "u" },
       { "value": "d", "caption": "down", "trigger": "d" },
       { "value": "j", "caption": "jump up", "trigger": "j" },
-      { "value": "J", "caption": "jump down", "trigger": "J" }
+      { "value": "J", "caption": "Jump down", "trigger": "J" }
     ]
   },
   {
