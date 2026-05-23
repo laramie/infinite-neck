@@ -53,15 +53,20 @@ function valuesEqual(leftValue, rightValue) {
 
 function normalizePluginResponse(response, fallbackResult) {
   if (typeof response === 'string') {
-    return { result: response, message: '' };
+    return { result: response, message: '', messageJSON: '' };
   }
   if (response && typeof response === 'object') {
+    let messageJSON = response.messageJSON || '';
+    if (messageJSON && typeof messageJSON !== 'string') {
+      messageJSON = JSON.stringify(messageJSON, null, 2);
+    }
     return {
       result: response.result || fallbackResult,
-      message: response.message || ''
+      message: response.message || '',
+      messageJSON
     };
   }
-  return { result: fallbackResult, message: '' };
+  return { result: fallbackResult, message: '', messageJSON: '' };
 }
 
 export class PluginManager {

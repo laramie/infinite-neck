@@ -259,6 +259,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleCaption,
 			toggleFullscreen,
 			toggleInstrumentCaptionRow,
+			toggleRecording,
 			transpose,
 			transposeSong,
 			transposeSongKeys,
@@ -1093,6 +1094,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	export function toggleTransport(){
 		TransportBuilder.toggleTransport();
+	}
+	export function toggleRecording(){
+		var btn = $("#btnRecord");
+		var recording = btn.attr("recording");
+		if (recording === undefined || recording === "false") {
+			$(".RecordButton").addClass("ButtonOn");
+			$("#btnRecord").attr("recording", "true");
+			clearRecordedNotes();
+			showBeats(getSong().getBeat());
+		} else {
+			$(".RecordButton").removeClass("ButtonOn");
+			$("#btnRecord").attr("recording", "false");
+		}
 	}
 	export function toggleSectionDrawer(){
 		TransportBuilder.toggleSectionDrawer();
@@ -1951,25 +1965,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('click', '.RecordButton', function() {
-			var btn = $("#btnRecord");
-			var recording = btn.attr("recording");
-			if (recording === undefined) {
-				$(".RecordButton").addClass("ButtonOn");    //.css({"background-color": "red"});
-			    $("#btnRecord").attr("recording", "true");
-				clearRecordedNotes();
-		        showBeats(getSong().getBeat());
-			} else if (recording === "false"){
-				$(".RecordButton").addClass("ButtonOn");    //.css({"background-color": "red"});
-			    $("#btnRecord").attr("recording", "true");
-				clearRecordedNotes();
-		        showBeats(getSong().getBeat());
-			} else if (recording === "true") {
-				$(".RecordButton").removeClass("ButtonOn");  //.css({"background-color": "green"});
-				   	$("#btnRecord").attr("recording", "false");
-			} else {
-				$(".RecordButton").removeClass("ButtonOn"); //css({"background-color": "green"});
-				   	$("#btnRecord").attr("recording", "false");
-			}
+			toggleRecording();
 		});
 
 		bindEvent('click', '#btnPrevBeat', function() {

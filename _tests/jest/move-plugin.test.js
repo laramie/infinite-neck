@@ -161,8 +161,45 @@ describe('MovePlugin', () => {
 
     expect(result.result).toContain('no-op');
     expect(song.graveyard.bury).toHaveBeenCalledTimes(1);
-    expect(plugin.droppedNotes).toHaveLength(1);
+    expect(song.graveyard.bury).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({
+      MovePlugin: { applyNumber: '1' }
+    }));
+    expect(plugin.droppedNotes).toHaveLength(2);
     expect(plugin.droppedNotes[0].reason).toBe('apply start');
+    expect(plugin.droppedNotes[1].reason).toBe('no-op warning: no note styles selected');
+  });
+
+  test('include summary resolves without changing persisted include properties', () => {
+    const song = createSong({
+      myTunings: [createTuning({ baseID: 'S6_1', banjoNut: {} })],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeSingle', true, { song });
+    plugin.setPropertyValue('includeRecorded', true, { song });
+
+    expect(plugin.resolveValue('includeSummary', { song })).toBe(' [s,r]');
+    expect(plugin.exportSongState().includeSingle).toBe(true);
+    expect(plugin.exportSongState().includeRecorded).toBe(true);
+  });
+
+  test('showDroppedNotes returns JSON content for showMessagesJSON', () => {
+    const song = createSong({
+      myTunings: [createTuning({ baseID: 'S6_1', banjoNut: {} })],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.droppedNotes = [{ reason: 'apply start', applyNumber: 1 }];
+
+    const result = plugin.invokeAction('showDroppedNotes', { song });
+
+    expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: plugin.droppedNotes }, null, 2));
   });
 
   test('moving a bend onto a nut cell drops it', () => {

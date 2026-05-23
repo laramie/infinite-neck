@@ -367,4 +367,17 @@ describe('PluginManager plugin persistence', () => {
     expect(song.sections[0].pluginData.arpeggio.positions).toEqual([[0, 3], [5, 9]]);
     expect(song.sections[0].pluginData.arpeggio.lastPositionIndex).toBe(-1);
   });
+
+  test('pluginAction:invoke preserves JSON plugin messages', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('move');
+    entry.plugin.droppedNotes = [{ reason: 'apply start', applyNumber: 1 }];
+
+    const result = manager.invokePluginAction(entry, 'showDroppedNotes');
+
+    expect(result.result).toBe('Move dropped notes shown');
+    expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: entry.plugin.droppedNotes }, null, 2));
+  });
 });

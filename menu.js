@@ -1211,8 +1211,13 @@ export var gMenuFile =    {
           "action": "toggleLoopBeats"
         },
         {
-          "caption": "<b>r</b>andom loop",
+          "caption": "<b>r</b>ec",
           "trigger": "r",
+          "action": "toggleRecording"
+        },
+        {
+          "caption": "r<b>a</b>ndom loop",
+          "trigger": "a",
           "action": "toggleRandomLoop"
         },
         {

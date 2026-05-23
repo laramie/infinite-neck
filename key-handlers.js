@@ -101,6 +101,7 @@ function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); 
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
+function toggleRecording(...args) { return requireProvider('toggleRecording')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
@@ -711,6 +712,10 @@ export function performCmdAction(menuItem, args){
 		case "toggleTransport":
 			toggleTransport();
 			break;
+		case "toggleRecording":
+			toggleRecording();
+			actionResult.result = "REC toggled";
+			break;
 		case "parkTransport":
 			showTransport(true);
 			break;
@@ -1021,7 +1026,9 @@ export function performCmdAction(menuItem, args){
 		case "pluginAction:bury": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
-			if (pluginResult.message) {
+			if (pluginResult.messageJSON) {
+				showMessagesJSON(pluginResult.messageJSON);
+			} else if (pluginResult.message) {
 				showMessages(pluginResult.message);
 			}
 			break;

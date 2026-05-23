@@ -2,7 +2,8 @@
 
 ## Document Version
 
-- This is document version 3, for Iteration 3.
+- This is document version 4, for Iteration 4.
+- Iteration 3 is preserved here unchanged. See the Addendum after Iteration 3 and before Iteration 4 section, as that was added as well.
 - Iteration 2, document version 2, is preserved in MovePlugin-design-2.md
 - Iteration language is kept in this document in relevant sections but is not the original text.  
 - Edits make this document definitive.  
@@ -273,3 +274,26 @@ One more audit and algorithm rule: A recorded note is not possible in the UI if 
 
 With that, the Implementation Plan, version 2 is Approved.  Please write your own Implementation Plan version 3 as noted above and consider it Approved.  Then, please proceed to coding!
 thanks.
+
+# Iteration 4: post-implementation tweaks
+
+After testing, we filed this request in chat as Iteration 4.
+
+Menu is motion:j and motion:J triggers correct, captions not.  We fixed this in properties.json. 
+
+Menu for caption "clear dropped notes" changed to "clear/backup" so backup option is seen as available. We changed properties.json.  What clear/backup means should be spelled out in help, with instruction to look in graveyard to revive.
+
+Please make the 'context' arg for bury() include a property called "MovePlugin" with a value such as {"applyNumber":"3"} .
+
+Apply with no includes showed entry for "apply start" but did not log an entry for no-op warning.
+
+menu still has 'tiny notes' and no choice for 'bends'.  This seems correct, since they occupy the same lanes.  Testing looks correct and moves both types together.  No code changes, since this seems good. Just commenting.
+
+Can 'include' menu item show a summary as its value, e.g. `include [s,t,h,p,r]` without messing up its properties storage?
+
+Can we have a plugin showMessagesJSON() instead of showMessages()?  If so, we'd like show droppedNotes to use showMessagesJSON().  We've simplified the JSON during design, and we like its current format, but it should still be valid JSON and work in that call.
+
+Existing code (confirmed on older version as well) actually allows multiple STYLENUM_MIDIPITCHES highlights.  Steps to reproduce: Click a STYLENUM_MIDIPITCHES highlight with `[` shortcut on note C.  Then click `REC` button on transport.  Then click on note Db.  Then, /re to initiate beat looping, you will see both notes highlighted.  /vdf shows multiple STYLENUM_MIDIPITCHES notes in that recorded beat with styleNum:3.  We actually want to prevent this, so recording should clear previous STYLENUM_MIDIPITCHES styleNum:3 in the beat as it records from new clicks.  This is a change to the core, so be careful and let us know the files touched, and we'll look carefully at the diff.
+
+Feature request: we need a menu item for toggle REC.  /rr "rec".  It should toggle the same way as #btnRecord .
+

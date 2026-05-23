@@ -103,10 +103,12 @@ export class MovePlugin {
   }
 
   buildIncludeMenuNode() {
+    const token = 'plugin:move:includeSummary';
     return new MenuItemProxy(this, {
       name: 'include',
-      caption: buildCaption('include', 'i'),
+      caption: `${buildCaption('include', 'i')}${buildValueReference(token)}`,
       trigger: 'i',
+      vars: [token],
       children: [
         this.getProperty('includeSingle').getMenuNodeSpec(this),
         this.getProperty('includeTiny').getMenuNodeSpec(this),
@@ -166,6 +168,9 @@ export class MovePlugin {
       const value = this.getProperty('targetTable')?.getValue() || '';
       return value.startsWith('tbl') ? value.slice(3) : value;
     }
+    if (fieldName === 'includeSummary') {
+      return ` ${this.buildIncludeFlagsSummary()}`;
+    }
     return undefined;
   }
 
@@ -221,23 +226,42 @@ Moves non-Named notes in the current section and selected table.
 - include recorded = ${this.getProperty('includeRecorded')?.getValue()}
 - apply counter = ${this.applyCounter}
 - dropped notes entries = ${this.droppedNotes.length}
+
+clear/backup clears the dropped-notes log and arms a fresh section backup before the next Apply.
+That backup is buried in the graveyard. Revive it from the graveyard if you need to restore the prior section state.
 </pre>`;
   }
 
-  buildOptionsSummary() {
+  buildIncludeFlagsSummary() {
     const include = [];
     if (this.getProperty('includeSingle')?.getValue()) include.push('s');
     if (this.getProperty('includeTiny')?.getValue()) include.push('t');
     if (this.getProperty('includeHighlights')?.getValue()) include.push('h');
     if (this.getProperty('includePlayed')?.getValue()) include.push('p');
     if (this.getProperty('includeRecorded')?.getValue()) include.push('r');
-    return `motions:${this.getProperty('motion')?.getValue()} include:[${include.join(',')}] targetTable:${this.getSelectedTargetTableID()}`;
+    return `[${include.join(',')}]`;
+  }
+
+  buildOptionsSummary() {
+    return `motions:${this.getProperty('motion')?.getValue()} include:${this.buildIncludeFlagsSummary()} targetTable:${this.getSelectedTargetTableID()}`;
   }
 
   appendApplyStartEntry(tableID) {
     this.droppedNotes.push({
       algorithm: this.getProperty('algorithm')?.getValue(),
       reason: 'apply start',
+      optionsSummary: this.buildOptionsSummary(),
+      applyNumber: this.applyCounter,
+      beat: null,
+      tableID,
+      storageKind: null
+    });
+  }
+
+  appendNoopEntry(tableID, reason) {
+    this.droppedNotes.push({
+      algorithm: this.getProperty('algorithm')?.getValue(),
+      reason,
       optionsSummary: this.buildOptionsSummary(),
       applyNumber: this.applyCounter,
       beat: null,
@@ -253,7 +277,10 @@ Moves non-Named notes in the current section and selected table.
     const sectionIndex = Array.isArray(song.sections) ? song.sections.indexOf(section) : -1;
     song.graveyard.bury(GraveType.SECTION, section, {
       SectionIndex: sectionIndex,
-      caption: section.caption
+      caption: section.caption,
+      MovePlugin: {
+        applyNumber: `${this.applyCounter}`
+      }
     });
   }
 
@@ -265,7 +292,7 @@ Moves non-Named notes in the current section and selected table.
       case 'showDroppedNotes':
         return {
           result: 'Move dropped notes shown',
-          message: JSON.stringify({ droppedNotes: this.droppedNotes }, null, 2)
+          messageJSON: JSON.stringify({ droppedNotes: this.droppedNotes }, null, 2)
         };
       case 'clearDroppedNotes':
         this.droppedNotes = [];
@@ -309,9 +336,11 @@ Moves non-Named notes in the current section and selected table.
     };
 
     if (!include.single && !include.tiny && !include.highlights) {
+      this.appendNoopEntry(tableID, 'no-op warning: no note styles selected');
       return { result: 'Move apply: no-op, no note styles selected' };
     }
     if (!include.played && !include.recorded) {
+      this.appendNoopEntry(tableID, 'no-op warning: neither played nor recorded selected');
       return { result: 'Move apply: no-op, neither played nor recorded selected' };
     }
 
