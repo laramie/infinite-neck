@@ -17,10 +17,60 @@ let gCmdActionRunner = function () {
     throw new Error('Command action runner not configured');
 };
 
+let gCmdLineMenuMode = 'tall';
+
 export function setCmdActionRunner(actionRunner){
     if (typeof actionRunner === 'function') {
         gCmdActionRunner = actionRunner;
     }
+}
+
+function applyCmdLineMenuMode(){
+    const isOneLine = gCmdLineMenuMode === 'one-line';
+    const jCmdMenu = $("#CmdMenu");
+    jCmdMenu.toggleClass("CmdMenuOneLine", isOneLine);
+
+    const jOptionsTable = $("#CmdMenuOptionsTable");
+    if (jOptionsTable.length > 0){
+        jOptionsTable.toggle(!isOneLine);
+    }
+
+    const jStack = $("#CmdMenuStack");
+    if (jStack.length === 0){
+        return;
+    }
+
+    if (!isOneLine){
+        const fullStackHtml = jStack.data("fullStackHtml");
+        if (typeof fullStackHtml === 'string') {
+            jStack.html(fullStackHtml);
+        }
+        return;
+    }
+
+    const fullStackHtml = jStack.html();
+    jStack.data("fullStackHtml", fullStackHtml);
+
+    const jPrompt = jStack.find(".cmdPrompt").last().clone();
+    const jFallbackPrompt = jStack.find(".cmdPrompt2").last().clone();
+    const promptHtml = jPrompt.length > 0
+        ? $("<div>").append(jPrompt).html()
+        : $("<div>").append(jFallbackPrompt).html();
+
+    if (promptHtml) {
+        jStack.html(promptHtml);
+    }
+}
+
+export function setCmdLineMenuMode(mode){
+    if (mode === 'one-line') {
+        gCmdLineMenuMode = 'one-line';
+    } else if (mode === 'short') {
+        gCmdLineMenuMode = 'short';
+    } else {
+        gCmdLineMenuMode = 'tall';
+    }
+    applyCmdLineMenuMode();
 }
 
 export function showCmdLine(){
@@ -70,6 +120,7 @@ export function updateCmdLineView(addedCrumb){
     $("#CmdMenuStack").html(printMenuStack());
     $("#CmdMenuBreadcrumbs").html(printMenuStackBreadcrumbs(addedCrumb));
     $("#CmdMenuResults").html(buildChildMenuCaptionsRow(gMenuPointer));
+    applyCmdLineMenuMode();
 }
 
 var gCmdResultsCount = 0;

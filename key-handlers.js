@@ -4,6 +4,7 @@ import { setOneCssVar } from './themeFunctions.js';
 import {
 	clearCmdResults,
 	hideCmdLine,
+	setCmdLineMenuMode,
 	setCmdActionRunner,
 	showCmdLine,
 	stringifyMenuItem,
@@ -734,8 +735,16 @@ export function performCmdAction(menuItem, args){
 			var c = args["key"];
 			if (c == "s"){ //"short"
 				gMenuFile.tall = false;
+				setCmdLineMenuMode('short');
+				actionResult.result = 'menu prefs: short';
 			} else if (c == "t"){
 				gMenuFile.tall = true;
+				setCmdLineMenuMode('tall');
+				actionResult.result = 'menu prefs: tall';
+			} else if (c == "o"){
+				gMenuFile.tall = false;
+				setCmdLineMenuMode('one-line');
+				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
 		case "showViewDiagnostics":

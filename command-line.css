@@ -48,9 +48,6 @@
 
 #CmdMenuOptionsTable td b {
     color: #ffaa00;
-    ff-webkit-text-stroke: 2px black;
-    fffont-weight: normal;
-    ff-size: 130%;
 }
 #CmdMenuStack {
     padding: 0;
@@ -64,6 +61,19 @@
     color: #ffaa00;
     font-weight: normal;
     font-size: 120%;
+}
+#CmdMenu.CmdMenuOneLine #CmdMenuStack {
+    width: 1%;
+    white-space: nowrap;
+    color: lightgreen;
+}
+#CmdMenu.CmdMenuOneLine #CmdMenuStack .cmdPrompt,
+#CmdMenu.CmdMenuOneLine #CmdMenuStack .cmdPrompt2 {
+    display: inline-block;
+    padding-bottom: 0;
+}
+#CmdMenu.CmdMenuOneLine #CmdMenuOptionsTable {
+    display: none;
 }
 #CmdMenuBreadcrumbs {
     font-size: 100%;
@@ -86,7 +96,6 @@
     color: #ffaa00;
 }
 .cmdPrompt {
-    ffdisplay: inline-block;
     font-size: 140%;
     padding: 0;
     padding-bottom: 0.2em;

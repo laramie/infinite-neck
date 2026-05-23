@@ -655,6 +655,10 @@ export var gMenuFile =    {
               "trigger": "s"
             },
             {
+              "caption": "<b>o</b>ne-line",
+              "trigger": "o"
+            },
+            {
               "caption": "<b>t</b>all",
               "trigger": "t"
             }
