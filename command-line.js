@@ -94,6 +94,12 @@ function clearCmdLine(){
     $("#txtCmdLine").val('');
 }
 
+function applyMenuPrefKey(prefKey){
+    const actionResult = gCmdActionRunner({ action: 'setMenuPrefs' }, { key: prefKey }) || {};
+    updateCmdLineView();
+    return actionResult;
+}
+
 function preloadCmdLineFromInputMenu(inputMenu) {
     if (!inputMenu) {
         return;
@@ -284,4 +290,19 @@ export function txtCmdLine_keypress(e) {
             }
         }
     });
+}
+
+export function txtCmdLine_keydown(e) {
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyMenuPrefKey('t');
+        return;
+    }
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        e.stopPropagation();
+        applyMenuPrefKey('o');
+    }
 }

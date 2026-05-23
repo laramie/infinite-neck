@@ -23,6 +23,7 @@ import {
 	addCmdResults,
 	hideCmdLine,
 	toggleCmdLine,
+	txtCmdLine_keydown,
 	txtCmdLine_keypress 
 } from './command-line.js';
 import {
@@ -2359,6 +2360,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$(document).on('keydown', document_keydown);
 		$(document).on('keypress', document_keypress);
+		$("#txtCmdLine").on('keydown', txtCmdLine_keydown);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);
 
