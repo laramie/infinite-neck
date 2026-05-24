@@ -21,6 +21,7 @@ export const GraveType = Object.freeze({
         UNKNOWN: "UNKNOWN",
         SONG: "SONG",
         SECTION: "SECTION",
+    CLIP: "CLIP",
         DISPLAY: "DISPLAY",
         BEAT: "BEAT",
         STYLESHEET: "STYLESHEET",
@@ -185,7 +186,10 @@ export class Graveyard {
                            +" <a href='#' class='graveyard-toggle-json graveyard-context-toggle' data-target='#"+contextTargetId+"' data-more-text='&lt;more...&gt;' data-less-text='&lt;less...&gt;'>&lt;more...&gt;</a>";
             }
             var lastRevived = record.lastRevived ? record.lastRevived : "";
-            var row = "<tr><td>"+k+SEP+record.type+SEP+record.timestamp+SEP+record.date+SEP+record.time+"</td><td class='graveyard-context-cell'>"+theContext+SEP+lastRevived+SEP+"<a href='#' class='graveyard-raise-link' data-grave-index='"+k+"'>raise "+k+"</a></td></tr>";
+            var actionHtml = record.type === GraveType.CLIP
+                ? "use ClipPlugin"
+                : "<a href='#' class='graveyard-raise-link' data-grave-index='"+k+"'>raise "+k+"</a>";
+            var row = "<tr><td>"+k+SEP+record.type+SEP+record.timestamp+SEP+record.date+SEP+record.time+"</td><td class='graveyard-context-cell'>"+theContext+SEP+lastRevived+SEP+actionHtml+"</td></tr>";
             var row2 = "<tr><td><a href='#' class='graveyard-toggle-json' data-target='#grave"+record.timestamp+"'>show/hide</a></td><td colspan='6'><div id='grave"+record.timestamp+"' style='display:none;'>"+record.json+"</div></td></tr>";
             resultBody.unshift(row2);
             resultBody.unshift(row);

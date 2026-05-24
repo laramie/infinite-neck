@@ -77,7 +77,9 @@ Don't do the Section backup.  We are concerned about silently filling up the Gra
 
 Speaking of which, the menu should have a Clear Clipped notes for cleanup before saving a file.  Otherwise the Graveyard automatically persists, which is often good, but we want a way to clean up in case the User wants to stay lean.
 
-All your recommendations not addressed by the above are Approved. Please proceed to coding!
+We had made plugins/clip/ directory just to see how it looks.  It is empty and available for this work.
+
+All your recommendations not addressed by the above are Approved. Please proceed to Iteration 3: Coding!
 
 Thanks!
 

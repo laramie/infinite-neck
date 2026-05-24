@@ -69,6 +69,71 @@ function normalizePluginResponse(response, fallbackResult) {
   return { result: fallbackResult, message: '', messageJSON: '' };
 }
 
+function getMenuNodeKey(node, index = 0) {
+  if (!node) {
+    return `missing:${index}`;
+  }
+  if (node.name) {
+    return `name:${node.name}`;
+  }
+  if (node.pluginId && node.actionName) {
+    return `action:${node.pluginId}:${node.actionName}`;
+  }
+  if (node.pluginId && node.propertyName) {
+    return `property:${node.pluginId}:${node.propertyName}:${node.value ?? ''}`;
+  }
+  if (node.trigger) {
+    return `trigger:${node.trigger}:${stripHtml(node.caption || '')}`;
+  }
+  return `index:${index}:${stripHtml(node.caption || '')}`;
+}
+
+function reconcileMenuChildren(existingChildren = [], nextChildren = []) {
+  const buckets = new Map();
+  existingChildren.forEach((child, index) => {
+    const key = getMenuNodeKey(child, index);
+    if (!buckets.has(key)) {
+      buckets.set(key, []);
+    }
+    buckets.get(key).push(child);
+  });
+
+  return nextChildren.map((nextChild, index) => {
+    const key = getMenuNodeKey(nextChild, index);
+    const bucket = buckets.get(key) || [];
+    const existingChild = bucket.shift();
+    if (!existingChild) {
+      return nextChild;
+    }
+    reconcileMenuNode(existingChild, nextChild);
+    return existingChild;
+  });
+}
+
+function reconcileMenuNode(targetNode, sourceNode) {
+  const priorParent = targetNode.parent;
+  const priorChildren = Array.isArray(targetNode.children) ? targetNode.children : [];
+
+  targetNode.owner = sourceNode.owner;
+  targetNode.name = sourceNode.name || '';
+  targetNode.caption = sourceNode.caption || '';
+  targetNode.trigger = sourceNode.trigger || '';
+  targetNode.action = sourceNode.action || '';
+  targetNode.input = sourceNode.input || null;
+  targetNode.vars = Array.isArray(sourceNode.vars) ? sourceNode.vars : [];
+  targetNode.popOnBang = !!sourceNode.popOnBang;
+  targetNode.pluginId = sourceNode.pluginId;
+  targetNode.propertyName = sourceNode.propertyName;
+  targetNode.actionName = sourceNode.actionName;
+  targetNode.value = sourceNode.value;
+  targetNode.runtimeChildren = sourceNode.runtimeChildren;
+  targetNode.children = reconcileMenuChildren(priorChildren, Array.isArray(sourceNode.children) ? sourceNode.children : []);
+
+  if (priorParent !== undefined) {
+    targetNode.parent = priorParent;
+  }
+}
+
 export class PluginManager {
   constructor(eventBus) {
     this.eventBus = eventBus;
@@ -144,7 +209,7 @@ export class PluginManager {
     }
     markerNode.name = 'pluginsRuntime';
     markerNode.runtimeChildren = 'pluginManager';
-    markerNode.children = this.buildPluginsMenuChildren();
+    markerNode.children = reconcileMenuChildren(markerNode.children || [], this.buildPluginsMenuChildren());
     return markerNode;
   }
 
@@ -245,18 +310,21 @@ export class PluginManager {
         this.disablePluginEntry(entry);
       }
       this.syncSongPlugins();
+      this.refreshPluginsMenuNode();
       return { result: `enabled=${enabled}` };
     }
 
     if (propertyName === 'enableOnSongLoad') {
       entry.enableOnSongLoad = parseBoolean(rawValue);
       this.syncSongPlugins();
+      this.refreshPluginsMenuNode();
       return { result: `enableOnSongLoad=${entry.enableOnSongLoad}` };
     }
 
     if (propertyName === 'graveyardKey') {
       entry.graveyardKey = normalizeGraveyardKey(rawValue);
       this.syncSongPlugins();
+      this.refreshPluginsMenuNode();
       return { result: `graveyardKey=${entry.graveyardKey}` };
     }
 
@@ -265,6 +333,7 @@ export class PluginManager {
       pluginManager: this
     });
     this.syncSongPlugins();
+    this.refreshPluginsMenuNode();
     return { result: `${propertyName}=${formatValue(nextValue)}` };
   }
 
@@ -278,12 +347,14 @@ export class PluginManager {
         this.disablePluginEntry(entry);
       }
       this.syncSongPlugins();
+      this.refreshPluginsMenuNode();
       return { result: `enabled=${nextValue}` };
     }
 
     if (propertyName === 'enableOnSongLoad') {
       entry.enableOnSongLoad = !entry.enableOnSongLoad;
       this.syncSongPlugins();
+      this.refreshPluginsMenuNode();
       return { result: `enableOnSongLoad=${entry.enableOnSongLoad}` };
     }
 
@@ -301,6 +372,7 @@ export class PluginManager {
       pluginManager: this
     });
     this.syncSongPlugins();
+    this.refreshPluginsMenuNode();
     return { result: `${propertyName}=${formatValue(nextValue)}` };
   }
 
@@ -311,6 +383,7 @@ export class PluginManager {
       args
     });
     this.syncSongPlugins();
+    this.refreshPluginsMenuNode();
     return normalizePluginResponse(response, `${actionName}`);
   }
 

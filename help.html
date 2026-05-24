@@ -3315,22 +3315,19 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>The <span class="key"><b>/</b></span> key pops up the command-line Menu.  Any highlighted letter selects the next menu.
                     Instead of starting at the root like this, you can also use the global keyboard shortcut <span class="key">m</span> to re-open the command-line 
-                    at the last menu depth you left by hitting C or <span class="key">m</span>.
+                    at the last menu depth you left by hitting <span class="key">ESC</span> or <span class="key">x</span>.  
                 </td>
             </tr>
             <tr>
                 <td><span class="key"><b>m</b></span>
                 </td>
                 <td>
-                    The global keyboard shortcut <span class="key">m</span> pops up the command-line at the menu depth you left off last time.  
+                    The global keyboard shortcut <span class="key">m</span> pops up the command-line at the menu depth you left off last time. 
+                    This is useful for executing commands in plugins, 
+                    leaving the plugin menu page to use the Transport or keyboard shortcut to change Sections, 
+                    then using <span class="key">m</span> to pick back up where you left off in the plugin (or any menu item you want to use over and over). 
                 </td>
             </tr>
-
-
-            
-
-
-
             <tr>
                 <td><span class="key"><b>!</b></span>
                 </td>
@@ -3383,7 +3380,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td><span class="key">&#x2191;</span></span>
                 </td>
                 <td>
-                    The ArrowUp key.  Get back to tall menus with menu prompts
+                    The ArrowUp key.  Get back to tall menus with menu prompts.
                 </td>
             </tr>
             <tr>
@@ -3449,10 +3446,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td>unlocks (allows) the keyboard shortcuts for transposition.</td>
                 </tr>
                 <tr>
-                    <td>/sp</td>
-                    <td><b>s</b>ection | <b>p</b>rint</td>
-                    <td>Prints out a handy table of Sections, with hyperlinks to jump to the Section, and summary information, such as Key, Sharps/Flats, number of beats, caption, and count of notes.
+                    <td>/cs<br>
+                    /cn<br>
+                    /cd</td>
+                    <td>
+                        <b>c</b>hart | <b>s</b>ummary<br>
+                        <b>c</b>hart | <b>n</b>otes<br>
+                        <b>c</b>hart | <b>d</b>etails
+                    </td>
+                    <td>Prints out a handy chart of Sections, with hyperlinks to jump to the Section, and summary information, 
+                        such as Key, Sharps/Flats, number of beats, caption, and count of notes.
                         Since the links jump you to the Sections, this is a very handy way to navigate large songs with many Sections.
+                        /cn is the chart with notes, so has the Tonal.js information about chords and modes, and functions most like a band chart or Lead Sheet.
                     </td>
                 </tr>
                 <tr>

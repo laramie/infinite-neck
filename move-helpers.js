@@ -25,6 +25,32 @@ export function getTableID(tuning) {
   return `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
 }
 
+export function getTuningCompatibilityID(tuning) {
+  return `${tuning?.fromBaseID || tuning?.baseID || ''}`;
+}
+
+export function getTuningStringCount(tuning = {}) {
+  const explicitCount = toInt(tuning?.nStrings, null);
+  if (Number.isInteger(explicitCount) && explicitCount > 0) {
+    return explicitCount;
+  }
+  return Array.isArray(tuning?.rowRange) ? tuning.rowRange.length : 0;
+}
+
+export function canMidiPasteBetweenTunings(sourceTuning = {}, targetTuning = {}) {
+  const sourceStringCount = getTuningStringCount(sourceTuning);
+  const targetStringCount = getTuningStringCount(targetTuning);
+
+  return sourceTuning?.baseInstrument === 'Guitar'
+    && targetTuning?.baseInstrument === 'Guitar'
+    && sourceStringCount === 6
+    && targetStringCount === 6
+    && Array.isArray(sourceTuning?.rowRange)
+    && Array.isArray(targetTuning?.rowRange)
+    && sourceTuning.rowRange.length === 6
+    && targetTuning.rowRange.length === 6;
+}
+
 export function getEligibleTargetTunings(song = {}) {
   if (!song || !Array.isArray(song.myTunings)) {
     return [];

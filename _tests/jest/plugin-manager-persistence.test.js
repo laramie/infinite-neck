@@ -30,7 +30,9 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 }));
 
 const { PluginManager } = await import('../../plugins/PluginManager.js');
+const { gMenuFile } = await import('../../menu.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
+const { ClipPlugin } = await import('../../plugins/clip/ClipPlugin.js');
 const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
 const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
@@ -48,11 +50,13 @@ describe('PluginManager plugin persistence', () => {
     mockSectionsLooping.mockReturnValue(false);
     mockBeatsLooping.mockReset();
     mockBeatsLooping.mockReturnValue(false);
+    gMenuFile.children = [];
   });
 
   function createManagerWithPlugins() {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
+    manager.register(new ClipPlugin());
     manager.register(new FillPlugin());
     manager.register(new MovePlugin());
     manager.register(new TransposePlugin());
@@ -88,6 +92,16 @@ describe('PluginManager plugin persistence', () => {
       },
       graveyard: {
         records: [],
+        bury(graveType, obj, context) {
+          const record = {
+            type: graveType,
+            context,
+            json: JSON.stringify(obj),
+            lastRevived: null
+          };
+          this.records.push(record);
+          return record;
+        },
         buryReplacing(graveType, obj, context, predicate) {
           const record = {
             type: graveType,
@@ -371,5 +385,58 @@ describe('PluginManager plugin persistence', () => {
 
     expect(result.result).toBe('Move dropped notes shown');
     expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: entry.plugin.droppedNotes }, null, 2));
+  });
+
+  test('plugin actions and property changes refresh runtime plugin menus for dynamic children', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const refreshSpy = jest.spyOn(manager, 'refreshPluginsMenuNode');
+    const clipEntry = manager.getPluginEntry('clip');
+
+    manager.setPropertyValue(clipEntry, 'overwrite', false);
+    manager.togglePropertyValue(clipEntry, 'includeTiny');
+    manager.invokePluginAction(clipEntry, 'help');
+
+    expect(refreshSpy).toHaveBeenCalledTimes(3);
+  });
+
+  test('dynamic Clip revive submenu updates in place after copy', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    song.getCurrentSection().getSectionNotes(tableID).playedNotes.push({
+      noteName: 'D',
+      styleNum: 2,
+      row: '0',
+      col: '2',
+      colorClass: 'noteTransparent'
+    });
+    manager.loadSongPluginState(song);
+
+    gMenuFile.children = [
+      {
+        name: 'pluginsRuntime',
+        runtimeChildren: 'pluginManager',
+        trigger: 'p',
+        caption: 'plugins',
+        children: []
+      }
+    ];
+
+    const markerNode = manager.refreshPluginsMenuNode();
+    const clipNode = markerNode.children.find((node) => node.name === 'clip');
+    const reviveNode = clipNode.children.find((child) => child.name === 'reviveFromGraveyard');
+    const clipEntry = manager.getPluginEntry('clip');
+
+    expect(reviveNode.actionName).toBe('reviveClipChoice');
+    expect(reviveNode.input).toBeNull();
+    expect(reviveNode.popOnBang).toBe(false);
+    expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('');
+
+    manager.invokePluginAction(clipEntry, 'copyToGraveyard', { value: 'single-1' });
+
+    expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('1');
+    expect(manager.resolveValue('plugin:clip:reviveSummary')).toContain('[1:single-1]');
   });
 });
