@@ -76,22 +76,36 @@ const CSS_TEXT = `
     display: inline-flex;
     align-items: center;
     flex: 0 0 auto;
+    padding: 0.08em;
+    border: 1px solid rgba(59, 33, 10, 0.55);
+    background: linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(122,74,22,0.08) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 1px 1px 2px rgba(54, 29, 8, 0.18);
+}
+.tonalSourceSelectLabel[data-tonal-source-set="NamedNote"] {
+    border-radius: 0;
+}
+.tonalSourceSelectLabel[data-tonal-source-set="SingleNote"] {
+    border-radius: 1em 0 0 0;
+}
+.tonalSourceSelectLabel[data-tonal-source-set="TinyNote"] {
+    border-radius: 999px;
 }
 .tonalSourceSelect {
     flex: 0 0 auto;
-    width: 3.1em;
-    min-width: 3.1em;
-    max-width: 3.1em;
-    padding: 0.16em 1.05em 0.16em 0.42em;
-    border: 2px solid #4b3524;
-    background: linear-gradient(180deg, #fff4dc 0%, #f2cf95 100%);
-    color: #372312;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 1px 1px 2px rgba(42, 24, 8, 0.25);
+    width: 2.85em;
+    min-width: 2.85em;
+    max-width: 2.85em;
+    padding: 0.18em 1em 0.18em 0.38em;
+    border: 1px solid #4b3524;
+    background: linear-gradient(180deg, #fff8ec 0%, #efc97f 100%);
+    color: #2f1c0d;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), inset 0 -1px 0 rgba(100, 56, 13, 0.16);
     font-weight: 700;
-    font-size: 0.9em;
+    font-size: 0.82em;
     line-height: 1.1;
     text-align: center;
     text-align-last: center;
+    letter-spacing: 0.02em;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -100,15 +114,16 @@ const CSS_TEXT = `
 .tonalSourceSelectLabel::after {
     content: "▾";
     position: absolute;
-    right: 0.38em;
+    right: 0.34em;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.72em;
+    font-size: 0.64em;
     color: #5a412b;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.45);
     pointer-events: none;
 }
 .tonalSourceSelect:hover {
-    background: linear-gradient(180deg, #fff8e7 0%, #f4daa8 100%);
+    background: linear-gradient(180deg, #fffdf6 0%, #f3d28c 100%);
 }
 .tonalSourceSelect:focus {
     outline: 2px solid #2678a8;
@@ -116,12 +131,15 @@ const CSS_TEXT = `
 }
 .tonalSourceSelect[data-tonal-source-set="NamedNote"] {
     border-radius: 0;
+    background-image: linear-gradient(180deg, #fff8ec 0%, #efc97f 100%), linear-gradient(90deg, rgba(75,53,36,0.17) 0%, rgba(75,53,36,0.17) 100%);
 }
 .tonalSourceSelect[data-tonal-source-set="SingleNote"] {
-    border-radius: 0 0.95em 0 0;
+    border-radius: 0.95em 0 0 0;
+    background-image: linear-gradient(180deg, #fff8ec 0%, #efc97f 100%), radial-gradient(circle at 100% 0, rgba(75,53,36,0.14) 0 40%, transparent 41%);
 }
 .tonalSourceSelect[data-tonal-source-set="TinyNote"] {
     border-radius: 999px;
+    background-image: linear-gradient(180deg, #fff8ec 0%, #efc97f 100%), radial-gradient(circle, rgba(75,53,36,0.14) 0 28%, transparent 29%);
 }
 .tonalSourceSelect option {
     font-weight: 700;
@@ -361,7 +379,7 @@ function formatTonalSourceSetOptions(tonalSourceSet) {
 
 function formatTonalSourceSetSelect(ownerID, tableID, sectionIdx, tonalSourceSet){
     const selectId = getTonalSourceSelectId(ownerID, tableID, sectionIdx);
-    return `<label class="tonalSourceSelectLabel" for="${selectId}" title="${tonalSourceSet}">`
+    return `<label class="tonalSourceSelectLabel" for="${selectId}" data-tonal-source-set="${tonalSourceSet}" title="${tonalSourceSet}">`
         + `<select class="tonalSourceSelect" id="${selectId}" data-tonal-source-set="${tonalSourceSet}" aria-label="Tonal source set" title="${tonalSourceSet}" onchange="changeTonalSourceSet('${ownerID}', '${tableID}', ${sectionIdx}, this.value)">`
         + formatTonalSourceSetOptions(tonalSourceSet)
         + `</select></label>`;
@@ -410,7 +428,7 @@ export const TonalPickerOrientation = Object.freeze({
  *  @param ownerID is a string to differntiate multiple picker sets on one page, it is not used to find the owner. 
  */
 export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue, tableChordCurrentValue, tableModeCurrentValue, tonalSourceSet = TonalSourceSet.NAMEDNOTE){
-    let chordPicker = buildTonalPicker(ownerID, tableID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue, tableChordCurrentValue)                                         
+    let chordPicker = buildTonalPicker(ownerID, tableID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue, tableChordCurrentValue);
     let modePicker =  buildTonalPicker(ownerID, tableID, sectionIdx, "modes",  modeValueArray,  modeCurrentValue, tableModeCurrentValue);
     let tonalSourceSelect = formatTonalSourceSetSelect(ownerID, tableID, sectionIdx, tonalSourceSet);
     
@@ -424,6 +442,16 @@ export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, c
 }
 
 globalThis.changeTonalSourceSet = function changeTonalSourceSet(ownerID, tableID, sectionIdx, tonalSourceSet){
+    const selectId = getTonalSourceSelectId(ownerID, tableID, sectionIdx);
+    const selectEl = document.getElementById(selectId);
+    if (selectEl) {
+        selectEl.setAttribute('data-tonal-source-set', tonalSourceSet);
+        if (selectEl.parentElement) {
+            selectEl.parentElement.setAttribute('data-tonal-source-set', tonalSourceSet);
+            selectEl.parentElement.setAttribute('title', tonalSourceSet);
+        }
+        selectEl.setAttribute('title', tonalSourceSet);
+    }
     linkToSectionTableTonalSourceSet(sectionIdx, tableID, tonalSourceSet, false);
     linkToSectionChangedTonal();
 }
