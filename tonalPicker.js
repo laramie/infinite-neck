@@ -1,10 +1,12 @@
 import { 
     linkToSectionChartChord,
     linkToSectionChartMode,
+    linkToSectionTableTonalSourceSet,
     linkToSectionTableChord,
     linkToSectionTableMode,
     linkToSectionChangedTonal
 } from './infinite-neck.js';
+import { TonalSourceSet } from './TonalFunctions.js';
 
 const CSS_TEXT = `
 .spanTonalDetails,
@@ -68,6 +70,61 @@ const CSS_TEXT = `
 }
 .tonalPicker button.SaveToChartBtn {
     padding-top: 0;padding-bottom: 0;font-size:120%;padding-left: 0.4em;padding-right: 0.4em;
+}
+.tonalSourceSelectLabel {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.tonalSourceSelect {
+    flex: 0 0 auto;
+    width: 3.1em;
+    min-width: 3.1em;
+    max-width: 3.1em;
+    padding: 0.16em 1.05em 0.16em 0.42em;
+    border: 2px solid #4b3524;
+    background: linear-gradient(180deg, #fff4dc 0%, #f2cf95 100%);
+    color: #372312;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 1px 1px 2px rgba(42, 24, 8, 0.25);
+    font-weight: 700;
+    font-size: 0.9em;
+    line-height: 1.1;
+    text-align: center;
+    text-align-last: center;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+.tonalSourceSelectLabel::after {
+    content: "▾";
+    position: absolute;
+    right: 0.38em;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.72em;
+    color: #5a412b;
+    pointer-events: none;
+}
+.tonalSourceSelect:hover {
+    background: linear-gradient(180deg, #fff8e7 0%, #f4daa8 100%);
+}
+.tonalSourceSelect:focus {
+    outline: 2px solid #2678a8;
+    outline-offset: 1px;
+}
+.tonalSourceSelect[data-tonal-source-set="NamedNote"] {
+    border-radius: 0;
+}
+.tonalSourceSelect[data-tonal-source-set="SingleNote"] {
+    border-radius: 0 0.95em 0 0;
+}
+.tonalSourceSelect[data-tonal-source-set="TinyNote"] {
+    border-radius: 999px;
+}
+.tonalSourceSelect option {
+    font-weight: 700;
 }
 
 
@@ -274,6 +331,42 @@ function getCurrentTonalRawValue(ownerID, tableID, sectionIdx, dest){
     return $(getSpanTonalSelector(ownerID, tableID, sectionIdx, dest)).attr('data-tonal-raw-value') || "";
 }
 
+function getTonalSourceSelectId(ownerID, tableID, sectionIdx){
+    return `selTonalSourceSet-${ownerID}-${tableID}-${sectionIdx}`;
+}
+
+function getTonalSourceSetShortLabel(tonalSourceSet) {
+    switch (tonalSourceSet) {
+        case TonalSourceSet.SINGLENOTE:
+            return 'S';
+        case TonalSourceSet.TINYNOTE:
+            return 'T';
+        case TonalSourceSet.NAMEDNOTE:
+        default:
+            return 'N';
+    }
+}
+
+function formatTonalSourceSetOptions(tonalSourceSet) {
+    const optionValues = [
+        TonalSourceSet.NAMEDNOTE,
+        TonalSourceSet.SINGLENOTE,
+        TonalSourceSet.TINYNOTE
+    ];
+    return optionValues.map((value) => {
+        const selected = tonalSourceSet === value ? ' selected' : '';
+        return `<option value="${value}" title="${value}"${selected}>${getTonalSourceSetShortLabel(value)}</option>`;
+    }).join('');
+}
+
+function formatTonalSourceSetSelect(ownerID, tableID, sectionIdx, tonalSourceSet){
+    const selectId = getTonalSourceSelectId(ownerID, tableID, sectionIdx);
+    return `<label class="tonalSourceSelectLabel" for="${selectId}" title="${tonalSourceSet}">`
+        + `<select class="tonalSourceSelect" id="${selectId}" data-tonal-source-set="${tonalSourceSet}" aria-label="Tonal source set" title="${tonalSourceSet}" onchange="changeTonalSourceSet('${ownerID}', '${tableID}', ${sectionIdx}, this.value)">`
+        + formatTonalSourceSetOptions(tonalSourceSet)
+        + `</select></label>`;
+}
+
 
 // dest is either "mode" or "chord".
 export function buildTonalPicker(ownerID, tableID, sectionIdx, dest, valueArray, chartCurrentValue, tableCurrentValue){
@@ -316,17 +409,23 @@ export const TonalPickerOrientation = Object.freeze({
  *  @param orientation is one of TonalPickerOrientation.VERTICAL or TonalPickerOrientation.HORIZONTAL .
  *  @param ownerID is a string to differntiate multiple picker sets on one page, it is not used to find the owner. 
  */
-export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue, tableChordCurrentValue, tableModeCurrentValue){
+export function buildTonalPickerSet(ownerID, orientation, tableID, sectionIdx, chordValueArray, chardChordCurrentValue, modeValueArray, modeCurrentValue, tableChordCurrentValue, tableModeCurrentValue, tonalSourceSet = TonalSourceSet.NAMEDNOTE){
     let chordPicker = buildTonalPicker(ownerID, tableID, sectionIdx, "chords", chordValueArray, chardChordCurrentValue, tableChordCurrentValue)                                         
     let modePicker =  buildTonalPicker(ownerID, tableID, sectionIdx, "modes",  modeValueArray,  modeCurrentValue, tableModeCurrentValue);
+    let tonalSourceSelect = formatTonalSourceSetSelect(ownerID, tableID, sectionIdx, tonalSourceSet);
     
     let tbl;
     if  (orientation === TonalPickerOrientation.HORIZONTAL){
-        tbl = `<table class='TonalPickerHoriz'><tr><td>${chordPicker}</td><td>${modePicker}</td></tr></table>`;
+        tbl = `<table class='TonalPickerHoriz'><tr><td>${tonalSourceSelect}</td><td>${chordPicker}</td><td>${modePicker}</td></tr></table>`;
     } else {
-        tbl = `<table class='TonalPickerVert'><tr><td>${chordPicker}</td></tr><tr><td>${modePicker}</td></tr></table>`;
+        tbl = `<table class='TonalPickerVert'><tr><td>${tonalSourceSelect}</td></tr><tr><td>${chordPicker}</td></tr><tr><td>${modePicker}</td></tr></table>`;
     }
     return tbl;
+}
+
+globalThis.changeTonalSourceSet = function changeTonalSourceSet(ownerID, tableID, sectionIdx, tonalSourceSet){
+    linkToSectionTableTonalSourceSet(sectionIdx, tableID, tonalSourceSet, false);
+    linkToSectionChangedTonal();
 }
 
 globalThis.pickTonal = function pickTonal(ownerID, tableID, sectionIdx, dest, val, valueArray, chartCurrentValue){

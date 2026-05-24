@@ -923,6 +923,9 @@ export class Song extends SongPersistence {
                 if (!newSectionNotes.mode && oldSectionNotes.mode) {
                     newSectionNotes.mode = oldSectionNotes.mode;
                 }
+                if (!newSectionNotes.tonalSourceSet && oldSectionNotes.tonalSourceSet) {
+                    newSectionNotes.tonalSourceSet = oldSectionNotes.tonalSourceSet;
+                }
             } else {
                 section.sectionNotesByTable[newKey] = oldSectionNotes;
             }

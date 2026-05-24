@@ -1,4 +1,5 @@
 import * as Constants from './Constants.js';
+import { Note } from './Note.js';
 
 const { Chord } = globalThis.Tonal?.Chord
     ? globalThis.Tonal
@@ -7,24 +8,31 @@ const { Scale } = globalThis.Tonal?.Scale
     ? globalThis.Tonal
     : await import('tonal');
 
+export const TonalSourceSet = Object.freeze({
+    NAMEDNOTE: 'NamedNote',
+    SINGLENOTE: 'SingleNote',
+    TINYNOTE: 'TinyNote'
+});
+
 export function getTonal(theSong, section){
     let tablesResult = {};
     let rootKey = theSong.noteIDToNoteName(section.rootID);
     section.getAllSectionNotes().forEach(([tableID, sn]) => {
         let result = {};
-        let namedNotes = [];
-        Object.entries(sn?.namedNotes || {}).forEach(([noteName, noteObj]) => {
-            if (noteObj && Object.keys(noteObj).length > 0) {
-                namedNotes.push(noteName);
-            }
-        });
+        let tonalSourceSet = getEffectiveTonalSourceSet(sn);
+        let namedNotes = collectTonalSourceNoteNames(sn, tonalSourceSet);
         let normalizedNamedNotes = normalizeChord(namedNotes, rootKey);
         let chords = Chord.detect(normalizedNamedNotes);
         result.normalizedNamedNotes = normalizedNamedNotes;
         result.chords = chords;
-        result.scale = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+        result.scale = [];
+        if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
+            let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
+            result.scale = filterWesternScales(worldScales);
+        }
         result.chord = sn.chord;
         result.mode = sn.mode;
+        result.tonalSourceSet = tonalSourceSet;
         tablesResult[tableID] = result;
     });
     return tablesResult;
@@ -33,18 +41,9 @@ export function getTonal(theSong, section){
 export function getTonalForTable(theSong, section, tablename){
     let rootKey = theSong.noteIDToNoteName(section.rootID);
     let result = {};
-    let namedNotes = [];
-    let tableSectionNotes = null;
-    section.getAllSectionNotes().forEach(([tableID, sn]) => {
-        if (tablename === tableID){
-            tableSectionNotes = sn;
-            Object.entries(sn?.namedNotes || {}).forEach(([noteName, noteObj]) => {
-                if (noteObj && Object.keys(noteObj).length > 0) {
-                    namedNotes.push(noteName);
-                }
-            });
-        }
-    });
+    let tableSectionNotes = section.sectionNotesByTable?.[tablename] || null;
+    let tonalSourceSet = getEffectiveTonalSourceSet(tableSectionNotes);
+    let namedNotes = collectTonalSourceNoteNames(tableSectionNotes, tonalSourceSet);
     let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
@@ -56,7 +55,52 @@ export function getTonalForTable(theSong, section, tablename){
     result.chords = chords;
     result.chord = tableSectionNotes ? tableSectionNotes.chord : "";
     result.mode = tableSectionNotes ? tableSectionNotes.mode : "";
+    result.tonalSourceSet = tonalSourceSet;
     return result;
+}
+
+export function getEffectiveTonalSourceSet(sectionNotes){
+    const tonalSourceSet = sectionNotes?.tonalSourceSet || "";
+    switch (tonalSourceSet) {
+        case TonalSourceSet.SINGLENOTE:
+        case TonalSourceSet.TINYNOTE:
+        case TonalSourceSet.NAMEDNOTE:
+            return tonalSourceSet;
+        default:
+            return TonalSourceSet.NAMEDNOTE;
+    }
+}
+
+function collectTonalSourceNoteNames(sectionNotes, tonalSourceSet) {
+    switch (tonalSourceSet) {
+        case TonalSourceSet.SINGLENOTE:
+            return collectPlayedNoteNamesByStyle(sectionNotes, Note.STYLENUM_SINGLE);
+        case TonalSourceSet.TINYNOTE:
+            return collectPlayedNoteNamesByStyle(sectionNotes, Note.STYLENUM_TINY);
+        case TonalSourceSet.NAMEDNOTE:
+        default:
+            return collectNamedNoteNames(sectionNotes);
+    }
+}
+
+function collectNamedNoteNames(sectionNotes) {
+    let noteNames = [];
+    Object.entries(sectionNotes?.namedNotes || {}).forEach(([noteName, noteObj]) => {
+        if (noteObj && Object.keys(noteObj).length > 0) {
+            noteNames.push(noteName);
+        }
+    });
+    return noteNames;
+}
+
+function collectPlayedNoteNamesByStyle(sectionNotes, styleNum) {
+    let noteNames = [];
+    (sectionNotes?.playedNotes || []).forEach((noteObj) => {
+        if (noteObj && noteObj.styleNum === styleNum && noteObj.noteName) {
+            noteNames.push(noteObj.noteName);
+        }
+    });
+    return noteNames;
 }
 
 

@@ -731,7 +731,6 @@ export function performCmdAction(menuItem, args){
 			toggleFullscreen();
 			break;
 		case "setMenuPrefs":
-			console.log("setMenuPrefs:"+JSON.stringify(args));
 			var c = args["key"];
 			if (c == "s"){ //"short"
 				gMenuFile.tall = false;

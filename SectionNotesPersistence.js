@@ -1,6 +1,7 @@
 import { Note } from './Note.js';
 
 const sectionNotesDefaults = {
+    tonalSourceSet: ""
 }
 
 export class SectionNotesPersistence {
@@ -9,6 +10,7 @@ export class SectionNotesPersistence {
         this.recordedNotes = {};
         this.chord = "";
         this.mode = "";
+        this.tonalSourceSet = "";
         
         Object.assign(this, sectionNotesDefaults, obj);
 

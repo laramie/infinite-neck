@@ -266,7 +266,7 @@ export function colorNote(cell) {
                                                  res.tableID, idx, 
                                                  tonalResult.chords, theCurrentSection.chartChord, 
                                                  tonalResult.scale,  theCurrentSection.chartMode,
-                                                 tonalResult.chord, tonalResult.mode);
+                                                 tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
         
         $('#'+res.tableID+'_captionRowTonalInfo').html(tonalPickerSet); //"_captionRowTonalInfo" from TableBuilder
         updatePrintSections(); //infinite-neck, rather than updateSectionStatus, which is too heavy.
@@ -740,7 +740,7 @@ export function replayTable(replayOptions){
                                                  replayOptions.listenToTablename, idx, 
                                                  tonalResult.chords, currSection.chartChord, 
                                                  tonalResult.scale,  currSection.chartMode,
-                                                 tonalResult.chord, tonalResult.mode);
+                                                 tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 

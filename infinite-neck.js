@@ -1230,6 +1230,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 	}
 
+		export function linkToSectionTableTonalSourceSet(idx, tableID, tonalSourceSet) {
+			let section = getSong().sections[idx];
+			if (!section){
+				return;
+			}
+			let sn = section.getSectionNotes(tableID);
+			sn.tonalSourceSet = tonalSourceSet;
+			let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
+			if (doSectionChanged){
+				sectionChanged();
+			}
+		}
+
 	export function linkToSectionTableChord(idx, tableID, chord) {
 		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
 		if (!sn){
