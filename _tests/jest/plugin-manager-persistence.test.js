@@ -355,6 +355,44 @@ describe('PluginManager plugin persistence', () => {
     expect(intervalsNode.caption).toContain('[${plugin:transpose:intervals}]');
   });
 
+  test('plugins without registered events omit managed enable menu items', () => {
+    const manager = createManagerWithPlugins();
+    const clipNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'clip');
+    const moveNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'move');
+
+    expect(clipNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
+    expect(clipNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
+    expect(clipNode.children[0].name).toBe('bury');
+
+    expect(moveNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
+    expect(moveNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
+    expect(moveNode.children[0].name).toBe('bury');
+  });
+
+  test('plugins with registered events keep managed enable menu items', () => {
+    const manager = createManagerWithPlugins();
+    const transposeNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'transpose');
+    const arpeggioNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'arpeggio');
+
+    expect(transposeNode.children[0].name).toBe('enabled');
+    expect(transposeNode.children[1].name).toBe('enableOnSongLoad');
+
+    expect(arpeggioNode.children[0].name).toBe('enabled');
+    expect(arpeggioNode.children[1].name).toBe('enableOnSongLoad');
+  });
+
+  test('plugins without registered events suppress the enabled status mark', () => {
+    const manager = createManagerWithPlugins();
+    const clipEntry = manager.getPluginEntry('clip');
+    const transposeEntry = manager.getPluginEntry('transpose');
+
+    clipEntry.enabled = true;
+    transposeEntry.enabled = true;
+
+    expect(manager.buildPluginStatusSuffix(clipEntry)).toBe('');
+    expect(manager.buildPluginStatusSuffix(transposeEntry)).toContain('&#x1F5F9;');
+  });
+
   test('pluginAction:invoke passes menu input args through to the plugin action', () => {
     const manager = createManagerWithPlugins();
     const song = createSongWithTunings();

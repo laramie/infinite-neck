@@ -221,7 +221,7 @@ export class PluginManager {
     const pluginId = plugin.getId();
     const statusToken = `plugin:${pluginId}:statusSuffix`;
     const pluginChildren = [
-      ...this.buildManagedPropertyNodes(pluginId),
+      ...this.buildManagedPropertyNodes(plugin),
       ...plugin.getVisibleMenuChildren()
     ];
     return new MenuItemProxy(plugin, {
@@ -234,12 +234,27 @@ export class PluginManager {
     });
   }
 
-  buildManagedPropertyNodes(pluginId) {
-    return [
-      this.buildManagedBooleanNode(pluginId, 'enabled', 'Enable', 'E'),
-      this.buildManagedBooleanNode(pluginId, 'enableOnSongLoad', 'Load enabled', 'L'),
-      this.buildManagedBuryNode(pluginId)
-    ];
+  pluginHasRegisteredEvents(plugin) {
+    if (!plugin || typeof plugin.getEventNames !== 'function') {
+      return false;
+    }
+    const eventNames = plugin.getEventNames();
+    return Array.isArray(eventNames) && eventNames.length > 0;
+  }
+
+  buildManagedPropertyNodes(plugin) {
+    const pluginId = plugin.getId();
+    const managedNodes = [];
+
+    if (this.pluginHasRegisteredEvents(plugin)) {
+      managedNodes.push(
+        this.buildManagedBooleanNode(pluginId, 'enabled', 'Enable', 'E'),
+        this.buildManagedBooleanNode(pluginId, 'enableOnSongLoad', 'Load enabled', 'L')
+      );
+    }
+
+    managedNodes.push(this.buildManagedBuryNode(pluginId));
+    return managedNodes;
   }
 
   buildManagedBooleanNode(pluginId, propertyName, caption, trigger) {
@@ -642,7 +657,7 @@ export class PluginManager {
 
   buildPluginStatusSuffix(entry) {
     const marks = [];
-    if (entry.enabled) {
+    if (entry.enabled && this.pluginHasRegisteredEvents(entry.plugin)) {
       marks.push(ENABLED_CHECKMARK);
     }
     if (this.hasPersistedSongState(entry.plugin.getId())) {
