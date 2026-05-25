@@ -89,6 +89,12 @@ This keeps the existing note rendering, highlighting, playback classes, and clic
 - Added a focused Jest test for gating behavior in the helper module.
 - Manual visual validation is still recommended in the browser for final key proportions and text placement.
 
+## Follow-Up Visual Refinement
+
+- Adjusted the piano CSS so clicked note fills do not cover the entire visible key shell.
+- The skeuomorphic key shell and the active note face are now treated as separate layers.
+- The inset spacing is derived from existing theme variables such as `--cell-spacing` and `--named-note-radius`, so user theme and display-size choices continue to influence the result.
+
 ## Recommended Follow-Up Checks
 
 1. Test `PianoSkeuomorphic` with `pianoSkeuomorphic` on and off.

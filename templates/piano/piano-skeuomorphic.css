@@ -2,6 +2,12 @@
     --piano-white-key-width: clamp(2.3em, 3.4vw, 3.1em);
     --piano-black-key-width: calc(var(--piano-white-key-width) * 0.64);
     --piano-black-key-height: 0.64;
+    --piano-white-face-side-gap: max(2px, calc(var(--cell-spacing) * 0.18));
+    --piano-white-face-top-gap: max(2px, calc(var(--cell-spacing) * 0.10));
+    --piano-white-face-bottom-gap: max(3px, calc(var(--cell-spacing) * 0.18));
+    --piano-black-face-side-gap: max(1px, calc(var(--cell-spacing) * 0.10));
+    --piano-black-face-top-gap: max(1px, calc(var(--cell-spacing) * 0.08));
+    --piano-black-face-bottom-gap: max(2px, calc(var(--cell-spacing) * 0.12));
 }
 
 table.fretTable.pianoSkeuomorphicTable {
@@ -48,7 +54,26 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey {
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay {
+    position: absolute;
+    top: var(--piano-white-face-top-gap);
+    right: var(--piano-white-face-side-gap);
+    bottom: var(--piano-white-face-bottom-gap);
+    left: var(--piano-white-face-side-gap);
+    width: auto !important;
+    height: auto !important;
+    min-width: 0;
+    min-height: 0;
     border-radius: inherit;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey,
@@ -69,6 +94,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey {
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
+    box-sizing: border-box;
     position: absolute;
     top: 0;
     left: calc(var(--piano-black-key-width) * -0.5);
@@ -79,6 +105,17 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
     background: linear-gradient(180deg, #534f49 0%, #1b1917 18%, #090808 100%);
     box-shadow: inset -0.12em -0.14em 0.24em rgba(255, 255, 255, 0.08), 0.14em 0.22em 0.3em rgba(0, 0, 0, 0.45);
     cursor: pointer;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote {
+    top: var(--piano-black-face-top-gap);
+    right: var(--piano-black-face-side-gap);
+    bottom: var(--piano-black-face-bottom-gap);
+    left: var(--piano-black-face-side-gap);
+    width: auto;
+    height: auto;
+    border-radius: calc(var(--named-note-radius) * 0.55);
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote,
