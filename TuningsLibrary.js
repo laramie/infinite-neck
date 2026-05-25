@@ -7,6 +7,7 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
+import { supportsPianoSkeuomorphic } from './templates/piano/piano-skeuomorphic.builder.js';
 
 
 
@@ -97,7 +98,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th>" : "")
         +"<th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
+        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
         
     );
     table.append(trh);
@@ -129,6 +130,17 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + '<input class="checkboxPN"   id="cbPN' + tun.baseID + '" '
             + ' type="checkbox" name="cbnPN' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedPN + '></nobr></label>';
+
+        var pianoSkeuomorphicSupported = supportsPianoSkeuomorphic(tun);
+        var checkedPianoSkeuomorphic = tun.pianoSkeuomorphic ? " checked " : "";
+        var disabledPianoSkeuomorphic = pianoSkeuomorphicSupported ? "" : " disabled ";
+        var pianoSkeuomorphicTitle = pianoSkeuomorphicSupported
+            ? ' title="Decorate this one-row piano tuning as a keyboard." '
+            : ' title="Piano skeuomorphic layout is limited to one-row Piano tunings." ';
+        var checkboxPianoSkeuomorphic = '<label for="cbPianoSkeuomorphic' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxPianoSkeuomorphic"   id="cbPianoSkeuomorphic' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnPianoSkeuomorphic' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedPianoSkeuomorphic + disabledPianoSkeuomorphic + pianoSkeuomorphicTitle + '></nobr></label>';
 
         var checkedShowDiamonds = tun.showDiamonds ? " checked " : "";
         var checkboxShowDiamonds = '<label for="cbShowDiamonds' + tun.baseID + '"><nobr>'
@@ -197,6 +209,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html("" + BN));
         tr.append($("<td>").html(checkboxLH));
         tr.append($("<td>").html(checkboxPN));
+        tr.append($("<td>").html(checkboxPianoSkeuomorphic));
         tr.append($("<td>").html(checkboxShowDiamonds));
         tr.append($("<td>").html(checkboxNut));
         tr.append($("<td>").html(selectBlock)); //numFrets
@@ -523,6 +536,12 @@ export function bindFormTuningsEvents() {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
         tuning.pianoNamesRow = this.checked;
+        requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .checkboxPianoSkeuomorphic').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.pianoSkeuomorphic = this.checked;
         requestReinstallAllTuningsTables();
     });
     $('#frmTunings .checkboxShowDiamonds').change(function () {
