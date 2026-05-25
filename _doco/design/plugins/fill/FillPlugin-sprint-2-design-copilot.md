@@ -4,8 +4,8 @@
 
 Per request, I reviewed:
 
-- sprint-1 in [sprint-1.md](sprint-1.md)
-- sprint-2 in [sprint-2.md](sprint-2.md)
+- sprint-1 in [sprint-101-fill-plugin.md](sprint-101-fill-plugin.md)
+- sprint-2 in [sprint-108-fill-plugin-more-types.md](sprint-108-fill-plugin-more-types.md)
 - the current sprint-2 design in [FillPlugin-sprint-2-design.md](FillPlugin-sprint-2-design.md)
 - the completed sprint-1 FillPlugin code now in the repository at [plugins/fill/FillPlugin.js](../../../../plugins/fill/FillPlugin.js) and [plugins/fill/properties.json](../../../../plugins/fill/properties.json)
 
@@ -295,7 +295,7 @@ But the design should state that explicitly.
 
 ## Stale references / file-location issues found
 
-I found stale references in [sprint-2.md](sprint-2.md).
+I found stale references in the old sprint-planning filename now replaced by [sprint-108-fill-plugin-more-types.md](sprint-108-fill-plugin-more-types.md).
 
 The file currently refers to these names:
 
@@ -307,13 +307,11 @@ But in the current directory, the actual sprint-2 design files use the hyphenate
 
 - [FillPlugin-sprint-2-design.md](FillPlugin-sprint-2-design.md)
 - [FillPlugin-sprint-2-design-copilot.md](FillPlugin-sprint-2-design-copilot.md)
+- [FillPlugin-sprint-2-implementation-plan.md](FillPlugin-sprint-2-implementation-plan.md)
 
-And I do not see any implementation-plan file for sprint-2 yet in this directory.
+So there was at least one stale-location / stale-filename issue in the older planning document:
 
-So there are at least two stale-location / stale-filename issues:
-
-1. `sprint-2.md` uses `sprint2` where the actual files use `sprint-2`
-2. `sprint-2.md` references an implementation-plan file that does not currently exist here
+1. the old sprint planning doc used `sprint2` where the actual files use `sprint-2`
 
 ## Bottom line
 

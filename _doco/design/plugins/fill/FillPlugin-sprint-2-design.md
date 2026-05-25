@@ -77,8 +77,8 @@ Important: all three sibling types can have roles assigned to root,chord,scale, 
 ## Request
 
 Copilot, 
-- please review sprint-1, documented here: (sprint-1.md) in this directory.  
-- Please then review sprint-2, planned here: (sprint-2.md)
+- please review sprint-1, documented here: (sprint-101-fill-plugin.md) in this directory.  
+- Please then review sprint-2, planned here: (sprint-108-fill-plugin-more-types.md)
 - Please then review this document's section "Iteration 1" as the launch of this feature sprint, and reply in (FillPlugin-sprint-2-design-copilot.md) with design feasibility based on the completed code from sprint-1 in the repository now, and include a section of questions and clarifications needed from the Design team.
 - We have moved a bunch of files around in the _doco/design/ area to organize them into sprints and features, so if any references to stale locations persist, please let us know.
 

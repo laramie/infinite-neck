@@ -1,12 +1,48 @@
 # sprints
 
-- [sprint-111-fill-plugin](../design/plugins/fill/sprint-1.md)
-  - Design and implement FillPlugin
-  - complete 20260523
+- [sprint-100-my-tunings](../design/myTunings/sprint-100-my-tunings.md)
+  - Split tuning management into shared allTunings and user-specific myTunings with a dedicated My Tunings view.
+  - planning notes captured 20260320
 
-- [sprint-112-fill-plugin-more-types](../design/plugins/fill/sprint-2.md)
-  - FillPlugin supports NamedNote only. Add more note-types: SingleNote, TinyNote
-  - complete 20260523
+- [sprint-101-fill-plugin](../design/plugins/fill/sprint-101-fill-plugin.md)
+  - Design and implement FillPlugin as a command-menu-driven note-filling plugin with section and song cleanup actions.
+  - complete
+
+- [sprint-102-transpose-plugin](../design/plugins/transpose/sprint-102-transpose-plugin.md)
+  - Separate TransposePlugin reset behaviors into original-baseline and current-baseline actions.
+  - implementation plan written 20260512
+
+- [sprint-103-arpeggio-position](../design/plugins/arpeggio/sprint-103-arpeggio-position.md)
+  - Add a position style to ArpeggioPlugin with per-section position arrays and loop-driven state.
+  - design and implementation notes written through 20260521
+
+- [sprint-104-file-info](../design/info/sprint-104-file-info.md)
+  - Add a song Info page with rendered HTML, an Edit tab, and persisted open-on-load behavior.
+  - design and implementation notes written through 20260521
+
+- [sprint-105-map-spacebar](../design/transport/sprint-105-map-spacebar.md)
+  - Add configurable spacebar mappings for transport and navigation actions with clarified reset semantics.
+  - design and implementation notes written through 20260523
+
+- [sprint-106-transport-controller](../design/transport/sprint-106-transport-controller.md)
+  - Introduce TransportController to centralize transport verbs and lifecycle event ownership.
+  - implementation plan written 20260520
+
+- [sprint-107-move-plugin](../design/plugins/move/sprint-107-move-plugin.md)
+  - Design MovePlugin for relocating played and recorded notes with user-selectable drop and octave rules.
+  - design and implementation notes written through 20260522
+
+- [sprint-108-fill-plugin-more-types](../design/plugins/fill/sprint-108-fill-plugin-more-types.md)
+  - Extend FillPlugin planning beyond the initial release to cover additional note types and type-specific rules.
+  - planning phase 20260523
+
+- [sprint-109-clip-plugin](../design/plugins/clip/sprint-109-clip-plugin.md)
+  - Design ClipPlugin for cut, copy, and paste of note sets through Graveyard-backed clips.
+  - design cleanup complete and coding requested 20260523
+
+- [sprint-110-tonal-data](../design/tonal/sprint-110-tonal-data.md)
+  - Explore Tonal.js chord and mode recommendations and the widget data emitted from current section notes.
+  - exploratory notes written 20260524
 
 
 # TODO
