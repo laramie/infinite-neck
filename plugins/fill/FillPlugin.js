@@ -1,5 +1,5 @@
 import properties from './properties.json' with { type: 'json' };
-import { PluginProperty, buildCaption } from '../PluginProperty.js';
+import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
@@ -60,6 +60,8 @@ const ROLE_CONFIG = {
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
+const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
+const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
 
 function stripHtml(text) {
   return `${text || ''}`.replace(/<[^>]+>/g, '');
@@ -386,14 +388,40 @@ export class FillPlugin {
       children: [
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
-        this.getProperty('minFret').getMenuNodeSpec(this),
-        this.getProperty('maxFret').getMenuNodeSpec(this),
-        this.getProperty('minRow').getMenuNodeSpec(this),
-        this.getProperty('maxRow').getMenuNodeSpec(this),
+        this.buildPositionsMenuNode(),
+        this.buildStringsMenuNode(song),
         this.buildFamilyMenuNode('named', song),
         this.buildFamilyMenuNode('single', song),
         this.buildFamilyMenuNode('tiny', song),
         this.getProperty('apply').getMenuNodeSpec(this)
+      ]
+    });
+  }
+
+  buildPositionsMenuNode() {
+    const token = `plugin:${this.id}:${POSITIONS_SUMMARY_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'positions',
+      caption: `${buildCaption('positions', 'p')} [${buildValueReference(token)}]`,
+      trigger: 'p',
+      vars: [token],
+      children: [
+        this.getProperty('minFret').getMenuNodeSpec(this),
+        this.getProperty('maxFret').getMenuNodeSpec(this)
+      ]
+    });
+  }
+
+  buildStringsMenuNode(song = getSong()) {
+    const token = `plugin:${this.id}:${STRINGS_SUMMARY_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'strings',
+      caption: `${buildCaption('strings', 's')} [${buildValueReference(token)}]`,
+      trigger: 's',
+      vars: [token],
+      children: [
+        this.getProperty('minRow').getMenuNodeSpec(this),
+        this.getProperty('maxRow').getMenuNodeSpec(this)
       ]
     });
   }
@@ -577,6 +605,12 @@ export class FillPlugin {
     }
     if (fieldName === 'singleAddTiny') {
       return this.resolveSingleAddTinyDisplay(song);
+    }
+    if (fieldName === POSITIONS_SUMMARY_TOKEN) {
+      return `${this.getProperty('minFret')?.getValue()}:${this.getProperty('maxFret')?.getValue()}`;
+    }
+    if (fieldName === STRINGS_SUMMARY_TOKEN) {
+      return `${this.resolveValue('minRow', { song })}:${this.resolveValue('maxRow', { song })}`;
     }
     for (const familyName of FAMILY_NAMES) {
       for (const roleName of ROLE_NAMES) {

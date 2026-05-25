@@ -293,6 +293,13 @@ export function txtCmdLine_keypress(e) {
 }
 
 export function txtCmdLine_keydown(e) {
+    if (e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        e.stopPropagation();
+        applyMenuPrefKey('s');
+        return;
+    }
+
     if (e.key === 'ArrowUp') {
         e.preventDefault();
         e.stopPropagation();

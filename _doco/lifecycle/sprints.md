@@ -45,7 +45,7 @@
   - exploratory notes written 20260524
 
 
-# TODO
+# ARCHIVED: What we did to generate this document
 
 We'd like to fill out the `# sprints` section above with the sprints we already have documented, using the document organization we are moving to.
 

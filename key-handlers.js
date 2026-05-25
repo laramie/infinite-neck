@@ -23,6 +23,7 @@ import {
 } from './looper.js';
 import {
 	buildChildMenuCaptionsRow,
+	diveMenu,
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
@@ -148,6 +149,25 @@ function moveSelectByClampedStep(selectSelector, delta) {
 	jSelect.prop('selectedIndex', nextIndex).trigger('change');
 }
 
+function parkCommandLineAtPath(triggerPath = '') {
+	setMenuAtRoot();
+	let currentMenu = gMenuPointer;
+	for (const trigger of `${triggerPath}`) {
+		const children = currentMenu?.children || [];
+		const childIdx = children.findIndex((child) => child && child.trigger === trigger);
+		if (childIdx < 0) {
+			throw new Error(`Command-line path not found: /${triggerPath}`);
+		}
+		const child = children[childIdx];
+		diveMenu(child, childIdx);
+		currentMenu = gMenuPointer;
+	}
+	clearCmdResults();
+	$("#txtCmdLine").val('');
+	showCmdLine();
+	updateCmdLineView();
+}
+
 function isTextEditingTarget(target) {
 	if (!target) {
 		return false;
@@ -220,9 +240,17 @@ function document_keypress(e) {
             case "B":
                 getSong().prevBeat();
                 break;
-            case "c": //"_C_olor"
+			case "c": //"_C_olor"
 				$("#cbAutomaticColor").trigger('click');
                 break;
+			case "C":
+				try {
+					parkCommandLineAtPath('fpc');
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "e":
                 toggleWiringOpenState();
                 break;
@@ -256,20 +284,34 @@ function document_keypress(e) {
             case "N":
                 getSong().nextBeat();
                 break;
-            case "p":
-            case "P":
+			case "p":
                 showOneMenu("#palette");
                 break;
+			case "P":
+				try {
+					parkCommandLineAtPath('fp');
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "q":
                 $('#divQuick').toggle();
                 break;
 			case "r":
                 showOneMenu("#divChart");
                 break;
-            case "s":
-            case "S":
+			case "s":
                 toggleSectionDrawer();
                 break;
+			case "S":
+				try {
+					runActionByName('sectionAdd', {});
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "t":
                 toggleTransport();
                 break;

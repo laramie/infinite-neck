@@ -1,7 +1,7 @@
 [
   {
     "name": "targetTable",
-    "caption": "Target table",
+    "caption": "Table",
     "trigger": "T",
     "datatype": "org.dynamide.Select",
     "value": "",

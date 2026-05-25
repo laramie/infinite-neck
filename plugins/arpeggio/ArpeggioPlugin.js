@@ -20,7 +20,9 @@ const SHOW_NOTE_NAME_ALL = 'all';
 const SHOW_NOTE_NAME_PLAYED = 'played';
 const TARGET_TABLE_OPTION_LIMIT = 9;
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
-const POSITIONS_UNSET_DISPLAY = '<unset>';
+const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
+const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
+const POSITIONS_UNSET_DISPLAY = '[]';
 const POSITIONS_MENU_DEFAULT = '[[0,3],[4,7],[8,12]]';
 const POSITION_NOT_PLAYED_YET = -1;
 
@@ -66,15 +68,19 @@ export class ArpeggioPlugin {
 
   getVisibleMenuChildren() {
     this.refreshDynamicPropertyOptions(this.manager?.song || getSong());
-    const visibleProperties = this.properties
-      .filter((property) => property.visibleInMenu)
-      .map((property) => property.getMenuNodeSpec(this));
-    const targetTableNode = visibleProperties.find((node) => node?.name === 'targetTable');
-    const otherNodes = visibleProperties.filter((node) => node?.name !== 'targetTable');
     return [
-      targetTableNode,
+      this.getProperty('targetTable')?.getMenuNodeSpec(this),
+      this.getProperty('apply')?.getMenuNodeSpec(this),
+      this.getProperty('clear')?.getMenuNodeSpec(this),
       this.buildPositionsMenuNode(),
-      ...otherNodes
+      this.buildStringsMenuNode(),
+      this.getProperty('lowToHigh')?.getMenuNodeSpec(this),
+      this.getProperty('upOnly')?.getMenuNodeSpec(this),
+      this.getProperty('style')?.getMenuNodeSpec(this),
+      this.getProperty('showNoteName')?.getMenuNodeSpec(this),
+      this.getProperty('colorNotes')?.getMenuNodeSpec(this),
+      this.getProperty('flashcard')?.getMenuNodeSpec(this),
+      this.getProperty('help')?.getMenuNodeSpec(this)
     ].filter(Boolean);
   }
 
@@ -277,8 +283,14 @@ export class ArpeggioPlugin {
     if (this.isStringLimitProperty(fieldName)) {
       return this.toDisplayStringNumber(this.getProperty(fieldName)?.getValue() || 0, song);
     }
+    if (fieldName === POSITIONS_SUMMARY_TOKEN) {
+      return this.getCurrentSectionPositionsSummary(song);
+    }
     if (fieldName === POSITIONS_VALUE_TOKEN) {
       return this.getCurrentSectionPositionsDisplay(song);
+    }
+    if (fieldName === STRINGS_SUMMARY_TOKEN) {
+      return this.getCurrentStringsSummary(song);
     }
     return undefined;
   }
@@ -391,12 +403,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildPositionsMenuNode() {
+    const summaryToken = `plugin:${this.id}:${POSITIONS_SUMMARY_TOKEN}`;
     const token = `plugin:${this.id}:${POSITIONS_VALUE_TOKEN}`;
     return new MenuItemProxy(this, {
       name: 'positions',
-      caption: buildCaption('positions', 'p'),
+      caption: `${buildCaption('positions', 'p')} [${buildValueReference(summaryToken)}]`,
       trigger: 'p',
+      vars: [summaryToken],
       children: [
+        this.getProperty('minFret').getMenuNodeSpec(this),
+        this.getProperty('maxFret').getMenuNodeSpec(this),
         new MenuItemProxy(this, {
           name: 'positions:clearAllSections',
           caption: buildCaption('cLear all sections', 'L'),
@@ -459,6 +475,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
             id: 'value'
           }
         })
+      ]
+    });
+  }
+
+  buildStringsMenuNode() {
+    const summaryToken = `plugin:${this.id}:${STRINGS_SUMMARY_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'strings',
+      caption: `${buildCaption('strings', 's')} [${buildValueReference(summaryToken)}]`,
+      trigger: 's',
+      vars: [summaryToken],
+      children: [
+        this.getProperty('minRow').getMenuNodeSpec(this),
+        this.getProperty('maxRow').getMenuNodeSpec(this)
       ]
     });
   }
@@ -631,6 +661,21 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getCurrentSectionPositionsDisplay(song = getSong()) {
     return this.getSectionPositionsDisplay(this.getTargetSection(song));
+  }
+
+  getCurrentSectionPositionsSummary(song = getSong()) {
+    const section = this.getTargetSection(song);
+    const positions = this.getSectionPositions(section);
+    if (positions) {
+      return this.formatPositionsValue(positions);
+    }
+    const minFret = Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0;
+    const maxFret = Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0;
+    return `${minFret}:${maxFret}`;
+  }
+
+  getCurrentStringsSummary(song = getSong()) {
+    return `${this.resolveValue('minRow', { song })}:${this.resolveValue('maxRow', { song })}`;
   }
 
   parsePositionsInput(rawValue) {

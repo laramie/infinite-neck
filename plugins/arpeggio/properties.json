@@ -1,7 +1,7 @@
 [
   {
     "name": "targetTable",
-    "caption": "Target table",
+    "caption": "Table",
     "trigger": "T",
     "datatype": "org.dynamide.Select",
     "value": "",
@@ -35,23 +35,23 @@
   },
   {
     "name": "minFret",
-    "caption": "minFret position",
+    "caption": "minFret default position",
     "trigger": "m",
     "datatype": "Number",
     "value": 0,
     "defaultValue": 0,
     "inputCaption": "0..max fret",
-    "visibleInMenu": true
+    "visibleInMenu": false
   },
   {
     "name": "maxFret",
-    "caption": "maxFret position",
+    "caption": "maxFret default position",
     "trigger": "t",
     "datatype": "Number",
     "value": 12,
     "defaultValue": 12,
     "inputCaption": "0..max fret",
-    "visibleInMenu": true
+    "visibleInMenu": false
   },
   {
     "name": "minRow",
@@ -61,7 +61,7 @@
     "value": 0,
     "defaultValue": 0,
     "inputCaption": "1..max string",
-    "visibleInMenu": true
+    "visibleInMenu": false
   },
   {
     "name": "maxRow",
@@ -71,7 +71,7 @@
     "value": 0,
     "defaultValue": 0,
     "inputCaption": "1..max string",
-    "visibleInMenu": true
+    "visibleInMenu": false
   },
   {
     "name": "lowToHigh",
@@ -96,7 +96,7 @@
   {
     "name": "style",
     "caption": "style",
-    "trigger": "s",
+    "trigger": "y",
     "datatype": "org.dynamide.Select",
     "value": "every",
     "defaultValue": "every",
