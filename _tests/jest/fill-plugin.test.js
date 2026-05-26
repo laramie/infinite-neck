@@ -194,9 +194,9 @@ describe('FillPlugin', () => {
       'g',
       'p',
       's',
-      'n',
-      's',
-      't',
+      'N',
+      'S',
+      'T',
       'A'
     ]);
     expect(positionsNode.children.map((child) => child.name)).toEqual([
