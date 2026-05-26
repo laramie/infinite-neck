@@ -18,21 +18,21 @@ const TARGET_TABLE_OPTION_LIMIT = 9;
 const FAMILY_CONFIG = {
   named: {
     caption: 'NamedNote',
-    trigger: 'n',
+    trigger: 'N',
     styleNum: Note.STYLENUM_NAMED,
     supportsCopy: true,
     usesRange: false
   },
   single: {
     caption: 'SingleNote',
-    trigger: 's',
+    trigger: 'S',
     styleNum: Note.STYLENUM_SINGLE,
     supportsCopy: false,
     usesRange: true
   },
   tiny: {
     caption: 'TinyNote',
-    trigger: 't',
+    trigger: 'T',
     styleNum: Note.STYLENUM_TINY,
     supportsCopy: true,
     usesRange: true

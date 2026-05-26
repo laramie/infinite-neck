@@ -173,6 +173,8 @@ describe('FillPlugin', () => {
 
     const children = plugin.getVisibleMenuChildren();
     const optionsNode = children.find((child) => child.name === 'options');
+    const positionsNode = optionsNode.children.find((child) => child.name === 'positions');
+    const stringsNode = optionsNode.children.find((child) => child.name === 'strings');
     const namedNode = optionsNode.children.find((child) => child.name === 'named');
     const singleNode = optionsNode.children.find((child) => child.name === 'single');
     const tinyNode = optionsNode.children.find((child) => child.name === 'tiny');
@@ -180,10 +182,8 @@ describe('FillPlugin', () => {
     expect(optionsNode.children.map((child) => child.name)).toEqual([
       'chordFormula',
       'scaleFormula',
-      'minFret',
-      'maxFret',
-      'minRow',
-      'maxRow',
+      'positions',
+      'strings',
       'named',
       'single',
       'tiny',
@@ -192,14 +192,20 @@ describe('FillPlugin', () => {
     expect(optionsNode.children.map((child) => child.trigger)).toEqual([
       'c',
       'g',
-      'i',
-      'a',
-      'u',
-      'l',
+      'p',
+      's',
       'n',
       's',
       't',
       'A'
+    ]);
+    expect(positionsNode.children.map((child) => child.name)).toEqual([
+      'minFret',
+      'maxFret'
+    ]);
+    expect(stringsNode.children.map((child) => child.name)).toEqual([
+      'minRow',
+      'maxRow'
     ]);
     expect(namedNode.children.map((child) => child.name)).toEqual([
       'named:copyFromSingle',

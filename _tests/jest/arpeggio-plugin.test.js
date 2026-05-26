@@ -139,24 +139,38 @@ describe('ArpeggioPlugin sequencing', () => {
 	test('menu includes upper/lower string limits before low to high', () => {
 		const { plugin } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
 
-		const names = plugin.getVisibleMenuChildren().map((child) => child.name);
+		const children = plugin.getVisibleMenuChildren();
+		const names = children.map((child) => child.name);
+		const positionsNode = children.find((child) => child.name === 'positions');
+		const stringsNode = children.find((child) => child.name === 'strings');
 
 		expect(names).toEqual([
 			'targetTable',
-			'positions',
 			'apply',
 			'clear',
-			'help',
-			'minFret',
-			'maxFret',
-			'minRow',
-			'maxRow',
+			'positions',
+			'strings',
 			'lowToHigh',
 			'upOnly',
 			'style',
 			'showNoteName',
 			'colorNotes',
-			'flashcard'
+			'flashcard',
+			'help'
+		]);
+		expect(positionsNode.children.map((child) => child.name)).toEqual([
+			'minFret',
+			'maxFret',
+			'positions:clearAllSections',
+			'positions:clearCurrentSection',
+			'positions:copyToAllSections',
+			'positions:copyToUnsetSections',
+			'positions:refreshCurrentSection',
+			'positions:setCurrentSection'
+		]);
+		expect(stringsNode.children.map((child) => child.name)).toEqual([
+			'minRow',
+			'maxRow'
 		]);
 	});
 
@@ -746,7 +760,7 @@ describe('ArpeggioPlugin sequencing', () => {
 	test('positions current-section display resolves to canonical JSON or unset', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
 
-		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('<unset>');
+		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('[]');
 		plugin.setPositionsForCurrentSection(song, '0,2;3,5');
 		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('[[0,2],[3,5]]');
 	});

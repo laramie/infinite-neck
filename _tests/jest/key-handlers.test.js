@@ -59,6 +59,7 @@ jest.unstable_mockModule('../../looper.js', () => ({
 
 jest.unstable_mockModule('../../menu.js', () => ({
 	buildChildMenuCaptionsRow: jest.fn(() => ''),
+	diveMenu: jest.fn(),
 	dumpMenus: jest.fn(() => ''),
 	gMenuFile: {},
 	gMenuPointer: {},
