@@ -1,7 +1,12 @@
 # sprint-113-transpose-plugin-single-notes
 
 sprint number: 113
+
 sprint short name: transpose-plugin-single-notes
+
+date: 20260525
+
+Index of all sprints for reference to how other plugins have been discussed, designed, and implemented: [sprint planning index](_doco/lifecycle/sprints.md)
 
 ## Purpose
 
@@ -10,8 +15,8 @@ Purpose of this sprint is to:
 
 ## Sprint document locations
 
-- [sprint-111 design document](111-design.md) 
-- [sprint-111 implementation plan](111-implementation-plan.md) 
+- [sprint-113 design document](113-design.md) 
+- [sprint-113 implementation plan](113-implementation-plan.md) 
 
 ## Iterations
 

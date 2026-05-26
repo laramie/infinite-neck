@@ -38,3 +38,15 @@ The only supported "algorithm" supported is "string" so there is no menu item fo
 ## Request
 
 Copilot, please evaluate this design against the actual codebase for TransposePlugin and MovePlugin.  We feel it is straightforward, but if there are design holes or coding questions that need answers before coding, please bring them up in the draft implementation plan, which is your deliverable for this Iteration 1.  No code changes this Iteration 1.
+
+# Iteration 2: design questions answered
+
+We don't see a distinction between "octaves":0, "octaves":null, "octaves":undefined, "octaves":"", and "octaves":(n>numfrets%12)  They should all continue trying the maximum fret until the note becomes invisible, then just rely on Section storage.  When approaching the Nut, before they are given a negative fret number or one illegal with BanjoNut, wrap to the max visible octave, unless the instrument has less than an octave of frets, in which case wrap up one octave and rely on Section storage.
+
+A feature of MovePlugin to be replicated is that the notes are to be thought of as written to a scratch set, then all moved at once into the Section new positions.  So that a candidate note can never be thought to collide with a note that hasn't been calculated yet.  Since the entire set of notes is being moved (up, say), then in theory no notes from the current set on that string should ever clobber any other notes, since they are all moved/wrapped the same amount.  This should modify the request so far: if a user has requested "octaves":1 and there would be a collision, the algorithm should switch to "octaves":0, so that the entire neck can be used, including off-screen positions, thus ovoiding collisions, which is more important so the transposition can be non-lossy.  In this case, the "octaves" value should be rewritten so the User can see what happened.
+
+Invalid values for "octaves" upon parsing/validation should set "octaves":0, and a showMessages should be issued.  "help" should spell out the legal values statically. 
+
+All fields from SingleNote should be preserved.  The only other field needed would be whatever TransposePlugin currently uses to do "resetSong hard" and "reset" so that SingleNote gets reset the correct number of steps/semi-tones.
+
+To confirm, SingleNotes should participate in the "resetSong hard" and "resetSong" algorithm of TransposePlugin.
