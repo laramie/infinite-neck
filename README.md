@@ -1,3 +1,11 @@
+# Welcome to Laramie's infinite-neck
+
+<a href="http://demo.laramiecrocker.com/infinite-neck">infinite-neck</a> is a web app that helps you learn the entire fretboard of your instrument, for soloing, comping, playing chords, arpeggios, and modes the way professional session players do.  It teaches you how to understand music changes such as I-IV-V progression, so that you can play in any key, and gives you tools to move your practice through keys and transpositions.  Using strong visuals to grow your pattern-recognition skills, it guides you through practices, and lets you record and notate songs, progressions, chords, licks, and modes you are working on.  We support many instruments, such as guitars in any tunings, basses, cello, mandolin, banjo, Chapman stick, midi-pads, and piano.  More than a simple note and chord-finder for guitars, infinite-neck gives a whole new way of looking at instruments from a perspective of understanding what drives music--the patterns, fabrics, and modes of sound, melody, and harmony.
+
+Read our <a href="http://demo.laramiecrocker.com/infinite-neck/help.html">web documentation here</a>, try the <a href="http://demo.laramiecrocker.com/infinite-neck">infinite-neck</a> app on our website, and browse and download the code here on <a href="https://github.com/laramie/infinite-neck">GitHub</a>.  It is open source software, free for non-profit use and coding, and for running from a simple web server on your own workstation.
+
+The rest of this README is geared towards programmers (assistants and humans) who maintain the software, and anyone who would like to use the software or coding solutions for their own non-profit projects.
+
 # Documentation Routing Note
 
 For further details, please refer to the following documents:
