@@ -70,7 +70,7 @@ Iteration 2 answered the remaining design questions and refined expected behavio
 
 ## Planned implementation summary
 
-Implementation remains plugin-local and should follow this order:
+Implementation remained plugin-local and was completed in this order:
 
 1. audit `TransposePlugin` and `MovePlugin`
 2. confirm exact `SingleNote` storage shape and reset metadata usage
@@ -84,7 +84,63 @@ Implementation remains plugin-local and should follow this order:
 7. add collision fallback from `octaves:1` to full-neck/off-screen behavior
 8. integrate `SingleNote` into reset flows
 9. add tests
-10. update sprint notes with any confirmed code-level discoveries
+10. update sprint notes with confirmed code-level discoveries
+
+## Implementation outcome
+
+Implementation is complete.
+
+`TransposePlugin` now has:
+
+- `SingleNotes` toggle support, default `false`
+- `octaves` string-backed property, default empty
+- same-string `SingleNote` transposition across all sections and all section tables that map to a live `myTunings` entry
+- collision fallback from capped octave mode to full-neck/off-screen mode, with `octaves` rewritten to `0`
+- `SingleNote` participation in `apply`, `reset current interval`, `reset original`, and `Looper:OnResetSong`
+- help/summary output updated to describe the new options
+
+Validation was completed with Jest:
+
+- targeted transpose and persistence suites passed
+- full repository Jest suite passed
+- final green count: `28` suites, `323` tests
+
+## Code-confirmed adjustments
+
+The implementation matches the design direction, with these code-confirmed details:
+
+- `octaves` is implemented as a `String` plugin property rather than an integer-type property, because the plugin property system must preserve the semantic distinction between empty string and numeric values.
+- invalid `octaves` input normalizes to `0` and is surfaced through the plugin action/message response path, which is the plugin-local equivalent used here instead of adding a new direct UI contract.
+- existing `transposeSong()` behavior was intentionally preserved, so root/key transposition and existing named-note handling remain unchanged even when `NamedNotes` is `false`; the new `SingleNote` movement is additive to that existing path.
+- same-string `SingleNote` movement is implemented with plugin-local table/tuning traversal using `createTuningLayout()` from move helpers, rather than by introducing a new core API.
+- the implementation preserves all `SingleNote` object fields by cloning the original note object and only rewriting note-position fields and recalculated auto-color values.
+- collision fallback is evaluated on the fully transposed scratch result for a table before write-back, preserving the non-lossy behavior intended by Iteration 2.
+- off-screen storage is confirmed to work through normal `playedNotes` and `recordedNotes` persistence because the section note model does not clamp stored `col` values.
+
+## Implemented behavior summary
+
+### Menu/options
+
+- `named notes` remains default `true`
+- `single notes` is now present and defaults to `false`
+- `octaves` is now present and defaults to empty display `[]`
+- invalid `octaves` input stores as `0`
+- help text now lists legal `octaves` values statically
+
+### `SingleNote` transpose behavior
+
+- movement stays on the same string only
+- transpose updates `col`, `midinum`, and `noteName`
+- all other note fields are preserved
+- below-nut candidates wrap upward by octaves until they are legal for that string
+- full-neck mode uses the largest visible octave span available on the current string and then permits off-screen storage when needed
+- capped octave mode uses the requested octave span threshold; if that result would collide, the plugin falls back to full-neck/off-screen mode and rewrites `octaves` to `0`
+
+### Reset behavior
+
+- `reset current interval` reverses `SingleNote` movement back to the current sequence baseline
+- `reset original` reverses `SingleNote` movement back to the original baseline
+- `Looper:OnResetSong` soft/hard behavior now includes `SingleNote` movement through those same reset paths
 
 ## Expected behavior summary
 
@@ -93,7 +149,7 @@ Implementation remains plugin-local and should follow this order:
 - `named notes` remains default `true`
 - `single notes` defaults to `false`
 - `octaves` defaults to empty display `[]`
-- invalid `octaves` input becomes `0` with message output
+- invalid `octaves` input becomes `0` with plugin message output
 - help text should list accepted values and meanings
 
 ### `SingleNote` transpose behavior
@@ -119,7 +175,7 @@ Implementation remains plugin-local and should follow this order:
 
 ## Testing summary
 
-Tests should cover:
+Tests now cover:
 
 - menu defaults and parsing
 - invalid `octaves` normalization and messaging
@@ -133,6 +189,12 @@ Tests should cover:
 - coexistence with `NamedNote`
 - reset participation
 - unsupported note types unchanged
+
+Additional implemented coverage includes:
+
+- menu presence of `SingleNotes` and `octaves`
+- persistence/export of the new transpose properties
+- interval-reset restoration of moved `SingleNote` data
 
 ## Iterations
 

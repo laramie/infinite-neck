@@ -45,6 +45,26 @@
     "visibleInMenu": true
   },
   {
+    "name": "SingleNotes",
+    "caption": "single notes",
+    "trigger": "s",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "octaves",
+    "caption": "octaves",
+    "trigger": "o",
+    "datatype": "String",
+    "value": "",
+    "defaultValue": "",
+    "inputCaption": "empty|0|positive integer",
+    "visibleInMenu": true
+  },
+  {
     "name": "autoSharpsFlats",
     "caption": "auto sharps/flats",
     "trigger": "a",

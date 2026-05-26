@@ -16,7 +16,17 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
 
 function makeSection(rootID, sharps = false) {
-  return { rootID, sharps };
+  return {
+    rootID,
+    sharps,
+    sectionNotesByTable: {},
+    getSectionNotes(tableID) {
+      if (!this.sectionNotesByTable[tableID]) {
+        this.sectionNotesByTable[tableID] = { playedNotes: [], namedNotes: {}, recordedNotes: {} };
+      }
+      return this.sectionNotesByTable[tableID];
+    }
+  };
 }
 
 function makeCaptionSection(rootID, rootIDLead = '-1', sharps = false) {
@@ -44,6 +54,7 @@ function makeSong({ sections, currentSectionIndex = 0, isHeadless = true } = {})
     sections,
     isHeadless,
     sharps: false,
+    myTunings: [],
     getCurrentSection() {
       return this.sections[currentSectionIndex];
     },
@@ -102,7 +113,7 @@ describe('TransposePlugin', () => {
     const playedNode = children.find((child) => child.name === 'PlayedNotes');
     const recordedNode = children.find((child) => child.name === 'RecordedNotes');
 
-    expect(children.map((child) => child.name).slice(0, 4)).toEqual(['apply', 'resetMenu', 'help', 'intervals']);
+    expect(children.map((child) => child.name).slice(0, 6)).toEqual(['apply', 'resetMenu', 'help', 'intervals', 'NamedNotes', 'SingleNotes']);
     expect(resetNode).toBeTruthy();
     expect(resetNode.trigger).toBe('R');
     expect(resetNode.children.map((child) => child.name)).toEqual([
@@ -115,8 +126,110 @@ describe('TransposePlugin', () => {
     expect(autoNode.trigger).toBe('a');
     expect(leadNode).toBeTruthy();
     expect(leadNode.trigger).toBe('d');
+    expect(children.find((child) => child.name === 'octaves')?.trigger).toBe('o');
     expect(playedNode).toBeUndefined();
     expect(recordedNode).toBeUndefined();
+  });
+
+  test('invalid octaves normalize to zero', () => {
+    const plugin = new TransposePlugin();
+
+    expect(plugin.setPropertyValue('octaves', 'banana')).toBe('0');
+    expect(plugin.getProperty('octaves').getValue()).toBe('0');
+  });
+
+  test('single notes transpose on the same string and reset with interval changes', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    section.getSectionNotes(tableID).playedNotes = [
+      { noteName: 'G', styleNum: 2, midinum: '55', row: '3', col: '5', colorClass: 'noteTransparent' }
+    ];
+    section.getSectionNotes(tableID).recordedNotes = {
+      '1': [
+        { noteName: 'A', styleNum: 2, midinum: '57', row: '2', col: '2', colorClass: 'noteTransparent' }
+      ]
+    };
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'S6_1', frets: 17, rowRange: [64, 59, 55, 50, 45, 40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 2]);
+    plugin.setPropertyValue('SingleNotes', true);
+
+    expect(plugin.invokeAction('apply', { song }).result).toBe('manual apply: interval 2 (delta 2)');
+    expect(section.getSectionNotes(tableID).playedNotes[0].col).toBe('7');
+    expect(section.getSectionNotes(tableID).playedNotes[0].midinum).toBe('57');
+    expect(section.getSectionNotes(tableID).recordedNotes['1'][0].col).toBe('4');
+    expect(section.getSectionNotes(tableID).recordedNotes['1'][0].midinum).toBe('59');
+
+    expect(plugin.invokeAction('resetCurrentInterval', { song }).result).toBe('reset current interval: sequence offset 0');
+    expect(section.getSectionNotes(tableID).playedNotes[0].col).toBe('5');
+    expect(section.getSectionNotes(tableID).recordedNotes['1'][0].col).toBe('2');
+  });
+
+  test('single notes wrap upward from below a banjo nut', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}Banjo_1`;
+    section.getSectionNotes(tableID).playedNotes = [
+      { noteName: 'F', styleNum: 2, midinum: '69', row: '4', col: '5', colorClass: 'noteTransparent' }
+    ];
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'Banjo_1', frets: 17, rowRange: [62, 57, 54, 50, 64], nut: true, banjoNut: { 4: 5 }, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, -1]);
+    plugin.setPropertyValue('SingleNotes', true);
+
+    plugin.invokeAction('apply', { song });
+
+    expect(section.getSectionNotes(tableID).playedNotes[0].col).toBe('16');
+    expect(section.getSectionNotes(tableID).playedNotes[0].midinum).toBe('80');
+  });
+
+  test('octaves=1 collision falls back to full-neck placement and rewrites octaves to 0', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    section.getSectionNotes(tableID).playedNotes = [
+      { noteName: 'Db', styleNum: 2, midinum: '53', row: '4', col: '13', colorClass: 'noteTransparent' },
+      { noteName: 'B', styleNum: 5, midinum: '42', row: '4', col: '2', colorClass: 'noteTransparent', bendValue: 'semitone1' }
+    ];
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'S6_1', frets: 17, rowRange: [64, 59, 55, 50, 45, 40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 1]);
+    plugin.setPropertyValue('SingleNotes', true);
+    plugin.setPropertyValue('octaves', '1');
+
+    const response = plugin.invokeAction('apply', { song });
+
+    expect(response.result).toBe('manual apply: interval 1 (delta 1)');
+    expect(response.message).toContain('octaves reset to 0');
+    expect(plugin.getProperty('octaves').getValue()).toBe('0');
+    expect(section.getSectionNotes(tableID).playedNotes[0].col).toBe('14');
+  });
+
+  test('short-neck instruments preserve off-screen single notes when full-neck mode cannot wrap visibly', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}Short_1`;
+    section.getSectionNotes(tableID).playedNotes = [
+      { noteName: 'F#', styleNum: 2, midinum: '46', row: '0', col: '6', colorClass: 'noteTransparent' }
+    ];
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'Short_1', frets: 6, rowRange: [40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 2]);
+    plugin.setPropertyValue('SingleNotes', true);
+
+    plugin.invokeAction('apply', { song });
+
+    expect(section.getSectionNotes(tableID).playedNotes[0].col).toBe('8');
+    expect(section.getSectionNotes(tableID).playedNotes[0].midinum).toBe('48');
   });
 
   test('apply advances interval, tracks sequence offset, and reset current interval returns to zero', () => {
