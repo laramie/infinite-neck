@@ -1,0 +1,118 @@
+[
+  {
+    "name": "targetTable",
+    "caption": "Table",
+    "trigger": "T",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "apply",
+    "caption": "Apply",
+    "trigger": "A",
+    "datatype": "org.dynamide.Action",
+    "actionName": "apply",
+    "visibleInMenu": false
+  },
+  {
+    "name": "showDroppedNotes",
+    "caption": "show dropped notes",
+    "trigger": "s",
+    "datatype": "org.dynamide.Action",
+    "actionName": "showDroppedNotes",
+    "visibleInMenu": false
+  },
+  {
+    "name": "clearDroppedNotes",
+    "caption": "clear/backup",
+    "trigger": "c",
+    "datatype": "org.dynamide.Action",
+    "actionName": "clearDroppedNotes",
+    "visibleInMenu": false
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": false
+  },
+  {
+    "name": "algorithm",
+    "caption": "algorithm",
+    "trigger": "a",
+    "datatype": "org.dynamide.Select",
+    "value": "octave",
+    "defaultValue": "octave",
+    "visibleInMenu": false,
+    "options": [
+      { "value": "drop", "caption": "drop", "trigger": "d" },
+      { "value": "octave", "caption": "octave", "trigger": "o" },
+      { "value": "string", "caption": "string", "trigger": "s" }
+    ]
+  },
+  {
+    "name": "motion",
+    "caption": "motions",
+    "trigger": "m",
+    "datatype": "org.dynamide.Select",
+    "value": "u",
+    "defaultValue": "u",
+    "visibleInMenu": false,
+    "options": [
+      { "value": "u", "caption": "up", "trigger": "u" },
+      { "value": "d", "caption": "down", "trigger": "d" },
+      { "value": "j", "caption": "jump up", "trigger": "j" },
+      { "value": "J", "caption": "Jump down", "trigger": "J" }
+    ]
+  },
+  {
+    "name": "includeSingle",
+    "caption": "single notes",
+    "trigger": "s",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeTiny",
+    "caption": "tiny notes",
+    "trigger": "t",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeHighlights",
+    "caption": "highlights",
+    "trigger": "h",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includePlayed",
+    "caption": "played notes",
+    "trigger": "p",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeRecorded",
+    "caption": "recorded notes",
+    "trigger": "r",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  }
+]

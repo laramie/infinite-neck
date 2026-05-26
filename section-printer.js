@@ -163,7 +163,7 @@ export function printSectionsNotes(theSong, theSections){
                                                         tableID, idx, 
                                                         tonalResult.chords, section.chartChord, 
                                                         tonalResult.scale,  section.chartMode,
-                                                        tonalResult.chord, tonalResult.mode);
+                                                        tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
             result += "<td><div class='SPN_CC'>" 
                             +chartChordsNotes+':'
                             +tonalPickerSet

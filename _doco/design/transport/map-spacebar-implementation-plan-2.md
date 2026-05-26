@@ -2,7 +2,7 @@
 
 ## Document Version
 
-- This is document version 3.  It has been edited by the Design team, providing answers to questions, and culling options. The version 1 file can be found here: `_doco/design/map-spacebar-implementation-plan.md`. Document version 2 is abandonded, since we made partial edits.
+- This is document version 3.  It has been edited by the Design team, providing answers to questions, and culling options. The version 1 file can be found here: `_doco/design/map-spacebar-implementation-plan.md`
 
 ## Summary
 
@@ -12,10 +12,9 @@ The implementation should treat spacebar mapping as a thin configuration layer o
 
 The guiding rule for the sprint should be:
 
-- "map spacebar" action names which create actions that map the concrete menu.js to do the remapping.
-- mappings use real action names, not a second enum or a parallel action-id system, except that some mappings may use action names that seem different than the implied action, particularly `mapSpacebar_restartSong` is an action that maps the User-facing "restart song" to actual existing action `firstSection` and does *not* introduce an action `restartSong`.
+- store and dispatch real action names, not a second enum or a parallel action-id system
 - keep existing navigation actions semantically unchanged
-- add only the missing transport verbs needed by the updated [TransportNavigationTable](/home/laramie/infinite-neck/_doco/design/TransportNavigationTable.md) which is the table after this plan is implemented
+- add only the missing transport verbs needed by the updated [TransportNavigationTable](TransportNavigationTable.md)
 - use one new reset event, `Looper:OnResetSong`, for plugin state clearing
 
 If implemented that way, the plan stays aligned with the current command-menu architecture and should be directly actionable after plan approval.
@@ -25,10 +24,9 @@ If implemented that way, the plan stays aligned with the current command-menu ar
 1. Add a configurable spacebar mapping that only runs when focus is not in an input or textarea.
 2. Reuse existing transport actions whenever they already exist.
 3. Add missing single-verb transport actions needed by the updated navigation table.
-4. Add missing single-verb mapping actions.
-5. Add `Looper:OnResetSong` with optional `{ hard: true|false }` payload.
-6. Update the relevant plugins to respond to reset without teaching transport code about plugin internals.
-7. Keep the implementation small enough that it can be completed from this plan without another design pass.
+4. Add `Looper:OnResetSong` with optional `{ hard: true|false }` payload.
+5. Update the relevant plugins to respond to reset without teaching transport code about plugin internals.
+6. Keep the implementation small enough that it can be completed from this plan without another design pass.
 
 ## Current Baseline
 
@@ -80,6 +78,7 @@ These should be added as real `performCmdAction()` cases so the spacebar map can
 - `resetSong`
 - `resetSongHard`
 - `unsetSpacebarAction`
+- `setSpacebarAction`
 
 
 ### Bucket 3: Items that should not become separate actions for this sprint
@@ -217,21 +216,13 @@ Implementation intent:
 - move to first beat
 - trigger `Looper:OnResetSong` with `{ hard: false }`
 - refresh UI through the normal section path
-- if looping was active before reset, restart the looper using the same loop mode that was active before reset
-- restarting section looping should naturally fire `DaCapo:OnSongBegin` and `DaCapo:OnSectionBegin`
-- restarting beat looping should also do that, but only after `startLoopBeats()` is upgraded to emit begin events on start
 
 ### `resetSongHard`
 
 Implementation intent:
 
-- move to first section
-- move to first beat
+- same as `resetSong`
 - trigger `Looper:OnResetSong` with `{ hard: true }`
-- refresh UI through the normal section path
-- if looping was active before reset, restart the looper using the same loop mode that was active before reset
-- restarting section looping should naturally fire `DaCapo:OnSongBegin` and `DaCapo:OnSectionBegin`
-- restarting beat looping should also do that, but only after `startLoopBeats()` is upgraded to emit begin events on start
 
 ### `unsetSpacebarAction`
 
@@ -306,7 +297,6 @@ These menus under "/" should be updated
     - n) next
     - l) last
 	- L) Last beat in Song
-	- 0) 0 restart Song
 	- r) reset song
 	- R) Reset song hard
     - g) goto
@@ -377,7 +367,6 @@ Therefore, the full menus (without triggers) should be:
 - next
 - last
 - Last beat in song
-- 0 restart Song
 - reset song
 - reset song hard
 - goto
@@ -423,7 +412,7 @@ Therefore, the full menus (without triggers) should be:
 
 The Transport table has two versions now: 
 - Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
+- Planned version: `TransportNavigationTable.md`
 After implementation, the Planned version should be true.
 
 Add or extend command-menu coverage for the updated, Planned version Transport table:
@@ -433,24 +422,6 @@ Add or extend command-menu coverage for the updated, Planned version Transport t
 - here the `n+1` syntax means remember that the User-facing Section numbers are 1-base, while Song.sections[0] is zero-based.
 
 This is useful independently of the spacebar feature because the transport table now treats these as real navigation verbs.
-
-## Handler shape approved by design
-
-The concrete `menu.js` leaves under `/fm` should use explicit mapping actions, as shown in the design example document.
-
-Examples:
-
-- `mapSpacebar_lastSection` stores `lastSection`
-- `mapSpacebar_restartSong` stores `firstSection`
-- `mapSpacebar_resetSong` stores `resetSong`
-- `mapSpacebar_resetSongHard` stores `resetSongHard`
-
-This means the implementation uses two levels of names intentionally:
-
-- concrete mapping actions in `menu.js`, such as `mapSpacebar_resetSong`
-- concrete transport actions stored in `spacebarActionName`, such as `resetSong`
-
-That is now an approved part of the design, not an accidental inconsistency.
 
 ## `Song.js` and `Section.js` Plan
 
@@ -613,20 +584,7 @@ Iteration 3 is explicit that navigation is allowed during looping, but it does n
 Approved behavior:
 
 - `gotoLastBeatInSong` should preserve loop mode
-- `resetSong` and `resetSongHard` reposition to first section / first beat, emit `Looper:OnResetSong`, refresh the UI, and preserve the active loop mode
-- if looping was active before reset, the looper should restart after reset using that same loop mode
-- restarting section looping should naturally fire `DaCapo:OnSongBegin` and `DaCapo:OnSectionBegin`
-- restarting beat looping should also do that, but only after `startLoopBeats()` is upgraded to emit begin events on start
-
-Recommended implementation order for reset actions:
-
-1. capture whether looping is active, and which loop mode is active
-2. if looping is active, call `clearBeatAndSectionLooping()`
-3. move to first section
-4. move to first beat
-5. emit `Looper:OnResetSong` with the correct `hard` payload
-6. refresh the section UI using the normal section path
-7. if looping was active before reset, restart the looper using the previously active loop mode
+- `resetSong` and `resetSongHard` do immediate restart-from-beginning behavior
 
 ## 2. Exact beat-loop begin-event semantics
 
@@ -659,7 +617,7 @@ These are in scope for this implementation.
 
 The Transport table has two versions now: 
 - Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
+- Planned version: `TransportNavigationTable.md`
 The Planned version has the cleaned up terminology, including `LastBeatInSong`.
 
 ## Bottom Line
@@ -669,9 +627,8 @@ The implementation is now straightforward enough to code from a single approved 
 The most important choices to preserve are:
 
 - use real action names as the mapping values
-- use explicit `mapSpacebar_*` menu actions to assign those mapping values
 - add missing transport verbs as real `performCmdAction()` cases
-- reserve new event behavior for `Looper:OnResetSong` and for the beat-loop event fix, while preserving active loop mode across reset
+- reserve new event behavior for `Looper:OnResetSong` and for the beat-loop event fix
 - keep `firstSection` as the practical restart-song behavior for this sprint
 
 Once the remaining clarifications above are answered, this plan should be sufficient to implement the feature end-to-end.  **ANSWERS: These should all be anwered by this document version.**

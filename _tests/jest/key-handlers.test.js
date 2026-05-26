@@ -23,6 +23,7 @@ const restartLoopBeats = jest.fn(() => {
 });
 const mockToggleTransport = jest.fn();
 const mockShowTransport = jest.fn();
+const mockSetCmdLineMenuMode = jest.fn();
 
 jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 	jsonTree: jest.fn()
@@ -35,6 +36,7 @@ jest.unstable_mockModule('../../themeFunctions.js', () => ({
 jest.unstable_mockModule('../../command-line.js', () => ({
 	clearCmdResults: jest.fn(),
 	hideCmdLine: jest.fn(),
+	setCmdLineMenuMode: mockSetCmdLineMenuMode,
 	setCmdActionRunner: jest.fn(),
 	showCmdLine: jest.fn(),
 	stringifyMenuItem: jest.fn(() => ''),
@@ -140,6 +142,7 @@ describe('key-handlers spacebar mapping', () => {
 	let mockTransportController;
 	let mockSetBPM;
 	let mockGetBPM;
+	let mockToggleRecording;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -166,6 +169,7 @@ describe('key-handlers spacebar mapping', () => {
 		};
 		mockSetBPM = jest.fn();
 		mockGetBPM = jest.fn(() => 120);
+		mockToggleRecording = jest.fn();
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -175,6 +179,7 @@ describe('key-handlers spacebar mapping', () => {
 		restartLoopBeats.mockClear();
 		mockToggleTransport.mockClear();
 		mockShowTransport.mockClear();
+		mockSetCmdLineMenuMode.mockClear();
 		mockEventBus.trigger.mockClear();
 
 		setKeyHandlerProviders({
@@ -207,6 +212,7 @@ describe('key-handlers spacebar mapping', () => {
 			toggleCaption: jest.fn(),
 			toggleFullscreen: jest.fn(),
 			toggleInstrumentCaptionRow: jest.fn(),
+			toggleRecording: mockToggleRecording,
 			transpose: jest.fn(),
 			transposeSong: jest.fn(),
 			transposeSongKeys: jest.fn(),
@@ -298,6 +304,20 @@ describe('key-handlers spacebar mapping', () => {
 		expect(mockTransportController.toggleLoopSections).toHaveBeenCalledTimes(1);
 	});
 
+	test('setMenuPrefs routes short, one-line, and tall through the command-line mode helper', () => {
+		const shortResult = performCmdAction({ action: 'setMenuPrefs' }, { key: 's' });
+		expect(shortResult.result).toBe('menu prefs: short');
+		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(1, 'short');
+
+		const oneLineResult = performCmdAction({ action: 'setMenuPrefs' }, { key: 'o' });
+		expect(oneLineResult.result).toBe('menu prefs: one-line');
+		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(2, 'one-line');
+
+		const tallResult = performCmdAction({ action: 'setMenuPrefs' }, { key: 't' });
+		expect(tallResult.result).toBe('menu prefs: tall');
+		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(3, 'tall');
+	});
+
 	test('runActionByName routes remaining navigation verbs through the transport controller', () => {
 		expect(runActionByName('prevSection').result).toBe('1');
 		expect(runActionByName('nextSection').result).toBe('2');
@@ -346,5 +366,12 @@ describe('key-handlers spacebar mapping', () => {
 		performCmdAction({ action: 'parkTransportTopRight' });
 
 		expect(mockShowTransport).toHaveBeenCalledWith('top-right');
+	});
+
+	test('toggleRecording delegates to the recording provider', () => {
+		const result = performCmdAction({ action: 'toggleRecording' });
+
+		expect(result.result).toBe('REC toggled');
+		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
 	});
 });

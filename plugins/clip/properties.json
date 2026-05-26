@@ -1,0 +1,74 @@
+[
+  {
+    "name": "targetTable",
+    "caption": "Table",
+    "trigger": "T",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "overwrite",
+    "caption": "overwrite",
+    "trigger": "o",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "automatic",
+    "caption": "automatic",
+    "trigger": "a",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeNamed",
+    "caption": "named",
+    "trigger": "n",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeSingle",
+    "caption": "single",
+    "trigger": "s",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeTiny",
+    "caption": "tiny",
+    "trigger": "t",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeBend",
+    "caption": "bend",
+    "trigger": "b",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": false
+  }
+]

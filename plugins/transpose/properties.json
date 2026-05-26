@@ -45,26 +45,6 @@
     "visibleInMenu": true
   },
   {
-    "name": "PlayedNotes",
-    "caption": "played notes",
-    "trigger": "p",
-    "datatype": "org.dynamide.toggle",
-    "value": false,
-    "defaultValue": false,
-    "inputCaption": "true|false",
-    "visibleInMenu": true
-  },
-  {
-    "name": "RecordedNotes",
-    "caption": "recorded notes",
-    "trigger": "r",
-    "datatype": "org.dynamide.toggle",
-    "value": false,
-    "defaultValue": false,
-    "inputCaption": "true|false",
-    "visibleInMenu": true
-  },
-  {
     "name": "autoSharpsFlats",
     "caption": "auto sharps/flats",
     "trigger": "a",

@@ -30,8 +30,11 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 }));
 
 const { PluginManager } = await import('../../plugins/PluginManager.js');
+const { gMenuFile } = await import('../../menu.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
+const { ClipPlugin } = await import('../../plugins/clip/ClipPlugin.js');
 const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
+const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
 const Constants = await import('../../Constants.js');
 
@@ -47,12 +50,15 @@ describe('PluginManager plugin persistence', () => {
     mockSectionsLooping.mockReturnValue(false);
     mockBeatsLooping.mockReset();
     mockBeatsLooping.mockReturnValue(false);
+    gMenuFile.children = [];
   });
 
   function createManagerWithPlugins() {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
+    manager.register(new ClipPlugin());
     manager.register(new FillPlugin());
+    manager.register(new MovePlugin());
     manager.register(new TransposePlugin());
     return manager;
   }
@@ -86,6 +92,16 @@ describe('PluginManager plugin persistence', () => {
       },
       graveyard: {
         records: [],
+        bury(graveType, obj, context) {
+          const record = {
+            type: graveType,
+            context,
+            json: JSON.stringify(obj),
+            lastRevived: null
+          };
+          this.records.push(record);
+          return record;
+        },
         buryReplacing(graveType, obj, context, predicate) {
           const record = {
             type: graveType,
@@ -189,7 +205,7 @@ describe('PluginManager plugin persistence', () => {
     const manager = createManagerWithPlugins();
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
 
     expect(manager.exportSongPluginState()).toEqual({
       transpose: {
@@ -199,10 +215,8 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          PlayedNotes: true,
-          RecordedNotes: false,
           autoSharpsFlats: false,
-          doLeadKey: false
+          doLeadKey: true
         }
       }
     });
@@ -222,8 +236,6 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          PlayedNotes: false,
-          RecordedNotes: false,
           autoSharpsFlats: false,
           doLeadKey: false
         }
@@ -235,7 +247,7 @@ describe('PluginManager plugin persistence', () => {
     const manager = createManagerWithPlugins();
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.setPropertyValue(entry, 'graveyardKey', "Bob's I-IV-V Blues Practice");
 
     expect(manager.exportSongPluginState().transpose.graveyardKey).toBe("Bob's I-IV-V Blues Practice");
@@ -248,7 +260,7 @@ describe('PluginManager plugin persistence', () => {
     const entry = manager.getPluginEntry('transpose');
 
     manager.setPropertyValue(entry, 'enableOnSongLoad', true);
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     const result = manager.buryPluginEntry(entry, 'Blues A');
 
     expect(result.result).toBe('buried transpose as Blues A');
@@ -263,10 +275,8 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         NamedNotes: true,
-        PlayedNotes: true,
-        RecordedNotes: false,
         autoSharpsFlats: false,
-        doLeadKey: false
+        doLeadKey: true
       }
     });
     expect(entry.enabled).toBe(false);
@@ -292,7 +302,7 @@ describe('PluginManager plugin persistence', () => {
     manager.loadSongPluginState(song);
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.setPropertyValue(entry, 'graveyardKey', 'Current');
 
     manager.importPluginSnapshot('transpose', {
@@ -302,8 +312,6 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 2, 4],
         NamedNotes: true,
-        PlayedNotes: false,
-        RecordedNotes: false,
         autoSharpsFlats: false,
         doLeadKey: true
       }
@@ -323,15 +331,15 @@ describe('PluginManager plugin persistence', () => {
     manager.loadSongPluginState(song);
     const entry = manager.getPluginEntry('transpose');
 
-    manager.setPropertyValue(entry, 'PlayedNotes', true);
+    manager.setPropertyValue(entry, 'NamedNotes', false);
     manager.buryPluginEntry(entry, 'Preset');
-    manager.setPropertyValue(entry, 'RecordedNotes', true);
+    manager.setPropertyValue(entry, 'doLeadKey', true);
     manager.buryPluginEntry(entry, 'Preset');
 
     expect(song.graveyard.records).toHaveLength(1);
     const payload = JSON.parse(song.graveyard.records[0].json);
-    expect(payload.properties.PlayedNotes).toBe(false);
-    expect(payload.properties.RecordedNotes).toBe(true);
+    expect(payload.properties.NamedNotes).toBe(true);
+    expect(payload.properties.doLeadKey).toBe(true);
   });
 
   test('runtime plugin menu captions use ${plugin:...} value references', () => {
@@ -345,6 +353,44 @@ describe('PluginManager plugin persistence', () => {
     expect(enabledNode.caption).toContain('[${plugin:transpose:enabled}]');
     expect(loadEnabledNode.caption).toContain('[${plugin:transpose:enableOnSongLoad}]');
     expect(intervalsNode.caption).toContain('[${plugin:transpose:intervals}]');
+  });
+
+  test('plugins without registered events omit managed enable menu items', () => {
+    const manager = createManagerWithPlugins();
+    const clipNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'clip');
+    const moveNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'move');
+
+    expect(clipNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
+    expect(clipNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
+    expect(clipNode.children[0].name).toBe('bury');
+
+    expect(moveNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
+    expect(moveNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
+    expect(moveNode.children[0].name).toBe('bury');
+  });
+
+  test('plugins with registered events keep managed enable menu items', () => {
+    const manager = createManagerWithPlugins();
+    const transposeNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'transpose');
+    const arpeggioNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'arpeggio');
+
+    expect(transposeNode.children[0].name).toBe('enabled');
+    expect(transposeNode.children[1].name).toBe('enableOnSongLoad');
+
+    expect(arpeggioNode.children[0].name).toBe('enabled');
+    expect(arpeggioNode.children[1].name).toBe('enableOnSongLoad');
+  });
+
+  test('plugins without registered events suppress the enabled status mark', () => {
+    const manager = createManagerWithPlugins();
+    const clipEntry = manager.getPluginEntry('clip');
+    const transposeEntry = manager.getPluginEntry('transpose');
+
+    clipEntry.enabled = true;
+    transposeEntry.enabled = true;
+
+    expect(manager.buildPluginStatusSuffix(clipEntry)).toBe('');
+    expect(manager.buildPluginStatusSuffix(transposeEntry)).toContain('&#x1F5F9;');
   });
 
   test('pluginAction:invoke passes menu input args through to the plugin action', () => {
@@ -364,5 +410,71 @@ describe('PluginManager plugin persistence', () => {
     expect(result.result).toBe('positions=[[0,3],[5,9]]');
     expect(song.sections[0].pluginData.arpeggio.positions).toEqual([[0, 3], [5, 9]]);
     expect(song.sections[0].pluginData.arpeggio.lastPositionIndex).toBe(-1);
+  });
+
+  test('pluginAction:invoke preserves JSON plugin messages', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('move');
+    entry.plugin.droppedNotes = [{ reason: 'apply start', applyNumber: 1 }];
+
+    const result = manager.invokePluginAction(entry, 'showDroppedNotes');
+
+    expect(result.result).toBe('Move dropped notes shown');
+    expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: entry.plugin.droppedNotes }, null, 2));
+  });
+
+  test('plugin actions and property changes refresh runtime plugin menus for dynamic children', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const refreshSpy = jest.spyOn(manager, 'refreshPluginsMenuNode');
+    const clipEntry = manager.getPluginEntry('clip');
+
+    manager.setPropertyValue(clipEntry, 'overwrite', false);
+    manager.togglePropertyValue(clipEntry, 'includeTiny');
+    manager.invokePluginAction(clipEntry, 'help');
+
+    expect(refreshSpy).toHaveBeenCalledTimes(3);
+  });
+
+  test('dynamic Clip revive submenu updates in place after copy', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    song.getCurrentSection().getSectionNotes(tableID).playedNotes.push({
+      noteName: 'D',
+      styleNum: 2,
+      row: '0',
+      col: '2',
+      colorClass: 'noteTransparent'
+    });
+    manager.loadSongPluginState(song);
+
+    gMenuFile.children = [
+      {
+        name: 'pluginsRuntime',
+        runtimeChildren: 'pluginManager',
+        trigger: 'p',
+        caption: 'plugins',
+        children: []
+      }
+    ];
+
+    const markerNode = manager.refreshPluginsMenuNode();
+    const clipNode = markerNode.children.find((node) => node.name === 'clip');
+    const reviveNode = clipNode.children.find((child) => child.name === 'reviveFromGraveyard');
+    const clipEntry = manager.getPluginEntry('clip');
+
+    expect(reviveNode.actionName).toBe('reviveClipChoice');
+    expect(reviveNode.input).toBeNull();
+    expect(reviveNode.popOnBang).toBe(false);
+    expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('');
+
+    manager.invokePluginAction(clipEntry, 'copyToGraveyard', { value: 'single-1' });
+
+    expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('1');
+    expect(manager.resolveValue('plugin:clip:reviveSummary')).toContain('[1:single-1]');
   });
 });

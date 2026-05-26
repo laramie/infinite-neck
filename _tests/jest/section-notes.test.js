@@ -2,6 +2,12 @@ import { SectionNotes } from '../../SectionNotes.js';
 import { Note } from '../../Note.js';
 
 describe('SectionNotes named note mutations', () => {
+    test('defaults tonalSourceSet to the empty string for backward compatibility', () => {
+        const sectionNotes = new SectionNotes();
+
+        expect(sectionNotes.tonalSourceSet).toBe('');
+    });
+
     test('clearNamedNote removes the key instead of leaving an empty placeholder object', () => {
         const sectionNotes = new SectionNotes();
 

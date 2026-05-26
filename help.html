@@ -921,6 +921,13 @@
                                 <li><a href="#plugin-fill-actions">Actions And Events</a></li>
                             </ul>
                         </li>
+                        <li><a href="#plugin-move">MovePlugin</a>
+                            <ul class="LinkList">
+                                <li><a href="#plugin-move-what">What It Does</a></li>
+                                <li><a href="#plugin-move-options">Main Options</a></li>
+                                <li><a href="#plugin-move-actions">Actions And Events</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#plugin-transpose">TransposePlugin</a>
                             <ul class="LinkList">
                                 <li><a href="#plugin-transpose-what">What It Does</a></li>
@@ -1429,7 +1436,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     <li>LOOP over the beats in just one section, 
     with the little infinity button: <button class="redButton" type="button" tabindex="-1">&infin;</button>.
     <li>LOOP over the Song, all Sections.
-    <li>Open the <a href="#spanSectionDrawer">Section Drawer</a> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button>
+    <li>Open the <a href="#spanSectionDrawer">Section Drawer</a> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button> or with keystroke <span class="key">s</span>
     </ul>
   </p>
 
@@ -1604,12 +1611,14 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 <a name="spanSectionDrawer"></a>
 <h3>Section Drawer</h3>
   <p><img src="img/help/context/transport-w-section-drawer.png">
-            <br><i>On the transport, the <b>Section Drawer</b> is opened, giving you access to all the Section controls..</i></p>
+            <br><i>On the transport, the <b>Section Drawer</b> is opened, giving you access to all the Section controls..</i>
+            <br>Open the <b>Section Drawer</b> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button> or with keystroke <span class="key">s</span>
+  </p>
 
 
-<p>The <a href="#spanSectionDrawer">Section Drawer</a> lets you:
+<p>The <b>Section Drawer</b> lets you:
 <ul>
-    <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> to show the Song
+    <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> (while NOT editing the Caption) to show the Song
         caption.)
     <li>Set the <b>Key</b> of the current Section. (Also keyboard shortcut <span class="key">k</span> cycles through
         these.)
@@ -1702,6 +1711,17 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <a name="transposing"></a>
 <h5>Transposing</h5>
+<p>Note that infinite-neck has several ways to transpose: 
+    <ul>
+        <li>Transposing with the keyboard shortcuts transposes NamedNotes only in the Current Section.
+        <li><span class="menuExampleLine"><b>/fa</b></span> shows a menu where you can transpose all NamedNotes or just the Section keys in a song at once, after you chose the number of half-steps.
+        <li><span class="menuExampleLine"><b>/fpt</b></span> shows the TransposePlugin which gives you the option of transposing just the key, or also the NamedNotes, and lets you automate that choice while looping.
+        <li>For transposing SingleNotes or TinyNotes, use the MovePlugin.
+    </ul>   
+</p>
+    
+<p>Note: the MovePlugin, lets you chose how notes that may be dropped are handled.  NamedNotes can't be dropped because they just select all notes with a letter name, e.g. note 'F'.  But a SingleNote could be dropped if you transpose down and that note goes beyond the Nut. MovePlugin lets you specify whether to drop it, attempt a wrap on the same string by changing the note's octave, or attept a wrap to a different string by changing the note'sS octave.
+</p>
 <p>Transposing "<b>u</b>p" moves the notes and the Root Key up the scale one half-step. (<i>Uppercase matters: <b>u</b> goes up, <b>U</b> goes down. <b>d</b> goes down, <b>D</b> goes up.</i>)  Transposing with the "j" key ("<b>j</b>ump") moves the notes
     and the Root up a fourth, which <b>j</b>umps up one string on a P4 instrument.  Remember that <b>j</b>umping up a fourth from the G string
     to the B string in Standard guitar tuning will not be on the same fret. (<i>Uppercase matters: <b>j</b> jumps up, <b>J</b> jumps down.</i>)
@@ -1867,6 +1887,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <a name="SectionPrintTopic"></a>
 <h4>Section Print</h4>
+<b>This section is out of date: it needs a re-write, because these have been moved to Chart, key shortcut 'r'.</b>
 <p>You can see three tabular views of the Sections and their Notes:
 </p>    
 <p>    
@@ -2624,7 +2645,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Shift</td>
         <td>z</td>
         <td>x</td>
-        <td><a href="#toggleAutoColor">c</a></td>
+        <td><a href="#toggleAutoColor">c</a><a href="#toggleAutoColor">C</a></td>
         <td><a href="#showHideView">v</a></td>
         <td><a href="#previousBeat">b</a><a href="#previousBeat">B</a></td>
         <td><a href="#nextBeat">n</a><a href="#nextBeat">N</a></td>
@@ -2695,7 +2716,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
         <td><a href="#showHideFill" class="MBtn">f<b>i</b>ll</a></td>
         <td><a href="#useAFingeringOpen" class="Fingering"><i>o</i>pen fingering</a></td>
-        <td><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a></td>
+        <td><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a><br><a href="#showHidePalette" class="MBtn"><b>P</b> /fp plugins</a></td>
         <td><a href="#usethePitchHighlighter" class="Note"><b>[</b><br>pitch</a></td>
         <td><a href="#usetheMultiHighlighter" class="Note"><b>]</b><br>multi</a></td>
         <td>|<br>\</td>
@@ -2704,7 +2725,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <tr>
         <td>Caps Lock</td>
         <td><a href="#showHideInstrumentCaptions">instrument c<b>A</b>ption</a> <a href="#showHideSongTitle">c<b>a</b>ption</a></td>
-        <td><a href="#showHideSection" class="MBtn"><b>s</b>ection</a></td>
+        <td><a href="#showHideSection" class="MBtn"><b>s</b>ection</a><br><a href="#showHideSection" class="MBtn"><b>S</b> add section</a></td>
         <td><a href="#raiseRootKeyAnd"><b>D</b><br><small>transpose</small> up</a> <a href="#lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</a></td>
         <td><a href="#divFileControls"><b>F</b>ile</a><br><a href="#toggleFullscreenMode"><b>f</b>ullscreen</a></td> 
         <td><a href="#showHideTunings" class="MBtn">tunin<b>g</b>s</a></td>
@@ -2721,7 +2742,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Shift</td>
         <td>z</td>
         <td>x</td>
-        <td><a href="#toggleAutoColor"><b>c</b>olor</a></td>
+        <td><a href="#toggleAutoColor"><b>c</b>olor</a><br><a href="#toggleAutoColor"><b>C</b> clip plugin</a></td>
         <td><a href="#showHideView" class="MBtn"><b>v</b>iew</a></td>
         <td><a href="#previousBeat">prev <b>b</b>eat</a></td>
         <td><a href="#nextBeat"><b>n</b>ext beat</a></td>
@@ -2775,7 +2796,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td><span class="key">P</span>
                 </td>
-                <td>show/hide Palette
+                <td><span class="key">p</span> show/hide Palette; <span class="key">P</span> opens the command-line at <span class="menuExampleLine">/fp</span> plugins
                 </td>
             </tr>
             
@@ -2784,7 +2805,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td><span class="key">S</span>
                 </td>
-                <td>show/hide Section menu
+                <td><span class="key">s</span> show/hide Section menu; <span class="key">S</span> adds a new Section
                 </td>
             </tr>
             <tr id="showHideView">
@@ -3015,9 +3036,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <tr id="toggleAutoColor">
                 <td><span class="key">c</span>
                 </td>
-                <td>
+                <td><span class="key">C</span>
                 </td>
-                <td>Toggle Auto-color
+                <td><span class="key">c</span> toggles Auto-color; <span class="key">C</span> opens the command-line at ClipPlugin
                 </td>
             </tr>
             
@@ -3255,13 +3276,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </p>
 
 
-        <p>Here is the whole app with the command-line showing.  Just press <span class="key">/</span> to pop it up.</p>
+        <p>Here is the whole app with the command-line showing, set to short menus (<span class="menuExampleLine">/vms</span>).  Just press <span class="key">/</span> to pop it up.</p>
          <p>   <img  width="600px" src="img/help/cmd-line-w-app.png"></p>
         </p>
 
-        <p>Here is the whole app with the command-line showing with the view menu options set to tall menus ( /vmt ).  
+        <p>Here is the whole app with the command-line showing with the view menu options set to tall menus ( <span class="menuExampleLine">/vmt</span> ).  
         </p>
-         <p>   <img  width="600px" src="img/help/command-line-tall.png"></p>
+         <p>   <img  width="600px" src="img/help/command-line-tall.png">
         </p>
         <p>Note that in the upper left you can see the command items you have typed so far.  
         That plus the letter you type for the current menu
@@ -3271,9 +3292,29 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <span class="menuExampleLine">f</span> to set the Section to use Flats.  Thus the 
         full command-line command would be <span class="menuExampleLine">/sf</span> which you can 
         type any time to set the current Section to use Flats.  
-
         </p>
 
+        <p>Here is the command-line showing with the view menu options set to one-line menus 
+            ( <span class="menuExampleLine">/vmo</span> ).  
+            </p>
+         <p>   <img width="1200px"   src="img/help/command-line-one-line.png"></p>
+        <p>You can get into this mode with the command <span class="menuExampleLine">/vmo</span>, and get back out with <span class="menuExampleLine">/vmt</span> or <span class="menuExampleLine">/vms</span>.  In this mode, you won't get menu prompts, so you have to have memorized the command-line string.  But if you know them, you can go very fast this way without blocking your view of the instruments.</p>  
+            
+        <p>You can also get into this mode anywhere in the command-line with ArrowDown <span class="key">&#x2193;</span> and back to tall menus with ArrowUp <span class="key">&#x2191;</span>.  
+             
+        </p>
+        <p>ArrowDown and 
+           ArrowUp are two of the navigation keys on a US keyboard that show 
+           arrows left, up, down, and right ( 
+           <span class="key">&#x2190;</span>
+           <span class="key">&#x2191;</span>
+           <span class="key">&#x2193;</span>
+           <span class="key">&#x2192;</span>) usually found below the ENTER key, or slightly right of there, and left of any numeric keypad.  
+   <br>     
+<img width="100px"  src="img/help/arrow-keys.png">
+<img width="200px"  src="img/help/arrow-keys-laptop.png">
+<img width="200px"  src="img/help/arrow-keys-context.png">
+        </p>
         <a name="keysInCommandLine"></a>
         <h4>Keys Used in the Command-line</h4>
         <table id="tblKeysInCommandLine" class="CheatSheet" cellspacing="0" border="1">
@@ -3288,22 +3329,19 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>The <span class="key"><b>/</b></span> key pops up the command-line Menu.  Any highlighted letter selects the next menu.
                     Instead of starting at the root like this, you can also use the global keyboard shortcut <span class="key">m</span> to re-open the command-line 
-                    at the last menu depth you left by hitting C or <span class="key">m</span>.
+                    at the last menu depth you left by hitting <span class="key">ESC</span> or <span class="key">x</span>.  
                 </td>
             </tr>
             <tr>
                 <td><span class="key"><b>m</b></span>
                 </td>
                 <td>
-                    The global keyboard shortcut <span class="key">m</span> pops up the command-line at the menu depth you left off last time.  
+                    The global keyboard shortcut <span class="key">m</span> pops up the command-line at the menu depth you left off last time. 
+                    This is useful for executing commands in plugins, 
+                    leaving the plugin menu page to use the Transport or keyboard shortcut to change Sections, 
+                    then using <span class="key">m</span> to pick back up where you left off in the plugin (or any menu item you want to use over and over). 
                 </td>
             </tr>
-
-
-            
-
-
-
             <tr>
                 <td><span class="key"><b>!</b></span>
                 </td>
@@ -3338,6 +3376,25 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <div class="menuExampleBox"><b>p</b>alette | <b>n</b>ote | <b>s</b>ingle</div> as your
                     kind of note for the next moment you click on a cell.  You can verify this by looking at the
                     Palette dialog.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key">&#x2193;</span></span>
+                </td>
+                <td> 
+                    The ArrowDown key. Collapse the command-line to one-line mode. 
+                    You won't see menu prompts so you must already know the command-line string.  
+                    Useful when you know the commands and just want a minimal way to enter them 
+                    without having the command-line consume much screen real estate. 
+                    Get out with ArrowUp <span class="key">&#x2191;</span>, 
+                    or use command-line <span class="menuExampleLine"><b>/vmt</b></span>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="key">&#x2191;</span></span>
+                </td>
+                <td>
+                    The ArrowUp key.  Get back to tall menus with menu prompts.
                 </td>
             </tr>
             <tr>
@@ -3403,10 +3460,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td>unlocks (allows) the keyboard shortcuts for transposition.</td>
                 </tr>
                 <tr>
-                    <td>/sp</td>
-                    <td><b>s</b>ection | <b>p</b>rint</td>
-                    <td>Prints out a handy table of Sections, with hyperlinks to jump to the Section, and summary information, such as Key, Sharps/Flats, number of beats, caption, and count of notes.
+                    <td>/cs<br>
+                    /cn<br>
+                    /cd</td>
+                    <td>
+                        <b>c</b>hart | <b>s</b>ummary<br>
+                        <b>c</b>hart | <b>n</b>otes<br>
+                        <b>c</b>hart | <b>d</b>etails
+                    </td>
+                    <td>Prints out a handy chart of Sections, with hyperlinks to jump to the Section, and summary information, 
+                        such as Key, Sharps/Flats, number of beats, caption, and count of notes.
                         Since the links jump you to the Sections, this is a very handy way to navigate large songs with many Sections.
+                        /cn is the chart with notes, so has the Tonal.js information about chords and modes, and functions most like a band chart or Lead Sheet.
                     </td>
                 </tr>
                 <tr>
@@ -3442,7 +3507,12 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <tr>
                     <td>/vm</td>
                     <td><b>v</b>iew | <b>m</b>enu options</td>
-                    <td>Choose short or tall menus.  Short menus have all items on one row, tall menus have each item on one line.</td>
+                    <td>Choose short, one-line, or tall menus. Short menus have all items on one row, one-line hides the menu options list and keeps only the prompt plus input, and tall menus have each item on one line.</td>
+                </tr>
+                <tr>
+                    <td>/vmo</td>
+                    <td><b>v</b>iew | <b>m</b>enu options | <b>o</b>) one-line</td>
+                    <td>Shows the compact command-line layout: breadcrumbs and command results stay on the top row, and the current prompt plus input stay on the line below.</td>
                 </tr>
                 <tr>
                     <td>/vmt</td>
@@ -3478,167 +3548,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             
 <a name="commandLineMenuDump"></a>
             <h4>Command-line Full Menu Listing</h4>
-       <p><span class="menuExampleLine">/vdm</span> prints out a plaintext listing of the entire command-line heirarchy. </p> 
-       <p>Here, for example, is the command-line menu structure as of 20260217:</p>
+    <p><span class="menuExampleLine">/vdm</span> prints out a command-line menu dump formatted for an HTML <code>PRE</code> block, using <code>&amp;nbsp;</code> indentation and no trailing <code>&gt;</code> markers.</p> 
+    <p>Here is a current-format example excerpt:</p>
 
-<div class="menuDump">
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>/</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ile
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>o</b>pen
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>ownload
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ame
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>pm
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>raveyard
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>C</b>lear graveyard, with backup
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>o: keep graveyard.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>l</b>ock
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>u</b>nlock
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dvanced
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>ransposeSong
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transpose song <b>k</b>eys
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b> dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ection
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dd
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>av
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>irst
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rev
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ext
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>l</b>ast
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>elete
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>o: keep section.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dd
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>hallow clone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>lone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>aption
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>harps
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>lats
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>k</b>ey
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>w</b>hite keys
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>e</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>lack keys
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>e</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>l</b>eadKey
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>w</b>hite keys
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>e</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>lack keys
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>e</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>&flat;
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>eats<small>[${currentBeat}/${beats}]</small>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ext
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rev
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dd
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>elete
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>i</b>nsert first
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rint
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b> dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>v</b>iew
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>enu prefs
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>hort
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>all
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>h</b>ide
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>amedNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ingleNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>inyNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ingering
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>how
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>amedNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ingleNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>inyNotes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ingering
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>o</b>pacity
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>amed note
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ingle note
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>iny note
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>iagnostics
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ong model
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>i</b>n-memory model
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>enu dump
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user <b>c</b>olors
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>isplayOptions
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>h</b>ide
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ullscreen
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>oggle fullscreen
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>w</b>indow
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>leanup
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>ock all
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>g</b>ather
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>v</b>iewport
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b>  dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;th<b>e</b>mes
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b>  dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>unings
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b>  dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f<b>i</b>ll
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b>  dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>alette
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ote
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>amed
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ingle
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>iny
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>end
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>emitone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>-fret
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rebend
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>-fret
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>u</b>p&nbsp;down
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>-fret
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3</b>-frets
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>itch
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>h</b>ighlight
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>k</b>eep
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>lear
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ind color
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ingering
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>o</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>2</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>3</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>4</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>5</b>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>humb
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>r</b>ole
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>;</b>  dialog
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>r</b>un
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>oggle transport
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>l</b>oop
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loop <b>b</b>eats
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>irst
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rev
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ext
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>l</b>ast
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>b</b>eats<small>[${currentBeat}/${beats}]</small>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>n</b>ext
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>rev
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>h</b>elp
-</div>
+<pre class="menuDump">&nbsp;&nbsp;&nbsp;&nbsp;<b>/</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ile
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>lugins
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>rpeggio
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>lip
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ill
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>ove
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>ranspose
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ection
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dd
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>v</b>iew
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>iagnostics
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>enu dump</pre>
 
 
 
@@ -3654,9 +3579,10 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <p>The current plugins are:</p>
 
     <ul>
-        <li>ArpeggioPlugin</li>
-        <li>FillPlugin</li>
-        <li>TransposePlugin</li>
+        <li><a href="#plugin-arpeggio">ArpeggioPlugin</a>
+        <li><a href="#plugin-fill">FillPlugin</a>
+        <li><a href="#plugin-move">MovePlugin</a>
+        <li><a href="#plugin-transpose">TransposePlugin</a>
     </ul>
 
     <p>In the command-line menu, plugins live under 
@@ -3691,11 +3617,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <h3>Main Options</h3>
 
     <ul>
-        <li><b>m</b> minFret: lowest fret considered by the generated pattern.</li>
-        <li><b>t</b> maxFret: highest fret considered by the generated pattern.</li>
+        <li><b>T</b> Table chooses the target instrument table.</li>
+        <li><b>p</b> positions shows the active fret window. When section values exist, the caption shows those JSON values; otherwise it shows the default <span class="menuExampleLine">min:max</span> range.</li>
+        <li>Inside <b>positions</b>, <b>m</b> sets minFret default position, <b>t</b> sets maxFret default position, and the remaining items manage current-section position arrays.</li>
+        <li><b>s</b> strings opens the upper and lower string limits and shows them as a user-facing <span class="menuExampleLine">upper:lower</span> summary.</li>
         <li><b>o</b> lowToHigh: control whether the candidate traversal starts from lower strings and lower frets or the reverse logical order.</li>
         <li><b>u</b> upOnly: keep the pattern moving upward instead of bouncing back.</li>
-        <li><b>s</b> style chooses every, alternate, random, or bach.</li>
+        <li><b>y</b> style chooses every, alternate, random, or bach.</li>
         <li><b>n</b> show note name chooses off, one, all, or played.</li>
         <li><b>c</b> color notes chooses Emboss or AutoColor-style.</li>
         <li><b>f</b> flashcard delays note-name reveal by one beat.</li>
@@ -3773,7 +3701,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li><span class="menuExampleLine"><b>p</b> plugins</span></li>
         <li><span class="menuExampleLine"><b>a</b> arpeggio</span></li>
-        <li><span class="menuExampleLine"><b>m</b> minFret</span> and <span class="menuExampleLine"><b>t</b> maxFret</span></li>
+        <li><span class="menuExampleLine"><b>p</b> positions</span> then <span class="menuExampleLine"><b>m</b> minFret</span> and <span class="menuExampleLine"><b>t</b> maxFret</span></li>
+        <li><span class="menuExampleLine"><b>s</b> strings</span> if you need string limits</li>
         <li><span class="menuExampleLine"><b>n</b> show note name</span></li>
         <li><span class="menuExampleLine"><b>c</b> color notes</span></li>
         <li><span class="menuExampleLine"><b>A</b> Apply</span></li>
@@ -3786,21 +3715,23 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="plugin-fill-what"></a>
     <h3>What It Does</h3>
 
-    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It is used to fill a fret and string range with root, chord, and scale notes, and it can optionally add matching Tiny notes over the same emitted Single notes.</p>
+    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It can fill NamedNotes, SingleNotes, and TinyNotes from the current Section root, chord formula, and scale formula.</p>
 
-    <p>FillPlugin currently writes Single notes, and optionally one Tiny note per emitted Single note. It does not overwrite a user-authored Single note that already owns the same cell.</p>
+    <p>NamedNote ignores fret and string limits. SingleNote and standalone TinyNote obey the configured fret and string limits. SingleNote can also add an overlay TinyNote in the same cell, but that overlay is ignored whenever standalone TinyNote is active and emits notes.</p>
 
     <a name="plugin-fill-options"></a>
     <h3>Main Options</h3>
 
     <ul>
-        <li><b>t</b> target table chooses the main table to fill. By default it is the first table that is not wired to display another table.</li>
-        <li><b>d</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
-        <li><b>m</b> minFret and <b>f</b> maxFret limit the fret range.</li>
-        <li><b>u</b> upper string limit and <b>l</b> lower string limit limit the string range.</li>
-        <li><b>r</b> root, <b>c</b> chord, and <b>s</b> scale each choose whether that role is none, keep, or role, and which color source to use.</li>
+        <li><b>T</b> Table chooses the main table to fill. By default it is the first table that is not wired to display another table.</li>
+        <li><b>o</b> options contains the main FillPlugin configuration.</li>
+        <li>Inside <b>options</b>, <b>c</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
+        <li>Inside <b>options</b>, <b>p</b> positions groups <b>i</b> minFret and <b>a</b> maxFret under a <span class="menuExampleLine">min:max</span> summary.</li>
+        <li>Inside <b>options</b>, <b>s</b> strings groups <b>u</b> upper string limit and <b>l</b> lower string limit under a <span class="menuExampleLine">upper:lower</span> summary.</li>
+        <li><b>n</b> NamedNote, <b>s</b> SingleNote, and <b>t</b> TinyNote each have root, chord, and scale submenus with none, keep, and role modes.</li>
+        <li>NamedNote and TinyNote include <b>C</b> Copy from SingleNote to copy the SingleNote root, chord, and scale settings once.</li>
         <li>Fill pass order is scale, then chord, then root.</li>
-        <li><b>t</b> tiny notes chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for Tiny companions.</li>
+        <li>Inside <b>SingleNote</b>, <b>a</b> add TinyNote chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for overlay Tiny companions.</li>
     </ul>
 
     <a name="plugin-fill-actions"></a>
@@ -3814,6 +3745,62 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><b>h</b> help shows a summary of current settings.</li>
         <li>When enabled, FillPlugin handles <b>DaCapo:OnSectionBegin</b> and applies to the section that just began.</li>
     </ul>
+
+    <a name="plugin-move"></a>
+    <h2>MovePlugin</h2>
+
+    <a name="plugin-move-what"></a>
+    <h3>What It Does</h3>
+
+    <p>MovePlugin moves <a href="#glossary">PlayedNotes</a> and <a href="#glossary">RecordedNotes</a> inside the current Section and one selected Table (Instrument). It is used to shift chords or patterns up or down the neck, or "jump" them up or down strings, similar to how <a href="#divSectionTransposition">Transposition</a> works. But <a href="#divSectionTransposition">Transposition</a> only works on <a href="#glossary">NamedNotes</a>.  (See: <a href="#plugin-transpose">TransposePlugin</a> which also transposes the whole Song with lots of options, specifically geared to transposing while looping, and only does NamedNotes currently.)  With MovePlugin you can transpose <a href="#glossary">PlayedNotes</a> and
+    <a href="#glossary">RecordedNotes</a> for <a href="#glossary">SingleNotes</a>, <a href="#glossary">TinyNotes</a>, and <a href="#glossary">Highlights</a>, individually or in groups, i.e. <i>"all SingleNote PlayedNotes"</i>, or <i>"all SingleNotes, TinyNotes and Highlights in RecordedNotes"</i>.</p>
+
+    <p>Named notes are not moved by this plugin.</p>
+
+    <p>Since you can move notes right off the neck in all directions, the plugin deals with this by giving you three "algorithms".
+        <ul>
+            <li><b>octave:</b> Attempts to replace a shifted-off note by an octave down if you are going up, and and octave up if you are going down.  Leads to unplayable chords such as two notes on one string, but they might still be played as arpeggios.  So you can adjust the notes manually after moving (in the normal way: with the note type selected, click once on an existing note to clear it, then click once in a different cell to place a note.</li>
+            <li><b>string: </b>Attempts to replace shifted off notes by wrapping them an octave down towards the bottom of the fretboard on the same string if you are going up, and towards the top of the fretboard if you are going down.  For <b>j</b> jump up, and <b>J</b> jump down, wraps the chord or pattern around to the string on the opposite side of the neck.</li>
+            <li><b>drop:</b> Does not attempt to replace notes, simply drops them.</b></li>
+        </ul> 
+    </p>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Move a phrase or drill up or down by one semitone with <span class="menuExampleLine"><b>m</b> motions</span> set to <span class="menuExampleLine"><b>u</b> up</span> or <span class="menuExampleLine"><b>d</b> down</span>.</li>
+        <li>Jump a line to a neighboring string with <span class="menuExampleLine"><b>j</b> jump up</span> or <span class="menuExampleLine"><b>J</b> jump down</span>.</li>
+        <li>Move only PlayedNotes, only RecordedNotes, or both, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles.</li>
+        <li>Reposition SingleNotes or Tiny notes in beat looping.</li>
+        <li>Reposition recorded Highlights in beat looping.</li>
+        <li>Try a move, inspect <span class="menuExampleLine"><b>s</b> show dropped notes</span>, then use <span class="menuExampleLine"><b>c</b> clear/backup</span> to arm a fresh graveyard backup before the next pass.</li>
+    </ul>
+
+    <a name="plugin-move-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>T</b> Table chooses which current-section instrument table to move.</li>
+        <li><b>a</b> algorithm chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
+        <li><b>m</b> motions chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
+        <li><b>i</b> include opens toggles for <b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights, <b>p</b> played notes, and <b>r</b> recorded notes.</li>
+        <li>You must select one of <b>played notes</b> or <b>recorded notes</b> or both, plus at least one note type for anything to happen.</li>
+        <li>The <b>include</b> caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
+    </ul>
+
+    <a name="plugin-move-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>A</b> <b>Apply</b> moves the selected note layers in the current Section and selected table.</li>
+        <li><b>s</b> <b>show dropped notes</b> opens the current dropped-notes log as JSON in Messages.</li>
+        <li><b>c</b> <b>clear/backup</b> clears the dropped-notes log and arms a fresh section backup before the next Apply.  The backup is not put in the Graveyard until Apply is hit.</li>
+        <li><b>h</b> <b>help</b> shows the current MovePlugin settings and summary.</li>
+    </ul>
+
+    <p>Before the first Apply in a run, MovePlugin buries a copy of the current Section in the graveyard, which is a backup, but does not delete the Section. If a move lands badly or you simply want the older state back, revive that Section from the graveyard.  The bury happens on Apply after selecting <b>clear/backup</b>.</p>
+
+    <p>MovePlugin does not handle DaCapo events, and so does nothing in response to looping. It runs only when you invoke its actions from the command-line menu.  However, you can keep looping or beat looping while using <b>Apply</b>.  In fact, this is the best way to see how it moves RecordedNotes, since only the first beat will render after an Apply if you aren't looping</p>
 
     <a name="plugin-transpose"></a>
     <h2>TransposePlugin</h2>
@@ -3829,11 +3816,11 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li><b>i</b> intervals is a JSON array of target intervals.</li>
         <li><b>n</b> named notes chooses whether named notes move.</li>
-        <li><b>p</b> played notes chooses whether played-note layers are included in the transpose request.</li>
-        <li><b>r</b> recorded notes chooses whether recorded-note layers are included in the transpose request.</li>
         <li><b>a</b> auto sharps/flats applies the same key spelling after transposition as found in the menu /sc (section key).</li>
         <li><b>d</b> do lead key also transposes the Section lead key when keys move.</li>
     </ul>
+
+    <p>TransposePlugin does not move PlayedNotes or RecordedNotes. Use MovePlugin when you want to move those layers deterministically.</p>
 
     <a name="plugin-transpose-actions"></a>
     <h3>Actions</h3>
@@ -3877,9 +3864,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li><span class="menuExampleLine"><b>p</b> plugins</span></li>
         <li><span class="menuExampleLine"><b>a</b> arpeggio</span></li>
+        <li><span class="key">P</span> opens the command-line already parked at <span class="menuExampleLine">/fp</span>.</li>
+        <li><span class="key">C</span> opens the command-line already parked at ClipPlugin.</li>
+        <li><span class="key">S</span> adds a new Section without opening the command-line.</li>
         <li><span class="menuExampleLine"><b>f</b> fill</span></li>
+        <li><span class="menuExampleLine"><b>m</b> move</span></li>
         <li><span class="menuExampleLine"><b>t</b> transpose</span></li>
         <li><span class="menuExampleLine"><b>h</b> help</span></li>
+        <li>Inside the command-line input, <span class="key">Shift</span>+<span class="key">ArrowUp</span> and <span class="key">Shift</span>+<span class="key">ArrowDown</span> both switch the menu to short mode.</li>
     </ul>
 
     <p>Regular keyboard shortcuts in the main UI still use the same visual style as the rest of this help file, for example <span class="key">A</span> or <span class="key">Tab</span>.</p>
@@ -3899,7 +3891,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 in-memory model:  <span class="menuExampleLine">/vdi</span>
                     the model of just one Section
                 menu dump:   <span class="menuExampleLine">/vdm</span>
-                    condensed, simple printout all the menu items in menu.js
+                    PRE-formatted dump of the command-line menu tree
                 user colors: <span class="menuExampleLine">/vdc</span>
                     full display of colors in userColors.js
                     This is better seen graphically in Palette | Stylesheets
@@ -4090,13 +4082,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <span class="productsmaller">infinite-neck</span> shows the MIDI Number, not the names such as C3, C4 or c&#96;&#96;.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryNamedNote">
             <td>NamedNote
             </td>
-            <td>Display of all notes with the same Note Name.  Placing a NamedNote such as "F" on the neck marks all F's.
+            <td>Display of all notes with the same Note Name.  Placing a NamedNote such as "F" on the neck marks all F's.  A NamedNote is its own class of note, the three classes being NamedNotes, PlayedNotes, and RecordedNotes.
             </td>
         </tr>
-        <tr>
+        <tr id="glossarySingleNote">
             <td>SingleNote
             </td>
             <td>Display of one note on the neck.  Placing a SingleNote such as "F" on the neck marks one F -- the one you clicked.
@@ -4104,13 +4096,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 SingleNotes have one rounded corner so you can see if a NamedNote is present.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryTinyNote">
             <td>TinyNote
             </td>
-            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is also a TinyNote, so you can't use both in one cell.)
+            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is a special type of TinyNote, so you can't use both in one cell.)  TinyNotes (including Bends) are special in that they follow LeadKey (set on the SectionDrawer) in coloring and Function.  If you have LeadKey set to G and Key set to C, the TinyNote at G will display Function I, but the NamedNote at G will display V. But if you have LeadKey set to "root", which is the default, then the TinyNote will display the Function V, the same as a NamedNote or SingleNote in that same cell.  
             </td>
         </tr>
-        <tr>
+        <tr  id="glossaryBend">
             <td>Bend
             </td>
             <td>A special type of TinyNote, which shows the range of notes that bending (stretching) a string moves through.
@@ -4122,6 +4114,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 plucking the string, and then release the tension so that the pitch drops--the destination is then A.
                 <span class="productsmaller">infinite-neck</span> calls it an "up-down" bend where you start off relaxed, sound the note, then bend up
                 and then release the tension so the pitch comes back down.
+            </td>
+        </tr>
+        <tr id="glossaryPlayedNote">
+            <td>PlayedNote
+            </td>
+            <td>Any SingleNote, TinyNote, or Bend that is placed when <span class="GUIReferenceInline">REC</span> is <u>not</u> in effect, that is, when <u>not recording</u>, is a PlayedNote.  NamedNotes are never PlayedNotes. Highlights cannot be PlayedNotes, only RecordedNotes. (But a Highlight will work when not recording for demonstration purposes and will simply not be saved.  So if you are leading a presentation or class, you can highlight all notes with the same MIDI pitch number with Pitch, or can highlight multiple single notes with Multi.  When you place any other kind of note or Highlight, or change Sections, your Highlight disappears.)  Except for NamedNotes, any note placed while recording is a RecordedNote.
+            </td>
+        </tr>
+        <tr id="glossaryRecordedNote">
+            <td>RecordedNote
+            </td>
+            <td>Any SingleNote, TinyNote, Bend, or Highlight (Pitch or Multi), that is placed when <span class="GUIReferenceInline">REC</span> is in effect, that is, when <u>recording</u>, are RecordedNotes.  NamedNotes are never RecordedNotes.  Any note placed while not recording is either a NamedNote or a PlayedNote.
             </td>
         </tr>
         <tr>
@@ -4294,23 +4298,28 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 by editing the JSON text file themes.js.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryHighlight">
+            <td>Highlight
+            </td>
+            <td>Highlights are note types that come in two flavors: <a href="#glossaryMulti">Multi</a> and <a href="#glossaryPitch">Pitch</a>.  They highlight a note or set of notes with a bright glowing border. 
+            </td>
+        </tr>
+        <tr id="glossaryPitch">
             <td>Pitch
             </td>
-            <td>1) A setting for Highlights that displays a highlight around all notes with the same MIDI pitch, since a middle C appears
-                in multiple spots across strings on a guitar, for example.
+            <td>1) A setting for Highlight that displays a Highlight around all notes with the same MIDI pitch on the Instrument. Since a middle C appears
+                in multiple spots across strings on a guitar, for example, clicking Pitch as the note type, then clicking a C will highlight all C's on the neck with that same MIDI number.  Middle C with MIDI number 60 appears on a Standard tuning 6-string guitar on the second string, first fret; on the third string, fifth fret; on the fourth string, tenth fret; and on the fifth string, thirteenth fret. These would all be highlighted. But other C notes with different MIDI numbers would not be highlighted. For example, the C with MIDI number 48 at the fifth string, third fret would not be highlighted. Pitch can also be used to highlight notes for demonstration purposes when not recording.  Click a note and a Highlight will appear on each note on the neck that shares MIDI pitch number, but will disappear when you navigate Sections or place another note type.
                 <br>
                 <br>
-                2) A specific frequency of note, e.g. a 440Hz Concert A.  The MIDI spec defines default frequencies of pitch
-                for each named note.  In <span class="productsmaller">infinite-neck</span> we simply use one MIDI number for each note,
+                2) A specific frequency of note, e.g. a 440Hz Concert A.  The MIDI spec defines default frequencies of pitch for each named note.  In <span class="productsmaller">infinite-neck</span> we simply use one MIDI number for each note,
                 so pitches here are standardized on the MIDI default pitch spec, and we allow display of the MIDI pitch number
                 for each cell.  That is, we don't show microtonal pitches, or alternative pitch-tunings.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryMulti">
             <td>Multi
             </td>
-            <td>Highlight style that lets you highlight multiple notes on one Beat.
+            <td>Highlight style that lets you highlight multiple notes on one Beat.    Multi can also be used to highlight multiple notes for demonstration purposes when not recording.  Click the notes and a highlight will appear on each, but will disappear when you navigate Sections or place another note type.
             </td>
         </tr>
         <tr id="glossaryDisplayOptions">

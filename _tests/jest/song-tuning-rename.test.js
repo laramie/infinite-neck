@@ -132,6 +132,16 @@ describe('renameTuningIDInModel: pure model rename', () => {
         expect(section.sectionNotesByTable[Constants.TABLE_ID_PREFIX + 'P46_lead'].playedNotes).toEqual(notes);
     });
 
+    test('preserves tonalSourceSet during rename', () => {
+        cloneTuningHeadless(song, 'P46', 'P46_1');
+        const section = song.getSections()[0];
+        section.getSectionNotes(Constants.TABLE_ID_PREFIX + 'P46_1').tonalSourceSet = 'TinyNote';
+
+        song.renameTuningIDInModel('P46_1', 'P46_lead');
+
+        expect(section.sectionNotesByTable[Constants.TABLE_ID_PREFIX + 'P46_lead'].tonalSourceSet).toBe('TinyNote');
+    });
+
     test('updates visibleNoteTables to reflect the new key', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
         song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];

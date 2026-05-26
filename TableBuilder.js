@@ -3,6 +3,7 @@
 
 import * as Constants from './Constants.js';
 import { setOneCssVar } from './themeFunctions.js';
+import { decoratePianoSkeuomorphicTable } from './templates/piano/piano-skeuomorphic.builder.js';
 
 
 
@@ -29,6 +30,7 @@ export function buildNoteTable(options) {
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
 	table.addClass("fretTable");
+	const doPianoSkeuomorphic = decoratePianoSkeuomorphicTable(table, options);
 	if (options.leftmargin) {
 		table.addClass("leftmarginInstrument");
 	}
@@ -47,6 +49,7 @@ export function buildNoteTable(options) {
 		var row = $('<tr>');
 		row.addClass("stringRow");
 		var namesRow = $("<tr>");
+		namesRow.addClass("namesRowTR");
 		var dividerRow = $("<tr>");
 		dividerRow.addClass('stringDividerTR');
 		var nCols = options.nut ? options.frets + 1 : options.frets;
@@ -117,7 +120,8 @@ export function buildNoteTable(options) {
 				if (namesRowHeight) {
 					sHeight = ' style="height: ' + namesRowHeight + '" ';
 				}
-				var namesTdline = '<td class="namesRowCell" >';
+				var namesCellClass = doPianoSkeuomorphic ? 'namesRowCell ' + noteClass : 'namesRowCell';
+				var namesTdline = '<td class="' + namesCellClass + '" >';
 				var colorArea = $('<div class="' + noteClass + '" ' + sHeight + ' >');
 				colorArea.html(noteName);
 				var namesCell = $(namesTdline);
@@ -167,6 +171,10 @@ export function buildNoteTable(options) {
 
 	let wiringAndFretTable = $("<div>");
 	wiringAndFretTable.addClass("wiringAndFretTable");
+	if (doPianoSkeuomorphic) {
+		instrumentBackground.addClass("pianoSkeuomorphicInstrument");
+		wiringAndFretTable.addClass("pianoSkeuomorphicInstrument");
+	}
 	let divWiring = $("<div>");
 	divWiring.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID + "_wiring");
 	divWiring.addClass("divWiring");
@@ -179,6 +187,9 @@ export function buildNoteTable(options) {
 
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
+	if (doPianoSkeuomorphic) {
+		fretTableWrapper.addClass("pianoSkeuomorphicWrapper");
+	}
 		var table3 = $("<table>");
 		var row = $("<row>");
 		table3.append(row);

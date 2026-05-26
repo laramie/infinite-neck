@@ -4,6 +4,7 @@ import { setOneCssVar } from './themeFunctions.js';
 import {
 	clearCmdResults,
 	hideCmdLine,
+	setCmdLineMenuMode,
 	setCmdActionRunner,
 	showCmdLine,
 	stringifyMenuItem,
@@ -22,6 +23,7 @@ import {
 } from './looper.js';
 import {
 	buildChildMenuCaptionsRow,
+	diveMenu,
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
@@ -101,6 +103,7 @@ function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); 
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
+function toggleRecording(...args) { return requireProvider('toggleRecording')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
@@ -144,6 +147,25 @@ function moveSelectByClampedStep(selectSelector, delta) {
 		return;
 	}
 	jSelect.prop('selectedIndex', nextIndex).trigger('change');
+}
+
+function parkCommandLineAtPath(triggerPath = '') {
+	setMenuAtRoot();
+	let currentMenu = gMenuPointer;
+	for (const trigger of `${triggerPath}`) {
+		const children = currentMenu?.children || [];
+		const childIdx = children.findIndex((child) => child && child.trigger === trigger);
+		if (childIdx < 0) {
+			throw new Error(`Command-line path not found: /${triggerPath}`);
+		}
+		const child = children[childIdx];
+		diveMenu(child, childIdx);
+		currentMenu = gMenuPointer;
+	}
+	clearCmdResults();
+	$("#txtCmdLine").val('');
+	showCmdLine();
+	updateCmdLineView();
 }
 
 function isTextEditingTarget(target) {
@@ -218,9 +240,17 @@ function document_keypress(e) {
             case "B":
                 getSong().prevBeat();
                 break;
-            case "c": //"_C_olor"
+			case "c": //"_C_olor"
 				$("#cbAutomaticColor").trigger('click');
                 break;
+			case "C":
+				try {
+					parkCommandLineAtPath('fpc');
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "e":
                 toggleWiringOpenState();
                 break;
@@ -254,20 +284,34 @@ function document_keypress(e) {
             case "N":
                 getSong().nextBeat();
                 break;
-            case "p":
-            case "P":
+			case "p":
                 showOneMenu("#palette");
                 break;
+			case "P":
+				try {
+					parkCommandLineAtPath('fp');
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "q":
                 $('#divQuick').toggle();
                 break;
 			case "r":
                 showOneMenu("#divChart");
                 break;
-            case "s":
-            case "S":
+			case "s":
                 toggleSectionDrawer();
                 break;
+			case "S":
+				try {
+					runActionByName('sectionAdd', {});
+				} catch (error) {
+					showMessages(`<pre>${error.message}</pre>`);
+				}
+				e.preventDefault();
+				break;
             case "t":
                 toggleTransport();
                 break;
@@ -711,6 +755,10 @@ export function performCmdAction(menuItem, args){
 		case "toggleTransport":
 			toggleTransport();
 			break;
+		case "toggleRecording":
+			toggleRecording();
+			actionResult.result = "REC toggled";
+			break;
 		case "parkTransport":
 			showTransport(true);
 			break;
@@ -725,12 +773,19 @@ export function performCmdAction(menuItem, args){
 			toggleFullscreen();
 			break;
 		case "setMenuPrefs":
-			console.log("setMenuPrefs:"+JSON.stringify(args));
 			var c = args["key"];
 			if (c == "s"){ //"short"
 				gMenuFile.tall = false;
+				setCmdLineMenuMode('short');
+				actionResult.result = 'menu prefs: short';
 			} else if (c == "t"){
 				gMenuFile.tall = true;
+				setCmdLineMenuMode('tall');
+				actionResult.result = 'menu prefs: tall';
+			} else if (c == "o"){
+				gMenuFile.tall = false;
+				setCmdLineMenuMode('one-line');
+				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
 		case "showViewDiagnostics":
@@ -1021,7 +1076,9 @@ export function performCmdAction(menuItem, args){
 		case "pluginAction:bury": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
-			if (pluginResult.message) {
+			if (pluginResult.messageJSON) {
+				showMessagesJSON(pluginResult.messageJSON);
+			} else if (pluginResult.message) {
 				showMessages(pluginResult.message);
 			}
 			break;

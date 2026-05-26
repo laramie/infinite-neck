@@ -23,6 +23,7 @@ import {
 	addCmdResults,
 	hideCmdLine,
 	toggleCmdLine,
+	txtCmdLine_keydown,
 	txtCmdLine_keypress 
 } from './command-line.js';
 import {
@@ -259,6 +260,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleCaption,
 			toggleFullscreen,
 			toggleInstrumentCaptionRow,
+			toggleRecording,
 			transpose,
 			transposeSong,
 			transposeSongKeys,
@@ -1094,6 +1096,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function toggleTransport(){
 		TransportBuilder.toggleTransport();
 	}
+	export function toggleRecording(){
+		var btn = $("#btnRecord");
+		var recording = btn.attr("recording");
+		if (recording === undefined || recording === "false") {
+			$(".RecordButton").addClass("ButtonOn");
+			$("#btnRecord").attr("recording", "true");
+			clearRecordedNotes();
+			showBeats(getSong().getBeat());
+		} else {
+			$(".RecordButton").removeClass("ButtonOn");
+			$("#btnRecord").attr("recording", "false");
+		}
+	}
 	export function toggleSectionDrawer(){
 		TransportBuilder.toggleSectionDrawer();
 	}
@@ -1141,24 +1156,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function transposeSong(amount, options = {}){
-		//options is {amount: 1, NamedNotes: true, PlayedNotes: true, RecordedNotes:true, doKeyLead:false}
+		//options is {amount: 1, NamedNotes: true, doKeyLead:false}
 		const song = getSong();
 		const normalizedOptions = {
 			NamedNotes: options.NamedNotes !== false,
-			PlayedNotes: !!options.PlayedNotes,
-			RecordedNotes: !!options.RecordedNotes,
 			doKeyLead: !!options.doKeyLead
 		};
 		song.cycleThruKeysAllSections(amount, normalizedOptions.doKeyLead);
-		//TODO: select on arg "which" and call other variants: PlayedNotes, RecordedNotes.
 		if (normalizedOptions.NamedNotes){
 			song.moveNamedNotesAllSections(amount);
-		}
-		if (normalizedOptions.PlayedNotes){
-			song.movePlayedNotesAllSections(amount);
-		}
-		if (normalizedOptions.RecordedNotes){
-			song.moveRecordedNotesAllSections(amount);
 		}
 		if (song.isHeadless){
 			return;
@@ -1223,6 +1229,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function linkToSectionChangedTonal(){
 		sectionChanged();
 	}
+
+		export function linkToSectionTableTonalSourceSet(idx, tableID, tonalSourceSet) {
+			let section = getSong().sections[idx];
+			if (!section){
+				return;
+			}
+			let sn = section.getSectionNotes(tableID);
+			sn.tonalSourceSet = tonalSourceSet;
+			let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
+			if (doSectionChanged){
+				sectionChanged();
+			}
+		}
 
 	export function linkToSectionTableChord(idx, tableID, chord) {
 		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
@@ -1951,25 +1970,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('click', '.RecordButton', function() {
-			var btn = $("#btnRecord");
-			var recording = btn.attr("recording");
-			if (recording === undefined) {
-				$(".RecordButton").addClass("ButtonOn");    //.css({"background-color": "red"});
-			    $("#btnRecord").attr("recording", "true");
-				clearRecordedNotes();
-		        showBeats(getSong().getBeat());
-			} else if (recording === "false"){
-				$(".RecordButton").addClass("ButtonOn");    //.css({"background-color": "red"});
-			    $("#btnRecord").attr("recording", "true");
-				clearRecordedNotes();
-		        showBeats(getSong().getBeat());
-			} else if (recording === "true") {
-				$(".RecordButton").removeClass("ButtonOn");  //.css({"background-color": "green"});
-				   	$("#btnRecord").attr("recording", "false");
-			} else {
-				$(".RecordButton").removeClass("ButtonOn"); //css({"background-color": "green"});
-				   	$("#btnRecord").attr("recording", "false");
-			}
+			toggleRecording();
 		});
 
 		bindEvent('click', '#btnPrevBeat', function() {
@@ -2372,6 +2373,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$(document).on('keydown', document_keydown);
 		$(document).on('keypress', document_keypress);
+		$("#txtCmdLine").on('keydown', txtCmdLine_keydown);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
 		$(document).on('keyup', document_keyup);
 

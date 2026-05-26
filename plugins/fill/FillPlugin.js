@@ -1,5 +1,5 @@
 import properties from './properties.json' with { type: 'json' };
-import { PluginProperty, buildCaption } from '../PluginProperty.js';
+import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
@@ -12,35 +12,56 @@ const FILL_OWNER = 'FillPlugin';
 const MODE_NONE = 'none';
 const MODE_KEEP = 'keep';
 const MODE_ROLE = 'role';
-const SINGLE_STYLE = Note.STYLENUM_SINGLE;
-const TINY_STYLE = Note.STYLENUM_TINY;
 const TINY_NONE = 'none';
+const TARGET_TABLE_OPTION_LIMIT = 9;
+
+const FAMILY_CONFIG = {
+  named: {
+    caption: 'NamedNote',
+    trigger: 'n',
+    styleNum: Note.STYLENUM_NAMED,
+    supportsCopy: true,
+    usesRange: false
+  },
+  single: {
+    caption: 'SingleNote',
+    trigger: 's',
+    styleNum: Note.STYLENUM_SINGLE,
+    supportsCopy: false,
+    usesRange: true
+  },
+  tiny: {
+    caption: 'TinyNote',
+    trigger: 't',
+    styleNum: Note.STYLENUM_TINY,
+    supportsCopy: true,
+    usesRange: true
+  }
+};
 
 const ROLE_CONFIG = {
   root: {
     trigger: 'r',
-    modeProperty: 'rootMode',
-    colorProperty: 'rootColor',
     canonicalColor: 'noteRoot',
     canonicalCaption: 'noteRoot'
   },
   chord: {
     trigger: 'c',
-    modeProperty: 'chordMode',
-    colorProperty: 'chordColor',
     canonicalColor: 'noteChord',
     canonicalCaption: 'noteChord'
   },
   scale: {
     trigger: 's',
-    modeProperty: 'scaleMode',
-    colorProperty: 'scaleColor',
     canonicalColor: 'noteScale',
     canonicalCaption: 'noteScale'
   }
 };
 
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
+const FAMILY_NAMES = ['named', 'single', 'tiny'];
+const ROLE_NAMES = ['root', 'chord', 'scale'];
+const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
+const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
 
 function stripHtml(text) {
   return `${text || ''}`.replace(/<[^>]+>/g, '');
@@ -54,7 +75,13 @@ function valuesEqual(leftValue, rightValue) {
   return JSON.stringify(leftValue) === JSON.stringify(rightValue);
 }
 
-const TARGET_TABLE_OPTION_LIMIT = 9;
+function capitalize(text = '') {
+  return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '';
+}
+
+function cellKey(row, col) {
+  return `${row}:${col}`;
+}
 
 export class FillPlugin {
   constructor() {
@@ -95,6 +122,26 @@ export class FillPlugin {
 
   getProperty(name) {
     return this.propertyMap.get(name) || null;
+  }
+
+  getFamilyModePropertyName(familyName, roleName) {
+    return `${familyName}${capitalize(roleName)}Mode`;
+  }
+
+  getFamilyColorPropertyName(familyName, roleName) {
+    return `${familyName}${capitalize(roleName)}Color`;
+  }
+
+  getFamilyDisplayFieldName(familyName, roleName) {
+    return `${familyName}${capitalize(roleName)}Display`;
+  }
+
+  getFamilyConfig(familyName) {
+    return FAMILY_CONFIG[familyName] || null;
+  }
+
+  getRoleConfig(roleName) {
+    return ROLE_CONFIG[roleName] || null;
   }
 
   setStaticSelectOptions() {
@@ -217,6 +264,29 @@ export class FillPlugin {
     return legacyKeys.every((key) => valuesEqual(persistedProperties[key], legacyStub[key]));
   }
 
+  normalizeLegacyPersistedProperties(persistedProperties = {}) {
+    const normalized = { ...persistedProperties };
+    ROLE_NAMES.forEach((roleName) => {
+      const legacyModeName = `${roleName}Mode`;
+      const legacyColorName = `${roleName}Color`;
+      const singleModeName = this.getFamilyModePropertyName('single', roleName);
+      const singleColorName = this.getFamilyColorPropertyName('single', roleName);
+      if (normalized[singleModeName] == null && normalized[legacyModeName] != null) {
+        normalized[singleModeName] = normalized[legacyModeName];
+      }
+      if (normalized[singleColorName] == null && normalized[legacyColorName] != null) {
+        normalized[singleColorName] = normalized[legacyColorName];
+      }
+      delete normalized[legacyModeName];
+      delete normalized[legacyColorName];
+    });
+    if (normalized.singleAddTiny == null && normalized.tinyNotes != null) {
+      normalized.singleAddTiny = normalized.tinyNotes;
+    }
+    delete normalized.tinyNotes;
+    return normalized;
+  }
+
   normalizeRangeValues(song = getSong()) {
     const tuning = this.getSelectedTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
     if (!tuning) {
@@ -255,6 +325,14 @@ export class FillPlugin {
     return propertyName === 'minRow' || propertyName === 'maxRow';
   }
 
+  isFamilyModeProperty(propertyName) {
+    return FAMILY_NAMES.some((familyName) => ROLE_NAMES.some((roleName) => propertyName === this.getFamilyModePropertyName(familyName, roleName)));
+  }
+
+  isFamilyColorProperty(propertyName) {
+    return FAMILY_NAMES.some((familyName) => ROLE_NAMES.some((roleName) => propertyName === this.getFamilyColorPropertyName(familyName, roleName)));
+  }
+
   toDisplayStringNumber(rowIndex, song = getSong()) {
     const maxAllowedRow = this.getMaxAllowedRow(this.getSelectedTargetTuning(song));
     const clampedRowIndex = this.clampNumber(rowIndex, 0, Math.max(0, maxAllowedRow));
@@ -271,14 +349,19 @@ export class FillPlugin {
     return clampedStringNumber - 1;
   }
 
-  resolveRoleDisplay(roleName) {
-    const config = ROLE_CONFIG[roleName];
-    if (!config) {
-      return undefined;
-    }
-    const modeValue = this.getProperty(config.modeProperty)?.getValue();
+  getFamilyRoleMode(familyName, roleName) {
+    return `${this.getProperty(this.getFamilyModePropertyName(familyName, roleName))?.getValue() || MODE_NONE}`;
+  }
+
+  getFamilyRoleColor(familyName, roleName) {
+    const roleConfig = this.getRoleConfig(roleName);
+    return `${this.getProperty(this.getFamilyColorPropertyName(familyName, roleName))?.getValue() || roleConfig?.canonicalColor || 'noteTransparent'}`;
+  }
+
+  resolveFamilyRoleDisplay(familyName, roleName) {
+    const modeValue = this.getFamilyRoleMode(familyName, roleName);
     if (modeValue === MODE_ROLE) {
-      return this.getProperty(config.colorProperty)?.getValue();
+      return this.getFamilyRoleColor(familyName, roleName);
     }
     return modeValue;
   }
@@ -288,7 +371,7 @@ export class FillPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.getProperty('targetTable').getMenuNodeSpec(this),
-      this.buildOptionsMenuNode(),
+      this.buildOptionsMenuNode(song),
       this.getProperty('apply').getMenuNodeSpec(this),
       this.getProperty('clear').getMenuNodeSpec(this),
       this.getProperty('clearSong').getMenuNodeSpec(this),
@@ -297,7 +380,7 @@ export class FillPlugin {
     ];
   }
 
-  buildOptionsMenuNode() {
+  buildOptionsMenuNode(song = getSong()) {
     return new MenuItemProxy(this, {
       name: 'options',
       caption: buildCaption('options', 'o'),
@@ -305,54 +388,111 @@ export class FillPlugin {
       children: [
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
-        this.getProperty('minFret').getMenuNodeSpec(this),
-        this.getProperty('maxFret').getMenuNodeSpec(this),
-        this.getProperty('minRow').getMenuNodeSpec(this),
-        this.getProperty('maxRow').getMenuNodeSpec(this),
-        this.buildRoleMenuNode('root'),
-        this.buildRoleMenuNode('chord'),
-        this.buildRoleMenuNode('scale'),
-        this.getProperty('tinyNotes').getMenuNodeSpec(this),
+        this.buildPositionsMenuNode(),
+        this.buildStringsMenuNode(song),
+        this.buildFamilyMenuNode('named', song),
+        this.buildFamilyMenuNode('single', song),
+        this.buildFamilyMenuNode('tiny', song),
         this.getProperty('apply').getMenuNodeSpec(this)
       ]
     });
   }
 
-  buildRoleMenuNode(roleName) {
-    const config = ROLE_CONFIG[roleName];
-    const displayToken = `plugin:${this.id}:${roleName}Display`;
-    const colorToken = this.getProperty(config.colorProperty).getResolverToken(this.id);
+  buildPositionsMenuNode() {
+    const token = `plugin:${this.id}:${POSITIONS_SUMMARY_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'positions',
+      caption: `${buildCaption('positions', 'p')} [${buildValueReference(token)}]`,
+      trigger: 'p',
+      vars: [token],
+      children: [
+        this.getProperty('minFret').getMenuNodeSpec(this),
+        this.getProperty('maxFret').getMenuNodeSpec(this)
+      ]
+    });
+  }
+
+  buildStringsMenuNode(song = getSong()) {
+    const token = `plugin:${this.id}:${STRINGS_SUMMARY_TOKEN}`;
+    return new MenuItemProxy(this, {
+      name: 'strings',
+      caption: `${buildCaption('strings', 's')} [${buildValueReference(token)}]`,
+      trigger: 's',
+      vars: [token],
+      children: [
+        this.getProperty('minRow').getMenuNodeSpec(this),
+        this.getProperty('maxRow').getMenuNodeSpec(this)
+      ]
+    });
+  }
+
+  buildFamilyMenuNode(familyName) {
+    const familyConfig = this.getFamilyConfig(familyName);
+    const children = [];
+
+    if (familyConfig?.supportsCopy) {
+      children.push(new MenuItemProxy(this, {
+        name: `${familyName}:copyFromSingle`,
+        caption: buildCaption('Copy from SingleNote', 'C'),
+        trigger: 'C',
+        action: 'pluginAction:invoke',
+        pluginId: this.id,
+        actionName: `copyFamilyFromSingle:${familyName}`,
+        popOnBang: true
+      }));
+    }
+
+    ROLE_NAMES.forEach((roleName) => {
+      children.push(this.buildFamilyRoleMenuNode(familyName, roleName));
+    });
+
+    if (familyName === 'single') {
+      children.push(this.getProperty('singleAddTiny').getMenuNodeSpec(this));
+    }
 
     return new MenuItemProxy(this, {
-      name: roleName,
-      caption: `${buildCaption(roleName, config.trigger)} [$${displayToken}]`,
-      trigger: config.trigger,
+      name: familyName,
+      caption: buildCaption(familyConfig.caption, familyConfig.trigger),
+      trigger: familyConfig.trigger,
+      children
+    });
+  }
+
+  buildFamilyRoleMenuNode(familyName, roleName) {
+    const roleConfig = this.getRoleConfig(roleName);
+    const displayToken = `plugin:${this.id}:${this.getFamilyDisplayFieldName(familyName, roleName)}`;
+    const colorToken = this.getProperty(this.getFamilyColorPropertyName(familyName, roleName)).getResolverToken(this.id);
+
+    return new MenuItemProxy(this, {
+      name: `${familyName}:${roleName}`,
+      caption: `${buildCaption(roleName, roleConfig.trigger)} [\${${displayToken}}]`,
+      trigger: roleConfig.trigger,
       vars: [displayToken],
       children: [
-        this.buildRoleModeChild(roleName, MODE_NONE, 'none', 'n'),
-        ...(roleName === 'scale' ? [] : [this.buildRoleModeChild(roleName, MODE_KEEP, 'keep', 'k')]),
+        this.buildFamilyRoleModeChild(familyName, roleName, MODE_NONE, 'none', 'n'),
+        this.buildFamilyRoleModeChild(familyName, roleName, MODE_KEEP, 'keep', 'k'),
         new MenuItemProxy(this, {
-          name: `${roleName}:roleMenu`,
-          caption: `${buildCaption('role', 'r')} [$${colorToken}]`,
+          name: `${familyName}:${roleName}:roleMenu`,
+          caption: `${buildCaption('role', 'r')} [\${${colorToken}}]`,
           trigger: 'r',
           vars: [colorToken],
           children: [
             new MenuItemProxy(this, {
-              name: `${roleName}:canonical`,
-              caption: buildCaption(config.canonicalCaption, 'n'),
+              name: `${familyName}:${roleName}:canonical`,
+              caption: buildCaption(roleConfig.canonicalCaption, 'n'),
               trigger: 'n',
               action: 'pluginAction:invoke',
               pluginId: this.id,
-              actionName: `setRoleColor:${roleName}:${config.canonicalColor}`,
+              actionName: `setFamilyRoleColor:${familyName}:${roleName}:${roleConfig.canonicalColor}`,
               popOnBang: true
             }),
             new MenuItemProxy(this, {
-              name: `${roleName}:last`,
+              name: `${familyName}:${roleName}:last`,
               caption: buildCaption('last', 'l'),
               trigger: 'l',
               action: 'pluginAction:invoke',
               pluginId: this.id,
-              actionName: `setRoleColorLast:${roleName}`,
+              actionName: `setFamilyRoleColorLast:${familyName}:${roleName}`,
               popOnBang: true
             })
           ]
@@ -361,15 +501,14 @@ export class FillPlugin {
     });
   }
 
-  buildRoleModeChild(roleName, modeValue, caption, trigger) {
-    const config = ROLE_CONFIG[roleName];
+  buildFamilyRoleModeChild(familyName, roleName, modeValue, caption, trigger) {
     return new MenuItemProxy(this, {
-      name: `${roleName}:${modeValue}`,
+      name: `${familyName}:${roleName}:${modeValue}`,
       caption: buildCaption(caption, trigger),
       trigger,
       action: 'pluginProperty:select',
       pluginId: this.id,
-      propertyName: config.modeProperty,
+      propertyName: this.getFamilyModePropertyName(familyName, roleName),
       value: modeValue,
       popOnBang: true
     });
@@ -388,7 +527,8 @@ export class FillPlugin {
       this.refreshDynamicPropertyOptions(context.song || getSong());
       return;
     }
-    Object.entries(persistedProperties).forEach(([name, value]) => {
+    const normalizedPersistedProperties = this.normalizeLegacyPersistedProperties(persistedProperties);
+    Object.entries(normalizedPersistedProperties).forEach(([name, value]) => {
       const property = this.getProperty(name);
       if (!property || property.datatype === 'org.dynamide.Action') {
         return;
@@ -422,20 +562,16 @@ export class FillPlugin {
     const song = context.song || getSong();
     this.refreshDynamicPropertyOptions(song);
 
-    if (name.endsWith('Mode')) {
+    if (this.isFamilyModeProperty(name)) {
       const normalized = `${rawValue}`;
       if (![MODE_NONE, MODE_KEEP, MODE_ROLE].includes(normalized)) {
         throw new Error(`FillPlugin invalid mode for ${name}: ${rawValue}`);
-      }
-      if (name === 'scaleMode' && normalized === MODE_KEEP) {
-        property.value = MODE_ROLE;
-        return property.getValue();
       }
       property.value = normalized;
       return property.getValue();
     }
 
-    if (name.endsWith('Color')) {
+    if (this.isFamilyColorProperty(name)) {
       property.value = `${rawValue}`;
       return property.getValue();
     }
@@ -467,17 +603,21 @@ export class FillPlugin {
     if (fieldName === 'scaleFormula') {
       return this.resolveOptionCaption(Constants.FILL_SCALE_OPTIONS, this.getProperty('scaleFormula')?.getValue());
     }
-    if (fieldName === 'rootDisplay') {
-      return this.resolveRoleDisplay('root');
+    if (fieldName === 'singleAddTiny') {
+      return this.resolveSingleAddTinyDisplay(song);
     }
-    if (fieldName === 'chordDisplay') {
-      return this.resolveRoleDisplay('chord');
+    if (fieldName === POSITIONS_SUMMARY_TOKEN) {
+      return `${this.getProperty('minFret')?.getValue()}:${this.getProperty('maxFret')?.getValue()}`;
     }
-    if (fieldName === 'scaleDisplay') {
-      return this.resolveRoleDisplay('scale');
+    if (fieldName === STRINGS_SUMMARY_TOKEN) {
+      return `${this.resolveValue('minRow', { song })}:${this.resolveValue('maxRow', { song })}`;
     }
-    if (fieldName === 'tinyNotes') {
-      return this.resolveTinyDisplay();
+    for (const familyName of FAMILY_NAMES) {
+      for (const roleName of ROLE_NAMES) {
+        if (fieldName === this.getFamilyDisplayFieldName(familyName, roleName)) {
+          return this.resolveFamilyRoleDisplay(familyName, roleName);
+        }
+      }
     }
     if (this.isStringLimitProperty(fieldName)) {
       return this.toDisplayStringNumber(this.getProperty(fieldName)?.getValue() || 0, song);
@@ -489,6 +629,11 @@ export class FillPlugin {
       return this.getMaxAllowedRow(this.getSelectedTargetTuning(song)) + 1;
     }
     return undefined;
+  }
+
+  resolveSingleAddTinyDisplay(song = getSong()) {
+    const tinyValue = `${this.getProperty('singleAddTiny')?.getValue() || TINY_NONE}`;
+    return this.isStandaloneTinyActive(song) ? `${tinyValue} [disabled]` : tinyValue;
   }
 
   resolveOptionCaption(options, value) {
@@ -520,15 +665,20 @@ export class FillPlugin {
   invokeAction(actionName, context = {}) {
     const song = context.song || getSong();
 
-    if (actionName.startsWith('setRoleColor:')) {
-      const [, roleName, colorValue] = actionName.split(':');
-      return this.setRoleColorSelection(roleName, colorValue, song);
+    if (actionName.startsWith('setFamilyRoleColor:')) {
+      const [, familyName, roleName, colorValue] = actionName.split(':');
+      return this.setFamilyRoleColorSelection(familyName, roleName, colorValue, song);
     }
 
-    if (actionName.startsWith('setRoleColorLast:')) {
-      const [, roleName] = actionName.split(':');
+    if (actionName.startsWith('setFamilyRoleColorLast:')) {
+      const [, familyName, roleName] = actionName.split(':');
       const lastColor = PalettePresentation.getLastRestorableRbColor();
-      return this.setRoleColorSelection(roleName, lastColor?.value || 'noteTransparent', song);
+      return this.setFamilyRoleColorSelection(familyName, roleName, lastColor?.value || 'noteTransparent', song);
+    }
+
+    if (actionName.startsWith('copyFamilyFromSingle:')) {
+      const [, familyName] = actionName.split(':');
+      return this.copyFamilyFromSingle(familyName, song);
     }
 
     switch (actionName) {
@@ -550,30 +700,43 @@ export class FillPlugin {
     }
   }
 
-  setRoleColorSelection(roleName, colorValue, song = getSong()) {
-    const config = ROLE_CONFIG[roleName];
-    if (!config) {
-      throw new Error(`Unknown FillPlugin role: ${roleName}`);
+  setFamilyRoleColorSelection(familyName, roleName, colorValue, song = getSong()) {
+    if (!this.getFamilyConfig(familyName) || !this.getRoleConfig(roleName)) {
+      throw new Error(`Unknown FillPlugin family role: ${familyName}:${roleName}`);
     }
-    this.setPropertyValue(config.modeProperty, MODE_ROLE, { song });
-    this.setPropertyValue(config.colorProperty, colorValue, { song });
-    return { result: `${roleName} color set to ${colorValue}` };
+    this.setPropertyValue(this.getFamilyModePropertyName(familyName, roleName), MODE_ROLE, { song });
+    this.setPropertyValue(this.getFamilyColorPropertyName(familyName, roleName), colorValue, { song });
+    return { result: `${familyName} ${roleName} color set to ${colorValue}` };
+  }
+
+  copyFamilyFromSingle(familyName, song = getSong()) {
+    if (!this.getFamilyConfig(familyName) || familyName === 'single') {
+      return { result: `Fill copy skipped: unsupported family ${familyName}` };
+    }
+    ROLE_NAMES.forEach((roleName) => {
+      this.setPropertyValue(this.getFamilyModePropertyName(familyName, roleName), this.getFamilyRoleMode('single', roleName), { song });
+      this.setPropertyValue(this.getFamilyColorPropertyName(familyName, roleName), this.getFamilyRoleColor('single', roleName), { song });
+    });
+    return { result: `${familyName} copied from SingleNote` };
   }
 
   buildHelpMessage(song = getSong()) {
     return `<pre>${buildPluginHelpHeader(this, 'Fill plugin:', this.buildSummary(song))}
 
-SingleNote fill only.
+NamedNote, SingleNote, and TinyNote fill.
 
 - target table = ${this.resolveValue('targetTable', { song }) || '<none>'}
 - chord formula = ${this.resolveValue('chordFormula', { song })}
 - scale formula = ${this.resolveValue('scaleFormula', { song })}
 - fret range = ${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()}
 - upper/lower string limit = ${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}
-- root color = ${this.resolveValue('rootDisplay', { song })}
-- chord color = ${this.resolveValue('chordDisplay', { song })}
-- scale color = ${this.resolveValue('scaleDisplay', { song })}
-- tiny notes = ${this.resolveValue('tinyNotes', { song })}
+- NamedNote = ${this.buildFamilySummary('named')}
+- SingleNote = ${this.buildFamilySummary('single')}; add TinyNote = ${this.resolveValue('singleAddTiny', { song })}
+- TinyNote = ${this.buildFamilySummary('tiny')}
+
+NamedNote ignores fret and string limits.
+SingleNote and standalone TinyNote obey the configured fret and string limits.
+Standalone TinyNote suppresses SingleNote add TinyNote whenever it emits at least one note.
 
 Apply and Clear affect only the current section in the selected table.
 Clear Song and Commit Notes affect all sections in the selected table.
@@ -583,12 +746,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildSummary(song = getSong()) {
-    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord formula=${this.resolveValue('chordFormula', { song })} scale formula=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} tiny notes=${this.resolveValue('tinyNotes', { song })}`;
+    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord formula=${this.resolveValue('chordFormula', { song })} scale formula=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
   }
 
-  resolveTinyDisplay() {
-    const tinyValue = `${this.getProperty('tinyNotes')?.getValue() || TINY_NONE}`;
-    return tinyValue;
+  buildFamilySummary(familyName) {
+    return ROLE_NAMES.map((roleName) => `${roleName}=${this.resolveFamilyRoleDisplay(familyName, roleName)}`).join(' ');
   }
 
   buildTargetTableOptions(song = getSong()) {
@@ -704,89 +866,173 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return candidates;
   }
 
-  buildFillPlan(song, section, tuning) {
-    const roleNoteSets = this.computeRoleNoteSets(section);
-    const candidates = this.collectCandidateCells(tuning);
+  isCandidateInRange(candidate) {
     const minFret = Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0;
     const maxFret = Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0;
     const upperRowLimit = Number.parseInt(this.getProperty('minRow')?.getValue(), 10) || 0;
     const lowerRowLimit = Number.parseInt(this.getProperty('maxRow')?.getValue(), 10) || 0;
-    const plan = [];
+    return candidate.row >= upperRowLimit && candidate.row <= lowerRowLimit && candidate.col >= minFret && candidate.col <= maxFret;
+  }
 
-    candidates.forEach((candidate) => {
-      if (candidate.row < upperRowLimit || candidate.row > lowerRowLimit || candidate.col < minFret || candidate.col > maxFret) {
+  resolveFamilyDecision(familyName, noteName, roleNoteSets) {
+    let matched = false;
+    let preserveExisting = false;
+    let outputColorValue = null;
+
+    ROLE_PASS_ORDER.forEach((roleName) => {
+      if (!roleNoteSets[roleName]?.has(noteName)) {
         return;
       }
 
-      const decision = this.resolveCellDecision(candidate, roleNoteSets);
-      if (!decision) {
+      matched = true;
+      const modeValue = this.getFamilyRoleMode(familyName, roleName);
+      if (modeValue === MODE_KEEP) {
+        preserveExisting = true;
         return;
       }
 
-      plan.push({
-        singleNote: this.buildSingleNote(candidate, decision.colorValue, section),
-        tinyNote: this.buildTinyNote(candidate, section)
+      preserveExisting = false;
+      if (modeValue === MODE_ROLE) {
+        outputColorValue = this.getFamilyRoleColor(familyName, roleName);
+        return;
+      }
+
+      outputColorValue = null;
+    });
+
+    return {
+      matched,
+      preserveExisting,
+      outputColorValue
+    };
+  }
+
+  buildNamedPlan(roleNoteSets) {
+    const notePlans = [];
+    const noteNames = new Set();
+    Object.values(roleNoteSets).forEach((noteSet) => {
+      (noteSet || []).forEach((noteName) => noteNames.add(noteName));
+    });
+
+    noteNames.forEach((noteName) => {
+      const decision = this.resolveFamilyDecision('named', noteName, roleNoteSets);
+      if (!decision.matched) {
+        return;
+      }
+      notePlans.push({
+        noteName,
+        preserveExisting: decision.preserveExisting,
+        outputNote: decision.outputColorValue
+          ? this.buildNamedNote(noteName, decision.outputColorValue)
+          : null
       });
     });
 
-    return plan;
+    return { notePlans };
   }
 
-  resolveCellDecision(candidate, roleNoteSets) {
-    let selectedRole = null;
+  buildPlayedFamilyPlan(familyName, section, tuning, roleNoteSets) {
+    const cellPlans = [];
+    this.collectCandidateCells(tuning)
+      .filter((candidate) => !this.getFamilyConfig(familyName).usesRange || this.isCandidateInRange(candidate))
+      .forEach((candidate) => {
+        const decision = this.resolveFamilyDecision(familyName, candidate.noteName, roleNoteSets);
+        if (!decision.matched) {
+          return;
+        }
+        cellPlans.push({
+          row: candidate.row,
+          col: candidate.col,
+          preserveExisting: decision.preserveExisting,
+          outputNote: decision.outputColorValue
+            ? this.buildPlayedNote(familyName, candidate, decision.outputColorValue, section)
+            : null
+        });
+      });
+    return { cellPlans };
+  }
 
-    ROLE_PASS_ORDER.forEach((roleName) => {
-      const noteSet = roleNoteSets[roleName];
-      if (!noteSet?.has(candidate.noteName)) {
-        return;
-      }
+  buildOverlayTinyPlan(section, singlePlan) {
+    const tinyValue = `${this.getProperty('singleAddTiny')?.getValue() || TINY_NONE}`;
+    if (tinyValue === TINY_NONE) {
+      return { cellPlans: [] };
+    }
 
-      const config = ROLE_CONFIG[roleName];
-      const mode = `${this.getProperty(config.modeProperty)?.getValue() || MODE_ROLE}`;
-      if (mode === MODE_ROLE) {
-        selectedRole = {
-          roleName,
-          colorValue: `${this.getProperty(config.colorProperty)?.getValue() || config.canonicalColor}`
-        };
-        return;
-      }
+    return {
+      cellPlans: singlePlan.cellPlans
+        .filter((cellPlan) => cellPlan.outputNote)
+        .map((cellPlan) => ({
+          row: cellPlan.row,
+          col: cellPlan.col,
+          preserveExisting: false,
+          outputNote: this.buildPlayedNote('tiny', cellPlan.outputNote, tinyValue, section, true)
+        }))
+    };
+  }
 
-      if (mode === MODE_NONE) {
-        selectedRole = null;
+  buildCombinedOverlayTinyPlan(tinyPlan, overlayTinyPlan) {
+    const combinedByCell = new Map();
+
+    tinyPlan.cellPlans.forEach((cellPlan) => {
+      if (cellPlan.preserveExisting) {
+        combinedByCell.set(cellKey(cellPlan.row, cellPlan.col), {
+          ...cellPlan,
+          outputNote: null
+        });
       }
     });
 
-    return selectedRole;
+    overlayTinyPlan.cellPlans.forEach((cellPlan) => {
+      const key = cellKey(cellPlan.row, cellPlan.col);
+      if (combinedByCell.get(key)?.preserveExisting) {
+        return;
+      }
+      combinedByCell.set(key, cellPlan);
+    });
+
+    return {
+      cellPlans: Array.from(combinedByCell.values())
+    };
   }
 
-  buildSingleNote(candidate, colorValue, section) {
+  buildApplyPlan(song, section, tuning) {
+    const roleNoteSets = this.computeRoleNoteSets(section);
+    const namedPlan = this.buildNamedPlan(roleNoteSets);
+    const singlePlan = this.buildPlayedFamilyPlan('single', section, tuning, roleNoteSets);
+    const tinyPlan = this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets);
+    const standaloneTinyActive = tinyPlan.cellPlans.some((cellPlan) => cellPlan.outputNote);
+    const overlayTinyPlan = standaloneTinyActive
+      ? { cellPlans: [] }
+      : this.buildCombinedOverlayTinyPlan(tinyPlan, this.buildOverlayTinyPlan(section, singlePlan));
+
+    return {
+      namedPlan,
+      singlePlan,
+      tinyPlan: standaloneTinyActive ? tinyPlan : overlayTinyPlan,
+      standaloneTinyActive
+    };
+  }
+
+  buildNamedNote(noteName, colorValue) {
+    return new Note({
+      noteName,
+      styleNum: Note.STYLENUM_NAMED,
+      colorClass: colorValue,
+      owner: FILL_OWNER
+    });
+  }
+
+  buildPlayedNote(familyName, candidate, colorValue, section, fromOutputNote = false) {
+    const source = fromOutputNote ? candidate : null;
     const note = new Note({
-      noteName: candidate.noteName,
-      styleNum: SINGLE_STYLE,
-      midinum: candidate.midinum,
-      row: candidate.row,
-      col: candidate.col,
+      noteName: source?.noteName || candidate.noteName,
+      styleNum: this.getFamilyConfig(familyName).styleNum,
+      midinum: source?.midinum ?? candidate.midinum,
+      row: source?.row ?? candidate.row,
+      col: source?.col ?? candidate.col,
       owner: FILL_OWNER
     });
     note.colorClass = this.resolvePersistedColorValue(colorValue, note, section);
-    return note;
-  }
-
-  buildTinyNote(candidate, section) {
-    const tinyValue = `${this.getProperty('tinyNotes')?.getValue() || TINY_NONE}`;
-    if (tinyValue === TINY_NONE) {
-      return null;
-    }
-
-    const note = new Note({
-      noteName: candidate.noteName,
-      styleNum: TINY_STYLE,
-      midinum: candidate.midinum,
-      row: candidate.row,
-      col: candidate.col,
-      owner: FILL_OWNER
-    });
-    note.colorClass = this.resolvePersistedColorValue(tinyValue, note, section);
     return note;
   }
 
@@ -804,6 +1050,14 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return 'noteTransparent';
   }
 
+  isStandaloneTinyActive(song = getSong(), section = this.getCurrentSection(song), tuning = this.getSelectedTargetTuning(song)) {
+    if (!song || !section || !tuning || !this.getSelectedTargetTableID()) {
+      return false;
+    }
+    const roleNoteSets = this.computeRoleNoteSets(section);
+    return this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets).cellPlans.some((cellPlan) => cellPlan.outputNote);
+  }
+
   applyToCurrentSection(song = getSong()) {
     return this.applyToSection(song, this.getCurrentSection(song));
   }
@@ -819,38 +1073,91 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const sectionNotes = section.getSectionNotes(tableID);
     this.clearOwnedFillNotesInSection(sectionNotes);
 
-    const occupiedCells = new Set(
-      (sectionNotes.playedNotes || [])
-        .filter((note) => Number.parseInt(note?.styleNum, 10) === SINGLE_STYLE)
-        .map((note) => `${note.row}:${note.col}`)
-    );
-
-    const plan = this.buildFillPlan(song, section, tuning);
-    let addedCount = 0;
-    let tinyAddedCount = 0;
-    let skippedCount = 0;
-
-    plan.forEach(({ singleNote, tinyNote }) => {
-      const key = `${singleNote.row}:${singleNote.col}`;
-      if (occupiedCells.has(key)) {
-        skippedCount += 1;
-        return;
-      }
-      sectionNotes.playedNotes.push(singleNote);
-      if (tinyNote) {
-        sectionNotes.playedNotes.push(tinyNote);
-        tinyAddedCount += 1;
-      }
-      occupiedCells.add(key);
-      addedCount += 1;
-    });
+    const plan = this.buildApplyPlan(song, section, tuning);
+    const counts = this.applyPlanToSection(sectionNotes, plan);
 
     this.refreshCurrentSectionUi(song);
-    return { result: `Fill applied: added ${addedCount}, tiny ${tinyAddedCount}, skipped ${skippedCount}` };
+    return {
+      result: `Fill applied: named ${counts.namedAdded}, single ${counts.singleAdded}, tiny ${counts.tinyAdded}, overlay ${counts.overlayTinyAdded}, kept ${counts.kept}`
+    };
+  }
+
+  applyPlanToSection(sectionNotes, plan) {
+    const namedCounts = this.applyNamedPlan(sectionNotes, plan.namedPlan);
+    const singleCounts = this.applyPlayedPlan(sectionNotes, plan.singlePlan, Note.STYLENUM_SINGLE);
+    const tinyCounts = this.applyPlayedPlan(sectionNotes, plan.tinyPlan, Note.STYLENUM_TINY);
+    return {
+      namedAdded: namedCounts.added,
+      singleAdded: singleCounts.added,
+      tinyAdded: plan.standaloneTinyActive ? tinyCounts.added : 0,
+      overlayTinyAdded: plan.standaloneTinyActive ? 0 : tinyCounts.added,
+      kept: namedCounts.kept + singleCounts.kept + tinyCounts.kept
+    };
+  }
+
+  applyNamedPlan(sectionNotes, plan) {
+    let added = 0;
+    let kept = 0;
+
+    plan.notePlans.forEach((notePlan) => {
+      const existingNote = sectionNotes.namedNotes?.[notePlan.noteName];
+      if (notePlan.preserveExisting && existingNote) {
+        kept += 1;
+        return;
+      }
+      if (existingNote) {
+        sectionNotes.clearNamedNote(notePlan.noteName);
+      }
+      if (notePlan.outputNote) {
+        sectionNotes.setNamedNote(notePlan.noteName, notePlan.outputNote);
+        added += 1;
+      }
+    });
+
+    return { added, kept };
+  }
+
+  applyPlayedPlan(sectionNotes, plan, styleNum) {
+    let added = 0;
+    let kept = 0;
+    const planByCell = new Map(plan.cellPlans.map((cellPlan) => [cellKey(cellPlan.row, cellPlan.col), { ...cellPlan, hadExisting: false }]));
+
+    sectionNotes.playedNotes = (sectionNotes.playedNotes || []).filter((note) => {
+      if (Number.parseInt(note?.styleNum, 10) !== styleNum) {
+        return true;
+      }
+      const decision = planByCell.get(cellKey(note.row, note.col));
+      if (!decision) {
+        return true;
+      }
+      if (decision.preserveExisting) {
+        decision.hadExisting = true;
+        return true;
+      }
+      return false;
+    });
+
+    planByCell.forEach((decision) => {
+      if (decision.preserveExisting && decision.hadExisting) {
+        kept += 1;
+        return;
+      }
+      if (decision.outputNote) {
+        sectionNotes.playedNotes.push(decision.outputNote);
+        added += 1;
+      }
+    });
+
+    return { added, kept };
   }
 
   clearOwnedFillNotesInSection(sectionNotes) {
-    sectionNotes.removePlayedNotesWhere((note) => this.isOwnedFillNote(note));
+    sectionNotes.removePlayedNotesWhere((note) => this.isOwnedFillPlayedNote(note));
+    Object.entries(sectionNotes.namedNotes || {}).forEach(([noteName, note]) => {
+      if (this.isOwnedFillNamedNote(note)) {
+        sectionNotes.clearNamedNote(noteName);
+      }
+    });
   }
 
   clearCurrentSection(song = getSong()) {
@@ -882,18 +1189,28 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return { result: 'Fill commit skipped: no target table selected' };
     }
     (song.sections || []).forEach((section) => {
-      section.getSectionNotes(tableID).forEachPlayedNoteWhere(
-        (note) => this.isOwnedFillNote(note),
+      const sectionNotes = section.getSectionNotes(tableID);
+      sectionNotes.forEachPlayedNoteWhere(
+        (note) => this.isOwnedFillPlayedNote(note),
         (note) => { delete note.owner; }
       );
+      Object.values(sectionNotes.namedNotes || {}).forEach((note) => {
+        if (this.isOwnedFillNamedNote(note)) {
+          delete note.owner;
+        }
+      });
     });
     this.refreshCurrentSectionUi(song);
     return { result: 'Fill committed generated notes' };
   }
 
-  isOwnedFillNote(note) {
+  isOwnedFillPlayedNote(note) {
     const styleNum = Number.parseInt(note?.styleNum, 10);
-    return note?.owner === FILL_OWNER && (styleNum === SINGLE_STYLE || styleNum === TINY_STYLE);
+    return note?.owner === FILL_OWNER && (styleNum === Note.STYLENUM_SINGLE || styleNum === Note.STYLENUM_TINY);
+  }
+
+  isOwnedFillNamedNote(note) {
+    return note?.owner === FILL_OWNER;
   }
 
   refreshCurrentSectionUi(song = getSong()) {

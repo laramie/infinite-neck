@@ -263,6 +263,27 @@ export var gMenuFile =    {
       ]
     },
     {
+    "caption": "<b>c</b>hart",
+    "trigger": "c",
+    "children": [
+        {
+          "caption": "<b>s</b>ummary",
+          "trigger": "s",
+          "action": "printSectionsSummary"
+        },
+        {
+          "caption": "<b>n</b>otes",
+          "trigger": "n",
+          "action": "printSectionsNotes"
+        },
+        {
+          "caption": "<b>d</b>etails",
+          "trigger": "d",
+          "action": "printSectionsDetails"
+        }            
+      ]
+    },
+    {
       "caption": "<b>s</b>ection",
       "trigger": "s",
       "children": [
@@ -614,27 +635,6 @@ export var gMenuFile =    {
           ]
         },
         {
-        "caption": "cha<b>r</b>t",
-        "trigger": "r",
-        "children": [
-            {
-              "caption": "<b>s</b>ummary",
-              "trigger": "s",
-              "action": "printSectionsSummary"
-            },
-            {
-              "caption": "<b>n</b>otes",
-              "trigger": "n",
-              "action": "printSectionsNotes"
-            },
-            {
-              "caption": "<b>d</b>etails",
-              "trigger": "d",
-              "action": "printSectionsDetails"
-            }            
-          ]
-        },
-        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-section"
@@ -653,6 +653,10 @@ export var gMenuFile =    {
             {
               "caption": "<b>s</b>hort",
               "trigger": "s"
+            },
+            {
+              "caption": "<b>o</b>ne-line",
+              "trigger": "o"
             },
             {
               "caption": "<b>t</b>all",
@@ -1211,8 +1215,13 @@ export var gMenuFile =    {
           "action": "toggleLoopBeats"
         },
         {
-          "caption": "<b>r</b>andom loop",
+          "caption": "<b>r</b>ec",
           "trigger": "r",
+          "action": "toggleRecording"
+        },
+        {
+          "caption": "r<b>a</b>ndom loop",
+          "trigger": "a",
           "action": "toggleRandomLoop"
         },
         {
@@ -1509,25 +1518,21 @@ function printMenuStackBreadcrumbCaptions(sep){
 export function dumpMenus(){
     var menu = gMenuFile;
     var result = showChildMenusRecursively(menu, 0);
-    //l("result:"+result);
-    return result;
+    return `<pre class="menuDump">${result}</pre>`;
 }
 
 function showChildMenusRecursively(menu, level){  
-    function l(m){
-      console.log(m);
-    }
     level++;
     var indent = "";
-    for(var i=0;i<level;i++){indent=indent+'----';}
-    var result = indent+menu.caption+":>";
-    //l(""+level+":menu.caption:"+menu.caption);
+    for (var i = 0; i < level; i++) {
+        indent += '&nbsp;&nbsp;&nbsp;&nbsp;';
+    }
+    var result = indent + menu.caption;
     var children = menu.children;
     if (children){
       children.forEach(child => {
         var childrenMenus = showChildMenusRecursively(child, level);
-        result = result+"<br>"+childrenMenus;
-        //l(""+level+":children::"+childrenMenus);
+        result = result + "\n" + childrenMenus;
       });
     }
     return result;

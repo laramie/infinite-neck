@@ -49,7 +49,7 @@ function clearHighlights() {
         if (!notesInBeatArr){
           recordedNotes[sBeatNum] = [];
         }
-        //MOJO TODO:  recordedNotes[sBeatNum] = [];//always hose the array in single-highlight--only one allowed.
+                recordedNotes[sBeatNum] = recordedNotes[sBeatNum].filter((element) => element.styleNum != Note.STYLENUM_MIDIPITCHES);
         if (!doEraseHighlight){
           recordedNotes[sBeatNum].push(recNote);
         }

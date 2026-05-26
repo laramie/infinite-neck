@@ -448,6 +448,21 @@ export const allTunings = {
     },
     {
       "instance": false,
+      "baseID": "PianoSkeuomorphic",
+      "baseInstrument": "Piano",
+      "caption": "Piano Skeuomorphic",
+      "nStrings": 1,
+      "rowRange": [48],
+      "frets": 26,
+      "nut": false,
+      "reverse": false,
+      "visible": false,
+      "pianoNamesRow": true,
+      "pianoSkeuomorphic": false,
+      "fixedFretWidthMult": 0.5
+    },
+    {
+      "instance": false,
       "baseID": "Piano",
       "baseInstrument": "Piano",
       "caption": "Piano",

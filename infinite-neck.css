@@ -937,6 +937,18 @@ td.arpeggioCurrentPositionPair {
     text-align: center;
 }
 
+td.arpeggioStringRange {
+    border: 2px solid brown;
+}
+
+.arpeggioLowerString {
+    background-color: lightblue;
+}
+
+.arpeggioUpperString {
+    background-color: aqua;
+}
+
 
 
 

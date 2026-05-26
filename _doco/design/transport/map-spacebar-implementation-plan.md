@@ -1,9 +1,5 @@
 # Map Spacebar Implementation Plan
 
-## Document Version
-
-- This is document version 3.  It has been edited by the Design team, providing answers to questions, and culling options. The version 1 file can be found here: `_doco/design/map-spacebar-implementation-plan.md`
-
 ## Summary
 
 This plan assumes the Iteration 3 design choices are the current target.
@@ -14,8 +10,8 @@ The guiding rule for the sprint should be:
 
 - store and dispatch real action names, not a second enum or a parallel action-id system
 - keep existing navigation actions semantically unchanged
-- add only the missing transport verbs needed by the updated [TransportNavigationTable](/home/laramie/infinite-neck/_doco/design/TransportNavigationTable.md)
-- use one new reset event, `Looper:OnResetSong`, for plugin state clearing
+- add only the missing transport verbs needed by the updated [TransportNavigationTable](TransportNavigationTable.md)
+- use one new reset event, `Looper:OnSongReset`, for plugin state clearing
 
 If implemented that way, the plan stays aligned with the current command-menu architecture and should be directly actionable after plan approval.
 
@@ -24,7 +20,7 @@ If implemented that way, the plan stays aligned with the current command-menu ar
 1. Add a configurable spacebar mapping that only runs when focus is not in an input or textarea.
 2. Reuse existing transport actions whenever they already exist.
 3. Add missing single-verb transport actions needed by the updated navigation table.
-4. Add `Looper:OnResetSong` with optional `{ hard: true|false }` payload.
+4. Add `Looper:OnSongReset` with optional `{ hard: true|false }` payload.
 5. Update the relevant plugins to respond to reset without teaching transport code about plugin internals.
 6. Keep the implementation small enough that it can be completed from this plan without another design pass.
 
@@ -45,7 +41,7 @@ The current code already provides these useful pieces:
 	- `prevBeat`
 - `Song.gotoFirstBeat()` already exists.
 - `Song.gotoSection(idx)` and `Song.gotoBeat(oneBasedIndex)` already exist.
-- `Looper:OnResetSong` does not exist yet.
+- `Looper:OnSongReset` does not exist yet.
 - `gotoLastBeat()` and `gotoLastBeatInSong()` do not appear to exist yet.
 - beat looping currently does not emit `DaCapo:OnSectionBegin` when it wraps, so it does not yet satisfy the Iteration 3 `LoopSection via LoopBeats` design choice.
 
@@ -75,11 +71,15 @@ These should be added as real `performCmdAction()` cases so the spacebar map can
 - `gotoFirstBeat`
 - `gotoLastBeat`
 - `gotoLastBeatInSong`
-- `resetSong`
-- `resetSongHard`
+- `songReset`
+- `songResetHard`
 - `unsetSpacebarAction`
+
+Optional, depending on menu authoring preference:
+
 - `setSpacebarAction`
 
+If `setSpacebarAction` is added, it should store an existing action string such as `nextBeat` or `songReset`, not a separate mapping id.
 
 ### Bucket 3: Items that should not become separate actions for this sprint
 
@@ -97,15 +97,15 @@ The mapping model should be deliberately simple.
 
 ### Runtime state
 
-Add one module-level variable in `key-handlers.js`:
+Add one module-level variable in `key-handlers.js`, for example:
 
-- spacebarActionName
+- current mapped spacebar action name
 
-spacebarActionName takes a value which is one of:
+That value should be one of:
 
 - empty string or `null` for unset
 - an existing `performCmdAction()` action name such as `nextBeat`
-- a newly added action name such as `resetSong`
+- a newly added action name such as `songReset`
 
 The important point is that the stored value is the action name itself.
 
@@ -132,7 +132,7 @@ This file is the center of the implementation.
 
 Add a small internal helper in `key-handlers.js` that can execute a transport action by action name without requiring a real menu node from `menu.js`.
 
-The approved clean version is:
+The cleanest version is:
 
 - extract the action switch body into a helper that receives `{ action, name, trigger, input, popOnBang }`
 - have `performCmdAction()` continue to call that helper
@@ -153,25 +153,27 @@ This branch should live inside the existing non-control guard so the current foc
 
 ## 3. Add configuration actions
 
-### Approved shape
+There are two reasonable implementation shapes.
 
-Add one explicit command case per menu leaf:
+### Preferred shape
 
-- `mapSpacebar_toggleLoopSections`
-- `mapSpacebar_toggleLoopBeats`
-- `mapSpacebar_firstSection`
-- `mapSpacebar_prevSection`
-- `mapSpacebar_nextSection`
-- `mapSpacebar_lastSection`
-- `mapSpacebar_nextBeat`
-- `mapSpacebar_prevBeat`
-- `mapSpacebar_gotoFirstBeat`
-- `mapSpacebar_gotoLastBeat`
-- `mapSpacebar_gotoLastBeatInSong`
-- `mapSpacebar_restartSong`
-- `mapSpacebar_resetSong`
-- `mapSpacebar_resetSongHard`
-- `mapSpacebar_unsetSpacebarAction`
+Add one generic config action:
+
+- `setSpacebarAction`
+
+That action reads `menuItem.name` and stores it as the mapped action string.
+
+This keeps `menu.js` compact while still storing real action names.
+
+### Acceptable alternative
+
+Add one explicit command case per menu leaf, such as:
+
+- `mapSpacebarNextBeat`
+- `mapSpacebarSongReset`
+- `mapSpacebarUnset`
+
+This is more verbose and not my preferred shape, but it is still compatible with the design intent if you want the mapping menu to read as literal single-purpose commands.
 
 ## 4. Add new transport action cases
 
@@ -195,7 +197,7 @@ Implementation intent:
 - refresh the section UI consistently
 - return the current beat
 
-Approved: Add a new Song or Section helper to keep this out of key-handler.js: `getSong().gotoBeat(getSong().getBeats())`.
+This likely requires a new Song or Section helper unless you choose to implement it with `getSong().gotoBeat(getSong().getBeats())`.
 
 ### `gotoLastBeatInSong`
 
@@ -208,21 +210,21 @@ Implementation intent:
 
 This action is intended to park transport so the next loop turnover happens naturally.
 
-### `resetSong`
+### `songReset`
 
 Implementation intent:
 
 - move to first section
 - move to first beat
-- trigger `Looper:OnResetSong` with `{ hard: false }`
+- trigger `Looper:OnSongReset` with `{ hard: false }`
 - refresh UI through the normal section path
 
-### `resetSongHard`
+### `songResetHard`
 
 Implementation intent:
 
-- same as `resetSong`
-- trigger `Looper:OnResetSong` with `{ hard: true }`
+- same as `songReset`
+- trigger `Looper:OnSongReset` with `{ hard: true }`
 
 ### `unsetSpacebarAction`
 
@@ -256,170 +258,31 @@ Recommended contents for the first pass:
 - reset mappings
 - unset
 
-### Menu Structure:
+Suggested leaves:
 
-Using markdown outlines as menu hierarchy, the menu structure is shown here.
-
-The format is '-' represents a menu item, more indentation means indented lists in markdown, and child menu items in the menu.
-Triggers are represented by the trigger letter, case-sensitive, before a close parenthesis, followed by the menu caption
-
-e.g. `- trigger) menu caption`
-
-
-First menu item is mounted here as "/", "file", "map spacebar": /fm
-
-- f) file
-  - m) map spacerbar
-    - R) Restart song (w/o DaCapo:OnSongEnd)
-    - r) restart Section (begin Section / firstBeat)
-    - z) z reset song
-    - Z) Z reset song hard
-    - u) unset spacebar
-	- s) section
-      - f) first
-      - p) prev
-      - n) next
-      - l) last
-	  - L) Last beat in Song
-	- b) beats
-      - f) first
-      - p) prev
-      - n) next
-      - l) last
-
-
-These menus under "/" should be updated
-
-- r) run
-  - s) section
-    - f) first
-    - p) prev
-    - n) next
-    - l) last
-	- L) Last beat in Song
-	- r) reset song
-	- R) Reset song hard
-    - g) goto
-      - input) n+1 
-  - b) beats
-    - f) first
-    - p) prev
-    - n) next
-    - l) last
-    - g) goto
-      - input) n+1  
-
-- s) section
-  - n) nav
-    - f) first
-    - p) prev
-    - n) next
-    - l) last
-    - g) goto
-      - input) n+1 
-  - b) beats
-    - f) first
-    - p) prev
-    - n) next
-    - l) last
-    - g) goto
-      - input) n 
-    - a) add
-    - d) delete
-    - '0') insert first
-    - i) insert beat  
-
-Therefore, the full menus (without triggers) should be:
-
-/fm
-- Restart song (w/o DaCapo:OnSongEnd)
-- restart Section (begin Section / firstBeat)
-- z reset song
-- Z reset song hard
-- unset spacebar
-
-/fms
-- first
-- prev
-- next
-- last
-- Last beat in Song
-
-/fmb	
-- first
-- prev
-- next
-- last
-
-
-/r
-- toggle transport
-- park transport
-- loop
+- loop song
 - loop beats
-- random loop
-- section[n+1/N+1]
-- beats[n+1/N+1]
-
-/rs
-- first
-- prev
-- next
-- last
-- Last beat in song
+- prev beat
+- next beat
+- first section
+- prev section
+- next section
+- last section
+- first beat
+- last beat
+- last beat in song
 - reset song
 - reset song hard
-- goto
+- unset
 
-/rsg
-- input: n+1
-
-/rb
-- first
-- prev
-- next
-- last
-- goto
-
-/rbg
-- input: n+1
-
-/sn
-- first
-- prev
-- next
-- last
-- goto
-
-/sng
-- input: n+1
-
-/sb
-- first
-- prev
-- next
-- last
-- goto
-- add (last)
-- delete
-- insert first
-- insert beat
-
-/sbg
-- input: n+1
+If you use the preferred `setSpacebarAction` shape, each leaf can carry `name` equal to the target action string.
 
 ## 2. Add the missing navigation commands described in Iteration 2/3
 
-The Transport table has two versions now: 
-- Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
-After implementation, the Planned version should be true.
-
-Add or extend command-menu coverage for the updated, Planned version Transport table:
+Add or extend command-menu coverage for the updated transport table:
 
 - section beats submenu commands for first and last beat if they do not already exist
-- any `gotoSection n+1` and `gotoBeat n+1` entries from Iteration 2, which are in scope.
-- here the `n+1` syntax means remember that the User-facing Section numbers are 1-base, while Song.sections[0] is zero-based.
+- any `gotoSection n` and `gotoBeat n` entries you still want from Iteration 2
 
 This is useful independently of the spacebar feature because the transport table now treats these as real navigation verbs.
 
@@ -445,9 +308,11 @@ Even though `gotoLastBeatInSong()` could be composed inside `key-handlers.js`, a
 
 ## `Section.js`
 
-Approved:
+Optional but clean:
 
 - add `gotoLastBeat()` to mirror `gotoFirstBeat()`
+
+This would make the Song helper implementation straightforward and easier to read.
 
 ## `looper.js` Plan
 
@@ -478,7 +343,7 @@ Plugins should remain ignorant of transport implementation details and only obse
 
 ## `TransposePlugin`
 
-Add `Looper:OnResetSong` handling.
+Add `Looper:OnSongReset` handling.
 
 Expected semantics:
 
@@ -489,7 +354,7 @@ This matches the Iteration 3 decision and the current Transpose reset model.
 
 ## `ArpeggioPlugin`
 
-Add `Looper:OnResetSong` handling.
+Add `Looper:OnSongReset` handling.
 
 Expected semantics:
 
@@ -497,7 +362,7 @@ Expected semantics:
 
 ## `FillPlugin`
 
-Add `Looper:OnResetSong` handling.
+Add `Looper:OnSongReset` handling.
 
 Expected semantics:
 
@@ -512,7 +377,7 @@ Most of the required helpers are already wired into `setKeyHandlerProviders()`.
 Possible updates only if needed:
 
 - expose an additional helper through provider wiring if the chosen `key-handlers.js` implementation needs a UI refresh function not already wrapped
-- It is not needed to add a small startup default for the spacebar mapping, because default state is “unset”.
+- optionally add a small startup default for the spacebar mapping if you want an explicit default state beyond “unset”
 
 At the moment, I do not expect major provider work to be necessary.
 
@@ -524,7 +389,7 @@ The safest coding order is:
 2. add the new action cases in `key-handlers.js`
 3. add the spacebar mapping state and dispatcher in `key-handlers.js`
 4. add the `/fm` map-spacebar submenu in `menu.js`
-5. add `Looper:OnResetSong` emission in the reset actions
+5. add `Looper:OnSongReset` emission in the reset actions
 6. update `TransposePlugin`, `ArpeggioPlugin`, and `FillPlugin` to consume the reset event
 7. update beat-loop behavior in `looper.js` so `LoopBeats` can stand in for `LoopSection`
 8. run menu validation and focused tests
@@ -541,8 +406,8 @@ The implementation should ship with focused regression coverage.
 	- `gotoFirstBeat`
 	- `gotoLastBeat`
 	- `gotoLastBeatInSong`
-	- `resetSong`
-	- `resetSongHard`
+	- `songReset`
+	- `songResetHard`
 	- spacebar dispatch when mapped
 	- no-op when unmapped
 - `looper` tests for beat-loop event sequencing:
@@ -562,8 +427,8 @@ The implementation should ship with focused regression coverage.
 2. Map spacebar to `firstSection` and verify parity with `<`.
 3. Map spacebar to `gotoFirstBeat` and verify current section stays the same while beat resets.
 4. Map spacebar to `gotoLastBeatInSong` and verify the app parks at last section / last beat.
-5. Map spacebar to `resetSong` and verify plugin reset behavior without `DaCapo:OnSongEnd`.
-6. Map spacebar to `resetSongHard` and verify Transpose returns to original baseline.
+5. Map spacebar to `songReset` and verify plugin reset behavior without `DaCapo:OnSongEnd`.
+6. Map spacebar to `songResetHard` and verify Transpose returns to original baseline.
 7. Map spacebar to unset and verify spacebar does nothing.
 8. Verify all of the above while focus is in a text control, where spacebar should remain ordinary text input.
 
@@ -573,18 +438,18 @@ These are the remaining points that still deserve an answer before coding starts
 
 ## 1. Exact loop policy for reset actions
 
-The plan uses these answers on whether `resetSong` and `resetSongHard` should:
+The plan needs a final answer on whether `songReset` and `songResetHard` should:
 
-- preserve active loop mode: YES
-- clear looping before reset: NO
-- or preserve loop mode but restart from the beginning: YES
+- preserve active loop mode
+- clear looping before reset
+- or preserve loop mode but restart from the beginning
 
 Iteration 3 is explicit that navigation is allowed during looping, but it does not fully settle reset behavior.
 
-Approved behavior:
+My recommendation is:
 
 - `gotoLastBeatInSong` should preserve loop mode
-- `resetSong` and `resetSongHard` do immediate restart-from-beginning behavior
+- `songReset` and `songResetHard` should clear looping first unless you explicitly want immediate restart-from-beginning behavior
 
 ## 2. Exact beat-loop begin-event semantics
 
@@ -592,7 +457,7 @@ The design choice says beat looping should become the practical implementation o
 
 The only remaining clarification is whether `toggleLoopBeats()` should emit `DaCapo:OnSectionBegin` immediately on start, or only after the first wrap.
 
-Approved: to emit it immediately on start and again on each wrap.
+My recommendation is to emit it immediately on start and again on each wrap.
 
 ## 3. Final menu contents under `/fm`
 
@@ -605,20 +470,23 @@ The remaining question is whether `/fm` should contain:
 
 My recommendation is the fuller transport set, because that matches the stated use-cases better.
 
-ANSWER: the menus presented above use the fuller transport set, including child menus for section and beats.
+## 4. Whether `gotoSection n` and `gotoBeat n` are in or out for this sprint
 
-## 4. Whether `gotoSection n+1` and `gotoBeat n+1` are in or out for this sprint
+They are still mentioned in Iteration 2, but Iteration 3 focuses more on spacebar mapping and reset behavior.
 
-- here the `n+1` syntax means remember that the User-facing Section numbers are 1-base, while Song.sections[0] is zero-based.
-
-These are in scope for this implementation.
+If you want the sprint kept tight, these can be deferred unless you specifically want the command-line transport surface completed at the same time.
 
 ## 5. Terminology cleanup in docs
 
-The Transport table has two versions now: 
-- Existing version: `_doco/design/TransportNavigationTable-existing.md`
-- Planned version: `_doco/design/TransportNavigationTable.md`
-The Planned version has the cleaned up terminology, including `LastBeatInSong`.
+The updated transport table currently contains both `LastBeatInSong` and `LastSongBeat`, both pointing at `gotoLastBeatInSong`.
+
+The implementation should pick one term and use it consistently in:
+
+- the table
+- menu captions
+- action naming in docs
+
+My recommendation is `LastBeatInSong`, since it matches the verb more directly.
 
 ## Bottom Line
 
@@ -628,7 +496,7 @@ The most important choices to preserve are:
 
 - use real action names as the mapping values
 - add missing transport verbs as real `performCmdAction()` cases
-- reserve new event behavior for `Looper:OnResetSong` and for the beat-loop event fix
+- reserve new event behavior for `Looper:OnSongReset` and for the beat-loop event fix
 - keep `firstSection` as the practical restart-song behavior for this sprint
 
-Once the remaining clarifications above are answered, this plan should be sufficient to implement the feature end-to-end.  **ANSWERS: These should all be anwered by this document version.**
+Once the remaining clarifications above are answered, this plan should be sufficient to implement the feature end-to-end.
