@@ -3548,22 +3548,474 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             
 <a name="commandLineMenuDump"></a>
             <h4>Command-line Full Menu Listing</h4>
-    <p><span class="menuExampleLine">/vdm</span> prints out a command-line menu dump formatted for an HTML <code>PRE</code> block, using <code>&amp;nbsp;</code> indentation and no trailing <code>&gt;</code> markers.</p> 
-    <p>Here is a current-format example excerpt:</p>
+    <p><span class="menuExampleLine">/vdm</span> prints out a command-line Menu Dump in the app.
+    </p> 
+    <p>Here is the full Menu Dump copied into this help file from the app 2026-05-25:</p>
 
-<pre class="menuDump">&nbsp;&nbsp;&nbsp;&nbsp;<b>/</b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ile
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>p</b>lugins
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>rpeggio
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>c</b>lip
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>f</b>ill
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>ove
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>t</b>ranspose
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>s</b>ection
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>a</b>dd
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>v</b>iew
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>d</b>iagnostics
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>m</b>enu dump</pre>
+    <!-- The code should deal with this, but for now: 
+     CharacterNamed Entity
+     Numeric Entity (Decimal)
+     Numeric Entity (Hex)
+     º 
+     (Degree/Ordinal)
+     &deg;
+     &#176;
+     &#xB0;
+     ø 
+     (o with stroke)
+     &oslash;
+     &#248;
+     &#xF8;
+     Δ 
+     (Greek capital Delta)
+     &Delta;
+     &#916;
+     &#x394;
+
+     also: ♭
+     &flat;
+     -->
+<details style="margin-left: 4em;">
+  <summary style="box-shadow: 4pt 4pt 6pt 2pt gray; padding: 0.5em; background-color: orange; color: black; font-weight: bold; border: 1px solid green;">Hide/Show Menu Dump</summary>
+  <div>
+    
+    <pre class="menuDump">  <b>/</b>
+    <b>f</b>ile
+      <b>o</b>pen
+      <b>d</b>ownload
+      <b>i</b>nfo
+      <b>n</b>ame
+      <b>b</b>pm
+      <b>g</b>raveyard
+      <b>m</b>ap spacebar
+        current: [${spacebarActionName}]
+        <b>R</b>estart song
+        <b>r</b>estart section
+        <b>z</b> reset song
+        <b>Z</b> reset song hard
+        <b>u</b>nset spacebar
+        <b>s</b>ection
+          <b>f</b>irst
+          <b>p</b>rev
+          <b>n</b>ext
+          <b>l</b>ast
+          <b>L</b>ast beat in song
+        <b>b</b>eats
+          <b>f</b>irst
+          <b>p</b>rev
+          <b>n</b>ext
+          <b>l</b>ast
+      <b>C</b>lear graveyard, with backup
+        <b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !
+        <b>n</b>o: keep graveyard.
+      <b>l</b>ock
+      <b>u</b>nlock
+      <b>v</b>ersion info
+      <b>V</b>ersion as Show Message
+      <b>a</b>dvanced
+        <b>t</b>ransposeSong
+        transpose song <b>k</b>eys
+      <b>p</b>lugins
+        <b>t</b>ranspose${plugin:transpose:statusSuffix}
+          <b>E</b>nable [${plugin:transpose:enabled}]
+          <b>L</b>oad enabled [${plugin:transpose:enableOnSongLoad}]
+          <b>B</b>ury
+          <b>A</b>pply
+          <b>R</b>eset
+            <b>o</b>riginal
+            <b>c</b>urrent interval
+            <b>s</b>et original to current
+          <b>h</b>elp
+          <b>i</b>ntervals [${plugin:transpose:intervals}]
+          <b>n</b>amed notes [${plugin:transpose:NamedNotes}]
+          <b>s</b>ingle notes [${plugin:transpose:SingleNotes}]
+          <b>o</b>ctaves [${plugin:transpose:octaves}]
+          <b>a</b>uto sharps/flats [${plugin:transpose:autoSharpsFlats}]
+          <b>d</b>o lead key [${plugin:transpose:doLeadKey}]
+        <b>a</b>rpeggio${plugin:arpeggio:statusSuffix}
+          <b>E</b>nable [${plugin:arpeggio:enabled}]
+          <b>L</b>oad enabled [${plugin:arpeggio:enableOnSongLoad}]
+          <b>B</b>ury
+          <b>T</b>able [${plugin:arpeggio:targetTable}]
+            <b>1</b>) P46_1
+          <b>A</b>pply
+          <b>C</b>lear
+          <b>p</b>ositions [${plugin:arpeggio:positionsSummary}]
+            <b>m</b>inFret default position [${plugin:arpeggio:minFret}]
+            maxFre<b>t</b> default position [${plugin:arpeggio:maxFret}]
+            c<b>L</b>ear all sections
+            clear <b>T</b>his section
+            <b>C</b>opy to all sections
+            copy to <b>U</b>nset sections
+            <b>R</b>efresh values
+            <b>v</b>alues this section [${plugin:arpeggio:positionsCurrentSection}]
+          <b>s</b>trings [${plugin:arpeggio:stringsSummary}]
+            <b>u</b>pper string limit [${plugin:arpeggio:minRow}]
+            <b>l</b>ower string limit [${plugin:arpeggio:maxRow}]
+          l<b>o</b>w to high [${plugin:arpeggio:lowToHigh}]
+          <b>u</b>p only [${plugin:arpeggio:upOnly}]
+          st<b>y</b>le [${plugin:arpeggio:style}]
+            <b>e</b>very
+            <b>a</b>lternate
+            <b>r</b>andom
+            <b>b</b>ach
+          show <b>n</b>ote name [${plugin:arpeggio:showNoteName}]
+            o<b>f</b>f
+            <b>o</b>ne
+            <b>a</b>ll
+            <b>p</b>layed
+          <b>c</b>olor notes [${plugin:arpeggio:colorNotes}]
+          <b>f</b>lashcard [${plugin:arpeggio:flashcard}]
+          <b>h</b>elp
+        <b>c</b>lip${plugin:clip:statusSuffix}
+          <b>B</b>ury
+          <b>T</b>able [${plugin:clip:targetTable}]
+            <b>1</b>) P46_1
+          <b>C</b>opy to Graveyard
+          <b>X</b> Cut to Graveyard
+          Re<b>v</b>ive from Graveyard${plugin:clip:reviveSummary}
+          <b>M</b>IDI Paste${plugin:clip:midiPasteSummary}
+          <b>a</b>utomatic [${plugin:clip:automatic}]
+          <b>o</b>verwrite [${plugin:clip:overwrite}]
+          <b>i</b>nclude${plugin:clip:includeSummary}
+            <b>n</b>amed [${plugin:clip:includeNamed}]
+            <b>s</b>ingle [${plugin:clip:includeSingle}]
+            <b>t</b>iny [${plugin:clip:includeTiny}]
+            <b>b</b>end [${plugin:clip:includeBend}]
+          C<b>l</b>ear Clipped notes
+          <b>h</b>elp
+        <b>f</b>ill${plugin:fill:statusSuffix}
+          <b>E</b>nable [${plugin:fill:enabled}]
+          <b>L</b>oad enabled [${plugin:fill:enableOnSongLoad}]
+          <b>B</b>ury
+          <b>T</b>able [${plugin:fill:targetTable}]
+            <b>1</b>) P46_1
+          <b>o</b>ptions
+            <b>c</b>hord formula [${plugin:fill:chordFormula}]
+              <b>M</b>aj
+              Mi<b>n</b>
+              <b>A</b>ug
+              <b>D</b>im &nbsp;&deg;
+              Dim<b>7</b>
+              m7<b>b</b>5 &nbsp;&oslash;
+              Sus<b>2</b>
+              Sus<b>4</b>
+              Ma<b>j</b>7 &nbsp;&Delta;
+              M<b>i</b>n7
+              D<b>o</b>m7
+              <b>x</b> MinMaj
+              Min<b>9</b>
+              <b>6</b>/9
+            <b>g</b> scale formula [${plugin:fill:scaleFormula}]
+              <b>W</b>holeTone
+              <b>D</b>iminished
+              Min<b>P</b>entatonic
+              MajPen<b>t</b>atonic
+              <b>I</b>onian/Major
+              D<b>o</b>rian
+              P<b>h</b>rygian
+              <b>L</b>ydian
+              L<b>y</b>dianDominant
+              Mi<b>x</b>olydian
+              <b>A</b>eolian/Natural
+              Lo<b>c</b>rian
+              Ha<b>r</b>monicMinor
+              <b>M</b>elodicMinor
+              <b>G</b>ypsy
+              <b>N</b>eopolitanMaj
+              N<b>e</b>opolitanMin
+            <b>p</b>ositions [${plugin:fill:positionsSummary}]
+              m<b>i</b>nFret position [${plugin:fill:minFret}]
+              m<b>a</b>xFret position [${plugin:fill:maxFret}]
+            <b>s</b>trings [${plugin:fill:stringsSummary}]
+              <b>u</b>pper string limit [${plugin:fill:minRow}]
+              <b>l</b>ower string limit [${plugin:fill:maxRow}]
+            <b>N</b>amedNote
+              <b>C</b>opy from SingleNote
+              <b>r</b>oot [${plugin:fill:namedRootDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:namedRootColor}]
+                  <b>n</b>oteRoot
+                  <b>l</b>ast
+              <b>c</b>hord [${plugin:fill:namedChordDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:namedChordColor}]
+                  <b>n</b>oteChord
+                  <b>l</b>ast
+              <b>s</b>cale [${plugin:fill:namedScaleDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:namedScaleColor}]
+                  <b>n</b>oteScale
+                  <b>l</b>ast
+            <b>S</b>ingleNote
+              <b>r</b>oot [${plugin:fill:singleRootDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:singleRootColor}]
+                  <b>n</b>oteRoot
+                  <b>l</b>ast
+              <b>c</b>hord [${plugin:fill:singleChordDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:singleChordColor}]
+                  <b>n</b>oteChord
+                  <b>l</b>ast
+              <b>s</b>cale [${plugin:fill:singleScaleDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:singleScaleColor}]
+                  <b>n</b>oteScale
+                  <b>l</b>ast
+              <b>a</b>dd TinyNote [${plugin:fill:singleAddTiny}]
+                <b>n</b>one
+                <b>e</b>mboss - noteTransparent
+                n<b>o</b>teAutomatic
+                <b>1</b> noteLead
+                noteLead<b>2</b>
+            <b>T</b>inyNote
+              <b>C</b>opy from SingleNote
+              <b>r</b>oot [${plugin:fill:tinyRootDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:tinyRootColor}]
+                  <b>n</b>oteRoot
+                  <b>l</b>ast
+              <b>c</b>hord [${plugin:fill:tinyChordDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:tinyChordColor}]
+                  <b>n</b>oteChord
+                  <b>l</b>ast
+              <b>s</b>cale [${plugin:fill:tinyScaleDisplay}]
+                <b>n</b>one
+                <b>k</b>eep
+                <b>r</b>ole [${plugin:fill:tinyScaleColor}]
+                  <b>n</b>oteScale
+                  <b>l</b>ast
+            <b>A</b>pply
+          <b>A</b>pply
+          <b>C</b>lear
+          Clear<b>S</b>ong
+          Co<b>m</b>mit Notes
+          <b>h</b>elp
+        <b>m</b>ove${plugin:move:statusSuffix}
+          <b>B</b>ury
+          <b>T</b>able [${plugin:move:targetTable}]
+            <b>1</b>) P46_1
+          <b>A</b>pply
+          <b>a</b>lgorithm [${plugin:move:algorithm}]
+            <b>d</b>rop
+            <b>o</b>ctave
+            <b>s</b>tring
+          <b>m</b>otions [${plugin:move:motion}]
+            <b>u</b>p
+            <b>d</b>own
+            <b>j</b>ump up
+            <b>J</b>ump down
+          <b>i</b>nclude${plugin:move:includeSummary}
+            <b>s</b>ingle notes [${plugin:move:includeSingle}]
+            <b>t</b>iny notes [${plugin:move:includeTiny}]
+            <b>h</b>ighlights [${plugin:move:includeHighlights}]
+            <b>p</b>layed notes [${plugin:move:includePlayed}]
+            <b>r</b>ecorded notes [${plugin:move:includeRecorded}]
+          <b>s</b>how dropped notes
+          <b>c</b>lear/backup
+          <b>h</b>elp
+      <b>;</b>&nbsp;dialog
+    <b>c</b>hart
+      <b>s</b>ummary
+      <b>n</b>otes
+      <b>d</b>etails
+    <b>s</b>ection
+      <b>a</b>dd
+      <b>n</b>av
+        <b>f</b>irst
+        <b>p</b>rev
+        <b>n</b>ext
+        <b>l</b>ast
+        <b>g</b>oto
+      <b>e</b>dit<small>[${currentSectionCardinal}/${sectionCount}]</small>
+        <b>d</b>elete
+          <b>Y</b>es: DELETE section ${currentSectionCardinal}/${sectionCount} !
+          <b>n</b>o: keep section.
+        <b>a</b>dd
+        <b>s</b>hallow clone
+        <b>c</b>lone
+      <b>c</b>aption
+      <b>s</b>harps
+      <b>f</b>lats
+      <b>k</b>ey
+        <b>w</b>hite keys
+          <b>a</b>
+          <b>b</b>
+          <b>c</b>
+          <b>d</b>
+          <b>e</b>
+          <b>f</b>
+          <b>g</b>
+        <b>b</b>lack keys
+          <b>a</b>&flat;
+          <b>b</b>&flat;
+          <b>d</b>&flat;
+          <b>e</b>&flat;
+          <b>g</b>&flat;
+      <b>l</b>eadKey
+        <b>w</b>hite keys
+          <b>a</b>
+          <b>b</b>
+          <b>c</b>
+          <b>d</b>
+          <b>e</b>
+          <b>f</b>
+          <b>g</b>
+        <b>b</b>lack keys
+          <b>a</b>&flat;
+          <b>b</b>&flat;
+          <b>d</b>&flat;
+          <b>e</b>&flat;
+          <b>g</b>&flat;
+      <b>b</b>eats<small>[${currentBeat}/${beats}]</small>
+        <b>f</b>irst
+        <b>n</b>ext
+        <b>p</b>rev
+        <b>a</b>dd (last)
+        <b>l</b>ast
+        <b>g</b>oto
+        <b>d</b>elete
+        insert <b>0</b> first
+        <b>i</b>nsert beat
+      <b>;</b>&nbsp;dialog
+    <b>v</b>iew
+      <b>m</b>enu prefs
+        <b>s</b>hort
+        <b>o</b>ne-line
+        <b>t</b>all
+      <b>h</b>ide
+        <b>n</b>amedNotes
+        <b>s</b>ingleNotes
+        <b>t</b>inyNotes
+        <b>f</b>ingering
+      <b>s</b>how
+        <b>n</b>amedNotes
+        <b>s</b>ingleNotes
+        <b>t</b>inyNotes
+        <b>f</b>ingering
+      <b>o</b>pacity
+        <b>n</b>amed note
+        <b>s</b>ingle note
+        <b>t</b>iny note
+      <b>d</b>iagnostics
+        <b>e</b>vent log to console
+        song <b>f</b>ile format
+        <b>s</b>ong model
+        <b>i</b>n-memory model
+        <b>m</b>enu dump
+        menu <b>j</b>son
+        user <b>c</b>olors
+        <b>d</b>isplayOptions
+        <b>v</b>ariables
+        <b>h</b>ide
+      <b>f</b>ullscreen
+      <b>t</b>oggle fullscreen
+      <b>w</b>indow
+        <b>c</b>leanup
+        <b>d</b>ock all
+        <b>g</b>ather
+        <b>v</b>iewport
+        <b>p</b>ark transport
+      <b>;</b>&nbsp;dialog
+    th<b>e</b>mes
+      <b>;</b>&nbsp;dialog
+    <b>t</b>unings
+      <b>;</b>&nbsp;dialog
+    f<b>i</b>ll
+      <b>;</b>&nbsp;dialog
+    <b>p</b>alette
+      <b>n</b>ote
+        <b>n</b>amed
+        <b>s</b>ingle
+        <b>t</b>iny
+        <b>b</b>end
+          <b>s</b>emitone
+            <b>1</b>&nbsp;fret
+            <b>2</b>&nbsp;frets
+            <b>3</b>&nbsp;frets
+          <b>p</b>rebend
+            <b>1</b>&nbsp;fret
+            <b>2</b>&nbsp;frets
+            <b>3</b>&nbsp;frets
+          <b>u</b>p-down
+            <b>1</b>&nbsp;fret
+            <b>2</b>&nbsp;frets
+            <b>3</b>&nbsp;frets
+        <b>p</b>itch
+        <b>h</b>ighlight
+        <b>k</b>eep
+        <b>c</b>lear
+        <b>f</b>ind color
+      <b>f</b>ingering
+        <b>o</b>
+        <b>1</b>
+        <b>2</b>
+        <b>3</b>
+        <b>4</b>
+        <b>5</b>
+        <b>t</b>humb
+      <b>r</b>ole
+        <b>t</b>ransparent
+        <b>a</b>utomatic
+        <b>s</b>cale
+        <b>r</b>oot
+        <b>c</b>hord
+          <b>1</b> - Chord
+          <b>2</b> - Ch2
+          <b>3</b> - Ch3
+        c<b>h</b>romatic
+        <b>p</b>assing
+        c<b>o</b>lornote
+          <b>1</b> - Colornote
+          <b>2</b> - C2
+          <b>3</b> - C3
+        a<b>v</b>oid
+          <b>1</b> - Avoid
+          <b>2</b> - Avoid
+          <b>3</b> - Avoid
+        <b>b</b>ass
+        <b>l</b>ead
+          <b>1</b> - Lead
+          <b>2</b> - Lead 2
+      <b>;</b>&nbsp;dialog
+    <b>r</b>un
+      <b>t</b>oggle transport
+      <b>p</b>ark transport
+      <b>P</b>ark transport top right
+      <b>l</b>oop
+      loop b<b>e</b>ats
+      <b>r</b>ec
+      r<b>a</b>ndom loop
+      <b>s</b>ection<small>[${currentSectionCardinal}/${sectionCount}]</small>
+        <b>f</b>irst
+        <b>p</b>rev
+        <b>n</b>ext
+        <b>l</b>ast
+        <b>L</b>ast beat in song
+        <b>0</b> restart song
+        <b>r</b>eset song
+        <b>R</b>eset song hard
+        <b>g</b>oto
+      <b>b</b>eats<small>[${currentBeat}/${beats}]</small>
+        <b>f</b>irst
+        <b>n</b>ext
+        <b>p</b>rev
+        <b>l</b>ast
+        <b>g</b>oto
+    <b>h</b>elp</pre>
+
+  </div>
+</details>
 
 
 

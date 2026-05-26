@@ -183,8 +183,8 @@ export class ClipPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.getProperty('targetTable').getMenuNodeSpec(this),
-      this.buildCopyMenuNode('copyToGraveyard', 'Copy to Graveyard', 'C'),
-      this.buildCopyMenuNode('cutToGraveyard', 'Cut to Graveyard', 'X'),
+      this.buildCopyMenuNode('copyToGraveyard', 'Copy', 'C'),
+      this.buildCopyMenuNode('cutToGraveyard', 'Cut', 'X'),
       this.buildReviveMenuNode(song),
       this.buildMidiPasteMenuNode(song),
       this.getProperty('automatic').getMenuNodeSpec(this),
@@ -225,7 +225,7 @@ export class ClipPlugin {
     const automatic = !!this.getProperty('automatic')?.getValue();
     const spec = {
       name: 'reviveFromGraveyard',
-      caption: `${buildCaption('Revive from Graveyard', 'V')}${buildValueReference(token)}`,
+      caption: `${buildCaption('Paste', 'V')}${buildValueReference(token)}`,
       trigger: 'V',
       vars: [token],
       action: 'pluginAction:invoke',
@@ -330,8 +330,8 @@ export class ClipPlugin {
   buildClearClipsNode() {
     return new MenuItemProxy(this, {
       name: 'clearClips',
-      caption: buildCaption('Clear Clipped notes', 'L'),
-      trigger: 'L',
+      caption: buildCaption('clear clipped notes', 'c'),
+      trigger: 'c',
       action: 'pluginAction:invoke',
       pluginId: this.id,
       actionName: 'clearClips',

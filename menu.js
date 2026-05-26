@@ -1525,7 +1525,8 @@ function showChildMenusRecursively(menu, level){
     level++;
     var indent = "";
     for (var i = 0; i < level; i++) {
-        indent += '&nbsp;&nbsp;&nbsp;&nbsp;';
+        //indent += '&nbsp;&nbsp;&nbsp;&nbsp;';
+        indent += '  ';
     }
     var result = indent + menu.caption;
     var children = menu.children;

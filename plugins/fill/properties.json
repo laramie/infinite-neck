@@ -27,7 +27,7 @@
   },
   {
     "name": "clearSong",
-    "caption": "ClearSong",
+    "caption": "S clear song",
     "trigger": "S",
     "datatype": "org.dynamide.Action",
     "actionName": "clearSong",
@@ -35,7 +35,7 @@
   },
   {
     "name": "commitNotes",
-    "caption": "Commit Notes",
+    "caption": "M commit notes",
     "trigger": "M",
     "datatype": "org.dynamide.Action",
     "actionName": "commitNotes",

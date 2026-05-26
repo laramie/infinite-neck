@@ -801,6 +801,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.wakeAtCurrentPosition();
     this.moveToOffset(this.sequenceBaselineOffset, song);
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'reset current interval: sequence offset 0';
   }
 
@@ -809,15 +810,32 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.moveToOffset(this.originalBaselineOffset, song);
     this.sequenceBaselineOffset = this.originalBaselineOffset;
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'reset original: original offset 0';
   }
 
-  setOriginalToCurrent() {
+  setOriginalToCurrent(song = this.manager?.song || getSong()) {
     this.wakeAtCurrentPosition();
     this.originalBaselineOffset = this.liveSongOffset;
     this.sequenceBaselineOffset = this.liveSongOffset;
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'set original to current: baselines rebased';
+  }
+
+  requestSectionStatusRefresh(song = this.manager?.song || getSong()) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    if (typeof song.publish_UpdateSectionStatus === 'function') {
+      song.publish_UpdateSectionStatus();
+      return;
+    }
+
+    if (typeof song.requestUiFullRepaint === 'function') {
+      song.requestUiFullRepaint();
+    }
   }
 
   applyAutoSharpsFlats(song = this.manager?.song || getSong()) {

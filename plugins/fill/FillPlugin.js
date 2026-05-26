@@ -371,11 +371,11 @@ export class FillPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.getProperty('targetTable').getMenuNodeSpec(this),
-      this.buildOptionsMenuNode(song),
       this.getProperty('apply').getMenuNodeSpec(this),
       this.getProperty('clear').getMenuNodeSpec(this),
       this.getProperty('clearSong').getMenuNodeSpec(this),
       this.getProperty('commitNotes').getMenuNodeSpec(this),
+      this.buildOptionsMenuNode(song),
       this.getProperty('help').getMenuNodeSpec(this)
     ];
   }

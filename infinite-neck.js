@@ -1376,17 +1376,33 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showAllNoteNames(isChecked);
 	}
 
+	function findRepresentativeKeyColorHex(primarySelector, detailSelector){
+		const candidates = [
+			$(primarySelector).css('background-color'),
+			$(detailSelector).css('background-color'),
+			$(primarySelector).css('background-image'),
+			$(detailSelector).css('background-image')
+		];
+
+		for (const candidate of candidates){
+			const hex = convertRGB_to_HEX(candidate);
+			if (hex){
+				return hex;
+			}
+		}
+
+		return null;
+	}
+
 	//var gLastWhiteBackgroundColor = null;
 	//var gLastBlackBackgroundColor = null;
 	export function showAllNoteNames(show){
 		if (show){
-			var LastBlackBackgroundColor = $('.noteBlackKey').css("background-color");
-			var LastWhiteBackgroundColor  = $('.noteWhiteKey').css("background-color");
-			if (!LastBlackBackgroundColor || !LastWhiteBackgroundColor){
+			var hexbb = findRepresentativeKeyColorHex('.noteBlackKey', '.noteBlackKey .NoteDisplay');
+			var hexww = findRepresentativeKeyColorHex('.noteWhiteKey', '.noteWhiteKey .NoteDisplay');
+			if (!hexbb || !hexww){
 				return;
 			}
-			var hexbb = convertRGB_to_HEX(LastBlackBackgroundColor);
-			var hexww = convertRGB_to_HEX(LastWhiteBackgroundColor);
 			var bw = false; //false is cooler. //force choice of Black/White color for all background colors.  mid-tone colors don't work so well.
 			var fontblack = invertColor(hexbb, bw);
 			var fontwhite = invertColor(hexww, bw);

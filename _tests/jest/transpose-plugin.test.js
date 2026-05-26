@@ -58,6 +58,7 @@ function makeSong({ sections, currentSectionIndex = 0, isHeadless = true } = {})
     getCurrentSection() {
       return this.sections[currentSectionIndex];
     },
+    publish_UpdateSectionStatus: jest.fn(),
     requestUiFullRepaint: jest.fn()
   };
 }
@@ -82,7 +83,7 @@ describe('TransposePlugin', () => {
   });
 
   test('Looper:OnResetSong performs soft and hard resets', () => {
-    const song = makeSong({ sections: [makeSection(3)] });
+    const song = makeSong({ sections: [makeSection(3)], isHeadless: false });
     mockRuntime.song = song;
 
     const plugin = new TransposePlugin();
@@ -91,6 +92,7 @@ describe('TransposePlugin', () => {
     plugin.invokeAction('apply', { song });
     plugin.setOriginalToCurrent(song);
     plugin.invokeAction('apply', { song });
+    song.publish_UpdateSectionStatus.mockClear();
 
     expect(plugin.resolveValue('currentOffset')).toBe(2);
     expect(plugin.resolveValue('originalOffset')).toBe(2);
@@ -102,6 +104,7 @@ describe('TransposePlugin', () => {
     expect(plugin.handleEvent('Looper:OnResetSong', { hard: true }, { song }).result).toBe('reset original: original offset 0');
     expect(plugin.resolveValue('currentOffset')).toBe(0);
     expect(plugin.resolveValue('originalOffset')).toBe(0);
+    expect(song.publish_UpdateSectionStatus).toHaveBeenCalledTimes(2);
   });
 
   test('visible menu includes reset submenu and lowercase auto sharps/flats toggle', () => {
@@ -304,7 +307,7 @@ describe('TransposePlugin', () => {
   });
 
   test('set original to current rebases both baselines and restarts from zero', () => {
-    const song = makeSong({ sections: [makeSection(3)] });
+    const song = makeSong({ sections: [makeSection(3)], isHeadless: false });
     mockRuntime.song = song;
 
     const plugin = new TransposePlugin();
@@ -327,6 +330,7 @@ describe('TransposePlugin', () => {
       NamedNotes: true,
       doKeyLead: false
     });
+    expect(song.publish_UpdateSectionStatus).toHaveBeenCalledTimes(1);
   });
 
   test('loadSongState with persisted properties wakes the plugin at zero/original zero', () => {
