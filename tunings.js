@@ -457,8 +457,8 @@ export const allTunings = {
       "nut": false,
       "reverse": false,
       "visible": false,
-      "pianoNamesRow": true,
-      "pianoSkeuomorphic": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5
     },
     {

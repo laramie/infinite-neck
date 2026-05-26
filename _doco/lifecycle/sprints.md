@@ -44,6 +44,9 @@
   - Explore Tonal.js chord and mode recommendations and the widget data emitted from current section notes.
   - exploratory notes written 20260524
 
+- [sprint-113-transpose-plugin-single-notes](../design/sprints/113-transpose-plugin-single-notes/sprint-113-transpose-plugin-single-notes.md)  
+  - teach TransposePlugin to use "algorithm":"string" from MovePlugin for SingleNotes transposed on one string.
+
 
 # ARCHIVED: What we did to generate this document
 
