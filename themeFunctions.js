@@ -212,6 +212,16 @@ import { gThemes } from './themes.js';
 
 	export function theme(themeOptions){
 		//console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
+		function resolvedUniversalLaneColor(whichOption, fallbackValue){
+			const configured = themeOptions && themeOptions[whichOption];
+			if (configured){
+				return configured;
+			}
+			if (defaultOptions && defaultOptions[whichOption]){
+				return defaultOptions[whichOption];
+			}
+			return fallbackValue;
+		}
 		function rule(cssVarName, whichOption){
 			//console.log("cssVarName:"+cssVarName+", whichOption:"+whichOption+"<=="); 
 			if (themeOptions && themeOptions[whichOption]){
@@ -232,6 +242,9 @@ import { gThemes } from './themes.js';
 						         +rule("border-radius", "noteRadius")
 								 +"}"
 						 +" .namedNote, .NoteDisplay {"
+						         +rule("border-radius", "namedNoteRadius")
+								 +"}"
+					 +" .universalNamedNote {"
 						         +rule("border-radius", "namedNoteRadius")
 								 +"}"
 						 +" .singleNote {"
@@ -270,6 +283,8 @@ import { gThemes } from './themes.js';
 
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
+									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('universalNoteWhiteKeyColor', 'black') + "; "
+									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('universalNoteBlackKeyColor', 'white') + "; "
 									+rule("--instrument-margin-tb", "instrumentMargins")
 									+rule("--cell-spacing", "cellSpacing")
 									+rule("--named-note-radius", "namedNoteRadius")

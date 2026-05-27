@@ -101,8 +101,6 @@ import {
 	gUserColorDictOEM
 } from './userColors.js';
 import {
-	convertRGB_to_HEX,
-	invertColor,
 	scrollToTop,
 	toInt
 } from './utils.js';
@@ -1372,54 +1370,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function refreshShowAllNoteNames(){
 		let isChecked = $("#cbShowAllNoteNames").prop("checked");
-		showAllNoteNames(!isChecked); //hack: do it twice for side-effects.
 		showAllNoteNames(isChecked);
-	}
-
-	function findRepresentativeKeyColorHex(primarySelector, detailSelector){
-		const candidates = [
-			$(primarySelector).css('background-color'),
-			$(detailSelector).css('background-color'),
-			$(primarySelector).css('background-image'),
-			$(detailSelector).css('background-image')
-		];
-
-		for (const candidate of candidates){
-			const hex = convertRGB_to_HEX(candidate);
-			if (hex){
-				return hex;
-			}
-		}
-
-		return null;
 	}
 
 	//var gLastWhiteBackgroundColor = null;
 	//var gLastBlackBackgroundColor = null;
 	export function showAllNoteNames(show){
-		if (show){
-			var hexbb = findRepresentativeKeyColorHex('.noteBlackKey', '.noteBlackKey .NoteDisplay');
-			var hexww = findRepresentativeKeyColorHex('.noteWhiteKey', '.noteWhiteKey .NoteDisplay');
-			if (!hexbb || !hexww){
-				return;
-			}
-			var bw = false; //false is cooler. //force choice of Black/White color for all background colors.  mid-tone colors don't work so well.
-			var fontblack = invertColor(hexbb, bw);
-			var fontwhite = invertColor(hexww, bw);
-			$('.noteWhiteKey').css({color: fontwhite});
-			$('.noteBlackKey').css({color: fontblack});
-		} else {
-			//if (gLastBlackBackgroundColor && gLastWhiteBackgroundColor){
-			//		$('.noteWhiteKey').css({color: "transparent"});   //gLastWhiteBackgroundColor});
-			//		$('.noteBlackKey').css({color: "transparent"});   //gLastBlackBackgroundColor});
-			//		console.log("gLastBlackBackgroundColor:"+gLastBlackBackgroundColor);
-			//} else {
-			$('.noteWhiteKey').css({color: "transparent"}); //this must sync with .noteWhiteKey's default background color so letters disappear.
-			$('.noteBlackKey').css({color: "transparent"});  //ditto
-			//}
-			//alert("else "+$('.noteWhiteKey').css("color"));
-
-		}
+		$('body').toggleClass('ShowAllNoteNames', !!show);
 	}
 
 	export function getVisibleTablesSelect() {

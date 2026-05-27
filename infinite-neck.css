@@ -28,6 +28,8 @@
   --fingering-position: -0.5em;
   --tiny-note-max-height: 45%;
   --tiny-note-font-size: 100%;
+    --universal-note-white-key-color: black;
+    --universal-note-black-key-color: white;
 
   --debug-border: 0;  /* just the border thickness */
 }
@@ -1320,6 +1322,28 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
 
 }
 
+.universalNamedNote {
+    position: absolute;
+    border-radius: 10px;
+    display: none;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+body.ShowAllNoteNames .universalNamedNote {
+    display: block;
+}
+
+.noteWhiteKey .universalNamedNote {
+    color: var(--universal-note-white-key-color);
+}
+
+.noteBlackKey .universalNamedNote {
+    color: var(--universal-note-black-key-color);
+}
+
 
 .singleNote {
     /* these two lines from cellFn */
@@ -1398,7 +1422,7 @@ td.nut div.NoteActive .CenterCell {
     width: 1em;
     max-height: var(--tiny-note-max-height);
     font-size: min(0.8em, var(--tiny-note-font-size));
-    z-index: 6;
+    z-index: 5;
     border-radius: 6px;
     text-align: center;
     vertical-align: top;
@@ -1463,7 +1487,7 @@ td.nut div.NoteActive .CenterCell {
 }
 .Fingering {
     display: none;
-    z-index: 12;
+    z-index: 7;
     position: absolute;
     top: calc( 50% - 0.6em );
     /*right: -10%;*/

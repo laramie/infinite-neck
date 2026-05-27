@@ -66,6 +66,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay {
     border-radius: inherit;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
     top: 0;
@@ -107,6 +108,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
     cursor: pointer;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote {
     top: var(--piano-black-face-top-gap);
     right: var(--piano-black-face-side-gap);

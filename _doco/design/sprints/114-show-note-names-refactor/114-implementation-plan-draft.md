@@ -205,3 +205,87 @@ If broader DOM tests are wanted, that would likely require a separate test harne
 - No changes to persisted song structure are required.
 
 If you want, I can turn this into a sprint-style implementation checklist next, broken into concrete edit steps per file.
+
+## Implementation Outcome
+
+Implemented the per-cell universal note-name lane in the live render path.
+
+- `showAllNoteNames` no longer derives contrast from computed key backgrounds.
+- Each cell now renders a dedicated `universalNamedNote` lane inside `NoteDisplay`.
+- The universal lane uses the same internal layout as `namedNote` for note names, MIDI numbers, functions, and subscripts.
+- The universal lane is display-only and does not participate in persistence, replay model state, or transient/plugin NamedNote ownership.
+
+## Code-Confirmed Adjustments
+
+The implementation kept the overall design, with these concrete details from the shipped code:
+
+1. The universal lane is always present in DOM and hidden by default.
+2. Visibility is controlled by a body class toggle: `body.ShowAllNoteNames`.
+3. Theme contrast is provided by dedicated CSS variables:
+   - `--universal-note-white-key-color`
+   - `--universal-note-black-key-color`
+4. Theme generation emits those variables centrally in `themeFunctions.js`.
+5. Representative themes with non-default key surfaces now define explicit universal-lane contrast colors in `themes.js`.
+6. PianoSkeuomorphic reuses the same face geometry selectors as `namedNote` so the universal lane inherits the existing white-key and black-key positioning model.
+
+## Implemented Layer Order
+
+Actual implemented z-order is now explicit in CSS:
+
+- universal lane: `universalNamedNote` at `z-index: 2`
+- NamedNotes: `namedNote` at `z-index: 3`
+- SingleNotes: `singleNote` at `z-index: 4`
+- TinyNotes: `tinyNote` at `z-index: 5`
+- Bends: `tinyNotePlayedBend` at `z-index: 6`
+- Fingering: `Fingering` at `z-index: 7`
+
+This matches the requested correction that real note overlays layer above NamedNotes, and that bends sit above TinyNotes.
+
+## Files Changed In Implementation
+
+- `NoteTableController.js`
+  - added `buildUniversalNamedNote()`
+  - factored shared note-name lane markup builder
+  - added `universalNamedNote` output to each `NoteDisplay`
+- `infinite-neck.js`
+  - replaced the Show All Note Names computed-color hack with a body class toggle
+- `infinite-neck.css`
+  - added universal lane CSS
+  - added explicit overlay z-index ordering
+  - added root defaults for universal-lane contrast variables
+- `templates/piano/piano-skeuomorphic.css`
+  - applied piano face geometry to `universalNamedNote`
+- `themeFunctions.js`
+  - emits dedicated universal-lane theme variables
+  - applies themed border radius to the universal lane
+- `themes.js`
+  - added explicit universal-lane contrast colors for representative theme variants
+
+## Persistence And Runtime Semantics
+
+Confirmed unchanged:
+
+- no changes to `SectionNotesPersistence`
+- no new persisted song data
+- no plugin ownership semantics attached to the universal lane
+- no changes to real NamedNote replay behavior beyond layering beneath the other visible overlays
+
+## Validation Summary
+
+Added focused regression coverage:
+
+- `_tests/jest/note-table-controller-markup.test.js`
+  - verifies `universalNamedNote` exists
+  - verifies it shares the same internal layout shape as `namedNote`
+  - verifies `cellBuilder()` emits the universal lane alongside the existing note layers
+- `_tests/jest/themeFunctions.test.js`
+  - verifies dedicated universal-lane contrast colors exist for representative theme variants
+
+Executed validation:
+
+- focused Jest suites for the new markup and theme coverage passed
+- full repository Jest suite passed after implementation
+
+## Follow-up Notes
+
+The current implementation uses explicit theme values for representative non-default surfaces plus centralized defaults for the general case. If more theme-specific tuning is desired later, the contrast variables are now in place and can be adjusted without revisiting the DOM-layer design.

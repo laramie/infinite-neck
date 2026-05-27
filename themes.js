@@ -23,6 +23,8 @@ export const gThemes = {
         "noteBlackKeySpecialColor": "#191919",
         "noteWhiteKeyFontColor": "transparent",
         "noteBlackKeyFontColor": "transparent",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "white",
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none",
         "instrumentBorderImage": "none"
@@ -46,6 +48,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#555",
         "noteWhiteKeyFontColor": "transparent",
         "noteBlackKeyFontColor": "transparent",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "white",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "Zinfandel" : {
@@ -90,8 +94,10 @@ export const gThemes = {
         "doubleDiamondsColor": "gold",
         "noteWhiteKeyColor": "#f5e0c4",
         "noteBlackKeyColor": "#331e01",
-        "noteWhiteKeyFontColor": "#f5e0c4",
-        "noteBlackKeyFontColor": "#331e01"
+        "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#f5e0c4",
+        "universalNoteWhiteKeyColor": "#331e01",
+        "universalNoteBlackKeyColor": "#f5e0c4"
     },
     "RobinHood": {
       "id": "RobinHood",
@@ -113,6 +119,8 @@ export const gThemes = {
       "noteBlackKeyColor": "#362312",
       "noteWhiteKeyFontColor": "transparent",
       "noteBlackKeyFontColor": "transparent",
+    "universalNoteWhiteKeyColor": "black",
+    "universalNoteBlackKeyColor": "#f5f0e1",
       "borderImageWhiteKey": "url('img/celtic-background-white.png')",
       "borderImageBlackKey": "url('img/celtic-background-black.png')",
       "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -124,6 +132,8 @@ export const gThemes = {
         "nutColor": "#331e01",
         "noteWhiteKeyColor": "lightgreen",
         "noteBlackKeyColor": "#362312",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "#f5f0e1",
         "borderImageWhiteKey": "url('img/celtic-background-white.png')",
         "borderImageBlackKey":  "url('img/celtic-background-black.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -141,6 +151,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#331e01",
         "noteWhiteKeyFontColor": "#f5e0c4",
         "noteBlackKeyFontColor": "#331e01",
+        "universalNoteWhiteKeyColor": "#331e01",
+        "universalNoteBlackKeyColor": "#f5e0c4",
         "borderImageWhiteKey": "url('img/celtic-background-2.png')",
         "borderImageBlackKey":  "url('img/celtic-background-2.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -158,6 +170,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#331e01",
         "noteWhiteKeyFontColor": "#f5e0c4",
         "noteBlackKeyFontColor": "#331e01",
+        "universalNoteWhiteKeyColor": "#331e01",
+        "universalNoteBlackKeyColor": "#f5e0c4",
         "borderImageWhiteKey": "none"
     },
     "CoffyBrown" : {
@@ -178,7 +192,9 @@ export const gThemes = {
         "noteWhiteKeySpecialColor": "SaddleBrown",
         "noteBlackKeySpecialColor": "SaddleBrown",
         "noteWhiteKeyFontColor": "#331e01",
-        "noteBlackKeyFontColor": "#331e01"
+        "noteBlackKeyFontColor": "#331e01",
+        "universalNoteWhiteKeyColor": "#f5e0c4",
+        "universalNoteBlackKeyColor": "#f5e0c4"
     },
     "Blade" : {
         "id": "Blade",
@@ -195,6 +211,8 @@ export const gThemes = {
         "noteBlackKeyColor": "black",
         "noteWhiteKeyFontColor": "white",
         "noteBlackKeyFontColor": "black",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "white",
         "borderImageWhiteKey":  "url('img/blade.png')",
         "borderImageBlackKey":  "none",
         "instrumentBorderImage": "url('img/blade-border.png')"
@@ -211,7 +229,9 @@ export const gThemes = {
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "black",
         "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "black"
+        "noteBlackKeyFontColor": "black",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "white"
     },
     "Reverse" : {
         "id": "Reverse",
@@ -225,7 +245,9 @@ export const gThemes = {
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "white",
         "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "white"
+        "noteBlackKeyFontColor": "white",
+        "universalNoteWhiteKeyColor": "white",
+        "universalNoteBlackKeyColor": "black"
     },
     "Snow" : {
         "id": "Snow",
@@ -244,6 +266,8 @@ export const gThemes = {
         "noteBlackKeyColor": "white",
         "noteWhiteKeyFontColor": "white",
         "noteBlackKeyFontColor": "white",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "black",
         "borderImageWhiteKey": "none"
     },
     "WiteOut" : {
@@ -262,7 +286,9 @@ export const gThemes = {
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "white",
         "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "white"
+        "noteBlackKeyFontColor": "white",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "black"
     },
     "Matrix" : {
         "id": "Matrix",
@@ -279,8 +305,10 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt chartreuse",
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "black",
-        "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "black"
+        "noteWhiteKeyFontColor": "chartreuse",
+        "noteBlackKeyFontColor": "chartreuse",
+        "universalNoteWhiteKeyColor": "white",
+        "universalNoteBlackKeyColor": "white"
     },
     "Blackout" : {
         "id": "Blackout",
@@ -298,7 +326,9 @@ export const gThemes = {
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "black",
         "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "black"
+        "noteBlackKeyFontColor": "black",
+        "universalNoteWhiteKeyColor": "white",
+        "universalNoteBlackKeyColor": "white"
     },
     "AdultSwim" : {
         "id": "AdultSwim",
@@ -349,7 +379,9 @@ export const gThemes = {
         "noteWhiteKeyColor": "aqua",
         "noteBlackKeyColor": "#555",
         "noteWhiteKeyFontColor": "transparent",
-        "noteBlackKeyFontColor": "transparent"
+        "noteBlackKeyFontColor": "transparent",
+        "universalNoteWhiteKeyColor": "black",
+        "universalNoteBlackKeyColor": "white"
     },
     "BiginJapan" : {
         "id": "BiginJapan",

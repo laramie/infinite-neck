@@ -138,6 +138,7 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
 	}
 
 	result = "<div class='NoteDisplay'>"
+            +buildUniversalNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass)
             +buildFloatingNotes(cell, subright, subleft, noteFnForHighlight, midinum, noteFunctionClass)
             +buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass)
 			+"</div>";
@@ -147,8 +148,8 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
 
 //=================================================================================
 
-export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
-    return "<div class='namedNote'>"
+function buildNoteNameLane(laneClass, cell, subright, midinum, noteFunctionClass){
+    return "<div class='"+laneClass+"'>"
 	        +"<span class='midinumDisplayNamedNote'>"+midinum+"</span>"
             +"<div class='CenterCell'>"
                 +"<div class='"+noteFunctionClass+"'>"
@@ -158,6 +159,14 @@ export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFun
                     +   subright
                 +"</span>"
         +"</div></div>";
+}
+
+export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
+    return buildNoteNameLane('namedNote', cell, subright, midinum, noteFunctionClass);
+}
+
+export function buildUniversalNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
+    return buildNoteNameLane('universalNamedNote', cell, subright, midinum, noteFunctionClass);
 }
 
 export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
