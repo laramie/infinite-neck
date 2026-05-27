@@ -537,7 +537,7 @@ export function styleNamedNote(theClass, theColorClass, noteName){
 		.addClass("NoteActive");
 	var namedNoteDiv = theClass.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
-	namedNoteDiv.addClass(theColorClass).show();
+    namedNoteDiv.addClass("NamedNoteActive").addClass(theColorClass).show();
 	namedNoteDiv.css("opacity",  getSong().namedNoteOpacity);
 }
 
