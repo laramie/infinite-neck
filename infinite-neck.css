@@ -10,6 +10,7 @@
   --note-black-shadow-color: white;
   --instrument-margin-tb: 4em; /* now just bottom, not top. */
   --cell-spacing: 8px; /*theme set it to values like: 0.5em;*/
+    --note-padding: 6pt;
   --border-image-black-key: none;
   --border-image-white-key: none;
   --instrument-border-image: url('img/celtic-background-black.png');

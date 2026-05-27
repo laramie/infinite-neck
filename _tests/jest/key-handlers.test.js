@@ -144,6 +144,7 @@ describe('key-handlers spacebar mapping', () => {
 	let mockSetBPM;
 	let mockGetBPM;
 	let mockToggleRecording;
+	let mockShowAllNoteNames;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -171,6 +172,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockSetBPM = jest.fn();
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
+		mockShowAllNoteNames = jest.fn();
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -209,6 +211,7 @@ describe('key-handlers spacebar mapping', () => {
 			setNamedNoteOpacity: jest.fn(),
 			setSingleNoteOpacity: jest.fn(),
 			setTinyNoteOpacity: jest.fn(),
+			showAllNoteNames: mockShowAllNoteNames,
 			showOneMenu: jest.fn(),
 			toggleCaption: jest.fn(),
 			toggleFullscreen: jest.fn(),
@@ -261,6 +264,18 @@ describe('key-handlers spacebar mapping', () => {
 		expect(event.preventDefault).not.toHaveBeenCalled();
 		expect(song.lastSection).not.toHaveBeenCalled();
 		expect(clearAndReplaySection).not.toHaveBeenCalled();
+	});
+
+	test('showAllNoteNames action delegates true to provider', () => {
+		performCmdAction({ action: 'showAllNoteNames' });
+
+		expect(mockShowAllNoteNames).toHaveBeenCalledWith(true);
+	});
+
+	test('hideAllNoteNames action delegates false to provider', () => {
+		performCmdAction({ action: 'hideAllNoteNames' });
+
+		expect(mockShowAllNoteNames).toHaveBeenCalledWith(false);
 	});
 
 	test('resetSong delegates to the transport controller', () => {

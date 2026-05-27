@@ -1,4 +1,16 @@
-const { buildNamedNote, buildUniversalNamedNote, cellBuilder } = await import('../../NoteTableController.js');
+const {
+  buildNamedNote,
+  buildUniversalNamedNote,
+  cellBuilder,
+  getPianoSkeuomorphicCellHeightPx,
+  getPianoSkeuomorphicCellHeightPxForScaleFactor,
+  getPianoSkeuomorphicScaleFactor,
+  getPianoSkeuomorphicWhiteKeyWidthPx,
+  getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor,
+  getPianoSkeuomorphicWidthScaleFactor,
+  getPianoSkeuomorphicBlackKeyWidthPx,
+  getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor
+} = await import('../../NoteTableController.js');
 
 describe('NoteTableController note-name lane markup', () => {
   test('universal note-name lane uses the same internal layout shape as NamedNote', () => {
@@ -30,5 +42,29 @@ describe('NoteTableController note-name lane markup', () => {
     expect(html).toContain("class='tinyNote'");
     expect(html).toContain("class='namedNote'");
     expect(html.indexOf("class='universalNamedNote'")).toBeLessThan(html.indexOf("class='namedNote'"));
+  });
+
+  test('piano skeuomorphic sizing helpers scale from the standard cell controls with floors', () => {
+    expect(getPianoSkeuomorphicCellHeightPx('30px')).toBe(120);
+    expect(getPianoSkeuomorphicCellHeightPx('50px')).toBe(200);
+    expect(getPianoSkeuomorphicScaleFactor(undefined)).toBe(3);
+    expect(getPianoSkeuomorphicScaleFactor('0')).toBe(1);
+    expect(getPianoSkeuomorphicScaleFactor('11')).toBe(10);
+    expect(getPianoSkeuomorphicCellHeightPxForScaleFactor('50px', 3)).toBe(200);
+    expect(getPianoSkeuomorphicCellHeightPxForScaleFactor('50px', 1)).toBe(67);
+    expect(getPianoSkeuomorphicCellHeightPxForScaleFactor('50px', 6)).toBe(400);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPx('40px')).toBe(50);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPx('100px')).toBe(50);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPx('200px')).toBe(100);
+    expect(getPianoSkeuomorphicWidthScaleFactor(undefined)).toBe(3);
+    expect(getPianoSkeuomorphicWidthScaleFactor('0')).toBe(1);
+    expect(getPianoSkeuomorphicWidthScaleFactor('7')).toBe(6);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor('100px', 1)).toBe(25);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor('100px', 3)).toBe(50);
+    expect(getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor('100px', 6)).toBe(87.5);
+    expect(getPianoSkeuomorphicBlackKeyWidthPx('100px')).toBeCloseTo(21.74, 2);
+    expect(getPianoSkeuomorphicBlackKeyWidthPx('200px')).toBeCloseTo(43.48, 2);
+    expect(getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor('100px', 1)).toBeCloseTo(10.87, 2);
+    expect(getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor('100px', 6)).toBeCloseTo(38.04, 2);
   });
 });

@@ -98,6 +98,7 @@ function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
+function showAllNoteNames(...args) { return requireProvider('showAllNoteNames')(...args); }
 function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
@@ -871,6 +872,9 @@ export function performCmdAction(menuItem, args){
 		case "showHelp":
 			window.open('help.html','_blank');
 			break;
+		case "showAllNoteNames":
+			showAllNoteNames(true);
+			break;
 		case "showNamedNotes":
 			$("#cbHideNamedNotes").prop("checked", false).trigger('change');
 			break;
@@ -882,6 +886,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
+			break;
+		case "hideAllNoteNames":
+			showAllNoteNames(false);
 			break;
 		case "hideNamedNotes":
 			$("#cbHideNamedNotes").prop("checked", true).trigger('change');

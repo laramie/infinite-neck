@@ -669,6 +669,11 @@ export var gMenuFile =    {
           "trigger": "h",
           "children": [
             {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "hideAllNoteNames"
+            },
+            {
               "caption": "<b>n</b>amedNotes",
               "trigger": "n",
               "action": "hideNamedNotes"
@@ -694,6 +699,11 @@ export var gMenuFile =    {
           "caption": "<b>s</b>how",
           "trigger": "s",
           "children": [
+            {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "showAllNoteNames"
+            },
             {
               "caption": "<b>n</b>amedNotes",
               "trigger": "n",

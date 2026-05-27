@@ -304,6 +304,7 @@ import { gThemes } from './themes.js';
 									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('noteBlackKeyFontColor', 'noteBlackKeyColor', 'noteWhiteKeyColor', 'white') + "; "
 									+rule("--instrument-margin-tb", "instrumentMargins")
 									+rule("--cell-spacing", "cellSpacing")
+									+rule("--note-padding", "notePadding")
 									+rule("--named-note-radius", "namedNoteRadius")
 									+rule("--border-image-black-key", "borderImageBlackKey")
 									+rule("--border-image-white-key", "borderImageWhiteKey")

@@ -55,6 +55,8 @@ describe('DisplayOptions baseline fixture contracts', () => {
         song.gotoSection(1);
         song.getCurrentSection().displayOptions.hideSingleNotes = false;
         song.getCurrentSection().displayOptions.NoteDisplaySizes.width = '90px';
+        song.getCurrentSection().displayOptions.pianoHeightScaleFactor = '7';
+        song.getCurrentSection().displayOptions.pianoWidthScaleFactor = '5';
 
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
@@ -68,7 +70,9 @@ describe('DisplayOptions baseline fixture contracts', () => {
             hideSingleNotes: s.displayOptions.hideSingleNotes,
             width: s.displayOptions.NoteDisplaySizes.width,
             height: s.displayOptions.NoteDisplaySizes.height,
-            showCellNotes: s.displayOptions.showCellNotes
+            showCellNotes: s.displayOptions.showCellNotes,
+            pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor
         }));
 
         song.prepareForSave({
@@ -85,7 +89,9 @@ describe('DisplayOptions baseline fixture contracts', () => {
             hideSingleNotes: s.displayOptions.hideSingleNotes,
             width: s.displayOptions.NoteDisplaySizes.width,
             height: s.displayOptions.NoteDisplaySizes.height,
-            showCellNotes: s.displayOptions.showCellNotes
+            showCellNotes: s.displayOptions.showCellNotes,
+            pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor
         }));
 
         expect(afterSummary).toEqual(beforeSummary);
@@ -123,12 +129,16 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         const savedOptions = clone(song.getCurrentSection().displayOptions);
         savedOptions.hideSingleNotes = false;
         savedOptions.NoteDisplaySizes.width = '88px';
+        savedOptions.pianoHeightScaleFactor = '8';
+        savedOptions.pianoWidthScaleFactor = '4';
 
         // Mirrors the save-button runtime contract: getCurrentSection().displayOptions = options
         song.getCurrentSection().displayOptions = savedOptions;
 
         expect(sections[1].displayOptions.hideSingleNotes).toBe(false);
         expect(sections[1].displayOptions.NoteDisplaySizes.width).toBe('88px');
+        expect(sections[1].displayOptions.pianoHeightScaleFactor).toBe('8');
+        expect(sections[1].displayOptions.pianoWidthScaleFactor).toBe('4');
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
     });

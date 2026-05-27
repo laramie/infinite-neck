@@ -30,8 +30,15 @@ describe('themeFunctions baseline contracts', () => {
         expect(themes.Default.noteBlackKeyFontColor).toBe('white');
         expect(themes.Reverse.noteWhiteKeyFontColor).toBe('white');
         expect(themes.Reverse.noteBlackKeyFontColor).toBe('black');
-        expect(themes.Matrix.noteWhiteKeyFontColor).toBe('white');
-        expect(themes.Matrix.noteBlackKeyFontColor).toBe('white');
+        expect(themes.Matrix.noteWhiteKeyFontColor).toBe('chartreuse');
+        expect(themes.Matrix.noteBlackKeyFontColor).toBe('chartreuse');
+    });
+
+    test('default theme still defines spacing inputs used by piano skeuomorphic insets', () => {
+        const themes = getThemes();
+
+        expect(themes.Default.notePadding).toBe('8pt');
+        expect(themes.Default.cellSpacing).toBe('6pt');
     });
 
     test('getWidget_SelectThemes includes all theme ids in the select HTML', () => {
