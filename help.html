@@ -4094,6 +4094,28 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
     <p>Flashcard mode changes the timing of note-name reveal, not the highlight itself.</p>
 
+    <p>The way to use Flashcard mode is to first place NamedNotes.  These become the notes of the scale/mode/chord that 
+        ArpeggioPlugin will play.  
+    </p>
+        
+    <p>
+        Then you set the ArpeggioPlugin options: 
+    </p>
+    <p>
+        <div class="menuExampleLine" style="margin-left: 4em;">{"show <b>n</b>ote name":"played", "<b>c</b>olor notes":true, "<b>f</b>lashcard":true}</div>
+    </p>
+    <p>
+        Then on the View page, you check the checkbox: <span class="GUIReferenceInline">View <span class="guiBox">&check; Hide Named Names</span></span> and make sure you don't have all note names shown for all cells: <span class="GUIReferenceInline">View <span class="guiBox">&#x2610; Show All Note Names</span></span> <div class=""></div>
+</p>
+    <p>
+        This works because you don't see the NamedNotes at all, then ArpeggioPlugin places SingleNotes for Flashcard mode, so you see the SingleNotes at Flashcard time.
+        
+    </p>
+    <p>Then, finally, start looping.  ArpeggioPlugin works by filling in the arpeggio on each loop, so on each loop you get a new display of 
+        highlights and optional note name reveals in the style (every, alternate, random, Bach) you chose.  
+        This works for beat-looping a Section, or looping a single-Section song, or a song with multiple Sections.
+    </p>
+
     <ul>
         <li>On beat 1 you see the highlight only.</li>
         <li>You guess, say the name or function out loud, and play the note on your physical instrument. </li>

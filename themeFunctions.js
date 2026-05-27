@@ -212,13 +212,30 @@ import { gThemes } from './themes.js';
 
 	export function theme(themeOptions){
 		//console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
-		function resolvedUniversalLaneColor(whichOption, fallbackValue){
-			const configured = themeOptions && themeOptions[whichOption];
-			if (configured){
-				return configured;
+		function resolvedThemeValue(whichOption){
+			if (themeOptions && themeOptions[whichOption]){
+				return themeOptions[whichOption];
 			}
 			if (defaultOptions && defaultOptions[whichOption]){
 				return defaultOptions[whichOption];
+			}
+			return "";
+		}
+		function isUsableContrastColor(value){
+			return !!value && `${value}`.trim() !== '' && `${value}`.trim().toLowerCase() !== 'transparent';
+		}
+		function normalizeColorToken(value){
+			return `${value || ''}`.trim().toLowerCase();
+		}
+		function resolvedUniversalLaneColor(fontOption, ownKeyColorOption, oppositeKeyColorOption, fallbackValue){
+			const fontColor = resolvedThemeValue(fontOption);
+			const ownKeyColor = resolvedThemeValue(ownKeyColorOption);
+			if (isUsableContrastColor(fontColor) && normalizeColorToken(fontColor) !== normalizeColorToken(ownKeyColor)){
+				return fontColor;
+			}
+			const oppositeKeyColor = resolvedThemeValue(oppositeKeyColorOption);
+			if (isUsableContrastColor(oppositeKeyColor)){
+				return oppositeKeyColor;
 			}
 			return fallbackValue;
 		}
@@ -262,12 +279,12 @@ import { gThemes } from './themes.js';
 							     +"}"
 						 +" .noteWhiteKey {"
 							     +rule("background-color", "noteWhiteKeyColor")
-							     +rule("color", "noteWhiteKeyFontColor")
+							     +"color: transparent; "
 								 +rule("box-shadow", "noteWhiteKeyShadowColor")
 								 +"}"
 						 +" .noteBlackKey {"
 							     +rule("background-color", "noteBlackKeyColor")
-							     +rule("color", "noteBlackKeyFontColor")
+							     +"color: transparent; "
 							     +rule("box-shadow", "noteBlackKeyShadowColor")
 								 +"}"
 						 +" :root { "
@@ -283,8 +300,8 @@ import { gThemes } from './themes.js';
 
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
-									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('universalNoteWhiteKeyColor', 'black') + "; "
-									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('universalNoteBlackKeyColor', 'white') + "; "
+									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black') + "; "
+									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('noteBlackKeyFontColor', 'noteBlackKeyColor', 'noteWhiteKeyColor', 'white') + "; "
 									+rule("--instrument-margin-tb", "instrumentMargins")
 									+rule("--cell-spacing", "cellSpacing")
 									+rule("--named-note-radius", "namedNoteRadius")

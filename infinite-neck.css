@@ -1422,7 +1422,7 @@ td.nut div.NoteActive .CenterCell {
     width: 1em;
     max-height: var(--tiny-note-max-height);
     font-size: min(0.8em, var(--tiny-note-font-size));
-    z-index: 5;
+    z-index: 6;
     border-radius: 6px;
     text-align: center;
     vertical-align: top;
@@ -1438,7 +1438,7 @@ td.nut div.NoteActive .CenterCell {
  }
 .tinyNotePlayedBend {
     display: block;
-    z-index: 6;
+    z-index: 5;
     border: 1px solid orange;
     text-align: left;
     /* doesn't work with display:block  vertical-align: center;  */
@@ -1487,7 +1487,7 @@ td.nut div.NoteActive .CenterCell {
 }
 .Fingering {
     display: none;
-    z-index: 7;
+    z-index: 5;
     position: absolute;
     top: calc( 50% - 0.6em );
     /*right: -10%;*/

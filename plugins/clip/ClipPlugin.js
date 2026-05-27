@@ -183,8 +183,8 @@ export class ClipPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.getProperty('targetTable').getMenuNodeSpec(this),
-      this.buildCopyMenuNode('copyToGraveyard', 'Copy', 'C'),
-      this.buildCopyMenuNode('cutToGraveyard', 'Cut', 'X'),
+      this.buildCopyMenuNode('copyToGraveyard', 'C copy', 'C'),
+      this.buildCopyMenuNode('cutToGraveyard', 'X cut', 'X'),
       this.buildReviveMenuNode(song),
       this.buildMidiPasteMenuNode(song),
       this.getProperty('automatic').getMenuNodeSpec(this),
@@ -225,7 +225,7 @@ export class ClipPlugin {
     const automatic = !!this.getProperty('automatic')?.getValue();
     const spec = {
       name: 'reviveFromGraveyard',
-      caption: `${buildCaption('Paste', 'V')}${buildValueReference(token)}`,
+      caption: `${buildCaption('V paste', 'V')}${buildValueReference(token)}`,
       trigger: 'V',
       vars: [token],
       action: 'pluginAction:invoke',

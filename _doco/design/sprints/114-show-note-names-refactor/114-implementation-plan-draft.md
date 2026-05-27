@@ -225,8 +225,9 @@ The implementation kept the overall design, with these concrete details from the
    - `--universal-note-white-key-color`
    - `--universal-note-black-key-color`
 4. Theme generation emits those variables centrally in `themeFunctions.js`.
-5. Representative themes with non-default key surfaces now define explicit universal-lane contrast colors in `themes.js`.
-6. PianoSkeuomorphic reuses the same face geometry selectors as `namedNote` so the universal lane inherits the existing white-key and black-key positioning model.
+5. Those variables are now derived from the existing theme fields `noteWhiteKeyFontColor` and `noteBlackKeyFontColor`, with core fallback logic for transparent or self-color values.
+6. Representative themes in `themes.js` were corrected so their existing key font color fields are real contrast pairs instead of the old transparent hack values.
+7. PianoSkeuomorphic reuses the same face geometry selectors as `namedNote` so the universal lane inherits the existing white-key and black-key positioning model.
 
 ## Implemented Layer Order
 
@@ -235,11 +236,11 @@ Actual implemented z-order is now explicit in CSS:
 - universal lane: `universalNamedNote` at `z-index: 2`
 - NamedNotes: `namedNote` at `z-index: 3`
 - SingleNotes: `singleNote` at `z-index: 4`
-- TinyNotes: `tinyNote` at `z-index: 5`
-- Bends: `tinyNotePlayedBend` at `z-index: 6`
-- Fingering: `Fingering` at `z-index: 7`
+- Bends: `tinyNotePlayedBend` at `z-index: 5`
+- Fingering: `Fingering` at `z-index: 5`
+- TinyNotes: `tinyNote` at `z-index: 6`
 
-This matches the requested correction that real note overlays layer above NamedNotes, and that bends sit above TinyNotes.
+This matches the corrected requirement that TinyNotes stay above bends so a bend spillover does not cover a TinyNote in the next cell.
 
 ## Files Changed In Implementation
 
@@ -256,10 +257,10 @@ This matches the requested correction that real note overlays layer above NamedN
 - `templates/piano/piano-skeuomorphic.css`
   - applied piano face geometry to `universalNamedNote`
 - `themeFunctions.js`
-  - emits dedicated universal-lane theme variables
+  - emits dedicated universal-lane theme variables derived from the existing key font theme fields
   - applies themed border radius to the universal lane
 - `themes.js`
-  - added explicit universal-lane contrast colors for representative theme variants
+  - corrected `noteWhiteKeyFontColor` and `noteBlackKeyFontColor` so they are usable contrast pairs instead of transparent hack values where needed
 
 ## Persistence And Runtime Semantics
 
@@ -279,7 +280,7 @@ Added focused regression coverage:
   - verifies it shares the same internal layout shape as `namedNote`
   - verifies `cellBuilder()` emits the universal lane alongside the existing note layers
 - `_tests/jest/themeFunctions.test.js`
-  - verifies dedicated universal-lane contrast colors exist for representative theme variants
+  - verifies representative themes now expose corrected key font contrast pairs used by the universal lane
 
 Executed validation:
 

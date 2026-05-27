@@ -23,15 +23,15 @@ describe('themeFunctions baseline contracts', () => {
         });
     });
 
-    test('themes expose dedicated universal note-lane contrast colors for representative variants', () => {
+    test('themes expose corrected key font contrast pairs for representative variants', () => {
         const themes = getThemes();
 
-        expect(themes.Default.universalNoteWhiteKeyColor).toBe('black');
-        expect(themes.Default.universalNoteBlackKeyColor).toBe('white');
-        expect(themes.Reverse.universalNoteWhiteKeyColor).toBe('white');
-        expect(themes.Reverse.universalNoteBlackKeyColor).toBe('black');
-        expect(themes.Matrix.universalNoteWhiteKeyColor).toBe('white');
-        expect(themes.Matrix.universalNoteBlackKeyColor).toBe('white');
+        expect(themes.Default.noteWhiteKeyFontColor).toBe('black');
+        expect(themes.Default.noteBlackKeyFontColor).toBe('white');
+        expect(themes.Reverse.noteWhiteKeyFontColor).toBe('white');
+        expect(themes.Reverse.noteBlackKeyFontColor).toBe('black');
+        expect(themes.Matrix.noteWhiteKeyFontColor).toBe('white');
+        expect(themes.Matrix.noteBlackKeyFontColor).toBe('white');
     });
 
     test('getWidget_SelectThemes includes all theme ids in the select HTML', () => {
