@@ -2,9 +2,36 @@
 
 <head>
     <style>
-        #helpBody {
-           padding-top: 10em;
-        }
+          html {
+              scroll-padding-top: 2.0em;
+          }
+          :target {
+              scroll-margin-top: 0.3em;
+              outline: 3px solid green;
+          }
+
+          h1, h2, h3, h4, h5 {
+           color: orange;
+           font-family: "Verdana";
+           margin-top: 1em;
+       }
+       h1 {
+           margin-left: 0;
+       }
+       h2 {
+           margin-left: 0.5em;
+       }
+       h3 {
+           margin-left: 1em;
+       }
+       h4 {
+           margin-top: 1.5em;
+           margin-left: 2em;
+       }
+       h5 {
+            margin-top: 2em;
+           margin-left: 3em;
+       }
         .helpButton {
            background-color: orange;
            box-shadow: 1pt 1pt 2pt 0.5pt gray;
@@ -23,6 +50,19 @@
            left: 0;
            top: 0;
            background-color: lightyellow;
+       }
+
+       .productsmall {
+            font-size: 150%;
+            color: darkorange;
+            font-family: "Kode Mono", monospace;
+            -webkit-text-stroke: 0.6px black;
+       }
+       .productsmaller {
+            font-size: 100%;
+            color: darkorange;
+            font-family: "Kode Mono", monospace;
+            -webkit-text-stroke: 0.7px black;
        }
 
 
@@ -136,9 +176,9 @@
 <div class="menunav">
     &nbsp;&nbsp;<span class="productsmaller">Laramie's </span>
     <span class="productsmall">infinite-neck</span>
-    <a class="helpButton" href="help.html">Back to Help</a>
-    <a class="helpButton" href="#QuickLinks">Quick Links</a>
-    <a class="helpButton" href="#TOC">TOC</a>
+    <a class="helpButton" href="help.html">Back to Main <b>Help</b></a>
+    <a class="helpButton" href="#QuickLinks">Plugin Quick Links</a>
+    <a class="helpButton" href="#TOC">Plugin TOC</a>
     <a class="helpButton" href="#PluginHelpTopics">Plugin Help Topics</a>
 </div>
 
@@ -146,9 +186,8 @@
 
 
     <p>
-        <a name="QuickLinks"></a>
         <br>
-        <h2>Quick Links</h2>
+        <h2 id="QuickLinks">Plugin Quick Links</h2>
         <table class="helpCmdLinks" id="helpCmdLinks">
             <tr><td><a href="#helpCmd-fpa">/fpa</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpa"><b>ArpeggioPlugin</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpap">/fpap</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpap"><b>ArpeggioPlugin <em>&raquo;</em>  positions</b></a></td></tr>
@@ -172,9 +211,8 @@
             <tr><td><a href="#helpCmd-fpt">/fpt</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpt"><b>TransposePlugin</b></a></td></tr>
         </table>
     </p>
-    <a name="TOC"></a>
     <br>
-    <h2>TOC - Table of Contents (all plugins, all options)</h2>
+    <h2 id="TOC">TOC - Table of Contents (all plugins, all options)</h2>
     <table  id="helpCmdTOC">
         
         <tr>
@@ -1222,12 +1260,8 @@
             </td>
         </tr>
     </table>
-
-
-
-<a name="PluginHelpTopics"></a>
 <br>
-<h1>Plugin Help Topics</h1>
+<h1 id="PluginHelpTopics">Plugin Help Topics</h1>
 
 
 <h2>ArpeggioPlugin</h2>
