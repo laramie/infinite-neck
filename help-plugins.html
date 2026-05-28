@@ -1263,6 +1263,11 @@
 <br>
 <h1 id="PluginHelpTopics">Plugin Help Topics</h1>
 
+<p>The plugins were written to be somewhat independent of the main User Interface in infinite-neck.  So they are entirely driven by the command-line.  You can learn about <a href="help.html#commandline">using the command-line</a> in the main helpfile.</p>
+
+<p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>
+
+<p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
 
 <h2>ArpeggioPlugin</h2>
     <table  class="helpCmdDetailHelp">
@@ -1461,6 +1466,142 @@
         </tr>
     </table>
 
+    <a name="plugin-arpeggio-what"></a>
+    <h3>What It Does</h3>
+
+    <p>ArpeggioPlugin generates played-note prompts from the named notes already present in the current Section. It is used for drills, fret-range/neck-position practice, learning keys, and flashcard-style note recall.</p>
+
+        <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Practice one chord or arpeggio shape in many keys without having to author a separate songfile for each key.</li>
+        <li>Limit practice to a small region of the neck by setting minFret and maxFret.</li>
+        <li>Hide all normal named notes on the neck, then let ArpeggioPlugin reveal only the current notes you want to practice.</li>
+        <li>Use flashcard mode so you guess first, then see the answer on the next beat.</li>
+        <li>Combine ArpeggioPlugin with TransposePlugin so one Song becomes a multi-key practice tool or game.</li>
+    </ul>
+
+
+
+    <a name="plugin-arpeggio-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>T</b> Table chooses the target instrument table.</li>
+        <li><b>p</b> positions shows the active fret window. When section values exist, the caption shows those JSON values; otherwise it shows the default <span class="menuExampleLine">min:max</span> range.</li>
+        <li>Inside <b>positions</b>, <b>m</b> sets minFret default position, <b>t</b> sets maxFret default position, and the remaining items manage current-section position arrays.</li>
+        <li><b>s</b> strings opens the upper and lower string limits and shows them as a user-facing <span class="menuExampleLine">upper:lower</span> summary.</li>
+        <li><b>o</b> lowToHigh: control whether the candidate traversal starts from lower strings and lower frets or the reverse logical order.</li>
+        <li><b>u</b> upOnly: keep the pattern moving upward instead of bouncing back.</li>
+        <li><b>y</b> style chooses every, alternate, random, or bach.</li>
+        <li><b>n</b> show note name chooses off, one, all, or played.</li>
+        <li><b>c</b> color notes chooses Emboss or AutoColor-style.</li>
+        <li><b>f</b> flashcard delays note-name reveal by one beat.</li>
+    </ul>
+
+        <h4>Show Note Name Modes</h4>
+
+    <ul>
+        <li>off: show only highlights, with no note-name text.</li>
+        <li>one: show only one beat's note-name text at a time.</li>
+        <li>all: show note-name text for all generated beats in the current Section.</li>
+        <li>played: accumulate note-name text beat by beat as the pass continues.</li>
+    </ul>
+
+    <h4>Flashcard Mode</h4>
+
+    <p>Flashcard mode changes the timing of note-name reveal, not the highlight itself.</p>
+
+    <p>The way to use Flashcard mode is to first place NamedNotes.  These become the notes of the scale/mode/chord that 
+        ArpeggioPlugin will play.  
+    </p>
+        
+    <p>
+        Then you set the ArpeggioPlugin options: 
+    </p>
+    <p>
+        <div class="menuExampleLine" style="margin-left: 4em;">{"show <b>n</b>ote name":"played", "<b>c</b>olor notes":true, "<b>f</b>lashcard":true}</div>
+    </p>
+    <p>
+        Then on the View page, you check the checkbox: <span class="GUIReferenceInline">View <span class="guiBox">&check; Hide Named Names</span></span> and make sure you don't have all note names shown for all cells: <span class="GUIReferenceInline">View <span class="guiBox">&#x2610; Show All Note Names</span></span> <div class=""></div>
+</p>
+    <p>
+        This works because you don't see the NamedNotes at all, then ArpeggioPlugin places SingleNotes for Flashcard mode, so you see the SingleNotes at Flashcard time.
+        
+    </p>
+    <p>Then, finally, start looping.  ArpeggioPlugin works by filling in the arpeggio on each loop, so on each loop you get a new display of 
+        highlights and optional note name reveals in the style (every, alternate, random, Bach) you chose.  
+        This works for beat-looping a Section, or looping a single-Section song, or a song with multiple Sections.
+    </p>
+
+    <ul>
+        <li>On beat 1 you see the highlight only.</li>
+        <li>You guess, say the name or function out loud, and play the note on your physical instrument. </li>
+        <li>On the next beat, the previous note's information is revealed.</li>
+        <li>On the final beat, the current note is also revealed because there is no later beat to show it.</li>
+        <li>This ties visually seeing the note position with hearing the note name and training your body memory to play that note along with hearing or seeing the note name or function.</li>
+    </ul>
+
+    <p>This creates a simple rhythm for practice:</p>
+
+    <ul>
+        <li>see the highlight</li>
+        <li>guess and play</li>
+        <li>see the answer on the next beat</li>
+    </ul>
+
+    <h3>Practical Practice Flows</h3>
+
+    <h4>Highlight Only</h4>
+
+    <p>Set <span class="menuExampleLine"><b>n</b> show note name</span> to off. This is the most demanding mode. You see fretboard position only.</p>
+
+    <h4>Embossed Prompt Notes</h4>
+
+    <p>Hide normal named notes through the View controls, then set Arpeggio's note-name mode to one, all, or played with <span class="menuExampleLine"><b>c</b> color notes</span> off. The generated prompts stand out from the rest of the neck without using the full AutoColor palette.</p>
+
+    <h4>AutoColored Prompt Notes</h4>
+
+    <p>Leave the rest of the neck visually plain or hidden, then set <span class="menuExampleLine"><b>c</b> color notes</span> on. Arpeggio's prompt notes will use the current AutoColor mapping and can stand out strongly inside the selected fret range.</p>
+
+    <h4>Flashcard Drill</h4>
+
+    <p>Set <span class="menuExampleLine"><b>f</b> flashcard</span> on and choose a note-name mode. This is useful when you want a short delay between the guess and the reveal.</p>
+
+    
+
+
+    <a name="plugin-arpeggio-actions"></a>
+    <h3>Actions</h3>
+
+    <ul>
+        <li><b>A</b> Apply regenerates the current Section immediately.</li>
+        <li><b>C</b> Clear removes Arpeggio-generated notes without touching user-authored notes.</li>
+        <li><b>h</b> help shows a summary of current settings.</li>
+    </ul>
+
+    <h3>Events</h3>
+
+    <ul>
+        <li>When enabled, ArpeggioPlugin handles <b>DaCapo:OnSectionBegin</b>.</li>
+    </ul>
+
+     <h3>Example Command-Line Flow</h3>
+
+    <p>One possible command-line rhythm is:</p>
+
+    <ul>
+        <li><span class="menuExampleLine"><b>p</b> plugins</span></li>
+        <li><span class="menuExampleLine"><b>a</b> arpeggio</span></li>
+        <li><span class="menuExampleLine"><b>p</b> positions</span> then <span class="menuExampleLine"><b>m</b> minFret</span> and <span class="menuExampleLine"><b>t</b> maxFret</span></li>
+        <li><span class="menuExampleLine"><b>s</b> strings</span> if you need string limits</li>
+        <li><span class="menuExampleLine"><b>n</b> show note name</span></li>
+        <li><span class="menuExampleLine"><b>c</b> color notes</span></li>
+        <li><span class="menuExampleLine"><b>A</b> Apply</span></li>
+    </ul>
+
+
+
 <h2>ClipPlugin</h2>
 
     <table  class="helpCmdDetailHelp">
@@ -1580,6 +1721,61 @@
             </td>
         </tr>
     </table>
+
+
+
+    <a name="plugin-clip"></a>
+    <h2>ClipPlugin</h2>
+
+    <a name="plugin-clip-what"></a>
+    <h3>What It Does</h3>
+
+    <p>ClipPlugin is a note clipboard for one current Section and one selected table at a time. It copies or cuts selected note lanes into Graveyard clip records, then pastes them back into the current Section either by direct revive or by MIDI-based remapping for supported cross-tuning guitar tables.</p>
+
+    <p>ClipPlugin works with <a href="help.html#glossary">NamedNotes</a> plus played-note lanes for SingleNotes, TinyNotes, and Bends. RecordedNotes and transient Highlights are out of scope. Clip records preserve the clipped note payloads, strip plugin ownership fields, and stay in the Graveyard until you clear them.</p>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Copy one voicing, riff, or drill fragment from the current table and paste it into another Section with <span class="menuExampleLine"><b>C</b> copy</span> and <span class="menuExampleLine"><b>V</b> paste</span>.</li>
+        <li>Cut authored notes out of one Section and move them elsewhere with <span class="menuExampleLine"><b>X</b> cut</span>.</li>
+        <li>Capture only selected lanes, such as named plus bends but not tiny notes, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles first.</li>
+        <li>Paste a same-family clip into a sibling table that shares the tuning family, while letting out-of-range played notes drop silently.</li>
+        <li>Use <span class="menuExampleLine"><b>M</b> MIDI Paste</span> to remap guitar clips across supported 6-string guitar tunings on the same string by MIDI pitch.</li>
+        <li>Keep <span class="menuExampleLine"><b>a</b> automatic</span> on for fast repeated copy, cut, and paste actions, or turn it off when you want to choose clip names and clip numbers explicitly.</li>
+    </ul>
+
+    <a name="plugin-clip-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>I</b> Instrument chooses which table ClipPlugin reads from and pastes into for the current Section.</li>
+        <li><b>a</b> automatic controls whether copy, cut, paste, and MIDI Paste run immediately with defaults, or stop for input first.</li>
+        <li><b>o</b> overwrite controls collision behavior while reviving or MIDI pasting. When off, colliding notes are skipped. When on, colliding notes are replaced.</li>
+        <li><b>i</b> include opens toggles for <b>n</b> named, <b>s</b> single, <b>t</b> tiny, and <b>b</b> bend lanes.</li>
+        <li>The <b>include</b> caption shows live counts for enabled lanes, for example <span class="menuExampleLine"><b>include [n:2,s:1,t:1,b:1]</b></span>.</li>
+        <li>Clip names default to a short count-based label such as <span class="menuExampleLine">named-1-single-1-bend-1-1202</span>, and you can edit that name when automatic mode is off.</li>
+        <li><b>V</b> paste lists only compatible same-family clip records for the selected table.</li>
+        <li><b>M</b> MIDI Paste lists only clip records that can be remapped to the selected target table under the current 6-string guitar scope.</li>
+    </ul>
+
+    <a name="plugin-clip-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>C</b> Copy stores the included note lanes from the current Section and selected table as a <b>CLIP</b> record in the Graveyard.</li>
+        <li><b>X</b> Cut stores the clip, then removes only the included lanes from the current Section and selected table.</li>
+        <li><b>V</b> paste revives the selected compatible clip into the current Section and selected table using row and fret coordinates directly.</li>
+        <li><b>M</b> MIDI Paste revives the selected clip by matching played notes to the same string and MIDI pitch on the target guitar tuning. Notes without a legal landing are dropped.</li>
+        <li>NamedNotes participate in both paste modes. Their collisions also follow the current <b>overwrite</b> setting.</li>
+        <li><b>c</b> clear clipped notes removes only <b>CLIP</b> records from the Graveyard and leaves other Graveyard record types alone.</li>
+        <li><b>h</b> help shows the current ClipPlugin summary, include counts, clip counts, and handled events.</li>
+        <li>ClipPlugin does not handle DaCapo loop events. It runs only when you invoke its actions from the command-line menu or the ClipPlugin shortcut.</li>
+    </ul>
+
+
+
+
 
 <h2>FillPlugin</h2>
 
@@ -1846,6 +2042,47 @@
             </td>
         </tr>
     </table>
+
+
+
+
+<a name="plugin-fill-what"></a>
+    <h3>What It Does</h3>
+
+    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It can fill NamedNotes, SingleNotes, and TinyNotes from the current Section root, chord formula, and scale formula.</p>
+
+    <p>NamedNote ignores fret and string limits. SingleNote and standalone TinyNote obey the configured fret and string limits. SingleNote can also add an overlay TinyNote in the same cell, but that overlay is ignored whenever standalone TinyNote is active and emits notes.</p>
+
+    <a name="plugin-fill-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>T</b> Table chooses the main table to fill. By default it is the first table that is not wired to display another table.</li>
+        <li><b>o</b> options contains the main FillPlugin configuration.</li>
+        <li>Inside <b>options</b>, <b>c</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
+        <li>Inside <b>options</b>, <b>p</b> positions groups <b>i</b> minFret and <b>a</b> maxFret under a <span class="menuExampleLine">min:max</span> summary.</li>
+        <li>Inside <b>options</b>, <b>s</b> strings groups <b>u</b> upper string limit and <b>l</b> lower string limit under a <span class="menuExampleLine">upper:lower</span> summary.</li>
+        <li><b>n</b> NamedNote, <b>s</b> SingleNote, and <b>t</b> TinyNote each have root, chord, and scale submenus with none, keep, and role modes.</li>
+        <li>NamedNote and TinyNote include <b>C</b> Copy from SingleNote to copy the SingleNote root, chord, and scale settings once.</li>
+        <li>Fill pass order is scale, then chord, then root.</li>
+        <li>Inside <b>SingleNote</b>, <b>a</b> add TinyNote chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for overlay Tiny companions.</li>
+    </ul>
+
+    <a name="plugin-fill-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>A</b> Apply fills only the current Section in the selected table.</li>
+        <li><b>C</b> Clear removes FillPlugin-owned notes from the current Section in the selected table.</li>
+        <li><b>S</b> ClearSong removes FillPlugin-owned notes from all Sections in the selected table.</li>
+        <li><b>M</b> Commit Notes removes FillPlugin ownership from generated notes in all Sections of the selected table.</li>
+        <li><b>h</b> help shows a summary of current settings.</li>
+        <li>When enabled, FillPlugin handles <b>DaCapo:OnSectionBegin</b> and applies to the section that just began.</li>
+    </ul>
+
+
+
+
 <h2>MovePlugin</h2>    
     <table  class="helpCmdDetailHelp">
         <tr id="helpCmd-fpm">
@@ -2032,6 +2269,62 @@
             </td>
         </tr>
     </table>
+
+    <a name="plugin-move-what"></a>
+    <h3>What It Does</h3>
+
+    <p>MovePlugin moves <a href="help.html#glossary">PlayedNotes</a> and <a href="help.html#glossary">RecordedNotes</a> inside the current Section and one selected Table (Instrument). It is used to shift chords or patterns up or down the neck, or "jump" them up or down strings, similar to how <a href="#divSectionTransposition">Transposition</a> works. But <a href="#divSectionTransposition">Transposition</a> only works on <a href="help.html#glossary">NamedNotes</a>.  (See: <a href="#plugin-transpose">TransposePlugin</a> which also transposes the whole Song with lots of options, specifically geared to transposing while looping, and only does NamedNotes currently.)  With MovePlugin you can transpose <a href="help.html#glossary">PlayedNotes</a> and
+    <a href="help.html#glossary">RecordedNotes</a> for <a href="help.html#glossary">SingleNotes</a>, <a href="help.html#glossary">TinyNotes</a>, and <a href="help.html#glossary">Highlights</a>, individually or in groups, i.e. <i>"all SingleNote PlayedNotes"</i>, or <i>"all SingleNotes, TinyNotes and Highlights in RecordedNotes"</i>.</p>
+
+    <p>Named notes are not moved by this plugin.</p>
+
+    <p>Since you can move notes right off the neck in all directions, the plugin deals with this by giving you three "algorithms".
+        <ul>
+            <li><b>octave:</b> Attempts to replace a shifted-off note by an octave down if you are going up, and and octave up if you are going down.  Leads to unplayable chords such as two notes on one string, but they might still be played as arpeggios.  So you can adjust the notes manually after moving (in the normal way: with the note type selected, click once on an existing note to clear it, then click once in a different cell to place a note.</li>
+            <li><b>string: </b>Attempts to replace shifted off notes by wrapping them an octave down towards the bottom of the fretboard on the same string if you are going up, and towards the top of the fretboard if you are going down.  For <b>j</b> jump up, and <b>J</b> jump down, wraps the chord or pattern around to the string on the opposite side of the neck.</li>
+            <li><b>drop:</b> Does not attempt to replace notes, simply drops them.</b></li>
+        </ul> 
+    </p>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Move a phrase or drill up or down by one semitone with <span class="menuExampleLine"><b>m</b> motions</span> set to <span class="menuExampleLine"><b>u</b> up</span> or <span class="menuExampleLine"><b>d</b> down</span>.</li>
+        <li>Jump a line to a neighboring string with <span class="menuExampleLine"><b>j</b> jump up</span> or <span class="menuExampleLine"><b>J</b> jump down</span>.</li>
+        <li>Move only PlayedNotes, only RecordedNotes, or both, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles.</li>
+        <li>Reposition SingleNotes or Tiny notes in beat looping.</li>
+        <li>Reposition recorded Highlights in beat looping.</li>
+        <li>Try a move, inspect <span class="menuExampleLine"><b>s</b> show dropped notes</span>, then use <span class="menuExampleLine"><b>c</b> clear/backup</span> to arm a fresh graveyard backup before the next pass.</li>
+    </ul>
+
+    <a name="plugin-move-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>T</b> Table chooses which current-section instrument table to move.</li>
+        <li><b>a</b> algorithm chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
+        <li><b>m</b> motions chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
+        <li><b>i</b> include opens toggles for <b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights, <b>p</b> played notes, and <b>r</b> recorded notes.</li>
+        <li>You must select one of <b>played notes</b> or <b>recorded notes</b> or both, plus at least one note type for anything to happen.</li>
+        <li>The <b>include</b> caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
+    </ul>
+
+    <a name="plugin-move-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>A</b> <b>Apply</b> moves the selected note layers in the current Section and selected table.</li>
+        <li><b>s</b> <b>show dropped notes</b> opens the current dropped-notes log as JSON in Messages.</li>
+        <li><b>c</b> <b>clear/backup</b> clears the dropped-notes log and arms a fresh section backup before the next Apply.  The backup is not put in the Graveyard until Apply is hit.</li>
+        <li><b>h</b> <b>help</b> shows the current MovePlugin settings and summary.</li>
+    </ul>
+
+    <p>Before the first Apply in a run, MovePlugin buries a copy of the current Section in the graveyard, which is a backup, but does not delete the Section. If a move lands badly or you simply want the older state back, revive that Section from the graveyard.  The bury happens on Apply after selecting <b>clear/backup</b>.</p>
+
+    <p>MovePlugin does not handle DaCapo events, and so does nothing in response to looping. It runs only when you invoke its actions from the command-line menu.  However, you can keep looping or beat looping while using <b>Apply</b>.  In fact, this is the best way to see how it moves RecordedNotes, since only the first beat will render after an Apply if you aren't looping</p>
+
+
+
 <h2>TransposePlugin</h2>    
     <table  class="helpCmdDetailHelp">
         <tr id="helpCmd-fpt">
@@ -2119,6 +2412,60 @@
             </td>
         </tr>
     </table>
+
+
+    <a name="plugin-transpose-what"></a>
+    <h3>What It Does</h3>
+
+    <p>TransposePlugin moves one Song through a programmed interval cycle. The first interval is the starting state. Each <b>Apply</b> advances to the next interval and uses only the difference from the currently applied interval.  Looping when the plugin is enabled applies the transposition every loop, at song begin.  Since the first interval is always 0, the transposition is noticable on the second loop.</p>
+
+    <a name="plugin-transpose-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>i</b> intervals is a JSON array of target intervals.</li>
+        <li><b>n</b> named notes chooses whether named notes move.</li>
+        <li><b>a</b> auto sharps/flats applies the same key spelling after transposition as found in the menu /sc (section key).</li>
+        <li><b>d</b> do lead key also transposes the Section lead key when keys move.</li>
+    </ul>
+
+    <p>TransposePlugin does not move PlayedNotes or RecordedNotes. Use MovePlugin when you want to move those layers deterministically.</p>
+
+    <a name="plugin-transpose-actions"></a>
+    <h3>Actions</h3>
+
+    <ul>
+        <li><b>A</b> Apply advances to the next configured interval.</li>
+        <li><b>S</b> Reset returns the plugin-managed transpose offset to zero.</li>
+        <li><b>h</b> help shows current interval, offset, options, and handled events.</li>
+    </ul>
+
+    <h3>Events</h3>
+
+    <ul>
+        <li>When enabled, TransposePlugin handles <b>DaCapo:OnSongEnd</b>.</li>
+    </ul>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Take one authored Song such as a chord or scale drill and practice it in all 12 keys.</li>
+        <li>Pair with ArpeggioPlugin so the same authored practice pattern can move across keys automatically.</li>
+        <li>Reduce maintenance of many nearly identical Song files that only differ by key.</li>
+    </ul>
+
+    <h3>Arpeggio And Transpose Together</h3>
+
+    <p>The two plugins are especially useful together.</p>
+
+    <ul>
+        <li>TransposePlugin changes the key progression over time.</li>
+        <li>ArpeggioPlugin regenerates and displays practice prompts inside the current fret range and display mode.</li>
+        <li>The user can choose whether the neck is fully labeled, mostly hidden, color-coded, or used in flashcard style.</li>
+    </ul>
+
+
+
 
 
 <div style="display: none;">
