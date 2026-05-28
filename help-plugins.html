@@ -44,55 +44,898 @@
             -webkit-text-stroke: 0.8px black;
             font-size: 120%;
         }
+        #helpCmdTOC td {
+            font-size: 70%;
+        }
+        .helpCmdLinks b,
+        .cmdLine b {
+            color: greenyellow;
+            font-weight: bold;
+        } 
+        .helpCmdLinks em,
+        .cmdLine em {
+            color: orange;
+            font-weight: bold;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="command-line.css" />
 
 </head>
 <body>
 
-<p>This is the example menu, in the pre element</p>
-
-<pre>
-menu-path: /fpf
-plugin-menu:
-```
-<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>C</b>lear<br><b>S</b> clear song<br><b>M</b> commit notes<br><b>o</b>ptions<br><b>h</b>elp<br><br>e<b>x</b>it</td>
-```
-</pre>
-
-<pre>
-sub-menu-path: /fpfo
-sub-menu:
-```
-<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
-```
-</pre>
 
 <p>This is the desired output, started with the example that the menu in the above pre element has been transformed into for the help file.</p>
 
     <p>
         <ul class="helpCmdLinks">
-            <li><a href="#helpCmd-fpf">/fpf</a></li>
-            <li><a href="#helpCmd-fpfo">/fpfo</a></li>
-            <li><a href="#helpCmd-fpa">/fpa</a></li>
-            <li><a href="#helpCmd-fpap">/fpap</a></li>
-            <li><a href="#helpCmd-fpas">/fpas</a></li>
-            <li><a href="#helpCmd-fpc">/fpc</a></li>
-            <li><a href="#helpCmd-fpci">/fpci</a></li>
-            <li><a href="#helpCmd-fpfoN">/fpfoN</a></li>
-            <li><a href="#helpCmd-fpfoNr">/fpfoNr</a></li>
-            <li><a href="#helpCmd-fpfop">/fpfop</a></li>
-            <li><a href="#helpCmd-fpfos">/fpfos</a></li>
-            <li><a href="#helpCmd-fpm">/fpm</a></li>
-            <li><a href="#helpCmd-fpma">/fpma</a></li>
-            <li><a href="#helpCmd-fpmm">/fpmm</a></li>
-            <li><a href="#helpCmd-fpmi">/fpmi</a></li>
-            <li><a href="#helpCmd-fpt">/fpt</a></li>
+            <li><a href="#helpCmd-fpf">/fpf</a> <b>FillPlugin</b></li>
+            <li><a href="#helpCmd-fpfo">/fpfo</a> <b>FillPlugin <em>&raquo;</em>  options</b></li>
+            <li><a href="#helpCmd-fpa">/fpa</a> <b>ArpeggioPlugin</b></li>
+            <li><a href="#helpCmd-fpap">/fpap</a> <b>ArpeggioPlugin <em>&raquo;</em>  positions</b></li>
+            <li><a href="#helpCmd-fpas">/fpas</a> <b>ArpeggioPlugin <em>&raquo;</em>  strings</b></li>
+            <li><a href="#helpCmd-fpc">/fpc</a> <b>ClipPlugin</b></li>
+            <li><a href="#helpCmd-fpci">/fpci</a> <b>ClipPlugin <em>&raquo;</em>  include</b></li>
+            <li><a href="#helpCmd-fpfoN">/fpfoN</a> <b>FillPlugin <em>&raquo;</em>  NamedNotes</b></li>
+            <li><a href="#helpCmd-fpfoNr">/fpfoNr</a>  <b>FillPlugin <em>&raquo;</em>  NamedNotes <em>&raquo;</em>  root</b></li>
+            <li><a href="#helpCmd-fpfop">/fpfop</a>  <b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  positions</b></li>
+            <li><a href="#helpCmd-fpfos">/fpfos</a>  <b>FillPlugin <em>&raquo;</em> options <em>&raquo;</em>  strings</b></li>
+            <li><a href="#helpCmd-fpm">/fpm</a> <b>MovePlugin</b></li>
+            <li><a href="#helpCmd-fpma">/fpma</a> <b>MovePlugin <em>&raquo;</em> algorithm</b></li>
+            <li><a href="#helpCmd-fpmm">/fpmm</a> <b>MovePlugin <em>&raquo;</em> motions</b></li>
+            <li><a href="#helpCmd-fpmi">/fpmi</a> <b>MovePlugin <em>&raquo;</em> include</b></li>
+            <li><a href="#helpCmd-fpt">/fpt</a> <b>TransposePlugin</b></li>
         </ul>
     </p>
-    <table border="1">
+    <table border="1" id="helpCmdTOC">
+        <tr id="helpCmdTOC-fpf">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpf">/fpf</a>  <b>FillPlugin</b></td>
+        </tr>
+        <tr class="plugin-menu">    
+            <td></td>
+            <td colspan="2">
+                <table  class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>E</b>nable
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>L</b>oad enabled
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>I</b>nstrument
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b>lear
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>S</b> clear song
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>M</b> commit
+                            notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>o</b>ptions
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfo">/fpfo</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpfo">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpfo">/fpfo</a>  <b>FillPlugin <em>&raquo;</em>  options</b></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>hord formula
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>g</b> scale formula
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>p</b>ositions
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfop">/fpfop</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>trings
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfos">/fpfos</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>N</b>amedNote
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoN">/fpfoN</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>S</b>ingleNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>T</b>inyNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" class="cmdLine" id="helpCmdTOC-fpa"><a href="#helpCmd-fpa">/fpa</a></td>
+        </tr>
+        <tr class="menu">
+            <td></td>
+            <td colspan="2">
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>E</b>nable
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>L</b>oad enabled
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>I</b>nstrument
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b>lear
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>p</b>ositions
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>trings
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            l<b>o</b>w to high
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>u</b>p only
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            st<b>y</b>le
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            show <b>n</b>ote name
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>olor notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>f</b>lashcard
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpap">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>m</b>inFret default position
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            maxFre<b>t</b> default position
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            c<b>L</b>ear all sections
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            clear <b>T</b>his section
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b>opy to all sections
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            copy to <b>U</b>nset sections
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>R</b>efresh values
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>v</b>alues this section
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpas">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>u</b>pper string limit
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>l</b>ower string limit
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpc">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpc">/fpc</a></td>
+        </tr>
+        <tr class="menu">
+            <td></td>
+            <td colspan="2">
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>I</b>nstrument
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b> copy
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>X</b> cut
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>V</b> paste
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>M</b>IDI Paste
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>a</b>utomatic
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>o</b>verwrite
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>i</b>nclude
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpci">/fpci</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>lear clipped notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpci">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpci">/fpci</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>n</b>amed
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>ingle
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>t</b>iny
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>b</b>end
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpfoN">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpfoN">/fpfoN</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b>opy from SingleNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>r</b>oot
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoNr">/fpfoNr</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>hord
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>cale
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpfoNr">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpfoNr">/fpfoNr</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>n</b>one
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>k</b>eep
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>r</b>ole
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpfop">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpfop">/fpfop</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            m<b>i</b>nFret position
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            m<b>a</b>xFret position
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpfos">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpfos">/fpfos</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>u</b>pper string limit
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>l</b>ower string limit
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpm">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpm">/fpm</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>I</b>nstrument
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>a</b>lgorithm
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpma">/fpma</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>m</b>otions
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmm">/fpmm</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>i</b>nclude
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmi">/fpmi</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>how dropped notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>lear/backup
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpma">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpma">/fpma</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>d</b>rop
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>o</b>ctave
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>tring
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpmm">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpmm">/fpmm</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>u</b>p
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>d</b>own
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>j</b>ump up
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>J</b>ump down
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpmi">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpmi">/fpmi</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>ingle notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>t</b>iny notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>ighlights
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>p</b>layed notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>r</b>ecorded notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpt">
+            <td colspan="3" class="cmdLine"><a href="#helpCmd-fpt">/fpt</a></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>E</b>nable
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>L</b>oad enabled
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>R</b>eset
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>i</b>ntervals
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>n</b>amed notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>ingle notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>o</b>ctaves
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>a</b>uto sharps/flats
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>d</b>o lead key
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
+
+
+    <table border="1" id="helpCmdDetailHelp">
         <tr id="helpCmd-fpf">
-            <td colspan="3" class="cmdLine">/fpf</td>
+            <td colspan="3" class="cmdLine">/fpf  <b>FillPlugin</b></td>
         </tr>
         <tr class="plugin-menu">    
             <td></td>
@@ -163,7 +1006,7 @@ sub-menu:
             </td>
         </tr>
         <tr id="helpCmd-fpfo">
-            <td colspan="3" class="cmdLine">/fpfo</td>
+            <td colspan="3" class="cmdLine">/fpfo  <b>FillPlugin <em>&raquo;</em>  options</b></td>
         </tr>
         <tr class="sub-menu">
             <td width="50">
@@ -931,21 +1774,39 @@ sub-menu:
         </tr>
     </table>
 
+<div style="display: none;">
+        
 <p> 
-    This is to complete the above table for our help file.
-    Please follow the examples above, and complete the above links and table, 
-        with the menus below which have not yet been transformed or added.
+    The above tables comes from the source data below.
     Note that the current value in square brackets have been removed, along with the square brackets.
     The "exit" rows have been removed, along with their blank row above.
-    The <b></b> elements have been preserved, but each <br> element has been transformed into wrapping td elements etc.
+    The <b></b> elements have been preserved, but each <br> element has been 
+        transformed into wrapping td elements etc.
     Note that `sub-menu` has one more `td` for indentation than `menu`.  
     Note that each menu and sub-menu get the menu-path three-column-span row. 
     Paths that are deeper do not cause more indentation with more 
          table columns--there are only menus and sub-menus--all sub-menus get the three-column-span 
          even if they are deeper paths such as /fpfoNr .
-    Note that the row for /fpa has been started simply to show how the next menu or sub-menu would 
-         continue the table.
+
+    Any added sources below should be transformed and the tables above should contain their transformed versions.     
 </p>
+
+<pre>
+menu-path: /fpf
+plugin-menu:
+```
+<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>C</b>lear<br><b>S</b> clear song<br><b>M</b> commit notes<br><b>o</b>ptions<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+<pre>
+sub-menu-path: /fpfo
+sub-menu:
+```
+<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
+```
+</pre>
+
 
 <pre>
 menu-path: /fpa
@@ -1094,6 +1955,9 @@ sub-menu:
 <td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>A</b>pply<br><b>R</b>eset<br><b>h</b>elp<br><b>i</b>ntervals [[0,1,2,3,4,5,6,7,8,9,10,11]]<br><b>n</b>amed notes [false]<br><b>s</b>ingle notes [false]<br><b>o</b>ctaves []<br><b>a</b>uto sharps/flats [false]<br><b>d</b>o lead key [false]<br><br>e<b>x</b>it</td>
 ```
 </pre>
+
+
+</div>
 
 </body>
 
