@@ -1,6 +1,6 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
-#CmdMenu {
+.CmdMenuClass {
     display: inline-block;
     z-index: 2000;
     position: fixed;
@@ -25,17 +25,17 @@
     font-family: monospace;
     font-size: 140%;
 }
-#CmdMenuResults td {
+.CmdMenuResultsClass td {
     font-size: 120%;
     color: black;
 }
-#CmdMenuResults td b {
+.CmdMenuResultsClass td b {
     color: #ffaa00;
     font-weight: 400;
     -webkit-text-stroke: 0.8px black;
     font-size: 120%;
 }
-#CmdMenuOptionsTable, #CmdMenuStackAndOptions {
+#CmdMenuOptionsTable, .CmdMenuStackAndOptionsClass {
     width: 100%;
     vertical-align: bottom;
 }

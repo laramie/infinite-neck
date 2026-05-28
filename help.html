@@ -921,6 +921,13 @@
                                 <li><a href="#plugin-fill-actions">Actions And Events</a></li>
                             </ul>
                         </li>
+                        <li><a href="#plugin-clip">ClipPlugin</a>
+                            <ul class="LinkList">
+                                <li><a href="#plugin-clip-what">What It Does</a></li>
+                                <li><a href="#plugin-clip-options">Main Options</a></li>
+                                <li><a href="#plugin-clip-actions">Actions And Events</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#plugin-move">MovePlugin</a>
                             <ul class="LinkList">
                                 <li><a href="#plugin-move-what">What It Does</a></li>
@@ -2716,7 +2723,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
         <td><a href="#showHideFill" class="MBtn">f<b>i</b>ll</a></td>
         <td><a href="#useAFingeringOpen" class="Fingering"><i>o</i>pen fingering</a></td>
-        <td><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a><br><a href="#showHidePalette" class="MBtn"><b>P</b> /fp plugins</a></td>
+        <td><a href="#showHidePalette" class="MBtn"><b>P</b> plugins</a><br><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a></td>
         <td><a href="#usethePitchHighlighter" class="Note"><b>[</b><br>pitch</a></td>
         <td><a href="#usetheMultiHighlighter" class="Note"><b>]</b><br>multi</a></td>
         <td>|<br>\</td>
@@ -2725,7 +2732,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <tr>
         <td>Caps Lock</td>
         <td><a href="#showHideInstrumentCaptions">instrument c<b>A</b>ption</a> <a href="#showHideSongTitle">c<b>a</b>ption</a></td>
-        <td><a href="#showHideSection" class="MBtn"><b>s</b>ection</a><br><a href="#showHideSection" class="MBtn"><b>S</b> add section</a></td>
+        <td><a href="#showHideSection" class="MBtn"><b>S</b> add section</a><br><a href="#showHideSection" class="MBtn"><b>s</b>ection</a></td>
         <td><a href="#raiseRootKeyAnd"><b>D</b><br><small>transpose</small> up</a> <a href="#lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</a></td>
         <td><a href="#divFileControls"><b>F</b>ile</a><br><a href="#toggleFullscreenMode"><b>f</b>ullscreen</a></td> 
         <td><a href="#showHideTunings" class="MBtn">tunin<b>g</b>s</a></td>
@@ -2742,7 +2749,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Shift</td>
         <td>z</td>
         <td>x</td>
-        <td><a href="#toggleAutoColor"><b>c</b>olor</a><br><a href="#toggleAutoColor"><b>C</b> clip plugin</a></td>
+        <td><a href="#toggleAutoColor"><b>C</b> clip plugin</a><br><a href="#toggleAutoColor"><b>c</b>olor</a></td>
         <td><a href="#showHideView" class="MBtn"><b>v</b>iew</a></td>
         <td><a href="#previousBeat">prev <b>b</b>eat</a></td>
         <td><a href="#nextBeat"><b>n</b>ext beat</a></td>
@@ -4033,6 +4040,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <ul>
         <li><a href="#plugin-arpeggio">ArpeggioPlugin</a>
         <li><a href="#plugin-fill">FillPlugin</a>
+        <li><a href="#plugin-clip">ClipPlugin</a>
         <li><a href="#plugin-move">MovePlugin</a>
         <li><a href="#plugin-transpose">TransposePlugin</a>
     </ul>
@@ -4218,6 +4226,55 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><b>M</b> Commit Notes removes FillPlugin ownership from generated notes in all Sections of the selected table.</li>
         <li><b>h</b> help shows a summary of current settings.</li>
         <li>When enabled, FillPlugin handles <b>DaCapo:OnSectionBegin</b> and applies to the section that just began.</li>
+    </ul>
+
+    <a name="plugin-clip"></a>
+    <h2>ClipPlugin</h2>
+
+    <a name="plugin-clip-what"></a>
+    <h3>What It Does</h3>
+
+    <p>ClipPlugin is a note clipboard for one current Section and one selected table at a time. It copies or cuts selected note lanes into Graveyard clip records, then pastes them back into the current Section either by direct revive or by MIDI-based remapping for supported cross-tuning guitar tables.</p>
+
+    <p>ClipPlugin works with <a href="#glossary">NamedNotes</a> plus played-note lanes for SingleNotes, TinyNotes, and Bends. RecordedNotes and transient Highlights are out of scope. Clip records preserve the clipped note payloads, strip plugin ownership fields, and stay in the Graveyard until you clear them.</p>
+
+    <h3>Typical Use Cases</h3>
+
+    <ul>
+        <li>Copy one voicing, riff, or drill fragment from the current table and paste it into another Section with <span class="menuExampleLine"><b>C</b> copy</span> and <span class="menuExampleLine"><b>V</b> paste</span>.</li>
+        <li>Cut authored notes out of one Section and move them elsewhere with <span class="menuExampleLine"><b>X</b> cut</span>.</li>
+        <li>Capture only selected lanes, such as named plus bends but not tiny notes, by changing the <span class="menuExampleLine"><b>i</b> include</span> toggles first.</li>
+        <li>Paste a same-family clip into a sibling table that shares the tuning family, while letting out-of-range played notes drop silently.</li>
+        <li>Use <span class="menuExampleLine"><b>M</b> MIDI Paste</span> to remap guitar clips across supported 6-string guitar tunings on the same string by MIDI pitch.</li>
+        <li>Keep <span class="menuExampleLine"><b>a</b> automatic</span> on for fast repeated copy, cut, and paste actions, or turn it off when you want to choose clip names and clip numbers explicitly.</li>
+    </ul>
+
+    <a name="plugin-clip-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>I</b> Instrument chooses which table ClipPlugin reads from and pastes into for the current Section.</li>
+        <li><b>a</b> automatic controls whether copy, cut, paste, and MIDI Paste run immediately with defaults, or stop for input first.</li>
+        <li><b>o</b> overwrite controls collision behavior while reviving or MIDI pasting. When off, colliding notes are skipped. When on, colliding notes are replaced.</li>
+        <li><b>i</b> include opens toggles for <b>n</b> named, <b>s</b> single, <b>t</b> tiny, and <b>b</b> bend lanes.</li>
+        <li>The <b>include</b> caption shows live counts for enabled lanes, for example <span class="menuExampleLine"><b>include [n:2,s:1,t:1,b:1]</b></span>.</li>
+        <li>Clip names default to a short count-based label such as <span class="menuExampleLine">named-1-single-1-bend-1-1202</span>, and you can edit that name when automatic mode is off.</li>
+        <li><b>V</b> paste lists only compatible same-family clip records for the selected table.</li>
+        <li><b>M</b> MIDI Paste lists only clip records that can be remapped to the selected target table under the current 6-string guitar scope.</li>
+    </ul>
+
+    <a name="plugin-clip-actions"></a>
+    <h3>Actions And Events</h3>
+
+    <ul>
+        <li><b>C</b> Copy stores the included note lanes from the current Section and selected table as a <b>CLIP</b> record in the Graveyard.</li>
+        <li><b>X</b> Cut stores the clip, then removes only the included lanes from the current Section and selected table.</li>
+        <li><b>V</b> paste revives the selected compatible clip into the current Section and selected table using row and fret coordinates directly.</li>
+        <li><b>M</b> MIDI Paste revives the selected clip by matching played notes to the same string and MIDI pitch on the target guitar tuning. Notes without a legal landing are dropped.</li>
+        <li>NamedNotes participate in both paste modes. Their collisions also follow the current <b>overwrite</b> setting.</li>
+        <li><b>c</b> clear clipped notes removes only <b>CLIP</b> records from the Graveyard and leaves other Graveyard record types alone.</li>
+        <li><b>h</b> help shows the current ClipPlugin summary, include counts, clip counts, and handled events.</li>
+        <li>ClipPlugin does not handle DaCapo loop events. It runs only when you invoke its actions from the command-line menu or the ClipPlugin shortcut.</li>
     </ul>
 
     <a name="plugin-move"></a>

@@ -1,76 +1,394 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Plugins Help</title>
     <style>
-       body {
-        password: 6436-garnet-49;
-           font-size: 14pt;
-           margin-bottom: 0;
-           font-weight: normal;
-       }
-       .lblSectionCaption {
-         font-family: shadowsIntoLight, cursive;
-         font-size: 120%;
-         color: rgb(71, 0, 0)
-       }
-       .lblSectionCaption .transposeProgFunc {
-            font-size: 60%;
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            color: rgb(15, 0, 0);
-            margin-left: 0.1em;
-            margin-right: 0;
+        .greenCmd {
+            padding: 0.2em;
+            background-color: lightgreen;
+            border: 4px solid green;
+            font-family: "Kode Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 400; /* 400-700 */
+            font-style: normal;
+            font-size: 100%;
+            font-size: 120%;
+            color: black;
+            border: 1px solid black;
+        }
+        .cmdLine {
+            font-family: "Kode Mono", monospace;
+            font-optical-sizing: auto;
+            background-color: black;
+            color: orange;
             font-weight: bold;
+            padding: 0.4em;
+            border: 3px solid lightgreen;
         }
 
-        .lblSectionCaption .transposeProgOffset {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 50%;
-            color: red;
-            margin-left: 0;
-            margin-right: 0.1em;
-            font-weight: bold;
+        .cmdTable {
+            border-collapse: collapse;
+            width: 100%;
         }
-        .transposeArrow {
-            display: inline-block;
-            vertical-align: top;
-            font-size: 80%;
-            color: rgb(58, 22, 0);
-            margin-right: 0.2em;
+        .cmdTable td {
+
+            border: 1px solid black;
         }
-        .transposeCaptionBox {
-            display: inline-block;
-            white-space: collapse;
-            margin-right: 0.1em;
-            border: 1px solid rgb(13, 6, 6);
-            background-color: transparent;
-            border-radius: 0.2em;
-            vertical-align: top;
-            box-shadow: 3px 3px 0px gray;
+        .cmdHelp {
+            background-color: white;
         }
 
-    </style
+
+        .greenCmd b {
+            color: #ffaa00;
+            font-weight: 400;
+            -webkit-text-stroke: 0.8px black;
+            font-size: 120%;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="command-line.css" />
+
 </head>
 <body>
-<h1>Test Area</h1>
-<div class="lblSectionCaption">
-    C
-    <span class="transposeCaptionBox">
-        <span class="transposeProgFunc">
-            <sup>
-                <small>+</small>IV
-            </sup>
-        </span>
-        <span class="transposeProgOffset">
-            <sub>
-                <small>+</small>5
-            </sub>
-        </span>
-        <span class="transposeArrow">&Rang;</span></span>
-    </span>
-    B<small>&flat;</small>        
-</div>
+
+<p>This is the example menu, in the pre element</p>
+
+<pre>
+menu-path: /fpf
+plugin-menu:
+```
+<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>C</b>lear<br><b>S</b> clear song<br><b>M</b> commit notes<br><b>o</b>ptions<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+<pre>
+sub-menu-path: /fpfo
+sub-menu:
+```
+<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+<p>This is the desired output, started with the example that the menu in the above pre element has been transformed into for the help file.</p>
+
+    <p>
+        <ul class="helpCmdLinks">
+            <li><a href="#helpCmd-fpf">/fpf</a></li>
+            <li><a href="#helpCmd-fpfo">/fpfo</a></li>
+            <li><a href="#helpCmd-fpa">/fpa</a></li>
+        </ul>
+    </p>
+    <table border="1">
+        <tr id="helpCmd-fpf">
+            <td colspan="3" class="cmdLine">/fpf</td>
+        </tr>
+        <tr class="plugin-menu">    
+            <td></td>
+            <td colspan="2">
+                <table  class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>E</b>nable
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>L</b>oad enabled
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>B</b>ury
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>I</b>nstrument
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>C</b>lear
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>S</b> clear song
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>M</b> commit
+                            notes
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>o</b>ptions
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfo">/fpfo</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>h</b>elp
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmd-fpfo">
+            <td colspan="3" class="cmdLine">/fpfo</td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd">
+                            <b>c</b>hord formula
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>g</b> scale formula
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>p</b>ositions
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>s</b>trings
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>N</b>amedNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>S</b>ingleNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>T</b>inyNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>A</b>pply
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" class="cmdLine" id="helpCmd-fpa">/fpa</td>
+        </tr>
+    </table>
+
+<p> 
+    This is to complete the above table for our help file.
+    Please follow the examples above, and complete the above links and table, 
+        with the menus below which have not yet been transformed or added.
+    Note that the current value in square brackets have been removed, along with the square brackets.
+    The <b></b> elements have been preserved, but each <br> element has been transformed into wrapping td elements etc.
+    Note that `sub-menu` has one more `td` for indentation than `menu`.  
+    Note that each menu and sub-menu get the menu-path three-column-span row. 
+    Paths that are deeper do not cause more indentation with more 
+         table columns--there are only menus and sub-menus--all sub-menus get the three-column-span 
+         even if they are deeper paths such as /fpfoNr .
+    Note that the row for /fpa has been started simply to show how the next menu or sub-menu would 
+         continue the table.
+</p>
+
+<pre>
+menu-path: /fpa
+menu:
+``` 
+<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>C</b>lear<br><b>p</b>ositions [0:12]<br><b>s</b>trings [1:6]<br>l<b>o</b>w to high [true]<br><b>u</b>p only [false]<br>st<b>y</b>le [every]<br>show <b>n</b>ote name [off]<br><b>c</b>olor notes [false]<br><b>f</b>lashcard [false]<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+
+<pre>
+sub-menu-path: /fpap
+sub-menu: 
+```
+<td><b>m</b>inFret default position [0]<br>maxFre<b>t</b> default position [12]<br>c<b>L</b>ear all sections<br>clear <b>T</b>his section<br><b>C</b>opy to all sections<br>copy to <b>U</b>nset sections<br><b>R</b>efresh values<br><b>v</b>alues this section [[]]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpas
+sub-menu: 
+```
+<td><b>u</b>pper string limit [1]<br><b>l</b>ower string limit [6]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+menu-path: /fpc
+menu: 
+```
+<td><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>C</b> copy<br><b>X</b> cut<br><b>V</b> paste [0:clip 0]<br><b>M</b>IDI Paste [0:clip 0]<br><b>a</b>utomatic [true]<br><b>o</b>verwrite [true]<br><b>i</b>nclude [n:0,s:0,t:0,b:0]<br><b>c</b>lear clipped notes<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpci
+sub-menu: 
+```
+<td><b>n</b>amed [true]<br><b>s</b>ingle [true]<br><b>t</b>iny [true]<br><b>b</b>end [true]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+menu-path: /fpf
+menu: 
+```
+<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>C</b>lear<br><b>S</b> clear song<br><b>M</b> commit notes<br><b>o</b>ptions<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfo
+sub-menu: 
+```
+<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfoN
+sub-menu: 
+```
+<td><b>C</b>opy from SingleNote<br><b>r</b>oot [noteRoot]<br><b>c</b>hord [noteChord]<br><b>s</b>cale [noteScale]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfoNr
+sub-menu: 
+```
+<td><b>n</b>one<br><b>k</b>eep<br><b>r</b>ole [noteRoot]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfop
+sub-menu: 
+```
+<td>m<b>i</b>nFret position [0]<br>m<b>a</b>xFret position [4]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfos
+sub-menu: 
+```
+<td><b>u</b>pper string limit [1]<br><b>l</b>ower string limit [6]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfoN
+sub-menu: 
+```
+<td><b>C</b>opy from SingleNote<br><b>r</b>oot [noteRoot]<br><b>c</b>hord [noteChord]<br><b>s</b>cale [noteScale]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpm
+sub-menu: 
+```
+<td><b>B</b>ury<br><b>I</b>nstrument [P46_1]<br><b>A</b>pply<br><b>a</b>lgorithm [octave]<br><b>m</b>otions [u]<br><b>i</b>nclude []<br><b>s</b>how dropped notes<br><b>c</b>lear/backup<br><b>h</b>elp<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+
+<pre>
+sub-menu-path: /fpma
+sub-menu: 
+```
+<td><b>d</b>rop<br><b>o</b>ctave<br><b>s</b>tring<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+
+<pre>
+sub-menu-path: /fpmm
+sub-menu: 
+```
+<td><b>u</b>p<br><b>d</b>own<br><b>j</b>ump up<br><b>J</b>ump down<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+
+<pre>
+sub-menu-path: /fpmi
+sub-menu: 
+```
+<td><b>s</b>ingle notes [false]<br><b>t</b>iny notes [false]<br><b>h</b>ighlights [false]<br><b>p</b>layed notes [false]<br><b>r</b>ecorded notes [false]<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+
+<pre>
+sub-menu-path: /fpt
+sub-menu: 
+```
+<td><b>E</b>nable [false]<br><b>L</b>oad enabled [false]<br><b>B</b>ury<br><b>A</b>pply<br><b>R</b>eset<br><b>h</b>elp<br><b>i</b>ntervals [[0,1,2,3,4,5,6,7,8,9,10,11]]<br><b>n</b>amed notes [false]<br><b>s</b>ingle notes [false]<br><b>o</b>ctaves []<br><b>a</b>uto sharps/flats [false]<br><b>d</b>o lead key [false]<br><br>e<b>x</b>it</td>
+```
+</pre>
 
 </body>
+
 </html>
