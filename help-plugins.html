@@ -2,6 +2,30 @@
 
 <head>
     <style>
+        #helpBody {
+           padding-top: 10em;
+        }
+        .helpButton {
+           background-color: orange;
+           box-shadow: 1pt 1pt 2pt 0.5pt gray;
+           padding: 0.2em;
+           color: black;
+           margin-top: 0.1em;
+           margin-left: 0.3em;
+           display: inline-block;
+       }
+       .menunav {
+           position: fixed;
+           width: 100%;
+           padding-top: 0.1em;
+           height: 2em;
+           border: 1px solid green;
+           left: 0;
+           top: 0;
+           background-color: lightyellow;
+       }
+
+
         .greenCmd {
             white-space: nowrap;
             padding: 0.2em;
@@ -109,9 +133,22 @@
 
 </head>
 <body>
+<div class="menunav">
+    &nbsp;&nbsp;<span class="productsmaller">Laramie's </span>
+    <span class="productsmall">infinite-neck</span>
+    <a class="helpButton" href="help.html">Back to Help</a>
+    <a class="helpButton" href="#QuickLinks">Quick Links</a>
+    <a class="helpButton" href="#TOC">TOC</a>
+    <a class="helpButton" href="#PluginHelpTopics">Plugin Help Topics</a>
+</div>
+
+<div id="helpBody">
 
 
     <p>
+        <a name="QuickLinks"></a>
+        <br>
+        <h2>Quick Links</h2>
         <table class="helpCmdLinks" id="helpCmdLinks">
             <tr><td><a href="#helpCmd-fpa">/fpa</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpa"><b>ArpeggioPlugin</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpap">/fpap</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpap"><b>ArpeggioPlugin <em>&raquo;</em>  positions</b></a></td></tr>
@@ -135,6 +172,9 @@
             <tr><td><a href="#helpCmd-fpt">/fpt</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpt"><b>TransposePlugin</b></a></td></tr>
         </table>
     </p>
+    <a name="TOC"></a>
+    <br>
+    <h2>TOC - Table of Contents (all plugins, all options)</h2>
     <table  id="helpCmdTOC">
         
         <tr>
@@ -1185,7 +1225,8 @@
 
 
 
-
+<a name="PluginHelpTopics"></a>
+<br>
 <h1>Plugin Help Topics</h1>
 
 
@@ -2245,6 +2286,7 @@ sub-menu:
 </pre>
 
 
+</div>
 </div>
 
 </body>
