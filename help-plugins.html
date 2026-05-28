@@ -64,6 +64,46 @@
             font-family: "Kode Mono", monospace;
             font-optical-sizing: auto;
         }
+        #helpCmdLinks td.helpCmdLinksLabelCell {
+            padding: 0;
+            cursor: pointer;
+        }
+        #helpCmdLinks td.helpCmdLinksLabelCell > a {
+            display: block;
+            padding: 0.4em;
+            color: inherit;
+            text-decoration: none;
+        }
+        #helpCmdLinks td.helpCmdLinksLabelCell > a:hover,
+        #helpCmdLinks td.helpCmdLinksLabelCell > a:active,
+        #helpCmdLinks td.helpCmdLinksLabelCell > a:visited {
+            color: inherit;
+            text-decoration: none;
+        }
+        #helpCmdLinks td.helpCmdLinksLabelCell:hover,
+        #helpCmdLinks td.helpCmdLinksLabelCell:active {
+            background-color: rgb(60, 22, 110);
+        }
+        #helpCmdTOC .cmdTable td.greenCmd {
+            padding: 0;
+            cursor: pointer;
+        }
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink {
+            display: block;
+            padding: 0.2em;
+            color: inherit;
+            text-decoration: none;
+        }
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:hover,
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:active,
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:visited {
+            color: inherit;
+            text-decoration: none;
+        }
+        #helpCmdTOC .cmdTable td.greenCmd:hover,
+        #helpCmdTOC .cmdTable td.greenCmd:active {
+            background-color: rgb(179, 247, 43);
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="command-line.css" />
 
@@ -72,27 +112,27 @@
 
 
     <p>
-        <table class="helpCmdLinks">
-            <tr><td><a href="#helpCmd-fpa">/fpa</a></td><td> <b>ArpeggioPlugin</b></td></tr>
-            <tr><td><a href="#helpCmd-fpap">/fpap</a></td><td> <b>ArpeggioPlugin <em>&raquo;</em>  positions</b></td></tr>
-            <tr><td><a href="#helpCmd-fpas">/fpas</a></td><td> <b>ArpeggioPlugin <em>&raquo;</em>  strings</b></td></tr>
+        <table class="helpCmdLinks" id="helpCmdLinks">
+            <tr><td><a href="#helpCmd-fpa">/fpa</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpa"><b>ArpeggioPlugin</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpap">/fpap</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpap"><b>ArpeggioPlugin <em>&raquo;</em>  positions</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpas">/fpas</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpas"><b>ArpeggioPlugin <em>&raquo;</em>  strings</b></a></td></tr>
             <tr><td colspan="2">&nbsp;</td></tr>
-            <tr><td><a href="#helpCmd-fpc">/fpc</a></td><td> <b>ClipPlugin</b></td></tr>
-            <tr><td><a href="#helpCmd-fpci">/fpci</a></td><td> <b>ClipPlugin <em>&raquo;</em>  include</b></td></tr>
+            <tr><td><a href="#helpCmd-fpc">/fpc</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpc"><b>ClipPlugin</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpci">/fpci</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpci"><b>ClipPlugin <em>&raquo;</em>  include</b></a></td></tr>
             <tr><td colspan="2">&nbsp;</td></tr>
-            <tr><td><a href="#helpCmd-fpfoN">/fpfoN</a></td><td> <b>FillPlugin <em>&raquo;</em>  NamedNotes</b></td></tr>
-            <tr><td><a href="#helpCmd-fpf">/fpf</a></td><td> <b>FillPlugin</b></td></tr>
-            <tr><td><a href="#helpCmd-fpfo">/fpfo</a></td><td> <b>FillPlugin <em>&raquo;</em>  options</b></td></tr>
-            <tr><td><a href="#helpCmd-fpfoNr">/fpfoNr</a></td><td>  <b>FillPlugin <em>&raquo;</em>  NamedNotes <em>&raquo;</em>  root</b></td></tr>
-            <tr><td><a href="#helpCmd-fpfop">/fpfop</a></td><td>  <b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  positions</b></td></tr>
-            <tr><td><a href="#helpCmd-fpfos">/fpfos</a></td><td>  <b>FillPlugin <em>&raquo;</em> options <em>&raquo;</em>  strings</b></td></tr>
+            <tr><td><a href="#helpCmd-fpfoN">/fpfoN</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfoN"><b>FillPlugin <em>&raquo;</em>  NamedNotes</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpf">/fpf</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpf"><b>FillPlugin</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpfo">/fpfo</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfo"><b>FillPlugin <em>&raquo;</em>  options</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpfoNr">/fpfoNr</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfoNr"><b>FillPlugin <em>&raquo;</em>  NamedNotes <em>&raquo;</em>  root</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpfop">/fpfop</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfop"><b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  positions</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpfos">/fpfos</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfos"><b>FillPlugin <em>&raquo;</em> options <em>&raquo;</em>  strings</b></a></td></tr>
             <tr><td colspan="2">&nbsp;</td></tr>
-            <tr><td><a href="#helpCmd-fpm">/fpm</a></td><td> <b>MovePlugin</b></td></tr>
-            <tr><td><a href="#helpCmd-fpma">/fpma</a></td><td> <b>MovePlugin <em>&raquo;</em> algorithm</b></td></tr>
-            <tr><td><a href="#helpCmd-fpmm">/fpmm</a></td><td> <b>MovePlugin <em>&raquo;</em> motions</b></td></tr>
-            <tr><td><a href="#helpCmd-fpmi">/fpmi</a></td><td> <b>MovePlugin <em>&raquo;</em> include</b></td></tr>
+            <tr><td><a href="#helpCmd-fpm">/fpm</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpm"><b>MovePlugin</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpma">/fpma</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpma"><b>MovePlugin <em>&raquo;</em> algorithm</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpmm">/fpmm</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpmm"><b>MovePlugin <em>&raquo;</em> motions</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpmi">/fpmi</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpmi"><b>MovePlugin <em>&raquo;</em> include</b></a></td></tr>
             <tr><td colspan="2">&nbsp;</td></tr>
-            <tr><td><a href="#helpCmd-fpt">/fpt</a></td><td> <b>TransposePlugin</b></td></tr>
+            <tr><td><a href="#helpCmd-fpt">/fpt</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpt"><b>TransposePlugin</b></a></td></tr>
         </table>
     </p>
     <table  id="helpCmdTOC">
@@ -105,92 +145,122 @@
             <td colspan="2">
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd" style="background-color: rgb(179, 247, 43);">
-                            <b>E</b>nable
+                        <td class="greenCmd">
+                            <a class="optionLink" href="#helpCmd-fpa-E">
+                                                        <b>E</b>nable
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>L</b>oad enabled
+                            <a class="optionLink" href="#helpCmd-fpa-L">
+                                                        <b>L</b>oad enabled
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>B</b>ury
+                            <a class="optionLink" href="#helpCmd-fpa-B">
+                                                        <b>B</b>ury
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>I</b>nstrument
+                            <a class="optionLink" href="#helpCmd-fpa-I">
+                                                        <b>I</b>nstrument
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>A</b>pply
+                            <a class="optionLink" href="#helpCmd-fpa-A">
+                                                        <b>A</b>pply
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>C</b>lear
+                            <a class="optionLink" href="#helpCmd-fpa-C">
+                                                        <b>C</b>lear
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>p</b>ositions
+                            <a class="optionLink" href="#helpCmd-fpa-p">
+                                                        <b>p</b>ositions
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>trings
+                            <a class="optionLink" href="#helpCmd-fpa-s">
+                                                        <b>s</b>trings
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            l<b>o</b>w to high
+                            <a class="optionLink" href="#helpCmd-fpa-o">
+                                                        l<b>o</b>w to high
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>u</b>p only
+                            <a class="optionLink" href="#helpCmd-fpa-u">
+                                                        <b>u</b>p only
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            st<b>y</b>le
+                            <a class="optionLink" href="#helpCmd-fpa-y">
+                                                        st<b>y</b>le
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            show <b>n</b>ote name
+                            <a class="optionLink" href="#helpCmd-fpa-n">
+                                                        show <b>n</b>ote name
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>c</b>olor notes
+                            <a class="optionLink" href="#helpCmd-fpa-c">
+                                                        <b>c</b>olor notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>f</b>lashcard
+                            <a class="optionLink" href="#helpCmd-fpa-f">
+                                                        <b>f</b>lashcard
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>elp
+                            <a class="optionLink" href="#helpCmd-fpa-h">
+                                                        <b>h</b>elp
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -211,49 +281,65 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>m</b>inFret default position
+                            <a class="optionLink" href="#helpCmd-fpap-m">
+                                                        <b>m</b>inFret default position
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            maxFre<b>t</b> default position
+                            <a class="optionLink" href="#helpCmd-fpap-t">
+                                                        maxFre<b>t</b> default position
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            c<b>L</b>ear all sections
+                            <a class="optionLink" href="#helpCmd-fpap-L">
+                                                        c<b>L</b>ear all sections
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            clear <b>T</b>his section
+                            <a class="optionLink" href="#helpCmd-fpap-T">
+                                                        clear <b>T</b>his section
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>C</b>opy to all sections
+                            <a class="optionLink" href="#helpCmd-fpap-C">
+                                                        <b>C</b>opy to all sections
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            copy to <b>U</b>nset sections
+                            <a class="optionLink" href="#helpCmd-fpap-U">
+                                                        copy to <b>U</b>nset sections
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>R</b>efresh values
+                            <a class="optionLink" href="#helpCmd-fpap-R">
+                                                        <b>R</b>efresh values
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>v</b>alues this section
+                            <a class="optionLink" href="#helpCmd-fpap-v">
+                                                        <b>v</b>alues this section
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -274,13 +360,17 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>u</b>pper string limit
+                            <a class="optionLink" href="#helpCmd-fpas-u">
+                                                        <b>u</b>pper string limit
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>l</b>ower string limit
+                            <a class="optionLink" href="#helpCmd-fpas-l">
+                                                        <b>l</b>ower string limit
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -296,67 +386,89 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>B</b>ury
+                            <a class="optionLink" href="#helpCmd-fpc-B">
+                                                        <b>B</b>ury
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>I</b>nstrument
+                            <a class="optionLink" href="#helpCmd-fpc-I">
+                                                        <b>I</b>nstrument
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>C</b> copy
+                            <a class="optionLink" href="#helpCmd-fpc-C">
+                                                        <b>C</b> copy
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>X</b> cut
+                            <a class="optionLink" href="#helpCmd-fpc-X">
+                                                        <b>X</b> cut
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>V</b> paste
+                            <a class="optionLink" href="#helpCmd-fpc-V">
+                                                        <b>V</b> paste
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>M</b>IDI Paste
+                            <a class="optionLink" href="#helpCmd-fpc-M">
+                                                        <b>M</b>IDI Paste
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>a</b>utomatic
+                            <a class="optionLink" href="#helpCmd-fpc-a">
+                                                        <b>a</b>utomatic
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>o</b>verwrite
+                            <a class="optionLink" href="#helpCmd-fpc-o">
+                                                        <b>o</b>verwrite
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>i</b>nclude
+                            <a class="optionLink" href="#helpCmd-fpc-i">
+                                                        <b>i</b>nclude
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpci">/fpci</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>c</b>lear clipped notes
+                            <a class="optionLink" href="#helpCmd-fpc-c">
+                                                        <b>c</b>lear clipped notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>elp
+                            <a class="optionLink" href="#helpCmd-fpc-h">
+                                                        <b>h</b>elp
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -377,25 +489,33 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>n</b>amed
+                            <a class="optionLink" href="#helpCmd-fpci-n">
+                                                        <b>n</b>amed
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>ingle
+                            <a class="optionLink" href="#helpCmd-fpci-s">
+                                                        <b>s</b>ingle
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>t</b>iny
+                            <a class="optionLink" href="#helpCmd-fpci-t">
+                                                        <b>t</b>iny
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>b</b>end
+                            <a class="optionLink" href="#helpCmd-fpci-b">
+                                                        <b>b</b>end
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -412,62 +532,82 @@
                 <table  class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>E</b>nable
+                            <a class="optionLink" href="#helpCmd-fpf-E">
+                                                        <b>E</b>nable
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>L</b>oad enabled
+                            <a class="optionLink" href="#helpCmd-fpf-L">
+                                                        <b>L</b>oad enabled
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>B</b>ury
+                            <a class="optionLink" href="#helpCmd-fpf-B">
+                                                        <b>B</b>ury
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>I</b>nstrument
+                            <a class="optionLink" href="#helpCmd-fpf-I">
+                                                        <b>I</b>nstrument
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>A</b>pply
+                            <a class="optionLink" href="#helpCmd-fpf-A">
+                                                        <b>A</b>pply
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>C</b>lear
+                            <a class="optionLink" href="#helpCmd-fpf-C">
+                                                        <b>C</b>lear
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>S</b> clear song
+                            <a class="optionLink" href="#helpCmd-fpf-S">
+                                                        <b>S</b> clear song
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>M</b> commit
-                            notes
+                            <a class="optionLink" href="#helpCmd-fpf-M">
+                                                        <b>M</b> commit
+                                                        notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>o</b>ptions
+                            <a class="optionLink" href="#helpCmd-fpf-o">
+                                                        <b>o</b>ptions
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfo">/fpfo</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>elp
+                            <a class="optionLink" href="#helpCmd-fpf-h">
+                                                        <b>h</b>elp
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -488,49 +628,65 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>c</b>hord formula
+                            <a class="optionLink" href="#helpCmd-fpfo-c">
+                                                        <b>c</b>hord formula
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>g</b> scale formula
+                            <a class="optionLink" href="#helpCmd-fpfo-g">
+                                                        <b>g</b> scale formula
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>p</b>ositions
+                            <a class="optionLink" href="#helpCmd-fpfo-p">
+                                                        <b>p</b>ositions
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfop">/fpfop</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>trings
+                            <a class="optionLink" href="#helpCmd-fpfo-s">
+                                                        <b>s</b>trings
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfos">/fpfos</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>N</b>amedNote
+                            <a class="optionLink" href="#helpCmd-fpfo-N">
+                                                        <b>N</b>amedNote
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoN">/fpfoN</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>S</b>ingleNote
+                            <a class="optionLink" href="#helpCmd-fpfo-S">
+                                                        <b>S</b>ingleNote
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>T</b>inyNote
+                            <a class="optionLink" href="#helpCmd-fpfo-T">
+                                                        <b>T</b>inyNote
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>A</b>pply
+                            <a class="optionLink" href="#helpCmd-fpfo-A">
+                                                        <b>A</b>pply
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -552,25 +708,33 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>C</b>opy from SingleNote
+                            <a class="optionLink" href="#helpCmd-fpfoN-C">
+                                                        <b>C</b>opy from SingleNote
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>r</b>oot
+                            <a class="optionLink" href="#helpCmd-fpfoN-r">
+                                                        <b>r</b>oot
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoNr">/fpfoNr</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>c</b>hord
+                            <a class="optionLink" href="#helpCmd-fpfoN-c">
+                                                        <b>c</b>hord
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>cale
+                            <a class="optionLink" href="#helpCmd-fpfoN-s">
+                                                        <b>s</b>cale
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -591,19 +755,25 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>n</b>one
+                            <a class="optionLink" href="#helpCmd-fpfoNr-n">
+                                                        <b>n</b>one
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>k</b>eep
+                            <a class="optionLink" href="#helpCmd-fpfoNr-k">
+                                                        <b>k</b>eep
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>r</b>ole
+                            <a class="optionLink" href="#helpCmd-fpfoNr-r">
+                                                        <b>r</b>ole
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -624,13 +794,17 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            m<b>i</b>nFret position
+                            <a class="optionLink" href="#helpCmd-fpfop-i">
+                                                        m<b>i</b>nFret position
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            m<b>a</b>xFret position
+                            <a class="optionLink" href="#helpCmd-fpfop-a">
+                                                        m<b>a</b>xFret position
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -651,13 +825,17 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>u</b>pper string limit
+                            <a class="optionLink" href="#helpCmd-fpfos-u">
+                                                        <b>u</b>pper string limit
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>l</b>ower string limit
+                            <a class="optionLink" href="#helpCmd-fpfos-l">
+                                                        <b>l</b>ower string limit
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -678,55 +856,73 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>B</b>ury
+                            <a class="optionLink" href="#helpCmd-fpm-B">
+                                                        <b>B</b>ury
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>I</b>nstrument
+                            <a class="optionLink" href="#helpCmd-fpm-I">
+                                                        <b>I</b>nstrument
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>A</b>pply
+                            <a class="optionLink" href="#helpCmd-fpm-A">
+                                                        <b>A</b>pply
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>a</b>lgorithm
+                            <a class="optionLink" href="#helpCmd-fpm-a">
+                                                        <b>a</b>lgorithm
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpma">/fpma</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>m</b>otions
+                            <a class="optionLink" href="#helpCmd-fpm-m">
+                                                        <b>m</b>otions
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmm">/fpmm</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>i</b>nclude
+                            <a class="optionLink" href="#helpCmd-fpm-i">
+                                                        <b>i</b>nclude
+                            </a>
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmi">/fpmi</a></span></td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>how dropped notes
+                            <a class="optionLink" href="#helpCmd-fpm-s">
+                                                        <b>s</b>how dropped notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>c</b>lear/backup
+                            <a class="optionLink" href="#helpCmd-fpm-c">
+                                                        <b>c</b>lear/backup
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>elp
+                            <a class="optionLink" href="#helpCmd-fpm-h">
+                                                        <b>h</b>elp
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -747,19 +943,25 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>d</b>rop
+                            <a class="optionLink" href="#helpCmd-fpma-d">
+                                                        <b>d</b>rop
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>o</b>ctave
+                            <a class="optionLink" href="#helpCmd-fpma-o">
+                                                        <b>o</b>ctave
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>tring
+                            <a class="optionLink" href="#helpCmd-fpma-s">
+                                                        <b>s</b>tring
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -780,25 +982,33 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>u</b>p
+                            <a class="optionLink" href="#helpCmd-fpmm-u">
+                                                        <b>u</b>p
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>d</b>own
+                            <a class="optionLink" href="#helpCmd-fpmm-d">
+                                                        <b>d</b>own
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>j</b>ump up
+                            <a class="optionLink" href="#helpCmd-fpmm-j">
+                                                        <b>j</b>ump up
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>J</b>ump down
+                            <a class="optionLink" href="#helpCmd-fpmm-J">
+                                                        <b>J</b>ump down
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -819,31 +1029,41 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>ingle notes
+                            <a class="optionLink" href="#helpCmd-fpmi-s">
+                                                        <b>s</b>ingle notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>t</b>iny notes
+                            <a class="optionLink" href="#helpCmd-fpmi-t">
+                                                        <b>t</b>iny notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>ighlights
+                            <a class="optionLink" href="#helpCmd-fpmi-h">
+                                                        <b>h</b>ighlights
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>p</b>layed notes
+                            <a class="optionLink" href="#helpCmd-fpmi-p">
+                                                        <b>p</b>layed notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>r</b>ecorded notes
+                            <a class="optionLink" href="#helpCmd-fpmi-r">
+                                                        <b>r</b>ecorded notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -864,73 +1084,97 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
-                            <b>E</b>nable
+                            <a class="optionLink" href="#helpCmd-fpt-E">
+                                                        <b>E</b>nable
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>L</b>oad enabled
+                            <a class="optionLink" href="#helpCmd-fpt-L">
+                                                        <b>L</b>oad enabled
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>B</b>ury
+                            <a class="optionLink" href="#helpCmd-fpt-B">
+                                                        <b>B</b>ury
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>A</b>pply
+                            <a class="optionLink" href="#helpCmd-fpt-A">
+                                                        <b>A</b>pply
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>R</b>eset
+                            <a class="optionLink" href="#helpCmd-fpt-R">
+                                                        <b>R</b>eset
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>h</b>elp
+                            <a class="optionLink" href="#helpCmd-fpt-h">
+                                                        <b>h</b>elp
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>i</b>ntervals
+                            <a class="optionLink" href="#helpCmd-fpt-i">
+                                                        <b>i</b>ntervals
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>n</b>amed notes
+                            <a class="optionLink" href="#helpCmd-fpt-n">
+                                                        <b>n</b>amed notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>s</b>ingle notes
+                            <a class="optionLink" href="#helpCmd-fpt-s">
+                                                        <b>s</b>ingle notes
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>o</b>ctaves
+                            <a class="optionLink" href="#helpCmd-fpt-o">
+                                                        <b>o</b>ctaves
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>a</b>uto sharps/flats
+                            <a class="optionLink" href="#helpCmd-fpt-a">
+                                                        <b>a</b>uto sharps/flats
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
-                            <b>d</b>o lead key
+                            <a class="optionLink" href="#helpCmd-fpt-d">
+                                                        <b>d</b>o lead key
+                            </a>
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -955,43 +1199,43 @@
             <td colspan="2">
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-E">
                             <b>E</b>nable
                         </td>
                         <td class="cmdHelp">When Enabled, Arpeggio highlights NamedNotes in each section while looping</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-L">
                             <b>L</b>oad enabled
                         </td>
                         <td class="cmdHelp"> Enable automatically when the song is loaded</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-B">
                             <b>B</b>ury
                         </td>
                         <td class="cmdHelp"> Save the current plugin settings in the Graveyard, with a name</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-I">
                             <b>I</b>nstrument
                         </td>
                         <td class="cmdHelp">The Instrument that the Arpeggio is applied to</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-A">
                             <b>A</b>pply
                         </td>
                         <td class="cmdHelp">Apply the current settings to the selected Instrument, in the Current Section</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-C">
                             <b>C</b>lear
                         </td>
                         <td class="cmdHelp">Clear any notes Applied by Arpeggio in the Current Section</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-p">
                             <b>p</b>ositions
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span>
@@ -999,50 +1243,50 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-s">
                             <b>s</b>trings
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span>
                         Limit arpeggios to the range between the lower and upper strings chosen.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-o">
                             l<b>o</b>w to high
                         </td>
                         <td class="cmdHelp"> "Low" is the last string on the neck, the lowest on the web page, the lowest musical note on a Standard-tuning guitar (the Sixth string).  The arpeggio goes from the lowest string towards the highest string, and back down again if the style, and "low to high", and the number of beats allows it.  The low string can be specified to be a number less than the maximum  with the <b>strings</b> option:/fpas.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-u">
                             <b>u</b>p only
                         </td>
                         <td class="cmdHelp">"Up" is the direction of "low to high", but doesn't descend. Instead, if there are enough beats, it starts over at the bottom.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-y">
                             st<b>y</b>le
                         </td>
                         <td class="cmdHelp">Several styles of how the algorithm chooses notes for the arpeggio.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-n">
                             show <b>n</b>ote name
                         </td>
                         <td class="cmdHelp">Several choices for how to display/reveal the notes of the arpeggio, especially useful when in Flashcard mode.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-c">
                             <b>c</b>olor notes
                         </td>
                         <td class="cmdHelp">Whether to color the notes as the arpeggio plays them.  Escpecially useful if you have turned off Auto-color so all other notes are Emboss which is black and white.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-f">
                             <b>f</b>lashcard
                         </td>
                         <td class="cmdHelp">Flashcard mode lets you delay seeing the name of the note until the next beat after it is highlighted, so you can practice guessing the note name by seeing its location first.</td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpa-h">
                             <b>h</b>elp
                         </td>
                         <td class="cmdHelp">Shows plugin help in the ShowMessages area below all the Instruments</td>
@@ -1063,49 +1307,49 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-m">
                             <b>m</b>inFret default position
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-t">
                             maxFre<b>t</b> default position
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-L">
                             c<b>L</b>ear all sections
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-T">
                             clear <b>T</b>his section
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-C">
                             <b>C</b>opy to all sections
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-U">
                             copy to <b>U</b>nset sections
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-R">
                             <b>R</b>efresh values
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpap-v">
                             <b>v</b>alues this section
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1126,13 +1370,13 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpas-u">
                             <b>u</b>pper string limit
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpas-l">
                             <b>l</b>ower string limit
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1153,67 +1397,67 @@
             <td colspan="2">
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-B">
                             <b>B</b>ury
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-I">
                             <b>I</b>nstrument
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-C">
                             <b>C</b> copy
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-X">
                             <b>X</b> cut
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-V">
                             <b>V</b> paste
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-M">
                             <b>M</b>IDI Paste
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-a">
                             <b>a</b>utomatic
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-o">
                             <b>o</b>verwrite
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-i">
                             <b>i</b>nclude
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpci">/fpci</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-c">
                             <b>c</b>lear clipped notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpc-h">
                             <b>h</b>elp
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1234,25 +1478,25 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpci-n">
                             <b>n</b>amed
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpci-s">
                             <b>s</b>ingle
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpci-t">
                             <b>t</b>iny
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpci-b">
                             <b>b</b>end
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1274,62 +1518,62 @@
             <td colspan="2">
                 <table  class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-E">
                             <b>E</b>nable
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-L">
                             <b>L</b>oad enabled
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-B">
                             <b>B</b>ury
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-I">
                             <b>I</b>nstrument
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-A">
                             <b>A</b>pply
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-C">
                             <b>C</b>lear
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-S">
                             <b>S</b> clear song
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-M">
                             <b>M</b> commit
                             notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-o">
                             <b>o</b>ptions
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfo">/fpfo</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpf-h">
                             <b>h</b>elp
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1350,49 +1594,49 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-c">
                             <b>c</b>hord formula
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-g">
                             <b>g</b> scale formula
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-p">
                             <b>p</b>ositions
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfop">/fpfop</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-s">
                             <b>s</b>trings
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfos">/fpfos</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-N">
                             <b>N</b>amedNote
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoN">/fpfoN</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-S">
                             <b>S</b>ingleNote
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-T">
                             <b>T</b>inyNote
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfo-A">
                             <b>A</b>pply
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1413,25 +1657,25 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoN-C">
                             <b>C</b>opy from SingleNote
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoN-r">
                             <b>r</b>oot
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfoNr">/fpfoNr</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoN-c">
                             <b>c</b>hord
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoN-s">
                             <b>s</b>cale
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1452,19 +1696,19 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoNr-n">
                             <b>n</b>one
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoNr-k">
                             <b>k</b>eep
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfoNr-r">
                             <b>r</b>ole
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1485,13 +1729,13 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfop-i">
                             m<b>i</b>nFret position
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfop-a">
                             m<b>a</b>xFret position
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1512,13 +1756,13 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfos-u">
                             <b>u</b>pper string limit
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpfos-l">
                             <b>l</b>ower string limit
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1539,55 +1783,55 @@
             <td colspan="2">
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-B">
                             <b>B</b>ury
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-I">
                             <b>I</b>nstrument
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-A">
                             <b>A</b>pply
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-a">
                             <b>a</b>lgorithm
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpma">/fpma</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-m">
                             <b>m</b>otions
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmm">/fpmm</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-i">
                             <b>i</b>nclude
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpmi">/fpmi</a></span></td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-s">
                             <b>s</b>how dropped notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-c">
                             <b>c</b>lear/backup
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpm-h">
                             <b>h</b>elp
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1608,19 +1852,19 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpma-d">
                             <b>d</b>rop
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpma-o">
                             <b>o</b>ctave
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpma-s">
                             <b>s</b>tring
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1641,25 +1885,25 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmm-u">
                             <b>u</b>p
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmm-d">
                             <b>d</b>own
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmm-j">
                             <b>j</b>ump up
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmm-J">
                             <b>J</b>ump down
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1680,31 +1924,31 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmi-s">
                             <b>s</b>ingle notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmi-t">
                             <b>t</b>iny notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmi-h">
                             <b>h</b>ighlights
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmi-p">
                             <b>p</b>layed notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpmi-r">
                             <b>r</b>ecorded notes
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1725,73 +1969,73 @@
             <td>
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-E">
                             <b>E</b>nable
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-L">
                             <b>L</b>oad enabled
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-B">
                             <b>B</b>ury
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-A">
                             <b>A</b>pply
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-R">
                             <b>R</b>eset
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-h">
                             <b>h</b>elp
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-i">
                             <b>i</b>ntervals
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-n">
                             <b>n</b>amed notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-s">
                             <b>s</b>ingle notes
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-o">
                             <b>o</b>ctaves
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-a">
                             <b>a</b>uto sharps/flats
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" id="helpCmd-fpt-d">
                             <b>d</b>o lead key
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1800,6 +2044,7 @@
             </td>
         </tr>
     </table>
+
 
 <div style="display: none;">
         
