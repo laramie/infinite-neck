@@ -3,6 +3,7 @@
 <head>
     <style>
         .greenCmd {
+            white-space: nowrap;
             padding: 0.2em;
             background-color: lightgreen;
             border: 4px solid green;
@@ -104,7 +105,7 @@
             <td colspan="2">
                 <table class="cmdTable">
                     <tr>
-                        <td class="greenCmd">
+                        <td class="greenCmd" style="background-color: rgb(179, 247, 43);">
                             <b>E</b>nable
                         </td>
                         <td class="cmdHelp"> </td>
@@ -993,55 +994,58 @@
                         <td class="greenCmd">
                             <b>p</b>ositions
                         </td>
-                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span></td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span>
+                        Limit arpeggios to positions, such as "first position", frets 0-4, or ranges of positions, such as 0-3,4-8, and 8-12.
+                        </td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             <b>s</b>trings
                         </td>
-                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span></td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span>
+                        Limit arpeggios to the range between the lower and upper strings chosen.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             l<b>o</b>w to high
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> "Low" is the last string on the neck, the lowest on the web page, the lowest musical note on a Standard-tuning guitar (the Sixth string).  The arpeggio goes from the lowest string towards the highest string, and back down again if the style, and "low to high", and the number of beats allows it.  The low string can be specified to be a number less than the maximum  with the <b>strings</b> option:/fpas.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             <b>u</b>p only
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">"Up" is the direction of "low to high", but doesn't descend. Instead, if there are enough beats, it starts over at the bottom.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             st<b>y</b>le
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">Several styles of how the algorithm chooses notes for the arpeggio.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             show <b>n</b>ote name
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">Several choices for how to display/reveal the notes of the arpeggio, especially useful when in Flashcard mode.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             <b>c</b>olor notes
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">Whether to color the notes as the arpeggio plays them.  Escpecially useful if you have turned off Auto-color so all other notes are Emboss which is black and white.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             <b>f</b>lashcard
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">Flashcard mode lets you delay seeing the name of the note until the next beat after it is highlighted, so you can practice guessing the note name by seeing its location first.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd">
                             <b>h</b>elp
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp">Shows plugin help in the ShowMessages area below all the Instruments</td>
                     </tr>
                 </table>
             </td>
@@ -1812,6 +1816,22 @@
          even if they are deeper paths such as /fpfoNr .
 
     Any added sources below should be transformed and the tables above should contain their transformed versions.     
+</p>
+
+<p>
+    We would like to have more active-looking links in the several style of TOC that we have.
+    We have the following link areas:
+    - `#helpCmdLinks`
+      - `a` links
+      - the second td in this table. On active/hover, these should not have any text decorations added, but should just have `background-color: rgb(60, 22, 110);`. It should link to the same thing linked by the `a` element on the same row. 
+    - `#helpCmdTOC`
+      - the `a` links in `.cmdLine` cell. Preserve.
+      - the `b` element in `.cmdLine` cell.  Preserve. This should *not* become a link, and the entire cell should *not* become a link or active hover.
+      - the `#helpCmdTOC tr.menu .cmdTable .greenCmd` `td` cell should entirely become an active hover link.  When not active/hover it should look exactly as it does now, but when hovered, should just be `background-color: rgb(179, 247, 43);` with no other text decorations added, so no underline added.  It should link to its equivalent cell in a `.helpCmdDetailHelp` table.  That is, from `#helpCmdTOC` to `#helpCmdDetailHelp`. The target will need an id to link to.  The id should be constructed by its path, plus a hyphen plus its property trigger, which is the letter in bold.  So within helpCmdDetailHelp, the `td` with the same property, e.g. `<td class="greenCmd">
+                            <b>f</b>lashcard
+                        </td>` should now have an id of `helpCmd-fpa-f` since it has a path of `/fpa` and an option of `f`.  The extra hyphen prevents collisions with paths of sub-menus.
+
+
 </p>
 
 <pre>
