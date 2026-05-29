@@ -1171,7 +1171,9 @@ input:read-only,textarea:read-only {
 
 /***************************** Instrument / NoteTable / FretTable *****************************/
 
-
+.diamondsPositionCurrent {
+    background-color: chartreuse !important;
+}
 .diamondsRow td {
     background-color: var(--diamonds-background-color);
     font-size: var(--diamonds-size);

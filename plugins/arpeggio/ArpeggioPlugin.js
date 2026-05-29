@@ -300,6 +300,7 @@ export class ArpeggioPlugin {
   }
 
   disable() {
+    this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
     return 'Arpeggio disabled';
   }
 
@@ -1152,6 +1153,53 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     });
   }
 
+  getDiamondPositionDisplayPayload({ section = null, tableID = '', fretWindow = null } = {}) {
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    const activeIndex = Number.isInteger(fretWindow?.appliedIndex)
+      ? fretWindow.appliedIndex
+      : this.getLastPositionIndex(section);
+    const positions = this.getSectionPositions(section);
+
+    if (!enabled || !section || !tableID || !Array.isArray(positions) || positions.length === 0 || !Number.isInteger(activeIndex) || activeIndex < 0) {
+      return {
+        owner: ARPEGGIO_OWNER,
+        clearExisting: true,
+        tableID,
+        minFret: null,
+        maxFret: null
+      };
+    }
+
+    const activeRange = positions[activeIndex];
+    if (!Array.isArray(activeRange) || activeRange.length !== 2) {
+      return {
+        owner: ARPEGGIO_OWNER,
+        clearExisting: true,
+        tableID,
+        minFret: null,
+        maxFret: null
+      };
+    }
+
+    return {
+      owner: ARPEGGIO_OWNER,
+      clearExisting: true,
+      tableID,
+      minFret: activeRange[0],
+      maxFret: activeRange[1]
+    };
+  }
+
+  emitDiamondPositionDisplay(payload = {}) {
+    EventBus.trigger('NoteTable:ShowDiamondPositionRange', {
+      owner: ARPEGGIO_OWNER,
+      clearExisting: !!payload.clearExisting,
+      tableID: payload.tableID || '',
+      minFret: payload.minFret,
+      maxFret: payload.maxFret
+    });
+  }
+
   syncNamedNoteDisplay({ song = getSong(), section = null, tableID = '', sequence = [], eventName = 'manual' } = {}) {
     if (!song || song.isHeadless) {
       return;
@@ -1162,6 +1210,18 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     this.emitNamedNoteDisplay(this.getNamedNoteDisplayPayload(sequence, song, section, tableID, eventName));
+  }
+
+  syncDiamondPositionDisplay({ song = getSong(), section = null, tableID = '', fretWindow = null } = {}) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    if (section && typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== section) {
+      return;
+    }
+
+    this.emitDiamondPositionDisplay(this.getDiamondPositionDisplayPayload({ section, tableID, fretWindow }));
   }
 
   requestCurrentBeatRefresh(song, section = null) {
@@ -1197,6 +1257,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const tuning = this.getTargetTuning(song);
     if (!section || !tuning) {
       this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
+      this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
       return;
     }
 
@@ -1216,6 +1277,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       tableID: this.getTableID(tuning),
       sequence,
       eventName
+    });
+    this.syncDiamondPositionDisplay({
+      song,
+      section,
+      tableID: this.getTableID(tuning),
+      fretWindow
     });
   }
 
@@ -1721,6 +1788,14 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       maxFret: fretWindow.maxFret
     });
     if (candidates.length === 0) {
+      this.requestSectionStatusRefresh(song);
+      this.syncNamedNoteDisplay({ song, section, tableID: this.getTableID(tuning), sequence: [], eventName });
+      this.syncDiamondPositionDisplay({
+        song,
+        section,
+        tableID: this.getTableID(tuning),
+        fretWindow
+      });
       if (removedCount > 0) {
         this.requestCurrentBeatRefresh(song, section);
       }
@@ -1751,6 +1826,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.requestCurrentBeatRefresh(song, section);
     this.requestSectionStatusRefresh(song);
     this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
+    this.syncDiamondPositionDisplay({ song, section, tableID, fretWindow });
 
     return {
       result: `Arpeggio applied: target table=${tableID} source=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`

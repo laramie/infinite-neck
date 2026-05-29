@@ -329,6 +329,7 @@ export function getJoniTuning(options) {
 export function diamondsRow(options) {
 	var arr = options.diamonds; //[3,5,7,9,15,17,19,21]
 	var dblArr = options.doubleDiamonds; //[12,24];
+	const tableID = Constants.TABLE_ID_PREFIX + options.baseID;
 	if (!dblArr) { 
 		dblArr = [];
 	}
@@ -359,6 +360,8 @@ export function diamondsRow(options) {
 				dcwn = dc;
 			}
 		}
+		td.attr('cellcol', dcwn);
+		td.attr('celltable', tableID);
 		if (dblArr.includes(dcwn + 1)) {  //user reads JSON file value as 1-based.
 			td.html(doubleDiamonds);
 		} else if (arr.includes(dcwn + 1)) {

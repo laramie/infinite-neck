@@ -958,6 +958,7 @@ const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-clas
 const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
 const TRANSIENT_NOTE_DISPLAY_CLASS_ATTR = 'data-transient-note-display-original-class';
 const TRANSIENT_NOTE_DISPLAY_STYLE_ATTR = 'data-transient-note-display-original-style';
+const TRANSIENT_DIAMOND_POSITION_OWNER_ATTR = 'data-transient-diamond-position-owner';
 
 function rememberTransientNamedNoteState(part, owner = '') {
     if (!owner || part.length === 0) {
@@ -1024,8 +1025,26 @@ export function clearTransientNamedNotes(owner = '') {
     });
 }
 
+export function clearTransientDiamondPositions(owner = '', tableID = '') {
+    const ownerSelector = owner
+        ? `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}='${owner}']`
+        : `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}]`;
+    const tableSelector = tableID
+        ? `table[id='${tableID}'] `
+        : '';
+    $(`${tableSelector}tr.diamondsRow.NotAString > td.diamonds${ownerSelector}`).each(function() {
+        $(this)
+            .removeClass('diamondsPositionCurrent')
+            .removeAttr(TRANSIENT_DIAMOND_POSITION_OWNER_ATTR);
+    });
+}
+
 export function findNoteCell(tableID, cellrow, cellcol) {
     return $("table[id='"+tableID+"'] td.note[cellrow='"+cellrow+"'][cellcol='"+cellcol+"']").first();
+}
+
+export function findDiamondCell(tableID, cellcol) {
+    return $("table[id='"+tableID+"'] tr.diamondsRow.NotAString > td.diamonds[cellcol='"+cellcol+"']").first();
 }
 
 export function findNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote') {
@@ -1078,6 +1097,41 @@ export function showNamedNotesAtCells(cells = [], options = {}) {
             shownCount += 1;
         }
     });
+    return shownCount;
+}
+
+export function showDiamondPositionAtCell(tableID, cellcol, owner = '') {
+    const cell = findDiamondCell(tableID, cellcol);
+    if (cell.length === 0) {
+        return false;
+    }
+    if (owner) {
+        cell.attr(TRANSIENT_DIAMOND_POSITION_OWNER_ATTR, owner);
+    }
+    cell.addClass('diamondsPositionCurrent');
+    return true;
+}
+
+export function showDiamondPositionRange(tableID, minFret, maxFret, options = {}) {
+    const clearExisting = !!options.clearExisting;
+    const owner = options.owner || '';
+
+    if (clearExisting) {
+        clearTransientDiamondPositions(owner, tableID);
+    }
+
+    const parsedMinFret = Number.parseInt(minFret, 10);
+    const parsedMaxFret = Number.parseInt(maxFret, 10);
+    if (!tableID || !Number.isInteger(parsedMinFret) || !Number.isInteger(parsedMaxFret) || parsedMaxFret < parsedMinFret) {
+        return 0;
+    }
+
+    let shownCount = 0;
+    for (let fret = parsedMinFret; fret <= parsedMaxFret; fret += 1) {
+        if (showDiamondPositionAtCell(tableID, `${fret}`, owner)) {
+            shownCount += 1;
+        }
+    }
     return shownCount;
 }
 
@@ -1217,6 +1271,7 @@ export function clearAllForTable(tablename) {
     var tdNote = $(tableSelector+"td.note");
     tdNote.removeClass("OverlayRaisedForPiano");
     tdNote.children(".NoteDisplay").removeClass("NoteActive");
+    clearTransientDiamondPositions('', tablename);
 
     var namedNoteDiv = tdNote.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
@@ -1441,5 +1496,16 @@ EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {
         clearExisting: !!(data && data.clearExisting),
         owner: data && data.owner ? data.owner : ''
     });
+});
+EventBus.on('NoteTable:ShowDiamondPositionRange', function(event, data) {
+    showDiamondPositionRange(
+        data && data.tableID ? data.tableID : '',
+        data && data.minFret,
+        data && data.maxFret,
+        {
+            clearExisting: !!(data && data.clearExisting),
+            owner: data && data.owner ? data.owner : ''
+        }
+    );
 });
 //=================================END-of-FILE========================================

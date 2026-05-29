@@ -81,6 +81,10 @@ function expectNamedNoteEvent(payload) {
 	expect(EventBus.trigger).toHaveBeenCalledWith('NoteTable:ShowNamedNotesAtCells', payload);
 }
 
+function expectDiamondRangeEvent(payload) {
+	expect(EventBus.trigger).toHaveBeenCalledWith('NoteTable:ShowDiamondPositionRange', payload);
+}
+
 function getBeatMidinums(sectionNotes, beatCount) {
 	return Array.from({ length: beatCount }, (_, idx) => {
 		const beatKey = `${idx + 1}`;
@@ -716,6 +720,10 @@ describe('ArpeggioPlugin sequencing', () => {
 
 	test('SongUiShowBeats uses the stored position without advancing it', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 4, currentBeat: 1 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
 		plugin.setPropertyValue('showNoteName', 'one', { song });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
 		plugin.setLastPositionIndex(section, 1);
@@ -729,6 +737,13 @@ describe('ArpeggioPlugin sequencing', () => {
 			owner: 'ArpeggioPlugin',
 			clearExisting: true,
 			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: 'tblARP',
+			minFret: 2,
+			maxFret: 2
 		});
 	});
 
@@ -789,7 +804,28 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 
 		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: 'tblARP',
+			minFret: 0,
+			maxFret: 0
+		});
 		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">0</td><td>2</td><td>2</td></tr></table></span>');
+	});
+
+	test('disable clears any transient diamond-position highlight', () => {
+		const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+
+		plugin.disable();
+
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: '',
+			minFret: null,
+			maxFret: null
+		});
 	});
 
 	test('arpeggioPositionsStatus is empty when Arpeggio is not enabled', () => {
