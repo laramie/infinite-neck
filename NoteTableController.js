@@ -38,6 +38,7 @@ import {
     getTonalForTable
 } from './TonalFunctions.js';
 import EventBus from './event-bus.js';
+import { fretToDiamondCellcol, tableHasDiamondNutColumn } from './diamond-position-helpers.js';
 import { 
     appInit_running,
     controlsToDisplayOptions,
@@ -1142,9 +1143,14 @@ export function showDiamondPositionRange(tableID, minFret, maxFret, options = {}
         return 0;
     }
 
+    const hasNutColumn = tableHasDiamondNutColumn(findDiamondCell, tableID);
     let shownCount = 0;
     for (let fret = parsedMinFret; fret <= parsedMaxFret; fret += 1) {
-        if (showDiamondPositionAtCell(tableID, `${fret}`, owner)) {
+        const diamondCellcol = fretToDiamondCellcol(fret, hasNutColumn);
+        if (diamondCellcol === null) {
+            continue;
+        }
+        if (showDiamondPositionAtCell(tableID, `${diamondCellcol}`, owner)) {
             shownCount += 1;
         }
     }
