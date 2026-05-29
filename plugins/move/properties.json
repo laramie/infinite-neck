@@ -98,6 +98,15 @@
     "visibleInMenu": false
   },
   {
+    "name": "includeFingering",
+    "caption": "fingering",
+    "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
     "name": "includePlayed",
     "caption": "played notes",
     "trigger": "p",

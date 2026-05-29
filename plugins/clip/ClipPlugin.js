@@ -20,7 +20,8 @@ const INCLUDED_STYLE_ORDER = [
   ['named', null],
   ['single', Note.STYLENUM_SINGLE],
   ['tiny', Note.STYLENUM_TINY],
-  ['bend', Note.STYLENUM_BEND]
+  ['bend', Note.STYLENUM_BEND],
+  ['fingering', Note.STYLENUM_FINGERING]
 ];
 
 function cloneValue(value) {
@@ -322,7 +323,8 @@ export class ClipPlugin {
         this.getProperty('includeNamed').getMenuNodeSpec(this),
         this.getProperty('includeSingle').getMenuNodeSpec(this),
         this.getProperty('includeTiny').getMenuNodeSpec(this),
-        this.getProperty('includeBend').getMenuNodeSpec(this)
+        this.getProperty('includeBend').getMenuNodeSpec(this),
+        this.getProperty('includeFingering').getMenuNodeSpec(this)
       ]
     });
   }
@@ -463,6 +465,7 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 - MIDI Paste clips = ${this.getMidiPasteClipRecords(song).length}
 - clip records live in the Graveyard as type CLIP
 - RecordedNotes and transient highlights are out of scope
+- supported played-note lanes include Single, Tiny, Bend, and optional Fingering
 - cut removes only the included note lanes from the current section/table
 - revive merges into the current section/table and drops out-of-range played notes
 - MIDI Paste remaps played notes by MIDI on the same string for supported 6-string guitars
@@ -475,7 +478,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       named: !!this.getProperty('includeNamed')?.getValue(),
       single: !!this.getProperty('includeSingle')?.getValue(),
       tiny: !!this.getProperty('includeTiny')?.getValue(),
-      bend: !!this.getProperty('includeBend')?.getValue()
+      bend: !!this.getProperty('includeBend')?.getValue(),
+      fingering: !!this.getProperty('includeFingering')?.getValue()
     };
   }
 
@@ -483,7 +487,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const section = this.getCurrentSection(song);
     const tableID = this.getSelectedTargetTableID();
     if (!section || !tableID) {
-      return { named: 0, single: 0, tiny: 0, bend: 0 };
+      return { named: 0, single: 0, tiny: 0, bend: 0, fingering: 0 };
     }
     const sectionNotes = section.getSectionNotes(tableID);
     const playedNotes = sectionNotes?.playedNotes || [];
@@ -491,7 +495,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       named: Object.keys(sectionNotes?.namedNotes || {}).length,
       single: playedNotes.filter((note) => note?.styleNum === Note.STYLENUM_SINGLE).length,
       tiny: playedNotes.filter((note) => note?.styleNum === Note.STYLENUM_TINY).length,
-      bend: playedNotes.filter((note) => note?.styleNum === Note.STYLENUM_BEND).length
+      bend: playedNotes.filter((note) => note?.styleNum === Note.STYLENUM_BEND).length,
+      fingering: playedNotes.filter((note) => note?.styleNum === Note.STYLENUM_FINGERING).length
     };
   }
 
@@ -503,6 +508,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (include.single) active.push(`s:${counts.single}`);
     if (include.tiny) active.push(`t:${counts.tiny}`);
     if (include.bend) active.push(`b:${counts.bend}`);
+    if (include.fingering) active.push(`f:${counts.fingering}`);
     return active.length > 0 ? `[${active.join(',')}]` : '[none]';
   }
 
@@ -516,7 +522,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   collectClipCounts(song = getSong()) {
     const payload = this.collectClipPayload(song);
-    return payload ? payload.counts : { named: 0, single: 0, tiny: 0, bend: 0 };
+    return payload ? payload.counts : { named: 0, single: 0, tiny: 0, bend: 0, fingering: 0 };
   }
 
   collectClipPayload(song = getSong()) {
@@ -546,7 +552,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         named: 0,
         single: 0,
         tiny: 0,
-        bend: 0
+        bend: 0,
+        fingering: 0
       },
       sectionNotes: {
         namedNotes: {},
@@ -575,6 +582,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       if (note?.styleNum === Note.STYLENUM_BEND && include.bend) {
         payload.sectionNotes.playedNotes.push(stripOwner(note));
         payload.counts.bend += 1;
+      }
+      if (note?.styleNum === Note.STYLENUM_FINGERING && include.fingering) {
+        payload.sectionNotes.playedNotes.push(stripOwner(note));
+        payload.counts.fingering += 1;
       }
     });
 
@@ -800,6 +811,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (include.single) allowedStyles.add(Note.STYLENUM_SINGLE);
     if (include.tiny) allowedStyles.add(Note.STYLENUM_TINY);
     if (include.bend) allowedStyles.add(Note.STYLENUM_BEND);
+    if (include.fingering) allowedStyles.add(Note.STYLENUM_FINGERING);
 
     const originalPlayedNotes = sectionNotes?.playedNotes || [];
     sectionNotes.playedNotes = originalPlayedNotes.filter((note) => {

@@ -292,9 +292,11 @@ function createScratch() {
     recordedNotes: {},
     playedSingleCells: new Set(),
     playedTinyBendCells: new Set(),
+    playedFingeringCells: new Set(),
     playedAnyCells: new Set(),
     recordedSingleCellsByBeat: new Map(),
     recordedTinyBendCellsByBeat: new Map(),
+    recordedFingeringCellsByBeat: new Map(),
     recordedHighlightSingleCellsByBeat: new Map(),
     recordedHighlightPitchBeat: new Set()
   };
@@ -318,6 +320,9 @@ function getCollisionDescriptor(layout, note, storageKind, beat) {
     if ((styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) && cellKey) {
       return { kind: 'playedTinyBend', key: cellKey, anyCell: cellKey };
     }
+    if (styleNum === Note.STYLENUM_FINGERING && cellKey) {
+      return { kind: 'playedFingering', key: cellKey, anyCell: cellKey };
+    }
     if (cellKey) {
       return { kind: 'playedAny', key: cellKey, anyCell: cellKey };
     }
@@ -329,6 +334,9 @@ function getCollisionDescriptor(layout, note, storageKind, beat) {
   }
   if ((styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) && cellKey) {
     return { kind: 'recordedTinyBend', key: `${beat}:${cellKey}`, cellKey };
+  }
+  if (styleNum === Note.STYLENUM_FINGERING && cellKey) {
+    return { kind: 'recordedFingering', key: `${beat}:${cellKey}`, cellKey };
   }
   if (styleNum === Note.STYLENUM_MIDIPITCHESSINGLE && cellKey) {
     return { kind: 'recordedHighlightSingle', key: `${beat}:${cellKey}`, cellKey };
@@ -364,6 +372,13 @@ function addScratchNote(scratch, layout, note, storageKind, beat, dropReason = '
       scratch.playedTinyBendCells.add(descriptor.key);
       scratch.playedAnyCells.add(descriptor.anyCell);
       break;
+    case 'playedFingering':
+      if (scratch.playedFingeringCells.has(descriptor.key)) {
+        return { accepted: false, reason: dropReason };
+      }
+      scratch.playedFingeringCells.add(descriptor.key);
+      scratch.playedAnyCells.add(descriptor.anyCell);
+      break;
     case 'playedAny':
       scratch.playedAnyCells.add(descriptor.anyCell);
       break;
@@ -377,6 +392,14 @@ function addScratchNote(scratch, layout, note, storageKind, beat, dropReason = '
     }
     case 'recordedTinyBend': {
       const set = getBeatSet(scratch.recordedTinyBendCellsByBeat, beat);
+      if (set.has(descriptor.cellKey)) {
+        return { accepted: false, reason: dropReason };
+      }
+      set.add(descriptor.cellKey);
+      break;
+    }
+    case 'recordedFingering': {
+      const set = getBeatSet(scratch.recordedFingeringCellsByBeat, beat);
       if (set.has(descriptor.cellKey)) {
         return { accepted: false, reason: dropReason };
       }
@@ -425,6 +448,9 @@ function shouldMoveStyle(styleNum, storageKind, include) {
   }
   if ((styleNum === Note.STYLENUM_MIDIPITCHESSINGLE || styleNum === Note.STYLENUM_MIDIPITCHES) && storageKind === 'recorded') {
     return include.highlights;
+  }
+  if (styleNum === Note.STYLENUM_FINGERING) {
+    return include.fingering;
   }
   return false;
 }

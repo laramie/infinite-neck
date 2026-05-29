@@ -64,6 +64,15 @@
     "visibleInMenu": false
   },
   {
+    "name": "includeFingering",
+    "caption": "fingering",
+    "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
     "name": "help",
     "caption": "help",
     "trigger": "h",

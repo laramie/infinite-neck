@@ -113,6 +113,7 @@ export class MovePlugin {
         this.getProperty('includeSingle').getMenuNodeSpec(this),
         this.getProperty('includeTiny').getMenuNodeSpec(this),
         this.getProperty('includeHighlights').getMenuNodeSpec(this),
+        this.getProperty('includeFingering').getMenuNodeSpec(this),
         this.getProperty('includePlayed').getMenuNodeSpec(this),
         this.getProperty('includeRecorded').getMenuNodeSpec(this)
       ]
@@ -208,7 +209,7 @@ export class MovePlugin {
 
   buildSummary(song = getSong()) {
     const tuning = this.getTargetTuning(song);
-    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} algorithm=${this.getProperty('algorithm')?.getValue()} motion=${this.getProperty('motion')?.getValue()} include single=${this.getProperty('includeSingle')?.getValue()} tiny=${this.getProperty('includeTiny')?.getValue()} highlights=${this.getProperty('includeHighlights')?.getValue()} played=${this.getProperty('includePlayed')?.getValue()} recorded=${this.getProperty('includeRecorded')?.getValue()} tuning=${tuning?.baseID || '<none>'}`;
+    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} algorithm=${this.getProperty('algorithm')?.getValue()} motion=${this.getProperty('motion')?.getValue()} include single=${this.getProperty('includeSingle')?.getValue()} tiny=${this.getProperty('includeTiny')?.getValue()} highlights=${this.getProperty('includeHighlights')?.getValue()} fingering=${this.getProperty('includeFingering')?.getValue()} played=${this.getProperty('includePlayed')?.getValue()} recorded=${this.getProperty('includeRecorded')?.getValue()} tuning=${tuning?.baseID || '<none>'}`;
   }
 
   buildHelpMessage(song = getSong()) {
@@ -222,6 +223,7 @@ Moves non-Named notes in the current section and selected table.
 - include single = ${this.getProperty('includeSingle')?.getValue()}
 - include tiny/bend = ${this.getProperty('includeTiny')?.getValue()}
 - include highlights = ${this.getProperty('includeHighlights')?.getValue()}
+- include fingering = ${this.getProperty('includeFingering')?.getValue()}
 - include played = ${this.getProperty('includePlayed')?.getValue()}
 - include recorded = ${this.getProperty('includeRecorded')?.getValue()}
 - apply counter = ${this.applyCounter}
@@ -237,6 +239,7 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
     if (this.getProperty('includeSingle')?.getValue()) include.push('s');
     if (this.getProperty('includeTiny')?.getValue()) include.push('t');
     if (this.getProperty('includeHighlights')?.getValue()) include.push('h');
+    if (this.getProperty('includeFingering')?.getValue()) include.push('f');
     if (this.getProperty('includePlayed')?.getValue()) include.push('p');
     if (this.getProperty('includeRecorded')?.getValue()) include.push('r');
     return `[${include.join(',')}]`;
@@ -331,11 +334,12 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
       single: !!this.getProperty('includeSingle')?.getValue(),
       tiny: !!this.getProperty('includeTiny')?.getValue(),
       highlights: !!this.getProperty('includeHighlights')?.getValue(),
+      fingering: !!this.getProperty('includeFingering')?.getValue(),
       played: !!this.getProperty('includePlayed')?.getValue(),
       recorded: !!this.getProperty('includeRecorded')?.getValue()
     };
 
-    if (!include.single && !include.tiny && !include.highlights) {
+    if (!include.single && !include.tiny && !include.highlights && !include.fingering) {
       this.appendNoopEntry(tableID, 'no-op warning: no note styles selected');
       return { result: 'Move apply: no-op, no note styles selected' };
     }

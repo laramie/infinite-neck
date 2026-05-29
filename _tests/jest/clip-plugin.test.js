@@ -422,7 +422,8 @@ describe('ClipPlugin', () => {
           playedNotes: [
             { noteName: 'C', styleNum: Note.STYLENUM_SINGLE, row: '0', col: '0' },
             { noteName: 'E', styleNum: Note.STYLENUM_TINY, row: '1', col: '2' },
-            { noteName: 'G', styleNum: Note.STYLENUM_BEND, row: '2', col: '5', bendValue: 'semitone1' }
+            { noteName: 'G', styleNum: Note.STYLENUM_BEND, row: '2', col: '5', bendValue: 'semitone1' },
+            { noteName: 'A', styleNum: Note.STYLENUM_FINGERING, row: '2', col: '6', finger: '3' }
           ]
         }
       })]
@@ -433,8 +434,9 @@ describe('ClipPlugin', () => {
     plugin.setManager({ song });
     plugin.getVisibleMenuChildren();
     plugin.setPropertyValue('includeBend', false, { song });
+    plugin.setPropertyValue('includeFingering', true, { song });
 
-    expect(plugin.resolveValue('includeSummary', { song })).toBe(' [n:2,s:1,t:1]');
+    expect(plugin.resolveValue('includeSummary', { song })).toBe(' [n:2,s:1,t:1,f:1]');
   });
 
   test('copy stores a CLIP graveyard record with stripped owner fields and default naming', () => {
@@ -466,7 +468,7 @@ describe('ClipPlugin', () => {
     expect(song.graveyard.records[0].type).toBe(GraveType.CLIP);
     expect(song.graveyard.records[0].context.tableID).toBe(tableID);
     const payload = JSON.parse(song.graveyard.records[0].json);
-    expect(payload.counts).toEqual({ named: 1, single: 1, tiny: 0, bend: 1 });
+    expect(payload.counts).toEqual({ named: 1, single: 1, tiny: 0, bend: 1, fingering: 0 });
     expect(payload.sectionNotes.namedNotes.C.owner).toBeUndefined();
     expect(payload.sectionNotes.playedNotes.every((note) => note.owner == null)).toBe(true);
   });
@@ -509,6 +511,73 @@ describe('ClipPlugin', () => {
     expect(getPlayedNotes(section, tableID).map((note) => note.styleNum)).toEqual([Note.STYLENUM_TINY]);
     expect(Object.keys(getNamedNotes(section, `${Constants.TABLE_ID_PREFIX}P48`))).toEqual(['G']);
     expect(song.requestUiFullRepaint).toHaveBeenCalled();
+  });
+
+  test('copy includes played fingering when includeFingering is enabled', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const song = createSong({
+      myTunings: [createTuning()],
+      sections: [createSection({
+        [tableID]: {
+          playedNotes: [
+            { noteName: 'D', styleNum: Note.STYLENUM_SINGLE, row: '0', col: '2', owner: 'FillPlugin' },
+            { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '2', owner: 'MovePlugin' }
+          ]
+        }
+      })]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeNamed', false, { song });
+    plugin.setPropertyValue('includeTiny', false, { song });
+    plugin.setPropertyValue('includeBend', false, { song });
+    plugin.setPropertyValue('includeFingering', true, { song });
+
+    const result = plugin.invokeAction('copyToGraveyard', { song, args: {} });
+
+    expect(result.result).toMatch(/single-1-fingering-1-\d{4}/);
+    const payload = JSON.parse(song.graveyard.records[0].json);
+    expect(payload.counts).toEqual({ named: 0, single: 1, tiny: 0, bend: 0, fingering: 1 });
+    expect(payload.sectionNotes.playedNotes.map((note) => note.styleNum)).toEqual([
+      Note.STYLENUM_SINGLE,
+      Note.STYLENUM_FINGERING
+    ]);
+    expect(payload.sectionNotes.playedNotes[1].finger).toBe('2');
+    expect(payload.sectionNotes.playedNotes.every((note) => note.owner == null)).toBe(true);
+  });
+
+  test('cut removes played fingering only when includeFingering is enabled', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const section = createSection({
+      [tableID]: {
+        playedNotes: [
+          { noteName: 'D', styleNum: Note.STYLENUM_SINGLE, row: '0', col: '2' },
+          { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '1' }
+        ]
+      }
+    });
+    const song = createSong({
+      myTunings: [createTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeNamed', false, { song });
+    plugin.setPropertyValue('includeSingle', false, { song });
+    plugin.setPropertyValue('includeTiny', false, { song });
+    plugin.setPropertyValue('includeBend', false, { song });
+    plugin.setPropertyValue('includeFingering', true, { song });
+
+    const result = plugin.invokeAction('cutToGraveyard', { song, args: { value: 'digits' } });
+
+    expect(result.result).toContain('removed named=0 played=1');
+    expect(getPlayedNotes(section, tableID).map((note) => note.styleNum)).toEqual([Note.STYLENUM_SINGLE]);
   });
 
   test('revive input defaults to clip 1 and choice 1 revives the newest compatible clip', () => {
@@ -664,6 +733,147 @@ describe('ClipPlugin', () => {
     expect(result.result).toContain('played +0 overwrite 2 skip 0');
     expect(getNamedNotes(section, tableID).C.colorClass).toBe('noteScale');
     expect(getPlayedNotes(section, tableID).map((note) => note.noteName)).toEqual(['D', 'E']);
+  });
+
+  test('revive skips same-cell fingering when overwrite is false and preserves finger payloads', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const graveyard = {
+      records: [
+        {
+          type: GraveType.CLIP,
+          context: { userKey: 'digits', baseID: 'P46', tableID },
+          json: JSON.stringify({
+            sectionNotes: {
+              namedNotes: {},
+              playedNotes: [
+                { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '4', colorClass: 'noteChord' }
+              ]
+            }
+          }),
+          lastRevived: null
+        }
+      ]
+    };
+    const section = createSection({
+      [tableID]: {
+        playedNotes: [
+          { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '1', colorClass: 'noteRoot' }
+        ]
+      }
+    });
+    const song = createSong({
+      myTunings: [createTuning()],
+      sections: [section],
+      graveyard
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('overwrite', false, { song });
+
+    const result = plugin.invokeAction('reviveClip:0', { song });
+
+    expect(result.result).toContain('played +0 overwrite 0 skip 1');
+    expect(getPlayedNotes(section, tableID)).toHaveLength(1);
+    expect(getPlayedNotes(section, tableID)[0].finger).toBe('1');
+  });
+
+  test('revive overwrites same-cell fingering when overwrite is true', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const graveyard = {
+      records: [
+        {
+          type: GraveType.CLIP,
+          context: { userKey: 'digits', baseID: 'P46', tableID },
+          json: JSON.stringify({
+            sectionNotes: {
+              namedNotes: {},
+              playedNotes: [
+                { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '4', colorClass: 'noteChord' }
+              ]
+            }
+          }),
+          lastRevived: null
+        }
+      ]
+    };
+    const section = createSection({
+      [tableID]: {
+        playedNotes: [
+          { noteName: 'E', styleNum: Note.STYLENUM_FINGERING, row: '1', col: '3', finger: '1', colorClass: 'noteRoot' }
+        ]
+      }
+    });
+    const song = createSong({
+      myTunings: [createTuning()],
+      sections: [section],
+      graveyard
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+
+    const result = plugin.invokeAction('reviveClip:0', { song });
+
+    expect(result.result).toContain('played +0 overwrite 1 skip 0');
+    expect(getPlayedNotes(section, tableID)).toHaveLength(1);
+    expect(getPlayedNotes(section, tableID)[0].finger).toBe('4');
+    expect(getPlayedNotes(section, tableID)[0].colorClass).toBe('noteChord');
+  });
+
+  test('midi paste preserves fingering payload while remapping location fields', () => {
+    const sourceTableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const section = createSection({
+      [sourceTableID]: {
+        playedNotes: [
+          { noteName: 'A', styleNum: Note.STYLENUM_FINGERING, midinum: '69', row: '0', col: '5', finger: '3', colorClass: 'noteTransparent' }
+        ]
+      },
+      [targetTableID]: {
+        playedNotes: []
+      }
+    });
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6', rowRange: [64, 59, 55, 50, 45, 40], frets: 24 }),
+        createTuning({ baseID: 'P46_1', fromBaseID: 'P46', rowRange: [65, 60, 55, 50, 45, 40], frets: 24 })
+      ],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('targetTable', sourceTableID, { song });
+    plugin.setPropertyValue('includeNamed', false, { song });
+    plugin.setPropertyValue('includeSingle', false, { song });
+    plugin.setPropertyValue('includeTiny', false, { song });
+    plugin.setPropertyValue('includeBend', false, { song });
+    plugin.setPropertyValue('includeFingering', true, { song });
+
+    plugin.invokeAction('copyToGraveyard', { song, args: { value: 'fingering-midi' } });
+
+    plugin.setPropertyValue('targetTable', targetTableID, { song });
+    plugin.setPropertyValue('automatic', false, { song });
+
+    const result = plugin.invokeAction('midiPasteClipChoice', { song, args: { value: '1' } });
+
+    expect(result.result).toContain('played +1 overwrite 0 skip 0');
+    expect(getPlayedNotes(section, targetTableID)).toHaveLength(1);
+    expect(getPlayedNotes(section, targetTableID)[0]).toMatchObject({
+      styleNum: Note.STYLENUM_FINGERING,
+      finger: '3',
+      row: '0',
+      col: '4',
+      midinum: '69',
+      noteName: 'A'
+    });
   });
 
   test('clearClips removes only CLIP graveyard records', () => {

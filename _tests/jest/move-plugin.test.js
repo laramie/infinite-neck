@@ -267,6 +267,24 @@ describe('MovePlugin', () => {
     expect(plugin.exportSongState().includeRecorded).toBe(true);
   });
 
+  test('include summary includes the fingering flag without changing persisted include properties', () => {
+    const song = createSong({
+      myTunings: [createTuning({ baseID: 'S6_1', banjoNut: {} })],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeFingering', true, { song });
+    plugin.setPropertyValue('includePlayed', true, { song });
+
+    expect(plugin.resolveValue('includeSummary', { song })).toBe(' [f,p]');
+    expect(plugin.exportSongState().includeFingering).toBe(true);
+    expect(plugin.exportSongState().includePlayed).toBe(true);
+  });
+
   test('showDroppedNotes returns JSON content for showMessagesJSON', () => {
     const song = createSong({
       myTunings: [createTuning({ baseID: 'S6_1', banjoNut: {} })],
@@ -343,6 +361,162 @@ describe('MovePlugin', () => {
     plugin.setManager({ song });
     plugin.getVisibleMenuChildren();
     plugin.setPropertyValue('includeSingle', true, { song });
+    plugin.setPropertyValue('includeRecorded', true, { song });
+    plugin.setPropertyValue('motion', 'u', { song });
+
+    const result = plugin.invokeAction('apply', { song });
+
+    expect(result.result).toContain('moved 0');
+    expect(sectionNotes.recordedNotes['1']).toBeUndefined();
+    expect(plugin.droppedNotes.some((entry) => entry.reason === 'played note takes precedence')).toBe(true);
+  });
+
+  test('played fingering moves when includeFingering and includePlayed are enabled', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '2' }
+      ]
+    });
+    const section = createSection({ [tableID]: sectionNotes });
+    const song = createSong({
+      myTunings: [tuning],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeFingering', true, { song });
+    plugin.setPropertyValue('includePlayed', true, { song });
+    plugin.setPropertyValue('motion', 'u', { song });
+
+    const result = plugin.invokeAction('apply', { song });
+
+    expect(result.result).toContain('moved 1');
+    expect(sectionNotes.playedNotes).toHaveLength(1);
+    expect(sectionNotes.playedNotes[0].styleNum).toBe(Note.STYLENUM_FINGERING);
+    expect(sectionNotes.playedNotes[0].midinum).toBe('63');
+    expect(sectionNotes.playedNotes[0].row).toBe('0');
+    expect(sectionNotes.playedNotes[0].col).toBe('1');
+    expect(sectionNotes.playedNotes[0].finger).toBe('2');
+  });
+
+  test('recorded fingering moves when includeFingering and includeRecorded are enabled', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const sectionNotes = createSectionNotes({
+      recordedNotes: {
+        '2': [
+          { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '3' }
+        ]
+      }
+    });
+    const section = createSection({ [tableID]: sectionNotes });
+    const song = createSong({
+      myTunings: [tuning],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeFingering', true, { song });
+    plugin.setPropertyValue('includeRecorded', true, { song });
+    plugin.setPropertyValue('motion', 'u', { song });
+
+    const result = plugin.invokeAction('apply', { song });
+
+    expect(result.result).toContain('moved 1');
+    expect(sectionNotes.recordedNotes['2']).toHaveLength(1);
+    expect(sectionNotes.recordedNotes['2'][0].styleNum).toBe(Note.STYLENUM_FINGERING);
+    expect(sectionNotes.recordedNotes['2'][0].midinum).toBe('63');
+    expect(sectionNotes.recordedNotes['2'][0].row).toBe('0');
+    expect(sectionNotes.recordedNotes['2'][0].col).toBe('1');
+    expect(sectionNotes.recordedNotes['2'][0].finger).toBe('3');
+  });
+
+  test('played fingering duplicate landing on the same cell is dropped', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '2' },
+        { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '3' }
+      ]
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'u',
+      algorithm: 'octave',
+      include: { single: false, tiny: false, highlights: false, fingering: true, played: true, recorded: false },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'octave', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.playedNotes).toHaveLength(1);
+    expect(result.droppedEntries).toHaveLength(1);
+  });
+
+  test('recorded fingering duplicate landing on the same beat and cell is dropped', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      recordedNotes: {
+        '1': [
+          { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '2' },
+          { noteName: 'D', styleNum: Note.STYLENUM_FINGERING, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent', finger: '3' }
+        ]
+      }
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'u',
+      algorithm: 'octave',
+      include: { single: false, tiny: false, highlights: false, fingering: true, played: false, recorded: true },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'octave', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.recordedNotes['1']).toHaveLength(1);
+    expect(result.droppedEntries).toHaveLength(1);
+  });
+
+  test('recorded fingering still drops when moved destination is occupied by a played note', () => {
+    const tuning = createTuning({ baseID: 'S6_1', banjoNut: {} });
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        { noteName: 'D', styleNum: Note.STYLENUM_SINGLE, midinum: '62', row: '0', col: '0', colorClass: 'noteTransparent' }
+      ],
+      recordedNotes: {
+        '1': [
+          { noteName: 'Db', styleNum: Note.STYLENUM_FINGERING, midinum: '61', row: '0', col: '0', colorClass: 'noteTransparent', finger: '4' }
+        ]
+      }
+    });
+    const section = createSection({ [tableID]: sectionNotes });
+    const song = createSong({
+      myTunings: [tuning],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new MovePlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('includeFingering', true, { song });
     plugin.setPropertyValue('includeRecorded', true, { song });
     plugin.setPropertyValue('motion', 'u', { song });
 

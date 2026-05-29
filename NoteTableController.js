@@ -953,6 +953,10 @@ function normalizeDisplayPartClass(partClass = 'namedNote') {
     return `${partClass || 'namedNote'}`.replace(/^\./, '');
 }
 
+function hasJQueryDomAccess() {
+    return typeof $ === 'function';
+}
+
 const TRANSIENT_NAMED_NOTE_OWNER_ATTR = 'data-transient-named-note-owner';
 const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-class';
 const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
@@ -1026,6 +1030,9 @@ export function clearTransientNamedNotes(owner = '') {
 }
 
 export function clearTransientDiamondPositions(owner = '', tableID = '') {
+    if (!hasJQueryDomAccess()) {
+        return;
+    }
     const ownerSelector = owner
         ? `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}='${owner}']`
         : `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}]`;
@@ -1044,6 +1051,9 @@ export function findNoteCell(tableID, cellrow, cellcol) {
 }
 
 export function findDiamondCell(tableID, cellcol) {
+    if (!hasJQueryDomAccess()) {
+        return null;
+    }
     return $("table[id='"+tableID+"'] tr.diamondsRow.NotAString > td.diamonds[cellcol='"+cellcol+"']").first();
 }
 
@@ -1101,8 +1111,11 @@ export function showNamedNotesAtCells(cells = [], options = {}) {
 }
 
 export function showDiamondPositionAtCell(tableID, cellcol, owner = '') {
+    if (!hasJQueryDomAccess()) {
+        return false;
+    }
     const cell = findDiamondCell(tableID, cellcol);
-    if (cell.length === 0) {
+    if (!cell || cell.length === 0) {
         return false;
     }
     if (owner) {
@@ -1113,6 +1126,9 @@ export function showDiamondPositionAtCell(tableID, cellcol, owner = '') {
 }
 
 export function showDiamondPositionRange(tableID, minFret, maxFret, options = {}) {
+    if (!hasJQueryDomAccess()) {
+        return 0;
+    }
     const clearExisting = !!options.clearExisting;
     const owner = options.owner || '';
 
