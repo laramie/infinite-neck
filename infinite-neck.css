@@ -932,7 +932,7 @@ td.transposeCurrentAppliedInterval {
 }
 
 td.arpeggioCurrentPositionPair {
-    background-color: #ff7f50;
+    background-color: chartreuse;
     font-weight: bold;
     color: black;
     border: 1px solid black;
