@@ -635,6 +635,14 @@ export function performCmdAction(menuItem, args){
 			spacebarActionName = 'resetSongHard';
 			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
 			break;
+		case "mapSpacebar_toggleLoopSections":
+			spacebarActionName = 'toggleLoopSections';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_toggleLoopBeats":
+			spacebarActionName = 'toggleLoopBeats';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
 		case "mapSpacebar_unsetSpacebarAction":
 			spacebarActionName = '';
 			actionResult.result = 'spacebar unmapped';

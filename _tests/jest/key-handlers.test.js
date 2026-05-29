@@ -250,6 +250,34 @@ describe('key-handlers spacebar mapping', () => {
 		expect(clearAndReplaySection).not.toHaveBeenCalled();
 	});
 
+	test('spacebar can be mapped to loop toggles', () => {
+		performCmdAction({ action: 'mapSpacebar_toggleLoopSections' });
+		const sectionLoopEvent = {
+			key: ' ',
+			code: 'Space',
+			target: { tagName: 'BODY' },
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(sectionLoopEvent);
+
+		expect(sectionLoopEvent.preventDefault).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.toggleLoopSections).toHaveBeenCalledTimes(1);
+
+		performCmdAction({ action: 'mapSpacebar_toggleLoopBeats' });
+		const beatLoopEvent = {
+			key: ' ',
+			code: 'Space',
+			target: { tagName: 'BODY' },
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(beatLoopEvent);
+
+		expect(beatLoopEvent.preventDefault).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.toggleLoopBeats).toHaveBeenCalledTimes(1);
+	});
+
 	test('mapped spacebar ignores text inputs', () => {
 		performCmdAction({ action: 'mapSpacebar_lastSection' });
 		const event = {

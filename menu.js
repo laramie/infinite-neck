@@ -118,6 +118,11 @@ export var gMenuFile =    {
               "trigger": "s",
               "children": [
                 {
+                  "caption": "<b>s</b>ection loop",
+                  "trigger": "s",
+                  "action": "mapSpacebar_toggleLoopSections"
+                },
+                {
                   "caption": "<b>f</b>irst",
                   "trigger": "f",
                   "action": "mapSpacebar_firstSection"
@@ -148,6 +153,11 @@ export var gMenuFile =    {
               "caption": "<b>b</b>eats",
               "trigger": "b",
               "children": [
+                {
+                  "caption": "<b>b</b>eat loop",
+                  "trigger": "b",
+                  "action": "mapSpacebar_toggleLoopBeats"
+                },
                 {
                   "caption": "<b>f</b>irst",
                   "trigger": "f",
