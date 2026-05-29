@@ -32,6 +32,13 @@
             margin-top: 2em;
            margin-left: 3em;
        }
+        P {
+           padding-left: 4em;
+       }
+       #helpBody > TABLE {
+        margin-left: 2em;
+       }
+
         .helpButton {
            background-color: orange;
            box-shadow: 1pt 1pt 2pt 0.5pt gray;
@@ -1262,7 +1269,134 @@
     </table>
 <br>
 <h1 id="PluginHelpTopics">Plugin Help Topics</h1>
+<style>
+.npmNO {
 
+    background-color: darkslategray;
+}
+.npmSee {
+    background-color: lightblue;
+}
+.npmNamedNotes, .npmPlayedNotes, .npmRecordedNotes {
+    font-family: "Kode Mono", monospace;
+    font-weight: bold;
+    font-size: 130%;
+    padding: 0.5em;
+}
+.npmNamedNotes {
+    background-color: black;
+    color: cyan;
+}
+.npmPlayedNotes {
+    background-color: black;
+    color: chartreuse;
+}
+.npmRecordedNotes{
+    background-color: black;
+    color: red;
+}
+#notePluginMatrix th {
+    background-color: #fbb23d;
+
+}
+#notePluginMatrix td {
+    padding: 0.2em;
+}
+.npmNT {
+    background-color: rgb(210, 255, 166);
+}
+.npmNTR {
+    background-color: rgb(250, 183, 135);
+}
+</style>
+<h2>Matrix of which Note types work with which Plugins</h2>
+<p>
+<table border="1" id="notePluginMatrix">
+    <tr>
+        <th colspan="2">Note type</th>
+        
+        <th>Clip</th>
+        <th>Move</th>
+        <th>Fill</th>
+        <th>Arpeggio</th>
+        <th>Transpose</th>
+    </tr>
+    <tr>
+        <td colspan="2" class="npmNamedNotes">NamedNotes</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+    </tr>
+    <tr>
+        <td rowspan="5" class="npmPlayedNotes">PlayedNotes</td>
+    </tr>
+    <tr>
+        <td class="npmNT">SingleNote</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td class="npmNO"></td>
+        <td class="npmSee">&checkmark;&nbsp;<b>"string"</b></td>
+    </tr>
+    <tr>
+        <td class="npmNT">TinyNote</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td class="npmNO"></td>
+        <td class="npmNO"></td>
+    </tr>
+    <tr>
+        <td class="npmNT">Bend</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td class="npmNO"></td>
+        <td class="npmNO"></td>
+        <td class="npmNO"></td>
+    </tr>
+    <tr>
+        <td class="npmNT">Fingering</td>
+        <td>&checkmark;</td>
+        <td>&checkmark;</td>
+        <td class="npmNO"></td>
+        <td class="npmNO"></td>
+        <td class="npmNO"></td>
+    </tr>
+    <tr>
+        <td rowspan="6" class="npmRecordedNotes">RecordedNotes</td>
+    </tr>
+    <tr>
+        <td class="npmNTR">SingleNote</td>
+        <td rowspan="5" class="npmNO"></td>
+        <td>&checkmark;</td>
+        <td rowspan="5" class="npmNO"></td>
+        <td rowspan="5" class="npmNO"></td>
+        <td rowspan="5" class="npmNO"></td>
+    </tr>
+    <tr>
+        <td class="npmNTR">TinyNote</td>
+        <td>&checkmark;</td>
+    </tr>
+    <tr>
+        <td class="npmNTR">Bend</td>
+        <td>&checkmark;</td>
+    </tr>
+    <tr>
+        <td class="npmNTR">Fingering</td>
+        <td>&checkmark;</td>
+    </tr>
+    <tr>
+        <td class="npmNTR">Highlight</td>
+        <td class="npmNO"></td>
+    </tr>
+</table>
+
+
+</p>
+
+<h2>The Plugins</h2>
 <p>The plugins were written to be somewhat independent of the main User Interface in infinite-neck.  So they are entirely driven by the command-line.  You can learn about <a href="help.html#commandline">using the command-line</a> in the main helpfile.</p>
 
 <p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>

@@ -1963,11 +1963,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnNextBeat', function() {
 			runActionByName('nextBeat');
 		});
-		bindEvent('click', '#transport button', function() {
+		bindDelegatedEvent('click', '#transport button', function() {
 			if ($(this).closest('#sectionDrawer').length > 0) {
 				return;
 			}
-			$(this).trigger('blur');
+			this.blur();
 		});
 		bindEvent('change', '#txtFilename', function() {
 			getSong().songName = $(this).val();
