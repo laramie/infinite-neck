@@ -4,6 +4,7 @@
 import * as Constants from './Constants.js';
 import { setOneCssVar } from './themeFunctions.js';
 import { decoratePianoSkeuomorphicTable } from './templates/piano/piano-skeuomorphic.builder.js';
+import { getDiamondMarkerFret, getDisplayedCellcol } from './table-column-helpers.js';
 
 
 
@@ -92,10 +93,10 @@ export function buildNoteTable(options) {
 
 			if (options.reverse) {
 				midinum = options.rowRange[r] + options.frets - c;
-				colDisplay = options.frets - c;
+				colDisplay = getDisplayedCellcol(options, c);
 			} else {
 				midinum = options.rowRange[r] + c;
-				colDisplay = c;
+				colDisplay = getDisplayedCellcol(options, c);
 			}
 			noteName = Constants.midinumToNoteName(midinum);
 			var noteClass = "note" + noteName;//"noteD";
@@ -340,31 +341,25 @@ export function diamondsRow(options) {
 	//diamondRow.addClass('diamonds');
 	diamondRow.addClass('NotAString');
 	var nCols = options.nut ? options.frets + 1 : options.frets;
-	var dcwn;
 	for (var dc = 0; dc < nCols; dc++) {
 		var td = $('<td>');
 		td.addClass('diamonds');
-		dcwn = dc;  //short for DiamondColumnWithNut
+		var displayedCellcol = getDisplayedCellcol(options, dc);
+		var markerFret = getDiamondMarkerFret(options, dc);
 		if (options.reverse) {
 			if (options.nut) {
-				dcwn = (options.frets - 1) - dc;
 				if (dc == (nCols - 1)) td.addClass("diamondRowSupernut");
-			} else {
-				dcwn = options.frets - dc;
 			}
 		} else {
 			if (options.nut) {
-				dcwn = dc - 1;
 				if (dc == 0) td.addClass("diamondRowSupernut");
-			} else {
-				dcwn = dc;
 			}
 		}
-		td.attr('cellcol', dcwn);
+		td.attr('cellcol', displayedCellcol);
 		td.attr('celltable', tableID);
-		if (dblArr.includes(dcwn + 1)) {  //user reads JSON file value as 1-based.
+		if (dblArr.includes(markerFret)) {
 			td.html(doubleDiamonds);
-		} else if (arr.includes(dcwn + 1)) {
+		} else if (arr.includes(markerFret)) {
 			td.html(singleDiamond);
 		} else {
 			td.html("&nbsp;");
