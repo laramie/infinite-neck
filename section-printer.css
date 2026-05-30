@@ -7,6 +7,20 @@
   border-spacing: 0;
 }
 
+#sectionPrintNotesScroller {
+  display: block;
+  width: 1px;
+  min-width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+#sectionPrintNotesChart {
+  min-width: 100%;
+  width: max-content;
+}
+
 .sectionPrintNotes th {
   border: 1px solid gray;
   padding: 0.4em;

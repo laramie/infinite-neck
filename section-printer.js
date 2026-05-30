@@ -106,7 +106,7 @@ export function printSectionsNotes(theSong, theSections){
         });
     });
 
-    let result = "<table class='sectionPrintNotes'><tr>"
+    let result = "<div id='sectionPrintNotesScroller'><table id='sectionPrintNotesChart' class='sectionPrintNotes'><tr>"
         + "<th class='SPN_TH' rowspan='2'>ID</th>"
         + "<th class='SPN_TH' rowspan='2'>beats</th>"
         + "<th class='SPN_TH' rowspan='2'>KEY</th>"
@@ -174,7 +174,7 @@ export function printSectionsNotes(theSong, theSections){
         result += "</tr>";
     });
 
-    return result + "</table>";
+    return result + "</table></div>";
 }
 
 
