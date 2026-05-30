@@ -1,12 +1,11 @@
 import fs from 'fs';
-import path from 'path';
 
 
 import * as SectionPrinter from './section-printer.js';
 import { Song } from './Song.js';
 import { ANSIColors } from './bin/ANSIColors.js';
 import {
-    getTonal
+    getTonalForTable
 } from './TonalFunctions.js';
 
 function loadSong(songFileRelPath){
@@ -16,14 +15,16 @@ function loadSong(songFileRelPath){
 }
 
 function main(){
-    const SONGFILE = './songs/tests/persistence/forward-backward-observers.json';
+    const SONGFILE = process.argv[2] || './songs/tests/persistence/forward-backward-observers.json';
     let song = loadSong(SONGFILE);
     //console.log("Song round-trip: \n"+JSON.stringify(song, null, 4));
     console.log(JSON.stringify(song, null, 4));
     song.getSections().forEach((s, idx) => {
         console.log(ANSIColors.red("Section["+idx+"]"));
         console.log(ANSIColors.cyan(SectionPrinter.getSectionNotesDisplayString(s)));
-        console.log(ANSIColors.yellow(JSON.stringify(getTonal(song, s))));
+        s.getAllSectionNotes().forEach(([tableID]) => {
+            console.log(ANSIColors.yellow(`${tableID}: ${JSON.stringify(getTonalForTable(song, s, tableID), null, 4)}`));
+        });
     });
 
     //console.log(ANSIColors.green("Song round-trip w/replacer:"));
@@ -33,6 +34,7 @@ function main(){
 /** run with something like this: 
     laramie@penguin:~/infinite-neck$ export FORCE_COLOR=1
     laramie@penguin:~/infinite-neck$ node SongHeadless.js
+        laramie@penguin:~/infinite-neck$ node SongHeadless.js ./songs/tests/persistence/forward-backward-observers.json
  */
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();

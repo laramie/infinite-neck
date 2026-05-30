@@ -165,6 +165,7 @@ export function printSectionsNotes(theSong, theSections){
                                                         tonalResult.scale,  section.chartMode,
                                                         tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
             result += "<td><div class='SPN_CC'>" 
+                            +(tonalResult.rootKey ? `<b>noteRoot:${tonalResult.noteRootTablename}:${tonalResult.rootKey}</b>&raquo;` : '')
                             +chartChordsNotes+':'
                             +tonalPickerSet
                             +"</div></td>";

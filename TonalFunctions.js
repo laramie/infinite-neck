@@ -14,37 +14,24 @@ export const TonalSourceSet = Object.freeze({
     TINYNOTE: 'TinyNote'
 });
 
-export function getTonal(theSong, section){
-    let tablesResult = {};
-    let rootKey = theSong.noteIDToNoteName(section.rootID);
-    section.getAllSectionNotes().forEach(([tableID, sn]) => {
-        let result = {};
-        let tonalSourceSet = getEffectiveTonalSourceSet(sn);
-        let namedNotes = collectTonalSourceNoteNames(sn, tonalSourceSet);
-        let normalizedNamedNotes = normalizeChord(namedNotes, rootKey);
-        let chords = Chord.detect(normalizedNamedNotes);
-        result.normalizedNamedNotes = normalizedNamedNotes;
-        result.chords = chords;
-        result.scale = [];
-        if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
-            let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-            result.scale = filterWesternScales(worldScales);
-        }
-        result.chord = sn.chord;
-        result.mode = sn.mode;
-        result.tonalSourceSet = tonalSourceSet;
-        tablesResult[tableID] = result;
-    });
-    return tablesResult;
-}
-
 export function getTonalForTable(theSong, section, tablename){
-    let rootKey = theSong.noteIDToNoteName(section.rootID);
     let result = {};
+    let rootKey = theSong.noteIDToNoteName(section.rootID);
+    result.rootKey = rootKey;
+    let sectionNoteRootResult = section.getNoteRoot(tablename);//search order: tablename has a Note with `"colorClass": "noteRoot"`, then any other table in section (order: namedNotes, playedNotes, then recordedNotes), and pass back the "noteName" and the tablename, or null if nobody had it.
+    if (sectionNoteRootResult){
+        rootKey = sectionNoteRootResult.noteName;
+        result.rootKey = rootKey;
+        result.noteRootTablename = sectionNoteRootResult.tablename; 
+    }
     let tableSectionNotes = section.sectionNotesByTable?.[tablename] || null;
     let tonalSourceSet = getEffectiveTonalSourceSet(tableSectionNotes);
     let namedNotes = collectTonalSourceNoteNames(tableSectionNotes, tonalSourceSet);
-    let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
+    let noteNamesForDetection = namedNotes.slice();
+    if (result.rootKey && !noteNamesForDetection.includes(result.rootKey)) {
+        noteNamesForDetection.unshift(result.rootKey);
+    }
+    let normalizedNamedNotes = normalizeChord(noteNamesForDetection, rootKey);
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
     result.scale = [];

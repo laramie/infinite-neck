@@ -1,6 +1,6 @@
 import { Note } from '../../Note.js';
 import { SectionNotes } from '../../SectionNotes.js';
-import { getTonal, getTonalForTable, TonalSourceSet } from '../../TonalFunctions.js';
+import { getTonalForTable, TonalSourceSet } from '../../TonalFunctions.js';
 
 function createSongMock(rootKey = 'C') {
     return {
@@ -14,6 +14,27 @@ function createSection(sectionNotesByTable, rootID = '3') {
     return {
         rootID,
         sectionNotesByTable,
+        getNoteRoot(tablename) {
+            const orderedTables = [];
+            if (tablename && this.sectionNotesByTable?.[tablename]) {
+                orderedTables.push([tablename, this.sectionNotesByTable[tablename]]);
+            }
+            Object.entries(this.sectionNotesByTable || {}).forEach(([tableID, sectionNotes]) => {
+                if (tableID !== tablename) {
+                    orderedTables.push([tableID, sectionNotes]);
+                }
+            });
+
+            for (const [tableID, sectionNotes] of orderedTables) {
+                for (const [noteName, note] of Object.entries(sectionNotes?.namedNotes || {})) {
+                    if (note?.colorClass === 'noteRoot') {
+                        return { noteName, tablename: tableID };
+                    }
+                }
+            }
+
+            return null;
+        },
         getAllSectionNotes() {
             return Object.entries(this.sectionNotesByTable);
         }
@@ -129,22 +150,25 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.scale).toEqual(['C major', 'C lydian']);
     });
 
-    test('getTonal returns tonalSourceSet per table using the same shared extraction logic', () => {
+    test('NamedNote source injects noteRoot ahead of the collected notes before chord detection', () => {
+        const tableID = 'tblP46_1';
+        const rootTableID = 'BASS_1';
         const section = createSection({
-            tblOne: new SectionNotes({
+            [tableID]: new SectionNotes({
+                tonalSourceSet: TonalSourceSet.NAMEDNOTE,
                 namedNotes: createNamedNotes(['C', 'E', 'G'])
             }),
-            tblTwo: new SectionNotes({
-                tonalSourceSet: TonalSourceSet.SINGLENOTE,
-                playedNotes: createPlayedNotes(['C', 'E', 'G', 'B'], Note.STYLENUM_SINGLE)
+            [rootTableID]: new SectionNotes({
+                namedNotes: {
+                    B: { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteRoot' }
+                }
             })
         });
 
-        const result = getTonal(createSongMock('C'), section);
+        const result = getTonalForTable(createSongMock('C'), section, tableID);
 
-        expect(result.tblOne.tonalSourceSet).toBe(TonalSourceSet.NAMEDNOTE);
-        expect(result.tblOne.chords).toEqual(['CM', 'Em#5/C']);
-        expect(result.tblTwo.tonalSourceSet).toBe(TonalSourceSet.SINGLENOTE);
-        expect(result.tblTwo.chords).toEqual(['Cmaj7']);
+        expect(result.rootKey).toBe('B');
+        expect(result.noteRootTablename).toBe(rootTableID);
+        expect(result.normalizedNamedNotes).toEqual(['B', 'C', 'E', 'G']);
     });
 });
