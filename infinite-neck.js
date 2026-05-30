@@ -1190,6 +1190,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divChartSummaryTab").html(SectionPrinter.printSections(getSong(), getSections(), false));
 		$("#divChartDetailsTab").html(SectionPrinter.printSections(getSong(), getSections(), true));
 		$("#divChartNotesTab")  .html(SectionPrinter.printSectionsNotes(getSong(), getSections()));
+		$("#divChartTab")       .html(SectionPrinter.printChart(getSong(), getSections()));
 	}
 
 	export function printSections(showDetail) {
@@ -1206,6 +1207,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		updatePrintSections();
 		showChartTab("Notes");
 		showOneMenu("#divChart", true);
+	}
+
+	export function linkToSectionChartPosition(idx, chartPosition) {
+		getSong().sections[idx].chartPosition = chartPosition;
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSectionChartCaptionWidth(idx, chartCaptionWidth) {
+		getSong().sections[idx].chartCaptionWidth = chartCaptionWidth;
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
 	}
 
 	export function linkToSection(idx) {
@@ -1699,10 +1716,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var showNotesTab = which === "Notes";
 		var showSummaryTab = which === "Summary";
 		var showDetailsTab = which === "Details";
+		var showChartOnlyTab = which === "Chart";
 		
 		$('#divChartSummaryTab').toggle(showSummaryTab);
 		$('#divChartNotesTab').toggle(showNotesTab);
 		$('#divChartDetailsTab').toggle(showDetailsTab);
+		$('#divChartTab').toggle(showChartOnlyTab);
 
 		$('#btnChartSummaryTab')
 			.toggleClass('BtnPunchedIn', showSummaryTab)
@@ -1712,7 +1731,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.toggleClass('BtnPunchedOut', !showNotesTab);
 		$('#btnChartDetailsTab')
 			.toggleClass('BtnPunchedIn', showDetailsTab)
-			.toggleClass('BtnPunchedOut', !showDetailsTab);	
+			.toggleClass('BtnPunchedOut', !showDetailsTab);
+		$('#btnChartTab')
+			.toggleClass('BtnPunchedIn', showChartOnlyTab)
+			.toggleClass('BtnPunchedOut', !showChartOnlyTab);	
 	}
 
 	export function bindDesktopEvents(){
@@ -1780,6 +1802,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtCaption, .inputTuningID', commitFieldOnEnter);
+		bindDelegatedEvent('change', '.sectionChartPositionSelect', function() {
+			const idx = toInt($(this).data('section-idx'), -1);
+			if (idx >= 0) {
+				linkToSectionChartPosition(idx, $(this).val());
+			}
+		});
+		bindDelegatedEvent('change', '.sectionChartCaptionWidthSelect', function() {
+			const idx = toInt($(this).data('section-idx'), -1);
+			if (idx >= 0) {
+				linkToSectionChartCaptionWidth(idx, $(this).val());
+			}
+		});
 		bindDelegatedEvent('keydown', '#txtColorSchemeName', function(e) {
 			if (!isPlainEnterKey(e)) {
 				return;
@@ -1819,6 +1853,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnChartDetailsTab', function() {
 			showChartTab("Details");
+		});
+		bindEvent('click', '#btnChartTab', function() {
+			showChartTab("Chart");
 		});
 		//=========================================
 		bindEvent('click', '#btnHelp', function() {

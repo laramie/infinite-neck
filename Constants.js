@@ -8,6 +8,21 @@ export const DEFAULT_BEATS = 4;
 export const RANDOM_SECTION_HISTORY_MAX = 16;
 export const FIRST_POSITION_MAX_FRET = 4;
 
+export const SECTION_CHART_POSITION = Object.freeze({
+    INTRO: 'INTRO',
+    HEAD: 'HEAD',
+    LINE: 'LINE',
+    BAR: 'BAR',
+    OUTRO: 'OUTRO'
+});
+
+export const SECTION_CHART_CAPTION_WIDTH = Object.freeze({
+    NONE: 'none',
+    SHORT: 'short',
+    MEDIUM: 'medium',
+    LINE: 'line'
+});
+
 export function calcFretLengths() {
     var L0 = 1;
     const MAGIC_RATIO = 0.9438743;

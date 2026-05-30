@@ -16,9 +16,132 @@ const { Chord } = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
 
+const CHART_POSITION_VALUES = [
+    Constants.SECTION_CHART_POSITION.INTRO,
+    Constants.SECTION_CHART_POSITION.HEAD,
+    Constants.SECTION_CHART_POSITION.LINE,
+    Constants.SECTION_CHART_POSITION.BAR,
+    Constants.SECTION_CHART_POSITION.OUTRO
+];
+
+const CHART_CAPTION_WIDTH_VALUES = [
+    Constants.SECTION_CHART_CAPTION_WIDTH.NONE,
+    Constants.SECTION_CHART_CAPTION_WIDTH.SHORT,
+    Constants.SECTION_CHART_CAPTION_WIDTH.MEDIUM,
+    Constants.SECTION_CHART_CAPTION_WIDTH.LINE
+];
+
+function getSectionKeyDisplay(theSong, section) {
+    return theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "");
+}
+
+function getSectionBeatsDisplay(section) {
+    if (typeof section?.getBeats === 'function') {
+        return section.getBeats();
+    }
+    return section?.beats ?? '';
+}
+
+function getEffectiveChartPosition(section) {
+    return CHART_POSITION_VALUES.includes(section?.chartPosition)
+        ? section.chartPosition
+        : Constants.SECTION_CHART_POSITION.BAR;
+}
+
+function getEffectiveChartCaptionWidth(section) {
+    return CHART_CAPTION_WIDTH_VALUES.includes(section?.chartCaptionWidth)
+        ? section.chartCaptionWidth
+        : Constants.SECTION_CHART_CAPTION_WIDTH.NONE;
+}
+
+function formatSelectOptions(values, selectedValue) {
+    return values.map((value) => {
+        const selected = selectedValue === value ? ' selected' : '';
+        return `<option value='${value}'${selected}>${value}</option>`;
+    }).join('');
+}
+
+function formatChartPositionSelect(section, idx) {
+    const currentValue = getEffectiveChartPosition(section);
+    return `<select class='sectionChartPositionSelect' data-section-idx='${idx}' aria-label='Chart position'>`
+        + formatSelectOptions(CHART_POSITION_VALUES, currentValue)
+        + `</select>`;
+}
+
+function formatChartCaptionWidthSelect(section, idx) {
+    const currentValue = getEffectiveChartCaptionWidth(section);
+    return `<select class='sectionChartCaptionWidthSelect' data-section-idx='${idx}' aria-label='Chart caption width'>`
+        + formatSelectOptions(CHART_CAPTION_WIDTH_VALUES, currentValue)
+        + `</select>`;
+}
+
+function formatChartLineValue(value) {
+    return value ? value : '&nbsp;';
+}
+
+function formatChartCaptionText(section) {
+    return section?.caption ? section.caption : '&nbsp;';
+}
+
+function formatChartMetaLine(theSong, section, idx) {
+    const sectionNumber = idx + 1;
+    return `<a href='#' data-action='linkToSection' data-action-args='[${idx}]'>${sectionNumber}</a>:${getSectionKeyDisplay(theSong, section)}:${getSectionBeatsDisplay(section)}`;
+}
+
+function formatChartBar(theSong, section, idx) {
+    const captionWidth = getEffectiveChartCaptionWidth(section);
+    const barClasses = ['chartBAR', `chartBAR--${captionWidth}`];
+    const parts = [
+        `<span class='${barClasses.join(' ')}'>`,
+        `<div class='chartBARChord'>${formatChartLineValue(section.chartChord)}</div>`,
+        `<div class='chartBARMode'>${formatChartLineValue(section.chartMode)}</div>`,
+        `<div class='chartBARMeta'>${formatChartMetaLine(theSong, section, idx)}</div>`
+    ];
+
+    if (captionWidth === Constants.SECTION_CHART_CAPTION_WIDTH.SHORT || captionWidth === Constants.SECTION_CHART_CAPTION_WIDTH.MEDIUM) {
+        parts.push(`<div class='chartBARCaption'>${formatChartCaptionText(section)}</div>`);
+    }
+
+    parts.push('</span>');
+    return parts.join('');
+}
+
+function formatLineCaptionEntry(section, idx) {
+    if (!section?.caption) {
+        return '';
+    }
+    return `<div class='chartLineCaption'>${idx + 1}. ${section.caption}</div>`;
+}
+
+function createChartLineMarkup(lineBars, lineCaptions) {
+    if (lineBars.length === 0) {
+        return '';
+    }
+
+    let lineMarkup = `<div class='chartLINE'>${lineBars.join('')}</div>`;
+    const nonEmptyCaptions = lineCaptions.filter((caption) => caption);
+    if (nonEmptyCaptions.length > 0) {
+        lineMarkup += `<div class='chartLineCaptions'>${nonEmptyCaptions.join('')}</div>`;
+    }
+    return lineMarkup;
+}
+
+function createChartBlockTitle(blockType) {
+    return `<div class='chart${blockType}Title'>${blockType}</div>`;
+}
+
+function createChartBlockMarkup(blockType, blockContent) {
+    if (!blockType) {
+        return '';
+    }
+    return `<div class='chart${blockType}'>${createChartBlockTitle(blockType)}${blockContent.join('')}</div>`;
+}
+
 export function printSections(theSong, theSections, showDetails) {
     let currentSection = theSong.getCurrentSection();
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th><th>Caption</th>"
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th>"
+        + (showDetails ? "<th>Position</th><th>Width</th>" : "")
+        + "<th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";
     let details;
@@ -32,10 +155,11 @@ export function printSections(theSong, theSections, showDetails) {
         result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>" + SEP
             + section.beats + SEP
-            + "<B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>" + SEP
+                + "<B style='font-size: 130%;'>" + getSectionKeyDisplay(theSong, section) + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
             + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
             + (section.chartMode ? section.chartMode : "&nbsp;") + SEP
+                + (showDetails ? (formatChartPositionSelect(section, idx) + SEP + formatChartCaptionWidthSelect(section, idx) + SEP) : "")
             + "<b style='font-size: 130%;'>" + section.caption + "</b>"
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
@@ -141,7 +265,7 @@ export function printSectionsNotes(theSong, theSections){
         result += `<tr ${rowClass}><td>`
             + "<a href='#' data-action='linkToSection' data-action-args='[" + idx + "]'>" + (toInt(idx, 0) + 1) + "</a>"
             + "</td><td>" + section.beats
-            + "</td><td><B style='font-size: 130%;'>" + theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "") + "</B>"
+            + "</td><td><B style='font-size: 130%;'>" + getSectionKeyDisplay(theSong, section) + "</B>"
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
             + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
             + "</td><td>" + (section.chartMode ? section.chartMode : "&nbsp;") 
@@ -175,6 +299,86 @@ export function printSectionsNotes(theSong, theSections){
     });
 
     return result + "</table></div>";
+}
+
+export function printChart(theSong, theSections) {
+    const chartParts = ["<div id='sectionPrinterChart'>"];
+    let currentBlockType = null;
+    let currentBlockContent = [];
+    let currentLineBars = [];
+    let currentLineCaptions = [];
+
+    function flushLine() {
+        const lineMarkup = createChartLineMarkup(currentLineBars, currentLineCaptions);
+        if (lineMarkup) {
+            currentBlockContent.push(lineMarkup);
+        }
+        currentLineBars = [];
+        currentLineCaptions = [];
+    }
+
+    function flushBlock() {
+        flushLine();
+        const blockMarkup = createChartBlockMarkup(currentBlockType, currentBlockContent);
+        if (blockMarkup) {
+            chartParts.push(blockMarkup);
+        }
+        currentBlockType = null;
+        currentBlockContent = [];
+    }
+
+    function startBlock(blockType) {
+        if (currentBlockType === blockType && currentBlockContent.length === 0 && currentLineBars.length === 0) {
+            return;
+        }
+        flushBlock();
+        currentBlockType = blockType;
+        currentBlockContent = [];
+    }
+
+    function ensureBlock() {
+        if (!currentBlockType) {
+            startBlock(Constants.SECTION_CHART_POSITION.HEAD);
+        }
+    }
+
+    function startLine() {
+        ensureBlock();
+        flushLine();
+    }
+
+    theSections.forEach((section, idx) => {
+        const chartPosition = getEffectiveChartPosition(section);
+        switch (chartPosition) {
+            case Constants.SECTION_CHART_POSITION.INTRO:
+            case Constants.SECTION_CHART_POSITION.HEAD:
+            case Constants.SECTION_CHART_POSITION.OUTRO:
+                startBlock(chartPosition);
+                break;
+            case Constants.SECTION_CHART_POSITION.LINE:
+                ensureBlock();
+                break;
+            case Constants.SECTION_CHART_POSITION.BAR:
+            default:
+                ensureBlock();
+                break;
+        }
+
+        if (chartPosition !== Constants.SECTION_CHART_POSITION.BAR) {
+            startLine();
+        } else if (currentLineBars.length === 0) {
+            startLine();
+        }
+
+        currentLineBars.push(formatChartBar(theSong, section, idx));
+        if (getEffectiveChartCaptionWidth(section) === Constants.SECTION_CHART_CAPTION_WIDTH.LINE) {
+            currentLineCaptions.push(formatLineCaptionEntry(section, idx));
+        }
+    });
+
+    flushBlock();
+    chartParts.push('</div>');
+    return chartParts.join('');
 }
 
 
