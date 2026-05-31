@@ -188,6 +188,7 @@ const sectionSchema = {
         chartMode: { type: 'string' },
         chartPosition: { type: 'string', enum: Object.values(SECTION_CHART_POSITION) },
         chartCaptionWidth: { type: 'string', enum: Object.values(SECTION_CHART_CAPTION_WIDTH) },
+        beatsPerBar: integerLikeSchema,
         rootID: integerLikeSchema,
         rootIDLead: integerLikeSchema,
         beats: integerLikeSchema,

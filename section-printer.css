@@ -102,9 +102,52 @@
   background-color: #a1fde9;
 }
 
+.sectionChartBeatsPerBarInput,
 .sectionChartPositionSelect,
 .sectionChartCaptionWidthSelect {
   min-width: 7.5em;
+}
+
+.sectionChartBeatsPerBarInput {
+  min-width: 0;
+  width: 4em;
+}
+
+.sectionChartCaptionCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.sectionChartCaptionDisplay {
+  min-width: 14em;
+  font-size: 130%;
+  cursor: text;
+}
+
+.sectionChartCaptionEditButton,
+.sectionChartCaptionSaveButton {
+  min-width: 2.5em;
+}
+
+.sectionChartCaptionEditor {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.sectionChartCaptionDisplay[hidden],
+.sectionChartCaptionEditButton[hidden],
+.sectionChartCaptionEditor[hidden] {
+  display: none !important;
+}
+
+.sectionChartCaptionTextarea {
+  width: min(32em, 60vw);
+  min-width: 18em;
+  min-height: 7em;
+  resize: vertical;
 }
 
 #sectionPrinterChartOptions {
@@ -184,9 +227,29 @@
   border: 1px solid black;
 }
 
-.barClass-LeadSheet {
+.barClass-Bare {
   border: 0;
   font-size: 200%;
+}
+
+.barClass-LeadSheet {
+  border: 0;
+  border-right: 2px solid black;
+  cursor: pointer;
+}
+
+.barClass-LeadSheet.chartBAR--firstInLine {
+  border-left: 2px solid black;
+}
+
+.barClass-LeadSheet:hover,
+.LeadSheetActive {
+  background-color: lightblue;
+}
+
+.chartBAR--leadSheet {
+  width: 20em;
+  max-width: 20em;
 }
 
 .chartBAR--short {
@@ -202,7 +265,8 @@
 .chartBARChord,
 .chartBARMode,
 .chartBARMeta,
-.chartBARCaption {
+.chartBARCaption,
+.chartBARBeatCount {
   line-height: 1.3;
   white-space: normal;
   font-size: var(--chart-bar-secondary-font-size, 100%);
@@ -213,6 +277,21 @@
   font-family: "Shadows Into Light", cursive;
   font-weight: 400;
   font-style: normal;
+}
+
+.barClass-LeadSheet .chartBARChord {
+  width: 100%;
+  text-align: center;
+}
+
+.barClass-LeadSheet .chartBARMode {
+  width: 100%;
+}
+
+.chartBARBeatCount {
+  align-self: flex-end;
+  width: 100%;
+  text-align: right;
 }
 
 .chartLineCaptions {

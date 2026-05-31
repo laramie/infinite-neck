@@ -482,6 +482,14 @@ export class Song extends SongPersistence {
         this.getCurrentSection().setBeats(newValue);
 	}
 
+    addBeat(){
+        this.setBeats(this.getBeats() + 1);
+        this.publish_UpdateSectionStatus();
+        this.requestUiUpdatePrintSections();
+        this.requestUiFullRepaint();
+        this.requestUiShowBeats();
+    }
+
 
 	gotoFirstBeat(){
         this.getCurrentSection().gotoFirstBeat();
@@ -537,6 +545,7 @@ export class Song extends SongPersistence {
 		this.setBeats(beatCount+1);
     	this.gotoBeat(insertIndex);
 		this.publish_UpdateSectionStatus();
+        this.requestUiUpdatePrintSections();
 		this.requestUiFullRepaint();
         this.requestUiShowBeats();
 	}
@@ -577,6 +586,7 @@ export class Song extends SongPersistence {
         var currBeat = nStartBeat > this.getBeats() ? this.getBeats() : nStartBeat;
         this.getCurrentSection().currentBeat = currBeat;
         this.publish_UpdateSectionStatus();
+		this.requestUiUpdatePrintSections();
         this.requestUiShowBeats();
     }
 
@@ -1040,6 +1050,10 @@ export class Song extends SongPersistence {
 
     requestUiShowBeats() {
         EventBus.trigger('SongUiShowBeats');
+    }
+
+    requestUiUpdatePrintSections() {
+        EventBus.trigger('SongUiUpdatePrintSections');
     }
 
     requestUiClearAndReplaySection() {

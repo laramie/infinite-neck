@@ -1,0 +1,612 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    }
+  ],
+  "visibleNoteTables": [
+    "tblP46_1"
+  ],
+  "plugins": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "1.00",
+  "openInfo": "none",
+  "presentationMode": false,
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "barClass": "LeadSheet",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "songfileVersion": "V2",
+  "songName": "chart-test",
+  "theme": "Autobahn",
+  "userInstrumentTuning": null,
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Am",
+          "mode": "A minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Section One",
+      "chartChord": "Am",
+      "chartMode": "A minor",
+      "chartPosition": "INTRO",
+      "chartCaptionWidth": "short",
+      "rootID": "0",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Amadd9",
+          "mode": "A minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Section Two",
+      "chartChord": "Amadd9",
+      "chartMode": "A minor",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "short",
+      "rootID": "0",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cmaj7",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Section Three, Sweetly",
+      "chartChord": "Cmaj7",
+      "chartMode": "C major",
+      "chartPosition": "HEAD",
+      "chartCaptionWidth": "short",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 6,
+      "currentBeat": 1,
+      "sharps": false,
+      "beatsPerBar": "4"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Fm7",
+          "mode": "F minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "In my dying days, in my dying days, I'm gonna change up, all my wayward ways",
+      "chartChord": "Fm7",
+      "chartMode": "F minor",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "medium",
+      "rootID": "8",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "G7",
+          "mode": "G mixolydian",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "4",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "1",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "1",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "G7",
+      "chartMode": "G mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "short",
+      "rootID": "10",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cmaj7",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "In my dying years, in my dying yearss, I'm gonna beat up all my childhood fears",
+      "chartChord": "Cmaj7",
+      "chartMode": "C major",
+      "chartPosition": "LINE",
+      "chartCaptionWidth": "line",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Fm7",
+          "mode": "F minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Fm7",
+      "chartMode": "F minor",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "short",
+      "rootID": "8",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "G7",
+          "mode": "G mixolydian",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "4",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "1",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "1",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "G7",
+      "chartMode": "G mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "short",
+      "rootID": "10",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "FMadd9/A",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "FMadd9/A",
+      "chartMode": "",
+      "chartPosition": "OUTRO",
+      "chartCaptionWidth": "short",
+      "rootID": "0",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Amb6b9",
+          "mode": "A phrygian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Amb6b9",
+      "chartMode": "A phrygian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "short",
+      "rootID": "0",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
+  }
+}

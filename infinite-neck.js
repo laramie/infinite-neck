@@ -247,6 +247,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			leaveFullscreen,
 			printSections,
 			printSectionsNotes,
+			printSectionsOptions,
+			printSectionsChart,
 			resetNoteNames,
 			sectionChanged,
 			setBPM,
@@ -1051,11 +1053,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
     export function addBeat(){
 		clearHighlights();
-		var beats = getSong().getBeats();
-		beats++;
-		getSong().setBeats(beats);
-		$('#lblBeats').html(beats);  //number of beats in Section
-		showBeats();  //updates #lblBeat  current beat in Section
+		getSong().addBeat();
     }
 
 	export function leaveFullscreen(){
@@ -1210,6 +1208,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showOneMenu("#divChart", true);
 	}
 
+	export function printSectionsOptions(){
+		updatePrintSections();
+		showChartTab("Options");
+		showOneMenu("#divChart", true);
+	}
+
+	export function printSectionsChart(){
+		updatePrintSections();
+		showChartTab("Chart");
+		showOneMenu("#divChart", true);
+	}
+
 	export function linkToSectionChartPosition(idx, chartPosition) {
 		getSong().sections[idx].chartPosition = chartPosition;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
@@ -1220,6 +1230,48 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function linkToSectionChartCaptionWidth(idx, chartCaptionWidth) {
 		getSong().sections[idx].chartCaptionWidth = chartCaptionWidth;
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSectionBeatsPerBar(idx, beatsPerBar) {
+		const section = getSong().sections[idx];
+		if (!section) {
+			return;
+		}
+
+		const rawValue = beatsPerBar == null ? '' : String(beatsPerBar).trim();
+		if (!rawValue) {
+			delete section.beatsPerBar;
+			let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+			if (doSectionChanged){
+				sectionChanged();
+			}
+			return;
+		}
+
+		if (!/^[1-9]\d*$/.test(rawValue)) {
+			showMessages(`<b>Chart Details:</b> Section ${idx + 1} Beats must be a positive, non-zero integer.`);
+			updatePrintSections();
+			return;
+		}
+
+		section.beatsPerBar = rawValue;
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSectionCaption(idx, caption) {
+		const section = getSong().sections[idx];
+		if (!section) {
+			return;
+		}
+
+		section.caption = caption;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged();
@@ -1794,6 +1846,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			e.preventDefault();
 			this.blur();
 		}
+
+		function openChartCaptionEditor(container) {
+			const jContainer = $(container);
+			jContainer.find('.sectionChartCaptionDisplay, .sectionChartCaptionEditButton').prop('hidden', true);
+			jContainer.find('.sectionChartCaptionEditor').prop('hidden', false);
+			const textarea = jContainer.find('.sectionChartCaptionTextarea').get(0);
+			if (textarea) {
+				textarea.focus();
+				textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+			}
+		}
 		
 		bindDelegatedEvent('click', '.graveyard-raise-link', function(e) {
 			e.preventDefault();
@@ -1818,7 +1881,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtCaption, .inputTuningID', commitFieldOnEnter);
+		bindDelegatedEvent('keydown', '#txtFilename, #txtBPM, #txtCaption, .inputTuningID, .sectionChartBeatsPerBarInput', commitFieldOnEnter);
+		bindDelegatedEvent('change', '.sectionChartBeatsPerBarInput', function() {
+			const idx = toInt($(this).data('section-idx'), -1);
+			if (idx >= 0) {
+				linkToSectionBeatsPerBar(idx, $(this).val());
+			}
+		});
 		bindDelegatedEvent('change', '.sectionChartPositionSelect', function() {
 			const idx = toInt($(this).data('section-idx'), -1);
 			if (idx >= 0) {
@@ -1829,6 +1898,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			const idx = toInt($(this).data('section-idx'), -1);
 			if (idx >= 0) {
 				linkToSectionChartCaptionWidth(idx, $(this).val());
+			}
+		});
+		bindDelegatedEvent('dblclick', '.sectionChartCaptionDisplay', function() {
+			openChartCaptionEditor($(this).closest('.sectionChartCaptionCell'));
+		});
+		bindDelegatedEvent('click', '.sectionChartCaptionEditButton', function() {
+			openChartCaptionEditor($(this).closest('.sectionChartCaptionCell'));
+		});
+		bindDelegatedEvent('click', '.sectionChartCaptionSaveButton', function() {
+			const container = $(this).closest('.sectionChartCaptionCell');
+			const idx = toInt(container.data('section-idx'), -1);
+			if (idx >= 0) {
+				linkToSectionCaption(idx, container.find('.sectionChartCaptionTextarea').val());
 			}
 		});
 		bindDelegatedEvent('change', '.songChartOptionsCheckbox', function() {
@@ -2551,6 +2633,9 @@ EventBus.on('SongUiResetNoteNames', function() {
 });
 EventBus.on('SongUiShowBeats', function() {
 	showBeats();
+});
+EventBus.on('SongUiUpdatePrintSections', function() {
+	updatePrintSections();
 });
 EventBus.on('SongUiClearAndReplaySection', function() {
 	clearAndReplaySection();

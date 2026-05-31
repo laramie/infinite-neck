@@ -205,6 +205,8 @@ describe('key-handlers spacebar mapping', () => {
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
 			printSectionsNotes: jest.fn(),
+			printSectionsOptions: jest.fn(),
+			printSectionsChart: jest.fn(),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
 			setBPM: mockSetBPM,
@@ -225,6 +227,24 @@ describe('key-handlers spacebar mapping', () => {
 		});
 
 		performCmdAction({ action: 'mapSpacebar_unsetSpacebarAction' });
+	});
+
+	test('printSectionsOptions routes to the Chart Options tab action', () => {
+		const printSectionsOptions = jest.fn();
+		setKeyHandlerProviders({ printSectionsOptions });
+
+		performCmdAction({ action: 'printSectionsOptions' });
+
+		expect(printSectionsOptions).toHaveBeenCalledTimes(1);
+	});
+
+	test('printSectionsChart routes to the Chart tab action', () => {
+		const printSectionsChart = jest.fn();
+		setKeyHandlerProviders({ printSectionsChart });
+
+		performCmdAction({ action: 'printSectionsChart' });
+
+		expect(printSectionsChart).toHaveBeenCalledTimes(1);
 	});
 
 	test('mapSpacebar_restartSong stores firstSection as the mapped action', () => {

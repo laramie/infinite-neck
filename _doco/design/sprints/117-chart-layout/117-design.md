@@ -272,6 +272,19 @@ ANSWER: Always one BAR, even beats less than beatsPerBar.
 
 Please proceed to coding.
 
+# Iteration 6: LeadSheet tweaks
+
+1) since there is no Section link in LeadSheet, make it so that clicking anywhere in a BAR jumps to that section in the same way a link would do.  Make a simple css :hover so that (without javascript) the entire BAR hovered over is set to .LeadSheetActive which should simply be `background-color: lightblue;`.
+
+2) move 'beats:n` display of beats to the bottom row of any display in a BAR, so it is below caption.
+
+3) allow 'show mode line' to be operable in LeadSheet
+
+4) map 'show section detail line' to showing/hiding the 'beats:n' line in LeadSheet.  The normal section detail line remains hidden always in LeadSheet.
+
+5) In LeadSheet, chord and the special "repeat" mark, `%` should be centered horizontally in the span.
+
+
 
 
 

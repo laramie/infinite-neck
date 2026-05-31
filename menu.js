@@ -290,7 +290,17 @@ export var gMenuFile =    {
           "caption": "<b>d</b>etails",
           "trigger": "d",
           "action": "printSectionsDetails"
-        }            
+        },
+        {
+          "caption": "<b>o</b>ptions",
+          "trigger": "o",
+          "action": "printSectionsOptions"
+        },
+        {
+          "caption": "<b>c</b>hart",
+          "trigger": "c",
+          "action": "printSectionsChart"
+        }
       ]
     },
     {

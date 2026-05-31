@@ -265,6 +265,21 @@ describe('Song beat APIs on loaded JSON', () => {
 
         triggerSpy.mockRestore();
     });
+
+    test('addBeat increases section beats and requests chart refresh', () => {
+        const song = createFreshHeadlessSong();
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.gotoSection(0);
+        const startingBeats = song.getBeats();
+
+        song.addBeat();
+
+        expect(song.getBeats()).toBe(startingBeats + 1);
+        expect(triggerSpy).toHaveBeenCalledWith('SongUiUpdatePrintSections');
+
+        triggerSpy.mockRestore();
+    });
 });
 
 describe('Song section navigation APIs on loaded JSON', () => {

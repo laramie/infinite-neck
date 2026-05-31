@@ -92,6 +92,8 @@ function highlightOneNote(...args) { return requireProvider('highlightOneNote')(
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
+function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
+function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
@@ -850,6 +852,14 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "printSectionsNotes":
 			printSectionsNotes();
+			hideCmdLine();
+			break;
+		case "printSectionsOptions":
+			printSectionsOptions();
+			hideCmdLine();
+			break;
+		case "printSectionsChart":
+			printSectionsChart();
 			hideCmdLine();
 			break;
 		case "sectionDelete":

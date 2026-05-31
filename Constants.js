@@ -25,6 +25,7 @@ export const SECTION_CHART_CAPTION_WIDTH = Object.freeze({
 
 export const SONG_CHART_BAR_CLASS = Object.freeze({
     BOX: 'Box',
+    BARE: 'Bare',
     LEADSHEET: 'LeadSheet'
 });
 
