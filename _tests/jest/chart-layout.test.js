@@ -1,7 +1,24 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import * as Constants from '../../Constants.js';
 import { Section } from '../../Section.js';
 import { Song } from '../../Song.js';
 import { printChart, printChartOptions, printSections } from '../../section-printer.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CHART_FIXTURE_FILE = path.join(__dirname, '../../songs/tests/chart-test-fixture.json');
+
+function loadChartFixtureSong() {
+    const data = JSON.parse(fs.readFileSync(CHART_FIXTURE_FILE, 'utf8'));
+    const song = new Song(data);
+    song.setHeadless(true, true);
+    song.ensureDefaultSection();
+    song.fixupCurrentIndexForLoadedSong();
+    return song;
+}
 
 function createSongMock(sections, chartOptions = {}) {
     return {
@@ -312,5 +329,39 @@ describe('chart layout rendering', () => {
         expect(html).not.toContain('chartLineCaptions');
         expect(html).not.toContain('Bar caption');
         expect(html).not.toContain('Line caption');
+    });
+
+    test('fixture-backed chart renders sprint LeadSheet structure and Details controls from disk', () => {
+        const song = loadChartFixtureSong();
+        const sections = song.getSections();
+
+        const chartHtml = printChart(song, sections);
+        const detailsHtml = printSections(song, sections, true);
+        const optionsHtml = printChartOptions(song);
+
+        expect(song.chartOptions.barClass).toBe(Constants.SONG_CHART_BAR_CLASS.LEADSHEET);
+        expect(chartHtml).toContain("class='chartINTROTitle'>INTRO</div>");
+        expect(chartHtml).toContain("class='chartHEADTitle'>HEAD</div>");
+        expect(chartHtml).toContain("class='chartOUTROTitle'>OUTRO</div>");
+        expect(chartHtml).toContain('barClass-LeadSheet');
+        expect(chartHtml).toContain('chartBAR--leadSheet');
+        expect(chartHtml).toContain('Section One');
+        expect(chartHtml).toContain('Section Three, Sweetly');
+        expect(chartHtml).toContain("chartBARBeatCount'>beats:4");
+        expect(chartHtml).toContain("chartBARBeatCount'>beats:2");
+        expect(chartHtml).toContain('>%<');
+        expect(chartHtml).toContain('chartLineCaptions');
+        expect(chartHtml).toContain('6. In my dying years, in my dying yearss, I\'m gonna beat up all my childhood fears');
+        expect(chartHtml).toContain("data-action='linkToSection' data-action-args='[2]'");
+
+        expect(detailsHtml).toContain("class='sectionChartBeatsPerBarInput' data-section-idx='2'");
+        expect(detailsHtml).toContain("value='4'");
+        expect(detailsHtml).toContain("class='sectionChartCaptionTextarea'");
+        expect(detailsHtml).toContain('Section Three, Sweetly');
+
+        expect(optionsHtml).toContain("data-chart-option='modes' checked");
+        expect(optionsHtml).toContain("data-chart-option='detailLine' checked");
+        expect(optionsHtml).toContain("data-chart-option='showCaptions' checked");
+        expect(optionsHtml).toContain("<option value='LeadSheet' selected>");
     });
 });
