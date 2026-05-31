@@ -222,6 +222,57 @@ To reiterate, this is mostly controls on `Chart | Chart Details` and `Chart | Ch
 
 Please evaluate this Iteration 5 design and ask any clarifying questions.
 
+## Iteration 5 Comments and Answers
+
+117-it5-implementation-plan.md is APPROVED.  Questions and Discussion follow. 
+
+### Comments
+
+should Bare also become a user-selectable value, or should the prior borderless behavior simply stop being user-accessible? ANSWER: Yes.  Visible text in SELECT is "Bare".
+
+Note: all barClass options should now follow the rule that each BAR span on a Chart should be identical widths.  For non-LeadSheet classes, if any BAR caption in the Chart is set to 'medium' width then that dictates the value for widths for all spans which then get the wider width, e.g. 'short' gets 20em and if any caption is set to 'medim', then all get 40em.  For LeadSheet class, we like your recommendation to ditch chartCaptionWidth and attempt a uniform layout.  But in any event, for all classes of 'Bar Style', all BARs, with chord display or "repeat" display of `%` will have the same width for any given Chart.
+
+APPROVED: Recommended interpretation for this sprint:
+- keep caption behavior controlled by chartCaptionWidth and showCaptions
+- but do not let caption width drive bar width in LeadSheet mode
+- line captions still collect below the line
+- short and medium captions may still render within a fixed-width LeadSheet bar
+
+APPROVED: "Block and line grouping" as specified in the it5 implementation plan.
+
+APPROVED: "first-in-line class" for CSS styling of BARs.
+
+Validation: only positive, non-zero, numeric integers for beatsPerBar
+
+NOTE: when beats is less than beatsPerBar, simply render the Section as one BAR. In LeadSheet, the small beats display should be used--the Section-num-link:key:beats line is omitted.
+
+In LeadSheet, the first BAR of the Section gets chartChord, the subsequent BARs get `%` displayed in the chartChord font/class/style.
+
+Do not worry about "legacy" songs for this change.  Unset values are specified, and songs produced since sprint-117 are temporary test files only.
+
+
+### Answers
+
+Clarifying Questions answered: 
+
+1. In `LeadSheet` mode, should the first BAR of a multi-bar Section show the actual Section chord, or should every rendered BAR show `%`? The design text currently says both that the actual chord is not displayed and that a subsequent BAR is a repeat mark, which point in different directions.
+ANSWER: First BAR shows chartChord.  Subsequent BARs show `%` styled as a chord.
+
+2. Should `Bare` become a third user-selectable `Bar Style` value in `Chart Options`, or is it only an internal CSS class with no UI/persistence option?
+ANSWER: Yes, available as a first-class valid User choice.
+
+3. Should `chartCaptionWidth` and `showCaptions` continue to affect `LeadSheet` bars, or should captions be suppressed entirely when `Bar Style` is `LeadSheet`?  Yes, captions remain in LeadSheet bars, with the discussion above about having LeadSheet span widths calculated reasonably and probably with a different, more consistent, simple rule for LeadSheets.
+
+4. Should `beatsPerBar` be limited to positive integers only? This plan recommends yes, even though the design text says numeric. ANSWER: Sorry, by numeric, we should have said "Validation: only positive, non-zero, integers for beatsPerBar". 
+
+5. What should happen if `beatsPerBar >= section.beats`? This plan assumes that still renders exactly one BAR with `beats:${section.beats}`. 
+ANSWER: Always one BAR, even beats less than beatsPerBar.
+
+6. What should the new Details column header be: `Beats/Bar`, `Bars`, or something else? This plan recommends `Beats/Bar` because that is the stored concept. ANSWER: to save space, since the number will likely be a number like 2, 4, 5, 6, 8, or 9, and may legally include two-digit integers, we'd like a small edit box, and just the caption "Beats".
+
+Please proceed to coding.
+
+
 
 
 
