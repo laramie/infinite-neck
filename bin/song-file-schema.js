@@ -1,5 +1,5 @@
 import Ajv2020 from 'ajv/dist/2020.js';
-import { SECTION_CHART_CAPTION_WIDTH, SECTION_CHART_POSITION } from '../Constants.js';
+import { SECTION_CHART_CAPTION_WIDTH, SECTION_CHART_POSITION, SONG_CHART_BAR_CLASS } from '../Constants.js';
 
 const INTEGER_LIKE_PATTERN = '^-?\\d+$';
 const ALLOWED_NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
@@ -210,6 +210,25 @@ const pluginSchema = {
     additionalProperties: true
 };
 
+const chartOptionsSchema = {
+    type: 'object',
+    properties: {
+        modes: { type: 'boolean' },
+        detailLine: { type: 'boolean' },
+        showCaptions: { type: 'boolean' },
+        barClass: { type: 'string', enum: Object.values(SONG_CHART_BAR_CLASS) },
+        lineCaptionFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        },
+        boxCaptionFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        }
+    },
+    additionalProperties: false
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -217,6 +236,7 @@ export const songFileV2Schema = {
         activeStylesheets: { type: 'string', minLength: 1 },
         captionsRowShowing: { type: 'boolean' },
         defaultBPM: stringOrNumberSchema,
+        chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
         rootID: integerLikeSchema,

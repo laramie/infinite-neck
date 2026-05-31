@@ -151,6 +151,78 @@ Should the Chart tab use raw section.beats or the normalized section.getBeats() 
 
 Should Summary and Notes remain exactly as they are now, with no new Position or Width columns at all? ANSWER: Yes, no changes to these tabs.
 
+# Iteration 4 : adjusting 
+
+## Chart Options
+
+The Chart is working very well!
+We would now like a new tab page `Chart Options` between tabs `Chart Details` and `Chart`.
+It should have checkboxes for boolean options, then a SELECT for the class options.  The options should be presented in a column of controls similar to how `divViewCard` is on the `#divViewControls` page is for `Option & Keystroke`, but without all the glop that surrounds the card, in other words, keep it minimal. Construct simple User-facing labels.
+
+These should be persisted in a new, schema-named but schema-optional property of Song: `Song.chartOptions` shown with defaults:
+
+Song.chartOptions {
+    modes: true,
+    detailLine: true,
+    barClass: "Box"
+}
+
+barClass :: [ "Box" | "LeadSheet"] are the names in the Select, default to "Box".
+
+"Box" points to class "barClass-Box"
+"LeadSheet" points to class "barClass-LeadSheet.
+
+In the CSS, barClass-Box is what BAR is now.  barClass-LeadSheet would be no border on the span, everything else like BAR, but a separate class, not descended, so we can easily tweak it without disturbing or consulting barClass-Box.
+
+`modes` when not checked/persisted would prevent section-printer from emitting that line at all, so the display of BAR gets shorter.  `detailLine` would prevent emission of the line with Section num, Key, and beats, similarly reclaiming space.
+
+These are song-wide and would affect the whole `Chart`.
+
+Song.chartOptions would be optional on opening a song, and would be persisted on saving a song.
+
+## Font tweaks
+Looks great.
+Now we need two more controls on the Chart Options page.
+Stored in Song.chartOptions.lineCaptionFontsize
+Song.chartOptions.boxCaptionFontsize
+lineCaptionFontsize should apply to any captions, mode, or detail line in a BAR.
+boxCaptionFontsize should apply just to all captions that get 'line' handling.
+The values visible to the User in the two new SELECT controls should be 50%, 60%, 70%, 80%, 90%, 100%, 110%, 120%, 140% 160%, 180%, 200%.  These should be applied as font-size values to the pertinent classes.  Not sure of the mechanism, but we don't want to use the DisplayOptions to come to and from the Theme or anything fancy like that.  Just the simplest way to apply it when read from the song file, and when changed in the control. 
+
+## All captions off
+Looking good.  One more tweak: a checkbox to turn off all caption display in the Chart, both in the BAR and in the lines below.
+
+# Iteration 5 : LeadSheet bars/sections
+
+For Iteration 5 of the sprint, we have the main goal of turning the 'LeadSheet' class in the SELECT into more features found in a standard LeadSheet.
+
+infinite-neck has the concept of Sections, whereas LeadSheets have a solid concept of "Bars".  Bars have a fixed number of beats.  Sections have a variable number of beats Section to Section.  We'd like to reconcile these by having a new Section property, beatsPerBar.  It is per Section, so each Section can contain a different number of bars.  Of course Bars and Sections can truly have changeable number of beats and BMP tempos throughout a real song and a real LeadSheet. But we'll set out some rules that will give Users the counts of each that they need to make good LeadSheets.
+
+Section has a number of beats.
+
+Section has a number of beats per BAR.
+
+Therefore, the Section can calculate the number of BARs it is followed by.  In the case where a User has chosen a number of beats for the Section that doesn't divide nicely, the last BAR gets the remaining beats.  Each BAR should display its number of beats in a subtle way, similar to the detail line, which should just be `beats:${beats}`, aligned right in the span, and in a font the same size as the detail line.  The actual chord symbol, and the mode, section number, and key are not displayed.
+
+Nothing else about the Section changes through the BARs: key, namedNotes, counting of beats, #transport -- all these stay the same as they are today.  But what will be different is a Chart display of BAR spans.  Since the chords and modes and section number don't change, the display is a music standard: instead of chords and modes, the BAR just displays a `%` in the same large font and style of the Section chord.  And the BAR gets the width that was previously calculated for a Section.  In this sense, a subsequent BAR after the first BAR in a Section is a "repeat" mark.
+
+Also, for all BARs the width should be the same for the whole Chart.  This is different than how it is laid out now at this point in the sprint.  So any BARs in the INTRO, HEAD, and OUTRO should all be the same width.  And a "repeat" BAR with just the symbol `%` should be the same width. 
+
+To allow the User to enter the beatsPerBar, there should be an edit box before the 'Position' column in `Chart | Chart Details` tab page.  If empty, then the value is unset in the Section.beatsPerBar storage, and the Section is the only BAR.  If the value is present (should only be allowed positive and greater than zero and numeric else rejected and message shown in showMessages) then the "repeat" BARs are calculated and placed and the value persisted in the Section.beatsPerBar.  Section.beatsPerBar is not initialized during construction, may be absent, and if absent, results in an empty edit box.
+
+Another adjustment to "LeadSheet" class: let there be an initial `border-left: 2px solid black;` on the first BAR span in the row.  Then for every BAR span in the row, there is a `border-right: 2px solid black;`  So the BARs all have a vertical line between them, and the line has vertical lines starting and ending.  The current CSS definition of "LeadSheet" is moved to class "barClass-Bare" and "barClass-LeadSheet" is modified to have these vertical line span separating borders.
+
+Please produce a new implementation plan for this Iteration 5 `117-it5-implementation-plan.md` , since the first set of Iterations is succesful and the implementation plan `117-implementation-plan.md' is implemented and closed.
+
+To reiterate, this is mostly controls on `Chart | Chart Details` and `Chart | Chart Options`, with one additional, nullable, optional field on Section.  Then the main change is View-only on `Chart | Chart` when `Bar Style` is `LeadSheet` and doesn't affect any other Views in infinite-neck.
+
+(Later, we'll have a widget available above the Instruments on the main table area that produces two lines of BARS: the current line with the current section highlighted, and the next line in the chart. But that will be a different sprint.)
+
+## Request 
+
+Please evaluate this Iteration 5 design and ask any clarifying questions.
+
+
 
 
 

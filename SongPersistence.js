@@ -10,6 +10,14 @@ const songDefaults = {
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
+    chartOptions: {
+        modes: true,
+        detailLine: true,
+        showCaptions: true,
+        barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+        lineCaptionFontsize: '100%',
+        boxCaptionFontsize: '100%'
+    },
     rootID: "3",
     sharps: false,
     singleNoteOpacity: "1.00",
@@ -44,6 +52,11 @@ export class SongPersistence {
         this.plugins = {};
 
         Object.assign(this, songDefaults, obj);
+        const incomingChartOptions = obj.chartOptions && typeof obj.chartOptions === 'object' ? obj.chartOptions : {};
+        this.chartOptions = {
+            ...songDefaults.chartOptions,
+            ...incomingChartOptions
+        };
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

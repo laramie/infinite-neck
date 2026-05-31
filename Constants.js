@@ -23,6 +23,11 @@ export const SECTION_CHART_CAPTION_WIDTH = Object.freeze({
     LINE: 'line'
 });
 
+export const SONG_CHART_BAR_CLASS = Object.freeze({
+    BOX: 'Box',
+    LEADSHEET: 'LeadSheet'
+});
+
 export function calcFretLengths() {
     var L0 = 1;
     const MAGIC_RATIO = 0.9438743;

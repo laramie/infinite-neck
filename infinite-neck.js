@@ -1190,6 +1190,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divChartSummaryTab").html(SectionPrinter.printSections(getSong(), getSections(), false));
 		$("#divChartDetailsTab").html(SectionPrinter.printSections(getSong(), getSections(), true));
 		$("#divChartNotesTab")  .html(SectionPrinter.printSectionsNotes(getSong(), getSections()));
+		$("#divChartOptionsTab").html(SectionPrinter.printChartOptions(getSong()));
 		$("#divChartTab")       .html(SectionPrinter.printChart(getSong(), getSections()));
 	}
 
@@ -1219,6 +1220,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function linkToSectionChartCaptionWidth(idx, chartCaptionWidth) {
 		getSong().sections[idx].chartCaptionWidth = chartCaptionWidth;
+		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSongChartOption(optionName, optionValue) {
+		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
+			getSong().chartOptions = {};
+		}
+		getSong().chartOptions[optionName] = optionValue;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged();
@@ -1716,11 +1728,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var showNotesTab = which === "Notes";
 		var showSummaryTab = which === "Summary";
 		var showDetailsTab = which === "Details";
+		var showOptionsTab = which === "Options";
 		var showChartOnlyTab = which === "Chart";
 		
 		$('#divChartSummaryTab').toggle(showSummaryTab);
 		$('#divChartNotesTab').toggle(showNotesTab);
 		$('#divChartDetailsTab').toggle(showDetailsTab);
+		$('#divChartOptionsTab').toggle(showOptionsTab);
 		$('#divChartTab').toggle(showChartOnlyTab);
 
 		$('#btnChartSummaryTab')
@@ -1732,6 +1746,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnChartDetailsTab')
 			.toggleClass('BtnPunchedIn', showDetailsTab)
 			.toggleClass('BtnPunchedOut', !showDetailsTab);
+		$('#btnChartOptionsTab')
+			.toggleClass('BtnPunchedIn', showOptionsTab)
+			.toggleClass('BtnPunchedOut', !showOptionsTab);
 		$('#btnChartTab')
 			.toggleClass('BtnPunchedIn', showChartOnlyTab)
 			.toggleClass('BtnPunchedOut', !showChartOnlyTab);	
@@ -1814,6 +1831,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				linkToSectionChartCaptionWidth(idx, $(this).val());
 			}
 		});
+		bindDelegatedEvent('change', '.songChartOptionsCheckbox', function() {
+			const optionName = $(this).data('chart-option');
+			if (optionName) {
+				linkToSongChartOption(optionName, $(this).prop('checked'));
+			}
+		});
+		bindDelegatedEvent('change', '.songChartBarClassSelect', function() {
+			linkToSongChartOption('barClass', $(this).val());
+		});
+		bindDelegatedEvent('change', '.songChartFontsizeSelect', function() {
+			const optionName = $(this).data('chart-option');
+			if (optionName) {
+				linkToSongChartOption(optionName, $(this).val());
+			}
+		});
 		bindDelegatedEvent('keydown', '#txtColorSchemeName', function(e) {
 			if (!isPlainEnterKey(e)) {
 				return;
@@ -1853,6 +1885,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnChartDetailsTab', function() {
 			showChartTab("Details");
+		});
+		bindEvent('click', '#btnChartOptionsTab', function() {
+			showChartTab("Options");
 		});
 		bindEvent('click', '#btnChartTab', function() {
 			showChartTab("Chart");
