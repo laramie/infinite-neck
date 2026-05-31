@@ -51,6 +51,15 @@
 - [sprint-113-transpose-plugin-single-notes](../design/sprints/113-transpose-plugin-single-notes/sprint-113-transpose-plugin-single-notes.md)  
   - teach TransposePlugin to use "algorithm":"string" from MovePlugin for SingleNotes transposed on one string.
 
+  - [sprint-114-show-note-names-refactor](../design/sprints/114-show-note-names-refactor/sprint-114-show-note-names-refactor.md)
+
+  - [sprint-115-move-fingering](../design/sprints/115-move-fingering/115-implementation-plan.md)
+
+  - [sprint-116-copy-fingering](../design/sprints/116-copy-fingering/116-implementation-plan.md)
+
+[sprint-117-chart-layout](../design/sprints/117-chart-layout/sprint-117.md)
+  - Adds a Chart LeadSheet with edit controls in Chart tab pages, and command-line /cc and /co.
+
 
 # ARCHIVED: What we did to generate this document
 
