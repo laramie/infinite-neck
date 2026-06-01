@@ -356,8 +356,11 @@
 
 .leadSheetLinePanelNext,
 .leadSheetLinePanelPlaceholder {
-  background-color: #f7c56a;
+  background-color: #fdca6b;
 }
+.leadSheetLinePanelNext .leadSheetLineBAR {
+ background-color: rgb(255, 158, 40);
+} 
 
 .leadSheetLineRow {
   display: flex;
