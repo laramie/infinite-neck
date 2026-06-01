@@ -60,6 +60,75 @@
 [sprint-117-chart-layout](../design/sprints/117-chart-layout/sprint-117.md)
   - Adds a Chart LeadSheet with edit controls in Chart tab pages, and command-line /cc and /co.
 
+# Future Sprints prior to Version 2 rollout
+118-cleanup
+  - cleanup and bugfixes, scheduled
+    - menu prompt stale sometimes
+    - chart colors and shadows
+
+119-songs
+  - song test fixtures / song test list
+  - song drills/games
+  - song library User-facing list
+
+120-plugin-feature-cleanup
+  - arpeggio should listen to singlenote and transform exiting ones to equivalent NamedNote and continue as usual
+  - fill and Fill page should normalize on Tonal's chord names (maybe on modes too) 
+  - Fill page should add Dom7No5 as option since so popular on guitar
+  - fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
+  - Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
+  - /fpfo shows options but you have to go all the way down to actually accept them. Flow is weird.
+
+121-persistence
+  - tunings persists 
+  - color themes persist
+  - user Themes persist
+  - everything filtered
+  - visible tables doesn't clobber tables in Model--allowed to persist without View.
+
+122-helpfile
+  - finish plugin help file
+  - move Themes to Themes gallery at end of helpfile
+
+123-build-process
+  - get tar deployment working
+  - include version 
+  - include README/CHANGELOG
+
+# Future Sprints Unscheduled  
+901-floating-windows
+902-song import
+  - Notes/Sections
+  - Color schemes
+  - User Themes
+  - Tunings
+  - Be clear about which things in old and new song hang around
+
+
+# Sprint Planning Rules
+
+## Rules getting ready for Version 2
+
+Copilot: Do not change core files without a design document or a chat confirming that coding is CORE-APPROVED.  All other changes require APPROVED in a design document or chat.  For example, we might say: `Your recommendations in the implementation plan are APPROVED`.
+
+### Files requiring `CORE-APPROVED`
+```
+infinite-neck.js
+NoteTableController.js
+Song.js
+SongPersistence.js
+Section.js
+SectionPersistence.js
+SectionNotes.js
+SectionNotesPersistence.js
+Note.js
+looper.js
+section-recorder.js
+TableBuilder.js
+transport-controller.js
+```
+
+## Rules Version 1
 
 # ARCHIVED: What we did to generate this document
 
