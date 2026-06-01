@@ -7,7 +7,10 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
-import { supportsPianoSkeuomorphic } from './templates/piano/piano-skeuomorphic.builder.js';
+import {
+    supportsPianoSkeuomorphic,
+    normalizePianoLayoutOptions
+} from './templates/piano/piano-skeuomorphic.builder.js';
 
 
 
@@ -106,6 +109,8 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var rows = tunings.length;
     for (var r = 0; r < rows; r++) {
         var tun = tunings[r];
+        normalizePianoLayoutOptions(tun);
+        var isPianoTuning = tun.baseInstrument === 'Piano';
         var disableMoveUp = r === 0 ? ' disabled' : '';
         var disableMoveDown = r === rows - 1 ? ' disabled' : '';
         var checkedVisible = tun.visible ? " checked " : "";
@@ -126,10 +131,14 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + tun.baseID + '" ' + checkedLH + '>Left-Handed</nobr></label>';
 
         var checkedPN = tun.pianoNamesRow ? " checked " : "";
+        var disabledPN = tun.pianoSkeuomorphic ? " disabled " : "";
+        var pianoNamesTitle = tun.pianoSkeuomorphic
+            ? ' title="PianoNames is unavailable when PianoSkeuo is enabled." '
+            : '';
         var checkboxPN = '<label for="cbPN' + tun.baseID + '"><nobr>'
             + '<input class="checkboxPN"   id="cbPN' + tun.baseID + '" '
             + ' type="checkbox" name="cbnPN' + tun.baseID + '" value="'
-            + tun.baseID + '" ' + checkedPN + '></nobr></label>';
+            + tun.baseID + '" ' + checkedPN + disabledPN + pianoNamesTitle + '></nobr></label>';
 
         var pianoSkeuomorphicSupported = supportsPianoSkeuomorphic(tun);
         var checkedPianoSkeuomorphic = tun.pianoSkeuomorphic ? " checked " : "";
@@ -149,10 +158,14 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
 
         var checkedNut = tun.nut ? " checked " : "";
+        var disabledNut = isPianoTuning ? ' disabled ' : '';
+        var nutTitle = isPianoTuning
+            ? ' title="Nut is unavailable for Piano layouts." '
+            : '';
         var checkboxNut = '<label for="cbNut' + tun.baseID + '"><nobr>'
             + '<input class="checkboxNut"   id="cbNut' + tun.baseID + '" '
             + ' type="checkbox" name="cbnNut' + tun.baseID + '" value="'
-            + tun.baseID + '" ' + checkedNut + '></nobr></label>';
+            + tun.baseID + '" ' + checkedNut + disabledNut + nutTitle + '></nobr></label>';
 
         var checked_doSpecialRows = tun.doSpecialRows ? " checked " : "";
         var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.doSpecialRows + '"><nobr>'
@@ -177,7 +190,12 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         }
 
         var selectBlock = generateSelect(tun.baseID, tun.frets);
-        var selectStringDividerHt = generateSelectStringDividerHt(tun.baseID, tun.stringDividerHeight);
+        var selectStringDividerHt = generateSelectStringDividerHt(
+            tun.baseID,
+            tun.stringDividerHeight,
+            isPianoTuning,
+            isPianoTuning ? 'Divider is unavailable for Piano layouts.' : ''
+        );
         var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
             + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
             + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '">X</button>';
@@ -240,8 +258,10 @@ export function generateSelect(ID, frets) {
     return sel;
 }
 
-export function generateSelectStringDividerHt(ID, sHeightValue) {
-    var sel = "<select class='selectStringDividerHt' id='" + SELECT_STRINGDIVIDER_PFX + ID + "'>";
+export function generateSelectStringDividerHt(ID, sHeightValue, disabled = false, title = '') {
+    var disabledAttr = disabled ? ' disabled' : '';
+    var titleAttr = title ? " title='" + title + "'" : '';
+    var sel = "<select class='selectStringDividerHt' id='" + SELECT_STRINGDIVIDER_PFX + ID + "'" + disabledAttr + titleAttr + ">";
     var opt = "<option value='0'>0</option>";
     sel = sel + opt;
     for (var r = 1; r <= 8; r++) {
@@ -481,6 +501,13 @@ function showTuningsTab(which) {
         .toggleClass('BtnPunchedOut', showMy);
 }
 
+function revealPianoReverseWarning(tuningID) {
+    $('.captionRow').show();
+    const tuningRoot = $('#' + Constants.TABLEDIV_ID_PREFIX + tuningID);
+    tuningRoot.find('.subcaption').show();
+    tuningRoot.find('.spanTuningDetails').show();
+}
+
 export function bindFormTuningsEvents() {
     $('#frmTunings').off('submit').on('submit', function (event) {
         event.preventDefault();
@@ -512,6 +539,9 @@ export function bindFormTuningsEvents() {
         var tuning = findTuningForID(tuningID);
         tuning.reverse = this.checked;
         requestReinstallAllTuningsTables();
+        if (tuning.reverse && tuning.baseInstrument === 'Piano') {
+            revealPianoReverseWarning(tuningID);
+        }
     });
     $('#frmTunings .selectFrets').change(function () {
         var tuningID = this.id.substring(SELECT_FRETS_PFX.length);
@@ -535,6 +565,11 @@ export function bindFormTuningsEvents() {
     $('#frmTunings .checkboxPN').change(function () {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
+        if (tuning.pianoSkeuomorphic) {
+            tuning.pianoNamesRow = false;
+            $(this).prop('checked', false);
+            return;
+        }
         tuning.pianoNamesRow = this.checked;
         requestReinstallAllTuningsTables();
     });
@@ -542,6 +577,10 @@ export function bindFormTuningsEvents() {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
         tuning.pianoSkeuomorphic = this.checked;
+        normalizePianoLayoutOptions(tuning);
+        $('#cbPN' + tuningID)
+            .prop('checked', tuning.pianoNamesRow === true)
+            .prop('disabled', tuning.pianoSkeuomorphic === true);
         requestReinstallAllTuningsTables();
     });
     $('#frmTunings .checkboxShowDiamonds').change(function () {

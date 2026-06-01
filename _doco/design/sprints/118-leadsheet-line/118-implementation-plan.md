@@ -10,7 +10,7 @@ This iteration is intentionally narrow:
 - show only the current LeadSheet line that contains the current Section
 - optionally show the next LeadSheet line when a new `Chart Options` checkbox `Show Next Line` is enabled
 - keep the line view synchronized with transport and with click-to-section navigation
-- apply the new background colors for the outer container, current line, next line, and current Section
+- apply the new background colors for the outer container, current line, next line, and current Section using directly editable hex values
 
 This sprint should not redesign the chart system. The goal is to derive a focused, transport-aware line view from the chart model that already exists after sprint 117.
 
@@ -56,6 +56,8 @@ Refactor toward this internal flow inside `section-printer.js`:
 	 - the filtered `LeadSheetLine` view
 
 The important design rule is that `Chart` and `Line` should share the same line computation so the second view always matches the full chart exactly.
+
+For CSS, do not depend heavily on the existing `LeadSheet` cascade. `LeadSheetLine` should have its own compact class set, even if that duplicates some styling, so spacing and colors can be tuned independently in the stylesheet.
 
 ## Model And Option Changes
 
@@ -107,6 +109,8 @@ Extend `printChartOptions(theSong)` so the `Chart Options` page includes:
 
 That checkbox should use the same binding path as the existing song-wide chart options.
 
+The `Line` tab is always available and always renders with its own LeadSheetLine styling. It does not depend on the `Bar Style` select and `LeadSheetLine` is not added as a `barClass` option.
+
 ## Rendering Plan
 
 ### New renderer
@@ -122,6 +126,8 @@ This renderer should:
 - render only that line by default
 - render that line plus the following line when `showNextLine` is enabled
 - preserve the vertical space for the second line when there is no next line
+- ignore captions
+- respect the existing song-wide `modes` and `detailLine` checkboxes
 
 ### Required intermediate data
 
@@ -161,10 +167,10 @@ This preserves the intended layout stability.
 
 Apply the design colors as follows:
 
-- outer `LeadSheetLine` container: `rgb(251, 185, 99)`
-- primary line: `rgb(255, 235, 156)`
+- outer `LeadSheetLine` container: `#fbb963`
+- primary line: `#ffeb9c`
 - current Section bar or bars: `#a1fde9`
-- next line container: `rgb(247, 197, 106)`
+- next line container: `#f7c56a`
 
 Recommended interpretation for multi-bar LeadSheet Sections:
 
@@ -195,16 +201,21 @@ All styling should stay in `section-printer.css`.
 Recommended new classes:
 
 - `#sectionPrinterChartLine`
-- `.chartLineView`
-- `.chartLineViewCurrent`
-- `.chartLineViewNext`
-- `.chartLineViewPlaceholder`
-- `.chartBAR--currentSection`
+- `.leadSheetLinePanel`
+- `.leadSheetLinePanelCurrent`
+- `.leadSheetLinePanelNext`
+- `.leadSheetLinePanelPlaceholder`
+- `.leadSheetLineRow`
+- `.leadSheetLineBAR`
+- `.leadSheetLineBAR--currentSection`
+- `.leadSheetLineBARChord`
+- `.leadSheetLineBARMode`
+- `.leadSheetLineBARBeatCount`
 
 Recommended styling approach:
 
-- reuse existing `chartLINE`, `chartBAR`, and `barClass-LeadSheet` styles where possible
-- add wrapper classes for the new background colors rather than duplicating bar layout CSS
+- prefer a dedicated `LeadSheetLine` class family over reuse of `chartBAR` and `barClass-LeadSheet`
+- accept some CSS duplication so padding, width, and colors are easy to tune independently from the full chart
 - keep the line view scrollable horizontally, matching the full chart’s overflow behavior
 
 ## Event And Refresh Integration
@@ -311,6 +322,6 @@ The cleanest product interpretation is:
 - `Line` always uses LeadSheet visuals, independent of the main `Chart` bar-style select
 - all bars belonging to the current Section are highlighted
 - the `Line` tab omits block titles and focuses only on the one or two rendered lines
-- caption behavior is initially suppressed in the `Line` tab unless you explicitly want the full chart caption logic carried over
+- caption behavior is suppressed in the `Line` tab
 
 That yields a small, coherent iteration and keeps the later “widget” sprint separate.

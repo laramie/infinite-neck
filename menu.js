@@ -300,6 +300,16 @@ export var gMenuFile =    {
           "caption": "<b>c</b>hart",
           "trigger": "c",
           "action": "printSectionsChart"
+        },
+        {
+          "caption": "<b>l</b>ine",
+          "trigger": "l",
+          "action": "printSectionsLine"
+        },
+        {
+          "caption": "<b>h</b>ide line",
+          "trigger": "h",
+          "action": "hideFullscreenLeadSheetLine"
         }
       ]
     },

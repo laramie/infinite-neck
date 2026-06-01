@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import * as Constants from '../../Constants.js';
 import { Section } from '../../Section.js';
 import { Song } from '../../Song.js';
-import { printChart, printChartOptions, printSections } from '../../section-printer.js';
+import { printChart, printChartOptions, printLeadSheetLine, printSections } from '../../section-printer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,12 +20,13 @@ function loadChartFixtureSong() {
     return song;
 }
 
-function createSongMock(sections, chartOptions = {}) {
+function createSongMock(sections, chartOptions = {}, currentSectionIndex = 0) {
     return {
         chartOptions,
         getCurrentSection() {
-            return sections[0];
+            return sections[currentSectionIndex] || sections[0];
         },
+        gSectionsCurrentIndex: currentSectionIndex,
         noteIDToNoteName(noteIndex) {
             const normalizedIndex = Number.parseInt(noteIndex, 10);
             return Constants.noteIDToNoteNameRaw(Number.isNaN(normalizedIndex) ? 0 : normalizedIndex);
@@ -48,7 +49,9 @@ describe('chart layout rendering', () => {
             modes: true,
             detailLine: true,
             showCaptions: true,
+            showNextLine: false,
             barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+            chordFontsize: '100%',
             lineCaptionFontsize: '100%',
             boxCaptionFontsize: '100%'
         });
@@ -59,7 +62,9 @@ describe('chart layout rendering', () => {
             modes: true,
             detailLine: true,
             showCaptions: true,
+            showNextLine: true,
             barClass: Constants.SONG_CHART_BAR_CLASS.BARE,
+            chordFontsize: '180%',
             lineCaptionFontsize: '120%',
             boxCaptionFontsize: '80%'
         });
@@ -69,9 +74,22 @@ describe('chart layout rendering', () => {
         expect(html).toContain("data-chart-option='modes' checked");
         expect(html).toContain("data-chart-option='detailLine' checked");
         expect(html).toContain("data-chart-option='showCaptions' checked");
+        expect(html).toContain("data-chart-option='showNextLine' checked");
+        expect(html).toContain("class='divViewCard sectionPrinterChartOptionsCard'");
+        expect(html).toContain("<table class='viewControls'>");
+        expect(html).toContain('<tr><td>Bar Style</td><td><select');
+        expect(html).toContain('<tr><td>Chord size</td><td><select');
+        expect(html).toContain('<tr><td>BAR caption/detail font size</td><td><select');
+        expect(html).toContain('<tr><td>Line caption font size</td><td><select');
+        expect(html).not.toContain('>Bar Style <select');
+        expect(html).not.toContain('>Chord size <select');
+        expect(html).not.toContain('>BAR caption/detail font size <select');
+        expect(html).not.toContain('>Line caption font size <select');
         expect(html).toContain("class='songChartBarClassSelect'");
         expect(html).toContain("<option value='Bare' selected>");
         expect(html).toContain("<option value='LeadSheet'>LeadSheet</option>");
+        expect(html).toContain("class='songChartFontsizeSelect' data-chart-option='chordFontsize'");
+        expect(html).toContain("<option value='180%' selected>");
         expect(html).toContain("class='songChartFontsizeSelect' data-chart-option='lineCaptionFontsize'");
         expect(html).toContain("<option value='120%' selected>");
         expect(html).toContain("class='songChartFontsizeSelect' data-chart-option='boxCaptionFontsize'");
@@ -214,6 +232,43 @@ describe('chart layout rendering', () => {
         expect(html).toContain('chartBARChord');
     });
 
+    test('Chart output makes Box-style bars clickable and highlights the current section', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Cmaj7',
+                chartMode: 'C ionian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                rootID: '3',
+                beats: 4
+            }),
+            new Section({
+                chartChord: 'F7',
+                chartMode: 'F mixolydian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                rootID: '3',
+                beats: 4
+            })
+        ];
+        const song = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.BOX
+        }, 1);
+
+        const html = printChart(song, sections);
+
+        expect(html).toContain("data-action='linkToSection' data-action-args='[0]'");
+        expect(html).toContain("data-action='linkToSection' data-action-args='[1]'");
+        expect(html).toMatch(/class='chartBAR [^']*barClass-Box[^']*chartBAR--currentSection[^']*' data-action='linkToSection' data-action-args='\[1\]'/);
+    });
+
+    test('Bare chart style stays Box-sized and only removes borders', () => {
+        const css = fs.readFileSync(path.join(__dirname, '../../section-printer.css'), 'utf8');
+        const bareBlockMatch = css.match(/\.barClass-Bare\s*\{([^}]*)\}/);
+
+        expect(bareBlockMatch).not.toBeNull();
+        expect(bareBlockMatch[1]).toContain('border: 0;');
+        expect(bareBlockMatch[1]).not.toContain('font-size');
+    });
+
     test('LeadSheet expands a section into repeated bars, keeps mode line, and makes bars clickable', () => {
         const sections = [
             new Section({
@@ -248,6 +303,27 @@ describe('chart layout rendering', () => {
         expect(html.indexOf('Verse opens')).toBeLessThan(html.indexOf("chartBARBeatCount'>beats:4"));
     });
 
+    test('LeadSheet highlights all repeated bars for the current section', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Em7#5',
+                chartMode: 'E phrygian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                beatsPerBar: '4',
+                rootID: '3',
+                beats: 10
+            })
+        ];
+        const song = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.LEADSHEET
+        }, 0);
+
+        const html = printChart(song, sections);
+
+        expect(html.match(/chartBAR--currentSection/g)).toHaveLength(3);
+        expect(html.match(/data-action='linkToSection' data-action-args='\[0\]'/g)).toHaveLength(3);
+    });
+
     test('LeadSheet hides beats line when show section detail line is off', () => {
         const sections = [
             new Section({
@@ -273,6 +349,130 @@ describe('chart layout rendering', () => {
         expect(html).not.toContain('beats:2');
     });
 
+    test('LeadSheetLine renders the current line with dedicated compact classes and ignores captions', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Cmaj7',
+                chartMode: 'C ionian',
+                chartPosition: Constants.SECTION_CHART_POSITION.HEAD,
+                beatsPerBar: '2',
+                chartCaptionWidth: Constants.SECTION_CHART_CAPTION_WIDTH.LINE,
+                caption: 'Ignored caption one',
+                rootID: '3',
+                beats: 4
+            }),
+            new Section({
+                chartChord: 'F7',
+                chartMode: 'F mixolydian',
+                chartPosition: Constants.SECTION_CHART_POSITION.LINE,
+                beatsPerBar: '2',
+                chartCaptionWidth: Constants.SECTION_CHART_CAPTION_WIDTH.SHORT,
+                caption: 'Ignored caption two',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+        const song = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+            showCaptions: true,
+            modes: true,
+            detailLine: true,
+            showNextLine: false
+        }, 1);
+
+        const html = printLeadSheetLine(song, sections);
+
+        expect(html).toContain("id='sectionPrinterChartLine'");
+        expect(html).toContain("--chart-bar-chord-scale:1");
+        expect(html).toContain("--chart-bar-secondary-font-size:100%");
+        expect(html).toContain("--chart-line-caption-font-size:100%");
+        expect(html).toContain("class='leadSheetLineBARMode'");
+        expect(html).toContain("class='leadSheetLineBARBeatCount'");
+        expect(html).toContain('leadSheetLinePanelCurrent');
+        expect(html).not.toContain('leadSheetLinePanelNext');
+        expect(html).toContain('leadSheetLineBAR');
+        expect(html).toContain('leadSheetLineBAR--currentSection');
+        expect(html).toContain('leadSheetLineBARChord');
+        expect(html).toContain('>%<');
+        expect(html).not.toContain('Ignored caption one');
+        expect(html).not.toContain('Ignored caption two');
+        expect(html).not.toContain('barClass-Box');
+    });
+
+    test('LeadSheetLine mode and beats follow BAR caption/detail font size', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Dm7',
+                chartMode: 'D dorian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                beatsPerBar: '2',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+        const song = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+            modes: true,
+            detailLine: true,
+            lineCaptionFontsize: '140%'
+        });
+
+        const html = printLeadSheetLine(song, sections);
+
+        expect(html).toContain("--chart-bar-secondary-font-size:140%");
+        expect(html).toContain("class='leadSheetLineBARMode'>D dorian</div>");
+        expect(html).toContain("class='leadSheetLineBARBeatCount'>2</div>");
+    });
+
+    test('LeadSheetLine optionally renders the next line and preserves placeholder space at the end', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Am7',
+                chartMode: 'A aeolian',
+                chartPosition: Constants.SECTION_CHART_POSITION.HEAD,
+                beatsPerBar: '2',
+                rootID: '3',
+                beats: 4
+            }),
+            new Section({
+                chartChord: 'Dm7',
+                chartMode: 'D dorian',
+                chartPosition: Constants.SECTION_CHART_POSITION.LINE,
+                beatsPerBar: '2',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+
+        const nextLineSong = createSongMock(sections, {
+            showNextLine: true,
+            modes: false,
+            detailLine: false,
+            chordFontsize: '120%',
+            lineCaptionFontsize: '90%',
+            boxCaptionFontsize: '80%'
+        }, 0);
+        const htmlWithNext = printLeadSheetLine(nextLineSong, sections);
+
+        expect(htmlWithNext).toContain("--chart-bar-chord-scale:1.2");
+        expect(htmlWithNext).toContain("--chart-bar-secondary-font-size:90%");
+        expect(htmlWithNext).toContain("--chart-line-caption-font-size:80%");
+        expect(htmlWithNext).toContain('leadSheetLinePanelNext');
+        expect(htmlWithNext).not.toContain('leadSheetLinePanelPlaceholder');
+        expect(htmlWithNext).not.toContain('leadSheetLineBARMode');
+        expect(htmlWithNext).not.toContain('leadSheetLineBARBeatCount');
+
+        const placeholderSong = createSongMock(sections, {
+            showNextLine: true,
+            modes: true,
+            detailLine: true
+        }, 1);
+        const htmlWithPlaceholder = printLeadSheetLine(placeholderSong, sections);
+
+        expect(htmlWithPlaceholder).toContain('leadSheetLinePanelPlaceholder');
+        expect(htmlWithPlaceholder).toContain('leadSheetLineRow--placeholder');
+    });
+
     test('Chart output applies song chart font-size variables', () => {
         const sections = [
             new Section({
@@ -286,12 +486,14 @@ describe('chart layout rendering', () => {
             })
         ];
         const song = createSongMock(sections, {
+            chordFontsize: '180%',
             lineCaptionFontsize: '140%',
             boxCaptionFontsize: '70%'
         });
 
         const html = printChart(song, sections);
 
+        expect(html).toContain("--chart-bar-chord-scale:1.8");
         expect(html).toContain("--chart-bar-secondary-font-size:140%");
         expect(html).toContain("--chart-line-caption-font-size:70%");
         expect(html).toContain('chartBARMode');
@@ -362,6 +564,7 @@ describe('chart layout rendering', () => {
         expect(optionsHtml).toContain("data-chart-option='modes' checked");
         expect(optionsHtml).toContain("data-chart-option='detailLine' checked");
         expect(optionsHtml).toContain("data-chart-option='showCaptions' checked");
+        expect(optionsHtml).toContain("data-chart-option='showNextLine'");
         expect(optionsHtml).toContain("<option value='LeadSheet' selected>");
     });
 });

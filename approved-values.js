@@ -42,12 +42,15 @@ function opacityPercent(rawValue) {
 	return '' + (opacity * 100);
 }
 
-function formatSampleValue(value) {
+function formatSampleValue(value, format = 'text') {
 	if (value === '') {
 		return '<em>(empty string)</em>';
 	}
 	if (value === undefined || value === null) {
 		return '<em>n/a</em>';
+	}
+	if (format === 'html' && typeof value === 'string') {
+		return value;
 	}
 	if (typeof value === 'object') {
 		return `<code>${escapeHtml(JSON.stringify(value))}</code>`;
@@ -58,6 +61,16 @@ function formatSampleValue(value) {
 function renderPatternHtml(name) {
 	const escapedName = escapeHtml(name);
 	return `<code>\${${escapedName}}</code>`;
+}
+
+function renderCopyPatternButtonHtml(name) {
+	const escapedName = escapeHtml(name);
+	const escapedPattern = escapeHtml('${' + name + '}');
+	return `<button type='button' class='approvedValueCopyButton' data-action='copyApprovedPattern' data-action-args='["${escapedName}"]' aria-label='Copy ${escapedPattern}' title='Copy ${escapedPattern}' style='display: inline-flex; align-items: center; justify-content: center; padding: 0.1em; margin-left: 0.35em; background: transparent; border: 0; cursor: pointer;'><img src='img/clipboard-arrow.png' alt='' aria-hidden='true' style='width: 1.1em; height: 1.1em; display: block;'></button>`;
+}
+
+function renderPatternCellHtml(name) {
+	return `<span style='display: inline-flex; align-items: center; white-space: nowrap;'>${renderPatternHtml(name)}${renderCopyPatternButtonHtml(name)}</span>`;
 }
 
 const approvedValueEntries = [
@@ -169,42 +182,50 @@ const approvedValueEntries = [
 	{
 		name: 'transposeFunctionSteps',
 		description: 'function-symbol steps for the active transpose chain',
-		resolve: () => getTransposeCaptionValue('transposeFunctionSteps')
+		resolve: () => getTransposeCaptionValue('transposeFunctionSteps'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeDistanceSteps',
 		description: 'numeric distances for the active transpose chain',
-		resolve: () => getTransposeCaptionValue('transposeDistanceSteps')
+		resolve: () => getTransposeCaptionValue('transposeDistanceSteps'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeFunctionDistanceSteps',
 		description: 'Function+distance steps for the active transpose chain',
-		resolve: () => getTransposeCaptionValue('transposeFunctionDistanceSteps')
+		resolve: () => getTransposeCaptionValue('transposeFunctionDistanceSteps'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeIntervalsStatus',
 		description: 'widget of active transpose chain',
-		resolve: () => getTransposeCaptionValue('transposeIntervalsStatus')
+		resolve: () => getTransposeCaptionValue('transposeIntervalsStatus'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeProgressionFunctions',
 		description: 'root keys with emphasized function steps',
-		resolve: () => getTransposeCaptionValue('transposeProgressionFunctions')
+		resolve: () => getTransposeCaptionValue('transposeProgressionFunctions'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeProgressionDistances',
 		description: 'root keys with emphasized numeric distances',
-		resolve: () => getTransposeCaptionValue('transposeProgressionDistances')
+		resolve: () => getTransposeCaptionValue('transposeProgressionDistances'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'transposeProgressionFunctionDistances',
 		description: 'root keys with emphasized Function+distance steps',
-		resolve: () => getTransposeCaptionValue('transposeProgressionFunctionDistances')
+		resolve: () => getTransposeCaptionValue('transposeProgressionFunctionDistances'),
+		sampleFormat: 'html'
 	},
 	{
 		name: 'arpeggioPositionsStatus',
 		description: 'widget of current-section Arpeggio positions',
-		resolve: () => getArpeggioCaptionValue('arpeggioPositionsStatus')
+		resolve: () => getArpeggioCaptionValue('arpeggioPositionsStatus'),
+		sampleFormat: 'html'
 	}
 ];
 
@@ -227,6 +248,7 @@ export function listApprovedValues(options = {}) {
 			description: entry.description,
 			menuPattern: '${' + entry.name + '}',
 			templatePattern: '${' + entry.name + '}',
+			sampleFormat: entry.sampleFormat || 'text',
 			sampleValue,
 			sampleError
 		};
@@ -245,13 +267,13 @@ export function renderApprovedValuesReferenceHtml(options = {}) {
 		if (row.sampleError) {
 			return '<td style="border: 1px solid black; padding: 0.4em;"><em>n/a</em></td>';
 		}
-		return `<td style="border: 1px solid black; padding: 0.4em;">${formatSampleValue(row.sampleValue)}</td>`;
+		return `<td style="border: 1px solid black; padding: 0.4em;">${formatSampleValue(row.sampleValue, row.sampleFormat)}</td>`;
 	};
 	const tableRows = rows.map(row => {
 		return [
 			'<tr>',
 			//`<td style="border: 1px solid black; padding: 0.4em;"><code>${escapeHtml(row.name)}</code></td>`,
-			`<td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;">${renderPatternHtml(row.name)}</td>`,
+			`<td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;">${renderPatternCellHtml(row.name)}</td>`,
 			`<td style="border: 1px solid black; padding: 0.4em;">${escapeHtml(row.description)}</td>`,
 			sampleCells(row),
 			'</tr>'

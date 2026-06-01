@@ -153,6 +153,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	var gSong = null;  //constructed in document ready.
+	let gFullscreenLeadSheetLineVisible = false;
 	export function getSong(){
 		return gSong;
 	}
@@ -160,6 +161,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const transportController = new TransportController();
 	export function getTransportController() {
 		return transportController;
+	}
+
+	export function copyApprovedPattern(name) {
+		if (!name) {
+			return;
+		}
+		const text = String(name).startsWith('${') ? String(name) : '${' + String(name) + '}';
+		void navigator.clipboard.writeText(text);
 	}
 
 	let WIRING_OPEN = false;
@@ -243,12 +252,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			getTransportController,
 			hideAllMenuDivs,
+			hideFullscreenLeadSheetLine,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
 			printSectionsNotes,
 			printSectionsOptions,
 			printSectionsChart,
+			printSectionsLine,
 			resetNoteNames,
 			sectionChanged,
 			setBPM,
@@ -659,6 +670,35 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//$("#topControlsCaptions").show();
 	}
 
+	function isFullscreenActive(){
+		return !$('.container').is(':visible');
+	}
+
+	function updateFullscreenLeadSheetLineHost(){
+		const jHost = $("#divFullscreenLeadSheetLineHost");
+		if (jHost.length === 0) {
+			return;
+		}
+		if (gFullscreenLeadSheetLineVisible && isFullscreenActive() && getSong()) {
+			jHost
+				.html(SectionPrinter.printLeadSheetLine(getSong(), getSections(), { rootId: 'sectionPrinterChartLineFullscreen' }))
+				.show();
+			return;
+		}
+		jHost.hide().empty();
+	}
+
+	function setFullscreenLeadSheetLineVisible(isVisible) {
+		gFullscreenLeadSheetLineVisible = !!isVisible;
+		updateFullscreenLeadSheetLineHost();
+	}
+
+	export function hideFullscreenLeadSheetLine(){
+		const wasVisible = gFullscreenLeadSheetLineVisible;
+		setFullscreenLeadSheetLineVisible(false);
+		return wasVisible ? "LeadSheetLine hidden" : "LeadSheetLine not shown";
+	}
+
 	export function isMenuShowing(strMenuDiv){
 		var jStrMenuDiv = $(strMenuDiv);
 		return jStrMenuDiv.is(":visible");
@@ -1061,6 +1101,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('.container').show();
 		$(".dockable-handle").show();
 		$("#divESCAPE").hide();
+		updateFullscreenLeadSheetLineHost();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
@@ -1069,6 +1110,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (showESCButton){ // undefined ==> false
 			$("#divESCAPE").show();
 		}
+		updateFullscreenLeadSheetLineHost();
 	}
 	
 	export function toggleFullscreen(){
@@ -1079,6 +1121,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('.captionRow').hide();
 			$(".dockable-handle").hide()
 			setWiringOpenState(false); //going fullscreen
+			updateFullscreenLeadSheetLineHost();
 		} else {
 			if (getSong().captionsRowShowing){
 				$('.captionRow').show();
@@ -1087,6 +1130,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 			$(".dockable-handle").show()
 			$("#divESCAPE").hide();
+			updateFullscreenLeadSheetLineHost();
 		}
 	}
 	export function showTransport(parkMode = false) {
@@ -1190,6 +1234,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divChartNotesTab")  .html(SectionPrinter.printSectionsNotes(getSong(), getSections()));
 		$("#divChartOptionsTab").html(SectionPrinter.printChartOptions(getSong()));
 		$("#divChartTab")       .html(SectionPrinter.printChart(getSong(), getSections()));
+		$("#divChartLineTab")   .html(SectionPrinter.printLeadSheetLine(getSong(), getSections()));
+		updateFullscreenLeadSheetLineHost();
 	}
 
 	export function printSections(showDetail) {
@@ -1218,6 +1264,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		updatePrintSections();
 		showChartTab("Chart");
 		showOneMenu("#divChart", true);
+	}
+
+	export function printSectionsLine(){
+		updatePrintSections();
+		showChartTab("Line");
+		if (isFullscreenActive()) {
+			setFullscreenLeadSheetLineVisible(true);
+			return "LeadSheetLine shown";
+		}
+		showOneMenu("#divChart", true);
+		return "Chart Line shown";
 	}
 
 	export function linkToSectionChartPosition(idx, chartPosition) {
@@ -1782,12 +1839,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var showDetailsTab = which === "Details";
 		var showOptionsTab = which === "Options";
 		var showChartOnlyTab = which === "Chart";
+		var showLineTab = which === "Line";
 		
 		$('#divChartSummaryTab').toggle(showSummaryTab);
 		$('#divChartNotesTab').toggle(showNotesTab);
 		$('#divChartDetailsTab').toggle(showDetailsTab);
 		$('#divChartOptionsTab').toggle(showOptionsTab);
 		$('#divChartTab').toggle(showChartOnlyTab);
+		$('#divChartLineTab').toggle(showLineTab);
 
 		$('#btnChartSummaryTab')
 			.toggleClass('BtnPunchedIn', showSummaryTab)
@@ -1803,7 +1862,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.toggleClass('BtnPunchedOut', !showOptionsTab);
 		$('#btnChartTab')
 			.toggleClass('BtnPunchedIn', showChartOnlyTab)
-			.toggleClass('BtnPunchedOut', !showChartOnlyTab);	
+			.toggleClass('BtnPunchedOut', !showChartOnlyTab);
+		$('#btnChartLineTab')
+			.toggleClass('BtnPunchedIn', showLineTab)
+			.toggleClass('BtnPunchedOut', !showLineTab);	
 	}
 
 	export function bindDesktopEvents(){
@@ -1973,6 +2035,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnChartTab', function() {
 			showChartTab("Chart");
+		});
+		bindEvent('click', '#btnChartLineTab', function() {
+			showChartTab("Line");
 		});
 		//=========================================
 		bindEvent('click', '#btnHelp', function() {
@@ -2321,7 +2386,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hideGraveyard,
 			saveInstrumentPrefs,
 			applyInstrumentPrefs,
-			clearInstrumentPrefs
+			clearInstrumentPrefs,
+			copyApprovedPattern
 		};
 
 		$(document).on('click', '[data-action]', function(e) {
@@ -2668,7 +2734,7 @@ EventBus.on('UpdateAllWiringSelects', function() {
 	refreshPluginMenus();
 });
 EventBus.on('InstrumentAdded', function() {
-	setWiringOpenState(true);  // to open
+	//setWiringOpenState(true);  // to open
 	refreshPluginMenus();
 });
 EventBus.on('Wiring:added', function() {

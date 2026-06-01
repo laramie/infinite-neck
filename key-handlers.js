@@ -88,12 +88,14 @@ function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsC
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
+function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
 function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
 function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
+function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
@@ -860,6 +862,14 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "printSectionsChart":
 			printSectionsChart();
+			hideCmdLine();
+			break;
+		case "printSectionsLine":
+			actionResult.result = printSectionsLine() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenLeadSheetLine":
+			actionResult.result = hideFullscreenLeadSheetLine() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "sectionDelete":

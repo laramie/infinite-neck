@@ -217,7 +217,12 @@ const chartOptionsSchema = {
         modes: { type: 'boolean' },
         detailLine: { type: 'boolean' },
         showCaptions: { type: 'boolean' },
+        showNextLine: { type: 'boolean' },
         barClass: { type: 'string', enum: Object.values(SONG_CHART_BAR_CLASS) },
+        chordFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        },
         lineCaptionFontsize: {
             type: 'string',
             enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']

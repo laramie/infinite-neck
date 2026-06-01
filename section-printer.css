@@ -158,10 +158,19 @@
   padding: 0.8em 0;
 }
 
+.sectionPrinterChartOptionsCard {
+  align-self: stretch;
+}
+
 .songChartOptionsControl {
   display: inline-flex;
   align-items: center;
   gap: 0.6em;
+}
+
+.sectionPrinterChartOptionsCard .songChartOptionsControl {
+  width: 100%;
+  justify-content: space-between;
 }
 
 .songChartBarClassSelect {
@@ -221,6 +230,11 @@
   background-color: white;
   min-width: 12em;
   box-sizing: border-box;
+  cursor: pointer;
+}
+
+.chartBAR--currentSection {
+  background-color: #a1fde9;
 }
 
 .barClass-Box {
@@ -229,22 +243,22 @@
 
 .barClass-Bare {
   border: 0;
-  font-size: 200%;
 }
 
 .barClass-LeadSheet {
   border: 0;
   border-right: 2px solid black;
-  cursor: pointer;
 }
 
 .barClass-LeadSheet.chartBAR--firstInLine {
   border-left: 2px solid black;
 }
 
+.chartBAR:hover,
+.chartBAR:focus-within,
 .barClass-LeadSheet:hover,
 .LeadSheetActive {
-  background-color: lightblue;
+  background-color: #d4f3ff;
 }
 
 .chartBAR--leadSheet {
@@ -273,7 +287,7 @@
 }
 
 .chartBARChord {
-  font-size:  200%;
+  font-size: calc(300% * var(--chart-bar-chord-scale, 1));
   font-family: "Shadows Into Light", cursive;
   font-weight: 400;
   font-style: normal;
@@ -306,5 +320,118 @@
   line-height: 1.3;
   margin-bottom: 0.3em;
   font-size: var(--chart-line-caption-font-size, 100%);
+}
+
+#sectionPrinterChartLine,
+.sectionPrinterChartLine {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  color: black;
+  background-color: #fbb963;
+  box-shadow: 4pt 4pt 2pt 0.2pt gray;
+  border: 1px solid black;
+  padding: 0.75em;
+}
+
+#divFullscreenLeadSheetLineHost {
+  display: none;
+  margin-bottom: 0.75em;
+}
+
+.leadSheetLinePanel {
+  display: block;
+  width: fit-content;
+  min-width: 100%;
+  padding: 0.45em;
+  box-sizing: border-box;
+}
+
+.leadSheetLinePanelCurrent {
+  background-color: #ffeb9c;
+}
+
+.leadSheetLinePanelNext,
+.leadSheetLinePanelPlaceholder {
+  background-color: #f7c56a;
+}
+
+.leadSheetLineRow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 0;
+  width: max-content;
+}
+
+.leadSheetLineRow--placeholder {
+  width: max-content;
+}
+
+.leadSheetLineBAR {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-self: flex-start;
+  gap: 0.2em;
+  width: 13em;
+  min-width: 13em;
+  max-width: 13em;
+  padding: 0.65em 0.8em;
+  box-sizing: border-box;
+  background-color: white; /*#ffeb9c;*/
+  border-right: 2px solid black;
+  cursor: pointer;
+}
+
+.leadSheetLineBAR--firstInLine {
+  border-left: 2px solid black;
+}
+
+.leadSheetLineBAR--currentSection {
+  background-color: #a1fde9;
+}
+
+.leadSheetLineBAR--placeholder {
+  visibility: hidden;
+}
+
+.leadSheetLineBAR:hover,
+.leadSheetLineBAR:focus-within {
+  background-color: #d4f3ff;
+}
+
+.leadSheetLineBARChord,
+.leadSheetLineBARMode,
+.leadSheetLineBARBeatCount {
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.leadSheetLineBARChord {
+  width: 100%;
+  text-align: center;
+  font-size: calc(300% * var(--chart-bar-chord-scale, 1));
+  font-family: "Shadows Into Light", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.leadSheetLineBARMode {
+  width: 100%;
+  font-size: var(--chart-bar-secondary-font-size, 100%);
+}
+
+.leadSheetLineBARBeatCount {
+  align-self: flex-end;
+  display: inline-block;
+  font-size: var(--chart-bar-secondary-font-size, 100%);
+  line-height: 1;
+  border: 1px solid darkgray;
+  margin-right: calc(-0.8em + 4px);
+  padding: 0;
 }
 

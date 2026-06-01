@@ -8,4 +8,9 @@
 - The current Section will get a `background-color: #a1fde9`
 - The second line of LeadSheetLine will be the LINE following the LINE the current section is on, with BARs as presented by LeadSheet, but the whole line will be `background-color: rgb(247, 197, 106)`
 - The LeadSheetLine will continue to show :hover for clicking any Section BAR which will continue to jump to that section.  This should cause re-rendering of LeadSheetLine because the current Section may change, and the row it is on may change, bringing in a new second line.
-- It will live in a new tab after `Chart` called `Line` 
+- It will live in a new tab after `Chart` called `Line`
+
+# Iteration 2: tweaks after implementation
+
+- Tightened up the display so that when no other text is in the BAR, chord determines the height and height of the LINE is minimal.
+- Added command-line /cl

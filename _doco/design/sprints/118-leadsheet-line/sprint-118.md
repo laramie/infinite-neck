@@ -18,7 +18,9 @@ Purpose of this sprint is to:
 - [sprint-117 where we implemented the Chart](../117-chart-layout/)
 - [sprint-118 design document](118-design.md) 
 - [sprint-118 implementation-plan](118-implementation-plan.md) 
+- [sprint-118 fullscreen LeadSheetLine implementation-plan](118-fullscreen-implementation-plan.md)
 
 ## Iterations
 
 - Iteration 1: define the new class/mode and see what it looks like.
+- Iteration 2: discuss a fullscreen-preserving `/cl` and `/ch` path using a dedicated fullscreen LeadSheetLine host.

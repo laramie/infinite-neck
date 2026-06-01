@@ -153,6 +153,7 @@ ul.tonalMode-list {
     white-space: normal; /* allow normal wrapping in the list */
 }
 ul.tonalMode-list li {
+    font-size: 120%;
     border: 1px dotted gray;
     margin: 0;
     margin-left: 1em;
@@ -174,7 +175,6 @@ ul.tonalMode-list li:nth-child(even) {
 
 
 .TonalPickerAllChords {
-   
 }
     
 .TonalPickerAllChords span:nth-child(odd) {
@@ -198,7 +198,6 @@ ul.tonalMode-list li:nth-child(even) {
 }
 
 .TonalPickerAllModes {
-   
 }
     
 .TonalPickerAllModes span:nth-child(odd) {

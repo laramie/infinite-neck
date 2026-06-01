@@ -201,12 +201,14 @@ describe('key-handlers spacebar mapping', () => {
 			getSong: () => song,
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
+			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
 			printSectionsNotes: jest.fn(),
 			printSectionsOptions: jest.fn(),
 			printSectionsChart: jest.fn(),
+			printSectionsLine: jest.fn(() => 'LeadSheetLine shown'),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
 			setBPM: mockSetBPM,
@@ -245,6 +247,26 @@ describe('key-handlers spacebar mapping', () => {
 		performCmdAction({ action: 'printSectionsChart' });
 
 		expect(printSectionsChart).toHaveBeenCalledTimes(1);
+	});
+
+	test('printSectionsLine routes to the Line action and returns its result', () => {
+		const printSectionsLine = jest.fn(() => 'LeadSheetLine shown');
+		setKeyHandlerProviders({ printSectionsLine });
+
+		const result = performCmdAction({ action: 'printSectionsLine' });
+
+		expect(printSectionsLine).toHaveBeenCalledTimes(1);
+		expect(result.result).toBe('LeadSheetLine shown');
+	});
+
+	test('hideFullscreenLeadSheetLine routes to the fullscreen hide action and returns its result', () => {
+		const hideFullscreenLeadSheetLine = jest.fn(() => 'LeadSheetLine hidden');
+		setKeyHandlerProviders({ hideFullscreenLeadSheetLine });
+
+		const result = performCmdAction({ action: 'hideFullscreenLeadSheetLine' });
+
+		expect(hideFullscreenLeadSheetLine).toHaveBeenCalledTimes(1);
+		expect(result.result).toBe('LeadSheetLine hidden');
 	});
 
 	test('mapSpacebar_restartSong stores firstSection as the mapped action', () => {

@@ -14,7 +14,9 @@ const songDefaults = {
         modes: true,
         detailLine: true,
         showCaptions: true,
+        showNextLine: false,
         barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+        chordFontsize: '100%',
         lineCaptionFontsize: '100%',
         boxCaptionFontsize: '100%'
     },

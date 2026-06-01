@@ -1043,11 +1043,12 @@
                                         <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
                                             <span style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
                                                 <span style="display: flex; gap: 0; align-items: flex-end;">
-                                                    <button id="btnChartSummaryTab" type="button" class="MenuTabBtn BtnPunchedIn">Chart Summary</button>
-                                                    <button id="btnChartNotesTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Notes</button>
-                                                    <button id="btnChartDetailsTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Details</button>
-                                                    <button id="btnChartOptionsTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Options</button>
+                                                    <button id="btnChartSummaryTab" type="button" class="MenuTabBtn BtnPunchedIn">Summary</button>
+                                                    <button id="btnChartNotesTab" type="button" class="MenuTabBtn BtnPunchedOut">Notes</button>
+                                                    <button id="btnChartDetailsTab" type="button" class="MenuTabBtn BtnPunchedOut">Details</button>
+                                                    <button id="btnChartOptionsTab" type="button" class="MenuTabBtn BtnPunchedOut">Options</button>
                                                     <button id="btnChartTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart</button>
+                                                    <button id="btnChartLineTab" type="button" class="MenuTabBtn BtnPunchedOut">Line</button>
                                                 </span>
                                             </span>
                                             <span style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
@@ -1059,6 +1060,7 @@
                                             <div id="divChartDetailsTab" style="display: none;"></div>
                                             <div id="divChartOptionsTab" style="display: none;"></div>
                                             <div id="divChartTab" style="display: none;"></div>
+                                            <div id="divChartLineTab" style="display: none;"></div>
                                         </div>
                             </td>
                         </tr>
@@ -1111,6 +1113,7 @@
 
 
         <div>
+            <div id="divFullscreenLeadSheetLineHost" style="display: none;"></div>
             <div id="topControlsCaptions">
                 <nobr>
                     <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>
