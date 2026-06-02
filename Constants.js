@@ -63,20 +63,20 @@ export const FUNCTION_OFFSETS = ["I+0","&tau;+1","II+2","m+3","III+4","IV+5","&T
 
 
 export const FILL_CHORD_OPTIONS = [
-    { value: '4,7', caption: 'Maj', trigger: 'm' },
-    { value: '3,7', caption: 'Min', trigger: 'n' },
-    { value: '4,8', caption: 'Aug', trigger: 'a' },
-    { value: '3,6', caption: 'Dim&nbsp;&nbsp;&nbsp;&ordm;', trigger: 'd' },
-    { value: '3,6,9', caption: 'Dim7', trigger: '7' },
+    { value: '4,7', caption: 'M', trigger: 'M' },
+    { value: '3,7', caption: 'm', trigger: 'm' },
+    { value: '4,8', caption: 'aug', trigger: 'u' },
+    { value: '3,6', caption: 'dim&nbsp;&nbsp;&nbsp;&ordm;', trigger: 'd' },
+    { value: '3,6,9', caption: 'dim7', trigger: 'i' },
     { value: '3,6,10', caption: 'm7b5&nbsp;&nbsp;&nbsp;&oslash;', trigger: 'b' },
-    { value: '2,7', caption: 'Sus2', trigger: '2' },
-    { value: '5,7', caption: 'Sus4', trigger: '4' },
-    { value: '4,7,11', caption: 'Maj7&nbsp;&nbsp;&nbsp;&Delta;', trigger: 'j' },
-    { value: '3,7,10', caption: 'Min7', trigger: 'i' },
-    { value: '4,7,10', caption: 'Dom7', trigger: 'o' },
-    { value: '3,7,11', caption: 'MinMaj', trigger: 'x' },
-    { value: '3,7,10,14', caption: 'Min9', trigger: '9' },
-    { value: '4,7,9,14', caption: '6/9', trigger: '6' }
+    { value: '2,7', caption: 'sus2', trigger: '2' },
+    { value: '5,7', caption: 'sus4', trigger: '4' },
+    { value: '4,7,11', caption: 'maj7&nbsp;&nbsp;&nbsp;&Delta;', trigger: 'a' },
+    { value: '3,7,10', caption: 'm7', trigger: 'n' },
+    { value: '4,7,10', caption: '7 (dom7)', trigger: '7' },
+    { value: '3,7,11', caption: 'm/ma7', trigger: 'j' },
+    { value: '3,7,10,14', caption: 'm9', trigger: '9' },
+    { value: '4,7,9,14', caption: '6add9', trigger: '6' }
 ];
 
 export const FILL_SCALE_OPTIONS = [

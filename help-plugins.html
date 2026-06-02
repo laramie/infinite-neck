@@ -2006,7 +2006,7 @@
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpfo-g">
-                            <b>g</b> scale formula
+                            <b>m</b>ode
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -2046,6 +2046,12 @@
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpfo-C">
+                            <b>C</b>lear
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
                 </table>
             </td>
         </tr>
@@ -2064,6 +2070,18 @@
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpfoN-C">
                             <b>C</b>opy from SingleNote
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpfoN-A">
+                            <b>A</b>ll role note
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpfoN-N">
+                            all <b>N</b>one
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -2183,7 +2201,7 @@
 <a name="plugin-fill-what"></a>
     <h3>What It Does</h3>
 
-    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It can fill NamedNotes, SingleNotes, and TinyNotes from the current Section root, chord formula, and scale formula.</p>
+    <p>FillPlugin writes plugin-owned notes into the current Section and selected table. It can fill NamedNotes, SingleNotes, and TinyNotes from the current Section root, chord, and mode.</p>
 
     <p>NamedNote ignores fret and string limits. SingleNote and standalone TinyNote obey the configured fret and string limits. SingleNote can also add an overlay TinyNote in the same cell, but that overlay is ignored whenever standalone TinyNote is active and emits notes.</p>
 
@@ -2193,11 +2211,11 @@
     <ul>
         <li><b>T</b> Table chooses the main table to fill. By default it is the first table that is not wired to display another table.</li>
         <li><b>o</b> options contains the main FillPlugin configuration.</li>
-        <li>Inside <b>options</b>, <b>c</b> chord formula and <b>g</b> scale formula choose the note sets to use with the current Section root.</li>
+        <li>Inside <b>options</b>, <b>c</b> chord and <b>m</b> mode choose the note sets to use with the current Section root.</li>
         <li>Inside <b>options</b>, <b>p</b> positions groups <b>i</b> minFret and <b>a</b> maxFret under a <span class="menuExampleLine">min:max</span> summary.</li>
         <li>Inside <b>options</b>, <b>s</b> strings groups <b>u</b> upper string limit and <b>l</b> lower string limit under a <span class="menuExampleLine">upper:lower</span> summary.</li>
-        <li><b>n</b> NamedNote, <b>s</b> SingleNote, and <b>t</b> TinyNote each have root, chord, and scale submenus with none, keep, and role modes.</li>
-        <li>NamedNote and TinyNote include <b>C</b> Copy from SingleNote to copy the SingleNote root, chord, and scale settings once.</li>
+        <li><b>n</b> NamedNote, <b>s</b> SingleNote, and <b>t</b> TinyNote each have all-role-note, all-none, root, chord, and scale controls.</li>
+        <li>NamedNote and TinyNote also include <b>C</b> Copy from SingleNote to copy the SingleNote root, chord, and scale settings once.</li>
         <li>Fill pass order is scale, then chord, then root.</li>
         <li>Inside <b>SingleNote</b>, <b>a</b> add TinyNote chooses none, emboss, noteAutomatic, noteLead, or noteLead2 for overlay Tiny companions.</li>
     </ul>
@@ -2647,7 +2665,7 @@ plugin-menu:
 sub-menu-path: /fpfo
 sub-menu:
 ```
-<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
+<td><b>c</b>hord [M]<br><b>m</b>ode [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
 ```
 </pre>
 
@@ -2711,7 +2729,7 @@ menu:
 sub-menu-path: /fpfo
 sub-menu: 
 ```
-<td><b>c</b>hord formula [Maj]<br><b>g</b> scale formula [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote<br><b>S</b>ingleNote<br><b>T</b>inyNote<br><b>A</b>pply<br><br>e<b>x</b>it</td>
+<td><b>c</b>hord [M]<br><b>m</b>ode [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
 ```
 </pre>
 
@@ -2720,7 +2738,7 @@ sub-menu:
 sub-menu-path: /fpfoN
 sub-menu: 
 ```
-<td><b>C</b>opy from SingleNote<br><b>r</b>oot [noteRoot]<br><b>c</b>hord [noteChord]<br><b>s</b>cale [noteScale]<br><br>e<b>x</b>it</td>
+<td><b>C</b>opy from SingleNote<br><b>A</b>ll role note<br>all <b>N</b>one<br><b>r</b>oot [noteRoot]<br><b>c</b>hord [noteChord]<br><b>s</b>cale [noteScale]<br><br>e<b>x</b>it</td>
 ```
 </pre>
 

@@ -14,6 +14,8 @@ const STYLE_EVERY = 'every';
 const STYLE_ALTERNATE = 'alternate';
 const STYLE_RANDOM = 'random';
 const STYLE_BACH = 'bach';
+const SOURCE_TYPE_NAMED_NOTE = 'NamedNote';
+const SOURCE_TYPE_SINGLE_NOTE = 'SingleNote';
 const SHOW_NOTE_NAME_OFF = 'off';
 const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
@@ -77,6 +79,7 @@ export class ArpeggioPlugin {
       this.getProperty('lowToHigh')?.getMenuNodeSpec(this),
       this.getProperty('upOnly')?.getMenuNodeSpec(this),
       this.getProperty('style')?.getMenuNodeSpec(this),
+      this.getProperty('type')?.getMenuNodeSpec(this),
       this.getProperty('showNoteName')?.getMenuNodeSpec(this),
       this.getProperty('colorNotes')?.getMenuNodeSpec(this),
       this.getProperty('flashcard')?.getMenuNodeSpec(this),
@@ -363,7 +366,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
@@ -383,6 +386,7 @@ Implemented in this iteration for:
 - style = alternate
 - style = random
 - style = bach
+- type = NamedNote or SingleNote
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
@@ -401,6 +405,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getTableID(tuning) {
     return `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+  }
+
+  getSourceType() {
+    return this.getProperty('type')?.getValue() || SOURCE_TYPE_NAMED_NOTE;
   }
 
   buildPositionsMenuNode() {
@@ -1289,12 +1297,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   collectCandidatesForSection(section, tuning, options = {}) {
     const tableID = this.getTableID(tuning);
     const sectionNotes = section?.sectionNotesByTable?.[tableID];
-    const namedNotes = sectionNotes?.namedNotes || {};
-    const targetNoteNames = new Set(
-      Object.entries(namedNotes)
-        .filter(([, note]) => note && typeof note === 'object' && Object.keys(note).length > 0)
-        .map(([noteName]) => noteName)
-    );
+    const targetNoteNames = this.collectCandidateNoteNames(sectionNotes);
 
     if (targetNoteNames.size === 0) {
       return [];
@@ -1332,6 +1335,31 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     return candidates;
+  }
+
+  collectCandidateNoteNames(sectionNotes) {
+    if (this.getSourceType() === SOURCE_TYPE_SINGLE_NOTE) {
+      return this.collectSingleNoteSourceNames(sectionNotes);
+    }
+    return this.collectNamedNoteSourceNames(sectionNotes);
+  }
+
+  collectNamedNoteSourceNames(sectionNotes) {
+    const namedNotes = sectionNotes?.namedNotes || {};
+    return new Set(
+      Object.entries(namedNotes)
+        .filter(([, note]) => note && typeof note === 'object' && Object.keys(note).length > 0)
+        .map(([noteName]) => noteName)
+    );
+  }
+
+  collectSingleNoteSourceNames(sectionNotes) {
+    return new Set(
+      (sectionNotes?.playedNotes || [])
+        .filter((note) => note?.styleNum === Note.STYLENUM_SINGLE)
+        .map((note) => `${note?.noteName || ''}`.trim())
+        .filter((noteName) => noteName.length > 0)
+    );
   }
 
   expandCandidateSequence(candidates, beatCount, context = {}) {

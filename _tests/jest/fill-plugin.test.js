@@ -187,18 +187,23 @@ describe('FillPlugin', () => {
       'named',
       'single',
       'tiny',
-      'apply'
+      'apply',
+      'clear'
     ]);
     expect(optionsNode.children.map((child) => child.trigger)).toEqual([
       'c',
-      'g',
+      'm',
       'p',
       's',
       'N',
       'S',
       'T',
-      'A'
+      'A',
+      'C'
     ]);
+    expect(namedNode.caption).toContain('[${plugin:fill:namedSummary}]');
+    expect(singleNode.caption).toContain('[${plugin:fill:singleSummary}]');
+    expect(tinyNode.caption).toContain('[${plugin:fill:tinySummary}]');
     expect(positionsNode.children.map((child) => child.name)).toEqual([
       'minFret',
       'maxFret'
@@ -209,11 +214,15 @@ describe('FillPlugin', () => {
     ]);
     expect(namedNode.children.map((child) => child.name)).toEqual([
       'named:copyFromSingle',
+      'named:allRoleNote',
+      'named:allNone',
       'named:root',
       'named:chord',
       'named:scale'
     ]);
     expect(singleNode.children.map((child) => child.name)).toEqual([
+      'single:allRoleNote',
+      'single:allNone',
       'single:root',
       'single:chord',
       'single:scale',
@@ -221,6 +230,8 @@ describe('FillPlugin', () => {
     ]);
     expect(tinyNode.children.map((child) => child.name)).toEqual([
       'tiny:copyFromSingle',
+      'tiny:allRoleNote',
+      'tiny:allNone',
       'tiny:root',
       'tiny:chord',
       'tiny:scale'
@@ -264,6 +275,8 @@ describe('FillPlugin', () => {
     expect(plugin.resolveValue('singleChordDisplay', { song })).toBe('noteChord');
     expect(plugin.resolveValue('tinyScaleDisplay', { song })).toBe('none');
     expect(plugin.resolveValue('singleAddTiny', { song })).toBe('none');
+    expect(plugin.resolveValue('namedSummary', { song })).toBe('r:noteRoot,c:noteChord,s:noteScale');
+    expect(plugin.resolveValue('tinySummary', { song })).toBe('r:none,c:none,s:none');
   });
 
   test('family role menu captions use ${plugin:...} value references', () => {
@@ -313,6 +326,29 @@ describe('FillPlugin', () => {
 
     expect(plugin.getProperty('namedRootColor').getValue()).toBe('noteLead2');
     expect(plugin.getProperty('tinyRootColor').getValue()).toBe('noteLead2');
+  });
+
+  test('all role note and all none bulk actions update a family consistently', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('singleRootColor', 'noteLead2', { song });
+    plugin.setPropertyValue('singleChordColor', 'noteTransparent', { song });
+    plugin.setPropertyValue('singleScaleColor', 'noteLead', { song });
+
+    expect(plugin.invokeAction('allRoleNote:single', { song }).result).toBe('single set to all role note');
+    expect(plugin.resolveValue('singleSummary', { song })).toBe('r:noteRoot,c:noteChord,s:noteScale');
+
+    expect(plugin.invokeAction('allNone:single', { song }).result).toBe('single set to all none');
+    expect(plugin.resolveValue('singleSummary', { song })).toBe('r:none,c:none,s:none');
+    expect(plugin.getProperty('singleRootColor').getValue()).toBe('noteRoot');
+    expect(plugin.getProperty('singleChordColor').getValue()).toBe('noteChord');
+    expect(plugin.getProperty('singleScaleColor').getValue()).toBe('noteScale');
   });
 
   test('loadSongState maps the legacy single-family fields onto sprint-2 SingleNote properties', () => {
@@ -385,10 +421,14 @@ describe('FillPlugin', () => {
     const help = plugin.buildHelpMessage(song);
 
     expect(plugin.buildSummary(song)).toContain('target table=P46_1');
+    expect(plugin.buildSummary(song)).toContain('chord=M');
+    expect(plugin.buildSummary(song)).toContain('mode=Ionian/Major');
     expect(plugin.buildSummary(song)).toContain('named=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('single=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('tiny=root=none chord=none scale=none');
     expect(help).toContain('NamedNote, SingleNote, and TinyNote fill.');
+    expect(help).toContain('- chord = M');
+    expect(help).toContain('- mode = Ionian/Major');
     expect(help).toContain('NamedNote ignores fret and string limits.');
     expect(help).toContain('Standalone TinyNote suppresses SingleNote add TinyNote');
     expect(help).toContain('DaCapo:OnSectionBegin');

@@ -188,6 +188,7 @@ export class ClipPlugin {
       this.buildCopyMenuNode('cutToGraveyard', 'X cut', 'X'),
       this.buildReviveMenuNode(song),
       this.buildMidiPasteMenuNode(song),
+      this.buildCopyMenuNode('copyListenedToGraveyard', 'L copy Listened notes', 'L', 'defaultListenerClipName'),
       this.getProperty('automatic').getMenuNodeSpec(this),
       this.getProperty('overwrite').getMenuNodeSpec(this),
       this.buildIncludeMenuNode(song),
@@ -196,7 +197,7 @@ export class ClipPlugin {
     ].filter(Boolean);
   }
 
-  buildCopyMenuNode(actionName, caption, trigger) {
+  buildCopyMenuNode(actionName, caption, trigger, defaultFieldName = 'defaultClipName') {
     const automatic = !!this.getProperty('automatic')?.getValue();
     const spec = {
       name: actionName,
@@ -212,7 +213,7 @@ export class ClipPlugin {
       spec.input = {
         type: 'input',
         caption: 'clip name',
-        default: `plugin:${this.id}:defaultClipName`,
+        default: `plugin:${this.id}:${defaultFieldName}`,
         datatype: 'string',
         id: 'value'
       };
@@ -392,6 +393,9 @@ export class ClipPlugin {
     if (fieldName === 'defaultClipName') {
       return this.buildDefaultClipName(song);
     }
+    if (fieldName === 'defaultListenerClipName') {
+      return this.buildDefaultClipName(song, this.collectListenerClipPayload(song));
+    }
     if (fieldName === 'defaultReviveChoice') {
       return this.getCompatibleClipRecords(song).length > 0 ? '1' : '';
     }
@@ -426,6 +430,8 @@ export class ClipPlugin {
         return this.copyOrCut(song, context.args, false);
       case 'cutToGraveyard':
         return this.copyOrCut(song, context.args, true);
+      case 'copyListenedToGraveyard':
+        return this.copyListened(song, context.args);
       case 'clearClips':
         return this.clearClips(song);
       case 'help':
@@ -469,6 +475,7 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 - cut removes only the included note lanes from the current section/table
 - revive merges into the current section/table and drops out-of-range played notes
 - MIDI Paste remaps played notes by MIDI on the same string for supported 6-string guitars
+- Listener Copy captures listened-to model notes for true Listener tables only, ignores Observers, and projects played notes by row plus MIDI into the selected listener table before clipping
 
 ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
@@ -512,29 +519,21 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return active.length > 0 ? `[${active.join(',')}]` : '[none]';
   }
 
-  buildDefaultClipName(song = getSong()) {
+  buildDefaultClipName(song = getSong(), payload = null) {
     const now = new Date();
     const hhmm = `${now.getHours()}`.padStart(2, '0') + `${now.getMinutes()}`.padStart(2, '0');
-    const counts = this.collectClipCounts(song);
+    const counts = this.collectClipCounts(song, payload);
     const label = clipCountLabel(counts);
     return label ? `${label}-${hhmm}` : `empty-${hhmm}`;
   }
 
-  collectClipCounts(song = getSong()) {
-    const payload = this.collectClipPayload(song);
-    return payload ? payload.counts : { named: 0, single: 0, tiny: 0, bend: 0, fingering: 0 };
+  collectClipCounts(song = getSong(), payload = null) {
+    const resolvedPayload = payload || this.collectClipPayload(song);
+    return resolvedPayload ? resolvedPayload.counts : { named: 0, single: 0, tiny: 0, bend: 0, fingering: 0 };
   }
 
-  collectClipPayload(song = getSong()) {
-    const section = this.getCurrentSection(song);
-    const tuning = this.getSelectedTargetTuning(song);
-    const tableID = this.getSelectedTargetTableID();
-    if (!section || !tuning || !tableID) {
-      return null;
-    }
-    const include = this.getIncludeConfig();
-    const sectionNotes = section.getSectionNotes(tableID);
-    const payload = {
+  createEmptyClipPayload(tuning, tableID, include) {
+    return {
       schemaVersion: CLIP_SCHEMA_VERSION,
       source: {
         tableID,
@@ -560,33 +559,116 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         playedNotes: []
       }
     };
+  }
 
-    if (include.named) {
-      Object.entries(sectionNotes?.namedNotes || {}).forEach(([noteName, note]) => {
-        const clippedNote = stripOwner(note);
-        clippedNote.noteName = clippedNote.noteName || noteName;
-        payload.sectionNotes.namedNotes[noteName] = clippedNote;
-        payload.counts.named += 1;
-      });
+  addNamedNotesToPayload(payload, sectionNotes, include) {
+    if (!include.named) {
+      return;
+    }
+    Object.entries(sectionNotes?.namedNotes || {}).forEach(([noteName, note]) => {
+      const clippedNote = stripOwner(note);
+      clippedNote.noteName = clippedNote.noteName || noteName;
+      payload.sectionNotes.namedNotes[noteName] = clippedNote;
+      payload.counts.named += 1;
+    });
+  }
+
+  addPlayedNoteToPayload(payload, note) {
+    payload.sectionNotes.playedNotes.push(stripOwner(note));
+    if (note?.styleNum === Note.STYLENUM_SINGLE) {
+      payload.counts.single += 1;
+    }
+    if (note?.styleNum === Note.STYLENUM_TINY) {
+      payload.counts.tiny += 1;
+    }
+    if (note?.styleNum === Note.STYLENUM_BEND) {
+      payload.counts.bend += 1;
+    }
+    if (note?.styleNum === Note.STYLENUM_FINGERING) {
+      payload.counts.fingering += 1;
+    }
+  }
+
+  includesPlayedStyle(include, styleNum) {
+    return (
+      (styleNum === Note.STYLENUM_SINGLE && include.single)
+      || (styleNum === Note.STYLENUM_TINY && include.tiny)
+      || (styleNum === Note.STYLENUM_BEND && include.bend)
+      || (styleNum === Note.STYLENUM_FINGERING && include.fingering)
+    );
+  }
+
+  addPlayedNotesToPayload(payload, sectionNotes, include) {
+    (sectionNotes?.playedNotes || []).forEach((note) => {
+      if (this.includesPlayedStyle(include, note?.styleNum)) {
+        this.addPlayedNoteToPayload(payload, note);
+      }
+    });
+  }
+
+  getTuningByTableID(song = getSong(), tableID = '') {
+    return this.getEligibleTargetTunings(song).find((tuning) => getTableID(tuning) === `${tableID}`) || null;
+  }
+
+  getSelectedListenerSelection(song = getSong()) {
+    const targetTableID = this.getSelectedTargetTableID();
+    if (!song || !targetTableID || !Array.isArray(song.wirings)) {
+      return null;
+    }
+    const wiring = song.wirings.find((candidate) => candidate?.tablename === targetTableID) || null;
+    if (!wiring || !wiring.listenToTablename || wiring.relativeSection) {
+      return null;
+    }
+    return {
+      targetTableID,
+      sourceTableID: `${wiring.listenToTablename}`,
+      wiring
+    };
+  }
+
+  collectClipPayload(song = getSong()) {
+    const section = this.getCurrentSection(song);
+    const tuning = this.getSelectedTargetTuning(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!section || !tuning || !tableID) {
+      return null;
+    }
+    const include = this.getIncludeConfig();
+    const sectionNotes = section.getSectionNotes(tableID);
+    const payload = this.createEmptyClipPayload(tuning, tableID, include);
+
+    this.addNamedNotesToPayload(payload, sectionNotes, include);
+    this.addPlayedNotesToPayload(payload, sectionNotes, include);
+
+    return payload;
+  }
+
+  collectListenerClipPayload(song = getSong()) {
+    const section = this.getCurrentSection(song);
+    const selection = this.getSelectedListenerSelection(song);
+    const targetTuning = this.getSelectedTargetTuning(song);
+    const sourceTuning = this.getTuningByTableID(song, selection?.sourceTableID);
+    if (!section || !selection || !targetTuning || !sourceTuning) {
+      return null;
     }
 
-    (sectionNotes?.playedNotes || []).forEach((note) => {
-      if (note?.styleNum === Note.STYLENUM_SINGLE && include.single) {
-        payload.sectionNotes.playedNotes.push(stripOwner(note));
-        payload.counts.single += 1;
+    const include = this.getIncludeConfig();
+    const sourceSectionNotes = section.getSectionNotes(selection.sourceTableID);
+    const payload = this.createEmptyClipPayload(targetTuning, selection.targetTableID, include);
+    const sourceLayout = createTuningLayout(sourceTuning);
+    const targetLayout = createTuningLayout(targetTuning);
+
+    this.addNamedNotesToPayload(payload, sourceSectionNotes, include);
+
+    (sourceSectionNotes?.playedNotes || []).forEach((note) => {
+      if (!this.includesPlayedStyle(include, note?.styleNum)) {
+        return;
       }
-      if (note?.styleNum === Note.STYLENUM_TINY && include.tiny) {
-        payload.sectionNotes.playedNotes.push(stripOwner(note));
-        payload.counts.tiny += 1;
+      const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+      if (!candidate) {
+        return;
       }
-      if (note?.styleNum === Note.STYLENUM_BEND && include.bend) {
-        payload.sectionNotes.playedNotes.push(stripOwner(note));
-        payload.counts.bend += 1;
-      }
-      if (note?.styleNum === Note.STYLENUM_FINGERING && include.fingering) {
-        payload.sectionNotes.playedNotes.push(stripOwner(note));
-        payload.counts.fingering += 1;
-      }
+      this.addPlayedNoteToPayload(payload, candidate);
     });
 
     return payload;
@@ -795,6 +877,43 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     return {
       result: `Clip ${doCut ? 'cut' : 'copied'} ${totalCount} notes as ${userKey}.${removedSummary}`.trim()
+    };
+  }
+
+  copyListened(song = getSong(), args = {}) {
+    const selection = this.getSelectedListenerSelection(song);
+    const payload = this.collectListenerClipPayload(song);
+    const tuning = this.getSelectedTargetTuning(song);
+    const totalCount = Object.values(payload?.counts || {}).reduce((sum, value) => sum + value, 0);
+    if (!selection) {
+      return { result: 'Clip listener-copy skipped: target table is not a Listener' };
+    }
+    if (!song?.graveyard || !payload || !tuning) {
+      return { result: 'Clip listener-copy skipped: no current section or target table selected' };
+    }
+    if (totalCount === 0) {
+      return {
+        result: `Clip listener-copy skipped: no included listened notes found from ${selection.sourceTableID} to ${selection.targetTableID}`
+      };
+    }
+
+    const fallbackKey = this.buildDefaultClipName(song, payload);
+    const userKey = normalizeClipKey(args?.value, fallbackKey);
+    const context = {
+      caption: userKey,
+      userKey,
+      logicalKey: `clip::${userKey}`,
+      tableID: selection.targetTableID,
+      baseID: tuning.baseID,
+      fromBaseID: tuning.fromBaseID || tuning.baseID,
+      schemaVersion: CLIP_SCHEMA_VERSION,
+      counts: { ...payload.counts }
+    };
+
+    song.graveyard.bury(GraveType.CLIP, payload, context);
+
+    return {
+      result: `Clip copied listened notes ${totalCount} as ${userKey} from ${selection.sourceTableID} to ${selection.targetTableID}.`
     };
   }
 

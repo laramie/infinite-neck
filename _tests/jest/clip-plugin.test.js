@@ -284,6 +284,63 @@ describe('ClipPlugin', () => {
     expect(clearNode.popOnBang).toBe(false);
   });
 
+  test('listener copy menu sits after MIDI Paste and uses its own default-name token when automatic is disabled', () => {
+    const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'P46_1' }),
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6' })
+      ],
+      wirings: [
+        { tablename: targetTableID, listenToTablename: `${Constants.TABLE_ID_PREFIX}S6_1` }
+      ],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('automatic', false, { song });
+    plugin.setPropertyValue('targetTable', targetTableID, { song });
+
+    const children = plugin.getVisibleMenuChildren();
+    const midiPasteIndex = children.findIndex((child) => child.name === 'midiPasteFromGraveyard');
+    const listenerCopyNode = children.find((child) => child.name === 'copyListenedToGraveyard');
+
+    expect(midiPasteIndex).toBeGreaterThan(-1);
+    expect(children[midiPasteIndex + 1].name).toBe('copyListenedToGraveyard');
+    expect(listenerCopyNode.input.default).toBe('plugin:clip:defaultListenerClipName');
+    expect(listenerCopyNode.popOnBang).toBe(true);
+  });
+
+  test('listener copy skips when selected target table is not a Listener or is relative wiring', () => {
+    const directTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const relativeTableID = `${Constants.TABLE_ID_PREFIX}P48_1`;
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'P46_1' }),
+        createTuning({ baseID: 'P48_1', fromBaseID: 'P48' }),
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6' })
+      ],
+      wirings: [
+        { tablename: relativeTableID, listenToTablename: `${Constants.TABLE_ID_PREFIX}S6_1`, relativeSection: '+1' }
+      ],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+
+    plugin.setPropertyValue('targetTable', directTableID, { song });
+    expect(plugin.invokeAction('copyListenedToGraveyard', { song, args: {} }).result).toBe('Clip listener-copy skipped: target table is not a Listener');
+
+    plugin.setPropertyValue('targetTable', relativeTableID, { song });
+    expect(plugin.invokeAction('copyListenedToGraveyard', { song, args: {} }).result).toBe('Clip listener-copy skipped: target table is not a Listener');
+  });
+
   test('midi paste menu lists supported cross-tuning clips when automatic is disabled', () => {
     const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
     const song = createSong({
@@ -347,6 +404,67 @@ describe('ClipPlugin', () => {
     expect(midiPasteNode.input.default).toBe('plugin:clip:defaultMidiPasteChoice');
     expect(midiPasteNode.input.children.map((child) => child.caption)).toEqual(['1) s6-clip']);
     expect(plugin.resolveValue('defaultMidiPasteChoice', { song })).toBe('1');
+  });
+
+  test('listener copy captures listened notes from model state, projects played notes, and ignores target self notes', () => {
+    const sourceTableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6', rowRange: [64, 59, 55, 50, 45, 40], frets: 24 }),
+        createTuning({ baseID: 'P46_1', fromBaseID: 'P46', rowRange: [65, 60, 55, 50, 45, 40], frets: 24 })
+      ],
+      wirings: [
+        { tablename: targetTableID, listenToTablename: sourceTableID }
+      ],
+      sections: [createSection({
+        [sourceTableID]: {
+          namedNotes: {
+            C: { noteName: 'C', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteRoot', owner: 'SourcePlugin' }
+          },
+          playedNotes: [
+            { noteName: 'A', styleNum: Note.STYLENUM_SINGLE, midinum: '69', row: '0', col: '5', colorClass: 'noteChord', owner: 'SourcePlugin' },
+            { noteName: 'B', styleNum: Note.STYLENUM_TINY, midinum: '59', row: '1', col: '0', colorClass: 'noteTransparent', owner: 'SourcePlugin' }
+          ]
+        },
+        [targetTableID]: {
+          namedNotes: {
+            E: { noteName: 'E', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteAvoid' }
+          },
+          playedNotes: [
+            { noteName: 'Db', styleNum: Note.STYLENUM_SINGLE, row: '0', col: '4', colorClass: 'noteTarget' }
+          ]
+        }
+      })]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('targetTable', targetTableID, { song });
+
+    const result = plugin.invokeAction('copyListenedToGraveyard', { song, args: { value: 'listener-riff' } });
+
+    expect(result.result).toBe(`Clip copied listened notes 2 as listener-riff from ${sourceTableID} to ${targetTableID}.`);
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.graveyard.records[0].type).toBe(GraveType.CLIP);
+    expect(song.graveyard.records[0].context.tableID).toBe(targetTableID);
+    const payload = JSON.parse(song.graveyard.records[0].json);
+    expect(payload.source.tableID).toBe(targetTableID);
+    expect(payload.counts).toEqual({ named: 1, single: 1, tiny: 0, bend: 0, fingering: 0 });
+    expect(Object.keys(payload.sectionNotes.namedNotes)).toEqual(['C']);
+    expect(payload.sectionNotes.namedNotes.C.colorClass).toBe('noteRoot');
+    expect(payload.sectionNotes.namedNotes.C.owner).toBeUndefined();
+    expect(payload.sectionNotes.playedNotes).toHaveLength(1);
+    expect(payload.sectionNotes.playedNotes[0]).toMatchObject({
+      noteName: 'A',
+      midinum: '69',
+      row: '0',
+      col: '4',
+      colorClass: 'noteChord'
+    });
+    expect(payload.sectionNotes.playedNotes[0].owner).toBeUndefined();
   });
 
   test('midi paste maps played notes by midi on the same string and drops illegal landings', () => {

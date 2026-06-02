@@ -65,6 +65,10 @@
   - cleanup and bugfixes, scheduled
     - menu prompt stale sometimes
     - chart colors and shadows
+    - plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
+    - palete KEEP, etc. should get a highlight ring so that KEEP is not so unexpected
+    - default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
+    - /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen.
 
 119-songs
   - song test fixtures / song test list
@@ -72,12 +76,14 @@
   - song library User-facing list
 
 120-plugin-feature-cleanup
-  - arpeggio should listen to singlenote and transform exiting ones to equivalent NamedNote and continue as usual
+  - "Iteration 1": Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
+    - COMPLETE
+  - "Iteration 2": arpeggio should listen to singlenote and transform exiting ones to equivalent NamedNote and continue as usual
+    - COMPLETE
+  - "Iteration 3": menu changes for Fill/fpfo shows options but you have to go all the way down to actually accept them. Flow is weird.
   - fill and Fill page should normalize on Tonal's chord names (maybe on modes too) 
   - Fill page should add Dom7No5 as option since so popular on guitar
   - fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
-  - Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
-  - /fpfo shows options but you have to go all the way down to actually accept them. Flow is weird.
 
 121-persistence
   - tunings persists 

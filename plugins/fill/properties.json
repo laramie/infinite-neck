@@ -51,7 +51,7 @@
   },
   {
     "name": "chordFormula",
-    "caption": "chord formula",
+    "caption": "chord",
     "trigger": "c",
     "datatype": "org.dynamide.Select",
     "value": "4,7",
@@ -61,8 +61,8 @@
   },
   {
     "name": "scaleFormula",
-    "caption": "scale formula",
-    "trigger": "g",
+    "caption": "mode",
+    "trigger": "m",
     "datatype": "org.dynamide.Select",
     "value": "0,2,4,5,7,9,11",
     "defaultValue": "0,2,4,5,7,9,11",

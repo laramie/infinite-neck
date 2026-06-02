@@ -63,6 +63,10 @@ const ROLE_NAMES = ['root', 'chord', 'scale'];
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
 
+function getRoleShortLabel(roleName) {
+  return roleName === 'root' ? 'r' : roleName === 'chord' ? 'c' : 's';
+}
+
 function stripHtml(text) {
   return `${text || ''}`.replace(/<[^>]+>/g, '');
 }
@@ -134,6 +138,10 @@ export class FillPlugin {
 
   getFamilyDisplayFieldName(familyName, roleName) {
     return `${familyName}${capitalize(roleName)}Display`;
+  }
+
+  getFamilySummaryFieldName(familyName) {
+    return `${familyName}Summary`;
   }
 
   getFamilyConfig(familyName) {
@@ -393,7 +401,8 @@ export class FillPlugin {
         this.buildFamilyMenuNode('named', song),
         this.buildFamilyMenuNode('single', song),
         this.buildFamilyMenuNode('tiny', song),
-        this.getProperty('apply').getMenuNodeSpec(this)
+        this.getProperty('apply').getMenuNodeSpec(this),
+        this.getProperty('clear').getMenuNodeSpec(this)
       ]
     });
   }
@@ -429,6 +438,7 @@ export class FillPlugin {
   buildFamilyMenuNode(familyName) {
     const familyConfig = this.getFamilyConfig(familyName);
     const children = [];
+    const summaryToken = `plugin:${this.id}:${this.getFamilySummaryFieldName(familyName)}`;
 
     if (familyConfig?.supportsCopy) {
       children.push(new MenuItemProxy(this, {
@@ -442,6 +452,9 @@ export class FillPlugin {
       }));
     }
 
+    children.push(this.buildFamilyBulkActionMenuNode(familyName, 'allRoleNote', 'All role note', 'A'));
+    children.push(this.buildFamilyBulkActionMenuNode(familyName, 'allNone', 'all None', 'N'));
+
     ROLE_NAMES.forEach((roleName) => {
       children.push(this.buildFamilyRoleMenuNode(familyName, roleName));
     });
@@ -452,9 +465,22 @@ export class FillPlugin {
 
     return new MenuItemProxy(this, {
       name: familyName,
-      caption: buildCaption(familyConfig.caption, familyConfig.trigger),
+      caption: `${buildCaption(familyConfig.caption, familyConfig.trigger)} [\${${summaryToken}}]`,
       trigger: familyConfig.trigger,
+      vars: [summaryToken],
       children
+    });
+  }
+
+  buildFamilyBulkActionMenuNode(familyName, actionName, caption, trigger) {
+    return new MenuItemProxy(this, {
+      name: `${familyName}:${actionName}`,
+      caption: buildCaption(caption, trigger),
+      trigger,
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName: `${actionName}:${familyName}`,
+      popOnBang: true
     });
   }
 
@@ -613,6 +639,9 @@ export class FillPlugin {
       return `${this.resolveValue('minRow', { song })}:${this.resolveValue('maxRow', { song })}`;
     }
     for (const familyName of FAMILY_NAMES) {
+      if (fieldName === this.getFamilySummaryFieldName(familyName)) {
+        return this.buildFamilyMenuSummary(familyName);
+      }
       for (const roleName of ROLE_NAMES) {
         if (fieldName === this.getFamilyDisplayFieldName(familyName, roleName)) {
           return this.resolveFamilyRoleDisplay(familyName, roleName);
@@ -681,6 +710,16 @@ export class FillPlugin {
       return this.copyFamilyFromSingle(familyName, song);
     }
 
+    if (actionName.startsWith('allRoleNote:')) {
+      const [, familyName] = actionName.split(':');
+      return this.setFamilyModesAllRole(familyName, song);
+    }
+
+    if (actionName.startsWith('allNone:')) {
+      const [, familyName] = actionName.split(':');
+      return this.setFamilyModesAllNone(familyName, song);
+    }
+
     switch (actionName) {
       case 'apply':
         return this.applyToCurrentSection(song);
@@ -720,14 +759,38 @@ export class FillPlugin {
     return { result: `${familyName} copied from SingleNote` };
   }
 
+  setFamilyModesAllRole(familyName, song = getSong()) {
+    const familyConfig = this.getFamilyConfig(familyName);
+    if (!familyConfig) {
+      return { result: `Fill all role note skipped: unsupported family ${familyName}` };
+    }
+    ROLE_NAMES.forEach((roleName) => {
+      const roleConfig = this.getRoleConfig(roleName);
+      this.setPropertyValue(this.getFamilyModePropertyName(familyName, roleName), MODE_ROLE, { song });
+      this.setPropertyValue(this.getFamilyColorPropertyName(familyName, roleName), roleConfig.canonicalColor, { song });
+    });
+    return { result: `${familyName} set to all role note` };
+  }
+
+  setFamilyModesAllNone(familyName, song = getSong()) {
+    const familyConfig = this.getFamilyConfig(familyName);
+    if (!familyConfig) {
+      return { result: `Fill all none skipped: unsupported family ${familyName}` };
+    }
+    ROLE_NAMES.forEach((roleName) => {
+      this.setPropertyValue(this.getFamilyModePropertyName(familyName, roleName), MODE_NONE, { song });
+    });
+    return { result: `${familyName} set to all none` };
+  }
+
   buildHelpMessage(song = getSong()) {
     return `<pre>${buildPluginHelpHeader(this, 'Fill plugin:', this.buildSummary(song))}
 
 NamedNote, SingleNote, and TinyNote fill.
 
 - target table = ${this.resolveValue('targetTable', { song }) || '<none>'}
-- chord formula = ${this.resolveValue('chordFormula', { song })}
-- scale formula = ${this.resolveValue('scaleFormula', { song })}
+- chord = ${this.resolveValue('chordFormula', { song })}
+- mode = ${this.resolveValue('scaleFormula', { song })}
 - fret range = ${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()}
 - upper/lower string limit = ${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}
 - NamedNote = ${this.buildFamilySummary('named')}
@@ -746,11 +809,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildSummary(song = getSong()) {
-    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord formula=${this.resolveValue('chordFormula', { song })} scale formula=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
+    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord=${this.resolveValue('chordFormula', { song })} mode=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
   }
 
   buildFamilySummary(familyName) {
     return ROLE_NAMES.map((roleName) => `${roleName}=${this.resolveFamilyRoleDisplay(familyName, roleName)}`).join(' ');
+  }
+
+  buildFamilyMenuSummary(familyName) {
+    return ROLE_NAMES.map((roleName) => `${getRoleShortLabel(roleName)}:${this.resolveFamilyRoleDisplay(familyName, roleName)}`).join(',');
   }
 
   buildTargetTableOptions(song = getSong()) {

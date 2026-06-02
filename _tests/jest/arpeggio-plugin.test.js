@@ -18,6 +18,7 @@ jest.unstable_mockModule('../../event-bus.js', () => ({
 }));
 
 const Constants = await import('../../Constants.js');
+const { Note } = await import('../../Note.js');
 const { createLookupContext, lookupClassForNote } = await import('../../colorFunctions.js');
 const EventBus = (await import('../../event-bus.js')).default;
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
@@ -42,7 +43,7 @@ function makeNamedNotesFromNames(noteNames) {
 	return Object.fromEntries(noteNames.map((noteName) => [noteName, { enabled: true }]));
 }
 
-function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, rootID = 3, currentBeat = 1 } = {}) {
+function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1 } = {}) {
 	const plugin = new ArpeggioPlugin();
 	const tuning = {
 		baseID: 'ARP',
@@ -52,6 +53,7 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	const tableID = plugin.getTableID(tuning);
 	const sectionNotes = {
 		namedNotes: namedNotes || makeNamedNotesForRange(rowRange, 0, frets),
+		playedNotes,
 		recordedNotes: {}
 	};
 	const section = {
@@ -134,13 +136,15 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(plugin.buildSummary()).toContain('fret range=0..3');
 		expect(plugin.buildSummary()).toContain('upper/lower string limit=1..1');
+		expect(plugin.buildSummary()).toContain('type=NamedNote');
 		expect(plugin.buildSummary()).toContain('show note names=played');
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
+		expect(help).toContain('type = NamedNote or SingleNote');
 	});
 
-	test('menu includes upper/lower string limits before low to high', () => {
+		test('menu includes type before show note name', () => {
 		const { plugin } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
 
 		const children = plugin.getVisibleMenuChildren();
@@ -157,6 +161,7 @@ describe('ArpeggioPlugin sequencing', () => {
 			'lowToHigh',
 			'upOnly',
 			'style',
+			'type',
 			'showNoteName',
 			'colorNotes',
 			'flashcard',
@@ -176,6 +181,13 @@ describe('ArpeggioPlugin sequencing', () => {
 			'minRow',
 			'maxRow'
 		]);
+	});
+
+	test('type defaults to NamedNote', () => {
+		const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+
+		expect(plugin.getProperty('type').getValue()).toBe('NamedNote');
+		expect(plugin.getSourceType()).toBe('NamedNote');
 	});
 
 	test('string limits display as 1-based values while persisting zero-based rows', () => {
@@ -594,6 +606,62 @@ describe('ArpeggioPlugin sequencing', () => {
 			: [...rotatedTail, ...rotatedHead];
 
 		expect(rotatedCycle).toEqual(expectedRotatedCycle);
+	});
+
+	test('type=SingleNote derives candidate note names only from STYLENUM_SINGLE notes on the selected table', () => {
+		const { plugin, song } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 2,
+			namedNotes: {},
+			playedNotes: [
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'D', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'E', styleNum: Note.STYLENUM_TINY },
+				{ noteName: 'F', styleNum: Note.STYLENUM_BEND },
+				{ noteName: 'G', styleNum: Note.STYLENUM_FINGERING },
+				{ noteName: '', styleNum: Note.STYLENUM_SINGLE }
+			]
+		});
+		plugin.setPropertyValue('type', 'SingleNote', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(song.getCurrentSection().getSectionNotes('tblARP'))).sort();
+		const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+		expect(candidateNames).toEqual(['C', 'D']);
+		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['C', 'D']);
+	});
+
+	test('type=NamedNote preserves current candidate collection even when SingleNotes exist', () => {
+		const { plugin, song } = makeContext({
+			beats: 4,
+			rowRange: [53],
+			frets: 2,
+			namedNotes: makeNamedNotesFromNames(['F', 'G']),
+			playedNotes: [
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'D', styleNum: Note.STYLENUM_SINGLE }
+			]
+		});
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(song.getCurrentSection().getSectionNotes('tblARP'))).sort();
+		const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+		expect(candidateNames).toEqual(['F', 'G']);
+		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['F', 'G']);
+	});
+
+	test('type property persists through export and load song state', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+		plugin.setPropertyValue('type', 'SingleNote', { song });
+
+		const exported = plugin.exportSongState();
+		plugin.loadSongState({ type: 'NamedNote' }, { song });
+		plugin.loadSongState(exported, { song });
+
+		expect(exported.type).toBe('SingleNote');
+		expect(plugin.getProperty('type').getValue()).toBe('SingleNote');
 	});
 
 	test('style=bach with lowToHigh=false does not repeat the rotated seam note', () => {

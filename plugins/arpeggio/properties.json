@@ -109,6 +109,19 @@
     ]
   },
   {
+    "name": "type",
+    "caption": "type",
+    "trigger": "t",
+    "datatype": "org.dynamide.Select",
+    "value": "NamedNote",
+    "defaultValue": "NamedNote",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "NamedNote", "caption": "NamedNote", "trigger": "N" },
+      { "value": "SingleNote", "caption": "SingleNote", "trigger": "S" }
+    ]
+  },
+  {
     "name": "showNoteName",
     "caption": "show note name",
     "trigger": "n",
