@@ -78,12 +78,20 @@
 120-plugin-feature-cleanup
   - "Iteration 1": Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
     - COMPLETE
+
   - "Iteration 2": arpeggio should listen to singlenote and transform exiting ones to equivalent NamedNote and continue as usual
     - COMPLETE
+
   - "Iteration 3": menu changes for Fill/fpfo shows options but you have to go all the way down to actually accept them. Flow is weird.
-  - fill and Fill page should normalize on Tonal's chord names (maybe on modes too) 
+    - COMPLETE: added menu options for All none and All roles, shows choices in higher menu.
+
+  - fill and Fill page should normalize on Tonal's chord names (and on modes too)
+    - COMPLETE: fixed the code by hand w/o Iteration.  Left some non-Tonal names in parens e.g. (Gypsy). 
+
   - Fill page should add Dom7No5 as option since so popular on guitar
-  - fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
+    - COMPLETE:  w/o Iteration
+
+  - "Iteration 4" fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
 
 121-persistence
   - tunings persists 
@@ -109,6 +117,13 @@
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+903-TonalPlugin
+  - allows clearing the filter for Western modes. It's a toggle.  When off, the TonalFunction.js filterWesternScales is paused. 
+  - has a nextSection, prevSection nav
+  - has a A) Accept first modes, and A) Accept first chords in modes and chords sub-menus
+  - has a numeric list of suggestions to accept, just like the tonalPicker
+  - writes to Song automatically (maybe protected with an option) 
+  
 
 
 # Sprint Planning Rules

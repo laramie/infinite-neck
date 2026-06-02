@@ -76,3 +76,51 @@ TinyNote [r:keep,c:keep,s:keep]
 
 Then change caption in /fpfo from `g scale formula` to `mode` trigger `m`.  Change `chord formula` to `chord` same caption `c`.
 
+## Iteration 4 
+
+- fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  
+
+- It would ignore the chord and mode picks if chart versions are chosen.
+
+- When the User has entered notes into a table, and used the TonalPicker to set the value in Section.chartChord and Section.chartMode, then clears the notes, but goes back into FillPlugin, we'd like the an option in the menu to use chartChord or use chartMode.  The plugin would then select the value from the list, and pop up.  If not found, would just stay there, silently failing, except for a message in the action result which would go into the dropdown.
+
+- We would need to strip the slash root and slash bass so that it plays well with the fill options available.
+
+- Menu items. 
+  - Avoid messing with the properties-based menu, and instead create a dynamic menu in the /fpfo dynamic menu area.
+  - At the level of /fpfo, add a menu item `u) use chart` with two action items on one sub-menu: `c) chord`, `m) mode`.  On success or fail it would pop so we'd be sitting at /fpfo again, and would see the dropdown and the defaults filled in on chord and mode.
+  - structure: 
+```
+/fpfo
+  u) use chart
+  c) chord
+  m) mode
+  p) positions
+  ....
+
+/fpfou
+  c) chord
+  m) mode  
+```
+
+
+Please produce an implementation plan in `_doco/design/sprints/120-plugin-feature-cleanup/120-it4-implementation-plan.md`
+
+### Iteration 4 Answers
+
+For slash chords such as FMadd9/A, should the match be based only on the stripped chord type left of /, with the bass always ignored? This is what the design text suggests, but it is the main product rule worth confirming explicitly.  ANSWER: Yes--stripped only.
+
+For misses, do you want the action result to include only the normalized candidate and current Fill list, or also a short set of likely suggestions when there are close alias matches? The simpler and safer first version is to report raw value, normalized value, and current Fill candidates only. ANSWER: simpler and safer version.  Further, action result that goes in the dropdown has to stay short, so don't include the list.  Then, put the full message in showMessages.  We'll turn this off later or with an option.  For now, showMessages is fine even though it disrupts User flow slightly.
+
+- Example for dropdown: 
+`No fill match for chartChord="FMadd9/A" normalized="Madd9"`
+
+- Example for showMessages:
+`Fill use chart chord: no match for chartChord="FMadd9/A" normalized="Madd9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9]` 
+
+For chartMode, is tonic stripping always expected, so C major and A minor should map to the same Fill entries as plain major and minor? This appears intended, but it is the core normalization rule.  ANSWER: Yes, tonic stripping always expected.
+
+If chartChord or chartMode is empty, should the message explicitly say empty chartChord / empty chartMode, or should that be treated as the same silent-style miss as any unmapped value? I recommend an explicit no-op message because it helps testing. ANSWER: if chartChord or chartMode is empty, simply skip filling anything in, don't showMessage, and do add a simple dropdown result: `No chartChord` | `No chartMode`
+
+For Fill's curated subset, should unmatched but clearly related chart chord types such as Madd9 be allowed to map to an existing Fill approximation like 6add9, or should only exact approved aliases be accepted? I recommend exact approved aliases only for the first version, because approximation rules are where surprising behavior creeps in. ANSWER: only exact approved aliases.  We will likely add a second properties menu with "additional Tonal" values so we can find them but not clutter up our menu, as we find the set we are missing and actually get used.
+

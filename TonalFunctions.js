@@ -109,7 +109,9 @@ const westernScales = [
   "major", "minor", 
   "ionian", "dorian", "phrygian", "lydian", "mixolydian", "aeolian", "locrian",
   "major pentatonic", "minor pentatonic", "blues",
-  "harmonic minor", "melodic minor"
+  "harmonic minor", "melodic minor",
+  "diminished", "half-diminished", "dominant diminished",
+  "whole tone", "altered", "ultralocrian", "super locrian" 
 ];
 
 /** 
@@ -122,6 +124,31 @@ function filterWesternScales(detections) {
     return westernScales.includes(type);
   });
 }
+
+function todoBetterMidiDetectOfModes(){
+    //There are a few strategies.  
+    // Strategy I: 
+        const scaleIntervals = Scale.get("diminished").intervals;
+
+        // 4. Transpose those intervals from your root
+        const diminishedNotes = scaleIntervals.map(interval => Distance.transpose(rootName, interval));
+
+    //Strategy II
+        //import { Midi, Scale } from "@tonaljs/tonal";
+
+        // 1. Array of MIDI numbers (e.g., C, Eb, Gb, Bbb -> C diminished 7th)
+        const midiNumbers = [60, 63, 66, 69];
+
+        // 2. Convert MIDI numbers to note names
+        const notes = midiNumbers.map(num => Midi.midiToNoteName(num)); 
+        // Result: ['C4', 'D#4', 'F#4', 'A4']
+
+        // 3. Detect the scale/mode
+        const detectedModes = Scale.detect(notes);
+        console.log(detectedModes); 
+        // Outputs matched scales like: [ 'C diminished', 'C locrian 6', ... ]
+}
+
 
 //==============================================================
 
