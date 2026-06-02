@@ -62,6 +62,42 @@ const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
+const CHART_CHORD_ALIASES = {
+  '4,7': ['', 'M', 'maj'],
+  '3,7': ['m', 'min'],
+  '4,8': ['aug', '+'],
+  '3,6': ['dim', 'o'],
+  '3,6,9': ['dim7', 'o7'],
+  '3,6,10': ['m7b5', 'half-diminished'],
+  '2,7': ['sus2'],
+  '5,7': ['sus4', 'sus'],
+  '4,7,11': ['maj7', 'M7', 'Maj7'],
+  '3,7,10': ['m7', 'min7'],
+  '4,7,10': ['7', 'dom', 'dom7'],
+  '4,10': ['7no5'],
+  '3,7,11': ['m/ma7', 'mMaj7', 'mM7'],
+  '3,7,10,14': ['m9'],
+  '4,7,9,14': ['6add9', '6/9', '69', 'Madd9']
+};
+const CHART_MODE_ALIASES = {
+  '0,2,4,5,7,9,11': ['major', 'ionian'],
+  '0,2,3,5,7,9,10': ['dorian'],
+  '0,1,3,5,7,8,10': ['phrygian'],
+  '0,2,4,6,7,9,11': ['lydian'],
+  '0,2,4,5,7,9,10': ['mixolydian'],
+  '0,2,3,5,7,8,10': ['minor', 'aeolian', 'natural minor'],
+  '0,1,3,5,6,8,10': ['locrian'],
+  '0,2,4,6,8,10': ['whole tone'],
+  '0,3,6,9': ['diminished'],
+  '0,3,5,7,10': ['minor pentatonic'],
+  '0,2,4,7,9': ['major pentatonic'],
+  '0,2,3,5,7,8,11': ['harmonic minor'],
+  '0,2,3,5,7,9,11': ['melodic minor'],
+  '0,2,4,6,7,9,10': ['lydian dominant'],
+  '0,1,4,5,7,8,10': ['gypsy'],
+  '0,1,3,5,7,9,11': ['neopolitanmaj'],
+  '0,1,3,5,7,8,11': ['neopolitanmin']
+};
 
 function getRoleShortLabel(roleName) {
   return roleName === 'root' ? 'r' : roleName === 'chord' ? 'c' : 's';
@@ -69,6 +105,22 @@ function getRoleShortLabel(roleName) {
 
 function stripHtml(text) {
   return `${text || ''}`.replace(/<[^>]+>/g, '');
+}
+
+function toMessageCaption(text) {
+  return stripHtml(text)
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&[A-Za-z0-9#]+;/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeAliasKey(text) {
+  return `${text || ''}`.trim().toLowerCase();
+}
+
+function normalizeChordAliasKey(text) {
+  return `${text || ''}`.trim();
 }
 
 function cloneOptions(options = []) {
@@ -394,6 +446,7 @@ export class FillPlugin {
       caption: buildCaption('options', 'o'),
       trigger: 'o',
       children: [
+        this.buildUseChartMenuNode(),
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
         this.buildPositionsMenuNode(),
@@ -404,6 +457,30 @@ export class FillPlugin {
         this.getProperty('apply').getMenuNodeSpec(this),
         this.getProperty('clear').getMenuNodeSpec(this)
       ]
+    });
+  }
+
+  buildUseChartMenuNode() {
+    return new MenuItemProxy(this, {
+      name: 'useChart',
+      caption: buildCaption('use chart', 'u'),
+      trigger: 'u',
+      children: [
+        this.buildUseChartActionNode('chord', 'useChartChord', 'c'),
+        this.buildUseChartActionNode('mode', 'useChartMode', 'm')
+      ]
+    });
+  }
+
+  buildUseChartActionNode(caption, actionName, trigger) {
+    return new MenuItemProxy(this, {
+      name: `useChart:${caption}`,
+      caption: buildCaption(caption, trigger),
+      trigger,
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName,
+      popOnBang: true
     });
   }
 
@@ -721,6 +798,10 @@ export class FillPlugin {
     }
 
     switch (actionName) {
+      case 'useChartChord':
+        return this.useChartChord(song);
+      case 'useChartMode':
+        return this.useChartMode(song);
       case 'apply':
         return this.applyToCurrentSection(song);
       case 'clear':
@@ -781,6 +862,90 @@ export class FillPlugin {
       this.setPropertyValue(this.getFamilyModePropertyName(familyName, roleName), MODE_NONE, { song });
     });
     return { result: `${familyName} set to all none` };
+  }
+
+  useChartChord(song = getSong()) {
+    const rawValue = `${this.getCurrentSection(song)?.chartChord || ''}`.trim();
+    if (!rawValue) {
+      return { result: 'No chartChord' };
+    }
+
+    const normalizedValue = this.normalizeChartChord(rawValue);
+    const match = this.matchChartChordToFillOption(normalizedValue);
+    if (!match) {
+      return {
+        result: `No fill match for chartChord="${rawValue}" normalized="${normalizedValue}"`,
+        message: this.buildChartMissMessage('chord', 'chartChord', rawValue, normalizedValue, Constants.FILL_CHORD_OPTIONS)
+      };
+    }
+
+    this.setPropertyValue('chordFormula', match.value, { song });
+    return { result: `chartChord -> ${this.getOptionMessageCaption(match)}` };
+  }
+
+  useChartMode(song = getSong()) {
+    const rawValue = `${this.getCurrentSection(song)?.chartMode || ''}`.trim();
+    if (!rawValue) {
+      return { result: 'No chartMode' };
+    }
+
+    const normalizedValue = this.normalizeChartMode(rawValue);
+    const match = this.matchChartModeToFillOption(normalizedValue);
+    if (!match) {
+      return {
+        result: `No fill match for chartMode="${rawValue}" normalized="${normalizedValue}"`,
+        message: this.buildChartMissMessage('mode', 'chartMode', rawValue, normalizedValue, Constants.FILL_SCALE_OPTIONS)
+      };
+    }
+
+    this.setPropertyValue('scaleFormula', match.value, { song });
+    return { result: `chartMode -> ${this.getOptionMessageCaption(match)}` };
+  }
+
+  normalizeChartChord(rawChord) {
+    const trimmed = `${rawChord || ''}`.trim();
+    if (!trimmed) {
+      return '';
+    }
+    const withoutSlashBass = trimmed.split('/')[0].trim();
+    const rootMatch = withoutSlashBass.match(/^([A-Ga-g](?:#{1,2}|b{1,2}|x)?)/);
+    const suffix = rootMatch ? withoutSlashBass.slice(rootMatch[0].length).trim() : withoutSlashBass;
+    return suffix || 'M';
+  }
+
+  normalizeChartMode(rawMode) {
+    const trimmed = `${rawMode || ''}`.trim();
+    if (!trimmed) {
+      return '';
+    }
+    const tonicMatch = trimmed.match(/^[A-Ga-g](?:#{1,2}|b{1,2}|x)?\s+(.+)$/);
+    const modeText = tonicMatch ? tonicMatch[1] : trimmed;
+    return normalizeAliasKey(modeText);
+  }
+
+  matchChartChordToFillOption(normalizedChord) {
+    const normalizedKey = normalizeChordAliasKey(normalizedChord);
+    return Constants.FILL_CHORD_OPTIONS.find((option) => {
+      const aliases = CHART_CHORD_ALIASES[option.value] || [];
+      return aliases.some((alias) => normalizeChordAliasKey(alias) === normalizedKey);
+    }) || null;
+  }
+
+  matchChartModeToFillOption(normalizedMode) {
+    const normalizedKey = normalizeAliasKey(normalizedMode);
+    return Constants.FILL_SCALE_OPTIONS.find((option) => {
+      const aliases = CHART_MODE_ALIASES[option.value] || [];
+      return aliases.some((alias) => normalizeAliasKey(alias) === normalizedKey);
+    }) || null;
+  }
+
+  getOptionMessageCaption(option) {
+    return toMessageCaption(option?.caption || option?.value || '');
+  }
+
+  buildChartMissMessage(kind, fieldName, rawValue, normalizedValue, options) {
+    const candidates = (options || []).map((option) => this.getOptionMessageCaption(option)).join(', ');
+    return `Fill use chart ${kind}: no match for ${fieldName}="${rawValue}" normalized="${normalizedValue}" against [${candidates}]`;
   }
 
   buildHelpMessage(song = getSong()) {

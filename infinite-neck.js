@@ -694,6 +694,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function hideFullscreenLeadSheetLine(){
+		if (!isFullscreenActive()) {
+			const wasChartVisible = $("#divChart").is(":visible");
+			if (wasChartVisible) {
+				hideAllMenuDivs();
+			}
+			return wasChartVisible ? "Chart hidden" : "Chart not shown";
+		}
 		const wasVisible = gFullscreenLeadSheetLineVisible;
 		setFullscreenLeadSheetLineVisible(false);
 		return wasVisible ? "LeadSheetLine hidden" : "LeadSheetLine not shown";

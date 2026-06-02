@@ -44,24 +44,28 @@
   - Explore Tonal.js chord and mode recommendations and the widget data emitted from current section notes.
   - exploratory notes written 20260524
 
-  - [sprint-111-cleanup-plugins-menus](../design/sprints/111-cleanup-plugins-menus/sprint-111-cleanup-plugins-menus.md)
+- [sprint-111-cleanup-plugins-menus](../design/sprints/111-cleanup-plugins-menus/sprint-111-cleanup-plugins-menus.md)
 
-  - [sprint-112-piano-skeuomorphic](../design/sprints/112-piano-skeuomorphic/112-implementation-plan.md)
+- [sprint-112-piano-skeuomorphic](../design/sprints/112-piano-skeuomorphic/112-implementation-plan.md)
 
 - [sprint-113-transpose-plugin-single-notes](../design/sprints/113-transpose-plugin-single-notes/sprint-113-transpose-plugin-single-notes.md)  
   - teach TransposePlugin to use "algorithm":"string" from MovePlugin for SingleNotes transposed on one string.
 
-  - [sprint-114-show-note-names-refactor](../design/sprints/114-show-note-names-refactor/sprint-114-show-note-names-refactor.md)
+- [sprint-114-show-note-names-refactor](../design/sprints/114-show-note-names-refactor/sprint-114-show-note-names-refactor.md)
 
-  - [sprint-115-move-fingering](../design/sprints/115-move-fingering/115-implementation-plan.md)
+- [sprint-115-move-fingering](../design/sprints/115-move-fingering/115-implementation-plan.md)
 
-  - [sprint-116-copy-fingering](../design/sprints/116-copy-fingering/116-implementation-plan.md)
+- [sprint-116-copy-fingering](../design/sprints/116-copy-fingering/116-implementation-plan.md)
 
-[sprint-117-chart-layout](../design/sprints/117-chart-layout/sprint-117.md)
+- [sprint-117-chart-layout](../design/sprints/117-chart-layout/sprint-117.md)
   - Adds a Chart LeadSheet with edit controls in Chart tab pages, and command-line /cc and /co.
 
-# Future Sprints prior to Version 2 rollout
-118-cleanup
+- [sprint-118-leadsheet-line](../design/sprints/118-leadsheet-line/sprint-118.md)
+
+# Sprints prior to Version 2 rollout
+
+119-cleanup
+  
   - cleanup and bugfixes, scheduled
     - menu prompt stale sometimes
     - chart colors and shadows
@@ -70,12 +74,9 @@
     - default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
     - /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen.
 
-119-songs
-  - song test fixtures / song test list
-  - song drills/games
-  - song library User-facing list
 
-120-plugin-feature-cleanup
+[120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
+
   - "Iteration 1": Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
     - COMPLETE
 
@@ -92,37 +93,51 @@
     - COMPLETE:  w/o Iteration
 
   - "Iteration 4" fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
+    - COMPLETE
 
-121-persistence
+  - "Iteration 5"
+    - Made modes limit to 6 then "n more..." is shown in the Tonal mode suggestions.  Picker still have full set.
+    - COMPLETE
+
+  - "Iteration 6"
+    -  /ch and /cl to be fullscreen aware
+    - COMPLETE
+
+121-songs
+  - song test fixtures / song test list
+  - song drills/games
+  - song library User-facing list
+
+122-persistence
   - tunings persists 
   - color themes persist
   - user Themes persist
   - everything filtered
   - visible tables doesn't clobber tables in Model--allowed to persist without View.
 
-122-helpfile
+123-helpfile
   - finish plugin help file
   - move Themes to Themes gallery at end of helpfile
 
-123-build-process
+124-build-process
   - get tar deployment working
   - include version 
   - include README/CHANGELOG
 
-# Future Sprints Unscheduled  
+# Future Sprints Unscheduled 
+
 901-floating-windows
-902-song import
+
+902-song-import
   - Notes/Sections
   - Color schemes
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+
 903-TonalPlugin
-  - allows clearing the filter for Western modes. It's a toggle.  When off, the TonalFunction.js filterWesternScales is paused. 
-  - has a nextSection, prevSection nav
-  - has a A) Accept first modes, and A) Accept first chords in modes and chords sub-menus
-  - has a numeric list of suggestions to accept, just like the tonalPicker
-  - writes to Song automatically (maybe protected with an option) 
+  - Hand-wavy Design request in [903-design](../design/sprints/903-tonal-plugin/903-design.md)
+  - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/903-tonal-plugin/903-design-sketch.md) 
   
 
 

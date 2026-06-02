@@ -124,3 +124,45 @@ If chartChord or chartMode is empty, should the message explicitly say empty cha
 
 For Fill's curated subset, should unmatched but clearly related chart chord types such as Madd9 be allowed to map to an existing Fill approximation like 6add9, or should only exact approved aliases be accepted? I recommend exact approved aliases only for the first version, because approximation rules are where surprising behavior creeps in. ANSWER: only exact approved aliases.  We will likely add a second properties menu with "additional Tonal" values so we can find them but not clutter up our menu, as we find the set we are missing and actually get used.
 
+## Iteration 5
+
+When `TonalPickerAllModes` gets populated, it can now include a silly number of options in span elements.  We'd like to limit this to 6 spans.  The 7th span would be replaced by the text "n more...", where n is the count elided.  Since the button and manufactured drop down show all options, we don't need "n more..." to be a link or take any action.  It is just text, so it should inherit the alternate coloring of a mode span as though it were a valid mode.  It should not affect the list in the manufactured dropdown, so should never be selectable. 
+
+## Iteration 6
+Iteration 6 was done in the chat, and documented here afterwards.
+
+That works very well now.
+
+We have a small menu fix, that changes a decision we made in a previous sprint.
+
+We would like /ch and /cl to be fullscreen aware.  This should be supported by how we left options for fullscreen with variables that track this.  When in fullscreen mode, key mapped shortcut `f`, the LeadSheetLine remembers its state per fullscreen mode.  If it is shown or hidden with /cl or /ch this works.  However, in non-fullscreen mode, the behavior is anti-intuitive.  So we'd like the meanings per-fullscreen-mode: 
+
+In non-fullscreen mode, /cl shows the LeadSheetLine in the chart tab.  /ch hides the chart tab and its chart menu page entirely, just like the User had hit ESC.
+
+In fullscreen mode, /cl shows the LeadSheetLine as it does today.  /ch hides it as it does today, but doesn't affect the non-fullscreen mode (e.g. changing tab pages or hiding the Chart menu page).  Since exiting fullscreen mode usually involves hitting ESC, we would expect that the Chart is automatically hidden on coming back to non-fullscreen mode--this is normal and accepted.
+
+Please proceed to coding, unless you see a snag, in which case we'll make a decision in the chat.
+
+## Copilot response:
+
+I found the old split: `/cl` goes through `printSectionsLine()`, while `/ch` only calls `hideFullscreenLeadSheetLine()`. I’m reading the concrete UI functions in infinite-neck.js now so I can make those commands fullscreen-aware without changing the command menu contract.
+
+The implementation point is clear now: `printSectionsLine()` already branches on fullscreen, but `hideFullscreenLeadSheetLine()` does not. I’m checking whether there’s an existing test harness around these exported UI helpers; if not, I’ll add a small focused test around the state transitions rather than trying to drive the whole UI.
+
+Implemented the `/ch` behavior split in infinite-neck.js.
+
+Behavior now:
+- Non-fullscreen:
+  - `/cl` still opens Chart tab on `Line`
+  - `/ch` now hides `#divChart` entirely, like ESC-out-of-chart behavior
+- Fullscreen:
+  - `/cl` still shows the fullscreen `LeadSheetLine`
+  - `/ch` still hides only the fullscreen `LeadSheetLine`
+  - it does not touch the non-fullscreen chart page state
+
+Important detail:
+- The non-fullscreen `/ch` path does not clear the remembered fullscreen line state, so the fullscreen and non-fullscreen meanings stay separate as requested.
+
+
+
+

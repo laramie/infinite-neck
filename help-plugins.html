@@ -206,6 +206,7 @@
             <tr><td><a href="#helpCmd-fpfoN">/fpfoN</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfoN"><b>FillPlugin <em>&raquo;</em>  NamedNotes</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpf">/fpf</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpf"><b>FillPlugin</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpfo">/fpfo</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfo"><b>FillPlugin <em>&raquo;</em>  options</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpfou">/fpfou</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfou"><b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  use chart</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpfoNr">/fpfoNr</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfoNr"><b>FillPlugin <em>&raquo;</em>  NamedNotes <em>&raquo;</em>  root</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpfop">/fpfop</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfop"><b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  positions</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpfos">/fpfos</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpfos"><b>FillPlugin <em>&raquo;</em> options <em>&raquo;</em>  strings</b></a></td></tr>
@@ -713,8 +714,16 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd">
+                            <a class="optionLink" href="#helpCmd-fpfou">
+                                                        <b>u</b>se chart
+                            </a>
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfou">/fpfou</a></span></td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
                             <a class="optionLink" href="#helpCmd-fpfo-c">
-                                                        <b>c</b>hord formula
+                                                        <b>c</b>hord
                             </a>
                         </td>
                         <td class="cmdHelp"> </td>
@@ -722,7 +731,7 @@
                     <tr>
                         <td class="greenCmd">
                             <a class="optionLink" href="#helpCmd-fpfo-g">
-                                                        <b>g</b> scale formula
+                                                        <b>m</b>ode
                             </a>
                         </td>
                         <td class="cmdHelp"> </td>
@@ -1999,8 +2008,14 @@
             <td>
                 <table class="cmdTable">
                     <tr>
+                        <td class="greenCmd" id="helpCmd-fpfou-link">
+                            <b>u</b>se chart
+                        </td>
+                        <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpfou">/fpfou</a></span></td>
+                    </tr>
+                    <tr>
                         <td class="greenCmd" id="helpCmd-fpfo-c">
-                            <b>c</b>hord formula
+                            <b>c</b>hord
                         </td>
                         <td class="cmdHelp"> </td>
                     </tr>
@@ -2069,6 +2084,33 @@
                 <table class="cmdTable">
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpfoN-C">
+        <tr id="helpCmdTOC-fpfou">
+            <td colspan="3" class="cmdLine">/fpfou <b>FillPlugin <em>&raquo;</em>  options <em>&raquo;</em>  use chart</b></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpfou">
+                            <b>c</b>hord
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd">
+                            <b>m</b>ode
+                        </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
                             <b>C</b>opy from SingleNote
                         </td>
                         <td class="cmdHelp"> </td>
@@ -2665,7 +2707,16 @@ plugin-menu:
 sub-menu-path: /fpfo
 sub-menu:
 ```
-<td><b>c</b>hord [M]<br><b>m</b>ode [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
+<td><b>u</b>se chart<br><b>c</b>hord [M]<br><b>m</b>ode [major (Ionian)]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfou
+sub-menu:
+```
+<td><b>c</b>hord<br><b>m</b>ode<br><br>e<b>x</b>it</td>
 ```
 </pre>
 
@@ -2729,7 +2780,16 @@ menu:
 sub-menu-path: /fpfo
 sub-menu: 
 ```
-<td><b>c</b>hord [M]<br><b>m</b>ode [Ionian/Major]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
+<td><b>u</b>se chart<br><b>c</b>hord [M]<br><b>m</b>ode [major (Ionian)]<br><b>p</b>ositions [0:4]<br><b>s</b>trings [1:6]<br><b>N</b>amedNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>S</b>ingleNote [r:noteRoot,c:noteChord,s:noteScale]<br><b>T</b>inyNote [r:none,c:none,s:none]<br><b>A</b>pply<br><b>C</b>lear<br><br>e<b>x</b>it</td>
+```
+</pre>
+
+
+<pre>
+sub-menu-path: /fpfou
+sub-menu: 
+```
+<td><b>c</b>hord<br><b>m</b>ode<br><br>e<b>x</b>it</td>
 ```
 </pre>
 

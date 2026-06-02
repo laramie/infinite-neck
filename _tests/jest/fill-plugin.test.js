@@ -180,6 +180,7 @@ describe('FillPlugin', () => {
     const tinyNode = optionsNode.children.find((child) => child.name === 'tiny');
 
     expect(optionsNode.children.map((child) => child.name)).toEqual([
+      'useChart',
       'chordFormula',
       'scaleFormula',
       'positions',
@@ -191,6 +192,7 @@ describe('FillPlugin', () => {
       'clear'
     ]);
     expect(optionsNode.children.map((child) => child.trigger)).toEqual([
+      'u',
       'c',
       'm',
       'p',
@@ -200,6 +202,10 @@ describe('FillPlugin', () => {
       'T',
       'A',
       'C'
+    ]);
+    expect(optionsNode.children.find((child) => child.name === 'useChart').children.map((child) => child.name)).toEqual([
+      'useChart:chord',
+      'useChart:mode'
     ]);
     expect(namedNode.caption).toContain('[${plugin:fill:namedSummary}]');
     expect(singleNode.caption).toContain('[${plugin:fill:singleSummary}]');
@@ -236,6 +242,118 @@ describe('FillPlugin', () => {
       'tiny:chord',
       'tiny:scale'
     ]);
+  });
+
+  test('use chart submenu exposes chord and mode actions with c and m triggers', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+    const useChartNode = optionsNode.children.find((child) => child.name === 'useChart');
+
+    expect(useChartNode.children.map((child) => child.trigger)).toEqual(['c', 'm']);
+    expect(useChartNode.children.map((child) => child.actionName)).toEqual(['useChartChord', 'useChartMode']);
+  });
+
+  test('useChartChord adopts direct chart matches and slash-chord aliases', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartChord = 'Cmaj7';
+    let result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> maj7');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,11');
+
+    section.chartChord = 'G7';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> 7 (dom7)');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,10');
+
+    section.chartChord = 'Cm';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> m');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('3,7');
+
+    section.chartChord = 'FMadd9/A';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> 6add9');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,9,14');
+  });
+
+  test('useChartMode adopts tonic-stripped chart modes', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartMode = 'C major';
+    let result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('chartMode -> major (Ionian)');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
+
+    section.chartMode = 'A minor';
+    result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('chartMode -> minor (Aeolian/Natural)');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,3,5,7,8,10');
+  });
+
+  test('use chart misses keep existing selection and return short result plus full message', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartChord = 'Amb6b9';
+    let result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('No fill match for chartChord="Amb6b9" normalized="mb6b9"');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9]');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7');
+
+    section.chartMode = 'A ultralocrian';
+    result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('No fill match for chartMode="A ultralocrian" normalized="ultralocrian"');
+    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (Ionian), dorian, phrygian, lydian, mixolydian, minor (Aeolian/Natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, (LydianDominant), (Gypsy), (NeopolitanMaj), (neopolitanMin)]');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
+  });
+
+  test('empty chart values return no-op results without messages', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.invokeAction('useChartChord', { song })).toEqual({ result: 'No chartChord' });
+    expect(plugin.invokeAction('useChartMode', { song })).toEqual({ result: 'No chartMode' });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
   });
 
   test('string limits display as 1-based values while persisting zero-based rows', () => {
@@ -422,13 +540,13 @@ describe('FillPlugin', () => {
 
     expect(plugin.buildSummary(song)).toContain('target table=P46_1');
     expect(plugin.buildSummary(song)).toContain('chord=M');
-    expect(plugin.buildSummary(song)).toContain('mode=Ionian/Major');
+    expect(plugin.buildSummary(song)).toContain('mode=major (Ionian)');
     expect(plugin.buildSummary(song)).toContain('named=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('single=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('tiny=root=none chord=none scale=none');
     expect(help).toContain('NamedNote, SingleNote, and TinyNote fill.');
     expect(help).toContain('- chord = M');
-    expect(help).toContain('- mode = Ionian/Major');
+    expect(help).toContain('- mode = major (Ionian)');
     expect(help).toContain('NamedNote ignores fret and string limits.');
     expect(help).toContain('Standalone TinyNote suppresses SingleNote add TinyNote');
     expect(help).toContain('DaCapo:OnSectionBegin');

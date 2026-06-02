@@ -223,6 +223,7 @@ ul.tonalMode-list li:nth-child(even) {
 `;
 
 const TONAL_PICKER_STYLE_ID = "tonalPicker";
+const TONAL_PICKER_ALL_MODES_INLINE_LIMIT = 6;
 
 function registerCSS(){
     let jHeadElement = $('head');
@@ -311,7 +312,7 @@ export function format_allModes(dest, valueArray, currentValue){
     if (dest === "modes"){
         let allModesArray = [];
         allModesArray.push("<span class='TonalPickerAllModes'>");
-        valueArray.forEach(val => {
+        valueArray.slice(0, TONAL_PICKER_ALL_MODES_INLINE_LIMIT).forEach(val => {
             let span;
             if (val === currentValue) {
                 span = `<span class="selectedMode">${val}</span>`;
@@ -319,7 +320,11 @@ export function format_allModes(dest, valueArray, currentValue){
                 span =  `<span>${val}</span>`;
             }
             allModesArray.push(span);
-        })
+        });
+        const hiddenCount = Math.max(0, valueArray.length - TONAL_PICKER_ALL_MODES_INLINE_LIMIT);
+        if (hiddenCount > 0) {
+            allModesArray.push(`<span>${hiddenCount} more...</span>`);
+        }
         allModesArray.push("</span>");
         allModesList = allModesArray.join("");   
     }
