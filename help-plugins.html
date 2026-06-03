@@ -216,6 +216,12 @@
             <tr><td><a href="#helpCmd-fpmm">/fpmm</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpmm"><b>MovePlugin <em>&raquo;</em> motions</b></a></td></tr>
             <tr><td><a href="#helpCmd-fpmi">/fpmi</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpmi"><b>MovePlugin <em>&raquo;</em> include</b></a></td></tr>
             <tr><td colspan="2">&nbsp;</td></tr>
+            <tr><td><a href="#helpCmd-fpo">/fpo</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpo"><b>TonalPlugin</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpoa">/fpoa</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpoa"><b>TonalPlugin <em>&raquo;</em> accept</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpoc">/fpoc</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpoc"><b>TonalPlugin <em>&raquo;</em> chords</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpom">/fpom</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpom"><b>TonalPlugin <em>&raquo;</em> modes</b></a></td></tr>
+            <tr><td><a href="#helpCmd-fpop">/fpop</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpop"><b>TonalPlugin <em>&raquo;</em> print extra modes</b></a></td></tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
             <tr><td><a href="#helpCmd-fpt">/fpt</a></td><td class="helpCmdLinksLabelCell"><a href="#helpCmd-fpt"><b>TransposePlugin</b></a></td></tr>
         </table>
     </p>
@@ -1159,6 +1165,33 @@
                                                         <b>r</b>ecorded notes
                             </a>
                         </td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmdTOC-fpt">
+            <td colspan="3" class="cmdLine" id="helpCmdTOC-fpo"><a href="#helpCmd-fpo">/fpo</a> <b>TonalPlugin</b></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">
+                &nbsp;
+            </td>
+            <td width="50">
+                &nbsp;
+            </td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd"><a class="optionLink" href="#helpCmd-fpo-B"><b>B</b>ury</a></td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd"><a class="optionLink" href="#helpCmd-fpo-a"><b>a</b>ccept</a></td>
+                        <td class="cmdHelp"> </td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd"><a class="optionLink" href="#helpCmd-fpo-p"><b>p</b>rint extra modes</a></td>
                         <td class="cmdHelp"> </td>
                     </tr>
                 </table>
@@ -2518,6 +2551,94 @@
     <p>MovePlugin does not handle DaCapo events, and so does nothing in response to looping. It runs only when you invoke its actions from the command-line menu.  However, you can keep looping or beat looping while using <b>Apply</b>.  In fact, this is the best way to see how it moves RecordedNotes, since only the first beat will render after an Apply if you aren't looping</p>
 
 
+
+<h2>TonalPlugin</h2>
+    <table class="helpCmdDetailHelp">
+        <tr id="helpCmd-fpo">
+            <td colspan="2" class="cmdLine">/fpo <b>TonalPlugin</b></td>
+        </tr>
+        <tr class="menu">
+            <td width="50">&nbsp;</td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpo-B"><b>B</b>ury</td>
+                        <td class="cmdHelp">Store the current TonalPlugin state in the Graveyard and reset the plugin.</td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpo-a"><b>a</b>ccept</td>
+                        <td class="cmdHelp">Open the rip-through approval menu for one instrument and the current section.</td>
+                    </tr>
+                    <tr>
+                        <td class="greenCmd" id="helpCmd-fpo-p"><b>p</b>rint extra modes</td>
+                        <td class="cmdHelp">Dump the full unfiltered Tonal mode list to Messages without accepting anything.</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmd-fpoa">
+            <td colspan="2" class="cmdLine">/fpoa <b>TonalPlugin <em>&raquo;</em> accept</b></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">&nbsp;</td>
+            <td>
+                <table class="cmdTable">
+                    <tr><td class="greenCmd"><b>i</b>nstrument</td><td class="cmdHelp">Choose the target table used for Tonal detection and acceptance.</td></tr>
+                    <tr><td class="greenCmd"><b>a</b>uto write</td><td class="cmdHelp">Choose <b>t</b>able or <b>c</b>hart+table. The default is chart+table.</td></tr>
+                    <tr><td class="greenCmd"><b>p</b>rev section</td><td class="cmdHelp">Move one section back and keep the menu open on the new section.</td></tr>
+                    <tr><td class="greenCmd"><b>n</b>ext section</td><td class="cmdHelp">Move one section forward and keep the menu open on the new section.</td></tr>
+                    <tr><td class="greenCmd" id="helpCmd-fpoc"><b>c</b>hords</td><td class="cmdHelp">Open a 1..9 list of chord suggestions for the current section and target table.</td></tr>
+                    <tr><td class="greenCmd"><b>C</b> accept Chord</td><td class="cmdHelp">Immediately accept the first chord suggestion and stay in /fpoa.</td></tr>
+                    <tr><td class="greenCmd" id="helpCmd-fpom"><b>m</b>odes</td><td class="cmdHelp">Open a 1..9 list of filtered mode suggestions for the current section and target table.</td></tr>
+                    <tr><td class="greenCmd"><b>M</b> accept Mode</td><td class="cmdHelp">Immediately accept the first mode suggestion and stay in /fpoa.</td></tr>
+                    <tr><td class="greenCmd"><b>r</b>efresh</td><td class="cmdHelp">Recompute the current summaries after edits or other plugin actions.</td></tr>
+                    <tr><td class="greenCmd"><b>h</b>elp</td><td class="cmdHelp">Show the current TonalPlugin summary and usage notes.</td></tr>
+                </table>
+            </td>
+        </tr>
+        <tr id="helpCmd-fpop">
+            <td colspan="2" class="cmdLine">/fpop <b>TonalPlugin <em>&raquo;</em> print extra modes</b></td>
+        </tr>
+        <tr class="sub-menu">
+            <td width="50">&nbsp;</td>
+            <td>
+                <table class="cmdTable">
+                    <tr>
+                        <td class="greenCmd"><b>p</b>rint extra modes</td>
+                        <td class="cmdHelp">Show the full unfiltered Tonal mode list, including Western modes, in Messages only.</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <a name="plugin-tonal-what"></a>
+    <h3>What It Does</h3>
+
+    <p>TonalPlugin is a command-line approval pass for Tonal suggestions. It uses the same model-based tonal detection data as the HTML TonalPicker flow, but keeps the interaction in stable command-line positions so you can move section-by-section and approve quickly from the keyboard.</p>
+
+    <a name="plugin-tonal-options"></a>
+    <h3>Main Options</h3>
+
+    <ul>
+        <li><b>i</b> instrument chooses the target table whose persisted <b>tonalSourceSet</b> drives detection.</li>
+        <li><b>a</b> auto write chooses whether acceptance updates only the table or both the table and the Section chart values.</li>
+        <li>The chord and mode summary captions show the first suggestion and how many more suggestions remain after it.</li>
+        <li>A leading <b>&amp;check;</b> means the first suggestion already matches the active auto-write destination.</li>
+    </ul>
+
+    <a name="plugin-tonal-actions"></a>
+    <h3>Actions</h3>
+
+    <ul>
+        <li><b>C</b> accepts the first chord suggestion verbatim.</li>
+        <li><b>M</b> accepts the first mode suggestion verbatim.</li>
+        <li><b>c</b> and <b>m</b> open limited 1..9 submenus when you want something other than the first suggestion.</li>
+        <li><b>p</b> and <b>n</b> move by exactly one section while keeping the accept menu open.</li>
+        <li><b>p</b> at /fpo prints the full unfiltered mode list into Messages for reference only.</li>
+    </ul>
+
+    <p>TonalPlugin intentionally omits clear actions and long-list acceptance in this sprint. Use the HTML TonalPicker when you need richer visual comparison, source changes, or deeper editing.</p>
 
 <h2>TransposePlugin</h2>    
     <table  class="helpCmdDetailHelp">

@@ -124,6 +124,10 @@
   - include version 
   - include README/CHANGELOG
 
+[125-tonal-plugin](../design/sprints/125-tonal-plugin/sprint-125.md)
+  - promoted from sprint-903 on 20260602
+  -   
+
 # Future Sprints Unscheduled 
 
 901-floating-windows

@@ -1,0 +1,33 @@
+[
+  {
+    "name": "targetTable",
+    "caption": "instrument",
+    "trigger": "i",
+    "datatype": "org.dynamide.Select",
+    "value": "",
+    "defaultValue": "",
+    "visibleInMenu": false,
+    "options": []
+  },
+  {
+    "name": "autoWrite",
+    "caption": "auto write",
+    "trigger": "a",
+    "datatype": "org.dynamide.Select",
+    "value": "chart+table",
+    "defaultValue": "chart+table",
+    "visibleInMenu": false,
+    "options": [
+      { "value": "table", "caption": "table", "trigger": "t" },
+      { "value": "chart+table", "caption": "chart+table", "trigger": "c" }
+    ]
+  },
+  {
+    "name": "help",
+    "caption": "help",
+    "trigger": "h",
+    "datatype": "org.dynamide.Action",
+    "actionName": "help",
+    "visibleInMenu": false
+  }
+]

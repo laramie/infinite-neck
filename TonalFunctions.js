@@ -14,8 +14,9 @@ export const TonalSourceSet = Object.freeze({
     TINYNOTE: 'TinyNote'
 });
 
-export function getTonalForTable(theSong, section, tablename){
+export function getTonalForTable(theSong, section, tablename, options = {}){
     let result = {};
+    const applyWesternFilter = options.filterWesternScales !== false;
     let rootKey = theSong.noteIDToNoteName(section.rootID);
     result.rootKey = rootKey;
     let sectionNoteRootResult = section.getNoteRoot(tablename);//search order: tablename has a Note with `"colorClass": "noteRoot"`, then any other table in section (order: namedNotes, playedNotes, then recordedNotes), and pass back the "noteName" and the tablename, or null if nobody had it.
@@ -37,7 +38,7 @@ export function getTonalForTable(theSong, section, tablename){
     result.scale = [];
     if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
         let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-        result.scale = filterWesternScales(worldScales);
+        result.scale = applyWesternFilter ? filterWesternScales(worldScales) : worldScales;
     }
     result.chords = chords;
     result.chord = tableSectionNotes ? tableSectionNotes.chord : "";
