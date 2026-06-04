@@ -464,6 +464,7 @@ export function performCmdAction(menuItem, args){
 	actionResult.menuItem = menuItem;
 	actionResult.args = args;
 	actionResult.popOnBang = false;
+	actionResult.preserveMenuStack = false;
 
 	if (menuItem.popOnBang){
 		actionResult.popOnBang = true;
@@ -1111,6 +1112,7 @@ export function performCmdAction(menuItem, args){
 		case "pluginAction:bury": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
+			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;
 			if (pluginResult.messageJSON) {
 				showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {

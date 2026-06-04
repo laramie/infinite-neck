@@ -9,6 +9,7 @@ import {
   buildOverflowResultSuffix,
   formatTonalSuggestionSummary,
   getTonalSuggestionState,
+  resolveStoredTonalValue,
   TONAL_SUGGESTION_LIMIT,
   TonalAutoWrite
 } from '../../tonalPicker-functions.js';
@@ -27,6 +28,12 @@ function escapeHtml(text) {
 function normalizeSuggestionIndex(rawIndex) {
   const parsed = Number.parseInt(rawIndex, 10);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : 0;
+}
+
+function formatImmediateAcceptCaption(label, suggestion = '', isSelected = false) {
+  const safeSuggestion = suggestion || '<none>';
+  const checkmark = isSelected ? `<span class='commandCheckmark'>&check;</span>` : '';
+  return `${label} ${checkmark}<em>${escapeHtml(safeSuggestion)}</em>`;
 }
 
 export class TonalPlugin {
@@ -289,9 +296,10 @@ export class TonalPlugin {
 
   buildImmediateAcceptNode(kind, label, trigger, state) {
     const suggestion = kind === 'chord' ? state.chordSuggestions[0] : state.modeSuggestions[0];
+    const isSelected = resolveStoredTonalValue(kind, state) === `${suggestion || ''}`;
     return new MenuItemProxy(this, {
       name: `acceptFirst${label}`,
-      caption: buildCaption(`accept ${label} '${suggestion || '<none>'}'`, trigger),
+      caption: buildCaption(formatImmediateAcceptCaption(label, suggestion, isSelected), trigger),
       trigger,
       action: 'pluginAction:invoke',
       pluginId: this.id,
@@ -315,7 +323,8 @@ export class TonalPlugin {
       case 'help':
         return {
           result: 'Tonal help shown',
-          message: this.buildHelpMessage(song)
+          message: this.buildHelpMessage(song),
+          preserveMenuStack: true
         };
       case 'acceptFirstChord':
         return this.acceptSuggestion(song, 'chord', 0, false);
@@ -385,7 +394,8 @@ export class TonalPlugin {
     const body = extraModes.length > 0 ? extraModes.map((mode) => `- ${mode}`).join('\n') : '- none';
     return {
       result: `printed ${extraModes.length} modes`,
-      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
+      preserveMenuStack: true
     };
   }
 

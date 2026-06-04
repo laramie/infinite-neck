@@ -137,7 +137,7 @@ describe('TonalPlugin', () => {
       'refresh',
       'help'
     ]);
-    expect(acceptNode.children.find((child) => child.name === 'acceptFirstChord').caption).toContain("Chord 'Cmaj7'");
+    expect(acceptNode.children.find((child) => child.name === 'acceptFirstChord').caption).toContain('<b>C</b>hord <em>Cmaj7</em>');
     expect(plugin.resolveValue('targetTable', { song })).toBe('P46_1');
   });
 
@@ -177,14 +177,33 @@ describe('TonalPlugin', () => {
     plugin.setPropertyValue('autoWrite', TonalAutoWrite.TABLE, { song });
 
     const result = plugin.invokeAction('acceptFirstChord', { song });
+    const acceptNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'accept');
+    const acceptFirstChordNode = acceptNode.children.find((child) => child.name === 'acceptFirstChord');
 
     expect(result.result).toBe('accepted chord 1: Cmaj7');
     expect(section.chartChord).toBe('');
     expect(section.getSectionNotes('tblP46_1').chord).toBe('Cmaj7');
-    expect(plugin.resolveValue('chordSummary', { song })).toBe('[&check;Cmaj7]');
+    expect(plugin.resolveValue('chordSummary', { song })).toBe("[<span class='commandCheckmark'>&check;</span>Cmaj7]");
+    expect(acceptFirstChordNode.caption).toContain("<span class='commandCheckmark'>&check;</span><em>Cmaj7</em>");
+    expect(acceptFirstChordNode.caption).not.toContain("<span class='commandCheckmark'>&check;</span></em>");
   });
 
-  test('submenu accept actions stay terse when there is no hidden overflow', () => {
+  test('chord summary shows up to three visible suggestions before the more count', () => {
+    const section = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'D', 'Eb', 'F', 'G', 'Bb'])
+      })
+    });
+    const song = createSong([section]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.resolveValue('chordSummary', { song })).toBe('[Cm11, Ebmaj13/C, EbM7add13/C, 1 more]');
+  });
+
+  test('mode summary shows up to three visible suggestions and submenu accepts stay terse without hidden overflow', () => {
     const section = createSection({
       tblP46_1: new SectionNotes({
         namedNotes: createNamedNotes(['C', 'D', 'Eb', 'F', 'G', 'Bb'])
@@ -198,10 +217,13 @@ describe('TonalPlugin', () => {
 
     const terse = plugin.invokeAction('acceptFirstMode', { song });
     const verbose = plugin.invokeAction('acceptModeIndex:0:overflow', { song });
+    const acceptNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'accept');
+    const acceptFirstModeNode = acceptNode.children.find((child) => child.name === 'acceptFirstMode');
 
-    expect(plugin.resolveValue('modeSummary', { song })).toBe('[&check;C minor, 1 more]');
+    expect(plugin.resolveValue('modeSummary', { song })).toBe("[<span class='commandCheckmark'>&check;</span>C minor, C dorian]");
     expect(terse.result).toBe('accepted mode 1: C minor');
     expect(verbose.result).toBe('accepted mode 1: C minor');
+    expect(acceptFirstModeNode.caption).toContain("<span class='commandCheckmark'>&check;</span><em>C minor</em>");
   });
 
   test('next section navigation keeps the plugin on the new section context', () => {
@@ -225,7 +247,7 @@ describe('TonalPlugin', () => {
 
     expect(result.result).toBe('section 2');
     expect(song.getSectionsCurrentIndex()).toBe(1);
-    expect(plugin.resolveValue('chordSummary', { song })).toBe('[Dm7, 1 more]');
+    expect(plugin.resolveValue('chordSummary', { song })).toBe('[Dm7, F6/D]');
   });
 
   test('print extra modes uses the unfiltered mode list', () => {
@@ -245,7 +267,27 @@ describe('TonalPlugin', () => {
 
     expect(state.extraModeSuggestions.length).toBeGreaterThan(state.modeSuggestions.length);
     expect(result.result).toBe(`printed ${state.extraModeSuggestions.length} modes`);
+    expect(result.preserveMenuStack).toBe(true);
     expect(result.message).toContain('Tonal extra modes: section 1, table P46_1');
     expect(result.message).toContain('C major');
+  });
+
+  test('help keeps the command-line stack parked on the current tonal menu', () => {
+    const section = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G'])
+      })
+    });
+    const song = createSong([section]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    const result = plugin.invokeAction('help', { song });
+
+    expect(result.result).toBe('Tonal help shown');
+    expect(result.preserveMenuStack).toBe(true);
+    expect(result.message).toContain('/fpo opens the TonalPlugin root menu');
   });
 });

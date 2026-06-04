@@ -13,6 +13,12 @@ export const TonalAutoWrite = Object.freeze({
 });
 
 export const TONAL_SUGGESTION_LIMIT = 9;
+const TONAL_CHORD_SUMMARY_VISIBLE_LIMIT = 3;
+const TONAL_MODE_SUMMARY_VISIBLE_LIMIT = 3;
+
+function formatCommandCheckmark() {
+  return `<span class='commandCheckmark'>&check;</span>`;
+}
 
 function normalizeKind(kind = '') {
   return `${kind}`.toLowerCase().startsWith('chord') ? 'chord' : 'mode';
@@ -83,14 +89,17 @@ export function formatTonalSuggestionSummary(kind, state = {}) {
   const normalizedKind = normalizeKind(kind);
   const suggestions = normalizedKind === 'chord' ? state.chordSuggestions || [] : state.modeSuggestions || [];
   const hiddenCount = normalizedKind === 'chord' ? state.hiddenChordCount || 0 : state.hiddenModeCount || 0;
+  const visibleLimit = normalizedKind === 'chord' ? TONAL_CHORD_SUMMARY_VISIBLE_LIMIT : TONAL_MODE_SUMMARY_VISIBLE_LIMIT;
   if (suggestions.length === 0) {
     return '[]';
   }
-  const firstSuggestion = suggestions[0];
-  const checkmark = resolveStoredTonalValue(normalizedKind, state) === firstSuggestion ? '&check;' : '';
-  const remainingCount = Math.max(0, (suggestions.length - 1) + hiddenCount);
+  const storedValue = resolveStoredTonalValue(normalizedKind, state);
+  const visibleSuggestions = suggestions.slice(0, visibleLimit).map((suggestion) => (
+    storedValue === suggestion ? `${formatCommandCheckmark()}${suggestion}` : suggestion
+  ));
+  const remainingCount = Math.max(0, (suggestions.length - visibleSuggestions.length) + hiddenCount);
   const moreSuffix = remainingCount > 0 ? `, ${remainingCount} more` : '';
-  return `[${checkmark}${firstSuggestion}${moreSuffix}]`;
+  return `[${visibleSuggestions.join(', ')}${moreSuffix}]`;
 }
 
 export function buildOverflowResultSuffix(kind, hiddenCount) {

@@ -64,69 +64,63 @@
 
 # Sprints prior to Version 2 rollout
 
-119-cleanup
+- 119-cleanup
   
   - cleanup and bugfixes, scheduled
+    
     - menu prompt stale sometimes
+    
     - chart colors and shadows
+    
     - plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
+    
     - palete KEEP, etc. should get a highlight ring so that KEEP is not so unexpected
+    
     - default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
-    - /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen.
+    
+    - /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen. COMPLETE.
+
+    - Iteration: finish the coding of `section-status-vertical-widget` and friends, and sync with `.SongTitleLeadSheet` widget area, probably ditching the hand-coded LooperLight, and Key indicator. 
+      - make the title and the looper light be in the same vertical column on the LHS of the Instrument.
+      - ensure that the title in vertical mode in the instrument doesn't creep up above the table, leaving a space at the top.
+      - Add optional beat counter to looper light. Add "Show LooperLight Beats" after "Piano Width Scale Factor". 
+    
+    - In all menus, make sure "table" and "Table" are replaced by "Instrument". 
+    
+    - Track down and supress or replace message: "noteRoot:undefined" Chart>Notes>Chords per instrument.  If no noteRoot found, should just be silent. 
+
+    - 
 
 
-[120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
+- [120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
+  - see sprint file for Iterations 1-6.
 
-  - "Iteration 1": Copy should be able to `L) Listened Notes` copy any note in current section not in Model.
-    - COMPLETE
-
-  - "Iteration 2": arpeggio should listen to singlenote and transform exiting ones to equivalent NamedNote and continue as usual
-    - COMPLETE
-
-  - "Iteration 3": menu changes for Fill/fpfo shows options but you have to go all the way down to actually accept them. Flow is weird.
-    - COMPLETE: added menu options for All none and All roles, shows choices in higher menu.
-
-  - fill and Fill page should normalize on Tonal's chord names (and on modes too)
-    - COMPLETE: fixed the code by hand w/o Iteration.  Left some non-Tonal names in parens e.g. (Gypsy). 
-
-  - Fill page should add Dom7No5 as option since so popular on guitar
-    - COMPLETE:  w/o Iteration
-
-  - "Iteration 4" fill should listen to Song.chartChord and Song.chartMode with an option, and should make NamedNotes or SingleNotes using the current options for position and string ranges.  It would ignore the chord and mode picks if chart versions are chosen.
-    - COMPLETE
-
-  - "Iteration 5"
-    - Made modes limit to 6 then "n more..." is shown in the Tonal mode suggestions.  Picker still have full set.
-    - COMPLETE
-
-  - "Iteration 6"
-    -  /ch and /cl to be fullscreen aware
-    - COMPLETE
-
-121-songs
+- 121-songs
   - song test fixtures / song test list
   - song drills/games
   - song library User-facing list
 
-122-persistence
+- 122-persistence
   - tunings persists 
   - color themes persist
   - user Themes persist
   - everything filtered
   - visible tables doesn't clobber tables in Model--allowed to persist without View.
 
-123-helpfile
+- 123-helpfile
   - finish plugin help file
   - move Themes to Themes gallery at end of helpfile
 
-124-build-process
+- 124-build-process
   - get tar deployment working
   - include version 
   - include README/CHANGELOG
 
-[125-tonal-plugin](../design/sprints/125-tonal-plugin/sprint-125.md)
+- [125-tonal-plugin](../design/sprints/125-tonal-plugin/sprint-125.md)
   - promoted from sprint-903 on 20260602
-  -   
+  - Hand-wavy Design request in [125-design](../design/sprints/125-tonal-plugin/125-design.md)
+  - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/125-tonal-plugin/125-design-sketch.md) 
+  - COMPLETE  
 
 # Future Sprints Unscheduled 
 
@@ -138,11 +132,6 @@
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
-
-903-TonalPlugin
-  - Hand-wavy Design request in [903-design](../design/sprints/903-tonal-plugin/903-design.md)
-  - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/903-tonal-plugin/903-design-sketch.md) 
-  
 
 
 # Sprint Planning Rules

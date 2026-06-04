@@ -35,6 +35,23 @@
     -webkit-text-stroke: 0.8px black;
     font-size: 120%;
 }
+.CmdMenuResultsClass td em,
+#CmdMenuOptionsTable td em {
+    color: inherit;
+    font-style: normal;
+    font-weight: bold;
+}
+.commandCheckmark {
+    display: inline-block;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    color: red;
+    font-size: 90%;
+    font-weight: bold;
+    line-height: 1;
+}
 #CmdMenuOptionsTable, .CmdMenuStackAndOptionsClass {
     width: 100%;
     vertical-align: bottom;

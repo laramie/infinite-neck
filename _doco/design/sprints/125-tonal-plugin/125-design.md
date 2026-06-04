@@ -170,6 +170,19 @@ Yes, the full unfiltered list, which would include the Western modes too, should
 With that, coding for TonalPlugin and helpers is APPROVED.  Core changes should not be needed, but registering the Plugin and tweaking imports (while not technically in core) is CORE-APPROVED.
 
 
+## Iteration 4: Tweaks
+
+1) Make the `chords [[✓BbMadd9, 1 more]]` menu item have up to 3 chords, instead of 1 as designed.
+
+2) transform `accept <b>C</b>hord 'BbMadd9'` into `<b>Chord <em>BbMadd9</em>` . In other words, preserve the styling of the verb with the normal `<b>` highlight for the trigger, add `<em>` styling for the suggested single chord, remove the single quotes, and add `<em>` rule to command-line.css to make em in this context be simply `font-weight: bold` but not a different color.
+
+3) do the same for `Mode`, previously called `accept Modes...`
+
+4) Looking good. We'd like to tweak the checkmark.  Let it be a span, styled in command-line.css and whichever quote styles work with the menu output:
+`<span class='commandCheckmark'>&check;</span>`  With styling: bold; font-size 90%; color: red; and with left and right padding/margin of 0.2em; so that the checkmark has a little space on both sides but still plays well as inline text--adjust rules as you know works well.
+
+
+
 
 
 

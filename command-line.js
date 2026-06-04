@@ -204,7 +204,7 @@ export function txtCmdLine_keypress(e) {
             var args = {};
             args[targetMenu.input.id] = inputval;
             var actionResult = gCmdActionRunner(targetMenu, args) || {};
-            if (targetMenu.popOnBang || actionResult.popOnBang) {
+            if (!actionResult.preserveMenuStack && (targetMenu.popOnBang || actionResult.popOnBang)) {
                 surfaceOneMenu();
                 surfaceOneMenu();
             }
@@ -251,7 +251,7 @@ export function txtCmdLine_keypress(e) {
                     var actionResult = gCmdActionRunner(child);
                     child.bang = true;
                     surfaceOneMenu();
-                    if (actionResult.popOnBang) {
+                    if (actionResult.popOnBang && !actionResult.preserveMenuStack) {
                         surfaceOneMenu();
                     }
                     addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
