@@ -35,12 +35,14 @@ describe('DisplayOptions baseline fixture contracts', () => {
             expect(section).toHaveProperty('displayOptions');
             expect(section.displayOptions).toBeTruthy();
             expect(section.displayOptions).toHaveProperty('hideSingleNotes');
+            expect(section.displayOptions).toHaveProperty('showLooperLightBeats');
             expect(section.displayOptions).toHaveProperty('showCellNotes');
             expect(section.displayOptions).toHaveProperty('NoteDisplaySizes');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('width');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('height');
             if (idx === 1) {
                 expect(section.displayOptions.hideSingleNotes).toBe(true);
+                expect(section.displayOptions.showLooperLightBeats).toBe(true);
             }
         });
     });
@@ -57,6 +59,7 @@ describe('DisplayOptions baseline fixture contracts', () => {
         song.getCurrentSection().displayOptions.NoteDisplaySizes.width = '90px';
         song.getCurrentSection().displayOptions.pianoHeightScaleFactor = '7';
         song.getCurrentSection().displayOptions.pianoWidthScaleFactor = '5';
+        song.getCurrentSection().displayOptions.showLooperLightBeats = false;
 
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
@@ -72,7 +75,8 @@ describe('DisplayOptions baseline fixture contracts', () => {
             height: s.displayOptions.NoteDisplaySizes.height,
             showCellNotes: s.displayOptions.showCellNotes,
             pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
-            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor,
+            showLooperLightBeats: s.displayOptions.showLooperLightBeats
         }));
 
         song.prepareForSave({
@@ -91,7 +95,8 @@ describe('DisplayOptions baseline fixture contracts', () => {
             height: s.displayOptions.NoteDisplaySizes.height,
             showCellNotes: s.displayOptions.showCellNotes,
             pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
-            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor,
+            showLooperLightBeats: s.displayOptions.showLooperLightBeats
         }));
 
         expect(afterSummary).toEqual(beforeSummary);
@@ -131,6 +136,7 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         savedOptions.NoteDisplaySizes.width = '88px';
         savedOptions.pianoHeightScaleFactor = '8';
         savedOptions.pianoWidthScaleFactor = '4';
+        savedOptions.showLooperLightBeats = false;
 
         // Mirrors the save-button runtime contract: getCurrentSection().displayOptions = options
         song.getCurrentSection().displayOptions = savedOptions;
@@ -139,6 +145,7 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         expect(sections[1].displayOptions.NoteDisplaySizes.width).toBe('88px');
         expect(sections[1].displayOptions.pianoHeightScaleFactor).toBe('8');
         expect(sections[1].displayOptions.pianoWidthScaleFactor).toBe('4');
+        expect(sections[1].displayOptions.showLooperLightBeats).toBe(false);
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
     });

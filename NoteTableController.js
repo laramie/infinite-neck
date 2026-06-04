@@ -841,6 +841,8 @@ export function replayTable(replayOptions){
                         : "";
     let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
+    const showBeatCounter = !!controlsToDisplayOptions().showLooperLightBeats;
+    const currentBeatNumber = getBeatNumber();
 
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
@@ -851,19 +853,29 @@ export function replayTable(replayOptions){
         Object.assign(relSectionOptions, replayOptions);
         console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
-        //Don't need to send looping status, since that is a css class broadcast through 
-        //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
-        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+        EventBus.trigger("Widget:SectionStatus:statusChanged",
                             {
-                                ownerID: replayOptions.tablename, //don't need widgetID, because widget is bound to tableID as ownerID.
-                                replayOptions: relSectionOptions
+                                ownerID: replayOptions.tablename,
+                                relativeSection: relSectionOptions.relativeSection || '',
+                                sectionNumber: (relSectionOptions.sectionIndex !== undefined) ? relSectionOptions.sectionIndex + 1 : '',
+                                beatNumber: currentBeatNumber,
+                                showBeatCounter,
+                                rootKey: relSectionOptions.rootKey || '',
+                                rootKeyLead: relSectionOptions.rootKeyLead || '',
+                                keyMode: relSectionOptions.type
                             }
                         );
     } else {
-        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+        EventBus.trigger("Widget:SectionStatus:statusChanged",
             {
                 ownerID: replayOptions.tablename,
-                replayOptions: replayOptions 
+                relativeSection: replayOptions.relativeSection || '',
+                sectionNumber: (replayOptions.sectionIndex !== undefined) ? replayOptions.sectionIndex + 1 : '',
+                beatNumber: currentBeatNumber,
+                showBeatCounter,
+                rootKey: replayOptions.rootKey || '',
+                rootKeyLead: replayOptions.rootKeyLead || '',
+                keyMode: replayOptions.type
             }
         );
     }

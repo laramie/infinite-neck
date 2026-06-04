@@ -298,12 +298,17 @@ export class ArpeggioPlugin {
     return undefined;
   }
 
-  enable() {
+  enable(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    this.refreshCurrentSectionPositionState(song);
     return 'Arpeggio enabled';
   }
 
-  disable() {
+  disable(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
     this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
+    this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
+    this.requestSectionStatusRefresh(song);
     return 'Arpeggio disabled';
   }
 
@@ -342,7 +347,7 @@ export class ArpeggioPlugin {
       case 'apply':
         return this.applyToSection({ song, clearSectionFirst: true });
       case 'clear':
-        return this.clearGeneratedNotesInSong(song);
+        return this.clearAndResetSong(song);
       case 'positions:setCurrentSection':
         return this.setPositionsForCurrentSection(song, args?.value);
       case 'positions:clearCurrentSection':
@@ -507,7 +512,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const section = context.section || this.getTargetSection(song);
     const positions = this.getSectionPositions(section);
     const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
-    const currentIndex = this.getLastPositionIndex(section);
+    const lastPositionIndex = this.getLastPositionIndex(section);
+    const currentIndex = Array.isArray(positions) && positions.length > 0
+      ? ((lastPositionIndex !== null && lastPositionIndex >= 0) ? lastPositionIndex : 0)
+      : lastPositionIndex;
     return {
       enabled,
       hasSection: !!section,
@@ -646,6 +654,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       count += 1;
     });
     return count;
+  }
+
+  clearAndResetSong(song = getSong()) {
+    const resetCount = this.resetAllSectionPositionIndexes(song);
+    const clearResult = this.clearGeneratedNotesInSong(song);
+    this.refreshCurrentSectionPositionState(song);
+    return {
+      result: `${clearResult.result}; reset ${resetCount} position counters`
+    };
   }
 
   normalizeSectionPositionsOnLoad(song = getSong()) {
@@ -831,6 +848,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       }
       this.setSectionPositions(section, positions);
       this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      this.refreshCurrentSectionPositionState(song, section);
       return { result: `positions=${this.formatPositionsValue(positions)}` };
     } catch (error) {
       return this.buildPositionsRejectResponse(error?.message || 'invalid positions', rawValue);
@@ -843,6 +861,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return { result: 'positions skipped: no current section selected' };
     }
     this.clearSectionPositions(section);
+    this.refreshCurrentSectionPositionState(song, section);
     return { result: 'positions cleared for current section' };
   }
 
@@ -850,6 +869,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!song || !Array.isArray(song.sections)) {
       return { result: 'positions skipped: no song loaded' };
     }
+    const currentSection = this.getTargetSection(song);
     let clearedCount = 0;
     song.sections.forEach((section) => {
       if (this.getSectionPositions(section) || this.getLastPositionIndex(section) !== null) {
@@ -857,6 +877,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         clearedCount += 1;
       }
     });
+    this.refreshCurrentSectionPositionState(song, currentSection);
     return { result: `positions cleared across ${clearedCount} sections` };
   }
 
@@ -869,6 +890,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!sourcePositions) {
       return { result: 'positions copy skipped: current section unset' };
     }
+    this.setLastPositionIndex(currentSection, POSITION_NOT_PLAYED_YET);
     let copiedCount = 0;
     song.sections.forEach((section) => {
       if (section === currentSection) {
@@ -881,11 +903,39 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
       copiedCount += 1;
     });
+    this.refreshCurrentSectionPositionState(song, currentSection);
     return {
       result: onlyUnset
         ? `positions copied to ${copiedCount} unset sections`
         : `positions copied to ${copiedCount} sections`
     };
+  }
+
+  refreshCurrentSectionPositionState(song = getSong(), section = null) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    this.requestSectionStatusRefresh(song);
+
+    const currentSection = section || this.getTargetSection(song);
+    if (!currentSection) {
+      return;
+    }
+
+    if (typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== currentSection) {
+      return;
+    }
+
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    if (!enabled) {
+      return;
+    }
+
+    this.refreshNamedNoteDisplay({
+      song,
+      eventName: 'manual'
+    });
   }
 
   buildTargetTableOptions(song = getSong()) {

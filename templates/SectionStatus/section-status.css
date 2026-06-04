@@ -1,14 +1,33 @@
 /** TODO: move these out of infinite-neck.css before testing, after implementation. **/
-.LooperLight {
+.SectionStatus_loopLight {
     border: 2px solid green; 
     padding: 0.18em;
     border-radius: 10%;
+    display: inline-block;
 }
-.LooperLightOn {
+.SectionStatus_loopActive {
     border: 2px solid magenta !important; 
 }
-.LooperLightTD {
-    width: 3em;
+.SectionStatus_beatWrap {
+    display: none;
+    align-items: baseline;
+    gap: 0;
+    white-space: nowrap;
+}
+.SectionStatus_showBeatCounter .SectionStatus_beatWrap {
+    display: inline-flex;
+}
+.SectionStatus_beatColon {
+    color: chartreuse;
+}
+.SectionStatus_beatNumber {
+    color: chartreuse;
+}
+.SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
+    color: magenta;
+}
+.SectionStatus_beatRow td {
+    padding-top: 0.05em;
 }
 
 /* Use class selectors for correct cascade.
@@ -90,7 +109,44 @@
     font-size: 80%;
     padding-right: 0.5em;
 }
-.tdSSLeft {
-    vertical-align: top;
-    width: 1.5em;
+
+.SectionStatusWidget {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.SectionStatusWidget--leftRail {
+    display: inline-block;
+}
+
+.SectionStatusWidget--leftRail .section-status-vertical-table {
+    width: 100%;
+}
+
+.SectionStatusWidget--captionRow .SectionStatus_rootKey,
+.SectionStatusWidget--captionRow .SectionStatus_rootKeyLead,
+.SectionStatusWidget--leadSheet .SectionStatus_rootKey,
+.SectionStatusWidget--leadSheet .SectionStatus_rootKeyLead {
+    font-size: 110%;
+}
+
+.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
+.SectionStatusWidget--leadSheet .SectionsStatus_SectionNumber {
+    color: yellow;
+}
+
+.SectionStatusWidget--captionRow .SectionStatus_relativeSection,
+.SectionStatusWidget--leadSheet .SectionStatus_relativeSection {
+    margin-right: 0.15em;
+}
+
+.SectionStatusWidget--leftRail .SectionStatus_loopLight.SectionStatus_showBeatCounter {
+    min-width: 2.3em;
+}
+
+.leadSheetSectionStatusHost {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5em;
 }

@@ -551,6 +551,13 @@
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Show LooperLight Beats:
+                        </td>
+                        <td>
+                                <label for="cbShowLooperLightBeats"><input type="checkbox" id="cbShowLooperLightBeats" value="1" checked>Show</label>
+                        </td>
+                    </tr>
                     </tr>
                 </table>
             </div>
@@ -1110,16 +1117,13 @@
                 <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>
                 <br>
                 <span class="SongTitleLeadSheet">
-                    <span class="lblSectionNumber LooperLight"><span class="lblSectionmark">&sect;</span><span
-                            class="lblSectionsStatusSectionNo"></span></span>
-                    <span class="lblRootID"></span><span class="lblRootIDLead"></span>&nbsp;&nbsp;
+                    <span id="spanSectionStatusLeadSheetHost" class="leadSheetSectionStatusHost"></span>
                     <span class="lblSectionChartChord"></span>
                     <span class="lblSectionMode"></span>
                     <span class="lblLeadSheetWidgets"></span>
 
                 </span>
             </nobr>
-            <div id="divSectionStatus_LeadSheet"></div>
 
         </div>
     </div>

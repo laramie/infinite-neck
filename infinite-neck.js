@@ -52,6 +52,7 @@ import {
 	document_keyup
 } from './key-handlers.js';
 import {
+	beatsLooping,
 	restartLoopSections,
 	sectionsLooping,
 	toggleLoopBeats,
@@ -380,8 +381,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (getSong().isHeadless){
             return;
         }
-		//These should be in #topControlsCaptions in index.html
-	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
 	    var rawCaption = getSong().getCurrentSection().caption;
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
@@ -409,7 +408,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    
 		//These are in Transport:
 	    $("#lblBeats").html(getSong().getBeats());
-		$("#lblBeat").html("1");
+		$("#lblBeat").html(String(getSong().getBeat()));
 		
 		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
 	    $("#lblSectionsStatus").html(txt);
@@ -417,17 +416,45 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// .lblRootID and .lblRootIDLead have controls in 
 		//     Fill, Transport, and Song Caption:
 	    $(".lblRootID").html(keyname);
+		let leadKeyValue = "";
 		if (getSong().getCurrentSection().rootIDLead != "-1"){
 	        spans.html(keynameLead);
 	        spans.show();
 	        $(".lblRootIDLead").html(keynameLead).addClass("lblRootIDLead_active");
+			leadKeyValue = keynameLead;
 	    } else {
           spans.hide();
           $(".lblRootIDLead").html("&nbsp;").removeClass("lblRootIDLead_active");
 	    }
 
+		const showBeatCounter = $("#cbShowLooperLightBeats").prop("checked");
+		const sectionNumber = getSong().getSectionsCurrentIndex() + 1;
+		const currentBeat = getSong().getBeat();
+		const isLoopActive = sectionsLooping() || beatsLooping();
+
+		emitSectionStatusBeatUpdate();
+
+		EventBus.trigger('Widget:SectionStatus:statusChanged', {
+			ownerID: 'leadsheet',
+			placementID: 'leadSheet',
+			rootKey: keyname,
+			rootKeyLead: leadKeyValue,
+		});
+
 		showHideDisplayOptionsPresent();  //also calls SectionDrawerBuilder API.
 		updatePrintSections();
+	}
+
+	function emitSectionStatusBeatUpdate(){
+		if (getSong().isHeadless){
+			return;
+		}
+		EventBus.trigger('Widget:SectionStatus:statusChanged', {
+			sectionNumber: getSong().getSectionsCurrentIndex() + 1,
+			beatNumber: getSong().getBeat(),
+			showBeatCounter: $("#cbShowLooperLightBeats").prop("checked"),
+			isLoopActive: sectionsLooping() || beatsLooping()
+		});
 	}
 
 	export function clearAndReplaySection(){
@@ -446,6 +473,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function showBeats(){
 		var beat = getSong().getBeat();
 		$("#lblBeat").html(""+beat);
+		emitSectionStatusBeatUpdate();
 		showHighlightsForBeat(beat);
 	}
 
@@ -1653,6 +1681,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		$("#selPianoHeightScaleFactor").val(String(options.pianoHeightScaleFactor ?? 3));
 		$("#selPianoWidthScaleFactor").val(String(options.pianoWidthScaleFactor ?? 3));
+		$("#cbShowLooperLightBeats").prop("checked", options.showLooperLightBeats ?? true);
 		$("#selNoteFont").val(options.noteFont);
 		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
 		$("#selRightSubscriptFontSize").val(options.rightSubscriptFontSize);
@@ -1709,6 +1738,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.naturalFontScaling = $("#selNaturalFontScaling").val();
 		options.pianoHeightScaleFactor = $("#selPianoHeightScaleFactor").val();
 		options.pianoWidthScaleFactor = $("#selPianoWidthScaleFactor").val();
+		options.showLooperLightBeats = $("#cbShowLooperLightBeats").prop("checked");
 		options.noteFont = $("#selNoteFont").val();
 		options.leftSubscriptFontSize = $("#selLeftSubscriptFontSize").val();
 		options.rightSubscriptFontSize = $("#selRightSubscriptFontSize").val();
@@ -1756,12 +1786,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".showLeftCaption")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-			$(".fretTableTDCaption").toggle();
+			$(this)
+				.closest('.instrumentBackground')
+				.find('.leftRailCaptionHost')
+				.first()
+				.toggle();
 		});
 		$(".showLeftSectionMark")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-			$(".LooperLightTD").toggle();
+			$(this)
+				.closest('.instrumentBackground')
+				.find('.leftRailSectionStatusHost')
+				.first()
+				.toggle();
 		});
 		$(".showTuningDetails")
 			.off(`click${eventNamespace}`)
@@ -1793,12 +1831,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
             ? data.caption
             : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
         $('#btnLoopSections').html(caption).addClass('ButtonOn');
-        $('.LooperLight').addClass('LooperLightOn');
+		EventBus.trigger('Widget:SectionStatus:loopChanged', {
+			isLoopActive: true
+		});
     }
 
     function showLoopSectionsStopped(){
         $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
-        $('.LooperLight').removeClass('LooperLightOn');
+		EventBus.trigger('Widget:SectionStatus:loopChanged', {
+			isLoopActive: false
+		});
     }
 
 	export function toggleAutoColorCheckbox(){
@@ -2224,6 +2266,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor', function(){
 			fullRepaint();
 		});
+		bindEvent('change', '#cbShowLooperLightBeats', function() {
+			updateSectionsStatus();
+		});
 		bindEvent('change', '#selNoteFont', function(){
 			setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
 			fullRepaint();
@@ -2632,9 +2677,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}),
 
 			loadTemplates('templates/SectionStatus/section-status.html').then(() => {
-				//Neither of these work because table and replayOptions are not passed:
-				//SectionStatusBuilder.addToDest('#divSectionStatus_LeadSheet', 'leadsheet', 'caption', 'horizontal');
-				//.createWidget($('#divSectionStatus_LeadSheet'), 'leadsheet1', 'caption', 'horizontal');
+				SectionStatusBuilder.addToDest('#spanSectionStatusLeadSheetHost', 'leadsheet', 'leadSheet', 'horizontal');
 	
 			})
 		];

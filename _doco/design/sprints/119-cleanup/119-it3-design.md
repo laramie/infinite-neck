@@ -96,5 +96,28 @@ Should the left-rail vertical widget and instrument id be one flex column inside
 
 With these answers, please proceed to making a concrete implementation plan.  Please include discussion about the merits of "Should the left-rail vertical widget and instrument id be one flex column inside a table cell, or should the table-side structure be reduced more aggressively? " .
 
+# Iteration 3, round 4
+
+We'd like to add the beat looping indicators to the section-status widgets.
+
+One option checkbox to toggle them all: 
+ - Add "Show LooperLight Beats" after "Piano Width Scale Factor" on the View menu page third card.
+ - This, like all other View menu page options, is a DisplayOptions preference, so should be persisted like the others, and participate in display to controls and controls to display.
+
+Also, `leadsheet_leadSheet_SectionStatus :: SectionsStatus_SectionNumber`  should be in yellow like 
+`tblP46_1_leftRail_SectionStatus :: SectionsStatus_SectionNumber`
+
+The separating colon should be in chartreuse and the beat number should be in magenta, where the format is `S:b`  So S is the 1-based, User-facing Section number as it is today in the section-status and transport, `:` is the colon in chartreuse, and `b` is the beat number as it appears in transport.
+
+On the leftRail, vertical version, the layout of the beats should be a little different:
+```
+S
+:b
+```
+so that the colon and the beats appear on the next line, making the LooperLight taller.
+
+
+
+
 
 
