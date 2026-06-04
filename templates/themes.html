@@ -1,15 +1,13 @@
 <template id='themes-template'>
-<div id="divThemes">
-  <table class="menuTable">
-    <tr>
-        <td class="menuPage">
+    <div id="divThemes">
+        <div class="menuDiv">
             <span id='warny' class="floater"><span class="floaterClose">CLOSE</span>MESSAGES:<br></span>
             <div class="sectionPageControlsGroup">
-                <button id="btnFloatSection_divThemes" class="moveyButton floatDockableButton" onclick="makeDivDockable('divThemes')">Float</button>
+                <button id="btnFloatSection_divThemes" class="moveyButton floatDockableButton"
+                    onclick="makeDivDockable('divThemes')">Float</button>
 
                 <button id="btnTheme" class="safeButton" type="button">Theme</button>
-                <button id="btnToggleThemeTableResults" class="safeButton"
-                    type="button">Results</button>
+                <button id="btnToggleThemeTableResults" class="safeButton" type="button">Results</button>
                 <button id="btnShowWarny" class="safeButton" type="button">Show Theme Messages</button>
                 <br>
 
@@ -503,7 +501,7 @@
                         </tr>
 
                     </table>
-                    </div>
+                </div>
 
                 <!-- END Theme Controls -->
                 <table id="themeTableResults">
@@ -517,8 +515,6 @@
                 <div class="clearBoth"></div>
             </div>
 
-        </td>
-    </tr>
-  </table><!-- END menuTable -->
-</div>
+        </div><!-- END menuDiv -->
+    </div>
 </template>

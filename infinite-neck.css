@@ -615,6 +615,11 @@ table.viewControls th {
     width: 95%;
     margin-left: 0.4em;
 }
+.menuDiv {
+    border: 0;
+    width: 95%;
+    margin-left: 0.4em;
+}
 
 .productsmall {
     font-size:  70%;
