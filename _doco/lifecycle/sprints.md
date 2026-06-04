@@ -1,4 +1,29 @@
-# sprints
+# Sprints overview: rollout of App Version 2
+
+Many of the following sprints are in preparation of the rollout of App version 2.
+
+Songfile persistence version V2 refers to the work on the persistence side, and was complete before these sprints began.  Also complete prior to songfile/persistence V2 was the move to port the entire app to ES6 modules. 
+
+But Version 2 of the app includes much more: 
+- Plugins
+  - plugins started as a way to avoid repeating Sections in Songs just to cover drills and exercises, such as All-Chords in All-Keys, or name-that-note flashcards in All-Keys.  They have evolved to handle these use-cases well through transposition, fill, and arpeggios while using the DaCapo system of demarking song looping points.
+  - but plugins have also filled large gaps in useability, such as copy-paste, move, dexterous transpositions, better fill, easier use of Tonal.js.
+  - Because plugins are not in the core, they have created a way to extend the system rapidly for other uses without causing instability or regression.
+- Support for floating windows and panels
+- Info page
+- Section Drawer
+- Tonal.js chord and mode detection
+- Chart
+- MyTunings
+- Reorganized View Cards and Themes Cards
+- Listeners and Observers
+- Revamped helpfile.
+
+We want to make sure all these are working together, and are bug-free.  We want the command-line menu to smoothly drive the existing Version 1 features, as well as the new features, and especially the command-line-driven Plugins.  The plugins have had many sprints dedicated to completing their features, and ensuring consistency between them.
+
+The sprints toward this effort are documented here, as well as sprints planned but not started or complete.
+
+# Sprints with App Version 2 features
 
 - [sprint-100-my-tunings](../design/myTunings/sprint-100-my-tunings.md)
   - Split tuning management into shared allTunings and user-specific myTunings with a dedicated My Tunings view.
@@ -62,35 +87,10 @@
 
 - [sprint-118-leadsheet-line](../design/sprints/118-leadsheet-line/sprint-118.md)
 
-# Sprints prior to Version 2 rollout
+## Sprints prior to Version 2 rollout: prep, cleanup, fixes
 
 - 119-cleanup
   
-  - cleanup and bugfixes, scheduled
-    
-    - menu prompt stale sometimes
-    
-    - chart colors and shadows
-    
-    - plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
-    
-    - palete KEEP, etc. should get a highlight ring so that KEEP is not so unexpected
-    
-    - default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
-    
-    - /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen. COMPLETE.
-
-    - Iteration: finish the coding of `section-status-vertical-widget` and friends, and sync with `.SongTitleLeadSheet` widget area, probably ditching the hand-coded LooperLight, and Key indicator. 
-      - make the title and the looper light be in the same vertical column on the LHS of the Instrument.
-      - ensure that the title in vertical mode in the instrument doesn't creep up above the table, leaving a space at the top.
-      - Add optional beat counter to looper light. Add "Show LooperLight Beats" after "Piano Width Scale Factor". 
-    
-    - In all menus, make sure "table" and "Table" are replaced by "Instrument". 
-    
-    - Track down and supress or replace message: "noteRoot:undefined" Chart>Notes>Chords per instrument.  If no noteRoot found, should just be silent. 
-
-    - 
-
 
 - [120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
   - see sprint file for Iterations 1-6.
