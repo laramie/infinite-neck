@@ -237,7 +237,7 @@ export class TonalPlugin {
         this.buildImmediateAcceptNode('chord', 'Chord', 'C', state),
         this.buildSuggestionMenuNode('mode', 'modes', 'm', state),
         this.buildImmediateAcceptNode('mode', 'Mode', 'M', state),
-        this.buildActionNode('refresh', 'refresh', 'r', false),
+        this.buildActionNode('refresh', `refresh [section ${this.getCurrentSectionIndex(song) + 1}]`, 'r', false),
         this.getProperty('help').getMenuNodeSpec(this)
       ]
     });

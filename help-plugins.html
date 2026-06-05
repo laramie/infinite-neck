@@ -2,42 +2,56 @@
 
 <head>
     <style>
-          html {
+        html {
               scroll-padding-top: 2.0em;
-          }
-          :target {
+        }
+        :target {
               scroll-margin-top: 0.3em;
               outline: 3px solid green;
-          }
+        }
 
-          h1, h2, h3, h4, h5 {
+        h1, h2, h3, h4, h5 {
            color: orange;
            font-family: "Verdana";
            margin-top: 1em;
-       }
-       h1 {
+        }
+        h1 {
            margin-left: 0;
-       }
-       h2 {
+        }
+        h2 {
            margin-left: 0.5em;
-       }
-       h3 {
+        }
+        h3 {
            margin-left: 1em;
-       }
-       h4 {
+        }
+        h4 {
            margin-top: 1.5em;
            margin-left: 2em;
-       }
-       h5 {
+        }
+        h5 {
             margin-top: 2em;
            margin-left: 3em;
-       }
+        }
         P {
            padding-left: 4em;
-       }
-       #helpBody > TABLE {
-        margin-left: 2em;
-       }
+        }
+        UL {
+           padding-left: 8em;
+           font-size: 90%;
+        }
+        UL LI {
+           padding: 4px;
+           margin-right: 4em;
+        }
+        UL > UL {
+           margin-left: 1em;
+        }
+        UL > UL > LI {
+           font-size: 90%;
+        }
+        #helpBody > TABLE {
+            margin-left: 2em;
+        }
 
         .helpButton {
            background-color: orange;
@@ -47,8 +61,8 @@
            margin-top: 0.1em;
            margin-left: 0.3em;
            display: inline-block;
-       }
-       .menunav {
+        }
+        .menunav {
            position: fixed;
            width: 100%;
            padding-top: 0.1em;
@@ -57,20 +71,20 @@
            left: 0;
            top: 0;
            background-color: lightyellow;
-       }
+        }
 
-       .productsmall {
+        .productsmall {
             font-size: 150%;
             color: darkorange;
             font-family: "Kode Mono", monospace;
             -webkit-text-stroke: 0.6px black;
-       }
-       .productsmaller {
+        }
+        .productsmaller {
             font-size: 100%;
             color: darkorange;
             font-family: "Kode Mono", monospace;
             -webkit-text-stroke: 0.7px black;
-       }
+        }
 
 
         .greenCmd {
@@ -107,6 +121,7 @@
         }
         .cmdHelp {
             background-color: white;
+            padding-left: 1em;
         }
 
 
@@ -135,6 +150,28 @@
             font-family: "Kode Mono", monospace;
             font-optical-sizing: auto;
         }
+        
+        .cmdLine a:link {
+            color: rgb(205, 104, 251);
+        }
+        .cmdLine a:visited {
+             color: rgb(175, 12, 250);
+        }
+        .cmdLine a:hover,
+        .cmdLine a:active {
+            color: rgb(255, 140, 0);
+        }
+
+        #helpCmdLinks a:link {
+            color: rgb(205, 104, 251);
+        }
+        #helpCmdLinks a:visited {
+             color: rgb(175, 12, 250);
+        }
+        #helpCmdLinks a:hover,
+        #helpCmdLinks a:active {
+            color: rgb(255, 140, 0);
+        }
         #helpCmdLinks td.helpCmdLinksLabelCell {
             padding: 0;
             cursor: pointer;
@@ -145,9 +182,9 @@
             color: inherit;
             text-decoration: none;
         }
+        #helpCmdLinks td.helpCmdLinksLabelCell > a:visited,
         #helpCmdLinks td.helpCmdLinksLabelCell > a:hover,
-        #helpCmdLinks td.helpCmdLinksLabelCell > a:active,
-        #helpCmdLinks td.helpCmdLinksLabelCell > a:visited {
+        #helpCmdLinks td.helpCmdLinksLabelCell > a:active {
             color: inherit;
             text-decoration: none;
         }
@@ -165,9 +202,9 @@
             color: inherit;
             text-decoration: none;
         }
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:visited,
         #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:hover,
-        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:active,
-        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:visited {
+        #helpCmdTOC .cmdTable td.greenCmd > a.optionLink:active {
             color: inherit;
             text-decoration: none;
         }
@@ -1445,7 +1482,7 @@
 
 <p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
 
-<h2>ArpeggioPlugin</h2>
+<h2 id="plugin-arpeggio">ArpeggioPlugin</h2>
     <table  class="helpCmdDetailHelp">
         <tr>
             <td colspan="3" class="cmdLine" id="helpCmd-fpa">/fpa <b>ArpeggioPlugin</b></td>
@@ -1778,7 +1815,7 @@
 
 
 
-<h2>ClipPlugin</h2>
+<h2 id="plugin-clip">ClipPlugin</h2>
 
     <table  class="helpCmdDetailHelp">
         <tr id="helpCmd-fpc">
@@ -1901,7 +1938,7 @@
 
 
     <a name="plugin-clip"></a>
-    <h2>ClipPlugin</h2>
+    <h2 id="plugin-clip">ClipPlugin</h2>
 
     <a name="plugin-clip-what"></a>
     <h3>What It Does</h3>
@@ -1953,7 +1990,7 @@
 
 
 
-<h2>FillPlugin</h2>
+<h2 id="plugin-fill">FillPlugin</h2>
 
     <table  class="helpCmdDetailHelp">
 
@@ -2310,7 +2347,7 @@
 
 
 
-<h2>MovePlugin</h2>    
+<h2 id="plugin-move">MovePlugin</h2>    
     <table  class="helpCmdDetailHelp">
         <tr id="helpCmd-fpm">
             <td colspan="3" class="cmdLine">/fpm <b>MovePlugin</b></td>
@@ -2504,6 +2541,7 @@
     <a href="help.html#glossary">RecordedNotes</a> for <a href="help.html#glossary">SingleNotes</a>, <a href="help.html#glossary">TinyNotes</a>, and <a href="help.html#glossary">Highlights</a>, individually or in groups, i.e. <i>"all SingleNote PlayedNotes"</i>, or <i>"all SingleNotes, TinyNotes and Highlights in RecordedNotes"</i>.</p>
 
     <p>Named notes are not moved by this plugin.</p>
+    <p>IMPORTANT: You must <i>include</i> the type of notes to include (<b>s</b>ingle notes, <b>t</b>iny notes, <b>h</b>ighlights), <b><i>and</i></b> the storage type (<b>p</b>layed notes or <b>r</b>ecorded notes). So to select all the SingleNotes you see when not looping, <i>include</i> <b>s</b>ingle notes <b><i>and</i></b> <b>p</b>layed notes</p>
 
     <p>Since you can move notes right off the neck in all directions, the plugin deals with this by giving you three "algorithms".
         <ul>
@@ -2528,10 +2566,10 @@
     <h3>Main Options</h3>
 
     <ul>
-        <li><b>T</b> Table chooses which current-section instrument table to move.</li>
-        <li><b>a</b> algorithm chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
-        <li><b>m</b> motions chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
-        <li><b>i</b> include opens toggles for <b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights, <b>p</b> played notes, and <b>r</b> recorded notes.</li>
+        <li><b>T</b> Table - chooses which current-section instrument table to move.</li>
+        <li><b>a</b> algorithm - chooses <b>d</b> drop, <b>o</b> octave, or <b>s</b> string fallback when a direct landing is not available.</li>
+        <li><b>m</b> motions - chooses <b>u</b> up, <b>d</b> down, <b>j</b> jump up, or <b>J</b> jump down.</li>
+        <li><b>i</b> include - toggles the note types [<b>s</b> single notes, <b>t</b> tiny notes and bends, <b>h</b> highlights], and the storage type [<b>p</b> played notes, <b>r</b> recorded notes]. Note that you must have both the <u>note type</u> <b><i>and</i></b> one of [<u>played notes</u> or <u>recorded notes</u>] included.</li>
         <li>You must select one of <b>played notes</b> or <b>recorded notes</b> or both, plus at least one note type for anything to happen.</li>
         <li>The <b>include</b> caption shows a summary such as <span class="menuExampleLine"><b>include [s,t,p]</b></span> so you can see the active filters at a glance.</li>
     </ul>
@@ -2552,7 +2590,7 @@
 
 
 
-<h2>TonalPlugin</h2>
+<h2 id="plugin-tonal">TonalPlugin</h2>
     <table class="helpCmdDetailHelp">
         <tr id="helpCmd-fpo">
             <td colspan="2" class="cmdLine">/fpo <b>TonalPlugin</b></td>
@@ -2587,11 +2625,11 @@
                     <tr><td class="greenCmd"><b>a</b>uto write</td><td class="cmdHelp">Choose <b>t</b>able or <b>c</b>hart+table. The default is chart+table.</td></tr>
                     <tr><td class="greenCmd"><b>p</b>rev section</td><td class="cmdHelp">Move one section back and keep the menu open on the new section.</td></tr>
                     <tr><td class="greenCmd"><b>n</b>ext section</td><td class="cmdHelp">Move one section forward and keep the menu open on the new section.</td></tr>
-                    <tr><td class="greenCmd" id="helpCmd-fpoc"><b>c</b>hords</td><td class="cmdHelp">Open a 1..9 list of chord suggestions for the current section and target table. The accept-menu summary can show up to 3 chord values before using the <b>N more</b> suffix.</td></tr>
+                    <tr><td class="greenCmd" id="helpCmd-fpoc"><b>c</b>hords</td><td class="cmdHelp">Open a 1..9 list of chord suggestions for the current section and target table. The accept-menu summary can show up to 3 chord values before using the <b>N more</b> suffix. For chords not shown in the menu (more than 9), use the Tonal widget in either the Instrument, or in Chart Notes.</td></tr>
                     <tr><td class="greenCmd"><b>C</b>hord <em>BbMadd9</em></td><td class="cmdHelp">Immediately accept the first chord suggestion and stay in /fpoa.</td></tr>
-                    <tr><td class="greenCmd" id="helpCmd-fpom"><b>m</b>odes</td><td class="cmdHelp">Open a 1..9 list of filtered mode suggestions for the current section and target table. The accept-menu summary can show up to 3 mode values before using the <b>N more</b> suffix.</td></tr>
+                    <tr><td class="greenCmd" id="helpCmd-fpom"><b>m</b>odes</td><td class="cmdHelp">Open a 1..9 list of filtered mode suggestions for the current section and target table. The accept-menu summary can show up to 3 mode values before using the <b>N more</b> suffix.  For modes not shown in the menu (more than 9), use the Tonal widget in either the Instrument, or in Chart Notes.</td></tr>
                     <tr><td class="greenCmd"><b>M</b>ode <em>C dorian</em></td><td class="cmdHelp">Immediately accept the first mode suggestion and stay in /fpoa.</td></tr>
-                    <tr><td class="greenCmd"><b>r</b>efresh</td><td class="cmdHelp">Recompute the current summaries after edits or other plugin actions.</td></tr>
+                    <tr><td class="greenCmd"><b>r</b>efresh</td><td class="cmdHelp">Recompute the current summaries after edits or other plugin actions, or after moving around with the Transport.</td></tr>
                     <tr><td class="greenCmd"><b>h</b>elp</td><td class="cmdHelp">Show the current TonalPlugin summary and usage notes.</td></tr>
                 </table>
             </td>
@@ -2640,7 +2678,7 @@
 
     <p>TonalPlugin intentionally omits clear actions and long-list acceptance in this sprint. Use the HTML TonalPicker when you need richer visual comparison, source changes, or deeper editing.</p>
 
-<h2>TransposePlugin</h2>    
+<h2 id="plugin-transpose">TransposePlugin</h2>    
     <table  class="helpCmdDetailHelp">
         <tr id="helpCmd-fpt">
             <td colspan="2" class="cmdLine">/fpt <b>TransposePlugin</b></td>

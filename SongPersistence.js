@@ -32,7 +32,6 @@ const songDefaults = {
     isHeadless: false,
     gSectionsCurrentIndex: 0,
     gFirstBeatSeen: false,
-    userInstrumentTuning: null,
     gSongModelListener: null,
     captionsRowShowing: false,
 
@@ -79,6 +78,7 @@ export class SongPersistence {
             || key === 'randomSectionHistory'
             || key === 'isHeadless'
             || key === 'tunings'
+            || key === 'userInstrumentTuning'
             ) 
         {
             return undefined;

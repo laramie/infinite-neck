@@ -267,6 +267,7 @@ function document_keypress(e) {
                 break;
             case "g":
                 showOneMenu("#divTunings");
+				EventBus.trigger('ReloadTuningsDisplays');
                 break;
             case "i":
                 showOneMenu("#divFillNotes");

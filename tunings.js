@@ -490,21 +490,6 @@ export const allTunings = {
       "pianoNamesRow": true,
       "pianoNamesRowHeight": "30pt",
       "fixedFretWidthMult": 1.0
-    },
-    {
-      "instance": false,
-      "baseID": "USER",
-      "baseInstrument": "Guitar",
-      "caption": "User",
-      "nStrings": 6,
-      "rowRange": [64, 59, 55, 50, 45, 40],
-      "showDiamonds": true,
-      "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
-      "doubleDiamonds": [12, 24],
-      "frets": 16,
-      "nut": true,
-      "reverse": false,
-      "visible": false
     }
   ]
 }

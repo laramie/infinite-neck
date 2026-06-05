@@ -961,7 +961,7 @@ export class Song extends SongPersistence {
         this.visibleNoteTables = visibleTableIds;
     }
 
-    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning, plugins }){
+    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, plugins }){
         this.markVisibleTablesForFileSave(visibleTableIds);
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;

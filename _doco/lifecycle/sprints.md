@@ -89,7 +89,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 ## Sprints prior to Version 2 rollout: prep, cleanup, fixes
 
-- 119-cleanup
+- [119-cleanup](../design/sprints/119-cleanup/sprint-119.md)
   
 
 - [120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)

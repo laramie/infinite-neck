@@ -817,10 +817,10 @@
                         <span
                             style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
                             <span style="display: flex; gap: 0; align-items: flex-end;">
-                                <button id="btnMyTuningsTab" type="button" class="MenuTabBtn BtnPunchedIn">My
-                                    Tunings</button>
-                                <button id="btnAllTuningsTab" type="button" class="MenuTabBtn BtnPunchedOut">All
-                                    Tunings</button>
+                                <button id="btnMyTuningsTab" type="button" class="MenuTabBtn BtnPunchedIn">Tunings
+                                    in Song</button>
+                                <button id="btnAllTuningsTab" type="button" class="MenuTabBtn BtnPunchedOut">Tunings
+                                    Library</button>
                             </span>
                         </span>
                         <span
@@ -829,16 +829,31 @@
                     <div
                         style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
                         <div id="divMyTuningsTab"></div>
-                        <div id="divAllTuningsTab" style="display: none;">
-                            <div class="userInstrumentControlsGroup">
-                                <button id="btnShowHideEditUserTuning" type="button"
-                                    class="MenuTabBtn BtnPunchedOut">Customize USER Tuning</button>
-                                <div id="divEditUserTuning" class="paletteRBBackground" style="display: none;">
+                        <div id="divSongTuningControls" class="userInstrumentControlsGroup">
+                            <button id="btnShowHideAddSongTuning" type="button"
+                                class="MenuTabBtn BtnPunchedOut">Add One Tuning</button>
+                            <div id="divAddSongTuning" class="paletteRBBackground" style="display: none;">
                                     <table id="tblUserInstrumentEditor" class="menuTable">
                                         <tr>
                                             <td>
-                                                <b>You can customize the instrument with ID: USER</b>
-                                                <br>Any of these fields may be left blank.
+                                                <b>Create a new tuning owned by this song.</b>
+                                                <br>Tuning ID and Lineage ID are required.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="txtSongTuningID"><b>Tuning ID:</b>
+                                                    <input type="text" id="txtSongTuningID" value="" size="32">
+                                                </label>
+                                                <br>Unique ID for this song-owned instrument, for example: <b>LarP5_mark</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="txtLineageID"><b>Lineage ID:</b>
+                                                    <input type="text" id="txtLineageID" value="" size="32">
+                                                </label>
+                                                <br>Compatibility lineage for this tuning, for example: <b>P5</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -940,14 +955,14 @@
                                         <tr>
                                             <td>
                                                 <br>
-                                                <button id="btnSaveUserTuning" class="safeButton" type="button">Save
-                                                    User Tuning</button>
+                                                <button id="btnSaveSongTuning" class="safeButton" type="button">Save
+                                                    Song Tuning</button>
                                             </td>
                                         </tr>
                                     </table>
-                                </div>
                             </div>
                         </div>
+                        <div id="divAllTuningsTab" style="display: none;"></div>
                     </div>
                 </div>
                 <!--end menuDiv-->

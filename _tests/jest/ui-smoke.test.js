@@ -34,8 +34,7 @@ describe('Headless UI smoke contracts', () => {
                 songName: data.songName,
                 theme: data.theme,
                 bpm: parseInt(data.defaultBPM, 10),
-                userColors: data.userColors,
-                userInstrumentTuning: data.userInstrumentTuning
+                userColors: data.userColors
             });
 
             const savedObj = JSON.parse(JSON.stringify(song));

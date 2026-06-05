@@ -14,13 +14,20 @@ Here are the work items, grouped by status.
 
 - Iteration 2: Track down and supress or replace message: "noteRoot:undefined" Chart>Notes>Chords per instrument.  If no noteRoot found, should just be silent.  DONE.
 
-## Active
-
 - Iteration 3: finish the coding of `section-status-vertical-widget` and friends, and sync with `.SongTitleLeadSheet` widget area, probably ditching the hand-coded LooperLight, and Key indicator. 
     - make the title and the looper light be in the same vertical column on the LHS of the Instrument.
     - ensure that the title in vertical mode in the instrument doesn't creep up above the table, leaving a space at the top.
     - Add optional beat counter to looper light. Add "Show LooperLight Beats" after "Piano Width Scale Factor". 
     - See: [119-it3-design.md](119-it3-design.md)
+  - DONE
+
+- Iteration 4: clean up ArpeggioPlugin handling of "Clear" and Song Reset, specifically /fpaC.
+  - See: [Iteration 4 notes](119-it4.md)
+  - DONE
+
+
+## Active
+
 
 ## Unscheduled
 
@@ -34,6 +41,12 @@ Here are the work items, grouped by status.
 
 - default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
 
-- In all menus, make sure "table" and "Table" are replaced by "Instrument". 
+- In all menus, make sure "table" and "Table" are replaced by "Instrument".
+
+- In Chart Notes, you can select tonalResultSet of "Tiny".  Since Tiny follows LeadKey, when you select a LeadKey that is different from RootKey, the noteRoot must be set to LeadKey Root, unless noteRoot is specifically placed in the Section elsewhere.
+
+- In Chart Notes, we need a link next to the TH for "Caption" that toggles "hide"/"show" so you can hide the caption except for the first 10 characters then "...". The Captions get so long they blow out the width of the table.  Wrapping wouldn't help because then the rows would get tall.
+
+- in /fpoa "Refresh" should be "Refresh [section 1]"
 
 

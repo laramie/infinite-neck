@@ -209,8 +209,7 @@ describe('Song V2 save path from a loaded song', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(song.getPersistentSongFile());
@@ -224,6 +223,7 @@ describe('Song V2 save path from a loaded song', () => {
         expect(savedObj).not.toHaveProperty('isHeadless');
         expect(savedObj).not.toHaveProperty('gSectionsCurrentIndex');
         expect(savedObj).not.toHaveProperty('randomSectionHistory');
+        expect(savedObj).not.toHaveProperty('userInstrumentTuning');
 
         const bendNote = savedObj.sections[0].sectionNotesByTable.tblS6_1.recordedNotes['1'][1];
         expect(bendNote.styleNum).toBe(Note.STYLENUM_BEND);

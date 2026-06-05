@@ -7,7 +7,8 @@ import {
 } from '../../infinite-neck-headless.js';
 import {
     findTuningForID,
-    generateNextTuningID
+    generateNextTuningID,
+    validateSongTuningDraft
 } from '../../TuningsLibrary.js';
  
 
@@ -17,6 +18,13 @@ import {
 // ---------------------------------------------------------------------------
 
 function createFreshHeadlessSong() {
+    if (typeof globalThis.$ !== 'function') {
+        globalThis.$ = () => ({
+            each() {
+                return this;
+            }
+        });
+    }
     setupSongTests();
     getSong().setHeadless(true, true);
     return getSong();
@@ -92,6 +100,75 @@ describe('generateNextTuningID', () => {
         const song = getSong();
         song.myTunings = [{ baseID: 'S6__1' }];
         expect(generateNextTuningID('S6_')).toBe('S6_1');
+    });
+});
+
+describe('validateSongTuningDraft', () => {
+    beforeEach(() => {
+        const song = createFreshHeadlessSong();
+        song.myTunings = [];
+    });
+
+    test('accepts a brand-new lineage for a new custom tuning', () => {
+        const result = validateSongTuningDraft({
+            baseID: 'LarP5_mark',
+            fromBaseID: 'P5',
+            caption: 'P5',
+            baseInstrument: 'Guitar',
+            rowRange: [75, 68, 61, 54, 47, 40],
+            banjoNut: {}
+        });
+
+        expect(result.valid).toBe(true);
+        expect(result.normalizedDraft.nStrings).toBe(6);
+    });
+
+    test('rejects duplicate song tuning IDs', () => {
+        const song = getSong();
+        song.myTunings = [{ baseID: 'LarP5_mark', fromBaseID: 'P5', rowRange: [75, 68, 61, 54, 47, 40], nStrings: 6, baseInstrument: 'Guitar' }];
+
+        const result = validateSongTuningDraft({
+            baseID: 'LarP5_mark',
+            fromBaseID: 'P5',
+            caption: 'P5',
+            baseInstrument: 'Guitar',
+            rowRange: [75, 68, 61, 54, 47, 40],
+            banjoNut: {}
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.error).toMatch(/already exists/);
+    });
+
+    test('rejects lineage reuse when an existing library lineage has a different rowRange', () => {
+        const result = validateSongTuningDraft({
+            baseID: 'BrokenP46_mark',
+            fromBaseID: 'P46',
+            caption: 'Broken P4',
+            baseInstrument: 'Guitar',
+            rowRange: [64, 59, 55, 50, 46, 40],
+            banjoNut: {}
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.error).toMatch(/different MIDI rowRange/);
+    });
+
+    test('rejects lineage IDs that conflict with an existing song tuning ID', () => {
+        const song = getSong();
+        song.myTunings = [{ baseID: 'LarP5_mark', fromBaseID: 'P5', rowRange: [75, 68, 61, 54, 47, 40], nStrings: 6, baseInstrument: 'Guitar' }];
+
+        const result = validateSongTuningDraft({
+            baseID: 'LarP5_jimmy',
+            fromBaseID: 'LarP5_mark',
+            caption: 'P5',
+            baseInstrument: 'Guitar',
+            rowRange: [75, 68, 61, 54, 47, 40],
+            banjoNut: {}
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.error).toMatch(/conflicts with an existing tuning ID/);
     });
 });
 

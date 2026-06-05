@@ -1,0 +1,371 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "Lars3stringBanjo_clyde",
+      "baseInstrument": "Banjo",
+      "caption": "Lars3stringBanjo",
+      "nStrings": 3,
+      "rowRange": [
+        45,
+        60,
+        72
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "banjoNut": {
+        "2": 5
+      },
+      "fromBaseID": "USER"
+    },
+    {
+      "instance": true,
+      "baseID": "Lars3stringBanjo_percival",
+      "baseInstrument": "Banjo",
+      "caption": "Lars3stringBanjo",
+      "nStrings": 3,
+      "rowRange": [
+        45,
+        60,
+        72
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 12,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "banjoNut": {
+        "2": 5
+      },
+      "fromBaseID": "USER"
+    },
+    {
+      "instance": true,
+      "baseID": "LarP5_mark",
+      "baseInstrument": "Guitar",
+      "caption": "LarP5",
+      "nStrings": 6,
+      "rowRange": [
+        75,
+        68,
+        61,
+        54,
+        47,
+        40
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 12,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "banjoNut": {},
+      "fromBaseID": "USER"
+    }
+  ],
+  "visibleNoteTables": [
+    "tblP46_1",
+    "tblLars3stringBanjo_clyde",
+    "tblLars3stringBanjo_percival",
+    "tblLarP5_mark"
+  ],
+  "plugins": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "1.00",
+  "openInfo": "none",
+  "presentationMode": false,
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "barClass": "Box",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "songfileVersion": "V2",
+  "songName": "LarsUserTunings",
+  "theme": "Autobahn",
+  "userInstrumentTuning": {
+    "instance": false,
+    "baseID": "USER",
+    "baseInstrument": "Guitar",
+    "caption": "LarP5",
+    "nStrings": 6,
+    "rowRange": [
+      75,
+      68,
+      61,
+      54,
+      47,
+      40
+    ],
+    "showDiamonds": false,
+    "diamonds": [
+      3,
+      5,
+      7,
+      9,
+      15,
+      17,
+      19,
+      21
+    ],
+    "doubleDiamonds": [
+      12,
+      24
+    ],
+    "frets": 12,
+    "nut": true,
+    "reverse": false,
+    "visible": false,
+    "banjoNut": {}
+  },
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblLar6strP5_jimmy": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblLars3stringBanjo_clyde": {
+          "namedNotes": {
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblLars3stringBanjo_percival": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblLarP5_mark": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
+  }
+}

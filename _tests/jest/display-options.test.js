@@ -84,8 +84,7 @@ describe('DisplayOptions baseline fixture contracts', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(JSON.stringify(song));
@@ -178,8 +177,7 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(JSON.stringify(song));

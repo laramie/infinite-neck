@@ -26,6 +26,18 @@
 .SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
     color: magenta;
 }
+
+.section-status-horizontal-widget .SectionStatus_loopLight {
+    min-width: 4.5em;
+}
+
+/* Also this works: SectionStatusWidget--horizontal */
+.section-status-horizontal-widget .SectionStatus_beatNumber {
+    min-width: 1.4em;
+}
+.section-status-horizontal-widget .SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
+    min-width: 1.4em;
+}
 .SectionStatus_beatRow td {
     padding-top: 0.05em;
 }
@@ -102,6 +114,7 @@
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
 .instrumentSectionBox {
    font-size: 100%;
+   background-color: black;
 }
 /* The section character: §    */
 .instrumentSectionMark {

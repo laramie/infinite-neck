@@ -259,6 +259,21 @@ describe('key-handlers spacebar mapping', () => {
 		expect(result.result).toBe('LeadSheetLine shown');
 	});
 
+	test('keypress g opens tunings and reloads tunings displays', () => {
+		const showOneMenu = jest.fn();
+		setKeyHandlerProviders({ showOneMenu });
+
+		document_keypress({
+			key: 'g',
+			keyCode: 'g'.charCodeAt(0),
+			target: { tagName: 'DIV' },
+			preventDefault: jest.fn()
+		});
+
+		expect(showOneMenu).toHaveBeenCalledWith('#divTunings');
+		expect(mockEventBus.trigger).toHaveBeenCalledWith('ReloadTuningsDisplays');
+	});
+
 	test('hideFullscreenLeadSheetLine routes to the fullscreen hide action and returns its result', () => {
 		const hideFullscreenLeadSheetLine = jest.fn(() => 'LeadSheetLine hidden');
 		setKeyHandlerProviders({ hideFullscreenLeadSheetLine });

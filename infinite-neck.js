@@ -385,7 +385,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
-		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
+		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
 	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
@@ -865,7 +865,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        theme: $('#selThemes').val(),
 	        bpm,
 	        userColors: gUserColorDict.dict,
-	        userInstrumentTuning: TuningsLibrary.findTuningForID("USER"),  //Persistence only. allTunings.tunings with id="USER" is the live object used at runtime.
 	        plugins: pluginManager.exportSongPluginState()
 	    });
 	}
@@ -950,14 +949,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
 		
-		if (getSong().userInstrumentTuning){
-			var theUSERTuning = TuningsLibrary.findTuningForID("USER");
-			if (theUSERTuning){
-				TuningsLibrary.hideAllTunings();
-				Object.assign(theUSERTuning, getSong().userInstrumentTuning);  //the version in the song model is just used for persistence. allTunings.tunings array keeps the USER tuning that is used at runtime.
-			}
-		}
-
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
 		if (tuningsShowing == 0){
 			showDefaultTunings();
@@ -2545,8 +2536,53 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	//==================== 5) App init and EventBus integration ===============
 
+	function installHeadlessJQueryStub() {
+		if (typeof globalThis.$ === 'function') {
+			return;
+		}
+
+		const chain = {
+			length: 0,
+			each() { return this; },
+			html(value) { return value === undefined ? '' : this; },
+			val(value) { return value === undefined ? '' : this; },
+			show() { return this; },
+			hide() { return this; },
+			toggle() { return this; },
+			empty() { return this; },
+			append() { return this; },
+			prepend() { return this; },
+			appendTo() { return this; },
+			remove() { return this; },
+			find() { return this; },
+			prop(name, value) { return value === undefined ? undefined : this; },
+			attr(name, value) { return value === undefined ? undefined : this; },
+			data(name, value) { return value === undefined ? undefined : this; },
+			on() { return this; },
+			off() { return this; },
+			change() { return this; },
+			click() { return this; },
+			trigger() { return this; },
+			is() { return false; },
+			get() { return undefined; },
+			map() { return []; },
+			text(value) { return value === undefined ? '' : this; },
+			addClass() { return this; },
+			removeClass() { return this; },
+			toggleClass() { return this; },
+			focus() { return this; },
+			blur() { return this; }
+		};
+
+		globalThis.$ = function () {
+			return chain;
+		};
+		globalThis.jQuery = globalThis.$;
+	}
+
 	// Headless replacement for document.ready for testing
 	export function setupSongTests() {
+		installHeadlessJQueryStub();
 		gSong = new Song();   //var song global in this file (at top).
 		gSong.setHeadless(true, true);
 		gSong.ensureDefaultSection();

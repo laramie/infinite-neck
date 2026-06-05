@@ -785,23 +785,28 @@ table.viewControls th {
     font-size:  200%;
 }
 .lblSectionChartChord {
+    display: inline-block;
     font-family: "Shadows Into Light", cursive;
     color: #93ff41;
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    min-width: 4.5em;
 }
 .lblSectionMode {
+    display: inline-block;
     font-family: "Shadows Into Light", cursive;
     color: #41c6ff;
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    min-width: 7em;
 }
 .lblSectionNumber {
     padding: 0.2em;
     margin-left: 1em;
     margin-right: 1em;
+    border: 1px solid blue;
 }
 
 .lblSectionmark {

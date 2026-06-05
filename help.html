@@ -589,6 +589,11 @@
         <img width="95%" src="img/help/piano-schroeder.png">
         <br>
         <br>
+        <b>Piano Skeuomorphic</b>
+        <br>
+        <img width="95%" src="img/help/piano-skeuomorphic.png">
+        <br>
+        <br>
         <br>
 
         Two Ableton Controller surfaces, when used with <b><i>Theme:</i></b> <b>DJ TrailMix</b>.
@@ -903,44 +908,51 @@
                         <li><a href="#keysInCommandLine">Keys</a></li>
                         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
                         <li><a href="#commandLineMenuDump">Full Menu Listing</a></li>
-                    </ul>
+                    </ul>plugin-fill
                 </li>
-                <li><a href="#plugins">Plugins</a>
+                <li><a href="help-plugins.html#plugins">Plugins</a>
                     <ul class="LinkList">
-                        <li><a href="#plugins-overview">Overview</a></li>
-                        <li><a href="#plugin-arpeggio">ArpeggioPlugin</a>
+                        <li><a href="help-plugins.html#plugins-overview">Overview</a></li>
+                        <li><a href="help-plugins.html#plugin-arpeggio">ArpeggioPlugin</a>
                             <ul class="LinkList">
-                                <li><a href="#plugin-arpeggio-what">What It Does</a></li>
-                                <li><a href="#plugin-arpeggio-options">Main Options</a></li>
-                                <li><a href="#plugin-arpeggio-actions">Actions And Events</a></li>
+                                <li><a href="help-plugins.html#plugin-arpeggio-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-arpeggio-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-arpeggio-actions">Actions And Events</a></li>
                             </ul>
                         </li>
-                        <li><a href="#plugin-fill">FillPlugin</a>
+                        <li><a href="help-plugins.html#plugin-clip">ClipPlugin</a>
                             <ul class="LinkList">
-                                <li><a href="#plugin-fill-what">What It Does</a></li>
-                                <li><a href="#plugin-fill-options">Main Options</a></li>
-                                <li><a href="#plugin-fill-actions">Actions And Events</a></li>
+                                <li><a href="help-plugins.html#plugin-clip-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-clip-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-clip-actions">Actions And Events</a></li>
                             </ul>
                         </li>
-                        <li><a href="#plugin-clip">ClipPlugin</a>
+                        <li><a href="help-plugins.html#plugin-fill">FillPlugin</a>
                             <ul class="LinkList">
-                                <li><a href="#plugin-clip-what">What It Does</a></li>
-                                <li><a href="#plugin-clip-options">Main Options</a></li>
-                                <li><a href="#plugin-clip-actions">Actions And Events</a></li>
+                                <li><a href="help-plugins.html#plugin-fill-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-fill-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-fill-actions">Actions And Events</a></li>
                             </ul>
                         </li>
-                        <li><a href="#plugin-move">MovePlugin</a>
+                        <li><a href="help-plugins.html#plugin-move">MovePlugin</a>
                             <ul class="LinkList">
-                                <li><a href="#plugin-move-what">What It Does</a></li>
-                                <li><a href="#plugin-move-options">Main Options</a></li>
-                                <li><a href="#plugin-move-actions">Actions And Events</a></li>
+                                <li><a href="help-plugins.html#plugin-move-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-move-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-move-actions">Actions And Events</a></li>
                             </ul>
                         </li>
-                        <li><a href="#plugin-transpose">TransposePlugin</a>
+                        <li><a href="help-plugins.html#plugin-tonal">TonalPlugin</a>
                             <ul class="LinkList">
-                                <li><a href="#plugin-transpose-what">What It Does</a></li>
-                                <li><a href="#plugin-transpose-options">Main Options</a></li>
-                                <li><a href="#plugin-transpose-actions">Actions And Events</a></li>
+                                <li><a href="help-plugins.html#plugin-tonal-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-tonal-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-tonal-actions">Actions And Events</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="help-plugins.html#plugin-transpose">TransposePlugin</a>
+                            <ul class="LinkList">
+                                <li><a href="help-plugins.html#plugin-transpose-what">What It Does</a></li>
+                                <li><a href="help-plugins.html#plugin-transpose-options">Main Options</a></li>
+                                <li><a href="help-plugins.html#plugin-transpose-actions">Actions And Events</a></li>
                             </ul>
                         </li>
                         <li><a href="#plugins-keyboard-menu">Keyboard And Menu Reminders</a></li>
@@ -948,6 +960,9 @@
                 </li>
                 <li><a href="#techie">Techie Bits</a></li>
                 <ul class="LinkList">
+                    <li><a href="#styleNum">styleNum Values</a></li>
+                    <li><a href="#viewDiagnostics">View Diagnostics</a></li>
+                    <li><a href="#chromeDevTools">Spelunking with Chrome DevTools</a></li>
                     <li><a href="#variableNames">Variables for Captions</a></li>
                     <li><a href="#transposeProgression">transposeProgression Family of Variables</a></li>
 
@@ -1300,7 +1315,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 <a name="copy-paste-delete-undo-o-my"></a>
 <h3>Copy, Paste, Delete, Save, Versions, O My!</h3>
 <p><span class="productsmaller">infinite-neck</span> doesn't have many of the things we associate with computer programs.  It doesn't 
-do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions for getting what you need to get done, with different idioms.
+do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, which selects notes by algorithm, and pastes in compatible positions or instruments).  It doesn't do Undo/Redo.  But there are functions for getting what you need to get done, with different idioms.
 </p>
 <p>
 <table class="ExamplesTable">
@@ -1309,8 +1324,12 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
         so this can be used to copy/paste a Section.  You can also <a href='#glossaryClone'>Clone</a> a section.
     </td></tr>
      <tr><td>Copy Section</td><td>Use <a href='#glossaryClone'>Clone</a> or <a href='#glossaryShallowClone'>Shallow</a> clone on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  <a href='#glossaryClone'>Clone</a> copies all notes and Display Options.</td></tr>
-    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.</td></tr>
-    <tr><td>Copy Notes</td><td>You can't copy/paste notes, but you can copy/<a href='#glossaryClone'>Clone</a> whole sections, and within that new section you can transpose. So the flow would be:
+    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.
+        <br>
+        <br>
+        Using the ClipPlugin, you can also select the kind of note to include and Cut the notes, which removes them from the Instrument in that Section, and puts them in the Graveyard.
+    </td></tr>
+    <tr><td>Copy Notes</td><td>You can copy/<a href='#glossaryClone'>Clone</a> whole sections, and within that new section you can transpose. So the flow would be:
         <ul>
             <li>Unlock the Song so Transposition works <span class="menuExampleLine"><b><small>/fu</small></b></span>
             <li>In Section 1, place notes for the I chord.
@@ -1322,6 +1341,31 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
             <li>Hit <b><u>l</u></b>oop!
             <li>Voila! The three-chord wonder.
             <li>(This only works with NamedNotes.)
+        </ul>
+    </td></tr>
+    <tr><td>Copy/Paste Notes with ClipPlugin</td><td><span class="menuExampleLine">/fpc</span>, or <span class="key">SHIFT</span>+<span class="key">C</span> which will bring up the ClipPlugin.  
+        With Clip, you can copy, cut, and paste notes from the
+        selected Instrument, which is where the notes come from or go to.  MIDI Paste pastes to another instrument based on MIDI numbers, not positions.
+        Copy listened notes copies notes that are visible in the instrument but aren't recorded in that instrument, when that instrument is listening to another.
+        <br>
+        <br>
+        The workflow is: 
+        <ul>
+            <li>Select the Instrument</li>
+            <li>choose the included note types</li>
+            <li>copy</li>
+            <li>switch to the destination Instrument</li>
+            <li>if you want to paste to another Section, use the Transport, then click back in the command-line, or come back in with <span class="key">m</span> if you escaped the command-line.</li>
+            <li>paste</li>
+        </ul>
+        <br>
+        If you want to paste into a compatible instrument in another tuning, choose that Instrument before you paste, then use MIDI Paste, which places notes by MIDI number not position.
+        <ul>
+            <li>Select the Instrument</li>
+            <li>choose the included note types</li>
+            <li>copy</li>
+            <li>switch to the destination Instrument</li>
+            <li>select MIDI Paste</li>
         </ul>
     </td></tr>
     <tr><td>Open</td><td><span class="GUIReferenceInline">File | Open Song | Choose File</span>, or <span class="GUIReferenceInline">File | Open Song from [Song Library]</span>   </td></tr>
@@ -1394,7 +1438,7 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 <a name="songfileInfo"></a>
 <h4>Songfile Info</h4>
 
-<p>The Songfile Info page lets you keep notes right in the song file itself.  This is handy for things like tuning reminders, setup notes, fingering hints, rehearsal directions, or a short formatted description of the song.</p>
+<p>The Songfile Info page lets you keep comments right in the song file itself.  This is handy for things like instruction on how plugins are set up, reminders about using flashcard mode, or a short formatted description of the song. You can format your comments with simple HTML.</p>
 
 <p>You can open Songfile Info in any of these ways:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click the <span class="GUIReferenceInline">Info</span> button in the top menu button row.
@@ -1479,7 +1523,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
 <table class="ExamplesTable">
     <tr>
         <th>Navigation</th>
-        <th>Avail</th>
         <th>Key</th>
         <th>Menu</th>
         <th>Action</th>
@@ -1487,15 +1530,13 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>LoopSong</td>
-        <td>&check;</td>
-        <td>l</td>
+        <td><span class="key"> l</span></td>
         <td><span class="menuExampleLine"><b><small>/rl</small></b></span></td>
         <td>toggleLoopSections</td>
         <td>Loop Song button</td>
     </tr>
     <tr>
         <td>SectionBegin</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
         <td>gotoFirstBeat</td>
@@ -1503,7 +1544,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>FirstBeat</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
         <td>gotoFirstBeat</td>
@@ -1511,23 +1551,20 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>FirstSection</td>
-        <td>&check;</td>
-        <td>&lt;</td>
+        <td><span class="key"> &lt;</span></td>
         <td><span class="menuExampleLine"><b><small>/rsf</small></b></span></td>
         <td>firstSection</td>
         <td>First Section button</td>
     </tr>
     <tr>
         <td>PrevBeat</td>
-        <td>&check;</td>
-        <td>b</td>
+        <td><span class="key"> b</span></td>
         <td><span class="menuExampleLine"><b><small>/rbp</small></b></span></td>
         <td>prevBeat</td>
         <td>Previous Beat button</td>
     </tr>
     <tr>
         <td>NextBeat</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbn</small></b></span></td>
         <td>nextBeat</td>
@@ -1535,7 +1572,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>LastBeat</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbl</small></b></span></td>
         <td>gotoLastBeat</td>
@@ -1543,31 +1579,27 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>PrevSection</td>
-        <td>&check;</td>
-        <td>,</td>
+        <td><span class="key"> ,</span></td>
         <td><span class="menuExampleLine"><b><small>/rsp</small></b></span></td>
         <td>prevSection</td>
         <td>Previous Section button</td>
     </tr>
     <tr>
         <td>NextSection</td>
-        <td>&check;</td>
-        <td>.</td>
+        <td><span class="key"> .</span></td>
         <td><span class="menuExampleLine"><b><small>/rsn</small></b></span></td>
         <td>nextSection</td>
         <td>Next Section button</td>
     </tr>
     <tr>
         <td>LastSection</td>
-        <td>&check;</td>
-        <td>&gt;</td>
+        <td><span class="key"> &gt;</span></td>
         <td><span class="menuExampleLine"><b><small>/rsl</small></b></span></td>
         <td>lastSection</td>
         <td>Last Section button</td>
     </tr>
     <tr>
         <td>LoopBeats</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/re</small></b></span></td>
         <td>toggleLoopBeats</td>
@@ -1575,7 +1607,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>RestartSection</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
         <td>gotoFirstBeat</td>
@@ -1583,15 +1614,13 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>RestartSong</td>
-        <td>&check;</td>
-        <td>&lt;</td>
+        <td><span class="key"> &lt;</span></td>
         <td><span class="menuExampleLine"><b><small>/rs0</small></b></span></td>
         <td>firstSection</td>
         <td>First Section button</td>
     </tr>
     <tr>
         <td>ResetSong</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rsr</small></b></span></td>
         <td>resetSong</td>
@@ -1599,7 +1628,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>ResetSongHard</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rsR</small></b></span></td>
         <td>resetSongHard</td>
@@ -1607,7 +1635,6 @@ do Copy/Paste, for example.  It doesn't do Undo/Redo.  But there are functions f
     </tr>
     <tr>
         <td>LastBeatInSong</td>
-        <td>&check;</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rsL</small></b></span></td>
         <td>gotoLastBeatInSong</td>
@@ -1700,6 +1727,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
  <a name="divSectionTransposition"></a>
 <h4>Transposition</h4>
  <a name="allowTransposition"></a>
+ <p>Note: this section is mostly about doing transposition with the keyboard shortcuts and the command-line <span class="menuExampleLine">/fat</span> or <span class="menuExampleLine">/fak</span> for transposing notes or keys for a whole song.  There are many more options in the <a href="help-plugins.html#plugin-transpose">TransposePlugin</a> which does it a little differently, and transposes in cycles while looping.</p>
 <h5>Allow Transposition</h5>
  <p>If the 
         <span class="GUIReferenceInline">File | Allow transposition by keyboard shortcuts d, U, u, D, j, & J</span>
@@ -1723,24 +1751,24 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     <ul>
         <li>Transposing with the keyboard shortcuts transposes NamedNotes only in the Current Section.
         <li><span class="menuExampleLine"><b>/fa</b></span> shows a menu where you can transpose all NamedNotes or just the Section keys in a song at once, after you chose the number of half-steps.
-        <li><span class="menuExampleLine"><b>/fpt</b></span> shows the TransposePlugin which gives you the option of transposing just the key, or also the NamedNotes, and lets you automate that choice while looping.
+        <li><span class="menuExampleLine"><b>/fpt</b></span> shows the <a href="help-plugins.html#plugin-transpose">TransposePlugin</a> which gives you the option of transposing just the key, or also the NamedNotes, and lets you automate that choice while looping.
         <li>For transposing SingleNotes or TinyNotes, use the MovePlugin.
     </ul>   
 </p>
     
-<p>Note: the MovePlugin, lets you chose how notes that may be dropped are handled.  NamedNotes can't be dropped because they just select all notes with a letter name, e.g. note 'F'.  But a SingleNote could be dropped if you transpose down and that note goes beyond the Nut. MovePlugin lets you specify whether to drop it, attempt a wrap on the same string by changing the note's octave, or attept a wrap to a different string by changing the note'sS octave.
+<p>Note: the MovePlugin lets you chose how notes that may be dropped are handled.  NamedNotes can't be dropped because they just show all notes with a letter name, e.g. note 'F'.  But a SingleNote could be dropped if you transpose down and that note goes beyond the Nut. MovePlugin lets you specify whether to drop it, attempt a wrap on the same string by changing the note's octave, or attempt a wrap to a different string by changing the note's octave.
 </p>
 <p>Transposing "<b>u</b>p" moves the notes and the Root Key up the scale one half-step. (<i>Uppercase matters: <b>u</b> goes up, <b>U</b> goes down. <b>d</b> goes down, <b>D</b> goes up.</i>)  Transposing with the "j" key ("<b>j</b>ump") moves the notes
     and the Root up a fourth, which <b>j</b>umps up one string on a P4 instrument.  Remember that <b>j</b>umping up a fourth from the G string
     to the B string in Standard guitar tuning will not be on the same fret. (<i>Uppercase matters: <b>j</b> jumps up, <b>J</b> jumps down.</i>)
 </p>
 <p>
-    Here we show a Section with a C major chord shown in NamedNotes (all legal notes on the neck) which <i>will</i> move
+    Here we show a Section with a C major chord shown in NamedNotes (all legal notes on the neck with that note name) which <i>will</i> move
     when we transpose.
     We have added a B-flat SingleNote, which is the dominant seven.
     Since it is a SingleNote, it <i>won't</i> move when we transpose.
     (Also, all SingleNotes have a thin yellow backglow so they look different from NamedNotes,
-    much thinner than the fat yellow Highlight which surrounds the entire cell.)
+    much thinner than the fat yellow <a href="#glossaryHighlight">Highlight</a> note style [Multi or Pitch] which surrounds the entire cell.)
 </p>
 <p>
         Transposing from C to D-flat then looks like this:
@@ -1757,7 +1785,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
      <br>
      <img class="floatingScreenshot"  width="60%" src="img/help/context/transpose-C-up-after.png">
  </p>
- <p>Notice that the C major chord is now a D-flat major chord, that all D-flats are highlighted with a fat, yellow Highlight to show you the new Root,
+ <p>Notice that the C major chord is now a D-flat major chord, that all D-flats are highlighted with a fat, yellow <a href="#glossaryHighlight">Pitch Highlight</a> to show you the new Root,
      and that the B-flat SingleNote is still a B-flat, but its Note Function has changed from the dominant seven to the six,
      since its relative position to the Root has changed (it was two strings up from the Root, same fret; now it
      is still two strings up, but the Root has moved one fret up the neck).
@@ -2042,11 +2070,11 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
     </p>
     <p>
         Here SR is checked, and the Special Rows and displayed in other colors:
-        <br> <br><img src="img/help/context/S6-SpecialRows-on.png">
+        <br> <br><img width="50%" src="img/help/context/S6-SpecialRows-on.png">
     </p>
     <p>
         Here SR is unchecked, and the Special Rows are displayed normally:
-          <br> <br><img src="img/help/context/S6-SpecialRows-off.png">
+          <br> <br><img  width="50%" src="img/help/context/S6-SpecialRows-off.png">
     </p>
 
 <a name="palette"></a>
@@ -2422,74 +2450,6 @@ Stylesheet order
 <p>You can delete all objects from the Graveyard (and receive a download of the song just before the deletion) 
     by using the <a href="#commandline">command-line</a> <span class="menuExampleLine">/fC</span></span> documented
 in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>    
-
-
-<hr>
-<a name="themesGallery"></a>
-<h2>Themes Gallery</h2>
-
- <p>Themes, we got Themes, baby!  Just choose one from the dropdown (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
-
- <p>
-    <a name="adult-swim"></a>
-    <h3>Adult Swim</h3>
-    <img width="80%" src="img/help/theme-adult-swim.png"><br><br>
-    <a name="everyone-into-the-pool"></a>
-    <h3>Everyone into the Pool</h3>
-    <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br>
-    <a name="zinfandel"></a>
-    <h3>Zinfandel</h3>
-    <img width="80%" src="img/help/theme-zinfandel.png"><br><br>
-    <a name="autobahn"></a>
-    <h3>Autobahn</h3>
-    <img width="80%" src="img/help/theme-autobahn.png"><br><br>
-    <a name="late-nite"></a>
-    <h3>Late Nite</h3>
-    <img width="80%" src="img/help/theme-late-nite.png"><br><br>
-    <a name="big-in-japan"></a>
-    <h3>Big in Japan</h3>
-    <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
-    <a name="pool-shark"></a>
-    <h3>Pool Shark</h3>
-    <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
-    <a name="blade"></a>
-    <h3>Blade</h3>
-    <img width="80%" src="img/help/theme-blade.png"><br><br>
-    <a name="coffy-brown"></a>
-    <h3>Coffy Brown</h3>
-    <img width="80%" src="img/help/theme-coffee-brown.png"><br><br>
-    <a name="landau-top"></a>
-    <h3>Landau Top</h3>
-    <p>For those of you who didn't live through the 70's
-        a "Landau Top" was an interpretation of an old carriage option from Laundau, Germany,
-         which was implemented in Pleather (Vinyl) in the stock 1978 Chevy Monte Carlo,
-        with these hip-daddy colors. 
-        <br><img src="img/help/monte-carlo-78.png" width="500"></li>
-    </p>
-    <img width="80%" src="img/help/theme-landau-top.png"><br><br>
-    <a name="renfaire"></a>
-    <h3>Renfaire</h3>
-    <img width="80%" src="img/help/theme-renfaire.png"><br><br>
-    <a name="robin-hood"></a>
-    <h3>Robin Hood</h3>
-    <img width="80%" src="img/help/theme-robin-hood.png"><br><br>
-    <a name="shire"></a>
-    <h3>Shire</h3>
-    <img width="80%" src="img/help/theme-shire.png"><br><br>
- </p>
-
- <p>
-        If you see that the top two rows are a different color scheme, you might have Special Rows turned on by default.
-        See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
- </p>
- <p>
-    Here SR is checked, and the Special Rows and displayed in other colors:
-        <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-on.png">
-    </p>
-    <p>
-        Here SR is unchecked, and the Special Rows are displayed normally:
-          <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
-    </p>
 
 
 <hr>
@@ -4080,8 +4040,55 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <hr>
 <a name="techie"></a>
 <h2>Techie Bits</h2>
+
+<a name="styleNum"></a>
+<h3>styleNum Values</h3>
+<p>Here are the styleNum values for the Note types, which you'll see if you go digging around in the Graveyard or <span class="menuExampleLine">/vdf</span>.
+<table class="ExamplesTable">
+   <tr>
+      <td>Named</td>
+      <td>STYLENUM_NAMED</td>
+      <td>0</td>
+   </tr>
+   <tr>
+      <td>Tiny</td>
+      <td>STYLENUM_TINY</td>
+      <td>1</td>
+   </tr>
+   <tr>
+      <td>Single</td>
+      <td>STYLENUM_SINGLE</td>
+      <td>2</td>
+   </tr>
+   <tr>
+      <td>Pitches</td>
+      <td>STYLENUM_MIDIPITCHES</td>
+      <td>3</td>
+   </tr>
+   <tr>
+      <td>Multi</td>
+      <td>STYLENUM_MIDIPITCHESSINGLE</td>
+      <td>4</td>
+   </tr>
+   <tr>
+      <td>Bend</td>
+      <td>STYLENUM_BEND</td>
+      <td>5</td>
+   </tr>
+   <tr>
+      <td>Fingering</td>
+      <td>STYLENUM_FINGERING</td>
+      <td>6</td>
+   </tr>
+</table>    
+
+
+</p>
+
+<a name="viewDiagnostics"></a>
+<h3>View Diagnostics ( /vd )</h3>
 <p>
-<div style="border: 2px solid green">
+<div style="border: 2px solid green; margin-left:4em;">
 <pre>
         Using the command-line Menu, you can view Diagnostics:  <span class="menuExampleLine">/vd</span>
                 song model:   <span class="menuExampleLine">/vds</span>
@@ -4097,7 +4104,16 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     all the DisplayOptions stored for each Section
                 variables: <span class="menuExampleLine">/vdv</span>
                     approved ${name} caption variables and input.default tokens
+</pre>
+</div>
+</p>
 
+<a name="chromeDevTools"></a>
+<h3>Spelunking with Chrome DevTools</h3>
+
+<p>
+<div style="border: 2px solid green; margin-left:4em;">
+<pre>
         In the object model, and therefore the file format, here are the objects:
             sections - An array of section objects in song order.
             section - An object in the sections array that represents one Section.
@@ -4485,9 +4501,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr>
             <td>Banjo Nut (BN)
             </td>
-            <td>In "My Tunings", or the "All Tunings" library, the values in column "BN" causes the 
+            <td>In "Tunings in Song", the values in column "BN" causes the 
                 Nut location to move per string. Used for modelling Banjo, and also for creating custom Capos
-                in USER tunings.  See the instructions under "Customize USER Tuning" in the "All Tunings" library at the bottom of the table.
+                in song-owned tunings. Deep custom tuning creation now lives under "Add One Tuning" in "Tunings in Song".
             </td>
         </tr>
         <tr>
@@ -4601,6 +4617,75 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     </table>
 </p>
 <br>
+
+<hr>
+<a name="themesGallery"></a>
+<h2>Themes Gallery</h2>
+
+ <p>Themes, we got Themes, baby!  Just choose one from the dropdown (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
+
+ <p>
+    <a name="adult-swim"></a>
+    <h3>Adult Swim</h3>
+    <img width="80%" src="img/help/theme-adult-swim.png"><br><br>
+    <a name="everyone-into-the-pool"></a>
+    <h3>Everyone into the Pool</h3>
+    <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br>
+    <a name="zinfandel"></a>
+    <h3>Zinfandel</h3>
+    <img width="80%" src="img/help/theme-zinfandel.png"><br><br>
+    <a name="autobahn"></a>
+    <h3>Autobahn</h3>
+    <img width="80%" src="img/help/theme-autobahn.png"><br><br>
+    <a name="late-nite"></a>
+    <h3>Late Nite</h3>
+    <img width="80%" src="img/help/theme-late-nite.png"><br><br>
+    <a name="big-in-japan"></a>
+    <h3>Big in Japan</h3>
+    <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
+    <a name="pool-shark"></a>
+    <h3>Pool Shark</h3>
+    <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
+    <a name="blade"></a>
+    <h3>Blade</h3>
+    <img width="80%" src="img/help/theme-blade.png"><br><br>
+    <a name="coffy-brown"></a>
+    <h3>Coffy Brown</h3>
+    <img width="80%" src="img/help/theme-coffee-brown.png"><br><br>
+    <a name="landau-top"></a>
+    <h3>Landau Top</h3>
+    <p>For those of you who didn't live through the 70's
+        a "Landau Top" was an interpretation of an old carriage option from Laundau, Germany,
+         which was implemented in Pleather (Vinyl) in the stock 1978 Chevy Monte Carlo,
+        with these hip-daddy colors. 
+        <br><img src="img/help/monte-carlo-78.png" width="500"></li>
+    </p>
+    <img width="80%" src="img/help/theme-landau-top.png"><br><br>
+    <a name="renfaire"></a>
+    <h3>Renfaire</h3>
+    <img width="80%" src="img/help/theme-renfaire.png"><br><br>
+    <a name="robin-hood"></a>
+    <h3>Robin Hood</h3>
+    <img width="80%" src="img/help/theme-robin-hood.png"><br><br>
+    <a name="shire"></a>
+    <h3>Shire</h3>
+    <img width="80%" src="img/help/theme-shire.png"><br><br>
+ </p>
+
+ <p>
+        If you see that the top two rows are a different color scheme, you might have Special Rows turned on by default.
+        See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
+ </p>
+ <p>
+    Here SR is checked, and the Special Rows and displayed in other colors:
+        <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-on.png">
+    </p>
+    <p>
+        Here SR is unchecked, and the Special Rows are displayed normally:
+          <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
+    </p>
+
+
 <br>
 <br>
 <br>
