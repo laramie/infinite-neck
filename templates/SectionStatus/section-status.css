@@ -18,7 +18,8 @@
     display: inline-flex;
 }
 .SectionStatus_beatColon {
-    color: chartreuse;
+    color: green;
+    padding-right: 0.2em;
 }
 .SectionStatus_beatNumber {
     color: chartreuse;
@@ -27,10 +28,11 @@
     color: magenta;
 }
 
+/*
 .section-status-horizontal-widget .SectionStatus_loopLight {
     min-width: 4.5em;
 }
-
+*/
 /* Also this works: SectionStatusWidget--horizontal */
 .section-status-horizontal-widget .SectionStatus_beatNumber {
     min-width: 1.4em;
@@ -144,9 +146,12 @@
     font-size: 110%;
 }
 
+.SectionStatusWidget--captionRow .SectionsStatus_SectionNumber, 
 .SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
 .SectionStatusWidget--leadSheet .SectionsStatus_SectionNumber {
     color: yellow;
+    display: inline-block;
+    min-width: 1.4em;
 }
 
 .SectionStatusWidget--captionRow .SectionStatus_relativeSection,
