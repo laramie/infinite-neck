@@ -5,7 +5,8 @@ import { jest } from '@jest/globals';
 
 import {
     setupSongTests,
-    getSong
+    getSong,
+    installDefaultColorDicts
 } from '../../infinite-neck-headless.js';
 import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
@@ -82,6 +83,31 @@ describe('Headless tuning bootstrap contracts', () => {
         expect(song.myTunings[0]).toHaveProperty('baseID');
         expect(song.myTunings[0].baseID).toMatch(/^S6_\d+$/);
         expect(song.myTunings[0].baseID).toBe('S6_1');
+    });
+
+    test('installDefaultColorDicts appends user-authored stylesheets after Default', () => {
+        const song = createFreshHeadlessSong();
+        song.colorDicts = {
+            lar4: {
+                readOnly: false,
+                computed: false,
+                checked: true,
+                dict: {
+                    noteChord: { colorClass: 'noteHatched4 notePink3', caption: 'Ch' }
+                }
+            }
+        };
+
+        installDefaultColorDicts();
+
+        expect(Object.keys(song.colorDicts)).toEqual([
+            'All-Clear',
+            'CycleOfColors',
+            'Roles',
+            'Fingerings',
+            'Default',
+            'lar4'
+        ]);
     });
 });
 

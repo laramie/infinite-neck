@@ -229,4 +229,61 @@ describe('Song V2 save path from a loaded song', () => {
         expect(bendNote.styleNum).toBe(Note.STYLENUM_BEND);
         expect(bendNote.bendValue).toBe('semitone1');
     });
+
+    test('getPersistentSongFile keeps runtime stylesheet rows in memory but only saves user-authored colorDicts', () => {
+        const { data, song } = loadSongCanonical();
+        const builtInRows = {
+            Roles: {
+                readOnly: true,
+                computed: false,
+                checked: true,
+                dict: {
+                    noteRoot: { colorClass: 'noteBlack', caption: 'Root' }
+                }
+            },
+            Default: {
+                readOnly: true,
+                computed: true,
+                checked: true,
+                Default: true,
+                dict: {
+                    noteRoot: { colorClass: 'noteBlack', caption: 'Root' }
+                }
+            }
+        };
+        const userRow = {
+            readOnly: false,
+            computed: false,
+            checked: true,
+            dict: {
+                note12: { colorClass: 'noteHatched3 notePink4', caption: '&Delta;' }
+            }
+        };
+
+        song.colorDicts = {
+            ...builtInRows,
+            s2Laramie: userRow
+        };
+
+        song.prepareForSave({
+            visibleTableIds: data.visibleNoteTables,
+            songName: data.songName,
+            theme: data.theme,
+            bpm: parseInt(data.defaultBPM, 10),
+            userColors: {
+                note12: { colorClass: 'noteHatched3 notePink4', caption: '&Delta;' }
+            }
+        });
+
+        const savedObj = JSON.parse(song.getPersistentSongFile());
+
+        expect(savedObj).not.toHaveProperty('userColors');
+        expect(savedObj.colorDicts).toEqual({
+            s2Laramie: userRow
+        });
+        // Serialization should not strip runtime rows from the live song.
+        expect(song.colorDicts).toHaveProperty('Roles');
+        expect(song.colorDicts).toHaveProperty('Default');
+        expect(song.colorDicts).toHaveProperty('s2Laramie');
+    });
 });

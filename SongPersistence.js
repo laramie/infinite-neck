@@ -66,8 +66,27 @@ export class SongPersistence {
         this.graveyard.setSong(this);
     }
 
+    static filterPersistentColorDicts(colorDicts){
+        if (!colorDicts || typeof colorDicts !== 'object'){
+            return colorDicts;
+        }
+        const filtered = {};
+        Object.entries(colorDicts).forEach(([key, scheme]) => {
+            if (!scheme || typeof scheme !== 'object'){
+                return;
+            }
+            if (scheme.readOnly || scheme.computed){
+                return;
+            }
+            filtered[key] = scheme;
+        });
+        return filtered;
+    }
+
     static persistentSongFileReplacer(key, value){
-        //key === 'colorDicts' 
+        if (key === 'colorDicts'){
+            return SongPersistence.filterPersistentColorDicts(value);
+        }
         if (   key === 'userColors' 
             || key === 'fretLengths' 
             || key === 'noteNamesFuncArr'

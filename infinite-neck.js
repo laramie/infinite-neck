@@ -981,11 +981,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function installDefaultColorDicts(){
-		getSong().colorDicts["All-Clear"] = gAllClear;
-		getSong().colorDicts["CycleOfColors"] = gDefault_CycleOfColors;
-		getSong().colorDicts["Roles"] = gUserColorDictRolesDefault;
-		getSong().colorDicts["Fingerings"] = gUserColorDictFingeringsDefault;
-		getSong().colorDicts["Default"] = gUserColorDictOEM;
+		const existingColorDicts = getSong().colorDicts && typeof getSong().colorDicts === 'object'
+			? getSong().colorDicts
+			: {};
+		const userColorDicts = {};
+		Object.entries(existingColorDicts).forEach(([key, scheme]) => {
+			if (!scheme || typeof scheme !== 'object'){
+				return;
+			}
+			if (scheme.readOnly || scheme.computed){
+				return;
+			}
+			userColorDicts[key] = scheme;
+		});
+		getSong().colorDicts = {
+			"All-Clear": gAllClear,
+			"CycleOfColors": gDefault_CycleOfColors,
+			"Roles": gUserColorDictRolesDefault,
+			"Fingerings": gUserColorDictFingeringsDefault,
+			"Default": gUserColorDictOEM,
+			...userColorDicts
+		};
 	}
 
 
