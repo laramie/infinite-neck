@@ -102,10 +102,10 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - added songs/sprint-121 as a work area for new songs, so they don't collide or get lost in the old files, which should be removed in this sprint.
 
 - 122-persistence
-  - tunings persists 
-  - color themes persist
-  - user Themes persist
-  - everything filtered
+  - tunings persists DONE
+  - color themes persist DONE
+  - USER Theme persists  DONE
+  - everything filtered DONE
   - visible tables doesn't clobber tables in Model--allowed to persist without View.
 
 - 123-helpfile
