@@ -67,8 +67,8 @@ export class SongPersistence {
     }
 
     static persistentSongFileReplacer(key, value){
+        //key === 'colorDicts' 
         if (   key === 'userColors' 
-            || key === 'colorDicts' 
             || key === 'fretLengths' 
             || key === 'noteNamesFuncArr'
             || key === 'noteNamesFuncArrDEFAULT'

@@ -87,6 +87,7 @@ import './svgLines.js';
 import {
 	getDefaultTheme,
 	getThemes,
+	installUserTheme,
 	THEME_INFO,
 	setOneCssVar
 } from './themeFunctions.js';
@@ -880,7 +881,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function getPersistentSongFile(){
 		updateMemoryModelPreFileSave(); //last-minute sync of stuff that should have been done before like 
 		                                // song name, bpm, myTunings, Theme, userColors, USERTuning, visibleTableIDs
-	    var text = getSong().getPersistentSongFile();
+	var text = getSong().getPersistentSongFile();
 		return text;
 	}
 
@@ -934,8 +935,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
 		installDefaultColorDicts();
+		const hasUserTheme = !!installUserTheme(getSong().userTheme);
 		
 		let songTheme = getSong().theme;  //some songs, e.g. snake.json, don't have theme stored.
+		if (hasUserTheme){
+			songTheme = 'USER';
+		}
 		if (!songTheme){
 			songTheme = getDefaultTheme().id;
 		}

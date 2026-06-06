@@ -9,6 +9,25 @@ import { gThemes } from './themes.js';
     export function getThemes(){
         return gThemes;
     }
+    export function getEmptyUserTheme(){
+		return {
+			id: "USER",
+			caption: "USER"
+		};
+	}
+	export function installUserTheme(userTheme){
+		if (!userTheme || typeof userTheme !== 'object' || Array.isArray(userTheme)){
+			gThemes["USER"] = getEmptyUserTheme();
+			return null;
+		}
+		const runtimeUserTheme = {
+			...userTheme,
+			id: "USER",
+			caption: "USER"
+		};
+		gThemes["USER"] = runtimeUserTheme;
+		return runtimeUserTheme;
+	}
     export function getWidget_SelectThemes(){
         return generateSelectThemes(gThemes);
     }

@@ -42,9 +42,9 @@ export class ThemesBuilder {
         //======= themes  =======
         $('#btnTheme').click(function() {
             var newTheme = ThemeFunctions.controlsToTheme();
-            ThemeFunctions.theme(newTheme);
             InfiniteNeck.getSong().userTheme = newTheme;
-            ThemeFunctions.getThemes()["USER"] = newTheme;
+            ThemeFunctions.installUserTheme(newTheme);
+            $('#selThemes').val('USER').trigger('change');
         });
         $('#btnToggleThemeTableResults').click(function() {
             $('#themeTableResults').toggle();

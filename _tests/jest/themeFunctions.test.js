@@ -1,4 +1,4 @@
-import { getDefaultTheme, getThemes, getWidget_SelectThemes } from '../../themeFunctions.js';
+import { getDefaultTheme, getThemes, getWidget_SelectThemes, installUserTheme } from '../../themeFunctions.js';
 
 describe('themeFunctions baseline contracts', () => {
     test('getDefaultTheme returns the Default theme object', () => {
@@ -50,5 +50,18 @@ describe('themeFunctions baseline contracts', () => {
         Object.keys(themes).forEach((id) => {
             expect(widget).toContain("value='" + id + "'");
         });
+    });
+
+    test('installUserTheme keeps the runtime USER slot addressable as USER', () => {
+        const runtimeUserTheme = installUserTheme({
+            id: 'Matrix-Matrix',
+            caption: 'Matrix+Matrix ',
+            noteRadius: '12%'
+        });
+
+        expect(runtimeUserTheme.id).toBe('USER');
+        expect(runtimeUserTheme.caption).toBe('USER');
+        expect(runtimeUserTheme.noteRadius).toBe('12%');
+        expect(getThemes().USER).toEqual(runtimeUserTheme);
     });
 });
