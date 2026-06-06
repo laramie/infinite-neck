@@ -50,6 +50,12 @@ import {
     TonalPickerOrientation 
 } from './tonalPicker.js';
 import { isPianoSkeuomorphicEnabled } from './templates/piano/piano-skeuomorphic.builder.js';
+import {
+    getTableID,
+    isMidiOnlyListenerProjection,
+    projectListenerPlayedNotes,
+    projectListenerRecordedNotes
+} from './move-helpers.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -85,6 +91,50 @@ function turnOffHiding() { return notetableProviders.turnOffHiding(); }
 
 function createNotetableLookupContext(section = getCurrentSection()) {
     return createLookupContext({ section });
+}
+
+function getTuningByTableID(tableID) {
+    return (getSong()?.myTunings || []).find((tuning) => getTableID(tuning) === `${tableID || ''}`) || null;
+}
+
+function shouldProjectListenerByMidi(replayOptions) {
+    return replayOptions?.type === ReplayOptions.Type.LISTENER
+        && isMidiOnlyListenerProjection(replayOptions?.listenerProjection);
+}
+
+function getProjectedListenerPlayedNotes(replayOptions, playedNotes = []) {
+    if (!shouldProjectListenerByMidi(replayOptions)) {
+        return playedNotes;
+    }
+    const sourceTuning = getTuningByTableID(replayOptions.listenToTablename);
+    const targetTuning = getTuningByTableID(replayOptions.tablename);
+    if (!sourceTuning || !targetTuning) {
+        return playedNotes;
+    }
+    return projectListenerPlayedNotes({
+        playedNotes,
+        sourceTuning,
+        targetTuning,
+        listenerProjection: replayOptions.listenerProjection
+    });
+}
+
+function getProjectedListenerRecordedNotesForBeat(replayOptions, beat, recordedNotes = {}) {
+    if (!shouldProjectListenerByMidi(replayOptions)) {
+        return recordedNotes?.[`${beat}`] || [];
+    }
+    const sourceTuning = getTuningByTableID(replayOptions.listenToTablename);
+    const targetTuning = getTuningByTableID(replayOptions.tablename);
+    if (!sourceTuning || !targetTuning) {
+        return recordedNotes?.[`${beat}`] || [];
+    }
+    const projected = projectListenerRecordedNotes({
+        recordedNotes: { [`${beat}`]: recordedNotes?.[`${beat}`] || [] },
+        sourceTuning,
+        targetTuning,
+        listenerProjection: replayOptions.listenerProjection
+    });
+    return projected?.[`${beat}`] || [];
 }
 
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
@@ -784,6 +834,7 @@ export function getReplayOptionsArray(){
                 let listenerSection = getCurrentSection();
                 listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerSection);
                 listenerOpts.listenToTablename = wiring.listenToTablename;
+                listenerOpts.listenerProjection = wiring.listenerProjection || 'row-midi';
                 listenerOpts.type = ReplayOptions.Type.LISTENER;
                 applySectionOpts(listenerOpts, listenerSection);
                 resultOptionsArray.push(listenerOpts);
@@ -908,6 +959,7 @@ export function replayTable(replayOptions){
     if (sn){
         tablearr = sn.playedNotes;
     }
+    tablearr = getProjectedListenerPlayedNotes(replayOptions, tablearr || []);
     if (tablearr){
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
@@ -1212,7 +1264,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
 			.attr("class", "tinyNote")   //remove marker classes: [tinyNotePlayed tinyNotePlayedBend Playback] and any color
 		 	.hide();
 
-		var arrForBeat = dict[""+nBeat];
+		var arrForBeat = getProjectedListenerRecordedNotesForBeat(options, nBeat, dict);
         if (arrForBeat) {
             arrForBeat.forEach(note => {
                 var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
@@ -1490,7 +1542,9 @@ EventBus.on('Note:colored', function(event, data) {
                 listenToTablename: sourceTableID,
                 currSection: getCurrentSection(),
                 sectionIndex: song.getSections().indexOf(getCurrentSection()),
-                relativeSection: wiring.relativeSection
+                relativeSection: wiring.relativeSection,
+                listenerProjection: wiring.listenerProjection || 'row-midi',
+                type: wiring.relativeSection ? ReplayOptions.Type.RELATIVE : ReplayOptions.Type.LISTENER
             });
         }
     });
@@ -1517,6 +1571,9 @@ EventBus.on('Wiring:added', function(event, data) {
         listenToTablename: data.listenToTablename,
         currSection: getCurrentSection(),
         sectionIndex: song.getSections().indexOf(getCurrentSection()),
+        relativeSection: data.relativeSection,
+        listenerProjection: data.listenerProjection || 'row-midi',
+        type: data.relativeSection ? ReplayOptions.Type.RELATIVE : ReplayOptions.Type.LISTENER
     });
 });
 EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {

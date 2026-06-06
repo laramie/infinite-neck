@@ -99,7 +99,11 @@ const wiringSchema = {
     properties: {
         tablename: { type: 'string', minLength: 1 },
         relativeSection: { type: 'string' },
-        listenToTablename: { type: 'string', minLength: 1 }
+        listenToTablename: { type: 'string', minLength: 1 },
+        listenerProjection: {
+            type: 'string',
+            enum: ['row-midi', 'midi-low-to-high', 'midi-high-to-low']
+        }
     },
     required: ['tablename', 'relativeSection', 'listenToTablename'],
     additionalProperties: false
@@ -148,7 +152,8 @@ const sectionNotesSchema = {
             }
         },
         chord: { type: 'string' },
-        mode: { type: 'string' }
+        mode: { type: 'string' },
+        tonalSourceSet: { type: 'string' }
     },
     required: ['playedNotes', 'namedNotes', 'recordedNotes'],
     additionalProperties: false

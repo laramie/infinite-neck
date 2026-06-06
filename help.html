@@ -2316,6 +2316,14 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                      in which case you have look-ahead and look-behind of other Sections.
                         </ul>
                 </li>
+                <li><b>Listener projection</b>: controls how listened PlayedNotes and RecordedNotes land on the listening instrument.
+                    <ul>
+                        <li><b>Same string + MIDI</b> keeps the current listener behavior and matches by source string plus MIDI pitch.
+                        <li><b>MIDI only, low string to high</b> ignores source string position, maps by MIDI pitch only, and lets higher strings overwrite lower strings when they collide.
+                        <li><b>MIDI only, high string to low</b> ignores source string position, maps by MIDI pitch only, and lets lower strings overwrite higher strings when they collide.
+                        <li>This is mainly useful for Piano Lineage or other single-string-display instruments listening to multi-string instruments.
+                    </ul>
+                </li>
                 <li><b>Wiring button</b>: shows various states: <b>[<s>No Instrument</s>]</b>, <b>[Add Wiring]</b>, <b>[Wired]</b>.  
                     <ul>
                         <li><b>[<s>No Instrument</s>]</b> means you need to select an instrument from the Instrument

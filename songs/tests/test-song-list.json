@@ -5,9 +5,10 @@
          "persistence/3-chord-3keys-S6-Bass.json",
          "persistence/3-chord-3keys-S6-Bass-observers-highlights.json",
          "arpeggio-bach-sec2-manual.json",
-         "empty-song.json"
+         "empty-song.json",
+         "chart-test-fixture.json",
+         "piano-listener-guitar-wite-out-fixture.json"
     ],
     "ignoredSongs": [
-         
     ]
 }

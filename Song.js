@@ -50,17 +50,23 @@ export class Song extends SongPersistence {
         return visibleTuningIDs;    
     }
 
-    addWiring(tablename, relativeSection, listenToTablename) {
+    addWiring(tablename, relativeSection, listenToTablename, listenerProjection = 'row-midi') {
         const idx = this.wirings.findIndex(w => w.tablename === tablename);
         const newWiring = new Wiring({ tablename:tablename, 
                                        relativeSection:relativeSection, 
-                                       listenToTablename:listenToTablename});
+                                       listenToTablename:listenToTablename,
+                                       listenerProjection: listenerProjection || 'row-midi'});
         if (idx === -1) {
             this.wirings.push(newWiring);
         } else {
             this.wirings[idx] = newWiring;
         }
-        EventBus.trigger("Wiring:added", {tablename:tablename, listenToTablename: listenToTablename});
+        EventBus.trigger("Wiring:added", {
+            tablename: tablename,
+            listenToTablename: listenToTablename,
+            relativeSection: relativeSection,
+            listenerProjection: newWiring.listenerProjection
+        });
     }
 
     removeWiring(tablename){

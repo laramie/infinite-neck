@@ -12,7 +12,14 @@ const Constants = await import('../../Constants.js');
 const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 const { SectionNotes } = await import('../../SectionNotes.js');
 const { Note } = await import('../../Note.js');
-const { applyMovePlan, createTuningLayout, isBendLandingLegal } = await import('../../move-helpers.js');
+const {
+  ListenerProjection,
+  applyMovePlan,
+  createTuningLayout,
+  isBendLandingLegal,
+  projectListenerPlayedNotes,
+  projectListenerRecordedNotes
+} = await import('../../move-helpers.js');
 
 function createTuning(overrides = {}) {
   return {
@@ -21,6 +28,34 @@ function createTuning(overrides = {}) {
     rowRange: [62, 57, 54, 50, 64],
     nut: true,
     banjoNut: { 4: 5 },
+    reverse: false,
+    ...overrides
+  };
+}
+
+function createListenerSourceTuning(overrides = {}) {
+  return {
+    baseID: 'S6_1',
+    fromBaseID: 'S6',
+    baseInstrument: 'Guitar',
+    nStrings: 6,
+    frets: 24,
+    rowRange: [64, 59, 55, 50, 45, 40],
+    nut: true,
+    reverse: false,
+    ...overrides
+  };
+}
+
+function createPianoTargetTuning(overrides = {}) {
+  return {
+    baseID: 'Piano_1',
+    fromBaseID: 'Piano',
+    baseInstrument: 'Piano',
+    nStrings: 1,
+    frets: 0,
+    rowRange: [60],
+    nut: true,
     reverse: false,
     ...overrides
   };
@@ -203,6 +238,111 @@ describe('Move helpers', () => {
     expect(result.playedNotes).toHaveLength(0);
     expect(result.droppedEntries).toHaveLength(1);
     expect(result.droppedEntries[0].reason).toBe('no string above row 0');
+  });
+
+  test('listener played-note projection overwrites collisions by selected string order', () => {
+    const sourceTuning = createListenerSourceTuning();
+    const targetTuning = createPianoTargetTuning();
+    const lowStringNote = {
+      noteName: 'C',
+      styleNum: Note.STYLENUM_SINGLE,
+      midinum: '60',
+      row: '5',
+      col: '20',
+      colorClass: 'noteTransparent',
+      marker: 'low-string'
+    };
+    const highStringNote = {
+      noteName: 'C',
+      styleNum: Note.STYLENUM_SINGLE,
+      midinum: '60',
+      row: '1',
+      col: '1',
+      colorClass: 'noteTransparent',
+      marker: 'high-string'
+    };
+
+    const lowToHigh = projectListenerPlayedNotes({
+      playedNotes: [highStringNote, lowStringNote],
+      sourceTuning,
+      targetTuning,
+      listenerProjection: ListenerProjection.MIDI_LOW_TO_HIGH
+    });
+    const highToLow = projectListenerPlayedNotes({
+      playedNotes: [highStringNote, lowStringNote],
+      sourceTuning,
+      targetTuning,
+      listenerProjection: ListenerProjection.MIDI_HIGH_TO_LOW
+    });
+
+    expect(lowToHigh).toHaveLength(1);
+    expect(lowToHigh[0].row).toBe('0');
+    expect(lowToHigh[0].marker).toBe('high-string');
+
+    expect(highToLow).toHaveLength(1);
+    expect(highToLow[0].row).toBe('0');
+    expect(highToLow[0].marker).toBe('low-string');
+  });
+
+  test('listener recorded-note projection carries highlights and beat-local overwrite order', () => {
+    const sourceTuning = createListenerSourceTuning();
+    const targetTuning = createPianoTargetTuning();
+    const recordedNotes = {
+      '1': [
+        {
+          noteName: 'C',
+          styleNum: Note.STYLENUM_MIDIPITCHESSINGLE,
+          midinum: '60',
+          row: '5',
+          col: '20',
+          colorClass: 'noteTransparent',
+          marker: 'low-string'
+        },
+        {
+          noteName: 'C',
+          styleNum: Note.STYLENUM_MIDIPITCHESSINGLE,
+          midinum: '60',
+          row: '1',
+          col: '1',
+          colorClass: 'noteTransparent',
+          marker: 'high-string'
+        },
+        {
+          noteName: 'C',
+          styleNum: Note.STYLENUM_MIDIPITCHES,
+          midinum: '60',
+          row: '5',
+          colorClass: 'noteTransparent',
+          marker: 'pitch-highlight'
+        }
+      ]
+    };
+
+    const lowToHigh = projectListenerRecordedNotes({
+      recordedNotes,
+      sourceTuning,
+      targetTuning,
+      listenerProjection: ListenerProjection.MIDI_LOW_TO_HIGH
+    });
+    const highToLow = projectListenerRecordedNotes({
+      recordedNotes,
+      sourceTuning,
+      targetTuning,
+      listenerProjection: ListenerProjection.MIDI_HIGH_TO_LOW
+    });
+
+    expect(lowToHigh['1']).toHaveLength(2);
+    expect(lowToHigh['1'].find((note) => note.styleNum === Note.STYLENUM_MIDIPITCHESSINGLE).marker).toBe('high-string');
+    expect(lowToHigh['1'].find((note) => note.styleNum === Note.STYLENUM_MIDIPITCHES)).toEqual(
+      expect.objectContaining({
+        marker: 'pitch-highlight',
+        midinum: '60',
+        row: '0'
+      })
+    );
+
+    expect(highToLow['1']).toHaveLength(2);
+    expect(highToLow['1'].find((note) => note.styleNum === Note.STYLENUM_MIDIPITCHESSINGLE).marker).toBe('low-string');
   });
 });
 
