@@ -1272,7 +1272,18 @@ td.note small {
 .noteHatched4 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, white 10px, white 14px );
 }
-
+.noteHatched5 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, brown 20px, brown 21px );
+}
+.noteHatched6 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, darkolivegreen 20px, darkolivegreen 21px );
+}
+.noteHatched7 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, #170803 20px, #170803 21px );
+}
+.noteHatched8 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, rgb(249, 201, 98) 20px, rgb(249, 201, 98) 21px );
+}
 td.note {
     /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/
     height: 100%;

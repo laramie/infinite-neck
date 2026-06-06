@@ -47,10 +47,27 @@ Here are the work items, grouped by status.
 
 - In Chart Notes, we need a link next to the TH for "Caption" that toggles "hide"/"show" so you can hide the caption except for the first 10 characters then "...". The Captions get so long they blow out the width of the table.  Wrapping wouldn't help because then the rows would get tall.
 
-- in /fpoa "Refresh" should be "Refresh [section 1]"
+- in /fpoa "Refresh" should be "Refresh [section 1]" - DONE
 
 - command line loses LHS tracks when we go into short and one-line.
 
 - If you start /fpa on Piano, then change Instrument to guitar, it retains that its strings range is 1:1. changing instrument should upgrade strings to the number of that instrument's capacity.
 
+- Add menu choices and action to /vmo `o) opacity` to set this: 1) 100% 2) 95% 3) 90% 4) 85% 5) 80% 6) 60%  v) value
+```
+  .CmdMenuClass {
+      opacity: 85%;
+```
 
+- Allow navigation limited set in command-line when not in a value edit, to navigate: [,.<>]  Would be cleanest 
+
+- When not in presentation mode and first section has saved DisplayOptions, apply width and height once.  (Otherwise they are never saved or restored.)
+
+- add menu under /vp - view, presentation mode
+
+
+- DOCO: 
+  - I want to:
+    - Use the chart to fill in the notes on an instrument: FillPlugin, 
+    - Copy the notes from one instrument into another: `L` Listened notes copy
+    - Turn the notes from many Sections into chart chords: `rip-through` flow in TonalPlugin
