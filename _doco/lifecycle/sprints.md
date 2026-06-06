@@ -121,7 +121,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - promoted from sprint-903 on 20260602
   - Hand-wavy Design request in [125-design](../design/sprints/125-tonal-plugin/125-design.md)
   - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/125-tonal-plugin/125-design-sketch.md) 
-  - COMPLETE  
+  - COMPLETE 
+
+  [126-piano-listener](../design/sprints/126-piano-listener/sprint-126.md) 
 
 # Future Sprints Unscheduled 
 
@@ -133,6 +135,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+
+  903-piano-listener
+    - Piano needs to ignore col,row when Listening to multi-string instruments.
 
 
 # Sprint Planning Rules

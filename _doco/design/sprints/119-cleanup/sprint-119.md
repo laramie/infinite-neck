@@ -65,9 +65,13 @@ Here are the work items, grouped by status.
 
 - add menu under /vp - view, presentation mode
 
+- add verb under Clip to "Copy all Listened notes in song into this Listening/wired instrument"
 
 - DOCO: 
   - I want to:
     - Use the chart to fill in the notes on an instrument: FillPlugin, 
     - Copy the notes from one instrument into another: `L` Listened notes copy
     - Turn the notes from many Sections into chart chords: `rip-through` flow in TonalPlugin
+  - HELP!
+    - no clicky? Check Note KEEP
+    - can't select my Instrument in ArpeggioPlugin? Check that it is not Wired. Arpeggio doesn't work on Listeners or Observers.
