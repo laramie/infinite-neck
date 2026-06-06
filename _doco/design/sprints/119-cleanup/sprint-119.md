@@ -49,4 +49,8 @@ Here are the work items, grouped by status.
 
 - in /fpoa "Refresh" should be "Refresh [section 1]"
 
+- command line loses LHS tracks when we go into short and one-line.
+
+- If you start /fpa on Piano, then change Instrument to guitar, it retains that its strings range is 1:1. changing instrument should upgrade strings to the number of that instrument's capacity.
+
 

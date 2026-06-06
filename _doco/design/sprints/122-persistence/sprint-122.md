@@ -56,17 +56,26 @@ The preliminary report found these main planning issues:
 - Stop persisting or depending on redundant runtime-expanded stylesheet state.
 - Ensure saved color data hydrates back into runtime state correctly.
 
+- filter colorDicts and userColors now properly.
+- DONE
+
 ### Iteration 3: Fix myTunings and ensure USER tuning works
 
 - Confirm `myTunings` remains the persisted User tuning object.
 - Ensure `USER` tuning persistence and reload semantics are stable.
 - Avoid leaking live-library references or denormalized `tunings` snapshots into the songfile contract.
 
+- Reorganized so that "Add one Tuning" replaces lots of this, and USER tuning is gone.
+- DONE
+
 ### Iteration 4: Fix User Themes
 
 - Define the relationship between `theme` and `userTheme`.
 - Ensure a saved `USER` theme rehydrates correctly on load.
 - Preserve graceful fallback when a host lacks an exact theme match.
+
+- userTheme is saved in the songfile.   When song loads, this is loaded into USER theme in the dropdown, and any Theme button saves go to that USER theme.  Graceful fallback on host lacking theme not tested or implemented.
+- DONE
 
 ### Iteration 5: Fix Visible Tables
 
