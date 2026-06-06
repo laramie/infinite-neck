@@ -76,6 +76,7 @@ The preliminary report found these main planning issues:
 
 - userTheme is saved in the songfile.   When song loads, this is loaded into USER theme in the dropdown, and any Theme button saves go to that USER theme.  Graceful fallback on host lacking theme not tested or implemented.
 - DONE
+- Fixed incompleteness: USER was coming up as the selected Theme always. FIXED
 
 ### Iteration 5: Fix Visible Tables
 

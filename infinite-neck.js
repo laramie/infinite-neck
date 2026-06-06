@@ -937,13 +937,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installDefaultColorDicts();
 		const hasUserTheme = !!installUserTheme(getSong().userTheme);
 		
-		let songTheme = getSong().theme;  //some songs, e.g. snake.json, don't have theme stored.
-		if (hasUserTheme){
-			songTheme = 'USER';
-		}
-		if (!songTheme){
-			songTheme = getDefaultTheme().id;
-		}
+		const songTheme = resolveLoadedThemeId(getSong().theme, hasUserTheme);
 		$('#selThemes').val(songTheme).trigger('change');
 
 		$("#txtFilename").val(getSong().songName).trigger('change');
@@ -963,6 +957,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 		InfoBuilder.renderFromSong(getSong());
 		InfoBuilder.handleSongLoaded(getSong());
+	}
+
+	export function resolveLoadedThemeId(themeId, hasUserTheme = false){
+		if (themeId && getThemes()[themeId]){
+			return themeId;
+		}
+		if (hasUserTheme){
+			return 'USER';
+		}
+		return getDefaultTheme().id;
 	}
 
 	function showDefaultTunings(){

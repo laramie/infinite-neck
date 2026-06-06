@@ -6,7 +6,8 @@ import { jest } from '@jest/globals';
 import {
     setupSongTests,
     getSong,
-    installDefaultColorDicts
+    installDefaultColorDicts,
+    resolveLoadedThemeId
 } from '../../infinite-neck-headless.js';
 import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
@@ -108,6 +109,15 @@ describe('Headless tuning bootstrap contracts', () => {
             'Default',
             'lar4'
         ]);
+    });
+
+    test('resolveLoadedThemeId preserves the saved active theme when userTheme also exists', () => {
+        createFreshHeadlessSong();
+
+        expect(resolveLoadedThemeId('GuitarStrings', true)).toBe('GuitarStrings');
+        expect(resolveLoadedThemeId('USER', true)).toBe('USER');
+        expect(resolveLoadedThemeId('', true)).toBe('USER');
+        expect(resolveLoadedThemeId('MissingTheme', true)).toBe('USER');
     });
 });
 
