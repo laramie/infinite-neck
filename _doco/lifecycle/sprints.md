@@ -105,7 +105,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - added songs/tests/chart-test-fixture.js which was there but not in test-song-list.json
   - added songs/tests/piano-listener-guitar-wite-out-fixture.json
 
-- 122-persistence
+- [122-persistence](../design/sprints/122-persistence/sprint-122.md)
   - tunings persists DONE
   - color themes persist DONE
   - USER Theme persists  DONE
@@ -128,18 +128,18 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/125-tonal-plugin/125-design-sketch.md) 
   - COMPLETE 
 
-  [126-piano-listener](../design/sprints/126-piano-listener/sprint-126.md)
+- [126-piano-listener](../design/sprints/126-piano-listener/sprint-126.md)
   - Piano needs to ignore col,row when Listening to multi-string instruments.  Notes are placed by MIDI num and algorithm.
-  - Bonus: this works for all kinds of Notes, including Highlights, and Notes with "owner" which are temporary from plugins, so ArpeggioPlugin highlights get passed to the Listener.
-  - Notes with "owner" are printed in bold, magenta in Chart > Notes
-  - Setting `Instrument` in ArpeggioPlugin and FillPlugin now resets `strings` range.
+  - Bonus: this works for all kinds of Notes, including Highlights, and Notes with **"owner"** which are temporary from plugins, so ArpeggioPlugin highlights get passed to the Listener.
+  - Notes with **"owner"** are printed in bold, magenta in Chart > Notes
+  - Setting **Instrument** in ArpeggioPlugin and FillPlugin now resets **strings** range.
   - COMPLETE 
 
 # Future Sprints Unscheduled 
 
-901-floating-windows
+- 901-floating-windows
 
-902-song-import
+- 902-song-import
   - Notes/Sections
   - Color schemes
   - User Themes
@@ -151,7 +151,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 ## Rules getting ready for Version 2
 
-Copilot: Do not change core files without a design document or a chat confirming that coding is CORE-APPROVED.  All other changes require APPROVED in a design document or chat.  For example, we might say: `Your recommendations in the implementation plan are APPROVED`.
+Copilot: Do not change core files without a design document or a chat confirming that coding is CORE-APPROVED.  All other changes require APPROVED in a design document or chat.  For example, we might say: **"Your recommendations in the implementation plan are APPROVED"**.
 
 ### Files requiring `CORE-APPROVED`
 ```
@@ -173,8 +173,31 @@ transport-controller.js
 ## Rules Version 1
 
 New document organization: 
-- All sprints have a repository-unique number called the "sprint number", starting at 100.
-- All sprints have a short-name.  For example, sprint-111-fill-plugin shown above has a short name "fill-plugin".
+- All sprints have a repository-unique number called the *"sprint-number"*, starting at 100.
+- All sprints have a short-name.  For example, **sprint-111-fill-plugin** shown above has a *short-name* **fill-plugin**, and a *sprint-number* **111**.
+- All sprints have the basic structure: 
+  - listed in [sprints.md](../lifecycle/sprints.md)
+  - have a directory in [**sprints directory:** _doco/design/sprints/](../../_doco/design/sprints/)
+  - name of that directory is **\${sprint-number}-${short-name}/**
+  - within that directory, something like these should exist, possibly with extra version numbers in the filenames: 
+    - **sprint-${sprint-number}.md**   
+      - *highly recommended, has stati, list of files included, and bullet points for Iterations, Rounds, and Features*
+      - Use template [../design/sprints/sprint-NNN-TEMPLATE.md](../design/sprints/sprint-NNN-TEMPLATE.md)
+    - **${sprint-number}-design.md**  
+      - *Design team wish-list and product requirements, plus preliminary findings looking at the code and UI*
+    - **${sprint-number}-implementation-plan.md**  
+      - *Copilot-produced report sufficient to begin coding.  May have several versions for complicated sprints*
+    - optional files: 
+      - **${sprint-number}-report.md**  
+        - *Copilot preliminary reports when implementation plan cannot be produced until structure is hashed out and existing code is walked*
+      - **${sprint-number}-sketch.md**
+        - *Copilot preliminary sketch to play role of Design team and hint at implementation plan*
+      - any other files as needed, listed in **sprint-${sprint-number}.md**
+      - Useful songfile test fixtures should be installed in [songs/tests/](../../songs/tests/) 
+
+
+## Sprints prior to this structure
+
 - Here are the directories that count as sprint-planning prior to putting new sprints in `_doco/design/sprints`
 ```
 ├── design
