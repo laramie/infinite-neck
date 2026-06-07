@@ -49,6 +49,7 @@ The preliminary report found these main planning issues:
 - Correct the matrix so it reflects the actual current system.
 - Identify canonical songfile objects versus derived/runtime/library objects.
 - Define fallback behavior for peers that do not share the same libraries.
+- COMPLETE
 
 ### Iteration 2: Fix User Colors and Stylesheets
 
@@ -58,6 +59,7 @@ The preliminary report found these main planning issues:
 
 - filter colorDicts and userColors now properly.
 - DONE
+- COMPLETE
 
 ### Iteration 3: Fix myTunings and ensure USER tuning works
 
@@ -67,6 +69,7 @@ The preliminary report found these main planning issues:
 
 - Reorganized so that "Add one Tuning" replaces lots of this, and USER tuning is gone.
 - DONE
+- COMPLETE
 
 ### Iteration 4: Fix User Themes
 
@@ -77,11 +80,13 @@ The preliminary report found these main planning issues:
 - userTheme is saved in the songfile.   When song loads, this is loaded into USER theme in the dropdown, and any Theme button saves go to that USER theme.  Graceful fallback on host lacking theme not tested or implemented.
 - DONE
 - Fixed incompleteness: USER was coming up as the selected Theme always. FIXED
+- COMPLETE
 
 ### Iteration 5: Fix Visible Tables
 
 - Remove View-only dependence from visibility persistence.
 - Ensure visible-table persistence can work in no-View or headless save flows.
 - Keep visibility persistence from mutating or clobbering note-table model content.
+- OPEN: design document and report started.
 
 
