@@ -1,208 +1,237 @@
 # sprint-122-persistence Iteration 5 implementation plan
 
-Status: Draft for Design approval (no code changes yet)
+Status: Revised after Round 3 REDO (Song.noteTablesLayout)
 
 ## 1) Intent and scope
 
-Iteration 5 makes Song.visibleNoteTables the canonical source of truth for note-table visibility and ordering in "Tunings in Song", while preventing orphaning of table-backed SectionNotes by disallowing delete (X) when InMem > 0.
+Iteration 5 now replaces Song.visibleNoteTables with Song.noteTablesLayout as the canonical source of truth for:
+- Tunings in Song row order
+- whether each row is visible in layout
+
+This sprint also prevents table-note orphaning by gating delete (X) when InMem is present and greater than zero.
 
 In scope:
-- Disable X for rows where InMem is non-blank and > 0.
-- Allow X for rows where InMem is blank or 0.
-- Keep View checkbox behavior (hide/show layout only), but write through to Song.visibleNoteTables.
-- Preserve table order from Song.visibleNoteTables for the "Tunings in Song" list and move up/down behavior.
-- Remove DOM visibility as save-time/model-time authority.
-- Keep prepareForSave() cleanup behavior.
+- Introduce and persist Song.noteTablesLayout.
+- Migrate read path from visibleNoteTables to noteTablesLayout.
+- Keep hidden tunings in Tunings in Song rows; hide only table layout view.
+- Preserve ghost tables (model exists, no view) and make them usable in Wiring pickers.
+- Remove DOM visibility as model/save authority.
+- Remove tuning.visible usage as persisted/runtime authority.
+- Keep prepareForSave() cleanup behavior for empty note payloads.
 
-Out of scope (explicit defer):
-- Graveyard flow for references to missing table IDs.
-- New UX for cross-table section revive/migration.
-- Large refactor of unrelated visibility consumers unless needed to enforce correctness.
+Out of scope:
+- New Graveyard UX for missing-table references.
+- New section revive/migrate UX beyond current manual repair path.
 
-## 2) Contract to implement
+## 2) Canonical data contract
 
-Canonical contract:
-- Song.visibleNoteTables is persisted user-authored song state.
-- Song.visibleNoteTables order is the order of "Tunings in Song" view rows.
-- Hiding a table updates Song.visibleNoteTables only; it does not remove sectionNotesByTable data.
-- Deleting a tuning row (X) is blocked when InMem > 0 to prevent orphaning.
-- tuning.visible is runtime derived convenience only (if retained).
-- DOM visibility is projection only, never source of truth.
+### 2.1 New persisted field
 
-## 3) Concrete change plan (by area)
+Song.noteTablesLayout shape:
 
-### A. Model API hardening (Song.js)
+```json
+"noteTablesLayout": [
+	{ "tablename": "tblP46_2", "visible": true },
+	{ "tablename": "tblDADGAD_1", "visible": true },
+	{ "tablename": "tblBass4_1", "visible": false }
+]
+```
 
-Current touchpoints:
-- getVisibleTunings()
-- getVisibleTuningIDs()
-- setVisibleTableIds(...)
-- prepareForSave(...)
-- removeUnusedTablesFromMemoryModel()
+Rules:
+- Array order is Tunings in Song order.
+- Every row in Tunings in Song is represented here.
+- visible controls table layout rendering only.
+- Notes in sections remain valid regardless of visible.
 
-Planned changes:
-1. Make visibility query methods model-pure:
-- getVisibleTunings() and getVisibleTuningIDs() must read Song.visibleNoteTables (or derived tunings list), not jQuery/DOM visibility.
+### 2.2 Ghost table definition
 
-2. Normalize writer semantics:
-- setVisibleTableIds(ids) should preserve order, dedupe, and ignore unknown IDs only per approved fallback policy.
+Ghost table = table data present in model (sections/wirings) without an attached visible instrument/table view.
 
-3. Keep cleanup semantics unchanged:
-- prepareForSave() still calls removeUnusedTablesFromMemoryModel(); this is storage cleanup, not visibility authority.
+Rules:
+- Ghost tables are valid model citizens.
+- Ghost tables must participate in Wiring selects/pickers/validation.
+- On load, ghost presence triggers showMessages informational output (not fatal).
 
-Expected result:
-- Any call site asking song visibility reads model state, not browser state.
+### 2.3 X gating contract
 
-### B. Save path ownership fix (infinite-neck.js)
+Delete (X) in Tunings in Song is disabled when InMem is present and > 0.
 
-Current touchpoint:
-- updateVisibleTablesInMemoryModel() is called in save path and currently derives from DOM/table visibility.
+Gate details:
+- Blank/whitespace InMem UI, or null/undefined in backing data, means ungated (X enabled).
+- Plugin-owned notes count toward InMem.
+- Listener/Observer references do not count as table-owned notes for this gate.
+- Disabled X carries title: Delete Sections/Notes first.
 
-Planned changes:
-1. Stop deriving visibility from rendered table nodes at save time.
-2. Ensure save uses existing Song.visibleNoteTables as already managed by UI interactions.
-3. If updateVisibleTablesInMemoryModel() remains, reduce it to a model-sync helper that does not scrape :visible from DOM.
+## 3) Compatibility and versioning plan
 
-Expected result:
-- Headless/partial-render states cannot clobber persisted visibility.
+### 3.1 Read compatibility
 
-### C. Tunings in Song UI behavior (TuningsLibrary.js + related handlers)
+Support both song formats at load time:
+- Existing field: visibleNoteTables (legacy input)
+- New field: noteTablesLayout (canonical)
 
-Current touchpoints:
-- showTuningsForTablesInFile()
-- row actions for View checkbox and Move/X controls
+Migration logic:
+1. If noteTablesLayout is present, use it.
+2. Else if visibleNoteTables is present, map each tablename to { tablename, visible: true }.
+3. Ensure noteTablesLayout exists in memory (possibly empty array).
 
-Planned changes:
-1. X-button gating:
-- Compute InMem per row from model-backed counts.
-- Disable X when InMem > 0.
-- Keep X enabled when InMem is blank or 0.
+### 3.2 Write format
 
-2. View checkbox write-through:
-- Checking/unchecking updates Song.visibleNoteTables immediately.
-- Apply granular table show/hide without full rebuild where feasible.
+On save:
+- Persist noteTablesLayout.
+- Write songfileVersion as V2.1.
+- Do not rely on visibleNoteTables for persisted output.
 
-3. Order ownership:
-- Up/down movement updates Song.visibleNoteTables order directly.
-- Row render order in "Tunings in Song" follows Song.visibleNoteTables, not DOM incidental order.
+### 3.3 Version handling
 
-Expected result:
-- UI controls become model editors; model remains authoritative.
+V2 handlers must accept V2.1 as valid V2-family input.
 
-### D. Runtime projection alignment (TableBuilder.js + consumers)
+Schema/validator direction:
+- visibleNoteTables remains optional for read compatibility.
+- noteTablesLayout is required in canonical write path and should always exist (including empty array).
 
-Current risk:
-- Runtime install/build paths may still consult tuning.visible and/or visible DOM nodes.
+## 4) Concrete implementation changes
 
-Planned changes:
-1. Ensure runtime visible set is computed from Song.visibleNoteTables.
-2. If tuning.visible is kept, regenerate it from Song.visibleNoteTables during hydration/update.
-3. Audit visible-table consumers used by replay/wiring lists to ensure they consult model-derived visibility.
+### A) Song model API (Song.js, SongPersistence.js)
 
-Known consumers to verify:
-- NoteTableController.js visible-table queries.
-- templates/WiringBuilder.js source list behavior.
+Add or adapt model helpers around noteTablesLayout:
+- getNoteTablesLayout()
+- setNoteTablesLayout(layout)
+- getVisibleTuningIDs() derived from noteTablesLayout.visible
+- getVisibleTunings() derived from noteTablesLayout + tunings lookup
+- helper for Wiring options that includes visible, hidden, and ghost model tables
 
-Expected result:
-- Hidden tables remain valid model data and can be re-shown deterministically.
+Update persistence constructor defaults:
+- Initialize noteTablesLayout as [] if absent.
+- Keep migration from visibleNoteTables during hydration.
 
-### E. Load/hydration policy and fallback
+Rename/update operations:
+- Tuning ID rename must atomically update sectionNotesByTable keys and noteTablesLayout.tablename entries.
 
-Current touchpoints:
-- showTuningsForTablesInFile() + fallback behavior in song-open path.
+### B) Save path and load path (infinite-neck.js)
 
-Planned changes:
-1. Validate Song.visibleNoteTables against myTunings IDs during load.
-2. Apply explicit fallback policy (needs Design sign-off; see open questions):
-- Use valid subset.
-- Warn/log invalid IDs.
-- If empty after validation and song has tunings, choose deterministic song-owned fallback.
+Save path:
+- Remove DOM scraping as visibility source.
+- Save current model noteTablesLayout state.
 
-Expected result:
-- Visibility mismatches are recoverable without silent host-default drift.
+Load path:
+- Run migration to canonical layout field.
+- Detect ghost tables and call showMessages with approved text.
+- Preserve no-visible-table state when that is the loaded truth.
 
-## 4) Sequence and checkpoints
+### C) Tunings in Song behavior (TuningsLibrary.js)
 
-1. Implement model API hardening in Song.js.
-2. Update save path to stop DOM-derived visibility.
-3. Update Tunings in Song handlers: X gating, checkbox write-through, move/order wiring.
-4. Align runtime projection and load fallback behavior.
-5. Add/adjust tests (unit + integration).
-6. Manual acceptance run using defined scenarios.
+Render and interaction model:
+- Build rows from noteTablesLayout order/state.
+- View checkbox toggles noteTablesLayout[row].visible.
+- Up/down moves reorder noteTablesLayout array.
+- X button enablement uses resolved InMem gate rules.
 
-Checkpoint after step 2:
-- Verify that toggling view and saving without full table rendering preserves visibleNoteTables.
+Performance:
+- Checkbox toggle must be granular show/hide update, not full reinstall, unless strictly required.
 
-Checkpoint after step 4:
-- Verify hidden-table notes and listener wiring still round-trip and remain recoverable.
+### D) Layout/render projection (TableBuilder.js and related)
 
-## 5) Test plan (required before merge)
+Projection rule:
+- Table rendering decisions use noteTablesLayout visibility.
+- Remove tuning.visible as control signal.
 
-Automated tests:
-1. Save path does not recompute visibility from DOM and preserves Song.visibleNoteTables.
-2. Visibility checkbox updates Song.visibleNoteTables immediately.
-3. X is disabled when InMem > 0 and enabled at 0/blank.
-4. Move up/down updates Song.visibleNoteTables order.
-5. Hidden table with section notes round-trips (notes remain, table re-show works).
-6. Invalid visibleNoteTables IDs on load apply approved fallback and emit warning.
+### E) Wiring behavior (templates/WiringBuilder.js, NoteTableController.js, event wiring)
 
-Manual scenarios:
-1. Two-table listener setup where source table is hidden, save/reopen, listener behavior remains valid.
-2. Attempt to X table with notes in memory: blocked.
-3. Delete sections to zero InMem, then X: allowed.
-4. Hide/unhide does not erase section note payloads.
+Required behavior:
+- Wiring source/target selects include ghost tables and hidden tables.
+- Wiring validation and replay paths treat those tables as valid model tables.
+- Existing listener/observer playback behavior remains intact after reload.
 
-## 6) Concrete files likely to change (for coding phase)
+## 5) Concrete files expected to change
 
 - Song.js
+- SongPersistence.js
 - infinite-neck.js
 - TuningsLibrary.js
-- TableBuilder.js (if needed for projection consistency)
-- NoteTableController.js (if visible-set lookups need adjustment)
-- templates/WiringBuilder.js (if source list should include/exclude hidden tables per policy)
-- _tests/jest/* visibility/save/load related tests
+- TableBuilder.js
+- templates/WiringBuilder.js
+- NoteTableController.js
+- bin/song-file-schema.js
+- bin/validate-song-schema.js
+- _tests/jest/song-api-load-V2.test.js
+- _tests/jest/song-tuning-rename.test.js
+- _tests/jest/ui-smoke.test.js
+- _tests/jest/display-options.test.js
+- _tests/jest/song-load-library.test.js
 
 Note:
-Exact file list may adjust after implementation spike, but these are the verified current touchpoints.
+Exact test file set may expand during implementation.
 
-## 7) Design holes / approval questions
+## 6) Test plan (required)
 
-The following must be approved before coding starts:
+### 6.1 Migration and persistence
 
-1. InMem definition for X gating:
-- Is InMem strictly "count of sectionNotesByTable entries with non-empty notes across all sections", or a broader count including derived/legacy note containers?
+1. Load legacy visibleNoteTables-only song and migrate in memory to noteTablesLayout with visible=true rows.
+2. Save migrated song writes V2.1 and noteTablesLayout.
+3. V2 handlers accept V2.1 as valid V2-family input.
+4. noteTablesLayout always exists in saved payload (empty allowed).
 
-2. X-button UX when blocked:
-- Disable only, or disable + tooltip/message explaining "Delete sections first"?
+### 6.2 Tunings in Song behavior
 
-3. Invalid visibleNoteTables policy on load:
-- Keep valid subset and warn?
-- If subset is empty but song has myTunings, should fallback be first song tuning, previous default table ID, or no visible tables?
+1. Hidden tuning remains in Tunings in Song row list with checkbox off.
+2. Checkbox toggles only layout visibility and preserves section note data.
+3. Up/down changes noteTablesLayout order.
+4. X disables when InMem > 0 and shows title help.
+5. X enables when InMem is blank/whitespace/0/null/undefined.
 
-4. Ordering source of truth details:
-- If a tuning exists in myTunings but missing from visibleNoteTables, should it appear in "Tunings in Song" list as hidden append, or not appear until manually added?
+### 6.3 Wiring and ghost behavior
 
-5. Hidden-table participation policy:
-- Should hidden tables remain selectable in wiring source/target pickers, or should pickers remain "visible-only"?
-- Current behavior appears mixed; design decision required for consistency.
+1. Hidden and ghost tables appear in Wiring selectors.
+2. Listener/Observer wirings referencing hidden or ghost tables survive reload.
+3. Ghost tables trigger showMessages informational warning on load.
 
-6. Rename handling and ID repair:
-- Confirm that rename continues to update visibleNoteTables and sectionNotesByTable references atomically.
-- Confirm whether preserving manual ID-repair workflow is still required as an explicit supported behavior.
+### 6.4 Rename and repair
 
-7. Event/performance constraints:
-- Approve requirement that visibility checkbox updates must be granular (no full table reinstall unless necessary).
+1. Rename updates sectionNotesByTable keys and noteTablesLayout.tablename atomically.
+2. Manual ID repair path remains functional for ghost-table recovery flow.
 
-8. Schema strictness:
-- Should visibleNoteTables be required in V2 schema formally, or remain optional with strict validator enforcement only?
+## 7) Delivery sequence and checkpoints
 
-## 8) Definition of done for Iteration 5
+1. Implement schema/version compatibility and model migration.
+2. Implement Song model helpers and rename propagation for noteTablesLayout.
+3. Implement Tunings in Song row/render/update behavior from noteTablesLayout.
+4. Implement wiring selector/model-table coverage for hidden and ghost tables.
+5. Remove remaining tuning.visible control usage.
+6. Add and update tests.
 
-Iteration 5 is done when all are true:
-- Song.visibleNoteTables is canonical for visibility and ordering.
-- Save/load does not depend on DOM visibility.
-- X gating by InMem prevents orphaning paths defined in scope.
-- Hide/show preserves section note data and supports deterministic restore.
-- Tests cover core persistence and fallback behavior.
-- Design approval questions above are resolved and documented.
+Checkpoint A (after step 2):
+- Legacy fixture loads and exposes noteTablesLayout correctly in memory.
+
+Checkpoint B (after step 4):
+- Ghost wiring flows are selectable, valid, and replay-safe.
+
+Checkpoint C (after step 6):
+- Full save/load round trip passes with V2 and V2.1 fixtures.
+
+## 8) Remaining approval questions before coding
+
+Most prior questions are now answered in design. Remaining items to lock:
+
+1. noteTablesLayout canonical key naming:
+- Confirm field key is exactly tablename (not tableName/tableID).
+
+2. Dual-field precedence when both are present:
+- Confirm noteTablesLayout always wins and visibleNoteTables is ignored.
+
+3. Ghost load messaging behavior:
+- Confirm message shows once per load event (not repeated by redraw/reinstall events).
+
+4. Save payload coexistence policy:
+- Confirm whether to omit visibleNoteTables entirely on V2.1 writes, or optionally keep it as redundant compatibility field.
+
+## 9) Definition of done
+
+Iteration 5 is complete when all are true:
+- noteTablesLayout is the single model/save source of order and visibility.
+- Tunings in Song can be rebuilt with hidden rows retained and ordered.
+- Ghost tables are preserved and usable in Wiring tools.
+- X gating behaves exactly per InMem rules and title hint.
+- Save/load supports legacy input migration and writes canonical V2.1 output.
+- Tests cover migration, behavior, wiring, rename, and round-trip persistence.
 
