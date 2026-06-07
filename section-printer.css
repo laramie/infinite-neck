@@ -94,6 +94,10 @@
 .SPN_RN{
     overflow-wrap: break-word;
 }
+.SPN_OWNED {
+  color: magenta;
+  font-weight: bold;
+}
 .SPN_CC{
     overflow-wrap: break-word;
     white-space: normal;

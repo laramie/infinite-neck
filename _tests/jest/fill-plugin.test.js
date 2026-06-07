@@ -379,6 +379,37 @@ describe('FillPlugin', () => {
     expect(plugin.resolveValue('maxRow', { song })).toBe(5);
   });
 
+  test('switching target instrument resets string limits to the new instrument full range', () => {
+    const song = makeSong({
+      myTunings: [
+        createPrimaryTuning({ baseID: 'P1', rowRange: [48] }),
+        createPrimaryTuning({ baseID: 'P46_1', rowRange: [64, 59, 55, 50, 45, 40] })
+      ],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P46_1`, { song });
+    plugin.setPropertyValue('minRow', 2, { song });
+    plugin.setPropertyValue('maxRow', 3, { song });
+    expect(plugin.resolveValue('minRow', { song })).toBe(2);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(3);
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P1`, { song });
+    expect(plugin.resolveValue('minRow', { song })).toBe(1);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(1);
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P46_1`, { song });
+
+    expect(plugin.getProperty('minRow').getValue()).toBe(0);
+    expect(plugin.getProperty('maxRow').getValue()).toBe(5);
+    expect(plugin.resolveValue('minRow', { song })).toBe(1);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(6);
+  });
+
   test('family role displays default to canonical colors while standalone tiny defaults to none', () => {
     const song = makeSong({
       myTunings: [createPrimaryTuning()],

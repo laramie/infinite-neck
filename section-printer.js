@@ -114,6 +114,14 @@ function escapeHtmlAttribute(value) {
         .replaceAll('>', '&gt;');
 }
 
+function formatOwnedDisplayText(displayText, owner = '') {
+    const safeText = escapeHtmlAttribute(displayText);
+    if (!owner) {
+        return safeText;
+    }
+    return `<span class='SPN_OWNED'>${safeText}</span>`;
+}
+
 function getChartBeatsPerBarInputValue(section) {
     return section?.beatsPerBar == null ? '' : String(section.beatsPerBar);
 }
@@ -590,16 +598,25 @@ export function printSectionsNotes(theSong, theSections){
         return '';
     }
 
+    function formatDisplayNote(note, fallbackNoteName = '') {
+        const noteName = fallbackNoteName || getNoteName(note);
+        if (!noteName) {
+            return '';
+        }
+        return formatOwnedDisplayText(noteName, note?.owner || '');
+    }
+
     function formatNamedNotes(namedNotes) {
         return Object.entries(namedNotes || {})
             .filter(([_, v]) => v && Object.keys(v).length > 0)
-            .map(([k]) => k)
+            .map(([noteName, note]) => formatDisplayNote(note, noteName))
+            .filter((noteName) => !!noteName)
             .join(',');
     }
     function formatPlayedNotes(playedNotes) {
         return (playedNotes || [])
-            .map((note) => getNoteName(note))
-            .filter((noteName) => !!noteName)
+            .map((note) => formatDisplayNote(note))
+            .filter((noteMarkup) => !!noteMarkup)
             .join(',');
     }
 
@@ -608,8 +625,8 @@ export function printSectionsNotes(theSong, theSections){
             .sort((left, right) => toInt(left, 0) - toInt(right, 0))
             .map((beat) => {
                 const noteNames = (recordedNotes[beat] || [])
-                    .map((note) => getNoteName(note))
-                    .filter((noteName) => !!noteName)
+                    .map((note) => formatDisplayNote(note))
+                    .filter((noteMarkup) => !!noteMarkup)
                     .join(',');
                 return noteNames ? `<div class='beat'><span class='beatNum'>${beat}:</span> ${noteNames}</div>` : '';
             })

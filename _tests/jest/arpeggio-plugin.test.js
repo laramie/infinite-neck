@@ -205,6 +205,58 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(plugin.resolveValue('maxRow', { song })).toBe(5);
 	});
 
+	test('switching target instrument resets string limits to the new instrument full range', () => {
+		const plugin = new ArpeggioPlugin();
+		const pianoTuning = {
+			baseID: 'P1',
+			frets: 12,
+			rowRange: [48]
+		};
+		const guitarTuning = {
+			baseID: 'P46_1',
+			frets: 12,
+			rowRange: [40, 45, 50, 55, 59, 64]
+		};
+		const section = {
+			beats: 4,
+			rootID: 3,
+			currentBeat: 1,
+			sectionNotesByTable: {},
+			getSectionNotes: jest.fn(() => ({ namedNotes: {}, playedNotes: [], recordedNotes: {} })),
+			getBeats: jest.fn(() => 4)
+		};
+		const song = {
+			myTunings: [pianoTuning, guitarTuning],
+			wirings: [],
+			sections: [section],
+			getCurrentSection: jest.fn(() => section),
+			getBeat: jest.fn(() => 1),
+			requestUiShowBeats: jest.fn()
+		};
+		const pianoTableID = plugin.getTableID(pianoTuning);
+		const guitarTableID = plugin.getTableID(guitarTuning);
+
+		mockRuntime.song = song;
+		plugin.setManager({ song });
+
+		plugin.setPropertyValue('targetTable', guitarTableID, { song });
+		plugin.setPropertyValue('minRow', 2, { song });
+		plugin.setPropertyValue('maxRow', 3, { song });
+		expect(plugin.resolveValue('minRow', { song })).toBe(2);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(3);
+
+		plugin.setPropertyValue('targetTable', pianoTableID, { song });
+		expect(plugin.resolveValue('minRow', { song })).toBe(1);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(1);
+
+		plugin.setPropertyValue('targetTable', guitarTableID, { song });
+
+		expect(plugin.getProperty('minRow').getValue()).toBe(0);
+		expect(plugin.getProperty('maxRow').getValue()).toBe(5);
+		expect(plugin.resolveValue('minRow', { song })).toBe(1);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(6);
+	});
+
 	test('loadSongState preserves persisted zero-based string limits', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
 

@@ -124,6 +124,24 @@ export class ArpeggioPlugin {
     this.rowBoundsInitialized = true;
   }
 
+  resetStringLimitDefaultsForTarget(song = getSong(), tuning = null) {
+    const selectedTuning = tuning || this.getTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
+    if (!selectedTuning) {
+      return;
+    }
+
+    const upperStringProperty = this.getProperty('minRow');
+    const lowerStringProperty = this.getProperty('maxRow');
+    const upperStringDefault = 0;
+    const lowerStringDefault = this.getMaxAllowedRow(selectedTuning);
+
+    upperStringProperty.value = upperStringDefault;
+    upperStringProperty.defaultValue = upperStringDefault;
+    lowerStringProperty.value = lowerStringDefault;
+    lowerStringProperty.defaultValue = lowerStringDefault;
+    this.rowBoundsInitialized = true;
+  }
+
   normalizeRangeValues(song = getSong()) {
     const tuning = this.getTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
     if (!tuning) {
@@ -263,7 +281,11 @@ export class ArpeggioPlugin {
       return property.getValue();
     }
 
+    const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
     const nextValue = property.setValue(rawValue);
+    if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
+      this.resetStringLimitDefaultsForTarget(song);
+    }
     this.normalizeRangeValues(song);
     return nextValue;
   }
