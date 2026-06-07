@@ -234,9 +234,9 @@ function buildCaptionRow(options, tableID) {
 
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
-	var tuningBaseIDCaption = '<span>' + options.caption + '</span>';
-	var tuningIDCaption = '<span>' + options.baseID + '</span>';
-	var tuningIDnStrings = '<span>' + options.nStrings + '-string</span>';
+	var tuningBaseIDCaption = "<span class='tuningBaseIDCaption'>" + options.caption + ':</span>';
+	var tuningIDCaption = '<span>' + options.baseID + ':</span>';
+	var tuningIDnStrings = '<span>' + options.nStrings + '-string:</span>';
 	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
 
 	var captionRow = $("<div>");

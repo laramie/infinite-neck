@@ -87,12 +87,30 @@
 }
 .SPN_NN{
     overflow-wrap: break-word;
+    max-width: 5em;
 }
 .SPN_PN{
-    overflow-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 5em;
 }
 .SPN_RN{
-    overflow-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 5em;
+}
+.SPN_CAPTION {
+  max-width: 18em;
+}
+/* Not needed, really.  But here's how you would limit this:
+*  .SPN_SPAN_CAPTION {
+*     display: inline-block;
+*     max-width: 50em;
+*  }
+*/
+.SPN_CHORD{
+  white-space: nowrap;
+}
+.SPN_MODE{
+  white-space: nowrap;
 }
 .SPN_OWNED {
   color: magenta;

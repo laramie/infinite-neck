@@ -260,7 +260,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th>" : "")
-        +"<th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
+        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
         
     );
@@ -383,6 +383,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         }
         tr.append($("<td>").html(captionStr));
         tr.append($("<td>").html(idCellHtml));
+        if (isSongOwnedTable) {tr.append($("<td>").html(tun.fromBaseID));}
         tr.append($("<td>").html(tun.nStrings + "-string"));
         tr.append($("<td>").html(tun.baseInstrument));
         tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));

@@ -783,6 +783,7 @@ table.viewControls th {
     color: #b05917;
     font-weight: 200;
     font-size:  200%;
+    text-wrap: auto;
 }
 .lblSectionChartChord {
     display: inline-block;

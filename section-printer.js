@@ -82,8 +82,8 @@ function percentStringToMultiplier(percentValue) {
     return String(parsed / 100);
 }
 
-function getSectionKeyDisplay(theSong, section) {
-    return theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "/" + theSong.noteIDToNoteName(section.rootIDLead) : "");
+function getSectionKeyDisplay(theSong, section) {    //&#x2836 &#x2847 66 B4
+    return theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "&#x2836;" + theSong.noteIDToNoteName(section.rootIDLead) : "");
 }
 
 function getSectionBeatsDisplay(section) {
@@ -259,8 +259,8 @@ function formatChartCaptionEditor(section, idx) {
 }
 
 function formatChartMetaLine(theSong, section, idx) {
-    const sectionNumber = idx + 1;
-    return `<a href='#' data-action='linkToSection' data-action-args='[${idx}]'>${sectionNumber}</a>:${getSectionKeyDisplay(theSong, section)}:${getSectionBeatsDisplay(section)}`;
+    const sectionNumber = idx + 1;                                         //&#x2836 &#x2847 66 B4
+    return `<a href='#' data-action='linkToSection' data-action-args='[${idx}]'>${sectionNumber}</a> &#x28B4; ${getSectionKeyDisplay(theSong, section)} &#x2866; <span class='leadSheetLineBARBeatCount'>${getSectionBeatsDisplay(section)}</span>`;
 }
 
 function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass, isFirstInLine, currentSectionIndex) {
@@ -301,7 +301,7 @@ function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass,
     }
 
     if (isLeadSheetBar && songChartOptions.detailLine) {
-        parts.push(`<div class='chartBARBeatCount'>beats:${barBeats}</div>`);
+        parts.push(`<div class='chartBARBeatCount'><span class='leadSheetLineBARBeatCount'>${barBeats}</span></div>`);
     }
 
     parts.push('</span>');
@@ -542,7 +542,7 @@ function createChartBlockMarkup(blockType, blockContent) {
 
 export function printSections(theSong, theSections, showDetails) {
     let currentSection = theSong.getCurrentSection();
-    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th>&sharp;/&flat;</th><th>Chord</th><th>Mode</th>"
+    let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th style='white-space: nowrap;'>&sharp;&nbsp;/&flat;</th><th>Chord</th><th>Mode</th>"
         + (showDetails ? "<th>Beats</th><th>Position</th><th>Width</th>" : "")
         + "<th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
@@ -560,10 +560,10 @@ export function printSections(theSong, theSections, showDetails) {
             + section.beats + SEP
                 + "<B style='font-size: 130%;'>" + getSectionKeyDisplay(theSong, section) + "</B>" + SEP
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
-            + (section.chartChord ? section.chartChord : "&nbsp;") + SEP
-            + (section.chartMode ? section.chartMode : "&nbsp;") + SEP
+            + (section.chartChord ? "<span class='SPN_CHORD'>"+section.chartChord+"</span>" : "&nbsp;") + SEP
+            + (section.chartMode ? "<span class='SPN_MODE'>"+section.chartMode+"</span>" : "&nbsp;") + SEP
                 + (showDetails ? (formatChartBeatsPerBarInput(section, idx) + SEP + formatChartPositionSelect(section, idx) + SEP + formatChartCaptionWidthSelect(section, idx) + SEP) : "")
-            + (showDetails ? formatChartCaptionEditor(section, idx) : ("<b style='font-size: 130%;'>" + section.caption + "</b>"))
+            + (showDetails ? formatChartCaptionEditor(section, idx) : ("<span class='SPN_SPAN_CAPTION'><b style='font-size: 130%;'>" + section.caption + "</b></span>"))
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
     });
@@ -681,7 +681,7 @@ export function printSectionsNotes(theSong, theSections){
             + "</td><td>" + (section.sharps ? " &sharp; " : " &flat; ")
             + "</td><td>" + (section.chartChord ? section.chartChord : "&nbsp;") 
             + "</td><td>" + (section.chartMode ? section.chartMode : "&nbsp;") 
-            + "</td><td><b style='font-size: 130%;'>" + section.caption + "</b></td>";
+            + "</td><td class='SPN_CAPTION'><b style='font-size: 130%;'>" + section.caption + "</b></td>";
 
         instrumentTableIDs.forEach((tableID) => {
             const sn = section.sectionNotesByTable[tableID];
@@ -702,7 +702,7 @@ export function printSectionsNotes(theSong, theSections){
                                                         tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
             let noteRooTblNm =  tonalResult.noteRootTablename ? `: ${tonalResult.noteRootTablename}` : ''; 
             result += "<td><div class='SPN_CC'>" 
-                            +(tonalResult.rootKey ? `<b>noteRoot${noteRooTblNm}:${tonalResult.rootKey}</b>&raquo;` : '')
+                            +(tonalResult.rootKey ? `<b>noteRoot${noteRooTblNm}:${tonalResult.rootKey}</b>&raquo;<br>` : '')
                             +chartChordsNotes+':'
                             +tonalPickerSet
                             +"</div></td>";
