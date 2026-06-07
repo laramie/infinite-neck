@@ -980,26 +980,70 @@ export class Song extends SongPersistence {
     }
 
   getTuningHashInMemoryModel(){
-    return {"warning":"Not Implemented for V2 yet, see section-printer.js"};
-    var hashTuningNames = {};
-    this.sections.forEach((section, sectionIdx) => { //for all sections...
-            Object.entries(section.noteTables).forEach(([tablename, tablearr]) => {
-                if (tablearr && tablearr.length && tablearr.length > 0) {
-                    var tuningID = tablename.substring( Constants.TABLE_ID_PREFIX.length);
-                    var val = hashTuningNames[tuningID];
-                    if (!val) {
-                        val = tablearr.length;
-                        hashTuningNames[tuningID] = val;
-                        //console.log("section:"+sectionIdx+" tuningID:"+tuningID
-                        //    +" val-len:"+val+" new: "+tablearr.length+" obj: "+JSON.stringify(hashTuningNames));
-                    } else {
-                        hashTuningNames[tuningID] = val + tablearr.length;
-                        //console.log("section: "+sectionIdx+" tuningID:"+tuningID
-                        //   +" val:"+val+" adding:"+tablearr.length+" obj:"+JSON.stringify(hashTuningNames));
-                    }
-                }
-            });
+    const hashTuningNames = {};
+    const tablePrefix = Constants.TABLE_ID_PREFIX || '';
+
+    function countArrayEntries(arr) {
+        if (!Array.isArray(arr)) {
+            return 0;
+        }
+        return arr.filter((entry) => entry != null).length;
+    }
+
+    function countNamedNotes(namedNotes) {
+        if (!namedNotes || typeof namedNotes !== 'object') {
+            return 0;
+        }
+        let total = 0;
+        Object.values(namedNotes).forEach((entry) => {
+            if (Array.isArray(entry)) {
+                total += countArrayEntries(entry);
+            } else if (entry != null) {
+                total += 1;
+            }
         });
+        return total;
+    }
+
+    function countRecordedNotes(recordedNotes) {
+        if (!recordedNotes || typeof recordedNotes !== 'object') {
+            return 0;
+        }
+        let total = 0;
+        Object.values(recordedNotes).forEach((beatEntry) => {
+            if (Array.isArray(beatEntry)) {
+                total += countArrayEntries(beatEntry);
+            } else if (beatEntry && typeof beatEntry === 'object') {
+                total += Object.values(beatEntry).filter((entry) => entry != null).length;
+            } else if (beatEntry != null) {
+                total += 1;
+            }
+        });
+        return total;
+    }
+
+    this.sections.forEach((section) => {
+        if (!section || !section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
+            return;
+        }
+        Object.entries(section.sectionNotesByTable).forEach(([tableID, sectionNotes]) => {
+            if (!sectionNotes || typeof sectionNotes !== 'object') {
+                return;
+            }
+
+            const tuningID = tableID.startsWith(tablePrefix)
+                ? tableID.substring(tablePrefix.length)
+                : tableID;
+            const tableCount = countArrayEntries(sectionNotes.playedNotes)
+                + countNamedNotes(sectionNotes.namedNotes)
+                + countRecordedNotes(sectionNotes.recordedNotes);
+
+            if (tableCount > 0) {
+                hashTuningNames[tuningID] = (hashTuningNames[tuningID] || 0) + tableCount;
+            }
+        });
+    });
+
 	    return hashTuningNames;
 	}
 

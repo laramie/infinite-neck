@@ -491,6 +491,9 @@ export function performCmdAction(menuItem, args){
 			showMessagesJSON(JSON.stringify(version, null, 2),
 			                 `<a target='_blank' href='${version.README}'>${version.README}</a><br><br>`);
 			break;
+		case "removeUnusedTablesFromMemoryModel":
+			getSong().removeUnusedTablesFromMemoryModel();
+			break;
 		case "downloadPlayedNotes":
 			downloadPlayedNotes();
 			break;

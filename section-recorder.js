@@ -25,6 +25,16 @@ function clearHighlights() {
     return sectionRecorderProviders.clearHighlights();
 }
 
+function cleanupRecordedBeat(recordedNotes, sBeatNum) {
+    if (!recordedNotes || sBeatNum == null) {
+        return;
+    }
+    const beatNotes = recordedNotes[sBeatNum];
+    if (!Array.isArray(beatNotes) || beatNotes.length === 0) {
+        delete recordedNotes[sBeatNum];
+    }
+}
+
 
 
     export function getRecordedNotesForSection(tableID){
@@ -53,6 +63,7 @@ function clearHighlights() {
         if (!doEraseHighlight){
           recordedNotes[sBeatNum].push(recNote);
         }
+                cleanupRecordedBeat(recordedNotes, sBeatNum);
         //console.log("noteHighlight:"+JSON.stringify(recordedNotes, null, 2));
     }
 
@@ -80,6 +91,7 @@ function clearHighlights() {
         } else {
             recordedNotes[sBeatNum].push(recNote);
         }
+        cleanupRecordedBeat(recordedNotes, sBeatNum);
     }
 
     export function recordPlayedNote(tableID, sBeatNum, recNote){
@@ -109,7 +121,9 @@ function clearHighlights() {
 	}
 
     export function unRecordPlayedNote(tableID, sBeatNum, recNote){
-		getRecordedNotesForSection(tableID)[sBeatNum] = filterOutMidinumRowStyleNum(getRecordedNotesForSection(tableID), sBeatNum, recNote);
+        var recordedNotes = getRecordedNotesForSection(tableID);
+        recordedNotes[sBeatNum] = filterOutMidinumRowStyleNum(recordedNotes, sBeatNum, recNote);
+        cleanupRecordedBeat(recordedNotes, sBeatNum);
 	}
 
 	function filterOutMidinumRowStyleNum(recordedNotes, sBeatNum, recNote){

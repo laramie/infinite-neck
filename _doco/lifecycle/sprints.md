@@ -106,12 +106,19 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - added songs/tests/piano-listener-guitar-wite-out-fixture.json
 
 - [122-persistence](../design/sprints/122-persistence/sprint-122.md)
-  - tunings persists DONE
-  - color themes persist DONE
-  - USER Theme persists  DONE
-  - everything filtered DONE
-  - OPEN: visible tables doesn't clobber tables in Model--allowed to persist without View.
+  - [Iteration 1: persistence matrix](../design/sprints/122-persistence/sprint-122.md#iteration-1-define-scope-and-persistence-matrix) - DONE
 
+  - [Iteration 2: stylesheets/color themes](../design/sprints/122-persistence/sprint-122.md#iteration-2-fix-user-colors-and-stylesheets) - DONE
+  
+  - [Iteration 3: tunings](../design/sprints/122-persistence/sprint-122.md#iteration-3-fix-mytunings-and-ensure-user-tuning-works) - DONE
+
+
+  - [Iteration 4: USER Theme](../design/sprints/122-persistence/sprint-122.md#iteration-4-fix-user-themes) -  DONE
+
+
+  - [Iteration 5: visibleTables](../design/sprints/122-persistence/sprint-122.md#iteration-5-fix-visible-tables) - Ensure visible tables doesn't clobber tables in Model--allowed to persist without View. - **OPEN**
+
+  - [sprint-122-report-1: filters to keep](../design/sprints/122-persistence/122-report-1.md#sprint-122-filters-to-keep) - everything filtered - DONE
 
 - 123-helpfile
   - finish plugin help file

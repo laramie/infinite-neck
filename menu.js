@@ -183,27 +183,6 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>C</b>lear graveyard, with backup",
-          "trigger": "C",
-          "children": [
-                {
-                  "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
-                  "trigger": "Y",
-                  "action": "downloadBackupThenClearGraveyard",
-                  "vars": [
-                    "graveyardRecordCount"
-                  ],
-                  "popOnBang": true
-                },
-                {
-                  "caption": "<b>n</b>o: keep graveyard.",
-                  "trigger": "n",
-                  "action": "noAction",
-                  "popOnBang": true
-                }
-              ]
-        },
-        {
           "name": "lock",
           "caption": "<b>l</b>ock",
           "trigger": "l",
@@ -214,18 +193,6 @@ export var gMenuFile =    {
           "caption": "<b>u</b>nlock",
           "trigger": "u",
           "action": "unlock",
-        },
-        {
-          "name": "version",
-          "caption": "<b>v</b>ersion info",
-          "trigger": "v",
-          "action": "version",
-        },
-        {
-          "name": "versionMore",
-          "caption": "<b>V</b>ersion as Show Message",
-          "trigger": "V",
-          "action": "versionMore",
         },
         {
           "caption": "<b>a</b>dvanced",
@@ -243,8 +210,8 @@ export var gMenuFile =    {
                 "datatype": "int",
                 "id": "transposeSong"
               }
-          },
-          {
+            },
+            {
               "name": "transposeSongKeys",
               "caption": "transpose song <b>k</b>eys",
               "trigger": "k",
@@ -256,7 +223,46 @@ export var gMenuFile =    {
                 "datatype": "int",
                 "id": "transposeSongKeys"
               }
-          }
+            },
+            {
+              "caption": "<b>C</b>lear graveyard, with backup",
+              "trigger": "C",
+              "children": [
+                  {
+                    "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
+                    "trigger": "Y",
+                    "action": "downloadBackupThenClearGraveyard",
+                    "vars": [
+                      "graveyardRecordCount"
+                    ],
+                    "popOnBang": true
+                  },
+                  {
+                    "caption": "<b>n</b>o: keep graveyard.",
+                    "trigger": "n",
+                    "action": "noAction",
+                    "popOnBang": true
+                  }
+                ]
+            },
+            {
+              "name": "removeUnusedTablesFromMemoryModel",
+              "caption": "<b>r</b>emove unused table storage",
+              "trigger": "r",
+              "action": "removeUnusedTablesFromMemoryModel",
+            },
+            {
+              "name": "version",
+              "caption": "<b>v</b>ersion info",
+              "trigger": "v",
+              "action": "version",
+            },
+            {
+              "name": "versionMore",
+              "caption": "<b>V</b>ersion as Show Message",
+              "trigger": "V",
+              "action": "versionMore",
+            }
           ]
         },
         {

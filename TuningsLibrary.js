@@ -259,9 +259,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var showMoveColumn = primaryControl === "visibility";
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
-        + (showMoveColumn ? "<th>Move</th>" : "")
+        + (showMoveColumn ? "<th>Move</th><th>InMem</th>" : "")
         +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
+        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
         
     );
     table.append(trh);
@@ -380,6 +380,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(primaryControlHtml));
         if (showMoveColumn) {
             tr.append($("<td>").html(moveButtonHtml));
+            tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
         }
         tr.append($("<td>").html(captionStr));
         tr.append($("<td>").html(idCellHtml));
@@ -398,7 +399,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(nutCellHtml));
         tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
         tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
-        tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
+        
         
 
         table.append(tr);
