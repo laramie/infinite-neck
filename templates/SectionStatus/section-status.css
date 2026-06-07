@@ -1,14 +1,47 @@
 /** TODO: move these out of infinite-neck.css before testing, after implementation. **/
-.LooperLight {
+.SectionStatus_loopLight {
     border: 2px solid green; 
     padding: 0.18em;
     border-radius: 10%;
+    display: inline-block;
 }
-.LooperLightOn {
+.SectionStatus_loopActive {
     border: 2px solid magenta !important; 
 }
-.LooperLightTD {
-    width: 3em;
+.SectionStatus_beatWrap {
+    display: none;
+    align-items: baseline;
+    gap: 0;
+    white-space: nowrap;
+}
+.SectionStatus_showBeatCounter .SectionStatus_beatWrap {
+    display: inline-flex;
+}
+.SectionStatus_beatColon {
+    color: green;
+    padding-right: 0.2em;
+}
+.SectionStatus_beatNumber {
+    color: chartreuse;
+}
+.SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
+    color: magenta;
+}
+
+/*
+.section-status-horizontal-widget .SectionStatus_loopLight {
+    min-width: 4.5em;
+}
+*/
+/* Also this works: SectionStatusWidget--horizontal */
+.section-status-horizontal-widget .SectionStatus_beatNumber {
+    min-width: 1.4em;
+}
+.section-status-horizontal-widget .SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
+    min-width: 1.4em;
+}
+.SectionStatus_beatRow td {
+    padding-top: 0.05em;
 }
 
 /* Use class selectors for correct cascade.
@@ -83,6 +116,7 @@
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
 .instrumentSectionBox {
    font-size: 100%;
+   background-color: black;
 }
 /* The section character: §    */
 .instrumentSectionMark {
@@ -90,7 +124,47 @@
     font-size: 80%;
     padding-right: 0.5em;
 }
-.tdSSLeft {
-    vertical-align: top;
-    width: 1.5em;
+
+.SectionStatusWidget {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.SectionStatusWidget--leftRail {
+    display: inline-block;
+}
+
+.SectionStatusWidget--leftRail .section-status-vertical-table {
+    width: 100%;
+}
+
+.SectionStatusWidget--captionRow .SectionStatus_rootKey,
+.SectionStatusWidget--captionRow .SectionStatus_rootKeyLead,
+.SectionStatusWidget--leadSheet .SectionStatus_rootKey,
+.SectionStatusWidget--leadSheet .SectionStatus_rootKeyLead {
+    font-size: 110%;
+}
+
+.SectionStatusWidget--captionRow .SectionsStatus_SectionNumber, 
+.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
+.SectionStatusWidget--leadSheet .SectionsStatus_SectionNumber {
+    color: yellow;
+    display: inline-block;
+    min-width: 1.4em;
+}
+
+.SectionStatusWidget--captionRow .SectionStatus_relativeSection,
+.SectionStatusWidget--leadSheet .SectionStatus_relativeSection {
+    margin-right: 0.15em;
+}
+
+.SectionStatusWidget--leftRail .SectionStatus_loopLight.SectionStatus_showBeatCounter {
+    min-width: 2.3em;
+}
+
+.leadSheetSectionStatusHost {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5em;
 }

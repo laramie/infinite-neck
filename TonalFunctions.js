@@ -14,43 +14,31 @@ export const TonalSourceSet = Object.freeze({
     TINYNOTE: 'TinyNote'
 });
 
-export function getTonal(theSong, section){
-    let tablesResult = {};
-    let rootKey = theSong.noteIDToNoteName(section.rootID);
-    section.getAllSectionNotes().forEach(([tableID, sn]) => {
-        let result = {};
-        let tonalSourceSet = getEffectiveTonalSourceSet(sn);
-        let namedNotes = collectTonalSourceNoteNames(sn, tonalSourceSet);
-        let normalizedNamedNotes = normalizeChord(namedNotes, rootKey);
-        let chords = Chord.detect(normalizedNamedNotes);
-        result.normalizedNamedNotes = normalizedNamedNotes;
-        result.chords = chords;
-        result.scale = [];
-        if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
-            let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-            result.scale = filterWesternScales(worldScales);
-        }
-        result.chord = sn.chord;
-        result.mode = sn.mode;
-        result.tonalSourceSet = tonalSourceSet;
-        tablesResult[tableID] = result;
-    });
-    return tablesResult;
-}
-
-export function getTonalForTable(theSong, section, tablename){
-    let rootKey = theSong.noteIDToNoteName(section.rootID);
+export function getTonalForTable(theSong, section, tablename, options = {}){
     let result = {};
+    const applyWesternFilter = options.filterWesternScales !== false;
+    let rootKey = theSong.noteIDToNoteName(section.rootID);
+    result.rootKey = rootKey;
+    let sectionNoteRootResult = section.getNoteRoot(tablename);//search order: tablename has a Note with `"colorClass": "noteRoot"`, then any other table in section (order: namedNotes, playedNotes, then recordedNotes), and pass back the "noteName" and the tablename, or null if nobody had it.
+    if (sectionNoteRootResult){
+        rootKey = sectionNoteRootResult.noteName;
+        result.rootKey = rootKey;
+        result.noteRootTablename = sectionNoteRootResult.tablename; 
+    }
     let tableSectionNotes = section.sectionNotesByTable?.[tablename] || null;
     let tonalSourceSet = getEffectiveTonalSourceSet(tableSectionNotes);
     let namedNotes = collectTonalSourceNoteNames(tableSectionNotes, tonalSourceSet);
-    let normalizedNamedNotes = normalizeChord(namedNotes, theSong.noteIDToNoteName(section.rootID));
+    let noteNamesForDetection = namedNotes.slice();
+    if (result.rootKey && !noteNamesForDetection.includes(result.rootKey)) {
+        noteNamesForDetection.unshift(result.rootKey);
+    }
+    let normalizedNamedNotes = normalizeChord(noteNamesForDetection, rootKey);
     let chords = Chord.detect(normalizedNamedNotes);
     result.normalizedNamedNotes = normalizedNamedNotes;
     result.scale = [];
     if (Array.isArray(result.normalizedNamedNotes) && result.normalizedNamedNotes.length > 0) {
         let worldScales = Scale.detect(result.normalizedNamedNotes, { tonic: rootKey });
-        result.scale = filterWesternScales(worldScales);
+        result.scale = applyWesternFilter ? filterWesternScales(worldScales) : worldScales;
     }
     result.chords = chords;
     result.chord = tableSectionNotes ? tableSectionNotes.chord : "";
@@ -122,7 +110,9 @@ const westernScales = [
   "major", "minor", 
   "ionian", "dorian", "phrygian", "lydian", "mixolydian", "aeolian", "locrian",
   "major pentatonic", "minor pentatonic", "blues",
-  "harmonic minor", "melodic minor"
+  "harmonic minor", "melodic minor",
+  "diminished", "half-diminished", "dominant diminished",
+  "whole tone", "altered", "ultralocrian", "super locrian" 
 ];
 
 /** 
@@ -135,6 +125,31 @@ function filterWesternScales(detections) {
     return westernScales.includes(type);
   });
 }
+
+function todoBetterMidiDetectOfModes(){
+    //There are a few strategies.  
+    // Strategy I: 
+        const scaleIntervals = Scale.get("diminished").intervals;
+
+        // 4. Transpose those intervals from your root
+        const diminishedNotes = scaleIntervals.map(interval => Distance.transpose(rootName, interval));
+
+    //Strategy II
+        //import { Midi, Scale } from "@tonaljs/tonal";
+
+        // 1. Array of MIDI numbers (e.g., C, Eb, Gb, Bbb -> C diminished 7th)
+        const midiNumbers = [60, 63, 66, 69];
+
+        // 2. Convert MIDI numbers to note names
+        const notes = midiNumbers.map(num => Midi.midiToNoteName(num)); 
+        // Result: ['C4', 'D#4', 'F#4', 'A4']
+
+        // 3. Detect the scale/mode
+        const detectedModes = Scale.detect(notes);
+        console.log(detectedModes); 
+        // Outputs matched scales like: [ 'C diminished', 'C locrian 6', ... ]
+}
+
 
 //==============================================================
 

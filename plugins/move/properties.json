@@ -1,8 +1,8 @@
 [
   {
     "name": "targetTable",
-    "caption": "Table",
-    "trigger": "T",
+    "caption": "Instrument",
+    "trigger": "I",
     "datatype": "org.dynamide.Select",
     "value": "",
     "defaultValue": "",
@@ -92,6 +92,15 @@
     "name": "includeHighlights",
     "caption": "highlights",
     "trigger": "h",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
+    "name": "includeFingering",
+    "caption": "fingering",
+    "trigger": "f",
     "datatype": "org.dynamide.toggle",
     "value": false,
     "defaultValue": false,

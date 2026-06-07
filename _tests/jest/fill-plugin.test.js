@@ -173,41 +173,62 @@ describe('FillPlugin', () => {
 
     const children = plugin.getVisibleMenuChildren();
     const optionsNode = children.find((child) => child.name === 'options');
+    const positionsNode = optionsNode.children.find((child) => child.name === 'positions');
+    const stringsNode = optionsNode.children.find((child) => child.name === 'strings');
     const namedNode = optionsNode.children.find((child) => child.name === 'named');
     const singleNode = optionsNode.children.find((child) => child.name === 'single');
     const tinyNode = optionsNode.children.find((child) => child.name === 'tiny');
 
     expect(optionsNode.children.map((child) => child.name)).toEqual([
+      'useChart',
       'chordFormula',
       'scaleFormula',
-      'minFret',
-      'maxFret',
-      'minRow',
-      'maxRow',
+      'positions',
+      'strings',
       'named',
       'single',
       'tiny',
-      'apply'
+      'apply',
+      'clear'
     ]);
     expect(optionsNode.children.map((child) => child.trigger)).toEqual([
-      'c',
-      'g',
-      'i',
-      'a',
       'u',
-      'l',
-      'n',
+      'c',
+      'm',
+      'p',
       's',
-      't',
-      'A'
+      'N',
+      'S',
+      'T',
+      'A',
+      'C'
+    ]);
+    expect(optionsNode.children.find((child) => child.name === 'useChart').children.map((child) => child.name)).toEqual([
+      'useChart:chord',
+      'useChart:mode'
+    ]);
+    expect(namedNode.caption).toContain('[${plugin:fill:namedSummary}]');
+    expect(singleNode.caption).toContain('[${plugin:fill:singleSummary}]');
+    expect(tinyNode.caption).toContain('[${plugin:fill:tinySummary}]');
+    expect(positionsNode.children.map((child) => child.name)).toEqual([
+      'minFret',
+      'maxFret'
+    ]);
+    expect(stringsNode.children.map((child) => child.name)).toEqual([
+      'minRow',
+      'maxRow'
     ]);
     expect(namedNode.children.map((child) => child.name)).toEqual([
       'named:copyFromSingle',
+      'named:allRoleNote',
+      'named:allNone',
       'named:root',
       'named:chord',
       'named:scale'
     ]);
     expect(singleNode.children.map((child) => child.name)).toEqual([
+      'single:allRoleNote',
+      'single:allNone',
       'single:root',
       'single:chord',
       'single:scale',
@@ -215,10 +236,124 @@ describe('FillPlugin', () => {
     ]);
     expect(tinyNode.children.map((child) => child.name)).toEqual([
       'tiny:copyFromSingle',
+      'tiny:allRoleNote',
+      'tiny:allNone',
       'tiny:root',
       'tiny:chord',
       'tiny:scale'
     ]);
+  });
+
+  test('use chart submenu exposes chord and mode actions with c and m triggers', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+    const useChartNode = optionsNode.children.find((child) => child.name === 'useChart');
+
+    expect(useChartNode.children.map((child) => child.trigger)).toEqual(['c', 'm']);
+    expect(useChartNode.children.map((child) => child.actionName)).toEqual(['useChartChord', 'useChartMode']);
+  });
+
+  test('useChartChord adopts direct chart matches and slash-chord aliases', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartChord = 'Cmaj7';
+    let result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> maj7');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,11');
+
+    section.chartChord = 'G7';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> 7 (dom7)');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,10');
+
+    section.chartChord = 'Cm';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> m');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('3,7');
+
+    section.chartChord = 'FMadd9/A';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> 6add9');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,9,14');
+  });
+
+  test('useChartMode adopts tonic-stripped chart modes', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartMode = 'C major';
+    let result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('chartMode -> major (Ionian)');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
+
+    section.chartMode = 'A minor';
+    result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('chartMode -> minor (Aeolian/Natural)');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,3,5,7,8,10');
+  });
+
+  test('use chart misses keep existing selection and return short result plus full message', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    section.chartChord = 'Amb6b9';
+    let result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('No fill match for chartChord="Amb6b9" normalized="mb6b9"');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9]');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7');
+
+    section.chartMode = 'A ultralocrian';
+    result = plugin.invokeAction('useChartMode', { song });
+    expect(result.result).toBe('No fill match for chartMode="A ultralocrian" normalized="ultralocrian"');
+    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (Ionian), dorian, phrygian, lydian, mixolydian, minor (Aeolian/Natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, (LydianDominant), (Gypsy), (NeopolitanMaj), (neopolitanMin)]');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
+  });
+
+  test('empty chart values return no-op results without messages', () => {
+    const section = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.invokeAction('useChartChord', { song })).toEqual({ result: 'No chartChord' });
+    expect(plugin.invokeAction('useChartMode', { song })).toEqual({ result: 'No chartMode' });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
   });
 
   test('string limits display as 1-based values while persisting zero-based rows', () => {
@@ -244,6 +379,37 @@ describe('FillPlugin', () => {
     expect(plugin.resolveValue('maxRow', { song })).toBe(5);
   });
 
+  test('switching target instrument resets string limits to the new instrument full range', () => {
+    const song = makeSong({
+      myTunings: [
+        createPrimaryTuning({ baseID: 'P1', rowRange: [48] }),
+        createPrimaryTuning({ baseID: 'P46_1', rowRange: [64, 59, 55, 50, 45, 40] })
+      ],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P46_1`, { song });
+    plugin.setPropertyValue('minRow', 2, { song });
+    plugin.setPropertyValue('maxRow', 3, { song });
+    expect(plugin.resolveValue('minRow', { song })).toBe(2);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(3);
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P1`, { song });
+    expect(plugin.resolveValue('minRow', { song })).toBe(1);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(1);
+
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P46_1`, { song });
+
+    expect(plugin.getProperty('minRow').getValue()).toBe(0);
+    expect(plugin.getProperty('maxRow').getValue()).toBe(5);
+    expect(plugin.resolveValue('minRow', { song })).toBe(1);
+    expect(plugin.resolveValue('maxRow', { song })).toBe(6);
+  });
+
   test('family role displays default to canonical colors while standalone tiny defaults to none', () => {
     const song = makeSong({
       myTunings: [createPrimaryTuning()],
@@ -258,6 +424,8 @@ describe('FillPlugin', () => {
     expect(plugin.resolveValue('singleChordDisplay', { song })).toBe('noteChord');
     expect(plugin.resolveValue('tinyScaleDisplay', { song })).toBe('none');
     expect(plugin.resolveValue('singleAddTiny', { song })).toBe('none');
+    expect(plugin.resolveValue('namedSummary', { song })).toBe('r:noteRoot,c:noteChord,s:noteScale');
+    expect(plugin.resolveValue('tinySummary', { song })).toBe('r:none,c:none,s:none');
   });
 
   test('family role menu captions use ${plugin:...} value references', () => {
@@ -307,6 +475,29 @@ describe('FillPlugin', () => {
 
     expect(plugin.getProperty('namedRootColor').getValue()).toBe('noteLead2');
     expect(plugin.getProperty('tinyRootColor').getValue()).toBe('noteLead2');
+  });
+
+  test('all role note and all none bulk actions update a family consistently', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('singleRootColor', 'noteLead2', { song });
+    plugin.setPropertyValue('singleChordColor', 'noteTransparent', { song });
+    plugin.setPropertyValue('singleScaleColor', 'noteLead', { song });
+
+    expect(plugin.invokeAction('allRoleNote:single', { song }).result).toBe('single set to all role note');
+    expect(plugin.resolveValue('singleSummary', { song })).toBe('r:noteRoot,c:noteChord,s:noteScale');
+
+    expect(plugin.invokeAction('allNone:single', { song }).result).toBe('single set to all none');
+    expect(plugin.resolveValue('singleSummary', { song })).toBe('r:none,c:none,s:none');
+    expect(plugin.getProperty('singleRootColor').getValue()).toBe('noteRoot');
+    expect(plugin.getProperty('singleChordColor').getValue()).toBe('noteChord');
+    expect(plugin.getProperty('singleScaleColor').getValue()).toBe('noteScale');
   });
 
   test('loadSongState maps the legacy single-family fields onto sprint-2 SingleNote properties', () => {
@@ -379,10 +570,14 @@ describe('FillPlugin', () => {
     const help = plugin.buildHelpMessage(song);
 
     expect(plugin.buildSummary(song)).toContain('target table=P46_1');
+    expect(plugin.buildSummary(song)).toContain('chord=M');
+    expect(plugin.buildSummary(song)).toContain('mode=major (Ionian)');
     expect(plugin.buildSummary(song)).toContain('named=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('single=root=noteRoot chord=noteChord scale=noteScale');
     expect(plugin.buildSummary(song)).toContain('tiny=root=none chord=none scale=none');
     expect(help).toContain('NamedNote, SingleNote, and TinyNote fill.');
+    expect(help).toContain('- chord = M');
+    expect(help).toContain('- mode = major (Ionian)');
     expect(help).toContain('NamedNote ignores fret and string limits.');
     expect(help).toContain('Standalone TinyNote suppresses SingleNote add TinyNote');
     expect(help).toContain('DaCapo:OnSectionBegin');

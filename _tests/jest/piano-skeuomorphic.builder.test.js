@@ -1,6 +1,7 @@
 import {
     supportsPianoSkeuomorphic,
-    isPianoSkeuomorphicEnabled
+    isPianoSkeuomorphicEnabled,
+    normalizePianoLayoutOptions
 } from '../../templates/piano/piano-skeuomorphic.builder.js';
 
 describe('piano skeuomorphic helper gating', () => {
@@ -39,5 +40,55 @@ describe('piano skeuomorphic helper gating', () => {
             rowRange: [48, 36],
             pianoSkeuomorphic: true
         })).toBe(false);
+    });
+
+    test('turns off PianoNames when PianoSkeuo is enabled', () => {
+        expect(normalizePianoLayoutOptions({
+            baseInstrument: 'Piano',
+            rowRange: [48],
+            pianoNamesRow: true,
+            nut: true,
+            stringDividerHeight: '0.6em',
+            pianoSkeuomorphic: true
+        })).toEqual({
+            baseInstrument: 'Piano',
+            rowRange: [48],
+            pianoNamesRow: false,
+            nut: false,
+            stringDividerHeight: '0',
+            pianoSkeuomorphic: true
+        });
+
+        expect(normalizePianoLayoutOptions({
+            baseInstrument: 'Piano',
+            rowRange: [48],
+            pianoNamesRow: true,
+            nut: true,
+            stringDividerHeight: '0.6em',
+            pianoSkeuomorphic: false
+        })).toEqual({
+            baseInstrument: 'Piano',
+            rowRange: [48],
+            pianoNamesRow: true,
+            nut: false,
+            stringDividerHeight: '0',
+            pianoSkeuomorphic: false
+        });
+
+        expect(normalizePianoLayoutOptions({
+            baseInstrument: 'Guitar',
+            rowRange: [64, 59, 55, 50, 45, 40],
+            pianoNamesRow: true,
+            nut: true,
+            stringDividerHeight: '0.6em',
+            pianoSkeuomorphic: false
+        })).toEqual({
+            baseInstrument: 'Guitar',
+            rowRange: [64, 59, 55, 50, 45, 40],
+            pianoNamesRow: true,
+            nut: true,
+            stringDividerHeight: '0.6em',
+            pianoSkeuomorphic: false
+        });
     });
 });

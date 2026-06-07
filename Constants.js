@@ -8,6 +8,27 @@ export const DEFAULT_BEATS = 4;
 export const RANDOM_SECTION_HISTORY_MAX = 16;
 export const FIRST_POSITION_MAX_FRET = 4;
 
+export const SECTION_CHART_POSITION = Object.freeze({
+    INTRO: 'INTRO',
+    HEAD: 'HEAD',
+    LINE: 'LINE',
+    BAR: 'BAR',
+    OUTRO: 'OUTRO'
+});
+
+export const SECTION_CHART_CAPTION_WIDTH = Object.freeze({
+    NONE: 'none',
+    SHORT: 'short',
+    MEDIUM: 'medium',
+    LINE: 'line'
+});
+
+export const SONG_CHART_BAR_CLASS = Object.freeze({
+    BOX: 'Box',
+    BARE: 'Bare',
+    LEADSHEET: 'LeadSheet'
+});
+
 export function calcFretLengths() {
     var L0 = 1;
     const MAGIC_RATIO = 0.9438743;
@@ -42,40 +63,41 @@ export const FUNCTION_OFFSETS = ["I+0","&tau;+1","II+2","m+3","III+4","IV+5","&T
 
 
 export const FILL_CHORD_OPTIONS = [
-    { value: '4,7', caption: 'Maj', trigger: 'm' },
-    { value: '3,7', caption: 'Min', trigger: 'n' },
-    { value: '4,8', caption: 'Aug', trigger: 'a' },
-    { value: '3,6', caption: 'Dim&nbsp;&nbsp;&nbsp;&ordm;', trigger: 'd' },
-    { value: '3,6,9', caption: 'Dim7', trigger: '7' },
+    { value: '4,7', caption: 'M', trigger: 'M' },
+    { value: '3,7', caption: 'm', trigger: 'm' },
+    { value: '4,8', caption: 'aug', trigger: 'u' },
+    { value: '3,6', caption: 'dim&nbsp;&nbsp;&nbsp;&ordm;', trigger: 'd' },
+    { value: '3,6,9', caption: 'dim7', trigger: 'i' },
     { value: '3,6,10', caption: 'm7b5&nbsp;&nbsp;&nbsp;&oslash;', trigger: 'b' },
-    { value: '2,7', caption: 'Sus2', trigger: '2' },
-    { value: '5,7', caption: 'Sus4', trigger: '4' },
-    { value: '4,7,11', caption: 'Maj7&nbsp;&nbsp;&nbsp;&Delta;', trigger: 'j' },
-    { value: '3,7,10', caption: 'Min7', trigger: 'i' },
-    { value: '4,7,10', caption: 'Dom7', trigger: 'o' },
-    { value: '3,7,11', caption: 'MinMaj', trigger: 'x' },
-    { value: '3,7,10,14', caption: 'Min9', trigger: '9' },
-    { value: '4,7,9,14', caption: '6/9', trigger: '6' }
+    { value: '2,7', caption: 'sus2', trigger: '2' },
+    { value: '5,7', caption: 'sus4', trigger: '4' },
+    { value: '4,7,11', caption: 'maj7&nbsp;&nbsp;&nbsp;&Delta;', trigger: 'a' },
+    { value: '3,7,10', caption: 's m7', trigger: 's' },
+    { value: '4,7,10', caption: '7 (dom7)', trigger: '7' },
+    { value: '4,10', caption: '7no5', trigger: 'n' },
+    { value: '3,7,11', caption: 'm/ma7', trigger: 'j' },
+    { value: '3,7,10,14', caption: 'm9', trigger: '9' },
+    { value: '4,7,9,14', caption: '6add9', trigger: '6' }
 ];
 
 export const FILL_SCALE_OPTIONS = [
-    { value: '0,2,4,6,8,10', caption: 'WholeTone', trigger: 'w' },
-    { value: '0,3,6,9', caption: 'Diminished', trigger: 'd' },
-    { value: '0,3,5,7,10', caption: 'MinPentatonic', trigger: 'p' },
-    { value: '0,2,4,7,9', caption: 'MajPentatonic', trigger: 't' },
-    { value: '0,2,4,5,7,9,11', caption: 'Ionian/Major', trigger: 'i' },
-    { value: '0,2,3,5,7,9,10', caption: 'Dorian', trigger: 'o' },
-    { value: '0,1,3,5,7,8,10', caption: 'Phrygian', trigger: 'h' },
-    { value: '0,2,4,6,7,9,11', caption: 'Lydian', trigger: 'l' },
-    { value: '0,2,4,6,7,9,10', caption: 'LydianDominant', trigger: 'y' },
-    { value: '0,2,4,5,7,9,10', caption: 'Mixolydian', trigger: 'x' },
-    { value: '0,2,3,5,7,8,10', caption: 'Aeolian/Natural', trigger: 'a' },
-    { value: '0,1,3,5,6,8,10', caption: 'Locrian', trigger: 'c' },
-    { value: '0,2,3,5,7,8,11', caption: 'HarmonicMinor', trigger: 'r' },
-    { value: '0,2,3,5,7,9,11', caption: 'MelodicMinor', trigger: 'm' },
-    { value: '0,1,4,5,7,8,10', caption: 'Gypsy', trigger: 'g' },
-    { value: '0,1,3,5,7,9,11', caption: 'NeopolitanMaj', trigger: 'n' },
-    { value: '0,1,3,5,7,8,11', caption: 'NeopolitanMin', trigger: 'e' }
+    { value: '0,2,4,5,7,9,11', caption: 'major (Ionian)', trigger: '1' },
+    { value: '0,2,3,5,7,9,10', caption: 'dorian', trigger: '2' },
+    { value: '0,1,3,5,7,8,10', caption: 'phrygian', trigger: '3' },
+    { value: '0,2,4,6,7,9,11', caption: 'lydian', trigger: '4' },
+    { value: '0,2,4,5,7,9,10', caption: 'mixolydian', trigger: '5' },
+    { value: '0,2,3,5,7,8,10', caption: 'minor (Aeolian/Natural)', trigger: '6' },
+    { value: '0,1,3,5,6,8,10', caption: 'locrian', trigger: '7' },
+    { value: '0,2,4,6,8,10', caption: 'whole tone', trigger: 'w' },
+    { value: '0,3,6,9', caption: 'diminished', trigger: 'd' },
+    { value: '0,3,5,7,10', caption: 'minor pentatonic', trigger: 'p' },
+    { value: '0,2,4,7,9', caption: 'major Pentatonic', trigger: 'P' },
+    { value: '0,2,3,5,7,8,11', caption: 'harmonic minor', trigger: 'h' },
+    { value: '0,2,3,5,7,9,11', caption: 'melodic minor', trigger: 'm' },
+    { value: '0,2,4,6,7,9,10', caption: '(LydianDominant)', trigger: 'L' },
+    { value: '0,1,4,5,7,8,10', caption: '(Gypsy)', trigger: 'G' },
+    { value: '0,1,3,5,7,9,11', caption: '(NeopolitanMaj)', trigger: 'N' },
+    { value: '0,1,3,5,7,8,11', caption: '(neopolitanMin)', trigger: 'n' }
 ];
 
 

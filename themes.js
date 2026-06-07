@@ -21,8 +21,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#555",
         "noteWhiteKeySpecialColor": "SaddleBrown",
         "noteBlackKeySpecialColor": "#191919",
-        "noteWhiteKeyFontColor": "transparent",
-        "noteBlackKeyFontColor": "transparent",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none",
         "instrumentBorderImage": "none"
@@ -44,8 +44,8 @@ export const gThemes = {
         "noteBlackShadowColor": "black",
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "#555",
-        "noteWhiteKeyFontColor": "transparent",
-        "noteBlackKeyFontColor": "transparent",
+        "noteWhiteKeyFontColor": "#555",
+        "noteBlackKeyFontColor": "white",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "Zinfandel" : {
@@ -90,8 +90,8 @@ export const gThemes = {
         "doubleDiamondsColor": "gold",
         "noteWhiteKeyColor": "#f5e0c4",
         "noteBlackKeyColor": "#331e01",
-        "noteWhiteKeyFontColor": "#f5e0c4",
-        "noteBlackKeyFontColor": "#331e01"
+        "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#f5e0c4"
     },
     "RobinHood": {
       "id": "RobinHood",
@@ -111,8 +111,8 @@ export const gThemes = {
       "noteBlackShadowColor": "pink",
       "noteWhiteKeyColor": "lightgreen",
       "noteBlackKeyColor": "#362312",
-      "noteWhiteKeyFontColor": "transparent",
-      "noteBlackKeyFontColor": "transparent",
+            "noteWhiteKeyFontColor": "#362312",
+            "noteBlackKeyFontColor": "lightgreen",
       "borderImageWhiteKey": "url('img/celtic-background-white.png')",
       "borderImageBlackKey": "url('img/celtic-background-black.png')",
       "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -124,6 +124,8 @@ export const gThemes = {
         "nutColor": "#331e01",
         "noteWhiteKeyColor": "lightgreen",
         "noteBlackKeyColor": "#362312",
+        "noteWhiteKeyFontColor": "#362312",
+        "noteBlackKeyFontColor": "lightgreen",
         "borderImageWhiteKey": "url('img/celtic-background-white.png')",
         "borderImageBlackKey":  "url('img/celtic-background-black.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -139,8 +141,8 @@ export const gThemes = {
         "nutColor": "#331e01",
         "noteWhiteKeyColor": "#f5e0c4",
         "noteBlackKeyColor": "#331e01",
-        "noteWhiteKeyFontColor": "#f5e0c4",
-        "noteBlackKeyFontColor": "#331e01",
+        "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#f5e0c4",
         "borderImageWhiteKey": "url('img/celtic-background-2.png')",
         "borderImageBlackKey":  "url('img/celtic-background-2.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')"
@@ -156,8 +158,8 @@ export const gThemes = {
         "nutColor": "#331e01",
         "noteWhiteKeyColor": "#f5e0c4",
         "noteBlackKeyColor": "#331e01",
-        "noteWhiteKeyFontColor": "#f5e0c4",
-        "noteBlackKeyFontColor": "#331e01",
+        "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#f5e0c4",
         "borderImageWhiteKey": "none"
     },
     "CoffyBrown" : {
@@ -177,8 +179,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#331e01",
         "noteWhiteKeySpecialColor": "SaddleBrown",
         "noteBlackKeySpecialColor": "SaddleBrown",
-        "noteWhiteKeyFontColor": "#331e01",
-        "noteBlackKeyFontColor": "#331e01"
+        "noteWhiteKeyFontColor": "#f5e0c4",
+        "noteBlackKeyFontColor": "#f5e0c4"
     },
     "Blade" : {
         "id": "Blade",
@@ -193,8 +195,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "black",
-        "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "black",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey":  "url('img/blade.png')",
         "borderImageBlackKey":  "none",
         "instrumentBorderImage": "url('img/blade-border.png')"
@@ -210,8 +212,8 @@ export const gThemes = {
         "nutColor": "black",
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "black",
-        "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "black"
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "white"
     },
     "Reverse" : {
         "id": "Reverse",
@@ -224,8 +226,8 @@ export const gThemes = {
         "nutColor": "black",
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "white",
-        "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "white"
+        "noteWhiteKeyFontColor": "white",
+        "noteBlackKeyFontColor": "black"
     },
     "Snow" : {
         "id": "Snow",
@@ -242,8 +244,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt lightgray",
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "white",
-        "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "white",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey": "none"
     },
     "WiteOut" : {
@@ -261,8 +263,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt white",
         "noteWhiteKeyColor": "white",
         "noteBlackKeyColor": "white",
-        "noteWhiteKeyFontColor": "white",
-        "noteBlackKeyFontColor": "white"
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "black"
     },
     "Matrix" : {
         "id": "Matrix",
@@ -279,8 +281,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt chartreuse",
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "black",
-        "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "black"
+        "noteWhiteKeyFontColor": "chartreuse",
+        "noteBlackKeyFontColor": "chartreuse"
     },
     "Blackout" : {
         "id": "Blackout",
@@ -297,8 +299,8 @@ export const gThemes = {
         "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
         "noteWhiteKeyColor": "black",
         "noteBlackKeyColor": "black",
-        "noteWhiteKeyFontColor": "black",
-        "noteBlackKeyFontColor": "black"
+        "noteWhiteKeyFontColor": "white",
+        "noteBlackKeyFontColor": "white"
     },
     "AdultSwim" : {
         "id": "AdultSwim",
@@ -348,8 +350,8 @@ export const gThemes = {
         "noteBlackShadowColor": "black",
         "noteWhiteKeyColor": "aqua",
         "noteBlackKeyColor": "#555",
-        "noteWhiteKeyFontColor": "transparent",
-        "noteBlackKeyFontColor": "transparent"
+        "noteWhiteKeyFontColor": "#555",
+        "noteBlackKeyFontColor": "aqua"
     },
     "BiginJapan" : {
         "id": "BiginJapan",
@@ -361,6 +363,93 @@ export const gThemes = {
         "instrumentBackground": "brown",
         "nutColor": "yellow",
         "diamondsSize": "4em"
+    },
+    "GuitarStrings" : {
+        "id": "GuitarStrings",
+        "caption": "Guitar Strings",
+        "noteRadius": "0",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "0.1pt",
+        "instrumentBackground": "SaddleBrown",
+        "instrumentMargins": "1em",
+        "nutColor": "#331e01",
+        "diamondsSize": "1.5em",
+        "diamondsColor": "pink",
+        "doubleDiamondsColor": "gold",
+        "diamondsBackgroundColor": "transparent",
+        "noteWhiteShadowColor": "aqua",
+        "noteBlackShadowColor": "pink",
+        "noteWhiteKeyShadowColor": "0 0 2pt 1pt #ffab3c",
+        "noteBlackKeyShadowColor": "0 0 2pt 1pt #170803",
+        "noteWhiteKeyColor": "#ffab3c",
+        "noteBlackKeyColor": "#170803",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
+        "noteBlackKeySpecialColor": "#191919",
+        "noteWhiteKeyFontColor": "#331e01",
+        "noteBlackKeyFontColor": "#f5e0c4",
+        "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
+        "borderImageBlackKey": "url('img/guitar-string-fret.png')",
+        "instrumentBorderImage": "none",
+        "instrumentBorderThickness": "0.2em"
+    },
+    "GuitarStringsWhite": {
+        "id": "GuitarStringsWhite",
+        "caption": "Guitar Strings White",
+        "noteRadius": "0",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "0.1pt",
+        "instrumentBackground": "#230404",
+        "instrumentMargins": "0",
+        "nutColor": "green",
+        "diamondsSize": "1.5em",
+        "diamondsColor": "brown",
+        "doubleDiamondsColor": "gold",
+        "diamondsBackgroundColor": "black",
+        "noteWhiteShadowColor": "black",
+        "noteBlackShadowColor": "black",
+        "noteWhiteKeyShadowColor": "0 0 2pt 1pt white",
+        "noteBlackKeyShadowColor": "0 0 2pt 1pt white",
+        "noteWhiteKeyColor": "white",
+        "noteBlackKeyColor": "white",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
+        "noteBlackKeySpecialColor": "#191919",
+        "noteWhiteKeyFontColor": "black",
+        "noteBlackKeyFontColor": "black",
+        "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
+        "borderImageBlackKey": "url('img/guitar-string-fret.png')",
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "1.4em"
+    },
+    "GuitarStringsBlack": {
+        "id": "GuitarStringsBlack",
+        "caption": "Guitar Strings Black",
+        "noteRadius": "0",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "0.1pt",
+        "instrumentBackground": "#311900",
+        "instrumentMargins": "0",
+        "nutColor": "brown",
+        "diamondsSize": "1.5em",
+        "diamondsColor": "pink",
+        "doubleDiamondsColor": "gold",
+        "diamondsBackgroundColor": "transparent",
+        "noteWhiteShadowColor": "aqua",
+        "noteBlackShadowColor": "pink",
+        "noteWhiteKeyShadowColor": "0 0 2pt 1pt black",
+        "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
+        "noteWhiteKeyColor": "black",
+        "noteBlackKeyColor": "black",
+        "noteWhiteKeySpecialColor": "SaddleBrown",
+        "noteBlackKeySpecialColor": "#191919",
+        "noteWhiteKeyFontColor": "white",
+        "noteBlackKeyFontColor": "white",
+        "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
+        "borderImageBlackKey": "url('img/guitar-string-fret.png')",
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "1.4em"
     },
     "USER" : {
         "id": "USER",

@@ -10,6 +10,7 @@
   --note-black-shadow-color: white;
   --instrument-margin-tb: 4em; /* now just bottom, not top. */
   --cell-spacing: 8px; /*theme set it to values like: 0.5em;*/
+    --note-padding: 6pt;
   --border-image-black-key: none;
   --border-image-white-key: none;
   --instrument-border-image: url('img/celtic-background-black.png');
@@ -28,6 +29,8 @@
   --fingering-position: -0.5em;
   --tiny-note-max-height: 45%;
   --tiny-note-font-size: 100%;
+    --universal-note-white-key-color: black;
+    --universal-note-black-key-color: white;
 
   --debug-border: 0;  /* just the border thickness */
 }
@@ -612,6 +615,11 @@ table.viewControls th {
     width: 95%;
     margin-left: 0.4em;
 }
+.menuDiv {
+    border: 0;
+    width: 95%;
+    margin-left: 0.4em;
+}
 
 .productsmall {
     font-size:  70%;
@@ -762,11 +770,11 @@ table.viewControls th {
 
 .lblSongName {
     color: darkred;
-    font-size:  200%;
+    font-size:  140%;
     font-family: "Shadows Into Light", cursive;
-    font-weight: 400;
+    font-weight: 800;
     font-style: normal;
-    margin-left: 1em;
+    margin-left: 0.4em;
 }
 /* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
  *  so it inherits font-size, etc. */
@@ -775,25 +783,31 @@ table.viewControls th {
     color: #b05917;
     font-weight: 200;
     font-size:  200%;
+    text-wrap: auto;
 }
 .lblSectionChartChord {
+    display: inline-block;
     font-family: "Shadows Into Light", cursive;
     color: #93ff41;
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    min-width: 4.5em;
 }
 .lblSectionMode {
+    display: inline-block;
     font-family: "Shadows Into Light", cursive;
     color: #41c6ff;
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    min-width: 7em;
 }
 .lblSectionNumber {
     padding: 0.2em;
     margin-left: 1em;
     margin-right: 1em;
+    border: 1px solid blue;
 }
 
 .lblSectionmark {
@@ -803,7 +817,7 @@ table.viewControls th {
     display: inline-block;
 }
 .lblSectionsStatusSectionNo{
-    color: green;
+    color: chartreuse;
     font-size: 100%;
     font-weight: normal;
 }
@@ -929,7 +943,7 @@ td.transposeCurrentAppliedInterval {
 }
 
 td.arpeggioCurrentPositionPair {
-    background-color: #ff7f50;
+    background-color: chartreuse;
     font-weight: bold;
     color: black;
     border: 1px solid black;
@@ -1168,7 +1182,9 @@ input:read-only,textarea:read-only {
 
 /***************************** Instrument / NoteTable / FretTable *****************************/
 
-
+.diamondsPositionCurrent {
+    background-color: chartreuse !important;
+}
 .diamondsRow td {
     background-color: var(--diamonds-background-color);
     font-size: var(--diamonds-size);
@@ -1257,7 +1273,18 @@ td.note small {
 .noteHatched4 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, white 10px, white 14px );
 }
-
+.noteHatched5 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, brown 20px, brown 21px );
+}
+.noteHatched6 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, darkolivegreen 20px, darkolivegreen 21px );
+}
+.noteHatched7 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, #170803 20px, #170803 21px );
+}
+.noteHatched8 {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, rgb(249, 201, 98) 20px, rgb(249, 201, 98) 21px );
+}
 td.note {
     /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/
     height: 100%;
@@ -1318,6 +1345,28 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
     width: 100%;
     z-index: 3;
 
+}
+
+.universalNamedNote {
+    position: absolute;
+    border-radius: 10px;
+    display: none;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+body.ShowAllNoteNames .universalNamedNote {
+    display: block;
+}
+
+.noteWhiteKey .universalNamedNote {
+    color: var(--universal-note-white-key-color);
+}
+
+.noteBlackKey .universalNamedNote {
+    color: var(--universal-note-black-key-color);
 }
 
 
@@ -1414,7 +1463,7 @@ td.nut div.NoteActive .CenterCell {
  }
 .tinyNotePlayedBend {
     display: block;
-    z-index: 6;
+    z-index: 5;
     border: 1px solid orange;
     text-align: left;
     /* doesn't work with display:block  vertical-align: center;  */
@@ -1463,7 +1512,7 @@ td.nut div.NoteActive .CenterCell {
 }
 .Fingering {
     display: none;
-    z-index: 12;
+    z-index: 5;
     position: absolute;
     top: calc( 50% - 0.6em );
     /*right: -10%;*/

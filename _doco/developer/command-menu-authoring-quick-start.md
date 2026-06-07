@@ -234,6 +234,8 @@ The repository includes a validator script for the command menu:
 npm run validate:cmdmenu
 ```
 
+If you are working on runtime-generated plugin menus, passive display rows, or other non-static menu patterns, also read [command-menu-validator-w-dynamic-menus.md](command-menu-validator-w-dynamic-menus.md).
+
 It currently checks for:
 
 - duplicate sibling triggers,

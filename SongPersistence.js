@@ -10,6 +10,16 @@ const songDefaults = {
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
+    chartOptions: {
+        modes: true,
+        detailLine: true,
+        showCaptions: true,
+        showNextLine: false,
+        barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+        chordFontsize: '100%',
+        lineCaptionFontsize: '100%',
+        boxCaptionFontsize: '100%'
+    },
     rootID: "3",
     sharps: false,
     singleNoteOpacity: "1.00",
@@ -22,7 +32,6 @@ const songDefaults = {
     isHeadless: false,
     gSectionsCurrentIndex: 0,
     gFirstBeatSeen: false,
-    userInstrumentTuning: null,
     gSongModelListener: null,
     captionsRowShowing: false,
 
@@ -44,6 +53,11 @@ export class SongPersistence {
         this.plugins = {};
 
         Object.assign(this, songDefaults, obj);
+        const incomingChartOptions = obj.chartOptions && typeof obj.chartOptions === 'object' ? obj.chartOptions : {};
+        this.chartOptions = {
+            ...songDefaults.chartOptions,
+            ...incomingChartOptions
+        };
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
@@ -52,9 +66,28 @@ export class SongPersistence {
         this.graveyard.setSong(this);
     }
 
+    static filterPersistentColorDicts(colorDicts){
+        if (!colorDicts || typeof colorDicts !== 'object'){
+            return colorDicts;
+        }
+        const filtered = {};
+        Object.entries(colorDicts).forEach(([key, scheme]) => {
+            if (!scheme || typeof scheme !== 'object'){
+                return;
+            }
+            if (scheme.readOnly || scheme.computed){
+                return;
+            }
+            filtered[key] = scheme;
+        });
+        return filtered;
+    }
+
     static persistentSongFileReplacer(key, value){
+        if (key === 'colorDicts'){
+            return SongPersistence.filterPersistentColorDicts(value);
+        }
         if (   key === 'userColors' 
-            || key === 'colorDicts' 
             || key === 'fretLengths' 
             || key === 'noteNamesFuncArr'
             || key === 'noteNamesFuncArrDEFAULT'
@@ -64,6 +97,7 @@ export class SongPersistence {
             || key === 'randomSectionHistory'
             || key === 'isHeadless'
             || key === 'tunings'
+            || key === 'userInstrumentTuning'
             ) 
         {
             return undefined;

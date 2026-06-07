@@ -49,6 +49,21 @@ import {
     buildTonalPickerSet, 
     TonalPickerOrientation 
 } from './tonalPicker.js';
+import { isPianoSkeuomorphicEnabled } from './templates/piano/piano-skeuomorphic.builder.js';
+import {
+    getTableID,
+    isMidiOnlyListenerProjection,
+    projectListenerPlayedNotes,
+    projectListenerRecordedNotes
+} from './move-helpers.js';
+
+const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
+const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
+const PIANO_SKEUOMORPHIC_WIDTH_MULTIPLIER = 0.5;
+const PIANO_SKEUOMORPHIC_MIN_WHITE_KEY_WIDTH_PX = 50;
+const PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO = 2.3;
+const PIANO_SKEUOMORPHIC_BASELINE_HEIGHT_SCALE_FACTOR = 3;
+const PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR = 3;
 
 var notetableProviders = {
     getBeatNumber: function () { return 0; },
@@ -78,12 +93,107 @@ function createNotetableLookupContext(section = getCurrentSection()) {
     return createLookupContext({ section });
 }
 
+function getTuningByTableID(tableID) {
+    return (getSong()?.myTunings || []).find((tuning) => getTableID(tuning) === `${tableID || ''}`) || null;
+}
+
+function shouldProjectListenerByMidi(replayOptions) {
+    return replayOptions?.type === ReplayOptions.Type.LISTENER
+        && isMidiOnlyListenerProjection(replayOptions?.listenerProjection);
+}
+
+function getProjectedListenerPlayedNotes(replayOptions, playedNotes = []) {
+    if (!shouldProjectListenerByMidi(replayOptions)) {
+        return playedNotes;
+    }
+    const sourceTuning = getTuningByTableID(replayOptions.listenToTablename);
+    const targetTuning = getTuningByTableID(replayOptions.tablename);
+    if (!sourceTuning || !targetTuning) {
+        return playedNotes;
+    }
+    return projectListenerPlayedNotes({
+        playedNotes,
+        sourceTuning,
+        targetTuning,
+        listenerProjection: replayOptions.listenerProjection
+    });
+}
+
+function getProjectedListenerRecordedNotesForBeat(replayOptions, beat, recordedNotes = {}) {
+    if (!shouldProjectListenerByMidi(replayOptions)) {
+        return recordedNotes?.[`${beat}`] || [];
+    }
+    const sourceTuning = getTuningByTableID(replayOptions.listenToTablename);
+    const targetTuning = getTuningByTableID(replayOptions.tablename);
+    if (!sourceTuning || !targetTuning) {
+        return recordedNotes?.[`${beat}`] || [];
+    }
+    const projected = projectListenerRecordedNotes({
+        recordedNotes: { [`${beat}`]: recordedNotes?.[`${beat}`] || [] },
+        sourceTuning,
+        targetTuning,
+        listenerProjection: replayOptions.listenerProjection
+    });
+    return projected?.[`${beat}`] || [];
+}
+
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
 export function isRecording(){
     var btn = $("#btnRecord");
     var recording = btn.attr("recording");
     return ((recording != undefined) && recording == "true");
+}
+
+export function getPianoSkeuomorphicCellHeightPx(heightValue) {
+    return getPianoSkeuomorphicCellHeightPxForScaleFactor(heightValue, PIANO_SKEUOMORPHIC_BASELINE_HEIGHT_SCALE_FACTOR);
+}
+
+export function getPianoSkeuomorphicScaleFactor(scaleFactorValue) {
+    const parsed = toInt(scaleFactorValue, PIANO_SKEUOMORPHIC_BASELINE_HEIGHT_SCALE_FACTOR);
+    return Math.max(1, Math.min(10, parsed));
+}
+
+export function getPianoSkeuomorphicCellHeightPxForScaleFactor(heightValue, scaleFactorValue) {
+    const baseHeight = toInt(heightValue, 50);
+    const normalizedScaleFactor = getPianoSkeuomorphicScaleFactor(scaleFactorValue);
+    const relativeScale = normalizedScaleFactor / PIANO_SKEUOMORPHIC_BASELINE_HEIGHT_SCALE_FACTOR;
+    return Math.max(
+        Math.round(PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX * relativeScale),
+        Math.round(baseHeight * PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER * relativeScale)
+    );
+}
+
+export function getPianoSkeuomorphicWhiteKeyWidthPx(widthValue) {
+    return getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR);
+}
+
+export function getPianoSkeuomorphicWidthScaleFactor(scaleFactorValue) {
+    const parsed = toInt(scaleFactorValue, PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR);
+    return Math.max(1, Math.min(6, parsed));
+}
+
+function getPianoSkeuomorphicWidthScaleMultiplier(scaleFactorValue) {
+    const normalizedScaleFactor = getPianoSkeuomorphicWidthScaleFactor(scaleFactorValue);
+    return 0.5 + ((normalizedScaleFactor - 1) * 0.25);
+}
+
+export function getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) {
+    const baseWidth = toInt(widthValue, 100);
+    const baselineWidth = Math.max(
+        PIANO_SKEUOMORPHIC_MIN_WHITE_KEY_WIDTH_PX,
+        Math.round(baseWidth * PIANO_SKEUOMORPHIC_WIDTH_MULTIPLIER)
+    );
+    return Math.max(1, Math.round(baselineWidth * getPianoSkeuomorphicWidthScaleMultiplier(scaleFactorValue) * 100) / 100);
+}
+
+export function getPianoSkeuomorphicBlackKeyWidthPx(widthValue) {
+    return getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR);
+}
+
+export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) {
+    const scaledWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) / PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO;
+    return Math.max(1, Math.round(scaledWidth * 100) / 100);
 }
 
 
@@ -138,6 +248,7 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
 	}
 
 	result = "<div class='NoteDisplay'>"
+            +buildUniversalNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass)
             +buildFloatingNotes(cell, subright, subleft, noteFnForHighlight, midinum, noteFunctionClass)
             +buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass)
 			+"</div>";
@@ -147,8 +258,8 @@ export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinu
 
 //=================================================================================
 
-export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
-    return "<div class='namedNote'>"
+function buildNoteNameLane(laneClass, cell, subright, midinum, noteFunctionClass){
+    return "<div class='"+laneClass+"'>"
 	        +"<span class='midinumDisplayNamedNote'>"+midinum+"</span>"
             +"<div class='CenterCell'>"
                 +"<div class='"+noteFunctionClass+"'>"
@@ -158,6 +269,14 @@ export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFun
                     +   subright
                 +"</span>"
         +"</div></div>";
+}
+
+export function buildNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
+    return buildNoteNameLane('namedNote', cell, subright, midinum, noteFunctionClass);
+}
+
+export function buildUniversalNamedNote(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
+    return buildNoteNameLane('universalNamedNote', cell, subright, midinum, noteFunctionClass);
 }
 
 export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, noteFunctionClass){
@@ -187,12 +306,22 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
         var celltable = td.attr("celltable");
         if (celltable) {
             var tuning = TuningsLibrary.findTuningForName(celltable);
+            const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
             cell.html(cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
 
 			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));
 
 			var w = options.NoteDisplaySizes.width;
 			var h = options.NoteDisplaySizes.height;
+            if (pianoSkeuomorphic) {
+                const pianoHeight = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
+                const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
+                const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
+                h = pianoHeight;
+                cell.closest("table")
+                    .css("--piano-white-key-width", pianoWhiteKeyWidth)
+                    .css("--piano-black-key-width", pianoBlackKeyWidth);
+            }
 			var multiplier = 1;
 			var width = w.substring(0, w.indexOf("px"));
 			var height = h.substring(0, h.indexOf("px"));
@@ -528,7 +657,7 @@ export function styleNamedNote(theClass, theColorClass, noteName){
 		.addClass("NoteActive");
 	var namedNoteDiv = theClass.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
-	namedNoteDiv.addClass(theColorClass).show();
+    namedNoteDiv.addClass("NamedNoteActive").addClass(theColorClass).show();
 	namedNoteDiv.css("opacity",  getSong().namedNoteOpacity);
 }
 
@@ -607,6 +736,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("Fingering");
 		textdiv.show();
+        jCell.removeClass("OverlayRaisedForPiano");
 		var radio = $("input:radio[name=rbHighlight]:checked");
 		var finger = radio.attr("finger");
 		textdiv.html(finger);
@@ -638,6 +768,9 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 	        		textdiv.addClass(lookupUserColorClass(notePlayed, lookupContext));
                 textdiv.addClass(theMidiNotePlayedClass);
                 textdiv.show();//Playback called .hide()
+                if (styleNum == Note.STYLENUM_FINGERING) {
+					jCell.addClass("OverlayRaisedForPiano");
+				}
                 if (theBendClass){
                     textdiv.addClass(theBendClass);
                 }
@@ -701,6 +834,7 @@ export function getReplayOptionsArray(){
                 let listenerSection = getCurrentSection();
                 listenerOpts.sectionIndex =  getSong().getSections().indexOf(listenerSection);
                 listenerOpts.listenToTablename = wiring.listenToTablename;
+                listenerOpts.listenerProjection = wiring.listenerProjection || 'row-midi';
                 listenerOpts.type = ReplayOptions.Type.LISTENER;
                 applySectionOpts(listenerOpts, listenerSection);
                 resultOptionsArray.push(listenerOpts);
@@ -758,6 +892,8 @@ export function replayTable(replayOptions){
                         : "";
     let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
+    const showBeatCounter = !!controlsToDisplayOptions().showLooperLightBeats;
+    const currentBeatNumber = getBeatNumber();
 
     if (replayOptions.type === ReplayOptions.Type.RELATIVE){
         let defaultDisplayOptions = controlsToDisplayOptions();
@@ -768,19 +904,29 @@ export function replayTable(replayOptions){
         Object.assign(relSectionOptions, replayOptions);
         console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
-        //Don't need to send looping status, since that is a css class broadcast through 
-        //    SectionStatusBuilder.MAGIC_BROADCAST_CSS_CLASS_LooperLight which is just "LooperLight" class.
-        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+        EventBus.trigger("Widget:SectionStatus:statusChanged",
                             {
-                                ownerID: replayOptions.tablename, //don't need widgetID, because widget is bound to tableID as ownerID.
-                                replayOptions: relSectionOptions
+                                ownerID: replayOptions.tablename,
+                                relativeSection: relSectionOptions.relativeSection || '',
+                                sectionNumber: (relSectionOptions.sectionIndex !== undefined) ? relSectionOptions.sectionIndex + 1 : '',
+                                beatNumber: currentBeatNumber,
+                                showBeatCounter,
+                                rootKey: relSectionOptions.rootKey || '',
+                                rootKeyLead: relSectionOptions.rootKeyLead || '',
+                                keyMode: relSectionOptions.type
                             }
                         );
     } else {
-        EventBus.trigger("Widget:SectionStatus:sectionChanged",
+        EventBus.trigger("Widget:SectionStatus:statusChanged",
             {
                 ownerID: replayOptions.tablename,
-                replayOptions: replayOptions 
+                relativeSection: replayOptions.relativeSection || '',
+                sectionNumber: (replayOptions.sectionIndex !== undefined) ? replayOptions.sectionIndex + 1 : '',
+                beatNumber: currentBeatNumber,
+                showBeatCounter,
+                rootKey: replayOptions.rootKey || '',
+                rootKeyLead: replayOptions.rootKeyLead || '',
+                keyMode: replayOptions.type
             }
         );
     }
@@ -813,6 +959,7 @@ export function replayTable(replayOptions){
     if (sn){
         tablearr = sn.playedNotes;
     }
+    tablearr = getProjectedListenerPlayedNotes(replayOptions, tablearr || []);
     if (tablearr){
         tablearr.forEach(script => {
             var jtdselector = "#"+tablename +" td[cellrow="+script.row+"][midiNum="+script.midinum+"]";
@@ -840,6 +987,7 @@ export function replayTable(replayOptions){
                     if (script.finger){
                         textdiv.html(script.finger);
                     }
+                    $(this).addClass("OverlayRaisedForPiano");
                     textdiv.addClass("FingeringPlayed");
                     textdiv.show();
                 }
@@ -869,11 +1017,16 @@ function normalizeDisplayPartClass(partClass = 'namedNote') {
     return `${partClass || 'namedNote'}`.replace(/^\./, '');
 }
 
+function hasJQueryDomAccess() {
+    return typeof $ === 'function';
+}
+
 const TRANSIENT_NAMED_NOTE_OWNER_ATTR = 'data-transient-named-note-owner';
 const TRANSIENT_NAMED_NOTE_CLASS_ATTR = 'data-transient-named-note-original-class';
 const TRANSIENT_NAMED_NOTE_STYLE_ATTR = 'data-transient-named-note-original-style';
 const TRANSIENT_NOTE_DISPLAY_CLASS_ATTR = 'data-transient-note-display-original-class';
 const TRANSIENT_NOTE_DISPLAY_STYLE_ATTR = 'data-transient-note-display-original-style';
+const TRANSIENT_DIAMOND_POSITION_OWNER_ATTR = 'data-transient-diamond-position-owner';
 
 function rememberTransientNamedNoteState(part, owner = '') {
     if (!owner || part.length === 0) {
@@ -940,8 +1093,32 @@ export function clearTransientNamedNotes(owner = '') {
     });
 }
 
+export function clearTransientDiamondPositions(owner = '', tableID = '') {
+    if (!hasJQueryDomAccess()) {
+        return;
+    }
+    const ownerSelector = owner
+        ? `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}='${owner}']`
+        : `[${TRANSIENT_DIAMOND_POSITION_OWNER_ATTR}]`;
+    const tableSelector = tableID
+        ? `table[id='${tableID}'] `
+        : '';
+    $(`${tableSelector}tr.diamondsRow.NotAString > td.diamonds${ownerSelector}`).each(function() {
+        $(this)
+            .removeClass('diamondsPositionCurrent')
+            .removeAttr(TRANSIENT_DIAMOND_POSITION_OWNER_ATTR);
+    });
+}
+
 export function findNoteCell(tableID, cellrow, cellcol) {
     return $("table[id='"+tableID+"'] td.note[cellrow='"+cellrow+"'][cellcol='"+cellcol+"']").first();
+}
+
+export function findDiamondCell(tableID, cellcol) {
+    if (!hasJQueryDomAccess()) {
+        return null;
+    }
+    return $("table[id='"+tableID+"'] tr.diamondsRow.NotAString > td.diamonds[cellcol='"+cellcol+"']").first();
 }
 
 export function findNoteDisplayPart(tableID, cellrow, cellcol, partClass = 'namedNote') {
@@ -997,6 +1174,47 @@ export function showNamedNotesAtCells(cells = [], options = {}) {
     return shownCount;
 }
 
+export function showDiamondPositionAtCell(tableID, cellcol, owner = '') {
+    if (!hasJQueryDomAccess()) {
+        return false;
+    }
+    const cell = findDiamondCell(tableID, cellcol);
+    if (!cell || cell.length === 0) {
+        return false;
+    }
+    if (owner) {
+        cell.attr(TRANSIENT_DIAMOND_POSITION_OWNER_ATTR, owner);
+    }
+    cell.addClass('diamondsPositionCurrent');
+    return true;
+}
+
+export function showDiamondPositionRange(tableID, minFret, maxFret, options = {}) {
+    if (!hasJQueryDomAccess()) {
+        return 0;
+    }
+    const clearExisting = !!options.clearExisting;
+    const owner = options.owner || '';
+
+    if (clearExisting) {
+        clearTransientDiamondPositions(owner, tableID);
+    }
+
+    const parsedMinFret = Number.parseInt(minFret, 10);
+    const parsedMaxFret = Number.parseInt(maxFret, 10);
+    if (!tableID || !Number.isInteger(parsedMinFret) || !Number.isInteger(parsedMaxFret) || parsedMaxFret < parsedMinFret) {
+        return 0;
+    }
+
+    let shownCount = 0;
+    for (let fret = parsedMinFret; fret <= parsedMaxFret; fret += 1) {
+        if (showDiamondPositionAtCell(tableID, `${fret}`, owner)) {
+            shownCount += 1;
+        }
+    }
+    return shownCount;
+}
+
 export function showHighlightsForBeat(nBeat){
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
@@ -1030,6 +1248,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
     }
     if (dict){
         $(tableSelector+"td.note").removeClass("noteHighlight");
+		$(tableSelector+"td.note").removeClass("OverlayRaisedForPiano");
 
         $(tableSelector+"td.note").removeClass("noteHighlightSingle");
 
@@ -1045,7 +1264,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
 			.attr("class", "tinyNote")   //remove marker classes: [tinyNotePlayed tinyNotePlayedBend Playback] and any color
 		 	.hide();
 
-		var arrForBeat = dict[""+nBeat];
+		var arrForBeat = getProjectedListenerRecordedNotesForBeat(options, nBeat, dict);
         if (arrForBeat) {
             arrForBeat.forEach(note => {
                 var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
@@ -1057,6 +1276,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass("noteHighlightSingle");
                 } else if (note.styleNum == Note.STYLENUM_FINGERING){
                     tdNote
+						.addClass("OverlayRaisedForPiano")
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
                         .addClass("Playback")
@@ -1129,7 +1349,9 @@ export function clearAllForTable(tablename) {
 
     hideNoteClickedCaption();
     var tdNote = $(tableSelector+"td.note");
+    tdNote.removeClass("OverlayRaisedForPiano");
     tdNote.children(".NoteDisplay").removeClass("NoteActive");
+    clearTransientDiamondPositions('', tablename);
 
     var namedNoteDiv = tdNote.children(".NoteDisplay").children(".namedNote");
     clearNamedNoteDivs(namedNoteDiv);
@@ -1320,7 +1542,9 @@ EventBus.on('Note:colored', function(event, data) {
                 listenToTablename: sourceTableID,
                 currSection: getCurrentSection(),
                 sectionIndex: song.getSections().indexOf(getCurrentSection()),
-                relativeSection: wiring.relativeSection
+                relativeSection: wiring.relativeSection,
+                listenerProjection: wiring.listenerProjection || 'row-midi',
+                type: wiring.relativeSection ? ReplayOptions.Type.RELATIVE : ReplayOptions.Type.LISTENER
             });
         }
     });
@@ -1347,6 +1571,9 @@ EventBus.on('Wiring:added', function(event, data) {
         listenToTablename: data.listenToTablename,
         currSection: getCurrentSection(),
         sectionIndex: song.getSections().indexOf(getCurrentSection()),
+        relativeSection: data.relativeSection,
+        listenerProjection: data.listenerProjection || 'row-midi',
+        type: data.relativeSection ? ReplayOptions.Type.RELATIVE : ReplayOptions.Type.LISTENER
     });
 });
 EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {
@@ -1354,5 +1581,16 @@ EventBus.on('NoteTable:ShowNamedNotesAtCells', function(event, data) {
         clearExisting: !!(data && data.clearExisting),
         owner: data && data.owner ? data.owner : ''
     });
+});
+EventBus.on('NoteTable:ShowDiamondPositionRange', function(event, data) {
+    showDiamondPositionRange(
+        data && data.tableID ? data.tableID : '',
+        data && data.minFret,
+        data && data.maxFret,
+        {
+            clearExisting: !!(data && data.clearExisting),
+            owner: data && data.owner ? data.owner : ''
+        }
+    );
 });
 //=================================END-of-FILE========================================

@@ -1,11 +1,11 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 
-#CmdMenu {
+.CmdMenuClass {
     display: inline-block;
     z-index: 2000;
     position: fixed;
     padding: 0.2em;
-    opacity: 95%;
+    opacity: 85%;
     width: 90%;
     left: 5%;
     bottom: 0;
@@ -25,17 +25,34 @@
     font-family: monospace;
     font-size: 140%;
 }
-#CmdMenuResults td {
+.CmdMenuResultsClass td {
     font-size: 120%;
     color: black;
 }
-#CmdMenuResults td b {
+.CmdMenuResultsClass td b {
     color: #ffaa00;
     font-weight: 400;
     -webkit-text-stroke: 0.8px black;
     font-size: 120%;
 }
-#CmdMenuOptionsTable, #CmdMenuStackAndOptions {
+.CmdMenuResultsClass td em,
+#CmdMenuOptionsTable td em {
+    color: inherit;
+    font-style: normal;
+    font-weight: bold;
+}
+.commandCheckmark {
+    display: inline-block;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    color: red;
+    font-size: 90%;
+    font-weight: bold;
+    line-height: 1;
+}
+#CmdMenuOptionsTable, .CmdMenuStackAndOptionsClass {
     width: 100%;
     vertical-align: bottom;
 }

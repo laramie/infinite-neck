@@ -22,10 +22,12 @@ function buildWiringWidget(tuningID, tablename) {
         const editRelativeSection = controlsDiv.querySelector('.editRelativeSection');
         const thisTable = spanTablename.dataset.tablename;
         const selTablename = controlsDiv.querySelector('.selTablename');
+        const selListenerProjection = controlsDiv.querySelector('.selListenerProjection');
         getSong().addWiring(
             thisTable,
             editRelativeSection.value,
-            selTablename.value
+            selTablename.value,
+            selListenerProjection ? selListenerProjection.value : 'row-midi'
         );
         updateWiringButtonStatus(controlsDiv);
     });
@@ -44,6 +46,9 @@ function buildWiringWidget(tuningID, tablename) {
     edit.on('change input', function () {
         updateWiringButtonStatus(controlsDiv);
     });
+    $(controlsDiv).find('.selListenerProjection').on('change', function () {
+        updateWiringButtonStatus(controlsDiv);
+    });
 
     return controlsDiv;
 }
@@ -60,6 +65,7 @@ export function updateAllWiringSelects() {
         const thisTable = $(this).find('.thisTablename').data('tablename');
         const sel = $(this).find('.selTablename');
         const editRelativeSection = $(this).find('.editRelativeSection');
+        const selListenerProjection = $(this).find('.selListenerProjection');
         sel.empty();
         sel.append($('<option>', { value: "", text: "none" }));
         const prefix = (typeof Constants !== 'undefined' && Constants.TABLE_ID_PREFIX) ? Constants.TABLE_ID_PREFIX : 'tbl';
@@ -72,6 +78,7 @@ export function updateAllWiringSelects() {
         const wiring = wirings.find(w => w.tablename === thisTable) || {};
         sel.val(wiring.listenToTablename || "");
         editRelativeSection.val(wiring.relativeSection || "");
+        selListenerProjection.val(wiring.listenerProjection || 'row-midi');
 
         updateWiringButtonStatus(this);
     });
@@ -83,6 +90,7 @@ function updateWiringButtonStatus(widget) {
     const thisTable = $(widget).find('.thisTablename').data('tablename');
     const sel = $(widget).find('.selTablename');
     const editRelativeSection = $(widget).find('.editRelativeSection');
+    const selListenerProjection = $(widget).find('.selListenerProjection');
     const button = $(widget).find('.btnAddWiring');
     const wiring = wirings.find(w => w.tablename === thisTable) || {};
 
@@ -90,7 +98,8 @@ function updateWiringButtonStatus(widget) {
     const isWired =
         (thisTable === wiring.tablename) &&
         (editRelativeSection.val() === (wiring.relativeSection || "")) &&
-        (sel.val() === (wiring.listenToTablename || ""));
+        (sel.val() === (wiring.listenToTablename || "")) &&
+        (selListenerProjection.val() === (wiring.listenerProjection || 'row-midi'));
 
     if (isBlocked) {
         button.removeClass('WiredButtonOn');

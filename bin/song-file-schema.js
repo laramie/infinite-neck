@@ -1,4 +1,5 @@
 import Ajv2020 from 'ajv/dist/2020.js';
+import { SECTION_CHART_CAPTION_WIDTH, SECTION_CHART_POSITION, SONG_CHART_BAR_CLASS } from '../Constants.js';
 
 const INTEGER_LIKE_PATTERN = '^-?\\d+$';
 const ALLOWED_NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
@@ -98,7 +99,11 @@ const wiringSchema = {
     properties: {
         tablename: { type: 'string', minLength: 1 },
         relativeSection: { type: 'string' },
-        listenToTablename: { type: 'string', minLength: 1 }
+        listenToTablename: { type: 'string', minLength: 1 },
+        listenerProjection: {
+            type: 'string',
+            enum: ['row-midi', 'midi-low-to-high', 'midi-high-to-low']
+        }
     },
     required: ['tablename', 'relativeSection', 'listenToTablename'],
     additionalProperties: false
@@ -147,7 +152,8 @@ const sectionNotesSchema = {
             }
         },
         chord: { type: 'string' },
-        mode: { type: 'string' }
+        mode: { type: 'string' },
+        tonalSourceSet: { type: 'string' }
     },
     required: ['playedNotes', 'namedNotes', 'recordedNotes'],
     additionalProperties: false
@@ -185,6 +191,9 @@ const sectionSchema = {
         caption: { type: 'string' },
         chartChord: { type: 'string' },
         chartMode: { type: 'string' },
+        chartPosition: { type: 'string', enum: Object.values(SECTION_CHART_POSITION) },
+        chartCaptionWidth: { type: 'string', enum: Object.values(SECTION_CHART_CAPTION_WIDTH) },
+        beatsPerBar: integerLikeSchema,
         rootID: integerLikeSchema,
         rootIDLead: integerLikeSchema,
         beats: integerLikeSchema,
@@ -207,6 +216,30 @@ const pluginSchema = {
     additionalProperties: true
 };
 
+const chartOptionsSchema = {
+    type: 'object',
+    properties: {
+        modes: { type: 'boolean' },
+        detailLine: { type: 'boolean' },
+        showCaptions: { type: 'boolean' },
+        showNextLine: { type: 'boolean' },
+        barClass: { type: 'string', enum: Object.values(SONG_CHART_BAR_CLASS) },
+        chordFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        },
+        lineCaptionFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        },
+        boxCaptionFontsize: {
+            type: 'string',
+            enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        }
+    },
+    additionalProperties: false
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -214,6 +247,7 @@ export const songFileV2Schema = {
         activeStylesheets: { type: 'string', minLength: 1 },
         captionsRowShowing: { type: 'boolean' },
         defaultBPM: stringOrNumberSchema,
+        chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
         rootID: integerLikeSchema,

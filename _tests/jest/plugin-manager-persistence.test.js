@@ -215,6 +215,8 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
+          SingleNotes: false,
+          octaves: '',
           autoSharpsFlats: false,
           doLeadKey: true
         }
@@ -236,6 +238,8 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
+          SingleNotes: false,
+          octaves: '',
           autoSharpsFlats: false,
           doLeadKey: false
         }
@@ -275,6 +279,8 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         NamedNotes: true,
+        SingleNotes: false,
+        octaves: '',
         autoSharpsFlats: false,
         doLeadKey: true
       }
@@ -312,6 +318,8 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 2, 4],
         NamedNotes: true,
+        SingleNotes: false,
+        octaves: '',
         autoSharpsFlats: false,
         doLeadKey: true
       }
@@ -423,6 +431,41 @@ describe('PluginManager plugin persistence', () => {
 
     expect(result.result).toBe('Move dropped notes shown');
     expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: entry.plugin.droppedNotes }, null, 2));
+  });
+
+  test('pluginAction:invoke preserves menu-stack hints from plugin responses', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    manager.register({
+      getId() {
+        return 'menuhint';
+      },
+      setManager() {},
+      getEventNames() {
+        return [];
+      },
+      exportSongState() {
+        return {};
+      },
+      getProperties() {
+        return [];
+      },
+      invokeAction() {
+        return {
+          result: 'stub help shown',
+          message: 'stub help',
+          preserveMenuStack: true
+        };
+      }
+    });
+    const entry = manager.getPluginEntry('menuhint');
+
+    const result = manager.invokePluginAction(entry, 'help');
+
+    expect(result.result).toBe('stub help shown');
+    expect(result.preserveMenuStack).toBe(true);
+    expect(result.message).toBe('stub help');
   });
 
   test('plugin actions and property changes refresh runtime plugin menus for dynamic children', () => {

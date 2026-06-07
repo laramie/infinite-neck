@@ -1,12 +1,29 @@
 const PIANO_BASE_INSTRUMENT = 'Piano';
 
+function isPianoTuning(tuning) {
+    return !!tuning && tuning.baseInstrument === PIANO_BASE_INSTRUMENT;
+}
+
 export function supportsPianoSkeuomorphic(tuning) {
     return Boolean(
-        tuning
-        && tuning.baseInstrument === PIANO_BASE_INSTRUMENT
+        isPianoTuning(tuning)
         && Array.isArray(tuning.rowRange)
         && tuning.rowRange.length === 1
     );
+}
+
+export function normalizePianoLayoutOptions(tuning) {
+    if (!tuning || typeof tuning !== 'object') {
+        return tuning;
+    }
+    if (isPianoTuning(tuning)) {
+        tuning.nut = false;
+        tuning.stringDividerHeight = '0';
+    }
+    if (tuning.pianoSkeuomorphic === true) {
+        tuning.pianoNamesRow = false;
+    }
+    return tuning;
 }
 
 export function isPianoSkeuomorphicEnabled(tuning) {

@@ -3,10 +3,14 @@ import { PluginProperty, buildCaption } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
+import { Note } from '../../Note.js';
+import { lookupClassForNote } from '../../colorFunctions.js';
 import { getSong, transposeSong } from '../../infinite-neck.js';
+import { createTuningLayout } from '../../move-helpers.js';
 
 const TRANSPOSE_PROG_EM_OPEN = '<em class="transposeProg">';
 const TRANSPOSE_PROG_EM_CLOSE = '</em>';
+const AUTO_COLOR_CLASS_RE = /^note([1-9]|1[0-2])$/;
 
 function canonicalizeIntervals(rawIntervals) {
   if (!Array.isArray(rawIntervals) || rawIntervals.length === 0) {
@@ -56,6 +60,184 @@ function formatOptions(propertiesByName) {
   };
 }
 
+function toInt(value, fallback = null) {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) ? parsed : fallback;
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function normalizeOctavesInput(rawValue) {
+  const text = `${rawValue ?? ''}`.trim();
+  if (text === '') {
+    return { value: '', cap: 0, isFullNeck: true, notice: '' };
+  }
+  if (!/^\d+$/.test(text)) {
+    return {
+      value: '0',
+      cap: 0,
+      isFullNeck: true,
+      notice: `Transpose octaves normalized to 0 from invalid value: ${rawValue}`
+    };
+  }
+  const cap = Number.parseInt(text, 10);
+  if (cap <= 0) {
+    return { value: '0', cap: 0, isFullNeck: true, notice: '' };
+  }
+  return { value: `${cap}`, cap, isFullNeck: false, notice: '' };
+}
+
+function buildRecordedNotes(recordedNotes = {}, mapFn) {
+  const result = {};
+  Object.entries(recordedNotes || {}).forEach(([beat, notesForBeat]) => {
+    result[`${beat}`] = (notesForBeat || []).map((note, index) => mapFn(note, `${beat}`, index));
+  });
+  return result;
+}
+
+function getCellKey(note) {
+  const row = toInt(note?.row, null);
+  const col = toInt(note?.col, null);
+  if (!Number.isInteger(row) || !Number.isInteger(col)) {
+    return null;
+  }
+  return `${row}:${col}`;
+}
+
+function detectSingleNoteCollisions(playedNotes = [], recordedNotes = {}) {
+  let collision = false;
+  const playedCells = new Set();
+
+  (playedNotes || []).forEach((note) => {
+    const key = getCellKey(note);
+    if (!key) {
+      return;
+    }
+    if (playedCells.has(key)) {
+      collision = true;
+    }
+    playedCells.add(key);
+  });
+
+  Object.values(recordedNotes || {}).forEach((notesForBeat) => {
+    const beatCells = new Set();
+    (notesForBeat || []).forEach((note) => {
+      const key = getCellKey(note);
+      if (!key) {
+        return;
+      }
+      if (playedCells.has(key) || beatCells.has(key)) {
+        collision = true;
+      }
+      beatCells.add(key);
+    });
+  });
+
+  return collision;
+}
+
+function shouldRecalculateColor(colorClass) {
+  return AUTO_COLOR_CLASS_RE.test(`${colorClass || ''}`);
+}
+
+function getTuningByTableID(song, tableID) {
+  return (song?.myTunings || []).find((tuning) => `${Constants.TABLE_ID_PREFIX}${tuning.baseID}` === `${tableID}`) || null;
+}
+
+function getRowBoundaries(layout, row) {
+  const rowLayout = layout?.rows?.[row] || null;
+  const nutCell = rowLayout?.nutCell || null;
+  const maxVisibleCell = rowLayout?.cells?.[rowLayout.cells.length - 1] || null;
+  if (!nutCell || !maxVisibleCell) {
+    return null;
+  }
+  return {
+    minVisibleFret: nutCell.col,
+    maxVisibleFret: maxVisibleCell.col
+  };
+}
+
+function normalizeSingleNoteColor(note, section) {
+  if (!shouldRecalculateColor(note?.colorClass)) {
+    return note?.colorClass;
+  }
+  const lookedUp = lookupClassForNote(note, { section, autoColor: true });
+  return lookedUp?.colorClass || note.colorClass;
+}
+
+function transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode) {
+  const row = toInt(note?.row, null);
+  if (!Number.isInteger(row)) {
+    return clone(note);
+  }
+
+  const boundaries = getRowBoundaries(layout, row);
+  const openMidi = toInt(tuning?.rowRange?.[row], null);
+  if (!boundaries || !Number.isInteger(openMidi)) {
+    return clone(note);
+  }
+
+  const sourceFretFromCol = toInt(note?.col, null);
+  const sourceMidinum = toInt(note?.midinum, null);
+  const sourceFret = Number.isInteger(sourceFretFromCol)
+    ? sourceFretFromCol
+    : (Number.isInteger(sourceMidinum) ? sourceMidinum - openMidi : null);
+  if (!Number.isInteger(sourceFret)) {
+    return clone(note);
+  }
+
+  let targetFret = sourceFret + delta;
+  while (targetFret < boundaries.minVisibleFret) {
+    targetFret += 12;
+  }
+
+  if (!octavesMode.isFullNeck) {
+    const step = Math.max(12, octavesMode.cap * 12);
+    const threshold = boundaries.minVisibleFret + step;
+    while (targetFret > threshold) {
+      targetFret -= step;
+    }
+  } else {
+    const wrapStep = Math.floor((boundaries.maxVisibleFret - boundaries.minVisibleFret) / 12) * 12;
+    while (wrapStep > 0 && targetFret > boundaries.maxVisibleFret) {
+      targetFret -= wrapStep;
+    }
+  }
+
+  const targetMidinum = openMidi + targetFret;
+  const moved = clone(note);
+  moved.row = `${row}`;
+  moved.col = `${targetFret}`;
+  moved.midinum = `${targetMidinum}`;
+  moved.noteName = Constants.midinumToNoteName(targetMidinum);
+  moved.colorClass = normalizeSingleNoteColor(moved, section);
+  return moved;
+}
+
+function transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode) {
+  const layout = createTuningLayout(tuning);
+  const playedNotes = (sectionNotes?.playedNotes || []).map((note) => {
+    if (toInt(note?.styleNum, null) !== Note.STYLENUM_SINGLE) {
+      return clone(note);
+    }
+    return transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode);
+  });
+  const recordedNotes = buildRecordedNotes(sectionNotes?.recordedNotes || {}, (note) => {
+    if (toInt(note?.styleNum, null) !== Note.STYLENUM_SINGLE) {
+      return clone(note);
+    }
+    return transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode);
+  });
+
+  return {
+    playedNotes,
+    recordedNotes,
+    collision: detectSingleNoteCollisions(playedNotes, recordedNotes)
+  };
+}
+
 export class TransposePlugin {
   constructor() {
     this.id = 'transpose';
@@ -101,7 +283,7 @@ export class TransposePlugin {
       this.getProperty('apply')?.getMenuNodeSpec(this),
       this.buildResetMenuNode(),
       this.getProperty('help')?.getMenuNodeSpec(this),
-      ...['intervals', 'NamedNotes', 'autoSharpsFlats', 'doLeadKey']
+      ...['intervals', 'NamedNotes', 'SingleNotes', 'octaves', 'autoSharpsFlats', 'doLeadKey']
         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
     ].filter(Boolean);
   }
@@ -170,9 +352,18 @@ export class TransposePlugin {
     }
     this.wakeAtCurrentPosition();
 
-    const nextValue = name === 'intervals'
-      ? property.setValue(canonicalizeIntervals(property.normalize(normalizeIntervalsInput(rawValue))))
-      : property.setValue(rawValue);
+    let nextValue;
+    if (name === 'intervals') {
+      nextValue = property.setValue(canonicalizeIntervals(property.normalize(normalizeIntervalsInput(rawValue))));
+    } else if (name === 'octaves') {
+      const normalized = normalizeOctavesInput(rawValue);
+      nextValue = property.setValue(normalized.value);
+      if (normalized.notice) {
+        this.setOperationMessage(normalized.notice);
+      }
+    } else {
+      nextValue = property.setValue(rawValue);
+    }
 
     if (name === 'intervals') {
       this.sequenceBaselineOffset = this.liveSongOffset;
@@ -216,27 +407,27 @@ export class TransposePlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    this.clearOperationMessage();
     if (eventName === 'Looper:OnResetSong') {
       const song = context.song || this.manager?.song || getSong();
-      return {
-        result: payload?.hard ? this.resetOriginal(song) : this.resetCurrentInterval(song)
-      };
+      return this.buildActionResponse(payload?.hard ? this.resetOriginal(song) : this.resetCurrentInterval(song));
     }
-    return this.advanceInterval(`event ${eventName}`, context.song || this.manager?.song || getSong());
+    return this.buildActionResponse(this.advanceInterval(`event ${eventName}`, context.song || this.manager?.song || getSong()));
   }
 
   invokeAction(actionName, context = {}) {
     const song = context.song || this.manager?.song || getSong();
+    this.clearOperationMessage();
     switch (actionName) {
       case 'apply':
-        return { result: this.advanceInterval('manual apply', song) };
+        return this.buildActionResponse(this.advanceInterval('manual apply', song));
       case 'reset':
       case 'resetCurrentInterval':
-        return { result: this.resetCurrentInterval(song) };
+        return this.buildActionResponse(this.resetCurrentInterval(song));
       case 'resetOriginal':
-        return { result: this.resetOriginal(song) };
+        return this.buildActionResponse(this.resetOriginal(song));
       case 'setOriginalToCurrent':
-        return { result: this.setOriginalToCurrent(song) };
+        return this.buildActionResponse(this.setOriginalToCurrent(song));
       case 'help':
         return {
           result: 'Transpose help shown',
@@ -248,7 +439,7 @@ export class TransposePlugin {
   }
 
   buildSummary() {
-    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()}`;
+    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} single notes=${this.getSingleNotesEnabled()} octaves=${this.getOctavesDisplayValue()}`;
   }
 
   buildHelpMessage() {
@@ -259,6 +450,8 @@ Current settings:
 - ${this.buildSummary()}
 - intervals = ${JSON.stringify(this.getIntervals())}
 - graveyard key = ${graveyardKey}
+- single notes = ${this.getSingleNotesEnabled()}
+- octaves = ${this.getOctavesDisplayValue()} (legal values: empty, 0, or positive integer)
 - interval list is canonicalized to start from 0
 - each trigger advances to the next interval
 - Reset > original returns to the original session baseline and restarts from 0
@@ -275,6 +468,24 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getNamedNotesEnabled() {
     return !!this.getProperty('NamedNotes')?.getValue();
+  }
+
+  getSingleNotesEnabled() {
+    return !!this.getProperty('SingleNotes')?.getValue();
+  }
+
+  getOctavesDisplayValue() {
+    const value = `${this.getProperty('octaves')?.getValue() ?? ''}`;
+    return value === '' ? '[]' : value;
+  }
+
+  getNormalizedOctavesMode() {
+    const normalized = normalizeOctavesInput(this.getProperty('octaves')?.getValue() ?? '');
+    if (normalized.notice) {
+      this.getProperty('octaves')?.setValue(normalized.value);
+      this.setOperationMessage(normalized.notice);
+    }
+    return normalized;
   }
 
   getAutoSharpsFlatsEnabled() {
@@ -462,7 +673,26 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.liveSongOffset = 0;
     this.sequenceBaselineOffset = 0;
     this.originalBaselineOffset = 0;
+    this.operationMessage = '';
     this.restartIntervalSequence();
+  }
+
+  clearOperationMessage() {
+    this.operationMessage = '';
+  }
+
+  setOperationMessage(message) {
+    if (!message) {
+      return;
+    }
+    this.operationMessage = this.operationMessage ? `${this.operationMessage}\n${message}` : message;
+  }
+
+  buildActionResponse(result) {
+    return {
+      result,
+      message: this.operationMessage || ''
+    };
   }
 
   restartIntervalSequence() {
@@ -488,11 +718,55 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return this.liveSongOffset - this.originalBaselineOffset;
   }
 
+  transposeSingleNotesAllSections(delta, song = this.manager?.song || getSong()) {
+    if (delta === 0 || !song || !Array.isArray(song.sections)) {
+      return { movedTables: 0, fallbackUsed: false };
+    }
+
+    let octavesMode = this.getNormalizedOctavesMode();
+    let fallbackUsed = false;
+    let movedTables = 0;
+
+    song.sections.forEach((section) => {
+      Object.entries(section?.sectionNotesByTable || {}).forEach(([tableID, sectionNotes]) => {
+        const tuning = getTuningByTableID(song, tableID);
+        if (!tuning) {
+          return;
+        }
+
+        let result = transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode);
+        if (!octavesMode.isFullNeck && result.collision) {
+          octavesMode = { value: '0', cap: 0, isFullNeck: true, notice: '' };
+          this.getProperty('octaves')?.setValue('0');
+          this.setOperationMessage('Transpose single-note collision detected for capped octaves; octaves reset to 0 and full-neck/off-screen placement used.');
+          fallbackUsed = true;
+          result = transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode);
+        }
+
+        sectionNotes.playedNotes = result.playedNotes;
+        sectionNotes.recordedNotes = result.recordedNotes;
+        movedTables += 1;
+      });
+    });
+
+    if (movedTables > 0 && !song.isHeadless && !this.getNamedNotesEnabled() && typeof song.requestUiFullRepaint === 'function') {
+      song.requestUiFullRepaint();
+    }
+
+    return { movedTables, fallbackUsed };
+  }
+
   applySongDelta(delta, song = this.manager?.song || getSong()) {
     if (delta === 0) {
       return;
     }
+
     transposeSong(delta, formatOptions(this.propertyMap));
+
+    if (this.getSingleNotesEnabled()) {
+      this.transposeSingleNotesAllSections(delta, song);
+    }
+
     this.liveSongOffset += delta;
     if (this.getAutoSharpsFlatsEnabled()) {
       this.applyAutoSharpsFlats(song);
@@ -527,6 +801,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.wakeAtCurrentPosition();
     this.moveToOffset(this.sequenceBaselineOffset, song);
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'reset current interval: sequence offset 0';
   }
 
@@ -535,15 +810,32 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.moveToOffset(this.originalBaselineOffset, song);
     this.sequenceBaselineOffset = this.originalBaselineOffset;
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'reset original: original offset 0';
   }
 
-  setOriginalToCurrent() {
+  setOriginalToCurrent(song = this.manager?.song || getSong()) {
     this.wakeAtCurrentPosition();
     this.originalBaselineOffset = this.liveSongOffset;
     this.sequenceBaselineOffset = this.liveSongOffset;
     this.restartIntervalSequence();
+    this.requestSectionStatusRefresh(song);
     return 'set original to current: baselines rebased';
+  }
+
+  requestSectionStatusRefresh(song = this.manager?.song || getSong()) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    if (typeof song.publish_UpdateSectionStatus === 'function') {
+      song.publish_UpdateSectionStatus();
+      return;
+    }
+
+    if (typeof song.requestUiFullRepaint === 'function') {
+      song.requestUiFullRepaint();
+    }
   }
 
   applyAutoSharpsFlats(song = this.manager?.song || getSong()) {

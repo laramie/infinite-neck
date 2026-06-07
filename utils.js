@@ -41,15 +41,43 @@ export function padZero(str, len) {
 
 
 export function convertRGB_to_HEX(rgb) {
-    if (/^#[0-9A-F]{6}$/i.test(rgb)) return rgb;
-
-    rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-    function hexCode(i) {
-        return ("0" + parseInt(i).toString(16)).slice(-2);
+    if (typeof rgb !== 'string') {
+        return null;
     }
-    return "#" + hexCode(rgb[1]) + hexCode(rgb[2])
-            + hexCode(rgb[3]);
+
+    const text = rgb.trim();
+    if (!text || text === 'transparent' || text === 'none') {
+        return null;
+    }
+
+    if (/^#[0-9A-F]{6}$/i.test(text)) {
+        return text;
+    }
+
+    const shortHex = text.match(/^#([0-9A-F]{3})$/i);
+    if (shortHex) {
+        const [r, g, b] = shortHex[1].split('');
+        return `#${r}${r}${g}${g}${b}${b}`;
+    }
+
+    const rgbaMatch = text.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?/i);
+    if (rgbaMatch) {
+        if (rgbaMatch[4] !== undefined && Number.parseFloat(rgbaMatch[4]) === 0) {
+            return null;
+        }
+        function hexCode(i) {
+            return ("0" + parseInt(i, 10).toString(16)).slice(-2);
+        }
+        return "#" + hexCode(rgbaMatch[1]) + hexCode(rgbaMatch[2])
+                + hexCode(rgbaMatch[3]);
+    }
+
+    const gradientHexMatch = text.match(/#([0-9A-F]{6}|[0-9A-F]{3})/i);
+    if (gradientHexMatch) {
+        return convertRGB_to_HEX(gradientHexMatch[0]);
+    }
+
+    return null;
 }
 
 /* this was an experiment to see if I could just alpha out the background-color, thus

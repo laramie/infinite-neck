@@ -5,7 +5,9 @@ import { jest } from '@jest/globals';
 
 import {
     setupSongTests,
-    getSong
+    getSong,
+    installDefaultColorDicts,
+    resolveLoadedThemeId
 } from '../../infinite-neck-headless.js';
 import { noteNameToNoteID } from '../../Constants.js';
 import EventBus from '../../event-bus.js';
@@ -82,6 +84,40 @@ describe('Headless tuning bootstrap contracts', () => {
         expect(song.myTunings[0]).toHaveProperty('baseID');
         expect(song.myTunings[0].baseID).toMatch(/^S6_\d+$/);
         expect(song.myTunings[0].baseID).toBe('S6_1');
+    });
+
+    test('installDefaultColorDicts appends user-authored stylesheets after Default', () => {
+        const song = createFreshHeadlessSong();
+        song.colorDicts = {
+            lar4: {
+                readOnly: false,
+                computed: false,
+                checked: true,
+                dict: {
+                    noteChord: { colorClass: 'noteHatched4 notePink3', caption: 'Ch' }
+                }
+            }
+        };
+
+        installDefaultColorDicts();
+
+        expect(Object.keys(song.colorDicts)).toEqual([
+            'All-Clear',
+            'CycleOfColors',
+            'Roles',
+            'Fingerings',
+            'Default',
+            'lar4'
+        ]);
+    });
+
+    test('resolveLoadedThemeId preserves the saved active theme when userTheme also exists', () => {
+        createFreshHeadlessSong();
+
+        expect(resolveLoadedThemeId('GuitarStrings', true)).toBe('GuitarStrings');
+        expect(resolveLoadedThemeId('USER', true)).toBe('USER');
+        expect(resolveLoadedThemeId('', true)).toBe('USER');
+        expect(resolveLoadedThemeId('MissingTheme', true)).toBe('USER');
     });
 });
 
@@ -262,6 +298,21 @@ describe('Song beat APIs on loaded JSON', () => {
         expect(recordedNotes['1']).toEqual([{ noteName: 'A' }]);
         expect(recordedNotes['2']).toEqual([{ noteName: 'B' }]);
         expect(recordedNotes['3']).toEqual([{ noteName: 'D' }]);
+
+        triggerSpy.mockRestore();
+    });
+
+    test('addBeat increases section beats and requests chart refresh', () => {
+        const song = createFreshHeadlessSong();
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.gotoSection(0);
+        const startingBeats = song.getBeats();
+
+        song.addBeat();
+
+        expect(song.getBeats()).toBe(startingBeats + 1);
+        expect(triggerSpy).toHaveBeenCalledWith('SongUiUpdatePrintSections');
 
         triggerSpy.mockRestore();
     });

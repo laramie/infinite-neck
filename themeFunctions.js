@@ -9,6 +9,25 @@ import { gThemes } from './themes.js';
     export function getThemes(){
         return gThemes;
     }
+    export function getEmptyUserTheme(){
+		return {
+			id: "USER",
+			caption: "USER"
+		};
+	}
+	export function installUserTheme(userTheme){
+		if (!userTheme || typeof userTheme !== 'object' || Array.isArray(userTheme)){
+			gThemes["USER"] = getEmptyUserTheme();
+			return null;
+		}
+		const runtimeUserTheme = {
+			...userTheme,
+			id: "USER",
+			caption: "USER"
+		};
+		gThemes["USER"] = runtimeUserTheme;
+		return runtimeUserTheme;
+	}
     export function getWidget_SelectThemes(){
         return generateSelectThemes(gThemes);
     }
@@ -212,6 +231,33 @@ import { gThemes } from './themes.js';
 
 	export function theme(themeOptions){
 		//console.log("theme::rule==>themeOptions:"+JSON.stringify(themeOptions));
+		function resolvedThemeValue(whichOption){
+			if (themeOptions && themeOptions[whichOption]){
+				return themeOptions[whichOption];
+			}
+			if (defaultOptions && defaultOptions[whichOption]){
+				return defaultOptions[whichOption];
+			}
+			return "";
+		}
+		function isUsableContrastColor(value){
+			return !!value && `${value}`.trim() !== '' && `${value}`.trim().toLowerCase() !== 'transparent';
+		}
+		function normalizeColorToken(value){
+			return `${value || ''}`.trim().toLowerCase();
+		}
+		function resolvedUniversalLaneColor(fontOption, ownKeyColorOption, oppositeKeyColorOption, fallbackValue){
+			const fontColor = resolvedThemeValue(fontOption);
+			const ownKeyColor = resolvedThemeValue(ownKeyColorOption);
+			if (isUsableContrastColor(fontColor) && normalizeColorToken(fontColor) !== normalizeColorToken(ownKeyColor)){
+				return fontColor;
+			}
+			const oppositeKeyColor = resolvedThemeValue(oppositeKeyColorOption);
+			if (isUsableContrastColor(oppositeKeyColor)){
+				return oppositeKeyColor;
+			}
+			return fallbackValue;
+		}
 		function rule(cssVarName, whichOption){
 			//console.log("cssVarName:"+cssVarName+", whichOption:"+whichOption+"<=="); 
 			if (themeOptions && themeOptions[whichOption]){
@@ -234,6 +280,9 @@ import { gThemes } from './themes.js';
 						 +" .namedNote, .NoteDisplay {"
 						         +rule("border-radius", "namedNoteRadius")
 								 +"}"
+					 +" .universalNamedNote {"
+						         +rule("border-radius", "namedNoteRadius")
+								 +"}"
 						 +" .singleNote {"
 						         +rule("border-radius", "namedNoteRadius")
 								 +" border-top-left-radius: var(--singleNote-top-left-radius);"
@@ -249,12 +298,12 @@ import { gThemes } from './themes.js';
 							     +"}"
 						 +" .noteWhiteKey {"
 							     +rule("background-color", "noteWhiteKeyColor")
-							     +rule("color", "noteWhiteKeyFontColor")
+							     +"color: transparent; "
 								 +rule("box-shadow", "noteWhiteKeyShadowColor")
 								 +"}"
 						 +" .noteBlackKey {"
 							     +rule("background-color", "noteBlackKeyColor")
-							     +rule("color", "noteBlackKeyFontColor")
+							     +"color: transparent; "
 							     +rule("box-shadow", "noteBlackKeyShadowColor")
 								 +"}"
 						 +" :root { "
@@ -270,8 +319,11 @@ import { gThemes } from './themes.js';
 
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
+									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black') + "; "
+									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('noteBlackKeyFontColor', 'noteBlackKeyColor', 'noteWhiteKeyColor', 'white') + "; "
 									+rule("--instrument-margin-tb", "instrumentMargins")
 									+rule("--cell-spacing", "cellSpacing")
+									+rule("--note-padding", "notePadding")
 									+rule("--named-note-radius", "namedNoteRadius")
 									+rule("--border-image-black-key", "borderImageBlackKey")
 									+rule("--border-image-white-key", "borderImageWhiteKey")

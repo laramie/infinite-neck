@@ -7,7 +7,10 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
-import { supportsPianoSkeuomorphic } from './templates/piano/piano-skeuomorphic.builder.js';
+import {
+    supportsPianoSkeuomorphic,
+    normalizePianoLayoutOptions
+} from './templates/piano/piano-skeuomorphic.builder.js';
 
 
 
@@ -22,8 +25,12 @@ export function getMyTuningsStore() {
     return song.myTunings;
 }
 
+export function getLibraryTunings() {
+    return allTunings.tunings;
+}
+
 export function getAllTunings() {
-    return allTunings.tunings.concat(getMyTuningsStore());
+    return getLibraryTunings().concat(getMyTuningsStore());
 }
 
 export function getMyTunings() {
@@ -86,18 +93,174 @@ export function generateNextTuningID(baseID) {
     return prefix + (maxNum + 1);
 }
 
+function cloneTuningObject(tuning) {
+    return JSON.parse(JSON.stringify(tuning));
+}
+
+function arraysEqual(left = [], right = []) {
+    if (left.length !== right.length) {
+        return false;
+    }
+    for (let index = 0; index < left.length; index += 1) {
+        if (left[index] !== right[index]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function buildDefaultSongTuningTemplate(baseInstrument = 'Guitar') {
+    const isPiano = baseInstrument === 'Piano';
+    return {
+        instance: true,
+        visible: true,
+        baseInstrument,
+        caption: '',
+        nStrings: 0,
+        rowRange: [],
+        showDiamonds: !isPiano,
+        diamonds: [3, 5, 7, 9, 15, 17, 19, 21],
+        doubleDiamonds: [12, 24],
+        frets: 24,
+        nut: !isPiano,
+        reverse: false,
+        banjoNut: {},
+        pianoNamesRow: false,
+        pianoSkeuomorphic: false,
+        stringDividerHeight: '0.5em'
+    };
+}
+
+function getLineageReferenceTunings(fromBaseID, {
+    libraryTunings = getLibraryTunings(),
+    songTunings = getMyTuningsStore()
+} = {}) {
+    const references = [];
+    const libraryReference = libraryTunings.find((tuning) => tuning.baseID === fromBaseID);
+    if (libraryReference) {
+        references.push(libraryReference);
+    }
+    songTunings
+        .filter((tuning) => tuning.fromBaseID === fromBaseID)
+        .forEach((tuning) => references.push(tuning));
+    return references;
+}
+
+export function validateSongTuningDraft(draft = {}, {
+    libraryTunings = getLibraryTunings(),
+    songTunings = getMyTuningsStore()
+} = {}) {
+    const baseID = `${draft.baseID || ''}`.trim();
+    const fromBaseID = `${draft.fromBaseID || ''}`.trim();
+    const caption = `${draft.caption || ''}`.trim() || baseID;
+    const baseInstrument = `${draft.baseInstrument || 'Guitar'}`.trim() || 'Guitar';
+    const rowRange = Array.isArray(draft.rowRange)
+        ? draft.rowRange.map((value) => Number.parseInt(value, 10))
+        : [];
+    const banjoNut = draft.banjoNut && typeof draft.banjoNut === 'object'
+        ? draft.banjoNut
+        : {};
+
+    if (!baseID) {
+        return { valid: false, error: 'Tuning ID is required.' };
+    }
+
+    if (!fromBaseID) {
+        return { valid: false, error: 'Lineage ID is required.' };
+    }
+
+    if (!rowRange.length || rowRange.some((value) => !Number.isInteger(value))) {
+        return { valid: false, error: 'MIDI rowRange is required and must contain only integers.' };
+    }
+
+    if (getAllTunings().some((tuning) => tuning.baseID === baseID)) {
+        return { valid: false, error: `A tuning with ID '${baseID}' already exists.` };
+    }
+
+    if (songTunings.some((tuning) => tuning.baseID === fromBaseID)) {
+        return {
+            valid: false,
+            error: `Lineage ID '${fromBaseID}' conflicts with an existing tuning ID in the song.`
+        };
+    }
+
+    const referenceTunings = getLineageReferenceTunings(fromBaseID, { libraryTunings, songTunings });
+    for (const referenceTuning of referenceTunings) {
+        if ((referenceTuning.baseInstrument || '') !== baseInstrument) {
+            return {
+                valid: false,
+                error: `Lineage ID '${fromBaseID}' already exists for instrument '${referenceTuning.baseInstrument}'.`
+            };
+        }
+        if (Number.parseInt(referenceTuning.nStrings, 10) !== rowRange.length) {
+            return {
+                valid: false,
+                error: `Lineage ID '${fromBaseID}' requires ${referenceTuning.nStrings} strings.`
+            };
+        }
+        if (!arraysEqual(referenceTuning.rowRange || [], rowRange)) {
+            return {
+                valid: false,
+                error: `Lineage ID '${fromBaseID}' already exists with a different MIDI rowRange.`
+            };
+        }
+    }
+
+    return {
+        valid: true,
+        normalizedDraft: {
+            baseID,
+            fromBaseID,
+            caption,
+            baseInstrument,
+            rowRange,
+            nStrings: rowRange.length,
+            banjoNut
+        }
+    };
+}
+
+export function createSongTuningFromDraft(draft = {}, {
+    libraryTunings = getLibraryTunings(),
+    songTunings = getMyTuningsStore()
+} = {}) {
+    const validation = validateSongTuningDraft(draft, { libraryTunings, songTunings });
+    if (!validation.valid) {
+        throw new Error(validation.error);
+    }
+
+    const { normalizedDraft } = validation;
+    const referenceTuning = getLineageReferenceTunings(normalizedDraft.fromBaseID, {
+        libraryTunings,
+        songTunings
+    })[0];
+    const createdTuning = referenceTuning
+        ? cloneTuningObject(referenceTuning)
+        : buildDefaultSongTuningTemplate(normalizedDraft.baseInstrument);
+
+    Object.assign(createdTuning, normalizedDraft, {
+        instance: true,
+        visible: true
+    });
+    if (!createdTuning.banjoNut || typeof createdTuning.banjoNut !== 'object') {
+        createdTuning.banjoNut = {};
+    }
+    return createdTuning;
+}
+
 export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tunings, options = {}) {
     var table = $("<table>");
     if (options.tableID) {
         table.attr("id", options.tableID);
     }
     var primaryControl = options.primaryControl || "clone";
+    var isSongOwnedTable = primaryControl === "visibility";
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var showMoveColumn = primaryControl === "visibility";
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th>" : "")
-        +"<th>Tuning</th><th>ID</th><th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
+        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>InMem</th>"
         
     );
@@ -106,6 +269,8 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var rows = tunings.length;
     for (var r = 0; r < rows; r++) {
         var tun = tunings[r];
+        normalizePianoLayoutOptions(tun);
+        var isPianoTuning = tun.baseInstrument === 'Piano';
         var disableMoveUp = r === 0 ? ' disabled' : '';
         var disableMoveDown = r === rows - 1 ? ' disabled' : '';
         var checkedVisible = tun.visible ? " checked " : "";
@@ -124,12 +289,18 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + '<input class="checkboxLH"   id="cbLH' + tun.baseID + '" '
             + ' type="checkbox" name="cbnLH' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedLH + '>Left-Handed</nobr></label>';
+        var leftHandCellHtml = isSongOwnedTable ? checkboxLH : (tun.reverse ? 'Left-Handed' : '');
 
         var checkedPN = tun.pianoNamesRow ? " checked " : "";
+        var disabledPN = tun.pianoSkeuomorphic ? " disabled " : "";
+        var pianoNamesTitle = tun.pianoSkeuomorphic
+            ? ' title="PianoNames is unavailable when PianoSkeuo is enabled." '
+            : '';
         var checkboxPN = '<label for="cbPN' + tun.baseID + '"><nobr>'
             + '<input class="checkboxPN"   id="cbPN' + tun.baseID + '" '
             + ' type="checkbox" name="cbnPN' + tun.baseID + '" value="'
-            + tun.baseID + '" ' + checkedPN + '></nobr></label>';
+            + tun.baseID + '" ' + checkedPN + disabledPN + pianoNamesTitle + '></nobr></label>';
+        var pianoNamesCellHtml = isSongOwnedTable ? checkboxPN : (tun.pianoNamesRow ? 'Yes' : '');
 
         var pianoSkeuomorphicSupported = supportsPianoSkeuomorphic(tun);
         var checkedPianoSkeuomorphic = tun.pianoSkeuomorphic ? " checked " : "";
@@ -141,18 +312,25 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + '<input class="checkboxPianoSkeuomorphic"   id="cbPianoSkeuomorphic' + tun.baseID + '" '
             + ' type="checkbox" name="cbnPianoSkeuomorphic' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedPianoSkeuomorphic + disabledPianoSkeuomorphic + pianoSkeuomorphicTitle + '></nobr></label>';
+        var pianoSkeuoCellHtml = isSongOwnedTable ? checkboxPianoSkeuomorphic : (tun.pianoSkeuomorphic ? 'Yes' : '');
 
         var checkedShowDiamonds = tun.showDiamonds ? " checked " : "";
         var checkboxShowDiamonds = '<label for="cbShowDiamonds' + tun.baseID + '"><nobr>'
             + '<input class="checkboxShowDiamonds"   id="cbShowDiamonds' + tun.baseID + '" '
             + ' type="checkbox" name="cbnShowDiamonds' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
+        var showDiamondsCellHtml = isSongOwnedTable ? checkboxShowDiamonds : (tun.showDiamonds ? 'Yes' : '');
 
         var checkedNut = tun.nut ? " checked " : "";
+        var disabledNut = isPianoTuning ? ' disabled ' : '';
+        var nutTitle = isPianoTuning
+            ? ' title="Nut is unavailable for Piano layouts." '
+            : '';
         var checkboxNut = '<label for="cbNut' + tun.baseID + '"><nobr>'
             + '<input class="checkboxNut"   id="cbNut' + tun.baseID + '" '
             + ' type="checkbox" name="cbnNut' + tun.baseID + '" value="'
-            + tun.baseID + '" ' + checkedNut + '></nobr></label>';
+            + tun.baseID + '" ' + checkedNut + disabledNut + nutTitle + '></nobr></label>';
+        var nutCellHtml = isSongOwnedTable ? checkboxNut : (tun.nut ? 'Yes' : '');
 
         var checked_doSpecialRows = tun.doSpecialRows ? " checked " : "";
         var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.doSpecialRows + '"><nobr>'
@@ -177,14 +355,19 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         }
 
         var selectBlock = generateSelect(tun.baseID, tun.frets);
-        var selectStringDividerHt = generateSelectStringDividerHt(tun.baseID, tun.stringDividerHeight);
+        var selectStringDividerHt = generateSelectStringDividerHt(
+            tun.baseID,
+            tun.stringDividerHeight,
+            isPianoTuning,
+            isPianoTuning ? 'Divider is unavailable for Piano layouts.' : ''
+        );
         var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
             + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
             + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '">X</button>';
 
         // For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text
         var idCellHtml;
-        if (primaryControl === "visibility") {
+        if (isSongOwnedTable) {
             idCellHtml = '<nobr><input type="text" class="inputTuningID" data-oldid="' + tun.baseID + '" value="' + tun.baseID + '" /><button type="button" class="moveyButton">&check;</button></nobr>';
         } else {
             idCellHtml = tun.baseID;
@@ -200,6 +383,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         }
         tr.append($("<td>").html(captionStr));
         tr.append($("<td>").html(idCellHtml));
+        if (isSongOwnedTable) {tr.append($("<td>").html(tun.fromBaseID));}
         tr.append($("<td>").html(tun.nStrings + "-string"));
         tr.append($("<td>").html(tun.baseInstrument));
         tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));
@@ -207,13 +391,13 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html());
         tr.append($("<td>").html(specialRows));
         tr.append($("<td>").html("" + BN));
-        tr.append($("<td>").html(checkboxLH));
-        tr.append($("<td>").html(checkboxPN));
-        tr.append($("<td>").html(checkboxPianoSkeuomorphic));
-        tr.append($("<td>").html(checkboxShowDiamonds));
-        tr.append($("<td>").html(checkboxNut));
-        tr.append($("<td>").html(selectBlock)); //numFrets
-        tr.append($("<td>").html(selectStringDividerHt));
+        tr.append($("<td>").html(leftHandCellHtml));
+        tr.append($("<td>").html(pianoNamesCellHtml));
+        tr.append($("<td>").html(pianoSkeuoCellHtml));
+        tr.append($("<td>").html(showDiamondsCellHtml));
+        tr.append($("<td>").html(nutCellHtml));
+        tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
+        tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
         tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
         
 
@@ -240,8 +424,10 @@ export function generateSelect(ID, frets) {
     return sel;
 }
 
-export function generateSelectStringDividerHt(ID, sHeightValue) {
-    var sel = "<select class='selectStringDividerHt' id='" + SELECT_STRINGDIVIDER_PFX + ID + "'>";
+export function generateSelectStringDividerHt(ID, sHeightValue, disabled = false, title = '') {
+    var disabledAttr = disabled ? ' disabled' : '';
+    var titleAttr = title ? " title='" + title + "'" : '';
+    var sel = "<select class='selectStringDividerHt' id='" + SELECT_STRINGDIVIDER_PFX + ID + "'" + disabledAttr + titleAttr + ">";
     var opt = "<option value='0'>0</option>";
     sel = sel + opt;
     for (var r = 1; r <= 8; r++) {
@@ -451,16 +637,12 @@ export function reloadTuningsDisplay(which){
             }));
         } else if (which === 'all'){
             var allTuningsDiv = $('#divAllTuningsTab');
-            var userControls = allTuningsDiv.find('.userInstrumentControlsGroup').detach();
             allTuningsDiv.empty();
             allTuningsDiv
-                .append(dumpTuningsToTable(tuningsInMemoryHash, allTunings.tunings, {
+                .append(dumpTuningsToTable(tuningsInMemoryHash, getLibraryTunings(), {
                     tableID: Constants.ALL_TUNINGS_TABLE_ID,
                     primaryControl: 'clone'
                 }));
-            if (userControls.length > 0) {
-                allTuningsDiv.append(userControls);
-            }
         }
         bindFormTuningsEvents();
         showTuningsTab('my');
@@ -473,6 +655,7 @@ function showTuningsTab(which) {
     var showMy = which !== 'all';
     $('#divMyTuningsTab').toggle(showMy);
     $('#divAllTuningsTab').toggle(!showMy);
+    $('#divSongTuningControls').toggle(showMy);
     $('#btnMyTuningsTab')
         .toggleClass('BtnPunchedIn', showMy)
         .toggleClass('BtnPunchedOut', !showMy);
@@ -481,15 +664,31 @@ function showTuningsTab(which) {
         .toggleClass('BtnPunchedOut', showMy);
 }
 
+function revealPianoReverseWarning(tuningID) {
+    $('.captionRow').show();
+    const tuningRoot = $('#' + Constants.TABLEDIV_ID_PREFIX + tuningID);
+    tuningRoot.find('.subcaption').show();
+    tuningRoot.find('.spanTuningDetails').show();
+}
+
+function resetSongTuningForm() {
+    $('#txtSongTuningID').val('');
+    $('#txtLineageID').val('');
+    $('#textareaRowRange').val('');
+    $('#textareaBanjoNut').val('');
+    $('#txtUserInstrumentCaption').val('');
+    $('#dropDownBaseInstrument').val('Guitar');
+}
+
 export function bindFormTuningsEvents() {
     $('#frmTunings').off('submit').on('submit', function (event) {
         event.preventDefault();
     });
 
-    $('#btnMyTuningsTab').click(function() {
+    $('#btnMyTuningsTab').off('click').on('click', function() {
         showTuningsTab('my');
     });
-    $('#btnAllTuningsTab').click(function() {
+    $('#btnAllTuningsTab').off('click').on('click', function() {
         showTuningsTab('all');
     });
     $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
@@ -512,6 +711,9 @@ export function bindFormTuningsEvents() {
         var tuning = findTuningForID(tuningID);
         tuning.reverse = this.checked;
         requestReinstallAllTuningsTables();
+        if (tuning.reverse && tuning.baseInstrument === 'Piano') {
+            revealPianoReverseWarning(tuningID);
+        }
     });
     $('#frmTunings .selectFrets').change(function () {
         var tuningID = this.id.substring(SELECT_FRETS_PFX.length);
@@ -535,6 +737,11 @@ export function bindFormTuningsEvents() {
     $('#frmTunings .checkboxPN').change(function () {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
+        if (tuning.pianoSkeuomorphic) {
+            tuning.pianoNamesRow = false;
+            $(this).prop('checked', false);
+            return;
+        }
         tuning.pianoNamesRow = this.checked;
         requestReinstallAllTuningsTables();
     });
@@ -542,6 +749,10 @@ export function bindFormTuningsEvents() {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
         tuning.pianoSkeuomorphic = this.checked;
+        normalizePianoLayoutOptions(tuning);
+        $('#cbPN' + tuningID)
+            .prop('checked', tuning.pianoNamesRow === true)
+            .prop('disabled', tuning.pianoSkeuomorphic === true);
         requestReinstallAllTuningsTables();
     });
     $('#frmTunings .checkboxShowDiamonds').change(function () {
@@ -556,43 +767,54 @@ export function bindFormTuningsEvents() {
         tuning.nut = this.checked;
         requestReinstallAllTuningsTables();
     });
-    $('#btnShowHideEditUserTuning').off('click').click(function () {
-        $('#divEditUserTuning').toggle();
+    $('#btnShowHideAddSongTuning').off('click').on('click', function () {
+        $('#divAddSongTuning').toggle();
     });
-    $('#btnSaveUserTuning').off('click').click(function () {
-        var tun = findTuningForID("USER");
-        if (tun) {
-            var text = $('#textareaRowRange').val();
-            if (text) {
-                if (text.trim()) {
-                    try {
-                        var arr = convertStringToIntArray(text.trim());
-                        tun.rowRange = arr;
-                        tun.nStrings = tun.rowRange.length;
-                    } catch (e) {
-                        alert("User instrument RowRange invalid: " + text);
-                        return;
-                    }
-                }
-            }
-
-
-            var sBanjoNut = $('#textareaBanjoNut').val();
-            if (sBanjoNut && sBanjoNut.trim()) {
-                tun.banjoNut = JSON.parse(sBanjoNut);
-            }
-
-            var sCaption = $('#txtUserInstrumentCaption').val();
-            if (sCaption && sCaption.trim()) {
-                tun.caption = sCaption.trim();
-            }
-
-            tun.baseInstrument = $('#dropDownBaseInstrument').val();
-            getSong().userInstrumentTuning = tun;
-
-            reloadAllTuningsDisplay();
-            // this click just modifies the tunings table, so not an instrument. requestReinstallAllTuningsTables();
+    $('#btnSaveSongTuning').off('click').on('click', function () {
+        let rowRange;
+        const rowRangeText = ($('#textareaRowRange').val() || '').trim();
+        if (!rowRangeText) {
+            alert('MIDI rowRange is required.');
+            return;
         }
+        try {
+            rowRange = convertStringToIntArray(rowRangeText);
+        } catch (error) {
+            alert('Song tuning RowRange invalid: ' + rowRangeText);
+            return;
+        }
+
+        let banjoNut = {};
+        const banjoNutText = ($('#textareaBanjoNut').val() || '').trim();
+        if (banjoNutText) {
+            try {
+                banjoNut = JSON.parse(banjoNutText);
+            } catch (error) {
+                alert('BanjoNut invalid JSON: ' + banjoNutText);
+                return;
+            }
+        }
+
+        const createdTuningResult = validateSongTuningDraft({
+            baseID: $('#txtSongTuningID').val(),
+            fromBaseID: $('#txtLineageID').val(),
+            caption: $('#txtUserInstrumentCaption').val(),
+            baseInstrument: $('#dropDownBaseInstrument').val(),
+            rowRange,
+            banjoNut
+        });
+        if (!createdTuningResult.valid) {
+            alert(createdTuningResult.error);
+            return;
+        }
+
+        const createdTuning = createSongTuningFromDraft(createdTuningResult.normalizedDraft);
+        getMyTuningsStore().push(createdTuning);
+        reloadMyTuningsDisplay();
+        resetSongTuningForm();
+        $('#divAddSongTuning').hide();
+        requestInstrumentAdded(createdTuning.baseID);
+        requestReinstallAllTuningsTables(createdTuning.baseID);
     });
 
     // Clone button handler (delegated from #frmTunings to support table reloads)

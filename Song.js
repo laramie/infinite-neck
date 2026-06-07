@@ -50,17 +50,23 @@ export class Song extends SongPersistence {
         return visibleTuningIDs;    
     }
 
-    addWiring(tablename, relativeSection, listenToTablename) {
+    addWiring(tablename, relativeSection, listenToTablename, listenerProjection = 'row-midi') {
         const idx = this.wirings.findIndex(w => w.tablename === tablename);
         const newWiring = new Wiring({ tablename:tablename, 
                                        relativeSection:relativeSection, 
-                                       listenToTablename:listenToTablename});
+                                       listenToTablename:listenToTablename,
+                                       listenerProjection: listenerProjection || 'row-midi'});
         if (idx === -1) {
             this.wirings.push(newWiring);
         } else {
             this.wirings[idx] = newWiring;
         }
-        EventBus.trigger("Wiring:added", {tablename:tablename, listenToTablename: listenToTablename});
+        EventBus.trigger("Wiring:added", {
+            tablename: tablename,
+            listenToTablename: listenToTablename,
+            relativeSection: relativeSection,
+            listenerProjection: newWiring.listenerProjection
+        });
     }
 
     removeWiring(tablename){
@@ -482,6 +488,14 @@ export class Song extends SongPersistence {
         this.getCurrentSection().setBeats(newValue);
 	}
 
+    addBeat(){
+        this.setBeats(this.getBeats() + 1);
+        this.publish_UpdateSectionStatus();
+        this.requestUiUpdatePrintSections();
+        this.requestUiFullRepaint();
+        this.requestUiShowBeats();
+    }
+
 
 	gotoFirstBeat(){
         this.getCurrentSection().gotoFirstBeat();
@@ -537,6 +551,7 @@ export class Song extends SongPersistence {
 		this.setBeats(beatCount+1);
     	this.gotoBeat(insertIndex);
 		this.publish_UpdateSectionStatus();
+        this.requestUiUpdatePrintSections();
 		this.requestUiFullRepaint();
         this.requestUiShowBeats();
 	}
@@ -577,6 +592,7 @@ export class Song extends SongPersistence {
         var currBeat = nStartBeat > this.getBeats() ? this.getBeats() : nStartBeat;
         this.getCurrentSection().currentBeat = currBeat;
         this.publish_UpdateSectionStatus();
+		this.requestUiUpdatePrintSections();
         this.requestUiShowBeats();
     }
 
@@ -951,7 +967,7 @@ export class Song extends SongPersistence {
         this.visibleNoteTables = visibleTableIds;
     }
 
-    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, userInstrumentTuning, plugins }){
+    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, plugins }){
         this.markVisibleTablesForFileSave(visibleTableIds);
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;
@@ -1040,6 +1056,10 @@ export class Song extends SongPersistence {
 
     requestUiShowBeats() {
         EventBus.trigger('SongUiShowBeats');
+    }
+
+    requestUiUpdatePrintSections() {
+        EventBus.trigger('SongUiUpdatePrintSections');
     }
 
     requestUiClearAndReplaySection() {

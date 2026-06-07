@@ -51,4 +51,23 @@ describe('approved values', () => {
   test('expandApprovedTemplate interpolates general and transpose caption values', () => {
     expect(approvedValues.expandApprovedTemplate('${arpeggioPositionsStatus} ${rootKey} ${transposeCurrentOffset} ${transposeProgressionFunctions}')).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span> F 3 C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeArrow">&Rang;</span></span>F');
   });
+
+  test('renders html samples as html while leaving plain samples escaped in the reference table', () => {
+    const html = approvedValues.renderApprovedValuesReferenceHtml({ includeSamples: true });
+
+    expect(html).toContain('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span>');
+    expect(html).toContain('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeArrow">&Rang;</span></span>D');
+    expect(html).toContain('<code>Song</code>');
+    expect(html).not.toContain('&lt;span class=&quot;arpeggioPositionsStatus&quot;&gt;');
+  });
+
+  test('renders copy buttons for each approved pattern row', () => {
+    const html = approvedValues.renderApprovedValuesReferenceHtml({ includeSamples: true });
+
+    expect(html).toContain("class='approvedValueCopyButton'");
+    expect(html).toContain("data-action='copyApprovedPattern'");
+    expect(html).toContain("data-action-args='[\"rootKey\"]'");
+    expect(html).toContain("src='img/clipboard-arrow.png'");
+    expect(html).toContain("title='Copy ${rootKey}'");
+  });
 });

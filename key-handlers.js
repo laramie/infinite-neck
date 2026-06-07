@@ -88,16 +88,21 @@ function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsC
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
+function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
+function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
+function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
+function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
+function showAllNoteNames(...args) { return requireProvider('showAllNoteNames')(...args); }
 function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
@@ -262,6 +267,7 @@ function document_keypress(e) {
                 break;
             case "g":
                 showOneMenu("#divTunings");
+				EventBus.trigger('ReloadTuningsDisplays');
                 break;
             case "i":
                 showOneMenu("#divFillNotes");
@@ -459,6 +465,7 @@ export function performCmdAction(menuItem, args){
 	actionResult.menuItem = menuItem;
 	actionResult.args = args;
 	actionResult.popOnBang = false;
+	actionResult.preserveMenuStack = false;
 
 	if (menuItem.popOnBang){
 		actionResult.popOnBang = true;
@@ -632,6 +639,14 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "mapSpacebar_resetSongHard":
 			spacebarActionName = 'resetSongHard';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_toggleLoopSections":
+			spacebarActionName = 'toggleLoopSections';
+			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
+			break;
+		case "mapSpacebar_toggleLoopBeats":
+			spacebarActionName = 'toggleLoopBeats';
 			actionResult.result = `spacebar mapped: ${spacebarActionName}`;
 			break;
 		case "mapSpacebar_unsetSpacebarAction":
@@ -843,6 +858,22 @@ export function performCmdAction(menuItem, args){
 			printSectionsNotes();
 			hideCmdLine();
 			break;
+		case "printSectionsOptions":
+			printSectionsOptions();
+			hideCmdLine();
+			break;
+		case "printSectionsChart":
+			printSectionsChart();
+			hideCmdLine();
+			break;
+		case "printSectionsLine":
+			actionResult.result = printSectionsLine() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenLeadSheetLine":
+			actionResult.result = hideFullscreenLeadSheetLine() || actionResult.result;
+			hideCmdLine();
+			break;
 		case "sectionDelete":
 			var deleted = getSong().deleteCurrentSection();
 			if (deleted){
@@ -871,6 +902,9 @@ export function performCmdAction(menuItem, args){
 		case "showHelp":
 			window.open('help.html','_blank');
 			break;
+		case "showAllNoteNames":
+			showAllNoteNames(true);
+			break;
 		case "showNamedNotes":
 			$("#cbHideNamedNotes").prop("checked", false).trigger('change');
 			break;
@@ -882,6 +916,9 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
+			break;
+		case "hideAllNoteNames":
+			showAllNoteNames(false);
 			break;
 		case "hideNamedNotes":
 			$("#cbHideNamedNotes").prop("checked", true).trigger('change');
@@ -1076,6 +1113,7 @@ export function performCmdAction(menuItem, args){
 		case "pluginAction:bury": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
+			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;
 			if (pluginResult.messageJSON) {
 				showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {

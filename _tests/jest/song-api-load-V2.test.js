@@ -12,6 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const FIXTURE_FILENAME = 'tests/persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
+const PIANO_LISTENER_FIXTURE_FILENAME = 'tests/piano-listener-guitar-wite-out-fixture.json';
 
 function getSongPath(songFilename = FIXTURE_FILENAME) {
     return path.join(__dirname, '../../songs', songFilename);
@@ -118,7 +119,32 @@ describe('Song V2 canonical load from disk', () => {
         song.wirings.forEach((wiring) => {
             expect(visibleTables.has(wiring.tablename)).toBe(true);
             expect(visibleTables.has(wiring.listenToTablename)).toBe(true);
+            expect(wiring.listenerProjection).toBe('row-midi');
         });
+    });
+
+    test('defaults listenerProjection to row-midi when older fixtures omit it', () => {
+        const { song } = loadSongCanonical();
+
+        expect(song.wirings.every((wiring) => wiring.listenerProjection === 'row-midi')).toBe(true);
+    });
+
+    test('loads the piano listener fixture with listenerProjection and tonalSourceSet fields intact', () => {
+        const { song } = loadSongCanonical(PIANO_LISTENER_FIXTURE_FILENAME);
+
+        expect(song.wirings).toEqual([
+            expect.objectContaining({
+                tablename: 'tblPiano_1',
+                listenToTablename: 'tblP46_1',
+                listenerProjection: 'midi-low-to-high'
+            })
+        ]);
+
+        const firstSectionGuitarNotes = song.getSections()[0].getSectionNotes('tblP46_1');
+        expect(firstSectionGuitarNotes.tonalSourceSet).toBe('');
+
+        const fourthSectionGuitarNotes = song.getSections()[3].getSectionNotes('tblP46_1');
+        expect(fourthSectionGuitarNotes.tonalSourceSet).toBe('SingleNote');
     });
 });
 
@@ -209,8 +235,7 @@ describe('Song V2 save path from a loaded song', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(song.getPersistentSongFile());
@@ -224,9 +249,84 @@ describe('Song V2 save path from a loaded song', () => {
         expect(savedObj).not.toHaveProperty('isHeadless');
         expect(savedObj).not.toHaveProperty('gSectionsCurrentIndex');
         expect(savedObj).not.toHaveProperty('randomSectionHistory');
+        expect(savedObj).not.toHaveProperty('userInstrumentTuning');
 
         const bendNote = savedObj.sections[0].sectionNotesByTable.tblS6_1.recordedNotes['1'][1];
         expect(bendNote.styleNum).toBe(Note.STYLENUM_BEND);
         expect(bendNote.bendValue).toBe('semitone1');
+    });
+
+    test('getPersistentSongFile persists listenerProjection only when non-default', () => {
+        const { song } = loadSongCanonical();
+
+        song.wirings[1].listenerProjection = 'midi-low-to-high';
+        const savedObj = JSON.parse(song.getPersistentSongFile());
+
+        expect(savedObj.wirings[0]).not.toHaveProperty('listenerProjection');
+        expect(savedObj.wirings[1]).toEqual(expect.objectContaining({
+            tablename: 'tblP46_1',
+            listenerProjection: 'midi-low-to-high'
+        }));
+
+        const reloaded = new Song(savedObj);
+        expect(reloaded.wirings[0].listenerProjection).toBe('row-midi');
+        expect(reloaded.wirings[1].listenerProjection).toBe('midi-low-to-high');
+    });
+
+    test('getPersistentSongFile keeps runtime stylesheet rows in memory but only saves user-authored colorDicts', () => {
+        const { data, song } = loadSongCanonical();
+        const builtInRows = {
+            Roles: {
+                readOnly: true,
+                computed: false,
+                checked: true,
+                dict: {
+                    noteRoot: { colorClass: 'noteBlack', caption: 'Root' }
+                }
+            },
+            Default: {
+                readOnly: true,
+                computed: true,
+                checked: true,
+                Default: true,
+                dict: {
+                    noteRoot: { colorClass: 'noteBlack', caption: 'Root' }
+                }
+            }
+        };
+        const userRow = {
+            readOnly: false,
+            computed: false,
+            checked: true,
+            dict: {
+                note12: { colorClass: 'noteHatched3 notePink4', caption: '&Delta;' }
+            }
+        };
+
+        song.colorDicts = {
+            ...builtInRows,
+            s2Laramie: userRow
+        };
+
+        song.prepareForSave({
+            visibleTableIds: data.visibleNoteTables,
+            songName: data.songName,
+            theme: data.theme,
+            bpm: parseInt(data.defaultBPM, 10),
+            userColors: {
+                note12: { colorClass: 'noteHatched3 notePink4', caption: '&Delta;' }
+            }
+        });
+
+        const savedObj = JSON.parse(song.getPersistentSongFile());
+
+        expect(savedObj).not.toHaveProperty('userColors');
+        expect(savedObj.colorDicts).toEqual({
+            s2Laramie: userRow
+        });
+        // Serialization should not strip runtime rows from the live song.
+        expect(song.colorDicts).toHaveProperty('Roles');
+        expect(song.colorDicts).toHaveProperty('Default');
+        expect(song.colorDicts).toHaveProperty('s2Laramie');
     });
 });

@@ -3,6 +3,11 @@ import { Note } from './Note.js';
 import { lookupClassForNote } from './colorFunctions.js';
 
 export const TARGET_TABLE_OPTION_LIMIT = 9;
+export const ListenerProjection = Object.freeze({
+  ROW_MIDI: 'row-midi',
+  MIDI_LOW_TO_HIGH: 'midi-low-to-high',
+  MIDI_HIGH_TO_LOW: 'midi-high-to-low'
+});
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -168,6 +173,201 @@ export function getPreferredCellForMidi(layout, midinum, preferredRow = null) {
   return (layout?.byMidi?.get(midinum) || [])[0] || null;
 }
 
+export function normalizeListenerProjection(mode = ListenerProjection.ROW_MIDI) {
+  switch (`${mode || ''}`) {
+    case ListenerProjection.MIDI_LOW_TO_HIGH:
+      return ListenerProjection.MIDI_LOW_TO_HIGH;
+    case ListenerProjection.MIDI_HIGH_TO_LOW:
+      return ListenerProjection.MIDI_HIGH_TO_LOW;
+    default:
+      return ListenerProjection.ROW_MIDI;
+  }
+}
+
+export function isMidiOnlyListenerProjection(mode = ListenerProjection.ROW_MIDI) {
+  const normalized = normalizeListenerProjection(mode);
+  return normalized === ListenerProjection.MIDI_LOW_TO_HIGH
+    || normalized === ListenerProjection.MIDI_HIGH_TO_LOW;
+}
+
+function getListenerSourceRowPriority(layout, projection) {
+  const normalized = normalizeListenerProjection(projection);
+  const orderedRows = (layout?.rows || [])
+    .filter((rowEntry) => rowEntry && Number.isInteger(rowEntry.row))
+    .map((rowEntry) => ({
+      row: rowEntry.row,
+      startMidi: toInt(rowEntry?.nutCell?.midinum, Number.MAX_SAFE_INTEGER)
+    }))
+    .sort((left, right) => left.startMidi - right.startMidi || left.row - right.row);
+
+  if (normalized === ListenerProjection.MIDI_HIGH_TO_LOW) {
+    orderedRows.reverse();
+  }
+
+  return new Map(orderedRows.map((entry, index) => [entry.row, index]));
+}
+
+function getListenerProjectedCellKey(note) {
+  const row = toInt(note?.row, null);
+  const col = toInt(note?.col, null);
+  const midinum = toInt(note?.midinum, null);
+
+  if (Number.isInteger(row) && Number.isInteger(col)) {
+    return rowKey(row, col);
+  }
+  if (Number.isInteger(row) && Number.isInteger(midinum)) {
+    return `${row}:${midinum}`;
+  }
+  if (Number.isInteger(midinum)) {
+    return `midi:${midinum}`;
+  }
+  return null;
+}
+
+function getListenerCollisionKey(note) {
+  const styleNum = toInt(note?.styleNum, Note.STYLENUM_TINY);
+  const cellKey = getListenerProjectedCellKey(note);
+  const midinum = toInt(note?.midinum, null);
+
+  switch (styleNum) {
+    case Note.STYLENUM_SINGLE:
+      return cellKey ? `single:${cellKey}` : null;
+    case Note.STYLENUM_TINY:
+    case Note.STYLENUM_BEND:
+      return cellKey ? `tinybend:${cellKey}` : null;
+    case Note.STYLENUM_FINGERING:
+      return cellKey ? `fingering:${cellKey}` : null;
+    case Note.STYLENUM_MIDIPITCHESSINGLE:
+      return cellKey ? `highlight-single:${cellKey}` : null;
+    case Note.STYLENUM_MIDIPITCHES:
+      return Number.isInteger(midinum) ? `highlight-pitch:${midinum}` : null;
+    default:
+      return cellKey ? `style-${styleNum}:${cellKey}` : null;
+  }
+}
+
+function rewriteProjectedListenerNote(note, targetCell) {
+  const projected = clone(note || {});
+  const styleNum = toInt(projected?.styleNum, Note.STYLENUM_TINY);
+
+  projected.midinum = `${targetCell.midinum}`;
+  projected.noteName = Constants.midinumToNoteName(targetCell.midinum);
+  projected.row = `${targetCell.row}`;
+
+  if (styleNum === Note.STYLENUM_MIDIPITCHES) {
+    delete projected.col;
+  } else {
+    projected.col = `${targetCell.col}`;
+  }
+
+  return projected;
+}
+
+function sortListenerSourceNotes(notes, sourceLayout, projection) {
+  const rowPriority = getListenerSourceRowPriority(sourceLayout, projection);
+
+  return [...(notes || [])]
+    .map((note, sourceIndex) => {
+      const sourceRow = toInt(note?.row, null);
+      return {
+        note,
+        sourceIndex,
+        sourceRow,
+        rowPriority: rowPriority.has(sourceRow) ? rowPriority.get(sourceRow) : Number.MAX_SAFE_INTEGER
+      };
+    })
+    .sort((left, right) => left.rowPriority - right.rowPriority || left.sourceIndex - right.sourceIndex)
+    .map((entry) => entry.note);
+}
+
+function resolveListenerProjectionCell(note, targetLayout) {
+  const midinum = toInt(note?.midinum, null);
+  if (!Number.isInteger(midinum)) {
+    return null;
+  }
+  return getPreferredCellForMidi(targetLayout, midinum);
+}
+
+function projectListenerNoteArray(notes, sourceLayout, targetLayout, projection) {
+  if (!isMidiOnlyListenerProjection(projection)) {
+    return [...(notes || [])].map((note) => clone(note));
+  }
+
+  const orderedKeys = [];
+  const projectedByKey = new Map();
+
+  sortListenerSourceNotes(notes, sourceLayout, projection).forEach((note) => {
+    const targetCell = resolveListenerProjectionCell(note, targetLayout);
+    if (!targetCell) {
+      return;
+    }
+
+    const styleNum = toInt(note?.styleNum, Note.STYLENUM_TINY);
+    if (styleNum === Note.STYLENUM_BEND && targetCell.isNut) {
+      return;
+    }
+
+    const projected = rewriteProjectedListenerNote(note, targetCell);
+    const collisionKey = getListenerCollisionKey(projected);
+    if (!collisionKey) {
+      return;
+    }
+
+    if (!projectedByKey.has(collisionKey)) {
+      orderedKeys.push(collisionKey);
+    }
+    projectedByKey.set(collisionKey, projected);
+  });
+
+  return orderedKeys
+    .map((key) => projectedByKey.get(key))
+    .filter(Boolean);
+}
+
+export function projectListenerPlayedNotes({
+  playedNotes = [],
+  sourceTuning = {},
+  targetTuning = {},
+  listenerProjection = ListenerProjection.ROW_MIDI
+} = {}) {
+  if (!isMidiOnlyListenerProjection(listenerProjection)) {
+    return [...playedNotes].map((note) => clone(note));
+  }
+
+  const sourceLayout = createTuningLayout(sourceTuning);
+  const targetLayout = createTuningLayout(targetTuning);
+  return projectListenerNoteArray(playedNotes, sourceLayout, targetLayout, listenerProjection);
+}
+
+export function projectListenerRecordedNotes({
+  recordedNotes = {},
+  sourceTuning = {},
+  targetTuning = {},
+  listenerProjection = ListenerProjection.ROW_MIDI
+} = {}) {
+  if (!isMidiOnlyListenerProjection(listenerProjection)) {
+    return Object.fromEntries(
+      Object.entries(recordedNotes || {}).map(([beat, notes]) => [
+        `${beat}`,
+        [...(notes || [])].map((note) => clone(note))
+      ])
+    );
+  }
+
+  const sourceLayout = createTuningLayout(sourceTuning);
+  const targetLayout = createTuningLayout(targetTuning);
+  const projected = {};
+
+  Object.entries(recordedNotes || {}).forEach(([beat, notes]) => {
+    const projectedNotes = projectListenerNoteArray(notes || [], sourceLayout, targetLayout, listenerProjection);
+    if (projectedNotes.length > 0) {
+      projected[`${beat}`] = projectedNotes;
+    }
+  });
+
+  return projected;
+}
+
 export function isNutCell(layout, row, col) {
   return !!getCellByRowCol(layout, row, col)?.isNut;
 }
@@ -292,9 +492,11 @@ function createScratch() {
     recordedNotes: {},
     playedSingleCells: new Set(),
     playedTinyBendCells: new Set(),
+    playedFingeringCells: new Set(),
     playedAnyCells: new Set(),
     recordedSingleCellsByBeat: new Map(),
     recordedTinyBendCellsByBeat: new Map(),
+    recordedFingeringCellsByBeat: new Map(),
     recordedHighlightSingleCellsByBeat: new Map(),
     recordedHighlightPitchBeat: new Set()
   };
@@ -318,6 +520,9 @@ function getCollisionDescriptor(layout, note, storageKind, beat) {
     if ((styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) && cellKey) {
       return { kind: 'playedTinyBend', key: cellKey, anyCell: cellKey };
     }
+    if (styleNum === Note.STYLENUM_FINGERING && cellKey) {
+      return { kind: 'playedFingering', key: cellKey, anyCell: cellKey };
+    }
     if (cellKey) {
       return { kind: 'playedAny', key: cellKey, anyCell: cellKey };
     }
@@ -329,6 +534,9 @@ function getCollisionDescriptor(layout, note, storageKind, beat) {
   }
   if ((styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) && cellKey) {
     return { kind: 'recordedTinyBend', key: `${beat}:${cellKey}`, cellKey };
+  }
+  if (styleNum === Note.STYLENUM_FINGERING && cellKey) {
+    return { kind: 'recordedFingering', key: `${beat}:${cellKey}`, cellKey };
   }
   if (styleNum === Note.STYLENUM_MIDIPITCHESSINGLE && cellKey) {
     return { kind: 'recordedHighlightSingle', key: `${beat}:${cellKey}`, cellKey };
@@ -364,6 +572,13 @@ function addScratchNote(scratch, layout, note, storageKind, beat, dropReason = '
       scratch.playedTinyBendCells.add(descriptor.key);
       scratch.playedAnyCells.add(descriptor.anyCell);
       break;
+    case 'playedFingering':
+      if (scratch.playedFingeringCells.has(descriptor.key)) {
+        return { accepted: false, reason: dropReason };
+      }
+      scratch.playedFingeringCells.add(descriptor.key);
+      scratch.playedAnyCells.add(descriptor.anyCell);
+      break;
     case 'playedAny':
       scratch.playedAnyCells.add(descriptor.anyCell);
       break;
@@ -377,6 +592,14 @@ function addScratchNote(scratch, layout, note, storageKind, beat, dropReason = '
     }
     case 'recordedTinyBend': {
       const set = getBeatSet(scratch.recordedTinyBendCellsByBeat, beat);
+      if (set.has(descriptor.cellKey)) {
+        return { accepted: false, reason: dropReason };
+      }
+      set.add(descriptor.cellKey);
+      break;
+    }
+    case 'recordedFingering': {
+      const set = getBeatSet(scratch.recordedFingeringCellsByBeat, beat);
       if (set.has(descriptor.cellKey)) {
         return { accepted: false, reason: dropReason };
       }
@@ -425,6 +648,9 @@ function shouldMoveStyle(styleNum, storageKind, include) {
   }
   if ((styleNum === Note.STYLENUM_MIDIPITCHESSINGLE || styleNum === Note.STYLENUM_MIDIPITCHES) && storageKind === 'recorded') {
     return include.highlights;
+  }
+  if (styleNum === Note.STYLENUM_FINGERING) {
+    return include.fingering;
   }
   return false;
 }

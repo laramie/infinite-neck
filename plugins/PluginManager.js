@@ -53,7 +53,7 @@ function valuesEqual(leftValue, rightValue) {
 
 function normalizePluginResponse(response, fallbackResult) {
   if (typeof response === 'string') {
-    return { result: response, message: '', messageJSON: '' };
+    return { result: response, message: '', messageJSON: '', preserveMenuStack: false };
   }
   if (response && typeof response === 'object') {
     let messageJSON = response.messageJSON || '';
@@ -63,10 +63,11 @@ function normalizePluginResponse(response, fallbackResult) {
     return {
       result: response.result || fallbackResult,
       message: response.message || '',
-      messageJSON
+      messageJSON,
+      preserveMenuStack: response.preserveMenuStack === true
     };
   }
-  return { result: fallbackResult, message: '', messageJSON: '' };
+  return { result: fallbackResult, message: '', messageJSON: '', preserveMenuStack: false };
 }
 
 function getMenuNodeKey(node, index = 0) {

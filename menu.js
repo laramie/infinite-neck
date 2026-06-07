@@ -118,6 +118,11 @@ export var gMenuFile =    {
               "trigger": "s",
               "children": [
                 {
+                  "caption": "<b>s</b>ection loop",
+                  "trigger": "s",
+                  "action": "mapSpacebar_toggleLoopSections"
+                },
+                {
                   "caption": "<b>f</b>irst",
                   "trigger": "f",
                   "action": "mapSpacebar_firstSection"
@@ -148,6 +153,11 @@ export var gMenuFile =    {
               "caption": "<b>b</b>eats",
               "trigger": "b",
               "children": [
+                {
+                  "caption": "<b>b</b>eat loop",
+                  "trigger": "b",
+                  "action": "mapSpacebar_toggleLoopBeats"
+                },
                 {
                   "caption": "<b>f</b>irst",
                   "trigger": "f",
@@ -280,7 +290,27 @@ export var gMenuFile =    {
           "caption": "<b>d</b>etails",
           "trigger": "d",
           "action": "printSectionsDetails"
-        }            
+        },
+        {
+          "caption": "<b>o</b>ptions",
+          "trigger": "o",
+          "action": "printSectionsOptions"
+        },
+        {
+          "caption": "<b>c</b>hart",
+          "trigger": "c",
+          "action": "printSectionsChart"
+        },
+        {
+          "caption": "<b>l</b>ine",
+          "trigger": "l",
+          "action": "printSectionsLine"
+        },
+        {
+          "caption": "<b>h</b>ide line",
+          "trigger": "h",
+          "action": "hideFullscreenLeadSheetLine"
+        }
       ]
     },
     {
@@ -669,6 +699,11 @@ export var gMenuFile =    {
           "trigger": "h",
           "children": [
             {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "hideAllNoteNames"
+            },
+            {
               "caption": "<b>n</b>amedNotes",
               "trigger": "n",
               "action": "hideNamedNotes"
@@ -694,6 +729,11 @@ export var gMenuFile =    {
           "caption": "<b>s</b>how",
           "trigger": "s",
           "children": [
+            {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "showAllNoteNames"
+            },
             {
               "caption": "<b>n</b>amedNotes",
               "trigger": "n",
@@ -1525,7 +1565,8 @@ function showChildMenusRecursively(menu, level){
     level++;
     var indent = "";
     for (var i = 0; i < level; i++) {
-        indent += '&nbsp;&nbsp;&nbsp;&nbsp;';
+        //indent += '&nbsp;&nbsp;&nbsp;&nbsp;';
+        indent += '  ';
     }
     var result = indent + menu.caption;
     var children = menu.children;

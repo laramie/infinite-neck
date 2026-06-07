@@ -1,4 +1,4 @@
-import { getDefaultTheme, getThemes, getWidget_SelectThemes } from '../../themeFunctions.js';
+import { getDefaultTheme, getThemes, getWidget_SelectThemes, installUserTheme } from '../../themeFunctions.js';
 
 describe('themeFunctions baseline contracts', () => {
     test('getDefaultTheme returns the Default theme object', () => {
@@ -23,6 +23,24 @@ describe('themeFunctions baseline contracts', () => {
         });
     });
 
+    test('themes expose corrected key font contrast pairs for representative variants', () => {
+        const themes = getThemes();
+
+        expect(themes.Default.noteWhiteKeyFontColor).toBe('black');
+        expect(themes.Default.noteBlackKeyFontColor).toBe('white');
+        expect(themes.Reverse.noteWhiteKeyFontColor).toBe('white');
+        expect(themes.Reverse.noteBlackKeyFontColor).toBe('black');
+        expect(themes.Matrix.noteWhiteKeyFontColor).toBe('chartreuse');
+        expect(themes.Matrix.noteBlackKeyFontColor).toBe('chartreuse');
+    });
+
+    test('default theme still defines spacing inputs used by piano skeuomorphic insets', () => {
+        const themes = getThemes();
+
+        expect(themes.Default.notePadding).toBe('8pt');
+        expect(themes.Default.cellSpacing).toBe('6pt');
+    });
+
     test('getWidget_SelectThemes includes all theme ids in the select HTML', () => {
         const themes = getThemes();
         const widget = getWidget_SelectThemes();
@@ -32,5 +50,18 @@ describe('themeFunctions baseline contracts', () => {
         Object.keys(themes).forEach((id) => {
             expect(widget).toContain("value='" + id + "'");
         });
+    });
+
+    test('installUserTheme keeps the runtime USER slot addressable as USER', () => {
+        const runtimeUserTheme = installUserTheme({
+            id: 'Matrix-Matrix',
+            caption: 'Matrix+Matrix ',
+            noteRadius: '12%'
+        });
+
+        expect(runtimeUserTheme.id).toBe('USER');
+        expect(runtimeUserTheme.caption).toBe('USER');
+        expect(runtimeUserTheme.noteRadius).toBe('12%');
+        expect(getThemes().USER).toEqual(runtimeUserTheme);
     });
 });

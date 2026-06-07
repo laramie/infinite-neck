@@ -9,6 +9,34 @@ const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,
 const NOTE_NAMES_SHARPS = 'A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>,D,D<small>&#9839;</small>,E,F,F<small>&#9839;</small>,G,G<small>&#9839;</small>'.split(',');
 const DEFAULT_BEATS = 4;
 
+function getNoteRootFromSectionNotes(sectionNotes) {
+	if (!sectionNotes) {
+		return null;
+	}
+
+	for (const [noteName, note] of Object.entries(sectionNotes.namedNotes || {})) {
+		if (note?.colorClass === 'noteRoot') {
+			return noteName;
+		}
+	}
+
+	for (const note of sectionNotes.playedNotes || []) {
+		if (note?.colorClass === 'noteRoot' && note.noteName) {
+			return note.noteName;
+		}
+	}
+
+	for (const recordedNotes of Object.values(sectionNotes.recordedNotes || {})) {
+		for (const note of recordedNotes || []) {
+			if (note?.colorClass === 'noteRoot' && note.noteName) {
+				return note.noteName;
+			}
+		}
+	}
+
+	return null;
+}
+
 export class Section extends SectionPersistence {
 	constructor(obj = {}) {
 		super(obj, SectionNotes);
@@ -216,6 +244,28 @@ export class Section extends SectionPersistence {
 		// Returns an array of [tableID, SectionNotes] pairs, so you can .forEach(([tableID, sn]) => ...)
 		return Object.entries(this.sectionNotesByTable);
 	}
+
+	getNoteRoot(tablename) {
+		const orderedTables = [];
+		if (tablename && Object.hasOwn(this.sectionNotesByTable, tablename)) {
+			orderedTables.push([tablename, this.sectionNotesByTable[tablename]]);
+		}
+		Object.entries(this.sectionNotesByTable).forEach(([tableID, sectionNotes]) => {
+			if (tableID !== tablename) {
+				orderedTables.push([tableID, sectionNotes]);
+			}
+		});
+
+		for (const [tableID, sectionNotes] of orderedTables) {
+			const noteName = getNoteRootFromSectionNotes(sectionNotes);
+			if (noteName) {
+				return { noteName, tablename: tableID };
+			}
+		}
+
+		return null;
+	}
+
 	renameSectionNotesTableID(newTableID){
 		//TODO: implement moving the tableID embedded in SectionNotes if someone renames their table/myTunings instrument.
 	}

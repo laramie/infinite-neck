@@ -38,6 +38,20 @@ function makePromptCollection(htmlString) {
 function makeWrapper(element) {
 	return {
 		length: element ? 1 : 0,
+		prepend(value) {
+			if (!element) {
+				return this;
+			}
+			element.html = `${value || ''}${element.html || ''}`;
+			return this;
+		},
+		empty() {
+			if (!element) {
+				return this;
+			}
+			element.html = '';
+			return this;
+		},
 		toggleClass(className, force) {
 			if (!element) {
 				return this;
@@ -115,12 +129,18 @@ const elements = {
 	'#CmdMenuStack': makeElement(),
 	'#CmdMenuBreadcrumbs': makeElement(),
 	'#CmdMenuResults': makeElement(),
-	'#txtCmdLine': makeElement()
+	'#txtCmdLine': makeElement(),
+	'#dropDownCmdResults': makeElement()
 };
+
+global.Option = jest.fn((label = '', value = '') => ({ label, value }));
 
 global.$ = jest.fn((selector) => {
 	if (selector === '<div>') {
 		return makeHtmlBuilder();
+	}
+	if (selector && typeof selector === 'object') {
+		return makeWrapper(makeElement());
 	}
 	return makeWrapper(elements[selector] || null);
 });
@@ -128,9 +148,12 @@ global.$ = jest.fn((selector) => {
 const {
 	setCmdActionRunner,
 	setCmdLineMenuMode,
+	txtCmdLine_keypress,
 	txtCmdLine_keydown,
 	updateCmdLineView
 } = await import('../../command-line.js');
+
+const menuModule = await import('../../menu.js');
 
 describe('command-line ArrowUp and ArrowDown handlers', () => {
 	beforeEach(() => {
@@ -140,6 +163,15 @@ describe('command-line ArrowUp and ArrowDown handlers', () => {
 		elements['#CmdMenuStack'].data = new Map();
 		elements['#CmdMenuBreadcrumbs'].html = '';
 		elements['#CmdMenuResults'].html = '';
+			elements['#dropDownCmdResults'].html = '';
+			menuModule.gMenuPointer.type = undefined;
+			menuModule.gMenuPointer.action = undefined;
+			menuModule.gMenuPointer.children = [];
+			menuModule.gMenuPointer.input = undefined;
+			menuModule.diveMenu.mockClear();
+			menuModule.surfaceOneMenu.mockClear();
+			menuModule.hasNoChildMenus.mockReset();
+			menuModule.hasNoChildMenus.mockReturnValue(false);
 		setCmdLineMenuMode('tall');
 		updateCmdLineView();
 	});
@@ -218,5 +250,33 @@ describe('command-line ArrowUp and ArrowDown handlers', () => {
 		expect(event.preventDefault).not.toHaveBeenCalled();
 		expect(event.stopPropagation).not.toHaveBeenCalled();
 		expect(actionRunner).not.toHaveBeenCalled();
+	});
+
+	test('preserveMenuStack leaf actions return to the parent menu instead of staying on the leaf', () => {
+		const child = {
+			trigger: 'p',
+			action: 'pluginAction:invoke',
+			children: []
+		};
+		menuModule.gMenuPointer.children = [child];
+		menuModule.hasNoChildMenus.mockReturnValue(true);
+
+		setCmdActionRunner(jest.fn(() => ({
+			result: 'printed 5 modes',
+			popOnBang: true,
+			preserveMenuStack: true
+		})));
+
+		const event = {
+			key: 'p',
+			keyCode: 'p'.charCodeAt(0),
+			preventDefault: jest.fn()
+		};
+		global.event = event;
+
+		txtCmdLine_keypress(event);
+
+		expect(menuModule.diveMenu).toHaveBeenCalledWith(child, 'showing-list-menu');
+		expect(menuModule.surfaceOneMenu).toHaveBeenCalledTimes(1);
 	});
 });

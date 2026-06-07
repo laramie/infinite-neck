@@ -1,13 +1,16 @@
 .pianoSkeuomorphicInstrument {
-    --piano-white-key-width: clamp(2.3em, 3.4vw, 3.1em);
-    --piano-black-key-width: calc(var(--piano-white-key-width) * 0.64);
+    --piano-white-key-width: 50px;
+    --piano-black-key-width: calc(var(--piano-white-key-width) / 2.3);
     --piano-black-key-height: 0.64;
-    --piano-white-face-side-gap: max(2px, calc(var(--cell-spacing) * 0.18));
-    --piano-white-face-top-gap: max(2px, calc(var(--cell-spacing) * 0.10));
-    --piano-white-face-bottom-gap: max(3px, calc(var(--cell-spacing) * 0.18));
-    --piano-black-face-side-gap: max(1px, calc(var(--cell-spacing) * 0.10));
-    --piano-black-face-top-gap: max(1px, calc(var(--cell-spacing) * 0.08));
-    --piano-black-face-bottom-gap: max(2px, calc(var(--cell-spacing) * 0.12));
+    --piano-face-horizontal-gap: max(4px, calc(var(--note-padding) * 0.45), calc(var(--cell-spacing) * 0.75));
+    --piano-face-top-gap-base: max(3px, calc(var(--note-padding) * 0.22), calc(var(--cell-spacing) * 0.35));
+    --piano-face-bottom-gap-base: max(5px, calc(var(--note-padding) * 0.55), calc(var(--cell-spacing) * 0.90));
+    --piano-white-face-side-gap: var(--piano-face-horizontal-gap);
+    --piano-white-face-top-gap: var(--piano-face-top-gap-base);
+    --piano-white-face-bottom-gap: var(--piano-face-bottom-gap-base);
+    --piano-black-face-side-gap: max(2px, calc(var(--piano-face-horizontal-gap) * 0.70));
+    --piano-black-face-top-gap: max(2px, calc(var(--piano-face-top-gap-base) * 0.80));
+    --piano-black-face-bottom-gap: max(3px, calc(var(--piano-face-bottom-gap-base) * 0.72));
 }
 
 table.fretTable.pianoSkeuomorphicTable {
@@ -44,13 +47,17 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey {
     position: relative;
     z-index: 1;
     cursor: pointer;
-    color: #241c13;
+    color: transparent;
     border: 1px solid #8c7a57;
     border-top-color: #e8dec7;
     border-bottom-width: 2px;
     border-radius: 0 0 0.55em 0.55em;
     background: linear-gradient(180deg, #fffef8 0%, #f5f0e1 65%, #ddd2b5 100%) !important;
     box-shadow: inset -0.16em -0.18em 0.36em rgba(105, 84, 44, 0.18), 0 0.12em 0.2em rgba(18, 11, 4, 0.24);
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano {
+    z-index: 7;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay {
@@ -66,6 +73,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay {
     border-radius: inherit;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
     top: 0;
@@ -74,6 +82,36 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
     left: 0;
     width: auto;
     height: auto;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote {
+    color: #241c13;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote:not(.NamedNoteActive) {
+    color: transparent;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote {
+    color: #241c13;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote:not(.tinyNotePlayedBend),
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote:not(.tinyNotePlayedBend) {
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .midinumDisplayNamedNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .midinumDisplay,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .midinumDisplayNamedNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .midinumDisplay {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    text-align: center;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey,
@@ -90,7 +128,7 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey {
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey {
     z-index: 5;
     cursor: default;
-    color: #f8f2de;
+    color: transparent;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
@@ -107,6 +145,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
     cursor: pointer;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote {
     top: var(--piano-black-face-top-gap);
     right: var(--piano-black-face-side-gap);
@@ -128,10 +167,45 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote {
     border-top-left-radius: var(--singleNote-top-left-radius);
 }
 
-table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote:not(.NamedNoteActive) {
+    color: transparent;
+}
+
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote {
     color: #f8f2de;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote {
+    color: #f8f2de;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote > .CenterCell > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote > .CenterCell > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote > .CenterCell > .CenterCell {
+    align-items: center;
+    padding-top: 0;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote > .CenterCell {
+    position: relative;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote > .CenterCell > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote > .CenterCell > .CenterCell,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote > .CenterCell > .CenterCell {
+    box-sizing: border-box;
+    position: absolute;
+    top: calc(100% * var(--piano-black-key-height));
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    align-items: center;
+    justify-content: center;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.namesRowCell {
@@ -161,13 +235,4 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey > div {
 
 table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteWhiteKey > div {
     color: #2d2317;
-}
-
-table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .CenterCell {
-    align-items: flex-start;
-    padding-top: 0.2em;
-}
-
-table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .CenterCell {
-    padding-top: 0.45em;
 }

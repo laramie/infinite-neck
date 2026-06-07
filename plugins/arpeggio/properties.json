@@ -1,8 +1,8 @@
 [
   {
     "name": "targetTable",
-    "caption": "Table",
-    "trigger": "T",
+    "caption": "Instrument",
+    "trigger": "I",
     "datatype": "org.dynamide.Select",
     "value": "",
     "defaultValue": "",
@@ -56,7 +56,7 @@
   {
     "name": "minRow",
     "caption": "upper string limit",
-    "trigger": "U",
+    "trigger": "u",
     "datatype": "Number",
     "value": 0,
     "defaultValue": 0,
@@ -66,7 +66,7 @@
   {
     "name": "maxRow",
     "caption": "lower string limit",
-    "trigger": "L",
+    "trigger": "l",
     "datatype": "Number",
     "value": 0,
     "defaultValue": 0,
@@ -106,6 +106,19 @@
       { "value": "alternate", "caption": "alternate", "trigger": "a" },
       { "value": "random", "caption": "random", "trigger": "r" },
       { "value": "bach", "caption": "bach", "trigger": "b" }
+    ]
+  },
+  {
+    "name": "type",
+    "caption": "type",
+    "trigger": "t",
+    "datatype": "org.dynamide.Select",
+    "value": "NamedNote",
+    "defaultValue": "NamedNote",
+    "visibleInMenu": true,
+    "options": [
+      { "value": "NamedNote", "caption": "NamedNote", "trigger": "N" },
+      { "value": "SingleNote", "caption": "SingleNote", "trigger": "S" }
     ]
   },
   {

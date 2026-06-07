@@ -35,12 +35,14 @@ describe('DisplayOptions baseline fixture contracts', () => {
             expect(section).toHaveProperty('displayOptions');
             expect(section.displayOptions).toBeTruthy();
             expect(section.displayOptions).toHaveProperty('hideSingleNotes');
+            expect(section.displayOptions).toHaveProperty('showLooperLightBeats');
             expect(section.displayOptions).toHaveProperty('showCellNotes');
             expect(section.displayOptions).toHaveProperty('NoteDisplaySizes');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('width');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('height');
             if (idx === 1) {
                 expect(section.displayOptions.hideSingleNotes).toBe(true);
+                expect(section.displayOptions.showLooperLightBeats).toBe(true);
             }
         });
     });
@@ -55,6 +57,9 @@ describe('DisplayOptions baseline fixture contracts', () => {
         song.gotoSection(1);
         song.getCurrentSection().displayOptions.hideSingleNotes = false;
         song.getCurrentSection().displayOptions.NoteDisplaySizes.width = '90px';
+        song.getCurrentSection().displayOptions.pianoHeightScaleFactor = '7';
+        song.getCurrentSection().displayOptions.pianoWidthScaleFactor = '5';
+        song.getCurrentSection().displayOptions.showLooperLightBeats = false;
 
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
@@ -68,7 +73,10 @@ describe('DisplayOptions baseline fixture contracts', () => {
             hideSingleNotes: s.displayOptions.hideSingleNotes,
             width: s.displayOptions.NoteDisplaySizes.width,
             height: s.displayOptions.NoteDisplaySizes.height,
-            showCellNotes: s.displayOptions.showCellNotes
+            showCellNotes: s.displayOptions.showCellNotes,
+            pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor,
+            showLooperLightBeats: s.displayOptions.showLooperLightBeats
         }));
 
         song.prepareForSave({
@@ -76,8 +84,7 @@ describe('DisplayOptions baseline fixture contracts', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(JSON.stringify(song));
@@ -85,7 +92,10 @@ describe('DisplayOptions baseline fixture contracts', () => {
             hideSingleNotes: s.displayOptions.hideSingleNotes,
             width: s.displayOptions.NoteDisplaySizes.width,
             height: s.displayOptions.NoteDisplaySizes.height,
-            showCellNotes: s.displayOptions.showCellNotes
+            showCellNotes: s.displayOptions.showCellNotes,
+            pianoHeightScaleFactor: s.displayOptions.pianoHeightScaleFactor,
+            pianoWidthScaleFactor: s.displayOptions.pianoWidthScaleFactor,
+            showLooperLightBeats: s.displayOptions.showLooperLightBeats
         }));
 
         expect(afterSummary).toEqual(beforeSummary);
@@ -123,12 +133,18 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         const savedOptions = clone(song.getCurrentSection().displayOptions);
         savedOptions.hideSingleNotes = false;
         savedOptions.NoteDisplaySizes.width = '88px';
+        savedOptions.pianoHeightScaleFactor = '8';
+        savedOptions.pianoWidthScaleFactor = '4';
+        savedOptions.showLooperLightBeats = false;
 
         // Mirrors the save-button runtime contract: getCurrentSection().displayOptions = options
         song.getCurrentSection().displayOptions = savedOptions;
 
         expect(sections[1].displayOptions.hideSingleNotes).toBe(false);
         expect(sections[1].displayOptions.NoteDisplaySizes.width).toBe('88px');
+        expect(sections[1].displayOptions.pianoHeightScaleFactor).toBe('8');
+        expect(sections[1].displayOptions.pianoWidthScaleFactor).toBe('4');
+        expect(sections[1].displayOptions.showLooperLightBeats).toBe(false);
         expect(sections[0].displayOptions).toEqual(before0);
         expect(sections[2].displayOptions).toEqual(before2);
     });
@@ -161,8 +177,7 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
-            userColors: data.userColors,
-            userInstrumentTuning: data.userInstrumentTuning
+            userColors: data.userColors
         });
 
         const savedObj = JSON.parse(JSON.stringify(song));

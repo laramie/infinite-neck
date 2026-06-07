@@ -1,8 +1,8 @@
 <template id="section-status-vertical-template">
-    <span id="${widgetID}" class="section-status-vertical-widget" data-tablename="${ownerID}">
-        <table class="section-status-vertical-table LooperLightTD">
+    <span id="${widgetID}" class="${widgetClasses} section-status-vertical-widget" data-tablename="${ownerID}" data-placement-id="${placementID}">
+        <table class="section-status-vertical-table">
             <tr>
-                <td class="instrumentSectionBox ${LooperLight}">
+                <td class="instrumentSectionBox SectionStatus_loopLight">
                     <table class="section-status-vertical-table-inner">
                         <tr>
                             <td>
@@ -17,6 +17,11 @@
                         <tr>
                             <td>
                                 <span class="SectionsStatus_SectionNumber"></span>
+                            </td>
+                        </tr>
+                        <tr class="SectionStatus_beatRow">
+                            <td>
+                                <span class="SectionStatus_beatWrap"><span class="SectionStatus_beatColon">:</span><span class="SectionStatus_beatNumber"></span></span>
                             </td>
                         </tr>
                     </table>
@@ -36,23 +41,13 @@
     </span>
 </template>
 
-<!-- when we are done, kill these:
- 
-    infinite-neck.css :: .lblSectionmark
-    index.html :: topControlsCaptions :: lblSectionmark, lblSectionsStatusSectionNo, lblSectionNumber
-    instrument.css :: instrumentSectionMark (this should now be in section-status.css)
-
-    infinite-neck.js ::
-      export function updateSectionsStatus(){
-		//These should be in #topControlsCaptions in index.html
-	    $(".lblSectionsStatusSectionNo").html(""+(getSong().getSectionsCurrentIndex()+1));
--->
 <template id="section-status-horizontal-template">
-    <span id="${widgetID}" class="section-status-horizontal-widget" data-tablename="${ownerID}">
-        <span class="instrumentSectionBox ${LooperLight}">
+    <span id="${widgetID}" class="${widgetClasses} section-status-horizontal-widget" data-tablename="${ownerID}" data-placement-id="${placementID}">
+        <span class="instrumentSectionBox SectionStatus_loopLight">
             <span class='SectionStatus_relativeSection'></span>
             <span class="instrumentSectionMark">&sect;</span>
             <span class="SectionsStatus_SectionNumber"></span>
+            <span class="SectionStatus_beatWrap"><span class="SectionStatus_beatColon">:</span><span class="SectionStatus_beatNumber"></span></span>
         </span>
         <span class='SectionStatus_rootKey'></span>
         <span class='SectionStatus_rootKeyLead'></span>

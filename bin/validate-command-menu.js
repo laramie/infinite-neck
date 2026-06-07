@@ -40,6 +40,33 @@ function extractSwitchBlock(source, switchMarker) {
     return '';
 }
 
+function extractBlockAfterMarker(source, marker) {
+    const blockStart = source.indexOf(marker);
+    if (blockStart === -1) {
+        return '';
+    }
+
+    const braceStart = source.indexOf('{', blockStart);
+    if (braceStart === -1) {
+        return '';
+    }
+
+    let depth = 0;
+    for (let index = braceStart; index < source.length; index++) {
+        const ch = source[index];
+        if (ch === '{') {
+            depth += 1;
+        } else if (ch === '}') {
+            depth -= 1;
+            if (depth === 0) {
+                return source.slice(braceStart + 1, index);
+            }
+        }
+    }
+
+    return '';
+}
+
 function collectTopLevelCaseLabels(switchBody) {
     const labels = new Set();
     let depth = 0;
@@ -75,6 +102,7 @@ function collectTopLevelCaseLabels(switchBody) {
 
 const actionCases = collectTopLevelCaseLabels(extractSwitchBlock(keyHandlersSource, 'switch (menuItem.action){'));
 const valueCases = new Set(listApprovedValues({ includeSamples: false }).map((entry) => entry.name));
+const menuValueCases = collectLiteralValueCases(extractBlockAfterMarker(keyHandlersSource, 'export function getValue(what)'));
 
 const errors = [];
 const warnings = [];
@@ -84,11 +112,42 @@ const runtimeActionRefs = new Set();
 const runtimeChildrenActionMap = new Map([
     ['pluginManager', [
         'pluginAction:invoke',
+        'pluginAction:bury',
         'pluginProperty:select',
         'pluginProperty:set',
         'pluginProperty:toggle'
     ]]
 ]);
+
+function collectLiteralValueCases(functionBody) {
+    const labels = new Set();
+    const literalPattern = /what\s*===\s*'([^']+)'/g;
+    let match;
+
+    while ((match = literalPattern.exec(functionBody)) !== null) {
+        labels.add(match[1]);
+    }
+
+    return labels;
+}
+
+function hasChildren(node) {
+    return Array.isArray(node?.children) && node.children.length > 0;
+}
+
+function hasRuntimeChildren(node) {
+    return typeof node?.runtimeChildren === 'string' && node.runtimeChildren.length > 0;
+}
+
+function isPassiveDisplayNode(node) {
+    return Boolean(node)
+        && !node.trigger
+        && !node.action
+        && !node.input
+        && !hasChildren(node)
+        && !hasRuntimeChildren(node)
+        && typeof node.caption === 'string';
+}
 
 function addError(message) {
     errors.push(message);
@@ -104,6 +163,9 @@ function isLikelyResolverToken(value) {
 
 function pathForNode(parentPath, node) {
     if (!node || !node.trigger) {
+        if (isPassiveDisplayNode(node)) {
+            return parentPath + '/[display]';
+        }
         return parentPath + '/[input]';
     }
     if (parentPath === '/') {
@@ -115,6 +177,9 @@ function pathForNode(parentPath, node) {
 function validateVisibleNode(node, nodePath) {
     if (!node.caption) {
         addError(nodePath + ': missing caption');
+    }
+    if (isPassiveDisplayNode(node)) {
+        return;
     }
     if (!node.trigger) {
         addError(nodePath + ': missing trigger');
@@ -135,7 +200,7 @@ function validateVars(node, nodePath) {
         return;
     }
     node.vars.forEach((token) => {
-        if (!valueCases.has(token)) {
+        if (!valueCases.has(token) && !menuValueCases.has(token)) {
             addError(nodePath + ': unresolved vars token "' + token + '" in approved-values registry');
         }
         if (node.caption && !node.caption.includes('${' + token + '}')) {
@@ -186,20 +251,19 @@ function validateChildren(node, nodePath) {
     node.children.forEach((child, index) => {
         const childPath = pathForNode(nodePath, child);
 
-        if (!child.trigger) {
+        if (!child.trigger && !isPassiveDisplayNode(child)) {
             addError(childPath + ': child at index ' + index + ' is missing trigger');
         } else if (seenByTrigger.has(child.trigger)) {
             addError(
                 nodePath + ': duplicate sibling trigger "' + child.trigger + '" at ' + seenByTrigger.get(child.trigger) + ' and ' + childPath
             );
-        } else {
+        } else if (child.trigger) {
             seenByTrigger.set(child.trigger, childPath);
         }
 
-        const noChildren = !Array.isArray(child.children) || child.children.length === 0;
+        const noChildren = !hasChildren(child);
         const noAction = !child.action;
-        const hasRuntimeChildren = typeof child.runtimeChildren === 'string' && child.runtimeChildren.length > 0;
-        if (noChildren && noAction && !node.action && !hasRuntimeChildren) {
+        if (noChildren && noAction && !node.action && !hasRuntimeChildren(child) && !isPassiveDisplayNode(child)) {
             addWarning(childPath + ': selector-style leaf has no action, and parent also has no action');
         }
     });

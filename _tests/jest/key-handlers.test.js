@@ -59,6 +59,7 @@ jest.unstable_mockModule('../../looper.js', () => ({
 
 jest.unstable_mockModule('../../menu.js', () => ({
 	buildChildMenuCaptionsRow: jest.fn(() => ''),
+	diveMenu: jest.fn(),
 	dumpMenus: jest.fn(() => ''),
 	gMenuFile: {},
 	gMenuPointer: {},
@@ -143,6 +144,7 @@ describe('key-handlers spacebar mapping', () => {
 	let mockSetBPM;
 	let mockGetBPM;
 	let mockToggleRecording;
+	let mockShowAllNoteNames;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -170,6 +172,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockSetBPM = jest.fn();
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
+		mockShowAllNoteNames = jest.fn();
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -198,16 +201,21 @@ describe('key-handlers spacebar mapping', () => {
 			getSong: () => song,
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
+			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
 			printSectionsNotes: jest.fn(),
+			printSectionsOptions: jest.fn(),
+			printSectionsChart: jest.fn(),
+			printSectionsLine: jest.fn(() => 'LeadSheetLine shown'),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
 			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
 			setSingleNoteOpacity: jest.fn(),
 			setTinyNoteOpacity: jest.fn(),
+			showAllNoteNames: mockShowAllNoteNames,
 			showOneMenu: jest.fn(),
 			toggleCaption: jest.fn(),
 			toggleFullscreen: jest.fn(),
@@ -221,6 +229,59 @@ describe('key-handlers spacebar mapping', () => {
 		});
 
 		performCmdAction({ action: 'mapSpacebar_unsetSpacebarAction' });
+	});
+
+	test('printSectionsOptions routes to the Chart Options tab action', () => {
+		const printSectionsOptions = jest.fn();
+		setKeyHandlerProviders({ printSectionsOptions });
+
+		performCmdAction({ action: 'printSectionsOptions' });
+
+		expect(printSectionsOptions).toHaveBeenCalledTimes(1);
+	});
+
+	test('printSectionsChart routes to the Chart tab action', () => {
+		const printSectionsChart = jest.fn();
+		setKeyHandlerProviders({ printSectionsChart });
+
+		performCmdAction({ action: 'printSectionsChart' });
+
+		expect(printSectionsChart).toHaveBeenCalledTimes(1);
+	});
+
+	test('printSectionsLine routes to the Line action and returns its result', () => {
+		const printSectionsLine = jest.fn(() => 'LeadSheetLine shown');
+		setKeyHandlerProviders({ printSectionsLine });
+
+		const result = performCmdAction({ action: 'printSectionsLine' });
+
+		expect(printSectionsLine).toHaveBeenCalledTimes(1);
+		expect(result.result).toBe('LeadSheetLine shown');
+	});
+
+	test('keypress g opens tunings and reloads tunings displays', () => {
+		const showOneMenu = jest.fn();
+		setKeyHandlerProviders({ showOneMenu });
+
+		document_keypress({
+			key: 'g',
+			keyCode: 'g'.charCodeAt(0),
+			target: { tagName: 'DIV' },
+			preventDefault: jest.fn()
+		});
+
+		expect(showOneMenu).toHaveBeenCalledWith('#divTunings');
+		expect(mockEventBus.trigger).toHaveBeenCalledWith('ReloadTuningsDisplays');
+	});
+
+	test('hideFullscreenLeadSheetLine routes to the fullscreen hide action and returns its result', () => {
+		const hideFullscreenLeadSheetLine = jest.fn(() => 'LeadSheetLine hidden');
+		setKeyHandlerProviders({ hideFullscreenLeadSheetLine });
+
+		const result = performCmdAction({ action: 'hideFullscreenLeadSheetLine' });
+
+		expect(hideFullscreenLeadSheetLine).toHaveBeenCalledTimes(1);
+		expect(result.result).toBe('LeadSheetLine hidden');
 	});
 
 	test('mapSpacebar_restartSong stores firstSection as the mapped action', () => {
@@ -246,6 +307,34 @@ describe('key-handlers spacebar mapping', () => {
 		expect(clearAndReplaySection).not.toHaveBeenCalled();
 	});
 
+	test('spacebar can be mapped to loop toggles', () => {
+		performCmdAction({ action: 'mapSpacebar_toggleLoopSections' });
+		const sectionLoopEvent = {
+			key: ' ',
+			code: 'Space',
+			target: { tagName: 'BODY' },
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(sectionLoopEvent);
+
+		expect(sectionLoopEvent.preventDefault).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.toggleLoopSections).toHaveBeenCalledTimes(1);
+
+		performCmdAction({ action: 'mapSpacebar_toggleLoopBeats' });
+		const beatLoopEvent = {
+			key: ' ',
+			code: 'Space',
+			target: { tagName: 'BODY' },
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(beatLoopEvent);
+
+		expect(beatLoopEvent.preventDefault).toHaveBeenCalledTimes(1);
+		expect(mockTransportController.toggleLoopBeats).toHaveBeenCalledTimes(1);
+	});
+
 	test('mapped spacebar ignores text inputs', () => {
 		performCmdAction({ action: 'mapSpacebar_lastSection' });
 		const event = {
@@ -260,6 +349,18 @@ describe('key-handlers spacebar mapping', () => {
 		expect(event.preventDefault).not.toHaveBeenCalled();
 		expect(song.lastSection).not.toHaveBeenCalled();
 		expect(clearAndReplaySection).not.toHaveBeenCalled();
+	});
+
+	test('showAllNoteNames action delegates true to provider', () => {
+		performCmdAction({ action: 'showAllNoteNames' });
+
+		expect(mockShowAllNoteNames).toHaveBeenCalledWith(true);
+	});
+
+	test('hideAllNoteNames action delegates false to provider', () => {
+		performCmdAction({ action: 'hideAllNoteNames' });
+
+		expect(mockShowAllNoteNames).toHaveBeenCalledWith(false);
 	});
 
 	test('resetSong delegates to the transport controller', () => {

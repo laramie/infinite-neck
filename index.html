@@ -46,1109 +46,1158 @@
         }
     </style>
 </head>
+
 <body>
     <div id="root"></div>
-            <div class="container">
+    <div class="container">
 
-            <form id="frmTopControls" onsubmit="return false;">
-                <div id="divTopCaptions">
-                    <span style="vertical-align: top;">
-                        <button id="btnHamburger" class="HamburgerClass" type="button">&equiv;</button>
-                        <span class="productsmall">Laramie's </span><span class="product">infinite-neck</span>
-                    </span>
-                    <span id="transportLeftPoint"></span>
-                    <span id="divControls">
-                        <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1"><b><u>F</u></b>ile</button>
-                        <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Info</button>
-                        <button id="btnChart" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Cha<b><u>r</u></b>t</button>
-                        <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">F<b><u>i</u></b>ll</button>
-                        <button id="btnTunings" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Tunin<b><u class='obvious-underline'>g</u></b>s</button>
-                        <button id="btnPalette" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1"><b><u>p</u></b>alette</button>
-                        <button id="btnViewControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1"><b><u>V</u></b>iew</button>
-                        <button id="btnThemeControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Themes</button>
-                        <button id="btnDesktop" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                            tabindex="-1">Desktop</button>
-                        <button data-action="help" class="MainMenuTabBtn" tabindex="-1">Help</button>
-                        &nbsp;&nbsp;<span id="SelectThemesDest"></span>
-                    </span>
-                    <span id="transportTopPoint"></span>
-                </div>
-
-                <div id="divPalette">
-                </div>
-
-                <div id="divInfo">
-                </div>
-
-                <div id="divFileControls">
-                    <table class="menuTable">
-                        <tr>
-                            <td class="menuPage">
-                                <div class="sectionPageControlsGroup">
-                                    <label for="fileInput">Open Song from Local Files:
-                                        <input type="file" id="fileInput">
-                                    </label>
-                                    <br>
-                                    <nobr>&nbsp;&nbsp;<label for="cbAppendSections"><input id="cbAppendSections"
-                                                type="checkbox" name="cbnAppendSections" value="1">Append sections to
-                                            current song
-                                        </label>
-                                    </nobr>
-                                </div>
-                                <br>
-                                <div class="sectionPageControlsGroup">
-                                    Open Song from: <button id="btnSongList" type="button" tabindex="-1"
-                                        data-action="songLibrary">Song Library</button>
-                                    <div id="divSongList"></div>
-                                </div>
-                                <br>
-                                <div class="sectionPageControlsGroup">
-                                    <label for="txtFilename">Song Name:
-                                        <input type="text" name="txtFilename" id="txtFilename"
-                                            value="Round-midnight"><button type="button">&check;</button>
-                                    </label>
-                                    <br />
-                                    <button id="btnDownload" type="button">Download Song</button>&nbsp;<span
-                                        class="lblSongName"></span><span style="color: green;">.json</span>
-                                </div>
-                                <br>
-                                <div class="sectionPageControlsGroup">
-                                    <label for="txtBPM">BPM:&nbsp;</label>
-                                    <input type="text" name="txtBPM" id="txtBPM" size="4" value="80"><button
-                                        type="button">&check;</button>
-
-                                    <span id="loopTimingModeGroup" class="transportTimingModeGroup">
-                                          <label for="rbLoopTimingVisual">
-                                            <input
-                                              type="radio"
-                                              id="rbLoopTimingVisual"
-                                              name="rbLoopTimingMode"
-                                              value="visual"
-                                              checked
-                                            >
-                                            Visual Timing
-                                          </label>
-                                          <br>
-                                          <label for="rbLoopTimingTransport">
-                                            <input
-                                              type="radio"
-                                              id="rbLoopTimingTransport"
-                                              name="rbLoopTimingMode"
-                                              value="transport"
-                                            >
-                                            Transport Timing
-                                          </label>
-                                        </span>
-
-                                    &nbsp;&nbsp;&nbsp;<button id="btnGraveyard" type="button"
-                                        data-action="showGraveyard">View Graveyard</button>
-                                        &nbsp;&nbsp;&nbsp;<label for="cbTransposeNotes"><input id="cbTransposeNotes" type="checkbox"
-                                                name="cbnTransposeNotes" value="1">Allow transposition by keyboard
-                                            shortcuts <b><u>d</u></b>, <b><u>U</u></b>, <b><u>u</u></b>,
-                                            <b><u>D</u></b>, <b><u>&nbsp;j&nbsp;</u></b>, &amp; <b><u>J</u></b>
-                                        </label>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--end menuTable-->
-                </div>
-
-            </form>
-
-
-            <div id="divFillNotes">
-                <form id="frmFillNotes">
-                    <table class="menuTable">
-                        <tr>
-                            <td class="menuPage">
-                                <div class="sectionPageControlsGroup">
-                                    <table id="controlTable2">
-                                        <tr>
-                                            <td style="padding-left: 1em;">Root:
-                                            </td>
-                                            <td style="vertical-align: top;">
-                                                Key:<span style="font-size: 120%; padding-left: 10pt;"
-                                                    class="lblRootID">RootID</span>
-                                                <br />
-
-                                                <label id="lblFillNoteRootN" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteRootN" name="rbnFillNoteRoot"
-                                                        value="noteClear">
-                                                    None
-                                                </label>
-                                                <br>
-                                                <label id="lblFillNoteRootK" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteRootK" name="rbnFillNoteRoot"
-                                                        value="noteKeep" checked>
-                                                    Keep
-                                                </label>
-                                                <br>
-                                                <label id="lblFillNoteRoot" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteRoot" name="rbnFillNoteRoot"
-                                                        value="noteRoot">
-                                                    Root
-                                                </label>
-                                                <span style="display: none;" id="idRootRoleSpan">Root</span>
-
-                                            </td>
-                                            <td style="padding-left: 2em;">Chord:
-                                                <br /><small>no root</small>
-                                            </td>
-                                            <td style="vertical-align: top;">
-                                                <select id="dropDownChords">
-                                                    <option value="4,7">Maj</option>
-                                                    <option value="3,7">Min</option>
-                                                    <option value="4,8">Aug</option>
-                                                    <option value="3,6">Dim&nbsp;&nbsp;&nbsp;&ordm;</option>
-                                                    <option value="3,6,9">Dim7</option>
-                                                    <option value="3,6,10">m7b5&nbsp;&nbsp;&nbsp;&oslash;</option>
-                                                    <option value="2,7">Sus2</option>
-                                                    <option value="5,7">Sus4</option>
-                                                    <option value="4,7,11">Maj7&nbsp;&nbsp;&nbsp;&Delta;</option>
-                                                    <option value="3,7,10">Min7</option>
-                                                    <option value="4,7,10">Dom7</option>
-                                                    <option value="3,7,11">MinMaj</option>
-                                                    <option value="3,7,10,14">Min9</option>
-                                                    <option value="4,7,9,14">6/9</option>
-                                                </select>
-                                                <br />
-
-                                                <label id="lblFillNoteChordN" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteChordN" name="rbnFillNoteChord"
-                                                        value="noteClear">
-                                                    None
-                                                </label>
-                                                <br>
-                                                <label id="lblFillNoteChordK" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteChordK" name="rbnFillNoteChord"
-                                                        value="noteKeep" checked>
-                                                    Keep
-                                                </label>
-                                                <br>
-                                                <label id="lblFillNoteChord" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteChord" name="rbnFillNoteChord"
-                                                        value="noteChord">
-                                                    Chord
-                                                </label>
-                                                <br>
-                                                <label id="lblFillNoteChordH" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteChordH" name="rbnFillNoteChord"
-                                                        value="noteHighlightSingle">
-                                                    Highlight
-                                                </label>
-
-
-                                                <span style="display: none;" id="idChordRoleSpan">Chord</span>
-
-
-
-                                            </td>
-                                            <td align="right" style="padding-left: 2em;">Scale:
-                                                <br /><small>w/root</small>
-                                            </td>
-                                            <td style="vertical-align: top;">
-                                                <select id="dropDownScales">
-                                                    <option value="0,2,4,6,8,10">WholeTone</option>
-                                                    <option value="0,3,6,9">Diminished</option>
-                                                    <option value="0,3,5,7,10">MinPentatonic</option>
-                                                    <option value="0,2,4,7,9">MajPentatonic</option>
-                                                    <option value="0,2,4,5,7,9,11">Ionian/Major</option>
-                                                    <option value="0,2,3,5,7,9,10">Dorian</option>
-                                                    <option value="0,1,3,5,7,8,10">Phrygian</option>
-                                                    <option value="0,2,4,6,7,9,11">Lydian</option>
-                                                    <option value="0,2,4,6,7,9,10">LydianDominant</option>
-                                                    <option value="0,2,4,5,7,9,10">Mixolydian</option>
-                                                    <option value="0,2,3,5,7,8,10">Aeolian/Natural</option>
-                                                    <option value="0,1,3,5,6,8,10">Locrian</option>
-                                                    <option value="0,2,3,5,7,8,11">HarmonicMinor</option>
-                                                    <option value="0,2,3,5,7,9,11">MelodicMinor</option>
-                                                    <option value="0,1,4,5,7,8,10">Gypsy</option>
-                                                    <option value="0,1,3,5,7,9,11">NeopolitanMaj</option>
-                                                    <option value="0,1,3,5,7,8,11">NeopolitanMin</option>
-                                                </select>
-                                                <br />
-
-                                                <nobr>
-                                                    <label id="lblFillNoteScaleN" class="radioFillChooser"
-                                                        for="rbFillNoteScaleN"><input type="radio" id="rbFillNoteScaleN"
-                                                            name="rbnFillNoteScale" value="noteClear">None</label>
-                                                </nobr>
-
-                                                <br>
-                                                <nobr>
-                                                    <label id="lblFillNoteScaleK" class="radioFillChooser"
-                                                        for="rbFillNoteScaleK"><input type="radio" id="rbFillNoteScaleK"
-                                                            name="rbnFillNoteScale" value="noteKeep"
-                                                            checked>Keep</label>
-                                                </nobr>
-                                                <br>
-                                                <nobr>
-                                                    <label id="lblFillNoteScale" class="radioFillChooser">
-                                                        <input type="radio" id="rbFillNoteScale" name="rbnFillNoteScale"
-                                                            value="noteScale">
-                                                        Scale
-                                                    </label>
-                                                </nobr>
-                                                <br>
-                                                <label id="lblFillNoteScaleH" class="radioFillChooser">
-                                                    <input type="radio" id="rbFillNoteScaleH" name="rbnFillNoteScale"
-                                                        value="noteHighlightSingle">
-                                                    Highlight
-                                                </label>
-
-                                                <span style="display: none;" id="idScaleRoleSpan">Scale</span>
-
-                                            </td>
-                                            <td style="padding-left: 2em; vertical-align: top;">
-                                                <span id="spanFillVisibleTablesSelect"></span>
-                                                <br>
-                                                <br>
-                                                <button id="btnFillChord" class="MenuButton BtnPunchedOut"  
-                                                    type="button">Fill<br />&nbsp;Notes</button>
-                                                <br>
-                                                <br>
-                                                <button id="btnAutoColor2" class="MenuButton BtnPunchedIn" type="button"
-                                                    tabindex="-1">AutoColor</button>
-                                            </td>
-                                        </tr>
-                                    </table>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--end menuTable-->
-                </form>
+        <form id="frmTopControls" onsubmit="return false;">
+            <div id="divTopCaptions">
+                <span style="vertical-align: top;">
+                    <button id="btnHamburger" class="HamburgerClass" type="button">&equiv;</button>
+                    <span class="productsmall">Laramie's </span><span class="product">infinite-neck</span>
+                </span>
+                <span id="transportLeftPoint"></span>
+                <span id="divControls">
+                    <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1"><b><u>F</u></b>ile</button>
+                    <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1">Info</button>
+                    <button id="btnChart" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1">Cha<b><u>r</u></b>t</button>
+                    <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1">F<b><u>i</u></b>ll</button>
+                    <button id="btnTunings" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1">Tunin<b><u
+                                class='obvious-underline'>g</u></b>s</button>
+                    <button id="btnPalette" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1"><b><u>p</u></b>alette</button>
+                    <button id="btnViewControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1"><b><u>V</u></b>iew</button>
+                    <button id="btnThemeControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1">Themes</button>
+                    <button id="btnDesktop" type="button" class="MainMenuTabBtn BtnPunchedOut"
+                        tabindex="-1">Desktop</button>
+                    <button data-action="help" class="MainMenuTabBtn" tabindex="-1">Help</button>
+                    &nbsp;&nbsp;<span id="SelectThemesDest"></span>
+                </span>
+                <span id="transportTopPoint"></span>
             </div>
 
+            <div id="divPalette">
+            </div>
 
+            <div id="divInfo">
+            </div>
 
-            <div id="divViewControls" style="display:none;">
-                <div class="divViewCard">
-                    <table class="viewControls">
-                        <tr>
-                            <td colspan="2" align="left" style="text-align: left;">
-                                <span id="lblHideWarning">"Palette::Keep" is now selected</span>
-                                <br />
-                                <table class="sliderTable" border="1" cellpadding='0' cellspacing='0'>
-                                    <tr>
-                                        <td>NamedNote Opacity:
-                                        </td>
-                                        <td>
-                                            <input id="rangeNamedNoteOpacity" type="range" min="0" max="1.0" value="1.0"
-                                                step="0.01" class="slider">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>SingleNote Opacity:
-                                        </td>
-                                        <td>
-                                            <input id="rangeSingleNoteOpacity" type="range" min="0" max="1.0"
-                                                value="1.0" step="0.01" class="slider">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>TinyNote Opacity:
-                                        </td>
-                                        <td><input id="rangeTinyNoteOpacity" type="range" min="0" max="1.0" value="1.0"
-                                                step="0.01" class="slider">
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <br />
-                                <nobr><label for="cbHideNamedNotes"><input id="cbHideNamedNotes" type="checkbox"
-                                            name="cbnHideNamedNotes" value="1">HIDE Named Notes</label></nobr>
-                                <br />
-                                <nobr><label for="cbHideSingleNotes"><input id="cbHideSingleNotes" type="checkbox"
-                                            name="cbnHideSingleNotes" value="3">HIDE Single Notes</label></nobr>
-                                <br>
-                                <nobr><label for="cbHideTinyNotes"><input id="cbHideTinyNotes" type="checkbox"
-                                            name="cbnHideTinyNotes" value="2">HIDE Tiny Notes, Bends</label></nobr>
-                                <br>
-                                <nobr><label for="cbHideFingering"><input id="cbHideFingering" type="checkbox"
-                                            name="cbnHideFingering" value="4">HIDE Fingering</label></nobr>
-                                <br>
-                                <nobr><label for="cbShowAllNoteNames"><input id="cbShowAllNoteNames" type="checkbox"
-                                            name="cbnShowAllNoteNames" value="1">Show All Note Names</label></nobr>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-
-
-
-
-                <div class="divViewCard">
-                    <table class="viewControls">
-                        <tr>
-                            <td colspan="2">
-                                <nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes" type="checkbox"
-                                            name="cbnFunctions" value="1" checked="checked">Show Right Subscript</label>
-                                </nobr>
-                                <br />
-                                <nobr>&nbsp;&nbsp;<label for="cbCenterForRightFunction"><input
-                                            id="cbCenterForRightFunction" type="checkbox"
-                                            name="cbnCenterForRightFunction" value="1" checked="checked">Show Right
-                                        Subscript in Center</label></nobr>
-                                <br />
-                                <nobr><label for="cbShowSubscriptFunctions"><input id="cbShowSubscriptFunctions"
-                                            type="checkbox" name="cbnShowSubscriptFunctions" value="2"
-                                            checked="checked">Show Left Subscript</label></nobr>
-                                <br />
-                                <nobr><label for="cbMidiNum"><input id="cbMidiNum" type="checkbox" name="cbnMidiNum"
-                                            value="2" FOOchecked="checked">Show MIDI Number</label></nobr>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;&nbsp;Right Subscript:
-                            </td>
-                            <td>
-                                <nobr><label for="rbFunction"><input type="radio" id="rbFunction"
-                                            name="rbnFunctionNotename" value="showFunction"
-                                            checked="checked">Function</label></nobr>
-                                <br />
-                                <nobr><label for="rbNotename"><input type="radio" id="rbNotename"
-                                            name="rbnFunctionNotename" value="showNotename">Notename</label></nobr>
-                            </td>
-                        </tr>
-                    </table>
+            <div id="divFileControls">
+                <div class="menuDiv">
+                    <div class="sectionPageControlsGroup">
+                        <label for="fileInput">Open Song from Local Files:
+                            <input type="file" id="fileInput">
+                        </label>
+                        <br>
+                        <nobr>&nbsp;&nbsp;<label for="cbAppendSections"><input id="cbAppendSections" type="checkbox"
+                                    name="cbnAppendSections" value="1">Append sections to
+                                current song
+                            </label>
+                        </nobr>
+                    </div>
                     <br>
-                    <div style="padding: 0.8em; background-color: #f4f4f4;">
-                        <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
-                        <label for="textareaFunctionSymbols">Function Symbols:<br />
-                            <nobr>
-                                <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" cols="24"
-                                    class="scalingTextarea">
-                                </textarea>
-                                <button type="button" id="btnFunctionSymbolsChanged"
-                                    class="BtnPunchedOut">&check;</button>
-                                <button type="button" id="btnFunctionSymbolsReset"
-                                    class="BtnPunchedOut">&#x21BA;</button>
-                            </nobr>
-                            <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
-                            <br />
-                            <select id="dropDownFunctionSymbols">
-                                <option
-                                    value='["I","&tau;","II","m","III","IV","&Theta;","V","&sigma;","6","&delta;","&Delta;"]'>
-                                    Default</option>
-                                <option
-                                    value='["One","Tau","Two","Mi","Three","Four","Tri","Fi","Sa","Six","Dom","Say"]'>
-                                    Sounds Like</option>
-                                <option value='["1","2","3","4","5","6","7","8","9","10","11","12"]'>Function Numbers
-                                </option>
-                                <option value='["+0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11"]'>Function
-                                    Offset</option>
-                                <option value='["I<small>+0</small>","&tau;<small>+1</small>","II<small>+2</small>","m<small>+3</small>","III<small>+4</small>","IV<small>+5</small>","&Theta;<small>+6</small>","V<small>+7</small>","&sigma;<small>+8</small>","6<small>+9</small>","&delta;<small>+10</small>","&Delta;<small>+11</small>"]'>Function +
-                                    Offset</option>
-                                <option value='["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]'>
-                                    Solf&#232;ge
-                                </option>
-                                <option
-                                    value='["&#x4e00;","&#x4e8c;","&#x4e09;","&#x56db;","&#x4e94;","&#x516d;","&#x4e03;","&#x516b;","&#x4e5d;","&#x5341;","&#x5341;&#x4e00;","&#x5341;&#x4e8c;"]'>
-                                    Kanji Numerals</option>
-                            </select>
+                    <div class="sectionPageControlsGroup">
+                        Open Song from: <button id="btnSongList" type="button" tabindex="-1"
+                            data-action="songLibrary">Song Library</button>
+                        <div id="divSongList"></div>
+                    </div>
+                    <br>
+                    <div class="sectionPageControlsGroup">
+                        <label for="txtFilename">Song Name:
+                            <input type="text" name="txtFilename" id="txtFilename" value="Round-midnight"><button
+                                type="button">&check;</button>
+                        </label>
+                        <br />
+                        <button id="btnDownload" type="button">Download Song</button>&nbsp;<span
+                            class="lblSongName"></span><span style="color: green;">.json</span>
+                    </div>
+                    <br>
+                    <div class="sectionPageControlsGroup">
+                        <label for="txtBPM">BPM:&nbsp;</label>
+                        <input type="text" name="txtBPM" id="txtBPM" size="4" value="80"><button
+                            type="button">&check;</button>
+
+                        <span id="loopTimingModeGroup" class="transportTimingModeGroup">
+                            <label for="rbLoopTimingVisual">
+                                <input type="radio" id="rbLoopTimingVisual" name="rbLoopTimingMode" value="visual"
+                                    checked>
+                                Visual Timing
+                            </label>
+                            <br>
+                            <label for="rbLoopTimingTransport">
+                                <input type="radio" id="rbLoopTimingTransport" name="rbLoopTimingMode"
+                                    value="transport">
+                                Transport Timing
+                            </label>
+                        </span>
+
+                        &nbsp;&nbsp;&nbsp;<button id="btnGraveyard" type="button" data-action="showGraveyard">View
+                            Graveyard</button>
+                        &nbsp;&nbsp;&nbsp;<label for="cbTransposeNotes"><input id="cbTransposeNotes" type="checkbox"
+                                name="cbnTransposeNotes" value="1">Allow transposition by keyboard
+                            shortcuts <b><u>d</u></b>, <b><u>U</u></b>, <b><u>u</u></b>,
+                            <b><u>D</u></b>, <b><u>&nbsp;j&nbsp;</u></b>, &amp; <b><u>J</u></b>
                         </label>
                     </div>
                 </div>
-
-                <div class="divViewCard">
-                    <table class="viewControls">
-                        <tr>
-                            <th>Option &amp; Keystroke
-                            </th>
-                            <th>Value
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                Cell Height:<br>
-                                <span class="key">h</span> or <span class="key">H</span>
-                            </td>
-                            <td>
-                                <select id="dropDownCellHeight">
-                                    <option value="30px">30</option>
-                                    <option value="40px">40</option>
-                                    <option value="50px" selected>50</option>
-                                    <option value="60px">60</option>
-                                    <option value="70px">70</option>
-                                    <option value="80px">80</option>
-                                    <option value="100px">100</option>
-                                    <option value="120px">120</option>
-                                    <option value="140px">140</option>
-                                    <option value="160px">160</option>
-                                    <option value="180px">180</option>
-                                    <option value="200px">200</option>
-                                    <option value="300px">300</option>
-                                    <option value="400px">400</option>
-                                    <option value="600px">600</option>
-                                    <option value="800px">800</option>
-                                    <option value="1000px">1000</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Cell Width:<br>
-                                <span class="key">w</span> or <span class="key">W</span>
-                            </td>
-                            <td>
-                                <select id="dropDownCellWidth">
-                                    <option value="40px">40</option>
-                                    <option value="60px">60</option>
-                                    <option value="70px">70</option>
-                                    <option value="80px">80</option>
-                                    <option value="100px" selected>100</option>
-                                    <option value="120px">120</option>
-                                    <option value="140px">140</option>
-                                    <option value="160px">160</option>
-                                    <option value="200px">200</option>
-                                    <option value="260px">260</option>
-                                    <option value="320px">320</option>
-                                    <option value="440px">440</option>
-                                    <option value="600px">600</option>
-                                    <option value="800px">800</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label for="cbNaturalFretWidths">Natural fret widths</label>
-                            </td>
-                            <td>
-                                <input id="cbNaturalFretWidths" type="checkbox" name="cbnNaturalFretWidths" value="1"
-                                    checked>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Natural Font Scaling:
-                            </td>
-                            <td>
-                                <select id="selNaturalFontScaling">
-                                    <option value="30">mellow</option>
-                                    <option value="60" selected>normie</option>
-                                    <option value="95">radical</option>
-                                </select>
-                            </td>
-                        </tr>
-                        </tr>
-                    </table>
-                </div>
-
-
-
-                <div class="divViewCard">
-                    <table class="viewControls">
-                        <tr>
-                            <th>Option &amp; Keystroke
-                            </th>
-                            <th>Value
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>Note Font:
-                            </td>
-                            <td>
-                                <select id="selNoteFont">
-                                    <option value="EB Garamond" selected>EB Garamond</option>
-                                    <option value="Cardo">Cardo</option>
-                                    <option value="Eczar">Eczar</option>
-                                    <option value="Vollkorn">Vollkorn</option>
-                                    <option value="Dosis">Dosis</option>
-                                    <option value="Shadows Into Light">Shadows Into Light</option>
-                                    <option value="UnifrakturCook">UnifrakturCook</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>UI Font Size:
-                                <br>
-                                <span class="key">-</span> or <span class="key">=</span>
-                            </td>
-                            <td>
-                                <span id="lblUIFontSize" style="background-color: white">&nbsp;</span>
-                                &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button"
-                                    data-action="increaseUIFont" class="BtnPunchedOut">+</button>
-                                &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button"
-                                    data-action="decreaseUIFont" class="BtnPunchedOut">-</button>
-                                <br><br><small><i><b>NOT automated</b></i></small>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Cell Font Size:<br>
-                                <span class="key">SHIFT</span><span class="key">_</span>
-                                <br><span class="key">SHIFT</span><span class="key">+</span>
-                                <br>Reset:&nbsp;&nbsp;<span class="key">)</span>
-                            </td>
-                            <td>
-                                <span id="lblCellFontSize" style="background-color: white">&nbsp;</span>
-                                &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button"
-                                    data-action="increaseNoteFont" class="BtnPunchedOut">+</button>
-                                &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button"
-                                    data-action="decreaseNoteFont" class="BtnPunchedOut">-</button>
-
-
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="divViewCard">
-                    <table class="viewControls">
-                        <tr>
-                            <th>Option
-                            </th>
-                            <th>Value
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>leftSubscriptFontSize:
-                            </td>
-                            <td>
-                                <select id="selLeftSubscriptFontSize">
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%" selected>80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                    <option value="110%">110%</option>
-                                    <option value="120%">120%</option>
-                                    <option value="130%">130%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>rightSubscriptFontSize:
-                            </td>
-                            <td>
-                                <select id="selRightSubscriptFontSize">
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%" selected>80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                    <option value="110%">110%</option>
-                                    <option value="120%">120%</option>
-                                    <option value="130%">130%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>midiSubscriptFontSize:
-                            </td>
-                            <td>
-                                <select id="selMidiFontSize">
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%" selected>80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                    <option value="110%">110%</option>
-                                    <option value="120%">120%</option>
-                                    <option value="130%">130%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Fingering Font Size:
-                            </td>
-                            <td>
-                                <select id="selFingeringFontSize">
-                                    <option value="10%">10%</option>
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%" selected>80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                    <option value="110%">110%</option>
-                                    <option value="120%">120%</option>
-                                    <option value="130%">130%</option>
-                                    <option value="150%">150%</option>
-                                    <option value="200%">200%</option>
-                                    <option value="300%">300%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Fingering Position:
-                            </td>
-                            <td>
-                                <select id="selFingeringPosition">
-                                    <option value="-0.5em">-0.5em</option>
-                                    <option value="0" selected>0</option>
-                                    <option value="0.5em">0.5em</option>
-                                    <option value="10%">10%</option>
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="90%">90%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Tiny Note Font Size:
-                            </td>
-                            <td>
-                                <select id="selTinyNoteFontSize">
-                                    <option value="20%">20%</option>
-                                    <option value="30%">30%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%" selected>80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                    <option value="110%">110%</option>
-                                    <option value="120%">120%</option>
-                                    <option value="130%">130%</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Tiny Note Max Height:
-                            </td>
-                            <td>
-                                <select id="selTinyNoteMaxHeight">
-                                    <option value="25%">25%</option>
-                                    <option value="35%">35%</option>
-                                    <option value="40%">40%</option>
-                                    <option value="45%" selected>45%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="60%">60%</option>
-                                    <option value="70%">70%</option>
-                                    <option value="80%">80%</option>
-                                    <option value="90%">90%</option>
-                                    <option value="100%">100%</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-
-
-
-                <div class="divViewCard" id="divViewDisplayOptions">
-                    <b class="left">Display Options:</b><br>
-                    <span style="float:left; ">
-                        <button id="btnControlsToDisplayOptions_View" class="riskyButton" type="button">SAVE
-                            <small><br>Display
-                                Options</small></button>
-                    </span>
-                    <span style="float:left; ">
-                        <button id="btnDeleteDisplayOptions_View" class="riskyButton" type="button">CLEAR<small><br>Display
-                                Options</small></button>
-                    </span>
-                    <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
-                            sets Display
-                            Options. <i>Tip: Set-and-forget in the first section.</i></small></p>
-                    <br>
-                    <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode"
-                                value="1">Presentation
-                            Mode</label>
-                        <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
-                    </p>
-                </div>
-
-            </div>
-            <!-- END divViewControls -->
-
-
-
-            <!-- divThemeControls -->
-            <div id="divThemeControls" style="display:none;">
-                
-                
-            </div><!-- END divThemeControls -->
-
-
-
-            <!-- divTunings -->
-            <div id="divTunings">
-                <form id="frmTunings" onsubmit="return false;">
-                    <table class="menuTable">
-                        <tr>
-                            <td class="menuPage">
-                                <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
-                                    <span style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
-                                        <span style="display: flex; gap: 0; align-items: flex-end;">
-                                            <button id="btnMyTuningsTab" type="button" class="MenuTabBtn BtnPunchedIn">My Tunings</button>
-                                            <button id="btnAllTuningsTab" type="button" class="MenuTabBtn BtnPunchedOut">All Tunings</button>
-                                        </span>
-                                    </span>
-                                    <span style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
-                                </div>
-                                <div style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
-                                    <div id="divMyTuningsTab"></div>
-                                    <div id="divAllTuningsTab" style="display: none;">
-                                        <div class="userInstrumentControlsGroup">
-                                            <button id="btnShowHideEditUserTuning" type="button"
-                                                class="MenuTabBtn BtnPunchedOut">Customize USER Tuning</button>
-                                            <div id="divEditUserTuning" class="paletteRBBackground"
-                                                style="display: none;">
-                                                <table id="tblUserInstrumentEditor" class="menuTable">
-                                                    <tr>
-                                                        <td>
-                                                            <b>You can customize the instrument with ID: USER</b>
-                                                            <br>Any of these fields may be left blank.
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label for="textareaRowRange"><b>MIDI:</b><br />
-                                                                <textarea id="textareaRowRange" name="txtnRowRange"
-                                                                    rows="1" cols="80"
-                                                                    class="scalingTextarea"></textarea>
-                                                                <br>Comma-separate list of MIDI numbers for the note at
-                                                                the nut (open string), from first string to nth string.
-                                                                <br>The number of strings is determined by the length of
-                                                                this list.
-                                                                <br>Example for Standard Guitar: 64,59,55,50,45,40
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "BanjoNut") -->
-                                                            <label for="textareaBanjoNut"><b>BN (Banjo Nut):</b><br>
-                                                                <textarea id="textareaBanjoNut" name="txtnBanjoNut" rows="1" cols="80" class="scalingTextarea" style="width: 877px; height: 53px;"></textarea>
-                                                            </label>
-                                                            <br>
-                                                            <button type="button" id="btnBanjoNutExamples" class="BtnPunchedOut">Examples</button>
-                                                            <div id="divBanjoNutExamples" class="BanjoNutExamplesPanel">
-                                                                <table class="BanjoNutExamplesTable">
-                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"4":5}'>
-                                                                        <td class="BanjoNutExamplesCodeCell">{"4":5}</td>
-                                                                        <td>Makes a BanjoNut/Capo at the fifth fret on the fifth string.</td>
-                                                                    </tr>
-                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"0":2, "1":4}'>
-                                                                        <td class="BanjoNutExamplesCodeCell">{"0":2, "1":4}</td>
-                                                                        <td>BanjoNut at the second fret on the first string, and one on the fourth fret of the second string.</td>
-                                                                    </tr>
-                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"0":2, "1":2, "2":2, "3":2, "4":2}'>
-                                                                        <td class="BanjoNutExamplesCodeCell">{"0":2, "1":2, "2":2, "3":2, "4":2}</td>
-                                                                        <td>Drop-D style capo at the second fret covering the first five strings.</td>
-                                                                    </tr>
-                                                                    <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{}'>
-                                                                        <td class="BanjoNutExamplesCodeCell">{}</td>
-                                                                        <td>Resets the BN to be a standard nut.</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                            <br>
-                                                            <small>
-                                                                Empty, or one or more pairs of id:fret to specify where to block out a nut position up the neck, such as is used for Banjo or using a Capo.<br>
-                                                                "0" is the first string, and 0 is the first position, which places the nut in the normal position. The nut is fret 0. Thus the first fret is fret 1.<br>
-                                                                {"zero-based-string-id": zero-based-fret-number}<br>
-                                                                Follow the braces, commas, and quotes exactly as shown in these examples.
-                                                            </small>
-                                                            <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label for="dropDownBaseInstrument">
-                                                                <nobr><b>Instrument:</b></nobr>
-                                                                <select id="dropDownBaseInstrument">
-                                                                    <option value="Guitar">Guitar</option>
-                                                                    <option value="Bass">Bass</option>
-                                                                    <option value="Cello">Cello</option>
-                                                                    <option value="Ukulele">Ukulele</option>
-                                                                    <option value="Mandolin">Mandolin</option>
-                                                                    <option value="Banjo">Banjo</option>
-                                                                    <option value="ChampmanStick">ChampmanStick</option>
-                                                                    <option value="MIDI">MIDI</option>
-                                                                    <option value="Piano">Piano</option>
-                                                                </select>
-                                                            </label>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <nobr>
-                                                                <label for="txtUserInstrumentCaption"><b>Tuning:</b>
-                                                                    <input type="text" name="txtUserInstrumentCaption"
-                                                                        id="txtUserInstrumentCaption" value=""
-                                                                        size="64">
-                                                                </label>
-                                                            </nobr>
-                                                            <br>Give your tuning a name.
-
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <br>
-                                                            <button id="btnSaveUserTuning" class="safeButton"
-                                                                type="button">Save User Tuning</button>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--end menuTable-->
-                </form>
+                <!--end menuDiv-->
             </div>
 
-            <div id="divDesktop" style="display: none;">
-                <form id="frmDesktop" onsubmit="return false;">
-                    <table class="menuTable">
-                        <tr>
-                            <td class="menuPage">
-                                <div style="float: left;" class="sectionPageControlsGroup">
-                                    <p>Buttons for Mobile instead of keyboard shortcuts. </p>
-                                    <br>
-                                    <br>
-
-                                    <button id="btnToggleTransport" class="BtnPunchedOut BigMobileBtn"
-                                        type="button">Toggle Transport</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnToggleCmdLine" class="BtnPunchedOut BigMobileBtn"
-                                        type="button">Toggle Command-Line</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnToggleQuick" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
-                                        QuickMenu</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnChromeFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="ChromeFullscreen">Chrome Fullscreen</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="enterFullscreen">infinite-neck Fullscreen</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="increaseUIFont">Increase UI Font</button>
-                                    <br>
-                                    <br>
-                                    <button id="btntoggleCaption" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="toggleCaption">Toggle Caption</button>
-                                    <br>
-                                    <br>
-                                    <button id="btntoggleInstrumentCaption" class="BtnPunchedOut BigMobileBtn"
-                                        type="button" data-action="toggleInstrumentCaptionRow">Toggle Instrument
-                                        Caption</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnSaveScaling" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="saveScalingPrefs">Save Scaling Prefs</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnApplyScaling" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="applyScalingPrefs">Apply Scaling Prefs</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnClearScaling" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="clearScalingPrefs">Clear Scaling Prefs</button>
-                                    <br>
-                                    <br>
-                                    <div id="divScalingPrefs"></div>
-                                    <br>
-                                    <br>
-                                    <button id="btnSaveInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="saveInstrumentPrefs">Save Instrument Prefs</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnApplyInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="applyInstrumentPrefs">Show Instrument Prefs</button>
-                                    <br>
-                                    <br>
-                                    <button id="btnClearInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
-                                        data-action="clearInstrumentPrefs">Clear Instrument Prefs</button>
-                                    <br>
-                                    <br>
-                                    <div id="divInstrumentPrefs"></div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--end menuTable-->
-                </form>
-            </div>
-
-            <!-- BEGIN Chart menu page -->
-             <div id="divChart" style="display: none;">
-                <form id="frmSectionPrinter" onsubmit="return false;">
-                    <table class="menuTable">
-                        <tr>
-                            <td class="menuPage">
-                                        <!-- Chart tab group buttons-->
-                                        <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
-                                            <span style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
-                                                <span style="display: flex; gap: 0; align-items: flex-end;">
-                                                    <button id="btnChartSummaryTab" type="button" class="MenuTabBtn BtnPunchedIn">Chart Summary</button>
-                                                    <button id="btnChartNotesTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Notes</button>
-                                                    <button id="btnChartDetailsTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart Details</button>
-                                                </span>
-                                            </span>
-                                            <span style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
-                                        </div>
-                                         <!-- Chart tab group tabs-->
-                                        <div style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
-                                            <div id="divChartSummaryTab" style="display: none;"></div>
-                                            <div id="divChartNotesTab"></div>
-                                            <div id="divChartDetailsTab" style="display: none;"></div>
-                                        </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <!--end menuTable-->
-                </form>
-            </div>
-
-            <!-- END Chart menu page -->
+        </form>
 
 
-        </div><!--end div: class=container-->
+        <div id="divFillNotes">
+            <form id="frmFillNotes">
+                <div class="menuDiv">
+                    <div class="sectionPageControlsGroup">
+                        <table id="controlTable2">
+                            <tr>
+                                <td style="padding-left: 1em;">Root:
+                                </td>
+                                <td style="vertical-align: top;">
+                                    Key:<span style="font-size: 120%; padding-left: 10pt;"
+                                        class="lblRootID">RootID</span>
+                                    <br />
 
-        <!--  *******************   TRANSPORT *********************    -->
+                                    <label id="lblFillNoteRootN" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteRootN" name="rbnFillNoteRoot"
+                                            value="noteClear">
+                                        None
+                                    </label>
+                                    <br>
+                                    <label id="lblFillNoteRootK" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteRootK" name="rbnFillNoteRoot" value="noteKeep"
+                                            checked>
+                                        Keep
+                                    </label>
+                                    <br>
+                                    <label id="lblFillNoteRoot" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteRoot" name="rbnFillNoteRoot" value="noteRoot">
+                                        Root
+                                    </label>
+                                    <span style="display: none;" id="idRootRoleSpan">Root</span>
 
-        <!--span style="float: right; vertical-align: middle; margin-right: 2em;"-->
-            <span id="transport" class="noselect topControlsSections toolWindowRounded" style="display: none;">
-                <span id="spanSectionDrawer" style="display: none;"></span>
-                <span class="insetTransportBeat"
-                    style="border: 1px solid green; padding: 0.2em; text-align: center; vertical-align: middle;">
-                    <span class="lblRootID"></span>
-                    <span class="lblRootIDLead"></span>
-                    <button id="btnFirstSection" class="downyButton" type="button" tabindex="-1">&#x21E4;</button>
-                    <button id="btnPrevSection" class="downyButton" type="button" tabindex="-1">&laquo;</button>
-                    <small style="margin-left: 0.6em; font-size: 50%">&sect;</small><span style="vertical-align: middle"
-                        id="lblSectionsStatus"></span>
-                    <button id="btnNextSection" class="downyButton" type="button" tabindex="-1">&raquo;</button>
-                    <button id="btnLastSection" class="downyButton" type="button" tabindex="-1">&#x21E5;</button>
-                    &nbsp;
-                    <span class="insetTransportBeat"
-                        style="border: 1px solid green; text-align: center;vertical-align: middle;">
-                        <button class="redButton downyButton" id="btnPrevBeat" type="button" tabindex="-1">&laquo;</button>
-                        <span id="lblBeatCounter"><span id="lblBeat"></span><small>/</small><span
-                                id="lblBeats"></span></span>
-                        <button class="redButton downyButton" id="btnNextBeat" type="button" tabindex="-1">&raquo;</button>
-                        <button id="btnLoopBeats" class="redButton downyButton" type="button"
-                            tabindex="-1">&infin;</button>
-                    </span>
+                                </td>
+                                <td style="padding-left: 2em;">Chord:
+                                    <br /><small>no root</small>
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <select id="dropDownChords">
+                                        <option value="4,7">Maj</option>
+                                        <option value="3,7">Min</option>
+                                        <option value="4,8">Aug</option>
+                                        <option value="3,6">Dim&nbsp;&nbsp;&nbsp;&ordm;</option>
+                                        <option value="3,6,9">Dim7</option>
+                                        <option value="3,6,10">m7b5&nbsp;&nbsp;&nbsp;&oslash;</option>
+                                        <option value="2,7">Sus2</option>
+                                        <option value="5,7">Sus4</option>
+                                        <option value="4,7,11">Maj7&nbsp;&nbsp;&nbsp;&Delta;</option>
+                                        <option value="3,7,10">Min7</option>
+                                        <option value="4,7,10">Dom7</option>
+                                        <option value="3,7,11">MinMaj</option>
+                                        <option value="3,7,10,14">Min9</option>
+                                        <option value="4,7,9,14">6/9</option>
+                                    </select>
+                                    <br />
 
-                </span>
-
-                <span class="bpm"></span>&nbsp;<button id="btnRecord" class="RecordButton ArmedButton" type="button"
-                    tabindex="-1">REC</button>
-                <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>
-                <button id="btnEditSection" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">&sect;</button>
-            </span>
-        <!--/span-->
-
-         <!--  *******************   END TRANSPORT *********************    -->
-
-
-        <div>
-            <div id="topControlsCaptions">
-                <nobr>
-                    <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>
-                    <br>
-                    <span class="SongTitleLeadSheet">
-                        <span class="lblSectionNumber LooperLight"><span class="lblSectionmark">&sect;</span><span
-                                class="lblSectionsStatusSectionNo"></span></span>
-                        <span class="lblRootID"></span><span class="lblRootIDLead"></span>&nbsp;&nbsp;
-                        <span class="lblSectionChartChord"></span>
-                        <span class="lblSectionMode"></span>
-                        <span class="lblLeadSheetWidgets"></span>
-                        
-                    </span>
-                </nobr>
-                <div id="divSectionStatus_LeadSheet"></div>
-
-            </div>
-        </div>
-
-        <div id="divQuick" style="display: none;">
-            <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note
-                Names</button>
-            <button id="btnRandomLoop" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
-            <span class="PunchedTogether"><button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button"
-                    tabindex="-1">Func</button>
-                <button id="btnNoteV" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button></span>
-            <button id="btnAutoColor" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
-        </div>
-
-        <div id="tabledest"></div><!-- The place where all the Instrument noteTables go. -->
+                                    <label id="lblFillNoteChordN" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteChordN" name="rbnFillNoteChord"
+                                            value="noteClear">
+                                        None
+                                    </label>
+                                    <br>
+                                    <label id="lblFillNoteChordK" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteChordK" name="rbnFillNoteChord"
+                                            value="noteKeep" checked>
+                                        Keep
+                                    </label>
+                                    <br>
+                                    <label id="lblFillNoteChord" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteChord" name="rbnFillNoteChord"
+                                            value="noteChord">
+                                        Chord
+                                    </label>
+                                    <br>
+                                    <label id="lblFillNoteChordH" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteChordH" name="rbnFillNoteChord"
+                                            value="noteHighlightSingle">
+                                        Highlight
+                                    </label>
 
 
-        <div id="CmdMenu" style="display: none;">
-            <table id="CmdMenuStackAndOptions">
-                <tr>
-                    <td id="CmdMenuBreadcrumbs">
-                    </td>
-                    <td><select id="dropDownCmdResults" tabindex="-1">
-                            <option value="0">command results...</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td id="CmdMenuStack">
-                    </td>
-                    <td style="vertical-align: bottom;">
-                        <table id="CmdMenuOptionsTable">
-                            <tr id="CmdMenuResults">
+                                    <span style="display: none;" id="idChordRoleSpan">Chord</span>
+
+
+
+                                </td>
+                                <td align="right" style="padding-left: 2em;">Scale:
+                                    <br /><small>w/root</small>
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <select id="dropDownScales">
+                                        <option value="0,2,4,6,8,10">WholeTone</option>
+                                        <option value="0,3,6,9">Diminished</option>
+                                        <option value="0,3,5,7,10">MinPentatonic</option>
+                                        <option value="0,2,4,7,9">MajPentatonic</option>
+                                        <option value="0,2,4,5,7,9,11">Ionian/Major</option>
+                                        <option value="0,2,3,5,7,9,10">Dorian</option>
+                                        <option value="0,1,3,5,7,8,10">Phrygian</option>
+                                        <option value="0,2,4,6,7,9,11">Lydian</option>
+                                        <option value="0,2,4,6,7,9,10">LydianDominant</option>
+                                        <option value="0,2,4,5,7,9,10">Mixolydian</option>
+                                        <option value="0,2,3,5,7,8,10">Aeolian/Natural</option>
+                                        <option value="0,1,3,5,6,8,10">Locrian</option>
+                                        <option value="0,2,3,5,7,8,11">HarmonicMinor</option>
+                                        <option value="0,2,3,5,7,9,11">MelodicMinor</option>
+                                        <option value="0,1,4,5,7,8,10">Gypsy</option>
+                                        <option value="0,1,3,5,7,9,11">NeopolitanMaj</option>
+                                        <option value="0,1,3,5,7,8,11">NeopolitanMin</option>
+                                    </select>
+                                    <br />
+
+                                    <nobr>
+                                        <label id="lblFillNoteScaleN" class="radioFillChooser"
+                                            for="rbFillNoteScaleN"><input type="radio" id="rbFillNoteScaleN"
+                                                name="rbnFillNoteScale" value="noteClear">None</label>
+                                    </nobr>
+
+                                    <br>
+                                    <nobr>
+                                        <label id="lblFillNoteScaleK" class="radioFillChooser"
+                                            for="rbFillNoteScaleK"><input type="radio" id="rbFillNoteScaleK"
+                                                name="rbnFillNoteScale" value="noteKeep" checked>Keep</label>
+                                    </nobr>
+                                    <br>
+                                    <nobr>
+                                        <label id="lblFillNoteScale" class="radioFillChooser">
+                                            <input type="radio" id="rbFillNoteScale" name="rbnFillNoteScale"
+                                                value="noteScale">
+                                            Scale
+                                        </label>
+                                    </nobr>
+                                    <br>
+                                    <label id="lblFillNoteScaleH" class="radioFillChooser">
+                                        <input type="radio" id="rbFillNoteScaleH" name="rbnFillNoteScale"
+                                            value="noteHighlightSingle">
+                                        Highlight
+                                    </label>
+
+                                    <span style="display: none;" id="idScaleRoleSpan">Scale</span>
+
+                                </td>
+                                <td style="padding-left: 2em; vertical-align: top;">
+                                    <span id="spanFillVisibleTablesSelect"></span>
+                                    <br>
+                                    <br>
+                                    <button id="btnFillChord" class="MenuButton BtnPunchedOut"
+                                        type="button">Fill<br />&nbsp;Notes</button>
+                                    <br>
+                                    <br>
+                                    <button id="btnAutoColor2" class="MenuButton BtnPunchedIn" type="button"
+                                        tabindex="-1">AutoColor</button>
+                                </td>
                             </tr>
                         </table>
-                        <span><input type="text" name="txtCmdLine" id="txtCmdLine" tabindex="-1"></input></span>
-                    </td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+                <!--end menuDiv-->
+            </form>
         </div>
-        <div id="divMessageAndJsonTree" style="display:none">
-            <button id="btnMessagesTab" type="button" class="MenuTabBtn BtnPunchedIn"
-                style="display: none">Messages</button>
-            <button id="btnJsonTreeTab" type="button" class="MenuTabBtn BtnPunchedOut" style="display: none">JSON
-                Tree</button>
-            <button id="btnHideMessagesJsonTree" type="button" class="MenuTabBtn BtnPunchedOut"
-                style="display: none">Hide</button>
-            <div id="divMessages"></div>
-            <div id="divJsonTree" data-json></div>
+
+
+
+        <div id="divViewControls" style="display:none;">
+            <div class="divViewCard">
+                <table class="viewControls">
+                    <tr>
+                        <td colspan="2" align="left" style="text-align: left;">
+                            <table class="sliderTable" border="1" cellpadding='0' cellspacing='0'>
+                                <tr>
+                                    <td>NamedNote Opacity:
+                                    </td>
+                                    <td>
+                                        <input id="rangeNamedNoteOpacity" type="range" min="0" max="1.0" value="1.0"
+                                            step="0.01" class="slider">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SingleNote Opacity:
+                                    </td>
+                                    <td>
+                                        <input id="rangeSingleNoteOpacity" type="range" min="0" max="1.0" value="1.0"
+                                            step="0.01" class="slider">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>TinyNote Opacity:
+                                    </td>
+                                    <td><input id="rangeTinyNoteOpacity" type="range" min="0" max="1.0" value="1.0"
+                                            step="0.01" class="slider">
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <br />
+                            <span id="lblHideWarning">"Palette::Keep" is now selected</span>
+                            <br />
+                            <nobr><label for="cbHideNamedNotes"><input id="cbHideNamedNotes" type="checkbox"
+                                        name="cbnHideNamedNotes" value="1">HIDE Named Notes</label></nobr>
+                            <br />
+                            <nobr><label for="cbHideSingleNotes"><input id="cbHideSingleNotes" type="checkbox"
+                                        name="cbnHideSingleNotes" value="3">HIDE Single Notes</label></nobr>
+                            <br>
+                            <nobr><label for="cbHideTinyNotes"><input id="cbHideTinyNotes" type="checkbox"
+                                        name="cbnHideTinyNotes" value="2">HIDE Tiny Notes, Bends</label></nobr>
+                            <br>
+                            <nobr><label for="cbHideFingering"><input id="cbHideFingering" type="checkbox"
+                                        name="cbnHideFingering" value="4">HIDE Fingering</label></nobr>
+                            <br>
+                            <nobr><label for="cbShowAllNoteNames"><input id="cbShowAllNoteNames" type="checkbox"
+                                        name="cbnShowAllNoteNames" value="1">Show All Note Names</label></nobr>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+
+
+
+            <div class="divViewCard">
+                <table class="viewControls">
+                    <tr>
+                        <td colspan="2">
+                            <nobr><label for="cbShowCellNotes"><input id="cbShowCellNotes" type="checkbox"
+                                        name="cbnFunctions" value="1" checked="checked">Show Right Subscript</label>
+                            </nobr>
+                            <br />
+                            <nobr>&nbsp;&nbsp;<label for="cbCenterForRightFunction"><input id="cbCenterForRightFunction"
+                                        type="checkbox" name="cbnCenterForRightFunction" value="1"
+                                        checked="checked">Show Right
+                                    Subscript in Center</label></nobr>
+                            <br />
+                            <nobr><label for="cbShowSubscriptFunctions"><input id="cbShowSubscriptFunctions"
+                                        type="checkbox" name="cbnShowSubscriptFunctions" value="2"
+                                        checked="checked">Show Left Subscript</label></nobr>
+                            <br />
+                            <nobr><label for="cbMidiNum"><input id="cbMidiNum" type="checkbox" name="cbnMidiNum"
+                                        value="2" FOOchecked="checked">Show MIDI Number</label></nobr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;&nbsp;Right Subscript:
+                        </td>
+                        <td>
+                            <nobr><label for="rbFunction"><input type="radio" id="rbFunction" name="rbnFunctionNotename"
+                                        value="showFunction" checked="checked">Function</label></nobr>
+                            <br />
+                            <nobr><label for="rbNotename"><input type="radio" id="rbNotename" name="rbnFunctionNotename"
+                                        value="showNotename">Notename</label></nobr>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <div style="padding: 0.8em; background-color: #f4f4f4;">
+                    <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
+                    <label for="textareaFunctionSymbols">Function Symbols:<br />
+                        <nobr>
+                            <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" cols="24"
+                                class="scalingTextarea">
+                                </textarea>
+                            <button type="button" id="btnFunctionSymbolsChanged" class="BtnPunchedOut">&check;</button>
+                            <button type="button" id="btnFunctionSymbolsReset" class="BtnPunchedOut">&#x21BA;</button>
+                        </nobr>
+                        <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
+                        <br />
+                        <select id="dropDownFunctionSymbols">
+                            <option
+                                value='["I","&tau;","II","m","III","IV","&Theta;","V","&sigma;","6","&delta;","&Delta;"]'>
+                                Default</option>
+                            <option value='["One","Tau","Two","Mi","Three","Four","Tri","Fi","Sa","Six","Dom","Say"]'>
+                                Sounds Like</option>
+                            <option value='["1","2","3","4","5","6","7","8","9","10","11","12"]'>Function Numbers
+                            </option>
+                            <option value='["+0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11"]'>Function
+                                Offset</option>
+                            <option
+                                value='["I<small>+0</small>","&tau;<small>+1</small>","II<small>+2</small>","m<small>+3</small>","III<small>+4</small>","IV<small>+5</small>","&Theta;<small>+6</small>","V<small>+7</small>","&sigma;<small>+8</small>","6<small>+9</small>","&delta;<small>+10</small>","&Delta;<small>+11</small>"]'>
+                                Function +
+                                Offset</option>
+                            <option value='["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]'>
+                                Solf&#232;ge
+                            </option>
+                            <option
+                                value='["&#x4e00;","&#x4e8c;","&#x4e09;","&#x56db;","&#x4e94;","&#x516d;","&#x4e03;","&#x516b;","&#x4e5d;","&#x5341;","&#x5341;&#x4e00;","&#x5341;&#x4e8c;"]'>
+                                Kanji Numerals</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <div class="divViewCard">
+                <table class="viewControls">
+                    <tr>
+                        <th>Option &amp; Keystroke
+                        </th>
+                        <th>Value
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Cell Height:<br>
+                            <span class="key">h</span> or <span class="key">H</span>
+                        </td>
+                        <td>
+                            <select id="dropDownCellHeight">
+                                <option value="30px">30</option>
+                                <option value="40px">40</option>
+                                <option value="50px" selected>50</option>
+                                <option value="60px">60</option>
+                                <option value="70px">70</option>
+                                <option value="80px">80</option>
+                                <option value="100px">100</option>
+                                <option value="120px">120</option>
+                                <option value="140px">140</option>
+                                <option value="160px">160</option>
+                                <option value="180px">180</option>
+                                <option value="200px">200</option>
+                                <option value="300px">300</option>
+                                <option value="400px">400</option>
+                                <option value="600px">600</option>
+                                <option value="800px">800</option>
+                                <option value="1000px">1000</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Cell Width:<br>
+                            <span class="key">w</span> or <span class="key">W</span>
+                        </td>
+                        <td>
+                            <select id="dropDownCellWidth">
+                                <option value="40px">40</option>
+                                <option value="60px">60</option>
+                                <option value="70px">70</option>
+                                <option value="80px">80</option>
+                                <option value="100px" selected>100</option>
+                                <option value="120px">120</option>
+                                <option value="140px">140</option>
+                                <option value="160px">160</option>
+                                <option value="200px">200</option>
+                                <option value="260px">260</option>
+                                <option value="320px">320</option>
+                                <option value="440px">440</option>
+                                <option value="600px">600</option>
+                                <option value="800px">800</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="cbNaturalFretWidths">Natural fret widths</label>
+                        </td>
+                        <td>
+                            <input id="cbNaturalFretWidths" type="checkbox" name="cbnNaturalFretWidths" value="1"
+                                checked>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Natural Font Scaling:
+                        </td>
+                        <td>
+                            <select id="selNaturalFontScaling">
+                                <option value="30">mellow</option>
+                                <option value="60" selected>normie</option>
+                                <option value="95">radical</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Piano Height Scale Factor:
+                        </td>
+                        <td>
+                            <select id="selPianoHeightScaleFactor">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Piano Width Scale Factor:
+                        </td>
+                        <td>
+                            <select id="selPianoWidthScaleFactor">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Show LooperLight Beats:
+                        </td>
+                        <td>
+                                <label for="cbShowLooperLightBeats"><input type="checkbox" id="cbShowLooperLightBeats" value="1" checked>Show</label>
+                        </td>
+                    </tr>
+                    </tr>
+                </table>
+            </div>
+
+
+
+            <div class="divViewCard">
+                <table class="viewControls">
+                    <tr>
+                        <th>Option &amp; Keystroke
+                        </th>
+                        <th>Value
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>Note Font:
+                        </td>
+                        <td>
+                            <select id="selNoteFont">
+                                <option value="EB Garamond" selected>EB Garamond</option>
+                                <option value="Cardo">Cardo</option>
+                                <option value="Eczar">Eczar</option>
+                                <option value="Vollkorn">Vollkorn</option>
+                                <option value="Dosis">Dosis</option>
+                                <option value="Shadows Into Light">Shadows Into Light</option>
+                                <option value="UnifrakturCook">UnifrakturCook</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>UI Font Size:
+                            <br>
+                            <span class="key">-</span> or <span class="key">=</span>
+                        </td>
+                        <td>
+                            <span id="lblUIFontSize" style="background-color: white">&nbsp;</span>
+                            &nbsp;&nbsp;&nbsp;<button id="btnIncreaseUIFont" type="button" data-action="increaseUIFont"
+                                class="BtnPunchedOut">+</button>
+                            &nbsp;&nbsp;&nbsp;<button id="btnDecreaseUIFont" type="button" data-action="decreaseUIFont"
+                                class="BtnPunchedOut">-</button>
+                            <br><br><small><i><b>NOT automated</b></i></small>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Cell Font Size:<br>
+                            <span class="key">SHIFT</span><span class="key">_</span>
+                            <br><span class="key">SHIFT</span><span class="key">+</span>
+                            <br>Reset:&nbsp;&nbsp;<span class="key">)</span>
+                        </td>
+                        <td>
+                            <span id="lblCellFontSize" style="background-color: white">&nbsp;</span>
+                            &nbsp;&nbsp;&nbsp;<button id="btnIncreaseNoteFont" type="button"
+                                data-action="increaseNoteFont" class="BtnPunchedOut">+</button>
+                            &nbsp;&nbsp;&nbsp;<button id="btnDecreaseNoteFont" type="button"
+                                data-action="decreaseNoteFont" class="BtnPunchedOut">-</button>
+
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="divViewCard">
+                <table class="viewControls">
+                    <tr>
+                        <th>Option
+                        </th>
+                        <th>Value
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>leftSubscriptFontSize:
+                        </td>
+                        <td>
+                            <select id="selLeftSubscriptFontSize">
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%" selected>80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                                <option value="110%">110%</option>
+                                <option value="120%">120%</option>
+                                <option value="130%">130%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>rightSubscriptFontSize:
+                        </td>
+                        <td>
+                            <select id="selRightSubscriptFontSize">
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%" selected>80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                                <option value="110%">110%</option>
+                                <option value="120%">120%</option>
+                                <option value="130%">130%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>midiSubscriptFontSize:
+                        </td>
+                        <td>
+                            <select id="selMidiFontSize">
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%" selected>80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                                <option value="110%">110%</option>
+                                <option value="120%">120%</option>
+                                <option value="130%">130%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fingering Font Size:
+                        </td>
+                        <td>
+                            <select id="selFingeringFontSize">
+                                <option value="10%">10%</option>
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%" selected>80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                                <option value="110%">110%</option>
+                                <option value="120%">120%</option>
+                                <option value="130%">130%</option>
+                                <option value="150%">150%</option>
+                                <option value="200%">200%</option>
+                                <option value="300%">300%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fingering Position:
+                        </td>
+                        <td>
+                            <select id="selFingeringPosition">
+                                <option value="-0.5em">-0.5em</option>
+                                <option value="0" selected>0</option>
+                                <option value="0.5em">0.5em</option>
+                                <option value="10%">10%</option>
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="70%">70%</option>
+                                <option value="90%">90%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiny Note Font Size:
+                        </td>
+                        <td>
+                            <select id="selTinyNoteFontSize">
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%" selected>80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                                <option value="110%">110%</option>
+                                <option value="120%">120%</option>
+                                <option value="130%">130%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiny Note Max Height:
+                        </td>
+                        <td>
+                            <select id="selTinyNoteMaxHeight">
+                                <option value="25%">25%</option>
+                                <option value="35%">35%</option>
+                                <option value="40%">40%</option>
+                                <option value="45%" selected>45%</option>
+                                <option value="50%">50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%">80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+
+
+            <div class="divViewCard" id="divViewDisplayOptions">
+                <b class="left">Display Options:</b><br>
+                <span style="float:left; ">
+                    <button id="btnControlsToDisplayOptions_View" class="riskyButton" type="button">SAVE
+                        <small><br>Display
+                            Options</small></button>
+                </span>
+                <span style="float:left; ">
+                    <button id="btnDeleteDisplayOptions_View" class="riskyButton" type="button">CLEAR<small><br>Display
+                            Options</small></button>
+                </span>
+                <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
+                        sets Display
+                        Options. <i>Tip: Set-and-forget in the first section.</i></small></p>
+                <br>
+                <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
+                        Mode</label>
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
+                </p>
+            </div>
+
         </div>
-        <div id="divESCAPE" style="display: none;">
-            <br>
-            <br>
-            <br>
-            <button type="button" data-action="leaveFullscreen">Exit Fullscreen</button>
+        <!-- END divViewControls -->
+
+
+
+        <!-- divThemeControls -->
+        <div id="divThemeControls" style="display:none;">
+
+
+        </div><!-- END divThemeControls -->
+
+
+
+        <!-- divTunings -->
+        <div id="divTunings">
+            <form id="frmTunings" onsubmit="return false;">
+                <div class="menuDiv">
+                    <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
+                        <span
+                            style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
+                            <span style="display: flex; gap: 0; align-items: flex-end;">
+                                <button id="btnMyTuningsTab" type="button" class="MenuTabBtn BtnPunchedIn">Tunings
+                                    in Song</button>
+                                <button id="btnAllTuningsTab" type="button" class="MenuTabBtn BtnPunchedOut">Tunings
+                                    Library</button>
+                            </span>
+                        </span>
+                        <span
+                            style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
+                    </div>
+                    <div
+                        style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
+                        <div id="divMyTuningsTab"></div>
+                        <div id="divSongTuningControls" class="userInstrumentControlsGroup">
+                            <button id="btnShowHideAddSongTuning" type="button"
+                                class="MenuTabBtn BtnPunchedOut">Add One Tuning</button>
+                            <div id="divAddSongTuning" class="paletteRBBackground" style="display: none;">
+                                    <table id="tblUserInstrumentEditor" class="menuTable">
+                                        <tr>
+                                            <td>
+                                                <b>Create a new tuning owned by this song.</b>
+                                                <br>Tuning ID and Lineage ID are required.
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="txtSongTuningID"><b>Tuning ID:</b>
+                                                    <input type="text" id="txtSongTuningID" value="" size="32">
+                                                </label>
+                                                <br>Unique ID for this song-owned instrument, for example: <b>LarP5_mark</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="txtLineageID"><b>Lineage ID:</b>
+                                                    <input type="text" id="txtLineageID" value="" size="32">
+                                                </label>
+                                                <br>Compatibility lineage for this tuning, for example: <b>P5</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="textareaRowRange"><b>MIDI:</b><br />
+                                                    <textarea id="textareaRowRange" name="txtnRowRange" rows="1"
+                                                        cols="80" class="scalingTextarea"></textarea>
+                                                    <br>Comma-separate list of MIDI numbers for the note at
+                                                    the nut (open string), from first string to nth string.
+                                                    <br>The number of strings is determined by the length of
+                                                    this list.
+                                                    <br>Example for Standard Guitar: 64,59,55,50,45,40
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "BanjoNut") -->
+                                                <label for="textareaBanjoNut"><b>BN (Banjo Nut):</b><br>
+                                                    <textarea id="textareaBanjoNut" name="txtnBanjoNut" rows="1"
+                                                        cols="80" class="scalingTextarea"
+                                                        style="width: 877px; height: 53px;"></textarea>
+                                                </label>
+                                                <br>
+                                                <button type="button" id="btnBanjoNutExamples"
+                                                    class="BtnPunchedOut">Examples</button>
+                                                <div id="divBanjoNutExamples" class="BanjoNutExamplesPanel">
+                                                    <table class="BanjoNutExamplesTable">
+                                                        <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{"4":5}'>
+                                                            <td class="BanjoNutExamplesCodeCell">{"4":5}</td>
+                                                            <td>Makes a BanjoNut/Capo at the fifth fret on the
+                                                                fifth string.</td>
+                                                        </tr>
+                                                        <tr class="BanjoNutExamplesRow"
+                                                            data-banjo-nut-value='{"0":2, "1":4}'>
+                                                            <td class="BanjoNutExamplesCodeCell">{"0":2, "1":4}
+                                                            </td>
+                                                            <td>BanjoNut at the second fret on the first string,
+                                                                and one on the fourth fret of the second string.
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="BanjoNutExamplesRow"
+                                                            data-banjo-nut-value='{"0":2, "1":2, "2":2, "3":2, "4":2}'>
+                                                            <td class="BanjoNutExamplesCodeCell">{"0":2, "1":2,
+                                                                "2":2, "3":2, "4":2}</td>
+                                                            <td>Drop-D style capo at the second fret covering
+                                                                the first five strings.</td>
+                                                        </tr>
+                                                        <tr class="BanjoNutExamplesRow" data-banjo-nut-value='{}'>
+                                                            <td class="BanjoNutExamplesCodeCell">{}</td>
+                                                            <td>Resets the BN to be a standard nut.</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <br>
+                                                <small>
+                                                    Empty, or one or more pairs of id:fret to specify where to
+                                                    block out a nut position up the neck, such as is used for
+                                                    Banjo or using a Capo.<br>
+                                                    "0" is the first string, and 0 is the first position, which
+                                                    places the nut in the normal position. The nut is fret 0.
+                                                    Thus the first fret is fret 1.<br>
+                                                    {"zero-based-string-id": zero-based-fret-number}<br>
+                                                    Follow the braces, commas, and quotes exactly as shown in
+                                                    these examples.
+                                                </small>
+                                                <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="dropDownBaseInstrument">
+                                                    <nobr><b>Instrument:</b></nobr>
+                                                    <select id="dropDownBaseInstrument">
+                                                        <option value="Guitar">Guitar</option>
+                                                        <option value="Bass">Bass</option>
+                                                        <option value="Cello">Cello</option>
+                                                        <option value="Ukulele">Ukulele</option>
+                                                        <option value="Mandolin">Mandolin</option>
+                                                        <option value="Banjo">Banjo</option>
+                                                        <option value="ChampmanStick">ChampmanStick</option>
+                                                        <option value="MIDI">MIDI</option>
+                                                        <option value="Piano">Piano</option>
+                                                    </select>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <nobr>
+                                                    <label for="txtUserInstrumentCaption"><b>Tuning:</b>
+                                                        <input type="text" name="txtUserInstrumentCaption"
+                                                            id="txtUserInstrumentCaption" value="" size="64">
+                                                    </label>
+                                                </nobr>
+                                                <br>Give your tuning a name.
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <br>
+                                                <button id="btnSaveSongTuning" class="safeButton" type="button">Save
+                                                    Song Tuning</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                            </div>
+                        </div>
+                        <div id="divAllTuningsTab" style="display: none;"></div>
+                    </div>
+                </div>
+                <!--end menuDiv-->
+            </form>
         </div>
+
+        <div id="divDesktop" style="display: none;">
+            <form id="frmDesktop" onsubmit="return false;">
+                <div class="menuDiv">
+                    <div style="float: left;" class="sectionPageControlsGroup">
+                        <p>Buttons for Mobile instead of keyboard shortcuts. </p>
+                        <br>
+                        <br>
+
+                        <button id="btnToggleTransport" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
+                            Transport</button>
+                        <br>
+                        <br>
+                        <button id="btnToggleCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
+                            Command-Line</button>
+                        <br>
+                        <br>
+                        <button id="btnToggleQuick" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
+                            QuickMenu</button>
+                        <br>
+                        <br>
+                        <button id="btnChromeFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="ChromeFullscreen">Chrome Fullscreen</button>
+                        <br>
+                        <br>
+                        <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="enterFullscreen">infinite-neck Fullscreen</button>
+                        <br>
+                        <br>
+                        <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="increaseUIFont">Increase UI Font</button>
+                        <br>
+                        <br>
+                        <button id="btntoggleCaption" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="toggleCaption">Toggle Caption</button>
+                        <br>
+                        <br>
+                        <button id="btntoggleInstrumentCaption" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="toggleInstrumentCaptionRow">Toggle Instrument
+                            Caption</button>
+                        <br>
+                        <br>
+                        <button id="btnSaveScaling" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="saveScalingPrefs">Save Scaling Prefs</button>
+                        <br>
+                        <br>
+                        <button id="btnApplyScaling" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="applyScalingPrefs">Apply Scaling Prefs</button>
+                        <br>
+                        <br>
+                        <button id="btnClearScaling" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="clearScalingPrefs">Clear Scaling Prefs</button>
+                        <br>
+                        <br>
+                        <div id="divScalingPrefs"></div>
+                        <br>
+                        <br>
+                        <button id="btnSaveInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="saveInstrumentPrefs">Save Instrument Prefs</button>
+                        <br>
+                        <br>
+                        <button id="btnApplyInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="applyInstrumentPrefs">Show Instrument Prefs</button>
+                        <br>
+                        <br>
+                        <button id="btnClearInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="clearInstrumentPrefs">Clear Instrument Prefs</button>
+                        <br>
+                        <br>
+                        <div id="divInstrumentPrefs"></div>
+                    </div>
+                </div>
+                <!--end menuDiv-->
+            </form>
+        </div>
+
+        <!-- BEGIN Chart menu page -->
+        <div id="divChart" style="display: none;">
+            <form id="frmSectionPrinter" onsubmit="return false;">
+                <div class="menuDiv">
+                    <!-- Chart tab group buttons-->
+                    <div style="display: flex; align-items: flex-end; margin-top: 0.6em;">
+                        <span
+                            style="display: flex; flex-direction: column; justify-content: flex-end; height: 3em; border-top-left-radius: 0.4em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em; white-space: nowrap;">
+                            <span style="display: flex; gap: 0; align-items: flex-end;">
+                                <button id="btnChartSummaryTab" type="button"
+                                    class="MenuTabBtn BtnPunchedIn">Summary</button>
+                                <button id="btnChartNotesTab" type="button"
+                                    class="MenuTabBtn BtnPunchedOut">Notes</button>
+                                <button id="btnChartDetailsTab" type="button"
+                                    class="MenuTabBtn BtnPunchedOut">Details</button>
+                                <button id="btnChartOptionsTab" type="button"
+                                    class="MenuTabBtn BtnPunchedOut">Options</button>
+                                <button id="btnChartTab" type="button" class="MenuTabBtn BtnPunchedOut">Chart</button>
+                                <button id="btnChartLineTab" type="button"
+                                    class="MenuTabBtn BtnPunchedOut">Line</button>
+                            </span>
+                        </span>
+                        <span
+                            style="flex: 1 1 auto; display: inline-block; height: 1.0em; border-top-right-radius: 0.4em; background-color: lightblue; padding-left: 2em; padding-right: 2em; padding-top: 0.5em;"></span>
+                    </div>
+                    <!-- Chart tab group tabs-->
+                    <div
+                        style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
+                        <div id="divChartSummaryTab" style="display: none;"></div>
+                        <div id="divChartNotesTab"></div>
+                        <div id="divChartDetailsTab" style="display: none;"></div>
+                        <div id="divChartOptionsTab" style="display: none;"></div>
+                        <div id="divChartTab" style="display: none;"></div>
+                        <div id="divChartLineTab" style="display: none;"></div>
+                    </div>
+                </div>
+                <!--end menuDiv-->
+            </form>
+        </div>
+
+        <!-- END Chart menu page -->
+
+
+    </div><!--end div: class=container-->
+
+    <!--  *******************   TRANSPORT *********************    -->
+
+    <!--span style="float: right; vertical-align: middle; margin-right: 2em;"-->
+    <span id="transport" class="noselect topControlsSections toolWindowRounded" style="display: none;">
+        <span id="spanSectionDrawer" style="display: none;"></span>
+        <span class="insetTransportBeat"
+            style="border: 1px solid green; padding: 0.2em; text-align: center; vertical-align: middle;">
+            <span class="lblRootID"></span>
+            <span class="lblRootIDLead"></span>
+            <button id="btnFirstSection" class="downyButton" type="button" tabindex="-1">&#x21E4;</button>
+            <button id="btnPrevSection" class="downyButton" type="button" tabindex="-1">&laquo;</button>
+            <small style="margin-left: 0.6em; font-size: 50%">&sect;</small><span style="vertical-align: middle"
+                id="lblSectionsStatus"></span>
+            <button id="btnNextSection" class="downyButton" type="button" tabindex="-1">&raquo;</button>
+            <button id="btnLastSection" class="downyButton" type="button" tabindex="-1">&#x21E5;</button>
+            &nbsp;
+            <span class="insetTransportBeat"
+                style="border: 1px solid green; text-align: center;vertical-align: middle;">
+                <button class="redButton downyButton" id="btnPrevBeat" type="button" tabindex="-1">&laquo;</button>
+                <span id="lblBeatCounter"><span id="lblBeat"></span><small>/</small><span id="lblBeats"></span></span>
+                <button class="redButton downyButton" id="btnNextBeat" type="button" tabindex="-1">&raquo;</button>
+                <button id="btnLoopBeats" class="redButton downyButton" type="button" tabindex="-1">&infin;</button>
+            </span>
+
+        </span>
+
+        <span class="bpm"></span>&nbsp;<button id="btnRecord" class="RecordButton ArmedButton" type="button"
+            tabindex="-1">REC</button>
+        <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>
+        <button id="btnEditSection" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">&sect;</button>
+    </span>
+    <!--/span-->
+
+    <!--  *******************   END TRANSPORT *********************    -->
+
+
+    <div>
+        <div id="divFullscreenLeadSheetLineHost" style="display: none;"></div>
+        <div id="topControlsCaptions">
+            <nobr>
+                <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>
+                <br>
+                <span class="SongTitleLeadSheet">
+                    <span id="spanSectionStatusLeadSheetHost" class="leadSheetSectionStatusHost"></span>
+                    <span class="lblSectionChartChord"></span>
+                    <span class="lblSectionMode"></span>
+                    <span class="lblLeadSheetWidgets"></span>
+
+                </span>
+            </nobr>
+
+        </div>
+    </div>
+
+    <div id="divQuick" style="display: none;">
+        <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note
+            Names</button>
+        <button id="btnRandomLoop" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
+        <span class="PunchedTogether"><button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button"
+                tabindex="-1">Func</button>
+            <button id="btnNoteV" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button></span>
+        <button id="btnAutoColor" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
+    </div>
+
+    <div id="tabledest"></div><!-- The place where all the Instrument noteTables go. -->
+
+
+    <div id="CmdMenu" class="CmdMenuClass" style="display: none;">
+        <table id="CmdMenuStackAndOptions" class="CmdMenuStackAndOptionsClass">
+            <tr>
+                <td id="CmdMenuBreadcrumbs">
+                </td>
+                <td><select id="dropDownCmdResults" tabindex="-1">
+                        <option value="0">command results...</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td id="CmdMenuStack">
+                </td>
+                <td style="vertical-align: bottom;">
+                    <table id="CmdMenuOptionsTable">
+                        <tr id="CmdMenuResults" class="CmdMenuResultsClass">
+                        </tr>
+                    </table>
+                    <span><input type="text" name="txtCmdLine" id="txtCmdLine" tabindex="-1"></input></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMessageAndJsonTree" style="display:none">
+        <button id="btnMessagesTab" type="button" class="MenuTabBtn BtnPunchedIn"
+            style="display: none">Messages</button>
+        <button id="btnJsonTreeTab" type="button" class="MenuTabBtn BtnPunchedOut" style="display: none">JSON
+            Tree</button>
+        <button id="btnHideMessagesJsonTree" type="button" class="MenuTabBtn BtnPunchedOut"
+            style="display: none">Hide</button>
+        <div id="divMessages"></div>
+        <div id="divJsonTree" data-json></div>
+    </div>
+    <div id="divESCAPE" style="display: none;">
+        <br>
+        <br>
+        <br>
+        <button type="button" data-action="leaveFullscreen">Exit Fullscreen</button>
+    </div>
 
     <!--Best to pull this main module in last, so DOM is fully loaded-->
     <script type="module" src="infinite-neck.js"></script>
-    </body>
+</body>
 
 </html>

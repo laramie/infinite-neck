@@ -18,6 +18,7 @@ jest.unstable_mockModule('../../event-bus.js', () => ({
 }));
 
 const Constants = await import('../../Constants.js');
+const { Note } = await import('../../Note.js');
 const { createLookupContext, lookupClassForNote } = await import('../../colorFunctions.js');
 const EventBus = (await import('../../event-bus.js')).default;
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
@@ -42,7 +43,7 @@ function makeNamedNotesFromNames(noteNames) {
 	return Object.fromEntries(noteNames.map((noteName) => [noteName, { enabled: true }]));
 }
 
-function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, rootID = 3, currentBeat = 1 } = {}) {
+function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1 } = {}) {
 	const plugin = new ArpeggioPlugin();
 	const tuning = {
 		baseID: 'ARP',
@@ -52,6 +53,7 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	const tableID = plugin.getTableID(tuning);
 	const sectionNotes = {
 		namedNotes: namedNotes || makeNamedNotesForRange(rowRange, 0, frets),
+		playedNotes,
 		recordedNotes: {}
 	};
 	const section = {
@@ -79,6 +81,10 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 
 function expectNamedNoteEvent(payload) {
 	expect(EventBus.trigger).toHaveBeenCalledWith('NoteTable:ShowNamedNotesAtCells', payload);
+}
+
+function expectDiamondRangeEvent(payload) {
+	expect(EventBus.trigger).toHaveBeenCalledWith('NoteTable:ShowDiamondPositionRange', payload);
 }
 
 function getBeatMidinums(sectionNotes, beatCount) {
@@ -130,34 +136,58 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(plugin.buildSummary()).toContain('fret range=0..3');
 		expect(plugin.buildSummary()).toContain('upper/lower string limit=1..1');
+		expect(plugin.buildSummary()).toContain('type=NamedNote');
 		expect(plugin.buildSummary()).toContain('show note names=played');
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
+		expect(help).toContain('type = NamedNote or SingleNote');
 	});
 
-	test('menu includes upper/lower string limits before low to high', () => {
+		test('menu includes type before show note name', () => {
 		const { plugin } = makeContext({ beats: 4, rowRange: [40, 45, 50, 55, 59, 64], frets: 12 });
 
-		const names = plugin.getVisibleMenuChildren().map((child) => child.name);
+		const children = plugin.getVisibleMenuChildren();
+		const names = children.map((child) => child.name);
+		const positionsNode = children.find((child) => child.name === 'positions');
+		const stringsNode = children.find((child) => child.name === 'strings');
 
 		expect(names).toEqual([
 			'targetTable',
-			'positions',
 			'apply',
 			'clear',
-			'help',
-			'minFret',
-			'maxFret',
-			'minRow',
-			'maxRow',
+			'positions',
+			'strings',
 			'lowToHigh',
 			'upOnly',
 			'style',
+			'type',
 			'showNoteName',
 			'colorNotes',
-			'flashcard'
+			'flashcard',
+			'help'
 		]);
+		expect(positionsNode.children.map((child) => child.name)).toEqual([
+			'minFret',
+			'maxFret',
+			'positions:clearAllSections',
+			'positions:clearCurrentSection',
+			'positions:copyToAllSections',
+			'positions:copyToUnsetSections',
+			'positions:refreshCurrentSection',
+			'positions:setCurrentSection'
+		]);
+		expect(stringsNode.children.map((child) => child.name)).toEqual([
+			'minRow',
+			'maxRow'
+		]);
+	});
+
+	test('type defaults to NamedNote', () => {
+		const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+
+		expect(plugin.getProperty('type').getValue()).toBe('NamedNote');
+		expect(plugin.getSourceType()).toBe('NamedNote');
 	});
 
 	test('string limits display as 1-based values while persisting zero-based rows', () => {
@@ -173,6 +203,58 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(plugin.getProperty('maxRow').getValue()).toBe(4);
 		expect(plugin.resolveValue('minRow', { song })).toBe(2);
 		expect(plugin.resolveValue('maxRow', { song })).toBe(5);
+	});
+
+	test('switching target instrument resets string limits to the new instrument full range', () => {
+		const plugin = new ArpeggioPlugin();
+		const pianoTuning = {
+			baseID: 'P1',
+			frets: 12,
+			rowRange: [48]
+		};
+		const guitarTuning = {
+			baseID: 'P46_1',
+			frets: 12,
+			rowRange: [40, 45, 50, 55, 59, 64]
+		};
+		const section = {
+			beats: 4,
+			rootID: 3,
+			currentBeat: 1,
+			sectionNotesByTable: {},
+			getSectionNotes: jest.fn(() => ({ namedNotes: {}, playedNotes: [], recordedNotes: {} })),
+			getBeats: jest.fn(() => 4)
+		};
+		const song = {
+			myTunings: [pianoTuning, guitarTuning],
+			wirings: [],
+			sections: [section],
+			getCurrentSection: jest.fn(() => section),
+			getBeat: jest.fn(() => 1),
+			requestUiShowBeats: jest.fn()
+		};
+		const pianoTableID = plugin.getTableID(pianoTuning);
+		const guitarTableID = plugin.getTableID(guitarTuning);
+
+		mockRuntime.song = song;
+		plugin.setManager({ song });
+
+		plugin.setPropertyValue('targetTable', guitarTableID, { song });
+		plugin.setPropertyValue('minRow', 2, { song });
+		plugin.setPropertyValue('maxRow', 3, { song });
+		expect(plugin.resolveValue('minRow', { song })).toBe(2);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(3);
+
+		plugin.setPropertyValue('targetTable', pianoTableID, { song });
+		expect(plugin.resolveValue('minRow', { song })).toBe(1);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(1);
+
+		plugin.setPropertyValue('targetTable', guitarTableID, { song });
+
+		expect(plugin.getProperty('minRow').getValue()).toBe(0);
+		expect(plugin.getProperty('maxRow').getValue()).toBe(5);
+		expect(plugin.resolveValue('minRow', { song })).toBe(1);
+		expect(plugin.resolveValue('maxRow', { song })).toBe(6);
 	});
 
 	test('loadSongState preserves persisted zero-based string limits', () => {
@@ -578,6 +660,62 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(rotatedCycle).toEqual(expectedRotatedCycle);
 	});
 
+	test('type=SingleNote derives candidate note names only from STYLENUM_SINGLE notes on the selected table', () => {
+		const { plugin, song } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 2,
+			namedNotes: {},
+			playedNotes: [
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'D', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'E', styleNum: Note.STYLENUM_TINY },
+				{ noteName: 'F', styleNum: Note.STYLENUM_BEND },
+				{ noteName: 'G', styleNum: Note.STYLENUM_FINGERING },
+				{ noteName: '', styleNum: Note.STYLENUM_SINGLE }
+			]
+		});
+		plugin.setPropertyValue('type', 'SingleNote', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(song.getCurrentSection().getSectionNotes('tblARP'))).sort();
+		const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+		expect(candidateNames).toEqual(['C', 'D']);
+		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['C', 'D']);
+	});
+
+	test('type=NamedNote preserves current candidate collection even when SingleNotes exist', () => {
+		const { plugin, song } = makeContext({
+			beats: 4,
+			rowRange: [53],
+			frets: 2,
+			namedNotes: makeNamedNotesFromNames(['F', 'G']),
+			playedNotes: [
+				{ noteName: 'C', styleNum: Note.STYLENUM_SINGLE },
+				{ noteName: 'D', styleNum: Note.STYLENUM_SINGLE }
+			]
+		});
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(song.getCurrentSection().getSectionNotes('tblARP'))).sort();
+		const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+		expect(candidateNames).toEqual(['F', 'G']);
+		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['F', 'G']);
+	});
+
+	test('type property persists through export and load song state', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+		plugin.setPropertyValue('type', 'SingleNote', { song });
+
+		const exported = plugin.exportSongState();
+		plugin.loadSongState({ type: 'NamedNote' }, { song });
+		plugin.loadSongState(exported, { song });
+
+		expect(exported.type).toBe('SingleNote');
+		expect(plugin.getProperty('type').getValue()).toBe('SingleNote');
+	});
+
 	test('style=bach with lowToHigh=false does not repeat the rotated seam note', () => {
 		const fixture = loadLowToHighFalseDuplicateFixture();
 		const plugin = new ArpeggioPlugin();
@@ -630,6 +768,48 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(sectionNotes.recordedNotes).toEqual({});
 	});
 
+	test('top-level clear resets all section position indexes and refreshes current status', () => {
+		const { plugin, song, section, sectionNotes } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		const secondSectionNotes = {
+			namedNotes: makeNamedNotesForRange([40], 0, 6),
+			playedNotes: [],
+			recordedNotes: {}
+		};
+		const secondSection = {
+			beats: 4,
+			rootID: 3,
+			currentBeat: 1,
+			sectionNotesByTable: {
+				tblARP: secondSectionNotes
+			},
+			getSectionNotes: jest.fn(() => secondSectionNotes),
+			getBeats: jest.fn(() => 4)
+		};
+		song.sections = [section, secondSection];
+		plugin.setSectionPositions(section, [[0, 3], [3, 5]]);
+		plugin.setSectionPositions(secondSection, [[3, 5], [5, 7]]);
+		plugin.setLastPositionIndex(section, 1);
+		plugin.setLastPositionIndex(secondSection, 1);
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		song.requestUiShowBeats.mockClear();
+		EventBus.trigger.mockClear();
+
+		const result = plugin.invokeAction('clear', { song });
+
+		expect(result.result).toContain('removed');
+		expect(result.result).toContain('reset 2 position counters');
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(sectionNotes.recordedNotes).toEqual({});
+		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">3</td><td>3</td><td>5</td></tr></table></span>');
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+	});
+
 	test('positions semicolon shorthand normalizes and resets current-section index to zero', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 12 });
 
@@ -638,6 +818,61 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(result.result).toBe('positions=[[0,3],[2,5],[6,10]]');
 		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [2, 5], [6, 10]]);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+	});
+
+	test('clear current-section positions refreshes status for the visible section', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		plugin.setPositionsForCurrentSection(song, '0,2;3,5');
+		EventBus.trigger.mockClear();
+
+		const result = plugin.clearPositionsForCurrentSection(song);
+
+		expect(result.result).toBe('positions cleared for current section');
+		expect(plugin.getSectionPositions(section)).toBeNull();
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('');
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+	});
+
+	test('copying positions resets the source and target section indexes to not-played-yet', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 8 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		const secondSectionNotes = {
+			namedNotes: makeNamedNotesForRange([40], 0, 8),
+			playedNotes: [],
+			recordedNotes: {}
+		};
+		const secondSection = {
+			beats: 4,
+			rootID: 3,
+			currentBeat: 1,
+			sectionNotesByTable: {
+				tblARP: secondSectionNotes
+			},
+			getSectionNotes: jest.fn(() => secondSectionNotes),
+			getBeats: jest.fn(() => 4)
+		};
+		song.sections = [section, secondSection];
+		plugin.setPositionsForCurrentSection(song, '0,3;3,5;5,8');
+		plugin.setLastPositionIndex(section, 1);
+		plugin.setLastPositionIndex(secondSection, 2);
+		EventBus.trigger.mockClear();
+
+		const result = plugin.copyPositionsToSections(song, { onlyUnset: false });
+
+		expect(result.result).toBe('positions copied to 1 sections');
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(secondSection.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5], [5, 8]]);
+		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">3</td><td>3</td><td>5</td><td>5</td><td>8</td></tr></table></span>');
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
 	});
 
 	test('positions boundary shorthand normalizes to adjacent ranges', () => {
@@ -702,6 +937,10 @@ describe('ArpeggioPlugin sequencing', () => {
 
 	test('SongUiShowBeats uses the stored position without advancing it', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 4, currentBeat: 1 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
 		plugin.setPropertyValue('showNoteName', 'one', { song });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
 		plugin.setLastPositionIndex(section, 1);
@@ -715,6 +954,13 @@ describe('ArpeggioPlugin sequencing', () => {
 			owner: 'ArpeggioPlugin',
 			clearExisting: true,
 			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '2', colorClass: 'noteTransparent' }]
+		});
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: 'tblARP',
+			minFret: 2,
+			maxFret: 2
 		});
 	});
 
@@ -743,10 +989,22 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
 	});
 
+	test('arpeggioPositionsStatus highlights the first pair when reset leaves positions not-played-yet', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		plugin.setSectionPositions(section, [[0, 2], [3, 5]]);
+		plugin.setLastPositionIndex(section, -1);
+
+		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">2</td><td>3</td><td>5</td></tr></table></span>');
+	});
+
 	test('positions current-section display resolves to canonical JSON or unset', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
 
-		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('<unset>');
+		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('[]');
 		plugin.setPositionsForCurrentSection(song, '0,2;3,5');
 		expect(plugin.resolveValue('positionsCurrentSection', { song })).toBe('[[0,2],[3,5]]');
 	});
@@ -775,7 +1033,77 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 
 		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: 'tblARP',
+			minFret: 0,
+			maxFret: 0
+		});
 		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">0</td><td>2</td><td>2</td></tr></table></span>');
+	});
+
+	test('disable clears any transient diamond-position highlight', () => {
+		const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+
+		plugin.disable();
+
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: '',
+			minFret: null,
+			maxFret: null
+		});
+	});
+
+	test('enable requests immediate section-status refresh for the current section', () => {
+		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: true })
+		});
+		plugin.setSectionPositions(section, [[0, 2], [3, 5]]);
+		plugin.setLastPositionIndex(section, -1);
+		EventBus.trigger.mockClear();
+
+		const result = plugin.enable({ song });
+
+		expect(result).toBe('Arpeggio enabled');
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: 'tblARP',
+			minFret: 0,
+			maxFret: 2
+		});
+	});
+
+	test('disable requests immediate section-status refresh and clears transient displays', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+		plugin.setManager({
+			song,
+			getPluginEntry: () => ({ enabled: false })
+		});
+		EventBus.trigger.mockClear();
+
+		const result = plugin.disable({ song });
+
+		expect(result).toBe('Arpeggio disabled');
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: []
+		});
+		expectDiamondRangeEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			tableID: '',
+			minFret: null,
+			maxFret: null
+		});
+		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
 	});
 
 	test('arpeggioPositionsStatus is empty when Arpeggio is not enabled', () => {

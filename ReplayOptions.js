@@ -6,6 +6,7 @@ class ReplayOptions {
     currSection = null;
     sectionIndex = 0;
     relativeSection = '';
+    listenerProjection = 'row-midi';
     directionType = '';
     sharps = '';
     rootID = '';

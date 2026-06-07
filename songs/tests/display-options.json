@@ -75,6 +75,7 @@
           "height": "70px"
         },
         "naturalFretWidths": true,
+        "showLooperLightBeats": false,
         "hideNamedNotes": false,
         "hideTinyNotes": false,
         "hideSingleNotes": false,
@@ -160,6 +161,7 @@
           "height": "70px"
         },
         "naturalFretWidths": true,
+        "showLooperLightBeats": true,
         "hideNamedNotes": false,
         "hideTinyNotes": false,
         "hideSingleNotes": true,
@@ -221,6 +223,7 @@
           "height": "70px"
         },
         "naturalFretWidths": true,
+        "showLooperLightBeats": false,
         "hideNamedNotes": false,
         "hideTinyNotes": false,
         "hideSingleNotes": false,

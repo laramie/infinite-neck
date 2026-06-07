@@ -1,8 +1,8 @@
 [
   {
     "name": "targetTable",
-    "caption": "Table",
-    "trigger": "T",
+    "caption": "Instrument",
+    "trigger": "I",
     "datatype": "org.dynamide.Select",
     "value": "",
     "defaultValue": "",
@@ -27,7 +27,7 @@
   },
   {
     "name": "clearSong",
-    "caption": "ClearSong",
+    "caption": "S clear song",
     "trigger": "S",
     "datatype": "org.dynamide.Action",
     "actionName": "clearSong",
@@ -35,7 +35,7 @@
   },
   {
     "name": "commitNotes",
-    "caption": "Commit Notes",
+    "caption": "M commit notes",
     "trigger": "M",
     "datatype": "org.dynamide.Action",
     "actionName": "commitNotes",
@@ -51,7 +51,7 @@
   },
   {
     "name": "chordFormula",
-    "caption": "chord formula",
+    "caption": "chord",
     "trigger": "c",
     "datatype": "org.dynamide.Select",
     "value": "4,7",
@@ -61,8 +61,8 @@
   },
   {
     "name": "scaleFormula",
-    "caption": "scale formula",
-    "trigger": "g",
+    "caption": "mode",
+    "trigger": "m",
     "datatype": "org.dynamide.Select",
     "value": "0,2,4,5,7,9,11",
     "defaultValue": "0,2,4,5,7,9,11",

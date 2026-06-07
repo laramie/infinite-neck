@@ -14,6 +14,8 @@ const STYLE_EVERY = 'every';
 const STYLE_ALTERNATE = 'alternate';
 const STYLE_RANDOM = 'random';
 const STYLE_BACH = 'bach';
+const SOURCE_TYPE_NAMED_NOTE = 'NamedNote';
+const SOURCE_TYPE_SINGLE_NOTE = 'SingleNote';
 const SHOW_NOTE_NAME_OFF = 'off';
 const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
@@ -77,6 +79,7 @@ export class ArpeggioPlugin {
       this.getProperty('lowToHigh')?.getMenuNodeSpec(this),
       this.getProperty('upOnly')?.getMenuNodeSpec(this),
       this.getProperty('style')?.getMenuNodeSpec(this),
+      this.getProperty('type')?.getMenuNodeSpec(this),
       this.getProperty('showNoteName')?.getMenuNodeSpec(this),
       this.getProperty('colorNotes')?.getMenuNodeSpec(this),
       this.getProperty('flashcard')?.getMenuNodeSpec(this),
@@ -113,6 +116,24 @@ export class ArpeggioPlugin {
     const lowerStringProperty = this.getProperty('maxRow');
     const upperStringDefault = 0;
     const lowerStringDefault = this.getMaxAllowedRow(tuning);
+
+    upperStringProperty.value = upperStringDefault;
+    upperStringProperty.defaultValue = upperStringDefault;
+    lowerStringProperty.value = lowerStringDefault;
+    lowerStringProperty.defaultValue = lowerStringDefault;
+    this.rowBoundsInitialized = true;
+  }
+
+  resetStringLimitDefaultsForTarget(song = getSong(), tuning = null) {
+    const selectedTuning = tuning || this.getTargetTuning(song) || this.getEligibleTargetTunings(song)[0] || null;
+    if (!selectedTuning) {
+      return;
+    }
+
+    const upperStringProperty = this.getProperty('minRow');
+    const lowerStringProperty = this.getProperty('maxRow');
+    const upperStringDefault = 0;
+    const lowerStringDefault = this.getMaxAllowedRow(selectedTuning);
 
     upperStringProperty.value = upperStringDefault;
     upperStringProperty.defaultValue = upperStringDefault;
@@ -260,7 +281,11 @@ export class ArpeggioPlugin {
       return property.getValue();
     }
 
+    const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
     const nextValue = property.setValue(rawValue);
+    if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
+      this.resetStringLimitDefaultsForTarget(song);
+    }
     this.normalizeRangeValues(song);
     return nextValue;
   }
@@ -295,11 +320,17 @@ export class ArpeggioPlugin {
     return undefined;
   }
 
-  enable() {
+  enable(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    this.refreshCurrentSectionPositionState(song);
     return 'Arpeggio enabled';
   }
 
-  disable() {
+  disable(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
+    this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
+    this.requestSectionStatusRefresh(song);
     return 'Arpeggio disabled';
   }
 
@@ -338,7 +369,7 @@ export class ArpeggioPlugin {
       case 'apply':
         return this.applyToSection({ song, clearSectionFirst: true });
       case 'clear':
-        return this.clearGeneratedNotesInSong(song);
+        return this.clearAndResetSong(song);
       case 'positions:setCurrentSection':
         return this.setPositionsForCurrentSection(song, args?.value);
       case 'positions:clearCurrentSection':
@@ -362,7 +393,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
   }
 
   buildHelpMessage(song) {
@@ -382,6 +413,7 @@ Implemented in this iteration for:
 - style = alternate
 - style = random
 - style = bach
+- type = NamedNote or SingleNote
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
@@ -400,6 +432,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getTableID(tuning) {
     return `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+  }
+
+  getSourceType() {
+    return this.getProperty('type')?.getValue() || SOURCE_TYPE_NAMED_NOTE;
   }
 
   buildPositionsMenuNode() {
@@ -498,7 +534,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const section = context.section || this.getTargetSection(song);
     const positions = this.getSectionPositions(section);
     const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
-    const currentIndex = this.getLastPositionIndex(section);
+    const lastPositionIndex = this.getLastPositionIndex(section);
+    const currentIndex = Array.isArray(positions) && positions.length > 0
+      ? ((lastPositionIndex !== null && lastPositionIndex >= 0) ? lastPositionIndex : 0)
+      : lastPositionIndex;
     return {
       enabled,
       hasSection: !!section,
@@ -637,6 +676,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       count += 1;
     });
     return count;
+  }
+
+  clearAndResetSong(song = getSong()) {
+    const resetCount = this.resetAllSectionPositionIndexes(song);
+    const clearResult = this.clearGeneratedNotesInSong(song);
+    this.refreshCurrentSectionPositionState(song);
+    return {
+      result: `${clearResult.result}; reset ${resetCount} position counters`
+    };
   }
 
   normalizeSectionPositionsOnLoad(song = getSong()) {
@@ -822,6 +870,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       }
       this.setSectionPositions(section, positions);
       this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      this.refreshCurrentSectionPositionState(song, section);
       return { result: `positions=${this.formatPositionsValue(positions)}` };
     } catch (error) {
       return this.buildPositionsRejectResponse(error?.message || 'invalid positions', rawValue);
@@ -834,6 +883,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return { result: 'positions skipped: no current section selected' };
     }
     this.clearSectionPositions(section);
+    this.refreshCurrentSectionPositionState(song, section);
     return { result: 'positions cleared for current section' };
   }
 
@@ -841,6 +891,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!song || !Array.isArray(song.sections)) {
       return { result: 'positions skipped: no song loaded' };
     }
+    const currentSection = this.getTargetSection(song);
     let clearedCount = 0;
     song.sections.forEach((section) => {
       if (this.getSectionPositions(section) || this.getLastPositionIndex(section) !== null) {
@@ -848,6 +899,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         clearedCount += 1;
       }
     });
+    this.refreshCurrentSectionPositionState(song, currentSection);
     return { result: `positions cleared across ${clearedCount} sections` };
   }
 
@@ -860,6 +912,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (!sourcePositions) {
       return { result: 'positions copy skipped: current section unset' };
     }
+    this.setLastPositionIndex(currentSection, POSITION_NOT_PLAYED_YET);
     let copiedCount = 0;
     song.sections.forEach((section) => {
       if (section === currentSection) {
@@ -872,11 +925,39 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
       copiedCount += 1;
     });
+    this.refreshCurrentSectionPositionState(song, currentSection);
     return {
       result: onlyUnset
         ? `positions copied to ${copiedCount} unset sections`
         : `positions copied to ${copiedCount} sections`
     };
+  }
+
+  refreshCurrentSectionPositionState(song = getSong(), section = null) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    this.requestSectionStatusRefresh(song);
+
+    const currentSection = section || this.getTargetSection(song);
+    if (!currentSection) {
+      return;
+    }
+
+    if (typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== currentSection) {
+      return;
+    }
+
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    if (!enabled) {
+      return;
+    }
+
+    this.refreshNamedNoteDisplay({
+      song,
+      eventName: 'manual'
+    });
   }
 
   buildTargetTableOptions(song = getSong()) {
@@ -1152,6 +1233,53 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     });
   }
 
+  getDiamondPositionDisplayPayload({ section = null, tableID = '', fretWindow = null } = {}) {
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    const activeIndex = Number.isInteger(fretWindow?.appliedIndex)
+      ? fretWindow.appliedIndex
+      : this.getLastPositionIndex(section);
+    const positions = this.getSectionPositions(section);
+
+    if (!enabled || !section || !tableID || !Array.isArray(positions) || positions.length === 0 || !Number.isInteger(activeIndex) || activeIndex < 0) {
+      return {
+        owner: ARPEGGIO_OWNER,
+        clearExisting: true,
+        tableID,
+        minFret: null,
+        maxFret: null
+      };
+    }
+
+    const activeRange = positions[activeIndex];
+    if (!Array.isArray(activeRange) || activeRange.length !== 2) {
+      return {
+        owner: ARPEGGIO_OWNER,
+        clearExisting: true,
+        tableID,
+        minFret: null,
+        maxFret: null
+      };
+    }
+
+    return {
+      owner: ARPEGGIO_OWNER,
+      clearExisting: true,
+      tableID,
+      minFret: activeRange[0],
+      maxFret: activeRange[1]
+    };
+  }
+
+  emitDiamondPositionDisplay(payload = {}) {
+    EventBus.trigger('NoteTable:ShowDiamondPositionRange', {
+      owner: ARPEGGIO_OWNER,
+      clearExisting: !!payload.clearExisting,
+      tableID: payload.tableID || '',
+      minFret: payload.minFret,
+      maxFret: payload.maxFret
+    });
+  }
+
   syncNamedNoteDisplay({ song = getSong(), section = null, tableID = '', sequence = [], eventName = 'manual' } = {}) {
     if (!song || song.isHeadless) {
       return;
@@ -1162,6 +1290,18 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     this.emitNamedNoteDisplay(this.getNamedNoteDisplayPayload(sequence, song, section, tableID, eventName));
+  }
+
+  syncDiamondPositionDisplay({ song = getSong(), section = null, tableID = '', fretWindow = null } = {}) {
+    if (!song || song.isHeadless) {
+      return;
+    }
+
+    if (section && typeof song.getCurrentSection === 'function' && song.getCurrentSection() !== section) {
+      return;
+    }
+
+    this.emitDiamondPositionDisplay(this.getDiamondPositionDisplayPayload({ section, tableID, fretWindow }));
   }
 
   requestCurrentBeatRefresh(song, section = null) {
@@ -1197,6 +1337,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const tuning = this.getTargetTuning(song);
     if (!section || !tuning) {
       this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
+      this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
       return;
     }
 
@@ -1217,17 +1358,18 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       sequence,
       eventName
     });
+    this.syncDiamondPositionDisplay({
+      song,
+      section,
+      tableID: this.getTableID(tuning),
+      fretWindow
+    });
   }
 
   collectCandidatesForSection(section, tuning, options = {}) {
     const tableID = this.getTableID(tuning);
     const sectionNotes = section?.sectionNotesByTable?.[tableID];
-    const namedNotes = sectionNotes?.namedNotes || {};
-    const targetNoteNames = new Set(
-      Object.entries(namedNotes)
-        .filter(([, note]) => note && typeof note === 'object' && Object.keys(note).length > 0)
-        .map(([noteName]) => noteName)
-    );
+    const targetNoteNames = this.collectCandidateNoteNames(sectionNotes);
 
     if (targetNoteNames.size === 0) {
       return [];
@@ -1265,6 +1407,31 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     return candidates;
+  }
+
+  collectCandidateNoteNames(sectionNotes) {
+    if (this.getSourceType() === SOURCE_TYPE_SINGLE_NOTE) {
+      return this.collectSingleNoteSourceNames(sectionNotes);
+    }
+    return this.collectNamedNoteSourceNames(sectionNotes);
+  }
+
+  collectNamedNoteSourceNames(sectionNotes) {
+    const namedNotes = sectionNotes?.namedNotes || {};
+    return new Set(
+      Object.entries(namedNotes)
+        .filter(([, note]) => note && typeof note === 'object' && Object.keys(note).length > 0)
+        .map(([noteName]) => noteName)
+    );
+  }
+
+  collectSingleNoteSourceNames(sectionNotes) {
+    return new Set(
+      (sectionNotes?.playedNotes || [])
+        .filter((note) => note?.styleNum === Note.STYLENUM_SINGLE)
+        .map((note) => `${note?.noteName || ''}`.trim())
+        .filter((noteName) => noteName.length > 0)
+    );
   }
 
   expandCandidateSequence(candidates, beatCount, context = {}) {
@@ -1721,6 +1888,14 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       maxFret: fretWindow.maxFret
     });
     if (candidates.length === 0) {
+      this.requestSectionStatusRefresh(song);
+      this.syncNamedNoteDisplay({ song, section, tableID: this.getTableID(tuning), sequence: [], eventName });
+      this.syncDiamondPositionDisplay({
+        song,
+        section,
+        tableID: this.getTableID(tuning),
+        fretWindow
+      });
       if (removedCount > 0) {
         this.requestCurrentBeatRefresh(song, section);
       }
@@ -1751,6 +1926,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     this.requestCurrentBeatRefresh(song, section);
     this.requestSectionStatusRefresh(song);
     this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
+    this.syncDiamondPositionDisplay({ song, section, tableID, fretWindow });
 
     return {
       result: `Arpeggio applied: target table=${tableID} source=${eventName} generated=${generatedCount} preserved=${preservedCount} removed=${removedCount} beats=${beatCount}`
