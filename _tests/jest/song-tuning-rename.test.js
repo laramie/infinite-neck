@@ -6,10 +6,13 @@ import {
     getSong, 
 } from '../../infinite-neck-headless.js';
 import {
+    applyTuningVisibilityToggle,
     findTuningForID,
     generateNextTuningID,
+    removeMyTuning,
     validateSongTuningDraft
 } from '../../TuningsLibrary.js';
+import EventBus from '../../event-bus.js';
  
 
 
@@ -183,13 +186,13 @@ describe('renameTuningIDInModel: pure model rename', () => {
         song = createFreshHeadlessSong();
         //wireSongProvider(song);
         song.myTunings = [];
-        song.visibleNoteTables = [];
+        song.noteTablesLayout = [];
     });
 
     test('renames the sectionNotesByTable key in the section', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
         seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', [{ beat: 1 }]);
-        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
+        song.setNoteTablesLayout([{ tableID: Constants.TABLE_ID_PREFIX + 'P46_1', visible: true }]);
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
@@ -219,14 +222,15 @@ describe('renameTuningIDInModel: pure model rename', () => {
         expect(section.sectionNotesByTable[Constants.TABLE_ID_PREFIX + 'P46_lead'].tonalSourceSet).toBe('TinyNote');
     });
 
-    test('updates visibleNoteTables to reflect the new key', () => {
+    test('updates noteTablesLayout to reflect the new key', () => {
         cloneTuningHeadless(song, 'P46', 'P46_1');
-        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
+        song.setNoteTablesLayout([{ tableID: Constants.TABLE_ID_PREFIX + 'P46_1', visible: true }]);
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
-        expect(song.visibleNoteTables).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
-        expect(song.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        const layoutTableIDs = song.getNoteTablesLayout().map((entry) => entry.tableID);
+        expect(layoutTableIDs).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
+        expect(layoutTableIDs).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
     });
 
     test('is a no-op in sections that do not have the old key', () => {
@@ -258,12 +262,78 @@ describe('renameTuningIDInModel: pure model rename', () => {
         expect(song.getSections()[1].sectionNotesByTable[Constants.TABLE_ID_PREFIX + 'P46_lead'].playedNotes).toEqual(notes1);
     });
 
-    test('does not touch visibleNoteTables when old key is absent', () => {
-        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'S6'];
+        test('removing a tuning also removes wirings that reference its table', () => {
+            song.myTunings = [
+                { baseID: 'DEV_1' },
+                { baseID: 'DEV_2' }
+            ];
+            song.setNoteTablesLayout([
+                { tableID: Constants.TABLE_ID_PREFIX + 'DEV_1', visible: true },
+                { tableID: Constants.TABLE_ID_PREFIX + 'DEV_2', visible: true }
+            ]);
+            song.wirings = [
+                {
+                    tablename: Constants.TABLE_ID_PREFIX + 'DEV_2',
+                    relativeSection: '',
+                    listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_1'
+                },
+                {
+                    tablename: Constants.TABLE_ID_PREFIX + 'DEV_1',
+                    relativeSection: '',
+                    listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_2'
+                }
+            ];
+            // Simulate stale empty section table entry that can leak into /cn and wiring picker.
+            song.getSections()[0].getSectionNotes(Constants.TABLE_ID_PREFIX + 'DEV_1');
+
+            const removed = removeMyTuning('DEV_1');
+
+            expect(removed).toBe(true);
+            expect(song.myTunings.map((t) => t.baseID)).toEqual(['DEV_2']);
+            expect(song.getNoteTablesLayout().map((entry) => entry.tableID)).toEqual([
+                Constants.TABLE_ID_PREFIX + 'DEV_2'
+            ]);
+            expect(song.wirings).toEqual([]);
+            expect(song.getSections()[0].sectionNotesByTable).not.toHaveProperty(Constants.TABLE_ID_PREFIX + 'DEV_1');
+            expect(song.getAllModelTableIDs()).not.toContain(Constants.TABLE_ID_PREFIX + 'DEV_1');
+        });
+
+    test('does not touch noteTablesLayout when old key is absent', () => {
+        song.setNoteTablesLayout([{ tableID: Constants.TABLE_ID_PREFIX + 'S6', visible: true }]);
 
         song.renameTuningIDInModel('P46_1', 'P46_lead');
 
-        expect(song.visibleNoteTables).toEqual([Constants.TABLE_ID_PREFIX + 'S6']);
+        expect(song.getNoteTablesLayout()).toEqual([{ tableID: Constants.TABLE_ID_PREFIX + 'S6', visible: true }]);
+    });
+
+    test('updates wirings source and listener table IDs during rename', () => {
+        song.wirings = [
+            {
+                tablename: Constants.TABLE_ID_PREFIX + 'DEV_2',
+                relativeSection: '',
+                listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_1'
+            },
+            {
+                tablename: Constants.TABLE_ID_PREFIX + 'DEV_1',
+                relativeSection: '',
+                listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_2'
+            }
+        ];
+
+        song.renameTuningIDInModel('DEV_1', 'DEV_moved');
+
+        expect(song.wirings).toEqual([
+            {
+                tablename: Constants.TABLE_ID_PREFIX + 'DEV_2',
+                relativeSection: '',
+                listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_moved'
+            },
+            {
+                tablename: Constants.TABLE_ID_PREFIX + 'DEV_moved',
+                relativeSection: '',
+                listenToTablename: Constants.TABLE_ID_PREFIX + 'DEV_2'
+            }
+        ]);
     });
 });
 
@@ -278,7 +348,7 @@ describe('headless Clone → use → rename scenario', () => {
         song = createFreshHeadlessSong();
         //wireSongProvider(song);
         song.myTunings = [];
-        song.visibleNoteTables = [];
+        song.noteTablesLayout = [];
     });
 
     test('full scenario: clone P46 → seed notes → rename → model is consistent', () => {
@@ -298,7 +368,7 @@ describe('headless Clone → use → rename scenario', () => {
         // Step 3: Seed notes into the song under the clone's table key
         const notes = [{ beat: 1, string: 2, fret: 5 }];
         seedNotesInSection0(song, Constants.TABLE_ID_PREFIX + 'P46_1', notes);
-        song.visibleNoteTables = [Constants.TABLE_ID_PREFIX + 'P46_1'];
+        song.setNoteTablesLayout([{ tableID: Constants.TABLE_ID_PREFIX + 'P46_1', visible: true }]);
 
         // Step 4: Rename via model method and sync the myTunings entry
         song.renameTuningIDInModel('P46_1', 'P46_lead');
@@ -309,15 +379,16 @@ describe('headless Clone → use → rename scenario', () => {
         expect(section.sectionNotesByTable).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
         expect(section.sectionNotesByTable).not.toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_1');
         expect(section.sectionNotesByTable[Constants.TABLE_ID_PREFIX + 'P46_lead'].playedNotes).toEqual(notes);
-        expect(song.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
-        expect(song.visibleNoteTables).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
+        const layoutTableIDs = song.getNoteTablesLayout().map((entry) => entry.tableID);
+        expect(layoutTableIDs).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(layoutTableIDs).not.toContain(Constants.TABLE_ID_PREFIX + 'P46_1');
         expect(song.myTunings[0].baseID).toBe('P46_lead');
 
         // Step 6: JSON round-trip — renamed key survives serialisation
         const jsonText = JSON.stringify(song);
         const restored = JSON.parse(jsonText);
         expect(restored.sections[0].sectionNotesByTable).toHaveProperty(Constants.TABLE_ID_PREFIX + 'P46_lead');
-        expect(restored.visibleNoteTables).toContain(Constants.TABLE_ID_PREFIX + 'P46_lead');
+        expect(restored.noteTablesLayout).toContainEqual({ tableID: Constants.TABLE_ID_PREFIX + 'P46_lead', visible: true });
         expect(restored.myTunings[0].baseID).toBe('P46_lead');
     });
 
@@ -343,5 +414,60 @@ describe('headless Clone → use → rename scenario', () => {
         // P46_lead no longer starts with 'P46_', so next clone slot is _1 again
         const id2 = generateNextTuningID('P46');
         expect(id2).toBe('P46_1');
+    });
+});
+
+describe('tuning visibility toggle repaint behavior', () => {
+    let song;
+
+    beforeEach(() => {
+        song = createFreshHeadlessSong();
+        jest.spyOn(EventBus, 'trigger').mockImplementation((eventName) => {
+            // Keep the test focused on repaint behavior and avoid DOM wiring side effects.
+            if (eventName === 'UpdateAllWiringSelects') {
+                return;
+            }
+        });
+        globalThis.$ = () => ({
+            prop() { return this; },
+            show() { return this; },
+            hide() { return this; },
+            each() { return this; },
+            removeClass() { return this; },
+            addClass() { return this; }
+        });
+        song.myTunings = [];
+        song.noteTablesLayout = [];
+        song.requestUiClearAll = jest.fn();
+        song.requestUiReplay = jest.fn();
+        song.requestUiResetNoteNames = jest.fn();
+        song.requestUiShowBeats = jest.fn();
+        song.publish_UpdateSectionStatus = jest.fn();
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test('showing a hidden tuning triggers one immediate repaint cycle', () => {
+        cloneTuningHeadless(song, 'P46', 'P46_1');
+
+        applyTuningVisibilityToggle('P46_1', true);
+
+        expect(song.requestUiClearAll).toHaveBeenCalledTimes(1);
+        expect(song.requestUiResetNoteNames).toHaveBeenCalledTimes(1);
+        expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
+        expect(song.publish_UpdateSectionStatus).toHaveBeenCalledTimes(1);
+    });
+
+    test('hiding a tuning does not trigger repaint cycle', () => {
+        cloneTuningHeadless(song, 'P46', 'P46_1');
+
+        applyTuningVisibilityToggle('P46_1', false);
+
+        expect(song.requestUiClearAll).not.toHaveBeenCalled();
+        expect(song.requestUiResetNoteNames).not.toHaveBeenCalled();
+        expect(song.requestUiShowBeats).not.toHaveBeenCalled();
+        expect(song.publish_UpdateSectionStatus).not.toHaveBeenCalled();
     });
 });

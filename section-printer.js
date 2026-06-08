@@ -83,7 +83,17 @@ function percentStringToMultiplier(percentValue) {
 }
 
 function getSectionKeyDisplay(theSong, section) {    //&#x2836 &#x2847 66 B4
-    return theSong.noteIDToNoteName(section.rootID) + (section.rootIDLead != -1 ? "&#x2836;" + theSong.noteIDToNoteName(section.rootIDLead) : "");
+    // Key display must follow the source section (including its sharps/flats),
+    // not the currently selected section in the Song.
+    const rootID = toInt(section?.rootID, 0);
+    const leadID = toInt(section?.rootIDLead, -1);
+    const displayName = (noteID) => {
+        if (typeof section?.noteIDToDisplayName === 'function') {
+            return section.noteIDToDisplayName(noteID);
+        }
+        return theSong.noteIDToNoteName(noteID);
+    };
+    return displayName(rootID) + (leadID !== -1 ? "&#x2836;" + displayName(leadID) : "");
 }
 
 function getSectionBeatsDisplay(section) {
@@ -543,7 +553,7 @@ function createChartBlockMarkup(blockType, blockContent) {
 export function printSections(theSong, theSections, showDetails) {
     let currentSection = theSong.getCurrentSection();
     let result = "<table class='sectionPrintNotes'><tr><th>ID</th><th>beats</th><th>KEY</th><th style='white-space: nowrap;'>&sharp;&nbsp;/&flat;</th><th>Chord</th><th>Mode</th>"
-        + (showDetails ? "<th>Beats</th><th>Position</th><th>Width</th>" : "")
+        + (showDetails ? "<th>Beats</th><th>Position</th><th>Caption Width</th>" : "")
         + "<th>Caption</th>"
         + (showDetails ? "<th>Details</th>" : "")
         + "</tr>";

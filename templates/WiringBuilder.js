@@ -3,6 +3,32 @@ import {
     restoreWiringOpenState
 } from '../infinite-neck.js';
 
+function wouldCreateReciprocalListener(thisTable, listenToTable, relativeSection = '') {
+    if (!thisTable || !listenToTable || thisTable === listenToTable) {
+        return false;
+    }
+    const normalizedRelativeSection = `${relativeSection || ''}`.trim();
+    if (normalizedRelativeSection.length > 0) {
+        return false;
+    }
+    const wirings = Array.isArray(getSong().wirings) ? getSong().wirings : [];
+    return wirings.some((wiring) => {
+        if (!wiring) {
+            return false;
+        }
+        const reverseRelativeSection = `${wiring.relativeSection || ''}`.trim();
+        return wiring.tablename === listenToTable
+            && wiring.listenToTablename === thisTable
+            && reverseRelativeSection.length === 0;
+    });
+}
+
+function refreshAllWiringButtonStatus() {
+    $('.Wiring-controls').each(function () {
+        updateWiringButtonStatus(this);
+    });
+}
+
 function buildWiringWidget(tuningID, tablename) {
     const template = document.getElementById('Wiring-template');
     const clone = template.content.cloneNode(true);
@@ -22,14 +48,20 @@ function buildWiringWidget(tuningID, tablename) {
         const editRelativeSection = controlsDiv.querySelector('.editRelativeSection');
         const thisTable = spanTablename.dataset.tablename;
         const selTablename = controlsDiv.querySelector('.selTablename');
+        const relativeSection = editRelativeSection ? editRelativeSection.value : '';
+        const listenToTable = selTablename ? selTablename.value : '';
+        if (wouldCreateReciprocalListener(thisTable, listenToTable, relativeSection)) {
+            updateWiringButtonStatus(controlsDiv);
+            return;
+        }
         const selListenerProjection = controlsDiv.querySelector('.selListenerProjection');
         getSong().addWiring(
             thisTable,
-            editRelativeSection.value,
-            selTablename.value,
+            relativeSection,
+            listenToTable,
             selListenerProjection ? selListenerProjection.value : 'row-midi'
         );
-        updateWiringButtonStatus(controlsDiv);
+        refreshAllWiringButtonStatus();
     });
 
     $(controlsDiv).find('.selTablename').on('change', function () {
@@ -39,6 +71,7 @@ function buildWiringWidget(tuningID, tablename) {
             const thisTablename = $(controlsDiv).find('.thisTablename').data('tablename');
             getSong().removeWiring(thisTablename);
             $(controlsDiv).find('.editRelativeSection').val("");
+            refreshAllWiringButtonStatus();
         }
     });
     const edit = $(controlsDiv).find('.editRelativeSection');
@@ -59,7 +92,7 @@ export function addWiringWidget(tuningID, tablename) {
 }
 
 export function updateAllWiringSelects() {
-    const tuningIDs = getSong().getVisibleTunings();
+    const tuningIDs = getSong().getAllModelTableIDs();
     const wirings = getSong().wirings;
     $('.Wiring-controls').each(function () {
         const thisTable = $(this).find('.thisTablename').data('tablename');
@@ -95,6 +128,7 @@ function updateWiringButtonStatus(widget) {
     const wiring = wirings.find(w => w.tablename === thisTable) || {};
 
     const isBlocked = sel.val() === "";
+    const isReciprocalBlocked = wouldCreateReciprocalListener(thisTable, sel.val(), editRelativeSection.val());
     const isWired =
         (thisTable === wiring.tablename) &&
         (editRelativeSection.val() === (wiring.relativeSection || "")) &&
@@ -104,13 +138,21 @@ function updateWiringButtonStatus(widget) {
     if (isBlocked) {
         button.removeClass('WiredButtonOn');
         button.addClass('WiredButtonBlocked');
+        button.removeAttr('title');
         button.html('<s>No Instrument</s>');
+    } else if (isReciprocalBlocked) {
+        button.removeClass('WiredButtonOn');
+        button.addClass('WiredButtonBlocked');
+        button.attr('title', 'Mutual listener loops are blocked.');
+        button.html('<s>Loop Blocked</s>');
     } else if (isWired) {
         button.removeClass('WiredButtonBlocked');
         button.addClass('WiredButtonOn');
+        button.removeAttr('title');
         button.text('Wired');
     } else {
         button.removeClass('WiredButtonOn WiredButtonBlocked');
+        button.removeAttr('title');
         button.text('Add Wiring');
     }
 }

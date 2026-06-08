@@ -31,9 +31,9 @@ Song.noteTablesLayout shape:
 
 ```json
 "noteTablesLayout": [
-	{ "tablename": "tblP46_2", "visible": true },
-	{ "tablename": "tblDADGAD_1", "visible": true },
-	{ "tablename": "tblBass4_1", "visible": false }
+	{ "tableID": "tblP46_2", "visible": true },
+	{ "tableID": "tblDADGAD_1", "visible": true },
+	{ "tableID": "tblBass4_1", "visible": false }
 ]
 ```
 
@@ -72,15 +72,16 @@ Support both song formats at load time:
 
 Migration logic:
 1. If noteTablesLayout is present, use it.
-2. Else if visibleNoteTables is present, map each tablename to { tablename, visible: true }.
-3. Ensure noteTablesLayout exists in memory (possibly empty array).
+2. If both noteTablesLayout and visibleNoteTables are present, noteTablesLayout wins and visibleNoteTables is ignored.
+3. Else if visibleNoteTables is present, map each tableID string to { tableID, visible: true }.
+4. Ensure noteTablesLayout exists in memory (possibly empty array).
 
 ### 3.2 Write format
 
 On save:
 - Persist noteTablesLayout.
 - Write songfileVersion as V2.1.
-- Do not rely on visibleNoteTables for persisted output.
+- Omit visibleNoteTables entirely from V2.1 persisted output.
 
 ### 3.3 Version handling
 
@@ -106,7 +107,7 @@ Update persistence constructor defaults:
 - Keep migration from visibleNoteTables during hydration.
 
 Rename/update operations:
-- Tuning ID rename must atomically update sectionNotesByTable keys and noteTablesLayout.tablename entries.
+- Tuning ID rename must atomically update sectionNotesByTable keys and noteTablesLayout.tableID entries.
 
 ### B) Save path and load path (infinite-neck.js)
 
@@ -116,7 +117,7 @@ Save path:
 
 Load path:
 - Run migration to canonical layout field.
-- Detect ghost tables and call showMessages with approved text.
+- Detect ghost tables and call showMessages with approved text once per song-load event only.
 - Preserve no-visible-table state when that is the loaded truth.
 
 ### C) Tunings in Song behavior (TuningsLibrary.js)
@@ -171,6 +172,8 @@ Exact test file set may expand during implementation.
 2. Save migrated song writes V2.1 and noteTablesLayout.
 3. V2 handlers accept V2.1 as valid V2-family input.
 4. noteTablesLayout always exists in saved payload (empty allowed).
+5. V2.1 save omits visibleNoteTables completely.
+6. If both fields are present on load, noteTablesLayout wins.
 
 ### 6.2 Tunings in Song behavior
 
@@ -188,7 +191,7 @@ Exact test file set may expand during implementation.
 
 ### 6.4 Rename and repair
 
-1. Rename updates sectionNotesByTable keys and noteTablesLayout.tablename atomically.
+1. Rename updates sectionNotesByTable keys and noteTablesLayout.tableID atomically.
 2. Manual ID repair path remains functional for ghost-table recovery flow.
 
 ## 7) Delivery sequence and checkpoints
@@ -209,21 +212,19 @@ Checkpoint B (after step 4):
 Checkpoint C (after step 6):
 - Full save/load round trip passes with V2 and V2.1 fixtures.
 
-## 8) Remaining approval questions before coding
+## 8) Round 4 locked decisions (coding-approved)
 
-Most prior questions are now answered in design. Remaining items to lock:
+1. noteTablesLayout key name:
+- Use tableID (not tablename).
 
-1. noteTablesLayout canonical key naming:
-- Confirm field key is exactly tablename (not tableName/tableID).
+2. Dual-field precedence:
+- noteTablesLayout always wins; visibleNoteTables is ignored when both exist.
 
-2. Dual-field precedence when both are present:
-- Confirm noteTablesLayout always wins and visibleNoteTables is ignored.
+3. Ghost load messaging:
+- showMessages warning appears once per load event only.
 
-3. Ghost load messaging behavior:
-- Confirm message shows once per load event (not repeated by redraw/reinstall events).
-
-4. Save payload coexistence policy:
-- Confirm whether to omit visibleNoteTables entirely on V2.1 writes, or optionally keep it as redundant compatibility field.
+4. V2.1 save payload:
+- Omit visibleNoteTables entirely.
 
 ## 9) Definition of done
 
@@ -233,5 +234,7 @@ Iteration 5 is complete when all are true:
 - Ghost tables are preserved and usable in Wiring tools.
 - X gating behaves exactly per InMem rules and title hint.
 - Save/load supports legacy input migration and writes canonical V2.1 output.
+- noteTablesLayout entries persist with tableID key.
+- Dual-field load precedence and ghost warning frequency match Round 4 locks.
 - Tests cover migration, behavior, wiring, rename, and round-trip persistence.
 

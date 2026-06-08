@@ -849,19 +849,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function updateVisibleTablesInMemoryModel(){
-	    const visibleTableIds = TuningsLibrary.getMyTunings()
-	        .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-	        .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
-	    getSong().markVisibleTablesForFileSave(visibleTableIds);
-	    return visibleTableIds;
+	    return getSong().getVisibleTunings();
 	}
 
 	export function updateMemoryModelPreFileSave(){
-	    const visibleTableIds = updateVisibleTablesInMemoryModel();
+	    updateVisibleTablesInMemoryModel();
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({
-	        visibleTableIds,
 	        songName: $("#txtFilename").val(),
 	        theme: $('#selThemes').val(),
 	        bpm,
@@ -947,10 +942,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
+		requestReloadTuningsDisplays();
+		EventBus.trigger('ReinstallAllTuningsTables');
+		EventBus.trigger('UpdateAllWiringSelects');
 		
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
+		const ghostTableIds = getSong().getGhostTableIDs();
+		if (ghostTableIds.length > 0) {
+			const rows = ghostTableIds.map((tableID) => {
+				const tuningID = tableID.startsWith(Constants.TABLE_ID_PREFIX)
+					? tableID.substring(Constants.TABLE_ID_PREFIX.length)
+					: tableID;
+				const tuning = TuningsLibrary.findTuningForID(tuningID);
+				const fromBaseID = tuning?.fromBaseID || '(unknown)';
+				return `"${tableID}", ID: "${tuningID}", Lineage("from"): ${fromBaseID}<br>`;
+			});
+			showMessages(
+				`Tunings without views found in song:<br>${rows.join('')}`
+				+ 'These will continue to be accessible to Observers and Listeners through the Wiring page, and their Sections and Notes are visible in "Chart | Notes".<br>'
+				+ 'If you wish to attach a visible instrument to this Tuning, Clone a Tuning with a baseID equal to Lineage("from") and set its ID to the ID shown.'
+			);
+		}
 		if (tuningsShowing == 0){
-			showDefaultTunings();
+			// Preserve loaded no-visible state; UI already provides warning and recovery flows.
 		}
 
 		replay();
@@ -1061,12 +1075,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installAllTuningsTables(){
 		var count = 0;
-		var tunings = TuningsLibrary.getAllTunings();
+		var tunings = TuningsLibrary.getMyTunings();
 		for (let i = 0; i < tunings.length; i++) {
-			var div = TableBuilder.buildNoteTable(tunings[i]);
+			const tuning = tunings[i];
+			const tableID = Constants.TABLE_ID_PREFIX + tuning.baseID;
+			var div = TableBuilder.buildNoteTable({ ...tuning, visible: true });
 			if (div){
 				$('#tabledest')
 				.append(div);
+				if (!getSong().isTableVisible(tableID)) {
+					$('#' + Constants.TABLEDIV_ID_PREFIX + tuning.baseID).hide();
+				}
 				/* This has been commented out 20260420 because it was potentially weird and didn't seem to do anything any more,
 				   and may register this function too many times, e.g. once per loop.
 				    .on("click", "td", function() { // This function will execute when any td inside #container is clicked

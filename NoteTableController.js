@@ -899,10 +899,10 @@ export function replayTable(replayOptions){
         let defaultDisplayOptions = controlsToDisplayOptions();
         //let relSectionOptions = getSong().getDisplayOptionsInEffect(currSection, defaultDisplayOptions);
         let relSectionOptions = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
-        console.log("relSectionOptions before assign: "+JSON.stringify(relSectionOptions));
+        //console.log("relSectionOptions before assign: "+JSON.stringify(relSectionOptions));
         
         Object.assign(relSectionOptions, replayOptions);
-        console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
+        //console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
         buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
         EventBus.trigger("Widget:SectionStatus:statusChanged",
                             {
@@ -1519,6 +1519,7 @@ export function doFill(theClass, NoteNames, Color, listenToTablename) {
 // Listen for note creation events and update listener tables
 EventBus.on('Note:colored', function(event, data) {
     const { sourceTableID } = data;
+    const colorNoteResult = data && data.colorNoteResult ? data.colorNoteResult : null;
     const song = getSong();
     if (!song || !song.wirings) return;
 
@@ -1526,18 +1527,20 @@ EventBus.on('Note:colored', function(event, data) {
     song.wirings.forEach(wiring => {
         if (wiring.listenToTablename === sourceTableID && wiring.tablename !== sourceTableID) {
             // Prevent infinite loop: don't notify the source table
-            let relSection = song.getRelativeSectionWithWrap(wiring.relativeSection);
-            if ((song.getSections().length === 1)
-                   ||
-                (song.getSections().indexOf(getCurrentSection()) != song.getSections().indexOf(relSection)))
-                {
+            // Keep relative-section observer behavior gated to matching current section,
+            // but allow plain listeners to update immediately on every source note change.
+            if (wiring.relativeSection) {
+                const relSection = song.getRelativeSectionWithWrap(wiring.relativeSection);
+                if ((song.getSections().length === 1)
+                    ||
+                    (song.getSections().indexOf(getCurrentSection()) != song.getSections().indexOf(relSection))) {
                     return;
                 }
+            }
 
             
             // Replay the listener table (full replay, as layouts may differ)
-            clearAllForTable(wiring.tablename);
-            replayTable({
+            const replayOptions = {
                 tablename: wiring.tablename,
                 listenToTablename: sourceTableID,
                 currSection: getCurrentSection(),
@@ -1545,7 +1548,18 @@ EventBus.on('Note:colored', function(event, data) {
                 relativeSection: wiring.relativeSection,
                 listenerProjection: wiring.listenerProjection || 'row-midi',
                 type: wiring.relativeSection ? ReplayOptions.Type.RELATIVE : ReplayOptions.Type.LISTENER
-            });
+            };
+            clearAllForTable(wiring.tablename);
+            replayTable(replayOptions);
+
+            // During recording, Single/Tiny/Fingering/Bend notes are written to recordedNotes.
+            // Replay reads playedNotes, so push an immediate beat-highlight refresh for listeners.
+            if (!wiring.relativeSection
+                && isRecording()
+                && colorNoteResult
+                && colorNoteResult.returnCause === Cause.PLAYEDNOTE) {
+                showHighlightsForBeatForOptions(getBeatNumber(), replayOptions);
+            }
         }
     });
 });

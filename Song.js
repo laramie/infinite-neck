@@ -35,19 +35,141 @@ export class Song extends SongPersistence {
             return;
         }
     }
+
+    ensureNoteTablesLayout() {
+        const seen = new Set();
+        const normalized = [];
+        const incoming = Array.isArray(this.noteTablesLayout) ? this.noteTablesLayout : [];
+
+        incoming.forEach((entry) => {
+            if (!entry || typeof entry !== 'object') {
+                return;
+            }
+            const tableID = `${entry.tableID || entry.tablename || ''}`.trim();
+            if (!tableID || seen.has(tableID)) {
+                return;
+            }
+            seen.add(tableID);
+            normalized.push({ tableID, visible: entry.visible !== false });
+        });
+
+        this.noteTablesLayout = normalized;
+        return this.noteTablesLayout;
+    }
+
+    getNoteTablesLayout() {
+        return this.ensureNoteTablesLayout();
+    }
+
+    getNoteTablesLayoutMap() {
+        const map = new Map();
+        this.getNoteTablesLayout().forEach((entry) => {
+            map.set(entry.tableID, entry.visible !== false);
+        });
+        return map;
+    }
+
+    setNoteTablesLayout(layout = []) {
+        this.noteTablesLayout = Array.isArray(layout) ? layout : [];
+        this.ensureNoteTablesLayout();
+    }
+
+    setTableVisibilityByBaseID(baseID, visible) {
+        if (!baseID) {
+            return;
+        }
+        const tableID = Constants.TABLE_ID_PREFIX + baseID;
+        this.setTableVisibilityByTableID(tableID, visible);
+    }
+
+    setTableVisibilityByTableID(tableID, visible) {
+        if (!tableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        const idx = layout.findIndex((entry) => entry.tableID === tableID);
+        if (idx >= 0) {
+            layout[idx].visible = !!visible;
+            return;
+        }
+        layout.push({ tableID, visible: !!visible });
+    }
+
+    isTableVisible(tableID) {
+        const layout = this.getNoteTablesLayout();
+        const match = layout.find((entry) => entry.tableID === tableID);
+        return !!(match && match.visible !== false);
+    }
+
+    moveTableInLayoutByBaseID(baseID, direction) {
+        const tableID = Constants.TABLE_ID_PREFIX + baseID;
+        const layout = this.getNoteTablesLayout();
+        const index = layout.findIndex((entry) => entry.tableID === tableID);
+        if (index < 0) {
+            return false;
+        }
+        const nextIndex = direction === 'up' ? index - 1 : index + 1;
+        if (nextIndex < 0 || nextIndex >= layout.length) {
+            return false;
+        }
+        const [row] = layout.splice(index, 1);
+        layout.splice(nextIndex, 0, row);
+        return true;
+    }
+
+    removeTableFromLayoutByBaseID(baseID) {
+        const tableID = Constants.TABLE_ID_PREFIX + baseID;
+        this.noteTablesLayout = this.getNoteTablesLayout().filter((entry) => entry.tableID !== tableID);
+    }
+
+    getAllModelTableIDs() {
+        const tableIDs = new Set();
+        this.getNoteTablesLayout().forEach((entry) => {
+            tableIDs.add(entry.tableID);
+        });
+        if (Array.isArray(this.myTunings)) {
+            this.myTunings.forEach((tuning) => {
+                if (tuning && tuning.baseID) {
+                    tableIDs.add(Constants.TABLE_ID_PREFIX + tuning.baseID);
+                }
+            });
+        }
+        if (Array.isArray(this.sections)) {
+            this.sections.forEach((section) => {
+                if (!section || !section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
+                    return;
+                }
+                Object.keys(section.sectionNotesByTable).forEach((tableID) => tableIDs.add(tableID));
+            });
+        }
+        if (Array.isArray(this.wirings)) {
+            this.wirings.forEach((wiring) => {
+                if (wiring?.tablename) {
+                    tableIDs.add(wiring.tablename);
+                }
+                if (wiring?.listenToTablename) {
+                    tableIDs.add(wiring.listenToTablename);
+                }
+            });
+        }
+        return Array.from(tableIDs);
+    }
+
+    getGhostTableIDs() {
+        const layoutMap = this.getNoteTablesLayoutMap();
+        return this.getAllModelTableIDs().filter((tableID) => !layoutMap.has(tableID));
+    }
     
     getVisibleTunings(){
-        const visibleTableIds = this.myTunings
-            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-            .map(t => Constants.TABLE_ID_PREFIX + t.baseID);
-        return visibleTableIds;    
+        return this.getNoteTablesLayout()
+            .filter((entry) => entry.visible !== false)
+            .map((entry) => entry.tableID);
     }
 
     getVisibleTuningIDs(){
-        const visibleTuningIDs = this.myTunings
-            .filter(t => $(`#${Constants.TABLEDIV_ID_PREFIX}${t.baseID}`).is(':visible'))
-            .map(t => t.baseID);
-        return visibleTuningIDs;    
+        return this.getVisibleTunings()
+            .filter((tableID) => tableID.startsWith(Constants.TABLE_ID_PREFIX))
+            .map((tableID) => tableID.substring(Constants.TABLE_ID_PREFIX.length));
     }
 
     addWiring(tablename, relativeSection, listenToTablename, listenerProjection = 'row-midi') {
@@ -396,8 +518,9 @@ export class Song extends SongPersistence {
     }
 
 	getDefaultTableID() {
-		if (Array.isArray(this.visibleNoteTables) && this.visibleNoteTables.length > 0) {
-			return this.visibleNoteTables[0];
+        const visibleTableIDs = this.getVisibleTunings();
+        if (visibleTableIDs.length > 0) {
+            return visibleTableIDs[0];
 		}
 		const firstTuning = Array.isArray(this.myTunings) ? this.myTunings[0] : null;
 		if (firstTuning?.baseID) {
@@ -949,31 +1072,53 @@ export class Song extends SongPersistence {
             delete section.sectionNotesByTable[oldKey];
         });
 
-        if (Array.isArray(this.visibleNoteTables)) {
-            const seen = new Set();
-            this.visibleNoteTables = this.visibleNoteTables
-                .map((tableID) => tableID === oldKey ? newKey : tableID)
-                .filter((tableID) => {
-                    if (seen.has(tableID)) {
-                        return false;
-                    }
-                    seen.add(tableID);
-                    return true;
-                });
+        this.noteTablesLayout = this.getNoteTablesLayout()
+            .map((entry) => ({
+                tableID: entry.tableID === oldKey ? newKey : entry.tableID,
+                visible: entry.visible !== false
+            }))
+            .filter((entry, index, arr) => arr.findIndex((other) => other.tableID === entry.tableID) === index);
+
+        if (Array.isArray(this.wirings)) {
+            this.wirings = this.wirings.map((wiring) => {
+                if (!wiring) {
+                    return wiring;
+                }
+                return {
+                    ...wiring,
+                    tablename: wiring.tablename === oldKey ? newKey : wiring.tablename,
+                    listenToTablename: wiring.listenToTablename === oldKey ? newKey : wiring.listenToTablename
+                };
+            });
         }
     }
 
     markVisibleTablesForFileSave(visibleTableIds){
-        this.visibleNoteTables = visibleTableIds;
+        if (!Array.isArray(visibleTableIds)) {
+            return;
+        }
+        const visibleSet = new Set(visibleTableIds);
+        const layout = this.getNoteTablesLayout();
+        layout.forEach((entry) => {
+            entry.visible = visibleSet.has(entry.tableID);
+        });
+        visibleTableIds.forEach((tableID) => {
+            if (!layout.some((entry) => entry.tableID === tableID)) {
+                layout.push({ tableID, visible: true });
+            }
+        });
     }
 
     prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, plugins }){
         this.markVisibleTablesForFileSave(visibleTableIds);
+        this.ensureNoteTablesLayout();
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;
         this.defaultBPM = "" + bpm;
         this.userColors = userColors;
         this.theme = theme;
+        this.songfileVersion = 'V2.1';
+        delete this.visibleNoteTables;
         if (plugins && typeof plugins === 'object') {
             this.plugins = { ...plugins };
         }

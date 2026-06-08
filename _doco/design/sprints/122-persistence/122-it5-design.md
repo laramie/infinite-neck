@@ -201,7 +201,36 @@ The implementation plan is CORE-APPROVED with the following answers:
 - Confirm whether to omit visibleNoteTables entirely on V2.1 writes, or optionally keep it as redundant compatibility field.
 - ANSWER: omit visibleNoteTables entirely on V2.1 writes.  After this we will rip through the songs and migrate the good ones as part of sprint-121-songs . 
 
+## Round 5: post-implementation changes
 
+### fromBaseID
+We've noticed that, unrelated to the implementation, the myTunings entries don't persist "fromBaseID".  It seems that this value would be necessary for ClipPlugin MIDI Paste and friends.  fromBaseID is derived  from baseID upon Clone to make a real Tuning in myTunings from the Tunings Library. Can you check how fromBaseID lives in the runtime and whether this is correct to persist?
+
+FIXED
+
+### song migrations
+------ CAUTION -------
+- Please go ahead and migrate any songs in these locations:
+- Do not do the songs just sitting in songs/ as we need to check each by hand anyway, and when we save it will get the persisted migration.
+------ CAUTION -------
+
+### stale table 
+
+stale table doesn't repaint until next section mark on make visible.  Should repaint once on going to visible:true immediately.
+
+FIXED
+
+### Wiring not updated on name change
+
+Steps:
+Create two Tunings, DEV_1, DEV_2.
+Have DEV_2 Listener to DEV_1.
+Add notes, loop.
+"Tunings in Song" > ID : change DEV_1 to DEV_moved. 
+==> wiring broken, Listener stops receiving notes.
+Section data shows table was renamed properly in Section.sectionNotesByTable
+
+FIXED
 
 
 

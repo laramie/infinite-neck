@@ -37,6 +37,42 @@ export function getMyTunings() {
     return getMyTuningsStore();
 }
 
+function getOrderedMyTuningsByLayout() {
+    const song = getSong();
+    const myTunings = getMyTuningsStore();
+    if (!song || typeof song.getNoteTablesLayout !== 'function') {
+        return myTunings;
+    }
+    const layout = song.getNoteTablesLayout();
+    const byBaseID = new Map(myTunings.map((tuning) => [tuning.baseID, tuning]));
+    const ordered = [];
+    const seen = new Set();
+
+    layout.forEach((entry) => {
+        const tableID = entry?.tableID;
+        if (typeof tableID !== 'string' || !tableID.startsWith(Constants.TABLE_ID_PREFIX)) {
+            return;
+        }
+        const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
+        const tuning = byBaseID.get(baseID);
+        if (!tuning || seen.has(baseID)) {
+            return;
+        }
+        seen.add(baseID);
+        ordered.push(tuning);
+    });
+
+    myTunings.forEach((tuning) => {
+        if (!tuning || seen.has(tuning.baseID)) {
+            return;
+        }
+        seen.add(tuning.baseID);
+        ordered.push(tuning);
+    });
+
+    return ordered;
+}
+
 export function findTuning(oneBaseID) {
     return getAllTunings().find(tuning => tuning.baseID === oneBaseID);
 }
@@ -257,9 +293,10 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var isSongOwnedTable = primaryControl === "visibility";
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var showMoveColumn = primaryControl === "visibility";
+    var inMemHeader = '<button type="button" class="moveyButton btnRefreshInMemGate" title="Refresh Notes in memory">Notes &#x1F5D8;</button>';
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
-        + (showMoveColumn ? "<th>Move</th><th>InMem</th>" : "")
+        + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
         +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
         
@@ -273,7 +310,10 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var isPianoTuning = tun.baseInstrument === 'Piano';
         var disableMoveUp = r === 0 ? ' disabled' : '';
         var disableMoveDown = r === rows - 1 ? ' disabled' : '';
-        var checkedVisible = tun.visible ? " checked " : "";
+        var tableID = Constants.TABLE_ID_PREFIX + tun.baseID;
+        var checkedVisible = (isSongOwnedTable && getSong().isTableVisible(tableID))
+            ? " checked "
+            : (!isSongOwnedTable && tun.visible ? " checked " : "");
 
         var captionStr = '<nobr>' + tun.caption + '</nobr>';
         var primaryControlHtml = '<button type="button" class="btnCloneTuning" data-baseid="' + tun.baseID + '">Clone</button>';
@@ -361,9 +401,10 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             isPianoTuning,
             isPianoTuning ? 'Divider is unavailable for Piano layouts.' : ''
         );
+        var removeDisabled = sInMemCount && sInMemCount.trim().length > 0 ? ' disabled title="Delete Sections/Notes first"' : '';
         var moveButtonHtml = '<button type="button" class="btnMoveTuningUp" data-baseid="' + tun.baseID + '"' + disableMoveUp + '>&uarr;</button>'
             + '<button type="button" class="btnMoveTuningDown" data-baseid="' + tun.baseID + '"' + disableMoveDown + '>&darr;</button>'
-            + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '">X</button>';
+            + '<button type="button" class="btnRemoveTuning" data-baseid="' + tun.baseID + '"' + removeDisabled + '>X</button>';
 
         // For myTunings (visibility mode), make ID editable; for allTunings (clone mode), show as text
         var idCellHtml;
@@ -471,6 +512,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
     cloned.instance = true;
     cloned.visible = true;
     store.push(cloned);
+    getSong().setTableVisibilityByBaseID(cloned.baseID, true);
 }
 
 export function showHideTunings() {
@@ -506,33 +548,34 @@ export function showHideTuning(show, basekey) {
     } else {
         jdiv.hide();
     }
-    var tuning = findTuningForID(basekey);
-    if (tuning) {
-        tuning.visible = show;  //change it in the in-memory model.
-    } else {
-        //example: user opens new song, but default tuning S6_1 has been added to myTunings
-        // and getAllTunings() concats myTunings into allTunings list, but findTuningForID
-        // only consults all Tunings, so S6_1 will never be found.  Log it and TODO fix it 
-        // when we sort out what to do with myTunings. 20260318.
-        console.log("showHideTuning::Tuning not found (probably a myTunings) for: " + basekey);
+    getSong().setTableVisibilityByBaseID(basekey, show);
+}
+
+export function applyTuningVisibilityToggle(basekey, show) {
+    getSong().setTableVisibilityByBaseID(basekey, show);
+    showHideTuning(show, basekey);
+    if (show) {
+        // Newly shown tables can be stale; repaint once immediately from current section state.
+        getSong().requestUiClearAll();
+        getSong().requestUiResetNoteNames();
+        getSong().requestUiShowBeats();
+        getSong().publish_UpdateSectionStatus();
     }
+    requestUpdateAllWiringSelects();
 }
 
 export function showTuningsForTablesInFile() {
-    var numFound = 0;
-        getSong().visibleNoteTables.forEach(visTableID => {
-            const visbasekey = visTableID.substring(Constants.TABLE_ID_PREFIX.length);
-            const tuning = findTuning(visbasekey);
-            if (tuning) {
-                tuning.visible = true;
-            } else {
-                console.log("tuning not found for basekey: " + visbasekey);
-            }
-            requestReinstallAllTuningsTables();
-            showTuning(visbasekey);
-            numFound++;
-        });
-        return numFound;
+    let numFound = 0;
+    const visibleBaseIDs = new Set(getSong().getVisibleTuningIDs());
+    getMyTuningsStore().forEach((tuning) => {
+        const baseID = tuning.baseID;
+        const show = visibleBaseIDs.has(baseID);
+        showHideTuning(show, baseID);
+        if (show) {
+            numFound += 1;
+        }
+    });
+    return numFound;
 }
 
 export function hideAllTunings() {
@@ -540,6 +583,7 @@ export function hideAllTunings() {
 }
 
 export function moveMyTuningUp(baseID) {
+    var song = getSong();
     var myTunings = getMyTuningsStore();
     var index = myTunings.findIndex(function (tuning) {
         return tuning.baseID === baseID;
@@ -550,10 +594,12 @@ export function moveMyTuningUp(baseID) {
     var tuning = myTunings[index];
     myTunings.splice(index, 1);
     myTunings.splice(index - 1, 0, tuning);
+    song.moveTableInLayoutByBaseID(baseID, 'up');
     return true;
 }
 
 export function moveMyTuningDown(baseID) {
+    var song = getSong();
     var myTunings = getMyTuningsStore();
     var index = myTunings.findIndex(function (tuning) {
         return tuning.baseID === baseID;
@@ -564,10 +610,16 @@ export function moveMyTuningDown(baseID) {
     var tuning = myTunings[index];
     myTunings.splice(index, 1);
     myTunings.splice(index + 1, 0, tuning);
+    song.moveTableInLayoutByBaseID(baseID, 'down');
     return true;
 }
 
 export function removeMyTuning(baseID) {
+    var song = getSong();
+    if (isTuningRemovalBlockedByInMem(baseID)) {
+        return false;
+    }
+    var removedTableID = Constants.TABLE_ID_PREFIX + baseID;
     var myTunings = getMyTuningsStore();
     var index = myTunings.findIndex(function (tuning) {
         return tuning.baseID === baseID;
@@ -576,7 +628,69 @@ export function removeMyTuning(baseID) {
         return false;
     }
     myTunings.splice(index, 1);
+
+    if (Array.isArray(song.wirings)) {
+        song.wirings = song.wirings.filter(function (wiring) {
+            return wiring
+                && wiring.tablename !== removedTableID
+                && wiring.listenToTablename !== removedTableID;
+        });
+    }
+
+    if (Array.isArray(song.sections)) {
+        song.sections.forEach(function (section) {
+            if (!section || !section.sectionNotesByTable || typeof section.sectionNotesByTable !== 'object') {
+                return;
+            }
+            delete section.sectionNotesByTable[removedTableID];
+        });
+    }
+
+    song.removeTableFromLayoutByBaseID(baseID);
     return true;
+}
+
+function isTuningRemovalBlockedByInMem(baseID) {
+    if (!baseID) {
+        return false;
+    }
+    const tuningsInMemoryHash = getSong().getTuningHashInMemoryModel() || {};
+    const inMemValue = tuningsInMemoryHash[baseID];
+    const inMemCount = Number.parseInt(inMemValue, 10);
+    return Number.isInteger(inMemCount) && inMemCount > 0;
+}
+
+function refreshMyTuningsInMemGateUI() {
+    reloadMyTuningsDisplay();
+}
+
+function refreshMyTuningsInMemGateInline() {
+    const tuningsInMemoryHash = getSong().getTuningHashInMemoryModel() || {};
+    const table = $('#' + Constants.MY_TUNINGS_TABLE_ID);
+    if (table.length === 0) {
+        return;
+    }
+
+    table.find('.btnRemoveTuning').each(function () {
+        const button = $(this);
+        const baseID = button.data('baseid');
+        const rawCount = tuningsInMemoryHash[baseID];
+        const parsedCount = Number.parseInt(rawCount, 10);
+        const hasNotes = Number.isInteger(parsedCount) && parsedCount > 0;
+        const countText = hasNotes ? String(parsedCount) : '';
+
+        const row = button.closest('tr');
+        const inMemCell = row.children('td').eq(2);
+        inMemCell.html('<b>' + countText + '</b>');
+
+        if (hasNotes) {
+            button.prop('disabled', true);
+            button.attr('title', 'Delete Sections/Notes first');
+        } else {
+            button.prop('disabled', false);
+            button.removeAttr('title');
+        }
+    });
 }
 
 //===============================================================================
@@ -629,7 +743,7 @@ export function reloadTuningsDisplay(which){
         var tuningsInMemoryHash = getSong().getTuningHashInMemoryModel();
         if (which === 'my'){
             var myTuningsDiv = $('#divMyTuningsTab');
-            var myTunings = getSong().myTunings || [];
+            var myTunings = getOrderedMyTuningsByLayout();
             myTuningsDiv.empty();
             myTuningsDiv
             .append(dumpTuningsToTable(tuningsInMemoryHash, myTunings, {
@@ -687,25 +801,20 @@ export function bindFormTuningsEvents() {
     });
 
     $('#btnMyTuningsTab').off('click').on('click', function() {
+        refreshMyTuningsInMemGateUI();
         showTuningsTab('my');
     });
     $('#btnAllTuningsTab').off('click').on('click', function() {
         showTuningsTab('all');
     });
+    $('#frmTunings').off('click', '.btnRefreshInMemGate').on('click', '.btnRefreshInMemGate', function () {
+        refreshMyTuningsInMemGateInline();
+    });
     $('#' + Constants.MY_TUNINGS_TABLE_ID + ' .cbTuningVisible').change(function () {
         var show = this.checked;
         var basekey = this.value;
-        var tuning = findTuning(basekey);
-        if (tuning) {
-            tuning.visible = show;
-        } else {
-            console.log("tuning not found for basekey: " + basekey);
-        }
-        if (!show) {
-            $('#' + Constants.TABLEDIV_ID_PREFIX + basekey).hide();
-        }
-        requestReinstallAllTuningsTables();
-        showHideTuning(show, basekey);
+        applyTuningVisibilityToggle(basekey, show);
+        refreshMyTuningsInMemGateUI();
     });
     $('#frmTunings .checkboxLH').change(function () {
         var tuningID = this.value;
@@ -811,6 +920,7 @@ export function bindFormTuningsEvents() {
 
         const createdTuning = createSongTuningFromDraft(createdTuningResult.normalizedDraft);
         getMyTuningsStore().push(createdTuning);
+        getSong().setTableVisibilityByBaseID(createdTuning.baseID, true);
         reloadMyTuningsDisplay();
         resetSongTuningForm();
         $('#divAddSongTuning').hide();
@@ -836,6 +946,7 @@ export function bindFormTuningsEvents() {
         cloned.instance = true;
         cloned.visible = true;
         getMyTuningsStore().push(cloned);
+        getSong().setTableVisibilityByBaseID(cloned.baseID, true);
         reloadMyTuningsDisplay();
         requestInstrumentAdded(cloned.baseID);
         requestReinstallAllTuningsTables(cloned.baseID);
@@ -861,14 +972,24 @@ export function bindFormTuningsEvents() {
 
     $('#frmTunings').off('click', '.btnRemoveTuning').on('click', '.btnRemoveTuning', function () {
         var baseID = $(this).data('baseid');
+        if (isTuningRemovalBlockedByInMem(baseID)) {
+            // Refresh stale InMem/X gate state if the tab stayed open while notes changed.
+            refreshMyTuningsInMemGateUI();
+            return;
+        }
         if (!removeMyTuning(baseID)) {
             return;
         }
         reloadMyTuningsDisplay();
         requestReinstallAllTuningsTables();
+        requestUpdateAllWiringSelects();
     });
 
     // Tuning ID edit handler (for myTunings table only)
+    $('#frmTunings').off('focusin', '.inputTuningID').on('focusin', '.inputTuningID', function () {
+        refreshMyTuningsInMemGateInline();
+    });
+
     $('#frmTunings').off('change', '.inputTuningID').on('change', '.inputTuningID', function () {
         var oldID = $(this).data('oldid');
         var newID = $(this).val().trim();
@@ -904,10 +1025,10 @@ export function bindFormTuningsEvents() {
         tuning.baseID = newID;
         $(this).data('oldid', newID); // Update the stored old ID for future changes
 
-        // Rename all NoteTable references in the Song model (section noteTables keys + visibleNoteTables)
+        // Rename all NoteTable references in the Song model (section noteTables keys + noteTablesLayout)
         getSong().renameTuningIDInModel(oldID, newID);
 
-        reloadMyTuningsDisplay();
+        refreshMyTuningsInMemGateUI();
         requestReinstallAllTuningsTables();
     });
 }
