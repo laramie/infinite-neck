@@ -320,6 +320,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .noteBlack {
     background-color: black;
     color: darkorange;
+    border: 1px solid rgb(1, 1, 83);
 }
 .noteWhite { background-color: white; color: black; }
 

@@ -697,6 +697,60 @@ export var gMenuFile =    {
             {
               "caption": "<b>t</b>all",
               "trigger": "t"
+            },
+            {
+              "caption": "<b>b</b>ackground opacity",
+              "trigger": "b",
+              "children": [
+                {
+                  "caption": "<b>1</b>) 100%",
+                  "trigger": "1",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"100%"
+                },
+                {
+                  "caption": "<b>2</b>) 95%",
+                  "trigger": "2",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"95%"
+                },
+                {
+                  "caption": "<b>3</b>) 90%",
+                  "trigger": "3",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"90%"
+                },
+                {
+                  "caption": "<b>4</b>) 85%",
+                  "trigger": "4",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"85%"
+                },
+                {
+                  "caption": "<b>5</b>) 80%",
+                  "trigger": "5",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"80%"
+                },
+                {
+                  "caption": "<b>6</b>) 70%",
+                  "trigger": "6",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"70%"
+                },
+                {
+                  "caption": "<b>7</b>) 60%",
+                  "trigger": "7",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"60%"
+                },
+                {
+                  "caption": "<b>8</b>) 50%",
+                  "trigger": "8",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"50%"
+                }
+              ]
             }
           ]
         },

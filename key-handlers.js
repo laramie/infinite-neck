@@ -806,6 +806,9 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
+		case "cmdBackgroundOpacity":
+			setOneCssVar("--cmd-menu-opacity", menuItem.name);
+			break;	
 		case "showViewDiagnostics":
 			showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
 			break;

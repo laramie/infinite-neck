@@ -1734,7 +1734,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
 		setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
 		setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
-
 		fullRepaint();
 	}
 
@@ -2338,12 +2337,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
 			fullRepaint();
 		});
-		bindEvent('change', '#dropDownInstrumentMargins', function() {
-			//short-circuit and set it now, it is in mem for next time.
-			var margin = this.value;
-			$('.instrumentBackground').css({"margin-top": margin, "margin-bottom": +margin });
-		});
-
+		
 		bindEvent('change', '#cbHideNamedNotes, #cbHideSingleNotes, #cbHideTinyNotes, #cbHideFingering', function() {
 			var hnchecked = $('#cbHideNamedNotes').prop("checked");
 			var hschecked = $('#cbHideSingleNotes').prop("checked");
@@ -2676,6 +2670,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyScalingPrefs(true);
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
+		setOneCssVar("--cmd-menu-opacity", "90%");
 
 		var currentFilename = $("#txtFilename").val();
 		$(".lblSongName").html(currentFilename);
