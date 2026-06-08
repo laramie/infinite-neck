@@ -2670,6 +2670,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyScalingPrefs(true);
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
+		
 		setOneCssVar("--cmd-menu-opacity", "90%");
 
 		var currentFilename = $("#txtFilename").val();

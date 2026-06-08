@@ -993,6 +993,7 @@ export function bindFormTuningsEvents() {
     $('#frmTunings').off('change', '.inputTuningID').on('change', '.inputTuningID', function () {
         var oldID = $(this).data('oldid');
         var newID = $(this).val().trim();
+        newID = newID.replace(/\W/g,'_').replace(/^([0-9])/, '_$1');
 
         if (!newID) {
             alert("Tuning ID cannot be empty.");

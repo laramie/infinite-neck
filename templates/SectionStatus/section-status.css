@@ -79,7 +79,7 @@
     --section-status-key-idle-bg: white;
 }
 .SectionStatus_rootKeyLead {
-    --section-status-key-idle-bg: white;
+    --section-status-key-idle-bg: rgb(109, 109, 109);
     --section-status-key-live-bg: aqua;
 }
 .SectionStatus_rootKey.ssKey_relative {
@@ -101,26 +101,6 @@
 .SectionStatus_rootKeyLead.ssKey_hasValue {
     background-color: var(--section-status-key-live-bg);
 }
-/*
-.section-status-vertical-table {
-    border: 1px dashed blue;
-}
-
-.section-status-vertical-table tr td {
-    border: 1px dashed lightblue;
-}
-
-.section-status-vertical-table-inner {
-    border: 1px dashed green;
-}
-
-.section-status-vertical-table-inner tr td {
-    border: 1px dashed orange;
-}
-.fretTableWrapper td {
-    border: 1px solid red;
-}
-*/
 
 .RecordDot {
   display: inline-block;
@@ -171,6 +151,13 @@
 .SectionStatusWidget--leadSheet .SectionStatus_rootKeyLead {
     font-size: 110%;
 }
+
+
+.SectionStatusWidget--leftRail .SectionStatus_rootKey,
+.SectionStatusWidget--leftRail .SectionStatus_rootKeyLead {
+    font-size: 150%;
+}
+
 
 .SectionStatusWidget--captionRow .SectionsStatus_SectionNumber, 
 .SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
