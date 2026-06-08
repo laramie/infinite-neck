@@ -450,11 +450,48 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (getSong().isHeadless){
 			return;
 		}
+		const song = getSong();
+		const showBeatCounter = $("#cbShowLooperLightBeats").prop("checked");
+		const isLoopActive = sectionsLooping() || beatsLooping();
+
+		const visibleTables = (typeof song.getVisibleTunings === 'function')
+			? song.getVisibleTunings()
+			: [];
+
+		visibleTables.forEach((tableID) => {
+			const wiring = Array.isArray(song.wirings)
+				? song.wirings.find((w) => w && w.tablename === tableID)
+				: null;
+			const relativeSpec = `${wiring?.relativeSection || ''}`.trim();
+			if (relativeSpec) {
+				const relativeSection = song.getRelativeSectionWithWrap(relativeSpec);
+				const relativeSectionIndex = song.getSections().indexOf(relativeSection);
+				EventBus.trigger('Widget:SectionStatus:statusChanged', {
+					ownerID: tableID,
+					sectionNumber: (relativeSectionIndex >= 0) ? relativeSectionIndex + 1 : '',
+					beatNumber: relativeSection?.currentBeat ?? '',
+					showBeatCounter,
+					isLoopActive
+				});
+				return;
+			}
+
+			EventBus.trigger('Widget:SectionStatus:statusChanged', {
+				ownerID: tableID,
+				sectionNumber: song.getSectionsCurrentIndex() + 1,
+				beatNumber: song.getBeat(),
+				showBeatCounter,
+				isLoopActive
+			});
+		});
+
 		EventBus.trigger('Widget:SectionStatus:statusChanged', {
-			sectionNumber: getSong().getSectionsCurrentIndex() + 1,
-			beatNumber: getSong().getBeat(),
-			showBeatCounter: $("#cbShowLooperLightBeats").prop("checked"),
-			isLoopActive: sectionsLooping() || beatsLooping()
+			ownerID: 'leadsheet',
+			placementID: 'leadSheet',
+			sectionNumber: song.getSectionsCurrentIndex() + 1,
+			beatNumber: song.getBeat(),
+			showBeatCounter,
+			isLoopActive
 		});
 	}
 

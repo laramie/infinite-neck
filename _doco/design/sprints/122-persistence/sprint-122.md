@@ -109,6 +109,5 @@ Fixed in chat. Chat log:
 - Remove View-only dependence from visibility persistence.
 - Ensure visible-table persistence can work in no-View or headless save flows.
 - Keep visibility persistence from mutating or clobbering note-table model content.
-- OPEN: design document and report started.
-
+- **SPRINT COMPLETE**
 

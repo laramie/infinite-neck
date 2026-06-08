@@ -209,7 +209,7 @@ We've noticed that, unrelated to the implementation, the myTunings entries don't
 FIXED
 
 ### song migrations
------- CAUTION -------
+------ CAUTION DON'T SEND UNTIL YOU MAKE A PASS BY HAND AND TRIAGE -------
 - Please go ahead and migrate any songs in these locations:
 - Do not do the songs just sitting in songs/ as we need to check each by hand anyway, and when we save it will get the persisted migration.
 ------ CAUTION -------
@@ -232,6 +232,13 @@ Section data shows table was renamed properly in Section.sectionNotesByTable
 
 FIXED
 
+### Other things fixed in chat
+X button guarded better for when tables have InMem, but Tunings table has stale count of that.  Made it check in realtime, but did not make placing notes send any broadcast or make Tunings table listen to existing broadcasts.  So if you click on X, it may gray out then and then update the numbers.  Added a refresh button called "Notes" instead of InMem.  Added focus handler to ID edit box, and event handler to checkbox to update InMem.
+Added regex to changing the ID so you can't put spaces or special chars in the name.
+Things not getting populated on making tables visible again, like wiring SELECT, buttons.  
+Tweaked some events so that recording notes go to Listener.
+Observers and Listeners can't wire to each other in a circle
+Observers can't be clicked to place notes
+Observers were getting AutoColor context passed in from Current Section.
 
-
-
+**SPRINT COMPLETE** 

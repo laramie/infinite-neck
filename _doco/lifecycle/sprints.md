@@ -95,7 +95,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 - [120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
   - see sprint file for Iterations 1-6 
-  - COMPLETE
+  - **COMPLETE**
 
 - 121-songs
   - song test fixtures / song test list
@@ -106,19 +106,14 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - added songs/tests/piano-listener-guitar-wite-out-fixture.json
 
 - [122-persistence](../design/sprints/122-persistence/sprint-122.md)
-  - [Iteration 1: persistence matrix](../design/sprints/122-persistence/sprint-122.md#iteration-1-define-scope-and-persistence-matrix) - DONE
+  - [Iteration 1: persistence matrix](../design/sprints/122-persistence/sprint-122.md#iteration-1-define-scope-and-persistence-matrix) : DONE
+  - [Iteration 2: stylesheets/color themes](../design/sprints/122-persistence/sprint-122.md#iteration-2-fix-user-colors-and-stylesheets) : DONE
+  - [Iteration 3: tunings](../design/sprints/122-persistence/sprint-122.md#iteration-3-fix-mytunings-and-ensure-user-tuning-works) : DONE
+  - [Iteration 4: USER Theme](../design/sprints/122-persistence/sprint-122.md#iteration-4-fix-user-themes) :  DONE
+  - [Iteration 5: visibleTables](../design/sprints/122-persistence/sprint-122.md#iteration-5-fix-visible-tables) : Ensure visible tables doesn't clobber tables in Model--allowed to persist without View. : DONE
+  - [sprint-122-report-1: filters to keep](../design/sprints/122-persistence/122-report-1.md#sprint-122-filters-to-keep) : everything filtered : DONE
 
-  - [Iteration 2: stylesheets/color themes](../design/sprints/122-persistence/sprint-122.md#iteration-2-fix-user-colors-and-stylesheets) - DONE
-  
-  - [Iteration 3: tunings](../design/sprints/122-persistence/sprint-122.md#iteration-3-fix-mytunings-and-ensure-user-tuning-works) - DONE
-
-
-  - [Iteration 4: USER Theme](../design/sprints/122-persistence/sprint-122.md#iteration-4-fix-user-themes) -  DONE
-
-
-  - [Iteration 5: visibleTables](../design/sprints/122-persistence/sprint-122.md#iteration-5-fix-visible-tables) - Ensure visible tables doesn't clobber tables in Model--allowed to persist without View. - **OPEN**
-
-  - [sprint-122-report-1: filters to keep](../design/sprints/122-persistence/122-report-1.md#sprint-122-filters-to-keep) - everything filtered - DONE
+  - **SPRINT COMPLETE**
 
 - 123-helpfile
   - finish plugin help file
@@ -133,14 +128,14 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - promoted from sprint-903 on 20260602
   - Hand-wavy Design request in [125-design](../design/sprints/125-tonal-plugin/125-design.md)
   - Design-sketch document by Copilot: [903-design-sketch](../design/sprints/125-tonal-plugin/125-design-sketch.md) 
-  - COMPLETE 
+  - **COMPLETE**
 
 - [126-piano-listener](../design/sprints/126-piano-listener/sprint-126.md)
   - Piano needs to ignore col,row when Listening to multi-string instruments.  Notes are placed by MIDI num and algorithm.
   - Bonus: this works for all kinds of Notes, including Highlights, and Notes with **"owner"** which are temporary from plugins, so ArpeggioPlugin highlights get passed to the Listener.
   - Notes with **"owner"** are printed in bold, magenta in Chart > Notes
   - Setting **Instrument** in ArpeggioPlugin and FillPlugin now resets **strings** range.
-  - COMPLETE 
+  - **COMPLETE** 
 
 # Future Sprints Unscheduled 
 

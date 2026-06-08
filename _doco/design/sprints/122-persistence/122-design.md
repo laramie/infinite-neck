@@ -141,6 +141,7 @@ Likely design direction:
 - the model or save caller should provide the authoritative visible-table list
 - the View may reflect or edit that state, but should not be the only source of truth
 
+- **SPRINT COMPLETE**
 
 
 ----------------------

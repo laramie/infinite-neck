@@ -63,6 +63,12 @@ function makeWrapper(element) {
 			}
 			return this;
 		},
+		hasClass(className) {
+			if (!element) {
+				return false;
+			}
+			return element.classes.has(className);
+		},
 		toggle(force) {
 			if (!element) {
 				return this;
@@ -88,6 +94,13 @@ function makeWrapper(element) {
 				return element.data.get(key);
 			}
 			element.data.set(key, value);
+			return this;
+		},
+		removeData(key) {
+			if (!element) {
+				return this;
+			}
+			element.data.delete(key);
 			return this;
 		},
 		find(selector) {
@@ -278,5 +291,25 @@ describe('command-line ArrowUp and ArrowDown handlers', () => {
 
 		expect(menuModule.diveMenu).toHaveBeenCalledWith(child, 'showing-list-menu');
 		expect(menuModule.surfaceOneMenu).toHaveBeenCalledTimes(1);
+	});
+
+	test('leaving one-line mode keeps cmdPrompt updating while navigating back up with RETURN', () => {
+		menuModule.printMenuStack
+			.mockReturnValueOnce('<div class="cmdPrompt">/a:</div>')
+			.mockReturnValueOnce('<div class="cmdPrompt">/a/b:</div>')
+			.mockReturnValueOnce('<div class="cmdPrompt">/a:</div>');
+
+		updateCmdLineView();
+		expect(elements['#CmdMenuStack'].html).toContain('/a:');
+
+		setCmdLineMenuMode('one-line');
+		updateCmdLineView();
+		expect(elements['#CmdMenuStack'].html).toContain('/a/b:');
+
+		setCmdLineMenuMode('tall');
+		updateCmdLineView();
+
+		expect(elements['#CmdMenuStack'].html).toContain('/a:');
+		expect(elements['#CmdMenuStack'].html).not.toContain('/a/b:');
 	});
 });
