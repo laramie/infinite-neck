@@ -532,11 +532,30 @@ table.viewControls th {
 }
 #allTuningsTable th,
 #myTuningsTable th {
-    font-size:  80%;
+    font-size:  90%;
+    height: 3em;
 }
-#allTuningsTable tr:hover,
-#myTuningsTable tr:hover {
+.TuningsTableSkinny{
+    max-width: 6em;
+
+}
+#allTuningsTable tr:not(:first-child):hover,
+#myTuningsTable tr:not(:first-child):hover {
     background-color: lightgreen;
+}
+.btnRefreshInMemGate {
+    padding: 0;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    margin-right: 0.4em;
+    margin-top: 0.8em;
+    margin-bottom: 0.6em;
+    font-size: 80%;
+    font-weight: bold;
+    box-shadow: 1px 1px 2px black;
+    border-radius: 1px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 
 .userInstrumentControlsGroup {

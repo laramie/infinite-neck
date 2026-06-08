@@ -298,7 +298,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
         +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>PianoNames</th><th>PianoSkeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
+        + "<th>BN</th><th>Right/Left</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
         
     );
     table.append(trh);

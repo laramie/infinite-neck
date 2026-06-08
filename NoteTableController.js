@@ -377,6 +377,18 @@ export const Cause = Object.freeze({
 
 // td.note click calls just this from infinite-neck.js::installTDNoteClick()
 export function colorNote(cell) {
+    // Observer tables (relative-section wiring) should not accept direct note clicks.
+    const clickedTableID = cell && typeof cell.closest === 'function'
+        ? cell.closest('table').attr('id')
+        : '';
+    if (clickedTableID) {
+        const observerWiring = (getSong()?.wirings || []).find((wiring) => wiring?.tablename === clickedTableID);
+        const relativeSection = `${observerWiring?.relativeSection || ''}`.trim();
+        if (relativeSection.length > 0) {
+            return;
+        }
+    }
+
     let res = {returnCause: Cause.ERROR};
     try {
         res = colorNoteInner(cell);
@@ -878,8 +890,7 @@ export function replayTable(replayOptions){
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    //const lookupContext = createNotetableLookupContext(currSection);
-    const lookupContext = createNotetableLookupContext(getCurrentSection());
+    const lookupContext = createNotetableLookupContext(currSection);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -1235,8 +1246,7 @@ export function showHighlightsForBeat(nBeat){
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
     const currSection = getReplaySection(options);
-    //const lookupContext = createNotetableLookupContext(currSection);
-    const lookupContext = createNotetableLookupContext(getCurrentSection());
+    const lookupContext = createNotetableLookupContext(currSection);
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';

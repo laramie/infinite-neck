@@ -45,12 +45,12 @@
 }
 
 .SectionStatus_td_rootKey{
-    padding-top: 1em;
+    padding-top: 0.6em;
     text-align: center;
 }
 .SectionStatus_td_rootKeyLead {
     text-align: center;
-    padding-bottom: 1em;
+    padding-bottom: 0.4em;
 }
 
 /* Use class selectors for correct cascade.
@@ -155,7 +155,9 @@
 
 .SectionStatusWidget--leftRail .SectionStatus_rootKey,
 .SectionStatusWidget--leftRail .SectionStatus_rootKeyLead {
-    font-size: 150%;
+    font-size: 120%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 
@@ -168,8 +170,9 @@
 }
 
 .SectionStatusWidget--captionRow .SectionStatus_relativeSection,
-.SectionStatusWidget--leadSheet .SectionStatus_relativeSection {
-    margin-right: 0.15em;
+.SectionStatusWidget--leadSheet .SectionStatus_relativeSection,
+.SectionStatusWidget--leftRail .SectionStatus_relativeSection {
+    color: rgb(120, 255, 235);
 }
 
 .SectionStatusWidget--leftRail .SectionStatus_loopLight.SectionStatus_showBeatCounter {

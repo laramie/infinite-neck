@@ -3,12 +3,8 @@ import {
     restoreWiringOpenState
 } from '../infinite-neck.js';
 
-function wouldCreateReciprocalListener(thisTable, listenToTable, relativeSection = '') {
+function wouldCreateReciprocalWiring(thisTable, listenToTable) {
     if (!thisTable || !listenToTable || thisTable === listenToTable) {
-        return false;
-    }
-    const normalizedRelativeSection = `${relativeSection || ''}`.trim();
-    if (normalizedRelativeSection.length > 0) {
         return false;
     }
     const wirings = Array.isArray(getSong().wirings) ? getSong().wirings : [];
@@ -16,10 +12,8 @@ function wouldCreateReciprocalListener(thisTable, listenToTable, relativeSection
         if (!wiring) {
             return false;
         }
-        const reverseRelativeSection = `${wiring.relativeSection || ''}`.trim();
         return wiring.tablename === listenToTable
-            && wiring.listenToTablename === thisTable
-            && reverseRelativeSection.length === 0;
+            && wiring.listenToTablename === thisTable;
     });
 }
 
@@ -50,7 +44,7 @@ function buildWiringWidget(tuningID, tablename) {
         const selTablename = controlsDiv.querySelector('.selTablename');
         const relativeSection = editRelativeSection ? editRelativeSection.value : '';
         const listenToTable = selTablename ? selTablename.value : '';
-        if (wouldCreateReciprocalListener(thisTable, listenToTable, relativeSection)) {
+        if (wouldCreateReciprocalWiring(thisTable, listenToTable)) {
             updateWiringButtonStatus(controlsDiv);
             return;
         }
@@ -128,7 +122,7 @@ function updateWiringButtonStatus(widget) {
     const wiring = wirings.find(w => w.tablename === thisTable) || {};
 
     const isBlocked = sel.val() === "";
-    const isReciprocalBlocked = wouldCreateReciprocalListener(thisTable, sel.val(), editRelativeSection.val());
+    const isReciprocalBlocked = wouldCreateReciprocalWiring(thisTable, sel.val());
     const isWired =
         (thisTable === wiring.tablename) &&
         (editRelativeSection.val() === (wiring.relativeSection || "")) &&
@@ -143,7 +137,7 @@ function updateWiringButtonStatus(widget) {
     } else if (isReciprocalBlocked) {
         button.removeClass('WiredButtonOn');
         button.addClass('WiredButtonBlocked');
-        button.attr('title', 'Mutual listener loops are blocked.');
+        button.attr('title', 'Mutual wiring loops are blocked (Observer/Listener combinations included).');
         button.html('<s>Loop Blocked</s>');
     } else if (isWired) {
         button.removeClass('WiredButtonBlocked');

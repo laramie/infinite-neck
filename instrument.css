@@ -159,7 +159,7 @@
 .fretTableLeftCaption {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: 140%;
+    font-size: 120%;
     text-align: center;
 }
 
