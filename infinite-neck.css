@@ -1468,7 +1468,8 @@ td.nut div.NoteActive .CenterCell {
     max-height: max(20px, var(--tiny-note-max-height)); /* New 20260608 */
     font-size: max(40%, var(--tiny-note-font-size));
     z-index: 6;
-    border-radius: 6px;
+    /*border-radius: 6px;*/
+    border-radius: var(--tiny-note-radius);
     text-align: center;
     vertical-align: top;
  }

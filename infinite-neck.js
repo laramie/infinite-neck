@@ -1894,6 +1894,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selTinyNoteVPosition").val(options.tinyNoteVPosition);
 		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
 		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
+		$("#selTinyNoteRadius").val(options.tinyNoteRadius);
 
 		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
@@ -1903,6 +1904,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--tiny-note-width",      $("#selTinyNoteWidth").val());
 		setOneCssVar("--tiny-note-max-width",  $("#selTinyNoteMaxWidth").val());
 		setOneCssVar("--tiny-note-hposition",  $("#selTinyNoteHPosition").val());
+		setOneCssVar("--tiny-note-radius",     $("#selTinyNoteRadius").val());
 		setOneCssVar("--tiny-note-font-size",  $("#selTinyNoteFontSize").val());
 		setOneCssVar("--midi-font-size",       $("#selMidiFontSize").val());
 		setOneCssVar("--fingering-font-size",  $("#selFingeringFontSize").val());
@@ -1957,6 +1959,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.tinyNoteVPosition = $("#selTinyNoteVPosition").val();
 		options.tinyNoteWidth = $("#selTinyNoteWidth").val();
 		options.tinyNoteHPosition = $("#selTinyNoteHPosition").val();
+		options.tinyNoteRadius = $("#selTinyNoteRadius").val();
 		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		
 		return options;
@@ -2508,6 +2511,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('change', '#selTinyNoteHPosition', function(){
 			setOneCssVar("--tiny-note-hposition", $("#selTinyNoteHPosition").val());
+			fullRepaint();
+		});
+		bindEvent('change', '#selTinyNoteRadius', function(){
+			setOneCssVar("--tiny-note-radius", $("#selTinyNoteRadius").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#selTinyNoteFontSize', function(){
