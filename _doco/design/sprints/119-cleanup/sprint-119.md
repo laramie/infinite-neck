@@ -71,6 +71,8 @@ Here are the work items, grouped by status.
 
 - add verb under Clip to "Copy all Listened notes in song into this Listening/wired instrument"
 
+- Make Find Color work for other Note types than just NamedNote.
+
 - DOCO: 
   - I want to:
     - Use the chart to fill in the notes on an instrument: FillPlugin, 

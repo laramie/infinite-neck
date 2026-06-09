@@ -1239,8 +1239,8 @@ placed on A, and a "NamedNote" is placed on F&sharp; which selects <u>all</u> F&
 </p>
 
 
-<p>Click the Clear radio button, then any note name you want to clear.
-    (These are specific to the kind of note, so also select the kind of note.) Actually, while you have a note
+<p>Click the CLEAR radio button, then any note in that cell, and the entire cell will be cleared of all note types.
+    However, if you want to clear just one note type, then while you have a note
     style selected, you can also
     just click the note again with the same style to remove that note--click on, click off, click on, click off. <i>Karate Kid anyone?</i>
 </p>
@@ -1269,12 +1269,12 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 </p>
 
 
-<p>Click the 'keep' radio button, to avoid making changes when scrolling
+<p>Click the 'KEEP' radio button, to avoid making changes when scrolling
  around.</p>
 
  <p><img src="img/help/keep.png"></p>
 
-<p>Click the 'clear' radio button to delete a note of the kind selected (Named, Single, Tiny, Bend).</p>
+<p>Click the 'CLEAR' radio button to delete all notes in the cell you click (Named, Single, Tiny, Bend, Highlight).  This does not clear any recorded notes.</p>
 
  <p><img src="img/help/clear.png"></p>
 
@@ -1327,8 +1327,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         so this can be used to copy/paste a Section.  You can also <a href='#glossaryClone'>Clone</a> a section.
     </td></tr>
      <tr><td>Copy Section</td><td>Use <a href='#glossaryClone'>Clone</a> or <a href='#glossaryShallowClone'>Shallow</a> clone on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  <a href='#glossaryClone'>Clone</a> copies all notes and Display Options.</td></tr>
-    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.
-        <br>
+    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select CLEAR on the Palette and and all notes in that cell will be deleted when you click on a note in a cell.
         <br>
         Using the ClipPlugin, you can also select the kind of note to include and Cut the notes, which removes them from the Instrument in that Section, and puts them in the Graveyard.
     </td></tr>
@@ -1957,7 +1956,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <p>
      If you want to save these options, it is best to set them at least in the first Section, so that when looping
      the song, or opening the song from a file, the default options you chose get restored logically.  When you navigate to
-     another section, the options persist until you hit another section that has Display Options set.  As you change Sections,
+     another section, the options follow the rule that settings persist from the Section where they are set, as though you were looping forward.  As you change Sections,
      if the View menu is showing, you'll see the option controls get updated.
 </p>
 
@@ -2161,25 +2160,24 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
      the two notes in your stylesheet would override the Default, but other notes would use the Default.
  </p>
 
- <p>Finally, there are several special "Color" buttons: [Clear, Keep, and Find Color].
+ <p>Finally, there are several special "Color" buttons: [CLEAR, KEEP, and Find Color] and the special "Last Color" button to the right of these, and the left of "AutoColor".
 </p>
 
 <p>
-     "Keep" disables placing new notes,
+     "KEEP" disables placing new notes,
      so is useful if you just want to click around and not change anything, or if you are doing a presentation
-     and don't want to mess things up.
+     and don't want to mess things up. You can still place Highlights to call attention to notes, and these will disappear on Navigation actions, such as NextSection
 </p>
 
 <p>
- "Clear" lets you delete notes of the kind
-     selected.  Actually, you can also just click on a note, and if you have the note kind selected,
-     that note will go away.  If you click again,
-     the note will come back, but with whatever color you currently have active.
+ "CLEAR" lets you delete all note types from the cell you clicked.  To delete just one note type, you can select that type in the Palette, then just click on a note, and the note will go away.  
+ If, instead of CLEAR, you select the Last Note button, and a different color the note will be re-colored with whatever color you currently have active.
 </p>
 
 <p>
      To find what color you used before, make sure AutoColor is off, then click "Find Color", then click the note
-     on the neck.  The color name will appear in the Caption of that instrument, so open up the Caption row
+     on the neck. This currently only works for NamedNotes.  
+     The color name will appear in the Caption of that instrument, so open up the Caption row
      with the little hamburger on the instrument.
      If the whole Caption on the instrument is missing, press ESC then SHIFT-A to show it.
      The color will also be highlighted on the Palette, so you

@@ -137,6 +137,19 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Setting **Instrument** in ArpeggioPlugin and FillPlugin now resets **strings** range.
   - **COMPLETE** 
 
+- [127-ui-consistency](../design/sprints/127-ui-consistency/sprint-127.md)
+  - Work to get the UI consistent: 
+    - Radio buttons in Palette
+      - KEEP: New backglow when checked, new cursor
+      - CLEAR: lots of changes -- see sprint -- notably: new backglow, new cursor, Now does remove of all note types.
+      - Checkmark button: Last Color Chosen: added backglow when selected
+      - Find Color: just gave it its own class, rather than sharing noteKeep
+    - Navigation while DisplayOptions are in effect: 
+      - new warning color on SAVE when dirty
+      - propogate DisplayOptions to every Section even when going backwards
+      - do not mark Sections that inherit DisplayOptions as dirty, and don't un-gray the CLEAR button. 
+
+
 # Future Sprints Unscheduled 
 
 - 901-floating-windows
