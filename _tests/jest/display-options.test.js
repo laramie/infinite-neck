@@ -187,3 +187,37 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         expect(savedObj.sections[2].displayOptions).toBeTruthy();
     });
 });
+
+describe('getDisplayOptionsInEffect contracts', () => {
+    test('inherits nearest prior saved displayOptions for sections without explicit options', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+        const fallbackOptions = {
+            hideSingleNotes: false,
+            NoteDisplaySizes: { width: '77px', height: '44px' }
+        };
+
+        delete sections[1].displayOptions;
+        const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
+
+        expect(inEffect).toEqual(sections[0].displayOptions);
+        expect(inEffect).not.toEqual(fallbackOptions);
+    });
+
+    test('uses provided default options when no earlier section has explicit displayOptions', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+        const fallbackOptions = {
+            hideSingleNotes: true,
+            showCellNotes: false,
+            NoteDisplaySizes: { width: '91px', height: '52px' }
+        };
+
+        delete sections[0].displayOptions;
+        delete sections[1].displayOptions;
+
+        const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
+
+        expect(inEffect).toEqual(fallbackOptions);
+    });
+});

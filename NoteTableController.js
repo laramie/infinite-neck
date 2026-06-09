@@ -527,6 +527,16 @@ export function colorNoteInner(cell) {
                 result.returnCause = Cause.DROPPER;
                 return result;
             }
+            if (theColorClass == "noteClear") {
+                const noteNameElements = $(parentTableSel+'.note' + noteName);
+                const namedNoteDiv = noteNameElements.find(".namedNote");
+                getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
+                clearNamedNoteDivs(namedNoteDiv);
+                noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+                clearPlayedNotesAtCell(cell, tableID);
+                result.returnCause = Cause.CLEAR;
+                return result;
+            }
             if (!doKeep) {
                 if (isRecording()){
                     if (theColorClass != "noteClear"){
@@ -548,6 +558,13 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.PLAYEDNOTE;
             return result;
         } else if (doHighlight){
+                if (!isRecording() && theColorClass == "noteClear") {
+                    clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
+                    clearPlayedNotesAtCell(cell, tableID);
+                    clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
+                    result.returnCause = Cause.CLEAR;
+                    return result;
+                }
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
                 $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
@@ -561,6 +578,13 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.HIGHLIGHT;
            return result;
        } else if (doHighlightSingle){
+               if (!isRecording() && theColorClass == "noteClear") {
+                   clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
+                   clearPlayedNotesAtCell(cell, tableID);
+                   clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
+                   result.returnCause = Cause.CLEAR;
+                   return result;
+               }
            if (doEraseHighlightSingle){
                cell.removeClass("noteHighlightSingle");
                var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
@@ -599,6 +623,7 @@ export function colorNoteInner(cell) {
 			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+            clearPlayedNotesAtCell(cell, tableID);
             result.returnCause = Cause.CLEAR;
 		} else {
             result.returnCause = Cause.NAMEDNOTE;
@@ -680,6 +705,46 @@ export function eraseNamedNote(NoteDisplayClassEls){
 }
 export function clearNamedNoteDivs(namedNoteDivs){
     namedNoteDivs.removeClass().addClass("namedNote");
+}
+
+function clearPlayedNotesAtCell(cell, tableID) {
+    if (!cell || !tableID) {
+        return;
+    }
+
+    const jCell = (cell && typeof cell.find === 'function') ? cell : $(cell);
+    const cellrow = `${jCell.attr("cellrow") ?? ""}`;
+    const cellcol = `${jCell.attr("cellcol") ?? ""}`;
+    if (!cellrow || !cellcol) {
+        return;
+    }
+
+    getCurrentSection().getSectionNotes(tableID).removePlayedNotesWhere((note) => {
+        return `${note?.row ?? ""}` === cellrow
+            && `${note?.col ?? ""}` === cellcol;
+    });
+
+    jCell.removeClass("OverlayRaisedForPiano");
+    jCell.find(".tinyNote").attr("class", "tinyNote").hide();
+    jCell.find(".singleNote").attr("class", "singleNote").hide();
+    jCell.find(".Fingering").attr("class", "Fingering").hide();
+}
+
+function clearNamedNoteAtPitch(tableID, noteName, parentTableSel = '') {
+    if (!tableID || !noteName) {
+        return;
+    }
+
+    const noteNameElements = $(parentTableSel + '.note' + noteName);
+    const namedNoteDiv = noteNameElements.find('.namedNote');
+    getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
+    clearNamedNoteDivs(namedNoteDiv);
+    noteNameElements.find('.NoteDisplay').removeClass().addClass('NoteDisplay');
+}
+
+function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
+    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass('noteHighlight');
+    $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']").removeClass('noteHighlightSingle');
 }
 
 

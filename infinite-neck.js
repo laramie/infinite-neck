@@ -364,13 +364,58 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
+	let defaultDisplayOptionsForNavigation = null;
+	let displayOptionsDirtyBaseline = null;
+
+	function cloneDisplayOptions(options){
+		if (!options || typeof options !== 'object') {
+			return {};
+		}
+		return JSON.parse(JSON.stringify(options));
+	}
+
+	function ensureDefaultDisplayOptionsForNavigation(){
+		if (!defaultDisplayOptionsForNavigation) {
+			defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
+		}
+		return cloneDisplayOptions(defaultDisplayOptionsForNavigation);
+	}
+
+	function captureDisplayOptionsNavigationDefault(){
+		defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
+		return ensureDefaultDisplayOptionsForNavigation();
+	}
+
+	function setDisplayOptionsSaveActionRequired(isRequired){
+		$('#btnControlsToDisplayOptions_View').toggleClass('riskyButtonActionRequired', !!isRequired);
+	}
+
+	function captureDisplayOptionsDirtyBaseline(){
+		displayOptionsDirtyBaseline = cloneDisplayOptions(controlsToDisplayOptions());
+		setDisplayOptionsSaveActionRequired(false);
+	}
+
+	function areDisplayOptionsEqual(left, right){
+		return JSON.stringify(left || {}) === JSON.stringify(right || {});
+	}
+
+	function refreshDisplayOptionsSaveActionRequired(){
+		if (!displayOptionsDirtyBaseline) {
+			captureDisplayOptionsDirtyBaseline();
+			return;
+		}
+		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(controlsToDisplayOptions(), displayOptionsDirtyBaseline));
+	}
+
 	function syncSectionUi(){
-		var options = getCurrentSection().displayOptions;
+		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
+		var options = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
 		if (options){
-			displayOptionsToControls(options);
+			displayOptionsToControls(cloneDisplayOptions(options));
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
+		captureDisplayOptionsDirtyBaseline();
 	}
 
 	export function sectionChanged(){
@@ -1309,6 +1354,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				}
 				PalettePresentation.updateRestoreRbColorButton();
 				if ("noteKeep" === $(this).val()) {
+					$("td.note").css({"cursor": "no-drop"});
+				} else if ("noteClear" === $(this).val()) {
+					$("td.note").css({"cursor": "crosshair"});
 				} else if ("noteDropper" === $(this).val()) {
 					$("td.note").css({"cursor": "zoom-in"});
 				} else {
@@ -2074,11 +2122,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getCurrentSection().displayOptions = options;
 		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
 		showHideDisplayOptionsPresent();
+		captureDisplayOptionsDirtyBaseline();
 	}
 	
 	export function handleBtnDeleteDisplayOptions() {
 		delete getCurrentSection().displayOptions;
 		showHideDisplayOptionsPresent();
+		captureDisplayOptionsDirtyBaseline();
 	}
 
 	export function toggleRandomLoop(){
@@ -2145,6 +2195,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(selector)
 				.off(namespacedEvents)
 				.on(namespacedEvents, handler);
+		}
+
+		function bindDisplayOptionsDirtyEvent(events, selector){
+			const namespacedEvents = events
+				.split(' ')
+				.map((eventName) => `${eventName}${eventNamespace}.displayOptionsDirty`)
+				.join(' ');
+			$(selector)
+				.off(namespacedEvents)
+				.on(namespacedEvents, function() {
+					refreshDisplayOptionsSaveActionRequired();
+				});
 		}
 
 		function bindDelegatedEvent(events, selector, handler){
@@ -2638,6 +2700,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode), #divViewControls select, #divViewControls textarea');
+		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
 	}
 	
 	export function bindDataActionHandlers(){
@@ -2876,6 +2940,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDesktopEvents();
 		installLoopTimingModeControls();
 		applyScalingPrefs(true);
+		captureDisplayOptionsNavigationDefault();
+		captureDisplayOptionsDirtyBaseline();
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 		

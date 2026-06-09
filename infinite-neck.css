@@ -371,6 +371,10 @@ table {
 .riskyButton {
     background-color: pink !important;
 }
+.riskyButtonActionRequired {
+    background-color: #f836f8 !important;
+    font-weight: bold;
+}
 
 /***************************** View *****************************/
 

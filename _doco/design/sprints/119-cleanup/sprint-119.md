@@ -32,14 +32,18 @@ Here are the work items, grouped by status.
 ## Unscheduled
 
 - menu prompt stale sometimes
+  - specific bug introduced by command-line one-line is FIXED.  
+  - CLOSED. Keep an eye out for other use-cases, such as in Plugins.
 
 - chart colors and shadows
+  - DEFERRED.  Looks good for now.
 
 - plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
 
 - palete KEEP, etc. should get a highlight ring so that KEEP is not so unexpected
 
-- default SPACEBAR to looper is getting trapped so you must hit ESC to use it again.
+- default spacebar to looper is getting trapped so you must hit ESC to use it again.
+  - CLOSED. Can't replicate.
 
 - In all menus, make sure "table" and "Table" are replaced by "Instrument".
 

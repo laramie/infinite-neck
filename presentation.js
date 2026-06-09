@@ -42,8 +42,10 @@ export class PalettePresentation {
     
         const remembered = gPresentation.palette.lastRestorableColor;
         const caption = remembered && remembered.caption ? remembered.caption : "Emboss";
-        const prefix = PalettePresentation.isRestoreButtonAligned() ? "\u2713 " : "";
+        const isAligned = PalettePresentation.isRestoreButtonAligned();
+        const prefix = isAligned ? "\u2713 " : "";
     
+        $btn.toggleClass("chooseLastColorAligned", isAligned);
         $btn.text(prefix + "Color: " + caption);
     }
 
