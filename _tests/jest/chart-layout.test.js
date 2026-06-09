@@ -51,6 +51,7 @@ describe('chart layout rendering', () => {
             showCaptions: true,
             showNextLine: false,
             barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+            chartSpacing: 'relaxed',
             chordFontsize: '100%',
             lineCaptionFontsize: '100%',
             boxCaptionFontsize: '100%'
@@ -64,6 +65,7 @@ describe('chart layout rendering', () => {
             showCaptions: true,
             showNextLine: true,
             barClass: Constants.SONG_CHART_BAR_CLASS.BARE,
+            chartSpacing: 'comfy',
             chordFontsize: '180%',
             lineCaptionFontsize: '120%',
             boxCaptionFontsize: '80%'
@@ -78,6 +80,7 @@ describe('chart layout rendering', () => {
         expect(html).toContain("class='divViewCard sectionPrinterChartOptionsCard'");
         expect(html).toContain("<table class='viewControls'>");
         expect(html).toContain('<tr><td>Bar Style</td><td><select');
+        expect(html).toContain('<tr><td>Chart Spacing</td><td><select');
         expect(html).toContain('<tr><td>Chord size</td><td><select');
         expect(html).toContain('<tr><td>BAR caption/detail font size</td><td><select');
         expect(html).toContain('<tr><td>Line caption font size</td><td><select');
@@ -86,6 +89,8 @@ describe('chart layout rendering', () => {
         expect(html).not.toContain('>BAR caption/detail font size <select');
         expect(html).not.toContain('>Line caption font size <select');
         expect(html).toContain("class='songChartBarClassSelect'");
+        expect(html).toContain("class='songChartSpacingSelect' data-chart-option='chartSpacing'");
+        expect(html).toContain("<option value='comfy' selected>");
         expect(html).toContain("<option value='Bare' selected>");
         expect(html).toContain("<option value='LeadSheet'>LeadSheet</option>");
         expect(html).toContain("class='songChartFontsizeSelect' data-chart-option='chordFontsize'");
@@ -487,6 +492,7 @@ describe('chart layout rendering', () => {
             })
         ];
         const song = createSongMock(sections, {
+            chartSpacing: 'tight',
             chordFontsize: '180%',
             lineCaptionFontsize: '140%',
             boxCaptionFontsize: '70%'
@@ -497,8 +503,43 @@ describe('chart layout rendering', () => {
         expect(html).toContain("--chart-bar-chord-scale:1.8");
         expect(html).toContain("--chart-bar-secondary-font-size:140%");
         expect(html).toContain("--chart-line-caption-font-size:70%");
+        expect(html).toContain("--chart-panel-padding:0.4em");
+        expect(html).toContain("--chart-bar-padding:0.2em");
+        expect(html).toContain("--chart-bar-width:8em");
+        expect(html).toContain("--chart-bar-leadsheet-width:10em");
+        expect(html).toContain("--chart-bar-short-width:10em");
         expect(html).toContain('chartBARMode');
         expect(html).toContain('chartLineCaption');
+    });
+
+    test('LeadSheetLine ignores chart spacing vars while still using chart font-size vars', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Dm7',
+                chartMode: 'D dorian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                beatsPerBar: '2',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+        const song = createSongMock(sections, {
+            chartSpacing: 'tight',
+            chordFontsize: '160%',
+            lineCaptionFontsize: '120%',
+            boxCaptionFontsize: '80%'
+        });
+
+        const html = printLeadSheetLine(song, sections);
+
+        expect(html).toContain("--chart-bar-chord-scale:1.6");
+        expect(html).toContain("--chart-bar-secondary-font-size:120%");
+        expect(html).toContain("--chart-line-caption-font-size:80%");
+        expect(html).not.toContain("--chart-panel-padding:");
+        expect(html).not.toContain("--chart-bar-padding:");
+        expect(html).not.toContain("--chart-bar-width:");
+        expect(html).not.toContain("--chart-bar-leadsheet-width:");
+        expect(html).not.toContain("--chart-bar-short-width:");
     });
 
     test('Chart output suppresses both bar and line captions when showCaptions is false', () => {

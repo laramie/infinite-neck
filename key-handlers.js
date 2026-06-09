@@ -851,7 +851,13 @@ export function performCmdAction(menuItem, args){
             $("#divMessages").hide();
             actionResult.result = "Messages hidden";
             break;
-
+		case "reshowViewMessages":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+            actionResult.result = "Messages re-shown";
+			hideCmdLine();
+    		scrollToMessages();
+            break;
 		case "printSectionsDetails":
 			printSections(true);
 			hideCmdLine();

@@ -76,6 +76,7 @@ const songDefaults = {
         showCaptions: true,
         showNextLine: false,
         barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+        chartSpacing: 'relaxed',
         chordFontsize: '100%',
         lineCaptionFontsize: '100%',
         boxCaptionFontsize: '100%'

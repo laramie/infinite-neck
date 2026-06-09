@@ -922,6 +922,11 @@ export var gMenuFile =    {
               "caption": "<b>h</b>ide",
               "trigger": "h",
               "action": "hideViewMessages"
+            },
+            {
+              "caption": "<b>r</b>e-show",
+              "trigger": "r",
+              "action": "reshowViewMessages"
             }
           ]
         },

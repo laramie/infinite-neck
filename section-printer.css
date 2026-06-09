@@ -212,7 +212,7 @@
   background-color: white;
   box-shadow: 4pt 4pt 2pt 0.2pt gray;
   border: 1px solid black;
-  padding: 2em;
+  padding: var(--chart-panel-padding, 2em);
 }
 
 .chartINTRO,
@@ -248,9 +248,11 @@
   flex-direction: column;
   vertical-align: top;
   gap: 0.5em;
-  padding: 2em;
+  padding: var(--chart-bar-padding, 2em);
   background-color: white;
-  min-width: 12em;
+  width: var(--chart-bar-width, 20em);
+  min-width: var(--chart-bar-width, 20em);
+  max-width: var(--chart-bar-width, 20em);
   box-sizing: border-box;
   cursor: pointer;
 }
@@ -284,13 +286,15 @@
 }
 
 .chartBAR--leadSheet {
-  width: 20em;
-  max-width: 20em;
+  width: var(--chart-bar-leadsheet-width, 20em);
+  min-width: var(--chart-bar-leadsheet-width, 20em);
+  max-width: var(--chart-bar-leadsheet-width, 20em);
 }
 
 .chartBAR--short {
-  width: 20em;
-  max-width: 20em;
+  width: var(--chart-bar-short-width, 20em);
+  min-width: var(--chart-bar-short-width, 20em);
+  max-width: var(--chart-bar-short-width, 20em);
 }
 
 .chartBAR--medium {
@@ -456,7 +460,7 @@
   font-size: var(--chart-bar-secondary-font-size, 100%);
   line-height: 1;
   border: 1px solid darkgray;
-  margin-right: calc(-0.8em + 4px);
+  margin-right: var(--lead-sheet-beat-count-margin-right, calc(-0.8em + 4px));
   padding: 0;
 }
 

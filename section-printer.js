@@ -52,6 +52,36 @@ const CHART_FONT_SIZE_VALUES = [
     '200%'
 ];
 
+const CHART_SPACING_VALUES = [
+    'tight',
+    'comfy',
+    'relaxed'
+];
+
+const CHART_SPACING_PRESETS = Object.freeze({
+    tight: {
+        chartPadding: '0.4em',
+        barPadding: '0.2em',
+        barWidth: '8em',
+        leadSheetWidth: '10em',
+        shortWidth: '10em'
+    },
+    comfy: {
+        chartPadding: '1em',
+        barPadding: '1em',
+        barWidth: '12em',
+        leadSheetWidth: '15em',
+        shortWidth: '15em'
+    },
+    relaxed: {
+        chartPadding: '2em',
+        barPadding: '2em',
+        barWidth: '20em',
+        leadSheetWidth: '20em',
+        shortWidth: '20em'
+    }
+});
+
 function getEffectiveSongChartOptions(theSong) {
     const chartOptions = theSong?.chartOptions && typeof theSong.chartOptions === 'object' ? theSong.chartOptions : {};
     return {
@@ -70,7 +100,10 @@ function getEffectiveSongChartOptions(theSong) {
             : '100%',
         boxCaptionFontsize: CHART_FONT_SIZE_VALUES.includes(chartOptions.boxCaptionFontsize)
             ? chartOptions.boxCaptionFontsize
-            : '100%'
+            : '100%',
+        chartSpacing: CHART_SPACING_VALUES.includes(chartOptions.chartSpacing)
+            ? chartOptions.chartSpacing
+            : 'relaxed'
     };
 }
 
@@ -245,8 +278,30 @@ function formatSongChartFontsizeSelectControl(optionName, currentValue, labelTex
         + `</select>`;
 }
 
-function formatChartStyleVariables(songChartOptions) {
-    return ` style='--chart-bar-chord-scale:${percentStringToMultiplier(songChartOptions.chordFontsize)}; --chart-bar-secondary-font-size:${songChartOptions.lineCaptionFontsize}; --chart-line-caption-font-size:${songChartOptions.boxCaptionFontsize};'`;
+function formatSongChartSpacingSelectControl(currentValue) {
+    return `<select class='songChartSpacingSelect' data-chart-option='chartSpacing' aria-label='Chart spacing'>`
+        + formatSelectOptions(CHART_SPACING_VALUES, currentValue)
+        + `</select>`;
+}
+
+function formatChartStyleVariables(songChartOptions, includeChartSpacing = true) {
+    const declarations = [
+        `--chart-bar-chord-scale:${percentStringToMultiplier(songChartOptions.chordFontsize)}`,
+        `--chart-bar-secondary-font-size:${songChartOptions.lineCaptionFontsize}`,
+        `--chart-line-caption-font-size:${songChartOptions.boxCaptionFontsize}`,
+        `--lead-sheet-beat-count-margin-right:${songChartOptions.chartSpacing === 'tight' ? '0' : 'calc(-0.8em + 4px)'}`
+    ];
+
+    if (includeChartSpacing) {
+        const spacing = CHART_SPACING_PRESETS[songChartOptions.chartSpacing] || CHART_SPACING_PRESETS.relaxed;
+        declarations.push(`--chart-panel-padding:${spacing.chartPadding}`);
+        declarations.push(`--chart-bar-padding:${spacing.barPadding}`);
+        declarations.push(`--chart-bar-width:${spacing.barWidth}`);
+        declarations.push(`--chart-bar-leadsheet-width:${spacing.leadSheetWidth}`);
+        declarations.push(`--chart-bar-short-width:${spacing.shortWidth}`);
+    }
+
+    return ` style='${declarations.join('; ')};'`;
 }
 
 function formatChartLineValue(value) {
@@ -505,6 +560,7 @@ export function printChartOptions(theSong) {
         + `<tr><td>Chord size</td><td>${formatSongChartFontsizeSelectControl('chordFontsize', chartOptions.chordFontsize, 'Chord size')}</td></tr>`
         + `<tr><td>BAR caption/detail font size</td><td>${formatSongChartFontsizeSelectControl('lineCaptionFontsize', chartOptions.lineCaptionFontsize, 'BAR caption/detail font size')}</td></tr>`
         + `<tr><td>Line caption font size</td><td>${formatSongChartFontsizeSelectControl('boxCaptionFontsize', chartOptions.boxCaptionFontsize, 'Line caption font size')}</td></tr>`
+        + `<tr><td>Chart Spacing</td><td>${formatSongChartSpacingSelectControl(chartOptions.chartSpacing)}</td></tr>`
         + "</table>"
         + "</div>";
     return "<div id='sectionPrinterChartOptions'>"
@@ -752,7 +808,7 @@ export function printLeadSheetLine(theSong, theSections, options = {}) {
     const safeLineIndex = currentLineIndex >= 0 ? currentLineIndex : 0;
     const currentLine = chartModel.allLines[safeLineIndex] || createChartLineModel(Constants.SECTION_CHART_POSITION.HEAD);
     const nextLine = songChartOptions.showNextLine ? chartModel.allLines[safeLineIndex + 1] : null;
-    const parts = [`<div id='${escapeHtmlAttribute(rootId)}' class='sectionPrinterChartLine'${formatChartStyleVariables(leadSheetLineOptions)}>`];
+    const parts = [`<div id='${escapeHtmlAttribute(rootId)}' class='sectionPrinterChartLine'${formatChartStyleVariables(leadSheetLineOptions, false)}>`];
 
     parts.push(createLeadSheetLinePanel('leadSheetLinePanelCurrent', renderLeadSheetLineRow(currentLine, leadSheetLineOptions, currentSectionIndex)));
 

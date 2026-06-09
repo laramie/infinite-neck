@@ -172,6 +172,149 @@ export class Song extends SongPersistence {
             .map((tableID) => tableID.substring(Constants.TABLE_ID_PREFIX.length));
     }
 
+    getMyTunings() {
+        if (!Array.isArray(this.myTunings)) {
+            this.myTunings = [];
+        }
+        return this.myTunings;
+    }
+
+    buildGhostTablesAuditText() {
+        const tablePrefix = Constants.TABLE_ID_PREFIX || '';
+        const allModelTableIDs = this.getAllModelTableIDs().slice().sort();
+        const layoutTableIDs = this.getNoteTablesLayout()
+            .map((entry) => entry.tableID)
+            .filter((tableID) => !!tableID)
+            .sort();
+        const myTuningTableIDs = (Array.isArray(this.myTunings) ? this.myTunings : [])
+            .map((tuning) => `${tablePrefix}${tuning?.baseID || ''}`)
+            .filter((tableID) => tableID !== tablePrefix)
+            .sort();
+        const ghostTableIDs = this.getGhostTableIDs().slice().sort();
+
+        return [
+            'Ghost table audit (post-addTunings):',
+            `All model tableIDs   ${String(allModelTableIDs.length).padStart(3, ' ')}: ${allModelTableIDs.length > 0 ? allModelTableIDs.join(', ') : '(none)'}`,
+            `Layout/view tableIDs ${String(layoutTableIDs.length).padStart(3, ' ')}: ${layoutTableIDs.length > 0 ? layoutTableIDs.join(', ') : '(none)'}`,
+            `myTunings tableIDs   ${String(myTuningTableIDs.length).padStart(3, ' ')}: ${myTuningTableIDs.length > 0 ? myTuningTableIDs.join(', ') : '(none)'}`,
+            `Tables without matching views (${ghostTableIDs.length}): ${ghostTableIDs.length > 0 ? ghostTableIDs.join(', ') : '(none)'}`
+        ].join('\n');
+    }
+
+    addTunings(newTunings){
+        if (!Array.isArray(this.myTunings)) {
+            this.myTunings = [];
+        }
+        if (!Array.isArray(newTunings) || newTunings.length === 0) {
+            return;
+        }
+
+        const tuningKeyFields = ['fromBaseID', 'baseInstrument', 'nStrings', 'rowRange', 'reverse'];
+        const noCollisionImported = [];
+        const detailLines = [];
+        let suffixIndex = 1;
+        let sawCollision = false;
+
+        const stringifyTuning = (tuning) => JSON.stringify(tuning, null, 4);
+        const cloneTuning = (tuning) => JSON.parse(JSON.stringify(tuning));
+        const buildKeyPayload = (tuning) => ({
+            // baseID is runtime/generated; lineage identity is fromBaseID.
+            // Fallback preserves compatibility with older songs missing fromBaseID.
+            fromBaseID: tuning?.fromBaseID || tuning?.baseID,
+            baseInstrument: tuning?.baseInstrument,
+            nStrings: tuning?.nStrings,
+            rowRange: tuning?.rowRange,
+            reverse: tuning?.reverse
+        });
+        const isDuplicateByKeyFields = (left, right) => {
+            const leftPayload = buildKeyPayload(left);
+            const rightPayload = buildKeyPayload(right);
+            return JSON.stringify(leftPayload) === JSON.stringify(rightPayload);
+        };
+
+        newTunings.forEach((rawNewTuning, incomingIndex) => {
+            if (!rawNewTuning || typeof rawNewTuning !== 'object') {
+                detailLines.push(`Skipped incoming tuning at index ${incomingIndex}: not an object.`);
+                return;
+            }
+
+            const incomingBaseID = `${rawNewTuning.baseID || ''}`.trim();
+            if (!incomingBaseID) {
+                detailLines.push(`Skipped incoming tuning at index ${incomingIndex}: missing baseID.`);
+                return;
+            }
+
+            const newTuning = cloneTuning(rawNewTuning);
+            newTuning.baseID = incomingBaseID;
+
+            const existing = this.myTunings.find((t) => t && t.baseID === incomingBaseID);
+            if (!existing) {
+                this.myTunings.push(newTuning);
+                this.setTableVisibilityByBaseID(newTuning.baseID, true);
+                noCollisionImported.push(newTuning.baseID);
+                return;
+            }
+
+            sawCollision = true;
+
+            if (isDuplicateByKeyFields(existing, newTuning)) {
+                detailLines.push([
+                    `Duplicate-by-key-fields detected and dropped:`,
+                    `Key fields used: ${tuningKeyFields.join(', ')}`,
+                    `Existing tuning caption: ${existing.caption || '(no caption)'}`,
+                    `Incoming tuning caption: ${newTuning.caption || '(no caption)'}`,
+                    'Existing tuning JSON:',
+                    stringifyTuning(existing),
+                    'Incoming tuning JSON:',
+                    stringifyTuning(newTuning),
+                    'Result: incoming tuning dropped.'
+                ].join('\n'));
+                return;
+            }
+
+            const oldID = newTuning.baseID;
+            let candidateID = `${oldID}_s${suffixIndex}`;
+            while (this.myTunings.some((t) => t && t.baseID === candidateID)) {
+                suffixIndex += 1;
+                candidateID = `${oldID}_s${suffixIndex}`;
+            }
+
+            newTuning.baseID = candidateID;
+            this.myTunings.push(newTuning);
+            this.setTableVisibilityByBaseID(newTuning.baseID, true);
+            detailLines.push([
+                `Collision resolved with new ID:`,
+                `Caption: ${newTuning.caption || '(no caption)'}`,
+                `Old ID: ${oldID}`,
+                `New ID: ${newTuning.baseID}`,
+                'Imported tuning JSON:',
+                stringifyTuning(newTuning)
+            ].join('\n'));
+            suffixIndex += 1;
+        });
+
+        const summaryLines = [];
+        if (noCollisionImported.length > 0) {
+            summaryLines.push('Imported with no ID collisions (IDs did not already exist in song):');
+            summaryLines.push(noCollisionImported.map((id) => `- ${id}`).join('\n'));
+        }
+        if (!sawCollision && noCollisionImported.length === 0 && detailLines.length === 0) {
+            summaryLines.push('No tunings were imported.');
+        }
+
+        const reportParts = [];
+        if (summaryLines.length > 0) {
+            reportParts.push(summaryLines.join('\n'));
+        }
+        if (detailLines.length > 0) {
+            reportParts.push(detailLines.join('\n\n'));
+        }
+        reportParts.push(this.buildGhostTablesAuditText());
+
+        const reportBody = reportParts.join('\n\n');
+        EventBus.trigger('ShowMessages', { html: `<pre>${reportBody}</pre>` });
+    }
+
     addWiring(tablename, relativeSection, listenToTablename, listenerProjection = 'row-midi') {
         const idx = this.wirings.findIndex(w => w.tablename === tablename);
         const newWiring = new Wiring({ tablename:tablename, 

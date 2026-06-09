@@ -52,6 +52,16 @@
     text-align: center;
     padding-bottom: 0.4em;
 }
+.SectionsStatus_td_RecordDot {
+    text-align: center;
+}
+.SectionStatus_td_SectionNumber {
+    text-align: right;
+    min-width: 2.6em;
+}
+.SectionStatus_td_beatNumber {
+    text-align: right;
+}
 
 /* Use class selectors for correct cascade.
  * Base/mode classes set the idle color.
@@ -104,10 +114,9 @@
 
 .RecordDot {
   display: inline-block;
-  width: 0.6em;
-  height: 0.6em;
+  width: 0.75em;
+  height: 0.75em;
   margin: 0;
-  margin-left: 0.2em;
   padding: 0;
   border-radius: 50%;
   color: black;
@@ -117,7 +126,15 @@
     width: 0.5em;
     height: 0.5em;
     margin-left: 0.14em;
+    margin-right: 0.4em;
 }
+.SectionStatusWidget--captionRow .RecordDot {
+    width: 0.5em;
+    height: 0.5em;
+    margin-left: 0.2em;
+    margin-right: 0.4em;
+}
+
 
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
 .instrumentSectionBox {
@@ -126,8 +143,14 @@
 }
 /* The section character: §    */
 .instrumentSectionMark {
+    display: inline-block;
     color: green;
     font-size: 80%;
+    padding-right: 0.5em;
+}
+.SectionStatus_td_SectionNumber .instrumentSectionMark {
+    color: green;
+    font-size: 90%;
     padding-right: 0.5em;
 }
 
@@ -162,12 +185,14 @@
 
 
 .SectionStatusWidget--captionRow .SectionsStatus_SectionNumber, 
-.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
 .SectionStatusWidget--leadSheet .SectionsStatus_SectionNumber {
     color: yellow;
     display: inline-block;
     min-width: 1.4em;
 }
+.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber {
+    color: yellow;
+}   
 
 .SectionStatusWidget--captionRow .SectionStatus_relativeSection,
 .SectionStatusWidget--leadSheet .SectionStatus_relativeSection,

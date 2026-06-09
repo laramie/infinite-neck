@@ -942,10 +942,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    var file = fileInput.files[0];
 			var textType = /json.*/;
 			if (file.type.match(textType)) {
+				const importOptions = {
+					sections: $("#cbAppendSections").prop("checked"),
+					stylesheets: $("#cbAppendStylesheets").prop("checked"),
+					replaceUserTheme: $("#cbReplaceUserTheme").prop("checked"),
+					graveyardRecords: $("#cbAppendGraveyardRecords").prop("checked")
+				};
 				var reader = new FileReader();
 				reader.onload = function(e) {
 					var str = JSON.stringify(reader.result, null, 2);
-					openSong(reader.result);
+					openSong(reader.result, importOptions);
 				}
 				hideAllMenuDivs();
 				reader.readAsText(file);
@@ -955,12 +961,135 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
         });
 	}
 
-	export function openSong(str){
+	function normalizeOpenSongImportOptions(appendOrOptions){
+		if (appendOrOptions && typeof appendOrOptions === 'object') {
+			return {
+				sections: !!appendOrOptions.sections,
+				stylesheets: !!appendOrOptions.stylesheets,
+				replaceUserTheme: !!appendOrOptions.replaceUserTheme,
+				graveyardRecords: !!appendOrOptions.graveyardRecords
+			};
+		}
+		return {
+			sections: !!appendOrOptions,
+			stylesheets: false,
+			replaceUserTheme: false,
+			graveyardRecords: false
+		};
+	}
+
+	function appendStylesheetsFromSong(newSong){
+		const incomingColorDicts = newSong?.colorDicts && typeof newSong.colorDicts === 'object'
+			? newSong.colorDicts
+			: {};
+		if (!getSong().colorDicts || typeof getSong().colorDicts !== 'object') {
+			getSong().colorDicts = {};
+		}
+
+		Object.entries(incomingColorDicts).forEach(([name, scheme]) => {
+			if (!name || !scheme || typeof scheme !== 'object') {
+				return;
+			}
+			if (scheme.readOnly || scheme.computed) {
+				return;
+			}
+			getSong().colorDicts[name] = JSON.parse(JSON.stringify(scheme));
+		});
+
+		installDefaultColorDicts();
+	}
+
+	function replaceUserThemeFromSong(newSong){
+		if (!newSong || typeof newSong !== 'object') {
+			return;
+		}
+		getSong().userTheme = newSong.userTheme
+			? JSON.parse(JSON.stringify(newSong.userTheme))
+			: undefined;
+	}
+
+	function appendGraveyardRecordsFromSong(newSong){
+		const currentRecords = Array.isArray(getSong()?.graveyard?.records)
+			? getSong().graveyard.records
+			: null;
+		if (!currentRecords) {
+			return;
+		}
+
+		const incomingRecords = Array.isArray(newSong?.graveyard?.records)
+			? newSong.graveyard.records
+			: [];
+		incomingRecords.forEach((record) => {
+			if (!record || typeof record !== 'object') {
+				return;
+			}
+			currentRecords.push(JSON.parse(JSON.stringify(record)));
+		});
+	}
+
+	export function openSong(str, append=false){
 		var jsonObj = JSON.parse(str);
+		const importOptions = normalizeOpenSongImportOptions(append);
+		const hasSelectiveImport = importOptions.sections || importOptions.stylesheets || importOptions.replaceUserTheme || importOptions.graveyardRecords;
+		if (gSong && hasSelectiveImport){
+			let newSong = new Song(jsonObj);
+
+			if (importOptions.sections) {
+				let sections = newSong.getSections();
+				for (const section of sections){
+					gSong.addSection(section);
+				}
+				let newTunings = newSong.getMyTunings();
+				if (newTunings){
+					gSong.addTunings(newTunings);
+				}
+			}
+
+			if (importOptions.stylesheets) {
+				appendStylesheetsFromSong(newSong);
+			}
+
+			if (importOptions.replaceUserTheme) {
+				replaceUserThemeFromSong(newSong);
+			}
+
+			if (importOptions.graveyardRecords) {
+				appendGraveyardRecordsFromSong(newSong);
+			}
+
+			updateAfterAppendSong(importOptions);
+			return;
+		}
 		gSong = new Song(jsonObj);
 		gSong.ensureDefaultSection();
 		pluginManager.loadSongPluginState(gSong);
 		updateAfterOpenSong();
+	}
+
+	export function updateAfterAppendSong(importOptions = { sections: true, stylesheets: false, replaceUserTheme: false, graveyardRecords: false }){
+		const song = getSong();
+		if (!song || song.isHeadless){
+			return;
+		}
+
+		if (importOptions.replaceUserTheme) {
+			installUserTheme(getSong().userTheme);
+			$('#selThemes').val('USER').trigger('change');
+		}
+
+		if (importOptions.stylesheets || importOptions.replaceUserTheme) {
+			applyStylesheetsTo_gUserColorDict();
+			buildColorDicts();
+		}
+
+		if (importOptions.sections) {
+			requestReloadTuningsDisplays();
+			EventBus.trigger('ReinstallAllTuningsTables');
+			EventBus.trigger('UpdateAllWiringSelects');
+		}
+
+		replay();
+		sectionChanged();
 	}
 
 	export function updateAfterOpenSong(){
@@ -1762,11 +1891,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selFingeringPosition").val(options.fingeringPosition);
 		$("#selTinyNoteFontSize").val(options.tinyNoteFontSize);
 		$("#selTinyNoteMaxHeight").val(options.tinyNoteMaxHeight);
+		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
 
 		setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
 		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
 		setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
+		setOneCssVar("--tiny-note-width", $("#selTinyNoteWidth").val());
+		setOneCssVar("--tiny-note-max-width", $("#selTinyNoteMaxWidth").val());
 		setOneCssVar("--tiny-note-font-size", $("#selTinyNoteFontSize").val());
 		setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
 		setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
@@ -1818,6 +1950,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.fingeringPosition = $("#selFingeringPosition").val();
 		options.tinyNoteFontSize = $("#selTinyNoteFontSize").val();
 		options.tinyNoteMaxHeight = $("#selTinyNoteMaxHeight").val();
+		options.tinyNoteWidth = $("#selTinyNoteWidth").val();
 		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		
 		return options;
@@ -2104,6 +2237,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDelegatedEvent('change', '.songChartBarClassSelect', function() {
 			linkToSongChartOption('barClass', $(this).val());
 		});
+		bindDelegatedEvent('change', '.songChartSpacingSelect', function() {
+			linkToSongChartOption('chartSpacing', $(this).val());
+		});
 		bindDelegatedEvent('change', '.songChartFontsizeSelect', function() {
 			const optionName = $(this).data('chart-option');
 			if (optionName) {
@@ -2354,6 +2490,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('change', '#selTinyNoteMaxHeight', function(){
 			setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
+			fullRepaint();
+		});
+		bindEvent('change', '#selTinyNoteWidth', function(){
+			setOneCssVar("--tiny-note-width", $("#selTinyNoteWidth").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#selTinyNoteFontSize', function(){
@@ -2700,6 +2840,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installAllTuningsTables();
 		installBtnHamburgerClicks();
 		setupOpenFile();
+
+		/* This presto-magico grabs all the View menu page options 
+		 *  and routes them as defaults, as though you had Save Display Options on Section 1.
+		 *  This way, if you haven't, you still get the defaults we coded into the controls in index.html
+		 */  
+		let options = controlsToDisplayOptions();
+		if (options){
+			displayOptionsToControls(options);
+		}
+
 		sectionChanged();
 		installTDNoteClick();
 		bindDesktopEvents();
