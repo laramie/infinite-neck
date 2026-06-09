@@ -1,10 +1,13 @@
-/** TODO: move these out of infinite-neck.css before testing, after implementation. **/
 .SectionStatus_loopLight {
     border: 2px solid green; 
     padding: 0.18em;
     border-radius: 10%;
     display: inline-block;
 }
+.section-status-vertical-table .SectionStatus_loopLight {
+    padding: 0;
+}
+
 .SectionStatus_loopActive {
     border: 2px solid magenta !important; 
 }
@@ -166,6 +169,10 @@
 
 .SectionStatusWidget--leftRail .section-status-vertical-table {
     width: 100%;
+    border-spacing: 0;
+}
+.section-status-vertical-table-inner {
+   border-spacing: 0;
 }
 
 .SectionStatusWidget--captionRow .SectionStatus_rootKey,
