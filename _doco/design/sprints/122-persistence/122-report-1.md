@@ -171,6 +171,8 @@ Conclusion:
 - For “user Themes persist”, the blocker is not the replacer.
 - The blocker is defining canonical hydration of `userTheme` during load.
 
+## sprint-122 filters to keep
+
 **Not Design Blockers**
 These excluded fields are mostly runtime-only and can stay filtered unless sprint-122 explicitly wants them:
 

@@ -57,6 +57,26 @@ export class ThemesBuilder {
             $('#warny').css("zIndex", 80000);
             $('#warny').show();
         });
+
+        const eventNamespace = '.bindThemesEvents';
+        function namespaceEvents(events){
+			return events
+				.split(' ')
+				.map((eventName) => `${eventName}${eventNamespace}`)
+				.join(' ');
+		}
+		function bindEvent(events, selector, handler){
+			const namespacedEvents = namespaceEvents(events);
+			$(selector)
+				.off(namespacedEvents)
+				.on(namespacedEvents, handler);
+		}
+        bindEvent('change', '#dropDownInstrumentMargins', function() {
+			//short-circuit and set it now, it is in mem for next time.
+			var margin = this.value;
+			$('.instrumentBackground').css({"margin-top": margin, "margin-bottom": +margin });
+		});
+
     }
 
 }

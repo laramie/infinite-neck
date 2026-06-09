@@ -2,6 +2,66 @@ import * as Constants from './Constants.js';
 import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
 
+function toTableID(baseID) {
+    return `${Constants.TABLE_ID_PREFIX}${baseID}`;
+}
+
+function normalizeLayoutEntry(entry) {
+    if (!entry || typeof entry !== 'object') {
+        return null;
+    }
+    const tableID = `${entry.tableID || entry.tablename || ''}`.trim();
+    if (!tableID) {
+        return null;
+    }
+    return {
+        tableID,
+        visible: entry.visible !== false
+    };
+}
+
+function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTunings }) {
+    const seen = new Set();
+    const layout = [];
+
+    if (Array.isArray(noteTablesLayout)) {
+        noteTablesLayout.forEach((entry) => {
+            const normalized = normalizeLayoutEntry(entry);
+            if (!normalized || seen.has(normalized.tableID)) {
+                return;
+            }
+            seen.add(normalized.tableID);
+            layout.push(normalized);
+        });
+    } else if (Array.isArray(visibleNoteTables)) {
+        visibleNoteTables.forEach((tableID) => {
+            const key = `${tableID || ''}`.trim();
+            if (!key || seen.has(key)) {
+                return;
+            }
+            seen.add(key);
+            layout.push({ tableID: key, visible: true });
+        });
+    }
+
+    // Legacy songs may have incomplete visible tables. Ensure all song tunings are represented.
+    if (Array.isArray(myTunings)) {
+        myTunings.forEach((tuning) => {
+            if (!tuning || !tuning.baseID) {
+                return;
+            }
+            const tableID = toTableID(tuning.baseID);
+            if (seen.has(tableID)) {
+                return;
+            }
+            seen.add(tableID);
+            layout.push({ tableID, visible: true });
+        });
+    }
+
+    return layout;
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -16,6 +76,7 @@ const songDefaults = {
         showCaptions: true,
         showNextLine: false,
         barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
+        chartSpacing: 'relaxed',
         chordFontsize: '100%',
         lineCaptionFontsize: '100%',
         boxCaptionFontsize: '100%'
@@ -49,6 +110,7 @@ export class SongPersistence {
         this.randomSectionHistory = [];
         this.myTunings = [];
         this.visibleNoteTables = [];
+        this.noteTablesLayout = [];
         this.colorDicts = {};
         this.plugins = {};
 
@@ -61,6 +123,11 @@ export class SongPersistence {
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
+        this.noteTablesLayout = normalizeNoteTablesLayout({
+            noteTablesLayout: obj.noteTablesLayout,
+            visibleNoteTables: obj.visibleNoteTables,
+            myTunings: this.myTunings
+        });
         this.plugins = obj.plugins && typeof obj.plugins === 'object' ? { ...obj.plugins } : {};
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
@@ -98,6 +165,7 @@ export class SongPersistence {
             || key === 'isHeadless'
             || key === 'tunings'
             || key === 'userInstrumentTuning'
+            || key === 'visibleNoteTables'
             ) 
         {
             return undefined;

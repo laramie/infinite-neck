@@ -9,6 +9,43 @@ const NOTE_NAMES_FLATS = 'A,B<small>&#9837;</small>,B,C,D<small>&#9837;</small>,
 const NOTE_NAMES_SHARPS = 'A,A<small>&#9839;</small>,B,C,C<small>&#9839;</small>,D,D<small>&#9839;</small>,E,F,F<small>&#9839;</small>,G,G<small>&#9839;</small>'.split(',');
 const DEFAULT_BEATS = 4;
 
+function countRecordedNotes(recordedNotes) {
+	if (!recordedNotes || typeof recordedNotes !== 'object') {
+		return 0;
+	}
+	let total = 0;
+	Object.values(recordedNotes).forEach((notesInBeat) => {
+		if (Array.isArray(notesInBeat)) {
+			total += notesInBeat.filter((note) => note != null).length;
+		}
+	});
+	return total;
+}
+
+function countNamedNotes(namedNotes) {
+	if (!namedNotes || typeof namedNotes !== 'object') {
+		return 0;
+	}
+	let total = 0;
+	Object.values(namedNotes).forEach((note) => {
+		if (note) {
+			total += 1;
+		}
+	});
+	return total;
+}
+
+function pruneEmptyRecordedBeats(recordedNotes) {
+	if (!recordedNotes || typeof recordedNotes !== 'object') {
+		return;
+	}
+	Object.entries(recordedNotes).forEach(([beatKey, notesInBeat]) => {
+		if (!Array.isArray(notesInBeat) || notesInBeat.filter((note) => note != null).length === 0) {
+			delete recordedNotes[beatKey];
+		}
+	});
+}
+
 function getNoteRootFromSectionNotes(sectionNotes) {
 	if (!sectionNotes) {
 		return null;
@@ -151,8 +188,8 @@ export class Section extends SectionPersistence {
 		Object.values(this.sectionNotesByTable).forEach((sn) => {
 			if (sn) {
 				noteCount += (Array.isArray(sn.playedNotes) ? sn.playedNotes.length : 0);
-				noteCount += Object.keys(sn.namedNotes || {}).length;
-				noteCount += Object.keys(sn.recordedNotes || {}).length;
+				noteCount += countNamedNotes(sn.namedNotes);
+				noteCount += countRecordedNotes(sn.recordedNotes);
 			}
 		});
 		return noteCount === 0;
@@ -162,9 +199,13 @@ export class Section extends SectionPersistence {
 	removeEmptyTables() {
 		const compact = {};
 		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
+			if (!sn) {
+				return;
+			}
+			pruneEmptyRecordedBeats(sn.recordedNotes);
 			const hasNotes = (Array.isArray(sn.playedNotes) && sn.playedNotes.length > 0)
-				|| (sn.namedNotes && Object.keys(sn.namedNotes).length > 0)
-				|| (sn.recordedNotes && Object.keys(sn.recordedNotes).length > 0);
+				|| countNamedNotes(sn.namedNotes) > 0
+				|| countRecordedNotes(sn.recordedNotes) > 0;
 			if (hasNotes) {
 				compact[tableID] = sn;
 			}

@@ -28,6 +28,7 @@ export function setCmdActionRunner(actionRunner){
 function applyCmdLineMenuMode(){
     const isOneLine = gCmdLineMenuMode === 'one-line';
     const jCmdMenu = $("#CmdMenu");
+    const wasOneLine = jCmdMenu.hasClass("CmdMenuOneLine");
     jCmdMenu.toggleClass("CmdMenuOneLine", isOneLine);
 
     const jOptionsTable = $("#CmdMenuOptionsTable");
@@ -41,10 +42,13 @@ function applyCmdLineMenuMode(){
     }
 
     if (!isOneLine){
-        const fullStackHtml = jStack.data("fullStackHtml");
-        if (typeof fullStackHtml === 'string') {
-            jStack.html(fullStackHtml);
+        if (wasOneLine) {
+            const fullStackHtml = jStack.data("fullStackHtml");
+            if (typeof fullStackHtml === 'string') {
+                jStack.html(fullStackHtml);
+            }
         }
+        jStack.removeData("fullStackHtml");
         return;
     }
 

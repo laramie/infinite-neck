@@ -13,7 +13,7 @@ function printUsage() {
     console.log('Usage: node bin/validate-song-schema.js [--song-list <path>] [--file <path>] [--quiet] [--alert-empty-songs] [--strict]');
     console.log('Defaults to validating songs/song-list.json and songs/tests/test-song-list.json.');
     console.log('--alert-empty-songs reports empty section counts per song.');
-    console.log('--strict also enables empty-section reporting, fails songs whose sections are all empty, and requires visibleNoteTables to be present.');
+    console.log('--strict also enables empty-section reporting, fails songs whose sections are all empty, and requires noteTablesLayout to be present.');
 }
 
 function parseArgs(argv) {
@@ -138,8 +138,8 @@ function validateOneFile(filePath, options = {}) {
     }
 
     if (options.strict) {
-        if (!Object.prototype.hasOwnProperty.call(data, 'visibleNoteTables')) {
-            errors.push('/ strict mode requires visibleNoteTables to be present');
+        if (!Object.prototype.hasOwnProperty.call(data, 'noteTablesLayout')) {
+            errors.push('/ strict mode requires noteTablesLayout to be present');
         }
         if (totalSections > 0 && emptySectionCount === totalSections) {
             errors.push(`/ strict mode found all sections empty (${emptySectionCount}/${totalSections})`);

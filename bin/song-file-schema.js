@@ -240,6 +240,16 @@ const chartOptionsSchema = {
     additionalProperties: false
 };
 
+const noteTableLayoutEntrySchema = {
+    type: 'object',
+    properties: {
+        tableID: { type: 'string', minLength: 1 },
+        visible: { type: 'boolean' }
+    },
+    required: ['tableID', 'visible'],
+    additionalProperties: false
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -254,7 +264,10 @@ export const songFileV2Schema = {
         sharps: { type: 'boolean' },
         singleNoteOpacity: stringOrNumberSchema,
         tinyNoteOpacity: stringOrNumberSchema,
-        songfileVersion: { const: 'V2' },
+        songfileVersion: {
+            type: 'string',
+            pattern: '^V2(\\.1)?$'
+        },
         songName: { type: 'string', minLength: 1 },
         theme: { type: 'string', minLength: 1 },
         userTheme: {
@@ -284,6 +297,10 @@ export const songFileV2Schema = {
         visibleNoteTables: {
             type: 'array',
             items: { type: 'string', minLength: 1 }
+        },
+        noteTablesLayout: {
+            type: 'array',
+            items: noteTableLayoutEntrySchema
         },
         wirings: {
             type: 'array',

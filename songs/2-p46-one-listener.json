@@ -1,0 +1,254 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_changed",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "P46_2",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_changed",
+      "visible": true
+    },
+    {
+      "tableID": "tblP46_2",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "1.00",
+  "openInfo": "none",
+  "presentationMode": false,
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "barClass": "Box",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "songfileVersion": "V2.1",
+  "songName": "2-p46-one-listener",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_changed": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "Ab",
+                "styleNum": 2,
+                "midinum": "44",
+                "row": "5",
+                "col": "4",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "A",
+                "styleNum": 2,
+                "midinum": "45",
+                "row": "5",
+                "col": "5",
+                "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "Bb",
+                "styleNum": 2,
+                "midinum": "46",
+                "row": "5",
+                "col": "6",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "Bb",
+                "styleNum": 2,
+                "midinum": "46",
+                "row": "5",
+                "col": "6",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "B",
+                "styleNum": 2,
+                "midinum": "47",
+                "row": "5",
+                "col": "7",
+                "colorClass": "noteTransparent"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_changed": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "Bb",
+                "styleNum": 2,
+                "midinum": "46",
+                "row": "5",
+                "col": "6",
+                "colorClass": "noteTransparent"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblP46_2",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_changed",
+      "listenerProjection": "row-midi"
+    }
+  ],
+  "graveyard": {
+    "records": []
+  }
+}

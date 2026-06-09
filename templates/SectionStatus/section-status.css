@@ -44,6 +44,25 @@
     padding-top: 0.05em;
 }
 
+.SectionStatus_td_rootKey{
+    padding-top: 0.6em;
+    text-align: center;
+}
+.SectionStatus_td_rootKeyLead {
+    text-align: center;
+    padding-bottom: 0.4em;
+}
+.SectionsStatus_td_RecordDot {
+    text-align: center;
+}
+.SectionStatus_td_SectionNumber {
+    text-align: right;
+    min-width: 2.6em;
+}
+.SectionStatus_td_beatNumber {
+    text-align: right;
+}
+
 /* Use class selectors for correct cascade.
  * Base/mode classes set the idle color.
  * The ssKey_hasValue class switches to the text-present color.
@@ -70,7 +89,7 @@
     --section-status-key-idle-bg: white;
 }
 .SectionStatus_rootKeyLead {
-    --section-status-key-idle-bg: white;
+    --section-status-key-idle-bg: rgb(109, 109, 109);
     --section-status-key-live-bg: aqua;
 }
 .SectionStatus_rootKey.ssKey_relative {
@@ -92,26 +111,30 @@
 .SectionStatus_rootKeyLead.ssKey_hasValue {
     background-color: var(--section-status-key-live-bg);
 }
-/*
-.section-status-vertical-table {
-    border: 1px dashed blue;
+
+.RecordDot {
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  color: black;
+  background-color: black;
+}
+.SectionStatusWidget--leadSheet .RecordDot {
+    width: 0.5em;
+    height: 0.5em;
+    margin-left: 0.14em;
+    margin-right: 0.4em;
+}
+.SectionStatusWidget--captionRow .RecordDot {
+    width: 0.5em;
+    height: 0.5em;
+    margin-left: 0.2em;
+    margin-right: 0.4em;
 }
 
-.section-status-vertical-table tr td {
-    border: 1px dashed lightblue;
-}
-
-.section-status-vertical-table-inner {
-    border: 1px dashed green;
-}
-
-.section-status-vertical-table-inner tr td {
-    border: 1px dashed orange;
-}
-.fretTableWrapper td {
-    border: 1px solid red;
-}
-*/
 
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
 .instrumentSectionBox {
@@ -120,8 +143,14 @@
 }
 /* The section character: §    */
 .instrumentSectionMark {
+    display: inline-block;
     color: green;
     font-size: 80%;
+    padding-right: 0.5em;
+}
+.SectionStatus_td_SectionNumber .instrumentSectionMark {
+    color: green;
+    font-size: 90%;
     padding-right: 0.5em;
 }
 
@@ -146,17 +175,29 @@
     font-size: 110%;
 }
 
+
+.SectionStatusWidget--leftRail .SectionStatus_rootKey,
+.SectionStatusWidget--leftRail .SectionStatus_rootKeyLead {
+    font-size: 120%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+
 .SectionStatusWidget--captionRow .SectionsStatus_SectionNumber, 
-.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber,
 .SectionStatusWidget--leadSheet .SectionsStatus_SectionNumber {
     color: yellow;
     display: inline-block;
     min-width: 1.4em;
 }
+.SectionStatusWidget--leftRail .SectionsStatus_SectionNumber {
+    color: yellow;
+}   
 
 .SectionStatusWidget--captionRow .SectionStatus_relativeSection,
-.SectionStatusWidget--leadSheet .SectionStatus_relativeSection {
-    margin-right: 0.15em;
+.SectionStatusWidget--leadSheet .SectionStatus_relativeSection,
+.SectionStatusWidget--leftRail .SectionStatus_relativeSection {
+    color: rgb(120, 255, 235);
 }
 
 .SectionStatusWidget--leftRail .SectionStatus_loopLight.SectionStatus_showBeatCounter {

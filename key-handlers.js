@@ -491,6 +491,9 @@ export function performCmdAction(menuItem, args){
 			showMessagesJSON(JSON.stringify(version, null, 2),
 			                 `<a target='_blank' href='${version.README}'>${version.README}</a><br><br>`);
 			break;
+		case "removeUnusedTablesFromMemoryModel":
+			getSong().removeUnusedTablesFromMemoryModel();
+			break;
 		case "downloadPlayedNotes":
 			downloadPlayedNotes();
 			break;
@@ -803,6 +806,9 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
+		case "cmdBackgroundOpacity":
+			setOneCssVar("--cmd-menu-opacity", menuItem.name);
+			break;	
 		case "showViewDiagnostics":
 			showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
 			break;
@@ -845,7 +851,13 @@ export function performCmdAction(menuItem, args){
             $("#divMessages").hide();
             actionResult.result = "Messages hidden";
             break;
-
+		case "reshowViewMessages":
+			$("#divMessageAndJsonTree").show()
+            $("#divMessages").show();
+            actionResult.result = "Messages re-shown";
+			hideCmdLine();
+    		scrollToMessages();
+            break;
 		case "printSectionsDetails":
 			printSections(true);
 			hideCmdLine();

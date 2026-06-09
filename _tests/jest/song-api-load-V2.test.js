@@ -75,7 +75,13 @@ describe('Song V2 canonical load from disk', () => {
         expect(song.getSections()).toHaveLength(data.sections.length);
         expect(song.getSectionsCurrentIndex()).toBe(0);
         expect(song.myTunings).toHaveLength(data.myTunings.length);
-        expect(song.visibleNoteTables).toEqual(data.visibleNoteTables);
+        expect(song.getVisibleTunings()).toEqual(data.visibleNoteTables);
+        expect(song.getNoteTablesLayout()).toEqual(
+            data.myTunings.map((tuning) => ({
+                tableID: `tbl${tuning.baseID}`,
+                visible: true
+            }))
+        );
         expect(song.wirings).toHaveLength(data.wirings.length);
 
         const firstSection = song.getSections()[0];
@@ -101,7 +107,7 @@ describe('Song V2 canonical load from disk', () => {
 
     test('loads observer/listener wirings that reference visible persisted tables', () => {
         const { song } = loadSongCanonical();
-        const visibleTables = new Set(song.visibleNoteTables);
+        const visibleTables = new Set(song.getVisibleTunings());
 
         expect(song.wirings).toEqual([
             expect.objectContaining({
@@ -188,13 +194,14 @@ describe('Song V2 headless operations on a loaded song', () => {
         expect(shifted['4']).toBeUndefined();
     });
 
-    test('renameTuningIDInModel updates loaded V2 sectionNotesByTable and visibleNoteTables', () => {
+    test('renameTuningIDInModel updates loaded V2 sectionNotesByTable and noteTablesLayout', () => {
         const { song } = loadSongCanonical();
 
         song.renameTuningIDInModel('Bass4_Observer', 'Bass4_Listener');
 
-        expect(song.visibleNoteTables).toContain('tblBass4_Listener');
-        expect(song.visibleNoteTables).not.toContain('tblBass4_Observer');
+        const layoutTableIDs = song.getNoteTablesLayout().map((entry) => entry.tableID);
+        expect(layoutTableIDs).toContain('tblBass4_Listener');
+        expect(layoutTableIDs).not.toContain('tblBass4_Observer');
 
         const thirdSection = song.getSections()[2];
         expect(thirdSection.sectionNotesByTable).toHaveProperty('tblBass4_Listener');
@@ -227,7 +234,7 @@ describe('Song V2 headless operations on a loaded song', () => {
 });
 
 describe('Song V2 save path from a loaded song', () => {
-    test('prepareForSave and getPersistentSongFile preserve save-facing V2 fields and exclude runtime-only state', () => {
+    test('prepareForSave and getPersistentSongFile preserve save-facing V2.1 fields and exclude runtime-only state', () => {
         const { data, song } = loadSongCanonical();
 
         song.prepareForSave({
@@ -240,10 +247,16 @@ describe('Song V2 save path from a loaded song', () => {
 
         const savedObj = JSON.parse(song.getPersistentSongFile());
 
-        expect(savedObj.songfileVersion).toBe('V2');
+        expect(savedObj.songfileVersion).toBe('V2.1');
         expect(savedObj.songName).toBe(data.songName);
         expect(savedObj.theme).toBe(data.theme);
-        expect(savedObj.visibleNoteTables).toEqual(data.visibleNoteTables);
+        expect(savedObj).not.toHaveProperty('visibleNoteTables');
+        expect(savedObj.noteTablesLayout).toEqual(
+            data.myTunings.map((tuning) => ({
+                tableID: `tbl${tuning.baseID}`,
+                visible: true
+            }))
+        );
         expect(savedObj.sections).toHaveLength(data.sections.length);
         expect(savedObj.wirings).toEqual(data.wirings);
         expect(savedObj).not.toHaveProperty('isHeadless');

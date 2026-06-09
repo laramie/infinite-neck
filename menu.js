@@ -183,27 +183,6 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>C</b>lear graveyard, with backup",
-          "trigger": "C",
-          "children": [
-                {
-                  "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
-                  "trigger": "Y",
-                  "action": "downloadBackupThenClearGraveyard",
-                  "vars": [
-                    "graveyardRecordCount"
-                  ],
-                  "popOnBang": true
-                },
-                {
-                  "caption": "<b>n</b>o: keep graveyard.",
-                  "trigger": "n",
-                  "action": "noAction",
-                  "popOnBang": true
-                }
-              ]
-        },
-        {
           "name": "lock",
           "caption": "<b>l</b>ock",
           "trigger": "l",
@@ -214,18 +193,6 @@ export var gMenuFile =    {
           "caption": "<b>u</b>nlock",
           "trigger": "u",
           "action": "unlock",
-        },
-        {
-          "name": "version",
-          "caption": "<b>v</b>ersion info",
-          "trigger": "v",
-          "action": "version",
-        },
-        {
-          "name": "versionMore",
-          "caption": "<b>V</b>ersion as Show Message",
-          "trigger": "V",
-          "action": "versionMore",
         },
         {
           "caption": "<b>a</b>dvanced",
@@ -243,8 +210,8 @@ export var gMenuFile =    {
                 "datatype": "int",
                 "id": "transposeSong"
               }
-          },
-          {
+            },
+            {
               "name": "transposeSongKeys",
               "caption": "transpose song <b>k</b>eys",
               "trigger": "k",
@@ -256,7 +223,46 @@ export var gMenuFile =    {
                 "datatype": "int",
                 "id": "transposeSongKeys"
               }
-          }
+            },
+            {
+              "caption": "<b>C</b>lear graveyard, with backup",
+              "trigger": "C",
+              "children": [
+                  {
+                    "caption": "<b>Y</b>es: CLEAR ${graveyardRecordCount} graveyard records !",
+                    "trigger": "Y",
+                    "action": "downloadBackupThenClearGraveyard",
+                    "vars": [
+                      "graveyardRecordCount"
+                    ],
+                    "popOnBang": true
+                  },
+                  {
+                    "caption": "<b>n</b>o: keep graveyard.",
+                    "trigger": "n",
+                    "action": "noAction",
+                    "popOnBang": true
+                  }
+                ]
+            },
+            {
+              "name": "removeUnusedTablesFromMemoryModel",
+              "caption": "<b>r</b>emove unused table storage",
+              "trigger": "r",
+              "action": "removeUnusedTablesFromMemoryModel",
+            },
+            {
+              "name": "version",
+              "caption": "<b>v</b>ersion info",
+              "trigger": "v",
+              "action": "version",
+            },
+            {
+              "name": "versionMore",
+              "caption": "<b>V</b>ersion as Show Message",
+              "trigger": "V",
+              "action": "versionMore",
+            }
           ]
         },
         {
@@ -691,6 +697,60 @@ export var gMenuFile =    {
             {
               "caption": "<b>t</b>all",
               "trigger": "t"
+            },
+            {
+              "caption": "<b>b</b>ackground opacity",
+              "trigger": "b",
+              "children": [
+                {
+                  "caption": "<b>1</b>) 100%",
+                  "trigger": "1",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"100%"
+                },
+                {
+                  "caption": "<b>2</b>) 95%",
+                  "trigger": "2",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"95%"
+                },
+                {
+                  "caption": "<b>3</b>) 90%",
+                  "trigger": "3",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"90%"
+                },
+                {
+                  "caption": "<b>4</b>) 85%",
+                  "trigger": "4",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"85%"
+                },
+                {
+                  "caption": "<b>5</b>) 80%",
+                  "trigger": "5",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"80%"
+                },
+                {
+                  "caption": "<b>6</b>) 70%",
+                  "trigger": "6",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"70%"
+                },
+                {
+                  "caption": "<b>7</b>) 60%",
+                  "trigger": "7",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"60%"
+                },
+                {
+                  "caption": "<b>8</b>) 50%",
+                  "trigger": "8",
+                  "action": "cmdBackgroundOpacity",
+                  "name":"50%"
+                }
+              ]
             }
           ]
         },
@@ -862,6 +922,11 @@ export var gMenuFile =    {
               "caption": "<b>h</b>ide",
               "trigger": "h",
               "action": "hideViewMessages"
+            },
+            {
+              "caption": "<b>r</b>e-show",
+              "trigger": "r",
+              "action": "reshowViewMessages"
             }
           ]
         },

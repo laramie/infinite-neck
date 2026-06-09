@@ -532,11 +532,30 @@ table.viewControls th {
 }
 #allTuningsTable th,
 #myTuningsTable th {
-    font-size:  80%;
+    font-size:  90%;
+    height: 3em;
 }
-#allTuningsTable tr:hover,
-#myTuningsTable tr:hover {
+.TuningsTableSkinny{
+    max-width: 6em;
+
+}
+#allTuningsTable tr:not(:first-child):hover,
+#myTuningsTable tr:not(:first-child):hover {
     background-color: lightgreen;
+}
+.btnRefreshInMemGate {
+    padding: 0;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    margin-right: 0.4em;
+    margin-top: 0.8em;
+    margin-bottom: 0.6em;
+    font-size: 80%;
+    font-weight: bold;
+    box-shadow: 1px 1px 2px black;
+    border-radius: 1px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
 }
 
 .userInstrumentControlsGroup {
@@ -1442,11 +1461,12 @@ td.nut div.NoteActive .CenterCell {
 .tinyNote {
     display:none;
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 1em;
-    max-height: var(--tiny-note-max-height);
-    font-size: min(0.8em, var(--tiny-note-font-size));
+    top: calc( var(--tiny-note-vposition) - calc(var(--tiny-note-max-height) / 2));        /* New 20260608 */
+    left: calc( var(--tiny-note-hposition) - calc(var(--tiny-note-width) / 2));  /* New 20260608 */
+    width: max(25%, var(--tiny-note-width, 25%));
+    height: 100%; /* New 20260608 */
+    max-height: max(20px, var(--tiny-note-max-height)); /* New 20260608 */
+    font-size: max(40%, var(--tiny-note-font-size));
     z-index: 6;
     border-radius: 6px;
     text-align: center;

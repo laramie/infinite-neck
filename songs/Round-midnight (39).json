@@ -1,0 +1,201 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "1.00",
+  "openInfo": "none",
+  "presentationMode": false,
+  "chartOptions": {
+    "modes": false,
+    "detailLine": false,
+    "showCaptions": true,
+    "showNextLine": false,
+    "barClass": "LeadSheet",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "songfileVersion": "V2.1",
+  "songName": "Round-midnight",
+  "theme": "GuitarStrings",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cmaj7",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cmaj7",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Gb7no5/Bb",
+          "mode": " whole tone",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Gb7no5/Bb",
+      "chartMode": " whole tone",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 9,
+      "rootIDLead": "4",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Bbm7#5",
+          "mode": " locrian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Bbm7#5",
+      "chartMode": " locrian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 1,
+      "rootIDLead": "6",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
+  }
+}

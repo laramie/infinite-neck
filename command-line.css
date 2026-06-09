@@ -5,7 +5,7 @@
     z-index: 2000;
     position: fixed;
     padding: 0.2em;
-    opacity: 85%;
+    opacity: var(--cmd-menu-opacity);
     width: 90%;
     left: 5%;
     bottom: 0;

@@ -29,13 +29,18 @@ At the moment the persistence system mixes four categories of state:
 - library defaults such as `themes.js` and `tunings.js`
 - runtime-expanded state such as `colorDicts` and `activeStylesheets`
 - song-owned state such as `myTunings` and `visibleNoteTables`
-- session-only state such as `isHeadless` and random history
+- session-only state such as `isHeadless` and random-loop-history
 
 These categories are not consistently separated. Some fields are already persisted correctly, some are persisted but loaded incompletely, and some are derived or runtime-only values that should remain filtered.
 
+
+-------------------------
+
 ## Iterations
 
-### "Iteration 1": Define Scope and Persistence Matrix
+### "Iteration 1": Persistence Matrix
+
+Title: Define Scope and Persistence Matrix
 
 Scope:
   - Define all User-facing persistence areas that belong in the songfile.
@@ -74,7 +79,9 @@ Likely non-goals:
 - persisting every system/default stylesheet in full
 - preserving every runtime checkbox/order artifact unless explicitly chosen as canonical
 
-### "Iteration 3": Fix myTunings, ensure USER tuning works.
+### "Iteration 3": Tunings
+
+Title: Fix myTunings, ensure USER tuning works.
 
 Problem:
 
@@ -94,7 +101,9 @@ This iteration is about persistence contract and load behavior, not about expand
 Iteration 3 Design work continues in: [Iteration 3 Design](122-it3-design.md)
 
 
-### "Iteration 4": Fix User Themes
+### "Iteration 4": USER Theme
+
+Title: Fix USER Theme
 
 Problem:
 
@@ -114,6 +123,9 @@ Fallback target:
 
 ### "Iteration 5": Fix Visible Tables
 
+[122-it5-report](122-it5-report.md)
+[122-it5.design](122-it5-design.md)
+
 Problem:
 
 `visibleNoteTables` is already a good persisted shape, but save currently derives it from DOM visibility. That makes persistence depend on the View, which is the opposite of what this sprint wants.
@@ -129,7 +141,13 @@ Likely design direction:
 - the model or save caller should provide the authoritative visible-table list
 - the View may reflect or edit that state, but should not be the only source of truth
 
-## Risks and edge cases
+- **SPRINT COMPLETE**
+
+
+----------------------
+
+
+## Sprint-122 Risks and edge cases
 
 ### Peer host does not have the same library tuning
 

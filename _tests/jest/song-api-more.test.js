@@ -75,6 +75,29 @@ function seedSongWithCaptionedSections(song, captions) {
     captions.forEach((caption) => song.addSection(createSectionWithCaption(song, caption)));
 }
 
+function makeTuning({
+    baseID,
+    fromBaseID,
+    caption,
+    baseInstrument = 'Guitar',
+    nStrings = 6,
+    rowRange = [64, 59, 55, 50, 45, 40],
+    reverse = false
+} = {}) {
+    return {
+        baseID,
+        fromBaseID: fromBaseID || baseID,
+        caption,
+        baseInstrument,
+        nStrings,
+        rowRange,
+        reverse,
+        frets: 16,
+        nut: true,
+        visible: false
+    };
+}
+
 describe('Headless tuning bootstrap contracts', () => {
     test('setupSongTests seeds at least one myTuning in the model', () => {
         const song = createFreshHeadlessSong();
@@ -118,6 +141,104 @@ describe('Headless tuning bootstrap contracts', () => {
         expect(resolveLoadedThemeId('USER', true)).toBe('USER');
         expect(resolveLoadedThemeId('', true)).toBe('USER');
         expect(resolveLoadedThemeId('MissingTheme', true)).toBe('USER');
+    });
+});
+
+describe('Song.addTunings import behavior', () => {
+    test('drops incoming tuning when colliding ID is duplicate by key fields', () => {
+        const song = new Song({
+            myTunings: [
+                makeTuning({ baseID: 'S6_1', fromBaseID: 'S6', caption: 'Existing Standard' })
+            ]
+        });
+        song.setHeadless(true, true);
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.addTunings([
+            makeTuning({ baseID: 'S6_1', fromBaseID: 'S6', caption: 'Incoming Standard Duplicate' })
+        ]);
+
+        expect(song.myTunings).toHaveLength(1);
+        expect(song.myTunings[0].baseID).toBe('S6_1');
+
+        const showMessagesCalls = triggerSpy.mock.calls.filter((call) => call[0] === 'ShowMessages');
+        expect(showMessagesCalls).toHaveLength(1);
+        const messageHtml = showMessagesCalls[0][1]?.html || '';
+        expect(messageHtml.startsWith('<pre>')).toBe(true);
+        expect(messageHtml.endsWith('</pre>')).toBe(true);
+        expect(messageHtml).toContain('Duplicate-by-key-fields detected and dropped');
+        expect(messageHtml).toContain('Key fields used: fromBaseID, baseInstrument, nStrings, rowRange, reverse');
+        expect(messageHtml).toContain('Existing Standard');
+        expect(messageHtml).toContain('Incoming Standard Duplicate');
+        expect(messageHtml).toContain('Result: incoming tuning dropped.');
+
+        triggerSpy.mockRestore();
+    });
+
+    test('creates unique _s{i} IDs for collisions and advances suffix index across collisions', () => {
+        const song = new Song({
+            myTunings: [
+                makeTuning({ baseID: 'S6_1', caption: 'Existing S6_1' }),
+                makeTuning({ baseID: 'P4_1', caption: 'Existing P4_1' })
+            ]
+        });
+        song.setHeadless(true, true);
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.addTunings([
+            makeTuning({
+                baseID: 'S6_1',
+                fromBaseID: 'DropD',
+                caption: 'Incoming S6 collision',
+                rowRange: [64, 59, 55, 50, 45, 38]
+            }),
+            makeTuning({
+                baseID: 'P4_1',
+                fromBaseID: 'DADGAD',
+                caption: 'Incoming P4 collision',
+                rowRange: [65, 60, 55, 50, 45, 40]
+            })
+        ]);
+
+        const baseIDs = song.myTunings.map((t) => t.baseID);
+        expect(baseIDs).toContain('S6_1_s1');
+        expect(baseIDs).toContain('P4_1_s2');
+
+        const showMessagesCalls = triggerSpy.mock.calls.filter((call) => call[0] === 'ShowMessages');
+        expect(showMessagesCalls).toHaveLength(1);
+        const messageHtml = showMessagesCalls[0][1]?.html || '';
+        expect(messageHtml).toContain('Collision resolved with new ID:');
+        expect(messageHtml).toContain('Old ID: S6_1');
+        expect(messageHtml).toContain('New ID: S6_1_s1');
+        expect(messageHtml).toContain('Old ID: P4_1');
+        expect(messageHtml).toContain('New ID: P4_1_s2');
+        expect(messageHtml).toContain('Ghost table audit (post-addTunings):');
+
+        triggerSpy.mockRestore();
+    });
+
+    test('reports no-collision imported IDs with reason and includes ghost audit', () => {
+        const song = new Song({ myTunings: [] });
+        song.setHeadless(true, true);
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.addTunings([
+            makeTuning({ baseID: 'CustomA', caption: 'Custom A' }),
+            makeTuning({ baseID: 'CustomB', caption: 'Custom B' })
+        ]);
+
+        expect(song.myTunings.map((t) => t.baseID)).toEqual(['CustomA', 'CustomB']);
+
+        const showMessagesCalls = triggerSpy.mock.calls.filter((call) => call[0] === 'ShowMessages');
+        expect(showMessagesCalls).toHaveLength(1);
+        const messageHtml = showMessagesCalls[0][1]?.html || '';
+        expect(messageHtml).toContain('Imported with no ID collisions (IDs did not already exist in song):');
+        expect(messageHtml).toContain('- CustomA');
+        expect(messageHtml).toContain('- CustomB');
+        expect(messageHtml).toMatch(/myTunings tableIDs\s+2:\s+tblCustomA, tblCustomB/);
+        expect(messageHtml).toContain('Tables without matching views (0): (none)');
+
+        triggerSpy.mockRestore();
     });
 });
 
