@@ -1461,9 +1461,8 @@ td.nut div.NoteActive .CenterCell {
 .tinyNote {
     display:none;
     position: absolute;
-    top: 0;
-    left: 0;
-    /*width: 1em; 20260608*/
+    top: calc( var(--tiny-note-vposition) - calc(var(--tiny-note-max-height) / 2));        /* New 20260608 */
+    left: calc( var(--tiny-note-hposition) - calc(var(--tiny-note-width) / 2));  /* New 20260608 */
     width: max(25%, var(--tiny-note-width, 25%));
     height: 100%; /* New 20260608 */
     max-height: max(20px, var(--tiny-note-max-height)); /* New 20260608 */

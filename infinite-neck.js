@@ -1891,18 +1891,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selFingeringPosition").val(options.fingeringPosition);
 		$("#selTinyNoteFontSize").val(options.tinyNoteFontSize);
 		$("#selTinyNoteMaxHeight").val(options.tinyNoteMaxHeight);
+		$("#selTinyNoteVPosition").val(options.tinyNoteVPosition);
 		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
+		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
 
-		setOneCssVar("--td-note-font-family", $("#selNoteFont").val());
+		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
 		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
 		setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
-		setOneCssVar("--tiny-note-width", $("#selTinyNoteWidth").val());
-		setOneCssVar("--tiny-note-max-width", $("#selTinyNoteMaxWidth").val());
-		setOneCssVar("--tiny-note-font-size", $("#selTinyNoteFontSize").val());
-		setOneCssVar("--midi-font-size", $("#selMidiFontSize").val());
-		setOneCssVar("--fingering-font-size", $("#selFingeringFontSize").val());
-		setOneCssVar("--fingering-position", $("#selFingeringPosition").val());
+		setOneCssVar("--tiny-note-vposition",  $("#selTinyNoteVPosition").val());
+		setOneCssVar("--tiny-note-width",      $("#selTinyNoteWidth").val());
+		setOneCssVar("--tiny-note-max-width",  $("#selTinyNoteMaxWidth").val());
+		setOneCssVar("--tiny-note-hposition",  $("#selTinyNoteHPosition").val());
+		setOneCssVar("--tiny-note-font-size",  $("#selTinyNoteFontSize").val());
+		setOneCssVar("--midi-font-size",       $("#selMidiFontSize").val());
+		setOneCssVar("--fingering-font-size",  $("#selFingeringFontSize").val());
+		setOneCssVar("--fingering-position",   $("#selFingeringPosition").val());
 		fullRepaint();
 	}
 
@@ -1950,7 +1954,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.fingeringPosition = $("#selFingeringPosition").val();
 		options.tinyNoteFontSize = $("#selTinyNoteFontSize").val();
 		options.tinyNoteMaxHeight = $("#selTinyNoteMaxHeight").val();
+		options.tinyNoteVPosition = $("#selTinyNoteVPosition").val();
 		options.tinyNoteWidth = $("#selTinyNoteWidth").val();
+		options.tinyNoteHPosition = $("#selTinyNoteHPosition").val();
 		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		
 		return options;
@@ -2492,8 +2498,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setOneCssVar("--tiny-note-max-height", $("#selTinyNoteMaxHeight").val());
 			fullRepaint();
 		});
+		bindEvent('change', '#selTinyNoteVPosition', function(){
+			setOneCssVar("--tiny-note-vposition", $("#selTinyNoteVPosition").val());
+			fullRepaint();
+		});
 		bindEvent('change', '#selTinyNoteWidth', function(){
 			setOneCssVar("--tiny-note-width", $("#selTinyNoteWidth").val());
+			fullRepaint();
+		});
+		bindEvent('change', '#selTinyNoteHPosition', function(){
+			setOneCssVar("--tiny-note-hposition", $("#selTinyNoteHPosition").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#selTinyNoteFontSize', function(){
