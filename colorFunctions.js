@@ -524,7 +524,7 @@ export function chuseStylesheet(dictkey){
             var userColorClass = "note"+Role;
             var captionClass = (obj.captionClass) ? obj.captionClass : userColorClass;
             var radio = $('<input type="radio" id="idR'+Role+'" name="rbColor" value="note'+Role+'"  '+checkedString+'>');
-            var label = $('<label id="chooseRole'+Role+'" ></label>');
+            var label = $('<label id="chooseRole'+Role+'" title="note'+Role+'" ></label>');
             label.append(radio);
             label.append(""+obj.caption);
             label.addClass("userColorRB");

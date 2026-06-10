@@ -28,4 +28,8 @@ Purpose of this sprint is to:
 All of the work happened in chat:
 - [sprint-127 chat document](127-chat.md) 
 
+Design and implementation specs for the palette mode-group refactor:
+- [palette mode state spec](palette-mode-state-spec.md)
+- [palette mode implementation checklist](palette-mode-implementation-checklist.md)
+
 

@@ -561,11 +561,17 @@ describe('key-handlers spacebar mapping', () => {
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
 	});
 
-	test('selectRadioNoteType restores via the button before selecting a note type when CLEAR is active', () => {
-		const restoreButton = {
-			id: 'btnRestoreRbColor',
-			tag: 'button',
-			click: jest.fn()
+	test('selectRadioNoteType enters paint mode before selecting a note type when CLEAR mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
 		};
 		const namedRadio = {
 			id: 'idNamedNotes',
@@ -579,34 +585,136 @@ describe('key-handlers spacebar mapping', () => {
 			})
 		};
 		const clearRadio = {
-			id: 'idClear',
+			id: 'idPaletteModeClear',
 			tag: 'input',
-			name: 'rbColor',
+			name: 'rbPaletteMode',
 			type: 'radio',
-			value: 'noteClear',
+			value: 'clear',
 			checked: true,
 			click: jest.fn(function () {
 				this.checked = true;
 			})
 		};
-		installPaletteJqueryStub([restoreButton, namedRadio, clearRadio]);
+		installPaletteJqueryStub([paintModeRadio, namedRadio, clearRadio]);
 
 		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'n' });
 
-		expect(restoreButton.click).toHaveBeenCalledTimes(1);
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
 		expect(namedRadio.click).toHaveBeenCalledTimes(1);
 	});
 
-	test('selectRadioNoteType last-chosen clicks the restore button directly', () => {
-		const restoreButton = {
-			id: 'btnRestoreRbColor',
-			tag: 'button',
-			click: jest.fn()
+	test('selectRadioNoteType last-chosen selects paint mode directly', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
 		};
-		installPaletteJqueryStub([restoreButton]);
+		installPaletteJqueryStub([paintModeRadio]);
 
 		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'l' });
 
-		expect(restoreButton.click).toHaveBeenCalledTimes(1);
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectFingering enters paint mode before selecting a fingering when a special mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const keepRadio = {
+			id: 'idPaletteModeKeep',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'keep',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const fingerRadio = {
+			id: 'rbFinger1',
+			tag: 'input',
+			name: 'rbHighlight',
+			type: 'radio',
+			value: 'Fingering',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const fingerColor = {
+			id: 'idRFinger1',
+			tag: 'input',
+			name: 'rbColor',
+			type: 'radio',
+			value: 'noteFinger1',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio, keepRadio, fingerRadio, fingerColor]);
+
+		performCmdAction({ action: 'selectFingering' }, { key: '1' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(fingerRadio.click).toHaveBeenCalledTimes(1);
+		expect(fingerColor.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRole enters paint mode before selecting a role when dropper mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const dropperRadio = {
+			id: 'idPaletteModeDropper',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'dropper',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const rootRole = {
+			id: 'idRRoot',
+			tag: 'input',
+			name: 'rbColor',
+			type: 'radio',
+			value: 'noteRoot',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio, dropperRadio, rootRole]);
+
+		performCmdAction({ action: 'selectRole' }, { key: 'r' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(rootRole.click).toHaveBeenCalledTimes(1);
 	});
 });

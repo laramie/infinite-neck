@@ -56,6 +56,9 @@ import {
     projectListenerPlayedNotes,
     projectListenerRecordedNotes
 } from './move-helpers.js';
+import {
+    PalettePresentation
+} from './presentation.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -474,9 +477,12 @@ export function colorNoteInner(cell) {
     }
     result.styleNum = styleNum;
 
-    var theColorClass = $("input:radio[name=rbColor]:checked").val();
-    var doKeep = "noteKeep" === theColorClass;
-    var doDropper = "noteDropper" === theColorClass;
+    var theColorClass = $("input:radio[name=rbColor]:checked").val()
+        || PalettePresentation.getLastRestorableRbColor().value;
+    const paletteMode = PalettePresentation.getMode();
+    var doKeep = paletteMode === 'keep';
+    var doDropper = paletteMode === 'dropper';
+    var doClear = paletteMode === 'clear';
     var doIndividualAutomatic = "noteAutomatic" === theColorClass;
 	var sBeatNum = getBeatNumber();
 	var cellcol = cell.attr("cellcol");//the optional one
@@ -527,7 +533,7 @@ export function colorNoteInner(cell) {
                 result.returnCause = Cause.DROPPER;
                 return result;
             }
-            if (theColorClass == "noteClear") {
+            if (doClear) {
                 const noteNameElements = $(parentTableSel+'.note' + noteName);
                 const namedNoteDiv = noteNameElements.find(".namedNote");
                 getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
@@ -539,7 +545,7 @@ export function colorNoteInner(cell) {
             }
             if (!doKeep) {
                 if (isRecording()){
-                    if (theColorClass != "noteClear"){
+                    if (!doClear){
                         if (styleNum == Note.STYLENUM_FINGERING){
                             handleRecordedNote(tableID, "Fingering");
                         } else if (styleNum == Note.STYLENUM_SINGLE){
@@ -558,7 +564,7 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.PLAYEDNOTE;
             return result;
         } else if (doHighlight){
-                if (!isRecording() && theColorClass == "noteClear") {
+                if (!isRecording() && doClear) {
                     clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
                     clearPlayedNotesAtCell(cell, tableID);
                     clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
@@ -578,7 +584,7 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.HIGHLIGHT;
            return result;
        } else if (doHighlightSingle){
-               if (!isRecording() && theColorClass == "noteClear") {
+               if (!isRecording() && doClear) {
                    clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
                    clearPlayedNotesAtCell(cell, tableID);
                    clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
@@ -619,7 +625,7 @@ export function colorNoteInner(cell) {
         var lenOtherClasses = namedNoteDiv.prop("className").replace('namedNote','').length; // .trim()???deal with spaces
         var noteAlreadyColored = (lenOtherClasses>0);
 
-		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
+		if (doClear){
 			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
@@ -673,7 +679,6 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
             || lookupUserColorClass(note, lookupContext);
 
         setNoteClickedCaption(cell, foundColorClass, note.styleNum ?? styleNum);
-        $("td.note").css({"cursor": "auto"});
     }
 }
 
@@ -735,6 +740,7 @@ function selectDropperRadioForNote(note, lookupContext) {
         const $radio = $(`input[name=rbColor][value="${value}"]`);
         if ($radio.length > 0) {
             turnOffAutoColorCheckbox();
+            PalettePresentation.ensureColorRadioVisible($radio);
             $radio
                 .prop('checked', true)
                 .trigger('change')

@@ -1,10 +1,18 @@
 export const gPresentation = {
     palette: {
+        mode: 'paint',
         lastRestorableColor: null,
         lastRestorableHighlight: null,
         suppressRbColorRemember: false,
         keepWasForced: false
     }
+};
+
+const PALETTE_MODE_IDS = {
+    paint: 'idPaletteModePaint',
+    clear: 'idPaletteModeClear',
+    keep: 'idPaletteModeKeep',
+    dropper: 'idPaletteModeDropper'
 };
 
 const RESTORABLE_HIGHLIGHT_IDS = new Set([
@@ -17,6 +25,75 @@ const RESTORABLE_HIGHLIGHT_IDS = new Set([
 ]);
 
 export class PalettePresentation {
+    static getMode() {
+        if (!gPresentation.palette.mode) {
+            PalettePresentation.initializePalettePresentation();
+        }
+        return gPresentation.palette.mode || 'paint';
+    }
+
+    static findPaletteModeRadio(mode = PalettePresentation.getMode()) {
+        const id = PALETTE_MODE_IDS[mode];
+        return id ? $('#' + id) : $();
+    }
+
+    static setMode(mode, options = {}) {
+        const {
+            forcedKeep = false,
+            syncUi = true
+        } = options;
+        gPresentation.palette.mode = PALETTE_MODE_IDS[mode] ? mode : 'paint';
+        gPresentation.palette.keepWasForced = forcedKeep;
+        if (syncUi) {
+            PalettePresentation.updatePaletteModeUi();
+        }
+        return gPresentation.palette.mode;
+    }
+
+    static enterPaintMode(options = {}) {
+        const {
+            restoreHighlightIfNeeded = true,
+            forcedKeep = false
+        } = options;
+        PalettePresentation.setMode('paint', {
+            forcedKeep,
+            syncUi: true
+        });
+        if (restoreHighlightIfNeeded) {
+            PalettePresentation.restoreLastRbHighlightIfNeeded();
+        }
+        return true;
+    }
+
+    static enterClearMode() {
+        PalettePresentation.clearRestorableRbHighlightsForClear();
+        PalettePresentation.setMode('clear', {
+            forcedKeep: false,
+            syncUi: true
+        });
+        return true;
+    }
+
+    static enterKeepMode(options = {}) {
+        const {
+            forcedKeep = false
+        } = options;
+        PalettePresentation.setMode('keep', {
+            forcedKeep,
+            syncUi: true
+        });
+        return true;
+    }
+
+    static enterDropperMode() {
+        PalettePresentation.setMode('dropper', {
+            forcedKeep: false,
+            syncUi: true
+        });
+        PalettePresentation.restoreLastRbHighlightIfNeeded();
+        return true;
+    }
+
     static getLastRestorableRbColor() {
         if (!gPresentation.palette.lastRestorableColor) {
             PalettePresentation.initializePalettePresentation();
@@ -45,17 +122,15 @@ export class PalettePresentation {
         return { ...remembered };
     }
 
-    static isSpecialRbColorValue(value) {
-        return value === "noteKeep" || value === "noteClear" || value === "noteDropper";
-    }
-
     static getRbColorCaption($radio) {
         if (!$radio || $radio.length === 0) {
             return "";
         }
         const $label = $radio.closest("label");
         const labelText = $.trim($label.text());
-        return labelText || $radio.attr("id") || $radio.val() || "";
+        const labelTitle = $.trim($label.attr("title"));
+        const radioTitle = $.trim($radio.attr("title"));
+        return labelText || labelTitle || radioTitle || $radio.val() || $radio.attr("id") || "";
     }
 
     static getRbHighlightCaption($radio) {
@@ -75,18 +150,66 @@ export class PalettePresentation {
     }
 
     static updateRestoreRbColorButton() {
-        const $btn = $("#btnRestoreRbColor");
-        if ($btn.length === 0) {
+        const $label = $("#choosePaletteModePaint");
+        const $caption = $("#spanPaletteModePaintCaption");
+        if ($label.length === 0 || $caption.length === 0) {
             return;
         }
-    
+
         const remembered = gPresentation.palette.lastRestorableColor;
         const caption = remembered && remembered.caption ? remembered.caption : "Emboss";
         const isAligned = PalettePresentation.isRestoreButtonAligned();
         const prefix = isAligned ? "\u2713 " : "";
-    
-        $btn.toggleClass("chooseLastColorAligned", isAligned);
-        $btn.text(prefix + "Color: " + caption);
+
+        $label.toggleClass("chooseLastColorAligned", isAligned);
+        $caption.text(prefix + "Color: " + caption);
+    }
+
+    static setExtraColorsVisible(isVisible) {
+        const visible = !!isVisible;
+        const $extraColors = $("#extraColors");
+        const $button = $("#showHideExtraColors");
+
+        if ($extraColors.length > 0) {
+            $extraColors.toggle(visible);
+        }
+
+        if ($button.length > 0) {
+            if (visible) {
+                $button
+                    .html("Less...")
+                    .removeClass("BtnPunchedOut")
+                    .addClass("BtnPunchedIn");
+            } else {
+                $button
+                    .html("More...")
+                    .removeClass("BtnPunchedIn")
+                    .addClass("BtnPunchedOut");
+            }
+        }
+    }
+
+    static setAutomaticColorUi(isAutomaticColor) {
+        const automatic = !!isAutomaticColor;
+        $("#cbAutomaticColor").prop("checked", automatic);
+        $("#manualColors").toggle(!automatic);
+        $("#btnAutoColor,#btnAutoColor2")
+            .toggleClass("BtnPunchedIn", automatic)
+            .toggleClass("BtnPunchedOut", !automatic);
+    }
+
+    static ensureColorRadioVisible($radio) {
+        if (!$radio || $radio.length === 0) {
+            return false;
+        }
+
+        PalettePresentation.setAutomaticColorUi(false);
+
+        if ($radio.closest("#extraColors").length > 0) {
+            PalettePresentation.setExtraColorsVisible(true);
+        }
+
+        return true;
     }
 
     static rememberRestorableRbColor(radioEl) {
@@ -95,10 +218,6 @@ export class PalettePresentation {
         }
         const $radio = $(radioEl);
         const value = $radio.val();
-
-        if (PalettePresentation.isSpecialRbColorValue(value)) {
-            return;
-        }
 
         gPresentation.palette.lastRestorableColor = {
             id: $radio.attr("id"),
@@ -137,6 +256,12 @@ export class PalettePresentation {
         PalettePresentation.rememberCurrentRestorableRbHighlight();
         $("#idNamedNotes, #idSingleNotes, #idTinyNotes, #rbBend, #idMidiPitches, #idMidiPitchesSingle")
             .prop("checked", false);
+    }
+
+    static hasRestorableHighlightSelected() {
+        return $("#idNamedNotes, #idSingleNotes, #idTinyNotes, #rbBend, #idMidiPitches, #idMidiPitchesSingle")
+            .filter(':checked')
+            .length > 0;
     }
 
     static findRestorableRbColor() {
@@ -196,13 +321,15 @@ export class PalettePresentation {
             remember: false,
             forcedKeep: false
         });
-        const highlightRestored = PalettePresentation.restoreLastRbHighlightIfNeeded();
+        const highlightRestored = PalettePresentation.enterPaintMode({
+            restoreHighlightIfNeeded: true,
+            forcedKeep: false
+        });
         return colorRestored || highlightRestored;
     }
 
     static restoreLastRbHighlightIfNeeded() {
-        const $checked = $('input[name="rbHighlight"]:checked').first();
-        if ($checked.length > 0) {
+        if (PalettePresentation.hasRestorableHighlightSelected()) {
             return false;
         }
 
@@ -215,10 +342,22 @@ export class PalettePresentation {
         return true;
     }
 
+    static updatePaletteModeUi() {
+        Object.entries(PALETTE_MODE_IDS).forEach(([mode, id]) => {
+            $('#' + id).prop('checked', PalettePresentation.getMode() === mode);
+        });
+        PalettePresentation.updateRestoreRbColorButton();
+    }
+
     static initializePalettePresentation() {
+        if (!gPresentation.palette.mode) {
+            const $checkedMode = $('input[name="rbPaletteMode"]:checked').first();
+            gPresentation.palette.mode = $checkedMode.length > 0 ? ($checkedMode.val() || 'paint') : 'paint';
+        }
+
         if (!gPresentation.palette.lastRestorableColor) {
             const $checked = $('input[name="rbColor"]:checked').first();
-            if ($checked.length > 0 && !PalettePresentation.isSpecialRbColorValue($checked.val())) {
+            if ($checked.length > 0) {
                 PalettePresentation.rememberRestorableRbColor($checked[0]);
             }
         }
@@ -243,27 +382,10 @@ export class PalettePresentation {
             };
         }
 
-        PalettePresentation.updateRestoreRbColorButton();
+        PalettePresentation.updatePaletteModeUi();
     }
 
     static isRestoreButtonAligned() {
-        const remembered = gPresentation.palette.lastRestorableColor;
-        if (!remembered) {
-            return false;
-        }
-    
-        const $checked = $('input[name="rbColor"]:checked').first();
-        if ($checked.length === 0) {
-            return false;
-        }
-    
-        if (PalettePresentation.isSpecialRbColorValue($checked.val())) {
-            return false;
-        }
-    
-        const checkedId = $checked.attr("id");
-        const checkedValue = $checked.val();
-    
-        return checkedId === remembered.id || checkedValue === remembered.value;
+        return PalettePresentation.getMode() === 'paint';
     }
 }

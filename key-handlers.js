@@ -365,41 +365,51 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-				$("#rbFinger0").prop('checked', true);
-                checkRB("#idRFinger0");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger0');
+				activateUiControl('#idRFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-				$("#rbFinger1").prop('checked', true);
-                checkRB("#idRFinger1");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger1');
+				activateUiControl('#idRFinger1');
                 break;
             case "2":
-				$("#rbFinger2").prop('checked', true);
-                checkRB("#idRFinger2");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger2');
+				activateUiControl('#idRFinger2');
                 break;
             case "3":
-				$("#rbFinger3").prop('checked', true);
-                checkRB("#idRFinger3");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger3');
+				activateUiControl('#idRFinger3');
                 break;
             case "4":
-				$("#rbFinger4").prop('checked', true);
-                checkRB("#idRFinger4");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger4');
+				activateUiControl('#idRFinger4');
                 break;
             case "5":
-				$("#rbFingerT").prop('checked', true);
-                checkRB("#idRFingerT");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFingerT');
+				activateUiControl('#idRFingerT');
                 break;
             case "6":
-                checkRB("#idNamedNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idNamedNotes');
                 break;
             case "7":
-                checkRB("#idSingleNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idSingleNotes');
                 break;
             case "8":
-                checkRB("#idTinyNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idTinyNotes');
                 break;
             case "9":
-                checkRB("#rbBend");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbBend');
                 break;
             case "0":
             	cycleThruNutWidths(-1);
@@ -434,10 +444,12 @@ function document_keypress(e) {
                 getSong().gotoNextSection(false);
                 break;
             case "[":
-                checkRB('#idMidiPitches');
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idMidiPitches');
                 break;
             case "]":
-                checkRB('#idMidiPitchesSingle');
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idMidiPitchesSingle');
                 break;
             default:
         }
@@ -485,20 +497,20 @@ function activateUiControl(id, options = {}) {
 	return true;
 }
 
-function isSpecialPaletteColorSelected() {
-	const $checked = $('input[name="rbColor"]:checked').first();
+function isSpecialPaletteModeSelected() {
+	const $checked = $('input[name="rbPaletteMode"]:checked').first();
 	if (!$checked || $checked.length === 0) {
 		return false;
 	}
 	const value = $checked.val();
-	return value === 'noteClear' || value === 'noteKeep' || value === 'noteDropper';
+	return value === 'clear' || value === 'keep' || value === 'dropper';
 }
 
-function restorePaletteIfSpecialColorSelected() {
-	if (!isSpecialPaletteColorSelected()) {
+function activatePaintModeIfSpecialSelected() {
+	if (!isSpecialPaletteModeSelected()) {
 		return false;
 	}
-	return activateUiControl('#btnRestoreRbColor');
+	return activateUiControl('#idPaletteModePaint');
 }
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
@@ -989,7 +1001,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectFingering":
 			if (args){
-				restorePaletteIfSpecialColorSelected();
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
 						check("#rbFinger0");
@@ -1026,46 +1038,47 @@ export function performCmdAction(menuItem, args){
 			if (args){
 				switch (args["key"]){
 					case "n":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 					    check("#idNamedNotes");
 						break;
 					case "s":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 						check("#idSingleNotes");
 						break;
 					case "t":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 						check("#idTinyNotes");
 						break;
 					case "b":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 						check("#rbBend");
 						break;
 					case "p":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 						check("#idMidiPitches");
 						break;
 					case "m":
-						restorePaletteIfSpecialColorSelected();
+						activatePaintModeIfSpecialSelected();
 						check("#idMidiPitchesSingle");
 						break;
 					case "l":
-						check("#btnRestoreRbColor");
+						check("#idPaletteModePaint");
 						break;
 					case "k":
-						checkAndTrigger("#idKeep");
+						checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						checkAndTrigger("#idClear");
+						checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						checkAndTrigger("#idDropper");
+						checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
 			break;
 		case "selectRole":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "t":
 						checkAndTrigger("#idRTransparent");
@@ -1093,6 +1106,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleChord":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRChord");
@@ -1108,6 +1122,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleColornote":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRColornote");
@@ -1123,6 +1138,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleAvoid":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRAvoid");
@@ -1138,6 +1154,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleLead":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRLead");
@@ -1151,7 +1168,7 @@ export function performCmdAction(menuItem, args){
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
-			restorePaletteIfSpecialColorSelected();
+			activatePaintModeIfSpecialSelected();
 			check("#rbBend");
 			break;
 		case "disposeAllDockables":

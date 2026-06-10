@@ -866,10 +866,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function turnOnKeep(){
-		PalettePresentation.selectRbColorById("#idKeep", {
-			remember: false,
+		PalettePresentation.enterKeepMode({
 			forcedKeep: true
 		});
+		$("td.note").css({"cursor": "no-drop"});
 	}
 	
 	export function turnOffKeep(){
@@ -877,7 +877,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		gPresentation.palette.keepWasForced = false;
-		PalettePresentation.restoreLastRbColor();
+		PalettePresentation.enterPaintMode({
+			restoreHighlightIfNeeded: true,
+			forcedKeep: false
+		});
+		$("td.note").css({"cursor": "pointer"});
 	}
 
 	export function hideNoteClickedCaption(){
@@ -1345,6 +1349,40 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installRBColorChangeEvents(){
 		const eventNamespace = '.installRBColorChangeEvents';
+
+		$('input[name="rbPaletteMode"]:radio')
+			.off(`change${eventNamespace}`)
+			.on(`change${eventNamespace}`, function() {
+				if (!$(this).is(":checked")) {
+					return;
+				}
+
+				const mode = $(this).val();
+				if (mode === 'keep') {
+					PalettePresentation.enterKeepMode();
+					$("td.note").css({"cursor": "no-drop"});
+					return;
+				}
+
+				if (mode === 'clear') {
+					PalettePresentation.enterClearMode();
+					$("td.note").css({"cursor": "crosshair"});
+					return;
+				}
+
+				if (mode === 'dropper') {
+					PalettePresentation.enterDropperMode();
+					$("td.note").css({"cursor": "zoom-in"});
+					return;
+				}
+
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: true,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
+			});
 	
 		$('input[name="rbColor"]:radio')
 			.off(`change${eventNamespace}`)
@@ -1353,26 +1391,33 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					PalettePresentation.rememberRestorableRbColor(this);
 				}
 				PalettePresentation.updateRestoreRbColorButton();
-				if ("noteKeep" === $(this).val()) {
-					$("td.note").css({"cursor": "no-drop"});
-				} else if ("noteClear" === $(this).val()) {
-					if ($(this).is(":checked")) {
-						PalettePresentation.clearRestorableRbHighlightsForClear();
-					}
-					$("td.note").css({"cursor": "crosshair"});
-				} else if ("noteDropper" === $(this).val()) {
-					$("td.note").css({"cursor": "zoom-in"});
-				} else {
-					$("td.note").css({"cursor": "pointer"});
-					turnOffHiding();
+			});
+
+		$('input[name="rbHighlight"]:radio')
+			.off(`change${eventNamespace}`)
+			.on(`change${eventNamespace}`, function() {
+				if (!$(this).is(":checked")) {
+					return;
 				}
+				PalettePresentation.rememberRestorableRbHighlight(this);
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: false,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
 			});
 	
 		$('input[name="rbColor"]')
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
 				$('input[name="rbColor"]').css({"box-shadow": "none"});
-				$("td.note").css({"cursor": "auto"});
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: true,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
 			});
 	
 		PalettePresentation.initializePalettePresentation();
@@ -1918,14 +1963,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			chuseStylesheet(currentColorDict);
 		}
 
-		$("#cbAutomaticColor").prop("checked", options.autoColor);
-		if (options.autoColor) {
-			$('#manualColors').hide();
-			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-		} else {
-			$('#manualColors').show();
-			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-		}
+		PalettePresentation.setAutomaticColorUi(options.autoColor);
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
 		if (naturalFontScaling != null){
@@ -2109,13 +2147,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function toggleAutoColorCheckbox(){
 		var cbac = $("#cbAutomaticColor");
-		cbac.prop("checked", !cbac.prop("checked"));
+		PalettePresentation.setAutomaticColorUi(!cbac.prop("checked"));
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
 	}
 	export function turnOffAutoColorCheckbox(){
-		var cbac = $("#cbAutomaticColor");
-		cbac.prop("checked", false);
+		PalettePresentation.setAutomaticColorUi(false);
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
 	}
