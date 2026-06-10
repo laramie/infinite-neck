@@ -1356,6 +1356,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				if ("noteKeep" === $(this).val()) {
 					$("td.note").css({"cursor": "no-drop"});
 				} else if ("noteClear" === $(this).val()) {
+					if ($(this).is(":checked")) {
+						PalettePresentation.clearRestorableRbHighlightsForClear();
+					}
 					$("td.note").css({"cursor": "crosshair"});
 				} else if ("noteDropper" === $(this).val()) {
 					$("td.note").css({"cursor": "zoom-in"});

@@ -1,10 +1,20 @@
 export const gPresentation = {
     palette: {
         lastRestorableColor: null,
+        lastRestorableHighlight: null,
         suppressRbColorRemember: false,
         keepWasForced: false
     }
 };
+
+const RESTORABLE_HIGHLIGHT_IDS = new Set([
+    'idNamedNotes',
+    'idSingleNotes',
+    'idTinyNotes',
+    'rbBend',
+    'idMidiPitches',
+    'idMidiPitchesSingle'
+]);
 
 export class PalettePresentation {
     static getLastRestorableRbColor() {
@@ -21,6 +31,20 @@ export class PalettePresentation {
         return { ...remembered };
     }
 
+    static getLastRestorableRbHighlight() {
+        if (!gPresentation.palette.lastRestorableHighlight) {
+            PalettePresentation.initializePalettePresentation();
+        }
+
+        const remembered = gPresentation.palette.lastRestorableHighlight || {
+            id: 'idNamedNotes',
+            value: 'Named',
+            caption: 'Named'
+        };
+
+        return { ...remembered };
+    }
+
     static isSpecialRbColorValue(value) {
         return value === "noteKeep" || value === "noteClear" || value === "noteDropper";
     }
@@ -32,6 +56,22 @@ export class PalettePresentation {
         const $label = $radio.closest("label");
         const labelText = $.trim($label.text());
         return labelText || $radio.attr("id") || $radio.val() || "";
+    }
+
+    static getRbHighlightCaption($radio) {
+        if (!$radio || $radio.length === 0) {
+            return "";
+        }
+        const $label = $radio.closest("label");
+        const labelText = $.trim($label.text());
+        return labelText || $radio.attr("id") || $radio.val() || "";
+    }
+
+    static isRestorableHighlightRadio($radio) {
+        if (!$radio || $radio.length === 0) {
+            return false;
+        }
+        return RESTORABLE_HIGHLIGHT_IDS.has($radio.attr("id"));
     }
 
     static updateRestoreRbColorButton() {
@@ -69,6 +109,36 @@ export class PalettePresentation {
         PalettePresentation.updateRestoreRbColorButton();
     }
 
+    static rememberRestorableRbHighlight(radioEl) {
+        if (!radioEl) {
+            return false;
+        }
+
+        const $radio = $(radioEl);
+        if (!PalettePresentation.isRestorableHighlightRadio($radio)) {
+            return false;
+        }
+
+        gPresentation.palette.lastRestorableHighlight = {
+            id: $radio.attr("id"),
+            value: $radio.val(),
+            caption: PalettePresentation.getRbHighlightCaption($radio)
+        };
+
+        return true;
+    }
+
+    static rememberCurrentRestorableRbHighlight() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        return PalettePresentation.rememberRestorableRbHighlight($checked);
+    }
+
+    static clearRestorableRbHighlightsForClear() {
+        PalettePresentation.rememberCurrentRestorableRbHighlight();
+        $("#idNamedNotes, #idSingleNotes, #idTinyNotes, #rbBend, #idMidiPitches, #idMidiPitchesSingle")
+            .prop("checked", false);
+    }
+
     static findRestorableRbColor() {
         const remembered = gPresentation.palette.lastRestorableColor;
         if (!remembered) {
@@ -78,6 +148,19 @@ export class PalettePresentation {
         let $radio = $("#" + remembered.id);
         if ($radio.length === 0 && remembered.value) {
             $radio = $('input[name="rbColor"][value="' + remembered.value + '"]');
+        }
+        return $radio.first();
+    }
+
+    static findRestorableRbHighlight() {
+        const remembered = gPresentation.palette.lastRestorableHighlight;
+        if (!remembered) {
+            return $();
+        }
+
+        let $radio = $("#" + remembered.id);
+        if ($radio.length === 0 && remembered.value) {
+            $radio = $('input[name="rbHighlight"][value="' + remembered.value + '"]');
         }
         return $radio.first();
     }
@@ -109,13 +192,27 @@ export class PalettePresentation {
 
     static restoreLastRbColor() {
         const $radio = PalettePresentation.findRestorableRbColor();
-        if ($radio.length === 0) {
-            return false;
-        }
-        return PalettePresentation.selectRbColorByElement($radio, {
+        const colorRestored = $radio.length === 0 ? false : PalettePresentation.selectRbColorByElement($radio, {
             remember: false,
             forcedKeep: false
         });
+        const highlightRestored = PalettePresentation.restoreLastRbHighlightIfNeeded();
+        return colorRestored || highlightRestored;
+    }
+
+    static restoreLastRbHighlightIfNeeded() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        if ($checked.length > 0) {
+            return false;
+        }
+
+        const $radio = PalettePresentation.findRestorableRbHighlight();
+        if ($radio.length === 0) {
+            return false;
+        }
+
+        $radio.prop("checked", true);
+        return true;
     }
 
     static initializePalettePresentation() {
@@ -126,11 +223,23 @@ export class PalettePresentation {
             }
         }
 
+        if (!gPresentation.palette.lastRestorableHighlight) {
+            PalettePresentation.rememberCurrentRestorableRbHighlight();
+        }
+
         if (!gPresentation.palette.lastRestorableColor) {
             gPresentation.palette.lastRestorableColor = {
                 id: "idRTransparent",
                 value: "noteTransparent",
                 caption: "Emboss"
+            };
+        }
+
+        if (!gPresentation.palette.lastRestorableHighlight) {
+            gPresentation.palette.lastRestorableHighlight = {
+                id: 'idNamedNotes',
+                value: 'Named',
+                caption: 'Named'
             };
         }
 

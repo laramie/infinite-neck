@@ -1,8 +1,14 @@
-User: We have this function that was written for Observers/Listeners.  We'd like to have it called on every song navigation.  Can you calculate a blast radius for this proposed change?
+
+----
+## User:
+ We have this function that was written for Observers/Listeners.  We'd like to have it called on every song navigation.  Can you calculate a blast radius for this proposed change?
 
 Proposal: use this function`Song.getDisplayOptionsInEffect`  or something like it, to make sure the song options are correct on every prevSection, nextSection, gotoSection for non-Listener, non-Observer note tables. (Those have their own logic, which should probably not be touched.).  "Correct" means: when you loop a song starting at Section 1, the DisplayOptions work as advertised and guaranteed by contract.  If a User wants consistent DisplayOptions, they should at least create one for Section 1.  There is no requirement that every Section have a DisplayOptions, in order to keep DisplayOption management at a minimum.  We'd like that contract to be simulated when hand-navigating backwards through the Sections, and other similar use cases. 
 
-GitHub Copilot: I’m tracing where section navigation currently updates UI state and where display options are applied, so I can scope what changes this proposal would actually touch and what it could regress.
+
+----
+## GitHub Copilot:
+ I’m tracing where section navigation currently updates UI state and where display options are applied, so I can scope what changes this proposal would actually touch and what it could regress.
 
 Searched for regex `getDisplayOptionsInEffect|displayOptions|Observer|Listener|listenerProjection|ShowMessages` (`**/infinite-neck/**`), 200 results
 
@@ -219,7 +225,10 @@ If you want, I can turn this into a concrete change plan with:
 2. expected test cases
 3. explicit “do not touch” boundaries for Listener and Observer logic
 
-User: 1) It was a mis-statement of ours to say just a few navigations would cause behavior.  It is more correct to say all navigation performs this updating.  We want it central, universal, and simple, with the exception that Observers and Listeners should not have their special handling disturbed.
+
+----
+## User:
+ 1) It was a mis-statement of ours to say just a few navigations would cause behavior.  It is more correct to say all navigation performs this updating.  We want it central, universal, and simple, with the exception that Observers and Listeners should not have their special handling disturbed.
 2) We have Observers locked down so clicks in the table are not allowed when Wired as Observer.  If there are still leak points back to the observed Section, we'd like to be careful, and to know about it as developers.  At this point, we do not want fixes to Listeners or Observers, just a heads-up.
 3) You are correct: "So I would avoid touching listener/observer replay unless you explicitly want to clean that up too." We want to avoid touching listener/observer replay.
 4) For "Display Options" present handling, it should be exactly as it looks today as if the change were not applied.  Not sure of the logic handling, but that is the intent.  You should NOT be able to CLEAR in a Section that does NOT have explicit DisplayOptions. Let's walk an example: On Section 1 make View changes, mash SAVE.  On Section 2, do nothing, On Section 3, make a change on View menu page. Navigate to Section 4.  View options lost, because you didn't hit save!  Correct. Display Options status shows no settings to change, therefore CLEAR is grayed out.  Nav back to Section 3, make a change on View menu page. CLEAR is still grayed.  Hit SAVE. CLEAR is now not grayed. Navigate to Section 4.  Display options in effect are from Section 1 plus Section 3. Correct.  On arriving at Section 1, CLEAR is not grayed.  On arriving at Section 2, CLEAR is grayed. On arriving at Section 3, CLEAR is not grayed.  All other Sections, CLEAR is grayed. 
@@ -229,7 +238,10 @@ User: 1) It was a mis-statement of ours to say just a few navigations would caus
 We are tagged in git so have a clean fallback in case of change weirdness.  Please proceed to CORE-APPROVED coding changes.
 
 
-GitHub Copilot: I’m implementing this at the shared section-change/UI-sync boundary, not in per-navigation branches, and I’m checking the view-control event wiring now so the unsaved-state button class behaves consistently without disturbing observer/listener replay.
+
+----
+## GitHub Copilot:
+ I’m implementing this at the shared section-change/UI-sync boundary, not in per-navigation branches, and I’m checking the view-control event wiring now so the unsaved-state button class behaves consistently without disturbing observer/listener replay.
 
 Searched for regex `btnControlsToDisplayOptions_View|riskyButton|change\)|trigger\('change'\)|cbShowCellNotes|selNaturalFontScaling|dropDownFunctionSymbols|cbAutomaticColor|cbHideNamedNotes|cbHideTinyNotes|cbHideSingleNotes|cbHideFingering` (`**/infinite-neck/**/*.{js,css,html}`), 62 results
 
@@ -401,9 +413,15 @@ Natural next steps
 
 Made changes.
 
-User: Check the code.  We've somehow broken all live updates of controls on View page, and keyboard shortcuts like `w` and `W` and `h` and `H` no longer respond.  Other keyboard shortcuts work, such as `t` to toggle transport, and `SHIFT-a` to toggle caption lines, so it is just the wiring for DisplayOption linked controls.
 
-GitHub Copilot: I’m checking the recent event-binding changes first, because the symptom pattern points to View-control handlers being detached rather than the keyboard layer failing globally.
+----
+## User:
+ Check the code.  We've somehow broken all live updates of controls on View page, and keyboard shortcuts like `w` and `W` and `h` and `H` no longer respond.  Other keyboard shortcuts work, such as `t` to toggle transport, and `SHIFT-a` to toggle caption lines, so it is just the wiring for DisplayOption linked controls.
+
+
+----
+## GitHub Copilot:
+ I’m checking the recent event-binding changes first, because the symptom pattern points to View-control handlers being detached rather than the keyboard layer failing globally.
 
 Searched for regex `bindDisplayOptionsDirtyEvent|bindEvent\(|namespaceEvents\(|document_keydown|case 'w'|case 'W'|case 'h'|case 'H'|cbNaturalFretWidths|selNaturalFontScaling|cbHideNamedNotes` (`**/infinite-neck/**/*.{js,md}`), 123 results
 
@@ -476,7 +494,10 @@ If you want, I can add a regression test around the event-binding helper so this
 
 Made changes.
 
-User: When the attached code line happens, 
+
+----
+## User:
+ When the attached code line happens, 
 ` const prefix = PalettePresentation.isRestoreButtonAligned() ? "\u2713 " : "";`
 we want to additionally style the button.
 When the checkmark is applied, e.g. isRestoreButtonAligned, we want this style added: 
@@ -489,7 +510,10 @@ No test need be added.
 
     
 
-GitHub Copilot: I’m locating the current restore-button styling so I can add the aligned-state highlight without hard-coding over unrelated button styles.
+
+----
+## GitHub Copilot:
+ I’m locating the current restore-button styling so I can add the aligned-state highlight without hard-coding over unrelated button styles.
 
 Searched for regex `btnRestoreRbColor|RestoreRbColor|restore.*button|box-shadow` (`**/infinite-neck/**/*.{js,css,html}`), 19 results
 
@@ -573,9 +597,15 @@ No tests were added, per request.
 
 Made changes.
 
-User: In this block, we want to change the behavior to include all playedNotes in this cell on this one Tuning/Instrument/table, not just namedNotes.  We do NOT want to affect recordedNotes or dive into the section-recorder.  We also want to check if any other code locations need to be touched, and those should be fixed if it directly answers this new use: "When noteClear is in effect because .chooseClear #idClear value="noteClear" radio button was chosen."  There are a number of other noteClear checks in infinite-neck.js::fillChord2() and doFill() that should NOT be included in changes.
 
-GitHub Copilot: I’m tracing how played notes are stored and cleared for a single cell so I can expand the `noteClear` click behavior without touching recorded notes or the fill-path `noteClear` cases.
+----
+## User:
+ In this block, we want to change the behavior to include all playedNotes in this cell on this one Tuning/Instrument/table, not just namedNotes.  We do NOT want to affect recordedNotes or dive into the section-recorder.  We also want to check if any other code locations need to be touched, and those should be fixed if it directly answers this new use: "When noteClear is in effect because .chooseClear #idClear value="noteClear" radio button was chosen."  There are a number of other noteClear checks in infinite-neck.js::fillChord2() and doFill() that should NOT be included in changes.
+
+
+----
+## GitHub Copilot:
+ I’m tracing how played notes are stored and cleared for a single cell so I can expand the `noteClear` click behavior without touching recorded notes or the fill-path `noteClear` cases.
 
 Searched for regex `noteClear|removeNotePlayedFromTable|getTableArrInCurrentSection|playedNotes|clearNamedNote\(|clear.*played|remove.*played` (`**/infinite-neck/**/*.{js,md}`), 93 results
 
@@ -684,12 +714,18 @@ If you want, the next useful step would be a manual check with one cell containi
 
 Made changes.
 
-User: Remembering that we have two existing ways to clear notes of any type:
+
+----
+## User:
+ Remembering that we have two existing ways to clear notes of any type:
  1)  clicking a note a second time, 
  2) or going into a cell and clicking a note when that note type is selected with, say, #chooseHighlightSingle #idSingleNotes name="rbHighlight" value="single", which clears that one note, one cell, one table, one note type.
  So leaving these features in place, the new action we just did is when noteClear is in effect because of CLEAR button, we clear all namedNotes and playedNotes.  That is working for all *except* NamedNote when the NamedNote radio button is *not* checked.  So being careful not to hose existing behavior, we need the new behavior to ensure that NamedNotes get deleted along with playedNotes.
 
-GitHub Copilot: I’m patching the `noteClear` early-return in the played-note branch so it also clears the noteName-backed named note for that clicked pitch, without changing the existing second-click or per-style clear behaviors.
+
+----
+## GitHub Copilot:
+ I’m patching the `noteClear` early-return in the played-note branch so it also clears the noteName-backed named note for that clicked pitch, without changing the existing second-click or per-style clear behaviors.
 
 Generating patch (20 lines) in [](file:///home/laramie/infinite-neck/NoteTableController.js)
 
@@ -731,7 +767,10 @@ Validation
 
 Made changes.
 
-User: We realize that Pitch and Multi highlight note types are special.  On KEEP, while not in REC, they still highlight, and that is fine, because when not recording, one can be in KEEP but want to point out to another user not driving the keyboard or mouse, that a note is interesting.  That is the real reason for these highlights: when presenting to other Users, the presentation can highlight notes without affecting the song.  When navigation happens, these kinds of highlights disappear.  If the Presenter-User wants to keep these highlights, he goes into REC mode and clicks them, whereupon they are saved in recordedNotes.The weird edge-case of being in REC *and* KEEP *and* Multi is desireable: the highlight is still placed, it is recorded into recordedNotes, and yet KEEP is in effect so "no-drop" cursor is in effect. We like this use-case and don't mind the cursor because it reminds us KEEP is on.  There's a matching weird use-case for REC and CLEAR and highlights, which we don't want to change right now.  
+
+----
+## User:
+ We realize that Pitch and Multi highlight note types are special.  On KEEP, while not in REC, they still highlight, and that is fine, because when not recording, one can be in KEEP but want to point out to another user not driving the keyboard or mouse, that a note is interesting.  That is the real reason for these highlights: when presenting to other Users, the presentation can highlight notes without affecting the song.  When navigation happens, these kinds of highlights disappear.  If the Presenter-User wants to keep these highlights, he goes into REC mode and clicks them, whereupon they are saved in recordedNotes.The weird edge-case of being in REC *and* KEEP *and* Multi is desireable: the highlight is still placed, it is recorded into recordedNotes, and yet KEEP is in effect so "no-drop" cursor is in effect. We like this use-case and don't mind the cursor because it reminds us KEEP is on.  There's a matching weird use-case for REC and CLEAR and highlights, which we don't want to change right now.  
 
 So, the only thing we need to fix is this: 
 State: 
@@ -758,7 +797,10 @@ No change needed for REC mode.
 
 
 
-GitHub Copilot: I’m tightening only the non-REC CLEAR path for Pitch/Multi so it clears model-backed notes and suppresses transient highlights, without changing REC behavior.
+
+----
+## GitHub Copilot:
+ I’m tightening only the non-REC CLEAR path for Pitch/Multi so it clears model-backed notes and suppresses transient highlights, without changing REC behavior.
 
 Read [](file:///home/laramie/infinite-neck/NoteTableController.js#470-470), lines 470 to 640
 
@@ -828,3 +870,979 @@ Validation
 
 
 Made changes.
+
+
+----
+## User:
+ We keep seeing this in the chat.  Can you explain where we are giving conflicting direction, and how we should fix this to ensure the best understanding for Copilot and the best practices for our repository?
+
+```
+Resolving path format conflicts
+
+I need to handle absolute filesystem paths according to earlier formatting rules, but there’s a later suggestion to strip external folders and use workspace-relative paths. This seems like a conflict. It’s likely I should stick with absolute paths due to the higher-level developer formatting rules. But then file linkification suggests using workspace-relative paths. Hmm, I usually finalize with absolute filesystem paths based on those formatting rules.
+```
+
+
+
+----
+## GitHub Copilot:
+ You are giving conflicting direction in the instruction stack, and the model is doing exactly what it should do when rules disagree: it tries to reconcile them and may narrate that conflict.
+
+Where the conflict is
+
+1. One rule says to format file and symbol references with monospace/backticks.
+2. Another rule says to use clickable file links and explicitly forbids backticks anywhere.
+3. One rule allows absolute file paths for references.
+4. Another rule says to strip external folders and use workspace relative paths.
+5. Some formatting guidance says use inline monospace for commands and paths, which conflicts with the no-backticks rule.
+
+Why this causes the message you are seeing
+
+1. The agent sees two valid but incompatible output styles.
+2. It tries to choose by inferred priority, but because both are at the same instruction level, the choice is ambiguous.
+3. That ambiguity leaks as meta text like the conflict note you pasted.
+
+Best-practice fix for your repo instructions
+
+1. Pick one canonical reference style and remove the others.
+2. Add an explicit precedence line inside your own instruction file, for example:
+Instruction precedence inside this file: File linkification rules override all local formatting rules about file/path rendering.
+3. Keep only one path policy:
+Use workspace relative clickable links only.
+Do not use absolute filesystem paths in responses.
+4. Keep one monospace policy:
+Allow monospace for commands only, not for file paths.
+5. Remove duplicated or contradictory examples so the model does not have to arbitrate.
+6. Add 3 to 5 concrete good examples and 2 bad examples; models follow examples very strongly.
+
+Recommended canonical style
+
+1. File references:
+Use markdown links with workspace relative targets.
+2. Path scope:
+No absolute paths in user-facing text.
+3. Commands:
+Monospace allowed for shell commands.
+4. Symbols:
+Plain text or descriptive link text, but no backticks if your no-backticks rule remains.
+
+Practical outcome
+
+1. Copilot will stop producing path-format conflict commentary.
+2. Responses will be more consistent and clickable in VS Code.
+3. Output stays portable across machines, branches, and multi-root workspaces.
+
+If you want, I can draft a clean replacement instruction block you can paste into your agent instructions as a single, non-conflicting standard.
+
+
+----
+## User:
+ We'd like noteDropper to work for all note types [NamedNote, SingleNote, TinyNote, Bends]  Right now, it just works for NamedNotes.  It should do some reporting in the note area in the caption line of each table, and it should highlight the radio button of the role or color if available.
+
+
+----
+## GitHub Copilot:
+ I’m tracing the existing dropper flow and the caption/radio update helpers first so I can extend it to Single, Tiny, and Bend without changing the NamedNote path semantics.
+
+Searched for regex `dropper\(|noteDropper|setNoteClickedCaption\(|lblNoteClickedCaption|rbColor|rbRole|role` (`**/infinite-neck/**/*.{js,html,css}`), 14 results
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#620-620), lines 620 to 760
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#880-880), lines 880 to 980
+
+I’m tracing the current dropper plumbing for color radios and role colors so I can extend it to played-note types without reviving the old `noteTables` path or breaking palette highlighting.
+
+Searched for regex `input\[name=rbColor\]|rbColor|idRoleButtonsDest|lookupUserColorClass\(|chooseLastColor|lblNoteClickedCaption|noteClickedCaption|role buttons|Role` (`**/infinite-neck/**/*.{js,html,css}`), 14 results
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1320-1320), lines 1320 to 1395
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#1-1), lines 1 to 320
+
+I have the current dropper path and the caption helper. Next I’m locating the generated role/color radios so I can make the dropper select and visually highlight the best matching palette choice for played notes too.
+
+Searched for regex `idRoleButtonsDest|rbColor|note1|noteAutomatic|buildUserColors|choose-stylesheet|RoleButtons|role buttons|input type="radio".*rbColor` (`**/infinite-neck/**/*.{js,html}`), 6 results
+
+Searched for text `lblNoteClickedCaption` (`**/infinite-neck/**/*.{html,js,css}`), no results
+
+Read [](file:///home/laramie/infinite-neck/userColors.js#1-1), lines 1 to 260
+
+I found the current dropper still uses a legacy `noteTables` lookup for non-named styles, so I’m switching it to the current `SectionNotes.playedNotes` model and reusing the existing caption/radio highlight path.
+
+Searched for regex `noteTables\b|sectionNotesByTable|getSectionNotes\(|playedNotes` (`**/infinite-neck/**/*.{js}`), no results
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#635-635), lines 635 to 700
+
+Searched for regex `installRBColorChangeEvents|box-shadow.*rbColor|css\(\{"box-shadow": "0 0 10pt 20pt cyan"\}\)|trigger\('change'\)` (`**/infinite-neck/**/*.js`), no results
+
+I found the old dropper implementation: it still depends on a legacy `noteTables` lookup for non-Named notes, which explains why it only works for NamedNotes today. I’m tracing the current model-backed color sources for played notes and the palette radio structure so I can replace that legacy path cleanly.
+
+Searched for regex `noteTables|sectionNotesByTable|getSectionNotes\(|namedNotes|playedNotes|installRBColorChangeEvents|rbColor` (`**/*.{js,html,css}`), 200 results
+
+Searched for text `lblNoteClickedCaption` (`**/*.{html,js,css}`), 11 results
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.html#120-120), lines 120 to 260
+
+Compacted conversationThe palette only has `rbColor` radios for the actual selectable colors plus the special `CLEAR/KEEP/Find Color` controls. I’m reading the dropper-adjacent helpers now so I can wire played-note lookup into the existing caption update and radio highlight flow instead of adding a parallel mechanism.
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#640-640), lines 640 to 760
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1280-1280), lines 1280 to 1378
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#872-872), lines 872 to 910
+
+The caption helper is already global across all table caption rows, and it already formats style plus color. The missing piece is purely data lookup for played-note types, so I’m inspecting the stored played-note payload next to make sure the dropper matches the same row/col/style fields the click logic persists.
+
+Searched for regex `new Note\(|playedNotes\.push|setPlayed|addPlayed|styleNum|bendValue|finger` (`**/infinite-neck/**/*.js`), no results
+
+Read [](file:///home/laramie/infinite-neck/Note.js)
+
+Read [](file:///home/laramie/infinite-neck/SectionNotesPersistence.js)
+
+I have the structure now: `playedNotes` are real `Note` objects in `SectionNotesPersistence`, so the remaining question is which fields are guaranteed on placement for Single/Tiny/Bend. I’m tracing the write path for those objects before I patch the dropper lookup, because that determines whether matching should use just row/col/style or also bend/finger metadata.
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#760-760), lines 760 to 900
+
+Ran terminal command:  rg -n "playedNotes|recordedNotes|styleNum|bendValue|finger" NoteTableController.js colorFunctions.js infinite-neck.js move-helpers.js tonalPicker-functions.js *.js
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1288-1288), lines 1288 to 1320
+
+Searched for regex `buildColorDicts|idRoleButtonsDest|userColorResultCaption|lookupUserColorClass` (`**/*.js`), 38 results
+
+Ran terminal command:  sed -n '1,220p' /home/laramie/.config/Code/User/workspaceStorage/a4cd8720505ac78a3e21b7b8e5ccf6c7/GitHub.copilot-chat/chat-session-resources/2de60570-7b1b-49c6-b0b4-9061bda609d5/call_VXzVby2yaK5zZ5ovQwyUsIAB__vscode-1781021752139/content.txt
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#500-500), lines 500 to 610
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#717-717), lines 717 to 760
+
+Read [](file:///home/laramie/.config/Code/User/workspaceStorage/a4cd8720505ac78a3e21b7b8e5ccf6c7/GitHub.copilot-chat/chat-session-resources/2de60570-7b1b-49c6-b0b4-9061bda609d5/call_2nBxPgHUgAA3XFAD8SVKSwk0__vscode-1781021752142/content.txt)
+
+The played-note write path is clear now: Single, Tiny, Bend, and Fingering all persist as `playedNotes` with `row`, `col`, `styleNum`, `colorClass`, and optional `bendValue` or `finger`. I’m comparing that against replay/rendering next so the dropper can prefer the same resolved palette class the user actually sees, not just the raw stored class.
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#1036-1036), lines 1036 to 1088
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#760-760), lines 760 to 795
+
+Searched for regex `doAutomaticColor|cbAutomaticColor|autoColor` (`**/*.js`), 49 results
+
+Replay confirms the visible class for played notes goes through `lookupUserColorClass(note, lookupContext)`, not just the stored `note.colorClass`. That means the dropper should resolve the same way, then select the matching `rbColor` if it exists, and fall back to the raw stored class only when no visible-role radio is present.
+
+Searched for regex `createNotetableLookupContext|createLookupContext` (`**/*.js`), 16 results
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#1-1), lines 1 to 70
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#1-1), lines 1 to 90
+
+I’ve got the last semantic wrinkle: the role buttons are also `rbColor` radios, so the correct priority is to reselect the stored `note.colorClass` first, because that preserves role radios like `noteRoot` or `noteChord`. If that exact radio doesn’t exist but the resolved visible class does, then the dropper should fall back to the visible color radio instead.
+
+Checked [](file:///home/laramie/infinite-neck/NoteTableController.js), no problems found
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#600-600), lines 600 to 648
+
+Searched for regex `noteAutomatic|noteTransparent|noteRoot|noteChord|noteScale` (`**/*.js`), 120 results
+
+The model side is consistent enough to patch now. I’m going to keep the change narrow: replace the stale non-Named dropper lookup, add a small radio-selection helper so role radios win when present, and then add a focused Jest test for the new played-note lookup contract.
+
+Searched for files matching `**/_tests/jest/*note-table*`, 2 matches
+
+Searched for regex `dropper\(|noteDropper|Find Color|lblNoteClickedCaption` (`**/_tests/jest/**/*.js`), no results
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-replay-context.test.js)
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#70-70), lines 70 to 120
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-markup.test.js)
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#476-476), lines 476 to 506
+
+I’m editing the controller now. The change is staying inside the existing dropper path: model-backed note lookup, role-first radio selection with visible-color fallback, and a narrow test around the new lookup helper so the legacy `noteTables` dependency doesn’t creep back in.
+
+Generating patch (138 lines) in [](file:///home/laramie/infinite-neck/NoteTableController.js)
+
+
+```
+
+```
+
+
+Generating patch (87 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-dropper.test.js)
+
+
+```
+
+```
+The legacy lookup is removed. I’m validating two things now: the controller still type-checks cleanly, and the new dropper lookup tests pass without pulling in browser-only behavior.
+
+Checked [](file:///home/laramie/infinite-neck/NoteTableController.js), [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-dropper.test.js), no problems found
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/note-table-controller-dropper.test.js --runInBand
+
+The focused contract passed. I’m running the adjacent NoteTableController Jest coverage next so I can catch any interaction regressions in the same module before I stop.
+
+Read changed files in [](file:///home/laramie/infinite-neck)
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/note-table-controller-*.test.js --runInBand
+
+The code path is stable in tests. I’m making one cleanup edit to normalize the new test file formatting, then I’ll summarize the behavioral change and the exact validation I ran.
+
+Generating patch (10 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-dropper.test.js)
+
+
+```
+
+```
+
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#650-650), lines 650 to 745
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/note-table-controller-dropper.test.js)
+
+The dropper now uses the current SectionNotes model for all clicked note types instead of the stale legacy `noteTables` lookup.
+
+What changed:
+- infinite-neck/NoteTableController.js
+  - `dropper()` now resolves the clicked note through a model-backed helper, so SingleNote, TinyNote, and Bend clicks can find their stored note data the same way NamedNotes do.
+  - Added `findDropperNoteForCell()` to look up:
+    - NamedNotes by `noteName`
+    - played notes by `row`, `col`, and `styleNum`
+  - Added radio selection logic that prefers the stored `note.colorClass` first, which preserves role radios like `noteRoot` or `noteChord` when available.
+  - If there is no exact role/color radio for the stored value, it falls back to the resolved visible color class.
+  - The caption update stays on the existing caption line path via `setNoteClickedCaption(...)`, so the clicked note still reports style and selected role/color there.
+
+Tests:
+- infinite-neck/_tests/jest/note-table-controller-dropper.test.js
+  - Added focused coverage for:
+    - NamedNote lookup by note name
+    - played-note lookup by cell and style, including distinguishing Single vs Bend in the same cell
+
+Validation run:
+- `node --experimental-vm-modules jest note-table-controller-dropper.test.js --runInBand`
+- `node --experimental-vm-modules jest _tests/jest/note-table-controller-*.test.js --runInBand`
+
+Result:
+- 3 test suites passed
+- 6 tests passed
+
+Not verified:
+- I did not run an in-browser manual UI check, so the remaining validation step is to click Named, Single, Tiny, and Bend notes with Find Color selected and confirm the expected palette radio and caption text in the live UI.
+
+Made changes.
+
+
+----
+## User:
+ Keeping on with this previously un-named sprint (now called sprint-127-ui-consistency) we are talking about radio buttons on the Palette.  When the User clicks CLEAR, we need to unselect/uncheck *all* the note types radio buttons [Named, Single, Tiny, Bend, Pitch, Multi].  This is acceptable, because the User can get back to a valid selected-note-type state by clicking on any of these buttons.  It solves a bunch of weird edge cases around having the highlights selected whilst CLEAR is in use, without a bunch of additional wiring in the controller.
+
+One case needs to be handled specially.  We currently track last color picked magically using special global state created for btnRestoreRbColor.  We now need to add to that state: the last of the six note-type radio buttons in effect when they clicked CLEAR and we uncheck all.  This may or may not be at the same state when the last color/role was picked, but it was the state before they hit CLEAR, so we want to restore that radio button to checked when they again click btnRestoreRbColor, rather than just randomly restoring to nothing or some other button. 
+
+
+----
+## GitHub Copilot:
+ I’m tracing the palette state flow first so I can wire CLEAR and Restore through the existing presentation state instead of layering controller-only exceptions on top.
+
+Read [](file:///home/laramie/infinite-neck/presentation.js)
+
+Searched for regex `btnRestoreRbColor|restoreLastRbColor|rememberRestorableRbColor|rbHighlight|name="rbHighlight"|idNamedNotes|idSingleNote|idTiny|idBend|idPitch|idMulti` (`**/*.{js,html}`), 63 results
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.html#1-1), lines 1 to 160
+
+I found the current restore state and the six note-type radios. Next I’m checking where `rbHighlight` changes are already handled so CLEAR can uncheck only the six requested note types and Restore can reapply the last one without disturbing Fingering.
+
+Searched for regex `rbHighlight|idClear|name="rbColor"|noteClear|btnRestoreRbColor` (`**/infinite-neck/**/*.js`), no results
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.builder.js)
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#360-360), lines 360 to 430
+
+The palette builder only restores color today; there’s no existing note-type memory there. I’m tracing the generic `checkRB` helpers and the `rbColor` change path next so I can put CLEAR behavior at the palette boundary and avoid leaking special cases into note placement.
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#840-840), lines 840 to 890
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#1-1), lines 1 to 80
+
+Ran terminal command:  rg -n "function checkRB|const checkRB|checkRB\(" key-handlers.js infinite-neck.js templates/palette.builder.js *.js
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#332-332), lines 332 to 350
+
+I have the behavior shape now: keep the remembered note-type state in presentation.js, clear only the six note-style radios when CLEAR becomes active, and restore that note type only if those six are currently all unset so we don’t override an intentional later choice like Fingering.
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1340-1340), lines 1340 to 1378
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#430-430), lines 430 to 455
+
+Ran terminal command:  rg -n "idClear|noteClear|idKeep|idDropper|checkRB\(\"#idClear|checkRB\('#idClear|prop\(['\"]checked['\"], true\).*idClear" key-handlers.js infinite-neck.js templates/palette.builder.js NoteTableController.js *.js
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#990-990), lines 990 to 1015
+
+Ran terminal command:  rg -n "function checkAndTrigger|const checkAndTrigger|checkAndTrigger\(" key-handlers.js infinite-neck.js *.js
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#452-452), lines 452 to 466
+
+Keyboard-triggered CLEAR already goes through the `rbColor change` event, so the cleanest place to hook the uncheck logic is that existing change handler. I’m adding the note-type memory into presentation.js and then I’ll cover the new restore semantics with a focused Jest test.
+
+Searched for files matching `**/_tests/jest/*presentation*`, no matches
+
+Searched for regex `PalettePresentation|initializePalettePresentation|restoreLastRbColor|btnRestoreRbColor` (`**/_tests/jest/**/*.js`), 4 results
+
+Read [](file:///home/laramie/infinite-neck/jest.config.js)
+
+I’m editing the palette presentation layer now: add remembered note-type state, hook CLEAR into the existing color-change path, and cover the restore behavior with a dedicated unit test instead of relying on a manual DOM-only change.
+
+Generating patch (187 lines) in [](file:///home/laramie/infinite-neck/presentation.js)
+
+
+```
+
+```
+
+
+Generating patch (21 lines) in [](file:///home/laramie/infinite-neck/infinite-neck.js)
+
+
+```
+
+```
+
+
+Generating patch (203 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/presentation.test.js)
+
+
+```
+
+```
+The state plumbing is in place. I’m validating the edited files and the new presentation tests now, then I’ll do one adjacent test run against the existing NoteTableController coverage to make sure the CLEAR path still behaves cleanly.
+
+Checked [](file:///home/laramie/infinite-neck/presentation.js), [](file:///home/laramie/infinite-neck/infinite-neck.js), [](file:///home/laramie/infinite-neck/_tests/jest/presentation.test.js), no problems found
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js --runInBand
+Completed with input:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js --runInBand
+
+The logic is fine; the failing test exposed a gap in the Jest jQuery stub rather than the app code. I’m fixing the stub so wrapped selections behave like jQuery objects when they’re passed back through `$()`, then I’ll rerun the focused and adjacent tests.
+
+Generating patch (20 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/presentation.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js --runInBand
+Completed with input:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js --runInBand
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/note-table-controller-*.test.js _tests/jest/presentation.test.js --runInBand
+Completed with input:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/note-table-controller-*.test.js _tests/jest/presentation.test.js --runInBand
+
+The remaining failure is the same class of stub mismatch: the presentation initializer expects jQuery-style numeric indexing like `$checked[0]`. I’m adding that to the stub and rerunning the same focused coverage.
+
+Generating patch (17 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/presentation.test.js)
+
+
+```
+
+```
+
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js --runInBand
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/note-table-controller-*.test.js _tests/jest/presentation.test.js --runInBand
+
+The palette behavior is now wired and green in Jest. I’m pulling the exact edited line ranges so I can summarize the behavioral contract precisely and note the one thing I didn’t verify in-browser.
+
+Read [](file:///home/laramie/infinite-neck/presentation.js#1-1), lines 1 to 220
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1346-1346), lines 1346 to 1372
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/presentation.test.js)
+
+CLEAR now drops the six note-style radios into a fully unchecked state and the Restore Color button now brings back the pre-CLEAR note type along with the remembered color.
+
+What changed:
+- infinite-neck/presentation.js
+  - Added palette state for the last restorable note type alongside the existing last restorable color.
+  - Added helpers to:
+    - remember the current note type from the six targeted radios: Named, Single, Tiny, Bend, Pitch, Multi
+    - uncheck those six radios when CLEAR is activated
+    - restore the remembered note type when Restore Color is clicked
+  - Restore is conservative: if any rbHighlight radio is already selected, it leaves that selection alone, so it does not override an intentional later choice such as Fingering.
+- infinite-neck/infinite-neck.js
+  - Wired the existing rbColor change handler so when noteClear becomes checked, it remembers the current targeted note type and unchecks the six targeted radios immediately.
+  - This applies to both mouse selection and keyboard-triggered CLEAR, because keyboard CLEAR already goes through the same change event.
+- infinite-neck/_tests/jest/presentation.test.js
+  - Added focused tests for:
+    - CLEAR remembering and unchecking the six note-type radios
+    - Restore Color restoring both color and the remembered note type
+    - Restore not overriding an already-selected rbHighlight choice
+
+Validation:
+- node --experimental-vm-modules jest presentation.test.js --runInBand
+- node --experimental-vm-modules jest _tests/jest/note-table-controller-*.test.js presentation.test.js --runInBand
+
+Result:
+- 4 suites passed
+- 8 tests passed
+
+Not verified:
+- I did not run a live browser check against the running app, so the remaining validation is manual palette interaction in the UI.
+
+Natural next steps:
+1. Click each of Named, Single, Tiny, Bend, Pitch, and Multi, then click CLEAR, and confirm all six end up unchecked.
+2. After each of those CLEAR cases, click Restore Color and confirm both the prior color and the prior note type return.
+
+Made changes.
+
+
+----
+## User:
+ As you spotted, the command-line does a sneaky-poo end run around the UI.  Some cases/action we need to route through the same plumbing you just fixed are: /pnn when in the state of just having clicked CLEAR with the mouse on the palette.  This command-line selects the Named radio button but skips the handlers somehow, such that AutoColor is checked but all the colors have not been hidden, nor has the color been restored as clicking on the btnRestoreRbColor would have done if they went through the UI.  It would be nice if all these options under /p could go through the same handler rather than having a messy solution. It would be acceptable to fill out or replace key-handlers.js::check() and checkAndTrigger() because they were brought in to deal with these cases specifically. 
+
+Plus, /pn should have a new menu-item /pnl which would have caption "last chosen" and trigger `l`.  It would exactly perform a click on the btnRestoreRbColor.
+
+
+----
+## GitHub Copilot:
+ I’m tracing the `/p` command path and the existing `check` helpers now so I can route command-line palette actions through the same UI events instead of patching one `/pnn` case by itself.
+
+Read [](file:///home/laramie/infinite-neck/key-handlers.js#930-930), lines 930 to 1105
+
+Read [](file:///home/laramie/infinite-neck/menu.js#1-1), lines 1 to 220
+
+Ran terminal command:  rg -n 'pnn|/pn|selectPalette|selectNote|last chosen|btnRestoreRbColor|checkAndTrigger\(|function check\(|function checkAndTrigger\(' key-handlers.js menu.js approved-values.js infinite-neck.js templates -g '!_TEMP_ONLY/**'
+
+I found the bypass: `selectRadioNoteType` still uses `check()` for the note-type radios, which only sets `checked` and skips the click/change behavior entirely. I’m locating the `/pn` menu definition next so I can switch the whole `/p` note-type family over to UI-equivalent clicks and add `/pnl` in the same pass.
+
+Read [](file:///home/laramie/infinite-neck/menu.js#520-520), lines 520 to 760
+
+Read [](file:///home/laramie/infinite-neck/menu.js#760-760), lines 760 to 980
+
+Ran terminal command:  rg -n 'selectRadioNoteType|selectRole|selectFingering|caption.*Named|trigger.*n|action.*selectRadioNoteType|<b>p</b>alette|chooseHighlight' menu.js
+
+Read [](file:///home/laramie/infinite-neck/menu.js#1008-1008), lines 1008 to 1295
+
+I found the `/pn` branch in the menu definition. Next I’m updating the command helpers so palette radio selections use the same click/change plumbing as the real UI, then I’ll add `/pnl` beside the other `/pn*` items and validate the command path with focused tests.
+
+Searched for files matching `**/_tests/jest/*key-handler*`, 1 match
+
+Searched for regex `performCmdAction|selectRadioNoteType|selectFingering|checkAndTrigger|checkRB` (`**/_tests/jest/**/*.js`), 24 results
+
+Ran terminal command:  rg -n '\bcheck\(|\bcheckAndTrigger\(' key-handlers.js
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js#1-1), lines 1 to 260
+
+I’ve confirmed the existing command helpers are the bypass point. Before editing them, I’m checking whether the palette already has a note-type click handler I can reuse, or whether `/pn*` needs to explicitly route through Restore Color first and then select the requested note type.
+
+Ran terminal command:  rg -n 'rbHighlight|idNamedNotes|idSingleNotes|idTinyNotes|rbBend|idMidiPitches|idMidiPitchesSingle|chooseHighlight' infinite-neck.js templates/palette.builder.js NoteTableController.js *.js -g '!_TEMP_ONLY/**'
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#430-430), lines 430 to 450
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.builder.js#1-1), lines 1 to 90
+
+I’ve narrowed the fix boundary: the command-line palette helpers should simulate real UI clicks, and the `/p` submenu should stop using the old direct `checked=true` path. I’m patching key-handlers.js to make `/pn*`, `/pf*`, role picks, and bend-type selection all go through the same click-based helper, and I’ll add `/pnl` as a real Restore button click.
+
+Checked [](file:///home/laramie/infinite-neck/key-handlers.js), [](file:///home/laramie/infinite-neck/menu.js), [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js), no problems found
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js#260-260), lines 260 to 478
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js#478-478), lines 478 to 478
+
+I have the right behavior model now: note-type picks from `/p` should only auto-restore via the Restore button when the current palette color is in a special state like CLEAR/KEEP/Find Color, not on every note-type change. I’m implementing that scoped restore path and covering `/pnn` plus the new `/pnl` command in Jest.
+
+Generating patch (148 lines) in [](file:///home/laramie/infinite-neck/key-handlers.js)
+
+
+```
+
+```
+
+
+Generating patch (16 lines) in [](file:///home/laramie/infinite-neck/menu.js)
+
+
+```
+
+```
+
+
+Generating patch (151 lines) in [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js)
+
+
+```
+
+```
+The `/p` command path is patched. I’m validating the new click-based helper behavior in the key-handler tests now, plus one menu sanity check so `/pnl` is actually present where the command line expects it.
+
+Checked [](file:///home/laramie/infinite-neck/key-handlers.js), [](file:///home/laramie/infinite-neck/menu.js), [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js), no problems found
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/key-handlers.test.js --runInBand
+
+Ran terminal command:  node --experimental-vm-modules node_modules/.bin/jest _tests/jest/presentation.test.js _tests/jest/key-handlers.test.js --runInBand
+
+The command-line path is now aligned with the palette UI for the cases you called out. I’m grabbing the exact changed anchors now so I can summarize the behavioral contract cleanly and call out what was validated.
+
+Searched for regex `function check\(|function checkAndTrigger\(|function activateUiControl\(|function restorePaletteIfSpecialColorSelected\(|case "selectRadioNoteType"|case "selectFingering"|case "selectBendType"` (`**/infinite-neck/key-handlers.js`), 7 results
+
+Searched for regex `last chosen|caption": "<b>l</b>ast chosen"` (`**/infinite-neck/menu.js`), 1 result
+
+Searched for regex `selectRadioNoteType restores via the button|selectRadioNoteType last-chosen clicks the restore button directly` (`**/infinite-neck/_tests/jest/key-handlers.test.js`), no results
+
+Searched for regex `restores via the button before selecting a note type|last-chosen clicks the restore button directly` (`**/infinite-neck/_tests/jest/key-handlers.test.js`), no results
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js#500-500), lines 500 to 560
+
+Read [](file:///home/laramie/infinite-neck/_tests/jest/key-handlers.test.js#560-560), lines 560 to 612
+
+The `/p` command-line palette actions now go through UI-equivalent clicks instead of directly mutating radio state, and `/pnl` has been added as a real Restore button action.
+
+What changed:
+- infinite-neck/key-handlers.js
+  - Reworked `check()` and `checkAndTrigger()` to use a click-based helper instead of only doing `checked = true`.
+  - Added the shared click helper so command-line palette actions follow the same UI plumbing as mouse actions whenever possible.
+  - Added special-color restore detection so note-type and fingering selections can recover from `CLEAR`, `KEEP`, or `Find Color` by clicking the Restore button first.
+- infinite-neck/key-handlers.js
+  - `/pf*` fingering commands now use the same click-based path instead of the old direct-check path.
+- infinite-neck/key-handlers.js
+  - `/pnn`, `/pns`, `/pnt`, `/pnb`, `/pnp`, `/pnm` now restore via `btnRestoreRbColor` first, but only when a special palette color is currently active.
+  - Added `/pnl`, which directly clicks `btnRestoreRbColor`.
+- infinite-neck/key-handlers.js
+  - `selectBendType` now also routes through the same note-selection plumbing instead of only setting `checked = true`.
+- infinite-neck/menu.js
+  - Added the `/pnl` menu item with caption `last chosen` and trigger `l`.
+- infinite-neck/_tests/jest/key-handlers.test.js
+  - Added focused coverage for:
+    - `/pnn` restoring via the Restore button before selecting Named when CLEAR is active
+    - `/pnl` clicking the Restore button directly
+
+Validation:
+- `node --experimental-vm-modules jest key-handlers.test.js --runInBand`
+- `node --experimental-vm-modules jest presentation.test.js key-handlers.test.js --runInBand`
+
+Result:
+- 2 suites passed
+- 27 tests passed
+
+Behavioral result:
+- After clicking CLEAR with the mouse, `/pnn` now routes back through the same restore path instead of silently setting the Named radio.
+- `/pnl` now behaves as an actual click on `btnRestoreRbColor`.
+
+I did not run an in-browser manual check against the live app. The natural next verification is:
+1. Mouse-click CLEAR, then run `/pnn`, and confirm the remembered color comes back and AutoColor/manual colors end up in the same state as a real Restore-button click.
+2. Mouse-click CLEAR, then run `/pnl`, and confirm it exactly matches clicking Restore Color on the palette.
+
+Made changes.
+
+
+----
+## User:
+ Helpful.  We're on the right track, and we like how you used one-liners in the cases in key-handler.js
+
+Now we need to work on the edge cases.
+ 
+ When you click Scale for role, then Named, then a cell, you get a NamedNote with role Scale.  You then click CLEAR.  CLEAR works.  You then click Named.  Now you are in the state of Named and CLEAR being both checked.  (This can happen through the command-line too.) Really, we should have another radio button that is the state of not-CLEAR, not-KEEP, and not-Find-Color.  That radio button is, for historical reasons, a button called btnRestoreRbColor.  We aren't married to this button.  If it makes more sense to have it be a radio button, then so be it.  It really is  a button that means "Go ahead and paint a note, and I'll remember which note type and role/color."   Before coding changes, please analyze and advise us on whether we should make the change to a radio button in a set of four [CLEAR, KEEP, Find Color, "Color: Root"] where "Color: Root" is a changeable title that lets the User know which is the last chosen.  We don't want to use a simple label like "LAST" because the role actually gets hidden in AutoColor, so the purpose of btnRestoreRbColor was to expose this name.
+
+
+----
+## GitHub Copilot:
+ I’m checking the current palette state model and the exact assumptions around `rbColor` versus `btnRestoreRbColor` so the recommendation is tied to the code you have, not just a generic UI opinion.
+
+Read [](file:///home/laramie/infinite-neck/presentation.js#1-1), lines 1 to 260
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#1346-1346), lines 1346 to 1378
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.html#140-140), lines 140 to 210
+
+I’ve confirmed the structural mismatch: `rbColor` models three special modes plus many paintable colors, while the restore control is the only thing that represents “paint with last remembered color”. I’m reading the role/color builder and AutoColor wiring once more so the recommendation covers the hidden-role case you called out.
+
+Searched for regex `rememberRestorableRbColor|restoreLastRbColor|isRestoreButtonAligned|cbAutomaticColor|manualColors` (`**/infinite-neck/**/*.js`), 14 results
+
+Read [](file:///home/laramie/infinite-neck/colorFunctions.js#520-520), lines 520 to 555
+
+Read [](file:///home/laramie/infinite-neck/templates/palette.builder.js#20-20), lines 20 to 60
+
+Recommendation: do not turn `btnRestoreRbColor` into another member of the existing `rbColor` color-role radio set. If you want radio semantics, make it a separate 4-way mode group.
+
+Why:
+- In the current code, the restore control is not “a color value.” It is an action that reapplies a composite state:
+  - remembered color/role from presentation.js
+  - remembered note type from presentation.js
+  - indirect UI consequences like leaving the special CLEAR/KEEP/Find Color modes and restoring normal paint behavior via infinite-neck.js
+- The existing `rbColor` radios are actual values such as `noteScale`, `noteRoot`, `noteChord`, `notePink3`, etc., generated in colorFunctions.js. `btnRestoreRbColor` is different: its label is dynamic, and its meaning is “resume painting with the last remembered state.”
+- AutoColor is the decisive point in your favor for keeping that distinction. When AutoColor is on, the meaningful thing you want to expose to the user is not a stable radio value in the DOM; it is the remembered caption, which may be hidden from the manual color area. That matches a restore/apply control better than a normal radio.
+
+What is actually wrong today:
+- You effectively have a hidden mode model already:
+  - CLEAR
+  - KEEP
+  - Find Color
+  - “normal painting with remembered state”
+- But only the first three are explicit radios in the UI. The fourth is represented indirectly by a button plus state in presentation.js.
+- That mismatch is exactly why states like “Named and CLEAR both checked” feel wrong: the note-type selection is moving back to paint intent, but the palette’s mode control is still visually stuck in a special mode.
+
+My advice:
+1. Do not make `btnRestoreRbColor` a radio inside `name="rbColor"`.
+2. If you want true radio semantics, introduce a separate mode group, for example:
+   - CLEAR
+   - KEEP
+   - Find Color
+   - Color: Root
+3. Keep the existing role/color radios as the data source for remembered paint selection, not as the top-level mode selector.
+
+Why a separate mode group is better:
+- It matches the actual domain model:
+  - mode = clear | keep | dropper | paint
+  - paintSelection = remembered color/role + remembered note type
+- It avoids abusing `rbColor` with one item that is not really a color.
+- It gives you a clean rule:
+  - choosing any note type or role/color while a special mode is active switches mode to paint
+  - choosing CLEAR/KEEP/Find Color switches mode away from paint
+  - the paint-mode label shows the current remembered caption, such as `Color: Root`
+- It solves the edge case you described at the correct boundary: mode selection, not note placement.
+
+What I would not recommend:
+- Converting the current button into a fourth `rbColor` value like `noteRestore`.
+- Reason: that would blur two different concepts:
+  - a concrete selected color/role value
+  - a command to re-enter paint mode using remembered state
+- You would still need side-state for the actual remembered role, remembered note type, AutoColor visibility, and caption. So the radio conversion would not simplify the logic as much as it first appears.
+
+Best practical path:
+- Short term:
+  - Keep the button visually if you want minimal UI disruption.
+  - Treat it in code as the explicit fourth mode.
+  - Centralize a small palette mode API:
+    - `enterClearMode()`
+    - `enterKeepMode()`
+    - `enterDropperMode()`
+    - `enterPaintModeFromRememberedState()`
+- Medium term:
+  - If you want the UI to reflect the mental model more honestly, replace the button with a fourth mode radio in a dedicated top-row mode group.
+  - Its label should stay dynamic, exactly as you want: `Color: Root`, `Color: Scale`, `Color: Emboss`, etc.
+
+Engineering tradeoff:
+- Keeping the current button but formalizing it as a fourth mode is the smallest safe implementation boundary.
+- Replacing it with a separate 4-way mode radio group is the cleanest end-state.
+- Replacing it with a fourth member of the existing `rbColor` group is the least coherent option.
+
+Blast radius if you do the clean version:
+- Moderate UI wiring impact:
+  - presentation.js
+  - infinite-neck.js
+  - templates/palette.html
+  - templates/palette.builder.js
+  - key-handlers.js
+- Low-to-moderate controller impact:
+  - mostly because note clicks should read “effective palette mode” instead of inferring everything from `rbColor` alone
+- Low model risk:
+  - this is UI/presentation state, not song persistence
+
+Bottom line:
+- Yes, the palette really wants an explicit fourth mode.
+- No, it should not be modeled as just another `rbColor` radio.
+- Best recommendation: either keep the current button but elevate it to a first-class paint mode in code, or replace it with a separate 4-way mode radio group whose fourth label stays dynamic as `Color: Root`.
+
+If you want, the next step I’d recommend is a small design pass, not code yet:
+1. Define the exact mode state machine in one page.
+2. Decide between:
+   - keep button, add explicit internal `paint` mode
+   - replace button with separate 4-way mode radios
+3. Then implement from that state machine, rather than continuing to patch edge cases around `rbColor`.
+
+
+----
+## User:
+ Let's do an implementation plan for the separate, four-way mode group (separate from faking them as special colors in rbColor).  In addition to the edge cases we have mentioned, we also have some other weird ones we are having trouble replicating.  But having a cleaner model would help, because the palette plus command-line plus these new rules are creating some spaghetti.
+
+
+----
+## GitHub Copilot:
+ I have enough context from the current palette, presentation, and command-line wiring to outline a concrete migration plan. I’m going to frame it around a real palette mode state machine so the next implementation step removes the `noteClear`/`noteKeep`/`noteDropper` special-case spaghetti instead of moving it around.Implementation plan: separate four-way palette mode group
+
+**Goal**
+Replace the current mixed model where `rbColor` carries both:
+- real paint selections like roles/colors
+- fake special values like CLEAR, KEEP, and Find Color
+
+with an explicit palette mode model:
+
+1. `paint`
+2. `clear`
+3. `keep`
+4. `dropper`
+
+The visible mode group would be separate from the paint-selection radios. The dynamic “Color: Root” control becomes the `paint` mode entry, not a special fake color.
+
+**Why this is the right refactor**
+Today the palette is doing two jobs with one control family:
+- mode selection
+- paint selection
+
+That creates ambiguity in places like:
+- infinite-neck/presentation.js
+- infinite-neck/infinite-neck.js
+- infinite-neck/key-handlers.js
+- infinite-neck/templates/palette.html
+
+The refactor should separate these concerns so the model becomes:
+
+- palette mode:
+  - `paint`
+  - `clear`
+  - `keep`
+  - `dropper`
+- remembered paint selection:
+  - last chosen role/color
+  - last chosen note type
+- current paint UI state:
+  - AutoColor on/off
+  - manual color area visible/hidden
+  - dynamic paint-mode caption such as `Color: Root`
+
+That gives you a stable state machine instead of inferring state from whichever `rbColor` happens to be checked.
+
+**Target state**
+After the refactor:
+
+- `rbColor` contains only real paint choices:
+  - role radios from infinite-neck/colorFunctions.js
+  - manual colors in infinite-neck/templates/palette.html
+- CLEAR, KEEP, and Find Color move out of `rbColor`
+- the current restore button becomes the fourth mode entry:
+  - label stays dynamic, for example `Color: Scale`
+  - selecting it means “enter paint mode using the remembered paint selection”
+- note placement logic reads palette mode first, then paint selection second
+
+That eliminates the invalid hybrid state “Named and CLEAR both checked but user intent is paint”.
+
+**Recommended UI shape**
+Use a new dedicated mode radio group with its own name, for example `rbPaletteMode`:
+
+1. CLEAR
+2. KEEP
+3. Find Color
+4. Color: Scale
+
+Recommended reason:
+- visually communicates one active mode at a time
+- preserves the dynamic label the user wants
+- avoids pretending the fourth item is itself a paint color
+
+Do not make the fourth entry another member of `rbColor`. It is not a color; it is a mode that uses remembered paint state.
+
+**State model**
+Move palette state into an explicit model in infinite-neck/presentation.js:
+
+Suggested shape:
+```js
+gPresentation.palette = {
+  mode: 'paint', // paint | clear | keep | dropper
+  lastPaintColor: {
+    id,
+    value,
+    caption
+  },
+  lastPaintHighlight: {
+    id,
+    value,
+    caption
+  },
+  suppressPaintRemember: false,
+  keepWasForced: false
+}
+```
+
+Important distinction:
+- `mode` is the live current behavior
+- `lastPaintColor` and `lastPaintHighlight` are remembered paint defaults
+- entering `paint` mode restores from remembered paint state if needed
+
+**Migration strategy**
+Use a phased migration so behavior stays testable.
+
+1. Introduce explicit mode state without changing the visible UI
+2. Route all click and command-line behavior through palette mode APIs
+3. Update note placement/controller logic to read mode from palette state, not from fake `rbColor` values
+4. Replace the existing button/three radios UI with a dedicated four-way mode group
+5. Remove legacy `noteClear`, `noteKeep`, `noteDropper` handling from `rbColor`
+
+That order keeps the blast radius controlled.
+
+**Phase 1: add explicit palette mode API**
+Implement in infinite-neck/presentation.js:
+
+Suggested API:
+- `PalettePresentation.getMode()`
+- `PalettePresentation.setMode(mode)`
+- `PalettePresentation.enterPaintMode()`
+- `PalettePresentation.enterClearMode()`
+- `PalettePresentation.enterKeepMode()`
+- `PalettePresentation.enterDropperMode()`
+- `PalettePresentation.rememberPaintColor(radioEl)`
+- `PalettePresentation.rememberPaintHighlight(radioEl)`
+- `PalettePresentation.restoreRememberedPaintState()`
+- `PalettePresentation.updateModeUi()`
+
+Rules:
+- selecting CLEAR sets mode to `clear`
+- selecting KEEP sets mode to `keep`
+- selecting Find Color sets mode to `dropper`
+- selecting any role/color or note type sets mode to `paint`
+- entering `paint` mode restores remembered paint selection if the UI is currently in a special mode state
+
+**Phase 2: centralize palette event routing**
+Refactor palette event handling in:
+- infinite-neck/infinite-neck.js
+- infinite-neck/templates/palette.builder.js
+
+Goal:
+- UI events should call the mode API instead of directly mutating radios and cursor state in scattered places
+
+Recommended wiring:
+- new `rbPaletteMode` change handler:
+  - `clear` -> enter clear mode
+  - `keep` -> enter keep mode
+  - `dropper` -> enter dropper mode
+  - `paint` -> enter paint mode
+- existing `rbColor` change handler:
+  - remembers paint color
+  - forces palette mode to `paint`
+- existing `rbHighlight` change handling:
+  - remembers paint note type
+  - forces palette mode to `paint`
+
+This is the key cleanup. It makes UI semantics uniform.
+
+**Phase 3: make controller logic read mode, not fake colors**
+Refactor note behavior in infinite-neck/NoteTableController.js:
+
+Today it infers behavior from selected `rbColor` values like:
+- `noteClear`
+- `noteKeep`
+- `noteDropper`
+
+That should become something like:
+- `const mode = PalettePresentation.getMode()`
+- `const paintColor = PalettePresentation.getLastRestorableRbColor()`
+- `const paintHighlight = PalettePresentation.getLastRestorableRbHighlight()`
+
+Then route behavior by mode:
+- `clear` -> clear logic
+- `keep` -> keep logic
+- `dropper` -> dropper logic
+- `paint` -> note placement logic using remembered/current color and note type
+
+This is the main spaghetti reduction point.
+
+**Phase 4: command-line and keyboard unify on the mode API**
+Refactor infinite-neck/key-handlers.js:
+
+Goal:
+- command-line should stop trying to mimic state by setting individual DOM properties
+- it should invoke the same mode and paint APIs as the palette UI
+
+Recommended pattern:
+- `/pnc` -> enter clear mode
+- `/pnk` -> enter keep mode
+- `/pnf` -> enter dropper mode
+- `/pnl` -> enter paint mode
+- `/pnn`, `/pns`, `/pnt`, `/pnb`, `/pnp`, `/pnm`:
+  - select note type
+  - force mode to `paint`
+
+Similarly:
+- role/color selections should force mode to `paint`
+- fingering selections should force mode to `paint`
+- bend-type changes should force mode to `paint`
+
+Then `check()` and `checkAndTrigger()` can stay thin one-liners, because the real logic is in the palette mode API.
+
+**Phase 5: replace the current mode UI**
+Update infinite-neck/templates/palette.html:
+
+Replace:
+- CLEAR radio in `rbColor`
+- KEEP radio in `rbColor`
+- Find Color radio in `rbColor`
+- `btnRestoreRbColor` button
+
+with a new dedicated mode group, for example:
+- `name="rbPaletteMode"`
+
+Example visible structure:
+- CLEAR
+- KEEP
+- Find Color
+- Color: Scale
+
+The last item should keep:
+- dynamic caption
+- aligned styling/checkmark if it matches remembered/current paint state
+- cyan highlight if you still want it
+
+Style updates would likely land in:
+- infinite-neck/templates/palette.css
+- maybe infinite-neck/infinite-neck.css
+
+**Behavioral rules to lock down**
+These should be documented before coding.
+
+1. Selecting a role/color always implies `paint` mode.
+2. Selecting a note type always implies `paint` mode.
+3. Selecting fingering always implies `paint` mode.
+4. Selecting bend type implies `paint` mode and Bend note type.
+5. CLEAR unchecks the six note-type radios only if that behavior is still desired under the new model.
+6. Entering `paint` mode restores remembered note type if no valid note-type radio is selected.
+7. Entering `paint` mode does not override a deliberate already-selected note type unless your spec says it should.
+8. AutoColor visibility remains controlled by `cbAutomaticColor`, independent of mode.
+9. The dynamic paint-mode label always exposes the remembered paint caption even when manual colors are hidden.
+
+**Testing plan**
+Add focused tests before deleting legacy paths.
+
+1. Palette presentation tests in infinite-neck/_tests/jest/presentation.test.js
+   - mode transitions
+   - remembered color/highlight persistence
+   - entering paint mode from clear/keep/dropper
+   - dynamic label updates
+
+2. Key-handler tests in infinite-neck/_tests/jest/key-handlers.test.js
+   - `/pnl` enters paint mode
+   - `/pnn` from CLEAR ends in `paint` mode + Named selected
+   - role selection from special mode enters `paint`
+
+3. Note controller tests
+   - clear/keep/dropper behavior driven by explicit mode
+   - paint behavior no longer depends on fake `rbColor` specials
+
+4. Manual browser validation
+   - palette mouse flow
+   - command-line `/p*` flow
+   - keyboard shortcuts
+   - AutoColor on/off
+   - role hidden/visible transitions
+
+**Risk areas**
+1. Legacy code that still reads `$('input[name="rbColor"]:checked').val()` and expects `noteClear`/`noteKeep`/`noteDropper`
+2. Hidden assumptions in command-line paths
+3. Palette-builder click handlers that set `.prop("checked", true)` without going through the new mode API
+4. Cursor styling currently attached to `rbColor` change logic in infinite-neck/infinite-neck.js
+
+Those should be systematically removed, not partially patched.
+
+**Smallest safe implementation boundary**
+If you want to keep scope under control, the safest first coding slice is:
+
+1. Add explicit `palette.mode` state and mode APIs in infinite-neck/presentation.js
+2. Make infinite-neck/infinite-neck.js and infinite-neck/key-handlers.js use that mode
+3. Keep the current visible UI temporarily
+4. Only after that is stable, swap the visible controls in infinite-neck/templates/palette.html
+
+That gives you the clean model first, then the cleaner UI second.
+
+**Recommended next step**
+Write a short one-page state spec before code:
+
+1. Palette mode states and transitions
+2. What entering `paint` mode restores
+3. Whether CLEAR should still blank note-type radios
+4. Whether role/color selection always exits special modes
+5. Whether fingering is part of remembered paint type or stays separate
+
+If you want, I can turn this into a concrete phased engineering checklist with exact file-by-file tasks and acceptance criteria for each phase.

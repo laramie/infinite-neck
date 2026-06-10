@@ -1124,8 +1124,12 @@ export var gMenuFile =    {
               "trigger": "p"
             },
             {
-              "caption": "<b>h</b>ighlight",
-              "trigger": "h"
+              "caption": "<b>m</b>ulti",
+              "trigger": "m"
+            },
+            {
+              "caption": "<b>l</b>ast chosen",
+              "trigger": "l"
             },
             {
               "caption": "<b>k</b>eep",

@@ -451,11 +451,54 @@ function document_keypress(e) {
 	//
 
 function check(id){
-    $(id).prop("checked", true);
+	activateUiControl(id, { forceChange: true });
 }
 
 function checkAndTrigger(id){
-    $(id).prop("checked", true).trigger('change');
+	activateUiControl(id, { forceChange: true });
+}
+
+function activateUiControl(id, options = {}) {
+	const {
+		forceChange = false
+	} = options;
+	const $el = $(id);
+	if (!$el || $el.length === 0) {
+		return false;
+	}
+
+	const el = $el[0];
+	if (el && typeof el.click === 'function') {
+		el.click();
+		return true;
+	}
+
+	const inputType = `${el?.type || $el.attr?.('type') || ''}`.toLowerCase();
+	const isCheckable = inputType === 'radio' || inputType === 'checkbox';
+	if (isCheckable) {
+		$el.prop('checked', true);
+	}
+	$el.trigger('click');
+	if (forceChange && isCheckable) {
+		$el.trigger('change');
+	}
+	return true;
+}
+
+function isSpecialPaletteColorSelected() {
+	const $checked = $('input[name="rbColor"]:checked').first();
+	if (!$checked || $checked.length === 0) {
+		return false;
+	}
+	const value = $checked.val();
+	return value === 'noteClear' || value === 'noteKeep' || value === 'noteDropper';
+}
+
+function restorePaletteIfSpecialColorSelected() {
+	if (!isSpecialPaletteColorSelected()) {
+		return false;
+	}
+	return activateUiControl('#btnRestoreRbColor');
 }
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
@@ -946,34 +989,35 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectFingering":
 			if (args){
+				restorePaletteIfSpecialColorSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						checkRB("#rbFinger0");
-						checkRB("#idRFinger0");
+						check("#rbFinger0");
+						checkAndTrigger("#idRFinger0");
 						break;
 					case "1":
-					    checkRB("#rbFinger1");
-						checkRB("#idRFinger1");
+					    check("#rbFinger1");
+						checkAndTrigger("#idRFinger1");
 						break;
 					case "2":
-					    checkRB("#rbFinger2");
-					    checkRB("#idRFinger2");
+					    check("#rbFinger2");
+					    checkAndTrigger("#idRFinger2");
 						break;
 					case "3":
-					    checkRB("#rbFinger3");
-					    checkRB("#idRFinger3");
+					    check("#rbFinger3");
+					    checkAndTrigger("#idRFinger3");
 						break;
 					case "4":
-					    checkRB("#rbFinger4");
-					    checkRB("#idRFinger4");
+					    check("#rbFinger4");
+					    checkAndTrigger("#idRFinger4");
 						break;
 					case "5":
-					    checkRB("#rbFingerT");
-					    checkRB("#idRFingerT");
+					    check("#rbFingerT");
+						checkAndTrigger("#idRFingerT");
 						break;
 					case "t":
-					    checkRB("#rbFingerT");
-						checkRB("#idRFingerT");
+					    check("#rbFingerT");
+						checkAndTrigger("#idRFingerT");
 						break;
 				}
 			}
@@ -982,22 +1026,31 @@ export function performCmdAction(menuItem, args){
 			if (args){
 				switch (args["key"]){
 					case "n":
+						restorePaletteIfSpecialColorSelected();
 					    check("#idNamedNotes");
 						break;
 					case "s":
+						restorePaletteIfSpecialColorSelected();
 						check("#idSingleNotes");
 						break;
 					case "t":
+						restorePaletteIfSpecialColorSelected();
 						check("#idTinyNotes");
 						break;
 					case "b":
+						restorePaletteIfSpecialColorSelected();
 						check("#rbBend");
 						break;
 					case "p":
+						restorePaletteIfSpecialColorSelected();
 						check("#idMidiPitches");
 						break;
-					case "h":
+					case "m":
+						restorePaletteIfSpecialColorSelected();
 						check("#idMidiPitchesSingle");
+						break;
+					case "l":
+						check("#btnRestoreRbColor");
 						break;
 					case "k":
 						checkAndTrigger("#idKeep");
@@ -1098,7 +1151,8 @@ export function performCmdAction(menuItem, args){
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
-			$("#rbBend").prop("checked", true);
+			restorePaletteIfSpecialColorSelected();
+			check("#rbBend");
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();

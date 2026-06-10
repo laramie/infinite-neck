@@ -137,6 +137,91 @@ function createSong() {
 	};
 }
 
+function installPaletteJqueryStub(elements) {
+	const byId = new Map(elements.map((element) => [element.id, element]));
+
+	function matchesSelector(element, selector) {
+		if (!element || !selector) {
+			return false;
+		}
+
+		const trimmed = selector.trim();
+		if (trimmed.startsWith('#')) {
+			return element.id === trimmed.slice(1);
+		}
+
+		const inputMatch = trimmed.match(/^input\[name="([^"]+)"\](?::checked)?$/);
+		if (!inputMatch) {
+			return false;
+		}
+
+		const [, name] = inputMatch;
+		const requiresChecked = trimmed.includes(':checked');
+		if (element.tag !== 'input' || element.name !== name) {
+			return false;
+		}
+		if (requiresChecked && !element.checked) {
+			return false;
+		}
+		return true;
+	}
+
+	function query(selector) {
+		if (!selector) {
+			return [];
+		}
+		return Array.from(byId.values()).filter((element) => matchesSelector(element, selector));
+	}
+
+	function wrap(items) {
+		const api = {
+			length: items.length,
+			first() {
+				return wrap(items.slice(0, 1));
+			},
+			val() {
+				return items[0]?.value;
+			},
+			prop(name, value) {
+				if (value === undefined) {
+					return items[0]?.[name];
+				}
+				items.forEach((item) => {
+					item[name] = value;
+				});
+				return api;
+			},
+			trigger(name) {
+				items.forEach((item) => {
+					item.triggered = item.triggered || [];
+					item.triggered.push(name);
+				});
+				return api;
+			},
+			attr(name) {
+				return items[0]?.[name];
+			}
+		};
+		items.forEach((item, index) => {
+			api[index] = item;
+		});
+		return api;
+	}
+
+	globalThis.$ = (selector) => {
+		if (typeof selector === 'string') {
+			return wrap(query(selector));
+		}
+		if (!selector) {
+			return wrap([]);
+		}
+		return wrap([selector]);
+	};
+	globalThis.jQuery = globalThis.$;
+
+	return { byId };
+}
+
 describe('key-handlers spacebar mapping', () => {
 	let song;
 	let clearAndReplaySection;
@@ -474,5 +559,54 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(result.result).toBe('REC toggled');
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRadioNoteType restores via the button before selecting a note type when CLEAR is active', () => {
+		const restoreButton = {
+			id: 'btnRestoreRbColor',
+			tag: 'button',
+			click: jest.fn()
+		};
+		const namedRadio = {
+			id: 'idNamedNotes',
+			tag: 'input',
+			name: 'rbHighlight',
+			type: 'radio',
+			value: 'Named',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const clearRadio = {
+			id: 'idClear',
+			tag: 'input',
+			name: 'rbColor',
+			type: 'radio',
+			value: 'noteClear',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([restoreButton, namedRadio, clearRadio]);
+
+		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'n' });
+
+		expect(restoreButton.click).toHaveBeenCalledTimes(1);
+		expect(namedRadio.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRadioNoteType last-chosen clicks the restore button directly', () => {
+		const restoreButton = {
+			id: 'btnRestoreRbColor',
+			tag: 'button',
+			click: jest.fn()
+		};
+		installPaletteJqueryStub([restoreButton]);
+
+		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'l' });
+
+		expect(restoreButton.click).toHaveBeenCalledTimes(1);
 	});
 });
