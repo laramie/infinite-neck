@@ -649,44 +649,101 @@ export function colorNoteInner(cell) {
 
 export function dropper(cell, cellcol, cellrow, styleNum, noteName){
     var jCell = $(cell);
-    
-    //else styleNum ==> Single,Tiny,Bend.
+
     var tableID = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
         tableID = jParentTable.attr("id");
 
-        if (noteName && styleNum == 0){ //namedNote
-            var note = getCurrentSection().getSectionNotes(tableID).namedNotes[noteName];
-            if (note){
-                turnOffAutoColorCheckbox();
-
-                $("input[name=rbColor]")
-                    .css({"box-shadow": "none"}); //clear any previously highlighted
-
-                var foundColorClass = note.colorClass;
-                $("input[name=rbColor][value="+foundColorClass+"]")
-                    .prop('checked', true)
-                    .trigger('change')
-                    .css({"box-shadow": "0 0 10pt 20pt cyan"});
-
-                setNoteClickedCaption(cell, foundColorClass, styleNum);
-                $("td.note").css({"cursor": "auto"});
-            }
+        const note = findDropperNoteForCell({
+            tableID,
+            cellrow,
+            cellcol,
+            styleNum,
+            noteName
+        });
+        if (!note){
             return;
         }
 
-        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
-        if (foundColorClass){
-        $("input[name=rbColor][value="+foundColorClass+"]")
+        const lookupContext = createNotetableLookupContext(getCurrentSection());
+        const foundColorClass = selectDropperRadioForNote(note, lookupContext)
+            || note.colorClass
+            || lookupUserColorClass(note, lookupContext);
+
+        setNoteClickedCaption(cell, foundColorClass, note.styleNum ?? styleNum);
+        $("td.note").css({"cursor": "auto"});
+    }
+}
+
+export function findDropperNoteForCell({
+    tableID,
+    cellrow,
+    cellcol,
+    styleNum,
+    noteName,
+    section = getCurrentSection()
+} = {}) {
+    if (!section || !tableID) {
+        return null;
+    }
+
+    const sectionNotes = section.getSectionNotes(tableID);
+    if (!sectionNotes) {
+        return null;
+    }
+
+    if (`${styleNum}` === `${Note.STYLENUM_NAMED}` && noteName) {
+        return sectionNotes.namedNotes?.[noteName] || null;
+    }
+
+    return findPlayedNoteAtCell(sectionNotes.playedNotes, cellrow, cellcol, styleNum);
+}
+
+function findPlayedNoteAtCell(playedNotes = [], cellrow, cellcol, styleNum) {
+    return (playedNotes || []).find((note) => {
+        return `${note?.row ?? ''}` === `${cellrow ?? ''}`
+            && `${note?.col ?? ''}` === `${cellcol ?? ''}`
+            && `${note?.styleNum ?? ''}` === `${styleNum ?? ''}`;
+    }) || null;
+}
+
+function getDropperRadioCandidateValues(note, lookupContext) {
+    const candidates = [];
+    const pushCandidate = (value) => {
+        if (!value || candidates.includes(value)) {
+            return;
+        }
+        candidates.push(value);
+    };
+
+    pushCandidate(note?.colorClass);
+    pushCandidate(lookupUserColorClass(note, lookupContext));
+    return candidates;
+}
+
+function selectDropperRadioForNote(note, lookupContext) {
+    if (!note) {
+        return null;
+    }
+
+    $("input[name=rbColor]").css({"box-shadow": "none"});
+
+    const candidateValues = getDropperRadioCandidateValues(note, lookupContext);
+    for (const value of candidateValues) {
+        const $radio = $(`input[name=rbColor][value="${value}"]`);
+        if ($radio.length > 0) {
+            turnOffAutoColorCheckbox();
+            $radio
                 .prop('checked', true)
                 .trigger('change')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
-            setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
+            return value;
         }
     }
+
+    return null;
 }
 
 export function styleNamedNote(theClass, theColorClass, noteName){
