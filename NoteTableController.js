@@ -895,13 +895,16 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 		textdiv =    jCell.find(".Fingering");
 		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("Fingering");
-		textdiv.show();
         jCell.removeClass("OverlayRaisedForPiano");
-		var radio = $("input:radio[name=rbHighlight]:checked");
-		var finger = radio.attr("finger");
-		textdiv.html(finger);
-		notePlayed.finger = finger;
-		notePlayed.colorClass = theColorClass;
+        if (clear || fingeringAlreadyPlayed) {
+            textdiv.hide();
+        } else {
+            var radio = $("input:radio[name=rbHighlight]:checked");
+            var finger = radio.attr("finger");
+            textdiv.html(finger);
+            notePlayed.finger = finger;
+            notePlayed.colorClass = theColorClass;
+        }
 		theMidiNotePlayedClass = "FingeringPlayed";
     } else if (styleNum == Note.STYLENUM_BEND){
         textdiv =    jCell.find(".tinyNote");

@@ -11,6 +11,8 @@ import {
   createTuningLayout,
   getCellByRowCol,
   getCellByRowMidi,
+  isMidiOnlyListenerProjection,
+  projectListenerPlayedNotes,
   getTableID,
   getTuningCompatibilityID
 } from '../../move-helpers.js';
@@ -657,19 +659,35 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const payload = this.createEmptyClipPayload(targetTuning, selection.targetTableID, include);
     const sourceLayout = createTuningLayout(sourceTuning);
     const targetLayout = createTuningLayout(targetTuning);
+    const listenerProjection = `${selection?.wiring?.listenerProjection || 'row-midi'}`;
 
     this.addNamedNotesToPayload(payload, sourceSectionNotes, include);
 
-    (sourceSectionNotes?.playedNotes || []).forEach((note) => {
-      if (!this.includesPlayedStyle(include, note?.styleNum)) {
-        return;
-      }
-      const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
-      if (!candidate) {
-        return;
-      }
-      this.addPlayedNoteToPayload(payload, candidate);
-    });
+    if (isMidiOnlyListenerProjection(listenerProjection)) {
+      const projectedPlayedNotes = projectListenerPlayedNotes({
+        playedNotes: sourceSectionNotes?.playedNotes || [],
+        sourceTuning,
+        targetTuning,
+        listenerProjection
+      });
+      projectedPlayedNotes.forEach((note) => {
+        if (!this.includesPlayedStyle(include, note?.styleNum)) {
+          return;
+        }
+        this.addPlayedNoteToPayload(payload, note);
+      });
+    } else {
+      (sourceSectionNotes?.playedNotes || []).forEach((note) => {
+        if (!this.includesPlayedStyle(include, note?.styleNum)) {
+          return;
+        }
+        const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+        if (!candidate) {
+          return;
+        }
+        this.addPlayedNoteToPayload(payload, candidate);
+      });
+    }
 
     return payload;
   }
