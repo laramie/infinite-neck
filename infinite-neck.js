@@ -702,6 +702,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.pianoHeightScaleFactor = toInt($('#selPianoHeightScaleFactor').val(), 3);
 		options.pianoWidthScaleFactor = toInt($('#selPianoWidthScaleFactor').val(), 3);
 		options.pianoWhiteToBlackWidthRatio = $('#selPianoWhiteToBlackWidthRatio').val() || '2.3';
+		options.pianoFingeringHPosition = $('#selPianoFingeringHPosition').val() || '50%';
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -2000,6 +2001,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selPianoHeightScaleFactor").val(String(options.pianoHeightScaleFactor ?? 3));
 		$("#selPianoWidthScaleFactor").val(String(options.pianoWidthScaleFactor ?? 3));
 		$("#selPianoWhiteToBlackWidthRatio").val(String(options.pianoWhiteToBlackWidthRatio ?? '2.3'));
+			$("#selPianoFingeringHPosition").val(String(options.pianoFingeringHPosition ?? '50%'));
 		$("#cbShowLooperLightBeats").prop("checked", options.showLooperLightBeats ?? true);
 		$("#selNoteFont").val(options.noteFont);
 		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
@@ -2027,6 +2029,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--midi-font-size",       $("#selMidiFontSize").val());
 		setOneCssVar("--fingering-font-size",  $("#selFingeringFontSize").val());
 		setOneCssVar("--fingering-position",   $("#selFingeringPosition").val());
+		setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
 		fullRepaint();
 	}
 
@@ -2066,6 +2069,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.pianoHeightScaleFactor = $("#selPianoHeightScaleFactor").val();
 		options.pianoWidthScaleFactor = $("#selPianoWidthScaleFactor").val();
 		options.pianoWhiteToBlackWidthRatio = $("#selPianoWhiteToBlackWidthRatio").val();
+		options.pianoFingeringHPosition = $("#selPianoFingeringHPosition").val();
 		options.showLooperLightBeats = $("#cbShowLooperLightBeats").prop("checked");
 		options.noteFont = $("#selNoteFont").val();
 		options.leftSubscriptFontSize = $("#selLeftSubscriptFontSize").val();
@@ -2615,7 +2619,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#dropDownCellWidth', function() {
 			fullRepaint();
 		});
-		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor,#selPianoWhiteToBlackWidthRatio', function(){
+		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor,#selPianoWhiteToBlackWidthRatio,#selPianoFingeringHPosition', function(){
+			setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#cbShowLooperLightBeats', function() {

@@ -27,6 +27,7 @@
   --midi-font-size: 0.5em;
   --fingering-font-size: 100%;
   --fingering-position: -0.5em;
+    --piano-fingering-hposition: 50%;
   --tiny-note-max-height: 45%;
   --tiny-note-font-size: 100%;
     --universal-note-white-key-color: black;

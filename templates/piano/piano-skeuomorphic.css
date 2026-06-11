@@ -134,6 +134,11 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .midinumDisplay {
     text-align: center;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .Fingering,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .Fingering {
+    right: calc(clamp(0%, var(--piano-fingering-hposition, 50%), 100%) - 50%);
+}
+
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey,
 table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey {
     position: relative;
