@@ -1110,7 +1110,8 @@ export function replayTable(replayOptions){
             }
         }
     } else {
-        $(nnTablenameSelector+'.namedNote').hide();
+        // Keep baseline lane text (especially nut labels) visible; hide only actual placed named notes.
+        $(nnTablenameSelector+'.namedNote.NamedNoteActive').hide();
     }
 
     var tablearr = null;

@@ -16,9 +16,16 @@ const { Chord } = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
 
-const CHART_POSITION_VALUES = [
-    Constants.SECTION_CHART_POSITION.INTRO,
+const DEFAULT_CHART_HEAD_NAMES = Object.freeze([
     Constants.SECTION_CHART_POSITION.HEAD,
+    'BRIDGE',
+    'CHORUS',
+    'SOLO',
+    'CODA'
+]);
+
+const CHART_POSITION_FIXED_VALUES = [
+    Constants.SECTION_CHART_POSITION.INTRO,
     Constants.SECTION_CHART_POSITION.LINE,
     Constants.SECTION_CHART_POSITION.BAR,
     Constants.SECTION_CHART_POSITION.OUTRO
@@ -82,13 +89,65 @@ const CHART_SPACING_PRESETS = Object.freeze({
     }
 });
 
+function sanitizeChartHeadName(value) {
+    return String(value ?? '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .replace(/[^A-Za-z0-9_\- ]/g, '');
+}
+
+function uniqueStrings(values = []) {
+    const seen = new Set();
+    return values.filter((value) => {
+        if (!value || seen.has(value)) {
+            return false;
+        }
+        seen.add(value);
+        return true;
+    });
+}
+
+export function normalizeChartHeadNames(rawHeadNames) {
+    const values = Array.isArray(rawHeadNames) ? rawHeadNames : [];
+    const cleaned = uniqueStrings(values.map((value) => sanitizeChartHeadName(value)));
+    if (cleaned.length > 0) {
+        return cleaned;
+    }
+    return [...DEFAULT_CHART_HEAD_NAMES];
+}
+
+export function parseChartHeadNamesTextarea(textValue) {
+    const rawLines = String(textValue ?? '').split(/\r?\n/);
+    return normalizeChartHeadNames(rawLines);
+}
+
+function getChartHeadNames(theSong) {
+    return normalizeChartHeadNames(theSong?.chartOptions?.HEADNames);
+}
+
+function getChartPositionValues(theSong) {
+    return [
+        Constants.SECTION_CHART_POSITION.INTRO,
+        ...getChartHeadNames(theSong),
+        Constants.SECTION_CHART_POSITION.LINE,
+        Constants.SECTION_CHART_POSITION.BAR,
+        Constants.SECTION_CHART_POSITION.OUTRO
+    ];
+}
+
+function isHeadChartPosition(chartPosition, chartHeadNames) {
+    return chartHeadNames.includes(chartPosition);
+}
+
 function getEffectiveSongChartOptions(theSong) {
     const chartOptions = theSong?.chartOptions && typeof theSong.chartOptions === 'object' ? theSong.chartOptions : {};
+    const chartHeadNames = normalizeChartHeadNames(chartOptions.HEADNames);
     return {
         modes: chartOptions.modes !== false,
         detailLine: chartOptions.detailLine !== false,
         showCaptions: chartOptions.showCaptions !== false,
         showNextLine: chartOptions.showNextLine === true,
+        HEADNames: chartHeadNames,
         barClass: CHART_BAR_CLASS_VALUES.includes(chartOptions.barClass)
             ? chartOptions.barClass
             : Constants.SONG_CHART_BAR_CLASS.BOX,
@@ -136,10 +195,15 @@ function getSectionBeatsDisplay(section) {
     return section?.beats ?? '';
 }
 
-function getEffectiveChartPosition(section) {
-    return CHART_POSITION_VALUES.includes(section?.chartPosition)
-        ? section.chartPosition
-        : Constants.SECTION_CHART_POSITION.BAR;
+function getEffectiveChartPosition(section, chartHeadNames) {
+    const chartPosition = section?.chartPosition;
+    if (CHART_POSITION_FIXED_VALUES.includes(chartPosition) || isHeadChartPosition(chartPosition, chartHeadNames)) {
+        return chartPosition;
+    }
+    if (chartPosition === Constants.SECTION_CHART_POSITION.HEAD && !chartHeadNames.includes(Constants.SECTION_CHART_POSITION.HEAD)) {
+        return chartHeadNames[0];
+    }
+    return Constants.SECTION_CHART_POSITION.BAR;
 }
 
 function getEffectiveChartCaptionWidth(section) {
@@ -235,10 +299,11 @@ function formatSelectOptions(values, selectedValue) {
     }).join('');
 }
 
-function formatChartPositionSelect(section, idx) {
-    const currentValue = getEffectiveChartPosition(section);
+function formatChartPositionSelect(theSong, section, idx) {
+    const chartHeadNames = getChartHeadNames(theSong);
+    const currentValue = getEffectiveChartPosition(section, chartHeadNames);
     return `<select class='sectionChartPositionSelect' data-section-idx='${idx}' aria-label='Chart position'>`
-        + formatSelectOptions(CHART_POSITION_VALUES, currentValue)
+        + formatSelectOptions(getChartPositionValues(theSong), currentValue)
         + `</select>`;
 }
 
@@ -383,6 +448,7 @@ function createChartLineModel(blockType) {
 }
 
 function buildChartRenderModel(theSong, theSections, songChartOptions) {
+    const chartHeadNames = songChartOptions.HEADNames;
     const blocks = [];
     const allLines = [];
     let currentBlock = null;
@@ -421,7 +487,7 @@ function buildChartRenderModel(theSong, theSections, songChartOptions) {
 
     function ensureBlock() {
         if (!currentBlock) {
-            startBlock(Constants.SECTION_CHART_POSITION.HEAD);
+            startBlock(chartHeadNames[0]);
         }
     }
 
@@ -432,17 +498,20 @@ function buildChartRenderModel(theSong, theSections, songChartOptions) {
     }
 
     theSections.forEach((section, idx) => {
-        const chartPosition = getEffectiveChartPosition(section);
+        const chartPosition = getEffectiveChartPosition(section, chartHeadNames);
         switch (chartPosition) {
             case Constants.SECTION_CHART_POSITION.INTRO:
-            case Constants.SECTION_CHART_POSITION.HEAD:
             case Constants.SECTION_CHART_POSITION.OUTRO:
                 startBlock(chartPosition);
                 break;
             case Constants.SECTION_CHART_POSITION.LINE:
             case Constants.SECTION_CHART_POSITION.BAR:
             default:
-                ensureBlock();
+                if (isHeadChartPosition(chartPosition, chartHeadNames)) {
+                    startBlock(chartPosition);
+                } else {
+                    ensureBlock();
+                }
                 break;
         }
 
@@ -553,6 +622,7 @@ function renderLeadSheetLinePlaceholder(leadSheetLineOptions) {
 
 export function printChartOptions(theSong) {
     const chartOptions = getEffectiveSongChartOptions(theSong);
+    const headNamesText = chartOptions.HEADNames.join('\n');
     const selectTable = "<div class='divViewCard sectionPrinterChartOptionsCard'>"
         + "<table class='viewControls'>"
         + "<tr><th>Option</th><th>Value</th></tr>"
@@ -563,12 +633,21 @@ export function printChartOptions(theSong) {
         + `<tr><td>Chart Spacing</td><td>${formatSongChartSpacingSelectControl(chartOptions.chartSpacing)}</td></tr>`
         + "</table>"
         + "</div>";
+    const headNamesEditor = "<div class='sectionPrinterChartOptionsHeadNames'>"
+        + "<label class='songChartHeadNamesLabel' for='songChartHeadNamesTextarea'>Chart Names</label>"
+        + `<textarea id='songChartHeadNamesTextarea' class='songChartHeadNamesTextarea' rows='10' aria-label='Chart Names'>${escapeHtmlAttribute(headNamesText)}</textarea>`
+        + "</div>";
     return "<div id='sectionPrinterChartOptions'>"
+        + "<div class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--left'>"
         + formatSongChartOptionCheckbox('modes', chartOptions.modes, 'Show mode line')
         + formatSongChartOptionCheckbox('detailLine', chartOptions.detailLine, 'Show section detail line')
         + formatSongChartOptionCheckbox('showCaptions', chartOptions.showCaptions, 'Show captions')
         + formatSongChartOptionCheckbox('showNextLine', chartOptions.showNextLine, 'Show Next Line')
         + selectTable
+        + "</div>"
+        + "<div class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'>"
+        + headNamesEditor
+        + "</div>"
         + "</div>";
 }
 
@@ -595,15 +674,30 @@ function createChartLineMarkup(lineBars, lineCaptions) {
     return lineMarkup;
 }
 
-function createChartBlockTitle(blockType) {
-    return `<div class='chart${blockType}Title'>${blockType}</div>`;
+function getChartBlockClassSuffix(blockType, chartHeadNames) {
+    if (blockType === Constants.SECTION_CHART_POSITION.INTRO) {
+        return Constants.SECTION_CHART_POSITION.INTRO;
+    }
+    if (blockType === Constants.SECTION_CHART_POSITION.OUTRO) {
+        return Constants.SECTION_CHART_POSITION.OUTRO;
+    }
+    if (isHeadChartPosition(blockType, chartHeadNames)) {
+        return Constants.SECTION_CHART_POSITION.HEAD;
+    }
+    return Constants.SECTION_CHART_POSITION.HEAD;
 }
 
-function createChartBlockMarkup(blockType, blockContent) {
+function createChartBlockTitle(blockType, chartHeadNames) {
+    const cssClassSuffix = getChartBlockClassSuffix(blockType, chartHeadNames);
+    return `<div class='chart${cssClassSuffix}Title'>${blockType}</div>`;
+}
+
+function createChartBlockMarkup(blockType, blockContent, chartHeadNames) {
     if (!blockType) {
         return '';
     }
-    return `<div class='chart${blockType}'>${createChartBlockTitle(blockType)}${blockContent.join('')}</div>`;
+    const cssClassSuffix = getChartBlockClassSuffix(blockType, chartHeadNames);
+    return `<div class='chart${cssClassSuffix}'>${createChartBlockTitle(blockType, chartHeadNames)}${blockContent.join('')}</div>`;
 }
 
 export function printSections(theSong, theSections, showDetails) {
@@ -628,7 +722,7 @@ export function printSections(theSong, theSections, showDetails) {
             + (section.sharps ? " &sharp; " : " &flat; ") + SEP
             + (section.chartChord ? "<span class='SPN_CHORD'>"+section.chartChord+"</span>" : "&nbsp;") + SEP
             + (section.chartMode ? "<span class='SPN_MODE'>"+section.chartMode+"</span>" : "&nbsp;") + SEP
-                + (showDetails ? (formatChartBeatsPerBarInput(section, idx) + SEP + formatChartPositionSelect(section, idx) + SEP + formatChartCaptionWidthSelect(section, idx) + SEP) : "")
+                + (showDetails ? (formatChartBeatsPerBarInput(section, idx) + SEP + formatChartPositionSelect(theSong, section, idx) + SEP + formatChartCaptionWidthSelect(section, idx) + SEP) : "")
             + (showDetails ? formatChartCaptionEditor(section, idx) : ("<span class='SPN_SPAN_CAPTION'><b style='font-size: 130%;'>" + section.caption + "</b></span>"))
             + (showDetails ? (SEP + details) : "")
             + "</td></tr>";
@@ -788,7 +882,7 @@ export function printChart(theSong, theSections) {
     const currentSectionIndex = getCurrentSectionIndex(theSong, theSections);
     chartModel.blocks.forEach((block) => {
         const blockContent = block.lines.map((lineModel) => renderChartLine(theSong, lineModel, songChartOptions, chartBarWidthClass, currentSectionIndex));
-        chartParts.push(createChartBlockMarkup(block.blockType, blockContent));
+        chartParts.push(createChartBlockMarkup(block.blockType, blockContent, songChartOptions.HEADNames));
     });
     chartParts.push('</div>');
     return chartParts.join('');
@@ -806,7 +900,7 @@ export function printLeadSheetLine(theSong, theSections, options = {}) {
     const currentSectionIndex = getCurrentSectionIndex(theSong, theSections);
     const currentLineIndex = chartModel.allLines.findIndex((lineModel) => lineModel.sectionIndexes.includes(currentSectionIndex));
     const safeLineIndex = currentLineIndex >= 0 ? currentLineIndex : 0;
-    const currentLine = chartModel.allLines[safeLineIndex] || createChartLineModel(Constants.SECTION_CHART_POSITION.HEAD);
+    const currentLine = chartModel.allLines[safeLineIndex] || createChartLineModel(songChartOptions.HEADNames[0]);
     const nextLine = songChartOptions.showNextLine ? chartModel.allLines[safeLineIndex + 1] : null;
     const parts = [`<div id='${escapeHtmlAttribute(rootId)}' class='sectionPrinterChartLine'${formatChartStyleVariables(leadSheetLineOptions, false)}>`];
 

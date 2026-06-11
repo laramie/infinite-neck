@@ -1,5 +1,5 @@
 import Ajv2020 from 'ajv/dist/2020.js';
-import { SECTION_CHART_CAPTION_WIDTH, SECTION_CHART_POSITION, SONG_CHART_BAR_CLASS } from '../Constants.js';
+import { SECTION_CHART_CAPTION_WIDTH, SONG_CHART_BAR_CLASS } from '../Constants.js';
 
 const INTEGER_LIKE_PATTERN = '^-?\\d+$';
 const ALLOWED_NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
@@ -191,7 +191,7 @@ const sectionSchema = {
         caption: { type: 'string' },
         chartChord: { type: 'string' },
         chartMode: { type: 'string' },
-        chartPosition: { type: 'string', enum: Object.values(SECTION_CHART_POSITION) },
+        chartPosition: { type: 'string', minLength: 1 },
         chartCaptionWidth: { type: 'string', enum: Object.values(SECTION_CHART_CAPTION_WIDTH) },
         beatsPerBar: integerLikeSchema,
         rootID: integerLikeSchema,
@@ -223,6 +223,10 @@ const chartOptionsSchema = {
         detailLine: { type: 'boolean' },
         showCaptions: { type: 'boolean' },
         showNextLine: { type: 'boolean' },
+        HEADNames: {
+            type: 'array',
+            items: { type: 'string' }
+        },
         barClass: { type: 'string', enum: Object.values(SONG_CHART_BAR_CLASS) },
         chordFontsize: {
             type: 'string',

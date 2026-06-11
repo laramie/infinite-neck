@@ -2,6 +2,36 @@ import * as Constants from './Constants.js';
 import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
 
+const DEFAULT_CHART_HEAD_NAMES = [
+    Constants.SECTION_CHART_POSITION.HEAD,
+    'BRIDGE',
+    'CHORUS',
+    'SOLO',
+    'CODA'
+];
+
+function sanitizeChartHeadName(value) {
+    return String(value ?? '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .replace(/[^A-Za-z0-9_\- ]/g, '');
+}
+
+function normalizeChartHeadNames(rawHeadNames) {
+    const values = Array.isArray(rawHeadNames) ? rawHeadNames : [];
+    const seen = new Set();
+    const cleaned = values
+        .map((value) => sanitizeChartHeadName(value))
+        .filter((value) => {
+            if (!value || seen.has(value)) {
+                return false;
+            }
+            seen.add(value);
+            return true;
+        });
+    return cleaned.length > 0 ? cleaned : [...DEFAULT_CHART_HEAD_NAMES];
+}
+
 function toTableID(baseID) {
     return `${Constants.TABLE_ID_PREFIX}${baseID}`;
 }
@@ -75,6 +105,7 @@ const songDefaults = {
         detailLine: true,
         showCaptions: true,
         showNextLine: false,
+        HEADNames: [...DEFAULT_CHART_HEAD_NAMES],
         barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
         chartSpacing: 'relaxed',
         chordFontsize: '100%',
@@ -120,6 +151,7 @@ export class SongPersistence {
             ...songDefaults.chartOptions,
             ...incomingChartOptions
         };
+        this.chartOptions.HEADNames = normalizeChartHeadNames(this.chartOptions.HEADNames);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

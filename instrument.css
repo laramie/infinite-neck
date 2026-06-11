@@ -256,7 +256,6 @@
 
 /* Base tinyNote centering - works for both piano skeuomorphic and regular instruments */
 .tinyNote {
-    display: flex !important;
     align-items: center;
     justify-content: center;
     vertical-align: middle;
@@ -264,6 +263,13 @@
 
 /* Ensure singleNote and other played note displays also center properly */
 .singleNote {
+    align-items: center;
+    justify-content: center;
+}
+
+.tinyNotePlayed,
+.tinyNotePlayedBend,
+.singleNotePlayed {
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -274,7 +280,6 @@
 .singleNote[style*="height: 100%"] {
     height: auto !important;
     min-height: 100%;
-    display: flex !important;
     align-items: center;
     justify-content: center;
 }

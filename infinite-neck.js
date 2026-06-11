@@ -1669,11 +1669,38 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSongChartOption(optionName, optionValue) {
+		if (optionName === 'HEADNames') {
+			const doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+			linkToSongChartHeadNames(optionValue, doSectionChanged);
+			return;
+		}
 		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
 			getSong().chartOptions = {};
 		}
 		getSong().chartOptions[optionName] = optionValue;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSongChartHeadNames(headNames) {
+		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
+			getSong().chartOptions = {};
+		}
+		const normalizedHeadNames = SectionPrinter.normalizeChartHeadNames(headNames);
+		getSong().chartOptions.HEADNames = normalizedHeadNames;
+
+		if (!normalizedHeadNames.includes(Constants.SECTION_CHART_POSITION.HEAD)) {
+			const replacementHeadName = normalizedHeadNames[0];
+			getSong().sections.forEach((section) => {
+				if (section?.chartPosition === Constants.SECTION_CHART_POSITION.HEAD) {
+					section.chartPosition = replacementHeadName;
+				}
+			});
+		}
+
+		let doSectionChanged = (arguments.length < 2) ? true : arguments[1];
 		if (doSectionChanged){
 			sectionChanged();
 		}
@@ -2359,6 +2386,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (optionName) {
 				linkToSongChartOption(optionName, $(this).val());
 			}
+		});
+		bindDelegatedEvent('change blur', '.songChartHeadNamesTextarea', function() {
+			const headNames = SectionPrinter.parseChartHeadNamesTextarea($(this).val());
+			linkToSongChartHeadNames(headNames);
 		});
 		bindDelegatedEvent('keydown', '#txtColorSchemeName', function(e) {
 			if (!isPlainEnterKey(e)) {
