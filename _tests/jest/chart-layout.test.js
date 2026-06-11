@@ -50,6 +50,7 @@ describe('chart layout rendering', () => {
             detailLine: true,
             showCaptions: true,
             showNextLine: false,
+            HEADNames: ['HEAD', 'BRIDGE', 'CHORUS', 'SOLO', 'CODA'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
             chartSpacing: 'relaxed',
             chordFontsize: '100%',
@@ -64,6 +65,7 @@ describe('chart layout rendering', () => {
             detailLine: true,
             showCaptions: true,
             showNextLine: true,
+            HEADNames: ['BRIDGE', 'HEAD', 'FOO'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BARE,
             chartSpacing: 'comfy',
             chordFontsize: '180%',
@@ -78,6 +80,12 @@ describe('chart layout rendering', () => {
         expect(html).toContain("data-chart-option='showCaptions' checked");
         expect(html).toContain("data-chart-option='showNextLine' checked");
         expect(html).toContain("class='divViewCard sectionPrinterChartOptionsCard'");
+        expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--left'");
+        expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'");
+        expect(html).toContain("class='sectionPrinterChartOptionsHeadNames'");
+        expect(html).toContain("class='songChartHeadNamesLabel' for='songChartHeadNamesTextarea'>Chart Names</label>");
+        expect(html).toContain("id='songChartHeadNamesTextarea' class='songChartHeadNamesTextarea'");
+        expect(html).toContain('>BRIDGE\nHEAD\nFOO</textarea>');
         expect(html).toContain("<table class='viewControls'>");
         expect(html).toContain('<tr><td>Bar Style</td><td><select');
         expect(html).toContain('<tr><td>Chart Spacing</td><td><select');
