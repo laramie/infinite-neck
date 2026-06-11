@@ -1,6 +1,7 @@
 .pianoSkeuomorphicInstrument {
     --piano-white-key-width: 50px;
-    --piano-black-key-width: calc(var(--piano-white-key-width) / 2.3);
+    --piano-white-to-black-width-ratio: 2.3;
+    --piano-black-key-width: calc(var(--piano-white-key-width) / var(--piano-white-to-black-width-ratio));
     --piano-black-key-height: 0.64;
     --piano-face-horizontal-gap: max(4px, calc(var(--note-padding) * 0.45), calc(var(--cell-spacing) * 0.75));
     --piano-face-top-gap-base: max(3px, calc(var(--note-padding) * 0.22), calc(var(--cell-spacing) * 0.35));
@@ -83,20 +84,6 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
     width: auto;
     height: auto;
 }
-/*
-table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote {
-    color: #241c13;
-}
-
-table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote:not(.NamedNoteActive) {
-    color: transparent;
-}
-
-table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote,
-table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote {
-    color: #241c13;
-}
-    */
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote:not(.tinyNotePlayedBend),
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote:not(.tinyNotePlayedBend) {
@@ -171,16 +158,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote {
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote:not(.NamedNoteActive) {
     color: transparent;
 }
-/*
-table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote,
-table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote {
-    color: #f8f2de;
-}
 
-table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote {
-    color: #f8f2de;
-}
-    */
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote > .CenterCell > .CenterCell,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote > .CenterCell > .CenterCell,
@@ -232,9 +210,5 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey > div {
     position: absolute;
     left: calc(var(--piano-black-key-width) * -0.5);
     width: var(--piano-black-key-width);
-    FOOcolor: #f4e9c8;
 }
 
-table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteWhiteKey > div {
-    FOOcolor: #2d2317;
-}

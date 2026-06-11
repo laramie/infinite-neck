@@ -19,7 +19,8 @@ describe('piano skeuomorphic note lane visibility css', () => {
         const css = fs.readFileSync(pianoCssPath, 'utf8');
 
         expect(css).toContain('--piano-white-key-width: 50px;');
-        expect(css).toContain('--piano-black-key-width: calc(var(--piano-white-key-width) / 2.3);');
+        expect(css).toContain('--piano-white-to-black-width-ratio: 2.3;');
+        expect(css).toContain('--piano-black-key-width: calc(var(--piano-white-key-width) / var(--piano-white-to-black-width-ratio));');
         expect(css).toContain('--piano-face-horizontal-gap: max(4px, calc(var(--note-padding) * 0.45), calc(var(--cell-spacing) * 0.75));');
         expect(css).toContain('--piano-white-face-side-gap: var(--piano-face-horizontal-gap);');
         expect(css).toContain('--piano-black-face-side-gap: max(2px, calc(var(--piano-face-horizontal-gap) * 0.70));');

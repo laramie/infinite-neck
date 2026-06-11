@@ -701,6 +701,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.naturalFontScaling = toInt($('#selNaturalFontScaling').val(), 60);
 		options.pianoHeightScaleFactor = toInt($('#selPianoHeightScaleFactor').val(), 3);
 		options.pianoWidthScaleFactor = toInt($('#selPianoWidthScaleFactor').val(), 3);
+		options.pianoWhiteToBlackWidthRatio = $('#selPianoWhiteToBlackWidthRatio').val() || '2.3';
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -1971,6 +1972,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		$("#selPianoHeightScaleFactor").val(String(options.pianoHeightScaleFactor ?? 3));
 		$("#selPianoWidthScaleFactor").val(String(options.pianoWidthScaleFactor ?? 3));
+		$("#selPianoWhiteToBlackWidthRatio").val(String(options.pianoWhiteToBlackWidthRatio ?? '2.3'));
 		$("#cbShowLooperLightBeats").prop("checked", options.showLooperLightBeats ?? true);
 		$("#selNoteFont").val(options.noteFont);
 		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
@@ -2036,6 +2038,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.naturalFontScaling = $("#selNaturalFontScaling").val();
 		options.pianoHeightScaleFactor = $("#selPianoHeightScaleFactor").val();
 		options.pianoWidthScaleFactor = $("#selPianoWidthScaleFactor").val();
+		options.pianoWhiteToBlackWidthRatio = $("#selPianoWhiteToBlackWidthRatio").val();
 		options.showLooperLightBeats = $("#cbShowLooperLightBeats").prop("checked");
 		options.noteFont = $("#selNoteFont").val();
 		options.leftSubscriptFontSize = $("#selLeftSubscriptFontSize").val();
@@ -2581,7 +2584,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#dropDownCellWidth', function() {
 			fullRepaint();
 		});
-		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor', function(){
+		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor,#selPianoWhiteToBlackWidthRatio', function(){
 			fullRepaint();
 		});
 		bindEvent('change', '#cbShowLooperLightBeats', function() {
