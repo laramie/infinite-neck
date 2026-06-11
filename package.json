@@ -7,6 +7,7 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "knip": "knip",
+    "package:deploy": "bash bin/package-deploy.sh",
     "update:help": "node bin/help.html-updater.js",
     "validate:cmdmenu": "node bin/validate-command-menu.js",
     "validate:song-schema": "node bin/validate-song-schema.js",

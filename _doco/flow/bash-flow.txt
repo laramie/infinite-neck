@@ -1,0 +1,5 @@
+show sizes of directories: 
+laramie@penguin:~/infinite-neck$ du -k --max-depth=1 --exclude="./node_modules" --exclude="./.git" --exclude="./_TEMP_ONLY" . | sort -nr
+
+use imagemagick:
+convert theme-everyone-into-the-pool.png  -resize 900 -density 90 theme-everyone-into-the-pool-90.png 

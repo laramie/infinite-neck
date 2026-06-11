@@ -83,7 +83,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
     width: auto;
     height: auto;
 }
-
+/*
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote {
     color: #241c13;
 }
@@ -96,6 +96,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote {
     color: #241c13;
 }
+    */
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote:not(.tinyNotePlayedBend),
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote:not(.tinyNotePlayedBend) {
@@ -170,7 +171,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote {
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote:not(.NamedNoteActive) {
     color: transparent;
 }
-
+/*
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote {
     color: #f8f2de;
@@ -179,6 +180,7 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote {
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote {
     color: #f8f2de;
 }
+    */
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote > .CenterCell > .CenterCell,
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote > .CenterCell > .CenterCell,
@@ -230,9 +232,9 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey > div {
     position: absolute;
     left: calc(var(--piano-black-key-width) * -0.5);
     width: var(--piano-black-key-width);
-    color: #f4e9c8;
+    FOOcolor: #f4e9c8;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteWhiteKey > div {
-    color: #2d2317;
+    FOOcolor: #2d2317;
 }

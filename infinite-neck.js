@@ -3010,12 +3010,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#divColorDicts').hide();
 			$("#CustomColorEditors").hide();
 
-			//in palette div: 
-			$('#cbAutomaticColor').prop('checked', true);
-			$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
-
 			buildUserColors();
 			installRBColorChangeEvents();
+
+			// Palette startup should use the shared AutoColor initializer directly,
+			// not a synthetic change event on a stale checkbox state.
+			PalettePresentation.setAutomaticColorUi(true);
+			fullRepaint();
+
+			// The palette loads asynchronously, so recapture the startup navigation
+			// defaults only after AutoColor and the palette controls really exist.
+			captureDisplayOptionsNavigationDefault();
+			captureDisplayOptionsDirtyBaseline();
 		});
 
 

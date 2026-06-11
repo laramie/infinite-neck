@@ -372,28 +372,28 @@ function document_keypress(e) {
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
 				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger1');
 				activateUiControl('#idRFinger1');
+				activateUiControl('#rbFinger1');
                 break;
             case "2":
 				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger2');
 				activateUiControl('#idRFinger2');
+				activateUiControl('#rbFinger2');
                 break;
             case "3":
 				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger3');
 				activateUiControl('#idRFinger3');
+				activateUiControl('#rbFinger3');
                 break;
             case "4":
 				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger4');
 				activateUiControl('#idRFinger4');
+				activateUiControl('#rbFinger4');
                 break;
             case "5":
 				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFingerT');
 				activateUiControl('#idRFingerT');
+				activateUiControl('#rbFingerT');
                 break;
             case "6":
 				activateUiControl('#idPaletteModePaint');
