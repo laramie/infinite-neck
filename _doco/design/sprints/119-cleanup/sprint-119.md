@@ -73,6 +73,8 @@ Here are the work items, grouped by status.
 
 - Make Find Color work for other Note types than just NamedNote.
 
+- Add MUTE and CAPTURE buttons to Wiring.  Leave 'Wired' wired, but allow MUTE to override.  CAPTURE does Listener paste.
+
 - DOCO: 
   - I want to:
     - Use the chart to fill in the notes on an instrument: FillPlugin, 

@@ -32,6 +32,25 @@
     background-color: rgb(245, 192, 15) !important; 
 }
 
+.WiringActionButton {
+  background-color: rgb(245, 192, 15);
+  border-radius: 10%;
+  box-shadow: 0 0 3pt 3pt lightgreen;
+  padding: 0.2em;
+  font-size: 1em;
+}
+
+.WiringActionButtonBlocked {
+  background-color: #8a8a8a !important;
+  box-shadow: none !important;
+  color: #ddd;
+}
+
+.WiringActionButtonMuted {
+  background-color: red !important;
+  box-shadow: 0 0 3pt 3pt #ff8080;
+}
+
 .Wiring-controls input[type="text"] {
  width: auto;
   max-width: unset;
