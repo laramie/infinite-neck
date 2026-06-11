@@ -242,3 +242,39 @@
 .spanNoteDetails {
     display: none;
 }
+
+/* ====================================================================
+   FIX: Vertical centering for tiny notes and other note displays.
+   
+   Problem: tinyNote had height: 100%, position: absolute, and 
+   vertical-align: top (which doesn't work on block/absolute elements),
+   causing text to float to top corner and misalign on height changes.
+   
+   Solution: Change display to flex and use align-items/justify-content
+   to center text both vertically and horizontally within the element.
+   =====================================================================  */
+
+/* Base tinyNote centering - works for both piano skeuomorphic and regular instruments */
+.tinyNote {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+/* Ensure singleNote and other played note displays also center properly */
+.singleNote {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* If height: 100% is causing issues, constrain max-height instead */
+.tinyNote[style*="height: 100%"],
+.singleNote[style*="height: 100%"] {
+    height: auto !important;
+    min-height: 100%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}

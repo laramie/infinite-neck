@@ -37,6 +37,10 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell {
     overflow: visible;
 }
 
+table.fretTable.pianoSkeuomorphicTable td.note.OverlayRaisedForPiano {
+    overflow: visible;
+}
+
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey,
 table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteWhiteKey {
     flex: 0 0 var(--piano-white-key-width);
@@ -58,7 +62,20 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey {
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano {
-    z-index: 7;
+    z-index: 1;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano {
+    z-index: 12;
+}
+
+/* Keep piano geometry stable during live repaint: white keys never jump above black keys. */
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano {
+    z-index: 1 !important;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano {
+    z-index: 12 !important;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay {
@@ -87,9 +104,24 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .singleNote {
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote:not(.tinyNotePlayedBend),
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote:not(.tinyNotePlayedBend) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .tinyNote.tinyNotePlayedBend,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .tinyNote.tinyNotePlayedBend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    position: relative;
 }
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .midinumDisplayNamedNote,
@@ -128,7 +160,8 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay {
     min-width: var(--piano-black-key-width);
     height: calc(100% * var(--piano-black-key-height)) !important;
     border-radius: 0 0 0.4em 0.4em;
-    background: linear-gradient(180deg, #534f49 0%, #1b1917 18%, #090808 100%);
+    WASbackground: linear-gradient(180deg, #534f49 0%, #1b1917 18%, #090808 100%);
+    background: linear-gradient(180deg, #534f49 0%, #1b1917 18%, #150b0b 100%);
     box-shadow: inset -0.12em -0.14em 0.24em rgba(255, 255, 255, 0.08), 0.14em 0.22em 0.3em rgba(0, 0, 0, 0.45);
     cursor: pointer;
 }
@@ -157,6 +190,18 @@ table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .singleNote {
 
 table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .namedNote:not(.NamedNoteActive) {
     color: transparent;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .namedNote:not(.NamedNoteActive) {
+    color: transparent;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .universalNamedNote {
+    color: #241c13;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .universalNamedNote {
+    color: #f8f2de;
 }
 
 
@@ -210,5 +255,31 @@ table.fretTable.pianoSkeuomorphicTable td.namesRowCell.noteBlackKey > div {
     position: absolute;
     left: calc(var(--piano-black-key-width) * -0.5);
     width: var(--piano-black-key-width);
+}
+
+/* Final layering guard: keep piano geometry stable during transient repaint states. */
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano .NoteDisplay {
+    z-index: 1 !important;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano .NoteDisplay {
+    z-index: 12 !important;
+}
+
+/* Repaint safety: keep piano key geometry intact under transient class toggles. */
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey .NoteDisplay,
+table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano .NoteDisplay {
+    z-index: 1 !important;
+}
+
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey .NoteDisplay,
+table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano .NoteDisplay {
+    z-index: 12 !important;
 }
 

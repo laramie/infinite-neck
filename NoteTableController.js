@@ -928,7 +928,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 	        		textdiv.addClass(lookupUserColorClass(notePlayed, lookupContext));
                 textdiv.addClass(theMidiNotePlayedClass);
                 textdiv.show();//Playback called .hide()
-                if (styleNum == Note.STYLENUM_FINGERING) {
+                if ((styleNum == Note.STYLENUM_FINGERING || styleNum == Note.STYLENUM_BEND) && jCell.hasClass("noteBlackKey")) {
 					jCell.addClass("OverlayRaisedForPiano");
 				}
                 if (theBendClass){
@@ -1138,6 +1138,9 @@ export function replayTable(replayOptions){
                     textdiv.css("opacity",  getSong().singleNoteOpacity);
                 } else if (script.styleNum == Note.STYLENUM_BEND && !replayOptions.hideTinyNotes){
                     textdiv = $(this).find(".tinyNote");
+                    if ($(this).hasClass("noteBlackKey")) {
+                        $(this).addClass("OverlayRaisedForPiano");
+                    }
                     textdiv.addClass("tinyNotePlayedBend");
                     textdiv.addClass(script.bendValue);
                     textdiv.css("opacity",  getSong().tinyNoteOpacity);//tiny and bends go together on visibility and opacity
@@ -1146,7 +1149,9 @@ export function replayTable(replayOptions){
                     if (script.finger){
                         textdiv.html(script.finger);
                     }
-                    $(this).addClass("OverlayRaisedForPiano");
+                    if ($(this).hasClass("noteBlackKey")) {
+                        $(this).addClass("OverlayRaisedForPiano");
+                    }
                     textdiv.addClass("FingeringPlayed");
                     textdiv.show();
                 }
@@ -1434,13 +1439,15 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass("noteHighlightSingle");
                 } else if (note.styleNum == Note.STYLENUM_FINGERING){
                     tdNote
-						.addClass("OverlayRaisedForPiano")
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
                         .addClass("Playback")
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .html(note.finger)  //finger (1234T) shown in cell here.
                         .show();
+                    if (tdNote.hasClass("noteBlackKey")) {
+						tdNote.addClass("OverlayRaisedForPiano");
+                    }
                 }  else if (note.styleNum == Note.STYLENUM_SINGLE){
                     tdNote
                         .find("div.singleNote")
@@ -1463,6 +1470,9 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass(note.bendValue)
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
+                    if (tdNote.hasClass("noteBlackKey")) {
+                        tdNote.addClass("OverlayRaisedForPiano");
+                    }
                 }
             });
         }

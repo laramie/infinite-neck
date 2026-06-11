@@ -24,7 +24,14 @@ describe('piano skeuomorphic note lane visibility css', () => {
         expect(css).toContain('--piano-face-horizontal-gap: max(4px, calc(var(--note-padding) * 0.45), calc(var(--cell-spacing) * 0.75));');
         expect(css).toContain('--piano-white-face-side-gap: var(--piano-face-horizontal-gap);');
         expect(css).toContain('--piano-black-face-side-gap: max(2px, calc(var(--piano-face-horizontal-gap) * 0.70));');
-        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano {\n    z-index: 7;\n}');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano,');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey.OverlayRaisedForPiano .NoteDisplay {');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano,');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey.OverlayRaisedForPiano .NoteDisplay {');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteWhiteKey,');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.noteBlackKey,');
+        expect(css).toContain('z-index: 12 !important;');
+        expect(css).toContain('table.fretTable.pianoSkeuomorphicTable td.note.OverlayRaisedForPiano {\n    overflow: visible;\n}');
     });
 
     test('centers piano midi numbers and retunes only the nested centered lane layout', () => {
