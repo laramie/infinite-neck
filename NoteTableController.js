@@ -1536,7 +1536,11 @@ export function clearAllForTable(tablename) {
     $(tableSelector+"td.note .Fingering").removeClass().addClass("Fingering");
 
     $(".noteHighlight").css("outline", "");
-    clearHighlights();
+    if (tablename) {
+        clearHighlightsForTable(tablename);
+    } else {
+        clearHighlights();
+    }
     colorWhiteBlackKeys();
 }
 

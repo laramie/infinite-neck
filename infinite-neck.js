@@ -1243,9 +1243,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function loadSong(songName){
 		$.get( "songs/"+songName, function( data ) {  //jQuery automatically calls something like JSON.parse and turns the result into a real javascript Object.
 			if (!getSong().isEmpty(getSong().getCurrentSection())){
-				var yes = confirm("Keep previous Song Sections? ( 'Cancel' deletes !! Otherwise, 'OK' adds new Song Sections at end of current Song Sections.)");
+				var yes = confirm("Did you save the current Song with File | Download already? ( 'Cancel' cancels, otherwise 'OK' forgets the current song and opens the new one.");
 				if (!yes){
-					getSong().removeAllSections();
+					return;
 				}
 			}
 			openSong(JSON.stringify(data));

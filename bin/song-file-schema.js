@@ -239,6 +239,10 @@ const chartOptionsSchema = {
         boxCaptionFontsize: {
             type: 'string',
             enum: ['50%', '60%', '70%', '80%', '90%', '100%', '110%', '120%', '140%', '160%', '180%', '200%']
+        },
+        chartSpacing: {
+            type: 'string',
+            enum: ['tight', 'comfy', 'relaxed']
         }
     },
     additionalProperties: false

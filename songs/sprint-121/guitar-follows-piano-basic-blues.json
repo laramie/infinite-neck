@@ -1,0 +1,727 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "S6_listener",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": false,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "S6"
+    },
+    {
+      "instance": true,
+      "baseID": "Piano_lead",
+      "baseInstrument": "Piano",
+      "caption": "Piano Skeuomorphic",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "visible": true,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "PianoSkeuomorphic"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblS6_listener",
+      "visible": true
+    },
+    {
+      "tableID": "tblPiano_lead",
+      "visible": true
+    }
+  ],
+  "colorDicts": {
+    "user": {
+      "readOnly": false,
+      "computed": false,
+      "checked": true,
+      "dict": {
+        "note1": {
+          "colorClass": "noteHatched noteBlack",
+          "MOJOcaptionClass": "noteBlack",
+          "caption": "I"
+        }
+      }
+    }
+  },
+  "plugins": {},
+  "activeStylesheets": "Default+user",
+  "captionsRowShowing": false,
+  "defaultBPM": "120",
+  "info": "<p>\nThis song, guitar-follows-piano-basic-blues.json, has a Standard-tuning guitar (called S6_listener) \"Listening\" to a Piano (called Piano_lead).  \n</p>\n<br>\n<p>\n\"Listening\" means that notes saved in Piano_lead's track are wired to play through S6_listener's track.  So you can see S6_listenerer \"following\" every note Piano_lead plays. The notes were chosen to be playable on both guitar and piano.\n</p>\n<br>\n<p>\nYou can add more notes to Piano_lead by chosing a note style from the palette (Named, Single, Tiny, Bend) then clicking on a piano key and these will automatically appear on the guitar.  You may have to scroll the piano left and right to be in the same pitch range on both instruments.  You can hover around until you see a scrollbar near the bottom of each instrument, or you can do a two-finger trackpad scroll.   To know which pitches are identical, use <b>View | Show MIDI Number</b>.   To get the MIDI Number to stick around as you navigate away from this Section, click <b>SAVE Display Options</b> before you leave the <b>View</b> menu.\n</p>\n<br>\n<p>\nTo get the instruments to fit in your browser, use your browser's <b>CTRL +</b> and <b>CTRL -</b> keyboard shortcuts.\n</p>\n<br>\n<p>\nTo see a song where the Piano listens to the Guitar, open \"piano-follows-guitar.json\".\n</p>\n<br>\n<p>\nTake a look at the Chart: \"Chart\" menu button &gt; \"Chart\" tab.  This lets you click on a Section and navigate to it.\n</p>\n<br>\n<p>\nYou can also toggle the \"Transport\" on an off with keyboard shortcut \"t\", and you can loop from there, or toggle looping with keyboard shortcut \"l\" ( l for loop).\n</p>",
+  "namedNoteOpacity": "1",
+  "openInfo": "parked",
+  "presentationMode": true,
+  "chartOptions": {
+    "modes": false,
+    "detailLine": false,
+    "showCaptions": false,
+    "showNextLine": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "LeadSheet",
+    "chartSpacing": "tight",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "guitar-follows-piano-basic-blues",
+  "theme": "GuitarStringsWhite",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "C7no5",
+          "mode": "C major pentatonic",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "0",
+              "col": "19",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "27",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "31",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "0",
+              "col": "37",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "C7no5",
+      "chartMode": "C major pentatonic",
+      "chartPosition": "HEAD",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "8",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "currentColorDict": "user",
+        "NoteDisplaySizes": {
+          "caption": "200x30:22",
+          "width": "200px",
+          "height": "30px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "6",
+        "pianoWidthScaleFactor": "2",
+        "pianoWhiteToBlackWidthRatio": "1.8",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "30%",
+        "tinyNoteFontSize": "90%",
+        "tinyNoteMaxHeight": "25%",
+        "tinyNoteVPosition": "25%",
+        "tinyNoteWidth": "45%",
+        "tinyNoteHPosition": "80%",
+        "tinyNoteRadius": "50%"
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "F7",
+          "mode": "F mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "0",
+              "col": "24",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "27",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "0",
+              "col": "30",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "41",
+              "row": "0",
+              "col": "20",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "F7",
+      "chartMode": "F mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "CM",
+          "mode": "C major pentatonic",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "27",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "31",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "0",
+              "col": "34",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "0",
+              "col": "39",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "0",
+              "col": "43",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "CM",
+      "chartMode": "C major pentatonic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 1,
+      "sharps": false,
+      "beatsPerBar": "4"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "F7",
+          "mode": "F mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "0",
+              "col": "24",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "0",
+              "col": "30",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "0",
+              "col": "39",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "41",
+              "row": "0",
+              "col": "20",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "F7",
+      "chartMode": "F mixolydian",
+      "chartPosition": "LINE",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 1,
+      "sharps": false,
+      "beatsPerBar": "4"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "C7",
+          "mode": "",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "0",
+              "col": "22",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "31",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "27",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "0",
+              "col": "37",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "C7",
+      "chartMode": "C mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 1,
+      "sharps": false,
+      "beatsPerBar": "4"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "G7",
+          "mode": "G mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "0",
+              "col": "22",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "0",
+              "col": "26",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "0",
+              "col": "32",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "0",
+              "col": "38",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblS6_listener": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "G7",
+      "chartMode": "G mixolydian",
+      "chartPosition": "LINE",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "F7no5",
+          "mode": "F mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "41",
+              "row": "0",
+              "col": "20",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "0",
+              "col": "24",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "0",
+              "col": "30",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": "41",
+              "row": "0",
+              "col": "20",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "F7no5",
+      "chartMode": "F mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "8",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "C9",
+          "mode": "C mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "27",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "0",
+              "col": "41",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "31",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "0",
+              "col": "34",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "0",
+              "col": "37",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblS6_listener": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "C9",
+      "chartMode": "C mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_lead": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "G7",
+          "mode": "",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "0",
+              "col": "26",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "0",
+              "col": "29",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "0",
+              "col": "32",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "0",
+              "col": "22",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "G7",
+      "chartMode": "G mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblS6_listener",
+      "relativeSection": "",
+      "listenToTablename": "tblPiano_lead",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": []
+  },
+  "currentColorDict": "user"
+}

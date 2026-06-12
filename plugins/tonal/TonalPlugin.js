@@ -13,8 +13,15 @@ import {
   TONAL_SUGGESTION_LIMIT,
   TonalAutoWrite
 } from '../../tonalPicker-functions.js';
+import { TonalSourceSet } from '../../TonalFunctions.js';
+import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 
 const TARGET_TABLE_OPTION_LIMIT = 9;
+const SOURCE_NOTE_TYPE_OPTIONS = Object.freeze([
+  { trigger: 'n', label: 'named', value: TonalSourceSet.NAMEDNOTE },
+  { trigger: 's', label: 'single', value: TonalSourceSet.SINGLENOTE },
+  { trigger: 't', label: 'tiny', value: TonalSourceSet.TINYNOTE }
+]);
 
 function escapeHtml(text) {
   return `${text || ''}`
@@ -34,6 +41,30 @@ function formatImmediateAcceptCaption(label, suggestion = '', isSelected = false
   const safeSuggestion = suggestion || '<none>';
   const checkmark = isSelected ? `<span class='commandCheckmark'>&check;</span>` : '';
   return `${label} ${checkmark}<em>${escapeHtml(safeSuggestion)}</em>`;
+}
+
+function normalizeSourceNoteTypeValue(rawValue) {
+  switch (`${rawValue || ''}`) {
+    case TonalSourceSet.SINGLENOTE:
+      return TonalSourceSet.SINGLENOTE;
+    case TonalSourceSet.TINYNOTE:
+      return TonalSourceSet.TINYNOTE;
+    case TonalSourceSet.NAMEDNOTE:
+    default:
+      return TonalSourceSet.NAMEDNOTE;
+  }
+}
+
+function sourceNoteTypeLabelFromValue(rawValue) {
+  const normalized = normalizeSourceNoteTypeValue(rawValue);
+  const match = SOURCE_NOTE_TYPE_OPTIONS.find((option) => option.value === normalized);
+  return match ? match.label : 'named';
+}
+
+function sourceNoteTypeValueFromLabel(label) {
+  const normalizedLabel = `${label || ''}`.toLowerCase();
+  const match = SOURCE_NOTE_TYPE_OPTIONS.find((option) => option.label === normalizedLabel);
+  return match ? match.value : TonalSourceSet.NAMEDNOTE;
 }
 
 export class TonalPlugin {
@@ -127,7 +158,19 @@ export class TonalPlugin {
     if (fieldName === 'modeSummary') {
       return formatTonalSuggestionSummary('mode', this.getSuggestionState(song));
     }
+    if (fieldName === 'sourceNoteType') {
+      return this.getCurrentSourceNoteTypeLabel(song);
+    }
     return undefined;
+  }
+
+  getCurrentSourceNoteTypeValue(song = getSong()) {
+    const state = this.getSuggestionState(song);
+    return normalizeSourceNoteTypeValue(state.tonalSourceSet);
+  }
+
+  getCurrentSourceNoteTypeLabel(song = getSong()) {
+    return sourceNoteTypeLabelFromValue(this.getCurrentSourceNoteTypeValue(song));
   }
 
   refreshDynamicPropertyOptions(song = getSong()) {
@@ -231,6 +274,8 @@ export class TonalPlugin {
       children: [
         this.getProperty('targetTable').getMenuNodeSpec(this),
         this.getProperty('autoWrite').getMenuNodeSpec(this),
+        this.buildSourceNoteTypeNode(),
+        this.buildApplySourceNoteTypeToAllSectionsNode(),
         this.buildActionNode('prevSection', 'prev section', 'p', false),
         this.buildActionNode('nextSection', 'next section', 'n', false),
         this.buildSuggestionMenuNode('chord', 'chords', 'c', state),
@@ -240,6 +285,39 @@ export class TonalPlugin {
         this.buildActionNode('refresh', `refresh [section ${this.getCurrentSectionIndex(song) + 1}]`, 'r', false),
         this.getProperty('help').getMenuNodeSpec(this)
       ]
+    });
+  }
+
+  buildSourceNoteTypeNode() {
+    const token = `plugin:${this.id}:sourceNoteType`;
+    const children = SOURCE_NOTE_TYPE_OPTIONS.map((option) => new MenuItemProxy(this, {
+      name: `sourceNoteType:${option.label}`,
+      caption: buildCaption(option.label, option.trigger),
+      trigger: option.trigger,
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName: `setSourceNoteType:${option.label}`,
+      popOnBang: true
+    }));
+
+    return new MenuItemProxy(this, {
+      name: 'sourceNoteType',
+      caption: `${buildCaption('source note type', 's')} [${buildValueReference(token)}]`,
+      trigger: 's',
+      vars: [token],
+      children
+    });
+  }
+
+  buildApplySourceNoteTypeToAllSectionsNode() {
+    return new MenuItemProxy(this, {
+      name: 'applySourceNoteTypeToAllSections',
+      caption: buildCaption('Apply source note type to All sections', 'A'),
+      trigger: 'A',
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName: 'applySourceNoteTypeToAllSections',
+      popOnBang: false
     });
   }
 
@@ -318,6 +396,8 @@ export class TonalPlugin {
         return this.navigateSection('next', song);
       case 'refresh':
         return { result: `refreshed section ${this.getCurrentSectionIndex(song) + 1}` };
+      case 'applySourceNoteTypeToAllSections':
+        return this.applySourceNoteTypeToAllSections(song);
       case 'printExtraModes':
         return this.printExtraModes(song);
       case 'help':
@@ -331,6 +411,10 @@ export class TonalPlugin {
       case 'acceptFirstMode':
         return this.acceptSuggestion(song, 'mode', 0, false);
       default:
+        if (actionName.startsWith('setSourceNoteType:')) {
+          const [, sourceNoteTypeLabel] = actionName.split(':');
+          return this.setSourceNoteTypeForCurrentSection(song, sourceNoteTypeLabel);
+        }
         if (actionName.startsWith('acceptChordIndex:')) {
           const [, rawIndex, overflowFlag] = actionName.split(':');
           return this.acceptSuggestion(song, 'chord', normalizeSuggestionIndex(rawIndex), overflowFlag === 'overflow');
@@ -341,6 +425,33 @@ export class TonalPlugin {
         }
         return { result: `Unknown tonal action: ${actionName}` };
     }
+  }
+
+  setSourceNoteTypeForCurrentSection(song = getSong(), sourceNoteTypeLabel = 'named') {
+    this.refreshDynamicPropertyOptions(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!tableID) {
+      return { result: 'No target instrument selected' };
+    }
+    const sectionIndex = this.getCurrentSectionIndex(song);
+    const sourceNoteTypeValue = sourceNoteTypeValueFromLabel(sourceNoteTypeLabel);
+    linkToSectionTableTonalSourceSet(sectionIndex, tableID, sourceNoteTypeValue, false);
+    linkToSectionChangedTonal();
+    return { result: `source note type set to ${sourceNoteTypeLabelFromValue(sourceNoteTypeValue)}` };
+  }
+
+  applySourceNoteTypeToAllSections(song = getSong()) {
+    this.refreshDynamicPropertyOptions(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!tableID) {
+      return { result: 'No target instrument selected' };
+    }
+    const sourceNoteTypeValue = this.getCurrentSourceNoteTypeValue(song);
+    (song?.sections || []).forEach((_, sectionIndex) => {
+      linkToSectionTableTonalSourceSet(sectionIndex, tableID, sourceNoteTypeValue, false);
+    });
+    linkToSectionChangedTonal();
+    return { result: `applied source note type ${sourceNoteTypeLabelFromValue(sourceNoteTypeValue)} to all sections` };
   }
 
   navigateSection(direction, song = getSong()) {
@@ -419,6 +530,8 @@ Fast section-by-section approval for Tonal suggestions.
 - mode summary = ${formatTonalSuggestionSummary('mode', state)}
 - /fpo opens the TonalPlugin root menu
 - /fpoa keeps instrument, write policy, navigation, and accept actions on stable keys
+- /fpoas selects tonal source note type [named|single|tiny] for the current section/table
+- /fpoaA applies the current section source note type to all sections for that table
 - C accepts the first chord suggestion and stays in /fpoa
 - M accepts the first mode suggestion and stays in /fpoa
 - c and m open limited 1..9 suggestion lists

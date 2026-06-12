@@ -3,6 +3,7 @@
 Below is a list of documentation files in this directory. Add or edit notes after each link as needed.
 
 - [LayoutManager-specification.md](LayoutManager-specification.md)
+- [Looper-DaCapo-OnSectionBegin-for-nav.md](Looper-DaCapo-OnSectionBegin-for-nav.md)
 - [call-tree.md](call-tree.md)
 - [class-diagram-20260316.md](class-diagram-20260316.md)
 - [class-diagram-note-types.md](class-diagram-note-types.md)
