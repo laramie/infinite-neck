@@ -8,7 +8,6 @@ export function supportsPianoSkeuomorphic(tuning) {
     return Boolean(
         isPianoTuning(tuning)
         && Array.isArray(tuning.rowRange)
-        && tuning.rowRange.length === 1
     );
 }
 
