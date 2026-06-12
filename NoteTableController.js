@@ -92,8 +92,17 @@ function setNoteClickedCaption(...args) { return notetableProviders.setNoteClick
 function showBeats() { return notetableProviders.showBeats(); }
 function turnOffHiding() { return notetableProviders.turnOffHiding(); }
 
-function createNotetableLookupContext(section = getCurrentSection()) {
-    return createLookupContext({ section });
+function createNotetableLookupContext(section = getCurrentSection(), tableID = '') {
+    // Table-scoped lookup context lets AutoColor see whether this table owns the
+    // noteRoot source, without changing the shared tonal model or listener paths.
+    const noteRootResult = section?.getNoteRoot?.(tableID) || null;
+    return createLookupContext({
+        section,
+        tableID,
+        tablename: tableID,
+        noteRootTablename: noteRootResult?.tablename || '',
+        rootID: noteRootResult ? NOTE_NAMES_ARRAY.indexOf(noteRootResult.noteName) : undefined
+    });
 }
 
 function getTuningByTableID(tableID) {
@@ -437,8 +446,9 @@ export function colorNote(cell) {
     }
 }
 export function colorNoteInner(cell) {
+    let tableID = "";
     let result = {returnCause:Cause.ERROR, tableID: ""};
-    const lookupContext = createNotetableLookupContext(getCurrentSection());
+    const lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -446,7 +456,6 @@ export function colorNoteInner(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
-    let tableID = "";
     let parentTableSel = "";
     var parentTable = cell.closest("table");
     if (parentTable){
@@ -693,7 +702,7 @@ export function dropper(cell, cellcol, cellrow, styleNum, noteName){
             return;
         }
 
-        const lookupContext = createNotetableLookupContext(getCurrentSection());
+        const lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
         const foundColorClass = selectDropperRadioForNote(note, lookupContext)
             || note.colorClass
             || lookupUserColorClass(note, lookupContext);
@@ -832,7 +841,7 @@ function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
 
 
 export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
-    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection());
+    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection(), tableID);
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
         var isNut = cell.hasClass("nut") || cell.hasClass("nutR");
@@ -1041,7 +1050,8 @@ export function replayTable(replayOptions){
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    const lookupContext = createNotetableLookupContext(currSection);
+    let tablename = replayOptions.tablename;
+    const lookupContext = createNotetableLookupContext(currSection, tablename);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -1052,7 +1062,6 @@ export function replayTable(replayOptions){
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
-    let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
     const showBeatCounter = !!controlsToDisplayOptions().showLooperLightBeats;
     const currentBeatNumber = getBeatNumber();
@@ -1403,7 +1412,7 @@ export function showHighlightsForBeat(nBeat){
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
     const currSection = getReplaySection(options);
-    const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(currSection, options.tablename);
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';

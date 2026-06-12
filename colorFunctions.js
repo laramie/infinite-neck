@@ -52,12 +52,14 @@ function fullRepaint() {
 export function createLookupContext({
 	section = getCurrentSection(),
 	autoColor = doingAutomaticColor(),
-	colorDict = gUserColorDict.dict
+	colorDict = gUserColorDict.dict,
+	...rest
 } = {}) {
 	return {
 		section,
 		autoColor,
-		colorDict
+		colorDict,
+		...rest
 	};
 }
 
@@ -66,14 +68,14 @@ function resolveLookupContext(lookupContext = {}) {
 	if (!context.section) {
 		return {
 			...context,
-			rootID: null,
-			rootIDLead: null
+			rootID: context.rootID ?? null,
+			rootIDLead: context.rootIDLead ?? null
 		};
 	}
 	return {
 		...context,
-		rootID: context.section.rootID,
-		rootIDLead: context.section.rootIDLead
+		rootID: context.rootID ?? context.section.rootID,
+		rootIDLead: context.rootIDLead ?? context.section.rootIDLead
 	};
 }
 
@@ -785,7 +787,15 @@ export function chuseStylesheet(dictkey){
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
 		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
+			// Keep the existing function-key lookup, but let the root-bearing table
+			// promote the root function to the special noteRoot styling.
 			result.colorClass = userColor.colorClass;
+			if (relNoteNum === 0 && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
+				const noteRootColor = context.colorDict.noteRoot;
+				if (noteRootColor?.colorClass) {
+					result.colorClass = noteRootColor.colorClass;
+				}
+			}
 			result.functionNum = relNoteNum;
 			return result;
 		}

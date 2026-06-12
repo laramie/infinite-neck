@@ -1,6 +1,7 @@
 import { Note } from '../../Note.js';
 import { SectionNotes } from '../../SectionNotes.js';
 import { getTonalForTable, TonalSourceSet } from '../../TonalFunctions.js';
+import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 
 function createSongMock(rootKey = 'C') {
     return {
@@ -170,5 +171,46 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.rootKey).toBe('B');
         expect(result.noteRootTablename).toBe(rootTableID);
         expect(result.normalizedNamedNotes).toEqual(['B', 'C', 'E', 'G']);
+    });
+
+    test('AutoColor can promote the root function to noteRoot for the table that owns noteRoot', () => {
+        const tableID = 'tblP46_1';
+        const rootTableID = 'BASS_1';
+        const section = createSection({
+            [tableID]: new SectionNotes({
+                tonalSourceSet: TonalSourceSet.NAMEDNOTE,
+                namedNotes: createNamedNotes(['C', 'E', 'G'])
+            }),
+            [rootTableID]: new SectionNotes({
+                namedNotes: {
+                    B: { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteRoot' }
+                }
+            })
+        }, '2');
+
+        const rootLookup = lookupClassForNote(
+            { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'note1' },
+            createLookupContext({
+                section,
+                autoColor: true,
+                tablename: rootTableID,
+                noteRootTablename: rootTableID,
+                rootID: 2
+            })
+        );
+
+        const nonRootLookup = lookupClassForNote(
+            { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'note1' },
+            createLookupContext({
+                section,
+                autoColor: true,
+                tablename: tableID,
+                noteRootTablename: rootTableID,
+                rootID: 2
+            })
+        );
+
+        expect(rootLookup?.colorClass).toBe('noteBlack noteHatched6');
+        expect(nonRootLookup?.colorClass).toBe('noteBlack');
     });
 });
