@@ -1,7 +1,9 @@
 # ChangeLog
 
 ### 20260612
+Tag: v2.1-beta-2 
 
+- Added multi-level keyboards for Piano when in "Piano Skeuo" mode, so "Piano Guitar 2Row"/PianoFrets2 works.
 Tag: v2.1-beta-1
 
 - 2a84855 **2026-06-12** added new chart options to schema. Changed file,download dialog to ask for confirmation of song loss, not append-song, which is moved. Fixed bug where you couldn't add highlights to instruments listened to. Added feature to TonalPlugin where you can set the Tonal source set (Named, Single, Tiny) from the command-line, and apply it to all Sections optionally. Added new sprint-121 songs.
