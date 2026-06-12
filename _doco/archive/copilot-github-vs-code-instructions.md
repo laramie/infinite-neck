@@ -1,5 +1,10 @@
 # Copilot Chat (GitHub/VS Code) — Notes Workflow
 
+This is an old version.  The live version lives in: 
+```
+.github/copilot-instructions.md
+```
+
 ## Goal
 Understand how we view the codebase, and how we appreciate a workflow with GitHub Copilot.
 

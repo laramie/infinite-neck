@@ -8,11 +8,16 @@ Specific work alloted to this sprint is broken into Iterations.  See the Iterati
 
 Here are the work items, grouped by status.
 
+## Active
+
+
 ## Complete
 
-- Iteration 1: /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen. DONE.
+- Iteration 1: /ch should also be fullscreen aware.  Weird that it affects fullscreen when not fullscreen, and doesn't hide non-fullscreen. 
+  - DONE.
 
-- Iteration 2: Track down and supress or replace message: "noteRoot:undefined" Chart>Notes>Chords per instrument.  If no noteRoot found, should just be silent.  DONE.
+- Iteration 2: Track down and supress or replace message: "noteRoot:undefined" Chart>Notes>Chords per instrument.  If no noteRoot found, should just be silent.  
+  - DONE.
 
 - Iteration 3: finish the coding of `section-status-vertical-widget` and friends, and sync with `.SongTitleLeadSheet` widget area, probably ditching the hand-coded LooperLight, and Key indicator. 
     - make the title and the looper light be in the same vertical column on the LHS of the Instrument.
@@ -25,25 +30,54 @@ Here are the work items, grouped by status.
   - See: [Iteration 4 notes](119-it4.md)
   - DONE
 
-
-## Active
-
-
-## Unscheduled
-
+### Complete (without Iteration number)
 - menu prompt stale sometimes
   - specific bug introduced by command-line one-line is FIXED.  
   - CLOSED. Keep an eye out for other use-cases, such as in Plugins.
 
-- chart colors and shadows
-  - DEFERRED.  Looks good for now.
-
-- plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
-
 - palete KEEP, etc. should get a highlight ring so that KEEP is not so unexpected
+  - COMPLETE (actually a complete refactor of the four radio buttons)
 
 - default spacebar to looper is getting trapped so you must hit ESC to use it again.
   - CLOSED. Can't replicate.
+
+- in /fpoa "Refresh" should be "Refresh [section 1]" 
+  - DONE
+
+- command line loses LHS tracks when we go into short and one-line.
+  - FIXED
+
+- If you start /fpa on Piano, then change Instrument to guitar, it retains that its strings range is 1:1. changing instrument should upgrade strings to the number of that instrument's capacity.
+  - FIXED
+
+- Add menu choices and action to /vmo `o) opacity` to set this: 
+  - `1) 100% 2) 95% 3) 90% 4) 85% 5) 80% 6) 60%  v) value`
+  - `.CmdMenuClass {opacity: 85%;....}`
+  - COMPLETE
+
+- When not in presentation mode and first section has saved DisplayOptions, apply width and height once.  (Otherwise they are never saved or restored.)
+  - COMPLETE, with a different strategy.  Now every Section looks back to DisplayOptions properly.
+
+- add verb under Clip to "Copy all Listened notes in song into this Listening/wired instrument"
+  - DONE : `/fpcL`, and also "Capture" button in Wiring.
+
+- Make Find Color work for other Note types than just NamedNote.
+  - COMPLETE
+
+- Add MUTE and CAPTURE buttons to Wiring.  Leave 'Wired' wired, but allow MUTE to override.  CAPTURE does Listener paste.
+  - COMPLETE
+
+## Deferred
+
+- chart colors and shadows
+  - DEFERRED.  Looks good for now.
+
+- Allow navigation limited set in command-line when not in a value edit, to navigate: [,.<>]  Would be cleanest
+  - DEFERRED (probably brittle and wonky.  /fpoa allows navigation, as do a few others that need it.) 
+
+## Unscheduled
+
+- plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
 
 - In all menus, make sure "table" and "Table" are replaced by "Instrument".
 
@@ -51,32 +85,13 @@ Here are the work items, grouped by status.
 
 - In Chart Notes, we need a link next to the TH for "Caption" that toggles "hide"/"show" so you can hide the caption except for the first 10 characters then "...". The Captions get so long they blow out the width of the table.  Wrapping wouldn't help because then the rows would get tall.
 
-- in /fpoa "Refresh" should be "Refresh [section 1]" - DONE
-
-- command line loses LHS tracks when we go into short and one-line.
-
-- If you start /fpa on Piano, then change Instrument to guitar, it retains that its strings range is 1:1. changing instrument should upgrade strings to the number of that instrument's capacity.
-
-- Add menu choices and action to /vmo `o) opacity` to set this: 1) 100% 2) 95% 3) 90% 4) 85% 5) 80% 6) 60%  v) value
-```
-  .CmdMenuClass {
-      opacity: 85%;
-```
-
-- Allow navigation limited set in command-line when not in a value edit, to navigate: [,.<>]  Would be cleanest 
-
-- When not in presentation mode and first section has saved DisplayOptions, apply width and height once.  (Otherwise they are never saved or restored.)
-
 - add menu under /vp - view, presentation mode
 
-- add verb under Clip to "Copy all Listened notes in song into this Listening/wired instrument"
 
-- Make Find Color work for other Note types than just NamedNote.
-
-- Add MUTE and CAPTURE buttons to Wiring.  Leave 'Wired' wired, but allow MUTE to override.  CAPTURE does Listener paste.
+## DOCO
 
 - DOCO: 
-  - I want to:
+  - FAQ / "I want to":
     - Use the chart to fill in the notes on an instrument: FillPlugin, 
     - Copy the notes from one instrument into another: `L` Listened notes copy
     - Turn the notes from many Sections into chart chords: `rip-through` flow in TonalPlugin
@@ -96,7 +111,7 @@ Here are the work items, grouped by status.
              - After the song is downloaded, the transpositions are kept, and TransposePlugin starts fresh the next time the song is opened.
   
          
-  - HELP!
+  - "HELP!"
     - no clicky? Check Note KEEP
     - can't select my Instrument in ArpeggioPlugin? Check that it is not Wired. Arpeggio doesn't work on Listeners or Observers.
     

@@ -1,5 +1,13 @@
 # Daily Command-lines
 
+## Copilot SOP and instructions
+
+`.github/copilot-instructions.md`
+
+## sprint planning documents
+
+[_doco/lifecycle/sprints.md](../lifecycle/sprints.md)
+
 ## Update _doco
 ```
 cd ~/infinite-neck
