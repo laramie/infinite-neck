@@ -65,7 +65,48 @@ Here are the work items, grouped by status.
   - COMPLETE
 
 - Add MUTE and CAPTURE buttons to Wiring.  Leave 'Wired' wired, but allow MUTE to override.  CAPTURE does Listener paste.
-  - COMPLETE
+  - 
+  
+
+- In Chart Notes, we need a link next to the TH for "Caption" that toggles "hide"/"show" so you can hide the caption except for the first 10 characters then "...". The Captions get so long they blow out the width of the table.  Wrapping wouldn't help because then the rows would get tall.
+  - DONE.  Used max-width instead on SPN_CAPTION.
+
+- In Chart Notes, you can select tonalResultSet of "Tiny".  Since TinyNote  follows LeadKey, when you select a LeadKey that is different from Key, the note sent to Tonal must be set to LeadKeyRoot, unless noteRoot is specifically placed in the Section elsewhere.
+  - **IMPLEMENTED** in getTonalForTable() [TonalFunctions.js, lines 27-33]. When TinyNote source is used and leadKey differs from Key, the leadKey is used as rootKey for Tonal analysis. This respects explicit noteRoot placement (takes precedence). Validated with 3 new regression tests in tonal-functions.test.js.
+
+- add menu under /vp - view, presentation mode
+  - COMPLETE implemented with /vpa and /vpm (automate and manual)     
+
+- in /fpoa you need to do refresh to get it to sync.
+
+  key-handlers.js : 
+  ```
+  function parkCommandLineAtPath(triggerPath = '') {
+    setMenuAtRoot();
+    // Ensure plugin runtime menu nodes are rebuilt for direct path entry (/fpoa, etc.)
+    // so nested suggestion menus are not stale from prior sections/notes.
+    pluginManager.refreshPluginsMenuNode();
+  ```
+
+  key-handlers.js : 
+  ```
+            case "/":
+          // Rebuild runtime plugin menu nodes before entering command mode
+          // so /fpoa starts with fresh tonal suggestions every time.
+          pluginManager.refreshPluginsMenuNode();
+                  setMenuAtRoot();
+    
+  ```
+
+  infinite-neck.js : 
+  ```
+  export function sectionChanged(){
+      syncSectionUi();
+      clearAndReplaySection();
+      // Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
+      pluginManager.refreshPluginsMenuNode();
+    }
+  ```
 
 ## Deferred
 
@@ -79,18 +120,26 @@ Here are the work items, grouped by status.
 
 - plugin menu capitalizations on triggers inconsistent or unneeded in sub-menus
 
-- In all menus, make sure "table" and "Table" are replaced by "Instrument".
+- In All menus, make sure "table" and "Table" are replaced by "Instrument".
 
-- In Chart Notes, you can select tonalResultSet of "Tiny".  Since Tiny follows LeadKey, when you select a LeadKey that is different from RootKey, the noteRoot must be set to LeadKey Root, unless noteRoot is specifically placed in the Section elsewhere.
+- In Chart Notes, you can select tonalResultSet of "Tiny". This informs the notes sent to Tonal.js to detect chords and modes in TonalFunctions.js::getTonalForTable().  However, we have seen NamedNotes leak into that set, so the chord detection is not based purely on TinyNotes, as the tonalSourceSet and the dropdown .tonalSourceSelect would have the User believe.  We need to keep an eye out for this case popping up again.
 
-- In Chart Notes, we need a link next to the TH for "Caption" that toggles "hide"/"show" so you can hide the caption except for the first 10 characters then "...". The Captions get so long they blow out the width of the table.  Wrapping wouldn't help because then the rows would get tall.
 
-- add menu under /vp - view, presentation mode
+
+
+
 
 
 ## DOCO
 
-- DOCO: 
+- Add documentation for add one tuning.  For now, I put this in the Glossary:
+    ```
+    Note: if you wish to add a 4-row Organ, Lineage is "Organ" or some other name you make up, can't be a Lineage in the 
+                Library such as "Piano" that has only one "string".  
+    ```
+  - You can add strings all starting at the same MIDI pitch, or octaves or whatever you want.
+  
+  - DOCO: 
   - FAQ / "I want to":
     - Use the chart to fill in the notes on an instrument: FillPlugin, 
     - Copy the notes from one instrument into another: `L` Listened notes copy

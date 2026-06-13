@@ -278,6 +278,7 @@ export class TonalPlugin {
         this.buildApplySourceNoteTypeToAllSectionsNode(),
         this.buildActionNode('prevSection', 'prev section', 'p', false),
         this.buildActionNode('nextSection', 'next section', 'n', false),
+        this.buildActionNode('acceptChordModeAndNext', 'Next :: accept Chord and Mode', 'N', false),
         this.buildSuggestionMenuNode('chord', 'chords', 'c', state),
         this.buildImmediateAcceptNode('chord', 'Chord', 'C', state),
         this.buildSuggestionMenuNode('mode', 'modes', 'm', state),
@@ -394,6 +395,8 @@ export class TonalPlugin {
         return this.navigateSection('prev', song);
       case 'nextSection':
         return this.navigateSection('next', song);
+      case 'acceptChordModeAndNext':
+        return this.acceptChordModeAndNext(song);
       case 'refresh':
         return { result: `refreshed section ${this.getCurrentSectionIndex(song) + 1}` };
       case 'applySourceNoteTypeToAllSections':
@@ -473,6 +476,17 @@ export class TonalPlugin {
     return { result: `section ${this.getCurrentSectionIndex(song) + 1}` };
   }
 
+  acceptChordModeAndNext(song = getSong()) {
+    // Match the /fpoa fast-path intent: do C, then M, then n.
+    const chordResult = this.acceptSuggestion(song, 'chord', 0, false);
+    const modeResult = this.acceptSuggestion(song, 'mode', 0, false);
+    const navResult = this.navigateSection('next', song);
+
+    return {
+      result: `${chordResult.result}; ${modeResult.result}; ${navResult.result}`
+    };
+  }
+
   acceptSuggestion(song, kind, index, includeOverflow) {
     const state = this.getSuggestionState(song);
     const suggestions = kind === 'chord' ? state.chordSuggestions : state.modeSuggestions;
@@ -534,6 +548,7 @@ Fast section-by-section approval for Tonal suggestions.
 - /fpoaA applies the current section source note type to all sections for that table
 - C accepts the first chord suggestion and stays in /fpoa
 - M accepts the first mode suggestion and stays in /fpoa
+- N accepts first chord+mode then advances to next section
 - c and m open limited 1..9 suggestion lists
 - p at /fpo prints the full unfiltered mode list to Messages only
 - chart+table writes both Section.chart* and table tonal values

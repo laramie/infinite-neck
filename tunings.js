@@ -413,8 +413,8 @@ export const allTunings = {
       "baseID": "PianoFrets",
       "baseInstrument": "Piano",
       "caption": "Piano Guitar",
-      "nStrings": 2,
-      "rowRange": [36],
+      "nStrings": 1,
+      "rowRange": [21],
       "frets": 88,
       "nut": false,
       "reverse": false,
@@ -487,9 +487,39 @@ export const allTunings = {
       "nut": false,
       "reverse": false,
       "visible": false,
-      "pianoNamesRow": true,
-      "pianoNamesRowHeight": "30pt",
-      "fixedFretWidthMult": 1.0
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5
+    },
+    {
+      "instance": false,
+      "baseID": "Organ2Rows",
+      "baseInstrument": "Piano",
+      "caption": "Organ 2 Rows",
+      "nStrings": 2,
+      "rowRange": [48, 36],
+      "frets": 49,
+      "nut": false,
+      "reverse": false,
+      "visible": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5
+    },
+    {
+      "instance": false,
+      "baseID": "Organ3Rows",
+      "baseInstrument": "Piano",
+      "caption": "Organ 3 Rows",
+      "nStrings": 2,
+      "rowRange": [48, 36, 24],
+      "frets": 48,
+      "nut": false,
+      "reverse": false,
+      "visible": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5
     }
   ]
 }

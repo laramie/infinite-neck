@@ -136,6 +136,7 @@ describe('TonalPlugin', () => {
       'applySourceNoteTypeToAllSections',
       'prevSection',
       'nextSection',
+      'acceptChordModeAndNext',
       'chords',
       'acceptFirstChord',
       'modes',
@@ -254,6 +255,38 @@ describe('TonalPlugin', () => {
     expect(result.result).toBe('section 2');
     expect(song.getSectionsCurrentIndex()).toBe(1);
     expect(plugin.resolveValue('chordSummary', { song })).toBe('[Dm7, F6/D]');
+  });
+
+  test('N accepts first chord and mode, then advances to next section', () => {
+    const firstSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G', 'Bb'])
+      })
+    });
+    const secondSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['D', 'F', 'A', 'C'])
+      })
+    }, '5');
+    const song = createSong([firstSection, secondSection]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+    const firstState = getTonalSuggestionState(song, firstSection, 'tblP46_1');
+    const expectedChord = firstState.chordSuggestions[0];
+    const expectedMode = firstState.modeSuggestions[0];
+
+    const result = plugin.invokeAction('acceptChordModeAndNext', { song });
+
+    expect(firstSection.chartChord).toBe(expectedChord);
+    expect(firstSection.getSectionNotes('tblP46_1').chord).toBe(expectedChord);
+    expect(firstSection.chartMode).toBe(expectedMode);
+    expect(firstSection.getSectionNotes('tblP46_1').mode).toBe(expectedMode);
+    expect(song.getSectionsCurrentIndex()).toBe(1);
+    expect(result.result).toContain(`accepted chord 1: ${expectedChord}`);
+    expect(result.result).toContain(`accepted mode 1: ${expectedMode}`);
+    expect(result.result).toContain('section 2');
   });
 
   test('source note type caption reflects the current section and updates after navigation', () => {

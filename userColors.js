@@ -26,7 +26,7 @@ export const gUserColorDictRolesDefault = {
             "tiny": "Sc"
         },
         "noteRoot": {
-            "colorClass": "noteBlack noteHatched6",
+            "colorClass": "noteBlack noteHatched",
             "captionClass": "noteBlack",
             "caption": "Root",
             "tiny": "R"

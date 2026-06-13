@@ -1481,7 +1481,7 @@ td.nut div.NoteActive .CenterCell {
 
 .tinyNotePlayed {
     display: block;
-    border: 1px solid orange;
+    border: 2px solid orange !important;
 }
 .singleNotePlayed {
      display: block;
@@ -1490,7 +1490,7 @@ td.nut div.NoteActive .CenterCell {
 .tinyNotePlayedBend {
     display: block;
     z-index: 5;
-    border: 1px solid orange;
+    border: 1px solid orange !important;
     text-align: left;
     /* doesn't work with display:block  vertical-align: center;  */
     font-size: 0.6em;

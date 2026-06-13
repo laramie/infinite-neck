@@ -491,6 +491,7 @@
       <a class="helpButton" href="#commandline">Command-line</a>
       <a class="helpButton" href="help-plugins.html">Plugin Help</a>
       <a class="helpButton" href="#glossary">Glossary</a>
+      <a class="helpButton" href="#themesGallery">Themes Gallery</a>
     </div>
 
 <div id="helpBody">
@@ -673,6 +674,10 @@
 
     <p>Within Sections, one key is the root key for the band, and optionally, a separate root key for the "lead".
         <i>("Bill is playing F# over Dave and the band's B".)</i></p>
+
+    <p>Additionally, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, and this changes what Tonal.js will 
+        present as the chord set.
+    </p>    
 
 
     <p>To show four chord changes over, say, a Dmin mood, you could use one Section with four Beats,
@@ -886,23 +891,6 @@
                 </li>
                 <li><a href="#options">Options</a></li>
                 <li><a href="#graveyard">The Graveyard</a></li>
-                <li><a href="#themesGallery">Themes Gallery</a>
-                    <ul class="LinkList">
-                        <li><a href="#adult-swim">Adult Swim</a></li>
-                        <li><a href="#everyone-into-the-pool">Everyone into the Pool</a></li>
-                        <li><a href="#zinfandel">Zinfandel</a></li>
-                        <li><a href="#autobahn">Autobahn</a></li>
-                        <li><a href="#late-nite">Late Nite</a></li>
-                        <li><a href="#big-in-japan">Big in Japan</a></li>
-                        <li><a href="#pool-shark">Pool Shark</a></li>
-                        <li><a href="#blade">Blade</a></li>
-                        <li><a href="#coffy-brown">Coffy Brown</a></li>
-                        <li><a href="#landau-top">Landau Top</a></li>
-                        <li><a href="#renfaire">Renfaire</a></li>
-                        <li><a href="#robin-hood">Robin Hood</a></li>
-                        <li><a href="#shire">Shire</a></li>
-                    </ul>
-                </li>
                 <li><a href="#keymap">Keymap</a></li>
                 <li><a href="#commandline">Command-line Menu</a>
                     <ul class="LinkList">
@@ -972,6 +960,24 @@
 
                 </ul>
                 <li><a href="#glossary">Glossary</a></li>
+                <li><a href="#themesGallery">Themes Gallery</a>
+                    <ul class="LinkList">
+                        <li><a href="#adult-swim">Adult Swim</a></li>
+                        <li><a href="#everyone-into-the-pool">Everyone into the Pool</a></li>
+                        <li><a href="#zinfandel">Zinfandel</a></li>
+                        <li><a href="#autobahn">Autobahn</a></li>
+                        <li><a href="#late-nite">Late Nite</a></li>
+                        <li><a href="#big-in-japan">Big in Japan</a></li>
+                        <li><a href="#pool-shark">Pool Shark</a></li>
+                        <li><a href="#blade">Blade</a></li>
+                        <li><a href="#coffy-brown">Coffy Brown</a></li>
+                        <li><a href="#landau-top">Landau Top</a></li>
+                        <li><a href="#renfaire">Renfaire</a></li>
+                        <li><a href="#robin-hood">Robin Hood</a></li>
+                        <li><a href="#shire">Shire</a></li>
+                    </ul>
+                </li>
+
             </ul>
         </li>
     </ul>
@@ -1044,7 +1050,9 @@
             express: a unique set of single letter names for each of the twelve tones of the chromatic scale.
             I do this by assigning names concretely, which apply in any 12-tone
             playing, assuming you know where the "root" is, or the key of the band or dominant instrument,
-            usually the bass player.  I used symbols familiar to Jazz and Session players, and added a few new ones
+            usually the bass player. (In <span class="productsmaller">infinite-neck</span>, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, 
+            and this changes what Tonal.js will 
+        present as the chord set.) I used symbols familiar to Jazz and Session players, and added a few new ones
             where singular, concrete names were needed.
             </i></small></p>
 
@@ -1750,7 +1758,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <a name="transposing"></a>
 <h5>Transposing</h5>
-<p>Note that infinite-neck has several ways to transpose: 
+<p>Note that <span class="productsmaller">infinite-neck</span> has several ways to transpose: 
     <ul>
         <li>Transposing with the keyboard shortcuts transposes NamedNotes only in the Current Section.
         <li><span class="menuExampleLine"><b>/fa</b></span> shows a menu where you can transpose all NamedNotes or just the Section keys in a song at once, after you chose the number of half-steps.
@@ -4514,6 +4522,15 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>In "Tunings in Song", the values in column "BN" causes the 
                 Nut location to move per string. Used for modelling Banjo, and also for creating custom Capos
                 in song-owned tunings. Deep custom tuning creation now lives under "Add One Tuning" in "Tunings in Song".
+                Note: if you wish to add a 4-row Organ, Lineage is "Organ" or some other name you make up, can't be a Lineage in the 
+                Library such as "Piano" that has only one "string".
+            </td>
+        </tr>
+        <tr>
+            <td>noteRoot
+            </td>
+            <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, just like a Bass player would, and this changes what Tonal.js will 
+        present as the chord set.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
             </td>
         </tr>
         <tr>

@@ -98,14 +98,10 @@
   max-width: 5em;
 }
 .SPN_CAPTION {
-  max-width: 18em;
+  max-width: 10em;
+  overflow-wrap: break-word; 
+  word-break: break-word;
 }
-/* Not needed, really.  But here's how you would limit this:
-*  .SPN_SPAN_CAPTION {
-*     display: inline-block;
-*     max-width: 50em;
-*  }
-*/
 .SPN_CHORD{
   white-space: nowrap;
 }

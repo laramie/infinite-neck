@@ -972,6 +972,22 @@ export var gMenuFile =    {
           ]
         },
         {
+          "caption": "<b>p</b>resentation mode",
+          "trigger": "p",
+          "children": [
+            {
+              "caption": "<b>a</b>utomate cell widths/heights/NoteFontSize",
+              "trigger": "a",
+              "action": "setPresentationModeAutomated"
+            },
+            {
+              "caption": "<b>m</b>anual cell widths/heights/NoteFontSize",
+              "trigger": "m",
+              "action": "setPresentationModeManual"
+            }
+          ]
+        },
+        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-view"
