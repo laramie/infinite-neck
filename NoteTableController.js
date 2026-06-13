@@ -448,7 +448,6 @@ export function colorNote(cell) {
 export function colorNoteInner(cell) {
     let tableID = "";
     let result = {returnCause:Cause.ERROR, tableID: ""};
-    const lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -464,6 +463,8 @@ export function colorNoteInner(cell) {
         result.tableID = tableID;
         parentTableSel = '#'+tableID+' ';
     }
+    // Build the lookup context after tableID is resolved so getNoteRoot targets the correct table.
+    let lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
@@ -665,6 +666,18 @@ export function colorNoteInner(cell) {
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
 
+            // When placing a noteRoot note, the model hasn't been updated yet so getNoteRoot
+            // won't find it. Rebuild context with explicit ownership so AutoColor promotion
+            // fires immediately on first placement without requiring a refresh.
+            if (theColorClass === 'noteRoot') {
+                lookupContext = createLookupContext({
+                    ...lookupContext,
+                    tablename: tableID,
+                    noteRootTablename: tableID,
+                    rootID: NOTE_NAMES_ARRAY.indexOf(noteName)
+                });
+            }
+
             var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
 
@@ -681,7 +694,6 @@ export function colorNoteInner(cell) {
         return result;
     }
 }
-
 export function dropper(cell, cellcol, cellrow, styleNum, noteName){
     var jCell = $(cell);
 
