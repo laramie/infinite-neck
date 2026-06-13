@@ -98,6 +98,7 @@ function printSectionsChart(...args) { return requireProvider('printSectionsChar
 function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
+function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
@@ -156,6 +157,9 @@ function moveSelectByClampedStep(selectSelector, delta) {
 
 function parkCommandLineAtPath(triggerPath = '') {
 	setMenuAtRoot();
+	// Ensure plugin runtime menu nodes are rebuilt for direct path entry (/fpoa, etc.)
+	// so nested suggestion menus are not stale from prior sections/notes.
+	pluginManager.refreshPluginsMenuNode();
 	let currentMenu = gMenuPointer;
 	for (const trigger of `${triggerPath}`) {
 		const children = currentMenu?.children || [];
@@ -227,6 +231,9 @@ function document_keypress(e) {
                 e.preventDefault();
                 break;
             case "/":
+				// Rebuild runtime plugin menu nodes before entering command mode
+				// so /fpoa starts with fresh tonal suggestions every time.
+				pluginManager.refreshPluginsMenuNode();
                 setMenuAtRoot();
                 clearCmdResults();
                 showCmdLine();
@@ -860,6 +867,14 @@ export function performCmdAction(menuItem, args){
 				setCmdLineMenuMode('one-line');
 				actionResult.result = 'menu prefs: one-line';
 			}
+			break;
+		case "setPresentationModeAutomated":
+			setPresentationMode(true);
+			actionResult.result = "presentation mode: automated";
+			break;
+		case "setPresentationModeManual":
+			setPresentationMode(false);
+			actionResult.result = "presentation mode: manual";
 			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);

@@ -264,6 +264,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			printSectionsLine,
 			resetNoteNames,
 			sectionChanged,
+			setPresentationMode,
 			setBPM,
 			setNamedNoteOpacity,
 			setSingleNoteOpacity,
@@ -335,6 +336,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function getSections(){
 	    return getSong().getSections();
+	}
+
+	export function setPresentationMode(shouldAutomate){
+		if (!getSong()){
+			return;
+		}
+		getSong().presentationMode = !!shouldAutomate;
+		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).trigger('change');
 	}
 	//==================== 2) Section/song state helpers ======================
 
@@ -420,7 +429,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function sectionChanged(){
 		syncSectionUi();
-		clearAndReplaySection()
+		clearAndReplaySection();
+		// Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
+		pluginManager.refreshPluginsMenuNode();
 	}
 
 	export function updateSectionsStatus(){
