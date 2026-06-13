@@ -285,29 +285,6 @@ export function txtCmdLine_keypress(e) {
                     child.bang = false;
                     return;
                 } else {
-                    /*
-                    if (menu && menu.pluginId === 'tonal' && child && child.name === 'accept') {
-                        // Opening /fpoa should behave as if refresh (r) was pressed first.
-                        gCmdActionRunner({
-                            action: 'pluginAction:invoke',
-                            pluginId: 'tonal',
-                            actionName: 'refresh'
-                        }, {});
-
-                        // Refresh may rebuild plugin nodes; rebind to the current /fpoa node.
-                        const refreshedChildren = gMenuPointer?.children || [];
-                        const refreshedChildIdx = refreshedChildren.findIndex((candidate) => (
-                            candidate
-                            && candidate.trigger === e.key
-                            && candidate.pluginId === 'tonal'
-                            && candidate.name === 'accept'
-                        ));
-                        if (refreshedChildIdx >= 0) {
-                            child = refreshedChildren[refreshedChildIdx];
-                            childIdx = refreshedChildIdx;
-                        }
-                    }
-                    */
                    diveMenu(child, childIdx);
                     event.preventDefault();
                     clearCmdLine();
