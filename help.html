@@ -975,6 +975,15 @@
                         <li><a href="#renfaire">Renfaire</a></li>
                         <li><a href="#robin-hood">Robin Hood</a></li>
                         <li><a href="#shire">Shire</a></li>
+                        <li><a href="#theme-guitar">Guitar</li>
+                        <li><a href="#theme-guitar-white">Guitar White</li>
+                        <li><a href="#theme-guitar-black">Guitar Black</li>
+                        <li><a href="#Pianos">Pianos with "Piano Skeuo"</li>
+                            <ul>
+                                <li><a href="#piano-skeuomorphic.png">Piano</li>
+                                <li><a href="#organ-3rows">Organ 3 Rows</li>
+                            </ul>
+                        <li><a href="#SpecialRows-small">Special Rows</li>
                     </ul>
                 </li>
 
@@ -2035,10 +2044,13 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <a name="divThemeControls"></a>
 <h3>Themes Menu</h3>
  <p>Normally, you can change Themes by just selecting one from the dropdown in the main menu button bar.
-    See screenshot of <a href="#themesGallery">Themes Gallery</a> in this helpfile.
+    See screenshots of <a href="#themesGallery">Themes Gallery</a> in this helpfile, where you can see the dropdown with the 
+    name of the themes, and the effect of the themes.
  </p>
  <p>The Theme menu is for tweaking the current Theme, and for building new Themes.  It's a bit techie, so we'll
-     explain it in a video at some point.
+     explain it in a video at some point.  In short, mash on the <b>Theme</b> button after changing some of the values, and your values
+     will be applied.  They are stored in a Theme called USER at the bottom of the Themes dropdown.  This theme is stored in your song, and will be used
+     on opening your song as the default Theme, unless you change to another Theme before you hit File | Download.
  </p>
 
 <a name="divFillNotes"></a>
@@ -2314,7 +2326,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                 <li><b>Instrument</b>: a dropdown list of other instruments, so you can "listen" to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  
                     <ul>
                         <li>Notes you "listen" to 
-                    will be replayed in your instrument but not recorded in your instrument <!-- some day: (unless you turn on recording for your instrument)-->.
+                    will be replayed in your instrument but not recorded in your instrument.  To record them, click "Capture", which acts on the current Section.
 
                         <li>This is useful if you want to see the notes of a standard tuning song on the neck of your P4 turning, for example.
 
@@ -2342,6 +2354,21 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                         <li><b>[Wired]</b> means you are actively listening to another instrument in this Section, or in another Section with Relative Section Amount.  
                             Change either Relative Section Amount or selected Instrument to have the button go to <b>[Add Wiring]</b> state so you can change the wiring.
                         </li>
+                    </ul>
+                </li>
+                <li><b>MUTE</b>  
+                    <ul>
+                        <li>When <b>red</b>, it mutes the Listening that may be in effect, so you only see the notes in this instrument.</li>
+                        <li>When <b>orange</b>, it means the instrument is wired as a Listener, but is not muted, so you can click to mute. 
+                        </li>When <b>gray</b> and <s>strikethrough</s>, it means the instrument is not wired as a Listener.
+                    </ul>
+                </li>
+                <li><b>Capture</b>  
+                    <ul>
+                        <li>When <b>orange</b>, it means the instrument is wired as a Listener, 
+                            and you can click to copy Listened-to notes in this Section into this instrument's 
+                            own notes, which you'll see when you MUTE or un-wire by clicking on the red Wired button. 
+                        </li>When <b>gray</b> and <s>strikethrough</s>, it means the instrument is not wired as a Listener.
                     </ul>
                 </li>
             </ul>
@@ -4649,36 +4676,37 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <a name="themesGallery"></a>
 <h2>Themes Gallery</h2>
 
- <p>Themes, we got Themes, baby!  Just choose one from the dropdown (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
+ <p>Themes, we got Themes, baby!  Just choose one from the dropdown 
+    (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
 
- <p>
+ 
     <a name="adult-swim"></a>
     <h3>Adult Swim</h3>
-    <img width="80%" src="img/help/theme-adult-swim.png"><br><br>
+ <p>    <img width="80%" src="img/help/theme-adult-swim.png"><br><br></p>
     <a name="everyone-into-the-pool"></a>
     <h3>Everyone into the Pool</h3>
-    <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br></p>
     <a name="zinfandel"></a>
     <h3>Zinfandel</h3>
-    <img width="80%" src="img/help/theme-zinfandel.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-zinfandel.png"><br><br></p>
     <a name="autobahn"></a>
     <h3>Autobahn</h3>
-    <img width="80%" src="img/help/theme-autobahn.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-autobahn.png"><br><br></p>
     <a name="late-nite"></a>
     <h3>Late Nite</h3>
-    <img width="80%" src="img/help/theme-late-nite.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-late-nite.png"><br><br></p>
     <a name="big-in-japan"></a>
     <h3>Big in Japan</h3>
-    <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-big-in-japan.png"><br><br></p>
     <a name="pool-shark"></a>
     <h3>Pool Shark</h3>
-    <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-pool-shark.png"><br><br></p>
     <a name="blade"></a>
     <h3>Blade</h3>
-    <img width="80%" src="img/help/theme-blade.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-blade.png"><br><br></p>
     <a name="coffy-brown"></a>
     <h3>Coffy Brown</h3>
-    <img width="80%" src="img/help/theme-coffee-brown.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-coffee-brown.png"><br><br></p>
     <a name="landau-top"></a>
     <h3>Landau Top</h3>
     <p>For those of you who didn't live through the 70's
@@ -4687,31 +4715,57 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         with these hip-daddy colors. 
         <br><img src="img/help/monte-carlo-78.png" width="500"></li>
     </p>
-    <img width="80%" src="img/help/theme-landau-top.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-landau-top.png"><br><br></p>
     <a name="renfaire"></a>
     <h3>Renfaire</h3>
-    <img width="80%" src="img/help/theme-renfaire.png"><br><br>
-    <img width="80%" src="img/help/theme-renfaire-90.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-renfaire.png"><br><br></p>
+<p>      <img width="80%" src="img/help/theme-renfaire-90.png"><br><br></p>
     <a name="robin-hood"></a>
     <h3>Robin Hood</h3>
-    <img width="80%" src="img/help/theme-robin-hood.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-robin-hood.png"><br><br></p>
     <a name="shire"></a>
     <h3>Shire</h3>
-    <img width="80%" src="img/help/theme-shire.png"><br><br>
- </p>
+<p>      <img width="80%" src="img/help/theme-shire.png"><br><br></p>
 
+    <a name="theme-guitar"></a>
+    <h3>Guitar</h3>
+<p>      <img width="80%" src="img/help/theme-guitar.png"><br><br></p>
+ 
+    <a name="theme-guitar-white"></a>
+    <h3>Guitar White</h3>
+<p>      <img width="80%" src="img/help/theme-guitar-white.png"><br><br></p>
+ 
+    <a name="theme-guitar-black"></a>
+    <h3>Guitar Black</h3>
+ <p>     <img width="80%" src="img/help/theme-guitar-black.png"><br><br></p>
+
+
+ <a name="Pianos"></a>
+<h2>Pianos with "Piano Skeuo"</h2>
+    <p>These Pianos are not a Theme, but they are special in that they don't follow Themes, they have unique styling.</p>
+<a name="piano-skeuomorphic.png"></a>
+<h3>Piano</h3>
+     <p><img width="80%" src="img/help/piano-skeuomorphic.png"></p>
+     <br>
+     <br>
+<a name="organ-3rows"></a>
+<h3>Organ 3 Rows</h3>
+     <p><img width="80%" src="img/help/organ-3rows.png"><br><br></p>
+
+<h3 id="SpecialRows-small">Special Rows</h3>
  <p>
-        If you see that the top two rows are a different color scheme, you might have Special Rows turned on by default.
+        If you see that the top two rows are a different color scheme, you have Special Rows turned on by default.
+        These mark the special rows on a Standard-tuning guitar that are not in Perfect 4ths.
         See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
  </p>
  <p>
     Here SR is checked, and the Special Rows and displayed in other colors:
         <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-on.png">
-    </p>
-    <p>
-        Here SR is unchecked, and the Special Rows are displayed normally:
-          <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
-    </p>
+</p>
+<p>
+    Here SR is unchecked, and the Special Rows are displayed normally:
+        <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
+</p>
 
 
 <br>

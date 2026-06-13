@@ -107,6 +107,7 @@ Here are the work items, grouped by status.
       pluginManager.refreshPluginsMenuNode();
     }
   ```
+  Cody also made an attempt to do this in command-line.js hardcoding for /fpoa, which I rolled back but committed in git for history.
 
 ## Deferred
 
