@@ -148,6 +148,25 @@ describe('TonalPlugin', () => {
     expect(plugin.resolveValue('targetTable', { song })).toBe('P46_1');
   });
 
+  test('empty first chord suggestion shows none without a checkmark', () => {
+    const section = createSection({
+      tblP46_1: new SectionNotes()
+    });
+    const song = createSong([section]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    const acceptNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'accept');
+    const acceptFirstChordNode = acceptNode.children.find((child) => child.name === 'acceptFirstChord');
+
+    expect(section.chartChord).toBe('');
+    expect(plugin.resolveValue('chordSummary', { song })).toBe('[]');
+    expect(acceptFirstChordNode.caption).toContain('<b>C</b>hord <em>&lt;none&gt;</em>');
+    expect(acceptFirstChordNode.caption).not.toContain("<span class='commandCheckmark'>&check;</span>");
+  });
+
   test('accepts the first chord into chart and table by default', () => {
     const section = createSection({
       tblP46_1: new SectionNotes({

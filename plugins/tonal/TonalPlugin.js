@@ -375,7 +375,8 @@ export class TonalPlugin {
 
   buildImmediateAcceptNode(kind, label, trigger, state) {
     const suggestion = kind === 'chord' ? state.chordSuggestions[0] : state.modeSuggestions[0];
-    const isSelected = resolveStoredTonalValue(kind, state) === `${suggestion || ''}`;
+    const suggestionValue = `${suggestion || ''}`;
+    const isSelected = suggestionValue !== '' && resolveStoredTonalValue(kind, state) === suggestionValue;
     return new MenuItemProxy(this, {
       name: `acceptFirst${label}`,
       caption: buildCaption(formatImmediateAcceptCaption(label, suggestion, isSelected), trigger),

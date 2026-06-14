@@ -15,40 +15,61 @@
   box-sizing: border-box;    /* ensures padding is included in width */
 }
 
+.WiredMoveyBtn {
+   transition: all 0.4s ease;  
+}
+.WiredMoveyBtn:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
 .WiredButton {
+  font-weight: 600;
   background-color: green;
+  color:rgb(255, 209, 59);
   border-radius: 10%;
-  box-shadow: 0 0 3pt 3pt lightgreen;
+  box-shadow: 0 0 2pt 2pt lightgreen;
   padding: 0.2em;
   font-size: 1em;
 }
+
 .WiredButtonOn {
     background-color: red !important;
 }
 .WiredButtonBlocked {
+    font-weight: 600;
+    color: black;
     background-color: rgb(245, 192, 15) !important; 
 }
 .ShowWiringButtonOpen {
+    font-weight: 600;
+    color: black;
     background-color: rgb(245, 192, 15) !important; 
 }
 
 .WiringActionButton {
+  font-weight: 600;
+  color: black;
   background-color: rgb(245, 192, 15);
   border-radius: 10%;
-  box-shadow: 0 0 3pt 3pt lightgreen;
+  box-shadow: 0 0 2pt 2pt lightgreen;
   padding: 0.2em;
   font-size: 1em;
 }
 
 .WiringActionButtonBlocked {
+  font-weight: 600;
+  color: black;
   background-color: #8a8a8a !important;
   box-shadow: none !important;
   color: #ddd;
 }
 
 .WiringActionButtonMuted {
+  color:rgb(255, 209, 59);
+  font-weight: 600;
   background-color: red !important;
-  box-shadow: 0 0 3pt 3pt #ff8080;
+  box-shadow: 0 0 2pt 2pt #ff8080;
 }
 
 .Wiring-controls input[type="text"] {
