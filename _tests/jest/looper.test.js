@@ -188,6 +188,20 @@ describe('looper looping state', () => {
 		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopBeatsStop');
 	});
 
+	test('toggleLoopBeats emits start and stop events that UI can mirror into loop-light state', () => {
+		mockRuntime.song = makeMockSong();
+
+		toggleLoopBeats();
+		toggleLoopBeats();
+
+		expect(triggerSpy.mock.calls.filter(([eventName]) => eventName === 'Looper:OnLoopBeatsStart')).toEqual([
+			['Looper:OnLoopBeatsStart', { caption: 'LOOPING...' }]
+		]);
+		expect(triggerSpy.mock.calls.filter(([eventName]) => eventName === 'Looper:OnLoopBeatsStop')).toEqual([
+			['Looper:OnLoopBeatsStop']
+		]);
+	});
+
 	test('switching from beat loop to section loop emits stop then start', () => {
 		mockRuntime.song = makeMockSong();
 		toggleLoopBeats();

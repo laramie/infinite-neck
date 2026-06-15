@@ -6,6 +6,20 @@ import { fileURLToPath } from 'node:url';
 import { listApprovedValues } from '../approved-values.js';
 import { gMenuFile } from '../menu.js';
 
+//These are used by dynamically built menus, so cause warnings unless allowlisted here.
+const runtimeChildrenActionMap = new Map([
+    ['pluginManager', [
+        'pluginAction:invoke',
+        'pluginAction:bury',
+        'pluginProperty:select',
+        'pluginProperty:set',
+        'pluginProperty:toggle'
+    ]],
+    ['sectionEditInstrument', [
+        'sectionEditInstrumentSelect2'
+    ]]
+]);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
@@ -108,16 +122,6 @@ const errors = [];
 const warnings = [];
 let runtimeChildrenCount = 0;
 const runtimeActionRefs = new Set();
-
-const runtimeChildrenActionMap = new Map([
-    ['pluginManager', [
-        'pluginAction:invoke',
-        'pluginAction:bury',
-        'pluginProperty:select',
-        'pluginProperty:set',
-        'pluginProperty:toggle'
-    ]]
-]);
 
 function collectLiteralValueCases(functionBody) {
     const labels = new Set();
@@ -310,7 +314,7 @@ const unusedActionCases = Array.from(actionCases)
     .sort();
 
 unusedActionCases.forEach((action) => {
-    addWarning('performCmdAction() contains unused case "' + action + '"');
+    addWarning('performCmdAction() contains unused case "' + action + '". If dynamic, update validate-command-menu.js::runtimeChildrenActionMap');
 });
 
 console.log('Command Menu Validator');

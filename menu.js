@@ -472,7 +472,6 @@ export var gMenuFile =    {
                   "input": {
                     "type": "input",
                     "caption": "section number (1-${sectionCount})",
-                    "default": "",
                     "datatype": "Number",
                     "id": "value"
                   },

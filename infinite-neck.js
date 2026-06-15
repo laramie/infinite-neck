@@ -3248,9 +3248,15 @@ EventBus.on('Wiring:removed', function() {
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
 	$('#btnLoopBeats').addClass('ButtonOn');
+	EventBus.trigger('Widget:SectionStatus:loopChanged', {
+		isLoopActive: true
+	});
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
 	$('#btnLoopBeats').removeClass('ButtonOn');
+	EventBus.trigger('Widget:SectionStatus:loopChanged', {
+		isLoopActive: false
+	});
 });
 EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
     showLoopSectionsStarted(data);
