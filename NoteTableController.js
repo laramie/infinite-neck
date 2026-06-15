@@ -152,9 +152,7 @@ function getProjectedListenerRecordedNotesForBeat(replayOptions, beat, recordedN
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
 export function isRecording(){
-    var btn = $("#btnRecord");
-    var recording = btn.attr("recording");
-    return ((recording != undefined) && recording == "true");
+    return getSong()?.isRecording?.() === true;
 }
 
 export function getPianoSkeuomorphicCellHeightPx(heightValue) {

@@ -195,6 +195,8 @@ export class SongPersistence {
             || key === 'gSongModelListener'
             || key === 'randomSectionHistory'
             || key === 'isHeadless'
+            || key === 'runtime'
+            || key === 'recording'
             || key === 'tunings'
             || key === 'userInstrumentTuning'
             || key === 'visibleNoteTables'

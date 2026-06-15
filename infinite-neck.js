@@ -1155,6 +1155,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function updateAfterOpenSong(){
+		getSong().resetRecording?.();
+		syncRecordingViews();
 		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
 		installDefaultColorDicts();
@@ -1484,18 +1486,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function toggleTransport(){
 		TransportBuilder.toggleTransport();
 	}
+	export function syncRecordingViews(){
+		const recording = getSong()?.isRecording?.() === true;
+		if (recording) {
+			$('.RecordButton').addClass('ButtonOn');
+		} else {
+			$('.RecordButton').removeClass('ButtonOn');
+		}
+		return recording;
+	}
 	export function toggleRecording(){
-		var btn = $("#btnRecord");
-		var recording = btn.attr("recording");
-		if (recording === undefined || recording === "false") {
-			$(".RecordButton").addClass("ButtonOn");
-			$("#btnRecord").attr("recording", "true");
+		const recording = getSong()?.toggleRecording?.() === true;
+		syncRecordingViews();
+		if (recording) {
 			clearRecordedNotes();
 			showBeats(getSong().getBeat());
-		} else {
-			$(".RecordButton").removeClass("ButtonOn");
-			$("#btnRecord").attr("recording", "false");
 		}
+		return recording;
 	}
 	export function toggleSectionDrawer(){
 		TransportBuilder.toggleSectionDrawer();

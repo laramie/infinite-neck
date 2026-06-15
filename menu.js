@@ -36,7 +36,10 @@ export function resolveMenuValue(value) {
 
     const resolved = gMenuValueResolver(value);
     if (resolved === undefined || resolved === null) {
-        return "" + value;
+    return `${value}`.replaceAll(/\$\{([^}]+)\}/g, (match, tokenName) => {
+      const tokenValue = gMenuValueResolver(tokenName);
+      return tokenValue === undefined || tokenValue === null ? match : `${tokenValue}`;
+    });
     }
 
     return "" + resolved;
@@ -453,6 +456,22 @@ export var gMenuFile =    {
                     "sectionEditInstrumentBaseID",
                     "sectionEditNextSectionCardinal"
                   ]
+                },
+                {
+                  "caption": "<b>i</b>nsert clone [${sectionEditInstrumentBaseID}] into Section",
+                  "trigger": "i",
+                  "action": "sectionEditInstrumentInsertIntoSection",
+                  "vars": [
+                    "sectionEditInstrumentBaseID"
+                  ],
+                  "input": {
+                    "type": "input",
+                    "caption": "section number (1-${sectionEditNextSectionCardinal})",
+                    "default": "${sectionEditNextSectionCardinal}",
+                    "datatype": "Number",
+                    "id": "value"
+                  },
+                  "popOnBang": true
                 },
                 {
                   "caption": "<b>C</b>lear [${sectionEditInstrumentBaseID} from Section ${currentSectionCardinal}] ?",
@@ -1636,7 +1655,7 @@ export function printMenuStack(){
     var doLargeItem = false;
     if (gMenuPointer.type && gMenuPointer.type == "input"){
         doLargeItem = true;
-      defaultValue = "["+gMenuValueResolver(gMenuPointer.default)+"]";
+      defaultValue = "["+resolveMenuValue(gMenuPointer.default)+"]";
     }
     var menuCaption = expandCaption(gMenuPointer);
     result = "<div class='cmdPrompt'>"+menuCaption+defaultValue+":</div>";
@@ -1765,7 +1784,7 @@ function expandCaption(menuItem){
         }
       });
     }
-    return caption;
+    return resolveMenuValue(caption);
 }
 
 

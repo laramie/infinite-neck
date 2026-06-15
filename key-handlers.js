@@ -368,6 +368,9 @@ function document_keypress(e) {
 			case "r":
                 showOneMenu("#divChart");
                 break;
+			case "R":
+                toggleRecording();
+                break;
 			case "s":
                 toggleSectionDrawer();
                 break;
@@ -1045,6 +1048,26 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = `cloned ${getTableBaseID(tableID)}`;
 			} else {
 				actionResult.result = cloneResult.reason || `no notes for ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+			}
+			break;
+		}
+		case "sectionEditInstrumentInsertIntoSection": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const destSectionNumber = toInt(argByInputID, -1);
+			if (destSectionNumber < 1) {
+				actionResult.result = `invalid Section ${argByInputID}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			const insertResult = getSong().insertCloneTableIntoSection(tableID, destSectionNumber);
+			if (insertResult.inserted) {
+				actionResult.result = `inserted ${getTableBaseID(tableID)} into Section ${destSectionNumber}`;
+			} else {
+				actionResult.result = insertResult.reason || `not inserted ${getTableBaseID(tableID)}`;
 				actionResult.suppressBang = true;
 			}
 			break;

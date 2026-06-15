@@ -33,8 +33,11 @@ Here are the work items, grouped by status.
 - Iteration 5: /sei :: instrument clone-into-Section and Clear-from-current-Section. 
   - See: [Iteration 5 /sei](119-it5.md) 
 
-- Iteration 5: Clip recordedNotes/beats
+- Iteration 6: Clip recordedNotes/beats
   - See: [Iteration 6 Clip recordedNotes/beats](119-it6.md) 
+  - Iteration pre-6 was implemented, so now REC has real state in Song.
+  TODO: add SHIFT-R for REC mode
+  add clone into different table in Section where legacy is the same
 
 ### Complete (without Iteration number)
 - menu prompt stale sometimes

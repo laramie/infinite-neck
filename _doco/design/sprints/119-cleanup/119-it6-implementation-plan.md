@@ -49,6 +49,7 @@ The plan below intentionally separates design decisions, implementation steps, t
 
 - REC mode is currently detected in UI code by checking `#btnRecord`'s `recording` attribute.
 - For testability, recorded-note paste actions should not hard-code jQuery deep inside all logic. Prefer a small mode-check boundary that can be supplied or stubbed from tests.
+- This should be addressed before Iteration 6: REC mode is command/application runtime state, not DOM state. The DOM should render that state, not own it.
 
 ---
 
@@ -106,8 +107,8 @@ Add this dynamic subtree under `/fpc`:
 r) recorded notes
 		c) copy
 				status: [tblname:sectionNum:beatnum]
-				c) current beat - copy
-				a) all beats - copy
+			c) current beat
+			a) all beats
 		p) paste
 				status: [tblname:sectionNum:beatnum]
 				a) add all beats
@@ -195,6 +196,7 @@ Recommended checks before any recorded paste:
 4. Source and destination lineage match by `fromBaseID || baseID`.
 5. `nStrings` matches.
 6. `midiPitches` arrays match exactly, in order.
+7. Recorded-note collisions line up by `styleNum:row:col`.
 
 Result examples:
 
@@ -371,6 +373,104 @@ Copy actions should not require a REC-mode state unless reviewers request it. Th
 
 ---
 
+## Recommended pre-iteration: REC mode runtime state
+
+Yes: this makes sense as a short prerequisite iteration before Iteration 6.
+
+Iteration 6 will need reliable REC-mode checks from `ClipPlugin`, command handlers, and tests. Leaving REC mode as a `#btnRecord` jQuery attribute would make the new behavior too UI-coupled and brittle. The better small refactor is to move REC mode into runtime-only application state and keep existing CSS class broadcasting as the view update mechanism.
+
+### Scope
+
+This should be a small MVC-ish cleanup, not a schema change.
+
+In scope:
+
+- Add runtime-only recording state to `Song`, for example `song.runtime.recording` or a non-persisted `song.recording` field guarded by the persistence replacer.
+- Default REC mode to `false` for every new or loaded song.
+- Add methods such as `song.isRecording()`, `song.setRecording(value)`, and `song.toggleRecording()`.
+- Keep [infinite-neck.js](infinite-neck.js) as the controller for the transport button and CSS class broadcast.
+- Change [NoteTableController.js](NoteTableController.js) `isRecording()` to ask the current `Song`, not the DOM.
+- Keep `.RecordButton` / `.ButtonOn` as the view mechanism for transport and section-status gee-gaws.
+- Ensure all `.RecordButton` views, including [templates/SectionStatus/section-status.html](templates/SectionStatus/section-status.html), continue to update from the same CSS class broadcast.
+
+Out of scope:
+
+- Persisting REC mode in song files.
+- Adding a new EventBus event.
+- Reworking the larger recording model or `recordedNotes` schema.
+- Replacing current CSS-based view synchronization.
+
+### Proposed design
+
+Add runtime methods to `Song`:
+
+```text
+isRecording() -> boolean
+setRecording(value) -> boolean
+toggleRecording() -> boolean
+resetRecording() -> false
+```
+
+`Song` should initialize the state to `false` in its constructor. If using a property directly on `Song`, the property name should be clearly runtime-only and excluded from persistence. A nested runtime bag is preferable if the existing persistence replacer allows it to be safely excluded.
+
+[infinite-neck.js](infinite-neck.js) should become the controller boundary:
+
+1. User clicks `.RecordButton` or invokes `/r...toggleRecording`.
+2. Controller calls `getSong().toggleRecording()`.
+3. Controller calls a view-sync helper, for example `syncRecordingViews()`.
+4. `syncRecordingViews()` adds or removes `.ButtonOn` on `.RecordButton`.
+5. When recording is turned on, preserve existing behavior: clear current recorded notes and refresh beat display.
+
+[NoteTableController.js](NoteTableController.js) should use model state:
+
+```text
+isRecording() -> getSong()?.isRecording() === true
+```
+
+For headless/Jest paths, this removes the dependency on `#btnRecord` and makes REC-mode guards testable.
+
+### View synchronization
+
+Keep this existing pattern:
+
+```text
+$('.RecordButton').addClass('ButtonOn')
+$('.RecordButton').removeClass('ButtonOn')
+```
+
+The important shift is that `.ButtonOn` becomes derived view state. The state source becomes `Song`, not `#btnRecord.attr('recording')`.
+
+This preserves the section-status gee-gaws such as:
+
+```html
+<span class="instrumentSectionMark"><span class="RecordDot RecordButton ButtonOn"></span>§</span>
+```
+
+Those remain proper views under the CSS broadcast approach.
+
+### Testing
+
+Recommended targeted tests:
+
+1. New/loaded `Song` starts with `isRecording() === false`.
+2. `toggleRecording()` toggles model state only.
+3. Song persistence output does not include recording state.
+4. `NoteTableController.isRecording()` reads `Song` state, not DOM state.
+5. Existing command action `toggleRecording` still delegates correctly.
+
+Manual UI acceptance:
+
+1. Transport REC button toggles `.ButtonOn`.
+2. Section-status record dots toggle with the same `.ButtonOn` CSS broadcast.
+3. Loading a song always starts REC off.
+4. Turning REC on still clears recorded notes and refreshes beat display as before.
+
+### Why before Iteration 6
+
+Iteration 6 adds REC-required and REC-forbidden paste commands. Those commands need deterministic, testable state. Doing this first will simplify `ClipPlugin` implementation and avoid spreading new jQuery checks into plugin code.
+
+---
+
 ## Implementation phases
 
 ### Phase 1: Small section-edit feature
@@ -388,7 +488,7 @@ Steps:
 2. Add `sectionEditInstrumentInsertIntoSection` command action.
 3. Add `Song.insertCloneTableIntoSection(tableID, oneBasedSectionNumber)`.
 4. Validate all no-op warning cases.
-5. Add tests for valid insert, missing section, existing non-empty destination table, and missing source table data.
+5. Add tests for valid insert, missing section, current-section destination rejection, existing non-empty destination table, and missing source table data.
 
 ### Phase 2: Recorded-notes clip payload and copy actions
 
@@ -564,3 +664,22 @@ Approve the plan with the following defaults unless changed by answers above:
 - Require same lineage, same `nStrings`, and exact `midiPitches` equality for recorded-note paste.
 - Add a small `Song` helper for `/seii` and likely a second tested helper for batch beat insertion.
 - Keep all warnings short and in the command result line.
+
+## Approved decisions for coding
+
+The questions above have been answered in [119-it6.md](_doco/design/sprints/119-cleanup/119-it6.md). Coding should use these decisions:
+
+- Recorded-notes clips are Graveyard-backed and use `clipKind: "recordedNotes"`.
+- Recorded-note paste ignores the existing `overwrite` property and always replaces collisions.
+- REC-mode recorded-note copy/paste ignores existing note-type include filters and copies all recorded note types.
+- Flatten includes `Single`, `Tiny`, `Bend`, `Fingering`, `Pitch`, and `Multi` recorded notes.
+- Flatten excludes `Named` recorded notes, including any that leak in through a user-authored song file.
+- Empty source beats are preserved when copying all beats.
+- `/seii` checks whether the same destination `tableID` in the destination section is non-empty. Other tables in the destination section do not block the insert.
+- `/seii` rejects the current section as the destination because the current section is the source.
+- Recorded-note paste requires same lineage, same `nStrings`, and exact `midiPitches` array equality. This iteration is not MIDI Paste.
+- Recorded-note collision identity is `styleNum:row:col`.
+- Add the general helper(s) to [Song.js](Song.js) where appropriate.
+- Status line format is `status: [P46_1:1:2]`.
+- Compact result strings such as `played 2/4 beats: added 5, overwritten 1` are acceptable.
+- Iteration pre-6 is complete: REC mode now lives in runtime `Song` state, defaults off on load, is not persisted, and remains visible through `.RecordButton` / `.ButtonOn` CSS broadcasts.

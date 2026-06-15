@@ -127,6 +127,10 @@ function preloadCmdLineFromInputMenu(inputMenu) {
     }
 }
 
+function getInputMenuCaption(inputMenu) {
+    return resolveMenuValue(inputMenu?.caption || '');
+}
+
 export function updateCmdLineView(addedCrumb){
     $("#CmdMenuStack").html(printMenuStack());
     $("#CmdMenuBreadcrumbs").html(printMenuStackBreadcrumbs(addedCrumb));
@@ -214,7 +218,7 @@ export function txtCmdLine_keypress(e) {
                 surfaceOneMenu();
             }
             var resultSuffix = actionResult.result ? " >> " + actionResult.result : "";
-            addCmdResults(targetMenu.input.caption+": "+inputval+resultSuffix);
+            addCmdResults(getInputMenuCaption(targetMenu.input)+": "+inputval+resultSuffix);
             clearCmdLine();
             updateCmdLineView(inputval);
             return;
@@ -248,7 +252,7 @@ export function txtCmdLine_keypress(e) {
             if (child.action && hasNoChildMenus(child)){
                 diveMenu(child,"showing-list-menu");
                 if (child.input) {
-                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + child.input.caption + " : ");
+                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + getInputMenuCaption(child.input) + " : ");
                     diveMenu(child.input, "");
                     updateCmdLineView();
                     preloadCmdLineFromInputMenu(child.input);

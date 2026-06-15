@@ -20,7 +20,34 @@ import { SongPersistence } from './SongPersistence.js';
 export class Song extends SongPersistence {
     constructor(obj) {
         super(obj, Section); 
+        delete this.runtime;
+        delete this.recording;
+        Object.defineProperty(this, 'runtime', {
+            value: {
+                recording: false
+            },
+            enumerable: false,
+            configurable: true,
+            writable: true
+        });
         // TODO:  deal with this: fixupCurrentIndexForLoadedSong 
+    }
+
+    isRecording(){
+        return this.runtime?.recording === true;
+    }
+
+    setRecording(value){
+        this.runtime.recording = value === true;
+        return this.runtime.recording;
+    }
+
+    toggleRecording(){
+        return this.setRecording(!this.isRecording());
+    }
+
+    resetRecording(){
+        return this.setRecording(false);
     }
 
     getPersistentSongFile(){
@@ -816,6 +843,51 @@ export class Song extends SongPersistence {
         this.getCurrentSection().getSectionNotes(tableID).recordedNotes = result;
     }
 
+    insertBeatsAtCurrentSection(oneBasedIndex, insertCount = 1){
+        const section = this.getCurrentSection();
+        const beatCount = this.getBeats();
+        let insertIndex = toInt(oneBasedIndex, 1);
+        const count = toInt(insertCount, 0);
+        if (!section || count < 1) {
+            return {
+                inserted: 0,
+                startBeat: insertIndex
+            };
+        }
+        if (insertIndex < 1){
+            insertIndex = 1;
+        }
+        if (insertIndex > beatCount + 1){
+            insertIndex = beatCount + 1;
+        }
+
+        section.getAllSectionNotes().forEach(([, sn]) => {
+            const notes = sn.recordedNotes || {};
+            const result = {};
+            for (let i = 1; i < insertIndex; i += 1){
+                result[`${i}`] = notes[`${i}`];
+            }
+            for (let i = 0; i < count; i += 1){
+                result[`${insertIndex + i}`] = [];
+            }
+            for (let i = insertIndex; i <= beatCount; i += 1){
+                result[`${i + count}`] = notes[`${i}`];
+            }
+            sn.recordedNotes = result;
+        });
+
+        this.setBeats(beatCount + count);
+        this.gotoBeat(insertIndex);
+        this.publish_UpdateSectionStatus();
+        this.requestUiUpdatePrintSections();
+        this.requestUiFullRepaint();
+        this.requestUiShowBeats();
+        return {
+            inserted: count,
+            startBeat: insertIndex
+        };
+    }
+
 	moveBeatsLater(oneBasedIndex){
         var beatCount = this.getBeats();
         var insertIndex = toInt(oneBasedIndex, 1);
@@ -1128,6 +1200,51 @@ export class Song extends SongPersistence {
         return {
             cloned: true,
             section: aSection
+        };
+    }
+
+    insertCloneTableIntoSection(tableID, oneBasedSectionNumber){
+        const sourceSection = this.getCurrentSection();
+        const sourceIndex = this.getSections().indexOf(sourceSection);
+        const destIndex = toInt(oneBasedSectionNumber, -1) - 1;
+        if (destIndex < 0 || destIndex >= this.sections.length) {
+            return {
+                inserted: false,
+                reason: `Section ${oneBasedSectionNumber} not found`
+            };
+        }
+        if (destIndex === sourceIndex) {
+            return {
+                inserted: false,
+                reason: `Section ${oneBasedSectionNumber} is current`
+            };
+        }
+
+        const sourceSectionNotes = sourceSection?.sectionNotesByTable?.[tableID];
+        if (!this.sectionNotesHasNotes(sourceSectionNotes)) {
+            return {
+                inserted: false,
+                reason: `no notes for ${tableID || 'selected instrument'}`
+            };
+        }
+
+        const destSection = this.sections[destIndex];
+        const destSectionNotes = destSection?.sectionNotesByTable?.[tableID];
+        if (this.sectionNotesHasNotes(destSectionNotes)) {
+            return {
+                inserted: false,
+                reason: `${tableID} not empty in Section ${oneBasedSectionNumber}`
+            };
+        }
+
+        destSection.sectionNotesByTable = destSection.sectionNotesByTable || {};
+        destSection.sectionNotesByTable[tableID] = new SectionNotes(JSON.parse(JSON.stringify(sourceSectionNotes)));
+        this.requestUiClearAll();
+        this.requestUiResetNoteNames();
+        this.publish_SectionChanged();
+        return {
+            inserted: true,
+            section: destSection
         };
     }
 
