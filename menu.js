@@ -2,10 +2,31 @@ let gMenuValueResolver = function () {
   return undefined;
 };
 
+let gMenuRuntimeChildrenResolver = function () {
+  return null;
+};
+
 export function setMenuValueResolver(resolverFn) {
   if (typeof resolverFn === 'function') {
     gMenuValueResolver = resolverFn;
   }
+}
+
+export function setMenuRuntimeChildrenResolver(resolverFn) {
+  if (typeof resolverFn === 'function') {
+    gMenuRuntimeChildrenResolver = resolverFn;
+  }
+}
+
+export function refreshRuntimeChildren(menu) {
+    if (!menu || !menu.runtimeChildren) {
+        return;
+    }
+
+    const children = gMenuRuntimeChildrenResolver(menu);
+    if (Array.isArray(children)) {
+        menu.children = children;
+    }
 }
 
 export function resolveMenuValue(value) {
@@ -410,6 +431,61 @@ export var gMenuFile =    {
               "caption": "<b>c</b>lone",
               "trigger": "c",
               "action": "sectionAddDeepClone"
+            },
+            {
+              "caption": "<b>i</b>nstrument",
+              "trigger": "i",
+              "children": [
+                {
+                  "caption": "<b>I</b>nstrument [${sectionEditInstrumentBaseID}]",
+                  "trigger": "I",
+                  "runtimeChildren": "sectionEditInstrument",
+                  "vars": [
+                    "sectionEditInstrumentBaseID"
+                  ],
+                  "children": []
+                },
+                {
+                  "caption": "<b>c</b>lone [${sectionEditInstrumentBaseID} into new Section ${sectionEditNextSectionCardinal}]",
+                  "trigger": "c",
+                  "action": "sectionEditInstrumentClone",
+                  "vars": [
+                    "sectionEditInstrumentBaseID",
+                    "sectionEditNextSectionCardinal"
+                  ]
+                },
+                {
+                  "caption": "<b>C</b>lear [${sectionEditInstrumentBaseID} from Section ${currentSectionCardinal}] ?",
+                  "trigger": "C",
+                  "action": "sectionEditInstrumentClearGuard",
+                  "guardBeforeDive": true,
+                  "vars": [
+                    "sectionEditInstrumentBaseID",
+                    "currentSectionCardinal"
+                  ],
+                  "children": [
+                    {
+                      "caption": "<b>Y</b>es: Clear ${sectionEditInstrumentBaseID} data from Section ${currentSectionCardinal}",
+                      "trigger": "Y",
+                      "action": "sectionEditInstrumentClear",
+                      "vars": [
+                        "sectionEditInstrumentBaseID",
+                        "currentSectionCardinal"
+                      ],
+                      "popOnBang": true
+                    },
+                    {
+                      "caption": "<b>n</b>o: keep table data in Section ${currentSectionCardinal}",
+                      "trigger": "n",
+                      "action": "sectionEditInstrumentClearKeep",
+                      "vars": [
+                        "currentSectionCardinal"
+                      ],
+                      "popOnBang": true
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -1509,6 +1585,7 @@ export function surfaceOneMenu(){
 }
 
 export function buildChildMenuCaptionsRow(menu){
+  refreshRuntimeChildren(menu);
     var children = menu.children;
     if (!children){
         return "";

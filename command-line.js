@@ -8,6 +8,7 @@ import {
     peekParentMenu,
     printMenuStack,
     printMenuStackBreadcrumbs,
+    refreshRuntimeChildren,
     resolveMenuValue,
     setMenuAtRoot,
     surfaceOneMenu
@@ -238,8 +239,10 @@ export function txtCmdLine_keypress(e) {
     /** we are here, we aren't one of these:   {'/', '..', or  'RETURN'} and we aren't gathering inputs.  **/
 
     var menu = gMenuPointer;
+    refreshRuntimeChildren(menu);
     var children = menu.children;
     children.forEach((child, childIdx) => {
+        refreshRuntimeChildren(child);
         //now look in all children to see if user pressed the trigger for the child menu
         if (child.trigger == e.key){
             if (child.action && hasNoChildMenus(child)){
@@ -253,7 +256,7 @@ export function txtCmdLine_keypress(e) {
                     return;
                 } else {
                     var actionResult = gCmdActionRunner(child);
-                    child.bang = true;
+                    child.bang = actionResult.suppressBang !== true;
                     surfaceOneMenu();
                     if (actionResult.popOnBang && !actionResult.preserveMenuStack) {
                         surfaceOneMenu();
@@ -285,6 +288,16 @@ export function txtCmdLine_keypress(e) {
                     child.bang = false;
                     return;
                 } else {
+                    if (child.action && child.guardBeforeDive) {
+                        var actionResult = gCmdActionRunner(child) || {};
+                        if (actionResult.preventDive) {
+                            addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
+                            e.preventDefault();
+                            clearCmdLine();
+                            updateCmdLineView(child.trigger);
+                            return;
+                        }
+                    }
                    diveMenu(child, childIdx);
                     event.preventDefault();
                     clearCmdLine();

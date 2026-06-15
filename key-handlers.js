@@ -27,6 +27,7 @@ import {
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
+	setMenuRuntimeChildrenResolver,
 	setMenuValueResolver,
 	setMenuAtRoot,
 	gMenuLoaded
@@ -60,6 +61,7 @@ export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
+let sectionEditInstrumentTableID = '';
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -133,6 +135,58 @@ function runActionByName(actionName, args) {
 		return { result: '' };
 	}
 	return performCmdAction(makeSyntheticMenuItem(actionName), args);
+}
+
+function getTableBaseID(tableID){
+	const text = `${tableID || ''}`;
+	return text.startsWith('tbl') ? text.substring(3) : text;
+}
+
+function getSectionEditInstrumentOptions(){
+	const song = getSong();
+	if (!song || typeof song.getVisibleUnwiredTunings !== 'function') {
+		return [];
+	}
+	return song.getVisibleUnwiredTunings().slice(0, 9).map((tuning, index) => {
+		const tableID = `tbl${tuning.baseID}`;
+		return {
+			name: `sectionEditInstrument:${tableID}`,
+			caption: `${index + 1}) ${tuning.baseID}`,
+			trigger: `${index + 1}`,
+			action: 'sectionEditInstrumentSelect',
+			value: tableID,
+			popOnBang: true
+		};
+	});
+}
+
+function isSectionEditInstrumentStillAvailable(tableID = sectionEditInstrumentTableID){
+	if (!tableID) {
+		return false;
+	}
+	return getSectionEditInstrumentOptions().some((option) => option.value === tableID);
+}
+
+function getSectionEditInstrumentTableID(){
+	return isSectionEditInstrumentStillAvailable() ? sectionEditInstrumentTableID : '';
+}
+
+function requireSectionEditInstrument(actionResult){
+	const tableID = getSectionEditInstrumentTableID();
+	if (tableID) {
+		return tableID;
+	}
+	actionResult.result = 'no Instrument chosen';
+	actionResult.suppressBang = true;
+	actionResult.preventDive = true;
+	return '';
+}
+
+function refreshSectionEditRuntimeChildren(menu){
+	if (menu?.runtimeChildren !== 'sectionEditInstrument') {
+		return null;
+	}
+	return getSectionEditInstrumentOptions();
 }
 
 function moveSelectByClampedStep(selectSelector, delta) {
@@ -853,7 +907,7 @@ export function performCmdAction(menuItem, args){
 			toggleFullscreen();
 			break;
 		case "setMenuPrefs":
-			var c = args["key"];
+			var c = args?.["key"];
 			if (c == "s"){ //"short"
 				gMenuFile.tall = false;
 				setCmdLineMenuMode('short');
@@ -976,6 +1030,45 @@ export function performCmdAction(menuItem, args){
 		case "sectionAddDeepClone":
 			getSong().addDeepCloneSection();
 			actionResult.result = "added-deep";
+			break;
+		case "sectionEditInstrumentSelect":
+			sectionEditInstrumentTableID = menuItem.value || '';
+			actionResult.result = getTableBaseID(sectionEditInstrumentTableID);
+			break;
+		case "sectionEditInstrumentClone": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const cloneResult = getSong().addCloneSectionForTable(tableID);
+			if (cloneResult.cloned) {
+				actionResult.result = `cloned ${getTableBaseID(tableID)}`;
+			} else {
+				actionResult.result = cloneResult.reason || `no notes for ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+			}
+			break;
+		}
+		case "sectionEditInstrumentClearGuard":
+			requireSectionEditInstrument(actionResult);
+			break;
+		case "sectionEditInstrumentClear": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const clearResult = getSong().clearCurrentSectionTable(tableID);
+			if (clearResult.cleared) {
+				actionResult.result = `cleared ${getTableBaseID(tableID)}`;
+			} else {
+				actionResult.result = clearResult.reason || `no table data for ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+				actionResult.popOnBang = false;
+			}
+			break;
+		}
+		case "sectionEditInstrumentClearKeep":
+			actionResult.result = "kept";
 			break;
 		case "sectionKeep":
 			console.log("sectionKeep=====!");
@@ -1313,6 +1406,15 @@ export function getValue(what){
 	if (what === 'spacebarActionName'){
 		return spacebarActionName;
 	}
+	if (what === 'sectionEditInstrumentTableID'){
+		return getSectionEditInstrumentTableID();
+	}
+	if (what === 'sectionEditInstrumentBaseID'){
+		return getTableBaseID(getSectionEditInstrumentTableID());
+	}
+	if (what === 'sectionEditNextSectionCardinal'){
+		return getSectionsCurrentIndex() + 2;
+	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);
 		if (pluginValue !== undefined) {
@@ -1327,5 +1429,6 @@ export function getValue(what){
 	return what;
 }
 
+setMenuRuntimeChildrenResolver(refreshSectionEditRuntimeChildren);
 setMenuValueResolver(getValue);
 setCmdActionRunner(performCmdAction);

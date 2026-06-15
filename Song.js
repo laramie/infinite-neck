@@ -166,6 +166,21 @@ export class Song extends SongPersistence {
             .map((entry) => entry.tableID);
     }
 
+    getVisibleUnwiredTunings(){
+        const visibleTableIDs = new Set(this.getVisibleTunings());
+        const wiredDisplayTables = new Set((this.wirings || [])
+            .map((wiring) => wiring?.tablename)
+            .filter(Boolean));
+
+        return this.getMyTunings().filter((tuning) => {
+            if (!tuning || !tuning.baseID) {
+                return false;
+            }
+            const tableID = Constants.TABLE_ID_PREFIX + tuning.baseID;
+            return visibleTableIDs.has(tableID) && !wiredDisplayTables.has(tableID);
+        });
+    }
+
     getVisibleTuningIDs(){
         return this.getVisibleTunings()
             .filter((tableID) => tableID.startsWith(Constants.TABLE_ID_PREFIX))
@@ -1067,6 +1082,80 @@ export class Song extends SongPersistence {
 	addDeepCloneSection(destIndex){
 	    return this.addCloneSection(true, destIndex);
 	}
+
+    sectionNotesHasNotes(sectionNotes){
+        if (!sectionNotes || typeof sectionNotes !== 'object') {
+            return false;
+        }
+
+        const playedCount = (sectionNotes.playedNotes || [])
+            .filter((note) => note && (typeof note !== 'object' || Object.keys(note).length > 0))
+            .length;
+        const namedCount = Object.values(sectionNotes.namedNotes || {})
+            .filter((note) => note && (typeof note !== 'object' || Object.keys(note).length > 0))
+            .length;
+        const recordedCount = Object.values(sectionNotes.recordedNotes || {})
+            .reduce((total, notes) => {
+                if (!Array.isArray(notes)) {
+                    return total;
+                }
+                return total + notes.filter((note) => note && (typeof note !== 'object' || Object.keys(note).length > 0)).length;
+            }, 0);
+
+        return playedCount + namedCount + recordedCount > 0;
+    }
+
+    addCloneSectionForTable(tableID){
+        const sourceSection = this.getCurrentSection();
+        const sourceSectionNotes = sourceSection?.sectionNotesByTable?.[tableID];
+        if (!this.sectionNotesHasNotes(sourceSectionNotes)) {
+            return {
+                cloned: false,
+                reason: `no notes for ${tableID || 'selected instrument'}`
+            };
+        }
+
+        const aSection = sourceSection.clone(true);
+        Object.keys(aSection.sectionNotesByTable || {}).forEach((candidateTableID) => {
+            if (candidateTableID !== tableID) {
+                delete aSection.sectionNotesByTable[candidateTableID];
+            }
+        });
+        this.addSectionAfterCurrent(aSection);
+        this.requestUiClearAll();
+        this.requestUiResetNoteNames();
+        this.publish_SectionChanged();
+        return {
+            cloned: true,
+            section: aSection
+        };
+    }
+
+	clearCurrentSectionTable(tableID){
+        const section = this.getCurrentSection();
+        if (!section || !section.sectionNotesByTable || !Object.prototype.hasOwnProperty.call(section.sectionNotesByTable, tableID)) {
+            return {
+                cleared: false,
+                reason: `no table data for ${tableID || 'selected instrument'}`
+            };
+        }
+
+        const context = {
+            "SectionIndex": this.getSections().indexOf(section),
+            "caption": section.caption,
+            "tableID": tableID,
+            "action": "clearCurrentSectionTable"
+        };
+        this.graveyard.bury(GraveType.SECTION, section, context);
+        delete section.sectionNotesByTable[tableID];
+        this.requestUiClearAll();
+        this.requestUiReplay();
+        this.publish_SectionChanged();
+        return {
+            cleared: true
+        };
+	}
+
 	addCloneSection(deep, destIndex){
         var aSection = this.getCurrentSection().clone(deep);
         if (destIndex){

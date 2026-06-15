@@ -33,6 +33,9 @@ Here are the work items, grouped by status.
 - Iteration 5: /sei :: instrument clone-into-Section and Clear-from-current-Section. 
   - See: [Iteration 5 /sei](119-it5.md) 
 
+- Iteration 5: Clip recordedNotes/beats
+  - See: [Iteration 6 Clip recordedNotes/beats](119-it6.md) 
+
 ### Complete (without Iteration number)
 - menu prompt stale sometimes
   - specific bug introduced by command-line one-line is FIXED.  

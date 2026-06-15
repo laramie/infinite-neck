@@ -8,6 +8,7 @@ jest.unstable_mockModule('../../menu.js', () => ({
 	peekParentMenu: jest.fn(() => null),
 	printMenuStack: jest.fn(() => '<div class="cmdPrompt">prompt:</div>'),
 	printMenuStackBreadcrumbs: jest.fn(() => '<b>/</b>'),
+	refreshRuntimeChildren: jest.fn(),
 	resolveMenuValue: jest.fn(() => ''),
 	setMenuAtRoot: jest.fn(),
 	surfaceOneMenu: jest.fn()
