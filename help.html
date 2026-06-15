@@ -1977,13 +1977,10 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
      if the View menu is showing, you'll see the option controls get updated.
 </p>
 
-<p>Also click Save Display Options to overwrite previously saved options for just the current Section.
+<p>Also click <span class="GUIReferenceInline">View | Save Display Options</span> to overwrite previously saved options for just the current Section.
 </p>
 
-<p>Click Clear Display Options to delete these options for just the current Section.
-</p>
-
-<p>These buttons also appear in the Section menu, and apply to the current Section.
+<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete these options for just the current Section, after which they will inherit the options in effect from previous Sections.
 </p>
 
 <p>You can audit all the Display Options for all Sections that have them set with the <a href="#commandline">command-line</a> <span class="menuExampleLine"><b><small>/vdd</small></b></span>
@@ -1995,9 +1992,29 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 </p>
 <p>
     You can also sit on the View page and
-     watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( &lt; and &gt; ).
+     watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( <span class="key">&lt;</span> and <span class="key">&gt;</span> ).
      Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
      come back to the View menu.
+ </p>
+
+ <p>A few of the options have different names than their labels on the View page:
+<ul>
+    <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
+    <li><b>showCellNotes</b> - "Show Right Subscript"</li>
+    <li><b>showSubscriptFunctions</b> - "Show Left Subscript"</li>
+    <li><b>cellIsFunction</b> - "Right Subscript" [<i>Function|Notename</i>]</li>
+    <li><b>useCenterForRightFunction</b> - "Show Right Subscript in Center"</li>
+</ul>
+
+ </p>
+
+ <p>Note that two of the options in <span class="menuExampleLine">/vdd</span> aren't on the View page:
+<ul>
+    <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
+    <li><b>currentColorDict</b> - <span class="GUIReferenceInline">palette &gt; Stylesheets</span></li>
+</ul>
+
+
  </p>
 
  <p>There's a bit more info in the <a href="#glossaryDisplayOptions">Glossary::Display Options</a> entry</p>

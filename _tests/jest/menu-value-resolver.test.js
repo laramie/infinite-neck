@@ -16,7 +16,7 @@ describe('menu value resolver token expansion', () => {
       if (tokenName === 'sectionEditInstrumentBaseID') {
         return 'P46_1';
       }
-      return undefined;
+      return tokenName;
     });
   });
 

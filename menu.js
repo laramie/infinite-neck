@@ -34,12 +34,17 @@ export function resolveMenuValue(value) {
         return "";
     }
 
-    const resolved = gMenuValueResolver(value);
-    if (resolved === undefined || resolved === null) {
-    return `${value}`.replaceAll(/\$\{([^}]+)\}/g, (match, tokenName) => {
+  const valueText = `${value}`;
+  if (valueText.includes('${')) {
+    return valueText.replaceAll(/\$\{([^}]+)\}/g, (match, tokenName) => {
       const tokenValue = gMenuValueResolver(tokenName);
       return tokenValue === undefined || tokenValue === null ? match : `${tokenValue}`;
     });
+  }
+
+    const resolved = gMenuValueResolver(value);
+    if (resolved === undefined || resolved === null) {
+    return valueText;
     }
 
     return "" + resolved;
@@ -466,8 +471,8 @@ export var gMenuFile =    {
                   ],
                   "input": {
                     "type": "input",
-                    "caption": "section number (1-${sectionEditNextSectionCardinal})",
-                    "default": "${sectionEditNextSectionCardinal}",
+                    "caption": "section number (1-${sectionCount})",
+                    "default": "",
                     "datatype": "Number",
                     "id": "value"
                   },
