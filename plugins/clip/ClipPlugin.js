@@ -82,6 +82,19 @@ function arraysEqual(left = [], right = []) {
     && left.every((value, index) => `${value}` === `${right[index]}`);
 }
 
+function getMaxRecordedCol(payload) {
+  let maxCol = 0;
+  Object.values(payload?.recordedNotesByBeat || {}).forEach((notes = []) => {
+    (notes || []).forEach((note) => {
+      const col = toInteger(note?.col, -1);
+      if (col > maxCol) {
+        maxCol = col;
+      }
+    });
+  });
+  return maxCol;
+}
+
 function clipCountLabel(counts) {
   return INCLUDED_STYLE_ORDER
     .map(([kind]) => [kind, counts[kind] || 0])
@@ -396,6 +409,10 @@ export class ClipPlugin {
     });
   }
 
+  buildRecordedMidiPasteNode() {
+    return this.getProperty('recordedMidiPaste').getMenuNodeSpec(this);
+  }
+
   buildRecordedNotesMenuNode(song = getSong()) {
     return new MenuItemProxy(this, {
       name: 'recordedNotes',
@@ -418,6 +435,7 @@ export class ClipPlugin {
           trigger: 'p',
           children: [
             this.buildRecordedStatusNode(song),
+            this.buildRecordedMidiPasteNode(song),
             this.buildRecordedActionNode('pasteRecordedAddAllBeats', 'add all beats', 'a'),
             this.buildRecordedActionNode('pasteRecordedInsertAllBeats', 'insert all beats', 'i'),
             this.buildRecordedActionNode('pasteRecordedPlayIntoCurrent', 'play beats into current', 'p'),
@@ -581,6 +599,7 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 
 - automatic = ${this.getProperty('automatic')?.getValue()}
 - overwrite = ${this.getProperty('overwrite')?.getValue()}
+- recorded midi paste = ${this.getProperty('recordedMidiPaste')?.getValue()}
 - include = ${this.buildIncludeSummary(song)}
 - target table = ${this.resolveValue('targetTable', { song }) || '<none>'}
 - compatible clips = ${this.getCompatibleClipRecords(song).length}
@@ -850,7 +869,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         beatNumber: currentBeat,
         beatCount,
         nStrings: tuning.nStrings,
-        midiPitches: getMidiPitchArray(tuning)
+        midiPitches: getMidiPitchArray(tuning),
+        rowRange: getMidiPitchArray(tuning),
+        frets: tuning.frets,
+        nut: tuning.nut,
+        reverse: tuning.reverse
       },
       recordedNotesByBeat,
       sourceBeatNumbers,
@@ -931,6 +954,45 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }));
   }
 
+  isRecordedMidiPasteEnabled() {
+    return this.getProperty('recordedMidiPaste')?.getValue() === true;
+  }
+
+  getRecordedSourceTuning(payload, targetTuning = {}) {
+    const source = payload?.source || {};
+    const rowRange = Array.isArray(source.rowRange)
+      ? [...source.rowRange]
+      : (Array.isArray(source.midiPitches) ? [...source.midiPitches] : []);
+    return {
+      ...source,
+      rowRange,
+      midiPitches: Array.isArray(source.midiPitches) ? [...source.midiPitches] : [...rowRange],
+      frets: source.frets ?? targetTuning?.frets ?? getMaxRecordedCol(payload),
+      nut: source.nut ?? targetTuning?.nut ?? true,
+      reverse: source.reverse ?? targetTuning?.reverse ?? false,
+      nStrings: source.nStrings || rowRange.length,
+      baseInstrument: source.baseInstrument || targetTuning?.baseInstrument || ''
+    };
+  }
+
+  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning) {
+    const sourceLayout = createTuningLayout(sourceTuning);
+    const targetLayout = createTuningLayout(targetTuning);
+    let droppedOutOfRange = 0;
+    const mappedSourceBeats = sourceBeats.map((sourceBeat) => ({
+      ...sourceBeat,
+      notes: sourceBeat.notes.map((note) => {
+        const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+        if (!candidate) {
+          droppedOutOfRange += 1;
+          return null;
+        }
+        return candidate;
+      }).filter(Boolean)
+    }));
+    return { sourceBeats: mappedSourceBeats, droppedOutOfRange };
+  }
+
   getRecordedPasteContext(song = getSong()) {
     const records = this.getRecordedClipRecords(song);
     const selected = records[0];
@@ -944,18 +1006,32 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return { error: 'no current section or target table' };
     }
     const source = selected.payload?.source || {};
-    if (getTuningCompatibilityID(source) !== getTuningCompatibilityID(targetTuning)) {
-      return { error: `${source.baseID || 'source'} incompatible with ${targetTuning.baseID}` };
-    }
-    if (`${source.nStrings || ''}` !== `${targetTuning.nStrings || ''}`) {
-      return { error: `${source.baseID || 'source'} string layout mismatch` };
-    }
-    if (!arraysEqual(source.midiPitches || [], getMidiPitchArray(targetTuning))) {
-      return { error: `${source.baseID || 'source'} pitch layout mismatch` };
-    }
-    const sourceBeats = this.normalizeRecordedSourceBeats(selected.payload);
+    const sourceTuning = this.getRecordedSourceTuning(selected.payload, targetTuning);
+    let sourceBeats = this.normalizeRecordedSourceBeats(selected.payload);
     if (sourceBeats.length === 0) {
       return { error: 'recordedNotes clip is empty' };
+    }
+    const exactPitchLayout = `${sourceTuning.nStrings || ''}` === `${targetTuning.nStrings || ''}`
+      && arraysEqual(sourceTuning.midiPitches || [], getMidiPitchArray(targetTuning));
+    let droppedOutOfRange = 0;
+    const recordedMidiPaste = this.isRecordedMidiPasteEnabled();
+    if (!recordedMidiPaste) {
+      if (getTuningCompatibilityID(source) !== getTuningCompatibilityID(targetTuning)) {
+        return { error: `${source.baseID || 'source'} incompatible with ${targetTuning.baseID}` };
+      }
+      if (`${sourceTuning.nStrings || ''}` !== `${targetTuning.nStrings || ''}`) {
+        return { error: `${source.baseID || 'source'} string layout mismatch` };
+      }
+      if (!exactPitchLayout) {
+        return { error: `${source.baseID || 'source'} pitch layout mismatch` };
+      }
+    } else if (!exactPitchLayout) {
+      if (!canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
+        return { error: `${source.baseID || 'source'} unsupported for MIDI Paste to ${targetTuning.baseID}` };
+      }
+      const mapped = this.mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning);
+      sourceBeats = mapped.sourceBeats;
+      droppedOutOfRange = mapped.droppedOutOfRange;
     }
     return {
       ...selected,
@@ -963,7 +1039,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       targetTuning,
       tableID,
       sectionNotes: section.getSectionNotes(tableID),
-      sourceBeats
+      sourceBeats,
+      recordedMidiPaste,
+      droppedOutOfRange
     };
   }
 
@@ -973,6 +1051,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       notesAdded: 0,
       notesOverwritten: 0,
       namedSkipped: 0,
+      droppedOutOfRange: 0,
       pitchIncluded: false,
       multiIncluded: false
     };
@@ -1120,7 +1199,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
     context.record.lastRevived = Date.now();
     this.refreshSongUi(song);
-    return { result: outcome.result };
+    const droppedSuffix = context.droppedOutOfRange > 0 ? `; dropped ${context.droppedOutOfRange}` : '';
+    return { result: `${outcome.result}${droppedSuffix}` };
   }
 
   getCompatibleClipRecords(song = getSong()) {

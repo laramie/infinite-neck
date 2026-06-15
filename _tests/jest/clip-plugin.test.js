@@ -189,6 +189,10 @@ describe('ClipPlugin', () => {
       '<b>c</b>urrent beat',
       '<b>a</b>ll beats'
     ]);
+    expect(pasteNode.children.map((child) => child.caption).slice(0, 2)).toEqual([
+      'status: [${plugin:clip:recordedStatus}]',
+      '<b>m</b>idi paste [${plugin:clip:recordedMidiPaste}]'
+    ]);
     expect(pasteNode.children.map((child) => child.actionName).filter(Boolean)).toEqual([
       'pasteRecordedAddAllBeats',
       'pasteRecordedInsertAllBeats',
@@ -197,6 +201,60 @@ describe('ClipPlugin', () => {
       'pasteRecordedFlattenToPlayedNotes'
     ]);
     expect(plugin.resolveValue('recordedStatus', { song })).toBe('P46:1:1');
+    expect(plugin.getProperty('recordedMidiPaste').getValue()).toBe(true);
+  });
+
+  test('recorded MIDI Paste defaults on and remaps cross-tuning recorded notes by row and MIDI', () => {
+    const sourceTableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const sourceSection = createSection({
+      [sourceTableID]: {
+        recordedNotes: {
+          '1': [recNote('A', 1, Note.STYLENUM_SINGLE, '0', '5')]
+        }
+      }
+    });
+    const destSection = createSection({
+      [targetTableID]: {
+        recordedNotes: {
+          '1': []
+        }
+      }
+    });
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6', rowRange: [64, 59, 55, 50, 45, 40], frets: 24 }),
+        createTuning({ baseID: 'P46_1', fromBaseID: 'P46', rowRange: [65, 60, 55, 50, 45, 40], frets: 24 })
+      ],
+      sections: [sourceSection, destSection]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('targetTable', sourceTableID, { song });
+    plugin.invokeAction('copyRecordedCurrentBeat', { song, args: {} });
+
+    song.getCurrentSection = () => destSection;
+    song.setRecording(true);
+    plugin.setPropertyValue('targetTable', targetTableID, { song });
+
+    const result = plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} });
+
+    expect(result.result).toBe('played 1/1 beats: added 1, overwritten 0');
+    expect(destSection.getSectionNotes(targetTableID).recordedNotes['1'][0]).toMatchObject({
+      noteName: 'A',
+      midinum: '69',
+      row: '0',
+      col: '4'
+    });
+
+    const secondDest = createSection({ [targetTableID]: { recordedNotes: { '1': [] } } });
+    song.getCurrentSection = () => secondDest;
+    plugin.setPropertyValue('recordedMidiPaste', false, { song });
+
+    expect(plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} }).result).toBe('S6_1 incompatible with P46_1');
   });
 
   test('recorded copy all preserves empty beats in a graveyard-backed clip', () => {
