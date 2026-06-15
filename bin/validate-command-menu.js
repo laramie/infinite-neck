@@ -16,7 +16,7 @@ const runtimeChildrenActionMap = new Map([
         'pluginProperty:toggle'
     ]],
     ['sectionEditInstrument', [
-        'sectionEditInstrumentSelect2'
+        'sectionEditInstrumentSelect'
     ]]
 ]);
 
