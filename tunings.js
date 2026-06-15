@@ -64,7 +64,7 @@ export const allTunings = {
       "nut": true,
       "reverse": false,
       "visible": false,
-      "pianoNamesRow": true
+      "pianoNamesRow": false
     },
     {
       "instance": false,
@@ -73,6 +73,8 @@ export const allTunings = {
       "caption": "DropD",
       "nStrings": 6,
       "rowRange": [64, 59, 55, 50, 45, 38],
+      "specialBackgroundIDRows": [0, 1, 5],
+      "doSpecialRows": true,
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
@@ -88,6 +90,8 @@ export const allTunings = {
       "caption": "DADGAD",
       "nStrings": 6,
       "rowRange": [62, 57, 55, 50, 45, 38],
+      "specialBackgroundIDRows": [0, 1, 5],
+      "doSpecialRows": true,
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
@@ -103,6 +107,8 @@ export const allTunings = {
       "caption": "DGDGBD",
       "nStrings": 6,
       "rowRange": [62, 59, 55, 50, 43, 38],
+      "specialBackgroundIDRows": [0, 1, 4, 5],
+      "doSpecialRows": true,
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
