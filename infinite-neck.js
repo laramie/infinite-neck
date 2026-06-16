@@ -1316,11 +1316,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function increaseNoteFont(){
 		setNoteFontSize(getNoteFontSize() + 1);
+		refreshDisplayOptionsSaveActionRequired();
 	}
 
 	export function decreaseNoteFont(){
 		if (getNoteFontSize() > 0.5){
 			setNoteFontSize(getNoteFontSize() - 1);
+			refreshDisplayOptionsSaveActionRequired();
 		}
 	}
 
