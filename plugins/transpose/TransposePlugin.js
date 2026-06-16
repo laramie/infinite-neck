@@ -1,5 +1,5 @@
 import properties from './properties.json' with { type: 'json' };
-import { PluginProperty, buildCaption } from '../PluginProperty.js';
+import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
@@ -11,6 +11,13 @@ import { createTuningLayout, getPreferredCellForMidi } from '../../move-helpers.
 const TRANSPOSE_PROG_EM_OPEN = '<em class="transposeProg">';
 const TRANSPOSE_PROG_EM_CLOSE = '</em>';
 const AUTO_COLOR_CLASS_RE = /^note([1-9]|1[0-2])$/;
+const PLAYED_TRANSPOSE_STYLES_BY_PROPERTY = new Map([
+  ['SingleNotes', Note.STYLENUM_SINGLE],
+  ['TinyNotes', Note.STYLENUM_TINY],
+  ['BendNotes', Note.STYLENUM_BEND],
+  ['FingeringNotes', Note.STYLENUM_FINGERING]
+]);
+const PLAYED_TRANSPOSE_STYLES = new Set(PLAYED_TRANSPOSE_STYLES_BY_PROPERTY.values());
 const RECORDED_TRANSPOSE_STYLES = new Set([
   Note.STYLENUM_SINGLE,
   Note.STYLENUM_TINY,
@@ -121,33 +128,42 @@ function getCellKey(note) {
   return `${row}:${col}`;
 }
 
-function detectSingleNoteCollisions(playedNotes = [], recordedNotes = {}) {
+function getPlayedCollisionKey(note) {
+  const styleNum = toInt(note?.styleNum, null);
+  if (!PLAYED_TRANSPOSE_STYLES.has(styleNum)) {
+    return null;
+  }
+
+  const cellKey = getCellKey(note);
+  if (!cellKey) {
+    return null;
+  }
+
+  if (styleNum === Note.STYLENUM_SINGLE) {
+    return `single:${cellKey}`;
+  }
+  if (styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) {
+    return `tinybend:${cellKey}`;
+  }
+  if (styleNum === Note.STYLENUM_FINGERING) {
+    return `fingering:${cellKey}`;
+  }
+  return null;
+}
+
+function detectPlayedNoteCollisions(playedNotes = []) {
   let collision = false;
-  const playedCells = new Set();
+  const playedKeys = new Set();
 
   (playedNotes || []).forEach((note) => {
-    const key = getCellKey(note);
+    const key = getPlayedCollisionKey(note);
     if (!key) {
       return;
     }
-    if (playedCells.has(key)) {
+    if (playedKeys.has(key)) {
       collision = true;
     }
-    playedCells.add(key);
-  });
-
-  Object.values(recordedNotes || {}).forEach((notesForBeat) => {
-    const beatCells = new Set();
-    (notesForBeat || []).forEach((note) => {
-      const key = getCellKey(note);
-      if (!key) {
-        return;
-      }
-      if (playedCells.has(key) || beatCells.has(key)) {
-        collision = true;
-      }
-      beatCells.add(key);
-    });
+    playedKeys.add(key);
   });
 
   return collision;
@@ -245,7 +261,7 @@ function normalizeFretForRecordedTranspose(targetFret, layout, row, isBend, mode
   return normalized;
 }
 
-function normalizeSingleNoteColor(note, section) {
+function normalizeCellBoundNoteColor(note, section) {
   if (!shouldRecalculateColor(note?.colorClass)) {
     return note?.colorClass;
   }
@@ -253,7 +269,7 @@ function normalizeSingleNoteColor(note, section) {
   return lookedUp?.colorClass || note.colorClass;
 }
 
-function transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode) {
+function transposePlayedNoteOnString(note, delta, tuning, layout, section, octavesMode) {
   const row = toInt(note?.row, null);
   if (!Number.isInteger(row)) {
     return clone(note);
@@ -292,29 +308,35 @@ function transposeSingleNoteOnString(note, delta, tuning, layout, section, octav
     }
   }
 
+  if (toInt(note?.styleNum, null) === Note.STYLENUM_BEND) {
+    while (isNutLanding(layout, row, targetFret)) {
+      targetFret += 12;
+    }
+  }
+
   const targetMidinum = openMidi + targetFret;
   const moved = clone(note);
   moved.row = `${row}`;
   moved.col = `${targetFret}`;
   moved.midinum = `${targetMidinum}`;
   moved.noteName = Constants.midinumToNoteName(targetMidinum);
-  moved.colorClass = normalizeSingleNoteColor(moved, section);
+  moved.colorClass = normalizeCellBoundNoteColor(moved, section);
   return moved;
 }
 
-function transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode) {
+function transposeSectionTablePlayedNotes(sectionNotes, delta, tuning, section, octavesMode, includedStyles) {
   const layout = createTuningLayout(tuning);
   const playedNotes = (sectionNotes?.playedNotes || []).map((note) => {
-    if (toInt(note?.styleNum, null) !== Note.STYLENUM_SINGLE) {
+    if (!includedStyles.has(toInt(note?.styleNum, null))) {
       return clone(note);
     }
-    return transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode);
+    return transposePlayedNoteOnString(note, delta, tuning, layout, section, octavesMode);
   });
 
   return {
     playedNotes,
     recordedNotes: clone(sectionNotes?.recordedNotes || {}),
-    collision: detectSingleNoteCollisions(playedNotes, {})
+    collision: detectPlayedNoteCollisions(playedNotes)
   };
 }
 
@@ -357,7 +379,7 @@ function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, ta
   moved.col = `${targetFret}`;
   moved.midinum = `${targetMidinum}`;
   moved.noteName = Constants.midinumToNoteName(targetMidinum);
-  moved.colorClass = normalizeSingleNoteColor(moved, section);
+  moved.colorClass = normalizeCellBoundNoteColor(moved, section);
   return moved;
 }
 
@@ -495,9 +517,29 @@ export class TransposePlugin {
       this.getProperty('apply')?.getMenuNodeSpec(this),
       this.buildResetMenuNode(),
       this.getProperty('help')?.getMenuNodeSpec(this),
-      ...['intervals', 'NamedNotes', 'SingleNotes', 'RecordedNotes', 'octaves', 'autoSharpsFlats', 'doLeadKey']
+      this.getProperty('intervals')?.getMenuNodeSpec(this),
+      this.buildIncludeMenuNode(),
+      ...['octaves', 'autoSharpsFlats', 'doLeadKey']
         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
     ].filter(Boolean);
+  }
+
+  buildIncludeMenuNode() {
+    const token = `plugin:${this.id}:includeSummary`;
+    return new MenuItemProxy(this, {
+      name: 'include',
+      caption: `${buildCaption('include', 'i')}${buildValueReference(token)}`,
+      trigger: 'i',
+      vars: [token],
+      children: [
+        this.getProperty('NamedNotes')?.getMenuNodeSpec(this),
+        this.getProperty('SingleNotes')?.getMenuNodeSpec(this),
+        this.getProperty('TinyNotes')?.getMenuNodeSpec(this),
+        this.getProperty('BendNotes')?.getMenuNodeSpec(this),
+        this.getProperty('FingeringNotes')?.getMenuNodeSpec(this),
+        this.getProperty('RecordedNotes')?.getMenuNodeSpec(this)
+      ].filter(Boolean)
+    });
   }
 
   buildResetMenuNode() {
@@ -594,6 +636,9 @@ export class TransposePlugin {
     if (fieldName === 'originalOffset') {
       return this.getCurrentOriginalOffset();
     }
+    if (fieldName === 'includeSummary') {
+      return ` ${this.buildIncludeFlagsSummary()}`;
+    }
     return undefined;
   }
 
@@ -651,7 +696,7 @@ export class TransposePlugin {
   }
 
   buildSummary() {
-    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} single notes=${this.getSingleNotesEnabled()} recorded=${this.getRecordedNotesEnabled()} octaves=${this.getOctavesDisplayValue()}`;
+    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} include=${this.buildIncludeFlagsSummary()} octaves=${this.getOctavesDisplayValue()}`;
   }
 
   buildHelpMessage() {
@@ -660,12 +705,16 @@ export class TransposePlugin {
 
 Current settings:
 - ${this.buildSummary()}
-- intervals = ${JSON.stringify(this.getIntervals())}
+- chroma = ${JSON.stringify(this.getIntervals())}
 - graveyard key = ${graveyardKey}
+- named notes = ${this.getNamedNotesEnabled()}
 - single notes = ${this.getSingleNotesEnabled()}
+- tiny notes = ${this.getTinyNotesEnabled()}
+- bend notes = ${this.getBendNotesEnabled()}
+- fingering notes = ${this.getFingeringNotesEnabled()}
 - recorded notes = ${this.getRecordedNotesEnabled()}
 - octaves = ${this.getOctavesDisplayValue()} (legal values: empty, 0, or positive integer)
-- interval list is canonicalized to start from 0
+- chroma list is canonicalized to start from 0
 - each trigger advances to the next interval
 - Reset > original returns to the original session baseline and restarts from 0
 - Reset > current interval returns to the current sequence baseline and restarts from 0
@@ -687,8 +736,41 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return !!this.getProperty('SingleNotes')?.getValue();
   }
 
+  getTinyNotesEnabled() {
+    return !!this.getProperty('TinyNotes')?.getValue();
+  }
+
+  getBendNotesEnabled() {
+    return !!this.getProperty('BendNotes')?.getValue();
+  }
+
+  getFingeringNotesEnabled() {
+    return !!this.getProperty('FingeringNotes')?.getValue();
+  }
+
   getRecordedNotesEnabled() {
     return !!this.getProperty('RecordedNotes')?.getValue();
+  }
+
+  buildIncludeFlagsSummary() {
+    const include = [];
+    if (this.getNamedNotesEnabled()) include.push('n');
+    if (this.getSingleNotesEnabled()) include.push('s');
+    if (this.getTinyNotesEnabled()) include.push('t');
+    if (this.getBendNotesEnabled()) include.push('b');
+    if (this.getFingeringNotesEnabled()) include.push('f');
+    if (this.getRecordedNotesEnabled()) include.push('r');
+    return `[${include.join(',')}]`;
+  }
+
+  getIncludedPlayedTransposeStyles() {
+    const included = new Set();
+    PLAYED_TRANSPOSE_STYLES_BY_PROPERTY.forEach((styleNum, propertyName) => {
+      if (this.getProperty(propertyName)?.getValue()) {
+        included.add(styleNum);
+      }
+    });
+    return included;
   }
 
   getOctavesDisplayValue() {
@@ -935,8 +1017,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return this.liveSongOffset - this.originalBaselineOffset;
   }
 
-  transposeSingleNotesAllSections(delta, song = this.manager?.song || getSong()) {
+  transposePlayedNotesAllSections(delta, song = this.manager?.song || getSong()) {
     if (delta === 0 || !song || !Array.isArray(song.sections)) {
+      return { movedTables: 0, fallbackUsed: false };
+    }
+
+    const includedStyles = this.getIncludedPlayedTransposeStyles();
+    if (includedStyles.size === 0) {
       return { movedTables: 0, fallbackUsed: false };
     }
 
@@ -951,13 +1038,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
           return;
         }
 
-        let result = transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode);
+        let result = transposeSectionTablePlayedNotes(sectionNotes, delta, tuning, section, octavesMode, includedStyles);
         if (!octavesMode.isFullNeck && result.collision) {
           octavesMode = { value: '0', cap: 0, isFullNeck: true, notice: '' };
           this.getProperty('octaves')?.setValue('0');
-          this.setOperationMessage('Transpose single-note collision detected for capped octaves; octaves reset to 0 and full-neck/off-screen placement used.');
+          this.setOperationMessage('Transpose played-note collision detected for capped octaves; octaves reset to 0 and full-neck/off-screen placement used.');
           fallbackUsed = true;
-          result = transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, octavesMode);
+          result = transposeSectionTablePlayedNotes(sectionNotes, delta, tuning, section, octavesMode, includedStyles);
         }
 
         sectionNotes.playedNotes = result.playedNotes;
@@ -1012,9 +1099,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     transposeSong(delta, formatOptions(this.propertyMap));
 
-    if (this.getSingleNotesEnabled()) {
-      this.transposeSingleNotesAllSections(delta, song);
-    }
+    this.transposePlayedNotesAllSections(delta, song);
 
     if (this.getRecordedNotesEnabled()) {
       this.transposeRecordedNotesAllSections(delta, song);

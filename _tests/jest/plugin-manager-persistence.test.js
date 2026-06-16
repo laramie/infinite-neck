@@ -215,8 +215,11 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          SingleNotes: false,
-          RecordedNotes: false,
+          SingleNotes: true,
+          TinyNotes: true,
+          BendNotes: true,
+          FingeringNotes: true,
+          RecordedNotes: true,
           octaves: '',
           autoSharpsFlats: false,
           doLeadKey: true
@@ -239,8 +242,11 @@ describe('PluginManager plugin persistence', () => {
         properties: {
           intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
           NamedNotes: true,
-          SingleNotes: false,
-          RecordedNotes: false,
+          SingleNotes: true,
+          TinyNotes: true,
+          BendNotes: true,
+          FingeringNotes: true,
+          RecordedNotes: true,
           octaves: '',
           autoSharpsFlats: false,
           doLeadKey: false
@@ -281,8 +287,11 @@ describe('PluginManager plugin persistence', () => {
       properties: {
         intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         NamedNotes: true,
-        SingleNotes: false,
-        RecordedNotes: false,
+        SingleNotes: true,
+        TinyNotes: true,
+        BendNotes: true,
+        FingeringNotes: true,
+        RecordedNotes: true,
         octaves: '',
         autoSharpsFlats: false,
         doLeadKey: true
@@ -322,6 +331,9 @@ describe('PluginManager plugin persistence', () => {
         intervals: [0, 2, 4],
         NamedNotes: true,
         SingleNotes: false,
+        TinyNotes: true,
+        BendNotes: true,
+        FingeringNotes: true,
         octaves: '',
         autoSharpsFlats: false,
         doLeadKey: true

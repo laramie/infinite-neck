@@ -25,8 +25,8 @@
   },
   {
     "name": "intervals",
-    "caption": "intervals",
-    "trigger": "i",
+    "caption": "chroma",
+    "trigger": "c",
     "datatype": "org.dynamide.IntegerArray",
     "value": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     "defaultValue": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
@@ -49,8 +49,38 @@
     "caption": "single notes",
     "trigger": "s",
     "datatype": "org.dynamide.toggle",
-    "value": false,
-    "defaultValue": false,
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "TinyNotes",
+    "caption": "tiny",
+    "trigger": "t",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "BendNotes",
+    "caption": "bend",
+    "trigger": "b",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "FingeringNotes",
+    "caption": "fingering",
+    "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
     "inputCaption": "true|false",
     "visibleInMenu": true
   },
@@ -59,8 +89,8 @@
     "caption": "recorded",
     "trigger": "r",
     "datatype": "org.dynamide.toggle",
-    "value": false,
-    "defaultValue": false,
+    "value": true,
+    "defaultValue": true,
     "inputCaption": "true|false",
     "visibleInMenu": true
   },
