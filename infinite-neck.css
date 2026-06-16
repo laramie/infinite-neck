@@ -1323,6 +1323,10 @@ td.note {
     /* LOL Best effect yet!   -webkit-transform: rotate(-90deg);   */
 
 }
+td.deadCell {
+    min-width: 1em; 
+    background-color: transparent;
+}
 
 td.note.noteBlackKey {
     background-image: var(--border-image-black-key);

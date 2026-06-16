@@ -112,7 +112,7 @@ export function buildNoteTable(options) {
 			cell.attr("celltable", tableID);
 			cell.html("" + noteName);
 			if (deadCell) {
-				cell = $('<td class="note" style="min-width: 1em; background-color: #222;">');
+				cell = $('<td class="note deadCell">');
 			}
 			row.append(cell);
 			if (doNamesRow) {
