@@ -251,6 +251,22 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.chords).toEqual(['Dmaj7']);
     });
 
+    test('AutoColor uses numeric rootIDLead zero for TinyNote color lookup', () => {
+        const section = createSection({}, 10); // rootID = Gb
+        section.rootIDLead = 0; // A, numeric zero must not fall back to rootID
+
+        const lookup = lookupClassForNote(
+            { noteName: 'D', styleNum: Note.STYLENUM_TINY, colorClass: 'noteTransparent' },
+            createLookupContext({
+                section,
+                autoColor: true
+            })
+        );
+
+        expect(lookup?.functionNum).toBe(5);
+        expect(lookup?.colorClass).toBe(gUserColorDict.dict.note6.colorClass);
+    });
+
     test('TinyNote source ignores LeadKey if noteRoot is explicitly placed', () => {
         const tableID = 'tblP46_1';
         const rootTableID = 'BASS_1';

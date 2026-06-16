@@ -752,7 +752,7 @@ export function chuseStylesheet(dictkey){
 			case Note.STYLENUM_BEND:
 			case Note.STYLENUM_TINY:
 				theRootID = context.rootIDLead;
-				if (!theRootID || theRootID == "-1"){
+				if (theRootID == null || theRootID === "" || theRootID == "-1"){
 					theRootID = context.rootID;
 				}
 				break;
