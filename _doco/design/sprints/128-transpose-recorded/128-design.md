@@ -212,6 +212,24 @@ ANSWER: Yes.
 
 With these answers, the [Iteration 2 implementation plan](128-it2-implementation-plan.md) is CORE-APPROVED for coding.
 
+# Iteration 3.  Make octaves available to recordedNotes
+
+We now have the two pieces working: 
+1) playedNotes with octaves option.
+2) recordedNotes without octaves option, using StringOneOctave algorithm.
+
+The idea is to keep notes authored together on the neck, to transpose together as closely as possible, since playedNotes and recordedNotes are usually authored to interplay and weave between each other.  Most players play in "positions" which are places to put your hands on the neck for a few beats or a Section, and are canonically four frets wide, or five frets wide with dexterous playing.  With sliding the fingers around most advanced players can span 6 frets comfortably, but spans bigger than this are extremely difficult to play in realtime.  Therefore, if a User places notes within a certain fret distance of other notes, he intends to keep the distances the same, even if we transpose the group up or down the neck.
+
+Keeping StringOneOctave intact, and a separate code path from the handling of playedNotes and namedNotes, we'd like to teach recordedNotes to use the octaves option from playedNotes.
+
+To aid us in testing, and possibly for retention for User use-cases, we'd like a new option: 
+`u) use octaves for recorded`
+This goes directly after menu-item `o) octaves []`
+It is an org.dynamide.toggle.
+If `true`, the StringOneOctave behavior is increased to use octaves behavior.  Whether this becomes a second algorithm or an option feeding into StringOneOctave is open to the implementor, as long as when toggled to `false`, the behavior is the same as it is right now with StringOneOctave and no octaves feature.
+
+Please attempt a coding pass at this, and point out any special areas for User Acceptance testing.  We are checked into git so we can evaluate and roll back in case of weirdness.
+
 
 
 
