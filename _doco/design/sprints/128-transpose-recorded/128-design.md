@@ -115,16 +115,16 @@ For this iteration, Iteration 2, we would like to follow up on what we did in It
 
 For Iteration 2, we would like to continue to handle all recordedNotes as a block, unchanged from Iteration 1.  We would like to handle NamedNotes exactly as they are handled now.  
 
-For Iteration 2, We would like to handle SingleNotes as they are now.  But we would like to add playedNotes:TinyNote, playedNotes:Bend, and playedNotes:Fingering.  Since Pitch and Multi are not persisted when they are playedNotes, they are not included in playedNotes handling in Iteration 2. 
+For Iteration 2, We would like to handle playedNotes:SingleNotes as they are now.  But we would like to add playedNotes:TinyNote, playedNotes:Bend, and playedNotes:Fingering.  Since Pitch and Multi are not persisted when they are playedNotes, they are not included in playedNotes handling in Iteration 2. 
 
 So we have three issues to implement: 
   1) making sure TinyNote, Bend, and Fingering are handled correctly when using the algorithm for SingleNote, but honoring the restrictions on the Nut for Bends as implemented when doing recordedNotes.
-  2) reorganizing the menu so that the style of chosing options matches the other plugins.
+  2) Reorganizing the menu so that the style of chosing options matches the other plugins.
   3) Dealing with `octaves`.
 
 ## Handling the new note types
 
-This is straightforward from a design perspective.  We look forward to seeing if the implementation plan has any design holes or questions we need to solve.
+This is straightforward from a design perspective: add the note types and watch out for Bends at the Nut.  We look forward to seeing if the implementation plan has any design holes or questions we need to solve.
 
 ## Reorganizing the menu
 
@@ -150,7 +150,7 @@ We would like to make the menu available with the following changes:
 
 `intervals` is functionally unchanged, but its caption is now `chroma` and its trigger is now `c`.
 
-`include []` is functionally like `/fpmi` (and `/fpci` except no count is provided here), in that they are org.dynamide.toggle, and one lowercase letter selects each and leaves us at that menu to keep selecting types.
+`include []` is functionally like `/fpmi` (and `/fpci` except no count is provided here), in that they are org.dynamide.toggle, and one lowercase letter selects each and leaves us at that menu to keep selecting types. It has caption `include []` with the computed value being a sum of the types chosen, at maximum: `[n,s,t,b,f,r]`, with no counts.  It has trigger `i` replacing trigger `i) intervals` which is moved to `c) chroma`.
 
 Here `include` has children `named` which is just `named notes` from the original menu moved here, and `recorded` which is just `recorded` from the original menu moved here.  Also, here the selection of the other types [single, tiny, bend, fingering] only adds them to the playedNotes bucket, not the recordedNotes bucket, because recordedNotes are dealt with as a non-configurable block.
 
@@ -179,12 +179,12 @@ do lead key [false]
 
 This option is a bit of a snag.  We added it in [sprint-113-transpose-plugin-single-notes](../113-transpose-plugin-single-notes/sprint-113-transpose-plugin-single-notes.md)
 
-It works for SingleNotes today.
+It works for SingleNotes today.  It is especially useful for short neck cases, but also for 24+ fret / long-neck cases.  It also works well when the intervals/chroma contains values greater than 12.
 
 We specifically excluded it from recorded notes, and that algorithm is working perfectly.
 
 But the questions are:
-1) Will it be straightforward to add TinyNotes, Bends, and Fingerings using the same feature?
+1) Will it be straightforward to add TinyNotes, Bends, and Fingerings to playedNotes using the same feature octaves of playedNotes:SingleNote?
 2) Is there a danger of it disrupting the current algorithm for recorded notes, if recorded notes begins to use the octaves feature?
 
 ## Request
@@ -192,6 +192,28 @@ But the questions are:
 Please provide an implementation plan draft, with questions and calling out design holes to be answered by the Design team.
 
 Let it be: [Iteration 2 implementation plan](128-it2-implementation-plan.md)
+
+## Answers to Iteration 2 implementation plan questions
+
+1. Should new played-note include toggles default to `false` for compatibility, or should they default to `true` to match the sample `[n,s,t,b,f,r]` menu state?
+ANSWER: Default all to `true`.  All song files need to be checked/rewritten for upcoming sprint-121.  We are not worried about legacy songfiles.  We'd prefer to have the default be that everything the User sees is automatically included. 
+
+2. Confirm property names: `TinyNotes`, `BendNotes`, and `FingeringNotes`.
+ANSWER: Yes.
+
+3. Confirm lane-wise collision policy: Single lane, Tiny/Bend lane, Fingering lane, with no cross-lane collision between Single and Tiny at the same cell.
+ANSWER: Yes.
+
+4. Should played-note capped-octave collision fallback continue to rewrite `octaves` to `0` and emit an action message for Tiny/Bend/Fingering, as it does for SingleNote today?
+ANSWER: Yes.
+
+5. Should `chroma` be only a caption/trigger change while keeping persisted property name `intervals`?
+ANSWER: Yes.
+
+With these answers, the [Iteration 2 implementation plan](128-it2-implementation-plan.md) is CORE-APPROVED for coding.
+
+
+
 
 
 
