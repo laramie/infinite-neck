@@ -105,6 +105,16 @@
     "visibleInMenu": true
   },
   {
+    "name": "useOctavesForRecorded",
+    "caption": "use octaves for recorded",
+    "trigger": "u",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
     "name": "autoSharpsFlats",
     "caption": "auto sharps/flats",
     "trigger": "a",

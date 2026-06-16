@@ -221,6 +221,7 @@ describe('PluginManager plugin persistence', () => {
           FingeringNotes: true,
           RecordedNotes: true,
           octaves: '',
+          useOctavesForRecorded: false,
           autoSharpsFlats: false,
           doLeadKey: true
         }
@@ -248,6 +249,7 @@ describe('PluginManager plugin persistence', () => {
           FingeringNotes: true,
           RecordedNotes: true,
           octaves: '',
+          useOctavesForRecorded: false,
           autoSharpsFlats: false,
           doLeadKey: false
         }
@@ -293,6 +295,7 @@ describe('PluginManager plugin persistence', () => {
         FingeringNotes: true,
         RecordedNotes: true,
         octaves: '',
+        useOctavesForRecorded: false,
         autoSharpsFlats: false,
         doLeadKey: true
       }
@@ -335,6 +338,7 @@ describe('PluginManager plugin persistence', () => {
         BendNotes: true,
         FingeringNotes: true,
         octaves: '',
+        useOctavesForRecorded: false,
         autoSharpsFlats: false,
         doLeadKey: true
       }

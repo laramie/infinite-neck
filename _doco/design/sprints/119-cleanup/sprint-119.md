@@ -118,6 +118,23 @@ Here are the work items, grouped by status.
   ```
   Cody also made an attempt to do this in command-line.js hardcoding for /fpoa, which I rolled back but committed in git for history.             
 
+- /vp presentation menu re-org
+
+We would like a menu re-organized.
+Current: 
+`/vp` `p) presentation mode` calls to toggle it
+New: 
+`/vp` `p) presentation` shows a sub-menu:
+    `p) presentation mode [true]` calls to toggle it, displays current value
+    `s) save Display Options [state]` does what #btnControlsToDisplayOptions_View does
+    `c) clear Display Options [state]` does what #btnDeleteDisplayOptions_View does
+
+  Each of these items would display a bang and stay at this level.
+  Since there is state behind the buttons in the UI in `View | SAVE` and `View | CLEAR`, represent this state in the [state] in the menu item: 
+  `save` state: ['unsaved','saved','none']
+  `clear` state: ['none','present']
+
+
 ## Deferred
 
 - chart colors and shadows

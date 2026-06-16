@@ -218,6 +218,21 @@ function normalizePitchDeltaStringOneOctave(delta) {
   return normalized;
 }
 
+function normalizePitchDeltaForOctaves(delta, octavesMode) {
+  if (octavesMode?.isFullNeck) {
+    return delta;
+  }
+  const step = Math.max(12, (octavesMode?.cap || 0) * 12);
+  let normalized = delta;
+  while (normalized > step) {
+    normalized -= step;
+  }
+  while (normalized < -step) {
+    normalized += step;
+  }
+  return normalized;
+}
+
 function resolveSourceFret(note, tuning, row) {
   const sourceFretFromCol = toInt(note?.col, null);
   if (Number.isInteger(sourceFretFromCol)) {
@@ -251,6 +266,37 @@ function normalizeFretForRecordedTranspose(targetFret, layout, row, isBend, mode
     const threshold = nutCol + 12;
     while (normalized > threshold) {
       normalized -= 12;
+    }
+  }
+
+  while (isBend && isNutLanding(layout, row, normalized)) {
+    normalized += 12;
+  }
+
+  return normalized;
+}
+
+function normalizeFretForRecordedOctaves(targetFret, layout, row, isBend, octavesMode) {
+  const boundaries = getRowBoundaries(layout, row);
+  if (!boundaries) {
+    return null;
+  }
+
+  let normalized = targetFret;
+  while (normalized < boundaries.minVisibleFret) {
+    normalized += 12;
+  }
+
+  if (!octavesMode.isFullNeck) {
+    const step = Math.max(12, octavesMode.cap * 12);
+    const threshold = boundaries.minVisibleFret + step;
+    while (normalized > threshold) {
+      normalized -= step;
+    }
+  } else {
+    const wrapStep = Math.floor((boundaries.maxVisibleFret - boundaries.minVisibleFret) / 12) * 12;
+    while (wrapStep > 0 && normalized > boundaries.maxVisibleFret) {
+      normalized -= wrapStep;
     }
   }
 
@@ -340,7 +386,7 @@ function transposeSectionTablePlayedNotes(sectionNotes, delta, tuning, section, 
   };
 }
 
-function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode) {
+function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode, octavesMode = null) {
   const row = toInt(note?.row, null);
   const styleNum = toInt(note?.styleNum, null);
   if (!Number.isInteger(row)) {
@@ -361,13 +407,15 @@ function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, ta
     return clone(note);
   }
 
-  const targetFret = normalizeFretForRecordedTranspose(
-    sourceFret + delta,
-    layout,
-    row,
-    styleNum === Note.STYLENUM_BEND,
-    mode
-  );
+  const targetFret = mode === 'octaves'
+    ? normalizeFretForRecordedOctaves(sourceFret + delta, layout, row, styleNum === Note.STYLENUM_BEND, octavesMode)
+    : normalizeFretForRecordedTranspose(
+      sourceFret + delta,
+      layout,
+      row,
+      styleNum === Note.STYLENUM_BEND,
+      mode
+    );
   if (!Number.isInteger(targetFret)) {
     logMalformedRecordedTransposeNote(tableID, beat, 'malformed nut boundary');
     return clone(note);
@@ -383,14 +431,17 @@ function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, ta
   return moved;
 }
 
-function transposePitchRecordedNote(note, delta, layout, tableID, beat) {
+function transposePitchRecordedNote(note, delta, layout, tableID, beat, mode, octavesMode = null) {
   const sourceMidinum = toInt(note?.midinum, null);
   if (!Number.isInteger(sourceMidinum)) {
     logMalformedRecordedTransposeNote(tableID, beat, 'malformed midinum');
     return clone(note);
   }
 
-  const targetMidinum = sourceMidinum + normalizePitchDeltaStringOneOctave(delta);
+  const pitchDelta = mode === 'octaves'
+    ? normalizePitchDeltaForOctaves(delta, octavesMode)
+    : normalizePitchDeltaStringOneOctave(delta);
+  const targetMidinum = sourceMidinum + pitchDelta;
   const preferredRow = toInt(note?.row, null);
   const targetCell = getPreferredCellForMidi(layout, targetMidinum, Number.isInteger(preferredRow) ? preferredRow : null);
   const moved = clone(note);
@@ -401,15 +452,15 @@ function transposePitchRecordedNote(note, delta, layout, tableID, beat) {
   return moved;
 }
 
-function transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode) {
+function transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode, octavesMode = null) {
   const styleNum = toInt(note?.styleNum, null);
   if (!isRecordedTransposeStyle(styleNum)) {
     return clone(note);
   }
   if (isCellBoundRecordedTransposeStyle(styleNum)) {
-    return transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode);
+    return transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode, octavesMode);
   }
-  return transposePitchRecordedNote(note, delta, layout, tableID, beat);
+  return transposePitchRecordedNote(note, delta, layout, tableID, beat, mode, octavesMode);
 }
 
 function getRecordedCollisionKey(note, beat) {
@@ -460,10 +511,10 @@ function detectRecordedTransformCollision(recordedNotes = {}) {
   return collision;
 }
 
-function transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, mode = 'oneOctave') {
+function transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, mode = 'oneOctave', octavesMode = null) {
   const layout = createTuningLayout(tuning);
   const recordedNotes = buildRecordedNotes(sectionNotes?.recordedNotes || {}, (note, beat) => (
-    transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode)
+    transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode, octavesMode)
   ));
 
   return {
@@ -519,7 +570,7 @@ export class TransposePlugin {
       this.getProperty('help')?.getMenuNodeSpec(this),
       this.getProperty('intervals')?.getMenuNodeSpec(this),
       this.buildIncludeMenuNode(),
-      ...['octaves', 'autoSharpsFlats', 'doLeadKey']
+      ...['octaves', 'useOctavesForRecorded', 'autoSharpsFlats', 'doLeadKey']
         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
     ].filter(Boolean);
   }
@@ -696,7 +747,7 @@ export class TransposePlugin {
   }
 
   buildSummary() {
-    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} include=${this.buildIncludeFlagsSummary()} octaves=${this.getOctavesDisplayValue()}`;
+    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} include=${this.buildIncludeFlagsSummary()} octaves=${this.getOctavesDisplayValue()} use octaves for recorded=${this.getUseOctavesForRecordedEnabled()}`;
   }
 
   buildHelpMessage() {
@@ -714,6 +765,7 @@ Current settings:
 - fingering notes = ${this.getFingeringNotesEnabled()}
 - recorded notes = ${this.getRecordedNotesEnabled()}
 - octaves = ${this.getOctavesDisplayValue()} (legal values: empty, 0, or positive integer)
+- use octaves for recorded = ${this.getUseOctavesForRecordedEnabled()}
 - chroma list is canonicalized to start from 0
 - each trigger advances to the next interval
 - Reset > original returns to the original session baseline and restarts from 0
@@ -750,6 +802,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getRecordedNotesEnabled() {
     return !!this.getProperty('RecordedNotes')?.getValue();
+  }
+
+  getUseOctavesForRecordedEnabled() {
+    return !!this.getProperty('useOctavesForRecorded')?.getValue();
   }
 
   buildIncludeFlagsSummary() {
@@ -1064,6 +1120,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return { movedTables: 0, fallbackUsed: false };
     }
 
+    const useOctavesForRecorded = this.getUseOctavesForRecordedEnabled();
+    const octavesMode = useOctavesForRecorded ? this.getNormalizedOctavesMode() : null;
+    const initialMode = useOctavesForRecorded ? 'octaves' : 'oneOctave';
     let fallbackUsed = false;
     let movedTables = 0;
 
@@ -1074,7 +1133,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
           return;
         }
 
-        let result = transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, 'oneOctave');
+        let result = transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, initialMode, octavesMode);
         if (result.collision) {
           fallbackUsed = true;
           result = transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, 'fullNeck');

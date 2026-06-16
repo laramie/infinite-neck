@@ -118,8 +118,9 @@ describe('TransposePlugin', () => {
     const playedNode = children.find((child) => child.name === 'PlayedNotes');
     const includeNode = children.find((child) => child.name === 'include');
     const chromaNode = children.find((child) => child.name === 'intervals');
+    const useOctavesForRecordedNode = children.find((child) => child.name === 'useOctavesForRecorded');
 
-    expect(children.map((child) => child.name).slice(0, 5)).toEqual(['apply', 'resetMenu', 'help', 'intervals', 'include']);
+    expect(children.map((child) => child.name).slice(0, 8)).toEqual(['apply', 'resetMenu', 'help', 'intervals', 'include', 'octaves', 'useOctavesForRecorded', 'autoSharpsFlats']);
     expect(resetNode).toBeTruthy();
     expect(resetNode.trigger).toBe('R');
     expect(resetNode.children.map((child) => child.name)).toEqual([
@@ -140,6 +141,8 @@ describe('TransposePlugin', () => {
     expect(includeNode.children.map((child) => child.name)).toEqual(['NamedNotes', 'SingleNotes', 'TinyNotes', 'BendNotes', 'FingeringNotes', 'RecordedNotes']);
     expect(includeNode.children.map((child) => child.trigger)).toEqual(['n', 's', 't', 'b', 'f', 'r']);
     expect(children.find((child) => child.name === 'octaves')?.trigger).toBe('o');
+    expect(useOctavesForRecordedNode).toBeTruthy();
+    expect(useOctavesForRecordedNode.trigger).toBe('u');
     expect(playedNode).toBeUndefined();
   });
 
@@ -310,6 +313,78 @@ describe('TransposePlugin', () => {
     expect(plugin.getProperty('octaves').getValue()).toBe('1');
     expect(section.getSectionNotes(tableID).recordedNotes['1'][0]).toEqual(expect.objectContaining({ midinum: '77', row: '0', col: '13' }));
     expect(section.getSectionNotes(tableID).recordedNotes['1'][1]).toEqual(expect.objectContaining({ midinum: '65', row: '0', col: '1' }));
+  });
+
+  test('recorded notes keep StringOneOctave behavior when use octaves for recorded is false', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    section.getSectionNotes(tableID).recordedNotes = {
+      '1': [
+        { noteName: 'F', styleNum: Note.STYLENUM_SINGLE, midinum: '77', row: '0', col: '13', colorClass: 'noteTransparent' }
+      ]
+    };
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'S6_1', frets: 17, rowRange: [64, 59, 55, 50, 45, 40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 1]);
+    plugin.setPropertyValue('RecordedNotes', true);
+    plugin.setPropertyValue('octaves', '2');
+
+    plugin.invokeAction('apply', { song });
+
+    expect(plugin.getProperty('useOctavesForRecorded').getValue()).toBe(false);
+    expect(section.getSectionNotes(tableID).recordedNotes['1'][0]).toEqual(expect.objectContaining({ midinum: '66', row: '0', col: '2' }));
+  });
+
+  test('recorded notes use capped octaves when use octaves for recorded is true', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    section.getSectionNotes(tableID).recordedNotes = {
+      '1': [
+        { noteName: 'F', styleNum: Note.STYLENUM_SINGLE, midinum: '77', row: '0', col: '13', colorClass: 'noteTransparent' },
+        { noteName: 'C', styleNum: Note.STYLENUM_MIDIPITCHES, midinum: '72', row: '0', colorClass: 'noteTransparent' }
+      ]
+    };
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'S6_1', frets: 17, rowRange: [64, 59, 55, 50, 45, 40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 1]);
+    plugin.setPropertyValue('RecordedNotes', true);
+    plugin.setPropertyValue('octaves', '2');
+    plugin.setPropertyValue('useOctavesForRecorded', true);
+
+    plugin.invokeAction('apply', { song });
+    const moved = section.getSectionNotes(tableID).recordedNotes['1'];
+
+    expect(moved[0]).toEqual(expect.objectContaining({ styleNum: Note.STYLENUM_SINGLE, midinum: '78', row: '0', col: '14' }));
+    expect(moved[1]).toEqual(expect.objectContaining({ styleNum: Note.STYLENUM_MIDIPITCHES, midinum: '73', row: '0' }));
+    expect(moved[1].col).toBeUndefined();
+  });
+
+  test('recorded notes use full-neck octaves when use octaves for recorded is true and octaves is empty', () => {
+    const section = makeSection(3);
+    const tableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    section.getSectionNotes(tableID).recordedNotes = {
+      '1': [
+        { noteName: 'F', styleNum: Note.STYLENUM_SINGLE, midinum: '77', row: '0', col: '13', colorClass: 'noteTransparent' }
+      ]
+    };
+    const song = makeSong({ sections: [section] });
+    song.myTunings = [{ baseID: 'S6_1', frets: 17, rowRange: [64, 59, 55, 50, 45, 40], nut: true, reverse: false }];
+    mockRuntime.song = song;
+
+    const plugin = new TransposePlugin();
+    plugin.setPropertyValue('intervals', [0, 1]);
+    plugin.setPropertyValue('RecordedNotes', true);
+    plugin.setPropertyValue('useOctavesForRecorded', true);
+
+    plugin.invokeAction('apply', { song });
+
+    expect(section.getSectionNotes(tableID).recordedNotes['1'][0]).toEqual(expect.objectContaining({ midinum: '78', row: '0', col: '14' }));
   });
 
   test('recorded malformed notes are cloned unchanged and logged', () => {
