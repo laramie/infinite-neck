@@ -567,11 +567,11 @@ export class TransposePlugin {
     return [
       this.getProperty('apply')?.getMenuNodeSpec(this),
       this.buildResetMenuNode(),
-      this.getProperty('help')?.getMenuNodeSpec(this),
       this.getProperty('intervals')?.getMenuNodeSpec(this),
       this.buildIncludeMenuNode(),
       ...['octaves', 'useOctavesForRecorded', 'autoSharpsFlats', 'doLeadKey']
-        .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
+         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this)),
+      this.getProperty('help')?.getMenuNodeSpec(this),
     ].filter(Boolean);
   }
 
