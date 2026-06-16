@@ -1618,6 +1618,61 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
 <p><b>Reset song</b> returns you to Section 1, Beat 1 and preserves the active loop mode if one was already running. <b>Reset song hard</b> does the same repositioning, but also triggers the stronger reset behavior used by plugins that need to clear generated state.</p>
 
+
+
+        <a name="SpacebarMapping"></a>
+        <h2>Special SPACEBAR Mapping</h2>
+
+        <p>Using the command-line, you can map the spacebar to actions for this session.  (This mapping is not saved in the songfile, 
+            so you'll need to map again if you open another song.)  These are used to reset the song during TransposePlugin looping, or jumping to different navigation points while looping, practicing, writing songs, running ArpeggioPlugin in flashcard mode, etc.
+        </p>
+
+        <p>
+            <div style="margin-left: 4em;">
+            <span class="menuExampleLine"><b>/fm</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar </span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 2em;">
+                current: []
+                <br><b>R</b>estart song
+                <br><b>r</b>estart section
+                <br><b>z</b> reset song
+                <br><b>Z</b> reset song hard
+                <br><b>u</b>nset spacebar
+                <br><b>s</b>ection
+                <br><b>b</b>eats
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            <br>
+            <span class="menuExampleLine"><b>/fms</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar  <b>s</b>ection</span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 4em;">
+                <b>s</b>ection loop
+                <br><b>f</b>irst
+                <br><b>p</b>rev
+                <br><b>n</b>ext
+                <br><b>l</b>ast
+                <br><b>L</b>ast beat in song
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            <br>
+            <span class="menuExampleLine"><b>/fmb</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar <b>b</b>eats </span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 4em;">
+                <b>b</b>eat loop
+                <br><b>f</b>irst
+                <br><b>p</b>rev
+                <br><b>n</b>ext
+                <br><b>l</b>ast
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            </div>
+        </p>
+
+
+
 <a name="transportNavigationTable"></a>
 <h4>Transport Navigation Table</h4>
 <p>This table summarizes the transport navigation commands available in the app. The Menu column shows the command-line path, and the UI column names the related transport control when one exists.</p>
@@ -3372,59 +3427,6 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             radio group for the colors.  Once you are in the palette, however, a <span class="key">p</span> key will get trapped by the radio buttons.  So to
             exit the palette, you must use <span class="key">ESC</span>.
         </p>
-
-        <a name="SpacebarMapping"></a>
-        <h2>Special SPACEBAR Mapping</h2>
-
-        <p>Using the command-line, you can map the spacebar to actions for this session.  (This mapping is not saved in the songfile, 
-            so you'll need to map again if you open another song.)  These are used to reset the song during TransposePlugin looping, or jumping to different navigation points while looping, practicing, writing songs, running ArpeggioPlugin in flashcard mode, etc.
-        </p>
-
-        <p>
-            <div style="margin-left: 4em;">
-            <span class="menuExampleLine"><b>/fm</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar </span>
-            <br>
-            <span class="menuExamplePrompt" style="margin-left: 2em;">
-                current: []
-                <br><b>R</b>estart song
-                <br><b>r</b>estart section
-                <br><b>z</b> reset song
-                <br><b>Z</b> reset song hard
-                <br><b>u</b>nset spacebar
-                <br><b>s</b>ection
-                <br><b>b</b>eats
-                <br>
-                <br>e<b>x</b>it
-            </span>
-            <br>
-            <span class="menuExampleLine"><b>/fms</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar  <b>s</b>ection</span>
-            <br>
-            <span class="menuExamplePrompt" style="margin-left: 4em;">
-                <b>s</b>ection loop
-                <br><b>f</b>irst
-                <br><b>p</b>rev
-                <br><b>n</b>ext
-                <br><b>l</b>ast
-                <br><b>L</b>ast beat in song
-                <br>
-                <br>e<b>x</b>it
-            </span>
-            <br>
-            <span class="menuExampleLine"><b>/fmb</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar <b>b</b>eats </span>
-            <br>
-            <span class="menuExamplePrompt" style="margin-left: 4em;">
-                <b>b</b>eat loop
-                <br><b>f</b>irst
-                <br><b>p</b>rev
-                <br><b>n</b>ext
-                <br><b>l</b>ast
-                <br>
-                <br>e<b>x</b>it
-            </span>
-            </div>
-        </p>
-
-
 
 <hr>
 <a name="commandline"></a>

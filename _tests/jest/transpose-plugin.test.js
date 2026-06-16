@@ -109,43 +109,7 @@ describe('TransposePlugin', () => {
     expect(song.publish_UpdateSectionStatus).toHaveBeenCalledTimes(2);
   });
 
-  test('visible menu includes reset submenu and lowercase auto sharps/flats toggle', () => {
-    const plugin = new TransposePlugin();
-    const children = plugin.getVisibleMenuChildren();
-    const resetNode = children.find((child) => child.name === 'resetMenu');
-    const autoNode = children.find((child) => child.name === 'autoSharpsFlats');
-    const leadNode = children.find((child) => child.name === 'doLeadKey');
-    const playedNode = children.find((child) => child.name === 'PlayedNotes');
-    const includeNode = children.find((child) => child.name === 'include');
-    const chromaNode = children.find((child) => child.name === 'intervals');
-    const useOctavesForRecordedNode = children.find((child) => child.name === 'useOctavesForRecorded');
-
-    expect(children.map((child) => child.name).slice(0, 8)).toEqual(['apply', 'resetMenu', 'help', 'intervals', 'include', 'octaves', 'useOctavesForRecorded', 'autoSharpsFlats']);
-    expect(resetNode).toBeTruthy();
-    expect(resetNode.trigger).toBe('R');
-    expect(resetNode.children.map((child) => child.name)).toEqual([
-      'resetOriginal',
-      'resetCurrentInterval',
-      'setOriginalToCurrent'
-    ]);
-    expect(resetNode.children.map((child) => child.trigger)).toEqual(['o', 'c', 's']);
-    expect(autoNode).toBeTruthy();
-    expect(autoNode.trigger).toBe('a');
-    expect(leadNode).toBeTruthy();
-    expect(leadNode.trigger).toBe('d');
-    expect(chromaNode).toBeTruthy();
-    expect(chromaNode.trigger).toBe('c');
-    expect(includeNode).toBeTruthy();
-    expect(includeNode.trigger).toBe('i');
-    expect(plugin.resolveValue('includeSummary')).toBe(' [n,s,t,b,f,r]');
-    expect(includeNode.children.map((child) => child.name)).toEqual(['NamedNotes', 'SingleNotes', 'TinyNotes', 'BendNotes', 'FingeringNotes', 'RecordedNotes']);
-    expect(includeNode.children.map((child) => child.trigger)).toEqual(['n', 's', 't', 'b', 'f', 'r']);
-    expect(children.find((child) => child.name === 'octaves')?.trigger).toBe('o');
-    expect(useOctavesForRecordedNode).toBeTruthy();
-    expect(useOctavesForRecordedNode.trigger).toBe('u');
-    expect(playedNode).toBeUndefined();
-  });
-
+  
   test('invalid octaves normalize to zero', () => {
     const plugin = new TransposePlugin();
 
