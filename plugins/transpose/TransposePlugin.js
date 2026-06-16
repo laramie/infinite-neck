@@ -6,11 +6,26 @@ import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { lookupClassForNote } from '../../colorFunctions.js';
 import { getSong, transposeSong } from '../../infinite-neck.js';
-import { createTuningLayout } from '../../move-helpers.js';
+import { createTuningLayout, getPreferredCellForMidi } from '../../move-helpers.js';
 
 const TRANSPOSE_PROG_EM_OPEN = '<em class="transposeProg">';
 const TRANSPOSE_PROG_EM_CLOSE = '</em>';
 const AUTO_COLOR_CLASS_RE = /^note([1-9]|1[0-2])$/;
+const RECORDED_TRANSPOSE_STYLES = new Set([
+  Note.STYLENUM_SINGLE,
+  Note.STYLENUM_TINY,
+  Note.STYLENUM_BEND,
+  Note.STYLENUM_FINGERING,
+  Note.STYLENUM_MIDIPITCHES,
+  Note.STYLENUM_MIDIPITCHESSINGLE
+]);
+const CELL_BOUND_RECORDED_TRANSPOSE_STYLES = new Set([
+  Note.STYLENUM_SINGLE,
+  Note.STYLENUM_TINY,
+  Note.STYLENUM_BEND,
+  Note.STYLENUM_FINGERING,
+  Note.STYLENUM_MIDIPITCHESSINGLE
+]);
 
 function canonicalizeIntervals(rawIntervals) {
   if (!Array.isArray(rawIntervals) || rawIntervals.length === 0) {
@@ -159,6 +174,77 @@ function getRowBoundaries(layout, row) {
   };
 }
 
+function isRecordedTransposeStyle(styleNum) {
+  return RECORDED_TRANSPOSE_STYLES.has(styleNum);
+}
+
+function isCellBoundRecordedTransposeStyle(styleNum) {
+  return CELL_BOUND_RECORDED_TRANSPOSE_STYLES.has(styleNum);
+}
+
+function getRowNutCol(layout, row) {
+  return toInt(layout?.rows?.[row]?.nutCell?.col, null);
+}
+
+function isNutLanding(layout, row, col) {
+  const nutCol = getRowNutCol(layout, row);
+  return Number.isInteger(nutCol) && nutCol === col;
+}
+
+function normalizePitchDeltaStringOneOctave(delta) {
+  let normalized = delta;
+  while (normalized > 12) {
+    normalized -= 12;
+  }
+  while (normalized < -12) {
+    normalized += 12;
+  }
+  return normalized;
+}
+
+function resolveSourceFret(note, tuning, row) {
+  const sourceFretFromCol = toInt(note?.col, null);
+  if (Number.isInteger(sourceFretFromCol)) {
+    return sourceFretFromCol;
+  }
+
+  const openMidi = toInt(tuning?.rowRange?.[row], null);
+  const sourceMidinum = toInt(note?.midinum, null);
+  if (Number.isInteger(openMidi) && Number.isInteger(sourceMidinum)) {
+    return sourceMidinum - openMidi;
+  }
+  return null;
+}
+
+function logMalformedRecordedTransposeNote(tableID, beat, reason) {
+  console.log(`TransposePlugin recorded note preserved unchanged: ${reason} in table ${tableID} beat ${beat}`);
+}
+
+function normalizeFretForRecordedTranspose(targetFret, layout, row, isBend, mode) {
+  const nutCol = getRowNutCol(layout, row);
+  if (!Number.isInteger(nutCol)) {
+    return null;
+  }
+
+  let normalized = targetFret;
+  while (normalized < nutCol) {
+    normalized += 12;
+  }
+
+  if (mode === 'oneOctave') {
+    const threshold = nutCol + 12;
+    while (normalized > threshold) {
+      normalized -= 12;
+    }
+  }
+
+  while (isBend && isNutLanding(layout, row, normalized)) {
+    normalized += 12;
+  }
+
+  return normalized;
+}
+
 function normalizeSingleNoteColor(note, section) {
   if (!shouldRecalculateColor(note?.colorClass)) {
     return note?.colorClass;
@@ -224,17 +310,143 @@ function transposeSectionTableSingleNotes(sectionNotes, delta, tuning, section, 
     }
     return transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode);
   });
-  const recordedNotes = buildRecordedNotes(sectionNotes?.recordedNotes || {}, (note) => {
-    if (toInt(note?.styleNum, null) !== Note.STYLENUM_SINGLE) {
-      return clone(note);
-    }
-    return transposeSingleNoteOnString(note, delta, tuning, layout, section, octavesMode);
-  });
 
   return {
     playedNotes,
+    recordedNotes: clone(sectionNotes?.recordedNotes || {}),
+    collision: detectSingleNoteCollisions(playedNotes, {})
+  };
+}
+
+function transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode) {
+  const row = toInt(note?.row, null);
+  const styleNum = toInt(note?.styleNum, null);
+  if (!Number.isInteger(row)) {
+    logMalformedRecordedTransposeNote(tableID, beat, 'malformed row');
+    return clone(note);
+  }
+
+  const boundaries = getRowBoundaries(layout, row);
+  const openMidi = toInt(tuning?.rowRange?.[row], null);
+  if (!boundaries || !Number.isInteger(openMidi)) {
+    logMalformedRecordedTransposeNote(tableID, beat, 'malformed tuning row');
+    return clone(note);
+  }
+
+  const sourceFret = resolveSourceFret(note, tuning, row);
+  if (!Number.isInteger(sourceFret)) {
+    logMalformedRecordedTransposeNote(tableID, beat, 'malformed col/midinum');
+    return clone(note);
+  }
+
+  const targetFret = normalizeFretForRecordedTranspose(
+    sourceFret + delta,
+    layout,
+    row,
+    styleNum === Note.STYLENUM_BEND,
+    mode
+  );
+  if (!Number.isInteger(targetFret)) {
+    logMalformedRecordedTransposeNote(tableID, beat, 'malformed nut boundary');
+    return clone(note);
+  }
+
+  const targetMidinum = openMidi + targetFret;
+  const moved = clone(note);
+  moved.row = `${row}`;
+  moved.col = `${targetFret}`;
+  moved.midinum = `${targetMidinum}`;
+  moved.noteName = Constants.midinumToNoteName(targetMidinum);
+  moved.colorClass = normalizeSingleNoteColor(moved, section);
+  return moved;
+}
+
+function transposePitchRecordedNote(note, delta, layout, tableID, beat) {
+  const sourceMidinum = toInt(note?.midinum, null);
+  if (!Number.isInteger(sourceMidinum)) {
+    logMalformedRecordedTransposeNote(tableID, beat, 'malformed midinum');
+    return clone(note);
+  }
+
+  const targetMidinum = sourceMidinum + normalizePitchDeltaStringOneOctave(delta);
+  const preferredRow = toInt(note?.row, null);
+  const targetCell = getPreferredCellForMidi(layout, targetMidinum, Number.isInteger(preferredRow) ? preferredRow : null);
+  const moved = clone(note);
+  moved.midinum = `${targetMidinum}`;
+  moved.noteName = Constants.midinumToNoteName(targetMidinum);
+  moved.row = `${targetCell?.row ?? (Number.isInteger(preferredRow) ? preferredRow : 0)}`;
+  delete moved.col;
+  return moved;
+}
+
+function transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode) {
+  const styleNum = toInt(note?.styleNum, null);
+  if (!isRecordedTransposeStyle(styleNum)) {
+    return clone(note);
+  }
+  if (isCellBoundRecordedTransposeStyle(styleNum)) {
+    return transposeCellBoundRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode);
+  }
+  return transposePitchRecordedNote(note, delta, layout, tableID, beat);
+}
+
+function getRecordedCollisionKey(note, beat) {
+  const styleNum = toInt(note?.styleNum, null);
+  if (!isRecordedTransposeStyle(styleNum)) {
+    return null;
+  }
+
+  if (styleNum === Note.STYLENUM_MIDIPITCHES) {
+    return `pitch:${beat}`;
+  }
+
+  const cellKey = getCellKey(note);
+  if (!cellKey) {
+    return null;
+  }
+
+  if (styleNum === Note.STYLENUM_SINGLE) {
+    return `single:${beat}:${cellKey}`;
+  }
+  if (styleNum === Note.STYLENUM_TINY || styleNum === Note.STYLENUM_BEND) {
+    return `tinybend:${beat}:${cellKey}`;
+  }
+  if (styleNum === Note.STYLENUM_FINGERING) {
+    return `fingering:${beat}:${cellKey}`;
+  }
+  if (styleNum === Note.STYLENUM_MIDIPITCHESSINGLE) {
+    return `multi:${beat}:${cellKey}`;
+  }
+  return null;
+}
+
+function detectRecordedTransformCollision(recordedNotes = {}) {
+  let collision = false;
+  Object.entries(recordedNotes || {}).forEach(([beat, notesForBeat]) => {
+    const keys = new Set();
+    (notesForBeat || []).forEach((note) => {
+      const key = getRecordedCollisionKey(note, beat);
+      if (!key) {
+        return;
+      }
+      if (keys.has(key)) {
+        collision = true;
+      }
+      keys.add(key);
+    });
+  });
+  return collision;
+}
+
+function transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, mode = 'oneOctave') {
+  const layout = createTuningLayout(tuning);
+  const recordedNotes = buildRecordedNotes(sectionNotes?.recordedNotes || {}, (note, beat) => (
+    transposeRecordedNote(note, delta, tuning, layout, section, tableID, beat, mode)
+  ));
+
+  return {
     recordedNotes,
-    collision: detectSingleNoteCollisions(playedNotes, recordedNotes)
+    collision: detectRecordedTransformCollision(recordedNotes)
   };
 }
 
@@ -283,7 +495,7 @@ export class TransposePlugin {
       this.getProperty('apply')?.getMenuNodeSpec(this),
       this.buildResetMenuNode(),
       this.getProperty('help')?.getMenuNodeSpec(this),
-      ...['intervals', 'NamedNotes', 'SingleNotes', 'octaves', 'autoSharpsFlats', 'doLeadKey']
+      ...['intervals', 'NamedNotes', 'SingleNotes', 'RecordedNotes', 'octaves', 'autoSharpsFlats', 'doLeadKey']
         .map((propertyName) => this.getProperty(propertyName)?.getMenuNodeSpec(this))
     ].filter(Boolean);
   }
@@ -439,7 +651,7 @@ export class TransposePlugin {
   }
 
   buildSummary() {
-    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} single notes=${this.getSingleNotesEnabled()} octaves=${this.getOctavesDisplayValue()}`;
+    return `current interval=${this.currentAppliedInterval} sequence offset=${this.getCurrentSequenceOffset()} original offset=${this.getCurrentOriginalOffset()} auto sharps/flats=${this.getAutoSharpsFlatsEnabled()} do lead key=${this.getDoLeadKeyEnabled()} named notes=${this.getNamedNotesEnabled()} single notes=${this.getSingleNotesEnabled()} recorded=${this.getRecordedNotesEnabled()} octaves=${this.getOctavesDisplayValue()}`;
   }
 
   buildHelpMessage() {
@@ -451,6 +663,7 @@ Current settings:
 - intervals = ${JSON.stringify(this.getIntervals())}
 - graveyard key = ${graveyardKey}
 - single notes = ${this.getSingleNotesEnabled()}
+- recorded notes = ${this.getRecordedNotesEnabled()}
 - octaves = ${this.getOctavesDisplayValue()} (legal values: empty, 0, or positive integer)
 - interval list is canonicalized to start from 0
 - each trigger advances to the next interval
@@ -472,6 +685,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getSingleNotesEnabled() {
     return !!this.getProperty('SingleNotes')?.getValue();
+  }
+
+  getRecordedNotesEnabled() {
+    return !!this.getProperty('RecordedNotes')?.getValue();
   }
 
   getOctavesDisplayValue() {
@@ -744,6 +961,38 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         }
 
         sectionNotes.playedNotes = result.playedNotes;
+        movedTables += 1;
+      });
+    });
+
+    if (movedTables > 0 && !song.isHeadless && !this.getNamedNotesEnabled() && typeof song.requestUiFullRepaint === 'function') {
+      song.requestUiFullRepaint();
+    }
+
+    return { movedTables, fallbackUsed };
+  }
+
+  transposeRecordedNotesAllSections(delta, song = this.manager?.song || getSong()) {
+    if (delta === 0 || !song || !Array.isArray(song.sections)) {
+      return { movedTables: 0, fallbackUsed: false };
+    }
+
+    let fallbackUsed = false;
+    let movedTables = 0;
+
+    song.sections.forEach((section) => {
+      Object.entries(section?.sectionNotesByTable || {}).forEach(([tableID, sectionNotes]) => {
+        const tuning = getTuningByTableID(song, tableID);
+        if (!tuning) {
+          return;
+        }
+
+        let result = transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, 'oneOctave');
+        if (result.collision) {
+          fallbackUsed = true;
+          result = transposeRecordedNotesForSectionTable(sectionNotes, delta, tuning, section, tableID, 'fullNeck');
+        }
+
         sectionNotes.recordedNotes = result.recordedNotes;
         movedTables += 1;
       });
@@ -765,6 +1014,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     if (this.getSingleNotesEnabled()) {
       this.transposeSingleNotesAllSections(delta, song);
+    }
+
+    if (this.getRecordedNotesEnabled()) {
+      this.transposeRecordedNotesAllSections(delta, song);
     }
 
     this.liveSongOffset += delta;

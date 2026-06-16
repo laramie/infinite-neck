@@ -55,6 +55,16 @@
     "visibleInMenu": true
   },
   {
+    "name": "RecordedNotes",
+    "caption": "recorded",
+    "trigger": "r",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
     "name": "octaves",
     "caption": "octaves",
     "trigger": "o",
