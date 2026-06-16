@@ -1071,18 +1071,35 @@ export var gMenuFile =    {
           ]
         },
         {
-          "caption": "<b>p</b>resentation mode",
+          "caption": "<b>p</b>resentation",
           "trigger": "p",
           "children": [
             {
-              "caption": "<b>a</b>utomate cell widths/heights/NoteFontSize",
-              "trigger": "a",
-              "action": "setPresentationModeAutomated"
+              "caption": "<b>p</b>resentation mode [${presentationModeState}]",
+              "trigger": "p",
+              "action": "togglePresentationMode",
+              "vars": [
+                "presentationModeState"
+              ],
+              "preserveMenuStack": true
             },
             {
-              "caption": "<b>m</b>anual cell widths/heights/NoteFontSize",
-              "trigger": "m",
-              "action": "setPresentationModeManual"
+              "caption": "<b>s</b>ave Display Options [${displayOptionsSaveState}]",
+              "trigger": "s",
+              "action": "saveViewDisplayOptions",
+              "vars": [
+                "displayOptionsSaveState"
+              ],
+              "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>c</b>lear Display Options [${displayOptionsClearState}]",
+              "trigger": "c",
+              "action": "clearViewDisplayOptions",
+              "vars": [
+                "displayOptionsClearState"
+              ],
+              "preserveMenuStack": true
             }
           ]
         },

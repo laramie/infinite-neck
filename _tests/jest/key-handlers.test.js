@@ -99,7 +99,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 	default: {}
 }));
 
-const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders, getValue } = await import('../../key-handlers.js');
 
 function createSong() {
 	const sections = [{ currentBeat: 1 }, { currentBeat: 1 }];
@@ -231,6 +231,8 @@ describe('key-handlers spacebar mapping', () => {
 	let mockGetBPM;
 	let mockToggleRecording;
 	let mockShowAllNoteNames;
+	let mockHandleBtnControlsToDisplayOptions;
+	let mockHandleBtnDeleteDisplayOptions;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -259,6 +261,8 @@ describe('key-handlers spacebar mapping', () => {
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
 		mockShowAllNoteNames = jest.fn();
+		mockHandleBtnControlsToDisplayOptions = jest.fn();
+		mockHandleBtnDeleteDisplayOptions = jest.fn();
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -282,12 +286,16 @@ describe('key-handlers spacebar mapping', () => {
 			enterFullscreen: jest.fn(),
 			getBPM: mockGetBPM,
 			getCurrentSection: () => song.getCurrentSection(),
+			getDisplayOptionsClearState: jest.fn(() => song.getCurrentSection().displayOptions ? 'present' : 'none'),
+			getDisplayOptionsSaveState: jest.fn(() => song.displayOptionsSaveState || 'none'),
 			getPersistentSongFile: jest.fn(() => ({})),
 			getSectionsCurrentIndex: () => song.gSectionsCurrentIndex,
 			getSong: () => song,
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
 			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
+			handleBtnControlsToDisplayOptions: mockHandleBtnControlsToDisplayOptions,
+			handleBtnDeleteDisplayOptions: mockHandleBtnDeleteDisplayOptions,
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
@@ -297,6 +305,9 @@ describe('key-handlers spacebar mapping', () => {
 			printSectionsLine: jest.fn(() => 'LeadSheetLine shown'),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
+			setPresentationMode: jest.fn((value) => {
+				song.presentationMode = !!value;
+			}),
 			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
 			setSingleNoteOpacity: jest.fn(),
@@ -503,6 +514,28 @@ describe('key-handlers spacebar mapping', () => {
 		const tallResult = performCmdAction({ action: 'setMenuPrefs' }, { key: 't' });
 		expect(tallResult.result).toBe('menu prefs: tall');
 		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(3, 'tall');
+	});
+
+	test('presentation submenu actions toggle mode and invoke Display Options save/clear without popping', () => {
+		song.presentationMode = false;
+		song.displayOptionsSaveState = 'unsaved';
+		song.getCurrentSection().displayOptions = { noteFontSize: 22 };
+
+		expect(getValue('presentationModeState')).toBe(false);
+		const toggleResult = performCmdAction({ action: 'togglePresentationMode' });
+		expect(toggleResult.result).toBe('presentation mode: true');
+		expect(toggleResult.preserveMenuStack).toBe(true);
+		expect(getValue('presentationModeState')).toBe(true);
+
+		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
+		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
+		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(saveResult.preserveMenuStack).toBe(true);
+
+		expect(getValue('displayOptionsClearState')).toBe('present');
+		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
+		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(clearResult.preserveMenuStack).toBe(true);
 	});
 
 	test('runActionByName routes remaining navigation verbs through the transport controller', () => {

@@ -249,12 +249,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			enterFullscreen,
 			getBPM,
 			getCurrentSection,
+			getDisplayOptionsClearState,
+			getDisplayOptionsSaveState,
 			getPersistentSongFile,
 			getSectionsCurrentIndex,
 			getSong,
 			getTransportController,
 			hideAllMenuDivs,
 			hideFullscreenLeadSheetLine,
+			handleBtnControlsToDisplayOptions,
+			handleBtnDeleteDisplayOptions,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
@@ -414,6 +418,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(controlsToDisplayOptions(), displayOptionsDirtyBaseline));
+	}
+
+	export function getDisplayOptionsSaveState(){
+		if (!getSong() || !getCurrentSection()) {
+			return 'none';
+		}
+		if (displayOptionsDirtyBaseline && !areDisplayOptionsEqual(controlsToDisplayOptions(), displayOptionsDirtyBaseline)) {
+			return 'unsaved';
+		}
+		return getCurrentSection().displayOptions ? 'saved' : 'none';
+	}
+
+	export function getDisplayOptionsClearState(){
+		if (!getSong() || !getCurrentSection()) {
+			return 'none';
+		}
+		return getCurrentSection().displayOptions ? 'present' : 'none';
 	}
 
 	function syncSectionUi(){

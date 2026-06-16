@@ -1,5 +1,7 @@
 import {
+  buildChildMenuCaptionsRow,
   diveMenu,
+  gMenuFile,
   printMenuStack,
   resolveMenuValue,
   setMenuAtRoot,
@@ -41,5 +43,29 @@ describe('menu value resolver token expansion', () => {
 
     expect(printMenuStack()).toContain('nsert clone [P46_1] into Section::');
     expect(printMenuStack()).toContain('section number (1-8)[8]:');
+  });
+
+  test('/vp presentation submenu exposes mode, save, and clear state actions', () => {
+    setMenuValueResolver((tokenName) => {
+      if (tokenName === 'presentationModeState') return 'true';
+      if (tokenName === 'displayOptionsSaveState') return 'unsaved';
+      if (tokenName === 'displayOptionsClearState') return 'present';
+      return tokenName;
+    });
+
+    const viewMenu = gMenuFile.children.find((child) => child.trigger === 'v');
+    const presentationMenu = viewMenu.children.find((child) => child.trigger === 'p');
+
+    expect(presentationMenu.caption).toBe('<b>p</b>resentation');
+    expect(presentationMenu.children.map((child) => child.trigger)).toEqual(['p', 's', 'c']);
+    expect(presentationMenu.children.map((child) => child.action)).toEqual([
+      'togglePresentationMode',
+      'saveViewDisplayOptions',
+      'clearViewDisplayOptions'
+    ]);
+    expect(presentationMenu.children.every((child) => child.preserveMenuStack)).toBe(true);
+    expect(buildChildMenuCaptionsRow(presentationMenu)).toContain('resentation mode [true]');
+    expect(buildChildMenuCaptionsRow(presentationMenu)).toContain('ave Display Options [unsaved]');
+    expect(buildChildMenuCaptionsRow(presentationMenu)).toContain('lear Display Options [present]');
   });
 });

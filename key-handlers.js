@@ -89,9 +89,13 @@ function getPersistentSongFile(...args) { return requireProvider('getPersistentS
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
+function getDisplayOptionsClearState(...args) { return requireProvider('getDisplayOptionsClearState')(...args); }
+function getDisplayOptionsSaveState(...args) { return requireProvider('getDisplayOptionsSaveState')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
+function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
+function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
@@ -933,6 +937,21 @@ export function performCmdAction(menuItem, args){
 			setPresentationMode(false);
 			actionResult.result = "presentation mode: manual";
 			break;
+		case "togglePresentationMode":
+			setPresentationMode(!getSong()?.presentationMode);
+			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "saveViewDisplayOptions":
+			handleBtnControlsToDisplayOptions();
+			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "clearViewDisplayOptions":
+			handleBtnDeleteDisplayOptions();
+			actionResult.result = `Display Options cleared: ${getDisplayOptionsClearState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
 			break;	
@@ -1437,6 +1456,15 @@ export function getValue(what){
 	}
 	if (what === 'sectionEditNextSectionCardinal'){
 		return getSectionsCurrentIndex() + 2;
+	}
+	if (what === 'presentationModeState'){
+		return !!getSong()?.presentationMode;
+	}
+	if (what === 'displayOptionsSaveState'){
+		return getDisplayOptionsSaveState();
+	}
+	if (what === 'displayOptionsClearState'){
+		return getDisplayOptionsClearState();
 	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);

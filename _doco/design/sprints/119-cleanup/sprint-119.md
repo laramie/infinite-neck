@@ -87,52 +87,48 @@ Here are the work items, grouped by status.
   - COMPLETE implemented with /vpa and /vpm (automate and manual)     
 
 - in /fpoa you need to do refresh to get it to sync.
-
-  key-handlers.js : 
-  ```
-  function parkCommandLineAtPath(triggerPath = '') {
-    setMenuAtRoot();
-    // Ensure plugin runtime menu nodes are rebuilt for direct path entry (/fpoa, etc.)
-    // so nested suggestion menus are not stale from prior sections/notes.
-    pluginManager.refreshPluginsMenuNode();
-  ```
-
-  key-handlers.js : 
-  ```
-            case "/":
-          // Rebuild runtime plugin menu nodes before entering command mode
-          // so /fpoa starts with fresh tonal suggestions every time.
+      key-handlers.js : 
+      ```
+      function parkCommandLineAtPath(triggerPath = '') {
+        setMenuAtRoot();
+        // Ensure plugin runtime menu nodes are rebuilt for direct path entry (/fpoa, etc.)
+        // so nested suggestion menus are not stale from prior sections/notes.
+        pluginManager.refreshPluginsMenuNode();
+      ```
+      key-handlers.js : 
+      ```
+                case "/":
+              // Rebuild runtime plugin menu nodes before entering command mode
+              // so /fpoa starts with fresh tonal suggestions every time.
+              pluginManager.refreshPluginsMenuNode();
+                      setMenuAtRoot();
+        
+      ```
+      infinite-neck.js : 
+      ```
+      export function sectionChanged(){
+          syncSectionUi();
+          clearAndReplaySection();
+          // Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
           pluginManager.refreshPluginsMenuNode();
-                  setMenuAtRoot();
-    
-  ```
-
-  infinite-neck.js : 
-  ```
-  export function sectionChanged(){
-      syncSectionUi();
-      clearAndReplaySection();
-      // Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
-      pluginManager.refreshPluginsMenuNode();
-    }
-  ```
-  Cody also made an attempt to do this in command-line.js hardcoding for /fpoa, which I rolled back but committed in git for history.             
+        }
+      ```
+      Cody also made an attempt to do this in command-line.js hardcoding for /fpoa, which I rolled back but committed in git for history.             
 
 - /vp presentation menu re-org
-
-We would like a menu re-organized.
-Current: 
-`/vp` `p) presentation mode` calls to toggle it
-New: 
-`/vp` `p) presentation` shows a sub-menu:
-    `p) presentation mode [true]` calls to toggle it, displays current value
-    `s) save Display Options [state]` does what #btnControlsToDisplayOptions_View does
-    `c) clear Display Options [state]` does what #btnDeleteDisplayOptions_View does
-
-  Each of these items would display a bang and stay at this level.
-  Since there is state behind the buttons in the UI in `View | SAVE` and `View | CLEAR`, represent this state in the [state] in the menu item: 
-  `save` state: ['unsaved','saved','none']
-  `clear` state: ['none','present']
+      We would like a menu re-organized.
+      Current: 
+      `/vp` `p) presentation mode` calls to toggle it
+      New: 
+      `/vp` `p) presentation` shows a sub-menu:
+          `p) presentation mode [true]` calls to toggle it, displays current value
+          `s) save Display Options [state]` does what #btnControlsToDisplayOptions_View does
+          `c) clear Display Options [state]` does what #btnDeleteDisplayOptions_View does
+        Each of these items would display a bang and stay at this level.
+        Since there is state behind the buttons in the UI in `View | SAVE` and `View | CLEAR`, represent this state in the [state] in the menu item: 
+        `save` state: ['unsaved','saved','none']
+        `clear` state: ['none','present']
+  - COMPLETE
 
 
 ## Deferred
