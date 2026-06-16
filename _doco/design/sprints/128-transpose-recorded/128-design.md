@@ -1,3 +1,7 @@
+# Iteration 1
+
+Sections "Design" and "Design Round 2" are now grouped as "Iteration 1".
+
 # Design
 
 For MovePlugin, when we use these settings:
@@ -31,7 +35,7 @@ So for our implementation, we'd like to add
 
 The set of notes would not be configurable, and the other algorithms in MovePlugin would not be included.
 
-# Request
+## Request
 
 Please provide an analysis of this request, any blockers, any holes or unspecified behaviors we should deal with in trying to teach this trick to TransposePlugin.
 
@@ -93,9 +97,102 @@ Recommendation: MIDI direction, same as MovePlugin and current TransposePlugin. 
 
 ANSWER: approve the recommendation.
 
-# Request
+## Request
 
 Please produce an implementation plan in new, empty file [sprint-128 implementation plan](128-implementation-plan.md) factoring in our answers and discussion as needed.
+
+# Iteration 2: Menu reorganization and other playedNotes
+
+## Changes in this document
+
+Previous work in this document has been renamed "Iteration 1".
+
+"Iteration 1" having been implemented following [Iteration 1 implementation plan](128-implementation-plan.md), and the code testing well, we are ready for Iteration 2.
+
+## Iteration 2 discussion of features
+
+For this iteration, Iteration 2, we would like to follow up on what we did in Iteration 1, which was to add handling of all recordedNotes in a new menu option, and ditching special handling of SingleNotes between playedNotes and recordedNotes.  Now SingleNotes are only handled specially as playedNotes.  SingleNotes are handled for recordedNotes with all the other types under the `r) recorded` menu option.
+
+For Iteration 2, we would like to continue to handle all recordedNotes as a block, unchanged from Iteration 1.  We would like to handle NamedNotes exactly as they are handled now.  
+
+For Iteration 2, We would like to handle SingleNotes as they are now.  But we would like to add playedNotes:TinyNote, playedNotes:Bend, and playedNotes:Fingering.  Since Pitch and Multi are not persisted when they are playedNotes, they are not included in playedNotes handling in Iteration 2. 
+
+So we have three issues to implement: 
+  1) making sure TinyNote, Bend, and Fingering are handled correctly when using the algorithm for SingleNote, but honoring the restrictions on the Nut for Bends as implemented when doing recordedNotes.
+  2) reorganizing the menu so that the style of chosing options matches the other plugins.
+  3) Dealing with `octaves`.
+
+## Handling the new note types
+
+This is straightforward from a design perspective.  We look forward to seeing if the implementation plan has any design holes or questions we need to solve.
+
+## Reorganizing the menu
+
+Here is the /fpt menu today, with representative values from runtime:
+
+```
+Enable [false]
+Load enabled [false]
+Bury
+Apply
+Reset
+help
+intervals [[0,1,2,3,4,5,6,7,8,9,10,11]]
+named notes [true]
+single notes [false]
+recorded [false]
+octaves []
+auto sharps/flats [false]
+do lead key [false]
+```
+
+We would like to make the menu available with the following changes:
+
+`intervals` is functionally unchanged, but its caption is now `chroma` and its trigger is now `c`.
+
+`include []` is functionally like `/fpmi` (and `/fpci` except no count is provided here), in that they are org.dynamide.toggle, and one lowercase letter selects each and leaves us at that menu to keep selecting types.
+
+Here `include` has children `named` which is just `named notes` from the original menu moved here, and `recorded` which is just `recorded` from the original menu moved here.  Also, here the selection of the other types [single, tiny, bend, fingering] only adds them to the playedNotes bucket, not the recordedNotes bucket, because recordedNotes are dealt with as a non-configurable block.
+
+Here is the redrawn menu:
+```
+Enable [false]
+Load enabled [false]
+Bury
+Apply
+Reset
+help
+chroma [[0,1,2,3,4,5,6,7,8,9,10,11]]
+include [n,s,t,b,f,r]
+    named [true]
+    single [true]
+    tiny [true]
+    bend [true]
+    fingering [true]
+    recorded [true]
+octaves []
+auto sharps/flats [false]
+do lead key [false]
+```
+
+## Dealing with octaves
+
+This option is a bit of a snag.  We added it in [sprint-113-transpose-plugin-single-notes](../113-transpose-plugin-single-notes/sprint-113-transpose-plugin-single-notes.md)
+
+It works for SingleNotes today.
+
+We specifically excluded it from recorded notes, and that algorithm is working perfectly.
+
+But the questions are:
+1) Will it be straightforward to add TinyNotes, Bends, and Fingerings using the same feature?
+2) Is there a danger of it disrupting the current algorithm for recorded notes, if recorded notes begins to use the octaves feature?
+
+## Request
+
+Please provide an implementation plan draft, with questions and calling out design holes to be answered by the Design team.
+
+Let it be: [Iteration 2 implementation plan](128-it2-implementation-plan.md)
+
 
 
 
