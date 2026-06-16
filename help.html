@@ -922,7 +922,7 @@
                         </li>
                         <li><a href="#transport">Transport</a>
                             <ul class="LinkList">
-                                <li><a href="#mapSpacebar">Map Spacebar</a></li>
+                                <li><a href="#SpacebarMapping">Special SPACEBAR Mapping</a></li>
                                 <li><a href="#transportNavigationTable">Transport Navigation Table</a></li>
                             </ul>
                         <li><a href="#spanSectionDrawer">Section Drawer</a>
@@ -1599,8 +1599,14 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
   <p><img src="img/help/context/transport-section-drawer-button.jpg">
             <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the <a href="#spanSectionDrawer">Section Drawer</a>: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
 
-<a name="mapSpacebar"></a>
-<h4>Map Spacebar</h4>
+
+<a name="SpacebarMapping"></a>
+<h4>Special SPACEBAR Mapping</h4>
+
+<p>Using the command-line, you can map the spacebar to actions for this session.  (This mapping is not saved in the songfile, 
+    so you'll need to map again if you open another song.)  These are used to reset the song during TransposePlugin looping, or jumping to different navigation points while looping, practicing, writing songs, running ArpeggioPlugin in flashcard mode, etc.
+</p>
+
 <p>You can map the spacebar to one transport action at a time. Use the File menu path <span class="menuExampleLine"><b><small>/fm</small></b></span> to choose what the spacebar should do.</p>
 
 <p>The top-level spacebar mappings are:</p>
@@ -1614,18 +1620,13 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
 <p>You can also map the spacebar to section navigation with <span class="menuExampleLine"><b><small>/fms</small></b></span> or beat navigation with <span class="menuExampleLine"><b><small>/fmb</small></b></span>.</p>
 
-<p>Once mapped, pressing <span class="key">SPACE</span> runs that transport action directly. This is useful for hands-on practice when you want one repeatable motion under your picking hand or your foot pedal keyboard.</p>
+<p>Once mapped, pressing <span class="key">SPACE</span> runs that transport action directly. 
+    This is useful for when you have your guitar balanced on your knee and want to reset a loop with a quick swat at the keyboard.</p>
 
 <p><b>Reset song</b> returns you to Section 1, Beat 1 and preserves the active loop mode if one was already running. <b>Reset song hard</b> does the same repositioning, but also triggers the stronger reset behavior used by plugins that need to clear generated state.</p>
 
 
-
-        <a name="SpacebarMapping"></a>
-        <h2>Special SPACEBAR Mapping</h2>
-
-        <p>Using the command-line, you can map the spacebar to actions for this session.  (This mapping is not saved in the songfile, 
-            so you'll need to map again if you open another song.)  These are used to reset the song during TransposePlugin looping, or jumping to different navigation points while looping, practicing, writing songs, running ArpeggioPlugin in flashcard mode, etc.
-        </p>
+<h4>Command-line menu for SPACEBAR Mapping</h4>
 
         <p>
             <div style="margin-left: 4em;">

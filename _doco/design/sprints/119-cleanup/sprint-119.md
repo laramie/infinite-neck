@@ -130,6 +130,39 @@ Here are the work items, grouped by status.
         `clear` state: ['none','present']
   - COMPLETE
 
+- palette and View consistency
+  - current color palette button (color: Emboss) not updating
+    - FIXED
+  - +/- Font button not showing "dirty" in riskyButton riskyButtonActionRequired
+    - FIXED
+
+
+- autoColor, currentColorDict. 
+  - autoColor, currentColorDict not showing dirty in the View page, e.g. `riskyButton riskyButtonActionRequired`.
+  - Also, add their read-only values to View card under Presentation Mode.
+
+      We would like two options that are not on the View page to participate in the "dirty" flag behavior: set the Save button to `riskyButton riskyButtonActionRequired` as is done for everything else on the View menu page.
+
+      We would also like these to have a read-only display that is updated live, but only a view of the real control elsewhere.
+      - autoColor: true|false
+      - currentColorDict: value
+      These would live in #divViewDisplayOptions under the `p` for #cbPresentationMode.
+      To keep in the same layout, make them also be paragraph `p` elements.
+
+      autoColor can be on the same line as its value.  It uses `autoColor` DisplayOption and its label is `autoColor` despite the checkbox capitalization in the palette.  It gets a `p` element.
+
+      To preserve width, put the label for currentColorDict on the first line, the value on the second line, indented a bit, both in the same `p` element:
+
+      ```
+        [] Presentation Mode
+           Automate cell widths/heights/NoteFontSize.
+
+        autoColor: true
+
+        currentColorDict:
+           minor-blues
+      ```      
+
 
 ## Deferred
 

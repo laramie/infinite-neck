@@ -149,8 +149,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
       - propogate DisplayOptions to every Section even when going backwards
       - do not mark Sections that inherit DisplayOptions as dirty, and don't un-gray the CLEAR button. 
 
-- 127-transpose-recorded
+- [128-transpose-recorded](../design/sprints/128-transpose-recorded/sprint-128.md)
   - Get TransposePlugin to do what MovePlugin does when using options: recordedNotes, all types, algorithm: string, and motion down (and up with octave fix).
+
 
 # Future Sprints Unscheduled 
 
