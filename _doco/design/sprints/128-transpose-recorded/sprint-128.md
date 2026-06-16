@@ -20,5 +20,7 @@ Purpose of this sprint is to:
 
 ## Iterations
 
-  - "Iteration 1": 
+  - Iteration 1: Teach TransposePlugin to transpose recordedNotes like MovePlugin:string:up 
+  - Iteration 2: Menu reorganization and other playedNotes
+  - Iteration 3: Make octaves available to recordedNotes
 

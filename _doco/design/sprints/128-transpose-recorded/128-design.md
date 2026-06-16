@@ -1,4 +1,4 @@
-# Iteration 1
+# Iteration 1: Teach TransposePlugin to transpose recordedNotes like MovePlugin:string:up
 
 Sections "Design" and "Design Round 2" are now grouped as "Iteration 1".
 
@@ -109,7 +109,7 @@ Previous work in this document has been renamed "Iteration 1".
 
 "Iteration 1" having been implemented following [Iteration 1 implementation plan](128-implementation-plan.md), and the code testing well, we are ready for Iteration 2.
 
-## Iteration 2 discussion of features
+## discussion of features
 
 For this iteration, Iteration 2, we would like to follow up on what we did in Iteration 1, which was to add handling of all recordedNotes in a new menu option, and ditching special handling of SingleNotes between playedNotes and recordedNotes.  Now SingleNotes are only handled specially as playedNotes.  SingleNotes are handled for recordedNotes with all the other types under the `r) recorded` menu option.
 
