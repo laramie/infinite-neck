@@ -113,7 +113,7 @@ stable-after-refactors-20260318
 ```sh
 stable-after-refactors-20260318-3-gab35b69
 ```
- - Then, in the web browser, in the command-line run `/fv` and `/fV` to check that the browser is picking up the new version string. 
+ - Then, in the web browser, in the command-line run `/fav` and `/faV` to check that the browser is picking up the new version string. 
 
  - Once you know the version string is in the files, go ahead and tag the repository so the tag includes the version string and CHANGELOG.md.  
 
