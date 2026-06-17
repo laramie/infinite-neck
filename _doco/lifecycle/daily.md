@@ -120,6 +120,10 @@ stable-after-refactors-20260318-3-gab35b69
  - don't use the Dreamhost uploader.  It can silently omit files and barf.
  - Do use the "new deploy tar action" below, then scp or Dreamhost upload the tarfile. 
 
+ ```
+scp dist/infinite-neck-20260616-173854.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+ ```
+
 ### new deploy tar action
 
 ```
@@ -127,6 +131,8 @@ npm run package:deploy
 ```
 
 - creates a tar file in ./dist/
+
+scp dist/infinite-neck-20260616-173854.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
 ### on the server
 
