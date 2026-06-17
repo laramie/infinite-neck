@@ -80,6 +80,7 @@ jest.unstable_mockModule('../../userColors.js', () => ({
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	showMessagesTab: jest.fn(),
+	showDisplayOptions: jest.fn(),
 	getVersionString: jest.fn(() => 'vtest'),
 	getVersionObject: jest.fn(() => ({ README: 'README.md' })),
 	toggleWiringOpenState: jest.fn(),
