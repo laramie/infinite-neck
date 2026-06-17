@@ -1,5 +1,51 @@
 # ChangeLog
 
+### 20260616 
+Tag: v2.1-beta-3
+
+- 2c8c071 **2026-06-16** Added BS mock to test so it matches the actuality of runtime. :(
+- aa10ee9 **2026-06-16** sprint-119 Iteration 7 done.
+- da82c57 **2026-06-16** 119 iteration 7
+- f01f199 **2026-06-16** Ready for sprint-119 mini-fixes autoColor, currentColorDict display and dirty flag.
+- 5fc4ad0 **2026-06-16** Removed brittle test that just checked the menu structure of TransposePlugin. Moved Special Spacebar Mapping to section where it is already partly defined
+- b779e79 **2026-06-16** Help file updates.  New intro with animated gif, special SPACEBAR mapping, ebony-ivory image.
+- c4af744 **2026-06-16** added .deadCell to css and removed inline style when deadCell due to banjoNut etc.
+- cadb293 **2026-06-16** ca
+- b3afac8 **2026-06-16** sprint-128 complete
+- 35095a2 **2026-06-16** /vp presentation menu re-org
+- 3e264d9 **2026-06-16** 128-it3 working
+- 856a21b **2026-06-16** tweak
+- 122450f **2026-06-16** Ready for Iteration 3
+- e3ccf9f **2026-06-15** 128-it2 working.  Played notes and recorded notes diverge when chroma exceeds 12.
+- 489e491 **2026-06-15** Ready for 128-it2
+- b3d5d86 **2026-06-15** ready for 128-it2 analysis
+- 2de0fdc **2026-06-15** Fixed bug where rootIDLead was being treated as falsy for TinyNote when it was 0, but -1 is the real "not set" value.
+- 3e11a0c **2026-06-15** 128-transpose-recorded working well.
+- 1b98920 **2026-06-15** Ready for 128-transpose-recorded
+- 7c9a399 **2026-06-15** Fixed algorithm where Bend was hitting the Nut and disappearing/dropping rather than jumping up an octave for "string" and "octave".
+- 784bd3a **2026-06-15** Remove test entry which forced error message.  Testing done, we are back to the correct set in runtimeChildrenActionMap
+- fbb3387 **2026-06-15** Cleaned up warnings from `npm run validate:cmdmenu`
+- 2a0884d **2026-06-15** Added midi paste option to /fpcrpm. Removed default from /seii.
+- 5337609 **2026-06-15** Fixed caption and default for INPUT for /seii
+- 9588d1d **2026-06-15** sprint-116-it6 implemented
+- 204bf27 **2026-06-14** getting ready for sprint-119-it6
+- 9e91221 **2026-06-14** 119-it5 changes for /sei, including plugin-style menu resolvers for static command-line menus.
+- d5e9e45 **2026-06-14** Working on adding descriptions to help-plugins.html
+- ed7ca57 **2026-06-12** small edit
+- 2905e91 **2026-06-12** Updated help with Wiring updates: MUTE and Capture.  Added screenshots of Guitars and Pianos
+- 1b1e20d **2026-06-12** Actual fix for staleness on /fpoa is to refresh all plugins on command-line menu dives.  sectionChanged==>pluginManager.refreshPluginsMenuNode(). Also key-handlers.js: parkCommandLineAtPath()==>pluginManager.refreshPluginsMenuNode(); and case '/'.
+- 0a17e80 **2026-06-12** Rolled back change from previous commit.  this is pristine to how it was before previous commit that had commented out attempt by Cody to fix /fpoa
+- ae6471b **2026-06-12** This commented out block is wrong.  Real change goes in infinite-neck.js and key-handlers.js in next commit.  This attempt by one of the Cody brothers was to fix /fpoa by hard-coding it into command-line.js.
+- 44626ff **2026-06-12** Handle special AutoColor when noteRoot
+- e18d8f6 **2026-06-12** Fixed TinyNote and Bend to have important on 2px orange border, so now TinyNote of I shows up against NamedNote note1. Moved Themes Gallery in TOC in help. Added /vpa and /vpm to set presentation mode from command-line. Modified NoteTableController: createNotetableLookupContext so that tableID can be passed in when doing special AutoColor case of noteRoot. section-printer: tightened up Caption width allowed in Chart>Notes TonalFunctions.js: Added rule that TinyNotes, since they follow leadKey, noteRoot is different for them if used in tonalSourceSet. Added a bunch of multi-row Organs in tunings.js. Defaulted Piano to PianoSkeuomorphic. Changed noteRoot to use noteHatched, not noteHatched6 so it would be more dramatic. Added /fpoaN to automatically accept Chord, Mode, and do next section.
+- 1ad6008 **2026-06-12** Special fix put in for how userColors.js resolves noteRoot, so that a bass player playing noteRoot (or any other table) can inform Tonal.js in tonalResult.noteRootTablename .  Now noteRoot is shown in noteRoot styling instead of note1 in any table that own noteRoot in AutoColor mode.
+- 58b1fb6 **2026-06-12** v2.1-beta-2
+- 0e35ca6 **2026-06-12** fixed test for multi-level Piano Skeuo.
+- a4b7114 **2026-06-12** Removed restriction that it has to be one string.  Multi-string Piano instrument seems to be working well as a model of multi-level organs.  Keyboards scroll together.
+- d62e397 **2026-06-12** Updated copilot instructions for filename clarity.  Removed copilot phone notes since phone flow didn't work well.  Updated daily.md and sprint planning docs for V2.1 readiness.
+- 417987f **2026-06-12** Instructions and build process as part of sprint-124
+
+
 ### 20260612
 Tag: v2.1-beta-2 
 

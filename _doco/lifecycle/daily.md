@@ -81,11 +81,19 @@ Adjust the --since date, update the tag in CHANGELOG.md, and then grab all the l
 rm _doco/lifecycle/CHANGELOG-new.md
 ```
 
- - Run the version-update.js command to update version.json, then check it.
+ - Run the version-update.js command to update version.json with the date.
  
 ```    
 cd ~/infinite-neck
 node bin/version-update.js ./version.json
+```
+Now *manually* update the version.json file to have the tag you are *going to* create: 
+
+vi version.json
+   ==> "gitTag": "v2.1-beta-3"
+
+Now check the version: 
+```
 node bin/version-read.js
 ```
 
