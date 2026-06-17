@@ -22,7 +22,8 @@ var colorFunctionsProviders = {
 	getSong: function () { return null; },
 	getCurrentSection: function () { return null; },
 	doingAutomaticColor: function () { return false; },
-	fullRepaint: function () { }
+	fullRepaint: function () { },
+	displayOptionsChanged: function () { }
 };
 
 export function setColorFunctionsProviders(providers) {
@@ -49,15 +50,21 @@ function fullRepaint() {
 	return colorFunctionsProviders.fullRepaint();
 }
 
+function displayOptionsChanged() {
+	return colorFunctionsProviders.displayOptionsChanged();
+}
+
 export function createLookupContext({
 	section = getCurrentSection(),
 	autoColor = doingAutomaticColor(),
-	colorDict = gUserColorDict.dict
+	colorDict = gUserColorDict.dict,
+	...rest
 } = {}) {
 	return {
 		section,
 		autoColor,
-		colorDict
+		colorDict,
+		...rest
 	};
 }
 
@@ -66,14 +73,14 @@ function resolveLookupContext(lookupContext = {}) {
 	if (!context.section) {
 		return {
 			...context,
-			rootID: null,
-			rootIDLead: null
+			rootID: context.rootID ?? null,
+			rootIDLead: context.rootIDLead ?? null
 		};
 	}
 	return {
 		...context,
-		rootID: context.section.rootID,
-		rootIDLead: context.section.rootIDLead
+		rootID: context.rootID ?? context.section.rootID,
+		rootIDLead: context.rootIDLead ?? context.section.rootIDLead
 	};
 }
 
@@ -452,6 +459,7 @@ export function chuseStylesheet(dictkey){
 			buildUserColors();
 			buildColorDicts();
 			fullRepaint();
+			displayOptionsChanged();
 		}
 	}
 
@@ -524,7 +532,7 @@ export function chuseStylesheet(dictkey){
             var userColorClass = "note"+Role;
             var captionClass = (obj.captionClass) ? obj.captionClass : userColorClass;
             var radio = $('<input type="radio" id="idR'+Role+'" name="rbColor" value="note'+Role+'"  '+checkedString+'>');
-            var label = $('<label id="chooseRole'+Role+'" ></label>');
+            var label = $('<label id="chooseRole'+Role+'" title="note'+Role+'" ></label>');
             label.append(radio);
             label.append(""+obj.caption);
             label.addClass("userColorRB");
@@ -750,7 +758,7 @@ export function chuseStylesheet(dictkey){
 			case Note.STYLENUM_BEND:
 			case Note.STYLENUM_TINY:
 				theRootID = context.rootIDLead;
-				if (!theRootID || theRootID == "-1"){
+				if (theRootID == null || theRootID === "" || theRootID == "-1"){
 					theRootID = context.rootID;
 				}
 				break;
@@ -785,7 +793,15 @@ export function chuseStylesheet(dictkey){
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
 		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
+			// Keep the existing function-key lookup, but let the root-bearing table
+			// promote the root function to the special noteRoot styling.
 			result.colorClass = userColor.colorClass;
+			if (relNoteNum === 0 && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
+				const noteRootColor = context.colorDict.noteRoot;
+				if (noteRootColor?.colorClass) {
+					result.colorClass = noteRootColor.colorClass;
+				}
+			}
 			result.functionNum = relNoteNum;
 			return result;
 		}

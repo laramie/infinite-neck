@@ -27,6 +27,16 @@ export function getTonalForTable(theSong, section, tablename, options = {}){
     }
     let tableSectionNotes = section.sectionNotesByTable?.[tablename] || null;
     let tonalSourceSet = getEffectiveTonalSourceSet(tableSectionNotes);
+    
+    // For TinyNote, use LeadKey as the tonal root if it differs from Key and no noteRoot is placed
+    if (tonalSourceSet === TonalSourceSet.TINYNOTE && !sectionNoteRootResult) {
+        const leadKey = section.getRootKeyLead();
+        if (leadKey && leadKey !== rootKey) {
+            rootKey = leadKey;
+            result.rootKey = rootKey;
+        }
+    }
+    
     let namedNotes = collectTonalSourceNoteNames(tableSectionNotes, tonalSourceSet);
     let noteNamesForDetection = namedNotes.slice();
     if (result.rootKey && !noteNamesForDetection.includes(result.rootKey)) {

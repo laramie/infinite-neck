@@ -1,8 +1,8 @@
 [
   {
     "name": "targetTable",
-    "caption": "instrument",
-    "trigger": "i",
+    "caption": "Instrument",
+    "trigger": "I",
     "datatype": "org.dynamide.Select",
     "value": "",
     "defaultValue": "",

@@ -8,3 +8,4 @@ Below is a list of documentation files in this directory. Add or edit notes afte
 - [daily.md](daily.md) — Command-lines to run: update index.md's, run Jest, etc. 
 - [programming-ideas.md](programming-ideas.md)
 - [programming-note.txt](programming-note.txt)
+- [sprints.md](sprints.md)

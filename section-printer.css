@@ -98,14 +98,10 @@
   max-width: 5em;
 }
 .SPN_CAPTION {
-  max-width: 18em;
+  max-width: 10em;
+  overflow-wrap: break-word; 
+  word-break: break-word;
 }
-/* Not needed, really.  But here's how you would limit this:
-*  .SPN_SPAN_CAPTION {
-*     display: inline-block;
-*     max-width: 50em;
-*  }
-*/
 .SPN_CHORD{
   white-space: nowrap;
 }
@@ -173,15 +169,48 @@
 }
 
 #sectionPrinterChartOptions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.2em;
+  padding: 0.8em 0;
+}
+
+.sectionPrinterChartOptionsColumn {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.8em;
-  padding: 0.8em 0;
+}
+
+.sectionPrinterChartOptionsColumn--left {
+  min-width: 22em;
+}
+
+.sectionPrinterChartOptionsColumn--right {
+  min-width: 16em;
 }
 
 .sectionPrinterChartOptionsCard {
   align-self: stretch;
+}
+
+.sectionPrinterChartOptionsHeadNames {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4em;
+}
+
+.songChartHeadNamesLabel {
+  font-weight: bold;
+}
+
+.songChartHeadNamesTextarea {
+  width: min(24em, 60vw);
+  min-width: 14em;
+  min-height: 12em;
+  resize: vertical;
 }
 
 .songChartOptionsControl {

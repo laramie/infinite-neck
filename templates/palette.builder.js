@@ -31,7 +31,7 @@ export class PaletteBuilder {
         $('#selBend')
             .off(`click${eventNamespace}`)
             .on(`click${eventNamespace}`, function() {
-                $("#rbBend").prop("checked", true);
+                $("#rbBend").prop("checked", true).trigger('change');
             });
 
         $('#rbFinger0, #rbFinger1, #rbFinger2, #rbFinger3, #rbFinger4, #rbFingerT')
@@ -44,15 +44,7 @@ export class PaletteBuilder {
         $("#cbAutomaticColor")
             .off(`change${eventNamespace}`)
             .on(`change${eventNamespace}`, function() {
-            if (this.checked) {
-                //console.log("cbAutomaticColor was checked--hiding");
-                $('#manualColors').hide();
-                $('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-            } else {
-                //console.log("cbAutomaticColor was not checked--showing");
-                $('#manualColors').show();
-                $('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-            }
+            PalettePresentation.setAutomaticColorUi(this.checked);
             NoteTableController.fullRepaint(); //TODO: this should be through EventBus.
         });
 
@@ -60,18 +52,7 @@ export class PaletteBuilder {
         $("#showHideExtraColors")
             .off(`click${eventNamespace}`)
             .on(`click${eventNamespace}`, function(event) {
-            $("#extraColors").toggle();
-            if ($("#extraColors").is(":visible")){
-                $("#showHideExtraColors")
-                    .html("Less...")
-                    .removeClass("BtnPunchedOut")
-                    .addClass("BtnPunchedIn");
-            } else {
-                $("#showHideExtraColors")
-                    .html("More...")
-                    .removeClass("BtnPunchedIn")
-                    .addClass("BtnPunchedOut");
-            }
+            PalettePresentation.setExtraColorsVisible(!$("#extraColors").is(":visible"));
             event.stopPropagation();
         });
 
@@ -119,13 +100,6 @@ export class PaletteBuilder {
 			.on(`click${eventNamespace}`, function() {
 				ColorFunctions.recordUserColorsFromSection();
 			});
-
-        $("#btnRestoreRbColor")
-			.off(`click${eventNamespace}`)
-			.on(`click${eventNamespace}`, function() {    
-			PalettePresentation.restoreLastRbColor();
-		});
-
 
         // Event delegation for stylesheet selection and deletion links
         $(document)

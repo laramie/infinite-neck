@@ -585,6 +585,116 @@ describe('Song section mutation APIs', () => {
         triggerSpy.mockRestore();
     });
 
+    test('addCloneSectionForTable clones section-level properties and only selected table notes', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        const source = createSectionWithCaption(song, 'SOURCE-TABLE');
+        source.rootID = '7';
+        source.rootIDLead = '9';
+        source.beats = '3';
+        source.chartChord = 'Cm7';
+        source.chartMode = 'Dorian';
+        source.getSectionNotes(PRIMARY_TABLE_ID).playedNotes = [new Note({ noteName: 'C', midinum: 60, row: 1 })];
+        source.getSectionNotes(AUX_TABLE_ID).playedNotes = [new Note({ noteName: 'D', midinum: 62, row: 2 })];
+
+        song.addSection(source);
+        song.gotoSection(0);
+
+        const result = song.addCloneSectionForTable(PRIMARY_TABLE_ID);
+        const cloned = song.getCurrentSection();
+
+        expect(result.cloned).toBe(true);
+        expect(song.getSections().length).toBe(2);
+        expect(cloned).not.toBe(source);
+        expect(cloned.caption).toBe('SOURCE-TABLE');
+        expect(cloned.rootID).toBe('7');
+        expect(cloned.rootIDLead).toBe('9');
+        expect(cloned.beats).toBe('3');
+        expect(cloned.chartChord).toBe('Cm7');
+        expect(cloned.chartMode).toBe('Dorian');
+        expect(Object.keys(cloned.sectionNotesByTable)).toEqual([PRIMARY_TABLE_ID]);
+        expect(cloned.sectionNotesByTable[PRIMARY_TABLE_ID]).toEqual(source.sectionNotesByTable[PRIMARY_TABLE_ID]);
+        expect(cloned.sectionNotesByTable[PRIMARY_TABLE_ID]).not.toBe(source.sectionNotesByTable[PRIMARY_TABLE_ID]);
+
+        triggerSpy.mockRestore();
+    });
+
+    test('addCloneSectionForTable no-ops when selected table has only chord or mode metadata', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        const source = createSectionWithCaption(song, 'SOURCE-NO-NOTES');
+        const sourceNotes = source.getSectionNotes(PRIMARY_TABLE_ID);
+        sourceNotes.chord = 'maj7';
+        sourceNotes.mode = 'Ionian';
+
+        song.addSection(source);
+        song.gotoSection(0);
+
+        const result = song.addCloneSectionForTable(PRIMARY_TABLE_ID);
+
+        expect(result.cloned).toBe(false);
+        expect(result.reason).toContain('no notes');
+        expect(song.getSections().length).toBe(1);
+        expect(song.getCurrentSection()).toBe(source);
+
+        triggerSpy.mockRestore();
+    });
+
+    test('clearCurrentSectionTable buries section backup and deletes selected table data', () => {
+        const song = createFreshHeadlessSong();
+        song.sections = [];
+        song.gSectionsCurrentIndex = 0;
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        const source = createSectionWithCaption(song, 'SOURCE-CLEAR');
+        source.getSectionNotes(PRIMARY_TABLE_ID).playedNotes = [new Note({ noteName: 'C', midinum: 60, row: 1 })];
+        source.getSectionNotes(AUX_TABLE_ID).playedNotes = [new Note({ noteName: 'D', midinum: 62, row: 2 })];
+
+        song.addSection(source);
+        song.gotoSection(0);
+
+        const beforeCount = song.graveyard.getRecordCount();
+        const result = song.clearCurrentSectionTable(PRIMARY_TABLE_ID);
+        const records = song.graveyard.getRecords();
+        const record = records[records.length - 1];
+
+        expect(result.cleared).toBe(true);
+        expect(song.getCurrentSection()).toBe(source);
+        expect(source.sectionNotesByTable[PRIMARY_TABLE_ID]).toBeUndefined();
+        expect(source.sectionNotesByTable[AUX_TABLE_ID]).toBeDefined();
+        expect(song.graveyard.getRecordCount()).toBe(beforeCount + 1);
+        expect(record.type).toBe('SECTION');
+        expect(record.context).toMatchObject({ SectionIndex: 0, caption: 'SOURCE-CLEAR', tableID: PRIMARY_TABLE_ID });
+        expect(JSON.parse(record.json).sectionNotesByTable[PRIMARY_TABLE_ID]).toBeDefined();
+
+        triggerSpy.mockRestore();
+    });
+
+    test('getVisibleUnwiredTunings filters hidden listener/observer targets but keeps sources', () => {
+        const song = createFreshHeadlessSong();
+        song.myTunings = [
+            makeTuning({ baseID: 'S6_1' }),
+            makeTuning({ baseID: 'Listener_1' }),
+            makeTuning({ baseID: 'Source_1' }),
+            makeTuning({ baseID: 'Hidden_1' })
+        ];
+        song.setNoteTablesLayout([
+            { tableID: 'tblS6_1', visible: true },
+            { tableID: 'tblListener_1', visible: true },
+            { tableID: 'tblSource_1', visible: true },
+            { tableID: 'tblHidden_1', visible: false }
+        ]);
+        song.wirings = [new Wiring({ tablename: 'tblListener_1', listenToTablename: 'tblSource_1' })];
+
+        expect(song.getVisibleUnwiredTunings().map((tuning) => tuning.baseID)).toEqual(['S6_1', 'Source_1']);
+    });
+
     test('addShallowCloneSection clones V2 namedNotes but empties playedNotes and recordedNotes', () => {
         const song = createFreshHeadlessSong();
         song.sections = [];

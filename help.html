@@ -371,6 +371,7 @@
             color: #ffaa00;
             -webkit-text-stroke: 1px black;
         }
+        .
         .menuDump{
             font-family: "Kode Mono", monospace;
             background-color: rgb(249, 245, 139);
@@ -472,6 +473,22 @@
             font-size: 60%;
         }
 
+        .image-wrapper {
+            display: inline-block; 
+            margin: 0; 
+            margin-left: 4em;
+            width: 90%;
+        }
+
+        .image-wrapper img {
+            display: block; /* Removes baseline spacing beneath the image */
+        }
+
+        .image-wrapper figcaption {
+            text-align: right; 
+        }
+
+
             
 
     
@@ -491,6 +508,7 @@
       <a class="helpButton" href="#commandline">Command-line</a>
       <a class="helpButton" href="help-plugins.html">Plugin Help</a>
       <a class="helpButton" href="#glossary">Glossary</a>
+      <a class="helpButton" href="#themesGallery">Themes Gallery</a>
     </div>
 
 <div id="helpBody">
@@ -504,11 +522,39 @@
         <li><a href="#walkthrough">infinite-neck Walk-through</a></li>
     </ul>
 
-    <p class="bigpoint">This tool, <span class="productsmaller">infinite-neck</span>, helps you visualize notes across the neck of your instrument.
-        </p>
+    <p class="bigpoint">
 
-        <p><img src="img/help/infinite-neck-visualization.png" width="80%"></p>
+        <span class="productsmaller">infinite-neck</span> is a web app that helps you learn the entire fretboard of your instrument, 
+        for soloing, comping, playing
+        chords, arpeggios, and modes the way professional session players do.</p>
+        <p>It teaches you how to understand music changes,
+        such as a I-IV-V progression, so that you can play in any key, and gives you tools to move your practice through keys
+        and transpositions. Using strong visuals to grow your pattern-recognition skills, it guides you through practices, and
+        lets you record and notate songs, progressions, chords, licks, and modes you are working on. We support many
+        instruments, such as guitars in any tunings, basses, cello, mandolin, banjo, Chapman stick, midi-pads, and piano. More
+        than a simple note-and-chord-finder for guitars, <span class="productsmaller">infinite-neck</span> gives a whole new way of looking at instruments from a
+        perspective of understanding what drives music--the patterns, fabrics, and modes of sound, melody, and harmony.
+    </p>
 
+
+       
+    <figure class="image-wrapper">
+         <img src="img/help/transpose-fingering.gif" width="100%" 
+             alt="P4 Guitar with skeuomorphic Theme: 'Guitar Black'"
+             title="P4 Guitar with skeuomorphic Theme: 'Guitar Black'"  >
+        <figcaption>P4 Guitar with skeuomorphic Theme: 'Guitar Black'</figcaption>
+    </figure>
+
+    <p class="bigpoint"><span class="productsmaller">infinite-neck</span> helps you visualize notes across the neck of your instrument.
+    </p>
+
+    <figure class="image-wrapper">
+         <img src="img/help/infinite-neck-visualization.png" width="100%" 
+             alt="P4 Guitar with Theme: 'Autobahn'"
+             title="P4 Guitar with Theme: 'Autobahn'"  >
+        <figcaption>P4 Guitar with Theme: 'Autobahn'</figcaption>
+    </figure>
+    
 
     <p>The fretboard is displayed as a spreadsheet-like table with cells representing each fret/string position.
         Clicking on cells puts "notes" on the virtual neck/fretboard,
@@ -548,7 +594,7 @@
     <a name="instruments"></a>
     <h3>Instruments</h3>
     <p>
-        &check;&nbsp;Supported instruments: guitar, bass, mandolin, cello, piano, midi-pads, uke, and banjo.
+        &check;&nbsp;Supported instruments: guitar, bass, mandolin, cello, piano, organ, midi-pads, uke, and banjo.
         <br>
         &check;&nbsp;All support left-handed and right-handed players.
         <br>
@@ -563,7 +609,7 @@
         <br>
         <br>
         <img width="95%" src="img/help/tunings-table.png">
-        <br>
+        <br><small>Actually, there are more, including 3-tier organs etc., but it gets hard to read the image. See the live app for the full Tunings Library.</small>
         <br>
         <br>
         <b>Or you could really get
@@ -634,7 +680,7 @@
     <br />
     <img src="img/help/blank-song.png" width="80%"></p>
 
-    <p>Here are a P4-tuning 6-string guitar, and a Standard-tuning left-hand 6-string,
+    <p>Here are a P4-tuning 6-string guitar, and a Standard-tuning <b><i>left-handed</i></b> 6-string,
         both playing a cowboy-chord D-major, and showing those notes across the necks.
         They are in editing mode with titles and controls, and are displayed in the same workspace.
     </p>
@@ -664,6 +710,10 @@
         <p>Each beat's length (time duration) is determined with the "BPM", or "Beats Per Minute" setting,
             and there can be any number of beats per section, from 1 to some large integer.</p>
 
+        <p>Each Section also has features for using the Tonal.js chord-finder and mode-finder and recording these
+            to be shown on the real-time Chart, and also beats-per-bar for figuring out where bars and chord changes lie in the Session and Chart.
+        </p>    
+
         <p class="bigpoint">You can then loop over the Beats in one Section, or in all Sections.</p>
 
             <p><img src="img/help/context/transport.png">
@@ -673,6 +723,10 @@
 
     <p>Within Sections, one key is the root key for the band, and optionally, a separate root key for the "lead".
         <i>("Bill is playing F# over Dave and the band's B".)</i></p>
+
+    <p>Additionally, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, and this changes what Tonal.js will 
+        present as the chord set.
+    </p>    
 
 
     <p>To show four chord changes over, say, a Dmin mood, you could use one Section with four Beats,
@@ -698,10 +752,28 @@
         and so draw your eyes to the chosen notes/positions within a whole fabric of playable notes.
         You can also add beats (Highlights) to these Sections for more expression.</p>
 
+        <p>Because placing notes on the neck creates chords and modes, <span class="productsmaller">infinite-neck</span> can
+            generate a chart and let you edit it as you edit the notes. Here is a chart for a jazzy Blues song, showing just the
+            guitar with the full LeadSheet.
+        </p>
+        <p style="text-align: center;">
+            <img src="img/help/chart-leadsheet-gtr.png" width="95%" style="background-color: gray; padding: 0.5em;">
+        </p>
+        <br>
+        <p>If you need more screen real estate to show a second instrument, such as the piano <a href="#event-wiring">Listening</a> to the guitar
+            here, you can show just one or two lines from the chart:</p>
+        <p style="text-align: center;">
+            <img src="img/help/chart-line-gtr-piano.png" width="95%">
+        </p>
+
         <p>I find it essential, when communicating with musicians, to "think Piano".  So in addition to the note
             markers, or fret positions that you <i>should</i> play, <i>should <b>not</b></i> play, <i>could</i> play...etc.,
-            I have styled the guitar necks with piano key coloring embeded as ivory and ebony box inlay,
-        though in software they look more like lit-up MIDI controllers built
+            I have styled the guitar necks with piano key coloring embeded as ivory and ebony box inlay.
+        </p>
+        <p style="text-align: center;">
+            <img src="img/help/ebony-ivory-p4.png" width="70%">
+        </p>
+        <p>Here is an extreme bit of styling just to have fun with the software, so it looks more like lit-up MIDI controllers built
         into your guitar neck like Guitar Hero with half of Synthesia bolted on.</p>
 
         <p style="text-align: center;"><img width="70%" src="img/help/highlights.png"></p>
@@ -739,7 +811,7 @@
              and I play a real clam because I'm missing a half-step.</small></i></p>
 
          <p>Along the way, I had to sort out where my Classical training and Jazz training had different names
-                 for the pitches of a scale, and what to call these enharmonically,
+                 for the pitches of a scale, what to call these enharmonically,
                  and what to call these pitches when the key changed,
                  but the played note was the same.
 
@@ -772,8 +844,9 @@
                  <li>Apprehend the patterns formed by scales and chords across and up the neck.
                  <li>Move these patterns around the neck.
                  <li>Watch lead patterns moving against patterns of comping, and practice improvising over the patterns and changes.
-                 <li>See the difference between tunings in real time
-             (pull up two tunings and press Ctrl-minus in your browser to make them both fit).
+                 <li>See the difference between tunings in real time by having one <a href="#event-wiring">Listen</a> to the other.
+                 <li>Transpose a song into a new key.   
+                 <li>Transpose a melody over a set of changes while writing a song.   
                  <li>Practice a song someone has saved in some other tuning, by observing it to your tuning (see <a href="#event-wiring">listeners</a>).
              </ul>
              </p>
@@ -789,6 +862,7 @@
     <li><a href="https://www.youtube.com/playlist?list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">infinite-neck Video Playlist</a>
     <li><a href="https://www.youtube.com/watch?v=qwNUnLNGCKQ&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=1">Intro</a>
     <li><a href="https://www.youtube.com/watch?v=rCRxt7ORFLg&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=2">GUI Menus</a>
+    <li><a href="https://www.youtube.com/watch?v=ZlUYsMzNE_U&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">Chord Shapes (P4/S6)</a>
     </ul>
 </p>
 
@@ -848,7 +922,7 @@
                         </li>
                         <li><a href="#transport">Transport</a>
                             <ul class="LinkList">
-                                <li><a href="#mapSpacebar">Map Spacebar</a></li>
+                                <li><a href="#SpacebarMapping">Special SPACEBAR Mapping</a></li>
                                 <li><a href="#transportNavigationTable">Transport Navigation Table</a></li>
                             </ul>
                         <li><a href="#spanSectionDrawer">Section Drawer</a>
@@ -885,24 +959,14 @@
                 </li>
                 <li><a href="#options">Options</a></li>
                 <li><a href="#graveyard">The Graveyard</a></li>
-                <li><a href="#themesGallery">Themes Gallery</a>
-                    <ul class="LinkList">
-                        <li><a href="#adult-swim">Adult Swim</a></li>
-                        <li><a href="#everyone-into-the-pool">Everyone into the Pool</a></li>
-                        <li><a href="#zinfandel">Zinfandel</a></li>
-                        <li><a href="#autobahn">Autobahn</a></li>
-                        <li><a href="#late-nite">Late Nite</a></li>
-                        <li><a href="#big-in-japan">Big in Japan</a></li>
-                        <li><a href="#pool-shark">Pool Shark</a></li>
-                        <li><a href="#blade">Blade</a></li>
-                        <li><a href="#coffy-brown">Coffy Brown</a></li>
-                        <li><a href="#landau-top">Landau Top</a></li>
-                        <li><a href="#renfaire">Renfaire</a></li>
-                        <li><a href="#robin-hood">Robin Hood</a></li>
-                        <li><a href="#shire">Shire</a></li>
-                    </ul>
-                </li>
                 <li><a href="#keymap">Keymap</a></li>
+                    <ul class="LinkList">
+                        <li><a href="#KeymapAlphabetical">Keymap Alphabetical</a></li>
+                        <li><a href="#KeymapKeyboard">Keymap on Keyboard</a></li>
+                        <li><a href="#ActionsKeyboard">Actions on Keyboard</a></li>
+                        <li><a href="#ActionsList">Actions List</a></li>
+                        <li><a href="#SpacebarMapping">Special SPACEBAR Mapping</a></li>
+                    </ul>
                 <li><a href="#commandline">Command-line Menu</a>
                     <ul class="LinkList">
                         <li><a href="#keysInCommandLine">Keys</a></li>
@@ -971,6 +1035,33 @@
 
                 </ul>
                 <li><a href="#glossary">Glossary</a></li>
+                <li><a href="#themesGallery">Themes Gallery</a>
+                    <ul class="LinkList">
+                        <li><a href="#adult-swim">Adult Swim</a></li>
+                        <li><a href="#everyone-into-the-pool">Everyone into the Pool</a></li>
+                        <li><a href="#zinfandel">Zinfandel</a></li>
+                        <li><a href="#autobahn">Autobahn</a></li>
+                        <li><a href="#late-nite">Late Nite</a></li>
+                        <li><a href="#big-in-japan">Big in Japan</a></li>
+                        <li><a href="#pool-shark">Pool Shark</a></li>
+                        <li><a href="#blade">Blade</a></li>
+                        <li><a href="#coffy-brown">Coffy Brown</a></li>
+                        <li><a href="#landau-top">Landau Top</a></li>
+                        <li><a href="#renfaire">Renfaire</a></li>
+                        <li><a href="#robin-hood">Robin Hood</a></li>
+                        <li><a href="#shire">Shire</a></li>
+                        <li><a href="#theme-guitar">Guitar</li>
+                        <li><a href="#theme-guitar-white">Guitar White</li>
+                        <li><a href="#theme-guitar-black">Guitar Black</li>
+                        <li><a href="#Pianos">Pianos with "Piano Skeuo"</li>
+                            <ul>
+                                <li><a href="#piano-skeuomorphic.png">Piano</li>
+                                <li><a href="#organ-3rows">Organ 3 Rows</li>
+                            </ul>
+                        <li><a href="#SpecialRows-small">Special Rows</li>
+                    </ul>
+                </li>
+
             </ul>
         </li>
     </ul>
@@ -1043,7 +1134,9 @@
             express: a unique set of single letter names for each of the twelve tones of the chromatic scale.
             I do this by assigning names concretely, which apply in any 12-tone
             playing, assuming you know where the "root" is, or the key of the band or dominant instrument,
-            usually the bass player.  I used symbols familiar to Jazz and Session players, and added a few new ones
+            usually the bass player. (In <span class="productsmaller">infinite-neck</span>, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, 
+            and this changes what Tonal.js will 
+        present as the chord set.) I used symbols familiar to Jazz and Session players, and added a few new ones
             where singular, concrete names were needed.
             </i></small></p>
 
@@ -1239,8 +1332,8 @@ placed on A, and a "NamedNote" is placed on F&sharp; which selects <u>all</u> F&
 </p>
 
 
-<p>Click the Clear radio button, then any note name you want to clear.
-    (These are specific to the kind of note, so also select the kind of note.) Actually, while you have a note
+<p>Click the CLEAR radio button, then any note in that cell, and the entire cell will be cleared of all note types.
+    However, if you want to clear just one note type, then while you have a note
     style selected, you can also
     just click the note again with the same style to remove that note--click on, click off, click on, click off. <i>Karate Kid anyone?</i>
 </p>
@@ -1269,12 +1362,12 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 </p>
 
 
-<p>Click the 'keep' radio button, to avoid making changes when scrolling
+<p>Click the 'KEEP' radio button, to avoid making changes when scrolling
  around.</p>
 
  <p><img src="img/help/keep.png"></p>
 
-<p>Click the 'clear' radio button to delete a note of the kind selected (Named, Single, Tiny, Bend).</p>
+<p>Click the 'CLEAR' radio button to delete all notes in the cell you click (Named, Single, Tiny, Bend, Highlight).  This does not clear any recorded notes.</p>
 
  <p><img src="img/help/clear.png"></p>
 
@@ -1327,8 +1420,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         so this can be used to copy/paste a Section.  You can also <a href='#glossaryClone'>Clone</a> a section.
     </td></tr>
      <tr><td>Copy Section</td><td>Use <a href='#glossaryClone'>Clone</a> or <a href='#glossaryShallowClone'>Shallow</a> clone on the <a href="#spanSectionDrawer">Section Drawer</a> in the Transport.  <a href='#glossaryClone'>Clone</a> copies all notes and Display Options.</td></tr>
-    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select Clear on the Palette and a Note type to clear just one kind of Note type, e.g. Bends.
-        <br>
+    <tr><td>Delete Notes</td><td>To delete a note you placed by clicking, just click again.  You can also select CLEAR on the Palette and and all notes in that cell will be deleted when you click on a note in a cell.
         <br>
         Using the ClipPlugin, you can also select the kind of note to include and Cut the notes, which removes them from the Instrument in that Section, and puts them in the Graveyard.
     </td></tr>
@@ -1343,13 +1435,12 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
             <li>Transpose up two half-steps with <b><u>u</u></b>p 2 times.  This gives you the V chord. 
             <li>Hit <b><u>l</u></b>oop!
             <li>Voila! The three-chord wonder.
-            <li>(This only works with NamedNotes.)
         </ul>
     </td></tr>
     <tr><td>Copy/Paste Notes with ClipPlugin</td><td><span class="menuExampleLine">/fpc</span>, or <span class="key">SHIFT</span>+<span class="key">C</span> which will bring up the ClipPlugin.  
         With Clip, you can copy, cut, and paste notes from the
         selected Instrument, which is where the notes come from or go to.  MIDI Paste pastes to another instrument based on MIDI numbers, not positions.
-        Copy listened notes copies notes that are visible in the instrument but aren't recorded in that instrument, when that instrument is listening to another.
+        Copy listened notes copies notes that are visible in the instrument but aren't recorded in that instrument, when that instrument is <a href="#event-wiring">listening</a> to another.
         <br>
         <br>
         The workflow is: 
@@ -1395,8 +1486,16 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
         &check;NamedNotes persist in Sections, but can't be recorded in Beats.
 
-        &check;SingleNotes, Tiny notes, and Bends persist in Sections, and can be recorded in beats.
-           &diams; If "REC" is active, notes record into beats, as you click them
+        &check;Highlights (Pitch and Multi) persist in Sections only when recorded in beats.
+           &diams; If "REC" is active, Highlights record into beats, as you click them
+           &diams; If "REC" is inactive, Highlights play into the Section
+             &diams; But they go away on navigation or placing another note or Highlight.
+             &diams; Highlight "Pitch" shows all notes with the same MIDI number.
+             &diams; Highlight "Multi" lets you highlight multiple notes.
+
+        &check;SingleNotes, TinyNotes, Bends, and Fingerings
+           &diams; Persist in Sections, and can be recorded in beats.
+           &diams; If "REC" is active, notes record into beats, as you click them.
            &diams; If "REC" is inactive, notes record into the Section, that is, they persist for all the beats.
 
         &check;SingleNotes are like NamedNotes, but you only get one note, not all notes that match the note name.
@@ -1500,8 +1599,14 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
   <p><img src="img/help/context/transport-section-drawer-button.jpg">
             <br><i>On the transport, the button with the section mark: <b>&sect;</b> shows/hides the <a href="#spanSectionDrawer">Section Drawer</a>: <button class="ArmedButton" type="button" tabindex="-1">&sect;</button></i></p>
 
-<a name="mapSpacebar"></a>
-<h4>Map Spacebar</h4>
+
+<a name="SpacebarMapping"></a>
+<h4>Special SPACEBAR Mapping</h4>
+
+<p>Using the command-line, you can map the spacebar to actions for this session.  (This mapping is not saved in the songfile, 
+    so you'll need to map again if you open another song.)  These are used to reset the song during TransposePlugin looping, or jumping to different navigation points while looping, practicing, writing songs, running ArpeggioPlugin in flashcard mode, etc.
+</p>
+
 <p>You can map the spacebar to one transport action at a time. Use the File menu path <span class="menuExampleLine"><b><small>/fm</small></b></span> to choose what the spacebar should do.</p>
 
 <p>The top-level spacebar mappings are:</p>
@@ -1515,9 +1620,59 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
 <p>You can also map the spacebar to section navigation with <span class="menuExampleLine"><b><small>/fms</small></b></span> or beat navigation with <span class="menuExampleLine"><b><small>/fmb</small></b></span>.</p>
 
-<p>Once mapped, pressing <span class="key">SPACE</span> runs that transport action directly. This is useful for hands-on practice when you want one repeatable motion under your picking hand or your foot pedal keyboard.</p>
+<p>Once mapped, pressing <span class="key">SPACE</span> runs that transport action directly. 
+    This is useful for when you have your guitar balanced on your knee and want to reset a loop with a quick swat at the keyboard.</p>
 
 <p><b>Reset song</b> returns you to Section 1, Beat 1 and preserves the active loop mode if one was already running. <b>Reset song hard</b> does the same repositioning, but also triggers the stronger reset behavior used by plugins that need to clear generated state.</p>
+
+
+<h4>Command-line menu for SPACEBAR Mapping</h4>
+
+        <p>
+            <div style="margin-left: 4em;">
+            <span class="menuExampleLine"><b>/fm</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar </span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 2em;">
+                current: []
+                <br><b>R</b>estart song
+                <br><b>r</b>estart section
+                <br><b>z</b> reset song
+                <br><b>Z</b> reset song hard
+                <br><b>u</b>nset spacebar
+                <br><b>s</b>ection
+                <br><b>b</b>eats
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            <br>
+            <span class="menuExampleLine"><b>/fms</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar  <b>s</b>ection</span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 4em;">
+                <b>s</b>ection loop
+                <br><b>f</b>irst
+                <br><b>p</b>rev
+                <br><b>n</b>ext
+                <br><b>l</b>ast
+                <br><b>L</b>ast beat in song
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            <br>
+            <span class="menuExampleLine"><b>/fmb</b></span><span class="menuExamplePrompt"><b>f</b>ile <b>m</b>ap spacebar <b>b</b>eats </span>
+            <br>
+            <span class="menuExamplePrompt" style="margin-left: 4em;">
+                <b>b</b>eat loop
+                <br><b>f</b>irst
+                <br><b>p</b>rev
+                <br><b>n</b>ext
+                <br><b>l</b>ast
+                <br>
+                <br>e<b>x</b>it
+            </span>
+            </div>
+        </p>
+
+
 
 <a name="transportNavigationTable"></a>
 <h4>Transport Navigation Table</h4>
@@ -1750,7 +1905,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <a name="transposing"></a>
 <h5>Transposing</h5>
-<p>Note that infinite-neck has several ways to transpose: 
+<p>Note that <span class="productsmaller">infinite-neck</span> has several ways to transpose: 
     <ul>
         <li>Transposing with the keyboard shortcuts transposes NamedNotes only in the Current Section.
         <li><span class="menuExampleLine"><b>/fa</b></span> shows a menu where you can transpose all NamedNotes or just the Section keys in a song at once, after you chose the number of half-steps.
@@ -1957,17 +2112,14 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <p>
      If you want to save these options, it is best to set them at least in the first Section, so that when looping
      the song, or opening the song from a file, the default options you chose get restored logically.  When you navigate to
-     another section, the options persist until you hit another section that has Display Options set.  As you change Sections,
+     another section, the options follow the rule that settings persist from the Section where they are set, as though you were looping forward.  As you change Sections,
      if the View menu is showing, you'll see the option controls get updated.
 </p>
 
-<p>Also click Save Display Options to overwrite previously saved options for just the current Section.
+<p>Click <span class="GUIReferenceInline">View | Save Display Options</span> to overwrite previously saved options for just the current Section. (Also <span class="menuExampleLine"><b><small>/vps</small></b></span>)
 </p>
 
-<p>Click Clear Display Options to delete these options for just the current Section.
-</p>
-
-<p>These buttons also appear in the Section menu, and apply to the current Section.
+<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete these options for just the current Section, after which they will inherit the options in effect from previous Sections.  (Also <span class="menuExampleLine"><b><small>/vpc</small></b></span>)
 </p>
 
 <p>You can audit all the Display Options for all Sections that have them set with the <a href="#commandline">command-line</a> <span class="menuExampleLine"><b><small>/vdd</small></b></span>
@@ -1979,9 +2131,29 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 </p>
 <p>
     You can also sit on the View page and
-     watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( &lt; and &gt; ).
+     watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( <span class="key">&lt;</span> and <span class="key">&gt;</span> ).
      Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
      come back to the View menu.
+ </p>
+
+ <p>A few of the options have different names than their labels on the View page:
+<ul>
+    <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
+    <li><b>showCellNotes</b> - "Show Right Subscript"</li>
+    <li><b>showSubscriptFunctions</b> - "Show Left Subscript"</li>
+    <li><b>cellIsFunction</b> - "Right Subscript" [<i>Function|Notename</i>]</li>
+    <li><b>useCenterForRightFunction</b> - "Show Right Subscript in Center"</li>
+</ul>
+
+ </p>
+
+ <p>Note that two of the options in <span class="menuExampleLine">/vdd</span> aren't on the View page:
+<ul>
+    <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
+    <li><b>currentColorDict</b> - <span class="GUIReferenceInline">palette &gt; Stylesheets</span></li>
+</ul>
+
+
  </p>
 
  <p>There's a bit more info in the <a href="#glossaryDisplayOptions">Glossary::Display Options</a> entry</p>
@@ -2027,10 +2199,13 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <a name="divThemeControls"></a>
 <h3>Themes Menu</h3>
  <p>Normally, you can change Themes by just selecting one from the dropdown in the main menu button bar.
-    See screenshot of <a href="#themesGallery">Themes Gallery</a> in this helpfile.
+    See screenshots of <a href="#themesGallery">Themes Gallery</a> in this helpfile, where you can see the dropdown with the 
+    name of the themes, and the effect of the themes.
  </p>
  <p>The Theme menu is for tweaking the current Theme, and for building new Themes.  It's a bit techie, so we'll
-     explain it in a video at some point.
+     explain it in a video at some point.  In short, mash on the <b>Theme</b> button after changing some of the values, and your values
+     will be applied.  They are stored in a Theme called USER at the bottom of the Themes dropdown.  This theme is stored in your song, and will be used
+     on opening your song as the default Theme, unless you change to another Theme before you hit File | Download.
  </p>
 
 <a name="divFillNotes"></a>
@@ -2061,11 +2236,11 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
     <a name="tunings-special-rows"></a>
     <h4>Special Rows</h4>
     <p>
-        Tunings S6, Standard 6-string guitar, and S8 default to using "Special Rows".  The thinnest two strings are shown
+        Tunings S6 (Standard 6-string guitar) and S8 default to using "Special Rows". So do DADGAD, DGDGBD, and Drop-D guitar tunings.  For example, the thinnest two strings on S6 are shown
         in a different background color scheme, so P4 players can have a visual reminder of the Special-ness of these strings--they 
         are a half-step off of Perfect Fourths tuning (P4).
         By default, 
-        an S6 or S8 tuning turn on "Special Rows" with a checkbox in the "My Tunings" table or "All Tunings" table.  Uncheck if you don't 
+        S6 or S8 tunings turn on "Special Rows" with a checkbox in the "My Tunings" table or "All Tunings" table.  Uncheck if you don't 
         want special rows displayed with different background colors. 
     </p>
     <p>
@@ -2155,31 +2330,31 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
      You may also have multiple stylesheets by entering different names in "Stylesheet name" before clicking "Record Stylesheet".
  </p>
 
- <p>There is another way to record a stylesheet: manually place colored NamedNotes on the neck, then click Section:NamedNotes==&gt;Stylesheet.
+ <p>There is another way to record a stylesheet: manually place colored NamedNotes on the neck, then click 
+    <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">FirstInstrument:NamedNotes =&gt; Stylesheet</button>.
      This will create a stylesheet for the Note Functions only, based on the colors you chose for those Note Function locations.
      You do not need to do all Note Functions--you could just override the II and the &Delta; for example.  Then, when AutoColor is on
      the two notes in your stylesheet would override the Default, but other notes would use the Default.
  </p>
 
- <p>Finally, there are several special "Color" buttons: [Clear, Keep, and Find Color].
+ <p>Finally, there are several special "Color" buttons: [CLEAR, KEEP, and Find Color] and the special "Last Color" button to the right of these, and the left of "AutoColor".
 </p>
 
 <p>
-     "Keep" disables placing new notes,
+     "KEEP" disables placing new notes,
      so is useful if you just want to click around and not change anything, or if you are doing a presentation
-     and don't want to mess things up.
+     and don't want to mess things up. You can still place Highlights to call attention to notes, and these will disappear on Navigation actions, such as NextSection
 </p>
 
 <p>
- "Clear" lets you delete notes of the kind
-     selected.  Actually, you can also just click on a note, and if you have the note kind selected,
-     that note will go away.  If you click again,
-     the note will come back, but with whatever color you currently have active.
+ "CLEAR" lets you delete all note types from the cell you clicked.  To delete just one note type, you can select that type in the Palette, then just click on a note, and the note will go away.  
+ If, instead of CLEAR, you select the Last Note button, and a different color the note will be re-colored with whatever color you currently have active.
 </p>
 
 <p>
      To find what color you used before, make sure AutoColor is off, then click "Find Color", then click the note
-     on the neck.  The color name will appear in the Caption of that instrument, so open up the Caption row
+     on the neck. This currently only works for NamedNotes.  
+     The color name will appear in the Caption of that instrument, so open up the Caption row
      with the little hamburger on the instrument.
      If the whole Caption on the instrument is missing, press ESC then SHIFT-A to show it.
      The color will also be highlighted on the Palette, so you
@@ -2304,19 +2479,19 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                             coud see in a score, or chart, or Guitar-Hero, or Synthesia, or Tetris.
                     </ul>
                 </li>
-                <li><b>Instrument</b>: a dropdown list of other instruments, so you can "listen" to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  
+                <li><b>Instrument</b>: a dropdown list of other instruments, so you can <a href="#event-wiring">listen</a> to their NamedNotes, PlayedNotes, RecordedNotes, and Highlights.  
                     <ul>
-                        <li>Notes you "listen" to 
-                    will be replayed in your instrument but not recorded in your instrument <!-- some day: (unless you turn on recording for your instrument)-->.
+                        <li>Notes you <a href="#event-wiring">listen</a> to 
+                    will be replayed in your instrument but not recorded in your instrument.  To record them, click "Capture", which acts on the current Section.
 
                         <li>This is useful if you want to see the notes of a standard tuning song on the neck of your P4 turning, for example.
 
-                        <li>You can only listen to one instrument, and you can't listen to your own instrument.
-                        <li>If you chose "Relative Section" in a clone of your instrument, you can have the clones listen to your instrument,
+                        <li>You can only <a href="#event-wiring">listen</a> to one instrument, and you can't <a href="#event-wiring">listen</a> to your own instrument.
+                        <li>If you chose "Relative Section" in a clone of your instrument, you can have the clones <a href="#event-wiring">listen</a> to your instrument,
                      in which case you have look-ahead and look-behind of other Sections.
                         </ul>
                 </li>
-                <li><b>Listener projection</b>: controls how listened PlayedNotes and RecordedNotes land on the listening instrument.
+                <li><b>Listener projection</b>: controls how listened PlayedNotes and RecordedNotes land on the <a href="#event-wiring">listening</a> instrument.
                     <ul>
                         <li><b>Same string + MIDI</b> keeps the current listener behavior and matches by source string plus MIDI pitch.
                         <li><b>MIDI only, low string to high</b> ignores source string position, maps by MIDI pitch only, and lets higher strings overwrite lower strings when they collide.
@@ -2335,6 +2510,21 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                         <li><b>[Wired]</b> means you are actively listening to another instrument in this Section, or in another Section with Relative Section Amount.  
                             Change either Relative Section Amount or selected Instrument to have the button go to <b>[Add Wiring]</b> state so you can change the wiring.
                         </li>
+                    </ul>
+                </li>
+                <li><b>MUTE</b>  
+                    <ul>
+                        <li>When <b>red</b>, it mutes the Listening that may be in effect, so you only see the notes in this instrument.</li>
+                        <li>When <b>orange</b>, it means the instrument is wired as a Listener, but is not muted, so you can click to mute. 
+                        </li>When <b>gray</b> and <s>strikethrough</s>, it means the instrument is not wired as a Listener.
+                    </ul>
+                </li>
+                <li><b>Capture</b>  
+                    <ul>
+                        <li>When <b>orange</b>, it means the instrument is wired as a Listener, 
+                            and you can click to copy Listened-to notes in this Section into this instrument's 
+                            own notes, which you'll see when you MUTE or un-wire by clicking on the red Wired button. 
+                        </li>When <b>gray</b> and <s>strikethrough</s>, it means the instrument is not wired as a Listener.
                     </ul>
                 </li>
             </ul>
@@ -2471,6 +2661,7 @@ in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>
         <li><a href="#KeymapKeyboard">Keymap on Keyboard</a></li>
         <li><a href="#ActionsKeyboard">Actions on Keyboard</a></li>
         <li><a href="#ActionsList">Actions List</a></li>
+        <li><a href="#SpacebarMapping">Special SPACEBAR Mapping</a></li>
     </ul>
 
     <p>These keys can be pressed at any time.  If you have other menus up,
@@ -2512,6 +2703,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#showHidePalette">p</a> 
     <a href="#showHidePalette">P</a>
      <a href="#showHideQuick">q</a>
+     <a href="#chart">r</a>
+     <a href="#toggleRecording">R</a>
      <a href="#showHideSection">s</a> 
     <a href="#showHideSection">S</a>
      <a href="#showHideTransport">t</a>
@@ -2552,6 +2745,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#hideMenusBlurFocus">ESC</a>
      <a href="#learnHowToBrowser">Cmd -/+</a> 
     <a href="#learnHowToBrowser">Ctrl -/+</a>
+    <a href="#SpacebarMapping">SPACEBAR</a>
     
 </div>
 
@@ -2592,7 +2786,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#showHideQuick">q</a></td>
         <td><a href="#changeWidthOfCells">w</a><a href="#changeWidthOfCells">W</a></td>
         <td><a href="#toggleWiringOpenState">e</a></td>
-        <td><a href="#showHideChart">r</a></td>
+        <td><a href="#showHideChart">r</a><a href="#toggleRecording">R</a></td>
+        <td></td>
         <td><a href="#showHideTransport">t</a></td>
         <td>y</td>
         <td><a href="#raiseRootKeyAnd">u</a><a href="#lowerRootKeyAnd">U</a></td>
@@ -2639,7 +2834,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Ctrl</td>
         <td>Alt</td>
         <td></td>
-        <td colspan="5">Spacebar</td>
+        <td colspan="5"><a href="#SpacebarMapping">SPACEBAR</a></td>
         <td> </td>
         <td> </td>
         <td>Alt</td>
@@ -2689,7 +2884,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#showHideQuick"  class="MBtn"><b>q</b>uick menu</a></td>
         <td><a href="#changeWidthOfCells"><b>W</b> narrower</a><a href="#changeWidthOfCells"><b>w</b>ider</a></td>
         <td><a href="#toggleWiringOpenState"><b>e</b>vent wiring</a></td>
-        <td><a href="#showHideChart" class="MBtn">cha<b>r</b>t</a></td>
+        <td><a href="#toggleRecording" class="MBtn"><b>R</b>EC</a><a href="#showHideChart" class="MBtn">cha<b>r</b>t</a></td>
         <td><a href="#showHideTransport" class="MBtn"><b>t</b>ransport</a></td>
         <td>y</td>
         <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
@@ -2736,7 +2931,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Ctrl</td>
         <td>Alt</td>
         <td></td>
-        <td colspan="5">Spacebar</td>
+        <td colspan="5"><a href="#SpacebarMapping">SPACEBAR</a></td>
         <td> </td>
         <td> </td>
         <td>Alt</td>
@@ -2776,6 +2971,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td><span class="key">P</span>
                 </td>
                 <td><span class="key">p</span> show/hide Palette; <span class="key">P</span> opens the command-line at <span class="menuExampleLine">/fp</span> plugins
+                </td>
+            </tr>
+            <tr id="chart">
+                <td><span class="key">r</span>
+                </td>
+                <td><span class="key"></span>
+                </td>
+                <td><span class="key">r</span> show/hide Chart
+                </td>
+            </tr>
+            <tr id="toggleRecording">
+                <td><span class="key">R</span>
+                </td>
+                <td><span class="key"></span>
+                </td>
+                <td><span class="key">R</span> Toggle REC recording beats button
                 </td>
             </tr>
             
@@ -3189,6 +3400,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>Hide menus, blur focus so keypresses do the action, rather than being captured by a textbox, e.g. the SongName.
                 </td>
             </tr>
+            <tr id="hideMenusBlurFocus">
+                <td><span class="key">SPACE</span>
+                </td>
+                <td>
+                </td>
+                <td>See: <a href="#SpacebarMapping">Special SPACEBAR Mapping</a>
+                </td>
+            </tr>
         
         </table>
 
@@ -3201,14 +3420,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 so all keyboard navigation
             should work.  <i>(However, we remove all the transport buttons from TAB order,
                 and other controls you can reach by the <a href="#commandline">command-line</a>
-            or keyboard shortcuts.)</i>  So tabbing to the hamburger button means
+            or keyboard shortcuts.)</i>.  Also, the <span class="key">SPACE</span> key 
+            <b><i>can be mapped</i></b>: </i></b><a href="#SpacebarMapping">Special SPACEBAR Mapping</a>.  
+            So tabbing to the hamburger button means
             <span class="key">SPACE</span> will click the hamburger, as usual.  Tabbing to radiobuttons
             lets you then use arrow keys to select different colors, for example.  There is one radio group for all the Note types, and one
             radio group for the colors.  Once you are in the palette, however, a <span class="key">p</span> key will get trapped by the radio buttons.  So to
             exit the palette, you must use <span class="key">ESC</span>.
         </p>
-
-
 
 <hr>
 <a name="commandline"></a>
@@ -3370,10 +3589,24 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
             </tr>
             <tr>
-                <td><span class="key">&#x2191;</span></span>
+                <td></span><span class="key">&#x2191;</span></span>
                 </td>
                 <td>
                     The ArrowUp key.  Get back to tall menus with menu prompts.
+                </td>
+            </tr>
+            <tr>
+                <td><nobr><span class="key">SHIFT</span>+<span class="key">&#x2191;</span></nobr></span>
+                </td>
+                <td>
+                    SHIFT + the ArrowUp key.  Get back to short menus with menu prompts.
+                </td>
+            </tr>
+            <tr>
+                <td><nobr><span class="key">SHIFT</span>+<span class="key">&#x2193;</span></nobr></span>
+                </td>
+                <td>
+                    SHIFT + the ArrowDown key.  Get back to short menus with menu prompts.
                 </td>
             </tr>
             <tr>
@@ -3518,6 +3751,11 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td>/spn</td>
                     <td><b>s</b>ection | <b>p</b>rint | <b>n</b>otes</td>
                     <td>Prints out all Sections, all Instruments, all Notes. See <a href="#SectionPrintTopic">Section Print</a>
+                </tr>
+                <tr>
+                    <td>/fp</td>
+                    <td><b>f</b>ile | <b>p</b>lugins </td>
+                    <td>Opens the <b>plugins</b> menu. Lots of useful stuff in here.  See <a href="help-plugins.html">Plugin Help</a>
                 </tr>
                 
             </table>  
@@ -4515,6 +4753,15 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>In "Tunings in Song", the values in column "BN" causes the 
                 Nut location to move per string. Used for modelling Banjo, and also for creating custom Capos
                 in song-owned tunings. Deep custom tuning creation now lives under "Add One Tuning" in "Tunings in Song".
+                Note: if you wish to add a 4-row Organ, Lineage is "Organ" or some other name you make up, can't be a Lineage in the 
+                Library such as "Piano" that has only one "string".
+            </td>
+        </tr>
+        <tr>
+            <td>noteRoot
+            </td>
+            <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, just like a Bass player would, and this changes what Tonal.js will 
+        present as the chord set.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
             </td>
         </tr>
         <tr>
@@ -4633,36 +4880,37 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <a name="themesGallery"></a>
 <h2>Themes Gallery</h2>
 
- <p>Themes, we got Themes, baby!  Just choose one from the dropdown (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
+ <p>Themes, we got Themes, baby!  Just choose one from the dropdown 
+    (or edit them in super-geek mode under the <a href="#divThemeControls">Themes Menu</a>).</p>
 
- <p>
+ 
     <a name="adult-swim"></a>
     <h3>Adult Swim</h3>
-    <img width="80%" src="img/help/theme-adult-swim.png"><br><br>
+ <p>    <img width="80%" src="img/help/theme-adult-swim.png"><br><br></p>
     <a name="everyone-into-the-pool"></a>
     <h3>Everyone into the Pool</h3>
-    <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-everyone-into-the-pool.png"><br><br></p>
     <a name="zinfandel"></a>
     <h3>Zinfandel</h3>
-    <img width="80%" src="img/help/theme-zinfandel.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-zinfandel.png"><br><br></p>
     <a name="autobahn"></a>
     <h3>Autobahn</h3>
-    <img width="80%" src="img/help/theme-autobahn.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-autobahn.png"><br><br></p>
     <a name="late-nite"></a>
     <h3>Late Nite</h3>
-    <img width="80%" src="img/help/theme-late-nite.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-late-nite.png"><br><br></p>
     <a name="big-in-japan"></a>
     <h3>Big in Japan</h3>
-    <img width="80%" src="img/help/theme-big-in-japan.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-big-in-japan.png"><br><br></p>
     <a name="pool-shark"></a>
     <h3>Pool Shark</h3>
-    <img width="80%" src="img/help/theme-pool-shark.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-pool-shark.png"><br><br></p>
     <a name="blade"></a>
     <h3>Blade</h3>
-    <img width="80%" src="img/help/theme-blade.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-blade.png"><br><br></p>
     <a name="coffy-brown"></a>
     <h3>Coffy Brown</h3>
-    <img width="80%" src="img/help/theme-coffee-brown.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-coffee-brown.png"><br><br></p>
     <a name="landau-top"></a>
     <h3>Landau Top</h3>
     <p>For those of you who didn't live through the 70's
@@ -4671,30 +4919,57 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         with these hip-daddy colors. 
         <br><img src="img/help/monte-carlo-78.png" width="500"></li>
     </p>
-    <img width="80%" src="img/help/theme-landau-top.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-landau-top.png"><br><br></p>
     <a name="renfaire"></a>
     <h3>Renfaire</h3>
-    <img width="80%" src="img/help/theme-renfaire.png"><br><br>
+<p>     <img width="80%" src="img/help/theme-renfaire.png"><br><br></p>
+<p>      <img width="80%" src="img/help/theme-renfaire-90.png"><br><br></p>
     <a name="robin-hood"></a>
     <h3>Robin Hood</h3>
-    <img width="80%" src="img/help/theme-robin-hood.png"><br><br>
+<p>      <img width="80%" src="img/help/theme-robin-hood.png"><br><br></p>
     <a name="shire"></a>
     <h3>Shire</h3>
-    <img width="80%" src="img/help/theme-shire.png"><br><br>
- </p>
+<p>      <img width="80%" src="img/help/theme-shire.png"><br><br></p>
 
+    <a name="theme-guitar"></a>
+    <h3>Guitar</h3>
+<p>      <img width="80%" src="img/help/theme-guitar.png"><br><br></p>
+ 
+    <a name="theme-guitar-white"></a>
+    <h3>Guitar White</h3>
+<p>      <img width="80%" src="img/help/theme-guitar-white.png"><br><br></p>
+ 
+    <a name="theme-guitar-black"></a>
+    <h3>Guitar Black</h3>
+ <p>     <img width="80%" src="img/help/theme-guitar-black.png"><br><br></p>
+
+
+ <a name="Pianos"></a>
+<h2>Pianos with "Piano Skeuo"</h2>
+    <p>These Pianos are not a Theme, but they are special in that they don't follow Themes, they have unique styling.</p>
+<a name="piano-skeuomorphic.png"></a>
+<h3>Piano</h3>
+     <p><img width="80%" src="img/help/piano-skeuomorphic.png"></p>
+     <br>
+     <br>
+<a name="organ-3rows"></a>
+<h3>Organ 3 Rows</h3>
+     <p><img width="80%" src="img/help/organ-3rows.png"><br><br></p>
+
+<h3 id="SpecialRows-small">Special Rows</h3>
  <p>
-        If you see that the top two rows are a different color scheme, you might have Special Rows turned on by default.
+        If you see that the top two rows are a different color scheme, you have Special Rows turned on by default.
+        These mark the special rows on a Standard-tuning guitar that are not in Perfect 4ths.
         See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
  </p>
  <p>
     Here SR is checked, and the Special Rows and displayed in other colors:
         <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-on.png">
-    </p>
-    <p>
-        Here SR is unchecked, and the Special Rows are displayed normally:
-          <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
-    </p>
+</p>
+<p>
+    Here SR is unchecked, and the Special Rows are displayed normally:
+        <br> <br><img style="width:25%;" src="img/help/context/S6-SpecialRows-off.png">
+</p>
 
 
 <br>

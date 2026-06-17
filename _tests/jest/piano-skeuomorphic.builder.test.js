@@ -5,7 +5,7 @@ import {
 } from '../../templates/piano/piano-skeuomorphic.builder.js';
 
 describe('piano skeuomorphic helper gating', () => {
-    test('supports only one-row Piano tunings', () => {
+    test('supports Piano tunings regardless of row count', () => {
         expect(supportsPianoSkeuomorphic({
             baseInstrument: 'Piano',
             rowRange: [48]
@@ -14,7 +14,7 @@ describe('piano skeuomorphic helper gating', () => {
         expect(supportsPianoSkeuomorphic({
             baseInstrument: 'Piano',
             rowRange: [48, 36]
-        })).toBe(false);
+        })).toBe(true);
 
         expect(supportsPianoSkeuomorphic({
             baseInstrument: 'Guitar',
@@ -39,7 +39,7 @@ describe('piano skeuomorphic helper gating', () => {
             baseInstrument: 'Piano',
             rowRange: [48, 36],
             pianoSkeuomorphic: true
-        })).toBe(false);
+        })).toBe(true);
     });
 
     test('turns off PianoNames when PianoSkeuo is enabled', () => {

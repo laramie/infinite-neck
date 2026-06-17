@@ -92,7 +92,7 @@
                 <div class="menuDiv">
                     <div class="sectionPageControlsGroup">
                         <label for="fileInput">Open Song from Local Files:
-                            <input type="file" id="fileInput">
+                            <input type="file" id="fileInput" style="font-size: 130%;">
                         </label>
                         <br>
                         <nobr>&nbsp;&nbsp;<label for="cbAppendSections"><input id="cbAppendSections" type="checkbox"
@@ -570,6 +570,46 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Piano White:Black Width Ratio:
+                        </td>
+                        <td>
+                            <select id="selPianoWhiteToBlackWidthRatio">
+                                <option value="1">1</option>
+                                <option value="1.2">1.2</option>
+                                <option value="1.4">1.4</option>
+                                <option value="1.5">1.5</option>
+                                <option value="1.6">1.6</option>
+                                <option value="1.8">1.8</option>
+                                <option value="1.9">1.9</option>
+                                <option value="2.0">2.0</option>
+                                <option value="2.1">2.1</option>
+                                <option value="2.2">2.2</option>
+                                <option value="2.3" selected>2.3</option>
+                                <option value="2.4">2.4</option>
+                                <option value="2.5">2.5</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Piano Fingering HPosition:
+                        </td>
+                        <td>
+                            <select id="selPianoFingeringHPosition">
+                                <option value="0%">0%</option>
+                                <option value="10%">10%</option>
+                                <option value="20%">20%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%" selected>50%</option>
+                                <option value="60%">60%</option>
+                                <option value="70%">70%</option>
+                                <option value="80%">80%</option>
+                                <option value="90%">90%</option>
+                                <option value="100%">100%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>Show LooperLight Beats:
                         </td>
                         <td>
@@ -766,6 +806,9 @@
                                 <option value="110%">110%</option>
                                 <option value="120%">120%</option>
                                 <option value="130%">130%</option>
+                                <option value="150%">150%</option>
+                                <option value="180%">180%</option>
+                                <option value="200%">200%</option>
                             </select>
                         </td>
                     </tr>
@@ -797,11 +840,10 @@
                                 <option value="-10%">-10%</option>
                                 <option value="0%">0%</option>
                                 <option value="10%">10%</option>
-                                <option value="20%">20%</option>
+                                <option value="20%" selected>20%</option>
                                 <option value="25%">25%</option>
                                 <option value="35%">35%</option>
                                 <option value="40%">40%</option>
-                                <option value="45%" selected>45%</option>
                                 <option value="50%">50%</option>
                                 <option value="60%">60%</option>
                                 <option value="70%">70%</option>
@@ -842,20 +884,37 @@
                                 <option value="-10%">-10%</option>
                                 <option value="0%">0%</option>
                                 <option value="10%">10%</option>
-                                <option value="20%">20%</option>
+                                <option value="20%" selected>20%</option>
                                 <option value="25%">25%</option>
                                 <option value="35%">35%</option>
                                 <option value="40%">40%</option>
-                                <option value="45%" selected>45%</option>
                                 <option value="50%">50%</option>
                                 <option value="60%">60%</option>
                                 <option value="75%">75%</option>
                                 <option value="80%">80%</option>
                                 <option value="90%">90%</option>
                                 <option value="100%">100%</option>
-                                <option value="110%">100%</option>
+                                <option value="110%">110%</option>
                                 <option value="120%">120%</option>
                                 <option value="150%">150%</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tiny Note Radius:
+                        </td>
+                        <td>
+                            <select id="selTinyNoteRadius">
+                                <option value="0%">0%</option>
+                                <option value="1%">1%</option>
+                                <option value="2%">2%</option>
+                                <option value="4%">4%</option>
+                                <option value="8%" selected>8%</option>
+                                <option value="16%">16%</option>
+                                <option value="25%">25%</option>
+                                <option value="30%">30%</option>
+                                <option value="40%">40%</option>
+                                <option value="50%">50%</option>
                             </select>
                         </td>
                     </tr>
@@ -878,12 +937,18 @@
                 </span>
                 <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
                         sets Display
-                        Options. <i>Tip: Set-and-forget in the first section.</i></small></p>
+                        Options. <i>Tip: Set-and-forget in the first section.</i></small>
+                    </p>
                 <br>
                 <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
                         Mode</label>
                     <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
                 </p>
+                <p class="viewDisplayOptionsReadOnly">autoColor: <span id="viewDisplayOptionAutoColorValue">false</span></p>
+                <p class="viewDisplayOptionsReadOnly">currentColorDict: [ <span id="viewDisplayOptionCurrentColorDictValue"></span> ]
+                </p>
+                <p class="viewDisplayOptionsReadOnly"><button id="btnShowDisplayOptions" type="button" data-action="showDisplayOptions">Show Display Options</button>
+                    </p>
             </div>
 
         </div>
@@ -1084,7 +1149,7 @@
                         <br>
                         <br>
                         <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
-                            data-action="enterFullscreen">infinite-neck Fullscreen</button>
+                            data-action="enterFullscreen" data-action-args='[true]'>infinite-neck Fullscreen</button>
                         <br>
                         <br>
                         <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"

@@ -38,9 +38,26 @@ function createSection(sectionNotesByTable = {}) {
   return {
     rootID: 3,
     caption: 'Verse',
+    beats: 4,
+    currentBeat: 1,
     sectionNotesByTable: Object.fromEntries(
       Object.entries(sectionNotesByTable).map(([tableID, value]) => [tableID, createSectionNotes(value)])
     ),
+    getBeat() {
+      return this.currentBeat;
+    },
+    getBeats() {
+      return this.beats;
+    },
+    setBeats(value) {
+      this.beats = value;
+    },
+    gotoBeat(value) {
+      this.currentBeat = value;
+    },
+    getAllSectionNotes() {
+      return Object.entries(this.sectionNotesByTable);
+    },
     getSectionNotes(tableID) {
       if (!this.sectionNotesByTable[tableID]) {
         this.sectionNotesByTable[tableID] = new SectionNotes();
@@ -55,6 +72,7 @@ function createSong({ myTunings, sections, currentSectionIndex = 0, wirings = []
     myTunings,
     sections,
     wirings,
+    recording: false,
     graveyard: graveyard || {
       records: [],
       bury(type, obj, context) {
@@ -63,6 +81,36 @@ function createSong({ myTunings, sections, currentSectionIndex = 0, wirings = []
     },
     getCurrentSection() {
       return this.sections[currentSectionIndex];
+    },
+    isRecording() {
+      return this.recording === true;
+    },
+    setRecording(value) {
+      this.recording = value === true;
+      return this.recording;
+    },
+    insertBeatsAtCurrentSection(oneBasedIndex, insertCount = 1) {
+      const section = this.getCurrentSection();
+      const beatCount = section.getBeats();
+      const count = Number.parseInt(insertCount, 10);
+      const insertIndex = Math.max(1, Math.min(Number.parseInt(oneBasedIndex, 10), beatCount + 1));
+      section.getAllSectionNotes().forEach(([, sectionNotes]) => {
+        const original = sectionNotes.recordedNotes || {};
+        const next = {};
+        for (let beat = 1; beat < insertIndex; beat += 1) {
+          next[`${beat}`] = original[`${beat}`];
+        }
+        for (let offset = 0; offset < count; offset += 1) {
+          next[`${insertIndex + offset}`] = [];
+        }
+        for (let beat = insertIndex; beat <= beatCount; beat += 1) {
+          next[`${beat + count}`] = original[`${beat}`];
+        }
+        sectionNotes.recordedNotes = next;
+      });
+      section.setBeats(beatCount + count);
+      section.gotoBeat(insertIndex);
+      return { inserted: count, startBeat: insertIndex };
     },
     requestUiFullRepaint: jest.fn()
   };
@@ -74,6 +122,18 @@ function getPlayedNotes(section, tableID) {
 
 function getNamedNotes(section, tableID) {
   return section.getSectionNotes(tableID).namedNotes;
+}
+
+function recNote(label, beat, styleNum = Note.STYLENUM_SINGLE, row = '0', col = '0') {
+  return { noteName: label, marker: label, beat, styleNum, row, col, colorClass: `note${label}` };
+}
+
+function getRecordedMarkers(section, tableID) {
+  const recordedNotes = section.getSectionNotes(tableID).recordedNotes || {};
+  return Object.fromEntries(Object.entries(recordedNotes).map(([beat, notes]) => [
+    beat,
+    (notes || []).map((note) => note.marker || note.noteName)
+  ]));
 }
 
 describe('ClipPlugin', () => {
@@ -107,6 +167,272 @@ describe('ClipPlugin', () => {
       `${Constants.TABLE_ID_PREFIX}Bass4`
     ]);
     expect(plugin.resolveValue('targetTable', { song })).toBe('P46');
+  });
+
+  test('recorded notes menu has approved copy captions and status token', () => {
+    const song = createSong({
+      myTunings: [createTuning()],
+      sections: [createSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+
+    const recordedNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'recordedNotes');
+    const copyNode = recordedNode.children.find((child) => child.name === 'recordedNotesCopy');
+    const pasteNode = recordedNode.children.find((child) => child.name === 'recordedNotesPaste');
+
+    expect(recordedNode.trigger).toBe('r');
+    expect(copyNode.children.map((child) => child.caption)).toEqual([
+      'status: [${plugin:clip:recordedStatus}]',
+      '<b>c</b>urrent beat',
+      '<b>a</b>ll beats'
+    ]);
+    expect(pasteNode.children.map((child) => child.caption).slice(0, 2)).toEqual([
+      'status: [${plugin:clip:recordedStatus}]',
+      '<b>m</b>idi paste [${plugin:clip:recordedMidiPaste}]'
+    ]);
+    expect(pasteNode.children.map((child) => child.actionName).filter(Boolean)).toEqual([
+      'pasteRecordedAddAllBeats',
+      'pasteRecordedInsertAllBeats',
+      'pasteRecordedPlayIntoCurrent',
+      'pasteRecordedSqueezeCurrentBeat',
+      'pasteRecordedFlattenToPlayedNotes'
+    ]);
+    expect(plugin.resolveValue('recordedStatus', { song })).toBe('P46:1:1');
+    expect(plugin.getProperty('recordedMidiPaste').getValue()).toBe(true);
+  });
+
+  test('recorded MIDI Paste defaults on and remaps cross-tuning recorded notes by row and MIDI', () => {
+    const sourceTableID = `${Constants.TABLE_ID_PREFIX}S6_1`;
+    const targetTableID = `${Constants.TABLE_ID_PREFIX}P46_1`;
+    const sourceSection = createSection({
+      [sourceTableID]: {
+        recordedNotes: {
+          '1': [recNote('A', 1, Note.STYLENUM_SINGLE, '0', '5')]
+        }
+      }
+    });
+    const destSection = createSection({
+      [targetTableID]: {
+        recordedNotes: {
+          '1': []
+        }
+      }
+    });
+    const song = createSong({
+      myTunings: [
+        createTuning({ baseID: 'S6_1', fromBaseID: 'S6', rowRange: [64, 59, 55, 50, 45, 40], frets: 24 }),
+        createTuning({ baseID: 'P46_1', fromBaseID: 'P46', rowRange: [65, 60, 55, 50, 45, 40], frets: 24 })
+      ],
+      sections: [sourceSection, destSection]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.setPropertyValue('targetTable', sourceTableID, { song });
+    plugin.invokeAction('copyRecordedCurrentBeat', { song, args: {} });
+
+    song.getCurrentSection = () => destSection;
+    song.setRecording(true);
+    plugin.setPropertyValue('targetTable', targetTableID, { song });
+
+    const result = plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} });
+
+    expect(result.result).toBe('played 1/1 beats: added 1, overwritten 0');
+    expect(destSection.getSectionNotes(targetTableID).recordedNotes['1'][0]).toMatchObject({
+      noteName: 'A',
+      midinum: '69',
+      row: '0',
+      col: '4'
+    });
+
+    const secondDest = createSection({ [targetTableID]: { recordedNotes: { '1': [] } } });
+    song.getCurrentSection = () => secondDest;
+    plugin.setPropertyValue('recordedMidiPaste', false, { song });
+
+    expect(plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} }).result).toBe('S6_1 incompatible with P46_1');
+  });
+
+  test('recorded copy all preserves empty beats in a graveyard-backed clip', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const section = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '2': [recNote('A', 2)],
+          '4': [recNote('B', 4)]
+        }
+      }
+    });
+    section.beats = 4;
+    const song = createSong({ myTunings: [createTuning()], sections: [section] });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+
+    const result = plugin.invokeAction('copyRecordedAllBeats', { song, args: {} });
+
+    expect(result.result).toContain('recorded copied 4 beats, 2 notes');
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.graveyard.records[0].context.clipKind).toBe('recordedNotes');
+    const payload = JSON.parse(song.graveyard.records[0].json);
+    expect(payload.clipKind).toBe('recordedNotes');
+    expect(payload.sourceBeatNumbers).toEqual([1, 2, 3, 4]);
+    expect(payload.recordedNotesByBeat['1']).toEqual([]);
+    expect(payload.recordedNotesByBeat['2']).toHaveLength(1);
+    expect(payload.recordedNotesByBeat['3']).toEqual([]);
+    expect(payload.recordedNotesByBeat['4']).toHaveLength(1);
+  });
+
+  test('recorded play into current requires REC and stops at destination end', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const sourceSection = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [recNote('A', 1, Note.STYLENUM_SINGLE, '0', '1')],
+          '2': [recNote('B', 2, Note.STYLENUM_SINGLE, '0', '2')],
+          '3': [recNote('C', 3, Note.STYLENUM_SINGLE, '0', '3')],
+          '4': [recNote('D', 4, Note.STYLENUM_SINGLE, '0', '4')]
+        }
+      }
+    });
+    const destSection = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [recNote('E', 1, Note.STYLENUM_SINGLE, '1', '1')],
+          '2': [recNote('F', 2, Note.STYLENUM_SINGLE, '0', '1')],
+          '3': [recNote('G', 3, Note.STYLENUM_SINGLE, '1', '3')]
+        }
+      }
+    });
+    destSection.beats = 3;
+    destSection.currentBeat = 2;
+    const song = createSong({ myTunings: [createTuning()], sections: [sourceSection, destSection] });
+    mockRuntime.song = song;
+
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.invokeAction('copyRecordedAllBeats', { song, args: {} });
+
+    song.sections = [sourceSection, destSection];
+    song.getCurrentSection = () => destSection;
+    expect(plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} }).result).toBe('REC mode required');
+
+    song.setRecording(true);
+    const result = plugin.invokeAction('pasteRecordedPlayIntoCurrent', { song, args: {} });
+
+    expect(result.result).toBe('played 2/4 beats: added 1, overwritten 1');
+    expect(getRecordedMarkers(destSection, tableID)).toEqual({
+      '1': ['E'],
+      '2': ['A'],
+      '3': ['G', 'B']
+    });
+  });
+
+  test('recorded add and insert all beats preserve source beat order around current beat', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const sourceSection = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [recNote('A', 1)],
+          '2': [recNote('B', 2)]
+        }
+      }
+    });
+    sourceSection.beats = 2;
+    const destSection = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [recNote('E', 1)],
+          '2': [recNote('F', 2)],
+          '3': [recNote('G', 3)]
+        }
+      }
+    });
+    destSection.beats = 3;
+    destSection.currentBeat = 2;
+    const song = createSong({ myTunings: [createTuning()], sections: [sourceSection] });
+    mockRuntime.song = song;
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.invokeAction('copyRecordedAllBeats', { song, args: {} });
+
+    song.sections = [sourceSection, destSection];
+    song.getCurrentSection = () => destSection;
+    song.setRecording(true);
+
+    expect(plugin.invokeAction('pasteRecordedAddAllBeats', { song, args: {} }).result).toBe('added 2 beats after beat 2: 2 notes');
+    expect(getRecordedMarkers(destSection, tableID)).toEqual({
+      '1': ['E'],
+      '2': ['F'],
+      '3': ['A'],
+      '4': ['B'],
+      '5': ['G']
+    });
+
+    destSection.recordedNotes = undefined;
+    const secondDest = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [recNote('E', 1)],
+          '2': [recNote('F', 2)],
+          '3': [recNote('G', 3)]
+        }
+      }
+    });
+    secondDest.beats = 3;
+    secondDest.currentBeat = 2;
+    song.getCurrentSection = () => secondDest;
+
+    expect(plugin.invokeAction('pasteRecordedInsertAllBeats', { song, args: {} }).result).toBe('inserted 2 beats before beat 2: 2 notes');
+    expect(getRecordedMarkers(secondDest, tableID)).toEqual({
+      '1': ['E'],
+      '2': ['A'],
+      '3': ['B'],
+      '4': ['F'],
+      '5': ['G']
+    });
+  });
+
+  test('recorded flatten requires REC off, includes Fingering, excludes Named, and reports temporary highlights', () => {
+    const tableID = `${Constants.TABLE_ID_PREFIX}P46`;
+    const sourceSection = createSection({
+      [tableID]: {
+        recordedNotes: {
+          '1': [
+            recNote('Named', 1, Note.STYLENUM_NAMED, '0', '0'),
+            recNote('S', 1, Note.STYLENUM_SINGLE, '0', '1'),
+            recNote('Fing', 1, Note.STYLENUM_FINGERING, '0', '2'),
+            recNote('Pitch', 1, Note.STYLENUM_MIDIPITCHES, '0', '3'),
+            recNote('Multi', 1, Note.STYLENUM_MIDIPITCHESSINGLE, '0', '3')
+          ]
+        }
+      }
+    });
+    const destSection = createSection({ [tableID]: { playedNotes: [] } });
+    const song = createSong({ myTunings: [createTuning()], sections: [sourceSection] });
+    mockRuntime.song = song;
+    const plugin = new ClipPlugin();
+    plugin.setManager({ song });
+    plugin.getVisibleMenuChildren();
+    plugin.invokeAction('copyRecordedAllBeats', { song, args: {} });
+
+    song.getCurrentSection = () => destSection;
+    song.setRecording(true);
+    expect(plugin.invokeAction('pasteRecordedFlattenToPlayedNotes', { song, args: {} }).result).toBe('REC mode must be off');
+
+    song.setRecording(false);
+    const result = plugin.invokeAction('pasteRecordedFlattenToPlayedNotes', { song, args: {} });
+
+    expect(result.result).toContain('flattened 4 beats: added 4, overwritten 0; Pitch/Multi are temporary');
+    expect(getPlayedNotes(destSection, tableID).map((note) => note.marker)).toEqual(['S', 'Fing', 'Pitch', 'Multi']);
   });
 
   test('revive menu uses input mode when automatic is disabled for a wired table selection', () => {

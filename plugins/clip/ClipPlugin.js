@@ -11,6 +11,8 @@ import {
   createTuningLayout,
   getCellByRowCol,
   getCellByRowMidi,
+  isMidiOnlyListenerProjection,
+  projectListenerPlayedNotes,
   getTableID,
   getTuningCompatibilityID
 } from '../../move-helpers.js';
@@ -22,6 +24,14 @@ const INCLUDED_STYLE_ORDER = [
   ['tiny', Note.STYLENUM_TINY],
   ['bend', Note.STYLENUM_BEND],
   ['fingering', Note.STYLENUM_FINGERING]
+];
+const RECORDED_FLATTEN_STYLE_ORDER = [
+  Note.STYLENUM_SINGLE,
+  Note.STYLENUM_TINY,
+  Note.STYLENUM_BEND,
+  Note.STYLENUM_FINGERING,
+  Note.STYLENUM_MIDIPITCHES,
+  Note.STYLENUM_MIDIPITCHESSINGLE
 ];
 
 function cloneValue(value) {
@@ -51,6 +61,40 @@ function playedCollisionKey(note) {
   return `${note?.styleNum}:${note?.row}:${note?.col}`;
 }
 
+function recordedCollisionKey(note) {
+  return `${note?.styleNum}:${note?.row}:${note?.col}`;
+}
+
+function getMidiPitchArray(tuning) {
+  if (Array.isArray(tuning?.midiPitches)) {
+    return [...tuning.midiPitches];
+  }
+  if (Array.isArray(tuning?.rowRange)) {
+    return [...tuning.rowRange];
+  }
+  return [];
+}
+
+function arraysEqual(left = [], right = []) {
+  return Array.isArray(left)
+    && Array.isArray(right)
+    && left.length === right.length
+    && left.every((value, index) => `${value}` === `${right[index]}`);
+}
+
+function getMaxRecordedCol(payload) {
+  let maxCol = 0;
+  Object.values(payload?.recordedNotesByBeat || {}).forEach((notes = []) => {
+    (notes || []).forEach((note) => {
+      const col = toInteger(note?.col, -1);
+      if (col > maxCol) {
+        maxCol = col;
+      }
+    });
+  });
+  return maxCol;
+}
+
 function clipCountLabel(counts) {
   return INCLUDED_STYLE_ORDER
     .map(([kind]) => [kind, counts[kind] || 0])
@@ -62,6 +106,18 @@ function clipCountLabel(counts) {
 function getRecordCompatibilityID(record) {
   const payload = JSON.parse(record?.json || '{}');
   return getTuningCompatibilityID(record?.context) || getTuningCompatibilityID(payload?.source);
+}
+
+function isRecordedNotesClipRecord(record) {
+  if (record?.context?.clipKind === 'recordedNotes') {
+    return true;
+  }
+  try {
+    const payload = JSON.parse(record?.json || '{}');
+    return payload?.clipKind === 'recordedNotes';
+  } catch (error) {
+    return false;
+  }
 }
 
 function createReviveSummary() {
@@ -192,6 +248,7 @@ export class ClipPlugin {
       this.getProperty('automatic').getMenuNodeSpec(this),
       this.getProperty('overwrite').getMenuNodeSpec(this),
       this.buildIncludeMenuNode(song),
+      this.buildRecordedNotesMenuNode(song),
       this.buildClearClipsNode(),
       this.getProperty('help').getMenuNodeSpec(this)
     ].filter(Boolean);
@@ -330,6 +387,66 @@ export class ClipPlugin {
     });
   }
 
+  buildRecordedActionNode(actionName, caption, trigger) {
+    return new MenuItemProxy(this, {
+      name: actionName,
+      caption: buildCaption(caption, trigger),
+      trigger,
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName,
+      popOnBang: false
+    });
+  }
+
+  buildRecordedStatusNode() {
+    const token = `plugin:${this.id}:recordedStatus`;
+    return new MenuItemProxy(this, {
+      name: 'recordedStatus',
+      caption: `status: [${buildValueReference(token)}]`,
+      trigger: '',
+      vars: [token]
+    });
+  }
+
+  buildRecordedMidiPasteNode() {
+    return this.getProperty('recordedMidiPaste').getMenuNodeSpec(this);
+  }
+
+  buildRecordedNotesMenuNode(song = getSong()) {
+    return new MenuItemProxy(this, {
+      name: 'recordedNotes',
+      caption: buildCaption('recorded notes', 'r'),
+      trigger: 'r',
+      children: [
+        new MenuItemProxy(this, {
+          name: 'recordedNotesCopy',
+          caption: buildCaption('copy', 'c'),
+          trigger: 'c',
+          children: [
+            this.buildRecordedStatusNode(song),
+            this.buildRecordedActionNode('copyRecordedCurrentBeat', 'current beat', 'c'),
+            this.buildRecordedActionNode('copyRecordedAllBeats', 'all beats', 'a')
+          ]
+        }),
+        new MenuItemProxy(this, {
+          name: 'recordedNotesPaste',
+          caption: buildCaption('paste', 'p'),
+          trigger: 'p',
+          children: [
+            this.buildRecordedStatusNode(song),
+            this.buildRecordedMidiPasteNode(song),
+            this.buildRecordedActionNode('pasteRecordedAddAllBeats', 'add all beats', 'a'),
+            this.buildRecordedActionNode('pasteRecordedInsertAllBeats', 'insert all beats', 'i'),
+            this.buildRecordedActionNode('pasteRecordedPlayIntoCurrent', 'play beats into current', 'p'),
+            this.buildRecordedActionNode('pasteRecordedSqueezeCurrentBeat', 'squeeze beats into current beat', 's'),
+            this.buildRecordedActionNode('pasteRecordedFlattenToPlayedNotes', 'flatten beats into playedNotes', 'f')
+          ]
+        })
+      ]
+    });
+  }
+
   buildClearClipsNode() {
     return new MenuItemProxy(this, {
       name: 'clearClips',
@@ -402,6 +519,9 @@ export class ClipPlugin {
     if (fieldName === 'defaultMidiPasteChoice') {
       return this.getMidiPasteClipRecords(song).length > 0 ? '1' : '';
     }
+    if (fieldName === 'recordedStatus') {
+      return this.buildRecordedStatus(song);
+    }
     if (fieldName === 'reviveSummary') {
       const records = this.getCompatibleClipRecords(song);
       const latestLabel = this.getClipRecordLabel(records[0]?.record) || 'none';
@@ -432,6 +552,20 @@ export class ClipPlugin {
         return this.copyOrCut(song, context.args, true);
       case 'copyListenedToGraveyard':
         return this.copyListened(song, context.args);
+      case 'copyRecordedCurrentBeat':
+        return this.copyRecordedNotes(song, false);
+      case 'copyRecordedAllBeats':
+        return this.copyRecordedNotes(song, true);
+      case 'pasteRecordedAddAllBeats':
+        return this.pasteRecordedNotes(song, 'add');
+      case 'pasteRecordedInsertAllBeats':
+        return this.pasteRecordedNotes(song, 'insert');
+      case 'pasteRecordedPlayIntoCurrent':
+        return this.pasteRecordedNotes(song, 'play');
+      case 'pasteRecordedSqueezeCurrentBeat':
+        return this.pasteRecordedNotes(song, 'squeeze');
+      case 'pasteRecordedFlattenToPlayedNotes':
+        return this.pasteRecordedNotes(song, 'flatten');
       case 'clearClips':
         return this.clearClips(song);
       case 'help':
@@ -465,12 +599,13 @@ Copies, cuts, and revives clip records for the current section and selected tabl
 
 - automatic = ${this.getProperty('automatic')?.getValue()}
 - overwrite = ${this.getProperty('overwrite')?.getValue()}
+- recorded midi paste = ${this.getProperty('recordedMidiPaste')?.getValue()}
 - include = ${this.buildIncludeSummary(song)}
 - target table = ${this.resolveValue('targetTable', { song }) || '<none>'}
 - compatible clips = ${this.getCompatibleClipRecords(song).length}
 - MIDI Paste clips = ${this.getMidiPasteClipRecords(song).length}
 - clip records live in the Graveyard as type CLIP
-- RecordedNotes and transient highlights are out of scope
+- RecordedNotes copy/paste supports same-lineage, same-pitch beat clips
 - supported played-note lanes include Single, Tiny, Bend, and optional Fingering
 - cut removes only the included note lanes from the current section/table
 - revive merges into the current section/table and drops out-of-range played notes
@@ -657,21 +792,415 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const payload = this.createEmptyClipPayload(targetTuning, selection.targetTableID, include);
     const sourceLayout = createTuningLayout(sourceTuning);
     const targetLayout = createTuningLayout(targetTuning);
+    const listenerProjection = `${selection?.wiring?.listenerProjection || 'row-midi'}`;
 
     this.addNamedNotesToPayload(payload, sourceSectionNotes, include);
 
-    (sourceSectionNotes?.playedNotes || []).forEach((note) => {
-      if (!this.includesPlayedStyle(include, note?.styleNum)) {
-        return;
-      }
-      const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
-      if (!candidate) {
-        return;
-      }
-      this.addPlayedNoteToPayload(payload, candidate);
-    });
+    if (isMidiOnlyListenerProjection(listenerProjection)) {
+      const projectedPlayedNotes = projectListenerPlayedNotes({
+        playedNotes: sourceSectionNotes?.playedNotes || [],
+        sourceTuning,
+        targetTuning,
+        listenerProjection
+      });
+      projectedPlayedNotes.forEach((note) => {
+        if (!this.includesPlayedStyle(include, note?.styleNum)) {
+          return;
+        }
+        this.addPlayedNoteToPayload(payload, note);
+      });
+    } else {
+      (sourceSectionNotes?.playedNotes || []).forEach((note) => {
+        if (!this.includesPlayedStyle(include, note?.styleNum)) {
+          return;
+        }
+        const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+        if (!candidate) {
+          return;
+        }
+        this.addPlayedNoteToPayload(payload, candidate);
+      });
+    }
 
     return payload;
+  }
+
+  buildRecordedStatus(song = getSong()) {
+    const section = this.getCurrentSection(song);
+    const tableID = this.getSelectedTargetTableID();
+    const tableLabel = tableID?.startsWith('tbl') ? tableID.slice(3) : (tableID || 'none');
+    const sectionIndex = Array.isArray(song?.sections) && section ? song.sections.indexOf(section) : -1;
+    const sectionNumber = sectionIndex >= 0 ? sectionIndex + 1 : '?';
+    const beatNumber = section?.getBeat?.() || '?';
+    return `${tableLabel}:${sectionNumber}:${beatNumber}`;
+  }
+
+  createRecordedClipPayload(song = getSong(), copyAllBeats = false) {
+    const section = this.getCurrentSection(song);
+    const tuning = this.getSelectedTargetTuning(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!section || !tuning || !tableID) {
+      return null;
+    }
+    const sectionNotes = section.getSectionNotes(tableID);
+    const beatCount = section.getBeats?.() || 0;
+    const currentBeat = section.getBeat?.() || 1;
+    const sourceBeatNumbers = copyAllBeats
+      ? Array.from({ length: beatCount }, (_, index) => index + 1)
+      : [currentBeat];
+    const recordedNotesByBeat = {};
+    let noteCount = 0;
+    sourceBeatNumbers.forEach((beatNumber) => {
+      const notes = (sectionNotes?.recordedNotes?.[`${beatNumber}`] || []).map((note) => stripOwner(note));
+      recordedNotesByBeat[`${beatNumber}`] = notes;
+      noteCount += notes.length;
+    });
+    const sectionIndex = Array.isArray(song?.sections) ? song.sections.indexOf(section) : -1;
+    return {
+      schemaVersion: CLIP_SCHEMA_VERSION,
+      clipKind: 'recordedNotes',
+      source: {
+        tableID,
+        baseID: tuning.baseID,
+        fromBaseID: tuning.fromBaseID || tuning.baseID,
+        baseInstrument: tuning.baseInstrument,
+        sectionIndex,
+        sectionNumber: sectionIndex >= 0 ? sectionIndex + 1 : null,
+        beatNumber: currentBeat,
+        beatCount,
+        nStrings: tuning.nStrings,
+        midiPitches: getMidiPitchArray(tuning),
+        rowRange: getMidiPitchArray(tuning),
+        frets: tuning.frets,
+        nut: tuning.nut,
+        reverse: tuning.reverse
+      },
+      recordedNotesByBeat,
+      sourceBeatNumbers,
+      counts: {
+        beats: sourceBeatNumbers.length,
+        notes: noteCount
+      }
+    };
+  }
+
+  buildDefaultRecordedClipName(song = getSong(), payload = null) {
+    const resolvedPayload = payload || this.createRecordedClipPayload(song, false);
+    const now = new Date();
+    const hhmm = `${now.getHours()}`.padStart(2, '0') + `${now.getMinutes()}`.padStart(2, '0');
+    return `recorded-${resolvedPayload?.counts?.beats || 0}b-${resolvedPayload?.counts?.notes || 0}n-${hhmm}`;
+  }
+
+  copyRecordedNotes(song = getSong(), copyAllBeats = false) {
+    const payload = this.createRecordedClipPayload(song, copyAllBeats);
+    const tuning = this.getSelectedTargetTuning(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!song?.graveyard || !payload || !tuning || !tableID) {
+      return { result: 'recorded copy skipped: no current section or target table' };
+    }
+    if (!copyAllBeats && payload.counts.notes === 0) {
+      return { result: 'recorded copy skipped: current beat empty' };
+    }
+    const userKey = this.buildDefaultRecordedClipName(song, payload);
+    const context = {
+      caption: userKey,
+      userKey,
+      logicalKey: `recordedClip::${userKey}`,
+      clipKind: 'recordedNotes',
+      tableID,
+      baseID: tuning.baseID,
+      fromBaseID: tuning.fromBaseID || tuning.baseID,
+      schemaVersion: CLIP_SCHEMA_VERSION,
+      counts: { ...payload.counts }
+    };
+    song.graveyard.bury(GraveType.CLIP, payload, context);
+    return {
+      result: `recorded copied ${payload.counts.beats} beats, ${payload.counts.notes} notes as ${userKey}`
+    };
+  }
+
+  getRecordedClipRecords(song = getSong()) {
+    const records = song?.graveyard?.records;
+    if (!Array.isArray(records)) {
+      return [];
+    }
+    const result = [];
+    for (let index = records.length - 1; index >= 0; index -= 1) {
+      const record = records[index];
+      if (record?.type !== GraveType.CLIP) {
+        continue;
+      }
+      let payload = null;
+      try {
+        payload = JSON.parse(record.json || '{}');
+      } catch (error) {
+        continue;
+      }
+      if (payload?.clipKind !== 'recordedNotes' && record?.context?.clipKind !== 'recordedNotes') {
+        continue;
+      }
+      result.push({ record, index, payload });
+    }
+    return result;
+  }
+
+  normalizeRecordedSourceBeats(payload) {
+    const sourceBeatNumbers = Array.isArray(payload?.sourceBeatNumbers)
+      ? payload.sourceBeatNumbers
+      : Object.keys(payload?.recordedNotesByBeat || {}).map((key) => Number.parseInt(key, 10)).filter(Number.isInteger).sort((a, b) => a - b);
+    return sourceBeatNumbers.map((beatNumber) => ({
+      originalBeatNumber: beatNumber,
+      notes: (payload?.recordedNotesByBeat?.[`${beatNumber}`] || []).map((note) => new Note(stripOwner(note)))
+    }));
+  }
+
+  isRecordedMidiPasteEnabled() {
+    return this.getProperty('recordedMidiPaste')?.getValue() === true;
+  }
+
+  getRecordedSourceTuning(payload, targetTuning = {}) {
+    const source = payload?.source || {};
+    const rowRange = Array.isArray(source.rowRange)
+      ? [...source.rowRange]
+      : (Array.isArray(source.midiPitches) ? [...source.midiPitches] : []);
+    return {
+      ...source,
+      rowRange,
+      midiPitches: Array.isArray(source.midiPitches) ? [...source.midiPitches] : [...rowRange],
+      frets: source.frets ?? targetTuning?.frets ?? getMaxRecordedCol(payload),
+      nut: source.nut ?? targetTuning?.nut ?? true,
+      reverse: source.reverse ?? targetTuning?.reverse ?? false,
+      nStrings: source.nStrings || rowRange.length,
+      baseInstrument: source.baseInstrument || targetTuning?.baseInstrument || ''
+    };
+  }
+
+  mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning) {
+    const sourceLayout = createTuningLayout(sourceTuning);
+    const targetLayout = createTuningLayout(targetTuning);
+    let droppedOutOfRange = 0;
+    const mappedSourceBeats = sourceBeats.map((sourceBeat) => ({
+      ...sourceBeat,
+      notes: sourceBeat.notes.map((note) => {
+        const candidate = this.buildMidiPasteCandidate(note, sourceLayout, targetLayout);
+        if (!candidate) {
+          droppedOutOfRange += 1;
+          return null;
+        }
+        return candidate;
+      }).filter(Boolean)
+    }));
+    return { sourceBeats: mappedSourceBeats, droppedOutOfRange };
+  }
+
+  getRecordedPasteContext(song = getSong()) {
+    const records = this.getRecordedClipRecords(song);
+    const selected = records[0];
+    const section = this.getCurrentSection(song);
+    const targetTuning = this.getSelectedTargetTuning(song);
+    const tableID = this.getSelectedTargetTableID();
+    if (!selected) {
+      return { error: 'no recordedNotes clip' };
+    }
+    if (!section || !targetTuning || !tableID) {
+      return { error: 'no current section or target table' };
+    }
+    const source = selected.payload?.source || {};
+    const sourceTuning = this.getRecordedSourceTuning(selected.payload, targetTuning);
+    let sourceBeats = this.normalizeRecordedSourceBeats(selected.payload);
+    if (sourceBeats.length === 0) {
+      return { error: 'recordedNotes clip is empty' };
+    }
+    const exactPitchLayout = `${sourceTuning.nStrings || ''}` === `${targetTuning.nStrings || ''}`
+      && arraysEqual(sourceTuning.midiPitches || [], getMidiPitchArray(targetTuning));
+    let droppedOutOfRange = 0;
+    const recordedMidiPaste = this.isRecordedMidiPasteEnabled();
+    if (!recordedMidiPaste) {
+      if (getTuningCompatibilityID(source) !== getTuningCompatibilityID(targetTuning)) {
+        return { error: `${source.baseID || 'source'} incompatible with ${targetTuning.baseID}` };
+      }
+      if (`${sourceTuning.nStrings || ''}` !== `${targetTuning.nStrings || ''}`) {
+        return { error: `${source.baseID || 'source'} string layout mismatch` };
+      }
+      if (!exactPitchLayout) {
+        return { error: `${source.baseID || 'source'} pitch layout mismatch` };
+      }
+    } else if (!exactPitchLayout) {
+      if (!canMidiPasteBetweenTunings(sourceTuning, targetTuning)) {
+        return { error: `${source.baseID || 'source'} unsupported for MIDI Paste to ${targetTuning.baseID}` };
+      }
+      const mapped = this.mapRecordedSourceBeatsForMidiPaste(sourceBeats, sourceTuning, targetTuning);
+      sourceBeats = mapped.sourceBeats;
+      droppedOutOfRange = mapped.droppedOutOfRange;
+    }
+    return {
+      ...selected,
+      section,
+      targetTuning,
+      tableID,
+      sectionNotes: section.getSectionNotes(tableID),
+      sourceBeats,
+      recordedMidiPaste,
+      droppedOutOfRange
+    };
+  }
+
+  createRecordedPasteSummary() {
+    return {
+      beatsUsed: 0,
+      notesAdded: 0,
+      notesOverwritten: 0,
+      namedSkipped: 0,
+      droppedOutOfRange: 0,
+      pitchIncluded: false,
+      multiIncluded: false
+    };
+  }
+
+  mergeRecordedNotesIntoBeat(sectionNotes, beatNumber, notes = [], summary = this.createRecordedPasteSummary()) {
+    const key = `${beatNumber}`;
+    const existing = Array.isArray(sectionNotes.recordedNotes?.[key]) ? sectionNotes.recordedNotes[key] : [];
+    let merged = [...existing];
+    notes.forEach((note) => {
+      const candidate = new Note(stripOwner(note));
+      const collisionKey = recordedCollisionKey(candidate);
+      const before = merged.length;
+      merged = merged.filter((existingNote) => recordedCollisionKey(existingNote) !== collisionKey);
+      if (merged.length < before) {
+        summary.notesOverwritten += before - merged.length;
+      } else {
+        summary.notesAdded += 1;
+      }
+      merged.push(candidate);
+    });
+    sectionNotes.recordedNotes = sectionNotes.recordedNotes || {};
+    sectionNotes.recordedNotes[key] = merged;
+    return summary;
+  }
+
+  playRecordedBeatsIntoCurrent(context) {
+    const summary = this.createRecordedPasteSummary();
+    const currentBeat = context.section.getBeat();
+    const beatCount = context.section.getBeats();
+    context.sourceBeats.forEach((sourceBeat, index) => {
+      const destBeat = currentBeat + index;
+      if (destBeat > beatCount) {
+        return;
+      }
+      summary.beatsUsed += 1;
+      this.mergeRecordedNotesIntoBeat(context.sectionNotes, destBeat, sourceBeat.notes, summary);
+    });
+    return {
+      summary,
+      result: `played ${summary.beatsUsed}/${context.sourceBeats.length} beats: added ${summary.notesAdded}, overwritten ${summary.notesOverwritten}`
+    };
+  }
+
+  squeezeRecordedBeatsIntoCurrent(context) {
+    const summary = this.createRecordedPasteSummary();
+    const currentBeat = context.section.getBeat();
+    context.sourceBeats.forEach((sourceBeat) => {
+      summary.beatsUsed += 1;
+      this.mergeRecordedNotesIntoBeat(context.sectionNotes, currentBeat, sourceBeat.notes, summary);
+    });
+    return {
+      summary,
+      result: `squeezed ${summary.beatsUsed} beats into beat ${currentBeat}: added ${summary.notesAdded}, overwritten ${summary.notesOverwritten}`
+    };
+  }
+
+  insertRecordedBeats(context, insertBeforeCurrent = false) {
+    const currentBeat = context.section.getBeat();
+    const insertIndex = insertBeforeCurrent ? currentBeat : currentBeat + 1;
+    const insertCount = context.sourceBeats.length;
+    if (typeof context.song?.insertBeatsAtCurrentSection === 'function') {
+      context.song.insertBeatsAtCurrentSection(insertIndex, insertCount);
+    }
+    const summary = this.createRecordedPasteSummary();
+    context.sourceBeats.forEach((sourceBeat, index) => {
+      const destBeat = insertIndex + index;
+      summary.beatsUsed += 1;
+      this.mergeRecordedNotesIntoBeat(context.sectionNotes, destBeat, sourceBeat.notes, summary);
+    });
+    const verb = insertBeforeCurrent ? 'inserted' : 'added';
+    const where = insertBeforeCurrent ? 'before' : 'after';
+    return {
+      summary,
+      result: `${verb} ${summary.beatsUsed} beats ${where} beat ${currentBeat}: ${summary.notesAdded} notes`
+    };
+  }
+
+  flattenRecordedBeatsToPlayedNotes(context) {
+    const summary = this.createRecordedPasteSummary();
+    const playedNotes = Array.isArray(context.sectionNotes.playedNotes) ? context.sectionNotes.playedNotes : [];
+    const collisionMap = new Map(playedNotes.map((note, index) => [playedCollisionKey(note), index]));
+    RECORDED_FLATTEN_STYLE_ORDER.forEach((styleNum) => {
+      context.sourceBeats.forEach((sourceBeat) => {
+        sourceBeat.notes.forEach((note) => {
+          if (note?.styleNum === Note.STYLENUM_NAMED) {
+            summary.namedSkipped += 1;
+            return;
+          }
+          if (note?.styleNum !== styleNum) {
+            return;
+          }
+          const candidate = new Note(stripOwner(note));
+          const appliedSummary = {
+            playedAdded: 0,
+            playedOverwritten: 0,
+            playedSkipped: 0
+          };
+          this.applyPlayedCandidate(candidate, playedNotes, collisionMap, true, appliedSummary);
+          summary.notesAdded += appliedSummary.playedAdded;
+          summary.notesOverwritten += appliedSummary.playedOverwritten;
+          if (candidate.styleNum === Note.STYLENUM_MIDIPITCHES) {
+            summary.pitchIncluded = true;
+          }
+          if (candidate.styleNum === Note.STYLENUM_MIDIPITCHESSINGLE) {
+            summary.multiIncluded = true;
+          }
+        });
+      });
+    });
+    context.sectionNotes.playedNotes = playedNotes;
+    summary.beatsUsed = context.sourceBeats.length;
+    const temporary = [summary.pitchIncluded ? 'Pitch' : '', summary.multiIncluded ? 'Multi' : ''].filter(Boolean).join('/');
+    return {
+      summary,
+      result: `flattened ${summary.beatsUsed} beats: added ${summary.notesAdded}, overwritten ${summary.notesOverwritten}${temporary ? `; ${temporary} are temporary` : ''}`
+    };
+  }
+
+  pasteRecordedNotes(song = getSong(), mode = 'play') {
+    const requiresRecOn = ['add', 'insert', 'play', 'squeeze'].includes(mode);
+    const recording = song?.isRecording?.() === true;
+    if (requiresRecOn && !recording) {
+      return { result: 'REC mode required' };
+    }
+    if (mode === 'flatten' && recording) {
+      return { result: 'REC mode must be off' };
+    }
+    const context = this.getRecordedPasteContext(song);
+    if (context.error) {
+      return { result: context.error };
+    }
+    const operationContext = { ...context, song };
+    let outcome;
+    if (mode === 'add') {
+      outcome = this.insertRecordedBeats(operationContext, false);
+    } else if (mode === 'insert') {
+      outcome = this.insertRecordedBeats(operationContext, true);
+    } else if (mode === 'squeeze') {
+      outcome = this.squeezeRecordedBeatsIntoCurrent(operationContext);
+    } else if (mode === 'flatten') {
+      outcome = this.flattenRecordedBeatsToPlayedNotes(operationContext);
+    } else {
+      outcome = this.playRecordedBeatsIntoCurrent(operationContext);
+    }
+    context.record.lastRevived = Date.now();
+    this.refreshSongUi(song);
+    const droppedSuffix = context.droppedOutOfRange > 0 ? `; dropped ${context.droppedOutOfRange}` : '';
+    return { result: `${outcome.result}${droppedSuffix}` };
   }
 
   getCompatibleClipRecords(song = getSong()) {
@@ -685,6 +1214,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     for (let index = graveyard.records.length - 1; index >= 0; index -= 1) {
       const record = graveyard.records[index];
       if (record?.type !== GraveType.CLIP) {
+        continue;
+      }
+      if (isRecordedNotesClipRecord(record)) {
         continue;
       }
       if (getRecordCompatibilityID(record) !== compatibilityID) {
@@ -728,6 +1260,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     for (let index = graveyard.records.length - 1; index >= 0; index -= 1) {
       const record = graveyard.records[index];
       if (record?.type !== GraveType.CLIP) {
+        continue;
+      }
+      if (isRecordedNotesClipRecord(record)) {
         continue;
       }
       const sourceTuning = this.getSourceTuningForRecord(record, song);

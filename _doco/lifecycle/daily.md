@@ -1,10 +1,24 @@
 # Daily Command-lines
 
+## Copilot SOP and instructions
+
+`.github/copilot-instructions.md`
+
+## sprint planning documents
+
+[_doco/lifecycle/sprints.md](../lifecycle/sprints.md)
+
 ## Update _doco
 ```
 cd ~/infinite-neck
 bin/index.md-update-all.sh
 bin/documentation.sh 
+```
+
+
+### To validate the command-line menu
+```
+npm run validate:cmdmenu
 ```
 
 ## Run Jest Tests
@@ -57,14 +71,29 @@ returned the broader test list under jest
 ```
 git fetch origin
 git checkout fix/my-branch
-git log origin/master..HEAD --pretty=format:"- %s"
+cd ~/infinite-neck
+bin/update-git-log.bash --since "2026-03-25" > _doco/lifecycle/CHANGELOG-new.md
 ```
 
- - Run the version-update.js command to update version.json, then check it.
+Adjust the --since date, update the tag in CHANGELOG.md, and then grab all the log lines and past into CHANGELOG.md from CHANGELOG-new.md, then 
+
+```
+rm _doco/lifecycle/CHANGELOG-new.md
+```
+
+ - Run the version-update.js command to update version.json with the date.
  
 ```    
 cd ~/infinite-neck
 node bin/version-update.js ./version.json
+```
+Now *manually* update the version.json file to have the tag you are *going to* create: 
+
+vi version.json
+   ==> "gitTag": "v2.1-beta-3"
+
+Now check the version: 
+```
 node bin/version-read.js
 ```
 
@@ -84,8 +113,55 @@ stable-after-refactors-20260318
 ```sh
 stable-after-refactors-20260318-3-gab35b69
 ```
- - Then, in the web browser, in the command-line run `/fv` and `/fV` to check that the browser is picking up the new version string.   
+ - Then, in the web browser, in the command-line run `/fav` and `/faV` to check that the browser is picking up the new version string. 
 
+ - Once you know the version string is in the files, go ahead and tag the repository so the tag includes the version string and CHANGELOG.md.  
+
+ - don't use the Dreamhost uploader.  It can silently omit files and barf.
+ - Do use the "new deploy tar action" below, then scp or Dreamhost upload the tarfile. 
+
+ ```
+scp dist/infinite-neck-20260616-173854.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+ ```
+
+### new deploy tar action
+
+```
+npm run package:deploy 
+```
+
+- creates a tar file in ./dist/
+
+scp dist/infinite-neck-20260616-173854.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+
+### on the server
+
+ssh ssh-user-name@demo.laramiecrocker.com
+
+Adjust the dates, and do something like: 
+```
+cd sites/demo.laramiecrocker.com
+dir
+mv infinite-neck infinite-neck-20260610
+mkdir infinite-neck
+cd infinite-neck
+mv ../infinite-neck-20260612-084929.tar.gz .
+tar xvf infinite-neck-20260612-084929.tar.gz 
+```
+
+### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
+
+```sh
+git checkout fix/attr-value
+git fetch origin
+git rebase origin/master
+git push --force-with-lease
+```
+
+
+### OLD INSTRUCTIONS -- OBVIATED BY INSTRUCTIONS ABOVE
+
+#### DEPLOY 
  - don't use the Dreamhost uploader.  It can silently omit files and barf.
  - Do use tar and scp: 
 ```
@@ -100,18 +176,8 @@ scp infinite-neck-deploy.tar.gz laramiessh@demo.laramiecrocker.com:~/sites/demo.
 tar xcv infinite-neck-deploy.tar.gz
 ```
 
-### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
+#### Old Jest strategy
 
-```sh
-git checkout fix/attr-value
-git fetch origin
-git rebase origin/master
-git push --force-with-lease
-```
 
-### To validate the command-line menu
 
-```
-npm run validate:cmdmenu
-```
      

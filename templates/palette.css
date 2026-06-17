@@ -78,7 +78,7 @@ table.organizer td {
     width: 3em;
 }
 
-#palette button.chooseLastColor {
+#palette label.chooseLastColor {
     width:15em;    
     display: inline-block;
     padding: 0.8em;
@@ -91,7 +91,13 @@ table.organizer td {
     background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
+
+#palette label.chooseLastColor.chooseLastColorAligned {
+    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
+}
+
 #palette label.chooseKeep,
+#palette label.chooseDropper,
 #palette label.chooseClear {
     padding: 0.8em;
     height: 1.4em;
@@ -106,12 +112,19 @@ table.organizer td {
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 
-/*
-    #palette label.chooseKeep:checked,
-    #palette label.chooseClear:checked {
+#palette label.chooseClear:has(input[type="radio"]:checked) {
     box-shadow: 1pt 1pt  3pt 0.01pt cyan;
-    }
-*/
+}
+#palette label.chooseKeep:has(input[type="radio"]:checked) {
+    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
+}
+#palette label.chooseDropper:has(input[type="radio"]:checked) {
+    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
+}
+#palette label.chooseLastColor:has(input[type="radio"]:checked) {
+    box-shadow: 1pt 1pt  3pt 0.01pt cyan;
+}
+
 label.chooseHighlight#idMidiPitchesLbl {
     outline: 6px solid yellow ;
     outline-offset: -8px;

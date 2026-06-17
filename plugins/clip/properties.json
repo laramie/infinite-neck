@@ -28,6 +28,15 @@
     "visibleInMenu": false
   },
   {
+    "name": "recordedMidiPaste",
+    "caption": "midi paste",
+    "trigger": "m",
+    "datatype": "org.dynamide.toggle",
+    "value": true,
+    "defaultValue": true,
+    "visibleInMenu": false
+  },
+  {
     "name": "includeNamed",
     "caption": "named",
     "trigger": "n",

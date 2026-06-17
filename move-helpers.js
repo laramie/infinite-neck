@@ -376,6 +376,13 @@ export function isBendLandingLegal(layout, row, col) {
   return !isNutCell(layout, row, col);
 }
 
+function isCandidateLandingLegal(candidate, layout, cell) {
+  if (!cell) {
+    return false;
+  }
+  return candidate.styleNum !== Note.STYLENUM_BEND || isBendLandingLegal(layout, cell.row, cell.col);
+}
+
 function getJumpDelta(layout, row, direction) {
   const currentNut = layout?.rows?.[row]?.nutCell?.midinum;
   if (!Number.isInteger(currentNut)) {
@@ -745,7 +752,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
     const delta = motion === 'u' ? 1 : -1;
     const failedDirectMidi = sourceMidinum + delta;
     const directCell = getCellByRowMidi(layout, sourceRow, failedDirectMidi);
-    if (directCell) {
+    if (isCandidateLandingLegal(candidate, layout, directCell)) {
       return { cell: directCell };
     }
     if (algorithm === 'drop') {
@@ -754,7 +761,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
 
     const overflowMidi = motion === 'u' ? failedDirectMidi - 12 : failedDirectMidi + 12;
     const sameRowCell = getCellByRowMidi(layout, sourceRow, overflowMidi);
-    if (sameRowCell) {
+    if (isCandidateLandingLegal(candidate, layout, sameRowCell)) {
       return { cell: sameRowCell };
     }
     if (algorithm === 'string') {
@@ -765,7 +772,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
     const rows = buildOverflowSearchRows(layout.rows.length, sourceRow, ascending);
     for (const row of rows) {
       const cell = getCellByRowMidi(layout, row, overflowMidi);
-      if (cell) {
+      if (isCandidateLandingLegal(candidate, layout, cell)) {
         return { cell };
       }
     }
@@ -775,7 +782,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
   const rowDelta = motion === 'j' ? -1 : 1;
   const targetRow = sourceRow + rowDelta;
   const directCell = getCellByRowCol(layout, targetRow, candidate.sourceCol);
-  if (directCell) {
+  if (isCandidateLandingLegal(candidate, layout, directCell)) {
     return { cell: directCell };
   }
 
@@ -785,7 +792,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
       || (motion === 'J' && targetRow >= layout.rows.length);
     if (wrappedOnlyBecauseOfOverflow) {
       const wrappedCell = getCellByRowCol(layout, wrappedRow, candidate.sourceCol);
-      if (wrappedCell) {
+      if (isCandidateLandingLegal(candidate, layout, wrappedCell)) {
         return { cell: wrappedCell };
       }
     }
@@ -801,7 +808,7 @@ function resolveCellBoundMovement(candidate, layout, motion, algorithm) {
   const rows = buildOverflowSearchRows(layout.rows.length, sourceRow, motion === 'j');
   for (const row of rows) {
     const cell = getCellByRowMidi(layout, row, overflowMidi);
-    if (cell) {
+    if (isCandidateLandingLegal(candidate, layout, cell)) {
       return { cell };
     }
   }

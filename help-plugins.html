@@ -1481,21 +1481,21 @@
 <p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>
 
 <p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
-
 <h2 id="plugin-arpeggio">ArpeggioPlugin</h2>
-    <table  class="helpCmdDetailHelp">
-        <tr>
+
+<table class="helpCmdDetailHelp">
+        <tbody><tr>
             <td colspan="3" class="cmdLine" id="helpCmd-fpa">/fpa <b>ArpeggioPlugin</b></td>
         </tr>
         <tr class="menu">
             <td></td>
             <td colspan="2">
                 <table class="cmdTable">
-                    <tr>
+                    <tbody><tr>
                         <td class="greenCmd" id="helpCmd-fpa-E">
                             <b>E</b>nable
                         </td>
-                        <td class="cmdHelp">When Enabled, Arpeggio highlights NamedNotes in each section while looping</td>
+                        <td class="cmdHelp">When Enabled, Arpeggio highlights NamedNotes in each section while looping.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-L">
@@ -1513,13 +1513,14 @@
                         <td class="greenCmd" id="helpCmd-fpa-I">
                             <b>I</b>nstrument
                         </td>
-                        <td class="cmdHelp">The Instrument that the Arpeggio is applied to</td>
+                        <td class="cmdHelp">Chooses the target instrument.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-A">
                             <b>A</b>pply
                         </td>
-                        <td class="cmdHelp">Apply the current settings to the selected Instrument, in the Current Section</td>
+                        <td class="cmdHelp">Apply the current settings to the selected Instrument, in the Current Section.  This marks notes in the Section, so highlights will be seen while looping, even if ArpeggioPlugin is not Enabled with <b>E) Enable</b>
+                        </td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-C">
@@ -1532,15 +1533,14 @@
                             <b>p</b>ositions
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpap">/fpap</a></span>
-                        Limit arpeggios to positions, such as "first position", frets 0-4, or ranges of positions, such as 0-3,4-8, and 8-12.
-                        </td>
+                           Which positions you will see the Arpeggio in, such as "first position", frets 0-4.  Also supports ranges of positions, such as 0-3,4-8, which would give first position and fourth position, which will show up on alternate loops.  When values exist, the caption shows those; otherwise it shows the default min:max range. </td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-s">
                             <b>s</b>trings
                         </td>
                         <td class="cmdHelp"> <b>See:</b> <span class="cmdLine"><a href="#helpCmd-fpas">/fpas</a></span>
-                        Limit arpeggios to the range between the lower and upper strings chosen.</td>
+                        Limit arpeggios to the range between the lower and upper strings chosen.  Lower string is lower in pitch on a Standard-tuning guitar, bass, violin etc. Upper is higher pitch, higher on the web page, and towards the skinnier strings on a Standard-tuning guitar, bass, violin, etc.  For instruments with high strings out of order, such as Banjo, the order is the same as a guitar--the pitch is not consulted.  Pianos have one "string" which the entire keyboard plays on.  Multi-level organs have one "string" per level, so a 3-Row Organ has 3 "strings", the top tier being the "high string", the bottom tier being the "low string".</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-o">
@@ -1558,13 +1558,13 @@
                         <td class="greenCmd" id="helpCmd-fpa-y">
                             st<b>y</b>le
                         </td>
-                        <td class="cmdHelp">Several styles of how the algorithm chooses notes for the arpeggio.</td>
+                        <td class="cmdHelp">Several styles of how the algorithm chooses notes for the arpeggio: every, alternate, random, or bach.  "bach" is how Classical musicians practice scales sometimes: alternating on the way up, alternating on the way down, with a special turn-around at top and bottom.  It is implemented as covering one octave.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-n">
                             show <b>n</b>ote name
                         </td>
-                        <td class="cmdHelp">Several choices for how to display/reveal the notes of the arpeggio, especially useful when in Flashcard mode.</td>
+                        <td class="cmdHelp">Several choices for how to display/reveal the notes of the arpeggio, especially useful when in Flashcard mode. off, one, all, or played</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpa-c">
@@ -1584,11 +1584,11 @@
                         </td>
                         <td class="cmdHelp">Shows plugin help in the ShowMessages area below all the Instruments</td>
                     </tr>
-                </table>
+                </tbody></table>
             </td>
         </tr>
         <tr id="helpCmd-fpap">
-            <td colspan="3" class="cmdLine">/fpap <b>ArpeggioPlugin <em>&raquo;</em>  positions</b></td>
+            <td colspan="3" class="cmdLine">/fpap <b>ArpeggioPlugin &raquo;  positions</b></td>
         </tr>
         <tr class="sub-menu">
             <td width="50">
@@ -1599,59 +1599,59 @@
             </td>
             <td>
                 <table class="cmdTable">
-                    <tr>
+                    <tbody><tr>
                         <td class="greenCmd" id="helpCmd-fpap-m">
                             <b>m</b>inFret default position
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> The number of the lowest fret position that you will play in the Arpeggio.  The "Nut" is fret zero. </td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-t">
                             maxFre<b>t</b> default position
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> The number of the highest fret position that you will play in the Arpeggio. 12 would be the twelfth fret, and would be the octave.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-L">
                             c<b>L</b>ear all sections
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> Clears "value" from all Sections!  </td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-T">
                             clear <b>T</b>his section
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> Clears "value from just this Section.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-C">
                             <b>C</b>opy to all sections
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> Copies "value" to all Sections. Useful when you have the fret positions and strings worked out for this Section and want to practice the whole song this way.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-U">
                             copy to <b>U</b>nset sections
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> First, set the Sections where you want a "special" fret position and string set.  The set a Section that has a set representative of how you want the rest of the song to be played.  Then use this action to copy the current Section to all the other Sections, without replacing sets you have already set.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-R">
                             <b>R</b>efresh values
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> When navigating outside of the command-line with the Transport, this menu can get stale.  Hit this to safely update.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpap-v">
                             <b>v</b>alues this section
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> A special set of position numbers that controls which positions you'll play.  The format is like this: 0-3 for first position, 0,3,5,8,12 for all positions between all those fret numbers, on subsequent loops, 0-3,8-12 for first position, then eighth position 5 frets wide.</td>
                     </tr>
-                </table>
+                </tbody></table>
             </td>
         </tr>
         <tr id="helpCmd-fpas">
-            <td colspan="3" class="cmdLine">/fpas <b>ArpeggioPlugin <em>&raquo;</em>  strings</b></td>
+            <td colspan="3" class="cmdLine">/fpas <b>ArpeggioPlugin &raquo;  strings</b></td>
         </tr>
         <tr class="sub-menu">
             <td width="50">
@@ -1662,22 +1662,22 @@
             </td>
             <td>
                 <table class="cmdTable">
-                    <tr>
+                    <tbody><tr>
                         <td class="greenCmd" id="helpCmd-fpas-u">
                             <b>u</b>pper string limit
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> The top string to include.  This is the skinniest string on a Standard-tuning guitar, and the same order on all other instruments.</td>
                     </tr>
                     <tr>
                         <td class="greenCmd" id="helpCmd-fpas-l">
                             <b>l</b>ower string limit
                         </td>
-                        <td class="cmdHelp"> </td>
+                        <td class="cmdHelp"> The lowest string to include.  The fattest string on a Standard-tuning guitar.</td>
                     </tr>
-                </table>
+                </tbody></table>
             </td>
         </tr>
-    </table>
+    </tbody></table>
 
     <a name="plugin-arpeggio-what"></a>
     <h3>What It Does</h3>
@@ -3040,6 +3040,33 @@ sub-menu:
 
 </div>
 </div>
+
+
+
+<!-- The Editable Element -->
+
+  Edit this text!
+  <table border="1">
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    </table>
+
+<!-- Save Button -->
+<button onclick="saveContent()">Save Changes</button>
+
+<script>
+  function saveContent() {
+    const editor = document.getElementById('my-editor');
+    const htmlOutput = editor.outerHTML;
+    
+    // Do something with htmlOutput (like send it to a server)
+    alert("Content captured! Check the console.");
+    console.log(htmlOutput);
+  }
+</script>
 
 </body>
 

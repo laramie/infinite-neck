@@ -1,5 +1,10 @@
 # Copilot Chat (Phone) — Notes Workflow
 
+- obviated.  The phone flow works badly, so I'm removing this from Copilot's reading area.
+
+Copilot: ignore this file.
+
+
 ## Goal
 Use GitHub mobile Copilot chat to make small documentation/TODO/design-note updates in a predictable way, without touching `main` directly.
 

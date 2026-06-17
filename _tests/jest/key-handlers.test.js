@@ -63,6 +63,7 @@ jest.unstable_mockModule('../../menu.js', () => ({
 	dumpMenus: jest.fn(() => ''),
 	gMenuFile: {},
 	gMenuPointer: {},
+	setMenuRuntimeChildrenResolver: jest.fn(),
 	setMenuValueResolver: jest.fn(),
 	setMenuAtRoot: jest.fn(),
 	gMenuLoaded: '{}'
@@ -79,6 +80,7 @@ jest.unstable_mockModule('../../userColors.js', () => ({
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	showMessagesTab: jest.fn(),
+	showDisplayOptions: jest.fn(),
 	getVersionString: jest.fn(() => 'vtest'),
 	getVersionObject: jest.fn(() => ({ README: 'README.md' })),
 	toggleWiringOpenState: jest.fn(),
@@ -98,7 +100,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 	default: {}
 }));
 
-const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders, getValue } = await import('../../key-handlers.js');
 
 function createSong() {
 	const sections = [{ currentBeat: 1 }, { currentBeat: 1 }];
@@ -137,6 +139,91 @@ function createSong() {
 	};
 }
 
+function installPaletteJqueryStub(elements) {
+	const byId = new Map(elements.map((element) => [element.id, element]));
+
+	function matchesSelector(element, selector) {
+		if (!element || !selector) {
+			return false;
+		}
+
+		const trimmed = selector.trim();
+		if (trimmed.startsWith('#')) {
+			return element.id === trimmed.slice(1);
+		}
+
+		const inputMatch = trimmed.match(/^input\[name="([^"]+)"\](?::checked)?$/);
+		if (!inputMatch) {
+			return false;
+		}
+
+		const [, name] = inputMatch;
+		const requiresChecked = trimmed.includes(':checked');
+		if (element.tag !== 'input' || element.name !== name) {
+			return false;
+		}
+		if (requiresChecked && !element.checked) {
+			return false;
+		}
+		return true;
+	}
+
+	function query(selector) {
+		if (!selector) {
+			return [];
+		}
+		return Array.from(byId.values()).filter((element) => matchesSelector(element, selector));
+	}
+
+	function wrap(items) {
+		const api = {
+			length: items.length,
+			first() {
+				return wrap(items.slice(0, 1));
+			},
+			val() {
+				return items[0]?.value;
+			},
+			prop(name, value) {
+				if (value === undefined) {
+					return items[0]?.[name];
+				}
+				items.forEach((item) => {
+					item[name] = value;
+				});
+				return api;
+			},
+			trigger(name) {
+				items.forEach((item) => {
+					item.triggered = item.triggered || [];
+					item.triggered.push(name);
+				});
+				return api;
+			},
+			attr(name) {
+				return items[0]?.[name];
+			}
+		};
+		items.forEach((item, index) => {
+			api[index] = item;
+		});
+		return api;
+	}
+
+	globalThis.$ = (selector) => {
+		if (typeof selector === 'string') {
+			return wrap(query(selector));
+		}
+		if (!selector) {
+			return wrap([]);
+		}
+		return wrap([selector]);
+	};
+	globalThis.jQuery = globalThis.$;
+
+	return { byId };
+}
+
 describe('key-handlers spacebar mapping', () => {
 	let song;
 	let clearAndReplaySection;
@@ -145,6 +232,8 @@ describe('key-handlers spacebar mapping', () => {
 	let mockGetBPM;
 	let mockToggleRecording;
 	let mockShowAllNoteNames;
+	let mockHandleBtnControlsToDisplayOptions;
+	let mockHandleBtnDeleteDisplayOptions;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -173,6 +262,8 @@ describe('key-handlers spacebar mapping', () => {
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
 		mockShowAllNoteNames = jest.fn();
+		mockHandleBtnControlsToDisplayOptions = jest.fn();
+		mockHandleBtnDeleteDisplayOptions = jest.fn();
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -196,12 +287,16 @@ describe('key-handlers spacebar mapping', () => {
 			enterFullscreen: jest.fn(),
 			getBPM: mockGetBPM,
 			getCurrentSection: () => song.getCurrentSection(),
+			getDisplayOptionsClearState: jest.fn(() => song.getCurrentSection().displayOptions ? 'present' : 'none'),
+			getDisplayOptionsSaveState: jest.fn(() => song.displayOptionsSaveState || 'none'),
 			getPersistentSongFile: jest.fn(() => ({})),
 			getSectionsCurrentIndex: () => song.gSectionsCurrentIndex,
 			getSong: () => song,
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
 			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
+			handleBtnControlsToDisplayOptions: mockHandleBtnControlsToDisplayOptions,
+			handleBtnDeleteDisplayOptions: mockHandleBtnDeleteDisplayOptions,
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
@@ -211,6 +306,9 @@ describe('key-handlers spacebar mapping', () => {
 			printSectionsLine: jest.fn(() => 'LeadSheetLine shown'),
 			resetNoteNames: jest.fn(),
 			sectionChanged: jest.fn(),
+			setPresentationMode: jest.fn((value) => {
+				song.presentationMode = !!value;
+			}),
 			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
 			setSingleNoteOpacity: jest.fn(),
@@ -419,6 +517,28 @@ describe('key-handlers spacebar mapping', () => {
 		expect(mockSetCmdLineMenuMode).toHaveBeenNthCalledWith(3, 'tall');
 	});
 
+	test('presentation submenu actions toggle mode and invoke Display Options save/clear without popping', () => {
+		song.presentationMode = false;
+		song.displayOptionsSaveState = 'unsaved';
+		song.getCurrentSection().displayOptions = { noteFontSize: 22 };
+
+		expect(getValue('presentationModeState')).toBe(false);
+		const toggleResult = performCmdAction({ action: 'togglePresentationMode' });
+		expect(toggleResult.result).toBe('presentation mode: true');
+		expect(toggleResult.preserveMenuStack).toBe(true);
+		expect(getValue('presentationModeState')).toBe(true);
+
+		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
+		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
+		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(saveResult.preserveMenuStack).toBe(true);
+
+		expect(getValue('displayOptionsClearState')).toBe('present');
+		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
+		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(clearResult.preserveMenuStack).toBe(true);
+	});
+
 	test('runActionByName routes remaining navigation verbs through the transport controller', () => {
 		expect(runActionByName('prevSection').result).toBe('1');
 		expect(runActionByName('nextSection').result).toBe('2');
@@ -474,5 +594,162 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(result.result).toBe('REC toggled');
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRadioNoteType enters paint mode before selecting a note type when CLEAR mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const namedRadio = {
+			id: 'idNamedNotes',
+			tag: 'input',
+			name: 'rbHighlight',
+			type: 'radio',
+			value: 'Named',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const clearRadio = {
+			id: 'idPaletteModeClear',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'clear',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio, namedRadio, clearRadio]);
+
+		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'n' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(namedRadio.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRadioNoteType last-chosen selects paint mode directly', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio]);
+
+		performCmdAction({ action: 'selectRadioNoteType' }, { key: 'l' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectFingering enters paint mode before selecting a fingering when a special mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const keepRadio = {
+			id: 'idPaletteModeKeep',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'keep',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const fingerRadio = {
+			id: 'rbFinger1',
+			tag: 'input',
+			name: 'rbHighlight',
+			type: 'radio',
+			value: 'Fingering',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const fingerColor = {
+			id: 'idRFinger1',
+			tag: 'input',
+			name: 'rbColor',
+			type: 'radio',
+			value: 'noteFinger1',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio, keepRadio, fingerRadio, fingerColor]);
+
+		performCmdAction({ action: 'selectFingering' }, { key: '1' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(fingerRadio.click).toHaveBeenCalledTimes(1);
+		expect(fingerColor.click).toHaveBeenCalledTimes(1);
+	});
+
+	test('selectRole enters paint mode before selecting a role when dropper mode is active', () => {
+		const paintModeRadio = {
+			id: 'idPaletteModePaint',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'paint',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const dropperRadio = {
+			id: 'idPaletteModeDropper',
+			tag: 'input',
+			name: 'rbPaletteMode',
+			type: 'radio',
+			value: 'dropper',
+			checked: true,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		const rootRole = {
+			id: 'idRRoot',
+			tag: 'input',
+			name: 'rbColor',
+			type: 'radio',
+			value: 'noteRoot',
+			checked: false,
+			click: jest.fn(function () {
+				this.checked = true;
+			})
+		};
+		installPaletteJqueryStub([paintModeRadio, dropperRadio, rootRole]);
+
+		performCmdAction({ action: 'selectRole' }, { key: 'r' });
+
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(rootRole.click).toHaveBeenCalledTimes(1);
 	});
 });

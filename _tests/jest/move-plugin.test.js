@@ -103,6 +103,46 @@ describe('Move helpers', () => {
     expect(isBendLandingLegal(layout, 4, 6)).toBe(true);
   });
 
+  test('string algorithm moves a bend up the string when direct down lands on the nut', () => {
+    const tuning = createTuning();
+    const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
+    const section = createSection();
+    const sectionNotes = createSectionNotes({
+      playedNotes: [
+        {
+          noteName: 'E',
+          styleNum: Note.STYLENUM_BEND,
+          midinum: '70',
+          row: '4',
+          col: '6',
+          colorClass: 'noteTransparent',
+          bendValue: 'semitone1'
+        }
+      ]
+    });
+
+    const result = applyMovePlan({
+      tableID,
+      sectionNotes,
+      tuning,
+      motion: 'd',
+      algorithm: 'string',
+      include: { single: false, tiny: true, highlights: false, fingering: false, played: true, recorded: false },
+      lookupContext: { section, autoColor: true },
+      logContext: { algorithm: 'string', optionsSummary: 'test', applyNumber: 1 }
+    });
+
+    expect(result.movedCount).toBe(1);
+    expect(result.droppedEntries).toHaveLength(0);
+    expect(result.playedNotes[0]).toEqual(expect.objectContaining({
+      styleNum: Note.STYLENUM_BEND,
+      midinum: '81',
+      row: '4',
+      col: '17',
+      bendValue: 'semitone1'
+    }));
+  });
+
   test('pitch-wide highlights are singular per beat', () => {
     const tuning = createTuning({ banjoNut: {} });
     const sectionNotes = createSectionNotes({
@@ -440,7 +480,7 @@ describe('MovePlugin', () => {
     expect(result.messageJSON).toBe(JSON.stringify({ droppedNotes: plugin.droppedNotes }, null, 2));
   });
 
-  test('moving a bend onto a nut cell drops it', () => {
+  test('drop algorithm drops a bend when direct down lands on a nut cell', () => {
     const tuning = createTuning();
     const tableID = `${Constants.TABLE_ID_PREFIX}${tuning.baseID}`;
     const sectionNotes = createSectionNotes({
@@ -468,13 +508,14 @@ describe('MovePlugin', () => {
     plugin.getVisibleMenuChildren();
     plugin.setPropertyValue('includeTiny', true, { song });
     plugin.setPropertyValue('includePlayed', true, { song });
+    plugin.setPropertyValue('algorithm', 'drop', { song });
     plugin.setPropertyValue('motion', 'd', { song });
 
     const result = plugin.invokeAction('apply', { song });
 
     expect(result.result).toContain('dropped 1');
     expect(sectionNotes.playedNotes).toHaveLength(0);
-    expect(plugin.droppedNotes.some((entry) => entry.reason === 'bend cannot land on nut')).toBe(true);
+    expect(plugin.droppedNotes.some((entry) => entry.reason === 'no fret below legal range')).toBe(true);
   });
 
   test('recorded note drops when moved destination is occupied by a played note', () => {

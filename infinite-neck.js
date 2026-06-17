@@ -27,7 +27,8 @@ import {
 	txtCmdLine_keypress 
 } from './command-line.js';
 import {
-	setDisplayOptionsProviders
+	setDisplayOptionsProviders,
+	displayOptionsTable
 } from './display-options.js';
 import {
 	draggable
@@ -249,12 +250,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			enterFullscreen,
 			getBPM,
 			getCurrentSection,
+			getDisplayOptionsClearState,
+			getDisplayOptionsSaveState,
 			getPersistentSongFile,
 			getSectionsCurrentIndex,
 			getSong,
 			getTransportController,
 			hideAllMenuDivs,
 			hideFullscreenLeadSheetLine,
+			handleBtnControlsToDisplayOptions,
+			handleBtnDeleteDisplayOptions,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
@@ -264,6 +269,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			printSectionsLine,
 			resetNoteNames,
 			sectionChanged,
+			setPresentationMode,
 			setBPM,
 			setNamedNoteOpacity,
 			setSingleNoteOpacity,
@@ -285,7 +291,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			getCurrentSection,
 			doingAutomaticColor: (...args) => doingAutomaticColor(...args),
-			fullRepaint
+			fullRepaint,
+			displayOptionsChanged: refreshDisplayOptionsSaveActionRequired
 		});
 		transportController.setProviders({
 			getBPM,
@@ -336,6 +343,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function getSections(){
 	    return getSong().getSections();
 	}
+
+	export function setPresentationMode(shouldAutomate){
+		if (!getSong()){
+			return;
+		}
+		getSong().presentationMode = !!shouldAutomate;
+		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).trigger('change');
+	}
 	//==================== 2) Section/song state helpers ======================
 
 	export function checkRB(id){
@@ -364,18 +379,91 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
+	let defaultDisplayOptionsForNavigation = null;
+	let displayOptionsDirtyBaseline = null;
+
+	function cloneDisplayOptions(options){
+		if (!options || typeof options !== 'object') {
+			return {};
+		}
+		return JSON.parse(JSON.stringify(options));
+	}
+
+	function ensureDefaultDisplayOptionsForNavigation(){
+		if (!defaultDisplayOptionsForNavigation) {
+			defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
+		}
+		return cloneDisplayOptions(defaultDisplayOptionsForNavigation);
+	}
+
+	function captureDisplayOptionsNavigationDefault(){
+		defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
+		return ensureDefaultDisplayOptionsForNavigation();
+	}
+
+	function setDisplayOptionsSaveActionRequired(isRequired){
+		$('#btnControlsToDisplayOptions_View').toggleClass('riskyButtonActionRequired', !!isRequired);
+	}
+
+	function updateDisplayOptionsReadonlyValues(options = null){
+		const values = options || controlsToDisplayOptions();
+		$('#viewDisplayOptionAutoColorValue').text(String(!!values.autoColor));
+		$('#viewDisplayOptionCurrentColorDictValue').text(values.currentColorDict || '');
+	}
+
+	function captureDisplayOptionsDirtyBaseline(){
+		displayOptionsDirtyBaseline = cloneDisplayOptions(controlsToDisplayOptions());
+		updateDisplayOptionsReadonlyValues(displayOptionsDirtyBaseline);
+		setDisplayOptionsSaveActionRequired(false);
+	}
+
+	function areDisplayOptionsEqual(left, right){
+		return JSON.stringify(left || {}) === JSON.stringify(right || {});
+	}
+
+	function refreshDisplayOptionsSaveActionRequired(){
+		if (!displayOptionsDirtyBaseline) {
+			captureDisplayOptionsDirtyBaseline();
+			return;
+		}
+		const currentOptions = controlsToDisplayOptions();
+		updateDisplayOptionsReadonlyValues(currentOptions);
+		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(currentOptions, displayOptionsDirtyBaseline));
+	}
+
+	export function getDisplayOptionsSaveState(){
+		if (!getSong() || !getCurrentSection()) {
+			return 'none';
+		}
+		if (displayOptionsDirtyBaseline && !areDisplayOptionsEqual(controlsToDisplayOptions(), displayOptionsDirtyBaseline)) {
+			return 'unsaved';
+		}
+		return getCurrentSection().displayOptions ? 'saved' : 'none';
+	}
+
+	export function getDisplayOptionsClearState(){
+		if (!getSong() || !getCurrentSection()) {
+			return 'none';
+		}
+		return getCurrentSection().displayOptions ? 'present' : 'none';
+	}
+
 	function syncSectionUi(){
-		var options = getCurrentSection().displayOptions;
+		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
+		var options = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
 		if (options){
-			displayOptionsToControls(options);
+			displayOptionsToControls(cloneDisplayOptions(options));
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
+		captureDisplayOptionsDirtyBaseline();
 	}
 
 	export function sectionChanged(){
 		syncSectionUi();
-		clearAndReplaySection()
+		clearAndReplaySection();
+		// Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
+		pluginManager.refreshPluginsMenuNode();
 	}
 
 	export function updateSectionsStatus(){
@@ -656,6 +744,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.naturalFontScaling = toInt($('#selNaturalFontScaling').val(), 60);
 		options.pianoHeightScaleFactor = toInt($('#selPianoHeightScaleFactor').val(), 3);
 		options.pianoWidthScaleFactor = toInt($('#selPianoWidthScaleFactor').val(), 3);
+		options.pianoWhiteToBlackWidthRatio = $('#selPianoWhiteToBlackWidthRatio').val() || '2.3';
+		options.pianoFingeringHPosition = $('#selPianoFingeringHPosition').val() || '50%';
 
 	    if (getSong().sharps) {
 	        resetSharps(options);
@@ -821,10 +911,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function turnOnKeep(){
-		PalettePresentation.selectRbColorById("#idKeep", {
-			remember: false,
+		PalettePresentation.enterKeepMode({
 			forcedKeep: true
 		});
+		$("td.note").css({"cursor": "no-drop"});
 	}
 	
 	export function turnOffKeep(){
@@ -832,7 +922,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		gPresentation.palette.keepWasForced = false;
-		PalettePresentation.restoreLastRbColor();
+		PalettePresentation.enterPaintMode({
+			restoreHighlightIfNeeded: true,
+			forcedKeep: false
+		});
+		$("td.note").css({"cursor": "pointer"});
 	}
 
 	export function hideNoteClickedCaption(){
@@ -1093,6 +1187,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function updateAfterOpenSong(){
+		getSong().resetRecording?.();
+		syncRecordingViews();
 		getSong().fixupCurrentIndexForLoadedSong();
 		hideGraveyard();
 		installDefaultColorDicts();
@@ -1192,9 +1288,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function loadSong(songName){
 		$.get( "songs/"+songName, function( data ) {  //jQuery automatically calls something like JSON.parse and turns the result into a real javascript Object.
 			if (!getSong().isEmpty(getSong().getCurrentSection())){
-				var yes = confirm("Keep previous Song Sections? ( 'Cancel' deletes !! Otherwise, 'OK' adds new Song Sections at end of current Song Sections.)");
+				var yes = confirm("Did you save the current Song with File | Download already? ( 'Cancel' cancels, otherwise 'OK' forgets the current song and opens the new one.");
 				if (!yes){
-					getSong().removeAllSections();
+					return;
 				}
 			}
 			openSong(JSON.stringify(data));
@@ -1221,6 +1317,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
+	export function showDisplayOptions(){
+		showMessages(displayOptionsTable());
+	}
+
 	export function increaseUIFont(){
 		setUIFontSize(getUIFontSize() + 1);
 	}
@@ -1231,11 +1331,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function increaseNoteFont(){
 		setNoteFontSize(getNoteFontSize() + 1);
+		refreshDisplayOptionsSaveActionRequired();
 	}
 
 	export function decreaseNoteFont(){
 		if (getNoteFontSize() > 0.5){
 			setNoteFontSize(getNoteFontSize() - 1);
+			refreshDisplayOptionsSaveActionRequired();
 		}
 	}
 
@@ -1252,17 +1354,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				if (!getSong().isTableVisible(tableID)) {
 					$('#' + Constants.TABLEDIV_ID_PREFIX + tuning.baseID).hide();
 				}
-				/* This has been commented out 20260420 because it was potentially weird and didn't seem to do anything any more,
-				   and may register this function too many times, e.g. once per loop.
-				    .on("click", "td", function() { // This function will execute when any td inside #container is clicked
-					    var noteRole = $(this).attr('noteRole'); 
-						$("input[name=rbColor][value="+noteRole+"]")
-							.prop('checked', true);
-							//this div has a ColorDict generated by buildColorDicts 
-							// and then we click on the TDs in there, 
-							// and the role has been stored in the td attr "noteRole"
-						//turnOffAutoColorCheckbox();	
-					});*/
 				count++;
 			}
 	    }
@@ -1300,28 +1391,78 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function installRBColorChangeEvents(){
 		const eventNamespace = '.installRBColorChangeEvents';
+
+		$('input[name="rbPaletteMode"]:radio, input[name="rbColor"]:radio, input[name="rbHighlight"]:radio')
+			.off(eventNamespace);
+
+		$(document)
+			.off(`change${eventNamespace}`, 'input[name="rbPaletteMode"]:radio')
+			.on(`change${eventNamespace}`, 'input[name="rbPaletteMode"]:radio', function() {
+				if (!$(this).is(":checked")) {
+					return;
+				}
+
+				const mode = $(this).val();
+				if (mode === 'keep') {
+					PalettePresentation.enterKeepMode();
+					$("td.note").css({"cursor": "no-drop"});
+					return;
+				}
+
+				if (mode === 'clear') {
+					PalettePresentation.enterClearMode();
+					$("td.note").css({"cursor": "crosshair"});
+					return;
+				}
+
+				if (mode === 'dropper') {
+					PalettePresentation.enterDropperMode();
+					$("td.note").css({"cursor": "zoom-in"});
+					return;
+				}
+
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: true,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
+			});
 	
-		$('input[name="rbColor"]:radio')
-			.off(`change${eventNamespace}`)
-			.on(`change${eventNamespace}`, function() {
+		$(document)
+			.off(`change${eventNamespace}`, 'input[name="rbColor"]:radio')
+			.on(`change${eventNamespace}`, 'input[name="rbColor"]:radio', function() {
 				if ($(this).is(":checked") && !gPresentation.palette.suppressRbColorRemember) {
 					PalettePresentation.rememberRestorableRbColor(this);
 				}
 				PalettePresentation.updateRestoreRbColorButton();
-				if ("noteKeep" === $(this).val()) {
-				} else if ("noteDropper" === $(this).val()) {
-					$("td.note").css({"cursor": "zoom-in"});
-				} else {
-					$("td.note").css({"cursor": "pointer"});
-					turnOffHiding();
+			});
+
+		$(document)
+			.off(`change${eventNamespace}`, 'input[name="rbHighlight"]:radio')
+			.on(`change${eventNamespace}`, 'input[name="rbHighlight"]:radio', function() {
+				if (!$(this).is(":checked")) {
+					return;
 				}
+				PalettePresentation.rememberRestorableRbHighlight(this);
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: false,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
 			});
 	
-		$('input[name="rbColor"]')
-			.off(`click${eventNamespace}`)
-			.on(`click${eventNamespace}`, function() {
+		$(document)
+			.off(`click${eventNamespace}`, 'input[name="rbColor"]')
+			.on(`click${eventNamespace}`, 'input[name="rbColor"]', function() {
 				$('input[name="rbColor"]').css({"box-shadow": "none"});
-				$("td.note").css({"cursor": "auto"});
+				PalettePresentation.enterPaintMode({
+					restoreHighlightIfNeeded: true,
+					forcedKeep: false
+				});
+				$("td.note").css({"cursor": "pointer"});
+				turnOffHiding();
 			});
 	
 		PalettePresentation.initializePalettePresentation();
@@ -1375,18 +1516,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function toggleTransport(){
 		TransportBuilder.toggleTransport();
 	}
+	export function syncRecordingViews(){
+		const recording = getSong()?.isRecording?.() === true;
+		if (recording) {
+			$('.RecordButton').addClass('ButtonOn');
+		} else {
+			$('.RecordButton').removeClass('ButtonOn');
+		}
+		return recording;
+	}
 	export function toggleRecording(){
-		var btn = $("#btnRecord");
-		var recording = btn.attr("recording");
-		if (recording === undefined || recording === "false") {
-			$(".RecordButton").addClass("ButtonOn");
-			$("#btnRecord").attr("recording", "true");
+		const recording = getSong()?.toggleRecording?.() === true;
+		syncRecordingViews();
+		if (recording) {
 			clearRecordedNotes();
 			showBeats(getSong().getBeat());
-		} else {
-			$(".RecordButton").removeClass("ButtonOn");
-			$("#btnRecord").attr("recording", "false");
 		}
+		return recording;
 	}
 	export function toggleSectionDrawer(){
 		TransportBuilder.toggleSectionDrawer();
@@ -1572,11 +1718,38 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSongChartOption(optionName, optionValue) {
+		if (optionName === 'HEADNames') {
+			const doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+			linkToSongChartHeadNames(optionValue, doSectionChanged);
+			return;
+		}
 		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
 			getSong().chartOptions = {};
 		}
 		getSong().chartOptions[optionName] = optionValue;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
+		if (doSectionChanged){
+			sectionChanged();
+		}
+	}
+
+	export function linkToSongChartHeadNames(headNames) {
+		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
+			getSong().chartOptions = {};
+		}
+		const normalizedHeadNames = SectionPrinter.normalizeChartHeadNames(headNames);
+		getSong().chartOptions.HEADNames = normalizedHeadNames;
+
+		if (!normalizedHeadNames.includes(Constants.SECTION_CHART_POSITION.HEAD)) {
+			const replacementHeadName = normalizedHeadNames[0];
+			getSong().sections.forEach((section) => {
+				if (section?.chartPosition === Constants.SECTION_CHART_POSITION.HEAD) {
+					section.chartPosition = replacementHeadName;
+				}
+			});
+		}
+
+		let doSectionChanged = (arguments.length < 2) ? true : arguments[1];
 		if (doSectionChanged){
 			sectionChanged();
 		}
@@ -1867,14 +2040,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			chuseStylesheet(currentColorDict);
 		}
 
-		$("#cbAutomaticColor").prop("checked", options.autoColor);
-		if (options.autoColor) {
-			$('#manualColors').hide();
-			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-		} else {
-			$('#manualColors').show();
-			$('#btnAutoColor,#btnAutoColor2').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-		}
+		PalettePresentation.setAutomaticColorUi(options.autoColor);
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
 		if (naturalFontScaling != null){
@@ -1882,6 +2048,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		$("#selPianoHeightScaleFactor").val(String(options.pianoHeightScaleFactor ?? 3));
 		$("#selPianoWidthScaleFactor").val(String(options.pianoWidthScaleFactor ?? 3));
+		$("#selPianoWhiteToBlackWidthRatio").val(String(options.pianoWhiteToBlackWidthRatio ?? '2.3'));
+			$("#selPianoFingeringHPosition").val(String(options.pianoFingeringHPosition ?? '50%'));
 		$("#cbShowLooperLightBeats").prop("checked", options.showLooperLightBeats ?? true);
 		$("#selNoteFont").val(options.noteFont);
 		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
@@ -1894,6 +2062,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selTinyNoteVPosition").val(options.tinyNoteVPosition);
 		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
 		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
+		$("#selTinyNoteRadius").val(options.tinyNoteRadius);
 
 		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
@@ -1903,10 +2072,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--tiny-note-width",      $("#selTinyNoteWidth").val());
 		setOneCssVar("--tiny-note-max-width",  $("#selTinyNoteMaxWidth").val());
 		setOneCssVar("--tiny-note-hposition",  $("#selTinyNoteHPosition").val());
+		setOneCssVar("--tiny-note-radius",     $("#selTinyNoteRadius").val());
 		setOneCssVar("--tiny-note-font-size",  $("#selTinyNoteFontSize").val());
 		setOneCssVar("--midi-font-size",       $("#selMidiFontSize").val());
 		setOneCssVar("--fingering-font-size",  $("#selFingeringFontSize").val());
 		setOneCssVar("--fingering-position",   $("#selFingeringPosition").val());
+		setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
+		updateDisplayOptionsReadonlyValues();
 		fullRepaint();
 	}
 
@@ -1945,6 +2117,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.naturalFontScaling = $("#selNaturalFontScaling").val();
 		options.pianoHeightScaleFactor = $("#selPianoHeightScaleFactor").val();
 		options.pianoWidthScaleFactor = $("#selPianoWidthScaleFactor").val();
+		options.pianoWhiteToBlackWidthRatio = $("#selPianoWhiteToBlackWidthRatio").val();
+		options.pianoFingeringHPosition = $("#selPianoFingeringHPosition").val();
 		options.showLooperLightBeats = $("#cbShowLooperLightBeats").prop("checked");
 		options.noteFont = $("#selNoteFont").val();
 		options.leftSubscriptFontSize = $("#selLeftSubscriptFontSize").val();
@@ -1957,6 +2131,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.tinyNoteVPosition = $("#selTinyNoteVPosition").val();
 		options.tinyNoteWidth = $("#selTinyNoteWidth").val();
 		options.tinyNoteHPosition = $("#selTinyNoteHPosition").val();
+		options.tinyNoteRadius = $("#selTinyNoteRadius").val();
 		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		
 		return options;
@@ -2055,13 +2230,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function toggleAutoColorCheckbox(){
 		var cbac = $("#cbAutomaticColor");
-		cbac.prop("checked", !cbac.prop("checked"));
+		PalettePresentation.setAutomaticColorUi(!cbac.prop("checked"));
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
 	}
 	export function turnOffAutoColorCheckbox(){
-		var cbac = $("#cbAutomaticColor");
-		cbac.prop("checked", false);
+		PalettePresentation.setAutomaticColorUi(false);
 		$("#cbAutomaticColor").trigger("change");
 		resetNoteNames();
 	}
@@ -2071,11 +2245,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getCurrentSection().displayOptions = options;
 		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
 		showHideDisplayOptionsPresent();
+		captureDisplayOptionsDirtyBaseline();
 	}
 	
 	export function handleBtnDeleteDisplayOptions() {
 		delete getCurrentSection().displayOptions;
 		showHideDisplayOptionsPresent();
+		captureDisplayOptionsDirtyBaseline();
 	}
 
 	export function toggleRandomLoop(){
@@ -2142,6 +2318,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(selector)
 				.off(namespacedEvents)
 				.on(namespacedEvents, handler);
+		}
+
+		function bindDisplayOptionsDirtyEvent(events, selector){
+			const namespacedEvents = events
+				.split(' ')
+				.map((eventName) => `${eventName}${eventNamespace}.displayOptionsDirty`)
+				.join(' ');
+			$(selector)
+				.off(namespacedEvents)
+				.on(namespacedEvents, function() {
+					refreshDisplayOptionsSaveActionRequired();
+				});
 		}
 
 		function bindDelegatedEvent(events, selector, handler){
@@ -2251,6 +2439,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (optionName) {
 				linkToSongChartOption(optionName, $(this).val());
 			}
+		});
+		bindDelegatedEvent('change blur', '.songChartHeadNamesTextarea', function() {
+			const headNames = SectionPrinter.parseChartHeadNamesTextarea($(this).val());
+			linkToSongChartHeadNames(headNames);
 		});
 		bindDelegatedEvent('keydown', '#txtColorSchemeName', function(e) {
 			if (!isPlainEnterKey(e)) {
@@ -2476,7 +2668,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#dropDownCellWidth', function() {
 			fullRepaint();
 		});
-		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor', function(){
+		bindEvent('change', '#cbNaturalFretWidths,#selNaturalFontScaling,#selPianoHeightScaleFactor,#selPianoWidthScaleFactor,#selPianoWhiteToBlackWidthRatio,#selPianoFingeringHPosition', function(){
+			setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#cbShowLooperLightBeats', function() {
@@ -2508,6 +2701,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('change', '#selTinyNoteHPosition', function(){
 			setOneCssVar("--tiny-note-hposition", $("#selTinyNoteHPosition").val());
+			fullRepaint();
+		});
+		bindEvent('change', '#selTinyNoteRadius', function(){
+			setOneCssVar("--tiny-note-radius", $("#selTinyNoteRadius").val());
 			fullRepaint();
 		});
 		bindEvent('change', '#selTinyNoteFontSize', function(){
@@ -2631,6 +2828,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode), #divViewControls select, #divViewControls textarea');
+		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
+		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
+			refreshDisplayOptionsSaveActionRequired();
+		});
 	}
 	
 	export function bindDataActionHandlers(){
@@ -2638,6 +2840,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			help: () => window.open(getHelpTopic(), 'infinitehelp'),
 			songLibrary,
 			showGraveyard,
+			showDisplayOptions,
 			increaseUIFont,
 			decreaseUIFont,
 			increaseNoteFont,
@@ -2869,6 +3072,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDesktopEvents();
 		installLoopTimingModeControls();
 		applyScalingPrefs(true);
+		captureDisplayOptionsNavigationDefault();
+		captureDisplayOptionsDirtyBaseline();
 		
 		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
 		
@@ -2897,12 +3102,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#divColorDicts').hide();
 			$("#CustomColorEditors").hide();
 
-			//in palette div: 
-			$('#cbAutomaticColor').prop('checked', true);
-			$("#cbAutomaticColor").trigger('change');//will change from checked to not checked and run click().
-
 			buildUserColors();
 			installRBColorChangeEvents();
+
+			// Palette startup should use the shared AutoColor initializer directly,
+			// not a synthetic change event on a stale checkbox state.
+			PalettePresentation.setAutomaticColorUi(true);
+			fullRepaint();
+
+			// The palette loads asynchronously, so recapture the startup navigation
+			// defaults only after AutoColor and the palette controls really exist.
+			captureDisplayOptionsNavigationDefault();
+			captureDisplayOptionsDirtyBaseline();
 		});
 
 
@@ -3072,9 +3283,15 @@ EventBus.on('Wiring:removed', function() {
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
 	$('#btnLoopBeats').addClass('ButtonOn');
+	EventBus.trigger('Widget:SectionStatus:loopChanged', {
+		isLoopActive: true
+	});
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
 	$('#btnLoopBeats').removeClass('ButtonOn');
+	EventBus.trigger('Widget:SectionStatus:loopChanged', {
+		isLoopActive: false
+	});
 });
 EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
     showLoopSectionsStarted(data);

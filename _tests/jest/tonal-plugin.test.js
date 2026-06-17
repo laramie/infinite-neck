@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import { TonalSourceSet } from '../../TonalFunctions.js';
 
 const NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
 
@@ -38,6 +39,9 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
   },
   linkToSectionTableMode(sectionIndex, tableID, value) {
     getSectionAt(mockRuntime.song, sectionIndex).getSectionNotes(tableID).mode = value;
+  },
+  linkToSectionTableTonalSourceSet(sectionIndex, tableID, value) {
+    getSectionAt(mockRuntime.song, sectionIndex).getSectionNotes(tableID).tonalSourceSet = value;
   },
   linkToSectionChangedTonal() {
     mockRuntime.sectionChangedCalls += 1;
@@ -128,8 +132,11 @@ describe('TonalPlugin', () => {
     expect(acceptNode.children.map((child) => child.name)).toEqual([
       'targetTable',
       'autoWrite',
+      'sourceNoteType',
+      'applySourceNoteTypeToAllSections',
       'prevSection',
       'nextSection',
+      'acceptChordModeAndNext',
       'chords',
       'acceptFirstChord',
       'modes',
@@ -139,6 +146,25 @@ describe('TonalPlugin', () => {
     ]);
     expect(acceptNode.children.find((child) => child.name === 'acceptFirstChord').caption).toContain('<b>C</b>hord <em>Cmaj7</em>');
     expect(plugin.resolveValue('targetTable', { song })).toBe('P46_1');
+  });
+
+  test('empty first chord suggestion shows none without a checkmark', () => {
+    const section = createSection({
+      tblP46_1: new SectionNotes()
+    });
+    const song = createSong([section]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    const acceptNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'accept');
+    const acceptFirstChordNode = acceptNode.children.find((child) => child.name === 'acceptFirstChord');
+
+    expect(section.chartChord).toBe('');
+    expect(plugin.resolveValue('chordSummary', { song })).toBe('[]');
+    expect(acceptFirstChordNode.caption).toContain('<b>C</b>hord <em>&lt;none&gt;</em>');
+    expect(acceptFirstChordNode.caption).not.toContain("<span class='commandCheckmark'>&check;</span>");
   });
 
   test('accepts the first chord into chart and table by default', () => {
@@ -248,6 +274,116 @@ describe('TonalPlugin', () => {
     expect(result.result).toBe('section 2');
     expect(song.getSectionsCurrentIndex()).toBe(1);
     expect(plugin.resolveValue('chordSummary', { song })).toBe('[Dm7, F6/D]');
+  });
+
+  test('N accepts first chord and mode, then advances to next section', () => {
+    const firstSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G', 'Bb'])
+      })
+    });
+    const secondSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['D', 'F', 'A', 'C'])
+      })
+    }, '5');
+    const song = createSong([firstSection, secondSection]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+    const firstState = getTonalSuggestionState(song, firstSection, 'tblP46_1');
+    const expectedChord = firstState.chordSuggestions[0];
+    const expectedMode = firstState.modeSuggestions[0];
+
+    const result = plugin.invokeAction('acceptChordModeAndNext', { song });
+
+    expect(firstSection.chartChord).toBe(expectedChord);
+    expect(firstSection.getSectionNotes('tblP46_1').chord).toBe(expectedChord);
+    expect(firstSection.chartMode).toBe(expectedMode);
+    expect(firstSection.getSectionNotes('tblP46_1').mode).toBe(expectedMode);
+    expect(song.getSectionsCurrentIndex()).toBe(1);
+    expect(result.result).toContain(`accepted chord 1: ${expectedChord}`);
+    expect(result.result).toContain(`accepted mode 1: ${expectedMode}`);
+    expect(result.result).toContain('section 2');
+  });
+
+  test('source note type caption reflects the current section and updates after navigation', () => {
+    const firstSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G']),
+        tonalSourceSet: TonalSourceSet.NAMEDNOTE
+      })
+    });
+    const secondSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['D', 'F', 'A']),
+        tonalSourceSet: TonalSourceSet.SINGLENOTE
+      })
+    });
+    const song = createSong([firstSection, secondSection]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.resolveValue('sourceNoteType', { song })).toBe('named');
+    plugin.invokeAction('nextSection', { song });
+    expect(plugin.resolveValue('sourceNoteType', { song })).toBe('single');
+  });
+
+  test('setSourceNoteType updates current section table tonalSourceSet', () => {
+    const section = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G']),
+        tonalSourceSet: TonalSourceSet.NAMEDNOTE
+      })
+    });
+    const song = createSong([section]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    const result = plugin.invokeAction('setSourceNoteType:tiny', { song });
+
+    expect(result.result).toBe('source note type set to tiny');
+    expect(section.getSectionNotes('tblP46_1').tonalSourceSet).toBe(TonalSourceSet.TINYNOTE);
+    expect(mockRuntime.sectionChangedCalls).toBe(1);
+  });
+
+  test('applySourceNoteTypeToAllSections copies current section source type across sections for target table', () => {
+    const firstSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['C', 'E', 'G']),
+        tonalSourceSet: TonalSourceSet.SINGLENOTE
+      })
+    });
+    const secondSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['D', 'F', 'A']),
+        tonalSourceSet: TonalSourceSet.NAMEDNOTE
+      })
+    });
+    const thirdSection = createSection({
+      tblP46_1: new SectionNotes({
+        namedNotes: createNamedNotes(['E', 'G', 'B']),
+        tonalSourceSet: TonalSourceSet.TINYNOTE
+      })
+    });
+    const song = createSong([firstSection, secondSection, thirdSection]);
+    mockRuntime.song = song;
+
+    const plugin = new TonalPlugin();
+    plugin.setManager({ song });
+
+    const result = plugin.invokeAction('applySourceNoteTypeToAllSections', { song });
+
+    expect(result.result).toBe('applied source note type single to all sections');
+    song.sections.forEach((sectionForAssertion) => {
+      expect(sectionForAssertion.getSectionNotes('tblP46_1').tonalSourceSet).toBe(TonalSourceSet.SINGLENOTE);
+    });
+    expect(mockRuntime.sectionChangedCalls).toBe(1);
   });
 
   test('print extra modes uses the unfiltered mode list', () => {

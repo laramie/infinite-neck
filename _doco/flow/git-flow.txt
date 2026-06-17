@@ -15,3 +15,16 @@ tree -I data                ## Ignore patterns, in this case don't show ./data/
 
 =================================
 
+
+=================================
+What happened:
+git commit --amend created a new commit ID, even though you only changed the message.
+The remote still had the old commit ID.
+Git reported “diverged” because local had the amended commit and remote had the pre-amend commit.
+Since the patch contents were equivalent, this was not a real code conflict.
+I verified the divergence was only the amended commit, then ran:
+  git push --force-with-lease origin fix/attr-value
+Now git status shows the branch is clean and synchronized:
+## fix/attr-value...origin/fix/attr-value
+So: no pull/rebase was needed. For future “amend a commit that was already pushed” cases, use git push --force-with-lease, not git pull, as long as you know nobody else added work to that branch.
+=================================

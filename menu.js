@@ -2,10 +2,31 @@ let gMenuValueResolver = function () {
   return undefined;
 };
 
+let gMenuRuntimeChildrenResolver = function () {
+  return null;
+};
+
 export function setMenuValueResolver(resolverFn) {
   if (typeof resolverFn === 'function') {
     gMenuValueResolver = resolverFn;
   }
+}
+
+export function setMenuRuntimeChildrenResolver(resolverFn) {
+  if (typeof resolverFn === 'function') {
+    gMenuRuntimeChildrenResolver = resolverFn;
+  }
+}
+
+export function refreshRuntimeChildren(menu) {
+    if (!menu || !menu.runtimeChildren) {
+        return;
+    }
+
+    const children = gMenuRuntimeChildrenResolver(menu);
+    if (Array.isArray(children)) {
+        menu.children = children;
+    }
 }
 
 export function resolveMenuValue(value) {
@@ -13,9 +34,17 @@ export function resolveMenuValue(value) {
         return "";
     }
 
+  const valueText = `${value}`;
+  if (valueText.includes('${')) {
+    return valueText.replaceAll(/\$\{([^}]+)\}/g, (match, tokenName) => {
+      const tokenValue = gMenuValueResolver(tokenName);
+      return tokenValue === undefined || tokenValue === null ? match : `${tokenValue}`;
+    });
+  }
+
     const resolved = gMenuValueResolver(value);
     if (resolved === undefined || resolved === null) {
-        return "" + value;
+    return valueText;
     }
 
     return "" + resolved;
@@ -410,6 +439,76 @@ export var gMenuFile =    {
               "caption": "<b>c</b>lone",
               "trigger": "c",
               "action": "sectionAddDeepClone"
+            },
+            {
+              "caption": "<b>i</b>nstrument",
+              "trigger": "i",
+              "children": [
+                {
+                  "caption": "<b>I</b>nstrument [${sectionEditInstrumentBaseID}]",
+                  "trigger": "I",
+                  "runtimeChildren": "sectionEditInstrument",
+                  "vars": [
+                    "sectionEditInstrumentBaseID"
+                  ],
+                  "children": []
+                },
+                {
+                  "caption": "<b>c</b>lone [${sectionEditInstrumentBaseID} into new Section ${sectionEditNextSectionCardinal}]",
+                  "trigger": "c",
+                  "action": "sectionEditInstrumentClone",
+                  "vars": [
+                    "sectionEditInstrumentBaseID",
+                    "sectionEditNextSectionCardinal"
+                  ]
+                },
+                {
+                  "caption": "<b>i</b>nsert clone [${sectionEditInstrumentBaseID}] into Section",
+                  "trigger": "i",
+                  "action": "sectionEditInstrumentInsertIntoSection",
+                  "vars": [
+                    "sectionEditInstrumentBaseID"
+                  ],
+                  "input": {
+                    "type": "input",
+                    "caption": "section number (1-${sectionCount})",
+                    "datatype": "Number",
+                    "id": "value"
+                  },
+                  "popOnBang": true
+                },
+                {
+                  "caption": "<b>C</b>lear [${sectionEditInstrumentBaseID} from Section ${currentSectionCardinal}] ?",
+                  "trigger": "C",
+                  "action": "sectionEditInstrumentClearGuard",
+                  "guardBeforeDive": true,
+                  "vars": [
+                    "sectionEditInstrumentBaseID",
+                    "currentSectionCardinal"
+                  ],
+                  "children": [
+                    {
+                      "caption": "<b>Y</b>es: Clear ${sectionEditInstrumentBaseID} data from Section ${currentSectionCardinal}",
+                      "trigger": "Y",
+                      "action": "sectionEditInstrumentClear",
+                      "vars": [
+                        "sectionEditInstrumentBaseID",
+                        "currentSectionCardinal"
+                      ],
+                      "popOnBang": true
+                    },
+                    {
+                      "caption": "<b>n</b>o: keep table data in Section ${currentSectionCardinal}",
+                      "trigger": "n",
+                      "action": "sectionEditInstrumentClearKeep",
+                      "vars": [
+                        "currentSectionCardinal"
+                      ],
+                      "popOnBang": true
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -972,6 +1071,39 @@ export var gMenuFile =    {
           ]
         },
         {
+          "caption": "<b>p</b>resentation",
+          "trigger": "p",
+          "children": [
+            {
+              "caption": "<b>p</b>resentation mode [${presentationModeState}]",
+              "trigger": "p",
+              "action": "togglePresentationMode",
+              "vars": [
+                "presentationModeState"
+              ],
+              "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>s</b>ave Display Options [${displayOptionsSaveState}]",
+              "trigger": "s",
+              "action": "saveViewDisplayOptions",
+              "vars": [
+                "displayOptionsSaveState"
+              ],
+              "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>c</b>lear Display Options [${displayOptionsClearState}]",
+              "trigger": "c",
+              "action": "clearViewDisplayOptions",
+              "vars": [
+                "displayOptionsClearState"
+              ],
+              "preserveMenuStack": true
+            }
+          ]
+        },
+        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-view"
@@ -1124,8 +1256,12 @@ export var gMenuFile =    {
               "trigger": "p"
             },
             {
-              "caption": "<b>h</b>ighlight",
-              "trigger": "h"
+              "caption": "<b>m</b>ulti",
+              "trigger": "m"
+            },
+            {
+              "caption": "<b>l</b>ast chosen",
+              "trigger": "l"
             },
             {
               "caption": "<b>k</b>eep",
@@ -1489,6 +1625,7 @@ export function surfaceOneMenu(){
 }
 
 export function buildChildMenuCaptionsRow(menu){
+  refreshRuntimeChildren(menu);
     var children = menu.children;
     if (!children){
         return "";
@@ -1539,7 +1676,7 @@ export function printMenuStack(){
     var doLargeItem = false;
     if (gMenuPointer.type && gMenuPointer.type == "input"){
         doLargeItem = true;
-      defaultValue = "["+gMenuValueResolver(gMenuPointer.default)+"]";
+      defaultValue = "["+resolveMenuValue(gMenuPointer.default)+"]";
     }
     var menuCaption = expandCaption(gMenuPointer);
     result = "<div class='cmdPrompt'>"+menuCaption+defaultValue+":</div>";
@@ -1668,7 +1805,7 @@ function expandCaption(menuItem){
         }
       });
     }
-    return caption;
+    return resolveMenuValue(caption);
 }
 
 

@@ -117,8 +117,8 @@
     "defaultValue": "NamedNote",
     "visibleInMenu": true,
     "options": [
-      { "value": "NamedNote", "caption": "NamedNote", "trigger": "N" },
-      { "value": "SingleNote", "caption": "SingleNote", "trigger": "S" }
+      { "value": "NamedNote", "caption": "named", "trigger": "n" },
+      { "value": "SingleNote", "caption": "single", "trigger": "s" }
     ]
   },
   {

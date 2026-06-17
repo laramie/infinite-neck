@@ -1,10 +1,13 @@
-/** TODO: move these out of infinite-neck.css before testing, after implementation. **/
 .SectionStatus_loopLight {
     border: 2px solid green; 
     padding: 0.18em;
     border-radius: 10%;
     display: inline-block;
 }
+.section-status-vertical-table .SectionStatus_loopLight {
+    padding: 0;
+}
+
 .SectionStatus_loopActive {
     border: 2px solid magenta !important; 
 }
@@ -19,6 +22,7 @@
 }
 .SectionStatus_beatColon {
     color: green;
+    font-weight: bold;
     padding-right: 0.2em;
 }
 .SectionStatus_beatNumber {
@@ -145,12 +149,12 @@
 .instrumentSectionMark {
     display: inline-block;
     color: green;
-    font-size: 80%;
+    font-size: 90%;
     padding-right: 0.5em;
 }
 .SectionStatus_td_SectionNumber .instrumentSectionMark {
     color: green;
-    font-size: 90%;
+    font-size: 110%;
     padding-right: 0.5em;
 }
 
@@ -166,6 +170,10 @@
 
 .SectionStatusWidget--leftRail .section-status-vertical-table {
     width: 100%;
+    border-spacing: 0;
+}
+.section-status-vertical-table-inner {
+   border-spacing: 0;
 }
 
 .SectionStatusWidget--captionRow .SectionStatus_rootKey,
@@ -192,6 +200,10 @@
 }
 .SectionStatusWidget--leftRail .SectionsStatus_SectionNumber {
     color: yellow;
+    padding-right: 0.1em;
+}   
+.SectionStatusWidget--leftRail .SectionStatus_beatNumber {
+   padding-right: 0.1em;
 }   
 
 .SectionStatusWidget--captionRow .SectionStatus_relativeSection,

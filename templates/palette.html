@@ -145,20 +145,21 @@
                 <table>
                     <tr>
                         <td width="70%" style="text-align: left">
-                            <label class="chooseClear">
-                                <input type="radio" id="idClear" name="rbColor" value="noteClear">CLEAR
+                            <label class="chooseClear choosePaletteMode" id="choosePaletteModeClear">
+                                <input type="radio" id="idPaletteModeClear" name="rbPaletteMode" value="clear">CLEAR
                             </label>
-                            <label class="chooseKeep">
-                                <input type="radio" id="idKeep" name="rbColor" value="noteKeep">KEEP
+                            <label class="chooseKeep choosePaletteMode" id="choosePaletteModeKeep">
+                                <input type="radio" id="idPaletteModeKeep" name="rbPaletteMode" value="keep">KEEP
                             </label>
-                            <label class="chooseKeep">
-                                <input type="radio" id="idDropper" name="rbColor"
-                                    value="noteDropper">Find Color
+                            <label class="chooseDropper choosePaletteMode" id="choosePaletteModeDropper">
+                                <input type="radio" id="idPaletteModeDropper" name="rbPaletteMode"
+                                    value="dropper">Find Color
                             </label>
 
-                            <button id="btnRestoreRbColor" type="button" class="chooseLastColor" tabindex="-1">
-                                Color: Emboss
-                            </button>
+                            <label class="chooseLastColor choosePaletteMode" id="choosePaletteModePaint">
+                                <input type="radio" id="idPaletteModePaint" name="rbPaletteMode" value="paint" checked>
+                                <span id="spanPaletteModePaintCaption">Color: Emboss</span>
+                            </label>
                             
                             <label for="cbAutomaticColor" id="lblAutomaticColor"><input id="cbAutomaticColor" type="checkbox"
                                     name="cbnAutomaticColor" value="1">AutoColor

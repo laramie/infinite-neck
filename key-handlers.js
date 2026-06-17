@@ -27,6 +27,7 @@ import {
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
+	setMenuRuntimeChildrenResolver,
 	setMenuValueResolver,
 	setMenuAtRoot,
 	gMenuLoaded
@@ -43,6 +44,7 @@ import {
 } from './utils.js';
 import {
 	showMessagesTab,
+	showDisplayOptions,
 	getVersionString,
 	getVersionObject,
 	toggleWiringOpenState,
@@ -60,6 +62,7 @@ export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
+let sectionEditInstrumentTableID = '';
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -87,9 +90,13 @@ function getPersistentSongFile(...args) { return requireProvider('getPersistentS
 function getSectionsCurrentIndex(...args) { return requireProvider('getSectionsCurrentIndex')(...args); }
 function getSong(...args) { return requireProvider('getSong')(...args); }
 function getTransportController(...args) { return requireProvider('getTransportController')(...args); }
+function getDisplayOptionsClearState(...args) { return requireProvider('getDisplayOptionsClearState')(...args); }
+function getDisplayOptionsSaveState(...args) { return requireProvider('getDisplayOptionsSaveState')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
+function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
+function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
@@ -98,6 +105,7 @@ function printSectionsChart(...args) { return requireProvider('printSectionsChar
 function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
+function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
@@ -134,6 +142,58 @@ function runActionByName(actionName, args) {
 	return performCmdAction(makeSyntheticMenuItem(actionName), args);
 }
 
+function getTableBaseID(tableID){
+	const text = `${tableID || ''}`;
+	return text.startsWith('tbl') ? text.substring(3) : text;
+}
+
+function getSectionEditInstrumentOptions(){
+	const song = getSong();
+	if (!song || typeof song.getVisibleUnwiredTunings !== 'function') {
+		return [];
+	}
+	return song.getVisibleUnwiredTunings().slice(0, 9).map((tuning, index) => {
+		const tableID = `tbl${tuning.baseID}`;
+		return {
+			name: `sectionEditInstrument:${tableID}`,
+			caption: `${index + 1}) ${tuning.baseID}`,
+			trigger: `${index + 1}`,
+			action: 'sectionEditInstrumentSelect',
+			value: tableID,
+			popOnBang: true
+		};
+	});
+}
+
+function isSectionEditInstrumentStillAvailable(tableID = sectionEditInstrumentTableID){
+	if (!tableID) {
+		return false;
+	}
+	return getSectionEditInstrumentOptions().some((option) => option.value === tableID);
+}
+
+function getSectionEditInstrumentTableID(){
+	return isSectionEditInstrumentStillAvailable() ? sectionEditInstrumentTableID : '';
+}
+
+function requireSectionEditInstrument(actionResult){
+	const tableID = getSectionEditInstrumentTableID();
+	if (tableID) {
+		return tableID;
+	}
+	actionResult.result = 'no Instrument chosen';
+	actionResult.suppressBang = true;
+	actionResult.preventDive = true;
+	return '';
+}
+
+function refreshSectionEditRuntimeChildren(menu){
+	if (menu?.runtimeChildren !== 'sectionEditInstrument') {
+		return null;
+	}
+	return getSectionEditInstrumentOptions();
+}
+
 function moveSelectByClampedStep(selectSelector, delta) {
 	var jSelect = $(selectSelector);
 	if (jSelect.length === 0) {
@@ -156,6 +216,9 @@ function moveSelectByClampedStep(selectSelector, delta) {
 
 function parkCommandLineAtPath(triggerPath = '') {
 	setMenuAtRoot();
+	// Ensure plugin runtime menu nodes are rebuilt for direct path entry (/fpoa, etc.)
+	// so nested suggestion menus are not stale from prior sections/notes.
+	pluginManager.refreshPluginsMenuNode();
 	let currentMenu = gMenuPointer;
 	for (const trigger of `${triggerPath}`) {
 		const children = currentMenu?.children || [];
@@ -227,6 +290,9 @@ function document_keypress(e) {
                 e.preventDefault();
                 break;
             case "/":
+				// Rebuild runtime plugin menu nodes before entering command mode
+				// so /fpoa starts with fresh tonal suggestions every time.
+				pluginManager.refreshPluginsMenuNode();
                 setMenuAtRoot();
                 clearCmdResults();
                 showCmdLine();
@@ -307,6 +373,9 @@ function document_keypress(e) {
 			case "r":
                 showOneMenu("#divChart");
                 break;
+			case "R":
+                toggleRecording();
+                break;
 			case "s":
                 toggleSectionDrawer();
                 break;
@@ -365,41 +434,51 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-				$("#rbFinger0").prop('checked', true);
-                checkRB("#idRFinger0");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbFinger0');
+				activateUiControl('#idRFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-				$("#rbFinger1").prop('checked', true);
-                checkRB("#idRFinger1");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idRFinger1');
+				activateUiControl('#rbFinger1');
                 break;
             case "2":
-				$("#rbFinger2").prop('checked', true);
-                checkRB("#idRFinger2");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idRFinger2');
+				activateUiControl('#rbFinger2');
                 break;
             case "3":
-				$("#rbFinger3").prop('checked', true);
-                checkRB("#idRFinger3");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idRFinger3');
+				activateUiControl('#rbFinger3');
                 break;
             case "4":
-				$("#rbFinger4").prop('checked', true);
-                checkRB("#idRFinger4");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idRFinger4');
+				activateUiControl('#rbFinger4');
                 break;
             case "5":
-				$("#rbFingerT").prop('checked', true);
-                checkRB("#idRFingerT");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idRFingerT');
+				activateUiControl('#rbFingerT');
                 break;
             case "6":
-                checkRB("#idNamedNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idNamedNotes');
                 break;
             case "7":
-                checkRB("#idSingleNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idSingleNotes');
                 break;
             case "8":
-                checkRB("#idTinyNotes");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idTinyNotes');
                 break;
             case "9":
-                checkRB("#rbBend");
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#rbBend');
                 break;
             case "0":
             	cycleThruNutWidths(-1);
@@ -434,10 +513,12 @@ function document_keypress(e) {
                 getSong().gotoNextSection(false);
                 break;
             case "[":
-                checkRB('#idMidiPitches');
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idMidiPitches');
                 break;
             case "]":
-                checkRB('#idMidiPitchesSingle');
+				activateUiControl('#idPaletteModePaint');
+				activateUiControl('#idMidiPitchesSingle');
                 break;
             default:
         }
@@ -451,11 +532,54 @@ function document_keypress(e) {
 	//
 
 function check(id){
-    $(id).prop("checked", true);
+	activateUiControl(id, { forceChange: true });
 }
 
 function checkAndTrigger(id){
-    $(id).prop("checked", true).trigger('change');
+	activateUiControl(id, { forceChange: true });
+}
+
+function activateUiControl(id, options = {}) {
+	const {
+		forceChange = false
+	} = options;
+	const $el = $(id);
+	if (!$el || $el.length === 0) {
+		return false;
+	}
+
+	const el = $el[0];
+	if (el && typeof el.click === 'function') {
+		el.click();
+		return true;
+	}
+
+	const inputType = `${el?.type || $el.attr?.('type') || ''}`.toLowerCase();
+	const isCheckable = inputType === 'radio' || inputType === 'checkbox';
+	if (isCheckable) {
+		$el.prop('checked', true);
+	}
+	$el.trigger('click');
+	if (forceChange && isCheckable) {
+		$el.trigger('change');
+	}
+	return true;
+}
+
+function isSpecialPaletteModeSelected() {
+	const $checked = $('input[name="rbPaletteMode"]:checked').first();
+	if (!$checked || $checked.length === 0) {
+		return false;
+	}
+	const value = $checked.val();
+	return value === 'clear' || value === 'keep' || value === 'dropper';
+}
+
+function activatePaintModeIfSpecialSelected() {
+	if (!isSpecialPaletteModeSelected()) {
+		return false;
+	}
+	return activateUiControl('#idPaletteModePaint');
 }
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
@@ -791,7 +915,7 @@ export function performCmdAction(menuItem, args){
 			toggleFullscreen();
 			break;
 		case "setMenuPrefs":
-			var c = args["key"];
+			var c = args?.["key"];
 			if (c == "s"){ //"short"
 				gMenuFile.tall = false;
 				setCmdLineMenuMode('short');
@@ -805,6 +929,29 @@ export function performCmdAction(menuItem, args){
 				setCmdLineMenuMode('one-line');
 				actionResult.result = 'menu prefs: one-line';
 			}
+			break;
+		case "setPresentationModeAutomated":
+			setPresentationMode(true);
+			actionResult.result = "presentation mode: automated";
+			break;
+		case "setPresentationModeManual":
+			setPresentationMode(false);
+			actionResult.result = "presentation mode: manual";
+			break;
+		case "togglePresentationMode":
+			setPresentationMode(!getSong()?.presentationMode);
+			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "saveViewDisplayOptions":
+			handleBtnControlsToDisplayOptions();
+			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "clearViewDisplayOptions":
+			handleBtnDeleteDisplayOptions();
+			actionResult.result = `Display Options cleared: ${getDisplayOptionsClearState()}`;
+			actionResult.preserveMenuStack = true;
 			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
@@ -826,7 +973,8 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "ColorDictionary sent to Messages";
             break;
         case "showViewDiagnosticsDisplayOptions":
-            showMessages(displayOptionsTable());
+            showDisplayOptions();
+			//showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
 		case "showViewDiagnosticsVariables":
@@ -907,6 +1055,65 @@ export function performCmdAction(menuItem, args){
 			getSong().addDeepCloneSection();
 			actionResult.result = "added-deep";
 			break;
+		case "sectionEditInstrumentSelect":
+			sectionEditInstrumentTableID = menuItem.value || '';
+			actionResult.result = getTableBaseID(sectionEditInstrumentTableID);
+			break;
+		case "sectionEditInstrumentClone": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const cloneResult = getSong().addCloneSectionForTable(tableID);
+			if (cloneResult.cloned) {
+				actionResult.result = `cloned ${getTableBaseID(tableID)}`;
+			} else {
+				actionResult.result = cloneResult.reason || `no notes for ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+			}
+			break;
+		}
+		case "sectionEditInstrumentInsertIntoSection": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const destSectionNumber = toInt(argByInputID, -1);
+			if (destSectionNumber < 1) {
+				actionResult.result = `invalid Section ${argByInputID}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			const insertResult = getSong().insertCloneTableIntoSection(tableID, destSectionNumber);
+			if (insertResult.inserted) {
+				actionResult.result = `inserted ${getTableBaseID(tableID)} into Section ${destSectionNumber}`;
+			} else {
+				actionResult.result = insertResult.reason || `not inserted ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+			}
+			break;
+		}
+		case "sectionEditInstrumentClearGuard":
+			requireSectionEditInstrument(actionResult);
+			break;
+		case "sectionEditInstrumentClear": {
+			const tableID = requireSectionEditInstrument(actionResult);
+			if (!tableID) {
+				break;
+			}
+			const clearResult = getSong().clearCurrentSectionTable(tableID);
+			if (clearResult.cleared) {
+				actionResult.result = `cleared ${getTableBaseID(tableID)}`;
+			} else {
+				actionResult.result = clearResult.reason || `no table data for ${getTableBaseID(tableID)}`;
+				actionResult.suppressBang = true;
+				actionResult.popOnBang = false;
+			}
+			break;
+		}
+		case "sectionEditInstrumentClearKeep":
+			actionResult.result = "kept";
+			break;
 		case "sectionKeep":
 			console.log("sectionKeep=====!");
 			actionResult.result = "kept";
@@ -946,34 +1153,35 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectFingering":
 			if (args){
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						checkRB("#rbFinger0");
-						checkRB("#idRFinger0");
+						check("#rbFinger0");
+						checkAndTrigger("#idRFinger0");
 						break;
 					case "1":
-					    checkRB("#rbFinger1");
-						checkRB("#idRFinger1");
+					    check("#rbFinger1");
+						checkAndTrigger("#idRFinger1");
 						break;
 					case "2":
-					    checkRB("#rbFinger2");
-					    checkRB("#idRFinger2");
+					    check("#rbFinger2");
+					    checkAndTrigger("#idRFinger2");
 						break;
 					case "3":
-					    checkRB("#rbFinger3");
-					    checkRB("#idRFinger3");
+					    check("#rbFinger3");
+					    checkAndTrigger("#idRFinger3");
 						break;
 					case "4":
-					    checkRB("#rbFinger4");
-					    checkRB("#idRFinger4");
+					    check("#rbFinger4");
+					    checkAndTrigger("#idRFinger4");
 						break;
 					case "5":
-					    checkRB("#rbFingerT");
-					    checkRB("#idRFingerT");
+					    check("#rbFingerT");
+						checkAndTrigger("#idRFingerT");
 						break;
 					case "t":
-					    checkRB("#rbFingerT");
-						checkRB("#idRFingerT");
+					    check("#rbFingerT");
+						checkAndTrigger("#idRFingerT");
 						break;
 				}
 			}
@@ -982,37 +1190,47 @@ export function performCmdAction(menuItem, args){
 			if (args){
 				switch (args["key"]){
 					case "n":
+						activatePaintModeIfSpecialSelected();
 					    check("#idNamedNotes");
 						break;
 					case "s":
+						activatePaintModeIfSpecialSelected();
 						check("#idSingleNotes");
 						break;
 					case "t":
+						activatePaintModeIfSpecialSelected();
 						check("#idTinyNotes");
 						break;
 					case "b":
+						activatePaintModeIfSpecialSelected();
 						check("#rbBend");
 						break;
 					case "p":
+						activatePaintModeIfSpecialSelected();
 						check("#idMidiPitches");
 						break;
-					case "h":
+					case "m":
+						activatePaintModeIfSpecialSelected();
 						check("#idMidiPitchesSingle");
 						break;
+					case "l":
+						check("#idPaletteModePaint");
+						break;
 					case "k":
-						checkAndTrigger("#idKeep");
+						checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						checkAndTrigger("#idClear");
+						checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						checkAndTrigger("#idDropper");
+						checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
 			break;
 		case "selectRole":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "t":
 						checkAndTrigger("#idRTransparent");
@@ -1040,6 +1258,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleChord":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRChord");
@@ -1055,6 +1274,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleColornote":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRColornote");
@@ -1070,6 +1290,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleAvoid":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRAvoid");
@@ -1085,6 +1306,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleLead":
 			if (args) {
+				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						checkAndTrigger("#idRLead");
@@ -1098,7 +1320,8 @@ export function performCmdAction(menuItem, args){
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
-			$("#rbBend").prop("checked", true);
+			activatePaintModeIfSpecialSelected();
+			check("#rbBend");
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();
@@ -1227,6 +1450,24 @@ export function getValue(what){
 	if (what === 'spacebarActionName'){
 		return spacebarActionName;
 	}
+	if (what === 'sectionEditInstrumentTableID'){
+		return getSectionEditInstrumentTableID();
+	}
+	if (what === 'sectionEditInstrumentBaseID'){
+		return getTableBaseID(getSectionEditInstrumentTableID());
+	}
+	if (what === 'sectionEditNextSectionCardinal'){
+		return getSectionsCurrentIndex() + 2;
+	}
+	if (what === 'presentationModeState'){
+		return !!getSong()?.presentationMode;
+	}
+	if (what === 'displayOptionsSaveState'){
+		return getDisplayOptionsSaveState();
+	}
+	if (what === 'displayOptionsClearState'){
+		return getDisplayOptionsClearState();
+	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);
 		if (pluginValue !== undefined) {
@@ -1241,5 +1482,6 @@ export function getValue(what){
 	return what;
 }
 
+setMenuRuntimeChildrenResolver(refreshSectionEditRuntimeChildren);
 setMenuValueResolver(getValue);
 setCmdActionRunner(performCmdAction);

@@ -56,6 +56,9 @@ import {
     projectListenerPlayedNotes,
     projectListenerRecordedNotes
 } from './move-helpers.js';
+import {
+    PalettePresentation
+} from './presentation.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -89,8 +92,17 @@ function setNoteClickedCaption(...args) { return notetableProviders.setNoteClick
 function showBeats() { return notetableProviders.showBeats(); }
 function turnOffHiding() { return notetableProviders.turnOffHiding(); }
 
-function createNotetableLookupContext(section = getCurrentSection()) {
-    return createLookupContext({ section });
+function createNotetableLookupContext(section = getCurrentSection(), tableID = '') {
+    // Table-scoped lookup context lets AutoColor see whether this table owns the
+    // noteRoot source, without changing the shared tonal model or listener paths.
+    const noteRootResult = section?.getNoteRoot?.(tableID) || null;
+    return createLookupContext({
+        section,
+        tableID,
+        tablename: tableID,
+        noteRootTablename: noteRootResult?.tablename || '',
+        rootID: noteRootResult ? NOTE_NAMES_ARRAY.indexOf(noteRootResult.noteName) : undefined
+    });
 }
 
 function getTuningByTableID(tableID) {
@@ -140,9 +152,7 @@ function getProjectedListenerRecordedNotesForBeat(replayOptions, beat, recordedN
 const LOCAL_FALLBACK_NOTE_FUNCTIONS = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
 
 export function isRecording(){
-    var btn = $("#btnRecord");
-    var recording = btn.attr("recording");
-    return ((recording != undefined) && recording == "true");
+    return getSong()?.isRecording?.() === true;
 }
 
 export function getPianoSkeuomorphicCellHeightPx(heightValue) {
@@ -188,11 +198,25 @@ export function getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, sc
 }
 
 export function getPianoSkeuomorphicBlackKeyWidthPx(widthValue) {
-    return getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR);
+    return getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
+        widthValue,
+        PIANO_SKEUOMORPHIC_BASELINE_WIDTH_SCALE_FACTOR,
+        PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO
+    );
 }
 
-export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) {
-    const scaledWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) / PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO;
+export function getPianoSkeuomorphicWhiteToBlackWidthRatio(ratioValue) {
+    const rawRatio = `${ratioValue ?? ''}`.replace(',', '.');
+    const parsed = Number.parseFloat(rawRatio);
+    if (!Number.isFinite(parsed)) {
+        return PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO;
+    }
+    return Math.max(1, Math.min(3, Math.round(parsed * 10) / 10));
+}
+
+export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, scaleFactorValue, ratioValue = PIANO_SKEUOMORPHIC_WHITE_TO_BLACK_WIDTH_RATIO) {
+    const widthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(ratioValue);
+    const scaledWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(widthValue, scaleFactorValue) / widthRatio;
     return Math.max(1, Math.round(scaledWidth * 100) / 100);
 }
 
@@ -316,10 +340,16 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
             if (pianoSkeuomorphic) {
                 const pianoHeight = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
                 const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
-                const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
+                const pianoWhiteToBlackWidthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(options.pianoWhiteToBlackWidthRatio);
+                const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
+                    w,
+                    options.pianoWidthScaleFactor,
+                    pianoWhiteToBlackWidthRatio
+                ) + "px";
                 h = pianoHeight;
                 cell.closest("table")
                     .css("--piano-white-key-width", pianoWhiteKeyWidth)
+                    .css("--piano-white-to-black-width-ratio", pianoWhiteToBlackWidthRatio)
                     .css("--piano-black-key-width", pianoBlackKeyWidth);
             }
 			var multiplier = 1;
@@ -414,8 +444,8 @@ export function colorNote(cell) {
     }
 }
 export function colorNoteInner(cell) {
+    let tableID = "";
     let result = {returnCause:Cause.ERROR, tableID: ""};
-    const lookupContext = createNotetableLookupContext(getCurrentSection());
     var styleNum = Note.STYLENUM_NAMED;
     var doHighlight = false;
     var doHighlightSingle = false;
@@ -423,7 +453,6 @@ export function colorNoteInner(cell) {
     var doEraseHighlight = cell.hasClass("noteHighlight");
     var doEraseHighlightSingle = cell.hasClass("noteHighlightSingle");
 
-    let tableID = "";
     let parentTableSel = "";
     var parentTable = cell.closest("table");
     if (parentTable){
@@ -432,6 +461,8 @@ export function colorNoteInner(cell) {
         result.tableID = tableID;
         parentTableSel = '#'+tableID+' ';
     }
+    // Build the lookup context after tableID is resolved so getNoteRoot targets the correct table.
+    let lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
@@ -474,9 +505,12 @@ export function colorNoteInner(cell) {
     }
     result.styleNum = styleNum;
 
-    var theColorClass = $("input:radio[name=rbColor]:checked").val();
-    var doKeep = "noteKeep" === theColorClass;
-    var doDropper = "noteDropper" === theColorClass;
+    var theColorClass = $("input:radio[name=rbColor]:checked").val()
+        || PalettePresentation.getLastRestorableRbColor().value;
+    const paletteMode = PalettePresentation.getMode();
+    var doKeep = paletteMode === 'keep';
+    var doDropper = paletteMode === 'dropper';
+    var doClear = paletteMode === 'clear';
     var doIndividualAutomatic = "noteAutomatic" === theColorClass;
 	var sBeatNum = getBeatNumber();
 	var cellcol = cell.attr("cellcol");//the optional one
@@ -527,9 +561,19 @@ export function colorNoteInner(cell) {
                 result.returnCause = Cause.DROPPER;
                 return result;
             }
+            if (doClear) {
+                const noteNameElements = $(parentTableSel+'.note' + noteName);
+                const namedNoteDiv = noteNameElements.find(".namedNote");
+                getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
+                clearNamedNoteDivs(namedNoteDiv);
+                noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+                clearPlayedNotesAtCell(cell, tableID);
+                result.returnCause = Cause.CLEAR;
+                return result;
+            }
             if (!doKeep) {
                 if (isRecording()){
-                    if (theColorClass != "noteClear"){
+                    if (!doClear){
                         if (styleNum == Note.STYLENUM_FINGERING){
                             handleRecordedNote(tableID, "Fingering");
                         } else if (styleNum == Note.STYLENUM_SINGLE){
@@ -548,6 +592,13 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.PLAYEDNOTE;
             return result;
         } else if (doHighlight){
+                if (!isRecording() && doClear) {
+                    clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
+                    clearPlayedNotesAtCell(cell, tableID);
+                    clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
+                    result.returnCause = Cause.CLEAR;
+                    return result;
+                }
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
                 $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
@@ -561,6 +612,13 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.HIGHLIGHT;
            return result;
        } else if (doHighlightSingle){
+               if (!isRecording() && doClear) {
+                   clearNamedNoteAtPitch(tableID, noteName, parentTableSel);
+                   clearPlayedNotesAtCell(cell, tableID);
+                   clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow);
+                   result.returnCause = Cause.CLEAR;
+                   return result;
+               }
            if (doEraseHighlightSingle){
                cell.removeClass("noteHighlightSingle");
                var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
@@ -595,15 +653,28 @@ export function colorNoteInner(cell) {
         var lenOtherClasses = namedNoteDiv.prop("className").replace('namedNote','').length; // .trim()???deal with spaces
         var noteAlreadyColored = (lenOtherClasses>0);
 
-		if (theColorClass == "noteClear"){  //color "noteClear" is hardcoded to mean actually clear/delete the note.
+		if (doClear){
 			getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
             clearNamedNoteDivs(namedNoteDiv);
             noteNameElements.find(".NoteDisplay").removeClass().addClass("NoteDisplay");
+            clearPlayedNotesAtCell(cell, tableID);
             result.returnCause = Cause.CLEAR;
 		} else {
             result.returnCause = Cause.NAMEDNOTE;
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
+
+            // When placing a noteRoot note, the model hasn't been updated yet so getNoteRoot
+            // won't find it. Rebuild context with explicit ownership so AutoColor promotion
+            // fires immediately on first placement without requiring a refresh.
+            if (theColorClass === 'noteRoot') {
+                lookupContext = createLookupContext({
+                    ...lookupContext,
+                    tablename: tableID,
+                    noteRootTablename: tableID,
+                    rootID: NOTE_NAMES_ARRAY.indexOf(noteName)
+                });
+            }
 
             var automaticColorClass = lookupUserColorClass(note, lookupContext);
             var noteAlreadyColoredWithCurrent  = namedNoteDiv.hasClass(automaticColorClass);
@@ -621,47 +692,103 @@ export function colorNoteInner(cell) {
         return result;
     }
 }
-
 export function dropper(cell, cellcol, cellrow, styleNum, noteName){
     var jCell = $(cell);
-    
-    //else styleNum ==> Single,Tiny,Bend.
+
     var tableID = "";
     var parentTable = jCell.closest("table");
     if (parentTable){
         var jParentTable =  $(parentTable);
         tableID = jParentTable.attr("id");
 
-        if (noteName && styleNum == 0){ //namedNote
-            var note = getCurrentSection().getSectionNotes(tableID).namedNotes[noteName];
-            if (note){
-                turnOffAutoColorCheckbox();
-
-                $("input[name=rbColor]")
-                    .css({"box-shadow": "none"}); //clear any previously highlighted
-
-                var foundColorClass = note.colorClass;
-                $("input[name=rbColor][value="+foundColorClass+"]")
-                    .prop('checked', true)
-                    .trigger('change')
-                    .css({"box-shadow": "0 0 10pt 20pt cyan"});
-
-                setNoteClickedCaption(cell, foundColorClass, styleNum);
-                $("td.note").css({"cursor": "auto"});
-            }
+        const note = findDropperNoteForCell({
+            tableID,
+            cellrow,
+            cellcol,
+            styleNum,
+            noteName
+        });
+        if (!note){
             return;
         }
 
-        var foundColorClass = jsonPath(getCurrentSection().noteTables, "$.."+tableID+"[?(@.col=="+cellcol+"  && @.row=="+cellrow+" && @.styleNum=="+styleNum+")].colorClass");
-        if (foundColorClass){
-        $("input[name=rbColor][value="+foundColorClass+"]")
+        const lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
+        const foundColorClass = selectDropperRadioForNote(note, lookupContext)
+            || note.colorClass
+            || lookupUserColorClass(note, lookupContext);
+
+        setNoteClickedCaption(cell, foundColorClass, note.styleNum ?? styleNum);
+    }
+}
+
+export function findDropperNoteForCell({
+    tableID,
+    cellrow,
+    cellcol,
+    styleNum,
+    noteName,
+    section = getCurrentSection()
+} = {}) {
+    if (!section || !tableID) {
+        return null;
+    }
+
+    const sectionNotes = section.getSectionNotes(tableID);
+    if (!sectionNotes) {
+        return null;
+    }
+
+    if (`${styleNum}` === `${Note.STYLENUM_NAMED}` && noteName) {
+        return sectionNotes.namedNotes?.[noteName] || null;
+    }
+
+    return findPlayedNoteAtCell(sectionNotes.playedNotes, cellrow, cellcol, styleNum);
+}
+
+function findPlayedNoteAtCell(playedNotes = [], cellrow, cellcol, styleNum) {
+    return (playedNotes || []).find((note) => {
+        return `${note?.row ?? ''}` === `${cellrow ?? ''}`
+            && `${note?.col ?? ''}` === `${cellcol ?? ''}`
+            && `${note?.styleNum ?? ''}` === `${styleNum ?? ''}`;
+    }) || null;
+}
+
+function getDropperRadioCandidateValues(note, lookupContext) {
+    const candidates = [];
+    const pushCandidate = (value) => {
+        if (!value || candidates.includes(value)) {
+            return;
+        }
+        candidates.push(value);
+    };
+
+    pushCandidate(note?.colorClass);
+    pushCandidate(lookupUserColorClass(note, lookupContext));
+    return candidates;
+}
+
+function selectDropperRadioForNote(note, lookupContext) {
+    if (!note) {
+        return null;
+    }
+
+    $("input[name=rbColor]").css({"box-shadow": "none"});
+
+    const candidateValues = getDropperRadioCandidateValues(note, lookupContext);
+    for (const value of candidateValues) {
+        const $radio = $(`input[name=rbColor][value="${value}"]`);
+        if ($radio.length > 0) {
+            turnOffAutoColorCheckbox();
+            PalettePresentation.ensureColorRadioVisible($radio);
+            $radio
                 .prop('checked', true)
                 .trigger('change')
                 .css({"box-shadow": "0 0 10pt 20pt cyan"});
-            setNoteClickedCaption(cell, foundColorClass, styleNum);
-            $("td.note").css({"cursor": "auto"});
+            return value;
         }
     }
+
+    return null;
 }
 
 export function styleNamedNote(theClass, theColorClass, noteName){
@@ -682,9 +809,49 @@ export function clearNamedNoteDivs(namedNoteDivs){
     namedNoteDivs.removeClass().addClass("namedNote");
 }
 
+function clearPlayedNotesAtCell(cell, tableID) {
+    if (!cell || !tableID) {
+        return;
+    }
+
+    const jCell = (cell && typeof cell.find === 'function') ? cell : $(cell);
+    const cellrow = `${jCell.attr("cellrow") ?? ""}`;
+    const cellcol = `${jCell.attr("cellcol") ?? ""}`;
+    if (!cellrow || !cellcol) {
+        return;
+    }
+
+    getCurrentSection().getSectionNotes(tableID).removePlayedNotesWhere((note) => {
+        return `${note?.row ?? ""}` === cellrow
+            && `${note?.col ?? ""}` === cellcol;
+    });
+
+    jCell.removeClass("OverlayRaisedForPiano");
+    jCell.find(".tinyNote").attr("class", "tinyNote").hide();
+    jCell.find(".singleNote").attr("class", "singleNote").hide();
+    jCell.find(".Fingering").attr("class", "Fingering").hide();
+}
+
+function clearNamedNoteAtPitch(tableID, noteName, parentTableSel = '') {
+    if (!tableID || !noteName) {
+        return;
+    }
+
+    const noteNameElements = $(parentTableSel + '.note' + noteName);
+    const namedNoteDiv = noteNameElements.find('.namedNote');
+    getCurrentSection().getSectionNotes(tableID).clearNamedNote(noteName);
+    clearNamedNoteDivs(namedNoteDiv);
+    noteNameElements.find('.NoteDisplay').removeClass().addClass('NoteDisplay');
+}
+
+function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
+    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass('noteHighlight');
+    $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']").removeClass('noteHighlightSingle');
+}
+
 
 export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
-    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection());
+    lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection(), tableID);
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
         var isNut = cell.hasClass("nut") || cell.hasClass("nutR");
@@ -747,13 +914,16 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 		textdiv =    jCell.find(".Fingering");
 		fingeringAlreadyPlayed = textdiv.hasClass(lookupUserColorClass(notePlayed, lookupContext));
         textdiv.removeClass().addClass("Fingering");
-		textdiv.show();
         jCell.removeClass("OverlayRaisedForPiano");
-		var radio = $("input:radio[name=rbHighlight]:checked");
-		var finger = radio.attr("finger");
-		textdiv.html(finger);
-		notePlayed.finger = finger;
-		notePlayed.colorClass = theColorClass;
+        if (clear || fingeringAlreadyPlayed) {
+            textdiv.hide();
+        } else {
+            var radio = $("input:radio[name=rbHighlight]:checked");
+            var finger = radio.attr("finger");
+            textdiv.html(finger);
+            notePlayed.finger = finger;
+            notePlayed.colorClass = theColorClass;
+        }
 		theMidiNotePlayedClass = "FingeringPlayed";
     } else if (styleNum == Note.STYLENUM_BEND){
         textdiv =    jCell.find(".tinyNote");
@@ -780,7 +950,7 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
 	        		textdiv.addClass(lookupUserColorClass(notePlayed, lookupContext));
                 textdiv.addClass(theMidiNotePlayedClass);
                 textdiv.show();//Playback called .hide()
-                if (styleNum == Note.STYLENUM_FINGERING) {
+                if ((styleNum == Note.STYLENUM_FINGERING || styleNum == Note.STYLENUM_BEND) && jCell.hasClass("noteBlackKey")) {
 					jCell.addClass("OverlayRaisedForPiano");
 				}
                 if (theBendClass){
@@ -890,7 +1060,8 @@ export function replayTable(replayOptions){
         $('#'+replayOptions.listenToTablename+'_captionRowTonalInfo').html(tonalPickerSet);
     }
 
-    const lookupContext = createNotetableLookupContext(currSection);
+    let tablename = replayOptions.tablename;
+    const lookupContext = createNotetableLookupContext(currSection, tablename);
     let relativeSectionText = replayOptions.relativeSection 
                                 ? "<span class='relativeSectionLabel'>"+replayOptions.relativeSection+"</span>" 
                                 : "";
@@ -901,7 +1072,6 @@ export function replayTable(replayOptions){
     let nnTablenameSelector = replayOptions.tablename
                         ? '#'+replayOptions.tablename+' '
                         : "";
-    let tablename = replayOptions.tablename;
     let listenToTablename = replayOptions.listenToTablename;
     const showBeatCounter = !!controlsToDisplayOptions().showLooperLightBeats;
     const currentBeatNumber = getBeatNumber();
@@ -962,7 +1132,8 @@ export function replayTable(replayOptions){
             }
         }
     } else {
-        $(nnTablenameSelector+'.namedNote').hide();
+        // Keep baseline lane text (especially nut labels) visible; hide only actual placed named notes.
+        $(nnTablenameSelector+'.namedNote.NamedNoteActive').hide();
     }
 
     var tablearr = null;
@@ -990,6 +1161,9 @@ export function replayTable(replayOptions){
                     textdiv.css("opacity",  getSong().singleNoteOpacity);
                 } else if (script.styleNum == Note.STYLENUM_BEND && !replayOptions.hideTinyNotes){
                     textdiv = $(this).find(".tinyNote");
+                    if ($(this).hasClass("noteBlackKey")) {
+                        $(this).addClass("OverlayRaisedForPiano");
+                    }
                     textdiv.addClass("tinyNotePlayedBend");
                     textdiv.addClass(script.bendValue);
                     textdiv.css("opacity",  getSong().tinyNoteOpacity);//tiny and bends go together on visibility and opacity
@@ -998,7 +1172,9 @@ export function replayTable(replayOptions){
                     if (script.finger){
                         textdiv.html(script.finger);
                     }
-                    $(this).addClass("OverlayRaisedForPiano");
+                    if ($(this).hasClass("noteBlackKey")) {
+                        $(this).addClass("OverlayRaisedForPiano");
+                    }
                     textdiv.addClass("FingeringPlayed");
                     textdiv.show();
                 }
@@ -1246,7 +1422,7 @@ export function showHighlightsForBeat(nBeat){
 //This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
     const currSection = getReplaySection(options);
-    const lookupContext = createNotetableLookupContext(currSection);
+    const lookupContext = createNotetableLookupContext(currSection, options.tablename);
     let tableSelector = '';
     if (options.tablename){
         tableSelector = '#'+options.tablename+' ';
@@ -1286,13 +1462,15 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass("noteHighlightSingle");
                 } else if (note.styleNum == Note.STYLENUM_FINGERING){
                     tdNote
-						.addClass("OverlayRaisedForPiano")
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
                         .addClass("Playback")
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .html(note.finger)  //finger (1234T) shown in cell here.
                         .show();
+                    if (tdNote.hasClass("noteBlackKey")) {
+						tdNote.addClass("OverlayRaisedForPiano");
+                    }
                 }  else if (note.styleNum == Note.STYLENUM_SINGLE){
                     tdNote
                         .find("div.singleNote")
@@ -1315,6 +1493,9 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                         .addClass(note.bendValue)
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
+                    if (tdNote.hasClass("noteBlackKey")) {
+                        tdNote.addClass("OverlayRaisedForPiano");
+                    }
                 }
             });
         }
@@ -1374,7 +1555,11 @@ export function clearAllForTable(tablename) {
     $(tableSelector+"td.note .Fingering").removeClass().addClass("Fingering");
 
     $(".noteHighlight").css("outline", "");
-    clearHighlights();
+    if (tablename) {
+        clearHighlightsForTable(tablename);
+    } else {
+        clearHighlights();
+    }
     colorWhiteBlackKeys();
 }
 

@@ -8,6 +8,7 @@ import {
     peekParentMenu,
     printMenuStack,
     printMenuStackBreadcrumbs,
+    refreshRuntimeChildren,
     resolveMenuValue,
     setMenuAtRoot,
     surfaceOneMenu
@@ -126,6 +127,10 @@ function preloadCmdLineFromInputMenu(inputMenu) {
     }
 }
 
+function getInputMenuCaption(inputMenu) {
+    return resolveMenuValue(inputMenu?.caption || '');
+}
+
 export function updateCmdLineView(addedCrumb){
     $("#CmdMenuStack").html(printMenuStack());
     $("#CmdMenuBreadcrumbs").html(printMenuStackBreadcrumbs(addedCrumb));
@@ -213,7 +218,7 @@ export function txtCmdLine_keypress(e) {
                 surfaceOneMenu();
             }
             var resultSuffix = actionResult.result ? " >> " + actionResult.result : "";
-            addCmdResults(targetMenu.input.caption+": "+inputval+resultSuffix);
+            addCmdResults(getInputMenuCaption(targetMenu.input)+": "+inputval+resultSuffix);
             clearCmdLine();
             updateCmdLineView(inputval);
             return;
@@ -238,14 +243,16 @@ export function txtCmdLine_keypress(e) {
     /** we are here, we aren't one of these:   {'/', '..', or  'RETURN'} and we aren't gathering inputs.  **/
 
     var menu = gMenuPointer;
+    refreshRuntimeChildren(menu);
     var children = menu.children;
     children.forEach((child, childIdx) => {
+        refreshRuntimeChildren(child);
         //now look in all children to see if user pressed the trigger for the child menu
         if (child.trigger == e.key){
             if (child.action && hasNoChildMenus(child)){
                 diveMenu(child,"showing-list-menu");
                 if (child.input) {
-                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + child.input.caption + " : ");
+                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + getInputMenuCaption(child.input) + " : ");
                     diveMenu(child.input, "");
                     updateCmdLineView();
                     preloadCmdLineFromInputMenu(child.input);
@@ -253,7 +260,7 @@ export function txtCmdLine_keypress(e) {
                     return;
                 } else {
                     var actionResult = gCmdActionRunner(child);
-                    child.bang = true;
+                    child.bang = actionResult.suppressBang !== true;
                     surfaceOneMenu();
                     if (actionResult.popOnBang && !actionResult.preserveMenuStack) {
                         surfaceOneMenu();
@@ -285,7 +292,17 @@ export function txtCmdLine_keypress(e) {
                     child.bang = false;
                     return;
                 } else {
-                    diveMenu(child, childIdx);
+                    if (child.action && child.guardBeforeDive) {
+                        var actionResult = gCmdActionRunner(child) || {};
+                        if (actionResult.preventDive) {
+                            addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
+                            e.preventDefault();
+                            clearCmdLine();
+                            updateCmdLineView(child.trigger);
+                            return;
+                        }
+                    }
+                   diveMenu(child, childIdx);
                     event.preventDefault();
                     clearCmdLine();
                     updateCmdLineView();
