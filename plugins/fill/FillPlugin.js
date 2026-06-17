@@ -17,22 +17,22 @@ const TARGET_TABLE_OPTION_LIMIT = 9;
 
 const FAMILY_CONFIG = {
   named: {
-    caption: 'NamedNote',
-    trigger: 'N',
+    caption: 'named',
+    trigger: 'n',
     styleNum: Note.STYLENUM_NAMED,
     supportsCopy: true,
     usesRange: false
   },
   single: {
-    caption: 'SingleNote',
-    trigger: 'S',
+    caption: 'single',
+    trigger: 's',
     styleNum: Note.STYLENUM_SINGLE,
     supportsCopy: false,
     usesRange: true
   },
   tiny: {
-    caption: 'TinyNote',
-    trigger: 'T',
+    caption: 'tiny',
+    trigger: 't',
     styleNum: Note.STYLENUM_TINY,
     supportsCopy: true,
     usesRange: true
@@ -980,9 +980,9 @@ NamedNote, SingleNote, and TinyNote fill.
 - mode = ${this.resolveValue('scaleFormula', { song })}
 - fret range = ${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()}
 - upper/lower string limit = ${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}
-- NamedNote = ${this.buildFamilySummary('named')}
-- SingleNote = ${this.buildFamilySummary('single')}; add TinyNote = ${this.resolveValue('singleAddTiny', { song })}
-- TinyNote = ${this.buildFamilySummary('tiny')}
+- named = ${this.buildFamilySummary('named')}
+- single = ${this.buildFamilySummary('single')}; add TinyNote = ${this.resolveValue('singleAddTiny', { song })}
+- tiny = ${this.buildFamilySummary('tiny')}
 
 NamedNote ignores fret and string limits.
 SingleNote and standalone TinyNote obey the configured fret and string limits.

@@ -189,9 +189,9 @@ import { gThemes } from './themes.js';
 		}
 		overwriteDefaultWithThemeValue(options, origThemeOptions);
 		overwriteDefaultWithControlValue(options);
-		console.log("orig:"+JSON.stringify(origThemeOptions));
-		console.log("default:"+JSON.stringify(defaultOptions));
-		console.log("new:"+JSON.stringify(options));
+		//console.log("orig:"+JSON.stringify(origThemeOptions));
+		//console.log("default:"+JSON.stringify(defaultOptions));
+		//console.log("new:"+JSON.stringify(options));
 
 		themeDiffResults(themeDiff(options, defaultOptions, origThemeOptions));
 		return options;

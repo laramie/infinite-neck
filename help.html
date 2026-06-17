@@ -489,11 +489,23 @@
             text-align: right; 
         }
 
+        .link-column {
+            columns: 8em auto; 
+            column-gap: 1em; 
+            width: 50%;
+            margin-left: 4em;
+            margin-bottom: 2em; 
+        }
 
-            
+        .link-column a {
+            display: block; 
+            margin-bottom: 0.2em; 
+            word-break: break-all; 
+        }
 
-    
-
+        #glossaryTable tr {
+            scroll-margin-top: 2.3em; 
+        }
 
     </style>
 </head>
@@ -723,7 +735,7 @@
     <p>Within Sections, one key is the root key for the band, and optionally, a separate root key for the "lead".
         <i>("Bill is playing F# over Dave and the band's B".)</i></p>
 
-    <p>Additionally, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, and this changes what Tonal.js will 
+    <p>Additionally, anyone playing a "<a href="#glossarynoteRoot">noteRoot</a>" determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js will 
         present as the chord set.
     </p>    
 
@@ -957,6 +969,7 @@
                         </ul>
                     </ul>
                 </li>
+                <li><a href="#TonalPicker">TonalPicker</a></li>
                 <li><a href="#options">Options</a></li>
                 <li><a href="#graveyard">The Graveyard</a></li>
                 <li><a href="#keymap">Keymap</a></li>
@@ -1032,7 +1045,7 @@
                     <li><a href="#chromeDevTools">Spelunking with Chrome DevTools</a></li>
                     <li><a href="#variableNames">Variables for Captions</a></li>
                     <li><a href="#transposeProgression">transposeProgression Family of Variables</a></li>
-
+                    <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
                 </ul>
                 <li><a href="#glossary">Glossary</a></li>
                 <li><a href="#themesGallery">Themes Gallery</a>
@@ -1134,7 +1147,7 @@
             express: a unique set of single letter names for each of the twelve tones of the chromatic scale.
             I do this by assigning names concretely, which apply in any 12-tone
             playing, assuming you know where the "root" is, or the key of the band or dominant instrument,
-            usually the bass player. (In <span class="productsmaller">infinite-neck</span>, anyone playing a "noteRoot" determines the apparent key, just like a Bass player would, 
+            usually the bass player. (In <span class="productsmaller">infinite-neck</span>, anyone playing a "<a href="#glossarynoteRoot">noteRoot</a>" determines the apparent key, just like a Bass player would, 
             and this changes what Tonal.js will 
         present as the chord set.) I used symbols familiar to Jazz and Session players, and added a few new ones
             where singular, concrete names were needed.
@@ -2348,7 +2361,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
          <br>
          <br>
          &bull;&nbsp;AutoColor chooses colors based on the note function colors: [note1, note2, ... note12],
-         which overrides noteChord, noteScale, and noteRoot.
+         which overrides noteChord, noteScale, and <a href="#glossarynoteRoot">noteRoot</a>.
          <br>&nbsp;&nbsp;So to see the color effect of filling, AutoColor button should be <span class="BtnPunchedOut">punched out</span>, not <span class="BtnPunchedIn">punched in</span>  .
  </p>
 
@@ -2705,6 +2718,176 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
         <li>"Wrap" means: if going forward and getting to the END, wrap back to the First Section; if going backwards past BEGIN, wrap to the Last Section.
     </ul>
 </p>
+
+
+<hr>
+<a name="TonalPicker"></a>
+<h2>TonalPicker</h2>
+<p>The TonalPicker is our widget that use <a href="https://tonaljs.github.io/tonal/docs">Tonal.js</a> to suggest chords and modes for the <span class="GUIReferenceInline">Chart</span>, based on the notes you have played.  We wrote it to be very visually compact so as not to clog up the screen real estate around each instrument.
+So it may take a quick minute to figure out where all the functions are and how to use it.
+</p>
+
+<p>
+    TonalPicker in <span class="GUIReferenceInline">Chart > Notes</span>
+    <br>
+    <br>
+    <img src="img/help/context/TonalPicker-chart-notes.png">
+
+</p>
+<p>
+    TonalPicker in each Instrument:
+    <br>
+    <br>
+    <img width="90%" src="img/help/context/TonalPicker.png">
+
+</p>
+<p>
+<table class="ExamplesTable">
+    <tr>
+        <th>Screenshot</th>
+        <th>Description</th>
+    </tr>
+
+    <tr>
+        <td>
+            <img src="img/help/context/TonalNamedNote.png">
+        <td>
+            This is the <b>tonalSourceSet</b> set to <b>N</b> - NamedNotes.
+            It means Tonal.js will only look at NamedNotes in the Instrument to determine chords and modes.
+            Pick this first, then Tonal.js will calculate all the possibilities.
+        </td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/help/context/TonalSingleNote.png">
+        </td>
+        <td>
+            This is the <b>tonalSourceSet</b> set to <b>S</b> - SingleNotes.
+            It means Tonal.js will only look at SingleNotes in the Instrument to determine chords and modes.
+            Pick this first, then Tonal.js will calculate all the possibilities.
+        </td>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/help/context/TonalTinyNote.png">
+        </td>
+        <td>
+            This is the <b>tonalSourceSet</b> set to <b>T</b> - TinyNotes.
+            It means Tonal.js will only look at TinyNotes in the Instrument to determine chords and modes.
+            Pick this first, then Tonal.js will calculate all the possibilities.
+        </td>
+        </td>
+    </tr>
+
+    <tr>
+        <td><img src="img/help/context/TonalGoodPossible.png"></td>
+        <td>&#x53EF; This Kanji character means "good" or "possible". The button shows (or hides) all good possibilities for chords
+            and modes.</td>
+    </tr>
+    <tr>
+        <td><img src="img/help/context/TonalSaveToChart.png"></td>
+        <td>&#x56F3; This Kanji character means "map", "drawing", or "plan". The button means "Save to Chart", which adds the selection to the
+            Chart.
+         If you have
+            multiple instruments,
+            some of them may not sync with the chart. Clicking this button makes this Instrument's saved
+            chord be
+            the reference for the Chart for the whole band.
+        </td>
+    </tr>
+    <tr>
+        <td><img src="img/help/context/Tonal-possible-chords.png">
+        </td>
+        <td>This is the list of possible chords, but you can't click on them. Click "chords:n" to choose a chord. This
+            list updates as you play notes or navigate Sections.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/help/context/TonalChords.png">
+        </td>
+        <td>This is the button that will open the chord picker dropdown.</td>
+    </tr>
+    <tr>
+        <td>
+            <img width="300" src="img/help/context/TonalChordClosed.png">
+        </td>
+        <td>This is the chord. Click "chords:n" to choose among the possible chords. In this case, there are two
+            possible chords, so the button reads "chords:2" .
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img width="300" src="img/help/context/TonalChordDropDown.png">
+        </td>
+        <td>This is the chord picker dropped down, after you have clicked "chords:2" in this case, showing you all the
+            chords as clickable links. Choose one, then the chosen chord appears in bold where before it may have said
+            &lt;choose&gt; or the previous chord you chose.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img width="300" src="img/help/context/TonalChordChosen.png">
+        </td>
+        <td>
+            This is the chord picker after you have chosen <b>CM</b>, a C Major chord. The yellow value in the list of
+            possible chords
+            means it is saved in the Instrument in the Section. The bold value means it is in the Chart. If you have
+            multiple instruments,
+            some of them may not sync with the chart. Clicking the Save to Chart button makes this Instrument's saved
+            chord be
+            the reference for the Chart for the whole band.  The first chord that is chosen for this Section automatically 
+            saves this Instrument's choice to the Chart, so you don't need to click the "Save to Chart" button.
+        </td>
+    </tr>
+
+
+</table>
+</p>
+<p>
+    The controls for modes are the same as for chords.
+</p>
+
+
+<a name="tonalChordNames"></a>
+<h3>Tonal.js Chord Names</h3>
+
+<p>Here is the full list of chord names from Tonal.js:
+<pre>
+            > console.dir(ChordType.symbols().sort(), { maxArrayLength: null });
+            [
+            '+add#9',     '11',      '11b9',      '13',       '13#11',
+            '13#9',       '13#9#11', '13b5',      '13b9',     '13b9#11',
+            '13no5',      '13sus4',  '4',         '5',        '6',
+            '69#11',      '6add9',   '7',         '7#11',     '7#11b13',
+            '7#5',        '7#5#9',   '7#5b9',     '7#5b9#11', '7#5sus4',
+            '7#9',        '7#9#11',  '7#9#11b13', '7#9b13',   '7add6',
+            '7b13',       '7b5',     '7b6',       '7b9',      '7b9#11',
+            '7b9#9',      '7b9b13',  '7b9b13#11', '7no5',     '7sus4',
+            '7sus4b9b13', '9',       '9#11',      '9#11b13',  '9#5',
+            '9#5#11',     '9b13',    '9b5',       '9no5',     '9sus4',
+            'M',          'M#5add9', 'M13#11',    'M6#11',    'M7#5sus4',
+            'M7add13',    'M7b5',    'M7b6',      'M7b9',     'M7sus4',
+            'M9#5sus4',   'M9b5',    'M9sus4',    'Madd9',    'Maddb9',
+            'Mb5',        'alt7',    'aug',       'b9sus',    'dim',
+            'dim7',       'm',       'm#5',       'm/ma7',    'm11',
+            'm11A',       'm13',     'm6',        'm69',      'm7',
+            'm7#5',       'm7add11', 'm7b5',      'm9',       'm9#5',
+            'm9b5',       'mM9',     'mMaj7b6',   'mMaj9b6',  'madd4',
+            'madd9',      'maj#4',   'maj13',     'maj7',     'maj7#5',
+            'maj7#9#11',  'maj9',    'maj9#11',   'maj9#5',   'mb6M7',
+            'mb6b9',      'o7M7',    'oM7',       'sus2',     'sus24',
+            'sus4'
+            ]
+
+</pre>
+
+
+</p>
+
+
 
 
 <hr>
@@ -4624,54 +4807,53 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <img width="30%" src="img/help/G-maj-in-C.png">
 
 </p>
-
-<p>Here is the full list of chord names from Tonal.js:
-<pre>
-            > console.dir(ChordType.symbols().sort(), { maxArrayLength: null });
-            [
-            '+add#9',     '11',      '11b9',      '13',       '13#11',
-            '13#9',       '13#9#11', '13b5',      '13b9',     '13b9#11',
-            '13no5',      '13sus4',  '4',         '5',        '6',
-            '69#11',      '6add9',   '7',         '7#11',     '7#11b13',
-            '7#5',        '7#5#9',   '7#5b9',     '7#5b9#11', '7#5sus4',
-            '7#9',        '7#9#11',  '7#9#11b13', '7#9b13',   '7add6',
-            '7b13',       '7b5',     '7b6',       '7b9',      '7b9#11',
-            '7b9#9',      '7b9b13',  '7b9b13#11', '7no5',     '7sus4',
-            '7sus4b9b13', '9',       '9#11',      '9#11b13',  '9#5',
-            '9#5#11',     '9b13',    '9b5',       '9no5',     '9sus4',
-            'M',          'M#5add9', 'M13#11',    'M6#11',    'M7#5sus4',
-            'M7add13',    'M7b5',    'M7b6',      'M7b9',     'M7sus4',
-            'M9#5sus4',   'M9b5',    'M9sus4',    'Madd9',    'Maddb9',
-            'Mb5',        'alt7',    'aug',       'b9sus',    'dim',
-            'dim7',       'm',       'm#5',       'm/ma7',    'm11',
-            'm11A',       'm13',     'm6',        'm69',      'm7',
-            'm7#5',       'm7add11', 'm7b5',      'm9',       'm9#5',
-            'm9b5',       'mM9',     'mMaj7b6',   'mMaj9b6',  'madd4',
-            'madd9',      'maj#4',   'maj13',     'maj7',     'maj7#5',
-            'maj7#9#11',  'maj9',    'maj9#11',   'maj9#5',   'mb6M7',
-            'mb6b9',      'o7M7',    'oM7',       'sus2',     'sus24',
-            'sus4'
-            ]
-
-</pre>
-
-
-</p>
-
-
 <hr>
 <a name="glossary"></a>
 <h1>Glossary</h1>
 <p>
+    <div id="glossaryLinks" class="link-column">
+        <a href="#glossaryBanjoNut">BanjoNut</a>
+        <a href="#glossaryBeat">Beat</a>
+        <a href="#glossaryBend">Bend</a>
+        <a href="#glossaryCell">Cell</a>
+        <a href="#glossaryClone">Clone</a>
+        <a href="#glossaryDiamondRows">DiamondRows</a>
+        <a href="#glossaryDisplayOptions">DisplayOptions</a>
+        <a href="#glossaryFingering">Fingering</a>
+        <a href="#glossaryHighlight">Highlight</a>
+        <a href="#glossaryInstrument">Instrument</a>
+        <a href="#glossaryMIDINumber">MIDINumber</a>
+        <a href="#glossaryMulti">Multi</a>
+        <a href="#glossaryNamedNote">NamedNote</a>
+        <a href="#glossaryNoteFunctions">NoteFunctions</a>
+        <a href="#glossaryNoteNames">NoteNames</a>
+        <a href="#glossarynoteRoot">noteRoot</a>
+        <a href="#glossaryPitch">Pitch</a>
+        <a href="#glossaryPlayedNote">PlayedNote</a>
+        <a href="#glossarypre-bend">pre-bend</a>
+        <a href="#glossaryRecordedNote">RecordedNote</a>
+        <a href="#glossaryRootChordScale">Root/Chord/Scale</a>
+        <a href="#glossaryRoot">Root</a>
+        <a href="#glossarySection">Section</a>
+        <a href="#glossarysemitone">semitone</a>
+        <a href="#glossaryShallowClone">ShallowClone</a>
+        <a href="#glossarySingleNote">SingleNote</a>
+        <a href="#glossarySpecialRows">SpecialRows</a>
+        <a href="#glossaryTheme">Theme</a>
+        <a href="#glossaryTinyNote">TinyNote</a>
+        <a href="#glossaryTonal-js">Tonal.js</a>
+        <a href="#glossaryTunings">Tunings</a>
+        <a href="#glossaryup-down">up-down</a>
+    </div>
 
-    <table class="CheatSheet menuExample" cellspacing="0" border="1">
+    <table id="glossaryTable" class="CheatSheet menuExample" cellspacing="0" border="1">
         <tr>
             <th>Term
             </th>
             <th>Definition
             </th>
         </tr>
-        <tr>
+        <tr id="glossaryNoteNames">
             <td>Note Names
             </td>
             <td>Names of notes in the octave: [A, A#, B, B#, ..., G#] or [A, B&#9837;, ...].
@@ -4681,7 +4863,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 Also, <span class="productsmaller">infinite-neck</span> does not display the enharmonic names such as B#, or C##.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryNoteFunctions">
             <td>Note Functions
             </td>
             <td>What a note functions as.  For example, in the key of C, the note G functions as "the Five" (or "V").
@@ -4692,7 +4874,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 with this by assigning a unique symbol to each Note Function: a dominant seven is &delta; and a major seven is &Delta;.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryMIDINumber">
             <td>MIDI Number
             </td>
             <td>The MIDI specification assigns an integer to each pitch within a range from 0 to 127, a superset of the piano range.
@@ -4722,7 +4904,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is a special type of TinyNote, so you can't use both in one cell.)  TinyNotes (and Bends) are special in that they follow LeadKey (set on the SectionDrawer) in coloring and Function.  If you have LeadKey set to G and Key set to C, the TinyNote at G will display Function I, but the NamedNote at G will display V. But if you have LeadKey set to "root", which is the default, then the TinyNote will display the Function V, the same as a NamedNote or SingleNote in that same cell.  
             </td>
         </tr>
-        <tr  id="glossaryBend">
+        <tr id="glossaryBend">
             <td>Bend
             </td>
             <td>A special type of TinyNote, which shows the range of notes that bending (stretching) a string moves through.
@@ -4748,28 +4930,28 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>Any SingleNote, TinyNote, Bend, or Highlight (Pitch or Multi), that is placed when <span class="GUIReferenceInline">REC</span> is in effect, that is, when <u>recording</u>, are RecordedNotes.  NamedNotes are never RecordedNotes.  Any note placed while not recording is either a NamedNote or a PlayedNote.
             </td>
         </tr>
-        <tr>
+        <tr id="glossarysemitone">
             <td>semitone
             </td>
             <td>A half-step, e.g. from C to C#.  A semitone Bend is where you stretch the string so that the pitch that sounds is
                 a half-step (semitone) above where the fretted pitch would be if played relaxed.
             </td>
         </tr>
-        <tr>
+        <tr id="glossarypre-bend">
             <td>pre-bend
             </td>
             <td>A pre-bend is where you bend the note up before
             plucking the string, and then release the tension so that the pitch drops.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryup-down">
             <td>up-down
             </td>
             <td><span class="productsmaller">infinite-neck</span> calls it an "up-down" bend where you start off relaxed, sound the note, then bend up
             and then release the tension so the pitch comes back down.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryFingering">
             <td>Fingering
             </td>
             <td>Which finger you use to play each note: 1, 2, 3, 4, T correspond to Index finger, Middle finger, Ring finger, Pinkie, and Thumb.
@@ -4781,7 +4963,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 Also, "Fingering" can means simply placing a finger on a string at a fret.
             </td>
         </tr>
-        <tr>
+        <tr id="glossarySection">
             <td>Section
             </td>
             <td>Corresponds roughly to a Bar of music.  Except that if the groove and key stay the same,
@@ -4814,7 +4996,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryBeat">
             <td>Beat
             </td>
             <td>One display of notes within a Section.  At every beat change, you can change SingleNotes, TinyNotes, and Highlights, but you don't have to.
@@ -4827,7 +5009,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 in each Section.  If you want to show fingering on the 1/8th note, put 8 Beats per Section, and set BPM to 160.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryInstrument">
             <td>Instrument
             </td>
             <td>In <span class="productsmaller">infinite-neck</span>, an Instrument is one display of the neck.
@@ -4837,7 +5019,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 we call it two Instruments.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryTunings">
             <td>Tunings
             </td>
             <td>Each set of pitches on one instrument is called a Tuning.  So for 6-string guitar, DADGAD would be one Tuning, P4 would be another Tuning.
@@ -4846,7 +5028,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             </td>
         </tr>
-        <tr>
+        <tr id="glossarySpecialRows">
             <td>Special Rows (SR)
             </td>
             <td>In Tunings, "Special Rows" checkboxes, showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
@@ -4856,7 +5038,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryDiamondRows">
             <td>Diamond Rows
             </td>
             <td>In "My Tunings", or the "All Tunings" library, the column "Diamonds" checkmark causes the 
@@ -4872,7 +5054,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryBanjoNut">
             <td>Banjo Nut (BN)
             </td>
             <td>In "Tunings in Song", the values in column "BN" causes the 
@@ -4882,21 +5064,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 Library such as "Piano" that has only one "string".
             </td>
         </tr>
-        <tr>
+        <tr id="glossarynoteRoot">
             <td>noteRoot
             </td>
             <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js will 
         present as the chord set.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
+        <br>However, "noteRoot" means something a little different in the context of <a href="#divFillNotes">Fill Notes</a> and in the command-line version in <a href="help-plugins.html#plugin-fill">FillPlugin</a>.  There it means the Fill will place a noteRoot for you.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryRoot">
             <td>Root
             </td>
             <td>The note at the first degree of a scale or mode.  Also, the Root Key (or Key of the Root Note).
                 So in A minor, A is the Root and the Root Key.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryRootChordScale">
             <td>Root/Chord/Scale - in Fill
             </td>
             <td>Root would be the home note of the key of the bass player,
@@ -4911,13 +5094,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 perfectly with a C m7b5.  These are all available in the Fill menu dropdowns.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryCell">
             <td>Cell
             </td>
             <td>One spot on the neck -- one string at one fret.  The term comes from spreadsheets, since we use HTML tables to model the fretboard.
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryTheme">
             <td>Theme
             </td>
             <td>A collection of styles, shapes, and sizes for the display of the instrument neck.  There are built-in <a href="#themesGallery">Themes</a>
@@ -4979,9 +5162,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 
             </td>
         </tr>
-        <tr>
+        <tr id="glossaryClone">
             <td>
-                <a name="glossaryClone"></a>
                 <br>
                 Clone
             </td>
@@ -4997,10 +5179,20 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 but show different chords or fingerings in a new Section.
             </td>
         </tr>
+        <tr id="glossaryTonal-js">
+            <td>Tonal.js
+            </td>
+            <td><b>Tonal.js</b> is an excellent Open-Source library that is widely used to detect chords and modes.  
+                <span class="productsmaller">infinite-neck</span> uses Tonal.js in the <a href="#TonalPicker">TonalPicker</a> 
+                above each instrument, in the Chart &gt; Notes page, and 
+                in the <a href="help-plugins.html#plugin-tonal">TonalPlugin</a> where you can also print out all the modes (including
+                all non-Western modes) with command-line <span class="CmdLineExample">/fpop</span>
+                <br>See: <a href="#tonalChordNames">Tonal.js Chord Names</a>
+            </td>
+        </tr>
     </table>
 </p>
 <br>
-
 <hr>
 <a name="themesGallery"></a>
 <h2>Themes Gallery</h2>

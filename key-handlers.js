@@ -435,51 +435,51 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger0');
-				activateUiControl('#idRFinger0');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#rbFinger0');
+				paletteUtils.activateUiControl('#idRFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger1');
-				activateUiControl('#rbFinger1');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger1');
+				paletteUtils.activateUiControl('#rbFinger1');
                 break;
             case "2":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger2');
-				activateUiControl('#rbFinger2');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger2');
+				paletteUtils.activateUiControl('#rbFinger2');
                 break;
             case "3":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger3');
-				activateUiControl('#rbFinger3');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger3');
+				paletteUtils.activateUiControl('#rbFinger3');
                 break;
             case "4":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger4');
-				activateUiControl('#rbFinger4');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger4');
+				paletteUtils.activateUiControl('#rbFinger4');
                 break;
             case "5":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFingerT');
-				activateUiControl('#rbFingerT');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFingerT');
+				paletteUtils.activateUiControl('#rbFingerT');
                 break;
             case "6":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idNamedNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idNamedNotes');
                 break;
             case "7":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idSingleNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idSingleNotes');
                 break;
             case "8":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idTinyNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idTinyNotes');
                 break;
             case "9":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbBend');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#rbBend');
                 break;
             case "0":
             	cycleThruNutWidths(-1);
@@ -514,12 +514,12 @@ function document_keypress(e) {
                 getSong().gotoNextSection(false);
                 break;
             case "[":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idMidiPitches');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idMidiPitches');
                 break;
             case "]":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idMidiPitchesSingle');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idMidiPitchesSingle');
                 break;
             default:
         }
@@ -994,7 +994,6 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "sectionAdd":
-			console.log("sectionAdd=====!!");
 			getSong().newSection(); //don't call addSection(section), which is an internal call.
 			actionResult.result = "added";
 			break;
@@ -1429,7 +1428,7 @@ export function getValue(what){
 	if (resolved !== undefined) {
 		return resolved;
 	}
-	console.log("key-handler.js::getValue::no-value-found::default:"+what);
+	//console.log("key-handler.js::getValue::no-value-found::default:"+what);
 	return what;
 }
 
