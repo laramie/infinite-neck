@@ -554,7 +554,10 @@ export function chuseStylesheet(dictkey){
             label.append(radio);
             label.append(""+obj.caption);
             label.addClass("userColorRB");
-            label.addClass(lookupUserColorClassByClass(captionClass));
+			label.addClass(lookupUserColorClassByClass(userColorClass));
+			if (captionClass !== userColorClass) {
+				label.addClass(lookupUserColorClassByClass(captionClass));
+			}
 			radio.val(userColorClass);
             $("#idRoleButtonsDest").append(label);
         }

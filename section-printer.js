@@ -860,7 +860,7 @@ export function printSectionsNotes(theSong, theSections){
                                                         tonalResult.chords, section.chartChord, 
                                                         tonalResult.scale,  section.chartMode,
                                                         tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
-            let noteRooTblNm =  tonalResult.noteRootTablename ? `: ${tonalResult.noteRootTablename}` : ''; 
+            let noteRooTblNm =  tonalResult.noteRootTablename ? `:Player: ${tonalResult.noteRootTablename.slice(Constants.TABLE_ID_PREFIX.length)}` : ''; 
             result += "<td><div class='SPN_CC'>" 
                             +(tonalResult.rootKey ? `<b>noteRoot${noteRooTblNm}:${tonalResult.rootKey}</b>&raquo;<br>` : '')
                             +chartChordsNotes+':'
