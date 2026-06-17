@@ -7,6 +7,7 @@
            font-size: 14pt;
            margin: 2em;
            margin-bottom: 0;
+           margin-top: 0;
            font-weight: normal;
        }
        a {
@@ -512,22 +513,13 @@
     </div>
 
 <div id="helpBody">
-
-<hr>
-<a name="about"></a>
-    <h1>About</h1>
-    <ul class="LinkList">
-        <li><a href="#instruments">Instruments</a></li>
-        <li><a href="#instrumentsInAction">Instruments in Action</a></li>
-        <li><a href="#walkthrough">infinite-neck Walk-through</a></li>
-    </ul>
-
+   <a name="about"></a>
     <p class="bigpoint">
 
         <span class="productsmaller">infinite-neck</span> is a web app that helps you learn the entire fretboard of your instrument, 
         for soloing, comping, playing
         chords, arpeggios, and modes the way professional session players do.</p>
-        <p>It teaches you how to understand music changes,
+        <p>It teaches you how to understand musical <i>changes</i>,
         such as a I-IV-V progression, so that you can play in any key, and gives you tools to move your practice through keys
         and transpositions. Using strong visuals to grow your pattern-recognition skills, it guides you through practices, and
         lets you record and notate songs, progressions, chords, licks, and modes you are working on. We support many
@@ -544,6 +536,13 @@
              title="P4 Guitar with skeuomorphic Theme: 'Guitar Black'"  >
         <figcaption>P4 Guitar with skeuomorphic Theme: 'Guitar Black'</figcaption>
     </figure>
+
+    <h1>About</h1>
+    <ul class="LinkList">
+        <li><a href="#instruments">Instruments</a></li>
+        <li><a href="#instrumentsInAction">Instruments in Action</a></li>
+        <li><a href="#walkthrough">infinite-neck Walk-through</a></li>
+    </ul>
 
     <p class="bigpoint"><span class="productsmaller">infinite-neck</span> helps you visualize notes across the neck of your instrument.
     </p>
@@ -847,7 +846,7 @@
                  <li>See the difference between tunings in real time by having one <a href="#event-wiring">Listen</a> to the other.
                  <li>Transpose a song into a new key.   
                  <li>Transpose a melody over a set of changes while writing a song.   
-                 <li>Practice a song someone has saved in some other tuning, by observing it to your tuning (see <a href="#event-wiring">listeners</a>).
+                 <li>Practice a song someone has saved in some other tuning, by observing it in your tuning (see <a href="#event-wiring">listeners</a>).
              </ul>
              </p>
        <p>Contact <a href="http://LaramieCrocker.com/contact.html">Laramie</a> with any questions, comments, or gripes.  </p>
@@ -863,6 +862,7 @@
     <li><a href="https://www.youtube.com/watch?v=qwNUnLNGCKQ&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=1">Intro</a>
     <li><a href="https://www.youtube.com/watch?v=rCRxt7ORFLg&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=2">GUI Menus</a>
     <li><a href="https://www.youtube.com/watch?v=ZlUYsMzNE_U&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm">Chord Shapes (P4/S6)</a>
+    <li><a href="https://www.youtube.com/watch?v=rgi9jZxU2Ec&list=PLV4jldN8QYI3SEchaKVF-HQTfMugR4tVm&index=5">Finding chords & modes with Tonal.js</a>
     </ul>
 </p>
 
@@ -1673,10 +1673,103 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         </p>
 
 
-
 <a name="transportNavigationTable"></a>
 <h4>Transport Navigation Table</h4>
-<p>This table summarizes the transport navigation commands available in the app. The Menu column shows the command-line path, and the UI column names the related transport control when one exists.</p>
+    <style>
+        .insetTransportBeat {
+            box-shadow: inset 2px 5px 20px black;
+            border-radius: 5px;
+            padding: 0.1em;
+            display: inline-block;
+        }
+        #btnPrevSection, #btnNextSection, #btnFirstSection, #btnLastSection {
+            font-size:  70%;
+            background: #ffbf00;
+            box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
+            border-radius: 20%;
+            border: 1px solid gray;
+            transition: all 0.1s ease;
+        }
+        #btnPrevBeat, #btnNextBeat {
+            background-color: lightgreen;
+        border: 1px solid green;
+            transition: all 0.1s ease;
+            margin: 0;
+            padding: 0;
+        }
+        .spanLeadDifferentFromRoot,
+        .lblRootID,
+        .lblRootIDLead,
+        .lblRootIDRelative,
+        .lblRootIDLeadRelative {
+            box-shadow: inset 2px 2px 5px 2px #555;
+            border-radius: 4px;
+            padding: 0.2em;
+            background-color: #dfd;
+            font-size:  75%;
+            color: black;
+            display: inline-block;
+            height: 1.35em;
+            width: 1.35em;
+            padding-bottom: 0;
+        }
+        .lblRootIDLead_active {
+            background-color: aqua;
+        }
+
+
+        .toolWindowRounded {
+            color: black;
+            border: 1px solid black;
+            padding: 1em;
+            margin: 0;
+            margin-top: 0em;
+            background-color: #dfd;
+            font-size:  100%;
+            box-shadow: inset 0 0 10pt 4pt  black;
+        }
+        #lblSectionsStatus {
+            display: inline-block;
+            width: 2.4em;
+            text-align: left;
+            color: black;
+        }
+
+    </style>
+    <p>The Transport:
+
+    <span class="noselect topControlsSections toolWindowRounded">
+        <span class="insetTransportBeat"
+            style="border: 1px solid green; padding: 0.2em; text-align: center; vertical-align: middle;">
+            <span class="lblRootID">C</span>
+            <span class="lblRootIDLead">G</span>
+            <button id="btnFirstSection" class="downyButton" type="button" tabindex="-1">&#x21E4;</button>
+            <button id="btnPrevSection" class="downyButton" type="button" tabindex="-1">&laquo;</button>
+            <small style="margin-left: 0.6em; font-size: 50%">&sect;</small><span style="vertical-align: middle"
+                id="lblSectionsStatus">1/2</span>
+            <button id="btnNextSection" class="downyButton" type="button" tabindex="-1">&raquo;</button>
+            <button id="btnLastSection" class="downyButton" type="button" tabindex="-1">&#x21E5;</button>
+            &nbsp;
+            <span class="insetTransportBeat"
+                style="border: 1px solid green; text-align: center;vertical-align: middle;">
+                <button class="redButton downyButton" id="btnPrevBeat" type="button" tabindex="-1">&laquo;</button>
+                <span id="lblBeatCounter"><span id="lblBeat"></span><small>1/4</small><span id="lblBeats"></span></span>
+                <button class="redButton downyButton" id="btnNextBeat" type="button" tabindex="-1">&raquo;</button>
+                <button id="btnLoopBeats" class="redButton downyButton" type="button" tabindex="-1">&infin;</button>
+            </span>
+        </span>
+        <span class="bpm"></span>&nbsp;<button id="btnRecord" class="RecordButton ArmedButton" type="button"
+            tabindex="-1">REC</button>
+        <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>
+        <button id="btnEditSection" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">&sect;</button>
+    </span>
+    </p>
+    
+
+
+<p>This table summarizes the transport navigation commands available in the app. 
+    The <b>Menu</b> column shows the command-line path, and the <b>UI</b> column 
+    shows the button in the Transport.  </p>
 
 <table class="ExamplesTable">
     <tr>
@@ -1687,20 +1780,42 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <th>UI</th>
     </tr>
     <tr>
-        <td>LoopSong</td>
-        <td><span class="key"> l</span></td>
-        <td><span class="menuExampleLine"><b><small>/rl</small></b></span></td>
-        <td>toggleLoopSections</td>
-        <td>Loop Song button</td>
+        <td>FirstSection</td>
+        <td><span class="key"> &lt;</span></td>
+        <td><span class="menuExampleLine"><b><small>/rsf</small></b></span></td>
+        <td>firstSection</td>
+        <td>
+            <button id="btnFirstSection" class="downyButton" type="button" tabindex="-1">&#x21E4;</button>&nbsp;&nbsp;
+        </td>
     </tr>
     <tr>
-        <td>SectionBegin</td>
-        <td></td>
-        <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
-        <td>gotoFirstBeat</td>
-        <td></td>
+        <td>PrevSection</td>
+        <td><span class="key"> ,</span></td>
+        <td><span class="menuExampleLine"><b><small>/rsp</small></b></span></td>
+        <td>prevSection</td>
+        <td>
+            <button id="btnPrevSection" class="downyButton" type="button" tabindex="-1">&laquo;</button>&nbsp;&nbsp;
+        </td>
     </tr>
     <tr>
+        <td>NextSection</td>
+        <td><span class="key"> .</span></td>
+        <td><span class="menuExampleLine"><b><small>/rsn</small></b></span></td>
+        <td>nextSection</td>
+        <td>
+            <button id="btnNextSection" class="downyButton" type="button" tabindex="-1">&raquo;</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>LastSection</td>
+        <td><span class="key"> &gt;</span></td>
+        <td><span class="menuExampleLine"><b><small>/rsl</small></b></span></td>
+        <td>lastSection</td>
+        <td>
+            <button id="btnLastSection" class="downyButton" type="button" tabindex="-1">&#x21E5;</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+        <tr>
         <td>FirstBeat</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
@@ -1708,25 +1823,22 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <td></td>
     </tr>
     <tr>
-        <td>FirstSection</td>
-        <td><span class="key"> &lt;</span></td>
-        <td><span class="menuExampleLine"><b><small>/rsf</small></b></span></td>
-        <td>firstSection</td>
-        <td>First Section button</td>
-    </tr>
-    <tr>
         <td>PrevBeat</td>
         <td><span class="key"> b</span></td>
         <td><span class="menuExampleLine"><b><small>/rbp</small></b></span></td>
         <td>prevBeat</td>
-        <td>Previous Beat button</td>
+        <td>
+            <button class="redButton downyButton" id="btnPrevBeat" type="button" tabindex="-1">&laquo;</button>&nbsp;&nbsp;
+        </td>
     </tr>
     <tr>
         <td>NextBeat</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rbn</small></b></span></td>
         <td>nextBeat</td>
-        <td>Next Beat button</td>
+        <td>
+            <button class="redButton downyButton" id="btnNextBeat" type="button" tabindex="-1">&raquo;</button>&nbsp;&nbsp;
+        </td>
     </tr>
     <tr>
         <td>LastBeat</td>
@@ -1736,32 +1848,50 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <td></td>
     </tr>
     <tr>
-        <td>PrevSection</td>
-        <td><span class="key"> ,</span></td>
-        <td><span class="menuExampleLine"><b><small>/rsp</small></b></span></td>
-        <td>prevSection</td>
-        <td>Previous Section button</td>
-    </tr>
-    <tr>
-        <td>NextSection</td>
-        <td><span class="key"> .</span></td>
-        <td><span class="menuExampleLine"><b><small>/rsn</small></b></span></td>
-        <td>nextSection</td>
-        <td>Next Section button</td>
-    </tr>
-    <tr>
-        <td>LastSection</td>
-        <td><span class="key"> &gt;</span></td>
-        <td><span class="menuExampleLine"><b><small>/rsl</small></b></span></td>
-        <td>lastSection</td>
-        <td>Last Section button</td>
+        <td>LastBeatInSong</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rsL</small></b></span></td>
+        <td>gotoLastBeatInSong</td>
+        <td></td>
     </tr>
     <tr>
         <td>LoopBeats</td>
         <td></td>
         <td><span class="menuExampleLine"><b><small>/re</small></b></span></td>
         <td>toggleLoopBeats</td>
-        <td>Loop Beats button</td>
+        <td>
+            <button id="btnLoopBeats" class="redButton downyButton" type="button" tabindex="-1">&infin;</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>RECORD beats</td>
+        <td><span class="key">SHIFT-R</span></td>
+        <td><span class="menuExampleLine"><b><small>/rr</small></b></span></td>
+        <td>REC</td>
+        <td>
+            <button id="btnRecord" class="RecordButton ArmedButton" type="button"
+            tabindex="-1">REC</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+
+
+
+
+    <tr>
+        <td>LoopSong</td>
+        <td><span class="key"> l</span></td>
+        <td><span class="menuExampleLine"><b><small>/rl</small></b></span></td>
+        <td>toggleLoopSections</td>
+        <td>
+            <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>SectionBegin</td>
+        <td></td>
+        <td><span class="menuExampleLine"><b><small>/rbf</small></b></span></td>
+        <td>gotoFirstBeat</td>
+        <td></td>
     </tr>
     <tr>
         <td>RestartSection</td>
@@ -1775,7 +1905,9 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <td><span class="key"> &lt;</span></td>
         <td><span class="menuExampleLine"><b><small>/rs0</small></b></span></td>
         <td>firstSection</td>
-        <td>First Section button</td>
+        <td>
+            <button id="btnFirstSection" class="downyButton" type="button" tabindex="-1">&#x21E4;</button>&nbsp;&nbsp;
+        </td>
     </tr>
     <tr>
         <td>ResetSong</td>
@@ -1789,13 +1921,6 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <td></td>
         <td><span class="menuExampleLine"><b><small>/rsR</small></b></span></td>
         <td>resetSongHard</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>LastBeatInSong</td>
-        <td></td>
-        <td><span class="menuExampleLine"><b><small>/rsL</small></b></span></td>
-        <td>gotoLastBeatInSong</td>
         <td></td>
     </tr>
 </table>
@@ -4946,7 +5071,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
  <a name="Pianos"></a>
 <h2>Pianos with "Piano Skeuo"</h2>
-    <p>These Pianos are not a Theme, but they are special in that they don't follow Themes, they have unique styling.</p>
+    <p>These Pianos are not a Theme, but they are special in that they don't follow Themes; they have unique styling.</p>
 <a name="piano-skeuomorphic.png"></a>
 <h3>Piano</h3>
      <p><img width="80%" src="img/help/piano-skeuomorphic.png"></p>

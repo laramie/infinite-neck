@@ -2,6 +2,7 @@
 :root {
   /* These are required by the theme() call in infinite-neck.js */
   --nut-gradient-color: brown;
+  --note-root-color: darkolivegreen;
   --diamonds-color: pink;
   --double-diamonds-color: aqua;
   --diamonds-background-color: transparent;
@@ -1314,6 +1315,9 @@ td.note small {
 }
 .noteHatched {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20px, var(--nut-gradient-color) 21px );
+}
+.noteHatchedRoot {
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--note-root-color) 20px, var(--note-root-color) 21px );
 }
 .noteHatched2 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, brown 10px, brown 14px );

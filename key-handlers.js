@@ -57,6 +57,7 @@ import {
 } from './infinite-neck.js';
 import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
+import * as paletteUtils from './paletteUtils.js';
 
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
@@ -531,56 +532,6 @@ function document_keypress(e) {
    	//  getValue :: turn a string Get request from a menu into a value.
 	//
 
-function check(id){
-	activateUiControl(id, { forceChange: true });
-}
-
-function checkAndTrigger(id){
-	activateUiControl(id, { forceChange: true });
-}
-
-function activateUiControl(id, options = {}) {
-	const {
-		forceChange = false
-	} = options;
-	const $el = $(id);
-	if (!$el || $el.length === 0) {
-		return false;
-	}
-
-	const el = $el[0];
-	if (el && typeof el.click === 'function') {
-		el.click();
-		return true;
-	}
-
-	const inputType = `${el?.type || $el.attr?.('type') || ''}`.toLowerCase();
-	const isCheckable = inputType === 'radio' || inputType === 'checkbox';
-	if (isCheckable) {
-		$el.prop('checked', true);
-	}
-	$el.trigger('click');
-	if (forceChange && isCheckable) {
-		$el.trigger('change');
-	}
-	return true;
-}
-
-function isSpecialPaletteModeSelected() {
-	const $checked = $('input[name="rbPaletteMode"]:checked').first();
-	if (!$checked || $checked.length === 0) {
-		return false;
-	}
-	const value = $checked.val();
-	return value === 'clear' || value === 'keep' || value === 'dropper';
-}
-
-function activatePaintModeIfSpecialSelected() {
-	if (!isSpecialPaletteModeSelected()) {
-		return false;
-	}
-	return activateUiControl('#idPaletteModePaint');
-}
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
 export function performCmdAction(menuItem, args){
@@ -1156,32 +1107,32 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						check("#rbFinger0");
-						checkAndTrigger("#idRFinger0");
+						paletteUtils.check("#rbFinger0");
+						paletteUtils.checkAndTrigger("#idRFinger0");
 						break;
 					case "1":
-					    check("#rbFinger1");
-						checkAndTrigger("#idRFinger1");
+					    paletteUtils.check("#rbFinger1");
+						paletteUtils.checkAndTrigger("#idRFinger1");
 						break;
 					case "2":
-					    check("#rbFinger2");
-					    checkAndTrigger("#idRFinger2");
+					    paletteUtils.check("#rbFinger2");
+					    paletteUtils.checkAndTrigger("#idRFinger2");
 						break;
 					case "3":
-					    check("#rbFinger3");
-					    checkAndTrigger("#idRFinger3");
+					    paletteUtils.check("#rbFinger3");
+					    paletteUtils.checkAndTrigger("#idRFinger3");
 						break;
 					case "4":
-					    check("#rbFinger4");
-					    checkAndTrigger("#idRFinger4");
+					    paletteUtils.check("#rbFinger4");
+					    paletteUtils.checkAndTrigger("#idRFinger4");
 						break;
 					case "5":
-					    check("#rbFingerT");
-						checkAndTrigger("#idRFingerT");
+					    paletteUtils.check("#rbFingerT");
+						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
 					case "t":
-					    check("#rbFingerT");
-						checkAndTrigger("#idRFingerT");
+					    paletteUtils.check("#rbFingerT");
+						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
 				}
 			}
@@ -1191,39 +1142,39 @@ export function performCmdAction(menuItem, args){
 				switch (args["key"]){
 					case "n":
 						activatePaintModeIfSpecialSelected();
-					    check("#idNamedNotes");
+					    paletteUtils.check("#idNamedNotes");
 						break;
 					case "s":
 						activatePaintModeIfSpecialSelected();
-						check("#idSingleNotes");
+						paletteUtils.check("#idSingleNotes");
 						break;
 					case "t":
 						activatePaintModeIfSpecialSelected();
-						check("#idTinyNotes");
+						paletteUtils.check("#idTinyNotes");
 						break;
 					case "b":
 						activatePaintModeIfSpecialSelected();
-						check("#rbBend");
+						paletteUtils.check("#rbBend");
 						break;
 					case "p":
 						activatePaintModeIfSpecialSelected();
-						check("#idMidiPitches");
+						paletteUtils.check("#idMidiPitches");
 						break;
 					case "m":
 						activatePaintModeIfSpecialSelected();
-						check("#idMidiPitchesSingle");
+						paletteUtils.check("#idMidiPitchesSingle");
 						break;
 					case "l":
-						check("#idPaletteModePaint");
+						paletteUtils.check("#idPaletteModePaint");
 						break;
 					case "k":
-						checkAndTrigger("#idPaletteModeKeep");
+						paletteUtils.checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						checkAndTrigger("#idPaletteModeClear");
+						paletteUtils.checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						checkAndTrigger("#idPaletteModeDropper");
+						paletteUtils.checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
@@ -1233,25 +1184,25 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "t":
-						checkAndTrigger("#idRTransparent");
+						paletteUtils.checkAndTrigger("#idRTransparent");
 						break;
 					case "a":
-						checkAndTrigger("#idRAutomatic");
+						paletteUtils.checkAndTrigger("#idRAutomatic");
 						break;
 					case "s":
-						checkAndTrigger("#idRScale");
+						paletteUtils.checkAndTrigger("#idRScale");
 						break;
 					case "r":
-						checkAndTrigger("#idRRoot");
+						paletteUtils.checkAndTrigger("#idRRoot");
 						break;
 					case "c":
-						checkAndTrigger("#idRChromatic");
+						paletteUtils.checkAndTrigger("#idRChromatic");
 						break;
 					case "p":
-						checkAndTrigger("#idRPassing");
+						paletteUtils.checkAndTrigger("#idRPassing");
 						break;
 					case "b":
-						checkAndTrigger("#idRBass");
+						paletteUtils.checkAndTrigger("#idRBass");
 						break;
 				}
 			}
@@ -1261,13 +1212,13 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRChord");
+						paletteUtils.checkAndTrigger("#idRChord");
 						break;
 					case "2":
-						checkAndTrigger("#idRChord2");
+						paletteUtils.checkAndTrigger("#idRChord2");
 						break;
 					case "3":
-						checkAndTrigger("#idRChord3");
+						paletteUtils.checkAndTrigger("#idRChord3");
 						break;
 				}
 			}
@@ -1277,13 +1228,13 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRColornote");
+						paletteUtils.checkAndTrigger("#idRColornote");
 						break;
 					case "2":
-						checkAndTrigger("#idRColornote2");
+						paletteUtils.checkAndTrigger("#idRColornote2");
 						break;
 					case "3":
-						checkAndTrigger("#idRColornote3");
+						paletteUtils.checkAndTrigger("#idRColornote3");
 						break;
 				}
 			}
@@ -1293,13 +1244,13 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRAvoid");
+						paletteUtils.checkAndTrigger("#idRAvoid");
 						break;
 					case "2":
-						checkAndTrigger("#idRAvoid2");
+						paletteUtils.checkAndTrigger("#idRAvoid2");
 						break;
 					case "3":
-						checkAndTrigger("#idRAvoid3");
+						paletteUtils.checkAndTrigger("#idRAvoid3");
 						break;
 				}
 			}
@@ -1309,10 +1260,10 @@ export function performCmdAction(menuItem, args){
 				activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRLead");
+						paletteUtils.checkAndTrigger("#idRLead");
 						break;
 					case "2":
-						checkAndTrigger("#idRLead2");
+						paletteUtils.checkAndTrigger("#idRLead2");
 						break;
 				}
 			}
@@ -1321,7 +1272,7 @@ export function performCmdAction(menuItem, args){
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
 			activatePaintModeIfSpecialSelected();
-			check("#rbBend");
+			paletteUtils.check("#rbBend");
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();

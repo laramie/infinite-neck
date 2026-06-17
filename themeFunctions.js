@@ -108,6 +108,7 @@ import { gThemes } from './themes.js';
 			setVal('#dropDownInstrumentBackground', 'instrumentBackground');
 			setVal('#dropDownInstrumentMargins', 'instrumentMargins');
 			setVal('#dropDownNutColor', 'nutColor');
+			setVal('#dropDownRootColor', 'rootColor');
 			setVal('#dropDownDiamondsSize', 'diamondsSize');
 			setVal('#dropDownDiamondsColor', 'diamondsColor');
 			setVal('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
@@ -156,6 +157,7 @@ import { gThemes } from './themes.js';
 			options.instrumentBackground = $('#dropDownInstrumentBackground').val();
 			options.instrumentMargins = $('#dropDownInstrumentMargins').val();
 			options.nutColor = $('#dropDownNutColor').val();
+			options.rootColor = $('#dropDownRootColor').val();
 			options.diamondsSize = $('#dropDownDiamondsSize').val();
 			options.diamondsColor = $('#dropDownDiamondsColor').val();
 			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor').val();
@@ -308,6 +310,7 @@ import { gThemes } from './themes.js';
 								 +"}"
 						 +" :root { "
 									+rule("--nut-gradient-color", "nutColor")
+									+rule("--note-root-color", "rootColor")
 									+rule("--diamonds-color", "diamondsColor")
 									+rule("--diamonds-background-color", "diamondsBackgroundColor")
 									+rule("--double-diamonds-color", "doubleDiamondsColor")
@@ -371,6 +374,7 @@ import { gThemes } from './themes.js';
 			showOptions('#dropDownInstrumentBackground', 'instrumentBackground');
 			showOptions('#dropDownInstrumentMargins', 'instrumentMargins');
 			showOptions('#dropDownNutColor', 'nutColor');
+			showOptions('#dropDownRootColor', 'rootColor');
 			showOptions('#dropDownDiamondsSize', 'diamondsSize');
 			showOptions('#dropDownDiamondsColor', 'diamondsColor');
 			showOptions('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');

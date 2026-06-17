@@ -20,16 +20,17 @@ export const gUserColorDictRolesDefault = {
             "caption": "Auto",
             "readonly": true
         },
+        "noteRoot": {
+            /*"colorClass": "noteBlack noteHatched",  specifically used --nut-gradient-color */
+            "colorClass": "noteBlack noteHatchedRoot", /* now uses --note-root-color */
+            "captionClass": "noteBlack",
+            "caption": "Root",
+            "tiny": "R"
+        },
         "noteScale":{
             "colorClass": "noteBlue2",
             "caption": "Scale",
             "tiny": "Sc"
-        },
-        "noteRoot": {
-            "colorClass": "noteBlack noteHatched",
-            "captionClass": "noteBlack",
-            "caption": "Root",
-            "tiny": "R"
         },
         "noteChord": {
              "colorClass": "noteRed4",
