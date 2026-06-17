@@ -182,6 +182,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     border-radius: 3px;
 }
 
+.colorDictLinkTD {
+    cursor: pointer;
+}
+
 .tblColorDicts td {
     width: 2em;
 }
@@ -205,7 +209,15 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 /* currentColorDict: a div around our table of user colors: tblColorDictOneRow */
 .currentColorDict {
     display: none;
-    height: 1em;
+    box-sizing: border-box;
+    clear: both;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 1em;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
     margin-top: 0.5em;
     margin-bottom: 0.4em;
 }
@@ -228,7 +240,8 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
   text-decoration: none;
 }
 .largeColorDict {
-    font-size: 130%;
+    font-size: 200%;
+    max-height: none;
 }
 .largeColorDict td {
     padding: 0.2em;

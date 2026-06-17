@@ -6,6 +6,19 @@ export function checkAndTrigger(id){
     activateUiControl(id, { forceChange: true });
 }
 
+export function paletteRadioSelectorForNoteRole(noteRole) {
+    const role = `${noteRole || ''}`;
+    if (!role.startsWith('note')) {
+        return '';
+    }
+    return `#idR${role.substring('note'.length)}`;
+}
+
+export function checkAndTriggerNoteRole(noteRole) {
+    const selector = paletteRadioSelectorForNoteRole(noteRole);
+    return selector ? checkAndTrigger(selector) : false;
+}
+
 export function activateUiControl(id, options = {}) {
     const {
         forceChange = false

@@ -1104,7 +1104,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectFingering":
 			if (args){
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
 						paletteUtils.check("#rbFinger0");
@@ -1141,27 +1141,27 @@ export function performCmdAction(menuItem, args){
 			if (args){
 				switch (args["key"]){
 					case "n":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 					    paletteUtils.check("#idNamedNotes");
 						break;
 					case "s":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 						paletteUtils.check("#idSingleNotes");
 						break;
 					case "t":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 						paletteUtils.check("#idTinyNotes");
 						break;
 					case "b":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 						paletteUtils.check("#rbBend");
 						break;
 					case "p":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 						paletteUtils.check("#idMidiPitches");
 						break;
 					case "m":
-						activatePaintModeIfSpecialSelected();
+						paletteUtils.activatePaintModeIfSpecialSelected();
 						paletteUtils.check("#idMidiPitchesSingle");
 						break;
 					case "l":
@@ -1181,7 +1181,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRole":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "t":
 						paletteUtils.checkAndTrigger("#idRTransparent");
@@ -1209,7 +1209,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleChord":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						paletteUtils.checkAndTrigger("#idRChord");
@@ -1225,7 +1225,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleColornote":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						paletteUtils.checkAndTrigger("#idRColornote");
@@ -1241,7 +1241,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleAvoid":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						paletteUtils.checkAndTrigger("#idRAvoid");
@@ -1257,7 +1257,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "selectRoleLead":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
 						paletteUtils.checkAndTrigger("#idRLead");
@@ -1271,7 +1271,7 @@ export function performCmdAction(menuItem, args){
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
-			activatePaintModeIfSpecialSelected();
+			paletteUtils.activatePaintModeIfSpecialSelected();
 			paletteUtils.check("#rbBend");
 			break;
 		case "disposeAllDockables":

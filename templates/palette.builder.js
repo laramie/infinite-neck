@@ -1,5 +1,6 @@
 import * as NoteTableController from '../NoteTableController.js';
 import * as ColorFunctions from '../colorFunctions.js';
+import * as PaletteUtils from '../paletteUtils.js';
 import { 
 	PalettePresentation 
 } from '../presentation.js';
@@ -146,6 +147,14 @@ export class PaletteBuilder {
             .on(`click${eventNamespace}`, 'td.hatchPickerCell', function(e) {
             e.preventDefault();
             ColorFunctions.hatchPickerClicked(this);
+        });
+
+        $(document)
+            .off(`click${eventNamespace}`, 'td.colorDictLinkTD[noteRole]')
+            .on(`click${eventNamespace}`, 'td.colorDictLinkTD[noteRole]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            PaletteUtils.checkAndTriggerNoteRole($(this).attr('noteRole'));
         });
 
 
