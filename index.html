@@ -937,12 +937,18 @@
                 </span>
                 <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
                         sets Display
-                        Options. <i>Tip: Set-and-forget in the first section.</i></small></p>
+                        Options. <i>Tip: Set-and-forget in the first section.</i></small>
+                    </p>
                 <br>
                 <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
                         Mode</label>
                     <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
                 </p>
+                <p class="viewDisplayOptionsReadOnly">autoColor: <span id="viewDisplayOptionAutoColorValue">false</span></p>
+                <p class="viewDisplayOptionsReadOnly">currentColorDict: [ <span id="viewDisplayOptionCurrentColorDictValue"></span> ]
+                </p>
+                <p class="viewDisplayOptionsReadOnly"><button id="btnShowDisplayOptions" type="button" data-action="showDisplayOptions">Show Display Options</button>
+                    </p>
             </div>
 
         </div>
@@ -1143,7 +1149,7 @@
                         <br>
                         <br>
                         <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
-                            data-action="enterFullscreen">infinite-neck Fullscreen</button>
+                            data-action="enterFullscreen" data-action-args='[true]'>infinite-neck Fullscreen</button>
                         <br>
                         <br>
                         <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"

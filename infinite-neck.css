@@ -408,6 +408,19 @@ table.viewControls th {
     width: 100%;
 }
 
+#btnShowDisplayOptions {
+    margin-right: 2px;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+#btnShowDisplayOptions:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+
 #lblHideWarning {
     font-weight: bold;
     color: darkred;
@@ -423,6 +436,20 @@ table.viewControls th {
 }
 #divViewDisplayOptions {
     padding: 2em;
+}
+.viewDisplayOptionsReadOnly {
+  /* Read-only display of controls that are _not_ on the View page. */
+  padding-top: 1em;
+  padding-left: 0;
+  font-size: 110%;
+}
+#viewDisplayOptionAutoColorValue {
+    font-weight: 600;
+    color: brown;
+}
+#viewDisplayOptionCurrentColorDictValue {
+    font-weight: 600;
+    color: brown;
 }
 
 .slider {
@@ -1467,7 +1494,7 @@ td.nut div.NoteActive .CenterCell {
 .enharmonicName { /* used to squish the sharps and flats together, but not Roman numerals. */
     letter-spacing: -0.1em;
 }
-.tinyNote {
+.tinyNote:not(.tinyNotePlayedBend) {
     display:none;
     position: absolute;
     top: calc( var(--tiny-note-vposition) - calc(var(--tiny-note-max-height) / 2));        /* New 20260608 */
@@ -1496,9 +1523,15 @@ td.nut div.NoteActive .CenterCell {
     z-index: 8;
     border: 1px solid orange !important;
     text-align: left;
-    /* doesn't work with display:block  vertical-align: center;  */
-    font-size: 0.6em;
     height:30%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /*
+    calc( var(--tiny-note-vposition) - calc(var(--tiny-note-max-height) / 2));        
+    left: calc( var(--tiny-note-hposition) - calc(var(--tiny-note-width) / 2));  
+    */
+    font-size: max(40%, var(--tiny-note-font-size));
 }
 
 

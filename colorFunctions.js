@@ -22,7 +22,8 @@ var colorFunctionsProviders = {
 	getSong: function () { return null; },
 	getCurrentSection: function () { return null; },
 	doingAutomaticColor: function () { return false; },
-	fullRepaint: function () { }
+	fullRepaint: function () { },
+	displayOptionsChanged: function () { }
 };
 
 export function setColorFunctionsProviders(providers) {
@@ -47,6 +48,10 @@ function doingAutomaticColor() {
 
 function fullRepaint() {
 	return colorFunctionsProviders.fullRepaint();
+}
+
+function displayOptionsChanged() {
+	return colorFunctionsProviders.displayOptionsChanged();
 }
 
 export function createLookupContext({
@@ -454,6 +459,7 @@ export function chuseStylesheet(dictkey){
 			buildUserColors();
 			buildColorDicts();
 			fullRepaint();
+			displayOptionsChanged();
 		}
 	}
 

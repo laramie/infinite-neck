@@ -27,7 +27,8 @@ import {
 	txtCmdLine_keypress 
 } from './command-line.js';
 import {
-	setDisplayOptionsProviders
+	setDisplayOptionsProviders,
+	displayOptionsTable
 } from './display-options.js';
 import {
 	draggable
@@ -290,7 +291,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			getCurrentSection,
 			doingAutomaticColor: (...args) => doingAutomaticColor(...args),
-			fullRepaint
+			fullRepaint,
+			displayOptionsChanged: refreshDisplayOptionsSaveActionRequired
 		});
 		transportController.setProviders({
 			getBPM,
@@ -403,8 +405,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnControlsToDisplayOptions_View').toggleClass('riskyButtonActionRequired', !!isRequired);
 	}
 
+	function updateDisplayOptionsReadonlyValues(options = null){
+		const values = options || controlsToDisplayOptions();
+		$('#viewDisplayOptionAutoColorValue').text(String(!!values.autoColor));
+		$('#viewDisplayOptionCurrentColorDictValue').text(values.currentColorDict || '');
+	}
+
 	function captureDisplayOptionsDirtyBaseline(){
 		displayOptionsDirtyBaseline = cloneDisplayOptions(controlsToDisplayOptions());
+		updateDisplayOptionsReadonlyValues(displayOptionsDirtyBaseline);
 		setDisplayOptionsSaveActionRequired(false);
 	}
 
@@ -417,7 +426,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			captureDisplayOptionsDirtyBaseline();
 			return;
 		}
-		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(controlsToDisplayOptions(), displayOptionsDirtyBaseline));
+		const currentOptions = controlsToDisplayOptions();
+		updateDisplayOptionsReadonlyValues(currentOptions);
+		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(currentOptions, displayOptionsDirtyBaseline));
 	}
 
 	export function getDisplayOptionsSaveState(){
@@ -1306,6 +1317,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
+	export function showDisplayOptions(){
+		showMessages(displayOptionsTable());
+	}
+
 	export function increaseUIFont(){
 		setUIFontSize(getUIFontSize() + 1);
 	}
@@ -2063,6 +2078,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--fingering-font-size",  $("#selFingeringFontSize").val());
 		setOneCssVar("--fingering-position",   $("#selFingeringPosition").val());
 		setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
+		updateDisplayOptionsReadonlyValues();
 		fullRepaint();
 	}
 
@@ -2814,6 +2830,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    });
 		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode), #divViewControls select, #divViewControls textarea');
 		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
+		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
+			refreshDisplayOptionsSaveActionRequired();
+		});
 	}
 	
 	export function bindDataActionHandlers(){
@@ -2821,6 +2840,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			help: () => window.open(getHelpTopic(), 'infinitehelp'),
 			songLibrary,
 			showGraveyard,
+			showDisplayOptions,
 			increaseUIFont,
 			decreaseUIFont,
 			increaseNoteFont,

@@ -44,6 +44,7 @@ import {
 } from './utils.js';
 import {
 	showMessagesTab,
+	showDisplayOptions,
 	getVersionString,
 	getVersionObject,
 	toggleWiringOpenState,
@@ -972,7 +973,8 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "ColorDictionary sent to Messages";
             break;
         case "showViewDiagnosticsDisplayOptions":
-            showMessages(displayOptionsTable());
+            showDisplayOptions();
+			//showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
 		case "showViewDiagnosticsVariables":
