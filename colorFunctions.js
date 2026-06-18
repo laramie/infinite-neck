@@ -814,10 +814,10 @@ export function chuseStylesheet(dictkey){
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
 		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
-			// Keep the existing function-key lookup, but let the root-bearing table
-			// promote the root function to the special noteRoot styling.
+			// Keep function-key lookup section-relative. noteRoot is intentionally
+			// limited to the explicit noteRoot note in the table that owns it.
 			result.colorClass = userColor.colorClass;
-			if (relNoteNum === 0 && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
+			if (note.colorClass === 'noteRoot' && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
 				const noteRootColor = context.colorDict.noteRoot;
 				if (noteRootColor?.colorClass) {
 					result.colorClass = noteRootColor.colorClass;

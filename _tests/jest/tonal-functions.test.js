@@ -187,7 +187,7 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.normalizedNamedNotes).toEqual(['B', 'C', 'E', 'G']);
     });
 
-    test('AutoColor can promote the root function to noteRoot for the table that owns noteRoot', () => {
+    test('AutoColor keeps noteRoot from shifting section-relative color lookups', () => {
         const tableID = 'tblP46_1';
         const rootTableID = 'BASS_1';
         const section = createSection({
@@ -200,33 +200,46 @@ describe('TonalFunctions tonal source selection', () => {
                     B: { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteRoot' }
                 }
             })
-        }, '2');
+        }, '3');
 
         const rootLookup = lookupClassForNote(
+            { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteRoot' },
+            createLookupContext({
+                section,
+                autoColor: true,
+                tablename: rootTableID,
+                noteRootTablename: rootTableID,
+                rootID: section.rootID
+            })
+        );
+
+        const guitarLookup = lookupClassForNote(
+            { noteName: 'C', styleNum: Note.STYLENUM_NAMED, colorClass: 'noteTransparent' },
+            createLookupContext({
+                section,
+                autoColor: true,
+                tablename: tableID,
+                noteRootTablename: rootTableID,
+                rootID: section.rootID
+            })
+        );
+
+        const nonRootBassLookup = lookupClassForNote(
             { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'note1' },
             createLookupContext({
                 section,
                 autoColor: true,
                 tablename: rootTableID,
                 noteRootTablename: rootTableID,
-                rootID: 2
-            })
-        );
-
-        const nonRootLookup = lookupClassForNote(
-            { noteName: 'B', styleNum: Note.STYLENUM_NAMED, colorClass: 'note1' },
-            createLookupContext({
-                section,
-                autoColor: true,
-                tablename: tableID,
-                noteRootTablename: rootTableID,
-                rootID: 2
+                rootID: section.rootID
             })
         );
 
         const expectedNoteRootClass = gUserColorDict?.dict?.noteRoot?.colorClass;
         expect(rootLookup?.colorClass).toBe(expectedNoteRootClass);
-        expect(nonRootLookup?.colorClass).toBe('noteBlack');
+        expect(guitarLookup?.functionNum).toBe(0);
+        expect(guitarLookup?.colorClass).toBe(gUserColorDict.dict.note1.colorClass);
+        expect(nonRootBassLookup?.colorClass).toBe(gUserColorDict.dict.note12.colorClass);
     });
 
     test('TinyNote source uses LeadKey as rootKey when LeadKey differs from Key and no noteRoot is placed', () => {

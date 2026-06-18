@@ -94,14 +94,14 @@ function turnOffHiding() { return notetableProviders.turnOffHiding(); }
 
 function createNotetableLookupContext(section = getCurrentSection(), tableID = '') {
     // Table-scoped lookup context lets AutoColor see whether this table owns the
-    // noteRoot source, without changing the shared tonal model or listener paths.
+    // noteRoot source. Do not replace the section Key with noteRoot here; noteRoot
+    // is only a tonal.js root source and an explicit noteRoot styling marker.
     const noteRootResult = section?.getNoteRoot?.(tableID) || null;
     return createLookupContext({
         section,
         tableID,
         tablename: tableID,
-        noteRootTablename: noteRootResult?.tablename || '',
-        rootID: noteRootResult ? NOTE_NAMES_ARRAY.indexOf(noteRootResult.noteName) : undefined
+        noteRootTablename: noteRootResult?.tablename || ''
     });
 }
 
@@ -665,14 +665,13 @@ export function colorNoteInner(cell) {
             note.colorClass = theColorClass;
 
             // When placing a noteRoot note, the model hasn't been updated yet so getNoteRoot
-            // won't find it. Rebuild context with explicit ownership so AutoColor promotion
-            // fires immediately on first placement without requiring a refresh.
+            // won't find it. Rebuild context with explicit ownership so noteRoot styling
+            // fires immediately on first placement without changing the section Key context.
             if (theColorClass === 'noteRoot') {
                 lookupContext = createLookupContext({
                     ...lookupContext,
                     tablename: tableID,
-                    noteRootTablename: tableID,
-                    rootID: NOTE_NAMES_ARRAY.indexOf(noteName)
+                    noteRootTablename: tableID
                 });
             }
 
