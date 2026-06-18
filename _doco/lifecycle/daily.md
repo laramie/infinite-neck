@@ -72,7 +72,7 @@ returned the broader test list under jest
 git fetch origin
 git checkout fix/my-branch
 cd ~/infinite-neck
-bin/update-git-log.bash --since "2026-03-25" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-06-17" > _doco/lifecycle/CHANGELOG-new.md
 ```
 
 Adjust the --since date, update the tag in CHANGELOG.md, and then grab all the log lines and past into CHANGELOG.md from CHANGELOG-new.md, then 

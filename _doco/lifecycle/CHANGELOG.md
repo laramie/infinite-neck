@@ -1,5 +1,19 @@
 # ChangeLog
 
+### 20260618
+Tag: v2.1-beta-4
+
+- 3683c09 **2026-06-18** Removed test that tested menu structure.  We need to get rid of all of these.
+- 9e7d308 **2026-06-18** Updated help with lots of screenshots and text explanations of TonalPicker.
+- 37d4cc9 **2026-06-18** Updated help with lots of screenshots and text explanations of TonalPicker.
+- 90d03d6 **2026-06-17** Added Tonal to help
+- 9311505 **2026-06-17** sprint-119 cleanup
+- 28a3f0e **2026-06-17** Fixed MiniPalette to have clickable cells.
+- 284652f **2026-06-17** Moved noteRoot first on palette (after special Emboss and Auto). Added to theme and controlsToDisplayOptions etc: noteRoot and --note-root-color.  And added noteHatchedRoot instead of noteHatched. Moved palette radio button functions from key-handlers.js to new independent module paletteUtils.js
+- b32866c **2026-06-16** updated scp instructions
+- 599f493 **2026-06-16** ready for v2.1-beta-3
+- 2c9e3e3 **2026-06-16** commit version tag
+
 ### 20260616 
 Tag: v2.1-beta-3
 
