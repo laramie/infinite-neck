@@ -721,7 +721,7 @@
         <p>Each beat's length (time duration) is determined with the "BPM", or "Beats Per Minute" setting,
             and there can be any number of beats per section, from 1 to some large integer.</p>
 
-        <p>Each Section also has features for using the Tonal.js chord-finder and mode-finder and recording these
+        <p>Each Section also has features for using the <a href="#TonalPicker">TonalPicker</a> chord-finder and mode-finder and recording these
             to be shown on the real-time Chart, and also beats-per-bar for figuring out where bars and chord changes lie in the Session and Chart.
         </p>    
 
@@ -735,7 +735,7 @@
     <p>Within Sections, one key is the root key for the band, and optionally, a separate root key for the "lead".
         <i>("Bill is playing F# over Dave and the band's B".)</i></p>
 
-    <p>Additionally, anyone playing a "<a href="#glossarynoteRoot">noteRoot</a>" determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js will 
+    <p>Additionally, anyone playing a "<a href="#glossarynoteRoot">noteRoot</a>" determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js and the <a href="#TonalPicker">TonalPicker</a> will 
         present as the chord set.
     </p>    
 
@@ -970,6 +970,16 @@
                     </ul>
                 </li>
                 <li><a href="#TonalPicker">TonalPicker</a></li>
+                    <ul class="LinkList">
+                        <li><a href="#TonalPickerChartNotes">TonalPicker in Chart &gt; Notes</a></li>
+                        <li><a href="#TonalPickerInstrumentToolbar">TonalPicker in InstrumentToolbar</a></li>
+                        <li><a href="#TonalPickerControls">TonalPicker Controls</a></li>
+                        <li><a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a></li>
+                        <li><a href="#SectionStatusWidget">section-status widget</a></li>
+                        <li><a href="#settingRootNoteTonal">Setting rootNote for Tonal.js</a></li>
+                        <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
+                        <li><a href="#tonalModeNames">Tonal.js Mode Names</a></li>
+                    </ul>
                 <li><a href="#options">Options</a></li>
                 <li><a href="#graveyard">The Graveyard</a></li>
                 <li><a href="#keymap">Keymap</a></li>
@@ -1148,7 +1158,7 @@
             I do this by assigning names concretely, which apply in any 12-tone
             playing, assuming you know where the "root" is, or the key of the band or dominant instrument,
             usually the bass player. (In <span class="productsmaller">infinite-neck</span>, anyone playing a "<a href="#glossarynoteRoot">noteRoot</a>" determines the apparent key, just like a Bass player would, 
-            and this changes what Tonal.js will 
+            and this changes what the <a href="#TonalPicker">TonalPicker</a> will 
         present as the chord set.) I used symbols familiar to Jazz and Session players, and added a few new ones
             where singular, concrete names were needed.
             </i></small></p>
@@ -1953,7 +1963,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         caption.)
     <li>Set the <b>Key</b> of the current Section. (Also keyboard shortcut <span class="key">k</span> cycles through
         these.)
-    <li>Set the <b>LeadKey</b> of the current Section (TinyNotes follow LeadKey) or "root" to follow the Key.
+    <li>Set the <b><a href="#glossaryLeadKey">LeadKey</a></b> of the current Section (TinyNotes follow <a href="#glossaryLeadKey">LeadKey</a>) or "root" to follow the <a href="#glossaryKey">Key</a>.
     <li>Set the enharmonic choice of <b>Flats</b> or <b>Sharps</b> for the key of the Section. [See <a
             href="#divSectionKeyChange">Key Change</a> below]
     <li><b>Transpose</b> all NamedNotes in the Section. (Use keyboard shortcuts for these: <span
@@ -2096,7 +2106,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <h4>Key Change</h4>
 <p>
     If we had just wanted to change keys but leave all the notes, we would just change the key of
-    the Section with the dropdown "Key".  Mashing on the "Flats" or "Sharps" buttons first sets whether the "Key" and "LeadKey" dropdown
+    the Section with the dropdown "Key".  Mashing on the "Flats" or "Sharps" buttons first sets whether the "<a href="#glossaryKey">Key</a>" and "<a href="#glossaryLeadKey">LeadKey</a>" dropdown
     will show sharps or flats, and also always updates how the neck will display them.  The result would look like this:
 </p>
 <p>
@@ -2138,7 +2148,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     [<i>After any <a href="#commandline">command-line</a> command, hit <span class="key">ESC</span> to close the <a href="#commandline">command-line</a>.</i>] 
 </p>
 
-<p>Just like using the dropdown "Key" or "LeadKey" on the Section menu page, on the <a href="#commandline">command-line</a> you can also set the key of a Section with the command 
+<p>Just like using the dropdown "<a href="#glossaryKey">Key</a>" or "<a href="#glossaryLeadKey">LeadKey</a>" on the Section menu page, on the <a href="#commandline">command-line</a> you can also set the key of a Section with the command 
     <span class="menuExampleLine"><b><small>/sk</small></b></span>.  This brings
     you to the menus choices of <span class="menuExampleLine"><b><small>white keys</small></b></span>
     where you can choose the keys: <span class="menuExampleLine"><b><small>a, b, c, d, e, f, g</small></b></span>, 
@@ -2160,7 +2170,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     So just set the LeadKey dropdown to the pitch you will be playing, even though its enharmonic name may be incorrect, 
     because whether Sharps or Flats are shown
     in the LeadKey dropdown is chosen by the Section's Sharps/Flats buttons, which also set the choices displayed for the Key dropdown.  Similarly, using 
-    the <a href="#commandline">command-line</a> to set LeadKey, choose the correct pitch using the available "black keys" menu choice, e.g. D&flat; instead of C&sharp;, which is not available through the <a href="#commandline">command-line</a>.
+    the <a href="#commandline">command-line</a> to set <a href="#glossaryLeadKey">LeadKey</a>, choose the correct pitch using the available "black keys" menu choice, e.g. D&flat; instead of C&sharp;, which is not available through the <a href="#commandline">command-line</a>.
     </p>
 
 <p>Remember, this is just a display option, and does not change the actual notes on the neck.
@@ -2723,23 +2733,85 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <hr>
 <a name="TonalPicker"></a>
 <h2>TonalPicker</h2>
-<p>The TonalPicker is our widget that use <a href="https://tonaljs.github.io/tonal/docs">Tonal.js</a> to suggest chords and modes for the <span class="GUIReferenceInline">Chart</span>, based on the notes you have played.  We wrote it to be very visually compact so as not to clog up the screen real estate around each instrument.
+<p>The TonalPicker is our widget that uses <a href="https://tonaljs.github.io/tonal/docs">Tonal.js</a> 
+    to suggest chords and modes for the <span class="GUIReferenceInline">Chart</span>, based on the notes you have played.  
+    We wrote it to be very visually compact so as not to clog up the screen real estate around each instrument.
 So it may take a quick minute to figure out where all the functions are and how to use it.
+<br>  
+<br>  
+The TonalPickers update in real-time in both the <span class="GUIReferenceInline">Chart &gt; Notes</span> and in the Instrument toolbars.
 </p>
 
-<p>
-    TonalPicker in <span class="GUIReferenceInline">Chart > Notes</span>
+<a name="TonalPickerChartNotes"></a>
+<h3>TonalPicker in Chart &gt; Notes</h3>
+<p style="padding: 2em; border: 1px solid green; margin-left: 4em;">
+    TonalPicker in <span class="GUIReferenceInline">Chart &gt; Notes</span>
     <br>
     <br>
     <img src="img/help/context/TonalPicker-chart-notes.png">
-
+    <br>
+    <br>
+    The TonalPicker in the Chart spans three lines, with the <b>tonalSourceSet</b> on the first line,
+    the chord picker on the second line, and the mode picker on the third line.
 </p>
+
+<br>
+<br>
+<a name="TonalPickerInstrumentToolbar"></a>
+<h3>TonalPicker in InstrumentToolbar</h3>
+<p>
+The TonalPicker for each Instrument is in the Intrument Toolbar.  The components (<b>tonalSourceSet</b>, chord picker, mode picker) all live on one line.
+<br>
+<br>
+The Instrument toolbars can be hidden and shown with keyboard shortcut 
+<a href="#showHideInstrumentToolbar"><span class="key">SHIFT-A</span></a>.
+  From there, click the <b>Tonal</b> button to show the TonalPicker. 
+   <br>
+   <br>
+    <i>
+      (You can't break anything 
+       by clicking any of these buttons, so just click around and try them out to see how they hide and show things in the toolbar. 
+       Once you see the controls inside the TonalPicker, the worst you will do is set a Chart chord, which you can unset, as explained below.
+       If you "Float" the Instrument, it will pop up into its own window, which you can park again with the thumbtack/pushpin icon. )
+   </i>
+    <br>
+    <br>
+   <i>
+       Note also the <b>MiniPalette</b> button shows/enlarges/hides the MiniPalette.  </b>
+   </i>
+    <br>
+    <br>
+   <i>
+       The first, green hamburger button collapses the whole Instrument toolbar.  
+       The second, white hamburger button collapses the rest of the white buttons,
+       except for the <b>Tonal</b> button.
+   </i>
+
+<br>
+<br>
+<b>Tonal</b> button when the toolbar buttons are expanded, but TonalPicker collapsed:
+<br>
+<img src="img/help/context/TonalButton-caption-expanded.png">
+<br>
+<b>Tonal</b> button with TonalPicker collapsed, and the toolbar buttons are collapsed:
+<br>
+<img src="img/help/context/TonalButton-caption-collapsed.png">
+<br>
+<b>Tonal</b> button clicked, showing the TonalPicker expanded in Instrument Toolbar (toolbar buttons collapsed): 
+<br>
+<img src="img/help/context/TonalPicker-w-toolbar.png">
+<br>
+<br>
+<br>
+<br>
+
+<a name="TonalPickerControls"></a>
+<h3>TonalPicker Controls</h3>
 <p>
     TonalPicker in each Instrument:
     <br>
     <br>
-    <img width="90%" src="img/help/context/TonalPicker.png">
-
+    <img width="90%"  style="border: 12px solid black;" src="img/help/context/TonalPicker.png">
 </p>
 <p>
 <table class="ExamplesTable">
@@ -2750,9 +2822,14 @@ So it may take a quick minute to figure out where all the functions are and how 
 
     <tr>
         <td>
+            <br>
+            <br>
             <img src="img/help/context/TonalNamedNote.png">
         <td>
-            This is the <b>tonalSourceSet</b> set to <b>N</b> - NamedNotes.
+            After you click the <b>Tonal</b> button, you can see the TonalPicker, which starts off with the dropdown <b>tonalSourceSet</b> which just displays an N, an S, or a T.
+            <br>
+            <br>
+            This is the <b>tonalSourceSet</b> set to <b>N</b> - <b>N</b>amedNotes.
             It means Tonal.js will only look at NamedNotes in the Instrument to determine chords and modes.
             Pick this first, then Tonal.js will calculate all the possibilities.
         </td>
@@ -2763,7 +2840,7 @@ So it may take a quick minute to figure out where all the functions are and how 
             <img src="img/help/context/TonalSingleNote.png">
         </td>
         <td>
-            This is the <b>tonalSourceSet</b> set to <b>S</b> - SingleNotes.
+            This is the <b>tonalSourceSet</b> set to <b>S</b> - <b>S</b>ingleNotes.
             It means Tonal.js will only look at SingleNotes in the Instrument to determine chords and modes.
             Pick this first, then Tonal.js will calculate all the possibilities.
         </td>
@@ -2774,7 +2851,7 @@ So it may take a quick minute to figure out where all the functions are and how 
             <img src="img/help/context/TonalTinyNote.png">
         </td>
         <td>
-            This is the <b>tonalSourceSet</b> set to <b>T</b> - TinyNotes.
+            This is the <b>tonalSourceSet</b> set to <b>T</b> - <b>T</b>inyNotes.
             It means Tonal.js will only look at TinyNotes in the Instrument to determine chords and modes.
             Pick this first, then Tonal.js will calculate all the possibilities.
         </td>
@@ -2808,14 +2885,14 @@ So it may take a quick minute to figure out where all the functions are and how 
         <td>
             <img src="img/help/context/TonalChords.png">
         </td>
-        <td>This is the button that will open the chord picker dropdown.</td>
+        <td>This is the button that will open the chord picker dropdown. This works even if you have hidden the possibilities with &#x53EF;</td>
     </tr>
     <tr>
         <td>
             <img width="300" src="img/help/context/TonalChordClosed.png">
         </td>
-        <td>This is the chord. Click "chords:n" to choose among the possible chords. In this case, there are two
-            possible chords, so the button reads "chords:2" .
+        <td>This is the whole area of the picker for the chord. Click "chords:n" to choose among the possible chords. In this case, there are two
+            possible chords, so the button shows "chords:2" .
         </td>
     </tr>
     <tr>
@@ -2825,6 +2902,10 @@ So it may take a quick minute to figure out where all the functions are and how 
         <td>This is the chord picker dropped down, after you have clicked "chords:2" in this case, showing you all the
             chords as clickable links. Choose one, then the chosen chord appears in bold where before it may have said
             &lt;choose&gt; or the previous chord you chose.
+            <br>
+            <br>
+            The special value <b>&lt;clear&gt;</b> will clear the current choice from the Instrument's saved chord, but won't clear the value in the Section that shows in the Chart.  
+            To clear the value from the Chart, choose <b>&lt;clear&gt;</b> then click <img src="img/help/context/TonalSaveToChart.png" height="20">
         </td>
     </tr>
     <tr>
@@ -2832,14 +2913,33 @@ So it may take a quick minute to figure out where all the functions are and how 
             <img width="300" src="img/help/context/TonalChordChosen.png">
         </td>
         <td>
-            This is the chord picker after you have chosen <b>CM</b>, a C Major chord. The yellow value in the list of
-            possible chords
-            means it is saved in the Instrument in the Section. The bold value means it is in the Chart. If you have
-            multiple instruments,
-            some of them may not sync with the chart. Clicking the Save to Chart button makes this Instrument's saved
-            chord be
-            the reference for the Chart for the whole band.  The first chord that is chosen for this Section automatically 
+            This is the chord picker after you have chosen <b>CM</b>, a C Major chord. The yellow value 
+            <img src="img/help/context/TonalPicker-chosen-chord-possible.png" height="20">
+            in the list of possible chords means it is saved in the Instrument in the Section. 
+            <br>
+            <br>
+            The bold value <img
+            src="img/help/context/TonalPicker-chosen-chord-saved-to-chart.png" height="20"> (not in a colored box) next to the chords:2 button
+            means it is saved in the Chart. 
+            <br>
+            <br>
+            The first chord that is chosen for this Section automatically
             saves this Instrument's choice to the Chart, so you don't need to click the "Save to Chart" button.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <img src="img/help/context/TonalPicker-chord-not-in-section.png">
+        </td>
+        <td>
+            If you have multiple instruments,
+            some of them may not sync with the chart. Or if you change your mind and select a different chord, this Instrument will be out of sync with the Chart. Then the chord picker would look like this, where we have selected the Em#5/C for the Chart, 
+            then come back in and selected CM for the Instrument, so it is shown with <s>strikethrough</s> text and not bold:
+            <br>
+            <br>
+            Clicking the Save to Chart button <img src="img/help/context/TonalSaveToChart.png" height="20"> makes this Instrument's saved
+            chord be
+            the reference for the Chart for the whole band.  Then the chord will be shown in regular text, bold again. 
         </td>
     </tr>
 
@@ -2847,41 +2947,285 @@ So it may take a quick minute to figure out where all the functions are and how 
 </table>
 </p>
 <p>
-    The controls for modes are the same as for chords.
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;The controls for modes are the same as for chords.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;The controls in <span class="GUIReferenceInline">Chart &gt; Notes</span> are the same, just on three lines, and you can see all the Instruments.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;Once values are in the Chart, you can add notes and delete notes and the Chart won't update automatically.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If there are too many chords or modes, add a note or two.  The specificity narrows the possibilities.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If there are no chords or modes, double-check the <b>tonalSourceSet</b> described above.  The letter must match the note types you have on that Instrument in that Section.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If there are no chords (chords:0) or modes (modes:0) you may have to simplify, by <a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a>.
+        <br>
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If the chords seem overly complicated, or seem as if they are in the wrong key, try <a href="#settingRootNoteTonal">Setting rootNote for Tonal.js</a>.
+</p>
+
+<a name="noteTypes-tonalSourceSet"></a>
+<h3 >Using different note types with tonalSourceSet</h3>
+<p>
+
+    If there are no chords (chords:0) or modes (modes:0), and you have <b>tonalSourceSet</b> pointing correctly at the right note types, 
+    then you have a note in a strange spot, or too many notes, or too few notes.  Tonal.js is strict.  
+    <br>
+    <br>
+    You can try using different note types 
+    [NamedNote, SingleNote, TinyNote] and then using the <b>tonalSourceSet</b> dropdown 
+    to restrict your source set of notes.  For example, if you are in the key of C and have NamedNotes [A, B, C, D, E, F] 
+    Tonal.js will suggest <b>FM13#11/C</b>.  But if you specify NamedNotes [C D E F G] Tonal.js will suggest "chords:0".  In this case, you can add SingleNotes at [C D E], 
+    then choose the <b>tonalSourceSet</b> value of <b>S</b> and Tonal.js will suggest a <b>CM</b> and <b>Em#5/C</b> because it is just looking at the SingleNote values.
+</p>
+        
+
+<a name="SectionStatusWidget"></a>
+<h3>section-status widget</h3>         
+<p>We need to pause here and point out the section-status widget, which appears in various parts of the app.
+    For our purpose here, we'll show the hideable one that lives in the left rail of the Instrument. Among other things, it
+    shows the
+    <a href="#glossaryKey">Key</a> we are in. It contains a LooperLight,
+    a green border here (around the section number and beat number) because we aren't looping. While looping, the
+    LooperLight is magenta.
+    Below the LooperLight are two boxes, one has a white background for rootKey and one has a gray background because
+     is <a href="#glossaryLeadKey">LeadKey</a> is absent.
+    Below these, is the Instrument name, P46_1, the first instance in our song of a P4 6-string guitar.
+    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
+        <li>Here is the section-status widget with the LooperLight showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C.
+            <br>
+            <img src="img/help/context/section-status-C.png" width="36">
+        </li>
+        <li style="padding-top: 1em;">
+            Here is the section-status widget with the LooperLight showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the root<a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.
+            <br>
+            <img src="img/help/context/section-status-C-Eb.png" width="36">
+        </il>
+    </ol>
+
+</p>
+
+<a name="settingRootNoteTonal"></a>
+<h3>Setting rootNote for Tonal.js</h3>
+<p>
+    If the chords seem overly complicated, or seem as if they are in the wrong key, 
+    try setting a <a href="#glossarynoteRoot">noteRoot</a> in either this 
+        Instrument, or another Instrument in this Section (Bass player, or Piano usually, 
+        but <span class="productsmaller">infinite-neck</span> 
+        will use the first noteRoot it finds in the Section, on any Instrument.)
+        <br>See also: <a href="#glossarynoteRoot">noteRoot</a>
+</p>
+<p>
+    <ol style="margin-left: 4em; border: 6px solid green;">
+        <li>Open the MiniPalette, click on rootNote, which is the black square with green diagonal lines and the letter R: <img src="img/help/context/rootNote-button-MiniPalette.png" height="30"> (to the right of <b>Auto</b>):
+            <br>
+            <img src="img/help/context/rootNote-MiniPalette.png">
+            <br>
+            <br>
+        </li>
+        <li>
+            Then drop this note (a NamedNote in this case) on the cell you want to be a rootNote (a G in this case, and we can see that we are in the key of C because the G is the V).
+            <br>
+            <img src="img/help/context/rootNote-G.png">
+            <br>
+            <br>
+
+        </li>
+        <li>Then the rootNote G in the key of G, and the MiniPalette, and the Section key indicator on the left side showing C, now look like this: 
+            <br>
+            <img src="img/help/context/rootNote-MiniPalette-G.png" width="300">
+            <br>
+            <br>
+        </li>
+
+    </ol>
+</p> 
+
+        
+<h4>G Major chord in C</h4>
+<p>
+    So if you set notes G, B, D in a Section in the key of C, you will see that Tonal.js suggests [ Bm6b9/C ] 
+    which is <i>B minor 6 flat9 over C</i>.  Because without noteRoot, <span class="productsmaller">infinite-neck</span> 
+    sends the root key (C) as the root note to Tonal.js, so the actual set of notes for the chord is [G, B, C, D].  
+    You can see that G has function V and color red, which is the AutoColor for the V function.
+    And you can see that the key indicator on the left has a C.
+    <br>
+    <br>
+    <img src="img/help/context/TonalEx-G-over-C.png" width="500">
+</p>
+
+<h4>G Major chord in C with noteRoot G</h4>
+<p>
+    To see a chord in the key of G while the Section is in the key of C, you would need to set a noteRoot 
+    (with the Palette or MiniPalette) on a G one of the Instruments, 
+    using the same note type as the <b>tonalSourceSet</b> dropdown.  Here you can see we have set G as the rootNote, because even though
+    it is still the V function, it has a black background with green diagonal hatches, the color scheme of rootNote.
+    So if you set a G, B, D in a Section in the key of C, with a rootNote of G, you will see that Tonal.js suggests [ GM, Bm#5/G ].  
+    <br>
+    <br>
+    <br><img src="img/help/context/TonalEx-G-over-G.png" width="500">
+</p>
+
+
+<h4>C Major chord in G</h4>
+<p>
+    So if you set notes C, E, G in a Section in the key of G, you will see that Tonal.js suggests [ CM/G , Em#5/G ].  
+    Here we can see the C is the function IV in the key of G, and AutoColor uses brown as the color for the IV.
+    <br>
+    <br>
+    <img src="img/help/context/TonalEx-C-over-G.png" width="500">
+</p>
+
+
+
+<h4>C Major chord in G with noteRoot C</h4>
+<p>
+    To see chords from the key of C while in a Section in the key of G, you would need to set a noteRoot 
+    (with the Palette or MiniPalette) on a C one of the Instruments, 
+    using the same note type as the <b>tonalSourceSet</b> dropdown.  
+    Here you can see we have set C as the rootNote, because even though
+    it is still the V function, it has a black background with green diagonal hatches, the color scheme of rootNote.
+    Then Tonal.js will suggest [ CM , Em#5/C ].
+    <br>
+    <br>
+    Setting a C Major chord over G with C as noteRoot.
+    <br><img src="img/help/context/TonalEx-C-over-C.png" width="500">
 </p>
 
 
 <a name="tonalChordNames"></a>
 <h3>Tonal.js Chord Names</h3>
 
-<p>Here is the full list of chord names from Tonal.js:
-<pre>
-            > console.dir(ChordType.symbols().sort(), { maxArrayLength: null });
-            [
-            '+add#9',     '11',      '11b9',      '13',       '13#11',
-            '13#9',       '13#9#11', '13b5',      '13b9',     '13b9#11',
-            '13no5',      '13sus4',  '4',         '5',        '6',
-            '69#11',      '6add9',   '7',         '7#11',     '7#11b13',
-            '7#5',        '7#5#9',   '7#5b9',     '7#5b9#11', '7#5sus4',
-            '7#9',        '7#9#11',  '7#9#11b13', '7#9b13',   '7add6',
-            '7b13',       '7b5',     '7b6',       '7b9',      '7b9#11',
-            '7b9#9',      '7b9b13',  '7b9b13#11', '7no5',     '7sus4',
-            '7sus4b9b13', '9',       '9#11',      '9#11b13',  '9#5',
-            '9#5#11',     '9b13',    '9b5',       '9no5',     '9sus4',
-            'M',          'M#5add9', 'M13#11',    'M6#11',    'M7#5sus4',
-            'M7add13',    'M7b5',    'M7b6',      'M7b9',     'M7sus4',
-            'M9#5sus4',   'M9b5',    'M9sus4',    'Madd9',    'Maddb9',
-            'Mb5',        'alt7',    'aug',       'b9sus',    'dim',
-            'dim7',       'm',       'm#5',       'm/ma7',    'm11',
-            'm11A',       'm13',     'm6',        'm69',      'm7',
-            'm7#5',       'm7add11', 'm7b5',      'm9',       'm9#5',
-            'm9b5',       'mM9',     'mMaj7b6',   'mMaj9b6',  'madd4',
-            'madd9',      'maj#4',   'maj13',     'maj7',     'maj7#5',
-            'maj7#9#11',  'maj9',    'maj9#11',   'maj9#5',   'mb6M7',
-            'mb6b9',      'o7M7',    'oM7',       'sus2',     'sus24',
-            'sus4'
-            ]
+<p>Tonal.js constructs your chord suggestion from the root note of the chord (C), plus the chord name (m7#5), to get (Em7#5), plus, possibly, a "slash" chord, e.g. (Em7#5/C).
+   <br>
+   <br>Here is the full list of chord names from Tonal.js:
+<pre style="margin-left: 4em; border: 2px solid green; padding: 2em;">
+> console.dir(ChordType.symbols().sort(), { maxArrayLength: null });
+[
+'+add#9',     '11',      '11b9',      '13',       '13#11',
+'13#9',       '13#9#11', '13b5',      '13b9',     '13b9#11',
+'13no5',      '13sus4',  '4',         '5',        '6',
+'69#11',      '6add9',   '7',         '7#11',     '7#11b13',
+'7#5',        '7#5#9',   '7#5b9',     '7#5b9#11', '7#5sus4',
+'7#9',        '7#9#11',  '7#9#11b13', '7#9b13',   '7add6',
+'7b13',       '7b5',     '7b6',       '7b9',      '7b9#11',
+'7b9#9',      '7b9b13',  '7b9b13#11', '7no5',     '7sus4',
+'7sus4b9b13', '9',       '9#11',      '9#11b13',  '9#5',
+'9#5#11',     '9b13',    '9b5',       '9no5',     '9sus4',
+'M',          'M#5add9', 'M13#11',    'M6#11',    'M7#5sus4',
+'M7add13',    'M7b5',    'M7b6',      'M7b9',     'M7sus4',
+'M9#5sus4',   'M9b5',    'M9sus4',    'Madd9',    'Maddb9',
+'Mb5',        'alt7',    'aug',       'b9sus',    'dim',
+'dim7',       'm',       'm#5',       'm/ma7',    'm11',
+'m11A',       'm13',     'm6',        'm69',      'm7',
+'m7#5',       'm7add11', 'm7b5',      'm9',       'm9#5',
+'m9b5',       'mM9',     'mMaj7b6',   'mMaj9b6',  'madd4',
+'madd9',      'maj#4',   'maj13',     'maj7',     'maj7#5',
+'maj7#9#11',  'maj9',    'maj9#11',   'maj9#5',   'mb6M7',
+'mb6b9',      'o7M7',    'oM7',       'sus2',     'sus24',
+'sus4'
+]
 
+</pre>
+</p>
+
+<a name="tonalModeNames"></a>
+<h3>Tonal.js Mode Names</h3>
+
+<p>Here is a list of Tonal modes when you have an empty Section in the key of C.  You can generate this with <span class="menuExampleLine">/fpop</span></p>
+
+<pre style="margin-left: 4em; border: 2px solid green; padding: 2em;">
+Tonal extra modes: section 1, table P46_1
+- C major pentatonic
+- C major
+- C minor
+- C major blues
+- C minor blues
+- C melodic minor
+- C harmonic minor
+- C bebop
+- C diminished
+- C dorian
+- C lydian
+- C mixolydian
+- C phrygian
+- C locrian
+- C ionian pentatonic
+- C mixolydian pentatonic
+- C ritusen
+- C egyptian
+- C neapolitan major pentatonic
+- C vietnamese 1
+- C pelog
+- C kumoijoshi
+- C hirajoshi
+- C iwato
+- C in-sen
+- C lydian pentatonic
+- C malkos raga
+- C locrian pentatonic
+- C minor pentatonic
+- C minor six pentatonic
+- C flat three pentatonic
+- C flat six pentatonic
+- C scriabin
+- C whole tone pentatonic
+- C lydian #5p pentatonic
+- C lydian dominant pentatonic
+- C minor #7m pentatonic
+- C super locrian pentatonic
+- C minor hexatonic
+- C augmented
+- C piongio
+- C prometheus neapolitan
+- C prometheus
+- C mystery #1
+- C six tone symmetric
+- C whole tone
+- C messiaen's mode #5
+- C locrian major
+- C double harmonic lydian
+- C altered
+- C locrian #2
+- C mixolydian b6
+- C lydian dominant
+- C lydian augmented
+- C dorian b2
+- C ultralocrian
+- C locrian 6
+- C augmented heptatonic
+- C dorian #4
+- C lydian diminished
+- C leading whole tone
+- C lydian minor
+- C phrygian dominant
+- C balinese
+- C neapolitan major
+- C harmonic major
+- C double harmonic major
+- C hungarian minor
+- C hungarian major
+- C oriental
+- C flamenco
+- C todi raga
+- C persian
+- C enigmatic
+- C major augmented
+- C lydian #9
+- C messiaen's mode #4
+- C purvi raga
+- C spanish heptatonic
+- C bebop minor
+- C bebop major
+- C bebop locrian
+- C minor bebop
+- C ichikosucho
+- C minor six diminished
+- C half-whole diminished
+- C kafi raga
+- C messiaen's mode #6
+- C composite blues
+- C messiaen's mode #3
+- C messiaen's mode #7
+- C chromatic
 </pre>
 
 
@@ -2983,7 +3327,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
 <div class="alphaCheatSheetLinks" id="alphaCheatSheetLinks_ALL">
      <a href="#showHideSongTitle">a</a> 
-    <a href="#showHideInstrumentCaptions">A</a>
+    <a href="#showHideInstrument">A</a>
      <a href="#previousBeat">b</a> 
     <a href="#previousBeat">B</a>
      <a href="#toggleAutoColor">c</a>
@@ -3109,7 +3453,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <!-- Row 3: ASDF -->
     <tr>
         <td>Caps Lock</td>
-        <td><a href="#showHideSongTitle">a</a><a href="#showHideInstrumentCaptions">A</a></td>
+        <td><a href="#showHideSongTitle">a</a><a href="#showHideInstrumentToolbar">A</a></td>
         <td><a href="#showHideSection">s</a><a href="#showHideSection">S</a></td>
         <td><a href="#lowerRootKeyAnd">d</a><a href="#raiseRootKeyAnd">D</a></td>
         <td><a href="#toggleFullscreenMode">f</a><a href="#divFileControls">F</a></td>
@@ -3206,7 +3550,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <!-- Row 3: ASDF -->
     <tr>
         <td>Caps Lock</td>
-        <td><a href="#showHideInstrumentCaptions">instrument c<b>A</b>ption</a> <a href="#showHideSongTitle">c<b>a</b>ption</a></td>
+        <td><a href="#showHideInstrumentToolbar">instrument c<b>A</b>ption</a> <a href="#showHideSongTitle">c<b>a</b>ption</a></td>
         <td><a href="#showHideSection" class="MBtn"><b>S</b> add section</a><br><a href="#showHideSection" class="MBtn"><b>s</b>ection</a></td>
         <td><a href="#raiseRootKeyAnd"><b>D</b><br><small>transpose</small> up</a> <a href="#lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</a></td>
         <td><a href="#divFileControls"><b>F</b>ile</a><br><a href="#toggleFullscreenMode"><b>f</b>ullscreen</a></td> 
@@ -3523,12 +3867,12 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>Show/hide Song title and caption
                 </td>
             </tr>
-            <tr id="showHideInstrumentCaptions">
+            <tr id="showHideInstrumentToolbar">
                 <td><span class="key">A</span>
                 </td>
                 <td>
                 </td>
-                <td>Show/hide Instrument captions
+                <td>Show/hide Instrument Toolbar
                 </td>
             </tr>
             <tr id="toggleAutoColor">
@@ -3991,7 +4335,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td>Prints out a handy chart of Sections, with hyperlinks to jump to the Section, and summary information, 
                         such as Key, Sharps/Flats, number of beats, caption, and count of notes.
                         Since the links jump you to the Sections, this is a very handy way to navigate large songs with many Sections.
-                        /cn is the chart with notes, so has the Tonal.js information about chords and modes, and functions most like a band chart or Lead Sheet.
+                        /cn is the chart with notes, so has <a href="#TonalPicker">TonalPicker</a> information about chords and modes, and functions most like a band chart or Lead Sheet.
                     </td>
                 </tr>
                 <tr>
@@ -4812,21 +5156,23 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <h1>Glossary</h1>
 <p>
     <div id="glossaryLinks" class="link-column">
-        <a href="#glossaryBanjoNut">BanjoNut</a>
+        <a href="#glossaryBanjoNut">Banjo Nut</a>
         <a href="#glossaryBeat">Beat</a>
         <a href="#glossaryBend">Bend</a>
         <a href="#glossaryCell">Cell</a>
         <a href="#glossaryClone">Clone</a>
-        <a href="#glossaryDiamondRows">DiamondRows</a>
-        <a href="#glossaryDisplayOptions">DisplayOptions</a>
+        <a href="#glossaryDiamondRows">Diamond Rows</a>
+        <a href="#glossaryDisplayOptions">Display Options</a>
         <a href="#glossaryFingering">Fingering</a>
         <a href="#glossaryHighlight">Highlight</a>
         <a href="#glossaryInstrument">Instrument</a>
+        <a href="#glossaryKey">Key</a>
+        <a href="#glossaryLeadKey">LeadKey</a>
         <a href="#glossaryMIDINumber">MIDINumber</a>
         <a href="#glossaryMulti">Multi</a>
         <a href="#glossaryNamedNote">NamedNote</a>
-        <a href="#glossaryNoteFunctions">NoteFunctions</a>
-        <a href="#glossaryNoteNames">NoteNames</a>
+        <a href="#glossaryNoteFunctions">Note Functions</a>
+        <a href="#glossaryNoteNames">Note Names</a>
         <a href="#glossarynoteRoot">noteRoot</a>
         <a href="#glossaryPitch">Pitch</a>
         <a href="#glossaryPlayedNote">PlayedNote</a>
@@ -4836,9 +5182,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <a href="#glossaryRoot">Root</a>
         <a href="#glossarySection">Section</a>
         <a href="#glossarysemitone">semitone</a>
-        <a href="#glossaryShallowClone">ShallowClone</a>
+        <a href="#glossaryShallowClone">Shallow Clone</a>
         <a href="#glossarySingleNote">SingleNote</a>
-        <a href="#glossarySpecialRows">SpecialRows</a>
+        <a href="#glossarySpecialRows">Special Rows (SR)</a>
         <a href="#glossaryTheme">Theme</a>
         <a href="#glossaryTinyNote">TinyNote</a>
         <a href="#glossaryTonal-js">Tonal.js</a>
@@ -4901,7 +5247,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr id="glossaryTinyNote">
             <td>TinyNote
             </td>
-            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is a special type of TinyNote, so you can't use both in one cell.)  TinyNotes (and Bends) are special in that they follow LeadKey (set on the SectionDrawer) in coloring and Function.  If you have LeadKey set to G and Key set to C, the TinyNote at G will display Function I, but the NamedNote at G will display V. But if you have LeadKey set to "root", which is the default, then the TinyNote will display the Function V, the same as a NamedNote or SingleNote in that same cell.  
+            <td>A smaller note display that stays visible over NamedNotes and SingleNotes.  (A Bend is a special type of TinyNote, so you can't use both in one cell.)  
+                TinyNotes (and Bends) are special in that they follow <a href="#glossaryLeadKey">LeadKey</a> (set on the SectionDrawer) in coloring and Function.  If you have Lea<a href="#glossaryLeadKey">LeadKey</a>dKey set to G and Key set to C, the TinyNote at G will display Function I, but the NamedNote at G will display V. But if you have <a href="#glossaryLeadKey">LeadKey</a> set to "root", which is the default, then the TinyNote will display the Function V, the same as a NamedNote or SingleNote in that same cell.  
             </td>
         </tr>
         <tr id="glossaryBend">
@@ -5068,7 +5415,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <td>noteRoot
             </td>
             <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js will 
-        present as the chord set.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
+        present as the chord set in the <a href="#TonalPicker">TonalPicker</a>.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
         <br>However, "noteRoot" means something a little different in the context of <a href="#divFillNotes">Fill Notes</a> and in the command-line version in <a href="help-plugins.html#plugin-fill">FillPlugin</a>.  There it means the Fill will place a noteRoot for you.
             </td>
         </tr>
@@ -5077,6 +5424,23 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             </td>
             <td>The note at the first degree of a scale or mode.  Also, the Root Key (or Key of the Root Note).
                 So in A minor, A is the Root and the Root Key.
+            </td>
+        </tr>
+        <tr id="glossaryKey">
+            <td>Key
+            </td>
+            <td>The key the Section is in.
+            </td>
+        </tr>
+        <tr id="glossaryLeadKey">
+            <td>LeadKey
+            </td>
+            <td>
+                The key a Lead Player is in, if not in the Key of the Section. For example, in a Blues in C, C is the Key, and the Root
+                of the Key of C is C. But on the IV chord, the F, the Lead Player may solo in the Key of F (as opposed to playing F Lydian
+                over C). If this is how you want to chart out the Lead's part, then set LeadKey to F in the Section, and use TinyNotes,
+                which follow LeadKey. The TinyNotes will show F as function I, C as function V, G as function II and so on.
+
             </td>
         </tr>
         <tr id="glossaryRootChordScale">
@@ -5187,7 +5551,10 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 above each instrument, in the Chart &gt; Notes page, and 
                 in the <a href="help-plugins.html#plugin-tonal">TonalPlugin</a> where you can also print out all the modes (including
                 all non-Western modes) with command-line <span class="CmdLineExample">/fpop</span>
-                <br>See: <a href="#tonalChordNames">Tonal.js Chord Names</a>
+                <br> - <b>See:</b> <a href="#TonalPicker">TonalPicker</a>
+                <br> - <b>See:</b> <a href="#tonalChordNames">Tonal.js Chord Names</a>
+                <br> - <b>See:</b> <a href="#tonalModeNames">Tonal.js Mode Names</a>
+                <br> - <b>See:</b> <a href="help-plugins.html#plugin-tonal">TonalPlugin</a>
             </td>
         </tr>
     </table>
@@ -5240,7 +5607,6 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a name="renfaire"></a>
     <h3>Renfaire</h3>
 <p>     <img width="80%" src="img/help/theme-renfaire.png"><br><br></p>
-<p>      <img width="80%" src="img/help/theme-renfaire-90.png"><br><br></p>
     <a name="robin-hood"></a>
     <h3>Robin Hood</h3>
 <p>      <img width="80%" src="img/help/theme-robin-hood.png"><br><br></p>
