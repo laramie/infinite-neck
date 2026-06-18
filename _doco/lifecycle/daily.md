@@ -132,7 +132,7 @@ npm run package:deploy
 
 - creates a tar file in ./dist/
 
-scp dist/infinite-neck-20260616-173854.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+scp dist/infinite-neck-20260618-020445.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
 ### on the server
 
