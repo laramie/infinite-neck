@@ -102,6 +102,11 @@
            padding-left: 0;
            margin-bottom: 0.4em;
        }
+       .ExamplesTable b {
+            color: rgb(66, 27, 1);
+            font-size: 120%;
+            font-weight: 800;
+       }
        .CheatSheet td {
            padding: 0.3em;
        }
@@ -179,6 +184,7 @@
             border: 1px solid gray; 
             background-color: lightgreen;
        }
+
 
        .menuExample  b {
            color: #ffaa00;
@@ -1424,7 +1430,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
     <tr>
         <td>tuning
         </td>
-        <td><span class="GUIReferenceInline">Tunings | All Tunings :: ID</span> e.g. Bass4, P46, S6
+        <td><span class="GUIReferenceInline">Tunings | Tunings Library :: ID</span> e.g. Bass4, P46, S6
         </td>
         <td>http://demo.laramiecrocker.com/infinite-neck?tuning=Bass4
         </td>
@@ -2388,7 +2394,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
         in a different background color scheme, so P4 players can have a visual reminder of the Special-ness of these strings--they 
         are a half-step off of Perfect Fourths tuning (P4).
         By default, 
-        S6 or S8 tunings turn on "Special Rows" with a checkbox in the "My Tunings" table or "All Tunings" table.  Uncheck if you don't 
+        S6 or S8 tunings turn on "Special Rows" with a checkbox in the "Tunings in Song" table or "Tunings Library" table.  Uncheck if you don't 
         want special rows displayed with different background colors. 
     </p>
     <p>
@@ -2670,7 +2676,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
                 <li><b>Wiring button</b>: shows various states: <b>[<s>No Instrument</s>]</b>, <b>[Add Wiring]</b>, <b>[Wired]</b>.  
                     <ul>
                         <li><b>[<s>No Instrument</s>]</b> means you need to select an instrument from the Instrument
-                    drop-down.  If it only shows "none" you need to add one more instrument into My Tunings from the All Tunings library.
+                    drop-down.  If it only shows "none" you need to add one more instrument into "Tunings in Song" from the "Tunings library".
                         </li>
                         <li><b>[Add Wiring]</b> means you are ready to wire the selected instruments events to the current instrument, possibly with Relative Section Amount.  Clicking on the 
                             button wires the events, and puts you in the <b>[Wired]</b> state for that instrument.
@@ -2753,6 +2759,16 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <hr>
 <a name="TonalPicker"></a>
 <h2>TonalPicker</h2>
+<ul class="LinkList">
+    <li><a href="#TonalPickerChartNotes">TonalPicker in Chart &gt; Notes</a></li>
+    <li><a href="#TonalPickerInstrumentToolbar">TonalPicker in InstrumentToolbar</a></li>
+    <li><a href="#TonalPickerControls">TonalPicker Controls</a></li>
+    <li><a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a></li>
+    <li><a href="#SectionStatusWidget">section-status widget</a></li>
+    <li><a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a></li>
+    <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
+    <li><a href="#tonalModeNames">Tonal.js Mode Names</a></li>
+</ul>
 <p>The TonalPicker is our widget that uses <a href="https://tonaljs.github.io/tonal/docs">Tonal.js</a> 
     to suggest chords and modes for the <span class="GUIReferenceInline">Chart</span>, based on the notes you have played.  
     We wrote it to be very visually compact so as not to clog up the screen real estate around each instrument.
@@ -3006,7 +3022,7 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
     <a href="#glossaryKey">Key</a> we are in. It contains a LooperLight,
     a green border here (around the section number and beat number) because we aren't looping. While looping, the
     LooperLight is magenta.
-    Below the LooperLight are two boxes, one has a white background for rootKey and one has a gray background because
+    Below the LooperLight are two boxes [Key, LeadKey], one has a white background for Key (the root key of the Section) and one has a gray background because
      is <a href="#glossaryLeadKey">LeadKey</a> is absent.
     Below these, is the Instrument name, P46_1, the first instance in our song of a P4 6-string guitar.
     <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
@@ -5212,7 +5228,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <a href="#glossaryup-down">up-down</a>
     </div>
 
-    <table id="glossaryTable" class="CheatSheet menuExample" cellspacing="0" border="1">
+    <table id="glossaryTable" class="CheatSheet ExamplesTable" cellspacing="0" border="1">
         <tr>
             <th>Term
             </th>
@@ -5398,7 +5414,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr id="glossarySpecialRows">
             <td>Special Rows (SR)
             </td>
-            <td>In Tunings, "Special Rows" checkboxes, showed as a column "SR" in the tables "My Tunings", or the "All Tunings" library, cause the 
+            <td>In Tunings, "Special Rows" checkboxes, showed as a column "SR" in the tables "Tunings in Song", or the "Tunings Library", cause the 
                 special rows of the instrument to be shown in different background colors, to distinguish them from P4 tunings.
                 For Standard tuning 6-string guitar, the "Special Rows" are the first two rows. 
                         See the instructions <a href="#tunings-special-rows">Help: Special Rows</a> topic to see how to change it.
@@ -5408,7 +5424,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr id="glossaryDiamondRows">
             <td>Diamond Rows
             </td>
-            <td>In "My Tunings", or the "All Tunings" library, the column "Diamonds" checkmark causes the 
+            <td>In "Tunings in Song", or the "Tunings Library", the column "Diamonds" checkmark causes the 
                 diamonds found on the necks of real instruments to be shown below the fretboard in <span class="productsmaller">infinite-neck</span>.
                 Diamonds are the dots, squares, diamonds, or other shapes and inlays (in pearl, ebony etc.) 
                 found typically at the 3rd, 5th, 7th, 9th, and twelth frets on the 
@@ -5434,22 +5450,45 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr id="glossarynoteRoot">
             <td>noteRoot
             </td>
-            <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, 
-                just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), 
-                and this changes what Tonal.js will 
-                present as the chord set in the <a href="#TonalPicker">TonalPicker</a>.  The lookup order is: look in the current table (Instrument)
-                first, then look for another Instrument that is playing noteRoot in the order they appear in Section.sectionNotesByTable, which is determined
-                by the order in which notes were first create by Instrument in this Section.  The visual order of Instruments in the Section has no effect.  
-                Essentially, you can craft a Section so that one Instrument wins in a battle of "who's playing bass?", but you are better off restricting
-                one instrument per Section to have a noteRoot.  You can still place note1 on any Instrument to get the coloring of the "I" in your color scheme in effect. 
+            <td><span class='productsmaller'>infinite-neck</span> has special note colors for roles, as can be customized in the Palette.  
+                There are note colors for <b>note1, note2, .... note12</b> that represent the AutoColors for the twelve tones of the scale.
+                So you can always use <b>note1</b> for the first note of the scale, or you can use <b>noteTransparent</b> to have AutoColor figure
+                this out for you based on the key you are in.
                 <br>
                 <br>
-                <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.             
-                <img width="70" src="img/help/context/noteRoot-G.png">
+                There is also a special note color/role: <b>noteRoot</b>.  Any instrument playing a <b>noteRoot</b> determines the apparent key or implied key, 
+                just like a Bass player (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>) 
+                playing a Pedal Tone would , and this changes what Tonal.js will 
+                present as the chord set in the <a href="#TonalPicker">TonalPicker</a>.  But it does not change the actual Key or LeadKey the Section is in. 
+                You can still place <b>note1</b> on any Instrument to get the coloring of the <b>I</b> in your color scheme in effect. 
+                <br>
+                <br>
+                <b>noteRoot</b> has a special hatch pattern in the cell so it looks different. Here it is, a G in the key of C so it is function V, but with the noteRoot it sets the root of the chords, and has the special coloring:
+                <br><img width="70" src="img/help/context/noteRoot-G.png">
+                <br>Here's a normal <b>note1</b> on C in the key of C, so it is the root note, but not <b>noteRoot</b>.             
+                <br><img width="70" src="img/help/context/note1-C.png">
 
                 <br>
                 <br>
+                See how to set a <b>noteRoot</b> in the app here: <a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a>
+    
+                <br>
+                <br>
+                <i><small>The lookup order is: look in the current Instrument
+                first, then look for another Instrument that is playing noteRoot in the order they appear in Section.sectionNotesByTable.
+                (Which is determined by the order in which notes were first create by Instrument in this Section.  
+                The visual order of Instruments in the Section has no effect.)
+                <br>  
+                <br>  
+                So while you can craft a Section so that one Instrument wins in a battle of "who's playing bass?", you are better off restricting
+                one instrument per Section to have a noteRoot.  You should make most instruments follow the Key or LeadKey, and assign one
+            instrument to use noteRoot if the movement of that instrument implies the key change, such as a descending bass line, or a Pedal Tone.</small></i>
+                <br>
+                <br>
                 However, "noteRoot" means something a little different in the context of <a href="#divFillNotes">Fill Notes</a> and in the command-line version in <a href="help-plugins.html#plugin-fill">FillPlugin</a>.  There it means the Fill will place a noteRoot for you.
+                <br>You can change the color scheme of <b>noteRoot</b> in <div class="GUIReferenceInline">palette | Customize ... | Root | Color / Hatch | Record Stylesheet </div>
+                <br>and this will show up whenever you place a noteRoot, either manually, with the Fill menu page, or with FillPlugin.
+                <br>
             </td>
         </tr>
         <tr id="glossaryRoot">
