@@ -1100,6 +1100,16 @@ export var gMenuFile =    {
                 "displayOptionsClearState"
               ],
               "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>v</b>iew DisplayOptions",
+              "trigger": "v",
+              "action": "showViewDiagnosticsDisplayOptions"
+            },
+            {
+              "caption": "<b>;</b>&nbsp;dialog",
+              "trigger": ";",
+              "action": "showDialog-view"
             }
           ]
         },

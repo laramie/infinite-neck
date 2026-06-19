@@ -881,14 +881,6 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
-		case "setPresentationModeAutomated":
-			setPresentationMode(true);
-			actionResult.result = "presentation mode: automated";
-			break;
-		case "setPresentationModeManual":
-			setPresentationMode(false);
-			actionResult.result = "presentation mode: manual";
-			break;
 		case "togglePresentationMode":
 			setPresentationMode(!getSong()?.presentationMode);
 			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;

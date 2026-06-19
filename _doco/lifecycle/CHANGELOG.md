@@ -1,6 +1,21 @@
 # ChangeLog
 
 ### 20260618
+Tag: v2.1-beta-5
+
+- d4b06b9 **2026-06-18** Moved TinyNote defaults around a bit so they don't cover the radius on SingleNotes, and hang out nearer the fret.  Made them round by default.  Square is still there for customization of radius. Updated help for palette. Fixed presentation.js and palette.builder.js so that Fingerings participate in Last Color chosen radio button scheme.
+- 3213023 **2026-06-18** Updating headers
+- 61a8dea **2026-06-18** added bass5, bass6. Added instructions on noteRoot
+- ab6af73 **2026-06-18** Added overview of Listeners and Observers
+- c3e0dee **2026-06-18** renamed rootNote* noteRoot*
+- 473502a **2026-06-18** test case for multiple players claiming noteRoot
+- 8b4b9a2 **2026-06-18** Song that shows how different players set noteRoot
+- d49af01 **2026-06-18** Special treatment for noteRoot, without messing up the color lookup context. Fixes bug where placing noteRoot of G in the bass changes colors in the guitar even though the Section is in C.
+- cc54441 **2026-06-18** song demonstrate noteRoot bug
+- ae3b4b9 **2026-06-18** Updated build date
+- b84629d **2026-06-18** Ready for v2.1-beta-4
+
+### 20260618
 Tag: v2.1-beta-4
 
 - 3683c09 **2026-06-18** Removed test that tested menu structure.  We need to get rid of all of these.
