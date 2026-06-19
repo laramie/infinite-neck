@@ -2612,7 +2612,27 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 
 <a name="event-wiring"></a>
 <h3>Event Wiring Controls</h3>
- <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop, and (some day) on the MIDI bus.  
+ <p> 
+    <span class="productsmaller">infinite-neck</span> allows you to have "Listener" and "Observer" instruments in your song.  
+    <ul>
+        <li>
+            Listeners can have their 
+            own notes (named, played, and recorded), but then on top of these they show the notes of all types from the instrument they are listening to.
+            This is called "Wiring", because you wire the input of one Instrument to the output of another, the way you would with MIDI instruments in 
+            Ableton or ProTools.  Listeners have an empty value in "Relative Section", otherwise they become Observers.  
+            Listeners can copy playedNotes and NamedNotes (but not recordedNotes) they are listening to with the "Capture" button.
+        </li>
+        <li>
+            Observers do not get their own notes, because they become read-only, and stop displaying notes they may own,
+             but then listen to other instruments.  The real use of Observers
+            is to listen to another Section on another Instrument.  This is used for look-ahead or look-behind like a piano roll, or Guitar-Hero or Synthesia.
+            Setting the "Relative Section" amount will make this Instrument an Observer.  Setting the "Instrument" dropdown to "none" in the Wiring controls will make this 
+            Instrument stop observing. Observers cannot "Capture" notes--use the instrument as a Listener for doing that.
+        </li>
+    </ul>
+ </p>
+    
+ <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop (and some day, on the MIDI bus).  
     The Event Wiring Controls (toggle with keyboard shortcut <span class="key">e</span> or with the "Wiring" buttons) let you map these events to each instrument.  Here are the main controls:
             <ul> 
                 <li><b>Relative Section Amount</b>: a text-string with a direction and an integer, giving a number of Sections to "look-ahead" or "look-behind" for notes to display in this table.
@@ -5414,9 +5434,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <tr id="glossarynoteRoot">
             <td>noteRoot
             </td>
-            <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), and this changes what Tonal.js will 
-        present as the chord set in the <a href="#TonalPicker">TonalPicker</a>.  <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.
-        <br>However, "noteRoot" means something a little different in the context of <a href="#divFillNotes">Fill Notes</a> and in the command-line version in <a href="help-plugins.html#plugin-fill">FillPlugin</a>.  There it means the Fill will place a noteRoot for you.
+            <td>Any instrument playing a <b>noteRoot</b> determines the apparent key, 
+                just like a Bass player would (<a href="https://www.youtube.com/watch?v=LOHTZREAseA&t=62s">BEHS!</a>), 
+                and this changes what Tonal.js will 
+                present as the chord set in the <a href="#TonalPicker">TonalPicker</a>.  The lookup order is: look in the current table (Instrument)
+                first, then look for another Instrument that is playing noteRoot in the order they appear in Section.sectionNotesByTable, which is determined
+                by the order in which notes were first create by Instrument in this Section.  The visual order of Instruments in the Section has no effect.  
+                Essentially, you can craft a Section so that one Instrument wins in a battle of "who's playing bass?", but you are better off restricting
+                one instrument per Section to have a noteRoot.  You can still place note1 on any Instrument to get the coloring of the "I" in your color scheme in effect. 
+                <br>
+                <br>
+                <b>noteRoot</b> has a special hatch pattern in the cell so it looks different.             
+                <img width="70" src="img/help/context/noteRoot-G.png">
+
+                <br>
+                <br>
+                However, "noteRoot" means something a little different in the context of <a href="#divFillNotes">Fill Notes</a> and in the command-line version in <a href="help-plugins.html#plugin-fill">FillPlugin</a>.  There it means the Fill will place a noteRoot for you.
             </td>
         </tr>
         <tr id="glossaryRoot">
