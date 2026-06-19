@@ -966,6 +966,9 @@
                         <li><a href="#divFillNotes">Fill</a></li>
                         <li><a href="#divTunings">Tunings</a></li>
                         <li><a href="#palette">Palette</a></li>
+                        <ul class="LinkList">
+                            <li><a href='#specialColors'>Special Colors</a></li>
+                        </ul>
                         <li><a href="#divDesktop">Desktop</a></li>
                         <li><a href="#QuickMenu">Quick Menu</a></li>
                         <li><a href="#event-wiring">Event Wiring Controls</a></li> 
@@ -2491,6 +2494,9 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
      the two notes in your stylesheet would override the Default, but other notes would use the Default.
  </p>
 
+ 
+ <a name='specialColors'>
+ <h4>Special Colors</h4>
  <p>Finally, there are several special "Color" buttons: [CLEAR, KEEP, and Find Color] and the special "Last Color" button to the right of these, and the left of "AutoColor".
 </p>
 
@@ -2507,13 +2513,14 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 
 <p>
      To find what color you used before, make sure AutoColor is off, then click "Find Color", then click the note
-     on the neck. This currently only works for NamedNotes.  
+     on the neck. Only the type of note chose [NamedNote, SingleNote,...] will be searched, helpful
+     if you have multiple note types in a cell.  
      The color name will appear in the Caption of that instrument, so open up the Caption row
      with the little hamburger on the instrument.
      If the whole Caption on the instrument is missing, press ESC then SHIFT-A to show it.
      The color will also be highlighted on the Palette, so you
      will have to have AutoColor off, and you should click "More..." after the [&Delta;] radio button to show
-     the full color palette.
+     the full color palette.  Click the big glow on that radio button to make the glow go away.
  </p>
 
  <p>Two more colors are special: [Emboss, and Auto].  Emboss just creates a note with transparent background.  This is useful
@@ -4196,13 +4203,13 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
            <span class="key">&#x2191;</span>
            <span class="key">&#x2193;</span>
            <span class="key">&#x2192;</span>) usually found below the ENTER key, or slightly right of there, and left of any numeric keypad.  
-   <br>     
-<img width="100px"  src="img/help/arrow-keys.png">
-<img width="200px"  src="img/help/arrow-keys-laptop.png">
-<img width="200px"  src="img/help/arrow-keys-context.png">
+        <br>     
+        <img width="100px"  src="img/help/arrow-keys.png">
+        <img width="200px"  src="img/help/arrow-keys-laptop.png">
+        <img width="200px"  src="img/help/arrow-keys-context.png">
         </p>
-        <a name="keysInCommandLine"></a>
-        <h4>Keys Used in the Command-line</h4>
+<a name="keysInCommandLine"></a>
+<h4>Keys Used in the Command-line</h4>
         <table id="tblKeysInCommandLine" class="CheatSheet" cellspacing="0" border="1">
             <tr>
                 <th id="key">key
@@ -4330,8 +4337,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             </tr>
         </table>
         
-        <a name="commandLineUsefulCommands"></a>
-            <h4>Command-line Useful Commands</h4>
+<a name="commandLineUsefulCommands"></a>
+<h4>Command-line Useful Commands</h4>
             <p>Most of the command-line menu items are self-explanatory.  Here are some notes for ones that aren't.
             </p>
             <p>Any command that "prints" out a result does it on the main page, below any instruments.
@@ -4452,7 +4459,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             
 <a name="commandLineMenuDump"></a>
-            <h4>Command-line Full Menu Listing</h4>
+<h4>Command-line Full Menu Listing</h4>
     <p><span class="menuExampleLine">/vdm</span> prints out a command-line Menu Dump in the app.
     </p> 
     <p>Here is the full Menu Dump copied into this help file from the app 2026-05-25:</p>
