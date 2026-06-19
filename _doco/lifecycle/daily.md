@@ -132,21 +132,22 @@ npm run package:deploy
 
 - creates a tar file in ./dist/
 
-scp dist/infinite-neck-20260618-020445.tar.gz ssh-user-name@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+scp dist/infinite-neck-20260618-233732.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
 ### on the server
 
-ssh ssh-user-name@demo.laramiecrocker.com
+ssh $SSH_LAR@demo.laramiecrocker.com
 
 Adjust the dates, and do something like: 
 ```
 cd sites/demo.laramiecrocker.com
-dir
-mv infinite-neck infinite-neck-20260610
-mkdir infinite-neck
-cd infinite-neck
-mv ../infinite-neck-20260612-084929.tar.gz .
-tar xvf infinite-neck-20260612-084929.tar.gz 
+mkdir infinite-neck-deploy
+cd infinite-neck-deploy
+mv ../infinite-neck-20260618-233732.tar.gz .
+tar xvf infinite-neck-20260618-233732.tar.gz
+rm infinite-neck-20260618-233732.tar.gz
+cd ..
+mv infinite-neck infinite-neck-v2.1-beta-4.2; mv infinite-neck-deploy infinite-neck
 ```
 
 ### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
