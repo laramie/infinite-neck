@@ -978,13 +978,13 @@ export class Song extends SongPersistence {
 
     //============== NOTE: Keep all new EventBus handling code between these comments, ending in END-TODO:EventBus =====================================
     
-    publish_SectionChanged(){
+    publish_SectionChanged(data = {}){
         var song = this || obj;
         if (song.isHeadless){
             return;
         }
         //sectionChanged(); //TODO:EventBus: call this throught the EventBus
-        EventBus.trigger('SectionChanged', { sectionIndex: song.getSectionsCurrentIndex() });
+        EventBus.trigger('SectionChanged', { ...data, sectionIndex: song.getSectionsCurrentIndex() });
     }      
 
     // replacement for direct calls to infinite-neck.js :: updateSectionsStatus();
@@ -1060,10 +1060,14 @@ export class Song extends SongPersistence {
     }
 
     gotoSection(idx){
+        const previousSectionIndex = this.getSectionsCurrentIndex();
         if (this.gotoSectionStateOnly(idx)){
             if (!this.isHeadless){
-                this.requestUiClearAndReplaySection();
-                this.publish_SectionChanged();
+                this.publish_SectionChanged({
+                    previousSectionIndex,
+                    reason: 'goto',
+                    source: 'song'
+                });
             }
         }
     }
@@ -1093,9 +1097,13 @@ export class Song extends SongPersistence {
     }
 
     gotoNextSection(orGotoFirst){
+        const previousSectionIndex = this.getSectionsCurrentIndex();
         this.gotoNextSectionStateOnly(orGotoFirst);
-        this.publish_SectionChanged();
-        this.requestUiClearAndReplaySection();
+        this.publish_SectionChanged({
+            previousSectionIndex,
+            reason: 'next',
+            source: 'song'
+        });
 	}
 
     gotoPrevSectionStateOnly(orGotoLast){
@@ -1107,9 +1115,13 @@ export class Song extends SongPersistence {
     }
 
 	gotoPrevSection(orGotoLast){
+        const previousSectionIndex = this.getSectionsCurrentIndex();
         this.gotoPrevSectionStateOnly(orGotoLast);
-        this.publish_SectionChanged();
-        this.requestUiClearAndReplaySection();
+        this.publish_SectionChanged({
+            previousSectionIndex,
+            reason: 'prev',
+            source: 'song'
+        });
 	}
 
     insertSectionAtDest(aSection, destIndex){
