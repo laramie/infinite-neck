@@ -307,6 +307,10 @@ export class PalettePresentation {
 
         $radio.prop("checked", true).trigger("change");
 
+        if (remember) {
+            PalettePresentation.rememberRestorableRbColor($radio[0]);
+        }
+
         gPresentation.palette.suppressRbColorRemember = prevSuppress;
         return true;
     }

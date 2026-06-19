@@ -318,6 +318,28 @@ describe('PalettePresentation CLEAR and restore note type state', () => {
     expect(byId.get('spanPaletteModePaintCaption').text).toContain('noteGreen7');
   });
 
+  test('programmatic rbColor selection remembers the chosen color for paint mode', () => {
+    const elements = [
+      createInput({ id: 'idPaletteModePaint', name: 'rbPaletteMode', value: 'paint', checked: true, labelText: 'Color: Emboss' }),
+      createInput({ id: 'idRFinger0', name: 'rbColor', value: 'noteFinger0', labelText: 'Finger0' }),
+      { id: 'choosePaletteModePaint', tag: 'label', text: '', classes: new Set() },
+      { id: 'spanPaletteModePaintCaption', tag: 'span', text: '', classes: new Set() }
+    ];
+    const { byId } = installJqueryStub(elements);
+
+    PalettePresentation.selectRbColorByElement($(byId.get('idRFinger0')));
+
+    expect(byId.get('idRFinger0').checked).toBe(true);
+    expect(byId.get('idRFinger0').triggered).toContain('change');
+    expect(PalettePresentation.getLastRestorableRbColor()).toEqual({
+      id: 'idRFinger0',
+      value: 'noteFinger0',
+      caption: 'Finger0'
+    });
+    expect(byId.get('spanPaletteModePaintCaption').text).toContain('Finger0');
+    expect(byId.get('choosePaletteModePaint').classes.has('chooseLastColorAligned')).toBe(true);
+  });
+
   test('ensureColorRadioVisible opens manual and extra colors for hidden extra-color radios', () => {
     const manualColors = { id: 'manualColors', tag: 'div', visible: false, classes: new Set() };
     const extraColors = { id: 'extraColors', tag: 'div', visible: false, classes: new Set(), parent: manualColors };
