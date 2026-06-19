@@ -170,6 +170,13 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+
+- 903-timing-caching
+  - [903-timing-caching design chat](../design/sprints/903-timing-caching/903-design-chat.md)
+  - Figure out how to get rid of loop hiccup on first beat
+  - Investigate paint/rebuild optimization
+  - Investigate warming up the next Section in idle time.  
+  - Investigate caching possibilities
     
 #### Heisenbug tonalResultSet "Tiny"
 
