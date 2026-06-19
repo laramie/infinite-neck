@@ -976,7 +976,7 @@
                         <li><a href="#TonalPickerControls">TonalPicker Controls</a></li>
                         <li><a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a></li>
                         <li><a href="#SectionStatusWidget">section-status widget</a></li>
-                        <li><a href="#settingRootNoteTonal">Setting rootNote for Tonal.js</a></li>
+                        <li><a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a></li>
                         <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
                         <li><a href="#tonalModeNames">Tonal.js Mode Names</a></li>
                     </ul>
@@ -2959,7 +2959,7 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
         <br>
         <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If there are no chords (chords:0) or modes (modes:0) you may have to simplify, by <a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a>.
         <br>
-        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If the chords seem overly complicated, or seem as if they are in the wrong key, try <a href="#settingRootNoteTonal">Setting rootNote for Tonal.js</a>.
+        <br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;If the chords seem overly complicated, or seem as if they are in the wrong key, try <a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a>.
 </p>
 
 <a name="noteTypes-tonalSourceSet"></a>
@@ -3003,8 +3003,8 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 
 </p>
 
-<a name="settingRootNoteTonal"></a>
-<h3>Setting rootNote for Tonal.js</h3>
+<a name="settingNoteRootTonal"></a>
+<h3>Setting noteRoot for Tonal.js</h3>
 <p>
     If the chords seem overly complicated, or seem as if they are in the wrong key, 
     try setting a <a href="#glossarynoteRoot">noteRoot</a> in either this 
@@ -3015,23 +3015,23 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 </p>
 <p>
     <ol style="margin-left: 4em; border: 6px solid green;">
-        <li>Open the MiniPalette, click on rootNote, which is the black square with green diagonal lines and the letter R: <img src="img/help/context/rootNote-button-MiniPalette.png" height="30"> (to the right of <b>Auto</b>):
+        <li>Open the MiniPalette, click on noteRoot, which is the black square with green diagonal lines and the letter R: <img src="img/help/context/noteRoot-button-MiniPalette.png" height="30"> (to the right of <b>Auto</b>):
             <br>
-            <img src="img/help/context/rootNote-MiniPalette.png">
+            <img src="img/help/context/noteRoot-MiniPalette.png">
             <br>
             <br>
         </li>
         <li>
-            Then drop this note (a NamedNote in this case) on the cell you want to be a rootNote (a G in this case, and we can see that we are in the key of C because the G is the V).
+            Then drop this note (a NamedNote in this case) on the cell you want to be a noteRoot (a G in this case, and we can see that we are in the key of C because the G is the V).
             <br>
-            <img src="img/help/context/rootNote-G.png">
+            <img src="img/help/context/noteRoot-G.png">
             <br>
             <br>
 
         </li>
-        <li>Then the rootNote G in the key of G, and the MiniPalette, and the Section key indicator on the left side showing C, now look like this: 
+        <li>Then the noteRoot G in the key of G, and the MiniPalette, and the Section key indicator on the left side showing C, now look like this: 
             <br>
-            <img src="img/help/context/rootNote-MiniPalette-G.png" width="300">
+            <img src="img/help/context/noteRoot-MiniPalette-G.png" width="300">
             <br>
             <br>
         </li>
@@ -3056,9 +3056,9 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 <p>
     To see a chord in the key of G while the Section is in the key of C, you would need to set a noteRoot 
     (with the Palette or MiniPalette) on a G one of the Instruments, 
-    using the same note type as the <b>tonalSourceSet</b> dropdown.  Here you can see we have set G as the rootNote, because even though
-    it is still the V function, it has a black background with green diagonal hatches, the color scheme of rootNote.
-    So if you set a G, B, D in a Section in the key of C, with a rootNote of G, you will see that Tonal.js suggests [ GM, Bm#5/G ].  
+    using the same note type as the <b>tonalSourceSet</b> dropdown.  Here you can see we have set G as the noteRoot, because even though
+    it is still the V function, it has a black background with green diagonal hatches, the color scheme of noteRoot.
+    So if you set a G, B, D in a Section in the key of C, with a noteRoot of G, you will see that Tonal.js suggests [ GM, Bm#5/G ].  
     <br>
     <br>
     <br><img src="img/help/context/TonalEx-G-over-G.png" width="500">
@@ -3081,8 +3081,8 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
     To see chords from the key of C while in a Section in the key of G, you would need to set a noteRoot 
     (with the Palette or MiniPalette) on a C one of the Instruments, 
     using the same note type as the <b>tonalSourceSet</b> dropdown.  
-    Here you can see we have set C as the rootNote, because even though
-    it is still the V function, it has a black background with green diagonal hatches, the color scheme of rootNote.
+    Here you can see we have set C as the noteRoot, because even though
+    it is still the V function, it has a black background with green diagonal hatches, the color scheme of noteRoot.
     Then Tonal.js will suggest [ CM , Em#5/C ].
     <br>
     <br>
