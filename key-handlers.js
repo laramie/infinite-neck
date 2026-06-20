@@ -1287,7 +1287,10 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
 		case "pluginAction:invoke":
-		case "pluginAction:bury": {
+		case "pluginAction:graveyardBury":
+		case "pluginAction:graveyardSave":
+		case "pluginAction:graveyardRaise":
+		case "pluginAction:graveyardLink": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
 			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;

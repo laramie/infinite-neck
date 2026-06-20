@@ -2596,6 +2596,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="]', function(e) {
+			e.preventDefault();
+			const href = $(this).attr('href') || '';
+			if (href) {
+				if (window.history && typeof window.history.pushState === 'function') {
+					window.history.pushState(null, '', href);
+				}
+				pluginManager.raisePluginSnapshotsFromHash(href);
+			}
+		});
+
 		bindDelegatedEvent('click', '.graveyard-toggle-json', function(e) {
 			e.preventDefault();
 			const target = $(this).data('target');
@@ -3484,6 +3495,9 @@ EventBus.on('PluginManager:ShowResult', function(event, data) {
 	if (data && data.message) {
 		showMessages(data.message);
 	}
+});
+EventBus.on('PluginGraveyard:linkAdded', function() {
+	InfoBuilder.renderFromSong(getSong());
 });
 
 function refreshPluginMenus() {

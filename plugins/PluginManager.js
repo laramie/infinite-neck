@@ -4,6 +4,7 @@ import { MenuItemProxy } from './MenuItemProxy.js';
 import { buildCaption, buildValueReference } from './PluginProperty.js';
 
 const DEFAULT_GRAVEYARD_KEY = 'USER';
+const PLUGIN_GRAVEYARD_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_-]*$/;
 const ENABLED_CHECKMARK = '&#x1F5F9;';
 const PERSISTED_SONG_MARK = '&#x1F5BA;';
 
@@ -36,11 +37,20 @@ function stripHtml(value) {
 }
 
 function normalizeGraveyardKey(rawValue) {
-  const normalized = `${rawValue || ''}`
-    .trim()
-    .replace(/\s+/g, ' ')
-    .replace(/[^A-Za-z0-9 _\-']/g, '');
-  return normalized || DEFAULT_GRAVEYARD_KEY;
+  const normalized = `${rawValue || ''}`.trim() || DEFAULT_GRAVEYARD_KEY;
+  if (!PLUGIN_GRAVEYARD_KEY_PATTERN.test(normalized)) {
+    throw new Error(`Plugin graveyard key must be an identifier: ${normalized}`);
+  }
+  return normalized;
+}
+
+function escapeHtml(value) {
+  return `${value ?? ''}`
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function canPromptForConfirmation() {
@@ -254,7 +264,7 @@ export class PluginManager {
       );
     }
 
-    managedNodes.push(this.buildManagedBuryNode(pluginId));
+    managedNodes.push(this.buildManagedGraveyardNode(pluginId));
     return managedNodes;
   }
 
@@ -271,21 +281,96 @@ export class PluginManager {
     });
   }
 
-  buildManagedBuryNode(pluginId) {
+  buildGraveyardInput(pluginId) {
+    return {
+      type: 'input',
+      caption: 'graveyard key',
+      default: `plugin:${pluginId}:graveyardKey`,
+      datatype: 'string',
+      id: 'value'
+    };
+  }
+
+  buildManagedGraveyardNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'graveyard',
+      caption: buildCaption('graveyard', 'g'),
+      trigger: 'g',
+      pluginId,
+      children: [
+        this.buildManagedGraveyardBuryNode(pluginId),
+        this.buildManagedGraveyardRaiseNode(pluginId),
+        this.buildManagedGraveyardSaveNode(pluginId),
+        this.buildManagedGraveyardLinkNode(pluginId)
+      ]
+    });
+  }
+
+  buildManagedGraveyardBuryNode(pluginId) {
     return new MenuItemProxy(this, {
       name: 'bury',
-      caption: buildCaption('Bury', 'B'),
-      trigger: 'B',
-      action: 'pluginAction:bury',
+      caption: buildCaption('bury (save+clear)', 'b'),
+      trigger: 'b',
+      action: 'pluginAction:graveyardBury',
       pluginId,
       popOnBang: true,
-      input: {
-        type: 'input',
-        caption: 'graveyard key',
-        default: `plugin:${pluginId}:graveyardKey`,
-        datatype: 'string',
-        id: 'value'
-      }
+      input: this.buildGraveyardInput(pluginId)
+    });
+  }
+
+  buildManagedGraveyardRaiseNode(pluginId) {
+    const records = this.getPluginGraveyardRecords(pluginId, 9);
+    const children = records.length > 0
+      ? records.map(({ record, graveyardIndex }, index) => this.buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, index + 1))
+      : [new MenuItemProxy(this, {
+        name: 'noPluginSnapshots',
+        caption: 'no plugin snapshots',
+        action: 'noAction',
+        pluginId
+      })];
+
+    return new MenuItemProxy(this, {
+      name: 'raise',
+      caption: buildCaption('raise', 'r'),
+      trigger: 'r',
+      pluginId,
+      children
+    });
+  }
+
+  buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, ordinal) {
+    return new MenuItemProxy(this, {
+      name: `raise:${graveyardIndex}`,
+      caption: buildCaption(this.getPluginGraveyardRecordCaption(record), `${ordinal}`),
+      trigger: `${ordinal}`,
+      action: 'pluginAction:graveyardRaise',
+      pluginId,
+      value: graveyardIndex,
+      popOnBang: true
+    });
+  }
+
+  buildManagedGraveyardSaveNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'save',
+      caption: buildCaption('save', 's'),
+      trigger: 's',
+      action: 'pluginAction:graveyardSave',
+      pluginId,
+      popOnBang: true,
+      input: this.buildGraveyardInput(pluginId)
+    });
+  }
+
+  buildManagedGraveyardLinkNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'link',
+      caption: buildCaption('link', 'l'),
+      trigger: 'l',
+      action: 'pluginAction:graveyardLink',
+      pluginId,
+      popOnBang: true,
+      input: this.buildGraveyardInput(pluginId)
     });
   }
 
@@ -307,10 +392,20 @@ export class PluginManager {
         return this.setPropertyValue(entry, menuItem.propertyName, menuItem.value);
       case 'pluginAction:invoke':
         return this.invokePluginAction(entry, menuItem.actionName, args);
-      case 'pluginAction:bury': {
+      case 'pluginAction:graveyardBury': {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.buryPluginEntry(entry, rawValue);
       }
+      case 'pluginAction:graveyardSave': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.savePluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardLink': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.linkPluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardRaise':
+        return this.raisePluginSnapshotByGraveyardIndex(pluginId, menuItem.value);
       default:
         throw new Error(`Unsupported plugin action: ${menuItem.action}`);
     }
@@ -503,9 +598,190 @@ export class PluginManager {
     this.replaceGraveyardRecord(entry, userKey, payload);
     this.syncSongPlugins();
     this.refreshPluginsMenuNode();
+    const resultVerb = options.resultVerb || 'buried';
     return {
-      result: `buried ${entry.plugin.getId()} as ${userKey}`,
+      result: `${resultVerb} ${entry.plugin.getId()} as ${userKey}`,
       userKey
+    };
+  }
+
+  savePluginEntry(entry, rawValue) {
+    return this.storePluginSnapshot(entry, rawValue, {
+      disableBeforeSnapshot: false,
+      skipLoopStop: true,
+      resultVerb: 'saved'
+    });
+  }
+
+  getPluginGraveyardRecords(pluginId, limit = 9) {
+    if (!this.song || !this.song.graveyard || !Array.isArray(this.song.graveyard.records)) {
+      return [];
+    }
+
+    const records = [];
+    for (let index = this.song.graveyard.records.length - 1; index >= 0; index -= 1) {
+      const record = this.song.graveyard.records[index];
+      if (record?.type === 'PLUGIN' && record?.context?.pluginId === pluginId) {
+        records.push({ record, graveyardIndex: index });
+        if (records.length >= limit) {
+          break;
+        }
+      }
+    }
+    return records;
+  }
+
+  getPluginGraveyardRecordCaption(record) {
+    return record?.context?.userKey
+      || record?.context?.caption
+      || record?.context?.logicalKey
+      || `${record?.timestamp || 'snapshot'}`;
+  }
+
+  findPluginGraveyardRecordIndex(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    if (!this.song || !this.song.graveyard || !Array.isArray(this.song.graveyard.records)) {
+      return -1;
+    }
+
+    for (let index = this.song.graveyard.records.length - 1; index >= 0; index -= 1) {
+      const record = this.song.graveyard.records[index];
+      if (record?.type !== 'PLUGIN') {
+        continue;
+      }
+      if (record?.context?.pluginId !== pluginId) {
+        continue;
+      }
+      if (record?.context?.userKey === normalizedKey || record?.context?.logicalKey === `${pluginId}::${normalizedKey}`) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  findPluginGraveyardRecord(pluginId, userKey) {
+    const index = this.findPluginGraveyardRecordIndex(pluginId, userKey);
+    return index >= 0 ? this.song.graveyard.records[index] : null;
+  }
+
+  raisePluginSnapshotByGraveyardIndex(pluginId, graveyardIndex) {
+    const index = Number.parseInt(`${graveyardIndex}`, 10);
+    const record = this.song?.graveyard?.records?.[index];
+    if (!record || record.type !== 'PLUGIN' || record.context?.pluginId !== pluginId) {
+      return { result: `missing ${pluginId} snapshot` };
+    }
+
+    const persisted = JSON.parse(record.json);
+    const result = this.importPluginSnapshot(pluginId, persisted, { autoBuryCurrent: true });
+    record.lastRevived = Date.now();
+    this.eventBus.trigger('PluginGraveyard:raised', { pluginId, graveyardIndex: index, userKey: record.context?.userKey });
+    this.eventBus.trigger('SongUiFullRepaint');
+    return {
+      result: result.result || `revived ${pluginId} as ${record.context?.userKey || index}`
+    };
+  }
+
+  raisePluginSnapshotByKey(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    const index = this.findPluginGraveyardRecordIndex(pluginId, normalizedKey);
+    if (index < 0) {
+      return { result: `missing ${pluginId}.${normalizedKey}`, missing: true };
+    }
+    return this.raisePluginSnapshotByGraveyardIndex(pluginId, index);
+  }
+
+  buildPluginRaiseFragment(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    return `#raise=${pluginId}.${normalizedKey}`;
+  }
+
+  appendPluginGraveyardLinkToSongInfo(entry, userKey) {
+    if (!this.song) {
+      return { result: 'link unavailable' };
+    }
+
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    const pluginId = entry.plugin.getId();
+    const fragment = this.buildPluginRaiseFragment(pluginId, normalizedKey);
+    const label = `${pluginId}.${normalizedKey}`;
+    const line = `\n<br>Raise plugin state: <a href="${escapeHtml(fragment)}">${escapeHtml(label)}</a>`;
+    this.song.info = `${this.song.info || ''}${line}`;
+    this.eventBus.trigger('PluginGraveyard:linkAdded', { pluginId, userKey: normalizedKey, fragment });
+    return {
+      result: `linked ${label}`,
+      fragment
+    };
+  }
+
+  linkPluginEntry(entry, rawValue) {
+    const snapshotResult = this.savePluginEntry(entry, rawValue);
+    if (snapshotResult.result === 'Bury unavailable') {
+      return snapshotResult;
+    }
+
+    const linkResult = this.appendPluginGraveyardLinkToSongInfo(entry, snapshotResult.userKey);
+    return {
+      result: linkResult.result,
+      message: linkResult.fragment || ''
+    };
+  }
+
+  parsePluginRaiseHash(hash = '') {
+    return this.parsePluginRaiseHashEntries(hash).items;
+  }
+
+  parsePluginRaiseHashEntries(hash = '') {
+    const text = `${hash || ''}`.trim().replace(/^#/, '');
+    if (!text.startsWith('raise=')) {
+      return { items: [], errors: [] };
+    }
+
+    const items = [];
+    const errors = [];
+    text
+      .slice('raise='.length)
+      .split(',')
+      .map((segment) => segment.trim().replace(/^raise=/, ''))
+      .filter(Boolean)
+      .forEach((segment) => {
+        const dotIndex = segment.indexOf('.');
+        if (dotIndex <= 0 || dotIndex === segment.length - 1) {
+          errors.push(`invalid ${segment}`);
+          return;
+        }
+        const pluginId = segment.slice(0, dotIndex).trim();
+        const userKey = segment.slice(dotIndex + 1).trim();
+        if (!PLUGIN_GRAVEYARD_KEY_PATTERN.test(pluginId) || !PLUGIN_GRAVEYARD_KEY_PATTERN.test(userKey)) {
+          errors.push(`invalid ${segment}`);
+          return;
+        }
+        items.push({ pluginId, userKey });
+      });
+    return { items, errors };
+  }
+
+  raisePluginSnapshotsFromHash(hash = '') {
+    const parsed = this.parsePluginRaiseHashEntries(hash);
+    const raises = parsed.items;
+    if (raises.length === 0 && parsed.errors.length === 0) {
+      return { result: 'no plugin snapshots raised', message: '' };
+    }
+
+    const results = parsed.errors.concat(raises.map(({ pluginId, userKey }) => {
+      try {
+        const result = this.raisePluginSnapshotByKey(pluginId, userKey);
+        return result.result || `${pluginId}.${userKey}`;
+      } catch (error) {
+        return `${pluginId}.${userKey}: ${error.message}`;
+      }
+    }));
+
+    const html = results.map((result) => `<div>${escapeHtml(result)}</div>`).join('');
+    this.eventBus.trigger('ShowMessages', { html });
+    return {
+      result: `processed ${results.length} plugin raise link${results.length === 1 ? '' : 's'}`,
+      message: html,
+      results
     };
   }
 

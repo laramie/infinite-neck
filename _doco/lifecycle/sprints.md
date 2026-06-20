@@ -159,6 +159,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Get TransposePlugin to do what MovePlugin does when using options: recordedNotes, all types, algorithm: string, and motion down (and up with octave fix).
   - COMPLETE
 
+sprint: 129-graveyard-plugin-menu
+  
+
 
 # Future Sprints Unscheduled 
 

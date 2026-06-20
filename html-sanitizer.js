@@ -34,8 +34,15 @@ const ALLOWED_TAGS = new Set([
 	'tr',
 	'th',
 	'td',
-	'hr'
+	'hr',
+	'a'
 ]);
+
+const PLUGIN_RAISE_FRAGMENT_PATTERN = /^#raise=[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*(?:,(?:raise=)?[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*)*$/;
+
+export function isAllowedInfoAnchorHref(href = '') {
+	return PLUGIN_RAISE_FRAGMENT_PATTERN.test(String(href || '').trim());
+}
 
 function sanitizeNode(node, doc) {
 	if (!node) {
@@ -60,6 +67,13 @@ function sanitizeNode(node, doc) {
 	}
 
 	const cleanNode = doc.createElement(tagName);
+	if (tagName === 'a') {
+		const href = node.getAttribute('href') || '';
+		if (!isAllowedInfoAnchorHref(href)) {
+			return null;
+		}
+		cleanNode.setAttribute('href', href.trim());
+	}
 	Array.from(node.childNodes).forEach((childNode) => {
 		const cleanChild = sanitizeNode(childNode, doc);
 		if (cleanChild) {

@@ -10,7 +10,10 @@ import { gMenuFile } from '../menu.js';
 const runtimeChildrenActionMap = new Map([
     ['pluginManager', [
         'pluginAction:invoke',
-        'pluginAction:bury',
+        'pluginAction:graveyardBury',
+        'pluginAction:graveyardSave',
+        'pluginAction:graveyardRaise',
+        'pluginAction:graveyardLink',
         'pluginProperty:select',
         'pluginProperty:set',
         'pluginProperty:toggle'
