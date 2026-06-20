@@ -62,6 +62,7 @@ import {
 import './menu.js';
 import {
 	buildCellsFromSelector,
+	cellBuilder,
 	clearAll,
 	clearHighlights,
 	colorNote,
@@ -74,6 +75,7 @@ import {
 	showMidiNotesInTable,
 	fullRepaint
 } from './NoteTableController.js';
+import * as NoteTableRenderCache from './NoteTableRenderCache.js';
 import {
 	Note
 } from './Note.js'; 
@@ -137,6 +139,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const NATURAL = "&nbsp;";
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
+	const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
+	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = true;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
 						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
@@ -464,6 +468,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		clearAndReplaySection();
 		// Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
 		pluginManager.refreshPluginsMenuNode();
+		if (NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			EventBus.trigger('NoteTableCache:prewarmNextSection', {
+				currentSectionIndex: getSectionsCurrentIndex(),
+				reason: 'sectionChanged'
+			});
+		}
 	}
 
 	export function updateSectionsStatus(){
@@ -775,26 +785,237 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (tableID){
 			tableID_prefix = '#'+tableID + ' ';
 		}
-		if (sharps) {
-			buildCellsFromSelector(tableID_prefix+"td.noteAb", "G", SHARP, 11, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteBb", "A", SHARP, 1, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteDb", "C", SHARP, 4, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteEb", "D", SHARP, 6, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteGb", "F", SHARP, 9, options);
-		} else {
-			buildCellsFromSelector(tableID_prefix+"td.noteAb","A", FLAT, 11, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteBb","B", FLAT, 1, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteDb","D", FLAT, 4, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteEb","E", FLAT, 6, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteGb","G", FLAT, 9, options);
+		const timingStart = getNoteTableTimingNow();
+		const noteNamesFuncArr = Array.isArray(options.noteNamesFuncArr)
+			? options.noteNamesFuncArr
+			: getSong()?.noteNamesFuncArr;
+		const tuning = tableID ? TuningsLibrary.findTuningForName(tableID) : null;
+		const renderCacheKey = (NOTE_TABLE_RENDER_CACHE_ENABLED && tableID)
+			? NoteTableRenderCache.buildRenderKey({ tableID, options, tuning, noteNamesFuncArr })
+			: '';
+		const renderCacheEntry = renderCacheKey ? NoteTableRenderCache.get(renderCacheKey) : null;
+		let selectorCount = 0;
+
+		NoteTableRenderCache.getNoteClassSpecs(sharps).forEach((spec) => {
+			selectorCount++;
+			buildCellsFromSelector(
+				tableID_prefix+`td.${spec.noteClass}`,
+				spec.noteLetter,
+				spec.sharpflat,
+				spec.noteNum,
+				options,
+				renderCacheEntry,
+				spec.noteClass
+			);
+		});
+		dumpNoteTableTiming('buildCellsForTable', {
+			tableID: tableID || '(all tables)',
+			durationMs: getNoteTableTimingNow() - timingStart,
+			cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED
+				? (renderCacheEntry ? 'hit' : 'miss')
+				: 'disabled',
+			selectorCount,
+			sharps: !!sharps,
+			rootID: options.rootID,
+			rootIDLead: options.rootIDLead
+		});
+	}
+
+	let noteTablePrewarmGeneration = 0;
+
+	function getNoteTableTimingNow(){
+		const perf = globalThis?.performance || globalThis?.window?.performance;
+		if (perf && typeof perf.now === 'function') {
+			return perf.now();
 		}
-		buildCellsFromSelector(tableID_prefix+"td.noteA","A", NATURAL, 0, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteB","B", NATURAL, 2, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteC","C", NATURAL, 3, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteD","D", NATURAL, 5, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteE","E", NATURAL, 7, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteF","F", NATURAL, 8, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteG","G", NATURAL, 10, options);
+		return Date.now();
+	}
+
+	function dumpNoteTableTiming(label, data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED) {
+			return;
+		}
+		const payload = {
+			...data,
+			durationMs: Math.round((Number(data.durationMs) || 0) * 100) / 100
+		};
+		console.info(`[NoteTableTiming] ${label}`, payload);
+	}
+
+	function scheduleNoteTableCacheWork(work){
+		const requestIdle = globalThis?.requestIdleCallback || globalThis?.window?.requestIdleCallback;
+		if (typeof requestIdle === 'function') {
+			return requestIdle(work, { timeout: 500 });
+		}
+		return setTimeout(() => work({ didTimeout: true, timeRemaining: () => 0 }), 0);
+	}
+
+	function parseNoteNamesFuncArrForOptions(options = {}){
+		const optionValue = options.dropDownFunctionSymbols?.value;
+		if (optionValue) {
+			try {
+				return JSON.parse(optionValue);
+			} catch (error) {
+				// Fall back to the current song symbols below.
+			}
+		}
+		return Array.isArray(getSong()?.noteNamesFuncArr)
+			? [...getSong().noteNamesFuncArr]
+			: [];
+	}
+
+	function buildRenderOptionsForSection(section){
+		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
+		const displayOptions = cloneDisplayOptions(getSong().getDisplayOptionsInEffect(section, defaultDisplayOptions));
+		const options = {
+			...displayOptions,
+			rootID: section?.rootID ?? 0,
+			rootIDLead: section?.rootIDLead ?? -1,
+			sharps: !!section?.sharps
+		};
+		options.noteNamesFuncArr = parseNoteNamesFuncArrForOptions(options);
+		return options;
+	}
+
+	function getPrewarmSectionForTable(song, tableID, baseSectionIndex){
+		const wiring = Array.isArray(song?.wirings)
+			? song.wirings.find((entry) => entry?.tablename === tableID)
+			: null;
+		const relativeSection = `${wiring?.relativeSection || ''}`.trim();
+		if (!relativeSection) {
+			return song.getSections()[baseSectionIndex];
+		}
+
+		const previousIndex = song.gSectionsCurrentIndex;
+		try {
+			song.gSectionsCurrentIndex = baseSectionIndex;
+			return song.getRelativeSectionWithWrap(relativeSection);
+		} finally {
+			song.gSectionsCurrentIndex = previousIndex;
+		}
+	}
+
+	function buildPrewarmTaskForTable(tableID, sectionIndex){
+		const song = getSong();
+		const section = getPrewarmSectionForTable(song, tableID, sectionIndex);
+		const tuning = TuningsLibrary.findTuningForName(tableID);
+		if (!section || !tuning) {
+			return null;
+		}
+
+		const options = buildRenderOptionsForSection(section);
+		const key = NoteTableRenderCache.buildRenderKey({
+			tableID,
+			options,
+			tuning,
+			noteNamesFuncArr: options.noteNamesFuncArr
+		});
+
+		if (NoteTableRenderCache.has(key)) {
+			return null;
+		}
+
+		return {
+			key,
+			options,
+			sectionIndex,
+			tableID,
+			tuning
+		};
+	}
+
+	function runNoteTablePrewarmTasks(tasks, generation, reason = ''){
+		const timingStart = getNoteTableTimingNow();
+		if (!Array.isArray(tasks) || tasks.length === 0) {
+			dumpNoteTableTiming('prewarmSection', {
+				cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED ? 'no-work' : 'disabled',
+				durationMs: getNoteTableTimingNow() - timingStart,
+				reason,
+				taskCount: 0
+			});
+			EventBus.trigger('NoteTableCache:ready', { count: 0, reason });
+			return;
+		}
+
+		let completed = 0;
+		const taskCount = tasks.length;
+		function runNext(){
+			if (generation !== noteTablePrewarmGeneration) {
+				return;
+			}
+			const task = tasks.shift();
+			if (!task) {
+				dumpNoteTableTiming('prewarmSection', {
+					cacheState: 'stored',
+					completed,
+					durationMs: getNoteTableTimingNow() - timingStart,
+					reason,
+					taskCount
+				});
+				EventBus.trigger('NoteTableCache:ready', { count: completed, reason });
+				return;
+			}
+
+			const entry = NoteTableRenderCache.createEntry({
+				key: task.key,
+				tableID: task.tableID,
+				sectionIndex: task.sectionIndex,
+				options: task.options,
+				tuning: task.tuning,
+				buildCellHtml: ({ noteLetter, sharpflat, noteNum, midinum, options }) => {
+					return cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
+				}
+			});
+			NoteTableRenderCache.set(task.key, entry);
+			completed++;
+			scheduleNoteTableCacheWork(runNext);
+		}
+
+		scheduleNoteTableCacheWork(runNext);
+	}
+
+	function prewarmNoteTablesForSection(sectionIndex, data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			dumpNoteTableTiming('prewarmSection', {
+				cacheState: 'disabled',
+				durationMs: 0,
+				reason: data.reason || 'prewarmSection',
+				sectionIndex
+			});
+			return;
+		}
+		const song = getSong();
+		const sections = song?.getSections?.() || [];
+		if (!song || song.isHeadless || sectionIndex < 0 || sectionIndex >= sections.length) {
+			return;
+		}
+
+		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 3));
+		const generation = ++noteTablePrewarmGeneration;
+		const tasks = song.getVisibleTunings()
+			.map((tableID) => buildPrewarmTaskForTable(tableID, sectionIndex))
+			.filter(Boolean);
+		runNoteTablePrewarmTasks(tasks, generation, data.reason || 'prewarmSection');
+	}
+
+	function prewarmNextSectionNoteTables(data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			return;
+		}
+		const song = getSong();
+		const nextSectionIndex = NoteTableRenderCache.getNextSectionIndexForPrewarm(song);
+		if (nextSectionIndex < 0) {
+			return;
+		}
+		prewarmNoteTablesForSection(nextSectionIndex, {
+			...data,
+			reason: data.reason || 'prewarmNextSection'
+		});
+	}
+
+	function invalidateNoteTableRenderCache(){
+		noteTablePrewarmGeneration++;
+		NoteTableRenderCache.clear();
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,
@@ -3244,6 +3465,15 @@ EventBus.on('SongUiUpdatePrintSections', function() {
 EventBus.on('SongUiClearAndReplaySection', function() {
 	clearAndReplaySection();
 });
+EventBus.on('NoteTableCache:invalidate', function() {
+	invalidateNoteTableRenderCache();
+});
+EventBus.on('NoteTableCache:prewarmNextSection', function(event, data) {
+	prewarmNextSectionNoteTables(data || {});
+});
+EventBus.on('NoteTableCache:prewarmSection', function(event, data) {
+	prewarmNoteTablesForSection(data?.sectionIndex, data || {});
+});
 EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
 });
@@ -3261,6 +3491,7 @@ function refreshPluginMenus() {
 }
 
 EventBus.on('ReinstallAllTuningsTables', function() {
+	EventBus.trigger('NoteTableCache:invalidate', { reason: 'ReinstallAllTuningsTables' });
 	reinstallAllTuningsTables();
 	refreshPluginMenus();
 });

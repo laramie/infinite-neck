@@ -59,6 +59,7 @@ import {
 import {
     PalettePresentation
 } from './presentation.js';
+import * as NoteTableRenderCache from './NoteTableRenderCache.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -224,7 +225,9 @@ export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, sc
 export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinum) {
     var song = getSong() || {};
     var relNoteNum = (12 + noteNum - options.rootID) % 12; //0-based: 0==first note of scale
-    var fnArr = Array.isArray(song.noteNamesFuncArr) ? song.noteNamesFuncArr : [];
+    var fnArr = Array.isArray(options.noteNamesFuncArr)
+        ? options.noteNamesFuncArr
+        : (Array.isArray(song.noteNamesFuncArr) ? song.noteNamesFuncArr : []);
     var importFallback = Array.isArray(NOTE_NAMES_ARRAY) ? NOTE_NAMES_ARRAY : LOCAL_FALLBACK_NOTE_FUNCTIONS;
     var noteFnBase = fnArr[relNoteNum] || importFallback[relNoteNum] || "";
     var noteFn = noteFnBase;
@@ -320,7 +323,7 @@ export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, not
      return result;
 }
 
-export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options){
+export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options, renderCacheEntry = null, noteClass = ''){
     var cellsSet = $(selector);
 	cellsSet.each(function(i, obj){
         var cell=$(this);
@@ -331,7 +334,8 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
         if (celltable) {
             var tuning = TuningsLibrary.findTuningForName(celltable);
             const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
-            cell.html(cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
+            const cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
+            cell.html(cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
 
 			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));
 

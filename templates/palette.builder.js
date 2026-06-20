@@ -3,6 +3,7 @@ import * as ColorFunctions from '../colorFunctions.js';
 import { 
 	PalettePresentation 
 } from '../presentation.js';
+import * as PaletteUtils from '../paletteUtils.js'
 
 
 export class PaletteBuilder {
