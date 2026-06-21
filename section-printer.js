@@ -245,8 +245,9 @@ export function getChartDisplayValue(value, valueKind = 'text', songChartOptions
 
     if (songChartOptions?.addTransposedRootToChord && (valueKind === 'chord' || valueKind === 'mode')) {
         const rootText = getTransposedRootDisplay(section);
+        const strippedSpace =  valueKind === 'mode' ? ' ' : '';
         if (rootText && strippedText && strippedText !== '%') {
-            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedText}`;
+            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedSpace}${strippedText}`;
         }
     }
 
