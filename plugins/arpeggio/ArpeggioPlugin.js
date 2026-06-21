@@ -33,11 +33,12 @@ export class ArpeggioPlugin {
     this.id = 'arpeggio';
     this.registeredName = 'arpeggio';
     this.menuTrigger = 'a';
-    this.eventNames = ['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong'];
+    this.eventNames = ['DaCapo:OnSectionBegin', 'DaCapo:OnSongEnd', 'SongUiShowBeats', 'Looper:OnResetSong'];
     this.rowBoundsInitialized = false;
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.skipNextSongUiShowBeats = false;
+    this.songLoopCountForPositionPair = 0;
   }
 
   setManager(manager) {
@@ -221,6 +222,7 @@ export class ArpeggioPlugin {
   resetToDefaults() {
     this.properties.forEach((property) => property.reset());
     this.rowBoundsInitialized = false;
+    this.songLoopCountForPositionPair = 0;
   }
 
   loadSongState(persistedProperties = {}, context = {}) {
@@ -247,47 +249,6 @@ export class ArpeggioPlugin {
       result[property.name] = property.toPersistedValue();
     });
     return result;
-  }
-
-  setPropertyValue(name, rawValue, context = {}) {
-    const property = this.getProperty(name);
-    if (!property) {
-      throw new Error(`ArpeggioPlugin unknown property: ${name}`);
-    }
-
-    const song = context.song || getSong();
-    this.refreshDynamicPropertyOptions(song);
-
-    const candidateValue = property.normalize(rawValue);
-    const normalizedValue = this.isStringLimitProperty(name)
-      ? (context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song))
-      : candidateValue;
-    const nextValues = {
-      minFret: this.getProperty('minFret')?.getValue(),
-      maxFret: this.getProperty('maxFret')?.getValue(),
-      minRow: this.getProperty('minRow')?.getValue(),
-      maxRow: this.getProperty('maxRow')?.getValue(),
-      lowToHigh: this.getProperty('lowToHigh')?.getValue(),
-      upOnly: this.getProperty('upOnly')?.getValue(),
-      style: this.getProperty('style')?.getValue(),
-      [name]: normalizedValue
-    };
-
-    this.validateValues(nextValues, song);
-    if (this.isStringLimitProperty(name)) {
-      property.value = context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song);
-      this.rowBoundsInitialized = true;
-      this.normalizeRangeValues(song);
-      return property.getValue();
-    }
-
-    const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
-    const nextValue = property.setValue(rawValue);
-    if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
-      this.resetStringLimitDefaultsForTarget(song);
-    }
-    this.normalizeRangeValues(song);
-    return nextValue;
   }
 
   resolveValue(fieldName, context = {}) {
@@ -335,8 +296,14 @@ export class ArpeggioPlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'DaCapo:OnSongEnd') {
+      this.incrementSongLoopCounter();
+      return {};
+    }
+
     if (eventName === 'Looper:OnResetSong') {
       const song = context.song || getSong();
+      this.resetSongLoopCounter();
       this.resetAllSectionPositionIndexes(song);
       return this.clearGeneratedNotesInSong(song);
     }
@@ -393,7 +360,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()} song loops per position=${this.getSongLoopsPerPositionPair()}`;
   }
 
   buildHelpMessage(song) {
@@ -510,9 +477,43 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
             datatype: 'String',
             id: 'value'
           }
-        })
+        }),
+        this.getProperty('songLoopsPerPositionPair').getMenuNodeSpec(this)
       ]
     });
+  }
+
+  getSongLoopsPerPositionPair() {
+    const value = Number.parseInt(this.getProperty('songLoopsPerPositionPair')?.getValue(), 10);
+    if (!Number.isFinite(value) || value < 1) {
+      return 1;
+    }
+    return value;
+  }
+
+  incrementSongLoopCounter() {
+    this.songLoopCountForPositionPair += 1;
+    if (!Number.isFinite(this.songLoopCountForPositionPair) || this.songLoopCountForPositionPair < 0) {
+      this.songLoopCountForPositionPair = 0;
+    }
+  }
+
+  resetSongLoopCounter() {
+    this.songLoopCountForPositionPair = 0;
+  }
+
+  getSectionPositionIndexForCurrentSongLoop(section, positions = []) {
+    const safePositions = Array.isArray(positions) ? positions : [];
+    if (safePositions.length === 0) {
+      return null;
+    }
+
+    const loopsPerPositionPair = this.getSongLoopsPerPositionPair();
+    const songLoopCount = Math.max(0, Number.parseInt(this.songLoopCountForPositionPair, 10) || 0);
+    const pairCycleCount = Math.floor(songLoopCount / loopsPerPositionPair);
+    const nextIndex = pairCycleCount % safePositions.length;
+    this.setLastPositionIndex(section, nextIndex);
+    return nextIndex;
   }
 
   buildStringsMenuNode() {
@@ -831,15 +832,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       };
     }
 
-    const lastIndex = this.getLastPositionIndex(section);
-    const hasPlayedBefore = lastIndex !== null && lastIndex >= 0;
-    let appliedIndex = hasPlayedBefore ? lastIndex : 0;
-    if (options.advance) {
-      appliedIndex = hasPlayedBefore ? (lastIndex + 1) % positions.length : 0;
-    }
-    if (options.advance) {
-      this.setLastPositionIndex(section, appliedIndex);
-    }
+    const appliedIndex = this.getSectionPositionIndexForCurrentSongLoop(section, positions);
     const [minFret, maxFret] = positions[appliedIndex];
     return {
       minFret,
@@ -1851,6 +1844,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return { result: `Arpeggio cleared: removed ${removedCount} generated notes across ${sectionCount} sections` };
   }
 
+  emitUserLogMessage(message) {
+    if (!message) {
+      return;
+    }
+    EventBus.trigger('UserLog', { subSystem: 'ArpeggioPlugin', message });
+  }
+
   applyToSection({ song = getSong(), payload = {}, eventName = 'manual', clearSectionFirst = true } = {}) {
     if (!song) {
       return { result: 'Arpeggio skipped: no song loaded' };
@@ -1864,7 +1864,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const removedCount = clearSectionFirst ? this.clearGeneratedNotesInSection(section) : 0;
     const unsupportedMessage = this.getUnsupportedConfigurationMessage();
     if (unsupportedMessage) {
-      console.warn(unsupportedMessage);
+      this.emitUserLogMessage(unsupportedMessage);
       return {
         result: `Arpeggio skipped: ${unsupportedMessage}`,
         message: this.buildHelpMessage(song)
@@ -1879,9 +1879,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const beatCount = typeof section.getBeats === 'function'
       ? section.getBeats()
       : (Number.parseInt(section?.beats, 10) || 0);
-    const fretWindow = this.resolveEffectiveFretWindow(section, tuning, {
-      advance: eventName === 'DaCapo:OnSectionBegin'
-    });
+    const fretWindow = this.resolveEffectiveFretWindow(section, tuning, {});
     const candidates = this.collectCandidatesForSection(section, tuning, {
       lowToHigh: [STYLE_RANDOM, STYLE_BACH].includes(this.getStyle()) ? true : this.isLowToHigh(),
       minFret: fretWindow.minFret,
@@ -1935,29 +1933,76 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   validateValues(values, song = getSong()) {
     const maxAllowedFret = this.getMaxAllowedFret(song);
-    //throw means you can't open the song file. :(  Just do console.warn for now.
+    // Throwing here can block song load; use UserLog feedback instead.
     if (values.minFret < 0 || values.minFret > maxAllowedFret) {
-      //throw new Error(`minFret must be between 0 and ${maxAllowedFret}`);
-      console.warn(`minFret must be between 0 and ${maxAllowedFret}`);
+      this.emitUserLogMessage(`minFret must be between 0 and ${maxAllowedFret}`);
     }
     if (values.maxFret < 0 || values.maxFret > maxAllowedFret) {
-      //throw new Error(`maxFret must be between 0 and ${maxAllowedFret}`);
-      console.warn(`maxFret must be between 0 and ${maxAllowedFret}`);
+      this.emitUserLogMessage(`maxFret must be between 0 and ${maxAllowedFret}`);
     }
     if (values.minFret > values.maxFret) {
-      //throw new Error('minFret must be less than or equal to maxFret');
-      console.warn('minFret must be less than or equal to maxFret');
+      this.emitUserLogMessage('minFret must be less than or equal to maxFret');
     }
     const maxAllowedRow = this.getMaxAllowedRow(this.getTargetTuning(song));
     if (values.minRow < 0 || values.minRow > maxAllowedRow) {
-      console.warn(`minRow must be between 0 and ${maxAllowedRow}`);
+      this.emitUserLogMessage(`minRow must be between 0 and ${maxAllowedRow}`);
     }
     if (values.maxRow < 0 || values.maxRow > maxAllowedRow) {
-      console.warn(`maxRow must be between 0 and ${maxAllowedRow}`);
+      this.emitUserLogMessage(`maxRow must be between 0 and ${maxAllowedRow}`);
     }
     if (values.minRow > values.maxRow) {
-      console.warn('minRow must be less than or equal to maxRow');
+      this.emitUserLogMessage('minRow must be less than or equal to maxRow');
     }
+    if (Number.isFinite(values.songLoopsPerPositionPair) && values.songLoopsPerPositionPair < 1) {
+      this.emitUserLogMessage('songLoopsPerPositionPair must be greater than or equal to 1');
+    }
+  }
+
+  setPropertyValue(name, rawValue, context = {}) {
+    const property = this.getProperty(name);
+    if (!property) {
+      throw new Error(`ArpeggioPlugin unknown property: ${name}`);
+    }
+
+    const song = context.song || getSong();
+    this.refreshDynamicPropertyOptions(song);
+
+    const candidateValue = property.normalize(rawValue);
+    const normalizedValue = this.isStringLimitProperty(name)
+      ? (context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song))
+      : candidateValue;
+    const nextValues = {
+      minFret: this.getProperty('minFret')?.getValue(),
+      maxFret: this.getProperty('maxFret')?.getValue(),
+      minRow: this.getProperty('minRow')?.getValue(),
+      maxRow: this.getProperty('maxRow')?.getValue(),
+      lowToHigh: this.getProperty('lowToHigh')?.getValue(),
+      upOnly: this.getProperty('upOnly')?.getValue(),
+      style: this.getProperty('style')?.getValue(),
+      songLoopsPerPositionPair: this.getSongLoopsPerPositionPair(),
+      [name]: normalizedValue
+    };
+
+    this.validateValues(nextValues, song);
+    if (name === 'songLoopsPerPositionPair') {
+      const nextLoopCount = Number.parseInt(normalizedValue, 10);
+      property.value = Number.isFinite(nextLoopCount) && nextLoopCount > 0 ? nextLoopCount : 1;
+      return property.getValue();
+    }
+    if (this.isStringLimitProperty(name)) {
+      property.value = context.persistedLoad ? property.normalize(rawValue) : this.toStoredRowIndex(rawValue, song);
+      this.rowBoundsInitialized = true;
+      this.normalizeRangeValues(song);
+      return property.getValue();
+    }
+
+    const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
+    const nextValue = property.setValue(rawValue);
+    if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
+      this.resetStringLimitDefaultsForTarget(song);
+    }
+    this.normalizeRangeValues(song);
+    return nextValue;
   }
 }
 

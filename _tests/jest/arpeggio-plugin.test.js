@@ -175,7 +175,8 @@ describe('ArpeggioPlugin sequencing', () => {
 			'positions:copyToAllSections',
 			'positions:copyToUnsetSections',
 			'positions:refreshCurrentSection',
-			'positions:setCurrentSection'
+			'positions:setCurrentSection',
+			'songLoopsPerPositionPair'
 		]);
 		expect(stringsNode.children.map((child) => child.name)).toEqual([
 			'minRow',
@@ -271,7 +272,22 @@ describe('ArpeggioPlugin sequencing', () => {
 	test('registers reset event alongside section-begin and beat display events', () => {
 		const plugin = new ArpeggioPlugin();
 
-		expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong']);
+		expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'DaCapo:OnSongEnd', 'SongUiShowBeats', 'Looper:OnResetSong']);
+	});
+
+	test('song loops per position pair defaults to 1 and rejects values below 1', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(1);
+		plugin.setPropertyValue('songLoopsPerPositionPair', 3, { song });
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(3);
+		EventBus.trigger.mockClear();
+		plugin.setPropertyValue('songLoopsPerPositionPair', 0, { song });
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(1);
+		expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+			subSystem: 'ArpeggioPlugin',
+			message: 'songLoopsPerPositionPair must be greater than or equal to 1'
+		});
 	});
 
 	test('result strings use user-facing skip terminology', () => {
@@ -768,7 +784,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(sectionNotes.recordedNotes).toEqual({});
 	});
 
-	test('top-level clear resets all section position indexes and refreshes current status', () => {
+	test('top-level clear resets all section indexes and refreshes current section status', () => {
 		const { plugin, song, section, sectionNotes } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
 		plugin.setManager({
 			song,
@@ -802,7 +818,7 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(result.result).toContain('removed');
 		expect(result.result).toContain('reset 2 position counters');
-		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
 		expect(sectionNotes.recordedNotes).toEqual({});
 		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
@@ -838,7 +854,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
 	});
 
-	test('copying positions resets the source and target section indexes to not-played-yet', () => {
+	test('copying positions resets target indexes and refreshes the current section index', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 8 });
 		plugin.setManager({
 			song,
@@ -868,7 +884,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		const result = plugin.copyPositionsToSections(song, { onlyUnset: false });
 
 		expect(result.result).toBe('positions copied to 1 sections');
-		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 		expect(secondSection.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5], [5, 8]]);
 		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
 		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">3</td><td>3</td><td>5</td><td>5</td><td>8</td></tr></table></span>');
@@ -903,7 +919,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [4, 5]]);
 	});
 
-	test('DaCapo section-begin advances positions from index zero and wraps', () => {
+	test('DaCapo section-begin uses current song-loop position while DaCapo song-end advances and wraps', () => {
 		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
 		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
 
@@ -912,30 +928,34 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
 
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 	});
 
-	test('manual apply uses the current resolved position and does not advance the index', () => {
+	test('manual apply uses the current song-loop position and does not advance it', () => {
 		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
-		plugin.setLastPositionIndex(section, 1);
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 
 		plugin.invokeAction('apply', { song });
 
 		const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
+		plugin.invokeAction('apply', { song });
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
 	});
 
-	test('SongUiShowBeats uses the stored position without advancing it', () => {
+	test('SongUiShowBeats uses current song-loop position without advancing it', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 4, currentBeat: 1 });
 		plugin.setManager({
 			song,
@@ -943,7 +963,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		});
 		plugin.setPropertyValue('showNoteName', 'one', { song });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
-		plugin.setLastPositionIndex(section, 1);
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.skipNextSongUiShowBeats = false;
 		EventBus.trigger.mockClear();
 
@@ -987,6 +1007,25 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.handleEvent('Looper:OnResetSong', { hard: false }, { song });
 
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(plugin.songLoopCountForPositionPair).toBe(0);
+	});
+
+	test('song loops per position pair delays pair advance until loop threshold', () => {
+		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
+		plugin.setPropertyValue('songLoopsPerPositionPair', 3, { song });
+		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
+
+		for (let loopIdx = 0; loopIdx < 2; loopIdx += 1) {
+			plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+			plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+			const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+			expect(Number.parseInt(beatOne.col, 10)).toBe(0);
+		}
+
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+		const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 	});
 
 	test('arpeggioPositionsStatus highlights the first pair when reset leaves positions not-played-yet', () => {

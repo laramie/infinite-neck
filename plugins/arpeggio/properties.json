@@ -54,6 +54,16 @@
     "visibleInMenu": false
   },
   {
+    "name": "songLoopsPerPositionPair",
+    "caption": "song loops per position",
+    "trigger": "s",
+    "datatype": "Number",
+    "value": 1,
+    "defaultValue": 1,
+    "inputCaption": "1..999",
+    "visibleInMenu": false
+  },
+  {
     "name": "minRow",
     "caption": "upper string limit",
     "trigger": "u",
