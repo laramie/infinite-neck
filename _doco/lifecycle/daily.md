@@ -21,6 +21,11 @@ bin/documentation.sh
 npm run validate:cmdmenu
 ```
 
+*TODO:* 
+    Warnings
+          --------
+          - /fap: input.default token "pluginFiringOrderInput" is not handled by approved-values registry
+
 ## Run Jest Tests
 ```
 cd ~/infinite-neck
@@ -72,10 +77,10 @@ returned the broader test list under jest
 git fetch origin
 git checkout fix/my-branch
 cd ~/infinite-neck
-bin/update-git-log.bash --since "2026-06-17" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-06-21" > _doco/lifecycle/CHANGELOG-new.md
 ```
 
-Adjust the --since date, update the tag in CHANGELOG.md, and then grab all the log lines and past into CHANGELOG.md from CHANGELOG-new.md, then 
+Adjust the --since date, after running this, and update the tag in CHANGELOG.md, and then grab all the log lines and past into CHANGELOG.md from CHANGELOG-new.md, then 
 
 ```
 rm _doco/lifecycle/CHANGELOG-new.md
@@ -132,7 +137,7 @@ npm run package:deploy
 
 - creates a tar file in ./dist/
 
-scp dist/infinite-neck-20260618-233732.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
+scp dist/infinite-neck-20260621-111937.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
 ### on the server
 
@@ -143,11 +148,11 @@ Adjust the dates, and do something like:
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy
 cd infinite-neck-deploy
-mv ../infinite-neck-20260618-233732.tar.gz .
-tar xvf infinite-neck-20260618-233732.tar.gz
-rm infinite-neck-20260618-233732.tar.gz
+mv ../infinite-neck-20260621-111937.tar.gz .
+tar xvf infinite-neck-20260621-111937.tar.gz
+rm infinite-neck-20260621-111937.tar.gz
 cd ..
-mv infinite-neck infinite-neck-v2.1-beta-4.2; mv infinite-neck-deploy infinite-neck
+mv infinite-neck infinite-neck-v2.1-beta-5; mv infinite-neck-deploy infinite-neck
 ```
 
 ### Safely Rebase to get working branch to be 0 ahead/ 0 behind "master"
