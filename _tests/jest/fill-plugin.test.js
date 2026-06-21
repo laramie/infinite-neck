@@ -177,6 +177,71 @@ describe('FillPlugin', () => {
 
     expect(useChartNode.children.map((child) => child.trigger)).toEqual(['c', 'm']);
     expect(useChartNode.children.map((child) => child.actionName)).toEqual(['useChartChord', 'useChartMode']);
+    const automaticNode = optionsNode.children.find((child) => child.name === 'automaticFromChart');
+    expect(automaticNode.trigger).toBe('a');
+  });
+
+  test('automatic from chart maps payload section chart values before section-begin fill', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const firstSection = makeSection({ [targetTable]: {} });
+    const secondSection = makeSection({ [targetTable]: {} });
+    firstSection.chartChord = 'Am';
+    firstSection.chartMode = 'A minor';
+    secondSection.chartChord = 'Cmaj7';
+    secondSection.chartMode = 'C major';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [firstSection, secondSection],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    const result = plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 1 }, { song });
+
+    expect(result.result).toBe('Fill applied: named 0, single 1, tiny 0, overlay 0, kept 0');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,11');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
+    expect(getPlayedNotesByStyle(secondSection, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(1);
+  });
+
+  test('section-begin fill keeps formulas unchanged when automatic from chart is off', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const firstSection = makeSection({ [targetTable]: {} });
+    const secondSection = makeSection({ [targetTable]: {} });
+    secondSection.chartChord = 'Cmaj7';
+    secondSection.chartMode = 'C major';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [firstSection, secondSection],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('chordFormula', '3,7', { song });
+    plugin.setPropertyValue('scaleFormula', '0,2,3,5,7,8,10', { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 1 }, { song });
+
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('3,7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,3,5,7,8,10');
   });
 
   test('useChartChord adopts direct chart matches and slash-chord aliases', () => {

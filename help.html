@@ -141,6 +141,12 @@
             border: 3px solid gray; 
             padding: 12pt; 
        }
+       .htmlElement{
+            border: 1px solid gray;
+            background-color: lightgrey; 
+            color: green; 
+            font-weight: bold;
+       }
        .LinkList {
            font-size: 9pt;
            color: darkorange;
@@ -202,10 +208,14 @@
            border: 1px solid black;
            background-color: darkgreen;
        }
+       .menuExampleLineSm ,
        .menuExampleLine {
             font-family: "Kode Mono", monospace;
             display: inline-block;
-            padding: 0.3em;
+            padding: 0.1em;
+            padding-left: 0.3em;
+            padding-right: 0.3em;
+            padding-bottom: 0;
             border: 1px solid black;
             background-color: darkgreen;
             color: #ffaa00;
@@ -214,7 +224,10 @@
             font-family: "Kode Mono", monospace;
             color: #ffaa00;
             font-weight: bold;
-            font-size: 130%;
+            font-size: 120%;
+       }
+       .menuExampleLineSm {
+            font-size: 80%;
        }
 
        .menuExamplePrompt {
@@ -1594,6 +1607,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; or click the little Save checkmark button.
 </p>
 
+<h4>Allowed HTML</h4>
 <p>Allowed HTML is intentionally limited to simple formatting.  Think of it as safe document markup such as:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; paragraphs and line breaks,
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; headings,
@@ -1602,6 +1616,8 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; code/preformatted text,
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; and simple tables.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Scripts, links, forms, images, styles, and other active or external content are stripped out.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>EXCEPT</b>: links to URI fragments (#...) are allowed, because they jump to actions within <span class='productsmaller'>infinite-neck</span>.  See superlinks below.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special tags</b>: &lt;kbd&gt; will create a formatted command-line keyboard examples, and &lt;i&gt;  and &lt;b&gt; within that create prompts and triggers.
 </p>
 
 <p>The <b>show on open</b> selector has three meanings:
@@ -1610,8 +1626,45 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>float</b> means open it as a floating window.
 </p>
 
+
 <p>If the Songfile Info content is empty, the app treats that as no Info and will not auto-open it, even if the selector had been set earlier.</p>
 
+<h4>Links and superlinks</h4>
+<p>A link within <span class='productsmaller'>infinite-neck</span> is allowed, because it just invokes an action within the app
+without taking the User anywhere else.  A "superlink" is a reference to multiple actions.  These are tags like: 
+<ul>
+    <li>
+        hyperlink: <span class="htmlElement">&lt;a href="#raise=transpose.blues"&gt;</span>Blues Transposition<span class="htmlElement">&lt;/a&gt;</span>
+    </li>
+    <li>
+        superlink: <span class="htmlElement">&lt;a href="#raise=transpose.blues,raise=arpeggio.firstPosition"&gt;</span>First Position Arpeggio Practice<span class="htmlElement">&lt;/a&gt;</span>
+    </li>
+    <li>
+        superlink: <span class="htmlElement">&lt;a href="#raise=transpose.blues,arpeggio.firstPosition"&gt;</span>Blues, First Position<span class="htmlElement">&lt;/a&gt;</span>
+    </li>
+</ul>
+</p>
+<p>Note that the superlink supports two formats: one where <b>action=</b> is repeated separated by commas, and one where the <b>action=</b> appears only once and its values are listed separated by commas.  The values are the name of the plugin, plus a dot, plus the name you saved the plugins settings as--preserve these values.
+</p>
+<p>
+    These links can be crafted from links put in Info for you by the
+    <span class="menuExampleLineSm"><b>g</b>raveyard &gt; <b>l</b>ink</span> menu item in plugins,
+    such as <span class="menuExampleLineSm">/fptgl</span> in the TransposePlugin, for example.
+    <span class="menuExampleLineSm"><b>l</b>ink</span> inserts one hyperlink. To create superlinks, just edit the HTML
+    in the 
+    <span class="GUIReferenceInline">Info &gt; Edit </span>
+    tab and combine the links into one link following the above pattern.
+    <span class="menuExampleLineSm"><b>l</b>ink</span> gives you the href, and you provide the text for the link.
+</p>
+<p>Note also that when you save a link with <span class="menuExampleLineSm"><b>g</b>raveyard &gt; <b>l</b>ink</span>,
+    or <span class="menuExampleLineSm"><b>g</b>raveyard &gt; <b>s</b>ave</span> or <span
+        class="menuExampleLineSm"><b>g</b>raveyard &gt; <b>b</b>ury</span>, it asks you for the name.
+    The default name for the saved plugin settings
+    is "USER". Certain menu-items auto-save, which saves them to USER as well, so if you want to create a link,
+    you should really provide a name other than USER,
+    such as <b>I-IV-V-progression</b> . Names can include hyphens, underscores, and alphanumerics, but can't start with
+    a digit.
+</p>
 <a name="transport"></a>
 <h3>Transport</h3>
 <p>The Transport lets you:

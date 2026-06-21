@@ -445,6 +445,42 @@ describe('PluginManager plugin persistence', () => {
     expect(mockEventBus.trigger).toHaveBeenCalledWith('SongUiFullRepaint');
   });
 
+  test('graveyard raise menu captions prefix numeric trigger before labels containing digits', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    song.graveyard.records = [
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'saved' },
+        timestamp: 1,
+        json: '{}'
+      },
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'USER' },
+        timestamp: 2,
+        json: '{}'
+      },
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'saved1-2-3' },
+        timestamp: 3,
+        json: '{}'
+      }
+    ];
+
+    const raiseNode = manager.buildManagedGraveyardRaiseNode('transpose');
+
+    expect(raiseNode.children.map((child) => child.caption)).toEqual([
+      '<b>1</b> saved1-2-3',
+      '<b>2</b> USER',
+      '<b>3</b> saved'
+    ]);
+    expect(raiseNode.children.map((child) => child.trigger)).toEqual(['1', '2', '3']);
+  });
+
   test('plugin raise hash parser and raiser support superlinks and continue after missing snapshots', () => {
     const manager = createManagerWithPlugins();
     const song = createSongWithTunings();
@@ -465,8 +501,9 @@ describe('PluginManager plugin persistence', () => {
     expect(result.results).toHaveLength(4);
     expect(result.results[0]).toBe('invalid bad.key.extra');
     expect(result.results[2]).toBe('missing fill.Missing_A');
-    expect(mockEventBus.trigger).toHaveBeenCalledWith('ShowMessages', expect.objectContaining({
-      html: expect.stringContaining('missing fill.Missing_A')
+    expect(mockEventBus.trigger).toHaveBeenCalledWith('UserLog', expect.objectContaining({
+      subSystem: 'PluginManager',
+      message: expect.stringContaining('missing fill.Missing_A')
     }));
   });
 

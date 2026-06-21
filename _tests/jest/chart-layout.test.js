@@ -50,6 +50,7 @@ describe('chart layout rendering', () => {
             detailLine: true,
             showCaptions: true,
             showNextLine: false,
+            stripTonalRoots: false,
             HEADNames: ['HEAD', 'BRIDGE', 'CHORUS', 'SOLO', 'CODA'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
             chartSpacing: 'relaxed',
@@ -65,6 +66,7 @@ describe('chart layout rendering', () => {
             detailLine: true,
             showCaptions: true,
             showNextLine: true,
+            stripTonalRoots: true,
             HEADNames: ['BRIDGE', 'HEAD', 'FOO'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BARE,
             chartSpacing: 'comfy',
@@ -79,6 +81,8 @@ describe('chart layout rendering', () => {
         expect(html).toContain("data-chart-option='detailLine' checked");
         expect(html).toContain("data-chart-option='showCaptions' checked");
         expect(html).toContain("data-chart-option='showNextLine' checked");
+        expect(html).toContain("data-chart-option='stripTonalRoots' checked");
+        expect(html.indexOf("data-chart-option='showNextLine' checked")).toBeLessThan(html.indexOf("data-chart-option='stripTonalRoots' checked"));
         expect(html).toContain("class='divViewCard sectionPrinterChartOptionsCard'");
         expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--left'");
         expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'");
@@ -438,6 +442,47 @@ describe('chart layout rendering', () => {
         expect(html).toContain("class='leadSheetLineBARBeatCount'>2</div>");
     });
 
+    test('Chart and LeadSheetLine can strip Tonal roots in view-only mode', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Cm7b5',
+                chartMode: 'C locrian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                beatsPerBar: '4',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+
+        const strippedSong = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.LEADSHEET,
+            modes: true,
+            detailLine: true,
+            stripTonalRoots: true
+        });
+        const strippedChartHtml = printChart(strippedSong, sections);
+        const strippedLineHtml = printLeadSheetLine(strippedSong, sections);
+
+        expect(strippedChartHtml).toContain("class='chartBARChord'>m7b5</div>");
+        expect(strippedChartHtml).toContain("class='chartBARMode'>locrian</div>");
+        expect(strippedLineHtml).toContain("class='leadSheetLineBARChord'>m7b5</div>");
+        expect(strippedLineHtml).toContain("class='leadSheetLineBARMode'>locrian</div>");
+
+        const unstrippedSong = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.LEADSHEET,
+            modes: true,
+            detailLine: true,
+            stripTonalRoots: false
+        });
+        const unstrippedChartHtml = printChart(unstrippedSong, sections);
+        const unstrippedLineHtml = printLeadSheetLine(unstrippedSong, sections);
+
+        expect(unstrippedChartHtml).toContain("class='chartBARChord'>Cm7b5</div>");
+        expect(unstrippedChartHtml).toContain("class='chartBARMode'>C locrian</div>");
+        expect(unstrippedLineHtml).toContain("class='leadSheetLineBARChord'>Cm7b5</div>");
+        expect(unstrippedLineHtml).toContain("class='leadSheetLineBARMode'>C locrian</div>");
+    });
+
     test('LeadSheetLine optionally renders the next line and preserves placeholder space at the end', () => {
         const sections = [
             new Section({
@@ -615,6 +660,7 @@ describe('chart layout rendering', () => {
         expect(optionsHtml).toContain("data-chart-option='detailLine' checked");
         expect(optionsHtml).toContain("data-chart-option='showCaptions' checked");
         expect(optionsHtml).toContain("data-chart-option='showNextLine'");
+        expect(optionsHtml).toContain("data-chart-option='stripTonalRoots'");
         expect(optionsHtml).toContain("<option value='LeadSheet' selected>");
     });
 });

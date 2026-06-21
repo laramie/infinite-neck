@@ -339,10 +339,12 @@ export class PluginManager {
   }
 
   buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, ordinal) {
+    const ordinalText = `${ordinal}`;
+    const captionText = this.getPluginGraveyardRecordCaption(record);
     return new MenuItemProxy(this, {
       name: `raise:${graveyardIndex}`,
-      caption: buildCaption(this.getPluginGraveyardRecordCaption(record), `${ordinal}`),
-      trigger: `${ordinal}`,
+      caption: `<b>${ordinalText}</b> ${captionText}`,
+      trigger: ordinalText,
       action: 'pluginAction:graveyardRaise',
       pluginId,
       value: graveyardIndex,
@@ -777,7 +779,7 @@ export class PluginManager {
     }));
 
     const html = results.map((result) => `<div>${escapeHtml(result)}</div>`).join('');
-    this.eventBus.trigger('ShowMessages', { html });
+    this.eventBus.trigger('UserLog', { subSystem: 'PluginManager', message: html });
     return {
       result: `processed ${results.length} plugin raise link${results.length === 1 ? '' : 's'}`,
       message: html,

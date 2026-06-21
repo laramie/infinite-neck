@@ -217,7 +217,7 @@ export function txtCmdLine_keypress(e) {
                 surfaceOneMenu();
                 surfaceOneMenu();
             }
-            var resultSuffix = actionResult.result ? " >> " + actionResult.result : "";
+            var resultSuffix = actionResult.result ? " &raquo; " + actionResult.result : "";
             addCmdResults(getInputMenuCaption(targetMenu.input)+": "+inputval+resultSuffix);
             clearCmdLine();
             updateCmdLineView(inputval);
@@ -252,7 +252,7 @@ export function txtCmdLine_keypress(e) {
             if (child.action && hasNoChildMenus(child)){
                 diveMenu(child,"showing-list-menu");
                 if (child.input) {
-                    addCmdResults(printMenuStackBreadcrumbs() + "==>" + child.action + " :: " + getInputMenuCaption(child.input) + " : ");
+                    addCmdResults(printMenuStackBreadcrumbs() + " &raquo; " + child.action + " :: " + getInputMenuCaption(child.input) + " : ");
                     diveMenu(child.input, "");
                     updateCmdLineView();
                     preloadCmdLineFromInputMenu(child.input);
@@ -265,7 +265,7 @@ export function txtCmdLine_keypress(e) {
                     if (actionResult.popOnBang && !actionResult.preserveMenuStack) {
                         surfaceOneMenu();
                     }
-                    addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
+                    addCmdResults(printMenuStackBreadcrumbs() + child.trigger + " &raquo; " + child.action + (actionResult.result?" &raquo; "+actionResult.result:""));
                     clearCmdLine();
                     updateCmdLineView(child.trigger);
                     child.bang = false;
@@ -284,7 +284,7 @@ export function txtCmdLine_keypress(e) {
                     var args = {};
                     args["key"] = e.key;
                     gCmdActionRunner(menu, args);
-                    addCmdResults("! "+menu.caption+"(<b>"+e.key+"</b>)===>"+menu.action);
+                    addCmdResults("! "+menu.caption+"(<b>"+e.key+"</b>)&raquo;"+menu.action);
                     child.bang = true;
                     e.preventDefault();
                     clearCmdLine();
@@ -295,7 +295,7 @@ export function txtCmdLine_keypress(e) {
                     if (child.action && child.guardBeforeDive) {
                         var actionResult = gCmdActionRunner(child) || {};
                         if (actionResult.preventDive) {
-                            addCmdResults(printMenuStackBreadcrumbs() + "->" + child.trigger + "==>" + child.action + " >> " + actionResult.result);
+                            addCmdResults(printMenuStackBreadcrumbs() + " &raquo; " + child.trigger + " &raquo; " + child.action + (actionResult.result?" &raquo; "+ actionResult.result:"") );
                             e.preventDefault();
                             clearCmdLine();
                             updateCmdLineView(child.trigger);

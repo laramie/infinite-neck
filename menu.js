@@ -1018,6 +1018,16 @@ export var gMenuFile =    {
               "action": "showViewDiagnosticsVariables"
             },
             {
+              "caption": "<b>u</b>ser log",
+              "trigger": "u",
+              "action": "showUserLog"
+            },
+            {
+              "caption": "<b>C</b>lear user log",
+              "trigger": "C",
+              "action": "clearUserLog"
+            },
+            {
               "caption": "<b>h</b>ide",
               "trigger": "h",
               "action": "hideViewMessages"

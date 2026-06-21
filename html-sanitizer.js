@@ -35,7 +35,8 @@ const ALLOWED_TAGS = new Set([
 	'th',
 	'td',
 	'hr',
-	'a'
+	'a',
+	'kbd'
 ]);
 
 const PLUGIN_RAISE_FRAGMENT_PATTERN = /^#raise=[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*(?:,(?:raise=)?[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*)*$/;

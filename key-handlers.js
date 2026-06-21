@@ -64,6 +64,7 @@ export { document_keydown, document_keypress, document_keyup, runActionByName };
 let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
+const USER_LOG_MAX_ROWS = 1000;
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -934,6 +935,14 @@ export function performCmdAction(menuItem, args){
 			}
 			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
+		case "showUserLog":
+			showUserLog();
+			actionResult.result = "User Log shown";
+			break;
+		case "clearUserLog":
+			clearUserLog();
+			actionResult.result = "User Log cleared";
+			break;
 		case "showGraveyard":
 			showGraveyard();
 			break;
@@ -1297,7 +1306,11 @@ export function performCmdAction(menuItem, args){
 			if (pluginResult.messageJSON) {
 				showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {
-				showMessages(pluginResult.message);
+				if (isQuietUserLogMessage(pluginResult.message)) {
+					addToUserLog('PluginManager', pluginResult.message);
+				} else {
+					showMessages(pluginResult.message);
+				}
 			}
 			break;
 		}
@@ -1312,6 +1325,96 @@ function scrollToMessages(){
     var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
     window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
 }
+
+function getUserLogTableBody(){
+	if (typeof document === 'undefined') {
+		return null;
+	}
+
+	const divUserLog = document.getElementById('divUserLog');
+	if (!divUserLog) {
+		return null;
+	}
+
+	let table = document.getElementById('tblUserLog');
+	if (!table) {
+		table = document.createElement('table');
+		table.id = 'tblUserLog';
+		const thead = document.createElement('thead');
+		const headerRow = document.createElement('tr');
+		['Time', 'SubSystem', 'Message'].forEach((caption) => {
+			const th = document.createElement('th');
+			th.textContent = caption;
+			headerRow.appendChild(th);
+		});
+		thead.appendChild(headerRow);
+		table.appendChild(thead);
+		table.appendChild(document.createElement('tbody'));
+		divUserLog.appendChild(table);
+	}
+
+	let tbody = table.querySelector('tbody');
+	if (!tbody) {
+		tbody = document.createElement('tbody');
+		table.appendChild(tbody);
+	}
+	return tbody;
+}
+
+function getUserLogTime(){
+	const now = new Date();
+	return [now.getHours(), now.getMinutes(), now.getSeconds()]
+		.map((value) => `${value}`.padStart(2, '0'))
+		.join(':');
+}
+
+function isQuietUserLogMessage(message = '') {
+	const text = `${message || ''}`.trim();
+	return text.startsWith('#raise=');
+}
+
+export function addToUserLog(subSystem, message){
+	const tbody = getUserLogTableBody();
+	if (!tbody) {
+		return false;
+	}
+
+	const row = document.createElement('tr');
+	const timeCell = document.createElement('td');
+	const subSystemCell = document.createElement('td');
+	const messageCell = document.createElement('td');
+
+	timeCell.textContent = getUserLogTime();
+	subSystemCell.textContent = `${subSystem || ''}`;
+	messageCell.innerHTML = `${message || ''}`;
+
+	row.appendChild(timeCell);
+	row.appendChild(subSystemCell);
+	row.appendChild(messageCell);
+	tbody.insertBefore(row, tbody.firstChild);
+
+	while (tbody.rows.length > USER_LOG_MAX_ROWS) {
+		tbody.deleteRow(tbody.rows.length - 1);
+	}
+
+	return true;
+}
+
+export function clearUserLog(){
+	const tbody = getUserLogTableBody();
+	if (tbody) {
+		tbody.innerHTML = '';
+	}
+}
+
+function showUserLog(){
+	getUserLogTableBody();
+	$("#divMessageAndJsonTree").show();
+	showMessagesTab("UserLog");
+	hideCmdLine();
+	scrollToMessages();
+}
+
 export function showMessagesJSON(json, preamble = ""){
 	showMessages(preamble+json);
     const div = document.getElementById('divJsonTree');

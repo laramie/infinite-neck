@@ -2317,6 +2317,14 @@
 
     <p>NamedNote ignores fret and string limits. SingleNote and standalone TinyNote obey the configured fret and string limits. SingleNote can also add an overlay TinyNote in the same cell, but that overlay is ignored whenever standalone TinyNote is active and emits notes.</p>
 
+    <p>FillPlugin is destructive: it erases notes that you configure it to fill.  You can Clear these, or Commit them.  But any 
+        notes already in that lane (SingleNote, NamedNote, etc.) will get hosed.
+    </p>
+
+    <p>So if you are using ArpeggioPlugin to arpeggiate NamedNotes on chords, and you want to show Scale notes with FillPlugin, set up FillPlugin to 
+        use SingleNotes, and use <span class="menuExampleLine"><b>/fpfoa</b></span> "automatic from chart", with "named notes" set to none, and "single notes" set to noteRole for scale, and none for the others.  
+        See: <All-Chords-w-fill class="json"></All-Chords-w-fill>
+    </p>
     <a name="plugin-fill-options"></a>
     <h3>Main Options</h3>
 

@@ -105,6 +105,7 @@ const songDefaults = {
         detailLine: true,
         showCaptions: true,
         showNextLine: false,
+        stripTonalRoots: false,
         HEADNames: [...DEFAULT_CHART_HEAD_NAMES],
         barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
         chartSpacing: 'relaxed',

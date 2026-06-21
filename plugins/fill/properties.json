@@ -70,6 +70,15 @@
     "options": []
   },
   {
+    "name": "automaticFromChart",
+    "caption": "automatic from chart",
+    "trigger": "a",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
     "name": "minFret",
     "caption": "minFret position",
     "trigger": "i",

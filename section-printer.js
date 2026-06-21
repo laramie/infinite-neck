@@ -12,9 +12,10 @@ import {
 } from './tonalPicker.js';
 
 
-const { Chord } = globalThis.Tonal?.Chord
+const tonalNamespace = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
+const { Chord, Mode, Scale } = tonalNamespace;
 
 const DEFAULT_CHART_HEAD_NAMES = Object.freeze([
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -147,6 +148,7 @@ function getEffectiveSongChartOptions(theSong) {
         detailLine: chartOptions.detailLine !== false,
         showCaptions: chartOptions.showCaptions !== false,
         showNextLine: chartOptions.showNextLine === true,
+        stripTonalRoots: chartOptions.stripTonalRoots === true,
         HEADNames: chartHeadNames,
         barClass: CHART_BAR_CLASS_VALUES.includes(chartOptions.barClass)
             ? chartOptions.barClass
@@ -164,6 +166,75 @@ function getEffectiveSongChartOptions(theSong) {
             ? chartOptions.chartSpacing
             : 'relaxed'
     };
+}
+
+function formatChordWithoutRoot(chartChord = '') {
+    const rawValue = `${chartChord || ''}`.trim();
+    if (!rawValue || rawValue === '%') {
+        return rawValue;
+    }
+
+    const tonalChord = Chord?.get?.(rawValue) || null;
+    const symbol = `${tonalChord?.symbol || ''}`.trim();
+    const tonic = `${tonalChord?.tonic || ''}`.trim();
+    if (!symbol || !tonic) {
+        return rawValue;
+    }
+
+    if (symbol.length > tonic.length && symbol.toLowerCase().startsWith(tonic.toLowerCase())) {
+        const stripped = symbol.slice(tonic.length).trim();
+        return stripped || rawValue;
+    }
+
+    return rawValue;
+}
+
+function resolveModeName(modeValue = '') {
+    const rawValue = `${modeValue || ''}`.trim();
+    if (!rawValue) {
+        return '';
+    }
+
+    if (Mode && typeof Mode.name === 'function') {
+        const namedMode = `${Mode.name(rawValue) || ''}`.trim();
+        if (namedMode) {
+            return namedMode;
+        }
+    }
+
+    const modeInfo = Mode?.get?.(rawValue) || null;
+    if (modeInfo?.name) {
+        return `${modeInfo.name}`.trim();
+    }
+
+    const scaleInfo = Scale?.get?.(rawValue) || null;
+    if (scaleInfo?.type) {
+        return `${scaleInfo.type}`.trim();
+    }
+
+    return '';
+}
+
+function formatModeWithoutRoot(chartMode = '') {
+    const rawValue = `${chartMode || ''}`.trim();
+    if (!rawValue) {
+        return '';
+    }
+    return resolveModeName(rawValue) || rawValue;
+}
+
+export function getChartDisplayValue(value, valueKind = 'text', songChartOptions = {}) {
+    const text = `${value || ''}`;
+    if (!songChartOptions?.stripTonalRoots) {
+        return text;
+    }
+    if (valueKind === 'chord') {
+        return formatChordWithoutRoot(text);
+    }
+    if (valueKind === 'mode') {
+        return formatModeWithoutRoot(text);
+    }
+    return text;
 }
 
 function percentStringToMultiplier(percentValue) {
@@ -369,8 +440,9 @@ function formatChartStyleVariables(songChartOptions, includeChartSpacing = true)
     return ` style='${declarations.join('; ')};'`;
 }
 
-function formatChartLineValue(value) {
-    return value ? value : '&nbsp;';
+function formatChartLineValue(value, valueKind = 'text', songChartOptions = {}) {
+    const displayValue = getChartDisplayValue(value, valueKind, songChartOptions);
+    return displayValue ? displayValue : '&nbsp;';
 }
 
 function formatChartCaptionText(section) {
@@ -410,16 +482,16 @@ function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass,
     const barActionAttrs = ` data-action='linkToSection' data-action-args='[${idx}]'`;
     const parts = [
         `<span class='${barClasses.join(' ')}'${barActionAttrs}>`,
-        `<div class='chartBARChord'>${formatChartLineValue(chordText)}</div>`,
+        `<div class='chartBARChord'>${formatChartLineValue(chordText, 'chord', songChartOptions)}</div>`,
     ];
 
     if (isLeadSheetBar) {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions)}</div>`);
         }
     } else {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions)}</div>`);
         }
         if (songChartOptions.detailLine) {
             parts.push(`<div class='chartBARMeta'>${formatChartMetaLine(theSong, section, idx)}</div>`);
@@ -571,11 +643,11 @@ function formatLeadSheetLineBar(barEntry, leadSheetLineOptions, isFirstInLine, i
 
     const parts = [
         `<span class='${barClasses.join(' ')}' data-action='linkToSection' data-action-args='[${idx}]'>`,
-        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText)}</div>`
+        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText, 'chord', leadSheetLineOptions)}</div>`
     ];
 
     if (leadSheetLineOptions.modes) {
-        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode, 'mode', leadSheetLineOptions)}</div>`);
     }
     if (leadSheetLineOptions.detailLine) {
         parts.push(`<div class='leadSheetLineBARBeatCount'>${barBeats}</div>`);
@@ -643,6 +715,7 @@ export function printChartOptions(theSong) {
         + formatSongChartOptionCheckbox('detailLine', chartOptions.detailLine, 'Show section detail line')
         + formatSongChartOptionCheckbox('showCaptions', chartOptions.showCaptions, 'Show captions')
         + formatSongChartOptionCheckbox('showNextLine', chartOptions.showNextLine, 'Show Next Line')
+        + formatSongChartOptionCheckbox('stripTonalRoots', chartOptions.stripTonalRoots, 'Strip Tonal roots (view only)')
         + selectTable
         + "</div>"
         + "<div class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'>"

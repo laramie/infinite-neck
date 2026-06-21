@@ -465,6 +465,7 @@ export class FillPlugin {
       trigger: 'o',
       children: [
         this.buildUseChartMenuNode(),
+        this.getProperty('automaticFromChart').getMenuNodeSpec(this),
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
         this.buildPositionsMenuNode(),
@@ -520,8 +521,8 @@ export class FillPlugin {
     const token = `plugin:${this.id}:${STRINGS_SUMMARY_TOKEN}`;
     return new MenuItemProxy(this, {
       name: 'strings',
-      caption: `${buildCaption('strings', 's')} [${buildValueReference(token)}]`,
-      trigger: 's',
+      caption: `${buildCaption('Strings', 'S')} [${buildValueReference(token)}]`,
+      trigger: 'S',
       vars: [token],
       children: [
         this.getProperty('minRow').getMenuNodeSpec(this),
@@ -787,7 +788,11 @@ export class FillPlugin {
     }
 
     const song = context.song || getSong();
-    return this.applyToSection(song, this.getSectionForPayload(song, payload));
+    const section = this.getSectionForPayload(song, payload);
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      this.applyAutomaticFromChart(song, section);
+    }
+    return this.applyToSection(song, section);
   }
 
   invokeAction(actionName, context = {}) {
@@ -886,8 +891,17 @@ export class FillPlugin {
     return { result: `${familyName} set to all none` };
   }
 
+  applyAutomaticFromChart(song = getSong(), section = this.getCurrentSection(song)) {
+    this.useChartChordForSection(song, section);
+    this.useChartModeForSection(song, section);
+  }
+
   useChartChord(song = getSong()) {
-    const rawValue = `${this.getCurrentSection(song)?.chartChord || ''}`.trim();
+    return this.useChartChordForSection(song, this.getCurrentSection(song));
+  }
+
+  useChartChordForSection(song = getSong(), section = this.getCurrentSection(song)) {
+    const rawValue = `${section?.chartChord || ''}`.trim();
     if (!rawValue) {
       return { result: 'No chartChord' };
     }
@@ -906,7 +920,11 @@ export class FillPlugin {
   }
 
   useChartMode(song = getSong()) {
-    const rawValue = `${this.getCurrentSection(song)?.chartMode || ''}`.trim();
+    return this.useChartModeForSection(song, this.getCurrentSection(song));
+  }
+
+  useChartModeForSection(song = getSong(), section = this.getCurrentSection(song)) {
+    const rawValue = `${section?.chartMode || ''}`.trim();
     if (!rawValue) {
       return { result: 'No chartMode' };
     }

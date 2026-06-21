@@ -38,6 +38,8 @@ import {
 	PalettePresentation 
 } from './presentation.js';
 import {
+	addToUserLog,
+	clearUserLog,
 	getFontSize,
 	getUIFontSize,
 	hideGraveyard,
@@ -487,8 +489,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
-	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
-	    $(".lblSectionMode").html( getSong().getCurrentSection().chartMode);
+		const chartOptions = getSong().chartOptions || {};
+		const displayChartChord = SectionPrinter.getChartDisplayValue(getSong().getCurrentSection().chartChord, 'chord', chartOptions);
+		const displayChartMode = SectionPrinter.getChartDisplayValue(getSong().getCurrentSection().chartMode, 'mode', chartOptions);
+	    $(".lblSectionChartChord").html(displayChartChord);
+	    $(".lblSectionMode").html(displayChartMode);
 
 		var currentFilename = getSong().songName;
 		if (currentFilename === undefined || currentFilename === null || currentFilename === '') {
@@ -652,18 +657,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function showMessagesTab(which) {
-		var showMsgs = which !== 'JsonTree';
+		var showMsgs = which !== 'JsonTree' && which !== 'UserLog';
+		var showJsonTree = which === 'JsonTree';
+		var showUserLog = which === 'UserLog';
 		   $('#divMessages').toggle(showMsgs);
-		   $('#divJsonTree').toggle(!showMsgs);
-		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnHideMessagesJsonTree';
+		   $('#divJsonTree').toggle(showJsonTree);
+		   $('#divUserLog').toggle(showUserLog);
+		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnUserLog, #btnHideMessagesJsonTree';
 		   $(selector).css('display', 'inline-block');
 
 		   $('#btnMessagesTab')
 			   .toggleClass('BtnPunchedIn', showMsgs)
 			   .toggleClass('BtnPunchedOut', !showMsgs);
 		   $('#btnJsonTreeTab')
-			   .toggleClass('BtnPunchedIn', !showMsgs)
-			   .toggleClass('BtnPunchedOut', showMsgs);
+			   .toggleClass('BtnPunchedIn', showJsonTree)
+			   .toggleClass('BtnPunchedOut', !showJsonTree);
+		   $('#btnUserLog')
+			   .toggleClass('BtnPunchedIn', showUserLog)
+			   .toggleClass('BtnPunchedOut', !showUserLog);
 	   }
 	function hideMessages_KeyHandler(){
 		hideMessages();
@@ -1376,6 +1387,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		gSong = new Song(jsonObj);
+		clearUserLog();
 		gSong.ensureDefaultSection();
 		pluginManager.loadSongPluginState(gSong);
 		updateAfterOpenSong();
@@ -2743,6 +2755,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnJsonTreeTab', function() {
 			showMessagesTab('JsonTree');
 		});
+		bindEvent('click', '#btnUserLog', function() {
+			showMessagesTab('UserLog');
+		});
 		bindEvent('click', '#btnHideMessagesJsonTree', function() {
 			hideMessages_KeyHandler();
 		});
@@ -3488,12 +3503,15 @@ EventBus.on('NoteTableCache:prewarmSection', function(event, data) {
 EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
 });
+EventBus.on('UserLog', function(event, data) {
+	addToUserLog(data?.subSystem || '', data?.message || '');
+});
 EventBus.on('PluginManager:ShowResult', function(event, data) {
 	if (data && data.result) {
 		addCmdResults(`${data.pluginId}:${data.eventName} >> ${data.result}`);
 	}
 	if (data && data.message) {
-		showMessages(data.message);
+		addToUserLog(data?.subSystem || 'PluginManager', data.message);
 	}
 });
 EventBus.on('PluginGraveyard:linkAdded', function() {

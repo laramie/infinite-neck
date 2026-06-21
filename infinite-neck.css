@@ -342,7 +342,7 @@ table {
     font-size: 120%; 
     padding-left: 1em;
 }
-#divMessages, #divJsonTree {
+#divMessages, #divJsonTree, #divUserLog {
     padding: 1em;
     display: none;
     background-color: white;
@@ -350,6 +350,26 @@ table {
     white-space: pre;
     margin: 0.2em;
     margin-bottom: 12em;
+}
+
+#tblUserLog {
+    width: 100%;
+    background-color: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-spacing: 0;
+    white-space: normal;
+}
+
+#tblUserLog tr:nth-child(odd) {
+    background-color: Khaki;
+}
+
+#tblUserLog td,
+#tblUserLog th {
+    padding: 0.8em;
+    border: 1px solid gray;
+    vertical-align: top;
 }
 
 
