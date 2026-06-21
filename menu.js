@@ -254,6 +254,22 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "pluginFiringOrder",
+              "caption": "<b>p</b>lugin firing order [${pluginFiringOrderDisplay}]",
+              "trigger": "p",
+              "action": "setPluginFiringOrder",
+              "vars": [
+                "pluginFiringOrderDisplay"
+              ],
+              "input": {
+                "type": "input",
+                "caption": "t,f,a,o,c,m or tfaocm",
+                "default": "pluginFiringOrderInput",
+                "datatype": "string",
+                "id": "value"
+              }
+            },
+            {
               "caption": "<b>C</b>lear graveyard, with backup",
               "trigger": "C",
               "children": [

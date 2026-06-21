@@ -651,4 +651,99 @@ describe('PluginManager plugin persistence', () => {
     expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('1');
     expect(manager.resolveValue('plugin:clip:reviveSummary')).toContain('[1:single-1]');
   });
+
+  test('plugin firing order normalizes comma and compact inputs to the same canonical order', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    const compact = manager.setSongPluginFiringOrder('tfacm');
+    const comma = manager.setSongPluginFiringOrder('t,f,a,c,m');
+
+    expect(compact).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(comma).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(song.pluginFiringOrder).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(manager.getPluginFiringOrderDisplay()).toBe('t,f,a,c,m');
+  });
+
+  test('plugin firing order removes unknown/duplicates and appends missing known triggers', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    const normalized = manager.setSongPluginFiringOrder('f,f,z,t');
+
+    expect(normalized).toEqual(['f', 't', 'a', 'c', 'm']);
+    expect(song.pluginFiringOrder).toEqual(['f', 't', 'a', 'c', 'm']);
+  });
+
+  test('central dispatch follows configured plugin order for same event listeners', () => {
+    const handlers = new Map();
+    const eventBus = {
+      on(eventName, handler) {
+        handlers.set(eventName, handler);
+      },
+      off(eventName) {
+        handlers.delete(eventName);
+      },
+      trigger(eventName, payload) {
+        const handler = handlers.get(eventName);
+        if (handler) {
+          handler(eventName, payload);
+        }
+      }
+    };
+    const manager = new PluginManager(eventBus);
+    const callOrder = [];
+
+    function makePlugin({ id, trigger, eventNames = ['Test:Event'] }) {
+      return {
+        getId() {
+          return id;
+        },
+        getRegisteredName() {
+          return id;
+        },
+        getMenuTrigger() {
+          return trigger;
+        },
+        getEventNames() {
+          return [...eventNames];
+        },
+        getVisibleMenuChildren() {
+          return [];
+        },
+        getProperties() {
+          return [];
+        },
+        exportSongState() {
+          return {};
+        },
+        resetToDefaults() {},
+        enable() {},
+        disable() {},
+        handleEvent() {
+          callOrder.push(id);
+          return {};
+        }
+      };
+    }
+
+    manager.register(makePlugin({ id: 'transpose', trigger: 't' }));
+    manager.register(makePlugin({ id: 'fill', trigger: 'f' }));
+    manager.register(makePlugin({ id: 'arpeggio', trigger: 'a' }));
+    manager.register(makePlugin({ id: 'clip', trigger: 'c', eventNames: [] }));
+
+    manager.loadSongPluginState({ plugins: {} });
+    manager.setSongPluginFiringOrder('aftc');
+    manager.setPropertyValue(manager.getPluginEntry('transpose'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('fill'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('arpeggio'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('clip'), 'enabled', true);
+
+    eventBus.trigger('Test:Event', { from: 'test' });
+
+    expect(callOrder).toEqual(['arpeggio', 'fill', 'transpose']);
+    expect(callOrder).not.toContain('clip');
+  });
 });

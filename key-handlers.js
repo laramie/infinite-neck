@@ -882,6 +882,12 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
+		case "setPluginFiringOrder": {
+			const normalizedOrder = pluginManager.setSongPluginFiringOrder(argByInputID || pluginManager.getPluginFiringOrderInput());
+			actionResult.result = `plugin firing order [${normalizedOrder.join(',')}]`;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
 		case "togglePresentationMode":
 			setPresentationMode(!getSong()?.presentationMode);
 			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
@@ -1515,6 +1521,12 @@ export function getValue(what){
 	}
 	if (what === 'displayOptionsClearState'){
 		return getDisplayOptionsClearState();
+	}
+	if (what === 'pluginFiringOrderDisplay') {
+		return pluginManager.getPluginFiringOrderDisplay();
+	}
+	if (what === 'pluginFiringOrderInput') {
+		return pluginManager.getPluginFiringOrderInput();
 	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);

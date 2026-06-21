@@ -270,6 +270,10 @@ export const songFileV2Schema = {
         chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
+        pluginFiringOrder: {
+            type: 'array',
+            items: { type: 'string', minLength: 1 }
+        },
         rootID: integerLikeSchema,
         sharps: { type: 'boolean' },
         singleNoteOpacity: stringOrNumberSchema,

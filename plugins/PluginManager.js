@@ -7,6 +7,8 @@ const DEFAULT_GRAVEYARD_KEY = 'USER';
 const PLUGIN_GRAVEYARD_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_-]*$/;
 const ENABLED_CHECKMARK = '&#x1F5F9;';
 const PERSISTED_SONG_MARK = '&#x1F5BA;';
+const DEFAULT_PLUGIN_TRIGGER_ORDER = ['t', 'f', 'a', 'o', 'c', 'm'];
+const PLUGIN_ORDER_DEBUG = false;
 
 function parseBoolean(rawValue) {
   if (typeof rawValue === 'boolean') {
@@ -150,6 +152,7 @@ export class PluginManager {
     this.eventBus = eventBus;
     this.plugins = new Map();
     this.song = null;
+    this.eventHandlers = new Map();
   }
 
   register(pluginInstance) {
@@ -251,6 +254,175 @@ export class PluginManager {
     }
     const eventNames = plugin.getEventNames();
     return Array.isArray(eventNames) && eventNames.length > 0;
+  }
+
+  getKnownPluginTriggers() {
+    const triggers = [];
+    this.plugins.forEach((entry) => {
+      const trigger = `${entry?.plugin?.getMenuTrigger?.() || ''}`.trim().toLowerCase();
+      if (!trigger || triggers.includes(trigger)) {
+        return;
+      }
+      triggers.push(trigger);
+    });
+    return triggers;
+  }
+
+  getDefaultPluginTriggerOrder() {
+    const knownTriggers = this.getKnownPluginTriggers();
+    const result = [];
+
+    DEFAULT_PLUGIN_TRIGGER_ORDER.forEach((trigger) => {
+      if (knownTriggers.includes(trigger) && !result.includes(trigger)) {
+        result.push(trigger);
+      }
+    });
+
+    knownTriggers.forEach((trigger) => {
+      if (!result.includes(trigger)) {
+        result.push(trigger);
+      }
+    });
+
+    return result;
+  }
+
+  tokenizePluginOrderInput(rawValue = '') {
+    if (Array.isArray(rawValue)) {
+      return rawValue.map((value) => `${value || ''}`);
+    }
+    const text = `${rawValue || ''}`.trim();
+    if (!text) {
+      return [];
+    }
+    if (text.includes(',')) {
+      return text.split(',');
+    }
+    return text.split('');
+  }
+
+  normalizePluginFiringOrder(rawValue = '') {
+    const knownTriggers = this.getKnownPluginTriggers();
+    const preferred = this.tokenizePluginOrderInput(rawValue)
+      .map((value) => `${value || ''}`.trim().toLowerCase())
+      .filter((value) => value && knownTriggers.includes(value));
+
+    const deduped = [];
+    preferred.forEach((trigger) => {
+      if (!deduped.includes(trigger)) {
+        deduped.push(trigger);
+      }
+    });
+
+    this.getDefaultPluginTriggerOrder().forEach((trigger) => {
+      if (!deduped.includes(trigger)) {
+        deduped.push(trigger);
+      }
+    });
+
+    return deduped;
+  }
+
+  getSongPluginFiringOrder() {
+    return this.normalizePluginFiringOrder(this.song?.pluginFiringOrder || []);
+  }
+
+  getPluginFiringOrderDisplay() {
+    return this.getSongPluginFiringOrder().join(',');
+  }
+
+  getPluginFiringOrderInput() {
+    return this.getPluginFiringOrderDisplay();
+  }
+
+  setSongPluginFiringOrder(rawValue = '') {
+    const normalized = this.normalizePluginFiringOrder(rawValue);
+    if (this.song && typeof this.song === 'object') {
+      this.song.pluginFiringOrder = [...normalized];
+    }
+    this.refreshPluginsMenuNode();
+    return normalized;
+  }
+
+  getEnabledPluginEntriesInTriggerOrder() {
+    const orderedEntries = [];
+    const triggerOrder = this.getSongPluginFiringOrder();
+    triggerOrder.forEach((trigger) => {
+      this.plugins.forEach((entry) => {
+        if (!entry?.enabled) {
+          return;
+        }
+        if (`${entry.plugin.getMenuTrigger() || ''}`.toLowerCase() !== trigger) {
+          return;
+        }
+        if (!orderedEntries.includes(entry)) {
+          orderedEntries.push(entry);
+        }
+      });
+    });
+    return orderedEntries;
+  }
+
+  refreshEventSubscriptions() {
+    const desiredEvents = new Set();
+    this.plugins.forEach((entry) => {
+      if (!entry?.enabled || !this.pluginHasRegisteredEvents(entry.plugin)) {
+        return;
+      }
+      entry.plugin.getEventNames().forEach((eventName) => desiredEvents.add(eventName));
+    });
+
+    this.eventHandlers.forEach((handler, eventName) => {
+      if (desiredEvents.has(eventName)) {
+        return;
+      }
+      this.eventBus.off(eventName, handler);
+      this.eventHandlers.delete(eventName);
+    });
+
+    desiredEvents.forEach((eventName) => {
+      if (this.eventHandlers.has(eventName)) {
+        return;
+      }
+      const handler = (busEventName, payload) => {
+        this.dispatchPluginEvent(busEventName, payload);
+      };
+      this.eventHandlers.set(eventName, handler);
+      this.eventBus.on(eventName, handler);
+    });
+  }
+
+  dispatchPluginEvent(eventName, payload) {
+    const orderedEntries = this.getEnabledPluginEntriesInTriggerOrder();
+    if (PLUGIN_ORDER_DEBUG) {
+      const triggerOrder = this.getSongPluginFiringOrder().join(',');
+      const matchingPlugins = orderedEntries
+        .filter((entry) => entry.plugin.getEventNames().includes(eventName))
+        .map((entry) => entry.plugin.getId())
+        .join(',');
+      console.log(`[PluginOrder] event=${eventName} order=[${triggerOrder}] listeners=[${matchingPlugins}]`);
+    }
+
+    orderedEntries.forEach((entry) => {
+      if (!entry.enabled || !entry.plugin.getEventNames().includes(eventName)) {
+        return;
+      }
+
+      const response = entry.plugin.handleEvent(eventName, payload, {
+        song: this.song,
+        pluginManager: this
+      });
+      const normalized = normalizePluginResponse(response, `${entry.plugin.getId()}:${eventName}`);
+      if (normalized.result || normalized.message) {
+        this.eventBus.trigger('PluginManager:ShowResult', {
+          pluginId: entry.plugin.getId(),
+          eventName,
+          result: normalized.result,
+          message: normalized.message
+        });
+      }
+      this.syncSongPlugins();
+    });
   }
 
   buildManagedPropertyNodes(plugin) {
@@ -865,6 +1037,13 @@ export class PluginManager {
   }
 
   resolveValue(token) {
+    if (token === 'plugin:manager:firingOrderDisplay') {
+      return this.getPluginFiringOrderDisplay();
+    }
+    if (token === 'plugin:manager:firingOrderInput') {
+      return this.getPluginFiringOrderInput();
+    }
+
     if (typeof token !== 'string' || !token.startsWith('plugin:')) {
       return undefined;
     }
@@ -915,6 +1094,9 @@ export class PluginManager {
 
   loadSongPluginState(song) {
     this.song = song || null;
+    if (this.song && typeof this.song === 'object') {
+      this.song.pluginFiringOrder = this.normalizePluginFiringOrder(this.song.pluginFiringOrder || []);
+    }
     const persistedPlugins = song && song.plugins && typeof song.plugins === 'object' ? song.plugins : {};
 
     this.plugins.forEach((entry, pluginId) => {
@@ -931,6 +1113,7 @@ export class PluginManager {
     });
 
     this.syncSongPlugins();
+    this.refreshEventSubscriptions();
     this.refreshPluginsMenuNode();
   }
 
@@ -1003,8 +1186,9 @@ export class PluginManager {
   }
 
   enablePluginEntry(entry) {
-    if (entry.handlers.size > 0) {
+    if (entry.enabled) {
       entry.enabled = true;
+      this.refreshEventSubscriptions();
       this.syncSongPlugins();
       return;
     }
@@ -1012,41 +1196,17 @@ export class PluginManager {
     if (typeof entry.plugin.enable === 'function') {
       entry.plugin.enable({ song: this.song, pluginManager: this });
     }
-    entry.plugin.getEventNames().forEach((eventName) => {
-      const handler = (busEventName, payload) => {
-        if (!entry.enabled) {
-          return;
-        }
-        const response = entry.plugin.handleEvent(busEventName, payload, {
-          song: this.song,
-          pluginManager: this
-        });
-        const normalized = normalizePluginResponse(response, `${entry.plugin.getId()}:${busEventName}`);
-        if (normalized.result || normalized.message) {
-          this.eventBus.trigger('PluginManager:ShowResult', {
-            pluginId: entry.plugin.getId(),
-            eventName: busEventName,
-            result: normalized.result,
-            message: normalized.message
-          });
-        }
-        this.syncSongPlugins();
-      };
-      entry.handlers.set(eventName, handler);
-      this.eventBus.on(eventName, handler);
-    });
+    this.refreshEventSubscriptions();
     this.syncSongPlugins();
   }
 
   disablePluginEntry(entry) {
+    const wasEnabled = entry.enabled;
     entry.enabled = false;
-    entry.handlers.forEach((handler, eventName) => {
-      this.eventBus.off(eventName, handler);
-    });
-    entry.handlers.clear();
-    if (typeof entry.plugin.disable === 'function') {
+    if (wasEnabled && typeof entry.plugin.disable === 'function') {
       entry.plugin.disable({ song: this.song, pluginManager: this });
     }
+    this.refreshEventSubscriptions();
     this.syncSongPlugins();
   }
 }

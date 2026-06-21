@@ -143,7 +143,7 @@ Implementation outline in [plugins/PluginManager.js](plugins/PluginManager.js):
 Effective order resolution:
 
 1. Song-defined order (`song.pluginFiringOrder`) if present.
-2. Fallback to static default order constant in one place (for deterministic behavior).
+2. Fallback to static default order constant in one place, set to `[t,f,a,o,c,m]` (clean-code default, not legacy-derived).
 3. Any unknown triggers ignored with a warning result.
 
 ## Validation-First Phase (Required by Design)
@@ -166,6 +166,7 @@ Use a temporary boolean constant (same style as prior timing toggles) so logs ar
 
 1. Confirm whether `DaCapo:OnSongEnd` transpose runs before or after next `DaCapo:OnSectionBegin` fill.
 2. Confirm current order between Fill and Arpeggio on `DaCapo:OnSectionBegin`.
+3. If findings prove the assumed default order `[t,f,a,o,c,m]` is wrong for intended musical behavior, recommend an updated default from Phase 0 evidence before finalizing the constant.
 
 Note: the attached song file currently has transpose persisted as disabled by default in [songs/sprint-121/C-chords-w-tiny-modes.json](songs/sprint-121/C-chords-w-tiny-modes.json). Reproduction steps should explicitly enable it when validating transpose interaction.
 
@@ -179,7 +180,7 @@ Note: the attached song file currently has transpose persisted as disabled by de
 
 ## Phase 1 - Internal Ordering Core
 
-1. Introduce a single default order constant (triggers) in PluginManager.
+1. Introduce a single default order constant (triggers) in PluginManager, initially `[t,f,a,o,c,m]`.
 2. Add song order parser/normalizer and display helpers.
 3. Convert PluginManager event execution to centralized dispatch.
 4. Keep public plugin APIs unchanged.
@@ -216,7 +217,7 @@ Add new focused tests for:
 ## Risks and Mitigations
 
 1. Risk: accidental change in behavior for existing songs with no custom order.
-	- Mitigation: default order constant should match current observed behavior unless intentionally changed.
+	- Mitigation: default order constant is intentionally set to `[t,f,a,o,c,m]`; if Phase 0 evidence contradicts intended behavior, revise the default and document rationale.
 
 2. Risk: menu confusion if partial orders are provided.
 	- Mitigation: normalize and auto-append missing known triggers, then show canonical bracketed result.

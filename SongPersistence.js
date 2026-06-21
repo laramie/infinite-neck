@@ -10,6 +10,8 @@ const DEFAULT_CHART_HEAD_NAMES = [
     'CODA'
 ];
 
+const DEFAULT_PLUGIN_FIRING_ORDER = ['t', 'f', 'a', 'o', 'c', 'm'];
+
 function sanitizeChartHeadName(value) {
     return String(value ?? '')
         .trim()
@@ -30,6 +32,27 @@ function normalizeChartHeadNames(rawHeadNames) {
             return true;
         });
     return cleaned.length > 0 ? cleaned : [...DEFAULT_CHART_HEAD_NAMES];
+}
+
+function normalizePluginFiringOrder(rawPluginFiringOrder) {
+    const values = Array.isArray(rawPluginFiringOrder)
+        ? rawPluginFiringOrder
+        : `${rawPluginFiringOrder || ''}`.trim();
+
+    const tokens = Array.isArray(values)
+        ? values.map((value) => `${value || ''}`)
+        : (values.includes(',') ? values.split(',') : values.split(''));
+
+    const cleaned = [];
+    tokens.forEach((value) => {
+        const token = `${value || ''}`.trim().toLowerCase();
+        if (!token || cleaned.includes(token)) {
+            return;
+        }
+        cleaned.push(token);
+    });
+
+    return cleaned.length > 0 ? cleaned : [...DEFAULT_PLUGIN_FIRING_ORDER];
 }
 
 function toTableID(baseID) {
@@ -100,6 +123,7 @@ const songDefaults = {
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
+    pluginFiringOrder: [...DEFAULT_PLUGIN_FIRING_ORDER],
     chartOptions: {
         modes: true,
         detailLine: true,
@@ -154,6 +178,7 @@ export class SongPersistence {
             ...incomingChartOptions
         };
         this.chartOptions.HEADNames = normalizeChartHeadNames(this.chartOptions.HEADNames);
+        this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

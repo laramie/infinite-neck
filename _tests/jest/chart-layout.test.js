@@ -45,6 +45,8 @@ describe('chart layout rendering', () => {
     test('Song defaults include chartOptions', () => {
         const song = new Song({ sections: [{}] });
 
+        expect(song.pluginFiringOrder).toEqual(['t', 'f', 'a', 'o', 'c', 'm']);
+
         expect(song.chartOptions).toEqual({
             modes: true,
             detailLine: true,
@@ -523,9 +525,9 @@ describe('chart layout rendering', () => {
         const lineHtml = printLeadSheetLine(song, sections);
 
         expect(chartHtml).toContain("class='chartBARChord'><b class='chartTransposedRoot'>C</b>m7b5</div>");
-        expect(chartHtml).toContain("class='chartBARMode'><b class='chartTransposedRoot'>C</b>locrian</div>");
+        expect(chartHtml).toContain("class='chartBARMode'><b class='chartTransposedRoot'>C</b> locrian</div>");
         expect(lineHtml).toContain("class='leadSheetLineBARChord'><b class='chartTransposedRoot'>C</b>m7b5</div>");
-        expect(lineHtml).toContain("class='leadSheetLineBARMode'><b class='chartTransposedRoot'>C</b>locrian</div>");
+        expect(lineHtml).toContain("class='leadSheetLineBARMode'><b class='chartTransposedRoot'>C</b> locrian</div>");
     });
 
     test('LeadSheetLine optionally renders the next line and preserves placeholder space at the end', () => {
