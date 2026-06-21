@@ -12,3 +12,27 @@ The checkbox should be bound to stripTonalRoots somehow so that checking stripTo
 
 Please proceed to coding this feature.
 
+# Copilot Response
+
+I’ve got the design requirements and will now patch the chart view pipeline so `stripTonalRoots` can optionally prepend a bold transposed root (from `Section.rootID`) across Chart, LeadSheet/Line, and the lead-sheet labels, with the new dependent checkbox in Chart Options.
+I patched the schema to accept both strip and add-root chart flags. I’ll rerun the failing loader test and then rerun the full Jest suite.
+
+**What I changed**
+- Added dependent chart option behavior and rendering support in section-printer.js:
+  - New effective option: `addTransposedRootToChord` (only active when `stripTonalRoots` is true).
+  - `getChartDisplayValue(...)` now supports section context and prepends `<b class='chartTransposedRoot'>Root</b>` for chord/mode when enabled.
+  - Added dependent checkbox under strip option in Chart Options UI, disabled unless strip is enabled.
+  - Wired section context through Chart and LeadSheetLine render paths.
+- Added default persistence key in SongPersistence.js:
+  - `chartOptions.addTransposedRootToChord: false`.
+- Added dependency enforcement and label context wiring in infinite-neck.js:
+  - Prevent enabling add-root while strip is off.
+  - Auto-clear add-root when strip is turned off.
+  - Lead-sheet header labels now pass section context into display formatting.
+- Added brown+bold styling for the prepended transposed root in section-printer.css.
+- Extended chart option/tests in chart-layout.test.js:
+  - Default and options expectations for the new key.
+  - Dependent disabled-checkbox behavior test.
+  - Rendering assertions for chart + lead-sheet line with transposed root prepended.
+- Fixed schema validation for persisted chart options in song-file-schema.js:
+  - Added `stripTonalRoots` and `addTransposedRootToChord` to `chartOptionsSchema`.
