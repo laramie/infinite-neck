@@ -1,0 +1,14 @@
+# Design
+
+Now that we have the root stripped from the Chart as a view-only option via `stripTonalRoots`, we need to add back in the root as it has been transposed.  
+
+To help the User spot the difference, we want to wrap the new transposed root in a `<b>` tag, which we want styled to be bold+brown when it is in a Chart or LeadSheet or LeadSheetLine or lblSectionChartChord or lblSectionMode, using CSS rules in section-printer.css.
+
+The new transposed root Key should be grabbed from the Section.rootID such that `<b>C</b>` is the root glued on for Section.rootID = 3 after TransposePlugin has transposed this Section to rootID == 3.
+
+The new checkbox will live under `Strip Tonal roots (view only)` and have a caption `Add transposed root to chord`.
+
+The checkbox should be bound to stripTonalRoots somehow so that checking stripTonalRoots enables adding the transformed root back in.  We don't want to be able to add a transposed root if it has not been stripped.
+
+Please proceed to coding this feature.
+

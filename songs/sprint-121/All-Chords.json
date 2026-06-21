@@ -141,7 +141,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true,
       "displayOptions": {
@@ -221,7 +221,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -256,7 +256,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -295,7 +295,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -338,7 +338,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -377,7 +377,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -412,7 +412,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -451,7 +451,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -486,7 +486,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -525,7 +525,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -564,7 +564,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -603,7 +603,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     },
@@ -638,7 +638,7 @@
       "chartCaptionWidth": "none",
       "rootID": 3,
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": true
     }

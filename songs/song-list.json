@@ -2,7 +2,10 @@
   "songs": [
     "sprint-121/piano-follows-guitar-basic-blues.json",
     "sprint-121/guitar-follows-piano-basic-blues.json",
-    "sprint-121/piano-f-guitar-chorus-coda.json"
+    "sprint-121/piano-f-guitar-chorus-coda.json",
+    "sprint-121/All-Chords.json",
+    "sprint-121/All-Chords-fill-mode-piano-listener-light.json",
+    "sprint-121/C-chords-w-tiny-modes.json"
   ],
   "ignoredSongs": [],
   "sections": [],

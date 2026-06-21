@@ -223,6 +223,8 @@ const chartOptionsSchema = {
         detailLine: { type: 'boolean' },
         showCaptions: { type: 'boolean' },
         showNextLine: { type: 'boolean' },
+        stripTonalRoots: { type: 'boolean' },
+        addTransposedRootToChord: { type: 'boolean' },
         HEADNames: {
             type: 'array',
             items: { type: 'string' }

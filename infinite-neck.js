@@ -490,8 +490,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
 		const chartOptions = getSong().chartOptions || {};
-		const displayChartChord = SectionPrinter.getChartDisplayValue(getSong().getCurrentSection().chartChord, 'chord', chartOptions);
-		const displayChartMode = SectionPrinter.getChartDisplayValue(getSong().getCurrentSection().chartMode, 'mode', chartOptions);
+		const currentSection = getSong().getCurrentSection();
+		const displayChartChord = SectionPrinter.getChartDisplayValue(currentSection.chartChord, 'chord', chartOptions, { section: currentSection });
+		const displayChartMode = SectionPrinter.getChartDisplayValue(currentSection.chartMode, 'mode', chartOptions, { section: currentSection });
 	    $(".lblSectionChartChord").html(displayChartChord);
 	    $(".lblSectionMode").html(displayChartMode);
 
@@ -1958,6 +1959,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
 			getSong().chartOptions = {};
+		}
+		if (optionName === 'stripTonalRoots' && optionValue !== true) {
+			getSong().chartOptions.addTransposedRootToChord = false;
+		}
+		if (optionName === 'addTransposedRootToChord' && optionValue === true && getSong().chartOptions.stripTonalRoots !== true) {
+			optionValue = false;
 		}
 		getSong().chartOptions[optionName] = optionValue;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];

@@ -108,6 +108,15 @@
 .SPN_MODE{
   white-space: nowrap;
 }
+.chartBARChord .chartTransposedRoot,
+.chartBARMode .chartTransposedRoot,
+.leadSheetLineBARChord .chartTransposedRoot,
+.leadSheetLineBARMode .chartTransposedRoot,
+.lblSectionChartChord .chartTransposedRoot,
+.lblSectionMode .chartTransposedRoot {
+  color: saddlebrown;
+  font-weight: bold;
+}
 .SPN_OWNED {
   color: magenta;
   font-weight: bold;

@@ -51,6 +51,7 @@ describe('chart layout rendering', () => {
             showCaptions: true,
             showNextLine: false,
             stripTonalRoots: false,
+            addTransposedRootToChord: false,
             HEADNames: ['HEAD', 'BRIDGE', 'CHORUS', 'SOLO', 'CODA'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BOX,
             chartSpacing: 'relaxed',
@@ -67,6 +68,7 @@ describe('chart layout rendering', () => {
             showCaptions: true,
             showNextLine: true,
             stripTonalRoots: true,
+            addTransposedRootToChord: true,
             HEADNames: ['BRIDGE', 'HEAD', 'FOO'],
             barClass: Constants.SONG_CHART_BAR_CLASS.BARE,
             chartSpacing: 'comfy',
@@ -82,7 +84,9 @@ describe('chart layout rendering', () => {
         expect(html).toContain("data-chart-option='showCaptions' checked");
         expect(html).toContain("data-chart-option='showNextLine' checked");
         expect(html).toContain("data-chart-option='stripTonalRoots' checked");
+        expect(html).toContain("data-chart-option='addTransposedRootToChord' checked");
         expect(html.indexOf("data-chart-option='showNextLine' checked")).toBeLessThan(html.indexOf("data-chart-option='stripTonalRoots' checked"));
+        expect(html.indexOf("data-chart-option='stripTonalRoots' checked")).toBeLessThan(html.indexOf("data-chart-option='addTransposedRootToChord' checked"));
         expect(html).toContain("class='divViewCard sectionPrinterChartOptionsCard'");
         expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--left'");
         expect(html).toContain("class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'");
@@ -483,6 +487,47 @@ describe('chart layout rendering', () => {
         expect(unstrippedLineHtml).toContain("class='leadSheetLineBARMode'>C locrian</div>");
     });
 
+    test('Chart Options keeps add transposed root disabled until strip roots is enabled', () => {
+        const song = createSongMock([new Section()], {
+            stripTonalRoots: false,
+            addTransposedRootToChord: true
+        });
+
+        const html = printChartOptions(song);
+
+        expect(html).toContain("data-chart-option='addTransposedRootToChord' disabled");
+        expect(html).not.toContain("data-chart-option='addTransposedRootToChord' checked");
+    });
+
+    test('Chart and LeadSheetLine can prepend transposed root when strip roots and add root are both enabled', () => {
+        const sections = [
+            new Section({
+                chartChord: 'Cm7b5',
+                chartMode: 'C locrian',
+                chartPosition: Constants.SECTION_CHART_POSITION.BAR,
+                beatsPerBar: '4',
+                rootID: '3',
+                beats: 4
+            })
+        ];
+
+        const song = createSongMock(sections, {
+            barClass: Constants.SONG_CHART_BAR_CLASS.LEADSHEET,
+            modes: true,
+            detailLine: true,
+            stripTonalRoots: true,
+            addTransposedRootToChord: true
+        });
+
+        const chartHtml = printChart(song, sections);
+        const lineHtml = printLeadSheetLine(song, sections);
+
+        expect(chartHtml).toContain("class='chartBARChord'><b class='chartTransposedRoot'>C</b>m7b5</div>");
+        expect(chartHtml).toContain("class='chartBARMode'><b class='chartTransposedRoot'>C</b>locrian</div>");
+        expect(lineHtml).toContain("class='leadSheetLineBARChord'><b class='chartTransposedRoot'>C</b>m7b5</div>");
+        expect(lineHtml).toContain("class='leadSheetLineBARMode'><b class='chartTransposedRoot'>C</b>locrian</div>");
+    });
+
     test('LeadSheetLine optionally renders the next line and preserves placeholder space at the end', () => {
         const sections = [
             new Section({
@@ -661,6 +706,7 @@ describe('chart layout rendering', () => {
         expect(optionsHtml).toContain("data-chart-option='showCaptions' checked");
         expect(optionsHtml).toContain("data-chart-option='showNextLine'");
         expect(optionsHtml).toContain("data-chart-option='stripTonalRoots'");
+        expect(optionsHtml).toContain("data-chart-option='addTransposedRootToChord'");
         expect(optionsHtml).toContain("<option value='LeadSheet' selected>");
     });
 });

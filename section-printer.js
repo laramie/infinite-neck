@@ -149,6 +149,7 @@ function getEffectiveSongChartOptions(theSong) {
         showCaptions: chartOptions.showCaptions !== false,
         showNextLine: chartOptions.showNextLine === true,
         stripTonalRoots: chartOptions.stripTonalRoots === true,
+        addTransposedRootToChord: chartOptions.stripTonalRoots === true && chartOptions.addTransposedRootToChord === true,
         HEADNames: chartHeadNames,
         barClass: CHART_BAR_CLASS_VALUES.includes(chartOptions.barClass)
             ? chartOptions.barClass
@@ -166,6 +167,11 @@ function getEffectiveSongChartOptions(theSong) {
             ? chartOptions.chartSpacing
             : 'relaxed'
     };
+}
+
+function getTransposedRootDisplay(section = null) {
+    const rootID = toInt(section?.rootID, 0);
+    return Constants.NOTE_NAMES_ARRAY[rootID] || Constants.NOTE_NAMES_ARRAY[0] || '';
 }
 
 function formatChordWithoutRoot(chartChord = '') {
@@ -223,18 +229,28 @@ function formatModeWithoutRoot(chartMode = '') {
     return resolveModeName(rawValue) || rawValue;
 }
 
-export function getChartDisplayValue(value, valueKind = 'text', songChartOptions = {}) {
+export function getChartDisplayValue(value, valueKind = 'text', songChartOptions = {}, context = {}) {
     const text = `${value || ''}`;
+    const section = context?.section || null;
     if (!songChartOptions?.stripTonalRoots) {
         return text;
     }
+
+    let strippedText = text;
     if (valueKind === 'chord') {
-        return formatChordWithoutRoot(text);
+        strippedText = formatChordWithoutRoot(text);
+    } else if (valueKind === 'mode') {
+        strippedText = formatModeWithoutRoot(text);
     }
-    if (valueKind === 'mode') {
-        return formatModeWithoutRoot(text);
+
+    if (songChartOptions?.addTransposedRootToChord && (valueKind === 'chord' || valueKind === 'mode')) {
+        const rootText = getTransposedRootDisplay(section);
+        if (rootText && strippedText && strippedText !== '%') {
+            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedText}`;
+        }
     }
-    return text;
+
+    return strippedText;
 }
 
 function percentStringToMultiplier(percentValue) {
@@ -385,9 +401,10 @@ function formatChartCaptionWidthSelect(section, idx) {
         + `</select>`;
 }
 
-function formatSongChartOptionCheckbox(optionName, isChecked, labelText) {
+function formatSongChartOptionCheckbox(optionName, isChecked, labelText, isDisabled = false) {
     const checked = isChecked ? ' checked' : '';
-    return `<label class='songChartOptionsControl'><input type='checkbox' class='songChartOptionsCheckbox' data-chart-option='${optionName}'${checked}> ${labelText}</label>`;
+    const disabled = isDisabled ? ' disabled' : '';
+    return `<label class='songChartOptionsControl'><input type='checkbox' class='songChartOptionsCheckbox' data-chart-option='${optionName}'${checked}${disabled}> ${labelText}</label>`;
 }
 
 function formatSongChartBarClassSelect(barClass) {
@@ -440,8 +457,8 @@ function formatChartStyleVariables(songChartOptions, includeChartSpacing = true)
     return ` style='${declarations.join('; ')};'`;
 }
 
-function formatChartLineValue(value, valueKind = 'text', songChartOptions = {}) {
-    const displayValue = getChartDisplayValue(value, valueKind, songChartOptions);
+function formatChartLineValue(value, valueKind = 'text', songChartOptions = {}, context = {}) {
+    const displayValue = getChartDisplayValue(value, valueKind, songChartOptions, context);
     return displayValue ? displayValue : '&nbsp;';
 }
 
@@ -482,16 +499,16 @@ function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass,
     const barActionAttrs = ` data-action='linkToSection' data-action-args='[${idx}]'`;
     const parts = [
         `<span class='${barClasses.join(' ')}'${barActionAttrs}>`,
-        `<div class='chartBARChord'>${formatChartLineValue(chordText, 'chord', songChartOptions)}</div>`,
+        `<div class='chartBARChord'>${formatChartLineValue(chordText, 'chord', songChartOptions, { section })}</div>`,
     ];
 
     if (isLeadSheetBar) {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions, { section })}</div>`);
         }
     } else {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions, { section })}</div>`);
         }
         if (songChartOptions.detailLine) {
             parts.push(`<div class='chartBARMeta'>${formatChartMetaLine(theSong, section, idx)}</div>`);
@@ -643,11 +660,11 @@ function formatLeadSheetLineBar(barEntry, leadSheetLineOptions, isFirstInLine, i
 
     const parts = [
         `<span class='${barClasses.join(' ')}' data-action='linkToSection' data-action-args='[${idx}]'>`,
-        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText, 'chord', leadSheetLineOptions)}</div>`
+        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText, 'chord', leadSheetLineOptions, { section })}</div>`
     ];
 
     if (leadSheetLineOptions.modes) {
-        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode, 'mode', leadSheetLineOptions)}</div>`);
+        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode, 'mode', leadSheetLineOptions, { section })}</div>`);
     }
     if (leadSheetLineOptions.detailLine) {
         parts.push(`<div class='leadSheetLineBARBeatCount'>${barBeats}</div>`);
@@ -716,6 +733,7 @@ export function printChartOptions(theSong) {
         + formatSongChartOptionCheckbox('showCaptions', chartOptions.showCaptions, 'Show captions')
         + formatSongChartOptionCheckbox('showNextLine', chartOptions.showNextLine, 'Show Next Line')
         + formatSongChartOptionCheckbox('stripTonalRoots', chartOptions.stripTonalRoots, 'Strip Tonal roots (view only)')
+        + formatSongChartOptionCheckbox('addTransposedRootToChord', chartOptions.addTransposedRootToChord, 'Add transposed root to chord', !chartOptions.stripTonalRoots)
         + selectTable
         + "</div>"
         + "<div class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'>"

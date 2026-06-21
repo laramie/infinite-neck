@@ -590,7 +590,7 @@
       "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": false,
       "displayOptions": {
@@ -1080,7 +1080,7 @@
       "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
-      "beats": 4,
+      "beats": 8,
       "currentBeat": 4,
       "sharps": false,
       "pluginData": {
