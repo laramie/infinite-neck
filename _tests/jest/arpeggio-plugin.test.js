@@ -43,7 +43,7 @@ function makeNamedNotesFromNames(noteNames) {
 	return Object.fromEntries(noteNames.map((noteName) => [noteName, { enabled: true }]));
 }
 
-function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1 } = {}) {
+function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1, chartChord = '', chartMode = '' } = {}) {
 	const plugin = new ArpeggioPlugin();
 	const tuning = {
 		baseID: 'ARP',
@@ -59,6 +59,8 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	const section = {
 		beats,
 		rootID,
+		chartChord,
+		chartMode,
 		currentBeat,
 		sectionNotesByTable: {
 			[tableID]: sectionNotes
@@ -141,7 +143,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
-		expect(help).toContain('type = NamedNote or SingleNote');
+		expect(help).toContain('type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
 	});
 
 		test('menu includes type before show note name', () => {
@@ -796,14 +798,93 @@ describe('ArpeggioPlugin sequencing', () => {
 
 	test('type property persists through export and load song state', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
-		plugin.setPropertyValue('type', 'SingleNote', { song });
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
 
 		const exported = plugin.exportSongState();
 		plugin.loadSongState({ type: 'NamedNote' }, { song });
 		plugin.loadSongState(exported, { song });
 
-		expect(exported.type).toBe('SingleNote');
-		expect(plugin.getProperty('type').getValue()).toBe('SingleNote');
+		expect(exported.type).toBe('AutoChartMode');
+		expect(plugin.getProperty('type').getValue()).toBe('AutoChartMode');
+	});
+
+	test('type=AutoChartChord derives candidate note names from chartChord and transposed section root', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartChord: 'Gbmaj7'
+		});
+		plugin.setPropertyValue('type', 'AutoChartChord', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'Eb', 'Gb']);
+	});
+
+	test('type=AutoChartMode derives candidate note names from chartMode and transposed section root', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartMode: 'Gb harmonic minor'
+		});
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'D', 'Db', 'E', 'G', 'Gb']);
+	});
+
+	test('type=AutoChartChordMode unions chord and mode candidate note names', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartChord: 'Gbmaj7',
+			chartMode: 'Gb harmonic minor'
+		});
+		plugin.setPropertyValue('type', 'AutoChartChordMode', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'D', 'Db', 'E', 'Eb', 'G', 'Gb']);
+	});
+
+	test('auto chart source types treat empty, none, and percent as unresolved', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 5
+		});
+
+		plugin.setPropertyValue('type', 'AutoChartChord', { song });
+		section.chartChord = '';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartChord = 'none';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartChord = '%';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
+		section.chartMode = '';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartMode = 'none';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartMode = '%';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
 	});
 
 	test('style=bach with lowToHigh=false does not repeat the rotated seam note', () => {

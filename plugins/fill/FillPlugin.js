@@ -2,6 +2,14 @@ import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
+import {
+  MODE_NONE,
+  normalizeAliasKey,
+  normalizeChartChord,
+  normalizeChartMode,
+  matchChartChordToOption,
+  matchChartModeToOption
+} from '../chart/chart-aliases.js';
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
@@ -9,7 +17,6 @@ import { PalettePresentation } from '../../presentation.js';
 import { getSong } from '../../infinite-neck.js';
 
 const FILL_OWNER = 'FillPlugin';
-const MODE_NONE = 'none';
 const MODE_KEEP = 'keep';
 const MODE_ROLE = 'role';
 const TINY_NONE = 'none';
@@ -62,42 +69,6 @@ const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
-const CHART_CHORD_ALIASES = {
-  '4,7': ['', 'M', 'maj'],
-  '3,7': ['m', 'min'],
-  '4,8': ['aug', '+'],
-  '3,6': ['dim', 'o'],
-  '3,6,9': ['dim7', 'o7'],
-  '3,6,10': ['m7b5', 'half-diminished'],
-  '2,7': ['sus2'],
-  '5,7': ['sus4', 'sus'],
-  '4,7,11': ['maj7', 'M7', 'Maj7'],
-  '3,7,10': ['m7', 'min7'],
-  '4,7,10': ['7', 'dom', 'dom7'],
-  '4,10': ['7no5'],
-  '3,7,11': ['m/ma7', 'mMaj7', 'mM7'],
-  '3,7,10,14': ['m9'],
-  '4,7,9,14': ['6add9', '6/9', '69', 'Madd9']
-};
-const CHART_MODE_ALIASES = {
-  '0,2,4,5,7,9,11': ['major', 'ionian'],
-  '0,2,3,5,7,9,10': ['dorian'],
-  '0,1,3,5,7,8,10': ['phrygian'],
-  '0,2,4,6,7,9,11': ['lydian'],
-  '0,2,4,5,7,9,10': ['mixolydian'],
-  '0,2,3,5,7,8,10': ['minor', 'aeolian', 'natural minor'],
-  '0,1,3,5,6,8,10': ['locrian'],
-  '0,2,4,6,8,10': ['whole tone'],
-  '0,3,6,9': ['diminished'],
-  '0,3,5,7,10': ['minor pentatonic'],
-  '0,2,4,7,9': ['major pentatonic'],
-  '0,2,3,5,7,8,11': ['harmonic minor'],
-  '0,2,3,5,7,9,11': ['melodic minor'],
-  '0,2,4,6,7,9,10': ['lydian dominant'],
-  '0,1,4,5,7,8,10': ['gypsy'],
-  '0,1,3,5,7,9,11': ['neopolitanmaj'],
-  '0,1,3,5,7,8,11': ['neopolitanmin']
-};
 
 function getRoleShortLabel(roleName) {
   return roleName === 'root' ? 'r' : roleName === 'chord' ? 'c' : 's';
@@ -113,14 +84,6 @@ function toMessageCaption(text) {
     .replace(/&[A-Za-z0-9#]+;/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-function normalizeAliasKey(text) {
-  return `${text || ''}`.trim().toLowerCase();
-}
-
-function normalizeChordAliasKey(text) {
-  return `${text || ''}`.trim();
 }
 
 function cloneOptions(options = []) {
@@ -953,40 +916,19 @@ export class FillPlugin {
   }
 
   normalizeChartChord(rawChord) {
-    const trimmed = `${rawChord || ''}`.trim();
-    if (!trimmed) {
-      return '';
-    }
-    const withoutSlashBass = trimmed.split('/')[0].trim();
-    const rootMatch = withoutSlashBass.match(/^([A-Ga-g](?:#{1,2}|b{1,2}|x)?)/);
-    const suffix = rootMatch ? withoutSlashBass.slice(rootMatch[0].length).trim() : withoutSlashBass;
-    return suffix || 'M';
+    return normalizeChartChord(rawChord);
   }
 
   normalizeChartMode(rawMode) {
-    const trimmed = `${rawMode || ''}`.trim();
-    if (!trimmed) {
-      return '';
-    }
-    const tonicMatch = trimmed.match(/^[A-Ga-g](?:#{1,2}|b{1,2}|x)?\s+(.+)$/);
-    const modeText = tonicMatch ? tonicMatch[1] : trimmed;
-    return normalizeAliasKey(modeText);
+    return normalizeChartMode(rawMode);
   }
 
   matchChartChordToFillOption(normalizedChord) {
-    const normalizedKey = normalizeChordAliasKey(normalizedChord);
-    return Constants.FILL_CHORD_OPTIONS.find((option) => {
-      const aliases = CHART_CHORD_ALIASES[option.value] || [];
-      return aliases.some((alias) => normalizeChordAliasKey(alias) === normalizedKey);
-    }) || null;
+    return matchChartChordToOption(normalizedChord, Constants.FILL_CHORD_OPTIONS);
   }
 
   matchChartModeToFillOption(normalizedMode) {
-    const normalizedKey = normalizeAliasKey(normalizedMode);
-    return Constants.FILL_SCALE_OPTIONS.find((option) => {
-      const aliases = CHART_MODE_ALIASES[option.value] || [];
-      return aliases.some((alias) => normalizeAliasKey(alias) === normalizedKey);
-    }) || null;
+    return matchChartModeToOption(normalizedMode, Constants.FILL_SCALE_OPTIONS);
   }
 
   getOptionMessageCaption(option) {

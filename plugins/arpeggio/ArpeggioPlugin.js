@@ -8,6 +8,14 @@ import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import EventBus from '../../event-bus.js';
 import { getSong } from '../../infinite-neck.js';
+import {
+  MODE_NONE,
+  normalizeAliasKey,
+  normalizeChartChord,
+  normalizeChartMode,
+  matchChartChordToOption,
+  matchChartModeToOption
+} from '../chart/chart-aliases.js';
 
 const ARPEGGIO_OWNER = 'ArpeggioPlugin';
 const STYLE_EVERY = 'every';
@@ -16,6 +24,9 @@ const STYLE_RANDOM = 'random';
 const STYLE_BACH = 'bach';
 const SOURCE_TYPE_NAMED_NOTE = 'NamedNote';
 const SOURCE_TYPE_SINGLE_NOTE = 'SingleNote';
+const SOURCE_TYPE_AUTO_CHART_CHORD = 'AutoChartChord';
+const SOURCE_TYPE_AUTO_CHART_MODE = 'AutoChartMode';
+const SOURCE_TYPE_AUTO_CHART_CHORD_MODE = 'AutoChartChordMode';
 const SHOW_NOTE_NAME_OFF = 'off';
 const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
@@ -392,6 +403,7 @@ Implemented in this iteration for:
 - style = random
 - style = bach
 - type = NamedNote or SingleNote
+- type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
@@ -1516,7 +1528,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   collectCandidatesForSection(section, tuning, options = {}) {
     const tableID = this.getTableID(tuning);
     const sectionNotes = section?.sectionNotesByTable?.[tableID];
-    const targetNoteNames = this.collectCandidateNoteNames(sectionNotes);
+    const targetNoteNames = this.collectCandidateNoteNames(sectionNotes, section);
 
     if (targetNoteNames.size === 0) {
       return [];
@@ -1556,11 +1568,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return candidates;
   }
 
-  collectCandidateNoteNames(sectionNotes) {
-    if (this.getSourceType() === SOURCE_TYPE_SINGLE_NOTE) {
-      return this.collectSingleNoteSourceNames(sectionNotes);
+  collectCandidateNoteNames(sectionNotes, section = null) {
+    switch (this.getSourceType()) {
+      case SOURCE_TYPE_SINGLE_NOTE:
+        return this.collectSingleNoteSourceNames(sectionNotes);
+      case SOURCE_TYPE_AUTO_CHART_CHORD:
+        return this.collectAutoChartChordSourceNames(section);
+      case SOURCE_TYPE_AUTO_CHART_MODE:
+        return this.collectAutoChartModeSourceNames(section);
+      case SOURCE_TYPE_AUTO_CHART_CHORD_MODE:
+        return this.collectAutoChartChordModeSourceNames(section);
+      case SOURCE_TYPE_NAMED_NOTE:
+      default:
+        return this.collectNamedNoteSourceNames(sectionNotes);
     }
-    return this.collectNamedNoteSourceNames(sectionNotes);
   }
 
   collectNamedNoteSourceNames(sectionNotes) {
@@ -1579,6 +1600,77 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         .map((note) => `${note?.noteName || ''}`.trim())
         .filter((noteName) => noteName.length > 0)
     );
+  }
+
+  parseFormulaValues(formulaText = '') {
+    const text = `${formulaText || ''}`.trim();
+    if (!text) {
+      return [];
+    }
+    return text.split(',')
+      .map((value) => Number.parseInt(value, 10))
+      .filter((value) => Number.isFinite(value));
+  }
+
+  buildFormulaNoteNames(formulaText = '', rootID = 0, options = {}) {
+    const includeRoot = options.includeRoot === true;
+    const offsets = this.parseFormulaValues(formulaText);
+    const noteNames = new Set();
+    if (includeRoot) {
+      noteNames.add(Constants.NOTE_NAMES_ARRAY[rootID]);
+    }
+    offsets.forEach((offset) => {
+      noteNames.add(Constants.NOTE_NAMES_ARRAY[(rootID + offset) % Constants.NOTE_NAMES_ARRAY.length]);
+    });
+    return noteNames;
+  }
+
+  getEffectiveChartRootID(section) {
+    const rootID = Number.parseInt(section?.rootID, 10);
+    if (!Number.isInteger(rootID) || rootID < 0 || rootID >= Constants.NOTE_NAMES_ARRAY.length) {
+      return 0;
+    }
+    return rootID;
+  }
+
+  collectAutoChartChordSourceNames(section) {
+    const rawValue = `${section?.chartChord || ''}`.trim();
+    const normalizedRaw = normalizeAliasKey(rawValue);
+    if (!rawValue || rawValue === '%' || normalizedRaw === MODE_NONE) {
+      return new Set();
+    }
+
+    const normalizedChord = normalizeChartChord(rawValue);
+    const match = matchChartChordToOption(normalizedChord, Constants.FILL_CHORD_OPTIONS);
+    if (!match) {
+      return new Set();
+    }
+
+    const rootID = this.getEffectiveChartRootID(section);
+    return this.buildFormulaNoteNames(match.value, rootID, { includeRoot: true });
+  }
+
+  collectAutoChartModeSourceNames(section) {
+    const rawValue = `${section?.chartMode || ''}`.trim();
+    const normalizedRaw = normalizeAliasKey(rawValue);
+    if (!rawValue || rawValue === '%' || normalizedRaw === MODE_NONE) {
+      return new Set();
+    }
+
+    const normalizedMode = normalizeChartMode(rawValue);
+    const match = matchChartModeToOption(normalizedMode, Constants.FILL_SCALE_OPTIONS);
+    if (!match) {
+      return new Set();
+    }
+
+    const rootID = this.getEffectiveChartRootID(section);
+    return this.buildFormulaNoteNames(match.value, rootID);
+  }
+
+  collectAutoChartChordModeSourceNames(section) {
+    const chordSet = this.collectAutoChartChordSourceNames(section);
+    const modeSet = this.collectAutoChartModeSourceNames(section);
+    return new Set([...chordSet, ...modeSet]);
   }
 
   expandCandidateSequence(candidates, beatCount, context = {}) {
