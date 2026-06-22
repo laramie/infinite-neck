@@ -214,6 +214,40 @@ describe('FillPlugin', () => {
     expect(getPlayedNotesByStyle(secondSection, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(1);
   });
 
+  test('automatic from chart clears formulas to none when payload section chart values are empty', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const firstSection = makeSection({ [targetTable]: {} });
+    const secondSection = makeSection({ [targetTable]: {} });
+    firstSection.chartChord = 'Cmaj7';
+    firstSection.chartMode = 'A harmonic minor';
+    secondSection.chartChord = '';
+    secondSection.chartMode = '';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [firstSection, secondSection],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 0 }, { song });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7,11');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,3,5,7,8,11');
+
+    plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 1 }, { song });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('');
+  });
+
   test('section-begin fill keeps formulas unchanged when automatic from chart is off', () => {
     const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
     const firstSection = makeSection({ [targetTable]: {} });
@@ -312,13 +346,13 @@ describe('FillPlugin', () => {
     section.chartChord = 'Amb6b9';
     let result = plugin.invokeAction('useChartChord', { song });
     expect(result.result).toBe('No fill match for chartChord="Amb6b9" normalized="mb6b9"');
-    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9]');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9, none]');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('4,7');
 
     section.chartMode = 'A ultralocrian';
     result = plugin.invokeAction('useChartMode', { song });
     expect(result.result).toBe('No fill match for chartMode="A ultralocrian" normalized="ultralocrian"');
-    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (Ionian), dorian, phrygian, lydian, mixolydian, minor (Aeolian/Natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, (LydianDominant), (Gypsy), (NeopolitanMaj), (neopolitanMin)]');
+    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (Ionian), dorian, phrygian, lydian, mixolydian, minor (Aeolian/Natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, (LydianDominant), (Gypsy), (NeopolitanMaj), (neopolitanMin), (none)]');
     expect(plugin.getProperty('scaleFormula').getValue()).toBe('0,2,4,5,7,9,11');
   });
 

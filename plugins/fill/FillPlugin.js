@@ -892,17 +892,22 @@ export class FillPlugin {
   }
 
   applyAutomaticFromChart(song = getSong(), section = this.getCurrentSection(song)) {
-    this.useChartChordForSection(song, section);
-    this.useChartModeForSection(song, section);
+    this.useChartChordForSection(song, section, { emptySetsNone: true });
+    this.useChartModeForSection(song, section, { emptySetsNone: true });
   }
 
   useChartChord(song = getSong()) {
     return this.useChartChordForSection(song, this.getCurrentSection(song));
   }
 
-  useChartChordForSection(song = getSong(), section = this.getCurrentSection(song)) {
+  useChartChordForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const rawValue = `${section?.chartChord || ''}`.trim();
-    if (!rawValue) {
+    const normalizedRaw = normalizeAliasKey(rawValue);
+    if (!rawValue || normalizedRaw === MODE_NONE) {
+      if (options.emptySetsNone) {
+        this.setPropertyValue('chordFormula', '', { song });
+        return { result: 'No chartChord -> none' };
+      }
       return { result: 'No chartChord' };
     }
 
@@ -923,9 +928,14 @@ export class FillPlugin {
     return this.useChartModeForSection(song, this.getCurrentSection(song));
   }
 
-  useChartModeForSection(song = getSong(), section = this.getCurrentSection(song)) {
+  useChartModeForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const rawValue = `${section?.chartMode || ''}`.trim();
-    if (!rawValue) {
+    const normalizedRaw = normalizeAliasKey(rawValue);
+    if (!rawValue || normalizedRaw === MODE_NONE) {
+      if (options.emptySetsNone) {
+        this.setPropertyValue('scaleFormula', '', { song });
+        return { result: 'No chartMode -> none' };
+      }
       return { result: 'No chartMode' };
     }
 
