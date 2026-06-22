@@ -77,7 +77,8 @@ export const FILL_CHORD_OPTIONS = [
     { value: '4,10', caption: '7no5', trigger: 'n' },
     { value: '3,7,11', caption: 'm/ma7', trigger: 'j' },
     { value: '3,7,10,14', caption: 'm9', trigger: '9' },
-    { value: '4,7,9,14', caption: '6add9', trigger: '6' }
+    { value: '4,7,9,14', caption: '6add9', trigger: '6' },
+    { value: '', caption: 'none', trigger: '0' }
 ];
 
 export const FILL_SCALE_OPTIONS = [
@@ -97,7 +98,8 @@ export const FILL_SCALE_OPTIONS = [
     { value: '0,2,4,6,7,9,10', caption: '(LydianDominant)', trigger: 'L' },
     { value: '0,1,4,5,7,8,10', caption: '(Gypsy)', trigger: 'G' },
     { value: '0,1,3,5,7,9,11', caption: '(NeopolitanMaj)', trigger: 'N' },
-    { value: '0,1,3,5,7,8,11', caption: '(neopolitanMin)', trigger: 'n' }
+    { value: '0,1,3,5,7,8,11', caption: '(neopolitanMin)', trigger: 'n' },
+    { value: '', caption: '(none)', trigger: '0' }
 ];
 
 
