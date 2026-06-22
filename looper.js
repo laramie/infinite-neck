@@ -53,7 +53,7 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		InfiniteNeck.showBPM();
 	}
 
-	function emitSectionBeginForCurrentSong(song){
+	function emitSectionBeginForCurrentSong(song, payload = {}){
 		if (!song) {
 			return;
 		}
@@ -61,7 +61,8 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 			sectionIndex: song.getSectionsCurrentIndex(),
 			sectionCount: song.getSections().length,
 			beat: song.getBeat(),
-			beats: song.getBeats()
+			beats: song.getBeats(),
+			...payload
 		});
 	}
 
@@ -241,7 +242,10 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
                 beat: song.getBeat(),
                 beats: song.getBeats()
             });
-			emitSectionBeginForCurrentSong(song);
+			emitSectionBeginForCurrentSong(song, {
+				transportAction: 'StartLoopSections',
+				reuseRandomSequence: true
+			});
         }
 
 		scheduleNextBeatTick('sections');
@@ -257,7 +261,10 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 		});
 
 		if (song) {
-			emitSectionBeginForCurrentSong(song);
+			emitSectionBeginForCurrentSong(song, {
+				transportAction: 'StartLoopBeats',
+				reuseRandomSequence: true
+			});
 		}
 
 		scheduleNextBeatTick('beats');
@@ -359,7 +366,10 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 					});
 				}
     
-				emitSectionBeginForCurrentSong(song);
+				emitSectionBeginForCurrentSong(song, {
+					transportAction: 'LoopSectionsTransition',
+					regenerateRandomSequence: true
+				});
 				callTimingHook('afterSectionTransition', {
 					...result,
 					song,
@@ -369,7 +379,10 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
 				});
             } else {
                 song.incBeatLoop();
-				emitSectionBeginForCurrentSong(song);
+				emitSectionBeginForCurrentSong(song, {
+					transportAction: 'LoopBeatsWrap',
+					reuseRandomSequence: true
+				});
                 showBeats();
             }
         } else {

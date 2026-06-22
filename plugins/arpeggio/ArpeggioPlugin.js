@@ -326,12 +326,13 @@ export class ArpeggioPlugin {
       return {};
     }
 
+    const regenerateRandomSequence = this.shouldRegenerateRandomSequence(eventName, payload);
     return this.applyToSection({
       song: context.song || getSong(),
       payload,
       eventName,
-      clearSectionFirst: true,
-      regenerateRandomSequence: this.shouldRegenerateRandomSequence(eventName, payload)
+      clearSectionFirst: regenerateRandomSequence,
+      regenerateRandomSequence
     });
   }
 
@@ -1051,8 +1052,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     }
 
     const transportAction = `${payload?.transportAction || payload?.action || ''}`.trim();
-    if (transportAction.toLowerCase() === 'restartsection') {
+    const action = transportAction.toLowerCase();
+    if (action === 'restartsection' || action === 'startloopsections' || action === 'startloopbeats' || action === 'loopbeatswrap') {
       return false;
+    }
+    if (action === 'loopsectionstransition' || action === 'gofirstsection') {
+      return true;
     }
     if (transportAction.length > 0) {
       return true;

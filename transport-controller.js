@@ -96,7 +96,7 @@ export class TransportController {
 		return true;
 	}
 
-	emitSectionBegin(song = this.getSong()) {
+	emitSectionBegin(song = this.getSong(), payload = {}) {
 		if (!song) {
 			return false;
 		}
@@ -105,16 +105,17 @@ export class TransportController {
 			sectionIndex: song.getSectionsCurrentIndex(),
 			sectionCount: Array.isArray(sections) ? sections.length : 0,
 			beat: song.getBeat(),
-			beats: song.getBeats()
+			beats: song.getBeats(),
+			...payload
 		});
 		return true;
 	}
 
-	emitSectionBeginIfLooping(song = this.getSong()) {
+	emitSectionBeginIfLooping(song = this.getSong(), payload = {}) {
 		if (!sectionsLooping() && !beatsLooping()) {
 			return false;
 		}
-		return this.emitSectionBegin(song);
+		return this.emitSectionBegin(song, payload);
 	}
 
 	emitSongBeginIfSectionLooping(song = this.getSong()) {
@@ -145,7 +146,10 @@ export class TransportController {
 		this.replayCurrentSectionView();
 		return {
 			result: '' + this.getCurrentSection().currentBeat,
-			didEmitSectionBegin: this.emitSectionBeginIfLooping()
+			didEmitSectionBegin: this.emitSectionBeginIfLooping(song, {
+				transportAction: 'RestartSection',
+				reuseRandomSequence: true
+			})
 		};
 	}
 
@@ -157,7 +161,10 @@ export class TransportController {
 		return {
 			result: '' + (this.getSectionsCurrentIndex() + 1),
 			didEmitSongBegin,
-			didEmitSectionBegin: this.emitSectionBeginIfLooping(song)
+			didEmitSectionBegin: this.emitSectionBeginIfLooping(song, {
+				transportAction: 'GoFirstSection',
+				regenerateRandomSequence: true
+			})
 		};
 	}
 

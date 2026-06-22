@@ -297,7 +297,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(plugin.applyToSection({ song: null }).result).toBe('Arpeggio skipped: no song loaded');
 	});
 
-	test('style=random excludes duplicate string/fret positions before repeating the cycle', () => {
+	test('style=random excludes duplicate string/fret positions and reshuffles on cycle exhaustion', () => {
 		const { plugin } = makeContext();
 		const duplicateCandidates = [
 			{ noteName: 'C', midinum: 36, row: 0, col: 0 },
@@ -308,10 +308,12 @@ describe('ArpeggioPlugin sequencing', () => {
 		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
 			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
 			.mockReturnValueOnce(0.0);
 
 		expect(plugin.expandRandomSequence(duplicateCandidates, 5).map((candidate) => candidate.midinum)).toEqual([
-			36, 38, 40, 36, 38
+			36, 38, 40, 40, 36
 		]);
 
 		randomSpy.mockRestore();
@@ -396,6 +398,40 @@ describe('ArpeggioPlugin sequencing', () => {
 		});
 		// One random shuffle for the section sequence; display refresh must reuse it.
 		expect(randomSpy).toHaveBeenCalledTimes(4);
+		randomSpy.mockRestore();
+	});
+
+	test('DaCapo section-begin reuse paths keep the existing random sequence and notes', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 6, rowRange: [40, 45], frets: 1, currentBeat: 4 });
+		plugin.setPropertyValue('style', 'random', { song });
+		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', { regenerateRandomSequence: true }, { song });
+		const beforeRestartSection = JSON.parse(JSON.stringify(sectionNotes.recordedNotes));
+		const randomCallsAfterGenerate = randomSpy.mock.calls.length;
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {
+			transportAction: 'RestartSection',
+			reuseRandomSequence: true
+		}, { song });
+		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
+		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {
+			transportAction: 'LoopBeatsWrap',
+			reuseRandomSequence: true
+		}, { song });
+		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
+		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
+
 		randomSpy.mockRestore();
 	});
 

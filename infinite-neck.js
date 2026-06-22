@@ -142,7 +142,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
 	const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
-	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = true;
+	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
 						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
