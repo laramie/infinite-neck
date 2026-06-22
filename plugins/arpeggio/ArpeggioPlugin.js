@@ -39,6 +39,9 @@ export class ArpeggioPlugin {
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.skipNextSongUiShowBeats = false;
     this.songLoopCountForPositionPair = 0;
+    this.randomSequenceCacheBySection = new Map();
+    this.sectionRuntimeIdentityCounter = 1;
+    this.debugRandomSequence = false;
   }
 
   setManager(manager) {
@@ -223,6 +226,7 @@ export class ArpeggioPlugin {
     this.properties.forEach((property) => property.reset());
     this.rowBoundsInitialized = false;
     this.songLoopCountForPositionPair = 0;
+    this.clearRandomSequenceCache();
   }
 
   loadSongState(persistedProperties = {}, context = {}) {
@@ -304,6 +308,7 @@ export class ArpeggioPlugin {
     if (eventName === 'Looper:OnResetSong') {
       const song = context.song || getSong();
       this.resetSongLoopCounter();
+      this.clearRandomSequenceCache();
       this.resetAllSectionPositionIndexes(song);
       return this.clearGeneratedNotesInSong(song);
     }
@@ -325,7 +330,8 @@ export class ArpeggioPlugin {
       song: context.song || getSong(),
       payload,
       eventName,
-      clearSectionFirst: true
+      clearSectionFirst: true,
+      regenerateRandomSequence: this.shouldRegenerateRandomSequence(eventName, payload)
     });
   }
 
@@ -334,7 +340,11 @@ export class ArpeggioPlugin {
     const args = context.args || {};
     switch (actionName) {
       case 'apply':
-        return this.applyToSection({ song, clearSectionFirst: true });
+        return this.applyToSection({
+          song,
+          clearSectionFirst: true,
+          regenerateRandomSequence: !!args?.regenerateRandomSequence
+        });
       case 'clear':
         return this.clearAndResetSong(song);
       case 'positions:setCurrentSection':
@@ -1027,6 +1037,133 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return Math.random();
   }
 
+  shouldRegenerateRandomSequence(eventName = 'manual', payload = {}) {
+    if (eventName !== 'DaCapo:OnSectionBegin') {
+      return false;
+    }
+
+    if (payload?.regenerateRandomSequence === true) {
+      return true;
+    }
+
+    if (payload?.reuseRandomSequence === true) {
+      return false;
+    }
+
+    const transportAction = `${payload?.transportAction || payload?.action || ''}`.trim();
+    if (transportAction.toLowerCase() === 'restartsection') {
+      return false;
+    }
+    if (transportAction.length > 0) {
+      return true;
+    }
+
+    return true;
+  }
+
+  clearRandomSequenceCache() {
+    this.randomSequenceCacheBySection.clear();
+  }
+
+  getSectionRuntimeIdentity(section) {
+    if (!section || typeof section !== 'object') {
+      return 'unknown';
+    }
+    if (!Object.prototype.hasOwnProperty.call(section, '__arpeggioRuntimeIdentity')) {
+      section.__arpeggioRuntimeIdentity = `s${this.sectionRuntimeIdentityCounter}`;
+      this.sectionRuntimeIdentityCounter += 1;
+    }
+    return section.__arpeggioRuntimeIdentity;
+  }
+
+  buildRandomSequenceCacheKey({
+    section,
+    tableID,
+    sourceType,
+    minRow,
+    maxRow,
+    minFret,
+    maxFret,
+    beatCount,
+    candidates,
+    fretWindow
+  } = {}) {
+    const sectionIdentity = this.getSectionRuntimeIdentity(section);
+    const candidatesSignature = (candidates || []).map((candidate) => this.getCandidatePositionKey(candidate)).join('|');
+    return [
+      sectionIdentity,
+      tableID || '',
+      sourceType || '',
+      `${minRow}:${maxRow}`,
+      `${minFret}:${maxFret}`,
+      `${Number.parseInt(beatCount, 10) || 0}`,
+      `${Number.isInteger(fretWindow?.appliedIndex) ? fretWindow.appliedIndex : -1}`,
+      candidatesSignature
+    ].join('~');
+  }
+
+  buildRandomizedCycle(candidates = []) {
+    const remaining = [...candidates];
+    const randomizedCycle = [];
+    while (remaining.length > 0) {
+      const randomIndex = Math.floor(this.getRandomNumber() * remaining.length);
+      randomizedCycle.push(remaining.splice(randomIndex, 1)[0]);
+    }
+    return randomizedCycle;
+  }
+
+  buildRandomSequenceForBeatCount(uniqueCandidates = [], beatCount = 0) {
+    if (!Array.isArray(uniqueCandidates) || uniqueCandidates.length === 0 || beatCount <= 0) {
+      return [];
+    }
+    if (uniqueCandidates.length === 1) {
+      return Array.from({ length: beatCount }, () => uniqueCandidates[0]);
+    }
+
+    const sequence = [];
+    while (sequence.length < beatCount) {
+      const cycle = this.buildRandomizedCycle(uniqueCandidates);
+      sequence.push(...cycle);
+    }
+    return sequence.slice(0, beatCount);
+  }
+
+  getCachedRandomSequence(candidates, beatCount, context = {}) {
+    const uniqueCandidates = this.dedupeCandidatesByPosition(candidates);
+    const cacheKey = this.buildRandomSequenceCacheKey({
+      section: context.section,
+      tableID: context.tableID,
+      sourceType: context.sourceType,
+      minRow: context.minRow,
+      maxRow: context.maxRow,
+      minFret: context.minFret,
+      maxFret: context.maxFret,
+      beatCount,
+      candidates: uniqueCandidates,
+      fretWindow: context.fretWindow
+    });
+    const sectionKey = this.getSectionRuntimeIdentity(context.section);
+    const cached = this.randomSequenceCacheBySection.get(sectionKey);
+    const shouldRegenerate = !!context.regenerateRandomSequence;
+    const shouldReuse = !shouldRegenerate && cached && cached.cacheKey === cacheKey;
+
+    if (shouldReuse) {
+      return cached.sequence;
+    }
+
+    const sequence = this.buildRandomSequenceForBeatCount(uniqueCandidates, beatCount);
+    this.randomSequenceCacheBySection.set(sectionKey, {
+      cacheKey,
+      sequence
+    });
+
+    if (this.debugRandomSequence) {
+      console.log(`Arpeggio random sequence regenerated: section=${sectionKey} beats=${beatCount} candidates=${uniqueCandidates.length}`);
+    }
+
+    return sequence;
+  }
+
   getCandidatePositionKey(candidate) {
     return `${candidate?.row}:${candidate?.col}`;
   }
@@ -1343,7 +1480,19 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       minFret: fretWindow.minFret,
       maxFret: fretWindow.maxFret
     });
-    const sequence = this.expandCandidateSequence(candidates, beatCount, { song, section });
+    const sequence = this.expandCandidateSequence(candidates, beatCount, {
+      song,
+      section,
+      tableID: this.getTableID(tuning),
+      sourceType: this.getSourceType(),
+      minRow: this.getProperty('minRow')?.getValue(),
+      maxRow: this.getProperty('maxRow')?.getValue(),
+      minFret: fretWindow.minFret,
+      maxFret: fretWindow.maxFret,
+      fretWindow,
+      regenerateRandomSequence: false,
+      eventName
+    });
     this.syncNamedNoteDisplay({
       song,
       section,
@@ -1435,7 +1584,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const style = this.getStyle();
     switch (style) {
       case STYLE_RANDOM:
-        return this.expandRandomSequence(candidates, beatCount);
+        return this.getCachedRandomSequence(candidates, beatCount, {
+          ...context,
+          sourceType: context?.sourceType || this.getSourceType(),
+          minRow: context?.minRow ?? this.getProperty('minRow')?.getValue(),
+          maxRow: context?.maxRow ?? this.getProperty('maxRow')?.getValue(),
+          minFret: context?.minFret,
+          maxFret: context?.maxFret,
+          regenerateRandomSequence: !!context?.regenerateRandomSequence
+        });
       case STYLE_BACH:
         return this.expandBachSequence(candidates, beatCount, context);
       case STYLE_ALTERNATE:
@@ -1459,19 +1616,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   expandRandomSequence(candidates, beatCount) {
-    const uniqueCandidates = this.dedupeCandidatesByPosition(candidates);
-    if (uniqueCandidates.length === 1) {
-      return Array.from({ length: beatCount }, () => uniqueCandidates[0]);
-    }
-
-    const remaining = [...uniqueCandidates];
-    const randomizedCycle = [];
-    while (remaining.length > 0) {
-      const randomIndex = Math.floor(this.getRandomNumber() * remaining.length);
-      randomizedCycle.push(remaining.splice(randomIndex, 1)[0]);
-    }
-
-    return Array.from({ length: beatCount }, (_, idx) => randomizedCycle[idx % randomizedCycle.length]);
+    return this.buildRandomSequenceForBeatCount(this.dedupeCandidatesByPosition(candidates), beatCount);
   }
 
   dedupeCandidatesByPosition(candidates) {
@@ -1851,7 +1996,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     EventBus.trigger('UserLog', { subSystem: 'ArpeggioPlugin', message });
   }
 
-  applyToSection({ song = getSong(), payload = {}, eventName = 'manual', clearSectionFirst = true } = {}) {
+  applyToSection({ song = getSong(), payload = {}, eventName = 'manual', clearSectionFirst = true, regenerateRandomSequence = false } = {}) {
     if (!song) {
       return { result: 'Arpeggio skipped: no song loaded' };
     }
@@ -1902,13 +2047,25 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       };
     }
 
-    const sequence = this.expandCandidateSequence(candidates, beatCount, { song, section });
     const tableID = this.getTableID(tuning);
+    const sequenceWithContext = this.expandCandidateSequence(candidates, beatCount, {
+      song,
+      section,
+      tableID,
+      sourceType: this.getSourceType(),
+      minRow: this.getProperty('minRow')?.getValue(),
+      maxRow: this.getProperty('maxRow')?.getValue(),
+      minFret: fretWindow.minFret,
+      maxFret: fretWindow.maxFret,
+      fretWindow,
+      regenerateRandomSequence: !!regenerateRandomSequence,
+      eventName
+    });
     const sectionNotes = section.getSectionNotes(tableID);
     let generatedCount = 0;
     let preservedCount = 0;
 
-    sequence.forEach((candidate, index) => {
+    sequenceWithContext.forEach((candidate, index) => {
       const beatKey = `${index + 1}`;
       if (!Array.isArray(sectionNotes.recordedNotes[beatKey])) {
         sectionNotes.recordedNotes[beatKey] = [];
@@ -1923,7 +2080,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     this.requestCurrentBeatRefresh(song, section);
     this.requestSectionStatusRefresh(song);
-    this.syncNamedNoteDisplay({ song, section, tableID, sequence, eventName });
+    this.syncNamedNoteDisplay({ song, section, tableID, sequence: sequenceWithContext, eventName });
     this.syncDiamondPositionDisplay({ song, section, tableID, fretWindow });
 
     return {

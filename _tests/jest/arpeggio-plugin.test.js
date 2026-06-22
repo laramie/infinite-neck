@@ -343,7 +343,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(getBeatMidinums(sectionNotes, 4)).toEqual([50, 51, 45, 46]);
 	});
 
-	test('style=random ignores lowToHigh and repeats the chosen random order after exhaustion', () => {
+	test('style=random ignores lowToHigh and reshuffles after exhausting one cycle', () => {
 		const { plugin, song, sectionNotes } = makeContext({ beats: 6, rowRange: [40, 45], frets: 1 });
 		plugin.setPropertyValue('style', 'random', { song });
 		plugin.setPropertyValue('lowToHigh', false, { song });
@@ -352,12 +352,50 @@ describe('ArpeggioPlugin sequencing', () => {
 			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.9)
 			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.0);
 
 		const result = plugin.applyToSection({ song, clearSectionFirst: true });
 
 		expect(result.result).toContain('generated=6');
-		expect(getBeatMidinums(sectionNotes, 6)).toEqual([45, 41, 46, 40, 45, 41]);
+		expect(getBeatMidinums(sectionNotes, 6)).toEqual([45, 41, 46, 40, 41, 45]);
+		expect(randomSpy).toHaveBeenCalledTimes(8);
+		randomSpy.mockRestore();
+	});
+
+	test('flashcard one-mode with random reveals the exact previous highlighted cell', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('style', 'random', { song });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0);
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(2);
+		song.getCurrentSection().currentBeat = 2;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }]
+		});
+		// One random shuffle for the section sequence; display refresh must reuse it.
+		expect(randomSpy).toHaveBeenCalledTimes(4);
 		randomSpy.mockRestore();
 	});
 
