@@ -18,8 +18,15 @@ Purpose of this sprint is to:
 ## Sprint document locations
 
 - [design document](133-design.md) 
+- [analysis 1](133-analysis-1.md)
+- [implementation plan 1](133-implementation-plan-1.md)
 
 ## Iterations
 
   - "Iteration 1": 
+    - analysis of current random plus flashcard behavior completed in [133-analysis-1.md](133-analysis-1.md)
+
+  - "Iteration 2":
+    - product answers recorded in [133-design.md](133-design.md)
+    - implementation plan drafted in [133-implementation-plan-1.md](133-implementation-plan-1.md)
 
