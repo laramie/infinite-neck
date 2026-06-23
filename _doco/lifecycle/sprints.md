@@ -152,16 +152,25 @@ The sprints toward this effort are documented here, as well as sprints planned b
       - propogate DisplayOptions to every Section even when going backwards
       - do not mark Sections that inherit DisplayOptions as dirty, and don't un-gray the CLEAR button.
       - Fixed bugs around noteRoot, especially throwing off color context.  Added fixtures for checking bass player and noteRoot
-      - Fixed bug around Fingerings not kicking Last Color radio button 
+      - Fixed bug around Fingerings not kiC lydiancking Last Color radio button 
       - COMPLETE
 
 - [128-transpose-recorded](../design/sprints/128-transpose-recorded/sprint-128.md)
   - Get TransposePlugin to do what MovePlugin does when using options: recordedNotes, all types, algorithm: string, and motion down (and up with octave fix).
   - COMPLETE
 
-sprint: 129-graveyard-plugin-menu
+- [sprint-129-graveyard-plugin-menu](../design/sprints/129-graveyard-plugin-menu/sprint-129.md)
 
-sprint: 133-name-that-note
+- [sprint-130-tonal-strip-root](../design/sprints/130-tonal-strip-root/sprint-130.md)
+
+
+- [sprint-131-fill-automatic-chart](../design/sprints/131-fill-automatic-chart/sprint-131.md)
+
+
+- [sprint-132-plugin-order](../design/sprints/132-plugin-order/sprint-132.md)
+
+
+- [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
 
   
 

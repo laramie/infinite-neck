@@ -17,9 +17,17 @@ Purpose of this sprint is to:
 
 ## Sprint document locations
 
-- [design document](133-design.md) 
-- [analysis 1](133-analysis-1.md)
-- [implementation plan 1](133-implementation-plan-1.md)
+- [133-analysis-1.md](133-analysis-1.md)
+- [133-design.md](133-design.md)
+- [133-implementation-plan-1.md](133-implementation-plan-1.md)
+- [133-it4-arpeggio-chart.md](133-it4-arpeggio-chart.md)
+- [133-it4-implementation-plan.md](133-it4-implementation-plan.md)
+- [133-it5-analysis.md](133-it5-analysis.md)
+- [133-it5-design.md](133-it5-design.md)
+- [133-it5-implementation-plan.md](133-it5-implementation-plan.md)
+- [133-it6-design.md](133-it6-design.md)
+- [133-it6-implementation-plan.md](133-it6-implementation-plan.md)
+- [sprint-133.md](sprint-133.md)
 
 ## Iterations
 
@@ -30,3 +38,17 @@ Purpose of this sprint is to:
     - product answers recorded in [133-design.md](133-design.md)
     - implementation plan drafted in [133-implementation-plan-1.md](133-implementation-plan-1.md)
 
+  - "Iteration 4": 
+    - arpeggio chart
+
+  - "Iteration 5": 
+    - Analysis: Tonal.js naming divergence in Chart, Fill, and Arpeggio
+
+  - "Iteration 6":
+    - fix old Fill page 
+    - performed cleanup of fillChord() legacy code after implementation.
+
+  - "Iteration 7":
+    - add graveyard cleaning UI
+    - [133-it7-design.md](133-it7-design.md)
+    - [133-it7-implementation-plan.md](133-it7-implementation-plan.md)

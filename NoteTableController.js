@@ -1691,33 +1691,6 @@ export function fillChord() {
     }
 }
 
-export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor, listenToTablename) {
-    // Deprecated compatibility wrapper. The old Fill page now runs through
-    // fillChord(), which uses shared role-engine logic aligned with FillPlugin.
-    return fillChord();
-}
-export function doFill(theClass, NoteNames, Color, listenToTablename) {
-    if (Color == "noteKeep") {
-        return;
-    }
-    var currSection = getCurrentSection();
-    const sectionNotes = currSection.getSectionNotes(listenToTablename);
-    if (Color != "noteClear") {
-        // NO: let replay color the notes. We are just adding them to the model here.
-        // theClass.addClass(lookupUserColorClassByClass(Color))
-        //          .addClass("NoteActive");
-        Object.keys(NoteNames).forEach(key => {
-            var noteName = NoteNames[key];
-            sectionNotes.setNamedNote(noteName, { "noteName": noteName, "colorClass": Color });
-        });
-    } else {
-        eraseNamedNote(theClass);
-        Object.keys(NoteNames).forEach(key => {
-            sectionNotes.clearNamedNote(NoteNames[key]);
-        });
-    }
-}
-
 //================================= EventBus handling ========================================
 
 // Listen for note creation events and update listener tables
