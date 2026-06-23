@@ -1035,6 +1035,45 @@ td.arpeggioStringRange {
     background-color: aqua;
 }
 
+.fillPositionsStatus{
+    font-family: "Kode Mono", monospace;
+    font-size: 60%;
+}
+.fillPositionsStatus table {
+  display: inline-table;
+  vertical-align: middle;
+  margin: 0;
+}
+.fillPositionsStatus td {
+    padding: 0 2px;
+    background-color: #ff9af1;
+    font-weight: normal;
+    color: black;
+    min-width: 1em;
+    text-align: center;
+}
+
+td.fillCurrentPositionPair {
+    background-color: #ff9af1;
+    font-weight: bold;
+    color: black;
+    border: 1px solid black;
+    min-width: 1em;
+    text-align: center;
+}
+
+td.fillStringRange {
+    border: 2px solid #ad2f8f;
+}
+
+.fillLowerString {
+    background-color: #ffc2f6;
+}
+
+.fillUpperString {
+    background-color: #ffe0fb;
+}
+
 
 
 

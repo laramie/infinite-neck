@@ -39,3 +39,81 @@ ANSWER: Yes.
 ANSWER:  Yes.
 
 
+# sprint-133 Iteration 8 Round 2 : sync plugin position settings w/o linking plugins
+
+We are now ready to have a mechanism to copy settings selectively without linking plugins.
+
+The underlying mechanism will be a JSON export/import loop between plugins.
+
+The scope of properties will be limited by both the requester (FillPlugin in this case) and the supplier (ArpeggioPlugin in this case).
+
+The location of the negotiation/handshake is up to Copilot, but we would think it was in PluginManager.
+
+## import request / export fullfilment in English/pseudocode
+
+Here is the transaction in English.  It would be in code, of course.
+
+requester (FillPlugin): "Provide JSON settings for `arpeggio/p` for the Current Section, Current Instrument please."
+dispatcher (PluginManager??): Let me hand you off to `arpeggio`. ArpeggioPlugin, please fullfil.
+supplier (ArpeggioPlugin): OK, the settings for `p` are: 
+```
+{
+    "minFret": 1,
+    "maxFret": 16,
+    "songLoopsPerPositionPair": 2,
+    "positions": [
+        [
+            0,
+            3
+        ],
+        [
+            4,
+            8
+        ],
+        [
+            8,
+            12
+        ]
+    ]
+}
+```
+
+Notice that the only Section and Instrument support in this call is "Current".  Include in the API as default params ("" === "Current" so we aren't literally hardcoding "Current"), so we could extend later.  
+Notice that `lastPositionIndex` is not supported.
+Notice that the order and depth of the JSON is not identical to current structure of plugin storage or whether property is stored in Song or Section.  It is up to each plugin to normalize and flatten its export payloads, and this shape makes sense for this iteration for easy import.
+
+The requester then ingests the JSON as it sees fit, which in this implementation would map it to the same menu structure in FillPlugin.
+
+On requester finding any JSON shape mismatch, requester quits with error message to UserLog.
+
+If the requested plugin name and relative path (`arpeggio/p` ==> `arpeggio`, `p`) don't align, return an error status so the requester can log in UserLog and quit.
+
+requester has included short name `arpeggio` and known trigger `p`.  If these change because of configuration, we can change the call.  We'll know because a mismatch causes UserLog.
+
+## API
+
+So, if there's no conflict, API could look like: 
+
+For FillPlugin call is:
+`getPluginMenuOptions("arpeggio/p")`
+
+For ArpeggioPlugin call is: 
+`getPluginMenuOptions("fill/op")`
+
+## Location of UI to initiate JSON property import
+
+In Fill Plugin, location is 
+
+`/fpfop`
+```
+    s) song loops per position [1]
+    I) Import from arpeggio
+```
+
+In ArpeggioPlugin, location is
+
+`/fpap`
+```
+    s) song loops per position [1]
+    I) Import from fill
+```

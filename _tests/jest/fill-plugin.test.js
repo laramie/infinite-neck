@@ -784,6 +784,92 @@ describe('FillPlugin', () => {
     expect(plugin.getProperty('maxRow').getValue()).toBe(beforeOptions.maxRow);
   });
 
+  test('positions actions set, copy, and clear section position arrays', () => {
+    const firstSection = makeSection();
+    const secondSection = makeSection();
+    const song = makeSong({
+      myTunings: [createPrimaryTuning({ baseID: 'P1', frets: 12, rowRange: [48] })],
+      sections: [firstSection, secondSection],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', `${Constants.TABLE_ID_PREFIX}P1`, { song });
+
+    expect(plugin.invokeAction('positions:setCurrentSection', { song, args: { value: '[[0,2],[3,5]]' } }).result).toBe('positions=[[0,2],[3,5]]');
+    expect(firstSection.pluginData?.fill?.positions).toEqual([[0, 2], [3, 5]]);
+    expect(plugin.invokeAction('positions:copyToUnsetSections', { song }).result).toBe('positions copied to 1 unset sections');
+    expect(secondSection.pluginData?.fill?.positions).toEqual([[0, 2], [3, 5]]);
+
+    expect(plugin.invokeAction('positions:clearCurrentSection', { song }).result).toBe('positions cleared for current section');
+    expect(firstSection.pluginData?.fill?.positions).toBeUndefined();
+    expect(secondSection.pluginData?.fill?.positions).toEqual([[0, 2], [3, 5]]);
+
+    expect(plugin.invokeAction('positions:clearAllSections', { song }).result).toBe('positions cleared across 1 sections');
+    expect(secondSection.pluginData?.fill?.positions).toBeUndefined();
+  });
+
+  test('section positions override global min/max fret for apply', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning({ baseID: 'P1', frets: 12, rowRange: [48] })],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+    plugin.setPropertyValue('minFret', 0, { song });
+    plugin.setPropertyValue('maxFret', 12, { song });
+
+    plugin.invokeAction('positions:setCurrentSection', { song, args: { value: '[[3,5]]' } });
+    plugin.applyToCurrentSection(song);
+    expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(0);
+
+    plugin.invokeAction('positions:setCurrentSection', { song, args: { value: '[[0,0]]' } });
+    plugin.applyToCurrentSection(song);
+    expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(1);
+  });
+
+  test('song loops per position rotates current section position windows', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning({ baseID: 'P1', frets: 12, rowRange: [48] })],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+    plugin.setPropertyValue('songLoopsPerPositionPair', 2, { song });
+    plugin.invokeAction('positions:setCurrentSection', { song, args: { value: '[[0,0],[1,1]]' } });
+
+    plugin.applyToCurrentSection(song);
+    expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(1);
+
+    plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+    plugin.applyToCurrentSection(song);
+    expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(1);
+
+    plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+    plugin.applyToCurrentSection(song);
+    expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(0);
+  });
+
   test('clear current section, clear song, and commit notes affect owned named, single, and tiny notes only in the selected table', () => {
     const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
     const otherTable = `${Constants.TABLE_ID_PREFIX}ALT`;

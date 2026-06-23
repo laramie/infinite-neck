@@ -24,6 +24,7 @@ function getRootKey(...args) { return requireProvider('getRootKey')(...args); }
 function getRootKeyLead(...args) { return requireProvider('getRootKeyLead')(...args); }
 function getTransposeCaptionValue(...args) { return requireProvider('getTransposeCaptionValue')(...args); }
 function getArpeggioCaptionValue(...args) { return requireProvider('getArpeggioCaptionValue')(...args); }
+function getFillCaptionValue(...args) { return requireProvider('getFillCaptionValue')(...args); }
 
 function escapeHtml(text) {
 	return `${text}`
@@ -225,6 +226,12 @@ const approvedValueEntries = [
 		name: 'arpeggioPositionsStatus',
 		description: 'widget of current-section Arpeggio positions',
 		resolve: () => getArpeggioCaptionValue('arpeggioPositionsStatus'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'fillPositionsStatus',
+		description: 'widget of current-section Fill positions',
+		resolve: () => getFillCaptionValue('fillPositionsStatus'),
 		sampleFormat: 'html'
 	}
 ];

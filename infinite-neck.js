@@ -233,6 +233,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					song: getSong(),
 					section: getCurrentSection()
 				});
+			},
+			getFillCaptionValue: (tokenName) => {
+				const plugin = pluginManager.getPluginById('fill');
+				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
+					return '';
+				}
+				return plugin.getApprovedCaptionValue(tokenName, {
+					song: getSong(),
+					section: getCurrentSection()
+				});
 			}
 		});
 		setNotetableProviders({
@@ -491,7 +501,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
-		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
+		var pluginWidgets = expandApprovedTemplate("${fillPositionsStatus} &nbsp;&nbsp;&nbsp; ${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
 		const chartOptions = getSong().chartOptions || {};
