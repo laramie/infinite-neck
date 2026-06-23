@@ -34,8 +34,8 @@ export const CHART_MODE_ALIASES = {
   '0,2,3,5,7,9,11': ['melodic minor'],
   '0,2,4,6,7,9,10': ['lydian dominant'],
   '0,1,4,5,7,8,10': ['gypsy'],
-  '0,1,3,5,7,9,11': ['neopolitanmaj'],
-  '0,1,3,5,7,8,11': ['neopolitanmin']
+  '0,1,3,5,7,9,11': ['neapolitan major'],
+  '0,1,3,5,7,8,11': ['neapolitan minor']
 };
 
 export function normalizeAliasKey(text) {

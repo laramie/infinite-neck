@@ -2,21 +2,24 @@ import properties from './properties.json' with { type: 'json' };
 import { PluginProperty, buildCaption, buildValueReference } from '../PluginProperty.js';
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
-import {
-  MODE_NONE,
-  normalizeAliasKey,
-  normalizeChartChord,
-  normalizeChartMode,
-  matchChartChordToOption,
-  matchChartModeToOption
-} from '../chart/chart-aliases.js';
 import * as Constants from '../../Constants.js';
+import {
+  canonicalizeChordForStorage,
+  canonicalizeModeForStorage,
+  chordTypeFromStoredChord,
+  modeTypeFromStoredMode,
+  chordNotesFromStoredChord,
+  modeNotesFromStoredMode,
+  chordNotesFromType,
+  modeNotesFromType
+} from '../chart/chart-tonal-resolver.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import { PalettePresentation } from '../../presentation.js';
 import { getSong } from '../../infinite-neck.js';
 
 const FILL_OWNER = 'FillPlugin';
+const MODE_NONE = 'none';
 const MODE_KEEP = 'keep';
 const MODE_ROLE = 'role';
 const TINY_NONE = 'none';
@@ -101,6 +104,46 @@ function capitalize(text = '') {
 function cellKey(row, col) {
   return `${row}:${col}`;
 }
+
+const LEGACY_CHORD_FORMULA_TO_TONAL = Object.freeze({
+  '4,7': 'M',
+  '3,7': 'm',
+  '4,8': 'aug',
+  '3,6': 'dim',
+  '3,6,9': 'dim7',
+  '3,6,10': 'm7b5',
+  '2,7': 'sus2',
+  '5,7': 'sus4',
+  '4,7,11': 'maj7',
+  '3,7,10': 'm7',
+  '4,7,10': '7',
+  '4,10': '7no5',
+  '3,7,11': 'm/ma7',
+  '3,7,10,14': 'm9',
+  '4,7,9,14': '6add9',
+  '': ''
+});
+
+const LEGACY_MODE_FORMULA_TO_TONAL = Object.freeze({
+  '0,2,4,5,7,9,11': 'major',
+  '0,2,3,5,7,9,10': 'dorian',
+  '0,1,3,5,7,8,10': 'phrygian',
+  '0,2,4,6,7,9,11': 'lydian',
+  '0,2,4,5,7,9,10': 'mixolydian',
+  '0,2,3,5,7,8,10': 'minor',
+  '0,1,3,5,6,8,10': 'locrian',
+  '0,2,4,6,8,10': 'whole tone',
+  '0,3,6,9': 'diminished',
+  '0,3,5,7,10': 'minor pentatonic',
+  '0,2,4,7,9': 'major pentatonic',
+  '0,2,3,5,7,8,11': 'harmonic minor',
+  '0,2,3,5,7,9,11': 'melodic minor',
+  '0,2,4,6,7,9,10': 'lydian dominant',
+  '0,1,4,5,7,8,10': 'double harmonic major',
+  '0,1,3,5,7,9,11': 'neapolitan major',
+  '0,1,3,5,7,8,11': 'balinese',
+  '': ''
+});
 
 export class FillPlugin {
   constructor() {
@@ -282,8 +325,8 @@ export class FillPlugin {
   isLegacyEmptyPersistedState(persistedProperties = {}) {
     const legacyStub = {
       targetTable: '',
-      chordFormula: '4,7',
-      scaleFormula: '0,2,4,5,7,9,11',
+      chordFormula: 'M',
+      scaleFormula: 'major',
       minFret: 0,
       maxFret: 0,
       minRow: 0,
@@ -302,7 +345,29 @@ export class FillPlugin {
       return false;
     }
 
-    return legacyKeys.every((key) => valuesEqual(persistedProperties[key], legacyStub[key]));
+    const legacyChordValues = new Set(['4,7', 'M']);
+    const legacyModeValues = new Set(['0,2,4,5,7,9,11', 'major']);
+
+    return legacyKeys.every((key) => {
+      if (key === 'chordFormula') {
+        return legacyChordValues.has(`${persistedProperties[key]}`);
+      }
+      if (key === 'scaleFormula') {
+        return legacyModeValues.has(`${persistedProperties[key]}`);
+      }
+      return valuesEqual(persistedProperties[key], legacyStub[key]);
+    });
+  }
+
+  normalizeLegacyFormulaValue(name, rawValue) {
+    const text = `${rawValue || ''}`;
+    if (name === 'chordFormula') {
+      return LEGACY_CHORD_FORMULA_TO_TONAL[text] ?? text;
+    }
+    if (name === 'scaleFormula') {
+      return LEGACY_MODE_FORMULA_TO_TONAL[text] ?? text;
+    }
+    return rawValue;
   }
 
   normalizeLegacyPersistedProperties(persistedProperties = {}) {
@@ -669,7 +734,8 @@ export class FillPlugin {
     }
 
     const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
-    const nextValue = property.setValue(rawValue);
+    const normalizedRawValue = this.normalizeLegacyFormulaValue(name, rawValue);
+    const nextValue = property.setValue(normalizedRawValue);
     if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
       this.resetStringLimitDefaultsForTarget(song);
     }
@@ -754,6 +820,7 @@ export class FillPlugin {
     const section = this.getSectionForPayload(song, payload);
     if (this.getProperty('automaticFromChart')?.getValue()) {
       this.applyAutomaticFromChart(song, section);
+      return this.applyToSection(song, section, { useSectionChart: true });
     }
     return this.applyToSection(song, section);
   }
@@ -865,8 +932,7 @@ export class FillPlugin {
 
   useChartChordForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const rawValue = `${section?.chartChord || ''}`.trim();
-    const normalizedRaw = normalizeAliasKey(rawValue);
-    if (!rawValue || normalizedRaw === MODE_NONE) {
+    if (!rawValue || rawValue.toLowerCase() === MODE_NONE) {
       if (options.emptySetsNone) {
         this.setPropertyValue('chordFormula', '', { song });
         return { result: 'No chartChord -> none' };
@@ -874,12 +940,13 @@ export class FillPlugin {
       return { result: 'No chartChord' };
     }
 
-    const normalizedValue = this.normalizeChartChord(rawValue);
-    const match = this.matchChartChordToFillOption(normalizedValue);
+    const canonicalValue = canonicalizeChordForStorage(rawValue);
+    const chordType = chordTypeFromStoredChord(canonicalValue);
+    const match = (Constants.FILL_CHORD_OPTIONS || []).find((option) => `${option.value}` === `${chordType}`) || null;
     if (!match) {
       return {
-        result: `No fill match for chartChord="${rawValue}" normalized="${normalizedValue}"`,
-        message: this.buildChartMissMessage('chord', 'chartChord', rawValue, normalizedValue, Constants.FILL_CHORD_OPTIONS)
+        result: `No fill subset match for chartChord="${rawValue}" tonalType="${chordType || '<none>'}"`,
+        message: this.buildChartMissMessage('chord', 'chartChord', rawValue, chordType || '<none>', Constants.FILL_CHORD_OPTIONS)
       };
     }
 
@@ -893,8 +960,7 @@ export class FillPlugin {
 
   useChartModeForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const rawValue = `${section?.chartMode || ''}`.trim();
-    const normalizedRaw = normalizeAliasKey(rawValue);
-    if (!rawValue || normalizedRaw === MODE_NONE) {
+    if (!rawValue || rawValue.toLowerCase() === MODE_NONE) {
       if (options.emptySetsNone) {
         this.setPropertyValue('scaleFormula', '', { song });
         return { result: 'No chartMode -> none' };
@@ -902,33 +968,18 @@ export class FillPlugin {
       return { result: 'No chartMode' };
     }
 
-    const normalizedValue = this.normalizeChartMode(rawValue);
-    const match = this.matchChartModeToFillOption(normalizedValue);
+    const canonicalValue = canonicalizeModeForStorage(rawValue);
+    const modeType = modeTypeFromStoredMode(canonicalValue);
+    const match = (Constants.FILL_SCALE_OPTIONS || []).find((option) => `${option.value}` === `${modeType}`) || null;
     if (!match) {
       return {
-        result: `No fill match for chartMode="${rawValue}" normalized="${normalizedValue}"`,
-        message: this.buildChartMissMessage('mode', 'chartMode', rawValue, normalizedValue, Constants.FILL_SCALE_OPTIONS)
+        result: `No fill subset match for chartMode="${rawValue}" tonalType="${modeType || '<none>'}"`,
+        message: this.buildChartMissMessage('mode', 'chartMode', rawValue, modeType || '<none>', Constants.FILL_SCALE_OPTIONS)
       };
     }
 
     this.setPropertyValue('scaleFormula', match.value, { song });
     return { result: `chartMode -> ${this.getOptionMessageCaption(match)}` };
-  }
-
-  normalizeChartChord(rawChord) {
-    return normalizeChartChord(rawChord);
-  }
-
-  normalizeChartMode(rawMode) {
-    return normalizeChartMode(rawMode);
-  }
-
-  matchChartChordToFillOption(normalizedChord) {
-    return matchChartChordToOption(normalizedChord, Constants.FILL_CHORD_OPTIONS);
-  }
-
-  matchChartModeToFillOption(normalizedMode) {
-    return matchChartModeToOption(normalizedMode, Constants.FILL_SCALE_OPTIONS);
   }
 
   getOptionMessageCaption(option) {
@@ -1028,26 +1079,29 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return Constants.NOTE_NAMES_ARRAY[rootID] || Constants.NOTE_NAMES_ARRAY[0];
   }
 
-  parseFormulaValues(propertyName) {
-    const text = `${this.getProperty(propertyName)?.getValue() || ''}`;
-    if (!text) {
-      return [];
-    }
-    return text.split(',').map((value) => Number.parseInt(value, 10)).filter((value) => Number.isFinite(value));
-  }
-
-  computeRoleNoteSets(section) {
+  computeRoleNoteSets(section, options = {}) {
     const rootName = this.getCurrentRootNoteName(section);
     const rootID = Number.parseInt(section?.rootID, 10) || 0;
 
+    const chordSource = options.useSectionChart
+      ? `${section?.chartChord || ''}`
+      : `${this.getProperty('chordFormula')?.getValue() || ''}`;
+    const modeSource = options.useSectionChart
+      ? `${section?.chartMode || ''}`
+      : `${this.getProperty('scaleFormula')?.getValue() || ''}`;
+
+    const chordSet = options.useSectionChart
+      ? chordNotesFromStoredChord(chordSource, rootID)
+      : chordNotesFromType(chordSource, rootID);
+
+    const modeSet = options.useSectionChart
+      ? modeNotesFromStoredMode(modeSource, rootID)
+      : modeNotesFromType(modeSource, rootID);
+
     return {
       root: new Set([rootName]),
-      chord: new Set(
-        this.parseFormulaValues('chordFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
-      ),
-      scale: new Set(
-        this.parseFormulaValues('scaleFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
-      )
+      chord: chordSet,
+      scale: modeSet
     };
   }
 
@@ -1219,8 +1273,8 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     };
   }
 
-  buildApplyPlan(song, section, tuning) {
-    const roleNoteSets = this.computeRoleNoteSets(section);
+  buildApplyPlan(song, section, tuning, options = {}) {
+    const roleNoteSets = this.computeRoleNoteSets(section, options);
     const namedPlan = this.buildNamedPlan(roleNoteSets);
     const singlePlan = this.buildPlayedFamilyPlan('single', section, tuning, roleNoteSets);
     const tinyPlan = this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets);
@@ -1286,7 +1340,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return this.applyToSection(song, this.getCurrentSection(song));
   }
 
-  applyToSection(song = getSong(), section = this.getCurrentSection(song)) {
+  applyToSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const tuning = this.getSelectedTargetTuning(song);
     const tableID = this.getSelectedTargetTableID();
 
@@ -1297,7 +1351,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const sectionNotes = section.getSectionNotes(tableID);
     this.clearOwnedFillNotesInSection(sectionNotes);
 
-    const plan = this.buildApplyPlan(song, section, tuning);
+    const plan = this.buildApplyPlan(song, section, tuning, options);
     const counts = this.applyPlanToSection(sectionNotes, plan);
 
     this.refreshCurrentSectionUi(song);

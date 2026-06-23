@@ -111,6 +111,10 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+import {
+	canonicalizeChordForStorage,
+	canonicalizeModeForStorage
+} from './plugins/chart/chart-tonal-resolver.js';
 import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
@@ -2000,14 +2004,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideCmdLine();
 	}
 	export function linkToSectionChartChord(idx, chartChord) {
-		getSong().sections[idx].chartChord = chartChord;
+		const section = getSong().sections[idx];
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		section.chartChord = canonicalizeChordForStorage(chartChord, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 		}
 	}
 	export function linkToSectionChartMode(idx, chartMode) {
-		getSong().sections[idx].chartMode = chartMode;
+		const section = getSong().sections[idx];
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		section.chartMode = canonicalizeModeForStorage(chartMode, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
@@ -2032,11 +2040,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 	export function linkToSectionTableChord(idx, tableID, chord) {
-		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		let section = getSong().sections[idx];
+		let sn = section.sectionNotesByTable[tableID];
 		if (!sn){
 			return;	
 		}
-		sn.chord = chord;
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		sn.chord = canonicalizeChordForStorage(chord, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();
@@ -2044,11 +2054,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSectionTableMode(idx, tableID, mode) {
-		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		let section = getSong().sections[idx];
+		let sn = section.sectionNotesByTable[tableID];
 		if (!sn){
 			return;	
 		}
-		sn.mode = mode;
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		sn.mode = canonicalizeModeForStorage(mode, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();

@@ -54,8 +54,8 @@
     "caption": "chord",
     "trigger": "c",
     "datatype": "org.dynamide.Select",
-    "value": "4,7",
-    "defaultValue": "4,7",
+    "value": "M",
+    "defaultValue": "M",
     "visibleInMenu": false,
     "options": []
   },
@@ -64,8 +64,8 @@
     "caption": "mode",
     "trigger": "m",
     "datatype": "org.dynamide.Select",
-    "value": "0,2,4,5,7,9,11",
-    "defaultValue": "0,2,4,5,7,9,11",
+    "value": "major",
+    "defaultValue": "major",
     "visibleInMenu": false,
     "options": []
   },

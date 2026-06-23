@@ -9,13 +9,9 @@ import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js
 import EventBus from '../../event-bus.js';
 import { getSong } from '../../infinite-neck.js';
 import {
-  MODE_NONE,
-  normalizeAliasKey,
-  normalizeChartChord,
-  normalizeChartMode,
-  matchChartChordToOption,
-  matchChartModeToOption
-} from '../chart/chart-aliases.js';
+  chordNotesFromStoredChord,
+  modeNotesFromStoredMode
+} from '../chart/chart-tonal-resolver.js';
 
 const ARPEGGIO_OWNER = 'ArpeggioPlugin';
 const STYLE_EVERY = 'every';
@@ -1602,29 +1598,6 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     );
   }
 
-  parseFormulaValues(formulaText = '') {
-    const text = `${formulaText || ''}`.trim();
-    if (!text) {
-      return [];
-    }
-    return text.split(',')
-      .map((value) => Number.parseInt(value, 10))
-      .filter((value) => Number.isFinite(value));
-  }
-
-  buildFormulaNoteNames(formulaText = '', rootID = 0, options = {}) {
-    const includeRoot = options.includeRoot === true;
-    const offsets = this.parseFormulaValues(formulaText);
-    const noteNames = new Set();
-    if (includeRoot) {
-      noteNames.add(Constants.NOTE_NAMES_ARRAY[rootID]);
-    }
-    offsets.forEach((offset) => {
-      noteNames.add(Constants.NOTE_NAMES_ARRAY[(rootID + offset) % Constants.NOTE_NAMES_ARRAY.length]);
-    });
-    return noteNames;
-  }
-
   getEffectiveChartRootID(section) {
     const rootID = Number.parseInt(section?.rootID, 10);
     if (!Number.isInteger(rootID) || rootID < 0 || rootID >= Constants.NOTE_NAMES_ARRAY.length) {
@@ -1634,37 +1607,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   collectAutoChartChordSourceNames(section) {
-    const rawValue = `${section?.chartChord || ''}`.trim();
-    const normalizedRaw = normalizeAliasKey(rawValue);
-    if (!rawValue || rawValue === '%' || normalizedRaw === MODE_NONE) {
-      return new Set();
-    }
-
-    const normalizedChord = normalizeChartChord(rawValue);
-    const match = matchChartChordToOption(normalizedChord, Constants.FILL_CHORD_OPTIONS);
-    if (!match) {
-      return new Set();
-    }
-
     const rootID = this.getEffectiveChartRootID(section);
-    return this.buildFormulaNoteNames(match.value, rootID, { includeRoot: true });
+    return chordNotesFromStoredChord(`${section?.chartChord || ''}`, rootID);
   }
 
   collectAutoChartModeSourceNames(section) {
-    const rawValue = `${section?.chartMode || ''}`.trim();
-    const normalizedRaw = normalizeAliasKey(rawValue);
-    if (!rawValue || rawValue === '%' || normalizedRaw === MODE_NONE) {
-      return new Set();
-    }
-
-    const normalizedMode = normalizeChartMode(rawValue);
-    const match = matchChartModeToOption(normalizedMode, Constants.FILL_SCALE_OPTIONS);
-    if (!match) {
-      return new Set();
-    }
-
     const rootID = this.getEffectiveChartRootID(section);
-    return this.buildFormulaNoteNames(match.value, rootID);
+    return modeNotesFromStoredMode(`${section?.chartMode || ''}`, rootID);
   }
 
   collectAutoChartChordModeSourceNames(section) {
