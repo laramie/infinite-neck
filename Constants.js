@@ -92,12 +92,12 @@ export const FILL_SCALE_OPTIONS = [
     { value: 'whole tone', caption: 'whole tone', trigger: 'w' },
     { value: 'diminished', caption: 'diminished', trigger: 'd' },
     { value: 'minor pentatonic', caption: 'minor pentatonic', trigger: 'p' },
-    { value: 'major pentatonic', caption: 'major pentatonic', trigger: 'P' },
+    { value: 'major pentatonic', caption: 'major Pentatonic', trigger: 'P' },
     { value: 'harmonic minor', caption: 'harmonic minor', trigger: 'h' },
     { value: 'melodic minor', caption: 'melodic minor', trigger: 'm' },
-    { value: 'lydian dominant', caption: 'lydian dominant', trigger: 'L' },
+    { value: 'lydian dominant', caption: 'Lydian dominant', trigger: 'L' },
     { value: 'double harmonic major', caption: '(Gypsy)', trigger: 'G' },
-    { value: 'neapolitan major', caption: 'neapolitan major', trigger: 'N' },
+    { value: 'neapolitan major', caption: 'Neapolitan major', trigger: 'N' },
     { value: 'balinese', caption: '(neapolitan minor)', trigger: 'n' },
     { value: '', caption: '(none)', trigger: '0' }
 ];

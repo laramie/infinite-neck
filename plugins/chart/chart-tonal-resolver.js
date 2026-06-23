@@ -18,9 +18,12 @@ const CHORD_ALIAS_MAP = new Map([
 
 const MODE_ALIAS_MAP = new Map([
   ['gypsy', 'double harmonic major'],
+  ['Lydian dominant','lydian dominant'],
   ['neapolitan minor', 'balinese'],
+  ['Neapolitan major', 'neapolitan major'],
   ['minor (aeolian/natural)', 'minor'],
-  ['major (ionian)', 'major']
+  ['major (ionian)', 'major'],
+  ['major Pentatonic', 'major pentatonic']
 ]);
 
 function normalizeText(rawValue) {
