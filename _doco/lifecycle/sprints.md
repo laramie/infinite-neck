@@ -160,6 +160,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - COMPLETE
 
 sprint: 129-graveyard-plugin-menu
+
+sprint: 133-name-that-note
+
   
 
 

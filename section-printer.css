@@ -111,11 +111,15 @@
 .chartBARChord .chartTransposedRoot,
 .chartBARMode .chartTransposedRoot,
 .leadSheetLineBARChord .chartTransposedRoot,
-.leadSheetLineBARMode .chartTransposedRoot,
-.lblSectionChartChord .chartTransposedRoot,
-.lblSectionMode .chartTransposedRoot {
+.leadSheetLineBARMode .chartTransposedRoot {
   color: saddlebrown;
   font-weight: bold;
+}
+.lblSectionChartChord .chartTransposedRoot,
+.lblSectionMode .chartTransposedRoot {
+  color: rgb(255, 128, 0);
+  font-weight: bold;
+  font-size: 120%;
 }
 .SPN_OWNED {
   color: magenta;
