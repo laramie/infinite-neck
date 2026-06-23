@@ -52,7 +52,8 @@ Target under `/fac`:
 
 Behavior:
 1. Toggles default false at menu open.
-2. `/facC` performs backup first, then clears records matching currently selected true toggles.
+2. `/facC` skips backup when no types are selected and returns `no types selected`.
+3. `/facC` performs backup first only when at least one type is selected, then clears records matching currently selected true toggles.
 3. No confirmation submenu for `/facC`.
 4. Action result text includes removed count and selected types summary.
 
@@ -102,7 +103,8 @@ Add action handling:
 
 Add provider function in infinite-neck:
 1. `downloadBackupThenClearGraveyardByType(selectedTypes)`:
-- Calls existing backup function first (same pattern as `/faC`).
+- Returns `no types selected` when no toggles are true.
+- Calls existing backup function first when selectedTypes is non-empty (same pattern as `/faC`).
 - Calls `getSong().graveyard.clearByTypes(selectedTypes)`.
 - Refreshes messages via `buildGraveyardTable()`.
 
@@ -118,9 +120,9 @@ Files:
 
 Rendering changes in graveyard table:
 1. Keep existing top row ACTION cell as current behavior (`raise` or clip message).
-2. In the second row (show/hide JSON row), include `delete_{id}` link adjacent to the toggle link.
-3. Link should be visible only in expanded state:
-- simplest path: render hidden by default and reveal when `.graveyard-toggle-json` makes row visible.
+2. In the second row (show/hide JSON row), include a dedicated ACTION column cell at the end of the row and render `delete_{id}` there.
+3. Keep the first-column `show/hide` link where it is; do not place delete beside it.
+4. `delete_{id}` is hidden while JSON is hidden and shown only when that row is expanded.
 
 Event handling:
 1. Add delegated click handler for `.graveyard-delete-link`.
@@ -132,11 +134,13 @@ Event handling:
 
 1. Selective clear matches exact `record.type` strings from GraveType values.
 2. Empty selection for `/facC`:
+2. Empty selection for `/facC`:
 - no records removed,
-- still performs backup (to match "backup before action happens"),
-- returns clear message such as `removed 0`.
+- no backup,
+- returns `no types selected`.
 3. Single delete works for all record types, including CLIP.
 4. Existing raise behavior remains unchanged.
+5. Delete label format is `delete_{id}` and raise label format should remain underscore-style for consistency.
 
 ## Testing plan
 
@@ -171,8 +175,4 @@ Risk 3: backup side effects for empty type selection.
 
 ## Open questions
 
-1. For `/facC` with no toggles selected, should backup still occur, or should we skip backup and return `no types selected`?
-2. Should selective clear include a compact action result string listing selected types, for example `cleared: SECTION,PLUGIN (12)`?
-3. For delete link label, do you want exact format `delete_9` (underscore) or `delete 9` (space) to match current `raise 9` style?
-4. Should delete link appear for CLIP records as well, or do you want CLIP protected because top-row action is `use ClipPlugin`?
-5. Should `/fac` toggle state reset to all false every time the submenu opens, or persist until command-line session/menu reset?
+All open questions have been answered in [133-it7-design.md](133-it7-design.md#answers-to-implementation-plan-questions), and this plan reflects those decisions.

@@ -52,3 +52,8 @@ Purpose of this sprint is to:
     - add graveyard cleaning UI
     - [133-it7-design.md](133-it7-design.md)
     - [133-it7-implementation-plan.md](133-it7-implementation-plan.md)
+
+  - "Iteration 8": 
+    - Fix FillPlugin migrating position during transposition.
+    - Have it copy the positions menu from ArpeggioPlugin
+    

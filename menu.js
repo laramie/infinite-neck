@@ -270,6 +270,82 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "clearGraveyardByType",
+              "caption": "<b>c</b>lear graveyard by type",
+              "trigger": "c",
+              "action": "resetGraveyardClearByTypeSelection",
+              "guardBeforeDive": true,
+              "children": [
+                {
+                  "name": "clearGraveyardTypeCLIP",
+                  "caption": "<b>c</b>) CLIP [${graveyardClearByTypeCLIP}]",
+                  "trigger": "c",
+                  "action": "toggleGraveyardClearTypeCLIP",
+                  "vars": [
+                    "graveyardClearByTypeCLIP"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeINSTRUMENT",
+                  "caption": "<b>i</b>) INSTRUMENT [${graveyardClearByTypeINSTRUMENT}]",
+                  "trigger": "i",
+                  "action": "toggleGraveyardClearTypeINSTRUMENT",
+                  "vars": [
+                    "graveyardClearByTypeINSTRUMENT"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypePLUGIN",
+                  "caption": "<b>p</b>) PLUGIN [${graveyardClearByTypePLUGIN}]",
+                  "trigger": "p",
+                  "action": "toggleGraveyardClearTypePLUGIN",
+                  "vars": [
+                    "graveyardClearByTypePLUGIN"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeSECTION",
+                  "caption": "<b>s</b>) SECTION [${graveyardClearByTypeSECTION}]",
+                  "trigger": "s",
+                  "action": "toggleGraveyardClearTypeSECTION",
+                  "vars": [
+                    "graveyardClearByTypeSECTION"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeTUNING",
+                  "caption": "<b>t</b>) TUNING [${graveyardClearByTypeTUNING}]",
+                  "trigger": "t",
+                  "action": "toggleGraveyardClearTypeTUNING",
+                  "vars": [
+                    "graveyardClearByTypeTUNING"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeSTYLESHEET",
+                  "caption": "<b>y</b>) STYLESHEET [${graveyardClearByTypeSTYLESHEET}]",
+                  "trigger": "y",
+                  "action": "toggleGraveyardClearTypeSTYLESHEET",
+                  "vars": [
+                    "graveyardClearByTypeSTYLESHEET"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardSelectedTypes",
+                  "caption": "<b>C</b>) Clear selected types, with backup",
+                  "trigger": "C",
+                  "action": "downloadBackupThenClearGraveyardByType",
+                  "popOnBang": true
+                }
+              ]
+            },
+            {
               "caption": "<b>C</b>lear graveyard, with backup",
               "trigger": "C",
               "children": [

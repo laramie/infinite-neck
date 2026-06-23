@@ -65,6 +65,22 @@ let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
 const USER_LOG_MAX_ROWS = 1000;
+const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
+	'CLIP',
+	'INSTRUMENT',
+	'PLUGIN',
+	'SECTION',
+	'TUNING',
+	'STYLESHEET'
+]);
+let graveyardClearByTypeState = {
+	CLIP: false,
+	INSTRUMENT: false,
+	PLUGIN: false,
+	SECTION: false,
+	TUNING: false,
+	STYLESHEET: false
+};
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -84,6 +100,7 @@ function clearAndReplaySection(...args) { return requireProvider('clearAndReplay
 function cycleThruKeys(...args) { return requireProvider('cycleThruKeys')(...args); }
 function cycleThruNutWidths(...args) { return requireProvider('cycleThruNutWidths')(...args); }
 function downloadBackupThenClearGraveyard(...args) { return requireProvider('downloadBackupThenClearGraveyard')(...args); }
+function downloadBackupThenClearGraveyardByType(...args) { return requireProvider('downloadBackupThenClearGraveyardByType')(...args); }
 function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNotes')(...args); }
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
@@ -165,6 +182,30 @@ function getSectionEditInstrumentOptions(){
 			popOnBang: true
 		};
 	});
+}
+
+function resetGraveyardClearByTypeSelection() {
+	graveyardClearByTypeState = {
+		CLIP: false,
+		INSTRUMENT: false,
+		PLUGIN: false,
+		SECTION: false,
+		TUNING: false,
+		STYLESHEET: false
+	};
+}
+
+function toggleGraveyardClearType(typeName) {
+	const normalized = `${typeName || ''}`;
+	if (!GRAVEYARD_CLEAR_BY_TYPE_ORDER.includes(normalized)) {
+		return false;
+	}
+	graveyardClearByTypeState[normalized] = !graveyardClearByTypeState[normalized];
+	return graveyardClearByTypeState[normalized];
+}
+
+function getGraveyardSelectedTypes() {
+	return GRAVEYARD_CLEAR_BY_TYPE_ORDER.filter((typeName) => graveyardClearByTypeState[typeName] === true);
 }
 
 function isSectionEditInstrumentStillAvailable(tableID = sectionEditInstrumentTableID){
@@ -576,6 +617,38 @@ export function performCmdAction(menuItem, args){
 		case "downloadBackupThenClearGraveyard":
 			downloadBackupThenClearGraveyard();
 			break;
+		case "resetGraveyardClearByTypeSelection":
+				resetGraveyardClearByTypeSelection();
+				actionResult.preserveMenuStack = true;
+				break;
+		case "toggleGraveyardClearTypeCLIP":
+		case "toggleGraveyardClearTypeINSTRUMENT":
+		case "toggleGraveyardClearTypePLUGIN":
+		case "toggleGraveyardClearTypeSECTION":
+		case "toggleGraveyardClearTypeTUNING":
+		case "toggleGraveyardClearTypeSTYLESHEET": {
+				const typeName = menuItem.action.replace('toggleGraveyardClearType', '');
+				const nextValue = toggleGraveyardClearType(typeName);
+				actionResult.result = `${typeName}=${nextValue}`;
+				actionResult.preserveMenuStack = true;
+				break;
+		}
+		case "downloadBackupThenClearGraveyardByType": {
+				const selectedTypes = getGraveyardSelectedTypes();
+				if (selectedTypes.length === 0) {
+					actionResult.result = 'no types selected';
+					resetGraveyardClearByTypeSelection();
+					break;
+				}
+				const clearResult = downloadBackupThenClearGraveyardByType(selectedTypes) || {};
+				if (typeof clearResult === 'string') {
+					actionResult.result = clearResult;
+				} else {
+					actionResult.result = clearResult.result || '';
+				}
+				resetGraveyardClearByTypeSelection();
+				break;
+		}
 		case "setSongName":
 			if (argByInputID){
 				$("#txtFilename").val(argByInputID).trigger('change');
@@ -1527,6 +1600,24 @@ export function getValue(what){
 	}
 	if (what === 'pluginFiringOrderInput') {
 		return pluginManager.getPluginFiringOrderInput();
+	}
+	if (what === 'graveyardClearByTypeCLIP') {
+		return `${!!graveyardClearByTypeState.CLIP}`;
+	}
+	if (what === 'graveyardClearByTypeINSTRUMENT') {
+		return `${!!graveyardClearByTypeState.INSTRUMENT}`;
+	}
+	if (what === 'graveyardClearByTypePLUGIN') {
+		return `${!!graveyardClearByTypeState.PLUGIN}`;
+	}
+	if (what === 'graveyardClearByTypeSECTION') {
+		return `${!!graveyardClearByTypeState.SECTION}`;
+	}
+	if (what === 'graveyardClearByTypeTUNING') {
+		return `${!!graveyardClearByTypeState.TUNING}`;
+	}
+	if (what === 'graveyardClearByTypeSTYLESHEET') {
+		return `${!!graveyardClearByTypeState.STYLESHEET}`;
 	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);

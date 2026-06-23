@@ -256,6 +256,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			cycleThruKeys,
 			cycleThruNutWidths: (...args) => cycleThruNutWidths(...args),
 			downloadBackupThenClearGraveyard,
+			downloadBackupThenClearGraveyardByType,
 			downloadPlayedNotes,
 			enterFullscreen,
 			getBPM,
@@ -1237,6 +1238,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		downloadPlayedNotes();
 		getSong().graveyard.clear();
 		showMessages(getSong().graveyard.buildGraveyardTable());
+	}
+
+	export function downloadBackupThenClearGraveyardByType(selectedTypes = []) {
+		const normalizedSelectedTypes = (selectedTypes || [])
+			.map((typeName) => `${typeName || ''}`.trim())
+			.filter((typeName) => typeName.length > 0);
+
+		if (normalizedSelectedTypes.length === 0) {
+			return { result: 'no types selected' };
+		}
+
+		downloadPlayedNotes();
+		const removed = getSong().graveyard.clearByTypes(normalizedSelectedTypes);
+		showMessages(getSong().graveyard.buildGraveyardTable());
+		return { result: `cleared: ${normalizedSelectedTypes.join(',')} (${removed})` };
 	}
 
 	//==================== 3) File open/save and persistence ==================
@@ -2627,6 +2643,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
+		bindDelegatedEvent('click', '.graveyard-delete-link', function(e) {
+			e.preventDefault();
+			const index = toInt($(this).data('grave-index'), -1);
+			if (index >= 0) {
+				getSong().graveyard.deleteRecordByIndex(index);
+				showMessages(getSong().graveyard.buildGraveyardTable());
+			}
+		});
+
 		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="]', function(e) {
 			e.preventDefault();
 			const href = $(this).attr('href') || '';
@@ -2644,6 +2669,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (target) {
 				const jTarget = $(target);
 				jTarget.toggle();
+				const deleteTarget = $(this).data('delete-target');
+				if (deleteTarget) {
+					$(deleteTarget).toggle(jTarget.is(':visible'));
+				}
 				const moreText = $(this).data('more-text');
 				const lessText = $(this).data('less-text');
 				if (moreText && lessText) {
