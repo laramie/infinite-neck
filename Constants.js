@@ -96,9 +96,9 @@ export const FILL_SCALE_OPTIONS = [
     { value: 'harmonic minor', caption: 'harmonic minor', trigger: 'h' },
     { value: 'melodic minor', caption: 'melodic minor', trigger: 'm' },
     { value: 'lydian dominant', caption: 'Lydian dominant', trigger: 'L' },
-    { value: 'double harmonic major', caption: '(Gypsy)', trigger: 'G' },
+    { value: 'double harmonic major', caption: 'double harmonic major (Gypsy)', trigger: 'G' },
     { value: 'neapolitan major', caption: 'Neapolitan major', trigger: 'N' },
-    { value: 'balinese', caption: '(neapolitan minor)', trigger: 'n' },
+    { value: 'balinese', caption: 'balinese (neapolitan minor)', trigger: 'n' },
     { value: '', caption: '(none)', trigger: '0' }
 ];
 

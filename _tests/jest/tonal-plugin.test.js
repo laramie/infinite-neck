@@ -246,7 +246,7 @@ describe('TonalPlugin', () => {
     const acceptNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'accept');
     const acceptFirstModeNode = acceptNode.children.find((child) => child.name === 'acceptFirstMode');
 
-    expect(plugin.resolveValue('modeSummary', { song })).toBe("[<span class='commandCheckmark'>&check;</span>C minor, C dorian]");
+    expect(plugin.resolveValue('modeSummary', { song })).toBe("[<span class='commandCheckmark'>&check;</span>C minor, C dorian, C chromatic]");
     expect(terse.result).toBe('accepted mode 1: C minor');
     expect(verbose.result).toBe('accepted mode 1: C minor');
     expect(acceptFirstModeNode.caption).toContain("<span class='commandCheckmark'>&check;</span><em>C minor</em>");

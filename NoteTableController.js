@@ -60,6 +60,12 @@ import {
     PalettePresentation
 } from './presentation.js';
 import * as NoteTableRenderCache from './NoteTableRenderCache.js';
+import {
+    computeRoleNoteSets,
+    buildNamedRolePlan,
+    applyNamedPlanToSectionNotes,
+    legacyFillColorToRoleMode
+} from './fill/fill-role-engine.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -1600,95 +1606,95 @@ export function colorWhiteBlackKeys() {
     $('.noteC:not(.nut,.nutR)').addClass("noteWhiteKey");
 }
 
-export function fillChord() {
-    var listenToTablename = $('#fillVisibleTablesSelect').val();
-    var chordFnNotes = $('#dropDownChords').val();
-    var chordFnNotesArr = chordFnNotes.split(',');
+const FILL_PAGE_OWNER = 'FillPlugin';
 
-    var scaleNotes = $('#dropDownScales').val();
-    var scaleNotesArr = scaleNotes.split(',');
-
-    var rootID = parseInt(getCurrentSection().rootID);
-    var rootName = NOTE_NAMES_ARRAY[rootID];
-    var rootClassName = ".note" + NOTE_NAMES_ARRAY[rootID];
-
-    var scaleColor = $("input:radio[name=rbnFillNoteScale]:checked").val()
-    var chordsColor = $("input:radio[name=rbnFillNoteChord]:checked").val()
-    var rootColor = $("input:radio[name=rbnFillNoteRoot]:checked").val()
-
-    var keepRoot = (rootColor == "noteKeep");
-    var keepChords = (chordsColor == "noteKeep");
-
-
-    var chordClasses = [];
-    var scaleClasses = [];
-    var chordNames = [];
-    var scaleNames = [];
-
-    for (let i = 0; i < chordFnNotesArr.length; i++) {
-        var noteID = (parseInt(chordFnNotesArr[i]) + rootID) % 12;
-        var noteName = NOTE_NAMES_ARRAY[noteID];
-        if (keepRoot && rootName==noteName){
-            console.log("NOT hosing root note by chord: "+noteName);
-        } else {
-            chordClasses.push(".note" + noteName);
-            chordNames.push(noteName);
+function getLegacyFillRoleConfig(rootColor, chordColor, scaleColor) {
+    return {
+        root: {
+            mode: legacyFillColorToRoleMode(rootColor),
+            color: rootColor
+        },
+        chord: {
+            mode: legacyFillColorToRoleMode(chordColor),
+            color: chordColor
+        },
+        scale: {
+            mode: legacyFillColorToRoleMode(scaleColor),
+            color: scaleColor
         }
-    }
-
-    for (let i = 0; i < scaleNotesArr.length; i++) {
-        var noteID = (parseInt(scaleNotesArr[i]) + rootID) % 12;
-        var noteName = NOTE_NAMES_ARRAY[noteID];
-        if (   (keepChords && chordNames.includes(noteName))
-            || (keepRoot   && rootName==noteName)            ){
-            console.log("NOT hosing root/chord note by scale: "+noteName);
-        } else {
-            scaleClasses.push(".note" + noteName);
-            scaleNames.push(noteName);
-        }
-    }
-
-    var chordClassNames = chordClasses.join(', ');
-    var scaleClassNames = scaleClasses.join(', ');
-    fillChord2(rootClassName, chordClassNames, scaleClassNames,
-               rootName, chordNames, scaleNames,
-               rootColor, chordsColor, scaleColor,
-               listenToTablename);
+    };
 }
 
-export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor, listenToTablename) {
-    //the arguments <chordNoteNames> and <scaleNoteNames> are arrays of ".noteBb" etc.
+function highlightSingleRoleNotes(tableID, noteNames = []) {
+    (noteNames || []).forEach((noteName) => {
+        $(`#${tableID} td.note${noteName}`).addClass('noteHighlightSingle');
+    });
+}
 
-	/** EACH OF THESE IS A COLLECTION OF TD > DIV.NoteDisplay   **/
-	var theChordClass = $(chord).children(".NoteDisplay");
-    var theScaleClass = $(scale).children(".NoteDisplay");
-    var theRootClass = $(root).children(".NoteDisplay");
+function clearNamedRoleNotes(sectionNotes, noteNames = []) {
+    (noteNames || []).forEach((noteName) => {
+        sectionNotes.clearNamedNote(noteName);
+    });
+}
 
+export function fillChord() {
+    const listenToTablename = `${$('#fillVisibleTablesSelect').val() || ''}`;
+    const chordSource = `${$('#dropDownChords').val() || ''}`;
+    const modeSource = `${$('#dropDownScales').val() || ''}`;
+    const scaleColor = `${$("input:radio[name=rbnFillNoteScale]:checked").val() || ''}`;
+    const chordsColor = `${$("input:radio[name=rbnFillNoteChord]:checked").val() || ''}`;
+    const rootColor = `${$("input:radio[name=rbnFillNoteRoot]:checked").val() || ''}`;
+    const currSection = getCurrentSection();
 
-    if ( rootColor == "noteClear"){
-        doFill(theRootClass, rootName, rootColor);
+    if (!listenToTablename || !currSection) {
+        return;
     }
-    if ( chordsColor == "noteClear"){
-        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
-    }
 
-    if ( scaleColor != "noteHighlightSingle"){
-        doFill(theScaleClass, scaleNoteNames, scaleColor, listenToTablename);
-    }
-    if ( chordsColor != "noteClear" && chordsColor != "noteHighlightSingle"){
-        doFill(theChordClass, chordNoteNames, chordsColor, listenToTablename);
-    }
-    if (rootColor != "noteClear"){ doFill(theRootClass, rootName, rootColor, listenToTablename); }
+    const roleColors = getLegacyFillRoleConfig(rootColor, chordsColor, scaleColor);
+    const roleNoteSets = computeRoleNoteSets({
+        rootID: Number.parseInt(currSection.rootID, 10) || 0,
+        chordSource,
+        modeSource,
+        useSectionChart: false
+    });
 
+    const namedPlan = buildNamedRolePlan(roleNoteSets, {
+        getModeForRole: (roleName) => roleColors[roleName]?.mode || 'none',
+        getColorForRole: (roleName) => roleColors[roleName]?.color || 'noteTransparent',
+        buildNamedNote: (noteName, colorValue) => new Note({
+            noteName,
+            styleNum: Note.STYLENUM_NAMED,
+            colorClass: colorValue,
+            owner: FILL_PAGE_OWNER
+        })
+    });
+
+    const sectionNotes = currSection.getSectionNotes(listenToTablename);
+    if (rootColor === 'noteClear') {
+        clearNamedRoleNotes(sectionNotes, Array.from(roleNoteSets.root || []));
+    }
+    if (chordsColor === 'noteClear') {
+        clearNamedRoleNotes(sectionNotes, Array.from(roleNoteSets.chord || []));
+    }
+    if (scaleColor === 'noteClear') {
+        clearNamedRoleNotes(sectionNotes, Array.from(roleNoteSets.scale || []));
+    }
+    applyNamedPlanToSectionNotes(sectionNotes, namedPlan);
 
     clearAll();
     replay();
-    if (chordsColor == "noteHighlightSingle"){
-        theChordClass.parent("td.note").addClass("noteHighlightSingle");
+    if (chordsColor === 'noteHighlightSingle') {
+        highlightSingleRoleNotes(listenToTablename, Array.from(roleNoteSets.chord || []));
     }
-    if ( scaleColor == "noteHighlightSingle"){
-        theScaleClass.parent("td.note").addClass("noteHighlightSingle");
+    if (scaleColor === 'noteHighlightSingle') {
+        highlightSingleRoleNotes(listenToTablename, Array.from(roleNoteSets.scale || []));
     }
+}
+
+export function fillChord2(root, chord, scale, rootName, chordNoteNames, scaleNoteNames, rootColor, chordsColor, scaleColor, listenToTablename) {
+    // Deprecated compatibility wrapper. The old Fill page now runs through
+    // fillChord(), which uses shared role-engine logic aligned with FillPlugin.
+    return fillChord();
 }
 export function doFill(theClass, NoteNames, Color, listenToTablename) {
     if (Color == "noteKeep") {

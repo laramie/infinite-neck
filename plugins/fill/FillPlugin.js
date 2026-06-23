@@ -7,16 +7,17 @@ import {
   canonicalizeChordForStorage,
   canonicalizeModeForStorage,
   chordTypeFromStoredChord,
-  modeTypeFromStoredMode,
-  chordNotesFromStoredChord,
-  modeNotesFromStoredMode,
-  chordNotesFromType,
-  modeNotesFromType
+  modeTypeFromStoredMode
 } from '../chart/chart-tonal-resolver.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import { PalettePresentation } from '../../presentation.js';
 import { getSong } from '../../infinite-neck.js';
+import {
+  computeRoleNoteSets as computeSharedRoleNoteSets,
+  resolveRoleDecision,
+  buildNamedRolePlan
+} from '../../fill/fill-role-engine.js';
 
 const FILL_OWNER = 'FillPlugin';
 const MODE_NONE = 'none';
@@ -1074,35 +1075,18 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return this.getCurrentSection(song);
   }
 
-  getCurrentRootNoteName(section) {
-    const rootID = Number.parseInt(section?.rootID, 10) || 0;
-    return Constants.NOTE_NAMES_ARRAY[rootID] || Constants.NOTE_NAMES_ARRAY[0];
-  }
-
   computeRoleNoteSets(section, options = {}) {
-    const rootName = this.getCurrentRootNoteName(section);
     const rootID = Number.parseInt(section?.rootID, 10) || 0;
-
-    const chordSource = options.useSectionChart
-      ? `${section?.chartChord || ''}`
-      : `${this.getProperty('chordFormula')?.getValue() || ''}`;
-    const modeSource = options.useSectionChart
-      ? `${section?.chartMode || ''}`
-      : `${this.getProperty('scaleFormula')?.getValue() || ''}`;
-
-    const chordSet = options.useSectionChart
-      ? chordNotesFromStoredChord(chordSource, rootID)
-      : chordNotesFromType(chordSource, rootID);
-
-    const modeSet = options.useSectionChart
-      ? modeNotesFromStoredMode(modeSource, rootID)
-      : modeNotesFromType(modeSource, rootID);
-
-    return {
-      root: new Set([rootName]),
-      chord: chordSet,
-      scale: modeSet
-    };
+    return computeSharedRoleNoteSets({
+      rootID,
+      chordSource: options.useSectionChart
+        ? `${section?.chartChord || ''}`
+        : `${this.getProperty('chordFormula')?.getValue() || ''}`,
+      modeSource: options.useSectionChart
+        ? `${section?.chartMode || ''}`
+        : `${this.getProperty('scaleFormula')?.getValue() || ''}`,
+      useSectionChart: !!options.useSectionChart
+    });
   }
 
   collectCandidateCells(tuning) {
@@ -1153,60 +1137,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   resolveFamilyDecision(familyName, noteName, roleNoteSets) {
-    let matched = false;
-    let preserveExisting = false;
-    let outputColorValue = null;
-
-    ROLE_PASS_ORDER.forEach((roleName) => {
-      if (!roleNoteSets[roleName]?.has(noteName)) {
-        return;
-      }
-
-      matched = true;
-      const modeValue = this.getFamilyRoleMode(familyName, roleName);
-      if (modeValue === MODE_KEEP) {
-        preserveExisting = true;
-        return;
-      }
-
-      preserveExisting = false;
-      if (modeValue === MODE_ROLE) {
-        outputColorValue = this.getFamilyRoleColor(familyName, roleName);
-        return;
-      }
-
-      outputColorValue = null;
+    return resolveRoleDecision(noteName, roleNoteSets, {
+      getModeForRole: (roleName) => this.getFamilyRoleMode(familyName, roleName),
+      getColorForRole: (roleName) => this.getFamilyRoleColor(familyName, roleName),
+      rolePassOrder: ROLE_PASS_ORDER
     });
-
-    return {
-      matched,
-      preserveExisting,
-      outputColorValue
-    };
   }
 
   buildNamedPlan(roleNoteSets) {
-    const notePlans = [];
-    const noteNames = new Set();
-    Object.values(roleNoteSets).forEach((noteSet) => {
-      (noteSet || []).forEach((noteName) => noteNames.add(noteName));
+    return buildNamedRolePlan(roleNoteSets, {
+      getModeForRole: (roleName) => this.getFamilyRoleMode('named', roleName),
+      getColorForRole: (roleName) => this.getFamilyRoleColor('named', roleName),
+      rolePassOrder: ROLE_PASS_ORDER,
+      buildNamedNote: (noteName, colorValue) => this.buildNamedNote(noteName, colorValue)
     });
-
-    noteNames.forEach((noteName) => {
-      const decision = this.resolveFamilyDecision('named', noteName, roleNoteSets);
-      if (!decision.matched) {
-        return;
-      }
-      notePlans.push({
-        noteName,
-        preserveExisting: decision.preserveExisting,
-        outputNote: decision.outputColorValue
-          ? this.buildNamedNote(noteName, decision.outputColorValue)
-          : null
-      });
-    });
-
-    return { notePlans };
   }
 
   buildPlayedFamilyPlan(familyName, section, tuning, roleNoteSets) {

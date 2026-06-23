@@ -87,7 +87,7 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.tonalSourceSet).toBe(TonalSourceSet.NAMEDNOTE);
         expect(result.normalizedNamedNotes).toEqual(['C', 'E', 'G']);
         expect(result.chords).toEqual(['CM', 'Em#5/C']);
-        expect(result.scale).toEqual(['C major pentatonic', 'C major', 'C lydian', 'C mixolydian']);
+        expect(result.scale).toEqual(['C major pentatonic', 'C major', 'C major blues', 'C lydian', 'C mixolydian', 'C augmented', 'C double harmonic major', 'C chromatic']);
     });
 
     test('NamedNote source returns the documented Cmaj7 recommendations', () => {
@@ -103,7 +103,7 @@ describe('TonalFunctions tonal source selection', () => {
 
         expect(result.normalizedNamedNotes).toEqual(['C', 'E', 'G', 'B']);
         expect(result.chords).toEqual(['Cmaj7']);
-        expect(result.scale).toEqual(['C major', 'C lydian']);
+        expect(result.scale).toEqual(['C major', 'C lydian', 'C augmented', 'C double harmonic major', 'C chromatic']);
     });
 
     test('NamedNote source returns the documented C minor and dorian recommendations for C D Eb F G Bb', () => {
@@ -119,7 +119,7 @@ describe('TonalFunctions tonal source selection', () => {
 
         expect(result.normalizedNamedNotes).toEqual(['C', 'D', 'Eb', 'F', 'G', 'Bb']);
         expect(result.chords).toEqual(['Cm11', 'Ebmaj13/C', 'EbM7add13/C', 'F13sus4/C']);
-        expect(result.scale).toEqual(['C minor', 'C dorian']);
+        expect(result.scale).toEqual(['C minor', 'C dorian','C chromatic',]);
     });
 
     test('SingleNote source uses playedNotes filtered to single-note style only', () => {
@@ -162,7 +162,7 @@ describe('TonalFunctions tonal source selection', () => {
         expect(result.tonalSourceSet).toBe(TonalSourceSet.TINYNOTE);
         expect(result.normalizedNamedNotes).toEqual(['C', 'E', 'G', 'B']);
         expect(result.chords).toEqual(['Cmaj7']);
-        expect(result.scale).toEqual(['C major', 'C lydian']);
+        expect(result.scale).toEqual(['C major', 'C lydian', 'C augmented', 'C double harmonic major', 'C chromatic']);
     });
 
     test('NamedNote source injects noteRoot ahead of the collected notes before chord detection', () => {
