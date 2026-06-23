@@ -1054,7 +1054,7 @@ td.arpeggioStringRange {
 }
 
 td.fillCurrentPositionPair {
-    background-color: #ff9af1;
+    background-color: chartreuse;
     font-weight: bold;
     color: black;
     border: 1px solid black;
@@ -1067,7 +1067,7 @@ td.fillStringRange {
 }
 
 .fillLowerString {
-    background-color: #ffc2f6;
+    background-color:#ffe0fb;
 }
 
 .fillUpperString {
