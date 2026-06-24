@@ -163,21 +163,11 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 - [sprint-130-tonal-strip-root](../design/sprints/130-tonal-strip-root/sprint-130.md)
 
-
 - [sprint-131-fill-automatic-chart](../design/sprints/131-fill-automatic-chart/sprint-131.md)
-
 
 - [sprint-132-plugin-order](../design/sprints/132-plugin-order/sprint-132.md)
 
-
 - [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
-
-  
-
-
-# Future Sprints Unscheduled 
-
-- 901-floating-windows
 
 - 902-song-import
   - Notes/Sections
@@ -185,6 +175,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+  - IMPLEMENTED.  Mostly in sprint-122, I think.
 
 - 903-timing-caching
   - [903-timing-caching design chat](../design/sprints/903-timing-caching/903-design-chat.md)
@@ -192,6 +183,15 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Investigate paint/rebuild optimization
   - Investigate warming up the next Section in idle time.  
   - Investigate caching possibilities
+  - *IMPLEMENTED* A first implementation was done and installed.  Its caching and console messages are controlled with flags:
+    - const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
+	  - const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
+
+# Future Sprints Unscheduled 
+
+- 901-floating-windows
+
+
     
 #### Heisenbug tonalResultSet "Tiny"
 
