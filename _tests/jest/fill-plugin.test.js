@@ -181,6 +181,21 @@ describe('FillPlugin', () => {
     expect(automaticNode.trigger).toBe('a');
   });
 
+  test('positions submenu includes Import from arpeggio action', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+    const positionsNode = optionsNode.children.find((child) => child.name === 'positions');
+    expect(positionsNode.children.map((child) => child.name)).toContain('positions:importFromArpeggio');
+  });
+
   test('automatic from chart maps payload section chart values before section-begin fill', () => {
     const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
     const firstSection = makeSection({ [targetTable]: {} });
@@ -868,6 +883,77 @@ describe('FillPlugin', () => {
     plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
     plugin.applyToCurrentSection(song);
     expect(getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE)).toHaveLength(0);
+  });
+
+  test('import from arpeggio applies payload and clears positions when source positions is empty', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning({ baseID: 'P1', frets: 12, rowRange: [48] })],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const getPluginMenuOptions = jest.fn(() => ({
+      status: 'ok',
+      pluginId: 'arpeggio',
+      menuPath: 'p',
+      payload: {
+        minFret: 2,
+        maxFret: 6,
+        songLoopsPerPositionPair: 3,
+        positions: []
+      }
+    }));
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song, getPluginMenuOptions });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.invokeAction('positions:setCurrentSection', { song, args: { value: '[[0,2]]' } });
+
+    const result = plugin.invokeAction('positions:importFromArpeggio', { song });
+
+    expect(result.result).toContain('Fill imported from arpeggio');
+    expect(getPluginMenuOptions).toHaveBeenCalledWith('arpeggio/p');
+    expect(plugin.getProperty('minFret').getValue()).toBe(2);
+    expect(plugin.getProperty('maxFret').getValue()).toBe(6);
+    expect(plugin.getSongLoopsPerPositionPair()).toBe(3);
+    expect(section.pluginData?.fill?.positions).toBeUndefined();
+  });
+
+  test('import from arpeggio rejects malformed payload without partial updates', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    const song = makeSong({
+      myTunings: [createPrimaryTuning({ baseID: 'P1', frets: 12, rowRange: [48] })],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const getPluginMenuOptions = jest.fn(() => ({
+      status: 'ok',
+      pluginId: 'arpeggio',
+      menuPath: 'p',
+      payload: {
+        minFret: 4,
+        maxFret: 8,
+        songLoopsPerPositionPair: 'oops',
+        positions: [[0, 2]]
+      }
+    }));
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song, getPluginMenuOptions });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('minFret', 0, { song });
+    plugin.setPropertyValue('maxFret', 4, { song });
+
+    const result = plugin.invokeAction('positions:importFromArpeggio', { song });
+
+    expect(result.result).toBe('positions import failed');
+    expect(result.message).toContain('songLoopsPerPositionPair');
+    expect(plugin.getProperty('minFret').getValue()).toBe(0);
+    expect(plugin.getProperty('maxFret').getValue()).toBe(4);
   });
 
   test('clear current section, clear song, and commit notes affect owned named, single, and tiny notes only in the selected table', () => {

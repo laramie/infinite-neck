@@ -117,3 +117,14 @@ In ArpeggioPlugin, location is
     s) song loops per position [1]
     I) Import from fill
 ```
+## Answers to implementation plan Round 2 Questions for approval
+
+1. On import when source positions is empty, should importer clear current section positions or leave existing positions unchanged?
+ANSWER: If it is empty because supplier exported valid JSON with no error code, then clear current section positions, because User has spent time scrutinizing supplier, and is now quickly going through requester getting it to match exactly.  
+
+2. Should import run when source plugin is disabled, or require source enabled state?
+ANSWER: not enabled is still valid plugin state, even if default values are the only ones present.  So: Yes, run when disabled. 
+
+3. Do you want importer success text to include full JSON payload in message, or concise summary only?
+ANSWER: concise summary.
+

@@ -190,6 +190,93 @@ export class PluginManager {
     return this.plugins.get(pluginId)?.plugin || null;
   }
 
+  getPluginMenuOptions(requestPath, options = {}) {
+    const requestText = `${requestPath || ''}`.trim();
+    const slashIndex = requestText.indexOf('/');
+    if (!requestText || slashIndex <= 0 || slashIndex === requestText.length - 1) {
+      return {
+        status: 'error',
+        code: 'invalid-request-path',
+        message: `Invalid plugin menu request path: ${requestPath}`
+      };
+    }
+
+    const pluginId = requestText.slice(0, slashIndex).trim();
+    const menuPath = requestText.slice(slashIndex + 1).trim();
+    if (!pluginId || !menuPath) {
+      return {
+        status: 'error',
+        code: 'invalid-request-path',
+        message: `Invalid plugin menu request path: ${requestPath}`
+      };
+    }
+
+    const entry = this.getPluginEntry(pluginId);
+    if (!entry?.plugin) {
+      return {
+        status: 'error',
+        code: 'unknown-plugin',
+        message: `Unknown plugin for request path ${requestText}`
+      };
+    }
+
+    if (typeof entry.plugin.exportMenuOptions !== 'function') {
+      return {
+        status: 'error',
+        code: 'unsupported-export',
+        message: `Plugin ${pluginId} does not support menu options export`
+      };
+    }
+
+    try {
+      const response = entry.plugin.exportMenuOptions(menuPath, {
+        song: this.song,
+        pluginManager: this,
+        sectionRef: `${options.sectionRef || ''}`,
+        instrumentRef: `${options.instrumentRef || ''}`
+      });
+
+      if (!response || typeof response !== 'object') {
+        return {
+          status: 'error',
+          code: 'invalid-export-response',
+          message: `Plugin ${pluginId} returned invalid export response for ${requestText}`
+        };
+      }
+
+      if (response.status !== 'ok') {
+        return {
+          status: 'error',
+          code: response.code || 'export-rejected',
+          message: response.message || `Plugin ${pluginId} rejected export for ${requestText}`
+        };
+      }
+
+      const responsePluginId = `${response.pluginId || pluginId}`.trim();
+      const responseMenuPath = `${response.menuPath || menuPath}`.trim();
+      if (responsePluginId !== pluginId || responseMenuPath !== menuPath) {
+        return {
+          status: 'error',
+          code: 'route-mismatch',
+          message: `Requested ${pluginId}/${menuPath} but supplier returned ${responsePluginId}/${responseMenuPath}`
+        };
+      }
+
+      return {
+        status: 'ok',
+        pluginId,
+        menuPath,
+        payload: response.payload
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        code: 'export-failed',
+        message: error?.message || `Plugin ${pluginId} export failed for ${requestText}`
+      };
+    }
+  }
+
   getPluginEntry(pluginId) {
     return this.plugins.get(pluginId) || null;
   }

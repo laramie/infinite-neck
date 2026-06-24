@@ -113,6 +113,8 @@ import { gThemes } from './themes.js';
 			setVal('#dropDownDiamondsColor', 'diamondsColor');
 			setVal('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			setVal('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			setVal('#dropDownSingleNoteShrink', 'singleNoteShrink');
+			setVal('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			setVal('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			setVal('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			setVal('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
@@ -162,6 +164,8 @@ import { gThemes } from './themes.js';
 			options.diamondsColor = $('#dropDownDiamondsColor').val();
 			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor').val();
 			options.diamondsBackgroundColor = $('#dropDownDiamondsBackgroundColor').val();
+			options.singleNoteShrink = $('#dropDownSingleNoteShrink').val();
+			options.singleNoteShadowColor = $('#dropDownSingleNoteShadowColor').val();
 			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor').val();
 			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor').val();
 			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor').val();
@@ -315,11 +319,13 @@ import { gThemes } from './themes.js';
 									+rule("--diamonds-background-color", "diamondsBackgroundColor")
 									+rule("--double-diamonds-color", "doubleDiamondsColor")
 									+rule("--diamonds-size", "diamondsSize")
+									+rule("--single-note-shrink", "singleNoteShrink")
 									+rule("--note-white-color", "noteWhiteColor")
 			
 									+rule("--note-white-key-special-color", "noteWhiteKeySpecialColor")
 									+rule("--note-black-key-special-color", "noteBlackKeySpecialColor")
 
+									+rule("--single-note-shadow-color", "singleNoteShadowColor")
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
 									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black') + "; "
@@ -379,6 +385,8 @@ import { gThemes } from './themes.js';
 			showOptions('#dropDownDiamondsColor', 'diamondsColor');
 			showOptions('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			showOptions('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			showOptions('#dropDownSingleNoteShrink', 'singleNoteShrink');
+			showOptions('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			showOptions('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			showOptions('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			showOptions('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');

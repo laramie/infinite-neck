@@ -2341,7 +2341,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
 		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
 		$("#selTinyNoteRadius").val(options.tinyNoteRadius);
-
+		
 		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
 		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());

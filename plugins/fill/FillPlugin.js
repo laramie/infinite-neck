@@ -77,6 +77,7 @@ const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
 const POSITIONS_UNSET_DISPLAY = '[]';
 const POSITIONS_MENU_DEFAULT = '[[0,3],[4,7],[8,12]]';
 const POSITION_NOT_PLAYED_YET = -1;
+const ARPEGGIO_POSITIONS_REQUEST_PATH = 'arpeggio/p';
 
 function getRoleShortLabel(roleName) {
   return roleName === 'root' ? 'r' : roleName === 'chord' ? 'c' : 's';
@@ -610,9 +611,144 @@ export class FillPlugin {
             id: 'value'
           }
         }),
-        this.getProperty('songLoopsPerPositionPair').getMenuNodeSpec(this)
+        this.getProperty('songLoopsPerPositionPair').getMenuNodeSpec(this),
+        new MenuItemProxy(this, {
+          name: 'positions:importFromArpeggio',
+          caption: buildCaption('Import from arpeggio', 'I'),
+          trigger: 'I',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:importFromArpeggio',
+          popOnBang: true
+        })
       ]
     });
+  }
+
+  exportMenuOptions(menuPath, context = {}) {
+    const normalizedMenuPath = `${menuPath || ''}`.trim();
+    if (normalizedMenuPath !== 'op') {
+      return {
+        status: 'error',
+        code: 'route-mismatch',
+        message: `Fill export supports only path op, received ${normalizedMenuPath || '<empty>'}`
+      };
+    }
+
+    const sectionRef = `${context.sectionRef || ''}`;
+    const instrumentRef = `${context.instrumentRef || ''}`;
+    if (sectionRef !== '' || instrumentRef !== '') {
+      return {
+        status: 'error',
+        code: 'unsupported-scope',
+        message: 'Fill export currently supports only Current section and instrument'
+      };
+    }
+
+    const song = context.song || this.manager?.song || getSong();
+    const section = this.getCurrentSection(song);
+    const positions = this.getSectionPositions(section) || [];
+    return {
+      status: 'ok',
+      pluginId: this.id,
+      menuPath: normalizedMenuPath,
+      payload: {
+        minFret: Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0,
+        maxFret: Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0,
+        songLoopsPerPositionPair: this.getSongLoopsPerPositionPair(),
+        positions: this.clonePositions(positions)
+      }
+    };
+  }
+
+  parseImportedInteger(payload, fieldName) {
+    const value = payload?.[fieldName];
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) {
+      throw new Error(`Imported ${fieldName} must be an integer`);
+    }
+    return parsed;
+  }
+
+  normalizeImportedPositionsPayload(payload, song = getSong()) {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw new Error('Imported payload must be an object');
+    }
+
+    const section = this.getCurrentSection(song);
+    if (!section) {
+      throw new Error('No current section selected');
+    }
+
+    const tuning = this.getSelectedTargetTuning(song);
+    if (!tuning) {
+      throw new Error('No target instrument available in myTunings');
+    }
+
+    const minFret = this.parseImportedInteger(payload, 'minFret');
+    const maxFret = this.parseImportedInteger(payload, 'maxFret');
+    const songLoopsPerPositionPair = this.parseImportedInteger(payload, 'songLoopsPerPositionPair');
+    if (songLoopsPerPositionPair < 1) {
+      throw new Error('Imported songLoopsPerPositionPair must be >= 1');
+    }
+
+    const rawPositions = payload.positions;
+    if (!Array.isArray(rawPositions)) {
+      throw new Error('Imported positions must be an array');
+    }
+    const positions = this.validatePositionsValue(rawPositions, tuning);
+    return {
+      section,
+      minFret,
+      maxFret,
+      songLoopsPerPositionPair,
+      positions
+    };
+  }
+
+  importPositionsFromPlugin(requestPath, song = getSong()) {
+    const pluginManager = this.manager;
+    if (!pluginManager || typeof pluginManager.getPluginMenuOptions !== 'function') {
+      return {
+        result: 'positions import failed',
+        message: 'Fill positions import failed: plugin manager export route unavailable'
+      };
+    }
+
+    const supplierResponse = pluginManager.getPluginMenuOptions(requestPath);
+    if (!supplierResponse || supplierResponse.status !== 'ok') {
+      return {
+        result: 'positions import failed',
+        message: `Fill positions import failed: ${supplierResponse?.message || 'supplier request failed'}`
+      };
+    }
+
+    try {
+      const imported = this.normalizeImportedPositionsPayload(supplierResponse.payload, song);
+      this.setPropertyValue('minFret', imported.minFret, { song });
+      this.setPropertyValue('maxFret', imported.maxFret, { song });
+      this.setPropertyValue('songLoopsPerPositionPair', imported.songLoopsPerPositionPair, { song });
+
+      if (imported.positions.length === 0) {
+        this.clearSectionPositions(imported.section);
+      } else {
+        this.setSectionPositions(imported.section, imported.positions);
+        this.setLastPositionIndex(imported.section, POSITION_NOT_PLAYED_YET);
+      }
+      this.refreshCurrentSectionUi(song);
+
+      const positionsSummary = imported.positions.length === 0
+        ? 'positions=cleared'
+        : `positions=${this.formatPositionsValue(imported.positions)}`;
+      return {
+        result: `Fill imported from arpeggio: minFret=${imported.minFret} maxFret=${imported.maxFret} loops=${imported.songLoopsPerPositionPair} ${positionsSummary}`
+      };
+    } catch (error) {
+      return {
+        result: 'positions import failed',
+        message: `Fill positions import failed: ${error?.message || 'invalid payload'}`
+      };
+    }
   }
 
   getSongLoopsPerPositionPair() {
@@ -970,6 +1106,8 @@ export class FillPlugin {
     }
 
     switch (actionName) {
+      case 'positions:importFromArpeggio':
+        return this.importPositionsFromPlugin(ARPEGGIO_POSITIONS_REQUEST_PATH, song);
       case 'positions:setCurrentSection':
         return this.setPositionsForCurrentSection(song, context.args?.value);
       case 'positions:clearCurrentSection':

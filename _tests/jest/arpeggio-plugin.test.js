@@ -178,7 +178,8 @@ describe('ArpeggioPlugin sequencing', () => {
 			'positions:copyToUnsetSections',
 			'positions:refreshCurrentSection',
 			'positions:setCurrentSection',
-			'songLoopsPerPositionPair'
+			'songLoopsPerPositionPair',
+			'positions:importFromFill'
 		]);
 		expect(stringsNode.children.map((child) => child.name)).toEqual([
 			'minRow',

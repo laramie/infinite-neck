@@ -14,6 +14,8 @@ export const gThemes = {
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor":"transparent",
+        "singleNoteShrink": "5%",
+        "singleNoteShadowColor": "#56fa00",
         "noteWhiteShadowColor": "aqua",
         "noteBlackShadowColor": "pink",
         "noteWhiteKeyShadowColor": "0 0 2pt 1pt pink",
