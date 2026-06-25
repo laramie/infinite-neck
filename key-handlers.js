@@ -130,6 +130,7 @@ function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpac
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
 function showAllNoteNames(...args) { return requireProvider('showAllNoteNames')(...args); }
+function toggleShowAllNoteNames(...args) { return requireProvider('toggleShowAllNoteNames')(...args); }
 function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
@@ -1180,6 +1181,21 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "hideFingering":
 			$("#cbHideFingering").prop("checked", true).trigger('change');
+			break;
+		case "toggleShowAllNoteNames":
+			toggleShowAllNoteNames();
+			break;
+		case "toggleNamedNotes":
+			$("#cbHideNamedNotes").prop("checked", !($("#cbHideNamedNotes").prop("checked"))).trigger('change');
+			break;
+		case "toggleSingleNotes":
+			$("#cbHideSingleNotes").prop("checked", !($("#cbHideSingleNotes").prop("checked"))).trigger('change');
+			break;
+		case "toggleTinyNotes":
+			$("#cbHideTinyNotes").prop("checked", !($("#cbHideTinyNotes").prop("checked",))).trigger('change');
+			break;
+		case "toggleFingering":
+			$("#cbHideFingering").prop("checked", !($("#cbHideFingering").prop("checked"))).trigger('change');
 			break;
 		case "selectFingering":
 			if (args){

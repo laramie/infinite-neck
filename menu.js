@@ -1008,6 +1008,42 @@ export var gMenuFile =    {
           ]
         },
         {
+          "caption": "<b>t</b>oggle",
+          "trigger": "t",
+          "children": [
+            {
+              "caption": "f<b>u</b>llscreen",
+              "trigger": "u",
+              "action": "toggleFullscreen"
+            },
+            {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "toggleShowAllNoteNames"
+            },
+            {
+              "caption": "<b>n</b>amedNotes",
+              "trigger": "n",
+              "action": "toggleNamedNotes"
+            },
+            {
+              "caption": "<b>s</b>ingleNotes",
+              "trigger": "s",
+              "action": "toggleSingleNotes"
+            },
+            {
+              "caption": "<b>t</b>inyNotes",
+              "trigger": "t",
+              "action": "toggleTinyNotes"
+            },
+            {
+              "caption": "<b>f</b>ingering",
+              "trigger": "f",
+              "action": "toggleFingering"
+            }
+          ]
+        },
+        {
           "caption": "<b>o</b>pacity",
           "trigger": "o",
           "children": [
@@ -1135,11 +1171,6 @@ export var gMenuFile =    {
           "caption": "<b>f</b>ullscreen",
           "trigger": "f",
           "action": "viewFullscreen"
-        },
-        {
-          "caption": "<b>t</b>oggle fullscreen",
-          "trigger": "t",
-          "action": "toggleFullscreen"
         },
         {
           "caption": "<b>w</b>indow",

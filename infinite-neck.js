@@ -296,6 +296,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setSingleNoteOpacity,
 			setTinyNoteOpacity,
 			showAllNoteNames,
+			toggleShowAllNoteNames,
 			showInfoDialog,
 			showOneMenu,
 			toggleCaption,
@@ -2201,9 +2202,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showAllNoteNames(isChecked);
 	}
 
-	//var gLastWhiteBackgroundColor = null;
-	//var gLastBlackBackgroundColor = null;
+	export function toggleShowAllNoteNames(){
+		let isChecked = $("#cbShowAllNoteNames").prop("checked");
+		console.log("toggleShowAllNoteNames isChecked: "+isChecked);
+		showAllNoteNames(!isChecked);
+	}
+
 	export function showAllNoteNames(show){
+		console.log("showAllNoteNames: "+show);
 		$("#cbShowAllNoteNames").prop("checked", !!show);
 		$('#btnShowAllNoteNames')
 			.toggleClass("BtnPunchedIn", !!show)
