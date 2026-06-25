@@ -1043,7 +1043,11 @@
                     </ul>
                 <li><a href="#commandline">Command-line Menu</a>
                     <ul class="LinkList">
-                        <li><a href="#one-line-CommandLine">one-line CommandLine</a></li>
+                        <li><a href="#command-line-overview">Overview</a></li>
+                        <ul class="LinkList">
+                            <li><a href="#short-vs-tall-CommandLine">short vs. tall</a></li>
+                            <li><a href="#one-line-CommandLine">one-line</a></li>
+                        </ul>
                         <li><a href="#keysInCommandLine">Keys</a></li>
                         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
                         <li><a href="#commandLineMenuDump">Full Menu Listing</a></li>
@@ -4214,7 +4218,10 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
     <ul class="LinkList">
         <li><a href="#command-line-overview">Overview</a></li>
-        <li><a href="#one-line-CommandLine">one-line CommandLine</a></li>
+        <ul class="LinkList">
+            <li><a href="#short-vs-tall-CommandLine">short vs. tall Command-line</a></li>
+            <li><a href="#one-line-CommandLine">one-line Command-line</a></li>
+        </ul>
         <li><a href="#keysInCommandLine">Keys Used in the Command-line</a></li>
         <li><a href="#commandLineUsefulCommands">Useful Commands</a></li>
         <li><a href="#commandLineMenuDump">Full Menu Listing</a></li>
@@ -4235,24 +4242,27 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 and don't want to be digging around in menus.  
         </p>
         <p>        
-                The command-line menu commands don't change
+                The command-line menu commands don't change,
                 because they all start from the root of the menu.  Any menu item that you use can just
                 be typed again and again without even looking at the screen.  All menus end with "x" so you 
-                can end any command with x and close the command-line.  Most of the time you can also just type /
+                can end any command with x and close the command-line.  (Although some will exit the command-line for you and get out of the way.) Most of the time you can also just type /
                 in the command-menu to restart at the top.  A few of the input dialogs in the menu will trap the /
-                in which case you can hit ESC to exit the command-line.
+                in which case you can hit ESC to exit the command-line, or backspace over the / you just typed then hit ENTER which will get you back up one level.
                 
          </p><p>
                 There are also some advanced or diagnostic
                 items that don't belong in the Graphical User Interface (GUI).  As you get 
                 more familiar with using <span class="productsmaller">infinite-neck</span>, please check this reference,
                 or poke around in the command-line menu to learn some of these advanced features.
-                A few, like the Display Options dump, or the Sections dump, are essential, and can't 
+                A few are essential, and can't 
                 be launched from the GUI.  Output from these commands often appears at the bottom of 
                 the main page, below any instruments, so you'll have to hit ESC to hide the command-line
                 menu and scroll down to see them.
         </p>
 
+
+        <a name="short-vs-tall-CommandLine"></a>
+        <h5>short vs. tall Command-line</h5>
 
         <p>Here is the whole app with the command-line showing, set to short menus (<span class="menuExampleLine">/vms</span>).  Just press <span class="key">/</span> to pop it up.</p>
          <p>   <img  width="600px" src="img/help/cmd-line-w-app.png"></p>
@@ -4273,14 +4283,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         </p>
 
 <a name="one-line-CommandLine"></a>
-<h4>one-line Command-line</h4>
+<h5>one-line Command-line</h5>
         <p>Here is the command-line showing with the view menu options set to one-line menus 
             ( <span class="menuExampleLine">/vmo</span> ).  
             </p>
          <p>   <img width="1200px"   src="img/help/command-line-one-line.png"></p>
-        <p>You can get into this mode with the command <span class="menuExampleLine">/vmo</span>, and get back out with <span class="menuExampleLine">/vmt</span> or <span class="menuExampleLine">/vms</span>.  In this mode, you won't get menu prompts, so you have to have memorized the command-line string.  But if you know them, you can go very fast this way without blocking your view of the instruments.</p>  
+        <p>You can get into this mode with the command <span class="menuExampleLine">/vmo</span>, 
+            and get back out with <span class="menuExampleLine">/vmt</span> or <span class="menuExampleLine">/vms</span>.  
+            In this mode, you won't get menu prompts, so you have to have memorized the command-line string.  
+            But if you know them, you can go very fast this way without blocking your view of the instruments.</p>  
             
-        <p>You can also get into this mode anywhere in the command-line with ArrowDown <span class="key">&#x2193;</span> and back to tall menus with ArrowUp <span class="key">&#x2191;</span>.  
+        <p>You can also get into this mode anywhere in the command-line with ArrowDown <span class="key">&#x2193;</span> and 
+            <a href="#short-vs-tall-CommandLine">back to tall menus</a> with ArrowUp <span class="key">&#x2191;</span>.  
              
         </p>
         <p>ArrowDown and 
@@ -4295,6 +4309,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <img width="200px"  src="img/help/arrow-keys-laptop.png">
         <img width="200px"  src="img/help/arrow-keys-context.png">
         </p>
+        <p>See also: <a href="#command-line-overview">Command-line Overview</a>.  
+        <p>See also: <a href="#short-vs-tall-CommandLine">short vs. tall Command-line</a>.  
+        
 <a name="keysInCommandLine"></a>
 <h4>Keys Used in the Command-line</h4>
         <table id="tblKeysInCommandLine" class="CheatSheet" cellspacing="0" border="1">
@@ -4433,7 +4450,21 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 down there, or use <span class="menuExampleLine"><b><small>/vdh</small></b></span> to get them out of your way.
             </p>
             <p> 
-                NOTE: <i>The global keyboard shortcut <span class="key">m</span> pops up the command-line at the menu depth you left off last time.  Whereas the keyboard shortcut <span class="key">/</span> pops up the command-line menu at the root of the menu every time.</i>
+                <blockquote style="margin-left: 6em;">
+
+                    NOTE: <i>The global keyboard shortcut <span class="key">m</span> pops up the command-line at 
+                        the menu depth you left off last time.  Whereas the keyboard shortcut <span class="key">/</span> 
+                        pops up the command-line menu at the root of the menu every time.  
+                        <br>
+                        <br>
+                        This is especially useful
+                        in the plugins, where you might wish to do Section navigation in the middle of a menu. Hit <span class="key">TAB</span>
+                        once, which will focus the Hamburger button, type your navigation, such as <span class="key">.</span> to go to the next
+                        Section, then type <span class="key">m</span> to jump back into the menu. You'll see, if you look carefully, that even
+                        though the command-line has stayed onscreen, you lose focus because the blinking text edit caret has disappeared from
+                        the command-line, which allows you to navigate with keyboard shortcuts. When you hit <span class="key">m</span>, you'll
+                        notice your blinking text caret is back, and typing is focused again in the command-line, where keyboard shortcuts are ignored.</i>
+                    </blockquote>
             </p>
 
             

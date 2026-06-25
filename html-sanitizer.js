@@ -40,9 +40,12 @@ const ALLOWED_TAGS = new Set([
 ]);
 
 const PLUGIN_RAISE_FRAGMENT_PATTERN = /^#raise=[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*(?:,(?:raise=)?[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*)*$/;
+const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;
 
 export function isAllowedInfoAnchorHref(href = '') {
-	return PLUGIN_RAISE_FRAGMENT_PATTERN.test(String(href || '').trim());
+	const normalized = String(href || '').trim();
+	return PLUGIN_RAISE_FRAGMENT_PATTERN.test(normalized)
+		|| HELP_PAGE_FRAGMENT_PATTERN.test(normalized);
 }
 
 function sanitizeNode(node, doc) {

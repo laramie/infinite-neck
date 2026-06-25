@@ -2679,6 +2679,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="help.html#"], #divInfoRendered a[href^="help-plugins.html#"]', function(e) {
+			e.preventDefault();
+			const href = ($(this).attr('href') || '').trim();
+			if (href) {
+				window.open(href, 'infinitehelp');
+			}
+		});
+
 		bindDelegatedEvent('click', '.graveyard-toggle-json', function(e) {
 			e.preventDefault();
 			const target = $(this).data('target');
