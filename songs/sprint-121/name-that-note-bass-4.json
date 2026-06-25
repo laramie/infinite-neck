@@ -93,41 +93,6 @@
         "colorNotes": true,
         "flashcard": true
       }
-    },
-    "fill": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblBass4_1",
-        "chordFormula": "M",
-        "scaleFormula": "chromatic",
-        "automaticFromChart": false,
-        "minFret": 0,
-        "maxFret": 4,
-        "songLoopsPerPositionPair": 1,
-        "minRow": 0,
-        "maxRow": 3,
-        "namedRootMode": "role",
-        "namedRootColor": "noteRoot",
-        "namedChordMode": "role",
-        "namedChordColor": "noteChord",
-        "namedScaleMode": "role",
-        "namedScaleColor": "noteScale",
-        "singleRootMode": "role",
-        "singleRootColor": "noteRoot",
-        "singleChordMode": "role",
-        "singleChordColor": "noteChord",
-        "singleScaleMode": "role",
-        "singleScaleColor": "noteScale",
-        "tinyRootMode": "none",
-        "tinyRootColor": "noteRoot",
-        "tinyChordMode": "none",
-        "tinyChordColor": "noteChord",
-        "tinyScaleMode": "none",
-        "tinyScaleColor": "noteScale",
-        "singleAddTiny": "none"
-      }
     }
   },
   "activeStylesheets": "Default",
@@ -253,7 +218,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 2,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -272,42 +237,6 @@
   "wirings": [],
   "graveyard": {
     "records": [
-      {
-        "timestamp": 1782367760107,
-        "date": "6/24/2026",
-        "time": "11:09:20 PM",
-        "type": "CLIP",
-        "context": {
-          "caption": "named-12-single-20-2309",
-          "userKey": "named-12-single-20-2309",
-          "logicalKey": "clip::named-12-single-20-2309",
-          "tableID": "tblBass4_1",
-          "baseID": "Bass4_1",
-          "fromBaseID": "Bass4",
-          "schemaVersion": 1,
-          "counts": {
-            "named": 12,
-            "single": 20,
-            "tiny": 0,
-            "bend": 0,
-            "fingering": 0
-          }
-        },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblBass4_1\",\n        \"baseID\": \"Bass4_1\",\n        \"fromBaseID\": \"Bass4\",\n        \"baseInstrument\": \"Bass\",\n        \"nStrings\": 4,\n        \"rowRange\": [\n            43,\n            38,\n            33,\n            28\n        ],\n        \"frets\": 15,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 12,\n        \"single\": 20,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteRoot\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            \"Db\": {\n                \"noteName\": \"Db\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"F\": {\n                \"noteName\": \"F\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Ab\": {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            }\n        },\n        \"playedNotes\": [\n            {\n                \"noteName\": \"G\",\n                \"styleNum\": 2,\n                \"midinum\": 43,\n                \"row\": 0,\n                \"col\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 2,\n                \"midinum\": 44,\n                \"row\": 0,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"A\",\n                \"styleNum\": 2,\n                \"midinum\": 45,\n                \"row\": 0,\n                \"col\": 2,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 2,\n                \"midinum\": 46,\n                \"row\": 0,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"B\",\n                \"styleNum\": 2,\n                \"midinum\": 47,\n                \"row\": 0,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"D\",\n                \"styleNum\": 2,\n                \"midinum\": 38,\n                \"row\": 1,\n                \"col\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Eb\",\n                \"styleNum\": 2,\n                \"midinum\": 39,\n                \"row\": 1,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"E\",\n                \"styleNum\": 2,\n                \"midinum\": 40,\n                \"row\": 1,\n                \"col\": 2,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"F\",\n                \"styleNum\": 2,\n                \"midinum\": 41,\n                \"row\": 1,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 2,\n                \"midinum\": 42,\n                \"row\": 1,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"A\",\n                \"styleNum\": 2,\n                \"midinum\": 33,\n                \"row\": 2,\n                \"col\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 2,\n                \"midinum\": 34,\n                \"row\": 2,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"B\",\n                \"styleNum\": 2,\n                \"midinum\": 35,\n                \"row\": 2,\n                \"col\": 2,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"C\",\n                \"styleNum\": 2,\n                \"midinum\": 36,\n                \"row\": 2,\n                \"col\": 3,\n                \"colorClass\": \"noteRoot\"\n            },\n            {\n                \"noteName\": \"Db\",\n                \"styleNum\": 2,\n                \"midinum\": 37,\n                \"row\": 2,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"E\",\n                \"styleNum\": 2,\n                \"midinum\": 28,\n                \"row\": 3,\n                \"col\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"F\",\n                \"styleNum\": 2,\n                \"midinum\": 29,\n                \"row\": 3,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 2,\n                \"midinum\": 30,\n                \"row\": 3,\n                \"col\": 2,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"G\",\n                \"styleNum\": 2,\n                \"midinum\": 31,\n                \"row\": 3,\n                \"col\": 3,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 2,\n                \"midinum\": 32,\n                \"row\": 3,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            }\n        ]\n    }\n}",
-        "lastRevived": null
-      },
-      {
-        "timestamp": 1782367808605,
-        "date": "6/24/2026",
-        "time": "11:10:08 PM",
-        "type": "SECTION",
-        "context": {
-          "SectionIndex": 1,
-          "caption": ""
-        },
-        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblBass4_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteRoot\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteChord\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteChord\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": 43,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": 44,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": 45,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": 46,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 2,\n                    \"midinum\": 47,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": 38,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": 39,\n                    \"row\": 1,\n                    \"col\": 1,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": 40,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": 41,\n                    \"row\": 1,\n                    \"col\": 3,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": 42,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": 33,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": 34,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 2,\n                    \"midinum\": 35,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": 36,\n                    \"row\": 2,\n                    \"col\": 3,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteRoot\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": 37,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": 28,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": 29,\n                    \"row\": 3,\n                    \"col\": 1,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": 30,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": 31,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": 32,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false,\n    \"pluginData\": {\n        \"arpeggio\": {\n            \"positions\": [\n                [\n                    0,\n                    7\n                ]\n            ],\n            \"lastPositionIndex\": 0\n        }\n    }\n}",
-        "lastRevived": null
-      },
       {
         "timestamp": 1782368248425,
         "date": "6/24/2026",
@@ -354,30 +283,6 @@
         "lastRevived": 1782370419519
       },
       {
-        "timestamp": 1782368629734,
-        "date": "6/24/2026",
-        "time": "11:23:49 PM",
-        "type": "CLIP",
-        "context": {
-          "caption": "named-12-single-20-2323",
-          "userKey": "named-12-single-20-2323",
-          "logicalKey": "clip::named-12-single-20-2323",
-          "tableID": "tblBass4_1",
-          "baseID": "Bass4_1",
-          "fromBaseID": "Bass4",
-          "schemaVersion": 1,
-          "counts": {
-            "named": 12,
-            "single": 20,
-            "tiny": 0,
-            "bend": 0,
-            "fingering": 0
-          }
-        },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblBass4_1\",\n        \"baseID\": \"Bass4_1\",\n        \"fromBaseID\": \"Bass4\",\n        \"baseInstrument\": \"Bass\",\n        \"nStrings\": 4,\n        \"rowRange\": [\n            43,\n            38,\n            33,\n            28\n        ],\n        \"frets\": 15,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 12,\n        \"single\": 20,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"F\": {\n                \"noteName\": \"F\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Ab\": {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"Db\": {\n                \"noteName\": \"Db\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteRoot\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"styleNum\": 0,\n                \"colorClass\": \"note3\"\n            }\n        },\n        \"playedNotes\": [\n            {\n                \"noteName\": \"G\",\n                \"styleNum\": 2,\n                \"midinum\": 43,\n                \"row\": 0,\n                \"col\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 2,\n                \"midinum\": 44,\n                \"row\": 0,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"A\",\n                \"styleNum\": 2,\n                \"midinum\": 45,\n                \"row\": 0,\n                \"col\": 2,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 2,\n                \"midinum\": 46,\n                \"row\": 0,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"B\",\n                \"styleNum\": 2,\n                \"midinum\": 47,\n                \"row\": 0,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"D\",\n                \"styleNum\": 2,\n                \"midinum\": 38,\n                \"row\": 1,\n                \"col\": 0,\n                \"colorClass\": \"noteRoot\"\n            },\n            {\n                \"noteName\": \"Eb\",\n                \"styleNum\": 2,\n                \"midinum\": 39,\n                \"row\": 1,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"E\",\n                \"styleNum\": 2,\n                \"midinum\": 40,\n                \"row\": 1,\n                \"col\": 2,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"F\",\n                \"styleNum\": 2,\n                \"midinum\": 41,\n                \"row\": 1,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 2,\n                \"midinum\": 42,\n                \"row\": 1,\n                \"col\": 4,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"A\",\n                \"styleNum\": 2,\n                \"midinum\": 33,\n                \"row\": 2,\n                \"col\": 0,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 2,\n                \"midinum\": 34,\n                \"row\": 2,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"B\",\n                \"styleNum\": 2,\n                \"midinum\": 35,\n                \"row\": 2,\n                \"col\": 2,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"C\",\n                \"styleNum\": 2,\n                \"midinum\": 36,\n                \"row\": 2,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Db\",\n                \"styleNum\": 2,\n                \"midinum\": 37,\n                \"row\": 2,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"E\",\n                \"styleNum\": 2,\n                \"midinum\": 28,\n                \"row\": 3,\n                \"col\": 0,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"F\",\n                \"styleNum\": 2,\n                \"midinum\": 29,\n                \"row\": 3,\n                \"col\": 1,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 2,\n                \"midinum\": 30,\n                \"row\": 3,\n                \"col\": 2,\n                \"colorClass\": \"noteChord\"\n            },\n            {\n                \"noteName\": \"G\",\n                \"styleNum\": 2,\n                \"midinum\": 31,\n                \"row\": 3,\n                \"col\": 3,\n                \"colorClass\": \"noteScale\"\n            },\n            {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 2,\n                \"midinum\": 32,\n                \"row\": 3,\n                \"col\": 4,\n                \"colorClass\": \"noteScale\"\n            }\n        ]\n    }\n}",
-        "lastRevived": null
-      },
-      {
         "timestamp": 1782370008573,
         "date": "6/24/2026",
         "time": "11:46:48 PM",
@@ -393,20 +298,18 @@
         "lastRevived": null
       },
       {
-        "timestamp": 1782370419510,
-        "date": "6/24/2026",
-        "time": "11:53:39 PM",
-        "type": "PLUGIN",
+        "timestamp": 1782395893211,
+        "date": "6/25/2026",
+        "time": "6:58:13 AM",
+        "type": "STYLESHEET",
         "context": {
-          "pluginId": "transpose",
-          "userKey": "USER",
-          "logicalKey": "transpose::USER",
-          "schemaVersion": 1,
-          "caption": "transpose / USER"
+          "dictkey": "mojo",
+          "which": "UserStylesheet"
         },
-        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
         "lastRevived": null
       }
     ]
-  }
+  },
+  "currentColorDict": "mojo"
 }
