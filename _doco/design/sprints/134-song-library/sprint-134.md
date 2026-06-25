@@ -19,6 +19,7 @@ Purpose of this sprint is to:
 ## Sprint document locations
 
 - [design document](134-design.md) 
+- [design document](134-design.md) 
 
 ## Iterations
 

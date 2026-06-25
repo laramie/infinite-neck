@@ -169,6 +169,8 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 - [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
 
+- [sprint-134-song-library](../design/sprints/134-song-library/sprint-134.md)
+
 - 902-song-import
   - Notes/Sections
   - Color schemes

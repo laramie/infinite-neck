@@ -1,25 +1,29 @@
 # sprint-134-song-libary Design
 
-## Goals
+## Iteration 1
+
+### Goals
 
 - Make the song library deeper, to support directory/categories of songs, and support descriptions.
   - Add buttons to open up each (curated) directory in "songs" (some may be hidden due to test fixtures).
-  - Close up directories except current one
+  - Close up directories as desired by User
   - Show song link plus description for each song. 
 
-## Code Separation
+### Code Separation
 
 To ensure that we keep this feature clean, let the work be done in a new module: `./SongLibrary.js`.  It should migrate any current directory/song listing in the codebase to this new module.
 
 The tests that currently depend on "songs" array should be updated to accept this new format. The old format should be readable by the tests, as we won't migrate all the song list files immediately.
 
-## Discussion and Features
+### Discussion and Features
 
 When `File > Open Song from: [Song Library]` button is clicked, it should open up the first level, which is the directory listing of ./songs/
 
 We should curate this directory to have only directories in it.
 
 Test directories should not be shown.  (But we may want to turn this off with `/fa` somehow so we can test fixture files as super-users.)  This will be achieved in song-list.json, by simply excluding those directories.  This needs to be worked out by Design team.  For this iteration, produce all directories listed in the "songs" array as visible rows/links.
+
+The directories and buttons should be driven by the paths present in song-list.json, not by a specification of what directories to show in some other struct, nor by walking the songs/ directory.
 
 When a User clicks on a directory button, show the contents of that directory, and close up any other directory showing.  First implementation will have all the directory buttons displayed running down the page like so: 
 ```
@@ -42,11 +46,11 @@ hiding any songs in Directory 1, Directory 3.
 
 Directory 1 is a button; Song A is a link, followed by its description block.
 
-Note: instead of literal buttons that we have to code state for, we have had good success with the details/summary tags used in `help.html` in element `#detailsMenuDump`.  We would imagine that would be a good way to go *instead of* custom menu buttons, as long as we could programmatically close them all up on entering with the `Song Library` button the first time.  If the User came back in by simply hiding and showing the File menu page, then we would leave their respective states how the User had them.  In fact, the `Song Library` button itself could be a details/summary element block, so that would be one less thing to track with state. 
+Note: instead of literal buttons that we have to code state for, we have had good success with the details/summary tags used in `help.html` in element `#detailsMenuDump`.  We would imagine that would be a good way to go *instead of* custom menu buttons, as long as we could have them be closed upon entering with the `Song Library` button the first time.  If the User came back in by simply hiding and showing the File menu page, then we would leave their respective states how the User had them.  In fact, the `Song Library` button itself could be a details/summary element block, so that would be one less thing to track with state. 
 
-## Links and Descriptions
+### Links and Descriptions
 
-Provide a table-like layout, with each song on one row, its link in column 1, its description in column 2.  Column 1 is built by the system as hyperlinks.  Column 2 is pasted as HTML from the JSON of song-list.json, using HTML in the curated description.
+Provide a table-like layout, with each song on one row, its link in column 1, its description in column 2.  Column 1 is built by the system as hyperlinks.  Column 2 is used as HTML from the JSON of song-list.json, using HTML in the curated description.
 
 The links will appear as they do today, with the relative path in column 1: 
 ```
@@ -57,7 +61,7 @@ Of course, we will get around to renaming directory "sprint-121" and curate all 
 
 If a description is present, show the description in column 2, bumping the other links down the page, since each song is a row with two columns.
 
-## Example new song-list.json file format
+### Example new song-list.json file format
 
 We want to keep the features of this format, since they support our tests.
 
@@ -85,3 +89,9 @@ To support descriptions, song-list.json will have a new format for `/songs[]`, l
 
 ```
 Missing descriptons and empty descriptions are allowed.  Missing href should be skippped.
+
+### Iteration 1 Request
+
+Copilot, please analyze this Iteration 1 specification, and produce an implementation plan in 
+[Iteration 1 implementation plan](134-it1-implementation-plan.md)
+with any questions, design holes, etc.
