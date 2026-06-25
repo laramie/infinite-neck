@@ -185,307 +185,16 @@
   "theme": "USER",
   "sections": [
     {
-      "sectionNotesByTable": {
-        "tblP46_1": {
-          "namedNotes": {
-            "Bb": {
-              "noteName": "Bb",
-              "styleNum": 0,
-              "colorClass": "noteRoot",
-              "owner": "FillPlugin"
-            }
-          },
-          "recordedNotes": {
-            "1": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "50",
-                "row": "5",
-                "col": "10",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "2": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "53",
-                "row": "5",
-                "col": "13",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "3": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "56",
-                "row": "4",
-                "col": "11",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "4": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "4",
-                "col": "13",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "5": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "62",
-                "row": "3",
-                "col": "12",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "6": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "65",
-                "row": "2",
-                "col": "10",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "7": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "68",
-                "row": "2",
-                "col": "13",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "8": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "70",
-                "row": "1",
-                "col": "10",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "9": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "74",
-                "row": "0",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "10": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "77",
-                "row": "0",
-                "col": "12",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "11": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "74",
-                "row": "0",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "12": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "70",
-                "row": "1",
-                "col": "10",
-                "owner": "ArpeggioPlugin"
-              }
-            ]
-          },
-          "chord": "",
-          "mode": "",
-          "tonalSourceSet": "",
-          "playedNotes": [
-            {
-              "noteName": "D",
-              "styleNum": 2,
-              "midinum": 74,
-              "row": 0,
-              "col": 9,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "F",
-              "styleNum": 2,
-              "midinum": 77,
-              "row": 0,
-              "col": 12,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": 70,
-              "row": 1,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "F",
-              "styleNum": 2,
-              "midinum": 65,
-              "row": 2,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 2,
-              "midinum": 68,
-              "row": 2,
-              "col": 13,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "D",
-              "styleNum": 2,
-              "midinum": 62,
-              "row": 3,
-              "col": 12,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 2,
-              "midinum": 56,
-              "row": 4,
-              "col": 11,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": 58,
-              "row": 4,
-              "col": 13,
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "D",
-              "styleNum": 2,
-              "midinum": 50,
-              "row": 5,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "F",
-              "styleNum": 2,
-              "midinum": 53,
-              "row": 5,
-              "col": 13,
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": 75,
-              "row": 0,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "C",
-              "styleNum": 1,
-              "midinum": 72,
-              "row": 1,
-              "col": 12,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "G",
-              "styleNum": 1,
-              "midinum": 67,
-              "row": 2,
-              "col": 12,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "C",
-              "styleNum": 1,
-              "midinum": 60,
-              "row": 3,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": 63,
-              "row": 3,
-              "col": 13,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "G",
-              "styleNum": 1,
-              "midinum": 55,
-              "row": 4,
-              "col": 10,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": 51,
-              "row": 5,
-              "col": 11,
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            }
-          ]
-        }
-      },
+      "sectionNotesByTable": {},
       "caption": "",
       "chartChord": "C7",
       "chartMode": "C mixolydian",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 1,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 12,
+      "currentBeat": 1,
       "sharps": false,
       "pluginData": {
         "arpeggio": {
@@ -503,7 +212,7 @@
               13
             ]
           ],
-          "lastPositionIndex": 2
+          "lastPositionIndex": -1
         },
         "fill": {
           "positions": [
@@ -520,7 +229,7 @@
               13
             ]
           ],
-          "lastPositionIndex": 2
+          "lastPositionIndex": -1
         }
       },
       "displayOptions": {
@@ -571,244 +280,16 @@
       }
     },
     {
-      "sectionNotesByTable": {
-        "tblP46_1": {
-          "namedNotes": {
-            "Bb": {
-              "noteName": "Bb",
-              "styleNum": 0,
-              "colorClass": "noteRoot",
-              "owner": "FillPlugin"
-            }
-          },
-          "recordedNotes": {
-            "1": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "46",
-                "row": "5",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "2": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "49",
-                "row": "5",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "3": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "53",
-                "row": "4",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "4": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "3",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "5": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "61",
-                "row": "2",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "6": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "73",
-                "row": "0",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "7": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "61",
-                "row": "2",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "8": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "3",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "9": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "53",
-                "row": "4",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "10": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "49",
-                "row": "5",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "11": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "46",
-                "row": "5",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "12": [
-              {
-                "noteName": "Db",
-                "styleNum": 4,
-                "midinum": "49",
-                "row": "5",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ]
-          },
-          "chord": "",
-          "mode": "",
-          "tonalSourceSet": "",
-          "playedNotes": [
-            {
-              "noteName": "Db",
-              "styleNum": 2,
-              "midinum": "73",
-              "row": "0",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Db",
-              "styleNum": 2,
-              "midinum": "61",
-              "row": "2",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": "58",
-              "row": "3",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "F",
-              "styleNum": 2,
-              "midinum": "53",
-              "row": "4",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": "46",
-              "row": "5",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "Db",
-              "styleNum": 2,
-              "midinum": "49",
-              "row": "5",
-              "col": "9",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 1,
-              "midinum": "68",
-              "row": "1",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": "63",
-              "row": "2",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 1,
-              "midinum": "56",
-              "row": "3",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": "51",
-              "row": "4",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            }
-          ]
-        }
-      },
+      "sectionNotesByTable": {},
       "caption": "",
       "chartChord": "Cm",
       "chartMode": "C minor pentatonic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 1,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 12,
+      "currentBeat": 1,
       "sharps": false,
       "pluginData": {
         "arpeggio": {
@@ -826,7 +307,7 @@
               13
             ]
           ],
-          "lastPositionIndex": 1
+          "lastPositionIndex": -1
         },
         "fill": {
           "positions": [
@@ -843,267 +324,21 @@
               13
             ]
           ],
-          "lastPositionIndex": 1
+          "lastPositionIndex": -1
         }
       }
     },
     {
-      "sectionNotesByTable": {
-        "tblP46_1": {
-          "namedNotes": {
-            "Bb": {
-              "noteName": "Bb",
-              "styleNum": 0,
-              "colorClass": "noteRoot",
-              "owner": "FillPlugin"
-            }
-          },
-          "recordedNotes": {
-            "1": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "46",
-                "row": "5",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "2": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "53",
-                "row": "4",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "3": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "56",
-                "row": "3",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "4": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "3",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "5": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "62",
-                "row": "2",
-                "col": "7",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "6": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "68",
-                "row": "1",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "7": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "74",
-                "row": "0",
-                "col": "9",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "8": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "68",
-                "row": "1",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "9": [
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "62",
-                "row": "2",
-                "col": "7",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "10": [
-              {
-                "noteName": "Bb",
-                "styleNum": 4,
-                "midinum": "58",
-                "row": "3",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "11": [
-              {
-                "noteName": "Ab",
-                "styleNum": 4,
-                "midinum": "56",
-                "row": "3",
-                "col": "6",
-                "owner": "ArpeggioPlugin"
-              }
-            ],
-            "12": [
-              {
-                "noteName": "F",
-                "styleNum": 4,
-                "midinum": "53",
-                "row": "4",
-                "col": "8",
-                "owner": "ArpeggioPlugin"
-              }
-            ]
-          },
-          "chord": "",
-          "mode": "",
-          "tonalSourceSet": "",
-          "playedNotes": [
-            {
-              "noteName": "D",
-              "styleNum": 2,
-              "midinum": "74",
-              "row": "0",
-              "col": "9",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 2,
-              "midinum": "68",
-              "row": "1",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "D",
-              "styleNum": 2,
-              "midinum": "62",
-              "row": "2",
-              "col": "7",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Ab",
-              "styleNum": 2,
-              "midinum": "56",
-              "row": "3",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": "58",
-              "row": "3",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "F",
-              "styleNum": 2,
-              "midinum": "53",
-              "row": "4",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteChord"
-            },
-            {
-              "noteName": "Bb",
-              "styleNum": 2,
-              "midinum": "46",
-              "row": "5",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteRoot"
-            },
-            {
-              "noteName": "C",
-              "styleNum": 1,
-              "midinum": "72",
-              "row": "0",
-              "col": "7",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "G",
-              "styleNum": 1,
-              "midinum": "67",
-              "row": "1",
-              "col": "7",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": "63",
-              "row": "2",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "Eb",
-              "styleNum": 1,
-              "midinum": "51",
-              "row": "4",
-              "col": "6",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            },
-            {
-              "noteName": "C",
-              "styleNum": 1,
-              "midinum": "48",
-              "row": "5",
-              "col": "8",
-              "owner": "FillPlugin",
-              "colorClass": "noteScale"
-            }
-          ]
-        }
-      },
+      "sectionNotesByTable": {},
       "caption": "",
       "chartChord": "G7",
       "chartMode": "G mixolydian",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 1,
+      "rootID": 10,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 12,
+      "currentBeat": 1,
       "sharps": false,
       "pluginData": {
         "arpeggio": {
@@ -1121,7 +356,7 @@
               13
             ]
           ],
-          "lastPositionIndex": 1
+          "lastPositionIndex": -1
         },
         "fill": {
           "positions": [
@@ -1138,7 +373,7 @@
               13
             ]
           ],
-          "lastPositionIndex": 1
+          "lastPositionIndex": -1
         }
       }
     }
