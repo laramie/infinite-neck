@@ -213,7 +213,7 @@ export class Graveyard {
             var jsonTarget = '#grave'+record.timestamp;
             var deleteTargetId = 'graveDelete'+record.timestamp+'_'+k;
             var row = "<tr><td>"+k+SEP+record.type+SEP+record.timestamp+SEP+record.date+SEP+record.time+"</td><td class='graveyard-context-cell'>"+theContext+SEP+lastRevived+SEP+actionHtml+"</td></tr>";
-            var row2 = "<tr><td><a href='#' class='graveyard-toggle-json' data-target='"+jsonTarget+"' data-delete-target='#"+deleteTargetId+"'>show/hide</a></td><td colspan='6'><div id='grave"+record.timestamp+"' style='display:none;'>"+record.json+"</div></td><td><a id='"+deleteTargetId+"' href='#' class='graveyard-delete-link' data-grave-index='"+k+"' style='display:none;'>delete_"+k+"</a></td></tr>";
+            var row2 = "<tr><td style='vertical-align: text-top;'><a href='#' class='graveyard-toggle-json' data-target='"+jsonTarget+"' data-delete-target='#"+deleteTargetId+"'>show/hide "+k+"</a></td><td colspan='6'><div id='grave"+record.timestamp+"' style='display:none;'>"+record.json+"</div></td><td style='vertical-align: text-top;'><a id='"+deleteTargetId+"' href='#' class='graveyard-delete-link' data-grave-index='"+k+"' style='display:none;'>delete_"+k+"</a></td></tr>";
             resultBody.unshift(row2);
             resultBody.unshift(row);
         });
