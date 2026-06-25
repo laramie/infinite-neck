@@ -8,3 +8,6 @@ Settings, search for
    folding
    glyph Margin
    lineNumbers
+
+Snippets: 
+   ~/.config/Code/User/snippets/laramie-snippets.code-snippets   

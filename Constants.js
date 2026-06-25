@@ -99,6 +99,7 @@ export const FILL_SCALE_OPTIONS = [
     { value: 'double harmonic major', caption: 'double harmonic major (Gypsy)', trigger: 'G' },
     { value: 'neapolitan major', caption: 'Neapolitan major', trigger: 'N' },
     { value: 'balinese', caption: 'balinese (neapolitan minor)', trigger: 'n' },
+    { value: 'chromatic', caption: 'chromatic', trigger: 'c' },
     { value: '', caption: '(none)', trigger: '0' }
 ];
 
