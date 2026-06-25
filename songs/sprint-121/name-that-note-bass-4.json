@@ -296,20 +296,8 @@
         },
         "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"no-transposition\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
         "lastRevived": null
-      },
-      {
-        "timestamp": 1782395893211,
-        "date": "6/25/2026",
-        "time": "6:58:13 AM",
-        "type": "STYLESHEET",
-        "context": {
-          "dictkey": "mojo",
-          "which": "UserStylesheet"
-        },
-        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
-        "lastRevived": null
       }
     ]
   },
-  "currentColorDict": "mojo"
+  "currentColorDict": ""
 }
