@@ -13,8 +13,8 @@
    *       --diamonds-size: 1em;
    *       --note-white-shadow-color: black;
    *       --note-black-shadow-color: white;
-   *       --instrument-margin-tb: 4em; /* now just bottom, not top. */
-   *       --cell-spacing: 8px; /*theme set it to values like: 0.5em;*/
+   *       --instrument-margin-tb: 4em;             now just bottom, not top.
+   *       --cell-spacing: 8px;                     theme set it to values like: 0.5em
    *       --note-padding: 6pt;
    *       --border-image-black-key: none;
    *       --border-image-white-key: none;
@@ -1602,7 +1602,7 @@ td.nut div.NoteActive .CenterCell {
     border: 1px solid orange !important;
     text-align: left;
     height:30%;
-    position: absolute;
+    position: absolute; /* TODO: this might be a problem */
     top: 0;
     left: 0;
     /*
