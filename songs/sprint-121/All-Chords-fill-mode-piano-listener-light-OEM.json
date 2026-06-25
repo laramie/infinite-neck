@@ -163,7 +163,6 @@
         "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 5,
         "lowToHigh": true,
@@ -176,17 +175,16 @@
       }
     },
     "fill": {
-      "enabled": true,
+      "enabled": false,
       "enableOnSongLoad": true,
       "graveyardKey": "SingleNotesScale",
       "properties": {
         "targetTable": "tblP46_1",
-        "chordFormula": "maj7",
-        "scaleFormula": "lydian",
+        "chordFormula": "4,7,9,14",
+        "scaleFormula": "0,2,4,7,9",
         "automaticFromChart": true,
         "minFret": 0,
         "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 5,
         "namedRootMode": "keep",
@@ -214,25 +212,16 @@
   "activeStylesheets": "Default+light-notes",
   "captionsRowShowing": false,
   "defaultBPM": "240",
-  "info": "In this song, we are running three plugins simultaneously: <b>fill</b> reads from the Chart and places SingleNotes for the Chart mode (Scale), <b>arpeggio</b> looks at NamedNotes in the Song which are Chart chords and arpeggiates, and <b>transpose</b> goes up chromatically, on every Song-loop. (Note: 6add9 is exactly major pentatonic, so you won't see extra scale notes for that chord.)\n<br>\n<br>\nSo you can use this song for both Chord practice and Mode practice.  Play with the show/hide options per note type in View, and save those DisplayOptions in the first Section.  You can either make SingleNotes hidden, or you can turn off FillPlugin with  <kbd> /fpfE <i> <b> E</b>nable </i></kbd>, and clear its notes with <kbd> /fpfC <i> <b> C</b>lear </i></kbd>\n<br>\n<br>\nTo be able to reset both the transposition and the arpeggio positions at once, map spacebar to \"Reset song hard\" with <kbd> /fmZ <i> <b> Z </b> reset song hard </i></kbd>\n<br>\n<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>\n<br>Raise plugin state: <a href=\"#raise=fill.SingleNotesScale\">fill.SingleNotesScale</a>\n<br>Raise plugin state: <a href=\"#raise=arpeggio.NamedNotes-AllHighlight-Positions\">arpeggio.NamedNotes-AllHighlight-Positions</a>",
+  "info": "In this song, we are running three plugins simultaneously: <b>fill</b> reads from the Chart and places SingleNotes for the Chart mode (Scale), <b>arpeggio</b> looks at NamedNotes in the Song which are Chart chords and arpeggiates, and <b>transpose</b> goes up chromatically, on every Song-loop.\n<br>\n<br>\nSo you can use this song for both Chord practice and Mode practice.  Play with the show/hide options per note type in View, and save those DisplayOptions in the first Section.  You can either make SingleNotes hidden, or you can turn off FillPlugin with  <kbd> /fpfE <i> <b> E</b>nable </i></kbd>, and clear its notes with <kbd> /fpfC <i> <b> C</b>lear </i></kbd>\n<br>\n<br>\nTo be able to reset both the transposition and the arpeggio positions at once, map spacebar to \"Reset song hard\" with <kbd> /fmZ <i> <b> Z </b> reset song hard </i></kbd>\n<br>\n<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>\n<br>Raise plugin state: <a href=\"#raise=fill.SingleNotesScale\">fill.SingleNotesScale</a>\n<br>Raise plugin state: <a href=\"#raise=arpeggio.NamedNotes-AllHighlight-Positions\">arpeggio.NamedNotes-AllHighlight-Positions</a>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
-  "pluginFiringOrder": [
-    "t",
-    "f",
-    "a",
-    "o",
-    "c",
-    "m"
-  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": false,
     "showNextLine": false,
     "stripTonalRoots": true,
-    "addTransposedRootToChord": false,
     "HEADNames": [
       "HEAD",
       "BRIDGE",
@@ -338,19 +327,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -396,19 +385,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -447,26 +436,26 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 8,
-      "currentBeat": 6,
+      "currentBeat": 8,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -509,26 +498,26 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 8,
-      "currentBeat": 3,
+      "currentBeat": 8,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -575,26 +564,26 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 8,
-      "currentBeat": 1,
+      "currentBeat": 4,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -644,19 +633,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -702,19 +691,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -764,19 +753,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -822,19 +811,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -884,19 +873,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -946,19 +935,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -1008,19 +997,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
@@ -1066,19 +1055,19 @@
           "positions": [
             [
               0,
-              4
+              3
             ],
             [
               3,
-              6
+              5
             ],
             [
-              7,
-              10
+              5,
+              8
             ],
             [
-              9,
-              13
+              8,
+              12
             ]
           ],
           "lastPositionIndex": -1
