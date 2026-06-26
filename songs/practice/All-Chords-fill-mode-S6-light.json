@@ -1,20 +1,18 @@
 {
   "myTunings": [
-    {
+     {
       "instance": true,
-      "baseID": "S8_1",
+      "baseID": "S6_1",
       "baseInstrument": "Guitar",
-      "caption": "Standard-8",
-      "nStrings": 8,
+      "caption": "Standard",
+      "nStrings": 6,
       "rowRange": [
         64,
         59,
         55,
         50,
         45,
-        40,
-        35,
-        30
+        40
       ],
       "specialBackgroundIDRows": [
         0,
@@ -40,48 +38,12 @@
       "nut": true,
       "reverse": false,
       "visible": true,
-      "pianoNamesRow": false,
-      "fromBaseID": "S8"
-    },
-    {
-      "instance": true,
-      "baseID": "P46_1",
-      "baseInstrument": "Guitar",
-      "caption": "P4",
-      "nStrings": 6,
-      "rowRange": [
-        65,
-        60,
-        55,
-        50,
-        45,
-        40
-      ],
-      "showDiamonds": true,
-      "diamonds": [
-        3,
-        5,
-        7,
-        9,
-        15,
-        17,
-        19,
-        21
-      ],
-      "doubleDiamonds": [
-        12,
-        24
-      ],
-      "frets": 24,
-      "nut": true,
-      "reverse": false,
-      "visible": true,
-      "fromBaseID": "P46"
+      "fromBaseID": "S6"
     }
   ],
   "noteTablesLayout": [
     {
-      "tableID": "tblS8_1",
+      "tableID": "tblS6_1",
       "visible": true
     },
     {
@@ -184,12 +146,12 @@
       "enableOnSongLoad": true,
       "graveyardKey": "NamedNotes-AllHighlight-Positions",
       "properties": {
-        "targetTable": "tblS8_1",
+        "targetTable": "tblS6_1",
         "minFret": 0,
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
         "minRow": 0,
-        "maxRow": 7,
+        "maxRow": 5,
         "lowToHigh": true,
         "upOnly": false,
         "style": "every",
@@ -204,7 +166,7 @@
       "enableOnSongLoad": false,
       "graveyardKey": "USER",
       "properties": {
-        "targetTable": "tblS8_1",
+        "targetTable": "tblS6_1",
         "overwrite": true,
         "automatic": true,
         "recordedMidiPaste": true,
@@ -220,7 +182,7 @@
       "enableOnSongLoad": true,
       "graveyardKey": "SingleNotesScale",
       "properties": {
-        "targetTable": "tblS8_1",
+        "targetTable": "tblS6_1",
         "chordFormula": "m",
         "scaleFormula": "minor",
         "automaticFromChart": true,
@@ -228,7 +190,7 @@
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
         "minRow": 0,
-        "maxRow": 7,
+        "maxRow": 5,
         "namedRootMode": "keep",
         "namedRootColor": "noteRoot",
         "namedChordMode": "keep",
@@ -317,7 +279,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "D": {
               "noteName": "D",
@@ -775,7 +737,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "D": {
               "noteName": "D",
@@ -1179,7 +1141,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "G": {
               "noteName": "G",
@@ -1596,7 +1558,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "Gb": {
               "noteName": "Gb",
@@ -1940,7 +1902,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "Gb": {
               "noteName": "Gb",
@@ -2031,7 +1993,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "Gb": {
               "noteName": "Gb",
@@ -2376,7 +2338,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "D": {
               "noteName": "D",
@@ -2775,7 +2737,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "F": {
               "noteName": "F",
@@ -3084,7 +3046,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "F": {
               "noteName": "F",
@@ -3501,7 +3463,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "F": {
               "noteName": "F",
@@ -3895,7 +3857,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "F": {
               "noteName": "F",
@@ -4226,7 +4188,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "F": {
               "noteName": "F",
@@ -4535,7 +4497,7 @@
           "tonalSourceSet": "",
           "playedNotes": []
         },
-        "tblS8_1": {
+        "tblS6_1": {
           "namedNotes": {
             "Gb": {
               "noteName": "Gb",
@@ -4840,7 +4802,7 @@
     {
       "tablename": "tblP46_1",
       "relativeSection": "",
-      "listenToTablename": "tblS8_1"
+      "listenToTablename": "tblS6_1"
     }
   ],
   "graveyard": {
@@ -4887,7 +4849,7 @@
           "schemaVersion": 1,
           "caption": "fill / SingleNotesScale"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"SingleNotesScale\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"5,7\",\n        \"scaleFormula\": \"0,2,4,5,7,9,11\",\n        \"automaticFromChart\": true,\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"minRow\": 0,\n        \"maxRow\": 7,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"role\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"keep\",\n        \"tinyRootColor\": \"noteRoot\",\n        \"tinyChordMode\": \"keep\",\n        \"tinyChordColor\": \"noteChord\",\n        \"tinyScaleMode\": \"keep\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"SingleNotesScale\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"5,7\",\n        \"scaleFormula\": \"0,2,4,5,7,9,11\",\n        \"automaticFromChart\": true,\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"role\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"keep\",\n        \"tinyRootColor\": \"noteRoot\",\n        \"tinyChordMode\": \"keep\",\n        \"tinyChordColor\": \"noteChord\",\n        \"tinyScaleMode\": \"keep\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
         "lastRevived": null
       },
       {
@@ -4902,7 +4864,7 @@
           "schemaVersion": 1,
           "caption": "arpeggio / NamedNotes-AllHighlight-Positions"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"NamedNotes-AllHighlight-Positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"minRow\": 0,\n        \"maxRow\": 7,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"NamedNote\",\n        \"showNoteName\": \"all\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"NamedNotes-AllHighlight-Positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"NamedNote\",\n        \"showNoteName\": \"all\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
         "lastRevived": null
       },
       {
@@ -4914,8 +4876,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -4926,7 +4888,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415039764
       },
       {
@@ -4938,8 +4900,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -4950,7 +4912,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415043053
       },
       {
@@ -4962,8 +4924,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -4974,7 +4936,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"F\": {\n                \"noteName\": \"F\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"F\": {\n                \"noteName\": \"F\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415047816
       },
       {
@@ -4986,8 +4948,8 @@
           "caption": "named-4-1217",
           "userKey": "named-4-1217",
           "logicalKey": "clip::named-4-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -4998,7 +4960,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415051473
       },
       {
@@ -5010,8 +4972,8 @@
           "caption": "named-5-1217",
           "userKey": "named-5-1217",
           "logicalKey": "clip::named-5-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5022,7 +4984,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 5,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 5,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"D\": {\n                \"noteName\": \"D\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415054708
       },
       {
@@ -5034,8 +4996,8 @@
           "caption": "named-4-1217",
           "userKey": "named-4-1217",
           "logicalKey": "clip::named-4-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5046,7 +5008,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415059221
       },
       {
@@ -5058,8 +5020,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5070,7 +5032,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            },\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415063474
       },
       {
@@ -5082,8 +5044,8 @@
           "caption": "named-4-1217",
           "userKey": "named-4-1217",
           "logicalKey": "clip::named-4-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5094,7 +5056,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415067333
       },
       {
@@ -5106,8 +5068,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5118,7 +5080,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415070877
       },
       {
@@ -5130,8 +5092,8 @@
           "caption": "named-3-1217",
           "userKey": "named-3-1217",
           "logicalKey": "clip::named-3-1217",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5142,7 +5104,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415077359
       },
       {
@@ -5154,8 +5116,8 @@
           "caption": "named-4-1218",
           "userKey": "named-4-1218",
           "logicalKey": "clip::named-4-1218",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5166,7 +5128,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415095392
       },
       {
@@ -5178,8 +5140,8 @@
           "caption": "named-4-1218",
           "userKey": "named-4-1218",
           "logicalKey": "clip::named-4-1218",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5190,7 +5152,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415101625
       },
       {
@@ -5202,8 +5164,8 @@
           "caption": "named-4-1218",
           "userKey": "named-4-1218",
           "logicalKey": "clip::named-4-1218",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5214,7 +5176,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 4,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415106447
       },
       {
@@ -5226,8 +5188,8 @@
           "caption": "named-3-1218",
           "userKey": "named-3-1218",
           "logicalKey": "clip::named-3-1218",
-          "tableID": "tblS8_1",
-          "baseID": "S8_1",
+          "tableID": "tblS6_1",
+          "baseID": "S6_1",
           "fromBaseID": "S8",
           "schemaVersion": 1,
           "counts": {
@@ -5238,7 +5200,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS8_1\",\n        \"baseID\": \"S8_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Ab\": {\n                \"noteName\": \"Ab\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblS6_1\",\n        \"baseID\": \"S6_1\",\n        \"fromBaseID\": \"S8\",\n        \"baseInstrument\": \"Guitar\",\n        \"nStrings\": 8,\n        \"rowRange\": [\n            64,\n            59,\n            55,\n            50,\n            45,\n            40,\n            35,\n            30\n        ],\n        \"frets\": 16,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"Ab\": {\n                \"noteName\": \"Ab\",\n                \"colorClass\": \"noteChord\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"colorClass\": \"noteRoot\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": 1782415109813
       }
     ]

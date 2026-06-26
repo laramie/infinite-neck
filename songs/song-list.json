@@ -10,43 +10,51 @@
     },
     {
       "href": "demo/piano-f-guitar-chorus-coda.json",
-      "description": "<b>Piano</b> listening to <em>Guitar</em>, showing how to use a Coda in the Chart"
+      "description": "<em>Piano</em> listening to <b>Guitar</b>, showing how to use a Coda in the <em>Chart</em>"
     },
     {
       "href": "demo/C-chords-w-tiny-modes.json",
-      "description": "Shows how to use <em>TinyNote</em> as fill for modes over <b>SingleNote</b> and <b>NamedNote</b> for the chords."
+      "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords."
     },
     {
       "href": "practice/All-Chords.json",
-      "description": "All the major Jazz chords, in C with <em>transposition</em>."
+      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <em>transposition</em> to all 12 keys. <em>P4-tuning</em> Guitar."
     },
     {
       "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
-      "description": "All-Chords with added Piano listening to the guitar, and a light <em>color theme</em> instead of AutoColor."
+      "description": "<b>All-Chords</b> with added <em>Piano</em> listening to the <em>Guitar</em>, and a light <em>color theme</em> instead of AutoColor. <em>P4-tuning</em> Guitar."
     },
     {
       "href": "practice/All-Chords-fill-mode-S8-light.json",
-      "description": "All-Chords on a <em>standard-tuning 8-string Guitar</em>"
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string Guitar</em>"
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-S6-light.json",
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string Guitar</em>"
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys.json",
       "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
     },
     {
-      "href": "practice/pentatonics-7-m-V7-in-6-keys-Fill.json",
-      "description": ""
-    },
-    {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
-      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses theme <em>Autobahn</em>."
+      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>."
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
       "description": "Same as pentatonics-7-m-V7-in-6-keys-with-fill.json but with theme <em>Guitar Black Glow</em> showing a 'strings' theme."
     },
     {
+      "href": "practice/name-that-note-S6.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string Guitar</em>."
+    },
+    {
+      "href": "practice/name-that-note-P4.json",
+      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string Guitar</em>."
+    },
+    {
       "href": "practice/name-that-note-bass-4.json",
-      "description": ""
+      "description": "<em>name-that-note</em> game for the <em>4-string bass</em>."
     }
   ],
   "directoryIntros": [
