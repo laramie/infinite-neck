@@ -133,6 +133,23 @@ function createSongList(theSongListFile, relDir = null) {
     logVerbose(3, "   🦊 attempting to open file in createSongList: "+theSongListFile);
     const songListPath = path.join(__dirname, '../../', theSongListFile);
     let theSongList = JSON.parse(fs.readFileSync(songListPath, 'utf8')).songs;
+    const normalizeSongListHref = (songEntry) => {
+        if (typeof songEntry === 'string') {
+            const href = songEntry.trim();
+            return href ? href : null;
+        }
+        if (!songEntry || typeof songEntry !== 'object' || Array.isArray(songEntry)) {
+            return null;
+        }
+        if (typeof songEntry.href !== 'string') {
+            return null;
+        }
+        const href = songEntry.href.trim();
+        return href ? href : null;
+    };
+    theSongList = Array.isArray(theSongList)
+        ? theSongList.map(normalizeSongListHref).filter((href) => typeof href === 'string')
+        : [];
     if (relDir) {
         theSongList = theSongList.map(f => `${relDir}${f}`);
     }
@@ -182,7 +199,24 @@ function setup_songTestOptions_Array_FromNamed(songlist) {
         logVerbose(1, `🛑 Strict structure violation in songTestOptions file: ${listPath}`);
         throw new Error('setup_songTestOptions_Array_FromNamed: JSON file must contain { songTestOptions: {...}, songs: [...] }');
     }
-    return parsed.songs.map(songFile => ({
+    const songFiles = parsed.songs
+        .map((songFile) => {
+            if (typeof songFile === 'string') {
+                const href = songFile.trim();
+                return href ? href : null;
+            }
+            if (!songFile || typeof songFile !== 'object' || Array.isArray(songFile)) {
+                return null;
+            }
+            if (typeof songFile.href !== 'string') {
+                return null;
+            }
+            const href = songFile.href.trim();
+            return href ? href : null;
+        })
+        .filter((songFile) => typeof songFile === 'string');
+
+    return songFiles.map(songFile => ({
         file: (parsed.songTestOptions.dir === SONGSTESTDIR ? SONGSTEST_RELDIR : '') + songFile,
         songTestOptions: {
             ...parsed.songTestOptions,

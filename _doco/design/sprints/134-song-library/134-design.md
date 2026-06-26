@@ -95,3 +95,68 @@ Missing descriptons and empty descriptions are allowed.  Missing href should be 
 Copilot, please analyze this Iteration 1 specification, and produce an implementation plan in 
 [Iteration 1 implementation plan](134-it1-implementation-plan.md)
 with any questions, design holes, etc.
+
+### Iteration 1 Answers to Questions
+
+
+1. Directory key for href values with no `/`:
+- Option A: show under `(root)`.
+- Option B: skip as malformed.
+ANSWER: Show under root
+
+2. Description rendering policy:
+- Should we allow raw HTML exactly as provided (current design intent), or pass through existing sanitizer utilities before insertion?
+ANSWER: raw HTML exactly.  This is programmer-authored and needs no sanitizer.
+
+3. Initial open-state behavior detail:
+- Should the top-level Song Library details be closed every time `Song Library` button is clicked, or only the first time in a session?
+ANSWER: Despite what we may have said in the early design, let it be user/browser remembered.  Initial state is closed for all, if they open one and the browser remembers, let it stay open.  No active/programmatic opening or closing.
+
+4. Empty directories behavior:
+- If all entries in a derived directory are skipped (invalid href), should that directory still appear?
+ANSWER: Yes.  We will likely fix them, but this will enable us to see them and know it's not a caching issue.
+
+5. Link text behavior:
+- Confirm link text remains full relative path (`dir/file.json`) rather than filename-only.
+ANSWER: Yes.  Full relative path, which will match the URI, so Users can understand where they live and copy URI's easily.
+
+6. Test-fixture visibility:
+- Iteration says list curation excludes fixtures; confirm no code-based filtering should be added now.
+ANSWER: No active filtering in code.  We will curate them and remove them from song-list.json
+
+ADDITIONALLY: 
+
+a) Let the alternating row colors of the current design be used as the model for alternate rows in the new list.
+
+b) Let there be an introductory paragraph/colspan, with HTML presented in two-column-wide format so that it spans the whole row/div.  It would come before any songs or directory open/close widgets.  This will have the form:
+
+```
+{
+  "songs": [
+    {"href": "sprint-121/piano-follows-guitar-basic-blues.json", "description": "A Basic Blues progression on guitar <i>with a piano Listener</i>"}
+  ],
+  "directoryIntros": [
+    {"introFor": "sprint-121", "html": "This directory has all the songs that you can use for practices: arpeggios, scales, note memorization." }
+  ]
+}
+```
+
+"introFor" is a directory name that matches a path given in other songs.
+
+So the final form should be:
+```
+Song Library
+   Root-Directory-Intro
+   Root-song-1-link  |  Root-song-1-description
+   Root-song-2-link  |  Root-song-2-description
+        Directory-1
+            Directory-1-Intro
+            song-3-link  |  song-3-description
+            song-4-link  |  song-4-description
+        Directory-2
+            Directory-2-Intro
+            song-5-link  |  song-5-description
+            song-6-link  |  song-6-description
+```
+Here "Song Library", "Directory-1", and "Directory-2" are all open/close widgets.  "Song Library" is an alias for "./songs" and the other are the actual directory names.
+

@@ -1086,23 +1086,81 @@ td.fillStringRange {
 
 #divSongList {
     background-color: white;
-    display: block;
-    width: 90%;
-    height: 90%;
-    left: 5%;
-    top: 5%;
-    columns: 4;
+    display: none;
+    width: 95%;
+    margin-top: 0.4em;
+    border: 1px solid #333;
+    padding: 0.4em;
 }
 
 #divSongList a {
     display: inline-block;
-    padding: 0.4em;
+    padding: 0.2em 0;
 }
-#divSongList a:nth-of-type(odd) {
+
+.songLibraryRootDetails,
+.songLibraryDirectoryDetails {
+    margin: 0.2em 0;
+}
+
+.songLibrarySummary {
+    background-color: #f4a460;
+    border: 1px solid #663300;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.35em 0.5em;
+}
+
+.songLibraryDirectorySummary {
+    background-color: #ffd39b;
+    margin-left: 0.8em;
+}
+
+.songLibraryBody,
+.songLibraryDirectoryBody {
+    padding: 0.3em 0;
+}
+
+.songLibraryRows {
+    display: block;
+    margin-left: 1.2em;
+}
+
+.songLibraryRow {
+    display: grid;
+    grid-template-columns: minmax(20em, 44%) 1fr;
+    gap: 0.6em;
+    padding: 0.25em 0.4em;
+}
+
+.songLibraryRows .songLibraryRow:nth-of-type(odd) {
     background-color: rgb(177, 255, 255);
 }
-#divSongList a:nth-of-type(even) {
+
+.songLibraryRows .songLibraryRow:nth-of-type(even) {
     background-color: rgb(235, 253, 148);
+}
+
+.songLibraryCell {
+    min-width: 0;
+}
+
+.songLibraryCellLink {
+    overflow-wrap: anywhere;
+}
+
+.songLibraryCellDescription {
+    overflow-wrap: anywhere;
+}
+
+.songLibraryIntroRow {
+    font-style: normal;
+}
+
+.songLibraryCellIntro {
+    grid-column: 1 / -1;
+    padding: 0.2em 0;
 }
 
 .bpm {

@@ -1,8 +1,17 @@
 {
   "songs": [
-    "sprint-121/piano-follows-guitar-basic-blues.json",
-    "sprint-121/guitar-follows-piano-basic-blues.json",
-    "sprint-121/piano-f-guitar-chorus-coda.json",
+    {
+      "href": "sprint-121/piano-follows-guitar-basic-blues.json",
+      "description": "A Basic Blues progression on guitar <i>with a piano Listener</i>"
+    },
+    {
+      "href": "sprint-121/guitar-follows-piano-basic-blues.json",
+      "description": "A Basic blues progression on piano <i>with a guitar Listener</i>"
+    },
+    {
+      "href": "sprint-121/piano-f-guitar-chorus-coda.json",
+      "description": "Piano listening to guitar, with a Coda in the Chart"
+    },
     "sprint-121/All-Chords.json",
     "sprint-121/All-Chords-fill-mode-piano-listener-light.json",
     "sprint-121/All-Chords-fill-mode-S8-light.json",
@@ -10,6 +19,16 @@
     "sprint-121/pentatonics-7-m-7-in-6-keys.json",
     "sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json",
     "sprint-121/name-that-note-bass-4.json"
+  ],
+  "directoryIntros": [
+    {
+      "introFor": "root",
+      "html": "<p>Choose a directory below to browse curated songs under <b>./songs</b>.</p>"
+    },
+    {
+      "introFor": "sprint-121",
+      "html": "This directory has songs for practice: arpeggios, scales, and note memorization."
+    }
   ],
   "ignoredSongs": [],
   "sections": [],

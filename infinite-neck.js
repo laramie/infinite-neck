@@ -118,6 +118,7 @@ import {
 import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
+import * as SongLibrary from './SongLibrary.js';
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
@@ -1563,18 +1564,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function songLibrary(){
-		var divSongList = $('#divSongList');
-		if (divSongList.is(":visible") && divSongList.html().trim().length > 0){
-			divSongList.hide();
-		} else {
-			$.get( "songs/song-list.json", function(data){
-				var result = "";
-				Object.values(data.songs).forEach(song => {
-					result = result + "<a href='#' data-action='loadSong' data-action-args='"+song+"'>"+song+"</a><br />";
-				});
-				$('#divSongList').html(result).show();
-			});
-		}
+		SongLibrary.toggleSongLibraryVisibility('#divSongList');
 	}
 
 	export function showGraveyard(){

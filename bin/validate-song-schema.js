@@ -81,7 +81,23 @@ function listSongsFromSongList(songListPath) {
     const songList = readJsonFile(songListPath);
     const songs = Array.isArray(songList.songs) ? songList.songs : [];
     const baseDir = path.dirname(songListPath);
-    return songs.map((songPath) => path.resolve(baseDir, songPath));
+    return songs
+        .map((songEntry) => {
+            if (typeof songEntry === 'string') {
+                const href = songEntry.trim();
+                return href ? href : null;
+            }
+            if (!songEntry || typeof songEntry !== 'object' || Array.isArray(songEntry)) {
+                return null;
+            }
+            if (typeof songEntry.href !== 'string') {
+                return null;
+            }
+            const href = songEntry.href.trim();
+            return href ? href : null;
+        })
+        .filter((songPath) => typeof songPath === 'string')
+        .map((songPath) => path.resolve(baseDir, songPath));
 }
 
 function uniquePaths(paths) {
