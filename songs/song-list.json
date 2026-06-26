@@ -1,33 +1,66 @@
 {
   "songs": [
     {
-      "href": "sprint-121/piano-follows-guitar-basic-blues.json",
-      "description": "A Basic Blues progression on guitar <i>with a piano Listener</i>"
+      "href": "demo/piano-follows-guitar-basic-blues.json",
+      "description": "A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em>"
     },
     {
-      "href": "sprint-121/guitar-follows-piano-basic-blues.json",
-      "description": "A Basic blues progression on piano <i>with a guitar Listener</i>"
+      "href": "demo/guitar-follows-piano-basic-blues.json",
+      "description": "A Basic Blues progression on <b>Piano</b> with a <em>Guitar Listener</em>"
     },
     {
-      "href": "sprint-121/piano-f-guitar-chorus-coda.json",
-      "description": "Piano listening to guitar, with a Coda in the Chart"
+      "href": "demo/piano-f-guitar-chorus-coda.json",
+      "description": "<b>Piano</b> listening to <em>Guitar</em>, showing how to use a Coda in the Chart"
     },
-    "sprint-121/All-Chords.json",
-    "sprint-121/All-Chords-fill-mode-piano-listener-light.json",
-    "sprint-121/All-Chords-fill-mode-S8-light.json",
-    "sprint-121/C-chords-w-tiny-modes.json",
-    "sprint-121/pentatonics-7-m-7-in-6-keys.json",
-    "sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json",
-    "sprint-121/name-that-note-bass-4.json"
+    {
+      "href": "demo/C-chords-w-tiny-modes.json",
+      "description": "Shows how to use <em>TinyNote</em> as fill for modes over <b>SingleNote</b> and <b>NamedNote</b> for the chords."
+    },
+    {
+      "href": "practice/All-Chords.json",
+      "description": "All the major Jazz chords, in C with <em>transposition</em>."
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
+      "description": "All-Chords with added Piano listening to the guitar, and a light <em>color theme</em> instead of AutoColor."
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-S8-light.json",
+      "description": "All-Chords on a <em>standard-tuning 8-string Guitar</em>"
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys.json",
+      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-Fill.json",
+      "description": ""
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
+      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses theme <em>Autobahn</em>."
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
+      "description": "Same as pentatonics-7-m-V7-in-6-keys-with-fill.json but with theme <em>Guitar Black Glow</em> showing a 'strings' theme."
+    },
+    {
+      "href": "practice/name-that-note-bass-4.json",
+      "description": ""
+    }
   ],
   "directoryIntros": [
     {
       "introFor": "root",
-      "html": "<p>Choose a directory below to browse curated songs under <b>./songs</b>.</p>"
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, arpeggios and name-that-note.</p>"
     },
     {
-      "introFor": "sprint-121",
-      "html": "This directory has songs for practice: arpeggios, scales, and note memorization."
+      "introFor": "demo",
+      "html": "Songs that demonstrate <span class='productsmaller'>infinite-neck</span> features, such as how to use plugins (<em>Fill, Arpeggio, Transpose</em>), how to wire <em>Listeners</em> and <em>Observers</em>.  Use these as templates for setting up your own songs."
+    },
+    {
+      "introFor": "practice",
+      "html": "Practice songs for chords, arpeggios, modes, scales, and name-that-note games."
     }
   ],
   "ignoredSongs": [],

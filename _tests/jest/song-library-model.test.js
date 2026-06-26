@@ -67,7 +67,8 @@ describe('SongLibrary model', () => {
         expect(html).toContain('Root intro');
         expect(html).toContain('Sprint intro');
         expect(html).toContain("data-action='loadSong'");
-        expect(html).toContain('sprint-121/song-a.json');
+        expect(html).toContain("data-action-args='[\"sprint-121/song-a.json\"]'");
+        expect(html).toContain('song-a.json');
         expect(html).toContain('song-root.json');
         expect(html).toContain('A <b>bold</b> desc');
     });

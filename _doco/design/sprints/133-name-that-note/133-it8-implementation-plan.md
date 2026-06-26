@@ -8,7 +8,7 @@ Inputs:
 - [plugins/arpeggio/properties.json](../../../../plugins/arpeggio/properties.json)
 - [plugins/fill/FillPlugin.js](../../../../plugins/fill/FillPlugin.js)
 - [plugins/fill/properties.json](../../../../plugins/fill/properties.json)
-- [songs/sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json](../../../../songs/sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json)
+- [songs/sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json](../../../../songs/sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json)
 
 ## Goal
 
@@ -150,7 +150,7 @@ Target outcome:
 1. Fill fret windows should advance by loop-position rules, not drift based on transposition side effects.
 2. Given same song loops per position and same per-section positions arrays in both plugins, Fill and Arpeggio should operate in equivalent fret windows after each transposition loop.
 
-Acceptance check using [songs/sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json](../../../../songs/sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json):
+Acceptance check using [songs/sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json](../../../../songs/sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json):
 1. Configure matching positions and loop count in both plugins.
 2. Run song loops across transpositions.
 3. Confirm Fill-generated notes stay in same active position windows Arpeggio highlights.

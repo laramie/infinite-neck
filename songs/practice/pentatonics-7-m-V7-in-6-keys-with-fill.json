@@ -95,8 +95,8 @@
       "graveyardKey": "USER",
       "properties": {
         "targetTable": "tblP46_1",
-        "chordFormula": "7",
-        "scaleFormula": "mixolydian",
+        "chordFormula": "m",
+        "scaleFormula": "minor pentatonic",
         "automaticFromChart": true,
         "minFret": 0,
         "maxFret": 4,
@@ -143,7 +143,7 @@
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
-  "defaultBPM": "60",
+  "defaultBPM": "120",
   "info": "To see notes, just hit LOOP!\n<br>\n<br>\nThis song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.\n<br>\n<br>\nThis song is a small variant of the similarly-named song, that adds the FillPlugin to fill in chords in SingleNotes and mode in TinyNotes.\n<br>\n<br>\nAs written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.\n<br>\n<br>You can change what keys you practice by setting <kbd>/fptc</kbd>\n<br>Here are some presets:\n<ul>\n<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>\n</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>\n</li></ul>\n\n<br>You can choose to practice chords, or modes.\n<br>\n<ul>\n<li>chords: <a href=\"#raise=arpeggio.use-chart-chord-3-positions\">arpeggio.use-chart-chord-3-positions</a>\n</li><li>modes: <a href=\"#raise=arpeggio.use-chart-mode-3-positions\">arpeggio.use-chart-mode-3-positions</a>\n</li></ul>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
@@ -177,12 +177,12 @@
     "boxCaptionFontsize": "100%"
   },
   "rootID": "3",
-  "sharps": false,
+  "sharps": true,
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
-  "songName": "pentatonics-7-m-7-in-6-keys-with-fill-themed",
-  "theme": "USER",
+  "songName": "pentatonics-7-m-V7-in-6-keys-with-Fill",
+  "theme": "Autobahn",
   "sections": [
     {
       "sectionNotesByTable": {},
@@ -195,7 +195,7 @@
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 1,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
@@ -250,9 +250,9 @@
         "tinyNoteOpacity": "1",
         "currentColorDict": "mojo",
         "NoteDisplaySizes": {
-          "caption": "160x40:22",
-          "width": "160px",
-          "height": "40px",
+          "caption": "200x50:22",
+          "width": "200px",
+          "height": "50px",
           "NoteFontSize": 22
         },
         "dropDownFunctionSymbols": {
@@ -275,7 +275,7 @@
         "tinyNoteMaxHeight": "45%",
         "tinyNoteVPosition": "50%",
         "tinyNoteWidth": "35%",
-        "tinyNoteHPosition": "50%",
+        "tinyNoteHPosition": "90%",
         "tinyNoteRadius": "50%"
       }
     },
@@ -290,7 +290,7 @@
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 1,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
@@ -335,11 +335,11 @@
       "chartMode": "G mixolydian",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 10,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 1,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
@@ -512,37 +512,5 @@
       }
     ]
   },
-  "currentColorDict": "mojo",
-  "userTheme": {
-    "id": "USER-USER",
-    "caption": "USER+USER ",
-    "noteRadius": "0",
-    "namedNoteRadius": "10%",
-    "notePadding": "6pt",
-    "cellSpacing": "0.1pt",
-    "instrumentBackground": "#311900",
-    "instrumentMargins": "0",
-    "nutColor": "brown",
-    "rootColor": "green",
-    "diamondsSize": "1.6em",
-    "diamondsColor": "brown",
-    "doubleDiamondsColor": "gold",
-    "diamondsBackgroundColor": "transparent",
-    "singleNoteShrink": "5%",
-    "singleNoteShadowColor": "#56fa00",
-    "noteWhiteShadowColor": "aqua",
-    "noteBlackShadowColor": "pink",
-    "noteWhiteKeyShadowColor": "0 0 2pt 1pt black",
-    "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
-    "noteWhiteKeyColor": "black",
-    "noteBlackKeyColor": "black",
-    "noteWhiteKeySpecialColor": "SaddleBrown",
-    "noteBlackKeySpecialColor": "#191919",
-    "noteWhiteKeyFontColor": "white",
-    "noteBlackKeyFontColor": "white",
-    "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
-    "borderImageBlackKey": "url('img/guitar-string-fret.png')",
-    "instrumentBorderImage": "url('img/celtic-background-black.png')",
-    "instrumentBorderThickness": "1.4em"
-  }
+  "currentColorDict": "mojo"
 }

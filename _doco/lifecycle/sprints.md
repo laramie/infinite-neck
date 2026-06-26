@@ -157,7 +157,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 - [128-transpose-recorded](../design/sprints/128-transpose-recorded/sprint-128.md)
   - Get TransposePlugin to do what MovePlugin does when using options: recordedNotes, all types, algorithm: string, and motion down (and up with octave fix).
-  - COMPLETE
+  - **COMPLETE**
 
 - [sprint-129-graveyard-plugin-menu](../design/sprints/129-graveyard-plugin-menu/sprint-129.md)
 
@@ -170,6 +170,8 @@ The sprints toward this effort are documented here, as well as sprints planned b
 - [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
 
 - [sprint-134-song-library](../design/sprints/134-song-library/sprint-134.md)
+  - Create an accordion list for all songs on File menu page, with categories (demo, practice,...)
+  - Add features so that `songs/song-list.json` drives this list, with descriptions and directory info.
 
 - 902-song-import
   - Notes/Sections

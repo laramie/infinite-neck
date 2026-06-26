@@ -1,5 +1,7 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
+/* Find styles in song-library.css */
+
 export const ROOT_DIRECTORY_KEY = 'root';
 
 function escapeHtml(text) {
@@ -151,11 +153,11 @@ function renderIntroRow(introHtml) {
 
 function renderSongRow(song) {
 	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
-	const safeHrefText = escapeHtml(song.href);
+	const safeLinkText = escapeHtml(song.filename || song.href);
 	return (
 		"<div class='songLibraryRow'>"
 			+ "<div class='songLibraryCell songLibraryCellLink'>"
-			+ "<a href='#' data-action='loadSong' data-action-args='" + argsAttr + "'>" + safeHrefText + '</a>'
+			+ "<a href='#' data-action='loadSong' data-action-args='" + argsAttr + "'>" + safeLinkText + '</a>'
 			+ '</div>'
 			+ "<div class='songLibraryCell songLibraryCellDescription'>" + (song.description || '') + '</div>'
 			+ '</div>'
@@ -190,21 +192,26 @@ export function renderSongLibraryHtml(songListJson) {
 	return html;
 }
 
-export function toggleSongLibraryVisibility(targetSelector = '#divSongList') {
+export function renderSongLibraryErrorHtml(message) {
+	const safeMessage = escapeHtml(message || 'Unable to load songs/song-list.json');
+	let html = "<details class='songLibraryRootDetails'><summary class='songLibrarySummary'>Song Library</summary>";
+	html += "<div class='songLibraryBody'>";
+	html += "<div class='songLibraryRows'>";
+	html += "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'><div class='warningMessage'>" + safeMessage + '</div></div></div>';
+	html += '</div></div></details>';
+	return html;
+}
+
+export function initializeSongLibrary(targetSelector = '#divSongList') {
 	const divSongList = $(targetSelector);
-	if (divSongList.is(':visible')) {
-		divSongList.hide();
-		return;
-	}
-
-	if (divSongList.html().trim().length > 0) {
-		divSongList.show();
-		return;
-	}
-
+	divSongList.show();
 	$.get('songs/song-list.json', function(data) {
-		divSongList.html(renderSongLibraryHtml(data)).show();
+		divSongList.html(renderSongLibraryHtml(data));
 	}).fail(function() {
-		divSongList.html("<div class='warningMessage'>Unable to load songs/song-list.json</div>").show();
+		divSongList.html(renderSongLibraryErrorHtml('Unable to load songs/song-list.json'));
 	});
+}
+
+export function songLibrary(targetSelector = '#divSongList') {
+	initializeSongLibrary(targetSelector);
 }

@@ -77,8 +77,8 @@ To support descriptions, song-list.json will have a new format for `/songs[]`, l
     {"href": "sprint-121/All-Chords-fill-mode-piano-listener-light.json", "description": ""},
     {"href": "sprint-121/All-Chords-fill-mode-S8-light.json", "description": ""},
     {"href": "sprint-121/C-chords-w-tiny-modes.json", "description": ""},
-    {"href": "sprint-121/pentatonics-7-m-7-in-6-keys.json", "description": ""},
-    {"href": "sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json", "description": ""},
+    {"href": "sprint-121/pentatonics-7-m-V7-in-6-keys.json", "description": ""},
+    {"href": "sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json", "description": ""},
     {"href": "sprint-121/name-that-note-bass-4.json", "description": ""}
     {"href": "practice/name-that-note-bass-4.json", "description": "A copy of the file in sprint-121, here in <b>new</b> songs/practice directory."}
   ],
@@ -159,4 +159,24 @@ Song Library
             song-6-link  |  song-6-description
 ```
 Here "Song Library", "Directory-1", and "Directory-2" are all open/close widgets.  "Song Library" is an alias for "./songs" and the other are the actual directory names.
+
+## Iteration 2: tune visuals
+
+Testing is going well.
+
+We would like to tune the visuals:
+
+1) We no longer need `#btnSongList`.  It will be sufficient to have the first UI in the `.sectionPageControlsGroup` to be `#divSongList`.  It will also not be needed to hide `#divSongList`.  It can be the always visible container.  
+
+We'll always have songs, but in the event of error or missing song directories etc., having "Song Library" be the always-present songLibrarySummary would be good.
+
+So on startup, instead of "Open Song from: [Song Library]" would be replaced by simply having the top collapse/expand item "Song Library".
+
+On startup, "Song Library" would be closed.  Again, the code doesn't react.  If the User opens it, it stays open.  But nor do we persist that state either way.
+
+2) We decided you were right, and the links will look better with just the filename, and not the directory.
+e.g. replace 
+`sprint-121/piano-follows-guitar-basic-blues.json`
+with 
+`piano-follows-guitar-basic-blues.json`
 

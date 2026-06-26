@@ -3,7 +3,7 @@
 Iteration 7 tests perfectly.
 
 We see that in this attached song, 
-`songs/sprint-121/pentatonics-7-m-7-in-6-keys-Fill.json`
+`songs/sprint-121/pentatonics-7-m-V7-in-6-keys-Fill.json`
 that Fill is doing something a bit funny, but mostly according to design.  We want to sync its behavior instead with ArpeggioPlugin.
 
 What Fill is doing, is: 

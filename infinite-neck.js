@@ -1564,7 +1564,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function songLibrary(){
-		SongLibrary.toggleSongLibraryVisibility('#divSongList');
+		SongLibrary.initializeSongLibrary('#divSongList');
 	}
 
 	export function showGraveyard(){
@@ -3400,6 +3400,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
  		hideAllMenuDivs();
 		$("#divQuick").hide();
 		$("#CmdMenu").hide();
+		SongLibrary.initializeSongLibrary('#divSongList');
 
 		updateFontLabel();
 
