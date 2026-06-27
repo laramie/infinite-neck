@@ -52,8 +52,8 @@
       "href": "practice/name-that-note-S6-positions.json",
       "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions."
     },
-    {
-      "href": "practice/name-that-note-S6-positions-by-sections.json",
+    {                   
+      "href": "practice/name-that-note-S6-positions-by-section.json",
       "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section."
     },
     {
