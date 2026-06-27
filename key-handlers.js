@@ -1391,6 +1391,7 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
 		case "pluginAction:invoke":
+		case "pluginAction:audit":
 		case "pluginAction:graveyardBury":
 		case "pluginAction:graveyardSave":
 		case "pluginAction:graveyardRaise":

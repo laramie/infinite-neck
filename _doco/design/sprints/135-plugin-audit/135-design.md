@@ -24,3 +24,23 @@ For the per-section audit table, we think there are only two properties that are
 
 Please produce an implementation plan for Iteration 1 in 
 `135-it1-implementation-plan.md`.
+
+# Iteration 2: refine audit report
+
+The report looks very good.
+
+The "Audit plugins" menu-item has trigger `A` but does not literally have an `A) ` in the caption.
+
+Table "Plugin Audit: Section-Level pluginData" is perfect.
+
+We now want the first table, "Plugin Audit: Song-Level Persisted Properties" to be restructured.
+
+The left column for each row (exclding header row) should be the plugin short name.
+The header row then becomes just the plugin property names.  We continue providing the curated list of property names to include in a code constant.  
+
+Not all columns will apply to all plugins.  Where a plugin does not have the property, the cell should be `background-color: #555;`.  Where it has a property, but the property is not set, the background should be unset (normal). Where it has a property, and it is set in a plugin, it would just have the value in normal font, normal background.
+
+All plugins are listed in the table, even if none of their properties line up.  The plugin order in the table is identical to the run-time value of `/fap` "plugin firing order".
+
+
+

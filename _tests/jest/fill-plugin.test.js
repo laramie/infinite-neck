@@ -367,7 +367,7 @@ describe('FillPlugin', () => {
     section.chartMode = 'A ultralocrian';
     result = plugin.invokeAction('useChartMode', { song });
     expect(result.result).toBe('No fill subset match for chartMode="A ultralocrian" tonalType="ultralocrian"');
-    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (ionian), dorian, phrygian, lydian, mixolydian, minor (aeolian/natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, Lydian dominant, double harmonic major (Gypsy), Neapolitan major, balinese (neapolitan minor), (none)]');
+    expect(result.message).toBe('Fill use chart mode: no match for chartMode="A ultralocrian" normalized="ultralocrian" against [major (ionian), dorian, phrygian, lydian, mixolydian, minor (aeolian/natural), locrian, whole tone, diminished, minor pentatonic, major Pentatonic, harmonic minor, melodic minor, Lydian dominant, double harmonic major (Gypsy), Neapolitan major, balinese (neapolitan minor), chromatic, (none)]');
     expect(plugin.getProperty('scaleFormula').getValue()).toBe('major');
   });
 

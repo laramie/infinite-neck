@@ -2,6 +2,7 @@ import { gMenuFile } from '../menu.js';
 import { clearBeatAndSectionLooping, beatsLooping, sectionsLooping } from '../looper.js';
 import { MenuItemProxy } from './MenuItemProxy.js';
 import { buildCaption, buildValueReference } from './PluginProperty.js';
+import { buildPluginAuditHtml } from './PluginAudit.js';
 
 const DEFAULT_GRAVEYARD_KEY = 'USER';
 const PLUGIN_GRAVEYARD_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_-]*$/;
@@ -315,7 +316,20 @@ export class PluginManager {
   }
 
   buildPluginsMenuChildren() {
-    return this.getRegisteredPlugins().map((plugin) => this.buildPluginMenuNode(plugin));
+    return [
+      ...this.getRegisteredPlugins().map((plugin) => this.buildPluginMenuNode(plugin)),
+      this.buildPluginsAuditNode()
+    ];
+  }
+
+  buildPluginsAuditNode() {
+    return new MenuItemProxy(this, {
+      name: 'pluginAudit',
+      caption: '<b>A</b>) Audit plugins',
+      trigger: 'A',
+      action: 'pluginAction:audit',
+      popOnBang: true
+    });
   }
 
   buildPluginMenuNode(plugin) {
@@ -636,6 +650,10 @@ export class PluginManager {
   }
 
   invokeMenuAction(menuItem, args = {}) {
+    if (menuItem.action === 'pluginAction:audit') {
+      return this.invokePluginAuditAction();
+    }
+
     const pluginId = menuItem.pluginId;
     const entry = this.getPluginEntry(pluginId);
     if (!entry) {
@@ -670,6 +688,13 @@ export class PluginManager {
       default:
         throw new Error(`Unsupported plugin action: ${menuItem.action}`);
     }
+  }
+
+  invokePluginAuditAction() {
+    return {
+      result: 'plugin audit',
+      message: buildPluginAuditHtml({ song: this.song, pluginManager: this })
+    };
   }
 
   setPropertyValue(entry, propertyName, rawValue) {
