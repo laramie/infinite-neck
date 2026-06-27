@@ -325,7 +325,7 @@ export class PluginManager {
   buildPluginsAuditNode() {
     return new MenuItemProxy(this, {
       name: 'pluginAudit',
-      caption: '<b>A</b>) Audit plugins',
+      caption: buildCaption('Audit plugins', 'A'),
       trigger: 'A',
       action: 'pluginAction:audit',
       popOnBang: true

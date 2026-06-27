@@ -29,6 +29,7 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 const { PluginManager } = await import('../../plugins/PluginManager.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
+const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
 
 function createSongWithSectionPluginData() {
   const sections = [
@@ -132,10 +133,11 @@ describe('Plugin audit', () => {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
     manager.register(new FillPlugin());
+    manager.register(new TransposePlugin());
     return manager;
   }
 
-  test('appends A) Audit plugins after runtime plugin menu entries', () => {
+  test('appends bold-trigger Audit plugins after runtime plugin menu entries', () => {
     const manager = createManager();
 
     const children = manager.buildPluginsMenuChildren();
@@ -144,7 +146,7 @@ describe('Plugin audit', () => {
     expect(lastNode.name).toBe('pluginAudit');
     expect(lastNode.trigger).toBe('A');
     expect(lastNode.action).toBe('pluginAction:audit');
-    expect(lastNode.caption).toContain('Audit plugins');
+    expect(lastNode.caption).toBe('<b>A</b>udit plugins');
   });
 
   test('pluginAction:audit returns showMessages HTML report with current section row highlight and native pair highlight', () => {
@@ -159,6 +161,13 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('sectionPrinterCurrentSectionRow');
     expect(result.message).toContain('arpeggioCurrentPositionPair');
     expect(result.message).toContain('fillCurrentPositionPair');
+    expect(result.message).toContain('<th scope=\'col\'>plugin</th>');
+    expect(result.message).toContain('<span>Instrument</span>');
+    expect(result.message).toContain('<span>chroma</span>');
+    expect(result.message).toContain('<td>arpeggio</td>');
+    expect(result.message).toContain('<td>fill</td>');
+    expect(result.message).toContain('<td>transpose</td>');
+    expect(result.message).toContain("background-color: #555;");
     expect(result.message).toContain('fill.customExtra');
     expect(result.message).toContain('Plugin Audit: Song-Level Persisted Properties');
     expect(result.message).toContain('Plugin Audit: Section-Level pluginData');

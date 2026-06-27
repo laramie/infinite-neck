@@ -42,5 +42,141 @@ Not all columns will apply to all plugins.  Where a plugin does not have the pro
 
 All plugins are listed in the table, even if none of their properties line up.  The plugin order in the table is identical to the run-time value of `/fap` "plugin firing order".
 
+# Iteration 3: summarize inputs/outputs
+
+Next, we want a two-column summary to be added to "Plugin Audit: Song-Level Persisted Properties".
+One column will be "inputs", the second new column will be "outputs".
+These will be questions asked of each plugin, which may respond with undefined or somesuch if not applicable.  Each plugin will format its "inputs" and "outputs" answer, such that it is compact, fits in one column, and may span several text lines within one report cell using `<br>`.  The PluginManager or report writer should not dig around in these plugins for the answers for "inputs" and "outputs" but rather ask each plugin the same two questions.
+
+## Representative outputs for the existing plugins: 
+
+### ArpeggioPlugin:  
+
+----
+
+Example 1:
+inputs:
+```
+named
+```
+outputs:
+```
+played
+color:true
+```
+----
+
+Example 2:
+inputs:
+```
+chord+mode
+```
+outputs:
+```
+played
+color:true
+flashcard:true
+```
+----
+
+Values are elided when false.
+
+
+### FillPlugin: 
+
+----
+
+Example 1: 
+inputs:
+```
+auto-chart:true
+```
+
+state of menu: 
+```
+named [r:noteRoot,c:noteChord,s:none]
+single [r:none,c:none,s:none]
+tiny [r:none,c:none,s:noteScale]
+```
+outputs:
+```
+named:r,c
+tiny:s
+```
+
+
+In other words, for Fill, show `[named, single, tiny]` if they have non-"none" values, and abreviate to just the non-"none" `[r,c,s]` categories.  They should appear on separate text lines as shown, within the report cell.
+
+"auto-chart" is a condensed caption alias for "automatic from chart".
+
+----
+
+Example 2: 
+(here "automatic from chart" is false, so FillPlugin uses `chord` and `mode` if set.)
+inputs: 
+```
+chord:M
+mode:lydian
+```
+outputs:
+```
+named:r,c
+tiny:s
+```
+
+### TransposePlugin
+
+inputs:
+```
+include:n,s,t,b,f,r
+```
+
+outputs: non pertinent, make background-color: #555;
+
+### ClipPlugin
+
+inputs: 
+Show just the categories, not the counts:
+`include [n:0,s:0,t:0,b:0,f:0]`
+would map to: 
+`include:n,s,t,b,f`
+or if only n and s were 'true' then
+`include:n,s`
+
+### MovePlugin
+inputs: 
+if include were:
+`
+include [s,h,r]`
+then inputs would be:
+`include:s,h,r`
+
+### TonalPlugin
+TonalPlugin does not respond to these questions.
+
+
+## Fix arpeggio `type` value display
+
+To help normalize this, ArpeggioPlugin needs to have its menu display of selected value fixed.
+The `type` submenu has these sub-menu-items:
+```
+named
+single
+auto chord
+auto mode
+b auto chord+mode
+```
+But when we pop back, we get displays like this:
+```
+type [AutoChartChordMode]
+```
+We should get values like this, not all at once, but shown for each of the above menu items in order: 
+```
+type [named]
+type [single]
+type [chord]
+type [mode]
+type [chord+mode]
+```
 
 

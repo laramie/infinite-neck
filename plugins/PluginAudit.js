@@ -34,43 +34,86 @@ function getCurrentSectionIndex(song, sections = []) {
   return sections.findIndex((section) => section === currentSection);
 }
 
-function buildSongLevelTable(song) {
-  const arpeggio = getSongPluginProperties(song, 'arpeggio');
-  const fill = getSongPluginProperties(song, 'fill');
-  const transpose = getSongPluginProperties(song, 'transpose');
+const SONG_LEVEL_AUDIT_COLUMNS = Object.freeze([
+  { label: 'Instrument', propertyName: 'targetTable' },
+  { label: 'minFret', propertyName: 'minFret' },
+  { label: 'maxFret', propertyName: 'maxFret' },
+  { label: 'minRow', propertyName: 'minRow' },
+  { label: 'maxRow', propertyName: 'maxRow' },
+  { label: 'chroma', propertyName: 'intervals' }
+]);
 
-  const values = [
-    formatInstrument(arpeggio.targetTable),
-    formatScalar(arpeggio.minFret),
-    formatScalar(arpeggio.maxFret),
-    formatScalar(arpeggio.minRow),
-    formatScalar(arpeggio.maxRow),
-    formatInstrument(fill.targetTable),
-    formatScalar(fill.minFret),
-    formatScalar(fill.maxFret),
-    formatScalar(fill.minRow),
-    formatScalar(fill.maxRow),
-    formatScalar(transpose.intervals)
-  ];
+function getPluginsInAuditOrder(pluginManager) {
+  const registeredPlugins = Array.isArray(pluginManager?.getRegisteredPlugins?.())
+    ? pluginManager.getRegisteredPlugins()
+    : [];
+  const pluginsByTrigger = new Map(
+    registeredPlugins.map((plugin) => [`${plugin.getMenuTrigger?.() || ''}`.trim().toLowerCase(), plugin])
+  );
+  const ordered = [];
+
+  const triggerOrder = Array.isArray(pluginManager?.getSongPluginFiringOrder?.())
+    ? pluginManager.getSongPluginFiringOrder()
+    : [];
+  triggerOrder.forEach((trigger) => {
+    const plugin = pluginsByTrigger.get(`${trigger || ''}`.toLowerCase());
+    if (plugin && !ordered.includes(plugin)) {
+      ordered.push(plugin);
+    }
+  });
+
+  registeredPlugins.forEach((plugin) => {
+    if (!ordered.includes(plugin)) {
+      ordered.push(plugin);
+    }
+  });
+
+  return ordered;
+}
+
+function pluginHasProperty(plugin, propertyName) {
+  const properties = Array.isArray(plugin?.getProperties?.()) ? plugin.getProperties() : [];
+  return properties.some((property) => property?.name === propertyName);
+}
+
+function formatSongLevelCellValue(column, value) {
+  if (column.propertyName === 'targetTable') {
+    return formatInstrument(value);
+  }
+  return formatScalar(value);
+}
+
+function buildSongLevelTable(song, pluginManager) {
+  const pluginsInOrder = getPluginsInAuditOrder(pluginManager);
+
+  const rows = pluginsInOrder.map((plugin) => {
+    const pluginId = `${plugin?.getId?.() || ''}`;
+    const pluginName = `${plugin?.getRegisteredName?.() || pluginId}`;
+    const persistedProperties = getSongPluginProperties(song, pluginId);
+
+    const cells = SONG_LEVEL_AUDIT_COLUMNS.map((column) => {
+      const applies = pluginHasProperty(plugin, column.propertyName);
+      if (!applies) {
+        return "<td style='background-color: #555;'>&nbsp;</td>";
+      }
+
+      const hasPersistedValue = Object.prototype.hasOwnProperty.call(persistedProperties, column.propertyName);
+      const rawValue = hasPersistedValue ? persistedProperties[column.propertyName] : undefined;
+      return `<td>${formatSongLevelCellValue(column, rawValue)}</td>`;
+    }).join('');
+
+    return `<tr><td>${escapeHtml(pluginName)}</td>${cells}</tr>`;
+  });
+
+  const headerCells = SONG_LEVEL_AUDIT_COLUMNS
+    .map((column) => `<th class='vertical-header'><span>${escapeHtml(column.label)}</span></th>`)
+    .join('');
 
   return [
     "<table border='1' class='tblDisplayOptions pluginAuditTable pluginAuditSongTable'>",
     '<caption>Plugin Audit: Song-Level Persisted Properties</caption>',
-    '<tr><th>&nbsp;</th><th colspan="5">arpeggio</th><th colspan="5">fill</th><th colspan="1">transpose</th></tr>',
-    '<tr><th scope="col">scope</th>'
-      + '<th class="vertical-header"><span>Instrument</span></th>'
-      + '<th class="vertical-header"><span>minFret</span></th>'
-      + '<th class="vertical-header"><span>maxFret</span></th>'
-      + '<th class="vertical-header"><span>minRow</span></th>'
-      + '<th class="vertical-header"><span>maxRow</span></th>'
-      + '<th class="vertical-header"><span>Instrument</span></th>'
-      + '<th class="vertical-header"><span>minFret</span></th>'
-      + '<th class="vertical-header"><span>maxFret</span></th>'
-      + '<th class="vertical-header"><span>minRow</span></th>'
-      + '<th class="vertical-header"><span>maxRow</span></th>'
-      + '<th class="vertical-header"><span>chroma</span></th>'
-      + '</tr>',
-    `<tr><td>song.plugins</td><td>${values.join('</td><td>')}</td></tr>`,
+    `<tr><th scope='col'>plugin</th>${headerCells}</tr>`,
+    rows.join('\n'),
     '</table>'
   ].join('\n');
 }
@@ -161,7 +204,7 @@ export function buildPluginAuditHtml({ song = null, pluginManager = null } = {})
     '<div class="pluginAuditReport">',
     '<h3>Plugin Audit</h3>',
     '<div>Current section row is highlighted when visible in this report.</div>',
-    buildSongLevelTable(song),
+    buildSongLevelTable(song, pluginManager),
     buildSectionLevelTable(song, pluginManager),
     '</div>'
   ].join('\n');
