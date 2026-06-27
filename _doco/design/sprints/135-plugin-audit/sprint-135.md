@@ -19,8 +19,9 @@ Purpose of this sprint is to:
 ## Sprint document locations
 
 - [design document](135-design.md) 
+- [Iteration 1 implementation plan](135-it1-implementation-plan.md)
 
 ## Iterations
 
-  - "Iteration 1": 
+  - "Iteration 1": Define the audit, menu item, first rev of showMessages audit tables output. 
 
