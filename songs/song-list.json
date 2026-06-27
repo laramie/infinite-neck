@@ -9,7 +9,7 @@
       "description": "A Basic Blues progression on <b>Piano</b> with a <em>Guitar Listener</em>"
     },
     {
-      "href": "demo/piano-f-guitar-chorus-coda.json",
+      "href": "demo/piano-follows-guitar-chorus-coda.json",
       "description": "<em>Piano</em> listening to <b>Guitar</b>, showing how to use a Coda in the <em>Chart</em>"
     },
     {
@@ -18,39 +18,39 @@
     },
     {
       "href": "practice/All-Chords.json",
-      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <em>transposition</em> to all 12 keys. <em>P4-tuning</em> Guitar."
+      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar."
     },
     {
       "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
-      "description": "<b>All-Chords</b> with added <em>Piano</em> listening to the <em>Guitar</em>, and a light <em>color theme</em> instead of AutoColor. <em>P4-tuning</em> Guitar."
+      "description": "<b>All-Chords</b> on a <em>P4-tuning</em> Guitar, with added <em>Piano</em> listening to the <i>Guitar</i>, and a light <em>color theme</em> instead of AutoColor."
     },
     {
       "href": "practice/All-Chords-fill-mode-S8-light.json",
-      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string Guitar</em>"
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string</em> Guitar.  (Just add a <i>Listener</i> to make it like the P4 version.)"
     },
     {
       "href": "practice/All-Chords-fill-mode-S6-light.json",
-      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string Guitar</em>"
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string</em> Guitar. (Just add a <i>Listener</i> to make it like the P4 version.)"
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys.json",
-      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
-      "description": "A dom7-minor-Vdom7 progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>."
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>."
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
-      "description": "Same as pentatonics-7-m-V7-in-6-keys-with-fill.json but with theme <em>Guitar Black Glow</em> showing a 'strings' theme."
+      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic <i>'strings'</i> theme."
     },
     {
       "href": "practice/name-that-note-S6.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string Guitar</em>."
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar."
     },
     {
       "href": "practice/name-that-note-P4.json",
-      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string Guitar</em>."
+      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string</em> Guitar."
     },
     {
       "href": "practice/name-that-note-bass-4.json",
@@ -68,7 +68,7 @@
     },
     {
       "introFor": "practice",
-      "html": "Practice songs for chords, arpeggios, modes, scales, and name-that-note games."
+      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, <i>scales</i>, and <em>name-that-note</em> games."
     }
   ],
   "ignoredSongs": [],

@@ -24,6 +24,10 @@
     font-weight: 600;
     color: rgb(85, 32, 1);
 }
+#divSongList i {
+    font-weight: 800;
+    color: rgb(40, 110, 2);
+}
 
 .songLibraryRootDetails,
 .songLibraryDirectoryDetails {
@@ -71,6 +75,7 @@
 
 .songLibraryCell {
     min-width: 0;
+    padding: 0.2em;
 }
 
 .songLibraryCellLink {
@@ -89,5 +94,6 @@
 .songLibraryCellIntro {
     grid-column: 1 / -1;
     padding: 0.2em 0;
+    font-size: 130%;
 }
 

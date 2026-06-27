@@ -72,7 +72,7 @@ To support descriptions, song-list.json will have a new format for `/songs[]`, l
     {"href": "sprint-121/piano-follows-guitar-basic-blues.json", "description": "A Basic Blues progression on guitar <i>with a piano Listener</i>"},
 
     {"href": "sprint-121/guitar-follows-piano-basic-blues.json", "description": "A Basic blues prgresion on piano <i>with a guitar Listener</i>"},
-    {"href": "sprint-121/piano-f-guitar-chorus-coda.json", "description": "Piano listening to guitar, with a Coda in the Chart"},
+    {"href": "sprint-121/piano-follows-guitar-chorus-coda.json", "description": "Piano listening to guitar, with a Coda in the Chart"},
     {"href": "sprint-121/All-Chords.json", "description": "All Chords in C, then transposed to all 12 keys"},
     {"href": "sprint-121/All-Chords-fill-mode-piano-listener-light.json", "description": ""},
     {"href": "sprint-121/All-Chords-fill-mode-S8-light.json", "description": ""},
