@@ -191,6 +191,14 @@
     font-weight: bold;
     font-size: 120%;
 }
+.infoRendered em {
+    font-weight: 600;
+    color: rgb(85, 32, 1);
+}
+.infoRendered i {
+    font-weight: 800;
+    color: rgb(40, 110, 2);
+}
 
 .infoEditControls {
     display: flex;

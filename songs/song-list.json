@@ -42,11 +42,19 @@
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
-      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic <i>'strings'</i> theme."
+      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme."
     },
     {
       "href": "practice/name-that-note-S6.json",
       "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar."
+    },
+    {
+      "href": "practice/name-that-note-S6-positions.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions."
+    },
+    {
+      "href": "practice/name-that-note-S6-positions-by-sections.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section."
     },
     {
       "href": "practice/name-that-note-P4.json",

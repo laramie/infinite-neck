@@ -102,6 +102,7 @@ import { gThemes } from './themes.js';
 		//console.log("themeToControls:"+JSON.stringify(theme, null, 2));
 		function setThemeControlValues(){
 			setVal('#dropDownNoteRadius', 'noteRadius'); //  1%-50%
+			setVal('#dropDownNoteCornerShape', 'noteCornerShape'); //  bevel
 			setVal('#dropDownNamedNoteRadius', 'namedNoteRadius');  //  1%-50%
 			setVal('#dropDownIvoryEbony', 'notePadding');  //padding is 0.5-1.5em
 			setVal('#dropDownCellSpacing', 'cellSpacing');  //border-spacing is 0.1-1.0em
@@ -153,6 +154,7 @@ import { gThemes } from './themes.js';
 			options.id = options.id + "-"+$('#selThemes').val();
 			options.caption = options.caption + "+"+$('#selThemes option:selected').text();
 			options.noteRadius = $('#dropDownNoteRadius').val();
+			options.noteCornerShape = $('#dropDownNoteCornerShape').val();
 			options.namedNoteRadius = $('#dropDownNamedNoteRadius').val();
 			options.notePadding = $('#dropDownIvoryEbony').val();
 			options.cellSpacing = $('#dropDownCellSpacing').val();
@@ -282,6 +284,7 @@ import { gThemes } from './themes.js';
 		var styleBody = "td.note {"
 						         +rule("padding", "notePadding")
 						         +rule("border-radius", "noteRadius")
+						         +rule("corner-shape", "noteCornerShape")
 								 +"}"
 						 +" .namedNote, .NoteDisplay {"
 						         +rule("border-radius", "namedNoteRadius")
@@ -374,6 +377,7 @@ import { gThemes } from './themes.js';
 		//Now show what's in all those SELECT dropdowns.
 		function auditThemesShowOptions(){
 			showOptions('#dropDownNoteRadius', 'noteRadius');
+			showOptions('#dropDownNoteCornerShape', 'noteCornerShape');
 			showOptions('#dropDownNamedNoteRadius', 'namedNoteRadius');
 			showOptions('#dropDownIvoryEbony', 'notePadding');
 			showOptions('#dropDownCellSpacing', 'cellSpacing');
