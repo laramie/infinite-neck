@@ -1943,6 +1943,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		updatePrintSections();
 		showChartTab("Input");
 		showOneMenu("#divChart", true);
+		getChartInputController().focusChordField();
 	}
 
 	export function printSectionsOptions(){
@@ -2846,6 +2847,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnChartInputTab', function() {
 			showChartTab("Input");
 			getChartInputController().ensurePanel('#divChartInputTab');
+			getChartInputController().focusChordField();
 		});
 		bindEvent('click', '#btnChartNotesTab', function() {
 			showChartTab("Notes");

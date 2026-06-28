@@ -2,6 +2,7 @@ import {
   buildChartInputHtml,
   buildChordSuggestionCatalog,
   buildModeSuggestionCatalog,
+  createChartInputController,
   cycleSuggestion,
   filterChartInputSuggestions,
   formatSuggestionColumns,
@@ -94,6 +95,106 @@ describe('Chart Input suggestion helpers', () => {
       leadKeyID: 8
     }));
     expect(modeSuggestions).toEqual([]);
+  });
+
+  test('enter accepts the highlighted value and rotates focus between fields', () => {
+    const hadDocument = Object.hasOwn(globalThis, 'document');
+    const previousDocument = globalThis.document;
+    const listeners = {};
+    const section = { rootID: 3, sharps: false, chartChord: '', chartMode: '' };
+    const suggestionHost = { innerHTML: '' };
+    const container = { innerHTML: '' };
+    const fields = {};
+    let newSectionArgs = null;
+
+    function createField(kind) {
+      return {
+        value: '',
+        selectCount: 0,
+        selectedValue: '',
+        dataset: { chartInputKind: kind },
+        classList: { contains: (className) => className === 'chartInputField' },
+        focus() { globalThis.document.activeElement = this; },
+        select() {
+          this.selectCount += 1;
+          this.selectedValue = this.value;
+        }
+      };
+    }
+
+    fields['#txtChartInputChord'] = createField('chord');
+    fields['#txtChartInputMode'] = createField('mode');
+
+    globalThis.document = {
+      activeElement: null,
+      querySelector(selector) {
+        return selector === '#divChartInputTab' ? container : fields[selector] || null;
+      },
+      getElementById(id) {
+        return id === 'chartInputSuggestions' ? suggestionHost : null;
+      },
+      addEventListener(type, listener) {
+        listeners[type] = listener;
+      }
+    };
+
+    try {
+      const controller = createChartInputController({
+        getSong: () => ({ getCurrentSection: () => section }),
+        getSectionsCurrentIndex: () => 0,
+        linkToSectionChartChord: (index, value) => { section.chartChord = value; },
+        linkToSectionChartMode: (index, value) => { section.chartMode = value; },
+        createNewSectionAfterCurrent: (args) => {
+          newSectionArgs = args;
+          section.chartChord = '';
+          section.chartMode = '';
+        }
+      });
+
+      controller.ensurePanel();
+      const chordField = fields['#txtChartInputChord'];
+      const modeField = fields['#txtChartInputMode'];
+      let prevented = false;
+
+      modeField.focus();
+      controller.focusChordField();
+      expect(globalThis.document.activeElement).toBe(chordField);
+
+      chordField.focus();
+      chordField.value = 'CM';
+      controller.updateSuggestionsForField(chordField);
+      listeners.keydown({ key: 'Enter', target: chordField, preventDefault: () => { prevented = true; } });
+
+      expect(prevented).toBe(true);
+      expect(section.chartChord).toBe('CM');
+      expect(globalThis.document.activeElement).toBe(modeField);
+      expect(modeField.selectCount).toBe(1);
+      expect(modeField.selectedValue).toBe('');
+
+      modeField.value = 'C major';
+      controller.updateSuggestionsForField(modeField);
+      listeners.keydown({ key: 'Enter', target: modeField, preventDefault: () => {} });
+
+      expect(section.chartMode).toBe('C major');
+      expect(globalThis.document.activeElement).toBe(chordField);
+      expect(chordField.selectCount).toBe(1);
+      expect(chordField.selectedValue).toBe('CM');
+
+      chordField.value = '!F/C';
+      controller.updateSuggestionsForField(chordField);
+      listeners.keydown({ key: 'Enter', target: chordField, preventDefault: () => {} });
+
+      expect(newSectionArgs).toEqual({ rootID: 3, rootIDLead: 8 });
+      expect(chordField.value).toBe('');
+      expect(globalThis.document.activeElement).toBe(chordField);
+      expect(modeField.selectCount).toBe(1);
+    } finally {
+      if (hadDocument) {
+        globalThis.document = previousDocument;
+      } else {
+        delete globalThis.document;
+      }
+    }
   });
 
   test('mode compact input finds spaced mode suggestion', () => {

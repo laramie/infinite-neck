@@ -367,6 +367,27 @@ export function createChartInputController(deps = {}) {
     return document.querySelector(FIELD_SELECTORS[normalizeKind(kind)]);
   }
 
+  function getOtherField(field) {
+    const kind = normalizeKind(field?.dataset?.chartInputKind);
+    return getField(kind === CHART_INPUT_KIND.CHORD ? CHART_INPUT_KIND.MODE : CHART_INPUT_KIND.CHORD);
+  }
+
+  function focusField(field, selectAll = false) {
+    if (!field || typeof field.focus !== 'function') {
+      return;
+    }
+    field.focus();
+    if (selectAll && typeof field.select === 'function') {
+      field.select();
+    }
+    updateSuggestionsForField(field);
+  }
+
+  function focusOtherField(field) {
+    const otherField = getOtherField(field);
+    focusField(otherField, true);
+  }
+
   function getCatalog(kind) {
     return normalizeKind(kind) === CHART_INPUT_KIND.CHORD ? state.chordCatalog : state.modeCatalog;
   }
@@ -445,7 +466,7 @@ export function createChartInputController(deps = {}) {
   function acceptCurrentSuggestion(field) {
     const accepted = resolveAcceptedSuggestion(field.value, state.suggestions, state.currentIndex);
     if (!accepted) {
-      return;
+      return true;
     }
     const kind = normalizeKind(field.dataset.chartInputKind);
     if (kind === CHART_INPUT_KIND.CHORD && accepted.action === CHART_INPUT_ACTION_NEW_SECTION) {
@@ -456,8 +477,8 @@ export function createChartInputController(deps = {}) {
         });
       }
       refreshFromSection();
-      field.focus();
-      return;
+      focusChordField(true);
+      return false;
     }
     const value = accepted.value === CHART_INPUT_NONE ? '' : accepted.value;
     const sectionIndex = getCurrentSectionIndex();
@@ -467,7 +488,8 @@ export function createChartInputController(deps = {}) {
       deps.linkToSectionChartMode(sectionIndex, value);
     }
     refreshFromSection();
-    field.focus();
+    focusField(field);
+    return true;
   }
 
   function navigateFromField(field, key) {
@@ -502,7 +524,9 @@ export function createChartInputController(deps = {}) {
 
     if (event.key === 'Enter') {
       event.preventDefault();
-      acceptCurrentSuggestion(field);
+      if (acceptCurrentSuggestion(field)) {
+        focusOtherField(field);
+      }
       return;
     }
 
@@ -561,8 +585,14 @@ export function createChartInputController(deps = {}) {
     refreshFromSection();
   }
 
+  function focusChordField(selectAll = false) {
+    const chordField = getField(CHART_INPUT_KIND.CHORD);
+    focusField(chordField, selectAll);
+  }
+
   return {
     ensurePanel,
+    focusChordField,
     refreshFromSection,
     updateSuggestionsForField,
     getState: () => ({ ...state })
