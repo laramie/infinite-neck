@@ -40,7 +40,9 @@ const SONG_LEVEL_AUDIT_COLUMNS = Object.freeze([
   { label: 'maxFret', propertyName: 'maxFret' },
   { label: 'minRow', propertyName: 'minRow' },
   { label: 'maxRow', propertyName: 'maxRow' },
-  { label: 'chroma', propertyName: 'intervals' }
+  { label: 'chroma', propertyName: 'intervals' },
+  { label: 'inputs', propertyName: 'auditInputs', kind: 'audit' },
+  { label: 'outputs', propertyName: 'auditOutputs', kind: 'audit' }
 ]);
 
 function getPluginsInAuditOrder(pluginManager) {
@@ -83,6 +85,35 @@ function formatSongLevelCellValue(column, value) {
   return formatScalar(value);
 }
 
+function normalizeAuditCellContent(value) {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+  if (Array.isArray(value)) {
+    const parts = value
+      .map((part) => `${part || ''}`.trim())
+      .filter((part) => part.length > 0)
+      .map((part) => escapeHtml(part));
+    return parts.length > 0 ? parts.join('<br>') : '&nbsp;';
+  }
+
+  const text = `${value}`.trim();
+  if (!text) {
+    return '&nbsp;';
+  }
+
+  const encoded = text.split('<br>').map((part) => escapeHtml(part));
+  return encoded.join('<br>');
+}
+
+function getPluginAuditCellValue(plugin, song, propertyName) {
+  const methodName = propertyName === 'auditInputs' ? 'getAuditInputs' : 'getAuditOutputs';
+  if (!plugin || typeof plugin[methodName] !== 'function') {
+    return undefined;
+  }
+  return normalizeAuditCellContent(plugin[methodName]({ song }));
+}
+
 function buildSongLevelTable(song, pluginManager) {
   const pluginsInOrder = getPluginsInAuditOrder(pluginManager);
 
@@ -92,6 +123,14 @@ function buildSongLevelTable(song, pluginManager) {
     const persistedProperties = getSongPluginProperties(song, pluginId);
 
     const cells = SONG_LEVEL_AUDIT_COLUMNS.map((column) => {
+      if (column.kind === 'audit') {
+        const auditValue = getPluginAuditCellValue(plugin, song, column.propertyName);
+        if (auditValue === undefined) {
+          return "<td style='background-color: #555;'>&nbsp;</td>";
+        }
+        return `<td>${auditValue}</td>`;
+      }
+
       const applies = pluginHasProperty(plugin, column.propertyName);
       if (!applies) {
         return "<td style='background-color: #555;'>&nbsp;</td>";

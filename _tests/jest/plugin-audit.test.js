@@ -30,6 +30,8 @@ const { PluginManager } = await import('../../plugins/PluginManager.js');
 const { ArpeggioPlugin } = await import('../../plugins/arpeggio/ArpeggioPlugin.js');
 const { FillPlugin } = await import('../../plugins/fill/FillPlugin.js');
 const { TransposePlugin } = await import('../../plugins/transpose/TransposePlugin.js');
+const { ClipPlugin } = await import('../../plugins/clip/ClipPlugin.js');
+const { MovePlugin } = await import('../../plugins/move/MovePlugin.js');
 
 function createSongWithSectionPluginData() {
   const sections = [
@@ -132,7 +134,9 @@ describe('Plugin audit', () => {
   function createManager() {
     const manager = new PluginManager(mockEventBus);
     manager.register(new ArpeggioPlugin());
+    manager.register(new ClipPlugin());
     manager.register(new FillPlugin());
+    manager.register(new MovePlugin());
     manager.register(new TransposePlugin());
     return manager;
   }
@@ -164,12 +168,39 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('<th scope=\'col\'>plugin</th>');
     expect(result.message).toContain('<span>Instrument</span>');
     expect(result.message).toContain('<span>chroma</span>');
+    expect(result.message).toContain('<span>inputs</span>');
+    expect(result.message).toContain('<span>outputs</span>');
     expect(result.message).toContain('<td>arpeggio</td>');
+    expect(result.message).toContain('<td>clip</td>');
     expect(result.message).toContain('<td>fill</td>');
+    expect(result.message).toContain('<td>move</td>');
     expect(result.message).toContain('<td>transpose</td>');
+    expect(result.message).toContain('include:n,s,t,b,f,r');
+    expect(result.message).toContain('played');
     expect(result.message).toContain("background-color: #555;");
     expect(result.message).toContain('fill.customExtra');
     expect(result.message).toContain('Plugin Audit: Song-Level Persisted Properties');
     expect(result.message).toContain('Plugin Audit: Section-Level pluginData');
+  });
+
+  test('arpeggio type resolveValue displays normalized labels instead of raw enum names', () => {
+    const manager = createManager();
+    const song = createSongWithSectionPluginData();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('arpeggio');
+
+    expect(manager.resolveValue('plugin:arpeggio:type')).toBe('named');
+
+    manager.setPropertyValue(entry, 'type', 'SingleNote');
+    expect(manager.resolveValue('plugin:arpeggio:type')).toBe('single');
+
+    manager.setPropertyValue(entry, 'type', 'AutoChartChord');
+    expect(manager.resolveValue('plugin:arpeggio:type')).toBe('chord');
+
+    manager.setPropertyValue(entry, 'type', 'AutoChartMode');
+    expect(manager.resolveValue('plugin:arpeggio:type')).toBe('mode');
+
+    manager.setPropertyValue(entry, 'type', 'AutoChartChordMode');
+    expect(manager.resolveValue('plugin:arpeggio:type')).toBe('chord+mode');
   });
 });

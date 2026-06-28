@@ -71,6 +71,11 @@ const ROLE_CONFIG = {
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
+const ROLE_AUDIT_LETTER = Object.freeze({
+  root: 'r',
+  chord: 'c',
+  scale: 's'
+});
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
@@ -1284,6 +1289,37 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   buildSummary(song = getSong()) {
     return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord=${this.resolveValue('chordFormula', { song })} mode=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} song loops per position=${this.getSongLoopsPerPositionPair()} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
+  }
+
+  getAuditInputs({ song = getSong() } = {}) {
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      return 'auto-chart:true';
+    }
+
+    const chord = `${this.resolveValue('chordFormula', { song }) || ''}`.trim();
+    const mode = `${this.resolveValue('scaleFormula', { song }) || ''}`.trim();
+    const lines = [];
+    if (chord) {
+      lines.push(`chord:${chord}`);
+    }
+    if (mode) {
+      lines.push(`mode:${mode}`);
+    }
+    return lines.length > 0 ? lines.join('<br>') : undefined;
+  }
+
+  getAuditFamilyOutputSummary(familyName) {
+    const roles = ROLE_NAMES
+      .filter((roleName) => this.getFamilyRoleMode(familyName, roleName) !== MODE_NONE)
+      .map((roleName) => ROLE_AUDIT_LETTER[roleName]);
+    return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
+  }
+
+  getAuditOutputs() {
+    const lines = FAMILY_NAMES
+      .map((familyName) => this.getAuditFamilyOutputSummary(familyName))
+      .filter((line) => line.length > 0);
+    return lines.length > 0 ? lines.join('<br>') : undefined;
   }
 
   getSectionPositionsDisplay(section) {

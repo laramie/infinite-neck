@@ -654,6 +654,21 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return active.length > 0 ? `[${active.join(',')}]` : '[none]';
   }
 
+  getAuditInputs() {
+    const include = this.getIncludeConfig();
+    const active = [];
+    if (include.named) active.push('n');
+    if (include.single) active.push('s');
+    if (include.tiny) active.push('t');
+    if (include.bend) active.push('b');
+    if (include.fingering) active.push('f');
+    return active.length > 0 ? `include:${active.join(',')}` : 'include:';
+  }
+
+  getAuditOutputs() {
+    return undefined;
+  }
+
   buildDefaultClipName(song = getSong(), payload = null) {
     const now = new Date();
     const hhmm = `${now.getHours()}`.padStart(2, '0') + `${now.getMinutes()}`.padStart(2, '0');

@@ -36,6 +36,14 @@ const POSITIONS_MENU_DEFAULT = '[[0,3],[4,7],[8,12]]';
 const POSITION_NOT_PLAYED_YET = -1;
 const FILL_POSITIONS_REQUEST_PATH = 'fill/op';
 
+const SOURCE_TYPE_LABELS = Object.freeze({
+  [SOURCE_TYPE_NAMED_NOTE]: 'named',
+  [SOURCE_TYPE_SINGLE_NOTE]: 'single',
+  [SOURCE_TYPE_AUTO_CHART_CHORD]: 'chord',
+  [SOURCE_TYPE_AUTO_CHART_MODE]: 'mode',
+  [SOURCE_TYPE_AUTO_CHART_CHORD_MODE]: 'chord+mode'
+});
+
 export class ArpeggioPlugin {
   constructor() {
     this.id = 'arpeggio';
@@ -290,6 +298,9 @@ export class ArpeggioPlugin {
     if (fieldName === STRINGS_SUMMARY_TOKEN) {
       return this.getCurrentStringsSummary(song);
     }
+    if (fieldName === 'type') {
+      return this.getSourceTypeLabel();
+    }
     return undefined;
   }
 
@@ -425,6 +436,25 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getSourceType() {
     return this.getProperty('type')?.getValue() || SOURCE_TYPE_NAMED_NOTE;
+  }
+
+  getSourceTypeLabel(sourceType = this.getSourceType()) {
+    return SOURCE_TYPE_LABELS[sourceType] || `${sourceType || ''}`;
+  }
+
+  getAuditInputs() {
+    return this.getSourceTypeLabel();
+  }
+
+  getAuditOutputs() {
+    const outputs = ['played'];
+    if (this.getColorNotesEnabled()) {
+      outputs.push('color:true');
+    }
+    if (this.getFlashcardEnabled()) {
+      outputs.push('flashcard:true');
+    }
+    return outputs.join('<br>');
   }
 
   buildPositionsMenuNode() {
