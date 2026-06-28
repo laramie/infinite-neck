@@ -119,10 +119,11 @@ function normalizeChord(arr, rootKey) {
 const westernScales = [
   "major", "minor", 
   "ionian", "dorian", "phrygian", "lydian", "mixolydian", "aeolian", "locrian",
-  "major pentatonic", "minor pentatonic", "blues",
-  "harmonic minor", "melodic minor",
+  "major pentatonic", "minor pentatonic", "blues", "double harmonic minor", "major blues", "minor blues",
+  "harmonic minor", "melodic minor", "double harmonic major",
   "diminished", "half-diminished", "dominant diminished",
-  "whole tone", "altered", "ultralocrian", "super locrian" 
+  "whole tone", "altered", "ultralocrian", "super locrian","augmented",
+  "chromatic", "neapolitan major", "neapolitan minor", "balinese" 
 ];
 
 /** 

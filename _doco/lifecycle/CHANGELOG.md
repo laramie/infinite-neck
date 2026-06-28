@@ -1,5 +1,52 @@
 # ChangeLog
 
+### 20260621
+Tag: v2.1-beta-6
+
+- 6762c5b **2026-06-21** sprint-132 Iteration 2 song loops per position is working, and works with different settings per Section.
+- d154d3b **2026-06-21** sprint-132 working
+- b5164a3 **2026-06-21** Ready for sprint-132 implementation.
+- f4cf70b **2026-06-21** updated screenshot of file menu. 130-it2 complete.
+- e7cc269 **2026-06-21** Added space back in for modes. Added gif of infinite-neck looping over modes with transposition and transposed chord names.
+- 28b60cd **2026-06-20** Add transpose root back into chart and leadsheet etc. when checkbox is checked.
+- 2516705 **2026-06-20** Added html tags to sanitizer for kbd and children i and b to support special styling for these so User can do command-line examples. Added 'automatic from chart' to FillPlugin. Cleaned up dropdown command-line results. Added UserLog for frequent messages that shouldn't disrupt flow, but need to be saved for longer than showMessages. Added special view-only handling of Chart for transposition: strip chord root name from chord using approved Tonal.js root stripper for chord and mode.  Thus, when you transpose from the chart, the chart looks right and displays only the chord function not the root.  Will need to be added back in with current key, but works for practices, where you can watch the Key status widget. See: formatChordWithoutRoot. Fixed plugin>graveyard>raise to use number every time.
+- 1d89d6d **2026-06-20** sprint-129 working!  Link (URI fragment) is placed in Info, and superlink can be constructed by editing Info.  Link and superlink work to revive one plugin(link), or many(superlink).
+- a3cc6b9 **2026-06-19** This was sprint 903 Phase 2. Cache and logging are in place.
+- bd3a3c1 **2026-06-19** sprint-903 Phase 1 complete
+- c0aa547 **2026-06-19** plan accepted
+- 1345c0c **2026-06-19** investigate optimization
+- 5fdae3c **2026-06-19** sprint cleanup
+- e595f11 **2026-06-18** Removed menu brittle test in menu-value-resolver.test.js Cleaned menu.js from old presentation switches.  Added two new ones to show View dialog and to /vdd from /vp. Added tag v2.1-beta-5
+
+### 20260618
+Tag: v2.1-beta-5
+
+- d4b06b9 **2026-06-18** Moved TinyNote defaults around a bit so they don't cover the radius on SingleNotes, and hang out nearer the fret.  Made them round by default.  Square is still there for customization of radius. Updated help for palette. Fixed presentation.js and palette.builder.js so that Fingerings participate in Last Color chosen radio button scheme.
+- 3213023 **2026-06-18** Updating headers
+- 61a8dea **2026-06-18** added bass5, bass6. Added instructions on noteRoot
+- ab6af73 **2026-06-18** Added overview of Listeners and Observers
+- c3e0dee **2026-06-18** renamed rootNote* noteRoot*
+- 473502a **2026-06-18** test case for multiple players claiming noteRoot
+- 8b4b9a2 **2026-06-18** Song that shows how different players set noteRoot
+- d49af01 **2026-06-18** Special treatment for noteRoot, without messing up the color lookup context. Fixes bug where placing noteRoot of G in the bass changes colors in the guitar even though the Section is in C.
+- cc54441 **2026-06-18** song demonstrate noteRoot bug
+- ae3b4b9 **2026-06-18** Updated build date
+- b84629d **2026-06-18** Ready for v2.1-beta-4
+
+### 20260618
+Tag: v2.1-beta-4
+
+- 3683c09 **2026-06-18** Removed test that tested menu structure.  We need to get rid of all of these.
+- 9e7d308 **2026-06-18** Updated help with lots of screenshots and text explanations of TonalPicker.
+- 37d4cc9 **2026-06-18** Updated help with lots of screenshots and text explanations of TonalPicker.
+- 90d03d6 **2026-06-17** Added Tonal to help
+- 9311505 **2026-06-17** sprint-119 cleanup
+- 28a3f0e **2026-06-17** Fixed MiniPalette to have clickable cells.
+- 284652f **2026-06-17** Moved noteRoot first on palette (after special Emboss and Auto). Added to theme and controlsToDisplayOptions etc: noteRoot and --note-root-color.  And added noteHatchedRoot instead of noteHatched. Moved palette radio button functions from key-handlers.js to new independent module paletteUtils.js
+- b32866c **2026-06-16** updated scp instructions
+- 599f493 **2026-06-16** ready for v2.1-beta-3
+- 2c9e3e3 **2026-06-16** commit version tag
+
 ### 20260616 
 Tag: v2.1-beta-3
 

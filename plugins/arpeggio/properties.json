@@ -54,6 +54,16 @@
     "visibleInMenu": false
   },
   {
+    "name": "songLoopsPerPositionPair",
+    "caption": "song loops per position",
+    "trigger": "s",
+    "datatype": "Number",
+    "value": 1,
+    "defaultValue": 1,
+    "inputCaption": "1..999",
+    "visibleInMenu": false
+  },
+  {
     "name": "minRow",
     "caption": "upper string limit",
     "trigger": "u",
@@ -118,7 +128,10 @@
     "visibleInMenu": true,
     "options": [
       { "value": "NamedNote", "caption": "named", "trigger": "n" },
-      { "value": "SingleNote", "caption": "single", "trigger": "s" }
+      { "value": "SingleNote", "caption": "single", "trigger": "s" },
+      { "value": "AutoChartChord", "caption": "auto chord", "trigger": "c" },
+      { "value": "AutoChartMode", "caption": "auto mode", "trigger": "m" },
+      { "value": "AutoChartChordMode", "caption": "auto chord+mode", "trigger": "b" }
     ]
   },
   {

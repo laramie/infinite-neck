@@ -245,6 +245,15 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
     return `[${include.join(',')}]`;
   }
 
+  getAuditInputs() {
+    const include = this.buildIncludeFlagsSummary().slice(1, -1);
+    return `include:${include}`;
+  }
+
+  getAuditOutputs() {
+    return undefined;
+  }
+
   buildOptionsSummary() {
     return `motions:${this.getProperty('motion')?.getValue()} include:${this.buildIncludeFlagsSummary()} targetTable:${this.getSelectedTargetTableID()}`;
   }

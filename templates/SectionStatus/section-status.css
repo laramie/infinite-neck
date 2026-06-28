@@ -1,11 +1,12 @@
 .SectionStatus_loopLight {
     border: 2px solid green; 
     padding: 0.18em;
-    border-radius: 10%;
+    border-radius: 0.7em 0.3em 0.3em 0.7em;
     display: inline-block;
 }
 .section-status-vertical-table .SectionStatus_loopLight {
     padding: 0;
+    border-radius: 1.2em 1.2em 0.3em 0.3em;
 }
 
 .SectionStatus_loopActive {
@@ -129,14 +130,17 @@
 .SectionStatusWidget--leadSheet .RecordDot {
     width: 0.5em;
     height: 0.5em;
-    margin-left: 0.14em;
+    margin-left: 0.34em;
     margin-right: 0.4em;
 }
 .SectionStatusWidget--captionRow .RecordDot {
     width: 0.5em;
     height: 0.5em;
-    margin-left: 0.2em;
+    margin-left: 0.3em;
     margin-right: 0.4em;
+}
+.section-status-vertical-table  .RecordDot {
+    margin-top: 0.4em;
 }
 
 

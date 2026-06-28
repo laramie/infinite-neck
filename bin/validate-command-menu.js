@@ -9,8 +9,12 @@ import { gMenuFile } from '../menu.js';
 //These are used by dynamically built menus, so cause warnings unless allowlisted here.
 const runtimeChildrenActionMap = new Map([
     ['pluginManager', [
+        'pluginAction:audit',
         'pluginAction:invoke',
-        'pluginAction:bury',
+        'pluginAction:graveyardBury',
+        'pluginAction:graveyardSave',
+        'pluginAction:graveyardRaise',
+        'pluginAction:graveyardLink',
         'pluginProperty:select',
         'pluginProperty:set',
         'pluginProperty:toggle'

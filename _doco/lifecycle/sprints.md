@@ -90,7 +90,9 @@ The sprints toward this effort are documented here, as well as sprints planned b
 ## Sprints prior to Version 2 rollout: prep, cleanup, fixes
 
 - [119-cleanup](../design/sprints/119-cleanup/sprint-119.md)
-  - Big list, not started.
+  - Big list
+  - One Heisenbug around TinyNotes in the tonalSourceSet hasn't shown up since, moved here.
+  - **SPRINT COMPLETE**
   
 
 - [120-plugin-feature-cleanup](../design/sprints/120-plugin-feature-cleanup/sprint-120.md)
@@ -112,17 +114,18 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - [Iteration 4: USER Theme](../design/sprints/122-persistence/sprint-122.md#iteration-4-fix-user-themes) :  DONE
   - [Iteration 5: visibleTables](../design/sprints/122-persistence/sprint-122.md#iteration-5-fix-visible-tables) : Ensure visible tables doesn't clobber tables in Model--allowed to persist without View. : DONE
   - [sprint-122-report-1: filters to keep](../design/sprints/122-persistence/122-report-1.md#sprint-122-filters-to-keep) : everything filtered : DONE
-
   - **SPRINT COMPLETE**
 
-- 123-helpfile
+- [123-helpfile](../design/sprints/123-helpfile/sprint-123.md)
   - finish plugin help file
   - move Themes to Themes gallery at end of helpfile - DONE
+  - add FAQ / HOWTO
 
 - 124-build-process
   - get tar deployment working
   - include version 
   - include README/CHANGELOG
+  - WORKING but not fully automated. See: [_doco/lifecycle/daily.md](../lifecycle/daily.md)
 
 - [125-tonal-plugin](../design/sprints/125-tonal-plugin/sprint-125.md)
   - promoted from sprint-903 on 20260602
@@ -147,15 +150,28 @@ The sprints toward this effort are documented here, as well as sprints planned b
     - Navigation while DisplayOptions are in effect: 
       - new warning color on SAVE when dirty
       - propogate DisplayOptions to every Section even when going backwards
-      - do not mark Sections that inherit DisplayOptions as dirty, and don't un-gray the CLEAR button. 
+      - do not mark Sections that inherit DisplayOptions as dirty, and don't un-gray the CLEAR button.
+      - Fixed bugs around noteRoot, especially throwing off color context.  Added fixtures for checking bass player and noteRoot
+      - Fixed bug around Fingerings not kiC lydiancking Last Color radio button 
+      - COMPLETE
 
 - [128-transpose-recorded](../design/sprints/128-transpose-recorded/sprint-128.md)
   - Get TransposePlugin to do what MovePlugin does when using options: recordedNotes, all types, algorithm: string, and motion down (and up with octave fix).
+  - **COMPLETE**
 
+- [sprint-129-graveyard-plugin-menu](../design/sprints/129-graveyard-plugin-menu/sprint-129.md)
 
-# Future Sprints Unscheduled 
+- [sprint-130-tonal-strip-root](../design/sprints/130-tonal-strip-root/sprint-130.md)
 
-- 901-floating-windows
+- [sprint-131-fill-automatic-chart](../design/sprints/131-fill-automatic-chart/sprint-131.md)
+
+- [sprint-132-plugin-order](../design/sprints/132-plugin-order/sprint-132.md)
+
+- [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
+
+- [sprint-134-song-library](../design/sprints/134-song-library/sprint-134.md)
+  - Create an accordion list for all songs on File menu page, with categories (demo, practice,...)
+  - Add features so that `songs/song-list.json` drives this list, with descriptions and directory info.
 
 - 902-song-import
   - Notes/Sections
@@ -163,7 +179,28 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - User Themes
   - Tunings
   - Be clear about which things in old and new song hang around
+  - IMPLEMENTED.  Mostly in sprint-122, I think.
+
+- 903-timing-caching
+  - [903-timing-caching design chat](../design/sprints/903-timing-caching/903-design-chat.md)
+  - Figure out how to get rid of loop hiccup on first beat
+  - Investigate paint/rebuild optimization
+  - Investigate warming up the next Section in idle time.  
+  - Investigate caching possibilities
+  - *IMPLEMENTED* A first implementation was done and installed.  Its caching and console messages are controlled with flags:
+    - const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
+	  - const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
+
+# Future Sprints Unscheduled 
+
+- 901-floating-windows
+
+
     
+#### Heisenbug tonalResultSet "Tiny"
+
+- In Chart Notes, you can select tonalResultSet of "Tiny". This informs the notes sent to Tonal.js to detect chords and modes in TonalFunctions.js::getTonalForTable().  However, we have seen NamedNotes leak into that set, so the chord detection is not based purely on TinyNotes, as the tonalSourceSet and the dropdown .tonalSourceSelect would have the User believe.  We need to keep an eye out for this case popping up again.
+
 
 # Sprint Planning Rules
 

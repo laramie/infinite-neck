@@ -165,6 +165,27 @@ export class Graveyard {
         return removed;                 
     }
 
+    clearByTypes(typeSetOrArray){
+        const selectedTypes = Array.isArray(typeSetOrArray)
+            ? new Set(typeSetOrArray.map((typeName) => `${typeName || ''}`.trim()).filter((typeName) => typeName.length > 0))
+            : (typeSetOrArray instanceof Set ? typeSetOrArray : new Set());
+        if (selectedTypes.size === 0) {
+            return 0;
+        }
+        const before = this.records.length;
+        this.records = this.records.filter((record) => !selectedTypes.has(`${record?.type || ''}`));
+        return before - this.records.length;
+    }
+
+    deleteRecordByIndex(indexNum){
+        const index = Number.parseInt(`${indexNum}`, 10);
+        if (!Number.isInteger(index) || index < 0 || index >= this.records.length) {
+            return null;
+        }
+        const removed = this.records.splice(index, 1);
+        return removed.length > 0 ? removed[0] : null;
+    }
+
     buildGraveyardTable(){
         var result = [];
         var resultBody = [];
@@ -188,9 +209,11 @@ export class Graveyard {
             var lastRevived = record.lastRevived ? record.lastRevived : "";
             var actionHtml = record.type === GraveType.CLIP
                 ? "use ClipPlugin"
-                : "<a href='#' class='graveyard-raise-link' data-grave-index='"+k+"'>raise "+k+"</a>";
+                : "<a href='#' class='graveyard-raise-link' data-grave-index='"+k+"'>raise_"+k+"</a>";
+            var jsonTarget = '#grave'+record.timestamp;
+            var deleteTargetId = 'graveDelete'+record.timestamp+'_'+k;
             var row = "<tr><td>"+k+SEP+record.type+SEP+record.timestamp+SEP+record.date+SEP+record.time+"</td><td class='graveyard-context-cell'>"+theContext+SEP+lastRevived+SEP+actionHtml+"</td></tr>";
-            var row2 = "<tr><td><a href='#' class='graveyard-toggle-json' data-target='#grave"+record.timestamp+"'>show/hide</a></td><td colspan='6'><div id='grave"+record.timestamp+"' style='display:none;'>"+record.json+"</div></td></tr>";
+            var row2 = "<tr><td style='vertical-align: text-top;'><a href='#' class='graveyard-toggle-json' data-target='"+jsonTarget+"' data-delete-target='#"+deleteTargetId+"'>show/hide "+k+"</a></td><td colspan='6'><div id='grave"+record.timestamp+"' style='display:none;'>"+record.json+"</div></td><td style='vertical-align: text-top;'><a id='"+deleteTargetId+"' href='#' class='graveyard-delete-link' data-grave-index='"+k+"' style='display:none;'>delete_"+k+"</a></td></tr>";
             resultBody.unshift(row2);
             resultBody.unshift(row);
         });

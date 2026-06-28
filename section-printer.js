@@ -12,9 +12,10 @@ import {
 } from './tonalPicker.js';
 
 
-const { Chord } = globalThis.Tonal?.Chord
+const tonalNamespace = globalThis.Tonal?.Chord
     ? globalThis.Tonal
     : await import('tonal');
+const { Chord, Mode, Scale } = tonalNamespace;
 
 const DEFAULT_CHART_HEAD_NAMES = Object.freeze([
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -147,6 +148,8 @@ function getEffectiveSongChartOptions(theSong) {
         detailLine: chartOptions.detailLine !== false,
         showCaptions: chartOptions.showCaptions !== false,
         showNextLine: chartOptions.showNextLine === true,
+        stripTonalRoots: chartOptions.stripTonalRoots === true,
+        addTransposedRootToChord: chartOptions.stripTonalRoots === true && chartOptions.addTransposedRootToChord === true,
         HEADNames: chartHeadNames,
         barClass: CHART_BAR_CLASS_VALUES.includes(chartOptions.barClass)
             ? chartOptions.barClass
@@ -164,6 +167,91 @@ function getEffectiveSongChartOptions(theSong) {
             ? chartOptions.chartSpacing
             : 'relaxed'
     };
+}
+
+function getTransposedRootDisplay(section = null) {
+    const rootID = toInt(section?.rootID, 0);
+    return Constants.NOTE_NAMES_ARRAY[rootID] || Constants.NOTE_NAMES_ARRAY[0] || '';
+}
+
+function formatChordWithoutRoot(chartChord = '') {
+    const rawValue = `${chartChord || ''}`.trim();
+    if (!rawValue || rawValue === '%') {
+        return rawValue;
+    }
+
+    const tonalChord = Chord?.get?.(rawValue) || null;
+    const symbol = `${tonalChord?.symbol || ''}`.trim();
+    const tonic = `${tonalChord?.tonic || ''}`.trim();
+    if (!symbol || !tonic) {
+        return rawValue;
+    }
+
+    if (symbol.length > tonic.length && symbol.toLowerCase().startsWith(tonic.toLowerCase())) {
+        const stripped = symbol.slice(tonic.length).trim();
+        return stripped || rawValue;
+    }
+
+    return rawValue;
+}
+
+function resolveModeName(modeValue = '') {
+    const rawValue = `${modeValue || ''}`.trim();
+    if (!rawValue) {
+        return '';
+    }
+
+    if (Mode && typeof Mode.name === 'function') {
+        const namedMode = `${Mode.name(rawValue) || ''}`.trim();
+        if (namedMode) {
+            return namedMode;
+        }
+    }
+
+    const modeInfo = Mode?.get?.(rawValue) || null;
+    if (modeInfo?.name) {
+        return `${modeInfo.name}`.trim();
+    }
+
+    const scaleInfo = Scale?.get?.(rawValue) || null;
+    if (scaleInfo?.type) {
+        return `${scaleInfo.type}`.trim();
+    }
+
+    return '';
+}
+
+function formatModeWithoutRoot(chartMode = '') {
+    const rawValue = `${chartMode || ''}`.trim();
+    if (!rawValue) {
+        return '';
+    }
+    return resolveModeName(rawValue) || rawValue;
+}
+
+export function getChartDisplayValue(value, valueKind = 'text', songChartOptions = {}, context = {}) {
+    const text = `${value || ''}`;
+    const section = context?.section || null;
+    if (!songChartOptions?.stripTonalRoots) {
+        return text;
+    }
+
+    let strippedText = text;
+    if (valueKind === 'chord') {
+        strippedText = formatChordWithoutRoot(text);
+    } else if (valueKind === 'mode') {
+        strippedText = formatModeWithoutRoot(text);
+    }
+
+    if (songChartOptions?.addTransposedRootToChord && (valueKind === 'chord' || valueKind === 'mode')) {
+        const rootText = getTransposedRootDisplay(section);
+        const strippedSpace =  valueKind === 'mode' ? ' ' : '';
+        if (rootText && strippedText && strippedText !== '%') {
+            return `<b class='chartTransposedRoot'>${rootText}</b>${strippedSpace}${strippedText}`;
+        }
+    }
+
+    return strippedText;
 }
 
 function percentStringToMultiplier(percentValue) {
@@ -314,9 +402,10 @@ function formatChartCaptionWidthSelect(section, idx) {
         + `</select>`;
 }
 
-function formatSongChartOptionCheckbox(optionName, isChecked, labelText) {
+function formatSongChartOptionCheckbox(optionName, isChecked, labelText, isDisabled = false) {
     const checked = isChecked ? ' checked' : '';
-    return `<label class='songChartOptionsControl'><input type='checkbox' class='songChartOptionsCheckbox' data-chart-option='${optionName}'${checked}> ${labelText}</label>`;
+    const disabled = isDisabled ? ' disabled' : '';
+    return `<label class='songChartOptionsControl'><input type='checkbox' class='songChartOptionsCheckbox' data-chart-option='${optionName}'${checked}${disabled}> ${labelText}</label>`;
 }
 
 function formatSongChartBarClassSelect(barClass) {
@@ -369,8 +458,9 @@ function formatChartStyleVariables(songChartOptions, includeChartSpacing = true)
     return ` style='${declarations.join('; ')};'`;
 }
 
-function formatChartLineValue(value) {
-    return value ? value : '&nbsp;';
+function formatChartLineValue(value, valueKind = 'text', songChartOptions = {}, context = {}) {
+    const displayValue = getChartDisplayValue(value, valueKind, songChartOptions, context);
+    return displayValue ? displayValue : '&nbsp;';
 }
 
 function formatChartCaptionText(section) {
@@ -410,16 +500,16 @@ function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass,
     const barActionAttrs = ` data-action='linkToSection' data-action-args='[${idx}]'`;
     const parts = [
         `<span class='${barClasses.join(' ')}'${barActionAttrs}>`,
-        `<div class='chartBARChord'>${formatChartLineValue(chordText)}</div>`,
+        `<div class='chartBARChord'>${formatChartLineValue(chordText, 'chord', songChartOptions, { section })}</div>`,
     ];
 
     if (isLeadSheetBar) {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions, { section })}</div>`);
         }
     } else {
         if (songChartOptions.modes) {
-            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+            parts.push(`<div class='chartBARMode'>${formatChartLineValue(section.chartMode, 'mode', songChartOptions, { section })}</div>`);
         }
         if (songChartOptions.detailLine) {
             parts.push(`<div class='chartBARMeta'>${formatChartMetaLine(theSong, section, idx)}</div>`);
@@ -571,11 +661,11 @@ function formatLeadSheetLineBar(barEntry, leadSheetLineOptions, isFirstInLine, i
 
     const parts = [
         `<span class='${barClasses.join(' ')}' data-action='linkToSection' data-action-args='[${idx}]'>`,
-        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText)}</div>`
+        `<div class='leadSheetLineBARChord'>${formatChartLineValue(chordText, 'chord', leadSheetLineOptions, { section })}</div>`
     ];
 
     if (leadSheetLineOptions.modes) {
-        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode)}</div>`);
+        parts.push(`<div class='leadSheetLineBARMode'>${formatChartLineValue(section.chartMode, 'mode', leadSheetLineOptions, { section })}</div>`);
     }
     if (leadSheetLineOptions.detailLine) {
         parts.push(`<div class='leadSheetLineBARBeatCount'>${barBeats}</div>`);
@@ -643,6 +733,8 @@ export function printChartOptions(theSong) {
         + formatSongChartOptionCheckbox('detailLine', chartOptions.detailLine, 'Show section detail line')
         + formatSongChartOptionCheckbox('showCaptions', chartOptions.showCaptions, 'Show captions')
         + formatSongChartOptionCheckbox('showNextLine', chartOptions.showNextLine, 'Show Next Line')
+        + formatSongChartOptionCheckbox('stripTonalRoots', chartOptions.stripTonalRoots, 'Strip Tonal roots (view only)')
+        + formatSongChartOptionCheckbox('addTransposedRootToChord', chartOptions.addTransposedRootToChord, 'Add transposed root to chord', !chartOptions.stripTonalRoots)
         + selectTable
         + "</div>"
         + "<div class='sectionPrinterChartOptionsColumn sectionPrinterChartOptionsColumn--right'>"
@@ -860,7 +952,7 @@ export function printSectionsNotes(theSong, theSections){
                                                         tonalResult.chords, section.chartChord, 
                                                         tonalResult.scale,  section.chartMode,
                                                         tonalResult.chord, tonalResult.mode, tonalResult.tonalSourceSet);
-            let noteRooTblNm =  tonalResult.noteRootTablename ? `: ${tonalResult.noteRootTablename}` : ''; 
+            let noteRooTblNm =  tonalResult.noteRootTablename ? `:Player: ${tonalResult.noteRootTablename.slice(Constants.TABLE_ID_PREFIX.length)}` : ''; 
             result += "<td><div class='SPN_CC'>" 
                             +(tonalResult.rootKey ? `<b>noteRoot${noteRooTblNm}:${tonalResult.rootKey}</b>&raquo;<br>` : '')
                             +chartChordsNotes+':'

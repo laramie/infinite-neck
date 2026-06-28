@@ -160,6 +160,46 @@
     white-space: pre-wrap;
 }
 
+.infoRendered kbd {
+    font-size: 94%;
+    font-family: "Kode Mono", monospace;
+    display: inline-block;
+    padding: 0.1em;
+    border: 1px solid black;
+    background-color: darkgreen;
+    color: #ffaa00;
+}
+.infoRendered kbd  b {
+    font-family: "Kode Mono", monospace;
+    color: #ffaa00;
+    font-weight: bold;
+    font-size: 120%;
+}
+.infoRendered kbd  i {
+    padding: 0.1em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    padding-bottom: 0;
+    font-family: "Kode Mono", monospace;
+    background-color: lightgreen;
+    color: black;
+    font-weight: normal;
+}
+.infoRendered kbd i b {
+    font-family: "Kode Mono", monospace;
+    color: #ac5702;
+    font-weight: bold;
+    font-size: 120%;
+}
+.infoRendered em {
+    font-weight: 600;
+    color: rgb(85, 32, 1);
+}
+.infoRendered i {
+    font-weight: 800;
+    color: rgb(40, 110, 2);
+}
+
 .infoEditControls {
     display: flex;
     align-items: center;

@@ -33,6 +33,9 @@ describe('approved values', () => {
       }[tokenName] || ''),
       getArpeggioCaptionValue: (tokenName) => ({
         arpeggioPositionsStatus: '<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span>'
+      }[tokenName] || ''),
+      getFillCaptionValue: (tokenName) => ({
+        fillPositionsStatus: '<span class="fillPositionsStatus"><table><tr><td class="fillStringRange"><span class="fillLowerString">1</span>:<span class="fillUpperString">4</span></td><td class="fillCurrentPositionPair">0</td><td class="fillCurrentPositionPair">3</td></tr></table></span>'
       }[tokenName] || '')
     });
   });
@@ -46,6 +49,7 @@ describe('approved values', () => {
     expect(approvedValues.resolveApprovedValue('transposeCurrentOffset')).toBe('3');
     expect(approvedValues.resolveApprovedValue('transposeProgressionFunctionDistances')).toBe('C<span class="transposeCaptionBox"><span class="transposeProgFunc">+II</span><span class="transposeProgOffset">+2</span><span class="transposeArrow">&Rang;</span></span>D<span class="transposeCaptionBox"><span class="transposeProgFunc">+m</span><span class="transposeProgOffset">+3</span><span class="transposeArrow">&Rang;</span></span>F');
     expect(approvedValues.resolveApprovedValue('arpeggioPositionsStatus')).toBe('<span class="arpeggioPositionsStatus"><table><tr><td>0</td><td>3</td><td class="arpeggioCurrentPositionPair">4</td><td class="arpeggioCurrentPositionPair">7</td></tr></table></span>');
+    expect(approvedValues.resolveApprovedValue('fillPositionsStatus')).toBe('<span class="fillPositionsStatus"><table><tr><td class="fillStringRange"><span class="fillLowerString">1</span>:<span class="fillUpperString">4</span></td><td class="fillCurrentPositionPair">0</td><td class="fillCurrentPositionPair">3</td></tr></table></span>');
   });
 
   test('expandApprovedTemplate interpolates general and transpose caption values', () => {

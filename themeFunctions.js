@@ -102,16 +102,20 @@ import { gThemes } from './themes.js';
 		//console.log("themeToControls:"+JSON.stringify(theme, null, 2));
 		function setThemeControlValues(){
 			setVal('#dropDownNoteRadius', 'noteRadius'); //  1%-50%
+			setVal('#dropDownNoteCornerShape', 'noteCornerShape'); //  bevel
 			setVal('#dropDownNamedNoteRadius', 'namedNoteRadius');  //  1%-50%
 			setVal('#dropDownIvoryEbony', 'notePadding');  //padding is 0.5-1.5em
 			setVal('#dropDownCellSpacing', 'cellSpacing');  //border-spacing is 0.1-1.0em
 			setVal('#dropDownInstrumentBackground', 'instrumentBackground');
 			setVal('#dropDownInstrumentMargins', 'instrumentMargins');
 			setVal('#dropDownNutColor', 'nutColor');
+			setVal('#dropDownRootColor', 'rootColor');
 			setVal('#dropDownDiamondsSize', 'diamondsSize');
 			setVal('#dropDownDiamondsColor', 'diamondsColor');
 			setVal('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			setVal('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			setVal('#dropDownSingleNoteShrink', 'singleNoteShrink');
+			setVal('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			setVal('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			setVal('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			setVal('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
@@ -150,16 +154,20 @@ import { gThemes } from './themes.js';
 			options.id = options.id + "-"+$('#selThemes').val();
 			options.caption = options.caption + "+"+$('#selThemes option:selected').text();
 			options.noteRadius = $('#dropDownNoteRadius').val();
+			options.noteCornerShape = $('#dropDownNoteCornerShape').val();
 			options.namedNoteRadius = $('#dropDownNamedNoteRadius').val();
 			options.notePadding = $('#dropDownIvoryEbony').val();
 			options.cellSpacing = $('#dropDownCellSpacing').val();
 			options.instrumentBackground = $('#dropDownInstrumentBackground').val();
 			options.instrumentMargins = $('#dropDownInstrumentMargins').val();
 			options.nutColor = $('#dropDownNutColor').val();
+			options.rootColor = $('#dropDownRootColor').val();
 			options.diamondsSize = $('#dropDownDiamondsSize').val();
 			options.diamondsColor = $('#dropDownDiamondsColor').val();
 			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor').val();
 			options.diamondsBackgroundColor = $('#dropDownDiamondsBackgroundColor').val();
+			options.singleNoteShrink = $('#dropDownSingleNoteShrink').val();
+			options.singleNoteShadowColor = $('#dropDownSingleNoteShadowColor').val();
 			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor').val();
 			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor').val();
 			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor').val();
@@ -187,9 +195,9 @@ import { gThemes } from './themes.js';
 		}
 		overwriteDefaultWithThemeValue(options, origThemeOptions);
 		overwriteDefaultWithControlValue(options);
-		console.log("orig:"+JSON.stringify(origThemeOptions));
-		console.log("default:"+JSON.stringify(defaultOptions));
-		console.log("new:"+JSON.stringify(options));
+		//console.log("orig:"+JSON.stringify(origThemeOptions));
+		//console.log("default:"+JSON.stringify(defaultOptions));
+		//console.log("new:"+JSON.stringify(options));
 
 		themeDiffResults(themeDiff(options, defaultOptions, origThemeOptions));
 		return options;
@@ -276,6 +284,7 @@ import { gThemes } from './themes.js';
 		var styleBody = "td.note {"
 						         +rule("padding", "notePadding")
 						         +rule("border-radius", "noteRadius")
+						         +rule("corner-shape", "noteCornerShape")
 								 +"}"
 						 +" .namedNote, .NoteDisplay {"
 						         +rule("border-radius", "namedNoteRadius")
@@ -308,15 +317,18 @@ import { gThemes } from './themes.js';
 								 +"}"
 						 +" :root { "
 									+rule("--nut-gradient-color", "nutColor")
+									+rule("--note-root-color", "rootColor")
 									+rule("--diamonds-color", "diamondsColor")
 									+rule("--diamonds-background-color", "diamondsBackgroundColor")
 									+rule("--double-diamonds-color", "doubleDiamondsColor")
 									+rule("--diamonds-size", "diamondsSize")
+									+rule("--single-note-shrink", "singleNoteShrink")
 									+rule("--note-white-color", "noteWhiteColor")
 			
 									+rule("--note-white-key-special-color", "noteWhiteKeySpecialColor")
 									+rule("--note-black-key-special-color", "noteBlackKeySpecialColor")
 
+									+rule("--single-note-shadow-color", "singleNoteShadowColor")
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
 									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black') + "; "
@@ -365,16 +377,20 @@ import { gThemes } from './themes.js';
 		//Now show what's in all those SELECT dropdowns.
 		function auditThemesShowOptions(){
 			showOptions('#dropDownNoteRadius', 'noteRadius');
+			showOptions('#dropDownNoteCornerShape', 'noteCornerShape');
 			showOptions('#dropDownNamedNoteRadius', 'namedNoteRadius');
 			showOptions('#dropDownIvoryEbony', 'notePadding');
 			showOptions('#dropDownCellSpacing', 'cellSpacing');
 			showOptions('#dropDownInstrumentBackground', 'instrumentBackground');
 			showOptions('#dropDownInstrumentMargins', 'instrumentMargins');
 			showOptions('#dropDownNutColor', 'nutColor');
+			showOptions('#dropDownRootColor', 'rootColor');
 			showOptions('#dropDownDiamondsSize', 'diamondsSize');
 			showOptions('#dropDownDiamondsColor', 'diamondsColor');
 			showOptions('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			showOptions('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			showOptions('#dropDownSingleNoteShrink', 'singleNoteShrink');
+			showOptions('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			showOptions('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			showOptions('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
 			showOptions('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');

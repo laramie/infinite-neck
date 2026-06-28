@@ -43,7 +43,7 @@ function makeNamedNotesFromNames(noteNames) {
 	return Object.fromEntries(noteNames.map((noteName) => [noteName, { enabled: true }]));
 }
 
-function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1 } = {}) {
+function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = null, playedNotes = [], rootID = 3, currentBeat = 1, chartChord = '', chartMode = '' } = {}) {
 	const plugin = new ArpeggioPlugin();
 	const tuning = {
 		baseID: 'ARP',
@@ -59,6 +59,8 @@ function makeContext({ beats = 6, rowRange = [40, 45], frets = 2, namedNotes = n
 	const section = {
 		beats,
 		rootID,
+		chartChord,
+		chartMode,
 		currentBeat,
 		sectionNotesByTable: {
 			[tableID]: sectionNotes
@@ -141,7 +143,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
-		expect(help).toContain('type = NamedNote or SingleNote');
+		expect(help).toContain('type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
 	});
 
 		test('menu includes type before show note name', () => {
@@ -175,7 +177,9 @@ describe('ArpeggioPlugin sequencing', () => {
 			'positions:copyToAllSections',
 			'positions:copyToUnsetSections',
 			'positions:refreshCurrentSection',
-			'positions:setCurrentSection'
+			'positions:setCurrentSection',
+			'songLoopsPerPositionPair',
+			'positions:importFromFill'
 		]);
 		expect(stringsNode.children.map((child) => child.name)).toEqual([
 			'minRow',
@@ -271,7 +275,22 @@ describe('ArpeggioPlugin sequencing', () => {
 	test('registers reset event alongside section-begin and beat display events', () => {
 		const plugin = new ArpeggioPlugin();
 
-		expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'SongUiShowBeats', 'Looper:OnResetSong']);
+		expect(plugin.getEventNames()).toEqual(['DaCapo:OnSectionBegin', 'DaCapo:OnSongEnd', 'SongUiShowBeats', 'Looper:OnResetSong']);
+	});
+
+	test('song loops per position pair defaults to 1 and rejects values below 1', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
+
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(1);
+		plugin.setPropertyValue('songLoopsPerPositionPair', 3, { song });
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(3);
+		EventBus.trigger.mockClear();
+		plugin.setPropertyValue('songLoopsPerPositionPair', 0, { song });
+		expect(plugin.getProperty('songLoopsPerPositionPair').getValue()).toBe(1);
+		expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+			subSystem: 'ArpeggioPlugin',
+			message: 'songLoopsPerPositionPair must be greater than or equal to 1'
+		});
 	});
 
 	test('result strings use user-facing skip terminology', () => {
@@ -281,7 +300,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(plugin.applyToSection({ song: null }).result).toBe('Arpeggio skipped: no song loaded');
 	});
 
-	test('style=random excludes duplicate string/fret positions before repeating the cycle', () => {
+	test('style=random excludes duplicate string/fret positions and reshuffles on cycle exhaustion', () => {
 		const { plugin } = makeContext();
 		const duplicateCandidates = [
 			{ noteName: 'C', midinum: 36, row: 0, col: 0 },
@@ -292,10 +311,12 @@ describe('ArpeggioPlugin sequencing', () => {
 		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
 			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
 			.mockReturnValueOnce(0.0);
 
 		expect(plugin.expandRandomSequence(duplicateCandidates, 5).map((candidate) => candidate.midinum)).toEqual([
-			36, 38, 40, 36, 38
+			36, 38, 40, 40, 36
 		]);
 
 		randomSpy.mockRestore();
@@ -327,7 +348,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(getBeatMidinums(sectionNotes, 4)).toEqual([50, 51, 45, 46]);
 	});
 
-	test('style=random ignores lowToHigh and repeats the chosen random order after exhaustion', () => {
+	test('style=random ignores lowToHigh and reshuffles after exhausting one cycle', () => {
 		const { plugin, song, sectionNotes } = makeContext({ beats: 6, rowRange: [40, 45], frets: 1 });
 		plugin.setPropertyValue('style', 'random', { song });
 		plugin.setPropertyValue('lowToHigh', false, { song });
@@ -336,12 +357,84 @@ describe('ArpeggioPlugin sequencing', () => {
 			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.9)
 			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
 			.mockReturnValueOnce(0.0);
 
 		const result = plugin.applyToSection({ song, clearSectionFirst: true });
 
 		expect(result.result).toContain('generated=6');
-		expect(getBeatMidinums(sectionNotes, 6)).toEqual([45, 41, 46, 40, 45, 41]);
+		expect(getBeatMidinums(sectionNotes, 6)).toEqual([45, 41, 46, 40, 41, 45]);
+		expect(randomSpy).toHaveBeenCalledTimes(8);
+		randomSpy.mockRestore();
+	});
+
+	test('flashcard one-mode with random reveals the exact previous highlighted cell', () => {
+		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3, currentBeat: 1 });
+		plugin.setPropertyValue('style', 'random', { song });
+		plugin.setPropertyValue('showNoteName', 'one', { song });
+		plugin.setPropertyValue('flashcard', true, { song });
+		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0);
+
+		plugin.applyToSection({ song, clearSectionFirst: true });
+		plugin.skipNextSongUiShowBeats = false;
+		EventBus.trigger.mockClear();
+
+		song.getBeat.mockReturnValue(2);
+		song.getCurrentSection().currentBeat = 2;
+		plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+		expectNamedNoteEvent({
+			owner: 'ArpeggioPlugin',
+			clearExisting: true,
+			cells: [{ tableID: 'tblARP', cellrow: '0', cellcol: '3', colorClass: 'noteTransparent' }]
+		});
+		// One random shuffle for the section sequence; display refresh must reuse it.
+		expect(randomSpy).toHaveBeenCalledTimes(4);
+		randomSpy.mockRestore();
+	});
+
+	test('DaCapo section-begin reuse paths keep the existing random sequence and notes', () => {
+		const { plugin, song, sectionNotes } = makeContext({ beats: 6, rowRange: [40, 45], frets: 1, currentBeat: 4 });
+		plugin.setPropertyValue('style', 'random', { song });
+		const randomSpy = jest.spyOn(plugin, 'getRandomNumber')
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.9)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.75)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0)
+			.mockReturnValueOnce(0.0);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', { regenerateRandomSequence: true }, { song });
+		const beforeRestartSection = JSON.parse(JSON.stringify(sectionNotes.recordedNotes));
+		const randomCallsAfterGenerate = randomSpy.mock.calls.length;
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {
+			transportAction: 'RestartSection',
+			reuseRandomSequence: true
+		}, { song });
+		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
+		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
+
+		plugin.handleEvent('DaCapo:OnSectionBegin', {
+			transportAction: 'LoopBeatsWrap',
+			reuseRandomSequence: true
+		}, { song });
+		expect(sectionNotes.recordedNotes).toEqual(beforeRestartSection);
+		expect(randomSpy.mock.calls.length).toBe(randomCallsAfterGenerate);
+
 		randomSpy.mockRestore();
 	});
 
@@ -706,14 +799,93 @@ describe('ArpeggioPlugin sequencing', () => {
 
 	test('type property persists through export and load song state', () => {
 		const { plugin, song } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
-		plugin.setPropertyValue('type', 'SingleNote', { song });
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
 
 		const exported = plugin.exportSongState();
 		plugin.loadSongState({ type: 'NamedNote' }, { song });
 		plugin.loadSongState(exported, { song });
 
-		expect(exported.type).toBe('SingleNote');
-		expect(plugin.getProperty('type').getValue()).toBe('SingleNote');
+		expect(exported.type).toBe('AutoChartMode');
+		expect(plugin.getProperty('type').getValue()).toBe('AutoChartMode');
+	});
+
+	test('type=AutoChartChord derives candidate note names from chartChord and transposed section root', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartChord: 'Gbmaj7'
+		});
+		plugin.setPropertyValue('type', 'AutoChartChord', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'Eb', 'Gb']);
+	});
+
+	test('type=AutoChartMode derives candidate note names from chartMode and transposed section root', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartMode: 'Gb harmonic minor'
+		});
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'D', 'Db', 'E', 'G', 'Gb']);
+	});
+
+	test('type=AutoChartChordMode unions chord and mode candidate note names', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 2,
+			chartChord: 'Gbmaj7',
+			chartMode: 'Gb harmonic minor'
+		});
+		plugin.setPropertyValue('type', 'AutoChartChordMode', { song });
+
+		const candidateNames = Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section)).sort();
+
+		expect(candidateNames).toEqual(['B', 'Bb', 'D', 'Db', 'E', 'Eb', 'G', 'Gb']);
+	});
+
+	test('auto chart source types treat empty, none, and percent as unresolved', () => {
+		const { plugin, song, section } = makeContext({
+			beats: 4,
+			rowRange: [48],
+			frets: 12,
+			namedNotes: {},
+			playedNotes: [],
+			rootID: 5
+		});
+
+		plugin.setPropertyValue('type', 'AutoChartChord', { song });
+		section.chartChord = '';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartChord = 'none';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartChord = '%';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+
+		plugin.setPropertyValue('type', 'AutoChartMode', { song });
+		section.chartMode = '';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartMode = 'none';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
+		section.chartMode = '%';
+		expect(Array.from(plugin.collectCandidateNoteNames(section.getSectionNotes('tblARP'), section))).toEqual([]);
 	});
 
 	test('style=bach with lowToHigh=false does not repeat the rotated seam note', () => {
@@ -768,7 +940,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(sectionNotes.recordedNotes).toEqual({});
 	});
 
-	test('top-level clear resets all section position indexes and refreshes current status', () => {
+	test('top-level clear resets all section indexes and refreshes current section status', () => {
 		const { plugin, song, section, sectionNotes } = makeContext({ beats: 4, rowRange: [40], frets: 6 });
 		plugin.setManager({
 			song,
@@ -802,7 +974,7 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(result.result).toContain('removed');
 		expect(result.result).toContain('reset 2 position counters');
-		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
 		expect(sectionNotes.recordedNotes).toEqual({});
 		expect(song.requestUiShowBeats).toHaveBeenCalledTimes(1);
@@ -838,7 +1010,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(EventBus.trigger).toHaveBeenCalledWith('UpdateSectionStatus', { sectionIndex: undefined });
 	});
 
-	test('copying positions resets the source and target section indexes to not-played-yet', () => {
+	test('copying positions resets target indexes and refreshes the current section index', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 8 });
 		plugin.setManager({
 			song,
@@ -868,7 +1040,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		const result = plugin.copyPositionsToSections(song, { onlyUnset: false });
 
 		expect(result.result).toBe('positions copied to 1 sections');
-		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 		expect(secondSection.pluginData.arpeggio.positions).toEqual([[0, 3], [3, 5], [5, 8]]);
 		expect(secondSection.pluginData.arpeggio.lastPositionIndex).toBe(-1);
 		expect(plugin.getApprovedCaptionValue('arpeggioPositionsStatus', { song, section })).toBe('<span class="arpeggioPositionsStatus"><table><tr><td class="arpeggioStringRange"><span class="arpeggioLowerString">1</span>:<span class="arpeggioUpperString">1</span></td><td class="arpeggioCurrentPositionPair">0</td><td class="arpeggioCurrentPositionPair">3</td><td>3</td><td>5</td><td>5</td><td>8</td></tr></table></span>');
@@ -903,7 +1075,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(section.pluginData.arpeggio.positions).toEqual([[0, 3], [4, 5]]);
 	});
 
-	test('DaCapo section-begin advances positions from index zero and wraps', () => {
+	test('DaCapo section-begin uses current song-loop position while DaCapo song-end advances and wraps', () => {
 		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
 		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
 
@@ -912,30 +1084,34 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
 
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
 		beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(0);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(0);
 	});
 
-	test('manual apply uses the current resolved position and does not advance the index', () => {
+	test('manual apply uses the current song-loop position and does not advance it', () => {
 		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
-		plugin.setLastPositionIndex(section, 1);
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 
 		plugin.invokeAction('apply', { song });
 
 		const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
 		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
+		plugin.invokeAction('apply', { song });
+		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(1);
 	});
 
-	test('SongUiShowBeats uses the stored position without advancing it', () => {
+	test('SongUiShowBeats uses current song-loop position without advancing it', () => {
 		const { plugin, song, section } = makeContext({ beats: 4, rowRange: [40], frets: 4, currentBeat: 1 });
 		plugin.setManager({
 			song,
@@ -943,7 +1119,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		});
 		plugin.setPropertyValue('showNoteName', 'one', { song });
 		plugin.setPositionsForCurrentSection(song, '0,0;2,2');
-		plugin.setLastPositionIndex(section, 1);
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
 		plugin.skipNextSongUiShowBeats = false;
 		EventBus.trigger.mockClear();
 
@@ -987,6 +1163,25 @@ describe('ArpeggioPlugin sequencing', () => {
 		plugin.handleEvent('Looper:OnResetSong', { hard: false }, { song });
 
 		expect(section.pluginData.arpeggio.lastPositionIndex).toBe(-1);
+		expect(plugin.songLoopCountForPositionPair).toBe(0);
+	});
+
+	test('song loops per position pair delays pair advance until loop threshold', () => {
+		const { plugin, song, section } = makeContext({ beats: 2, rowRange: [40], frets: 4 });
+		plugin.setPropertyValue('songLoopsPerPositionPair', 3, { song });
+		plugin.setSectionPositions(section, [[0, 0], [2, 2]]);
+
+		for (let loopIdx = 0; loopIdx < 2; loopIdx += 1) {
+			plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+			plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+			const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+			expect(Number.parseInt(beatOne.col, 10)).toBe(0);
+		}
+
+		plugin.handleEvent('DaCapo:OnSongEnd', {}, { song });
+		plugin.handleEvent('DaCapo:OnSectionBegin', {}, { song });
+		const beatOne = section.sectionNotesByTable.tblARP.recordedNotes['1'][0];
+		expect(Number.parseInt(beatOne.col, 10)).toBe(2);
 	});
 
 	test('arpeggioPositionsStatus highlights the first pair when reset leaves positions not-played-yet', () => {

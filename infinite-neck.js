@@ -38,6 +38,8 @@ import {
 	PalettePresentation 
 } from './presentation.js';
 import {
+	addToUserLog,
+	clearUserLog,
 	getFontSize,
 	getUIFontSize,
 	hideGraveyard,
@@ -62,6 +64,7 @@ import {
 import './menu.js';
 import {
 	buildCellsFromSelector,
+	cellBuilder,
 	clearAll,
 	clearHighlights,
 	colorNote,
@@ -74,6 +77,7 @@ import {
 	showMidiNotesInTable,
 	fullRepaint
 } from './NoteTableController.js';
+import * as NoteTableRenderCache from './NoteTableRenderCache.js';
 import {
 	Note
 } from './Note.js'; 
@@ -107,9 +111,14 @@ import {
 	scrollToTop,
 	toInt
 } from './utils.js';
+import {
+	canonicalizeChordForStorage,
+	canonicalizeModeForStorage
+} from './plugins/chart/chart-tonal-resolver.js';
 import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
+import * as SongLibrary from './SongLibrary.js';
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
@@ -137,6 +146,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const NATURAL = "&nbsp;";
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
+	const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
+	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
 
 	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
 						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
@@ -223,6 +234,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					song: getSong(),
 					section: getCurrentSection()
 				});
+			},
+			getFillCaptionValue: (tokenName) => {
+				const plugin = pluginManager.getPluginById('fill');
+				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
+					return '';
+				}
+				return plugin.getApprovedCaptionValue(tokenName, {
+					song: getSong(),
+					section: getCurrentSection()
+				});
 			}
 		});
 		setNotetableProviders({
@@ -246,6 +267,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			cycleThruKeys,
 			cycleThruNutWidths: (...args) => cycleThruNutWidths(...args),
 			downloadBackupThenClearGraveyard,
+			downloadBackupThenClearGraveyardByType,
 			downloadPlayedNotes,
 			enterFullscreen,
 			getBPM,
@@ -275,6 +297,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setSingleNoteOpacity,
 			setTinyNoteOpacity,
 			showAllNoteNames,
+			toggleShowAllNoteNames,
 			showInfoDialog,
 			showOneMenu,
 			toggleCaption,
@@ -464,6 +487,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		clearAndReplaySection();
 		// Refresh plugin menus so that Tonal datalables/suggestions are current when user navigates to /fpoa, etc.
 		pluginManager.refreshPluginsMenuNode();
+		if (NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			EventBus.trigger('NoteTableCache:prewarmNextSection', {
+				currentSectionIndex: getSectionsCurrentIndex(),
+				reason: 'sectionChanged'
+			});
+		}
 	}
 
 	export function updateSectionsStatus(){
@@ -474,11 +503,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
-		var pluginWidgets = expandApprovedTemplate("${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
+		var pluginWidgets = expandApprovedTemplate("${fillPositionsStatus} &nbsp;&nbsp;&nbsp; ${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
-	    $(".lblSectionChartChord").html( getSong().getCurrentSection().chartChord);
-	    $(".lblSectionMode").html( getSong().getCurrentSection().chartMode);
+		const chartOptions = getSong().chartOptions || {};
+		const currentSection = getSong().getCurrentSection();
+		const displayChartChord = SectionPrinter.getChartDisplayValue(currentSection.chartChord, 'chord', chartOptions, { section: currentSection });
+		const displayChartMode = SectionPrinter.getChartDisplayValue(currentSection.chartMode, 'mode', chartOptions, { section: currentSection });
+	    $(".lblSectionChartChord").html(displayChartChord);
+	    $(".lblSectionMode").html(displayChartMode);
 
 		var currentFilename = getSong().songName;
 		if (currentFilename === undefined || currentFilename === null || currentFilename === '') {
@@ -642,18 +675,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function showMessagesTab(which) {
-		var showMsgs = which !== 'JsonTree';
+		var showMsgs = which !== 'JsonTree' && which !== 'UserLog';
+		var showJsonTree = which === 'JsonTree';
+		var showUserLog = which === 'UserLog';
 		   $('#divMessages').toggle(showMsgs);
-		   $('#divJsonTree').toggle(!showMsgs);
-		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnHideMessagesJsonTree';
+		   $('#divJsonTree').toggle(showJsonTree);
+		   $('#divUserLog').toggle(showUserLog);
+		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnUserLog, #btnHideMessagesJsonTree';
 		   $(selector).css('display', 'inline-block');
 
 		   $('#btnMessagesTab')
 			   .toggleClass('BtnPunchedIn', showMsgs)
 			   .toggleClass('BtnPunchedOut', !showMsgs);
 		   $('#btnJsonTreeTab')
-			   .toggleClass('BtnPunchedIn', !showMsgs)
-			   .toggleClass('BtnPunchedOut', showMsgs);
+			   .toggleClass('BtnPunchedIn', showJsonTree)
+			   .toggleClass('BtnPunchedOut', !showJsonTree);
+		   $('#btnUserLog')
+			   .toggleClass('BtnPunchedIn', showUserLog)
+			   .toggleClass('BtnPunchedOut', !showUserLog);
 	   }
 	function hideMessages_KeyHandler(){
 		hideMessages();
@@ -775,26 +814,237 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (tableID){
 			tableID_prefix = '#'+tableID + ' ';
 		}
-		if (sharps) {
-			buildCellsFromSelector(tableID_prefix+"td.noteAb", "G", SHARP, 11, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteBb", "A", SHARP, 1, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteDb", "C", SHARP, 4, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteEb", "D", SHARP, 6, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteGb", "F", SHARP, 9, options);
-		} else {
-			buildCellsFromSelector(tableID_prefix+"td.noteAb","A", FLAT, 11, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteBb","B", FLAT, 1, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteDb","D", FLAT, 4, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteEb","E", FLAT, 6, options);
-			buildCellsFromSelector(tableID_prefix+"td.noteGb","G", FLAT, 9, options);
+		const timingStart = getNoteTableTimingNow();
+		const noteNamesFuncArr = Array.isArray(options.noteNamesFuncArr)
+			? options.noteNamesFuncArr
+			: getSong()?.noteNamesFuncArr;
+		const tuning = tableID ? TuningsLibrary.findTuningForName(tableID) : null;
+		const renderCacheKey = (NOTE_TABLE_RENDER_CACHE_ENABLED && tableID)
+			? NoteTableRenderCache.buildRenderKey({ tableID, options, tuning, noteNamesFuncArr })
+			: '';
+		const renderCacheEntry = renderCacheKey ? NoteTableRenderCache.get(renderCacheKey) : null;
+		let selectorCount = 0;
+
+		NoteTableRenderCache.getNoteClassSpecs(sharps).forEach((spec) => {
+			selectorCount++;
+			buildCellsFromSelector(
+				tableID_prefix+`td.${spec.noteClass}`,
+				spec.noteLetter,
+				spec.sharpflat,
+				spec.noteNum,
+				options,
+				renderCacheEntry,
+				spec.noteClass
+			);
+		});
+		dumpNoteTableTiming('buildCellsForTable', {
+			tableID: tableID || '(all tables)',
+			durationMs: getNoteTableTimingNow() - timingStart,
+			cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED
+				? (renderCacheEntry ? 'hit' : 'miss')
+				: 'disabled',
+			selectorCount,
+			sharps: !!sharps,
+			rootID: options.rootID,
+			rootIDLead: options.rootIDLead
+		});
+	}
+
+	let noteTablePrewarmGeneration = 0;
+
+	function getNoteTableTimingNow(){
+		const perf = globalThis?.performance || globalThis?.window?.performance;
+		if (perf && typeof perf.now === 'function') {
+			return perf.now();
 		}
-		buildCellsFromSelector(tableID_prefix+"td.noteA","A", NATURAL, 0, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteB","B", NATURAL, 2, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteC","C", NATURAL, 3, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteD","D", NATURAL, 5, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteE","E", NATURAL, 7, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteF","F", NATURAL, 8, options);
-		buildCellsFromSelector(tableID_prefix+"td.noteG","G", NATURAL, 10, options);
+		return Date.now();
+	}
+
+	function dumpNoteTableTiming(label, data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED) {
+			return;
+		}
+		const payload = {
+			...data,
+			durationMs: Math.round((Number(data.durationMs) || 0) * 100) / 100
+		};
+		console.info(`[NoteTableTiming] ${label}`, payload);
+	}
+
+	function scheduleNoteTableCacheWork(work){
+		const requestIdle = globalThis?.requestIdleCallback || globalThis?.window?.requestIdleCallback;
+		if (typeof requestIdle === 'function') {
+			return requestIdle(work, { timeout: 500 });
+		}
+		return setTimeout(() => work({ didTimeout: true, timeRemaining: () => 0 }), 0);
+	}
+
+	function parseNoteNamesFuncArrForOptions(options = {}){
+		const optionValue = options.dropDownFunctionSymbols?.value;
+		if (optionValue) {
+			try {
+				return JSON.parse(optionValue);
+			} catch (error) {
+				// Fall back to the current song symbols below.
+			}
+		}
+		return Array.isArray(getSong()?.noteNamesFuncArr)
+			? [...getSong().noteNamesFuncArr]
+			: [];
+	}
+
+	function buildRenderOptionsForSection(section){
+		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
+		const displayOptions = cloneDisplayOptions(getSong().getDisplayOptionsInEffect(section, defaultDisplayOptions));
+		const options = {
+			...displayOptions,
+			rootID: section?.rootID ?? 0,
+			rootIDLead: section?.rootIDLead ?? -1,
+			sharps: !!section?.sharps
+		};
+		options.noteNamesFuncArr = parseNoteNamesFuncArrForOptions(options);
+		return options;
+	}
+
+	function getPrewarmSectionForTable(song, tableID, baseSectionIndex){
+		const wiring = Array.isArray(song?.wirings)
+			? song.wirings.find((entry) => entry?.tablename === tableID)
+			: null;
+		const relativeSection = `${wiring?.relativeSection || ''}`.trim();
+		if (!relativeSection) {
+			return song.getSections()[baseSectionIndex];
+		}
+
+		const previousIndex = song.gSectionsCurrentIndex;
+		try {
+			song.gSectionsCurrentIndex = baseSectionIndex;
+			return song.getRelativeSectionWithWrap(relativeSection);
+		} finally {
+			song.gSectionsCurrentIndex = previousIndex;
+		}
+	}
+
+	function buildPrewarmTaskForTable(tableID, sectionIndex){
+		const song = getSong();
+		const section = getPrewarmSectionForTable(song, tableID, sectionIndex);
+		const tuning = TuningsLibrary.findTuningForName(tableID);
+		if (!section || !tuning) {
+			return null;
+		}
+
+		const options = buildRenderOptionsForSection(section);
+		const key = NoteTableRenderCache.buildRenderKey({
+			tableID,
+			options,
+			tuning,
+			noteNamesFuncArr: options.noteNamesFuncArr
+		});
+
+		if (NoteTableRenderCache.has(key)) {
+			return null;
+		}
+
+		return {
+			key,
+			options,
+			sectionIndex,
+			tableID,
+			tuning
+		};
+	}
+
+	function runNoteTablePrewarmTasks(tasks, generation, reason = ''){
+		const timingStart = getNoteTableTimingNow();
+		if (!Array.isArray(tasks) || tasks.length === 0) {
+			dumpNoteTableTiming('prewarmSection', {
+				cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED ? 'no-work' : 'disabled',
+				durationMs: getNoteTableTimingNow() - timingStart,
+				reason,
+				taskCount: 0
+			});
+			EventBus.trigger('NoteTableCache:ready', { count: 0, reason });
+			return;
+		}
+
+		let completed = 0;
+		const taskCount = tasks.length;
+		function runNext(){
+			if (generation !== noteTablePrewarmGeneration) {
+				return;
+			}
+			const task = tasks.shift();
+			if (!task) {
+				dumpNoteTableTiming('prewarmSection', {
+					cacheState: 'stored',
+					completed,
+					durationMs: getNoteTableTimingNow() - timingStart,
+					reason,
+					taskCount
+				});
+				EventBus.trigger('NoteTableCache:ready', { count: completed, reason });
+				return;
+			}
+
+			const entry = NoteTableRenderCache.createEntry({
+				key: task.key,
+				tableID: task.tableID,
+				sectionIndex: task.sectionIndex,
+				options: task.options,
+				tuning: task.tuning,
+				buildCellHtml: ({ noteLetter, sharpflat, noteNum, midinum, options }) => {
+					return cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
+				}
+			});
+			NoteTableRenderCache.set(task.key, entry);
+			completed++;
+			scheduleNoteTableCacheWork(runNext);
+		}
+
+		scheduleNoteTableCacheWork(runNext);
+	}
+
+	function prewarmNoteTablesForSection(sectionIndex, data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			dumpNoteTableTiming('prewarmSection', {
+				cacheState: 'disabled',
+				durationMs: 0,
+				reason: data.reason || 'prewarmSection',
+				sectionIndex
+			});
+			return;
+		}
+		const song = getSong();
+		const sections = song?.getSections?.() || [];
+		if (!song || song.isHeadless || sectionIndex < 0 || sectionIndex >= sections.length) {
+			return;
+		}
+
+		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 3));
+		const generation = ++noteTablePrewarmGeneration;
+		const tasks = song.getVisibleTunings()
+			.map((tableID) => buildPrewarmTaskForTable(tableID, sectionIndex))
+			.filter(Boolean);
+		runNoteTablePrewarmTasks(tasks, generation, data.reason || 'prewarmSection');
+	}
+
+	function prewarmNextSectionNoteTables(data = {}){
+		if (!NOTE_TABLE_RENDER_CACHE_ENABLED) {
+			return;
+		}
+		const song = getSong();
+		const nextSectionIndex = NoteTableRenderCache.getNextSectionIndexForPrewarm(song);
+		if (nextSectionIndex < 0) {
+			return;
+		}
+		prewarmNoteTablesForSection(nextSectionIndex, {
+			...data,
+			reason: data.reason || 'prewarmNextSection'
+		});
+	}
+
+	function invalidateNoteTableRenderCache(){
+		noteTablePrewarmGeneration++;
+		NoteTableRenderCache.clear();
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,
@@ -1002,6 +1252,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
+	export function downloadBackupThenClearGraveyardByType(selectedTypes = []) {
+		const normalizedSelectedTypes = (selectedTypes || [])
+			.map((typeName) => `${typeName || ''}`.trim())
+			.filter((typeName) => typeName.length > 0);
+
+		if (normalizedSelectedTypes.length === 0) {
+			return { result: 'no types selected' };
+		}
+
+		downloadPlayedNotes();
+		const removed = getSong().graveyard.clearByTypes(normalizedSelectedTypes);
+		showMessages(getSong().graveyard.buildGraveyardTable());
+		return { result: `cleared: ${normalizedSelectedTypes.join(',')} (${removed})` };
+	}
+
 	//==================== 3) File open/save and persistence ==================
 
 	export function getPersistentSongFile(){
@@ -1155,6 +1420,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		gSong = new Song(jsonObj);
+		clearUserLog();
 		gSong.ensureDefaultSection();
 		pluginManager.loadSongPluginState(gSong);
 		updateAfterOpenSong();
@@ -1298,18 +1564,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function songLibrary(){
-		var divSongList = $('#divSongList');
-		if (divSongList.is(":visible") && divSongList.html().trim().length > 0){
-			divSongList.hide();
-		} else {
-			$.get( "songs/song-list.json", function(data){
-				var result = "";
-				Object.values(data.songs).forEach(song => {
-					result = result + "<a href='#' data-action='loadSong' data-action-args='"+song+"'>"+song+"</a><br />";
-				});
-				$('#divSongList').html(result).show();
-			});
-		}
+		SongLibrary.initializeSongLibrary('#divSongList');
 	}
 
 	export function showGraveyard(){
@@ -1726,6 +1981,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!getSong().chartOptions || typeof getSong().chartOptions !== 'object') {
 			getSong().chartOptions = {};
 		}
+		if (optionName === 'stripTonalRoots' && optionValue !== true) {
+			getSong().chartOptions.addTransposedRootToChord = false;
+		}
+		if (optionName === 'addTransposedRootToChord' && optionValue === true && getSong().chartOptions.stripTonalRoots !== true) {
+			optionValue = false;
+		}
 		getSong().chartOptions[optionName] = optionValue;
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
@@ -1760,14 +2021,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideCmdLine();
 	}
 	export function linkToSectionChartChord(idx, chartChord) {
-		getSong().sections[idx].chartChord = chartChord;
+		const section = getSong().sections[idx];
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		section.chartChord = canonicalizeChordForStorage(chartChord, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
 		}
 	}
 	export function linkToSectionChartMode(idx, chartMode) {
-		getSong().sections[idx].chartMode = chartMode;
+		const section = getSong().sections[idx];
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		section.chartMode = canonicalizeModeForStorage(chartMode, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 3) ? true : arguments[2];
 		if (doSectionChanged){
 			sectionChanged(); //updateSectionsStatus(); //calls printSectionsNotes();
@@ -1792,11 +2057,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 	export function linkToSectionTableChord(idx, tableID, chord) {
-		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		let section = getSong().sections[idx];
+		let sn = section.sectionNotesByTable[tableID];
 		if (!sn){
 			return;	
 		}
-		sn.chord = chord;
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		sn.chord = canonicalizeChordForStorage(chord, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();
@@ -1804,11 +2071,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function linkToSectionTableMode(idx, tableID, mode) {
-		let sn = getSong().sections[idx].sectionNotesByTable[tableID];
+		let section = getSong().sections[idx];
+		let sn = section.sectionNotesByTable[tableID];
 		if (!sn){
 			return;	
 		}
-		sn.mode = mode;
+		const rootName = getSong().noteIDToNoteName(section?.rootID ?? 0);
+		sn.mode = canonicalizeModeForStorage(mode, { rootNoteName: rootName });
 		let doSectionChanged = (arguments.length < 4) ? true : arguments[3];
 		if (doSectionChanged){
 			sectionChanged();
@@ -1923,9 +2192,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showAllNoteNames(isChecked);
 	}
 
-	//var gLastWhiteBackgroundColor = null;
-	//var gLastBlackBackgroundColor = null;
+	export function toggleShowAllNoteNames(){
+		let isChecked = $("#cbShowAllNoteNames").prop("checked");
+		console.log("toggleShowAllNoteNames isChecked: "+isChecked);
+		showAllNoteNames(!isChecked);
+	}
+
 	export function showAllNoteNames(show){
+		console.log("showAllNoteNames: "+show);
 		$("#cbShowAllNoteNames").prop("checked", !!show);
 		$('#btnShowAllNoteNames')
 			.toggleClass("BtnPunchedIn", !!show)
@@ -2063,7 +2337,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
 		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
 		$("#selTinyNoteRadius").val(options.tinyNoteRadius);
-
+		
 		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
 		setOneCssVar("--right-subscript-font-size", $("#selRightSubscriptFontSize").val());
@@ -2375,12 +2649,44 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
+		bindDelegatedEvent('click', '.graveyard-delete-link', function(e) {
+			e.preventDefault();
+			const index = toInt($(this).data('grave-index'), -1);
+			if (index >= 0) {
+				getSong().graveyard.deleteRecordByIndex(index);
+				showMessages(getSong().graveyard.buildGraveyardTable());
+			}
+		});
+
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="]', function(e) {
+			e.preventDefault();
+			const href = $(this).attr('href') || '';
+			if (href) {
+				if (window.history && typeof window.history.pushState === 'function') {
+					window.history.pushState(null, '', href);
+				}
+				pluginManager.raisePluginSnapshotsFromHash(href);
+			}
+		});
+
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="help.html#"], #divInfoRendered a[href^="help-plugins.html#"]', function(e) {
+			e.preventDefault();
+			const href = ($(this).attr('href') || '').trim();
+			if (href) {
+				window.open(href, 'infinitehelp');
+			}
+		});
+
 		bindDelegatedEvent('click', '.graveyard-toggle-json', function(e) {
 			e.preventDefault();
 			const target = $(this).data('target');
 			if (target) {
 				const jTarget = $(target);
 				jTarget.toggle();
+				const deleteTarget = $(this).data('delete-target');
+				if (deleteTarget) {
+					$(deleteTarget).toggle(jTarget.is(':visible'));
+				}
 				const moreText = $(this).data('more-text');
 				const lessText = $(this).data('less-text');
 				if (moreText && lessText) {
@@ -2510,6 +2816,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnJsonTreeTab', function() {
 			showMessagesTab('JsonTree');
+		});
+		bindEvent('click', '#btnUserLog', function() {
+			showMessagesTab('UserLog');
 		});
 		bindEvent('click', '#btnHideMessagesJsonTree', function() {
 			hideMessages_KeyHandler();
@@ -3091,6 +3400,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
  		hideAllMenuDivs();
 		$("#divQuick").hide();
 		$("#CmdMenu").hide();
+		SongLibrary.initializeSongLibrary('#divSongList');
 
 		updateFontLabel();
 
@@ -3244,16 +3554,31 @@ EventBus.on('SongUiUpdatePrintSections', function() {
 EventBus.on('SongUiClearAndReplaySection', function() {
 	clearAndReplaySection();
 });
+EventBus.on('NoteTableCache:invalidate', function() {
+	invalidateNoteTableRenderCache();
+});
+EventBus.on('NoteTableCache:prewarmNextSection', function(event, data) {
+	prewarmNextSectionNoteTables(data || {});
+});
+EventBus.on('NoteTableCache:prewarmSection', function(event, data) {
+	prewarmNoteTablesForSection(data?.sectionIndex, data || {});
+});
 EventBus.on('ShowMessages', function(event, data) {
 	showMessages(data && data.html ? data.html : '');
+});
+EventBus.on('UserLog', function(event, data) {
+	addToUserLog(data?.subSystem || '', data?.message || '');
 });
 EventBus.on('PluginManager:ShowResult', function(event, data) {
 	if (data && data.result) {
 		addCmdResults(`${data.pluginId}:${data.eventName} >> ${data.result}`);
 	}
 	if (data && data.message) {
-		showMessages(data.message);
+		addToUserLog(data?.subSystem || 'PluginManager', data.message);
 	}
+});
+EventBus.on('PluginGraveyard:linkAdded', function() {
+	InfoBuilder.renderFromSong(getSong());
 });
 
 function refreshPluginMenus() {
@@ -3261,6 +3586,7 @@ function refreshPluginMenus() {
 }
 
 EventBus.on('ReinstallAllTuningsTables', function() {
+	EventBus.trigger('NoteTableCache:invalidate', { reason: 'ReinstallAllTuningsTables' });
 	reinstallAllTuningsTables();
 	refreshPluginMenus();
 });

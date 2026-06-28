@@ -57,12 +57,30 @@ import {
 } from './infinite-neck.js';
 import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
+import * as paletteUtils from './paletteUtils.js';
 
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
+const USER_LOG_MAX_ROWS = 1000;
+const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
+	'CLIP',
+	'INSTRUMENT',
+	'PLUGIN',
+	'SECTION',
+	'TUNING',
+	'STYLESHEET'
+]);
+let graveyardClearByTypeState = {
+	CLIP: false,
+	INSTRUMENT: false,
+	PLUGIN: false,
+	SECTION: false,
+	TUNING: false,
+	STYLESHEET: false
+};
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -82,6 +100,7 @@ function clearAndReplaySection(...args) { return requireProvider('clearAndReplay
 function cycleThruKeys(...args) { return requireProvider('cycleThruKeys')(...args); }
 function cycleThruNutWidths(...args) { return requireProvider('cycleThruNutWidths')(...args); }
 function downloadBackupThenClearGraveyard(...args) { return requireProvider('downloadBackupThenClearGraveyard')(...args); }
+function downloadBackupThenClearGraveyardByType(...args) { return requireProvider('downloadBackupThenClearGraveyardByType')(...args); }
 function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNotes')(...args); }
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
@@ -111,6 +130,7 @@ function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpac
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
 function showAllNoteNames(...args) { return requireProvider('showAllNoteNames')(...args); }
+function toggleShowAllNoteNames(...args) { return requireProvider('toggleShowAllNoteNames')(...args); }
 function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
@@ -163,6 +183,30 @@ function getSectionEditInstrumentOptions(){
 			popOnBang: true
 		};
 	});
+}
+
+function resetGraveyardClearByTypeSelection() {
+	graveyardClearByTypeState = {
+		CLIP: false,
+		INSTRUMENT: false,
+		PLUGIN: false,
+		SECTION: false,
+		TUNING: false,
+		STYLESHEET: false
+	};
+}
+
+function toggleGraveyardClearType(typeName) {
+	const normalized = `${typeName || ''}`;
+	if (!GRAVEYARD_CLEAR_BY_TYPE_ORDER.includes(normalized)) {
+		return false;
+	}
+	graveyardClearByTypeState[normalized] = !graveyardClearByTypeState[normalized];
+	return graveyardClearByTypeState[normalized];
+}
+
+function getGraveyardSelectedTypes() {
+	return GRAVEYARD_CLEAR_BY_TYPE_ORDER.filter((typeName) => graveyardClearByTypeState[typeName] === true);
 }
 
 function isSectionEditInstrumentStillAvailable(tableID = sectionEditInstrumentTableID){
@@ -434,51 +478,51 @@ function document_keypress(e) {
                 break;
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbFinger0');
-				activateUiControl('#idRFinger0');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#rbFinger0');
+				paletteUtils.activateUiControl('#idRFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger1');
-				activateUiControl('#rbFinger1');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger1');
+				paletteUtils.activateUiControl('#rbFinger1');
                 break;
             case "2":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger2');
-				activateUiControl('#rbFinger2');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger2');
+				paletteUtils.activateUiControl('#rbFinger2');
                 break;
             case "3":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger3');
-				activateUiControl('#rbFinger3');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger3');
+				paletteUtils.activateUiControl('#rbFinger3');
                 break;
             case "4":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFinger4');
-				activateUiControl('#rbFinger4');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFinger4');
+				paletteUtils.activateUiControl('#rbFinger4');
                 break;
             case "5":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idRFingerT');
-				activateUiControl('#rbFingerT');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idRFingerT');
+				paletteUtils.activateUiControl('#rbFingerT');
                 break;
             case "6":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idNamedNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idNamedNotes');
                 break;
             case "7":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idSingleNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idSingleNotes');
                 break;
             case "8":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idTinyNotes');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idTinyNotes');
                 break;
             case "9":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#rbBend');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#rbBend');
                 break;
             case "0":
             	cycleThruNutWidths(-1);
@@ -513,12 +557,12 @@ function document_keypress(e) {
                 getSong().gotoNextSection(false);
                 break;
             case "[":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idMidiPitches');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idMidiPitches');
                 break;
             case "]":
-				activateUiControl('#idPaletteModePaint');
-				activateUiControl('#idMidiPitchesSingle');
+				paletteUtils.activateUiControl('#idPaletteModePaint');
+				paletteUtils.activateUiControl('#idMidiPitchesSingle');
                 break;
             default:
         }
@@ -531,56 +575,6 @@ function document_keypress(e) {
    	//  getValue :: turn a string Get request from a menu into a value.
 	//
 
-function check(id){
-	activateUiControl(id, { forceChange: true });
-}
-
-function checkAndTrigger(id){
-	activateUiControl(id, { forceChange: true });
-}
-
-function activateUiControl(id, options = {}) {
-	const {
-		forceChange = false
-	} = options;
-	const $el = $(id);
-	if (!$el || $el.length === 0) {
-		return false;
-	}
-
-	const el = $el[0];
-	if (el && typeof el.click === 'function') {
-		el.click();
-		return true;
-	}
-
-	const inputType = `${el?.type || $el.attr?.('type') || ''}`.toLowerCase();
-	const isCheckable = inputType === 'radio' || inputType === 'checkbox';
-	if (isCheckable) {
-		$el.prop('checked', true);
-	}
-	$el.trigger('click');
-	if (forceChange && isCheckable) {
-		$el.trigger('change');
-	}
-	return true;
-}
-
-function isSpecialPaletteModeSelected() {
-	const $checked = $('input[name="rbPaletteMode"]:checked').first();
-	if (!$checked || $checked.length === 0) {
-		return false;
-	}
-	const value = $checked.val();
-	return value === 'clear' || value === 'keep' || value === 'dropper';
-}
-
-function activatePaintModeIfSpecialSelected() {
-	if (!isSpecialPaletteModeSelected()) {
-		return false;
-	}
-	return activateUiControl('#idPaletteModePaint');
-}
 
 // Called by the CmdMenu whenever someone has a string that identifies an "action".
 export function performCmdAction(menuItem, args){
@@ -624,6 +618,38 @@ export function performCmdAction(menuItem, args){
 		case "downloadBackupThenClearGraveyard":
 			downloadBackupThenClearGraveyard();
 			break;
+		case "resetGraveyardClearByTypeSelection":
+				resetGraveyardClearByTypeSelection();
+				actionResult.preserveMenuStack = true;
+				break;
+		case "toggleGraveyardClearTypeCLIP":
+		case "toggleGraveyardClearTypeINSTRUMENT":
+		case "toggleGraveyardClearTypePLUGIN":
+		case "toggleGraveyardClearTypeSECTION":
+		case "toggleGraveyardClearTypeTUNING":
+		case "toggleGraveyardClearTypeSTYLESHEET": {
+				const typeName = menuItem.action.replace('toggleGraveyardClearType', '');
+				const nextValue = toggleGraveyardClearType(typeName);
+				actionResult.result = `${typeName}=${nextValue}`;
+				actionResult.preserveMenuStack = true;
+				break;
+		}
+		case "downloadBackupThenClearGraveyardByType": {
+				const selectedTypes = getGraveyardSelectedTypes();
+				if (selectedTypes.length === 0) {
+					actionResult.result = 'no types selected';
+					resetGraveyardClearByTypeSelection();
+					break;
+				}
+				const clearResult = downloadBackupThenClearGraveyardByType(selectedTypes) || {};
+				if (typeof clearResult === 'string') {
+					actionResult.result = clearResult;
+				} else {
+					actionResult.result = clearResult.result || '';
+				}
+				resetGraveyardClearByTypeSelection();
+				break;
+		}
 		case "setSongName":
 			if (argByInputID){
 				$("#txtFilename").val(argByInputID).trigger('change');
@@ -930,14 +956,12 @@ export function performCmdAction(menuItem, args){
 				actionResult.result = 'menu prefs: one-line';
 			}
 			break;
-		case "setPresentationModeAutomated":
-			setPresentationMode(true);
-			actionResult.result = "presentation mode: automated";
+		case "setPluginFiringOrder": {
+			const normalizedOrder = pluginManager.setSongPluginFiringOrder(argByInputID || pluginManager.getPluginFiringOrderInput());
+			actionResult.result = `plugin firing order [${normalizedOrder.join(',')}]`;
+			actionResult.preserveMenuStack = true;
 			break;
-		case "setPresentationModeManual":
-			setPresentationMode(false);
-			actionResult.result = "presentation mode: manual";
-			break;
+		}
 		case "togglePresentationMode":
 			setPresentationMode(!getSong()?.presentationMode);
 			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
@@ -991,6 +1015,14 @@ export function performCmdAction(menuItem, args){
 			}
 			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
+		case "showUserLog":
+			showUserLog();
+			actionResult.result = "User Log shown";
+			break;
+		case "clearUserLog":
+			clearUserLog();
+			actionResult.result = "User Log cleared";
+			break;
 		case "showGraveyard":
 			showGraveyard();
 			break;
@@ -1043,7 +1075,6 @@ export function performCmdAction(menuItem, args){
 			}
 			break;
 		case "sectionAdd":
-			console.log("sectionAdd=====!!");
 			getSong().newSection(); //don't call addSection(section), which is an internal call.
 			actionResult.result = "added";
 			break;
@@ -1151,37 +1182,52 @@ export function performCmdAction(menuItem, args){
 		case "hideFingering":
 			$("#cbHideFingering").prop("checked", true).trigger('change');
 			break;
+		case "toggleShowAllNoteNames":
+			toggleShowAllNoteNames();
+			break;
+		case "toggleNamedNotes":
+			$("#cbHideNamedNotes").prop("checked", !($("#cbHideNamedNotes").prop("checked"))).trigger('change');
+			break;
+		case "toggleSingleNotes":
+			$("#cbHideSingleNotes").prop("checked", !($("#cbHideSingleNotes").prop("checked"))).trigger('change');
+			break;
+		case "toggleTinyNotes":
+			$("#cbHideTinyNotes").prop("checked", !($("#cbHideTinyNotes").prop("checked",))).trigger('change');
+			break;
+		case "toggleFingering":
+			$("#cbHideFingering").prop("checked", !($("#cbHideFingering").prop("checked"))).trigger('change');
+			break;
 		case "selectFingering":
 			if (args){
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						check("#rbFinger0");
-						checkAndTrigger("#idRFinger0");
+						paletteUtils.check("#rbFinger0");
+						paletteUtils.checkAndTrigger("#idRFinger0");
 						break;
 					case "1":
-					    check("#rbFinger1");
-						checkAndTrigger("#idRFinger1");
+					    paletteUtils.check("#rbFinger1");
+						paletteUtils.checkAndTrigger("#idRFinger1");
 						break;
 					case "2":
-					    check("#rbFinger2");
-					    checkAndTrigger("#idRFinger2");
+					    paletteUtils.check("#rbFinger2");
+					    paletteUtils.checkAndTrigger("#idRFinger2");
 						break;
 					case "3":
-					    check("#rbFinger3");
-					    checkAndTrigger("#idRFinger3");
+					    paletteUtils.check("#rbFinger3");
+					    paletteUtils.checkAndTrigger("#idRFinger3");
 						break;
 					case "4":
-					    check("#rbFinger4");
-					    checkAndTrigger("#idRFinger4");
+					    paletteUtils.check("#rbFinger4");
+					    paletteUtils.checkAndTrigger("#idRFinger4");
 						break;
 					case "5":
-					    check("#rbFingerT");
-						checkAndTrigger("#idRFingerT");
+					    paletteUtils.check("#rbFingerT");
+						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
 					case "t":
-					    check("#rbFingerT");
-						checkAndTrigger("#idRFingerT");
+					    paletteUtils.check("#rbFingerT");
+						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
 				}
 			}
@@ -1190,129 +1236,129 @@ export function performCmdAction(menuItem, args){
 			if (args){
 				switch (args["key"]){
 					case "n":
-						activatePaintModeIfSpecialSelected();
-					    check("#idNamedNotes");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.check("#idNamedNotes");
 						break;
 					case "s":
-						activatePaintModeIfSpecialSelected();
-						check("#idSingleNotes");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+						paletteUtils.check("#idSingleNotes");
 						break;
 					case "t":
-						activatePaintModeIfSpecialSelected();
-						check("#idTinyNotes");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+						paletteUtils.check("#idTinyNotes");
 						break;
 					case "b":
-						activatePaintModeIfSpecialSelected();
-						check("#rbBend");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+						paletteUtils.check("#rbBend");
 						break;
 					case "p":
-						activatePaintModeIfSpecialSelected();
-						check("#idMidiPitches");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+						paletteUtils.check("#idMidiPitches");
 						break;
 					case "m":
-						activatePaintModeIfSpecialSelected();
-						check("#idMidiPitchesSingle");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+						paletteUtils.check("#idMidiPitchesSingle");
 						break;
 					case "l":
-						check("#idPaletteModePaint");
+						paletteUtils.check("#idPaletteModePaint");
 						break;
 					case "k":
-						checkAndTrigger("#idPaletteModeKeep");
+						paletteUtils.checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						checkAndTrigger("#idPaletteModeClear");
+						paletteUtils.checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						checkAndTrigger("#idPaletteModeDropper");
+						paletteUtils.checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
 			break;
 		case "selectRole":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "t":
-						checkAndTrigger("#idRTransparent");
+						paletteUtils.checkAndTrigger("#idRTransparent");
 						break;
 					case "a":
-						checkAndTrigger("#idRAutomatic");
+						paletteUtils.checkAndTrigger("#idRAutomatic");
 						break;
 					case "s":
-						checkAndTrigger("#idRScale");
+						paletteUtils.checkAndTrigger("#idRScale");
 						break;
 					case "r":
-						checkAndTrigger("#idRRoot");
+						paletteUtils.checkAndTrigger("#idRRoot");
 						break;
 					case "c":
-						checkAndTrigger("#idRChromatic");
+						paletteUtils.checkAndTrigger("#idRChromatic");
 						break;
 					case "p":
-						checkAndTrigger("#idRPassing");
+						paletteUtils.checkAndTrigger("#idRPassing");
 						break;
 					case "b":
-						checkAndTrigger("#idRBass");
+						paletteUtils.checkAndTrigger("#idRBass");
 						break;
 				}
 			}
 			break;
 		case "selectRoleChord":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRChord");
+						paletteUtils.checkAndTrigger("#idRChord");
 						break;
 					case "2":
-						checkAndTrigger("#idRChord2");
+						paletteUtils.checkAndTrigger("#idRChord2");
 						break;
 					case "3":
-						checkAndTrigger("#idRChord3");
+						paletteUtils.checkAndTrigger("#idRChord3");
 						break;
 				}
 			}
 			break;
 		case "selectRoleColornote":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRColornote");
+						paletteUtils.checkAndTrigger("#idRColornote");
 						break;
 					case "2":
-						checkAndTrigger("#idRColornote2");
+						paletteUtils.checkAndTrigger("#idRColornote2");
 						break;
 					case "3":
-						checkAndTrigger("#idRColornote3");
+						paletteUtils.checkAndTrigger("#idRColornote3");
 						break;
 				}
 			}
 			break;
 		case "selectRoleAvoid":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRAvoid");
+						paletteUtils.checkAndTrigger("#idRAvoid");
 						break;
 					case "2":
-						checkAndTrigger("#idRAvoid2");
+						paletteUtils.checkAndTrigger("#idRAvoid2");
 						break;
 					case "3":
-						checkAndTrigger("#idRAvoid3");
+						paletteUtils.checkAndTrigger("#idRAvoid3");
 						break;
 				}
 			}
 			break;
 		case "selectRoleLead":
 			if (args) {
-				activatePaintModeIfSpecialSelected();
+				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]) {
 					case "1":
-						checkAndTrigger("#idRLead");
+						paletteUtils.checkAndTrigger("#idRLead");
 						break;
 					case "2":
-						checkAndTrigger("#idRLead2");
+						paletteUtils.checkAndTrigger("#idRLead2");
 						break;
 				}
 			}
@@ -1320,8 +1366,8 @@ export function performCmdAction(menuItem, args){
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
-			activatePaintModeIfSpecialSelected();
-			check("#rbBend");
+			paletteUtils.activatePaintModeIfSpecialSelected();
+			paletteUtils.check("#rbBend");
 			break;
 		case "disposeAllDockables":
 			disposeAllDockables();
@@ -1345,14 +1391,22 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
 		case "pluginAction:invoke":
-		case "pluginAction:bury": {
+		case "pluginAction:audit":
+		case "pluginAction:graveyardBury":
+		case "pluginAction:graveyardSave":
+		case "pluginAction:graveyardRaise":
+		case "pluginAction:graveyardLink": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
 			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;
 			if (pluginResult.messageJSON) {
 				showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {
-				showMessages(pluginResult.message);
+				if (isQuietUserLogMessage(pluginResult.message)) {
+					addToUserLog('PluginManager', pluginResult.message);
+				} else {
+					showMessages(pluginResult.message);
+				}
 			}
 			break;
 		}
@@ -1367,6 +1421,96 @@ function scrollToMessages(){
     var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
     window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
 }
+
+function getUserLogTableBody(){
+	if (typeof document === 'undefined') {
+		return null;
+	}
+
+	const divUserLog = document.getElementById('divUserLog');
+	if (!divUserLog) {
+		return null;
+	}
+
+	let table = document.getElementById('tblUserLog');
+	if (!table) {
+		table = document.createElement('table');
+		table.id = 'tblUserLog';
+		const thead = document.createElement('thead');
+		const headerRow = document.createElement('tr');
+		['Time', 'SubSystem', 'Message'].forEach((caption) => {
+			const th = document.createElement('th');
+			th.textContent = caption;
+			headerRow.appendChild(th);
+		});
+		thead.appendChild(headerRow);
+		table.appendChild(thead);
+		table.appendChild(document.createElement('tbody'));
+		divUserLog.appendChild(table);
+	}
+
+	let tbody = table.querySelector('tbody');
+	if (!tbody) {
+		tbody = document.createElement('tbody');
+		table.appendChild(tbody);
+	}
+	return tbody;
+}
+
+function getUserLogTime(){
+	const now = new Date();
+	return [now.getHours(), now.getMinutes(), now.getSeconds()]
+		.map((value) => `${value}`.padStart(2, '0'))
+		.join(':');
+}
+
+function isQuietUserLogMessage(message = '') {
+	const text = `${message || ''}`.trim();
+	return text.startsWith('#raise=');
+}
+
+export function addToUserLog(subSystem, message){
+	const tbody = getUserLogTableBody();
+	if (!tbody) {
+		return false;
+	}
+
+	const row = document.createElement('tr');
+	const timeCell = document.createElement('td');
+	const subSystemCell = document.createElement('td');
+	const messageCell = document.createElement('td');
+
+	timeCell.textContent = getUserLogTime();
+	subSystemCell.textContent = `${subSystem || ''}`;
+	messageCell.innerHTML = `${message || ''}`;
+
+	row.appendChild(timeCell);
+	row.appendChild(subSystemCell);
+	row.appendChild(messageCell);
+	tbody.insertBefore(row, tbody.firstChild);
+
+	while (tbody.rows.length > USER_LOG_MAX_ROWS) {
+		tbody.deleteRow(tbody.rows.length - 1);
+	}
+
+	return true;
+}
+
+export function clearUserLog(){
+	const tbody = getUserLogTableBody();
+	if (tbody) {
+		tbody.innerHTML = '';
+	}
+}
+
+function showUserLog(){
+	getUserLogTableBody();
+	$("#divMessageAndJsonTree").show();
+	showMessagesTab("UserLog");
+	hideCmdLine();
+	scrollToMessages();
+}
+
 export function showMessagesJSON(json, preamble = ""){
 	showMessages(preamble+json);
     const div = document.getElementById('divJsonTree');
@@ -1468,6 +1612,30 @@ export function getValue(what){
 	if (what === 'displayOptionsClearState'){
 		return getDisplayOptionsClearState();
 	}
+	if (what === 'pluginFiringOrderDisplay') {
+		return pluginManager.getPluginFiringOrderDisplay();
+	}
+	if (what === 'pluginFiringOrderInput') {
+		return pluginManager.getPluginFiringOrderInput();
+	}
+	if (what === 'graveyardClearByTypeCLIP') {
+		return `${!!graveyardClearByTypeState.CLIP}`;
+	}
+	if (what === 'graveyardClearByTypeINSTRUMENT') {
+		return `${!!graveyardClearByTypeState.INSTRUMENT}`;
+	}
+	if (what === 'graveyardClearByTypePLUGIN') {
+		return `${!!graveyardClearByTypeState.PLUGIN}`;
+	}
+	if (what === 'graveyardClearByTypeSECTION') {
+		return `${!!graveyardClearByTypeState.SECTION}`;
+	}
+	if (what === 'graveyardClearByTypeTUNING') {
+		return `${!!graveyardClearByTypeState.TUNING}`;
+	}
+	if (what === 'graveyardClearByTypeSTYLESHEET') {
+		return `${!!graveyardClearByTypeState.STYLESHEET}`;
+	}
 	if (typeof what === 'string' && what.startsWith('plugin:')) {
 		const pluginValue = pluginManager.resolveValue(what);
 		if (pluginValue !== undefined) {
@@ -1478,7 +1646,7 @@ export function getValue(what){
 	if (resolved !== undefined) {
 		return resolved;
 	}
-	console.log("key-handler.js::getValue::no-value-found::default:"+what);
+	//console.log("key-handler.js::getValue::no-value-found::default:"+what);
 	return what;
 }
 

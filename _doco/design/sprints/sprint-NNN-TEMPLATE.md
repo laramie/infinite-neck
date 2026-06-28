@@ -2,7 +2,7 @@
 
 sprint number: NNN
 
-sprint short name:
+sprint shortname:
 
 date: 20260000
 

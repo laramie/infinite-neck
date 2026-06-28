@@ -54,8 +54,8 @@
     "caption": "chord",
     "trigger": "c",
     "datatype": "org.dynamide.Select",
-    "value": "4,7",
-    "defaultValue": "4,7",
+    "value": "M",
+    "defaultValue": "M",
     "visibleInMenu": false,
     "options": []
   },
@@ -64,10 +64,19 @@
     "caption": "mode",
     "trigger": "m",
     "datatype": "org.dynamide.Select",
-    "value": "0,2,4,5,7,9,11",
-    "defaultValue": "0,2,4,5,7,9,11",
+    "value": "major",
+    "defaultValue": "major",
     "visibleInMenu": false,
     "options": []
+  },
+  {
+    "name": "automaticFromChart",
+    "caption": "automatic from chart",
+    "trigger": "a",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
   },
   {
     "name": "minFret",
@@ -87,6 +96,16 @@
     "value": 4,
     "defaultValue": 4,
     "inputCaption": "0..max fret",
+    "visibleInMenu": false
+  },
+  {
+    "name": "songLoopsPerPositionPair",
+    "caption": "song loops per position",
+    "trigger": "s",
+    "datatype": "Number",
+    "value": 1,
+    "defaultValue": 1,
+    "inputCaption": "1..999",
     "visibleInMenu": false
   },
   {

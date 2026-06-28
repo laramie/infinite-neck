@@ -1,8 +1,83 @@
 {
   "songs": [
-    "sprint-121/piano-follows-guitar-basic-blues.json",
-    "sprint-121/guitar-follows-piano-basic-blues.json",
-    "sprint-121/piano-f-guitar-chorus-coda.json"
+    {
+      "href": "demo/piano-follows-guitar-basic-blues.json",
+      "description": "A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em>"
+    },
+    {
+      "href": "demo/guitar-follows-piano-basic-blues.json",
+      "description": "A Basic Blues progression on <b>Piano</b> with a <em>Guitar Listener</em>"
+    },
+    {
+      "href": "demo/piano-follows-guitar-chorus-coda.json",
+      "description": "<em>Piano</em> listening to <b>Guitar</b>, showing how to use a Coda in the <em>Chart</em>"
+    },
+    {
+      "href": "demo/C-chords-w-tiny-modes.json",
+      "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords."
+    },
+    {
+      "href": "practice/All-Chords.json",
+      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar."
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
+      "description": "<b>All-Chords</b> on a <em>P4-tuning</em> Guitar, with added <em>Piano</em> listening to the <i>Guitar</i>, and a light <em>color theme</em> instead of AutoColor."
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-S8-light.json",
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string</em> Guitar.  (Just add a <i>Listener</i> to make it like the P4 version.)"
+    },
+    {
+      "href": "practice/All-Chords-fill-mode-S6-light.json",
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string</em> Guitar. (Just add a <i>Listener</i> to make it like the P4 version.)"
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys.json",
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>."
+    },
+    {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
+      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme."
+    },
+    {
+      "href": "practice/name-that-note-S6.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar."
+    },
+    {
+      "href": "practice/name-that-note-S6-positions.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions."
+    },
+    {                   
+      "href": "practice/name-that-note-S6-positions-by-section.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section."
+    },
+    {
+      "href": "practice/name-that-note-P4.json",
+      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string</em> Guitar."
+    },
+    {
+      "href": "practice/name-that-note-bass-4.json",
+      "description": "<em>name-that-note</em> game for the <em>4-string bass</em>."
+    }
+  ],
+  "directoryIntros": [
+    {
+      "introFor": "root",
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, arpeggios and name-that-note.</p>"
+    },
+    {
+      "introFor": "demo",
+      "html": "Songs that demonstrate <span class='productsmaller'>infinite-neck</span> features, such as how to use plugins (<em>Fill, Arpeggio, Transpose</em>), how to wire <em>Listeners</em> and <em>Observers</em>.  Use these as templates for setting up your own songs."
+    },
+    {
+      "introFor": "practice",
+      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, <i>scales</i>, and <em>name-that-note</em> games."
+    }
   ],
   "ignoredSongs": [],
   "sections": [],

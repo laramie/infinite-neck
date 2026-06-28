@@ -223,6 +223,8 @@ const chartOptionsSchema = {
         detailLine: { type: 'boolean' },
         showCaptions: { type: 'boolean' },
         showNextLine: { type: 'boolean' },
+        stripTonalRoots: { type: 'boolean' },
+        addTransposedRootToChord: { type: 'boolean' },
         HEADNames: {
             type: 'array',
             items: { type: 'string' }
@@ -268,6 +270,10 @@ export const songFileV2Schema = {
         chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
+        pluginFiringOrder: {
+            type: 'array',
+            items: { type: 'string', minLength: 1 }
+        },
         rootID: integerLikeSchema,
         sharps: { type: 'boolean' },
         singleNoteOpacity: stringOrNumberSchema,

@@ -1,0 +1,681 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "transpose": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "Chromatic",
+      "properties": {
+        "intervals": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "NamedNotes": true,
+        "SingleNotes": true,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
+        "octaves": "0",
+        "useOctavesForRecorded": true,
+        "autoSharpsFlats": true,
+        "doLeadKey": true
+      }
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": true,
+  "defaultBPM": "240",
+  "info": "\n<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>",
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": false,
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": true,
+    "stripTonalRoots": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Bare",
+    "chartSpacing": "tight",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "All-Chords",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            },
+            "E": {
+              "noteName": "E",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "CM",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "CM",
+      "chartMode": "C major",
+      "chartPosition": "HEAD",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "120x20:22",
+          "width": "120px",
+          "height": "20px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            },
+            "D": {
+              "noteName": "D",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Csus2",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Csus2",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Csus4",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Csus4",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "B": {
+              "noteName": "B",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cmaj7",
+          "mode": "C lydian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cmaj7",
+      "chartMode": "C lydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "A": {
+              "noteName": "A",
+              "colorClass": "noteChord"
+            },
+            "D": {
+              "noteName": "D",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "C6add9",
+          "mode": "C major pentatonic",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "C6add9",
+      "chartMode": "C major pentatonic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "C7",
+          "mode": "C mixolydian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "C7",
+      "chartMode": "C mixolydian",
+      "chartPosition": "LINE",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cm",
+          "mode": "C minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cm",
+      "chartMode": "C minor",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cm7",
+          "mode": "C dorian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cm7",
+      "chartMode": "C dorian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cdim",
+          "mode": "C locrian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cdim",
+      "chartMode": "C locrian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "colorClass": "noteChord"
+            },
+            "A": {
+              "noteName": "A",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cdim7",
+          "mode": "C diminished",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cdim7",
+      "chartMode": "C diminished",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "colorClass": "noteChord"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cm7b5",
+          "mode": "C locrian",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cm7b5",
+      "chartMode": "C locrian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "colorClass": "noteChord"
+            },
+            "G": {
+              "noteName": "G",
+              "colorClass": "noteChord"
+            },
+            "B": {
+              "noteName": "B",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Cm/ma7",
+          "mode": "C melodic minor",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Cm/ma7",
+      "chartMode": "C melodic minor",
+      "chartPosition": "LINE",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "colorClass": "noteChord"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "colorClass": "noteChord"
+            },
+            "C": {
+              "noteName": "C",
+              "colorClass": "noteRoot"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Caug",
+          "mode": "C whole tone",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "Caug",
+      "chartMode": "C whole tone",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 4,
+      "sharps": true
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1781975947113,
+        "date": "6/20/2026",
+        "time": "10:19:07 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "Chromatic",
+          "logicalKey": "transpose::Chromatic",
+          "schemaVersion": 1,
+          "caption": "transpose / Chromatic"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"Chromatic\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1781975918770,
+        "date": "6/20/2026",
+        "time": "10:18:38 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "USER",
+          "logicalKey": "transpose::USER",
+          "schemaVersion": 1,
+          "caption": "transpose / USER"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  }
+}

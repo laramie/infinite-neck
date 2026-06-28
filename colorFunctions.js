@@ -342,7 +342,7 @@ function resolveLookupContext(lookupContext = {}) {
 			if (!note.colorClass){
 				caption = "";
 			}
-			row.append($('<td>').addClass('colorDictLinkTD').attr('noteRole', notekeyTempl).html(caption).addClass(note.colorClass+borderClass));
+			row.append($('<td>').addClass('colorDictLinkTD').attr('noteRole', notekeyTempl).attr('title', notekeyTempl).html(caption).addClass(note.colorClass+borderClass));
 		}
 
 		if (doChuseLink){
@@ -351,6 +351,18 @@ function resolveLookupContext(lookupContext = {}) {
 		
 
 		return row;
+	}
+
+	function colorDictLinkCell(noteRole, note, caption = null) {
+		const displayCaption = caption ?? note?.tiny ?? note?.caption ?? '';
+		const colorClass = note?.colorClass || '';
+		const borderClass = colorClass == "noteTransparent" ? " colorDictTransparent" : "";
+		return $('<td>')
+			.addClass('colorDictLinkTD')
+			.attr('noteRole', noteRole)
+			.attr('title', noteRole)
+			.html(displayCaption)
+			.addClass(colorClass + borderClass);
 	}
 
 	export function registerColorSchemeCBEventSelectorsFAILED(eventSelectors){
@@ -499,6 +511,12 @@ export function chuseStylesheet(dictkey){
 		var row = colorDictDisplayRow(dictLabel, colorScheme, false);
 		var newRow = $('<tr>');
 		newRow.html(row.html());
+		['noteTransparent', 'noteAutomatic'].reverse().forEach((noteRole) => {
+			const note = gUserColorDict.dict[noteRole];
+			if (note) {
+				newRow.children('td:first').after(colorDictLinkCell(noteRole, note));
+			}
+		});
 		var tbl = $("<table class='tblColorDictOneRow'>");
 		tbl.append(newRow);
 		$('.currentColorDict').empty().append(tbl);
@@ -536,7 +554,10 @@ export function chuseStylesheet(dictkey){
             label.append(radio);
             label.append(""+obj.caption);
             label.addClass("userColorRB");
-            label.addClass(lookupUserColorClassByClass(captionClass));
+			label.addClass(lookupUserColorClassByClass(userColorClass));
+			if (captionClass !== userColorClass) {
+				label.addClass(lookupUserColorClassByClass(captionClass));
+			}
 			radio.val(userColorClass);
             $("#idRoleButtonsDest").append(label);
         }
@@ -793,10 +814,10 @@ export function chuseStylesheet(dictkey){
 		var notePlusNumKey = "note"+(relNoteNum+1);  //Use 1-based for note1, note2, etc.
 		var userColor = context.colorDict[notePlusNumKey];
 		if (userColor){
-			// Keep the existing function-key lookup, but let the root-bearing table
-			// promote the root function to the special noteRoot styling.
+			// Keep function-key lookup section-relative. noteRoot is intentionally
+			// limited to the explicit noteRoot note in the table that owns it.
 			result.colorClass = userColor.colorClass;
-			if (relNoteNum === 0 && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
+			if (note.colorClass === 'noteRoot' && context.noteRootTablename && context.tablename && context.noteRootTablename === context.tablename) {
 				const noteRootColor = context.colorDict.noteRoot;
 				if (noteRootColor?.colorClass) {
 					result.colorClass = noteRootColor.colorClass;

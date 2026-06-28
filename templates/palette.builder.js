@@ -3,6 +3,7 @@ import * as ColorFunctions from '../colorFunctions.js';
 import { 
 	PalettePresentation 
 } from '../presentation.js';
+import * as PaletteUtils from '../paletteUtils.js'
 
 
 export class PaletteBuilder {
@@ -10,6 +11,10 @@ export class PaletteBuilder {
     // #palette is the top div in the template.
     static div_palette = null; //Singleton.   
     static eventNamespace = '.paletteBuilder';
+    static selectFingerColorRole(suffix) {
+        return PalettePresentation.selectRbColorByElement($(`#idRFinger${suffix}`));
+    }
+
     static addToDest(divDestSelector) {
         if (!PaletteBuilder.div_palette){
             const template = document.getElementById('palette-template');
@@ -23,10 +28,6 @@ export class PaletteBuilder {
 
     static bindEvents(){
         const eventNamespace = PaletteBuilder.eventNamespace;
-
-        function checkRB(id){
-            $(id).prop("checked", true);
-        }
         
         $('#selBend')
             .off(`click${eventNamespace}`)
@@ -38,7 +39,7 @@ export class PaletteBuilder {
             .off(`click${eventNamespace}`)
             .on(`click${eventNamespace}`, function() {
                 const suffix = this.id.replace('rbFinger', '');
-                checkRB(`#idRFinger${suffix}`);
+                PaletteBuilder.selectFingerColorRole(suffix);
             });
 
         $("#cbAutomaticColor")
@@ -146,6 +147,14 @@ export class PaletteBuilder {
             .on(`click${eventNamespace}`, 'td.hatchPickerCell', function(e) {
             e.preventDefault();
             ColorFunctions.hatchPickerClicked(this);
+        });
+
+        $(document)
+            .off(`click${eventNamespace}`, 'td.colorDictLinkTD[noteRole]')
+            .on(`click${eventNamespace}`, 'td.colorDictLinkTD[noteRole]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            PaletteUtils.checkAndTriggerNoteRole($(this).attr('noteRole'));
         });
 
 

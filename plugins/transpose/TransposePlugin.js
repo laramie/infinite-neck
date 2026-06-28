@@ -819,6 +819,15 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return `[${include.join(',')}]`;
   }
 
+  getAuditInputs() {
+    const include = this.buildIncludeFlagsSummary().slice(1, -1);
+    return `include:${include}`;
+  }
+
+  getAuditOutputs() {
+    return undefined;
+  }
+
   getIncludedPlayedTransposeStyles() {
     const included = new Set();
     PLAYED_TRANSPOSE_STYLES_BY_PROPERTY.forEach((styleNum, propertyName) => {

@@ -2,10 +2,14 @@ import { gMenuFile } from '../menu.js';
 import { clearBeatAndSectionLooping, beatsLooping, sectionsLooping } from '../looper.js';
 import { MenuItemProxy } from './MenuItemProxy.js';
 import { buildCaption, buildValueReference } from './PluginProperty.js';
+import { buildPluginAuditHtml } from './PluginAudit.js';
 
 const DEFAULT_GRAVEYARD_KEY = 'USER';
+const PLUGIN_GRAVEYARD_KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_-]*$/;
 const ENABLED_CHECKMARK = '&#x1F5F9;';
 const PERSISTED_SONG_MARK = '&#x1F5BA;';
+const DEFAULT_PLUGIN_TRIGGER_ORDER = ['t', 'f', 'a', 'o', 'c', 'm'];
+const PLUGIN_ORDER_DEBUG = false;
 
 function parseBoolean(rawValue) {
   if (typeof rawValue === 'boolean') {
@@ -36,11 +40,20 @@ function stripHtml(value) {
 }
 
 function normalizeGraveyardKey(rawValue) {
-  const normalized = `${rawValue || ''}`
-    .trim()
-    .replace(/\s+/g, ' ')
-    .replace(/[^A-Za-z0-9 _\-']/g, '');
-  return normalized || DEFAULT_GRAVEYARD_KEY;
+  const normalized = `${rawValue || ''}`.trim() || DEFAULT_GRAVEYARD_KEY;
+  if (!PLUGIN_GRAVEYARD_KEY_PATTERN.test(normalized)) {
+    throw new Error(`Plugin graveyard key must be an identifier: ${normalized}`);
+  }
+  return normalized;
+}
+
+function escapeHtml(value) {
+  return `${value ?? ''}`
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function canPromptForConfirmation() {
@@ -140,6 +153,7 @@ export class PluginManager {
     this.eventBus = eventBus;
     this.plugins = new Map();
     this.song = null;
+    this.eventHandlers = new Map();
   }
 
   register(pluginInstance) {
@@ -175,6 +189,93 @@ export class PluginManager {
 
   getPluginById(pluginId) {
     return this.plugins.get(pluginId)?.plugin || null;
+  }
+
+  getPluginMenuOptions(requestPath, options = {}) {
+    const requestText = `${requestPath || ''}`.trim();
+    const slashIndex = requestText.indexOf('/');
+    if (!requestText || slashIndex <= 0 || slashIndex === requestText.length - 1) {
+      return {
+        status: 'error',
+        code: 'invalid-request-path',
+        message: `Invalid plugin menu request path: ${requestPath}`
+      };
+    }
+
+    const pluginId = requestText.slice(0, slashIndex).trim();
+    const menuPath = requestText.slice(slashIndex + 1).trim();
+    if (!pluginId || !menuPath) {
+      return {
+        status: 'error',
+        code: 'invalid-request-path',
+        message: `Invalid plugin menu request path: ${requestPath}`
+      };
+    }
+
+    const entry = this.getPluginEntry(pluginId);
+    if (!entry?.plugin) {
+      return {
+        status: 'error',
+        code: 'unknown-plugin',
+        message: `Unknown plugin for request path ${requestText}`
+      };
+    }
+
+    if (typeof entry.plugin.exportMenuOptions !== 'function') {
+      return {
+        status: 'error',
+        code: 'unsupported-export',
+        message: `Plugin ${pluginId} does not support menu options export`
+      };
+    }
+
+    try {
+      const response = entry.plugin.exportMenuOptions(menuPath, {
+        song: this.song,
+        pluginManager: this,
+        sectionRef: `${options.sectionRef || ''}`,
+        instrumentRef: `${options.instrumentRef || ''}`
+      });
+
+      if (!response || typeof response !== 'object') {
+        return {
+          status: 'error',
+          code: 'invalid-export-response',
+          message: `Plugin ${pluginId} returned invalid export response for ${requestText}`
+        };
+      }
+
+      if (response.status !== 'ok') {
+        return {
+          status: 'error',
+          code: response.code || 'export-rejected',
+          message: response.message || `Plugin ${pluginId} rejected export for ${requestText}`
+        };
+      }
+
+      const responsePluginId = `${response.pluginId || pluginId}`.trim();
+      const responseMenuPath = `${response.menuPath || menuPath}`.trim();
+      if (responsePluginId !== pluginId || responseMenuPath !== menuPath) {
+        return {
+          status: 'error',
+          code: 'route-mismatch',
+          message: `Requested ${pluginId}/${menuPath} but supplier returned ${responsePluginId}/${responseMenuPath}`
+        };
+      }
+
+      return {
+        status: 'ok',
+        pluginId,
+        menuPath,
+        payload: response.payload
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        code: 'export-failed',
+        message: error?.message || `Plugin ${pluginId} export failed for ${requestText}`
+      };
+    }
   }
 
   getPluginEntry(pluginId) {
@@ -215,7 +316,20 @@ export class PluginManager {
   }
 
   buildPluginsMenuChildren() {
-    return this.getRegisteredPlugins().map((plugin) => this.buildPluginMenuNode(plugin));
+    return [
+      ...this.getRegisteredPlugins().map((plugin) => this.buildPluginMenuNode(plugin)),
+      this.buildPluginsAuditNode()
+    ];
+  }
+
+  buildPluginsAuditNode() {
+    return new MenuItemProxy(this, {
+      name: 'pluginAudit',
+      caption: buildCaption('Audit plugins', 'A'),
+      trigger: 'A',
+      action: 'pluginAction:audit',
+      popOnBang: true
+    });
   }
 
   buildPluginMenuNode(plugin) {
@@ -243,6 +357,175 @@ export class PluginManager {
     return Array.isArray(eventNames) && eventNames.length > 0;
   }
 
+  getKnownPluginTriggers() {
+    const triggers = [];
+    this.plugins.forEach((entry) => {
+      const trigger = `${entry?.plugin?.getMenuTrigger?.() || ''}`.trim().toLowerCase();
+      if (!trigger || triggers.includes(trigger)) {
+        return;
+      }
+      triggers.push(trigger);
+    });
+    return triggers;
+  }
+
+  getDefaultPluginTriggerOrder() {
+    const knownTriggers = this.getKnownPluginTriggers();
+    const result = [];
+
+    DEFAULT_PLUGIN_TRIGGER_ORDER.forEach((trigger) => {
+      if (knownTriggers.includes(trigger) && !result.includes(trigger)) {
+        result.push(trigger);
+      }
+    });
+
+    knownTriggers.forEach((trigger) => {
+      if (!result.includes(trigger)) {
+        result.push(trigger);
+      }
+    });
+
+    return result;
+  }
+
+  tokenizePluginOrderInput(rawValue = '') {
+    if (Array.isArray(rawValue)) {
+      return rawValue.map((value) => `${value || ''}`);
+    }
+    const text = `${rawValue || ''}`.trim();
+    if (!text) {
+      return [];
+    }
+    if (text.includes(',')) {
+      return text.split(',');
+    }
+    return text.split('');
+  }
+
+  normalizePluginFiringOrder(rawValue = '') {
+    const knownTriggers = this.getKnownPluginTriggers();
+    const preferred = this.tokenizePluginOrderInput(rawValue)
+      .map((value) => `${value || ''}`.trim().toLowerCase())
+      .filter((value) => value && knownTriggers.includes(value));
+
+    const deduped = [];
+    preferred.forEach((trigger) => {
+      if (!deduped.includes(trigger)) {
+        deduped.push(trigger);
+      }
+    });
+
+    this.getDefaultPluginTriggerOrder().forEach((trigger) => {
+      if (!deduped.includes(trigger)) {
+        deduped.push(trigger);
+      }
+    });
+
+    return deduped;
+  }
+
+  getSongPluginFiringOrder() {
+    return this.normalizePluginFiringOrder(this.song?.pluginFiringOrder || []);
+  }
+
+  getPluginFiringOrderDisplay() {
+    return this.getSongPluginFiringOrder().join(',');
+  }
+
+  getPluginFiringOrderInput() {
+    return this.getPluginFiringOrderDisplay();
+  }
+
+  setSongPluginFiringOrder(rawValue = '') {
+    const normalized = this.normalizePluginFiringOrder(rawValue);
+    if (this.song && typeof this.song === 'object') {
+      this.song.pluginFiringOrder = [...normalized];
+    }
+    this.refreshPluginsMenuNode();
+    return normalized;
+  }
+
+  getEnabledPluginEntriesInTriggerOrder() {
+    const orderedEntries = [];
+    const triggerOrder = this.getSongPluginFiringOrder();
+    triggerOrder.forEach((trigger) => {
+      this.plugins.forEach((entry) => {
+        if (!entry?.enabled) {
+          return;
+        }
+        if (`${entry.plugin.getMenuTrigger() || ''}`.toLowerCase() !== trigger) {
+          return;
+        }
+        if (!orderedEntries.includes(entry)) {
+          orderedEntries.push(entry);
+        }
+      });
+    });
+    return orderedEntries;
+  }
+
+  refreshEventSubscriptions() {
+    const desiredEvents = new Set();
+    this.plugins.forEach((entry) => {
+      if (!entry?.enabled || !this.pluginHasRegisteredEvents(entry.plugin)) {
+        return;
+      }
+      entry.plugin.getEventNames().forEach((eventName) => desiredEvents.add(eventName));
+    });
+
+    this.eventHandlers.forEach((handler, eventName) => {
+      if (desiredEvents.has(eventName)) {
+        return;
+      }
+      this.eventBus.off(eventName, handler);
+      this.eventHandlers.delete(eventName);
+    });
+
+    desiredEvents.forEach((eventName) => {
+      if (this.eventHandlers.has(eventName)) {
+        return;
+      }
+      const handler = (busEventName, payload) => {
+        this.dispatchPluginEvent(busEventName, payload);
+      };
+      this.eventHandlers.set(eventName, handler);
+      this.eventBus.on(eventName, handler);
+    });
+  }
+
+  dispatchPluginEvent(eventName, payload) {
+    const orderedEntries = this.getEnabledPluginEntriesInTriggerOrder();
+    if (PLUGIN_ORDER_DEBUG) {
+      const triggerOrder = this.getSongPluginFiringOrder().join(',');
+      const matchingPlugins = orderedEntries
+        .filter((entry) => entry.plugin.getEventNames().includes(eventName))
+        .map((entry) => entry.plugin.getId())
+        .join(',');
+      console.log(`[PluginOrder] event=${eventName} order=[${triggerOrder}] listeners=[${matchingPlugins}]`);
+    }
+
+    orderedEntries.forEach((entry) => {
+      if (!entry.enabled || !entry.plugin.getEventNames().includes(eventName)) {
+        return;
+      }
+
+      const response = entry.plugin.handleEvent(eventName, payload, {
+        song: this.song,
+        pluginManager: this
+      });
+      const normalized = normalizePluginResponse(response, `${entry.plugin.getId()}:${eventName}`);
+      if (normalized.result || normalized.message) {
+        this.eventBus.trigger('PluginManager:ShowResult', {
+          pluginId: entry.plugin.getId(),
+          eventName,
+          result: normalized.result,
+          message: normalized.message
+        });
+      }
+      this.syncSongPlugins();
+    });
+  }
+
   buildManagedPropertyNodes(plugin) {
     const pluginId = plugin.getId();
     const managedNodes = [];
@@ -254,7 +537,7 @@ export class PluginManager {
       );
     }
 
-    managedNodes.push(this.buildManagedBuryNode(pluginId));
+    managedNodes.push(this.buildManagedGraveyardNode(pluginId));
     return managedNodes;
   }
 
@@ -271,25 +554,106 @@ export class PluginManager {
     });
   }
 
-  buildManagedBuryNode(pluginId) {
+  buildGraveyardInput(pluginId) {
+    return {
+      type: 'input',
+      caption: 'graveyard key',
+      default: `plugin:${pluginId}:graveyardKey`,
+      datatype: 'string',
+      id: 'value'
+    };
+  }
+
+  buildManagedGraveyardNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'graveyard',
+      caption: buildCaption('graveyard', 'g'),
+      trigger: 'g',
+      pluginId,
+      children: [
+        this.buildManagedGraveyardBuryNode(pluginId),
+        this.buildManagedGraveyardRaiseNode(pluginId),
+        this.buildManagedGraveyardSaveNode(pluginId),
+        this.buildManagedGraveyardLinkNode(pluginId)
+      ]
+    });
+  }
+
+  buildManagedGraveyardBuryNode(pluginId) {
     return new MenuItemProxy(this, {
       name: 'bury',
-      caption: buildCaption('Bury', 'B'),
-      trigger: 'B',
-      action: 'pluginAction:bury',
+      caption: buildCaption('bury (save+clear)', 'b'),
+      trigger: 'b',
+      action: 'pluginAction:graveyardBury',
       pluginId,
       popOnBang: true,
-      input: {
-        type: 'input',
-        caption: 'graveyard key',
-        default: `plugin:${pluginId}:graveyardKey`,
-        datatype: 'string',
-        id: 'value'
-      }
+      input: this.buildGraveyardInput(pluginId)
+    });
+  }
+
+  buildManagedGraveyardRaiseNode(pluginId) {
+    const records = this.getPluginGraveyardRecords(pluginId, 9);
+    const children = records.length > 0
+      ? records.map(({ record, graveyardIndex }, index) => this.buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, index + 1))
+      : [new MenuItemProxy(this, {
+        name: 'noPluginSnapshots',
+        caption: 'no plugin snapshots',
+        action: 'noAction',
+        pluginId
+      })];
+
+    return new MenuItemProxy(this, {
+      name: 'raise',
+      caption: buildCaption('raise', 'r'),
+      trigger: 'r',
+      pluginId,
+      children
+    });
+  }
+
+  buildManagedGraveyardRaiseRecordNode(pluginId, record, graveyardIndex, ordinal) {
+    const ordinalText = `${ordinal}`;
+    const captionText = this.getPluginGraveyardRecordCaption(record);
+    return new MenuItemProxy(this, {
+      name: `raise:${graveyardIndex}`,
+      caption: `<b>${ordinalText}</b> ${captionText}`,
+      trigger: ordinalText,
+      action: 'pluginAction:graveyardRaise',
+      pluginId,
+      value: graveyardIndex,
+      popOnBang: true
+    });
+  }
+
+  buildManagedGraveyardSaveNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'save',
+      caption: buildCaption('save', 's'),
+      trigger: 's',
+      action: 'pluginAction:graveyardSave',
+      pluginId,
+      popOnBang: true,
+      input: this.buildGraveyardInput(pluginId)
+    });
+  }
+
+  buildManagedGraveyardLinkNode(pluginId) {
+    return new MenuItemProxy(this, {
+      name: 'link',
+      caption: buildCaption('link', 'l'),
+      trigger: 'l',
+      action: 'pluginAction:graveyardLink',
+      pluginId,
+      popOnBang: true,
+      input: this.buildGraveyardInput(pluginId)
     });
   }
 
   invokeMenuAction(menuItem, args = {}) {
+    if (menuItem.action === 'pluginAction:audit') {
+      return this.invokePluginAuditAction();
+    }
+
     const pluginId = menuItem.pluginId;
     const entry = this.getPluginEntry(pluginId);
     if (!entry) {
@@ -307,13 +671,30 @@ export class PluginManager {
         return this.setPropertyValue(entry, menuItem.propertyName, menuItem.value);
       case 'pluginAction:invoke':
         return this.invokePluginAction(entry, menuItem.actionName, args);
-      case 'pluginAction:bury': {
+      case 'pluginAction:graveyardBury': {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.buryPluginEntry(entry, rawValue);
       }
+      case 'pluginAction:graveyardSave': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.savePluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardLink': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.linkPluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardRaise':
+        return this.raisePluginSnapshotByGraveyardIndex(pluginId, menuItem.value);
       default:
         throw new Error(`Unsupported plugin action: ${menuItem.action}`);
     }
+  }
+
+  invokePluginAuditAction() {
+    return {
+      result: 'plugin audit',
+      message: buildPluginAuditHtml({ song: this.song, pluginManager: this })
+    };
   }
 
   setPropertyValue(entry, propertyName, rawValue) {
@@ -503,9 +884,190 @@ export class PluginManager {
     this.replaceGraveyardRecord(entry, userKey, payload);
     this.syncSongPlugins();
     this.refreshPluginsMenuNode();
+    const resultVerb = options.resultVerb || 'buried';
     return {
-      result: `buried ${entry.plugin.getId()} as ${userKey}`,
+      result: `${resultVerb} ${entry.plugin.getId()} as ${userKey}`,
       userKey
+    };
+  }
+
+  savePluginEntry(entry, rawValue) {
+    return this.storePluginSnapshot(entry, rawValue, {
+      disableBeforeSnapshot: false,
+      skipLoopStop: true,
+      resultVerb: 'saved'
+    });
+  }
+
+  getPluginGraveyardRecords(pluginId, limit = 9) {
+    if (!this.song || !this.song.graveyard || !Array.isArray(this.song.graveyard.records)) {
+      return [];
+    }
+
+    const records = [];
+    for (let index = this.song.graveyard.records.length - 1; index >= 0; index -= 1) {
+      const record = this.song.graveyard.records[index];
+      if (record?.type === 'PLUGIN' && record?.context?.pluginId === pluginId) {
+        records.push({ record, graveyardIndex: index });
+        if (records.length >= limit) {
+          break;
+        }
+      }
+    }
+    return records;
+  }
+
+  getPluginGraveyardRecordCaption(record) {
+    return record?.context?.userKey
+      || record?.context?.caption
+      || record?.context?.logicalKey
+      || `${record?.timestamp || 'snapshot'}`;
+  }
+
+  findPluginGraveyardRecordIndex(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    if (!this.song || !this.song.graveyard || !Array.isArray(this.song.graveyard.records)) {
+      return -1;
+    }
+
+    for (let index = this.song.graveyard.records.length - 1; index >= 0; index -= 1) {
+      const record = this.song.graveyard.records[index];
+      if (record?.type !== 'PLUGIN') {
+        continue;
+      }
+      if (record?.context?.pluginId !== pluginId) {
+        continue;
+      }
+      if (record?.context?.userKey === normalizedKey || record?.context?.logicalKey === `${pluginId}::${normalizedKey}`) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  findPluginGraveyardRecord(pluginId, userKey) {
+    const index = this.findPluginGraveyardRecordIndex(pluginId, userKey);
+    return index >= 0 ? this.song.graveyard.records[index] : null;
+  }
+
+  raisePluginSnapshotByGraveyardIndex(pluginId, graveyardIndex) {
+    const index = Number.parseInt(`${graveyardIndex}`, 10);
+    const record = this.song?.graveyard?.records?.[index];
+    if (!record || record.type !== 'PLUGIN' || record.context?.pluginId !== pluginId) {
+      return { result: `missing ${pluginId} snapshot` };
+    }
+
+    const persisted = JSON.parse(record.json);
+    const result = this.importPluginSnapshot(pluginId, persisted, { autoBuryCurrent: true });
+    record.lastRevived = Date.now();
+    this.eventBus.trigger('PluginGraveyard:raised', { pluginId, graveyardIndex: index, userKey: record.context?.userKey });
+    this.eventBus.trigger('SongUiFullRepaint');
+    return {
+      result: result.result || `revived ${pluginId} as ${record.context?.userKey || index}`
+    };
+  }
+
+  raisePluginSnapshotByKey(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    const index = this.findPluginGraveyardRecordIndex(pluginId, normalizedKey);
+    if (index < 0) {
+      return { result: `missing ${pluginId}.${normalizedKey}`, missing: true };
+    }
+    return this.raisePluginSnapshotByGraveyardIndex(pluginId, index);
+  }
+
+  buildPluginRaiseFragment(pluginId, userKey) {
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    return `#raise=${pluginId}.${normalizedKey}`;
+  }
+
+  appendPluginGraveyardLinkToSongInfo(entry, userKey) {
+    if (!this.song) {
+      return { result: 'link unavailable' };
+    }
+
+    const normalizedKey = normalizeGraveyardKey(userKey);
+    const pluginId = entry.plugin.getId();
+    const fragment = this.buildPluginRaiseFragment(pluginId, normalizedKey);
+    const label = `${pluginId}.${normalizedKey}`;
+    const line = `\n<br>Raise plugin state: <a href="${escapeHtml(fragment)}">${escapeHtml(label)}</a>`;
+    this.song.info = `${this.song.info || ''}${line}`;
+    this.eventBus.trigger('PluginGraveyard:linkAdded', { pluginId, userKey: normalizedKey, fragment });
+    return {
+      result: `linked ${label}`,
+      fragment
+    };
+  }
+
+  linkPluginEntry(entry, rawValue) {
+    const snapshotResult = this.savePluginEntry(entry, rawValue);
+    if (snapshotResult.result === 'Bury unavailable') {
+      return snapshotResult;
+    }
+
+    const linkResult = this.appendPluginGraveyardLinkToSongInfo(entry, snapshotResult.userKey);
+    return {
+      result: linkResult.result,
+      message: linkResult.fragment || ''
+    };
+  }
+
+  parsePluginRaiseHash(hash = '') {
+    return this.parsePluginRaiseHashEntries(hash).items;
+  }
+
+  parsePluginRaiseHashEntries(hash = '') {
+    const text = `${hash || ''}`.trim().replace(/^#/, '');
+    if (!text.startsWith('raise=')) {
+      return { items: [], errors: [] };
+    }
+
+    const items = [];
+    const errors = [];
+    text
+      .slice('raise='.length)
+      .split(',')
+      .map((segment) => segment.trim().replace(/^raise=/, ''))
+      .filter(Boolean)
+      .forEach((segment) => {
+        const dotIndex = segment.indexOf('.');
+        if (dotIndex <= 0 || dotIndex === segment.length - 1) {
+          errors.push(`invalid ${segment}`);
+          return;
+        }
+        const pluginId = segment.slice(0, dotIndex).trim();
+        const userKey = segment.slice(dotIndex + 1).trim();
+        if (!PLUGIN_GRAVEYARD_KEY_PATTERN.test(pluginId) || !PLUGIN_GRAVEYARD_KEY_PATTERN.test(userKey)) {
+          errors.push(`invalid ${segment}`);
+          return;
+        }
+        items.push({ pluginId, userKey });
+      });
+    return { items, errors };
+  }
+
+  raisePluginSnapshotsFromHash(hash = '') {
+    const parsed = this.parsePluginRaiseHashEntries(hash);
+    const raises = parsed.items;
+    if (raises.length === 0 && parsed.errors.length === 0) {
+      return { result: 'no plugin snapshots raised', message: '' };
+    }
+
+    const results = parsed.errors.concat(raises.map(({ pluginId, userKey }) => {
+      try {
+        const result = this.raisePluginSnapshotByKey(pluginId, userKey);
+        return result.result || `${pluginId}.${userKey}`;
+      } catch (error) {
+        return `${pluginId}.${userKey}: ${error.message}`;
+      }
+    }));
+
+    const html = results.map((result) => `<div>${escapeHtml(result)}</div>`).join('');
+    this.eventBus.trigger('UserLog', { subSystem: 'PluginManager', message: html });
+    return {
+      result: `processed ${results.length} plugin raise link${results.length === 1 ? '' : 's'}`,
+      message: html,
+      results
     };
   }
 
@@ -587,6 +1149,13 @@ export class PluginManager {
   }
 
   resolveValue(token) {
+    if (token === 'plugin:manager:firingOrderDisplay') {
+      return this.getPluginFiringOrderDisplay();
+    }
+    if (token === 'plugin:manager:firingOrderInput') {
+      return this.getPluginFiringOrderInput();
+    }
+
     if (typeof token !== 'string' || !token.startsWith('plugin:')) {
       return undefined;
     }
@@ -637,6 +1206,9 @@ export class PluginManager {
 
   loadSongPluginState(song) {
     this.song = song || null;
+    if (this.song && typeof this.song === 'object') {
+      this.song.pluginFiringOrder = this.normalizePluginFiringOrder(this.song.pluginFiringOrder || []);
+    }
     const persistedPlugins = song && song.plugins && typeof song.plugins === 'object' ? song.plugins : {};
 
     this.plugins.forEach((entry, pluginId) => {
@@ -653,6 +1225,7 @@ export class PluginManager {
     });
 
     this.syncSongPlugins();
+    this.refreshEventSubscriptions();
     this.refreshPluginsMenuNode();
   }
 
@@ -725,8 +1298,9 @@ export class PluginManager {
   }
 
   enablePluginEntry(entry) {
-    if (entry.handlers.size > 0) {
+    if (entry.enabled) {
       entry.enabled = true;
+      this.refreshEventSubscriptions();
       this.syncSongPlugins();
       return;
     }
@@ -734,41 +1308,17 @@ export class PluginManager {
     if (typeof entry.plugin.enable === 'function') {
       entry.plugin.enable({ song: this.song, pluginManager: this });
     }
-    entry.plugin.getEventNames().forEach((eventName) => {
-      const handler = (busEventName, payload) => {
-        if (!entry.enabled) {
-          return;
-        }
-        const response = entry.plugin.handleEvent(busEventName, payload, {
-          song: this.song,
-          pluginManager: this
-        });
-        const normalized = normalizePluginResponse(response, `${entry.plugin.getId()}:${busEventName}`);
-        if (normalized.result || normalized.message) {
-          this.eventBus.trigger('PluginManager:ShowResult', {
-            pluginId: entry.plugin.getId(),
-            eventName: busEventName,
-            result: normalized.result,
-            message: normalized.message
-          });
-        }
-        this.syncSongPlugins();
-      };
-      entry.handlers.set(eventName, handler);
-      this.eventBus.on(eventName, handler);
-    });
+    this.refreshEventSubscriptions();
     this.syncSongPlugins();
   }
 
   disablePluginEntry(entry) {
+    const wasEnabled = entry.enabled;
     entry.enabled = false;
-    entry.handlers.forEach((handler, eventName) => {
-      this.eventBus.off(eventName, handler);
-    });
-    entry.handlers.clear();
-    if (typeof entry.plugin.disable === 'function') {
+    if (wasEnabled && typeof entry.plugin.disable === 'function') {
       entry.plugin.disable({ song: this.song, pluginManager: this });
     }
+    this.refreshEventSubscriptions();
     this.syncSongPlugins();
   }
 }

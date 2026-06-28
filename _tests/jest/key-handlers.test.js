@@ -101,6 +101,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 }));
 
 const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders, getValue } = await import('../../key-handlers.js');
+let mockDownloadBackupThenClearGraveyardByType;
 
 function createSong() {
 	const sections = [{ currentBeat: 1 }, { currentBeat: 1 }];
@@ -264,6 +265,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockShowAllNoteNames = jest.fn();
 		mockHandleBtnControlsToDisplayOptions = jest.fn();
 		mockHandleBtnDeleteDisplayOptions = jest.fn();
+		mockDownloadBackupThenClearGraveyardByType = jest.fn(() => ({ result: 'cleared: SECTION (1)' }));
 		updateSectionsStatus = jest.fn();
 
 		looperState.sections = false;
@@ -283,6 +285,7 @@ describe('key-handlers spacebar mapping', () => {
 			cycleThruKeys: jest.fn(),
 			cycleThruNutWidths: jest.fn(),
 			downloadBackupThenClearGraveyard: jest.fn(),
+			downloadBackupThenClearGraveyardByType: mockDownloadBackupThenClearGraveyardByType,
 			downloadPlayedNotes: jest.fn(),
 			enterFullscreen: jest.fn(),
 			getBPM: mockGetBPM,
@@ -594,6 +597,38 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(result.result).toBe('REC toggled');
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
+	});
+
+	test('/fac toggle actions update graveyard type state and keep menu stack', () => {
+		performCmdAction({ action: 'resetGraveyardClearByTypeSelection' });
+
+		expect(getValue('graveyardClearByTypeSECTION')).toBe('false');
+		const toggleResult = performCmdAction({ action: 'toggleGraveyardClearTypeSECTION' });
+		expect(toggleResult.preserveMenuStack).toBe(true);
+		expect(toggleResult.result).toBe('SECTION=true');
+		expect(getValue('graveyardClearByTypeSECTION')).toBe('true');
+	});
+
+	test('/facC skips provider call when no types are selected', () => {
+		performCmdAction({ action: 'resetGraveyardClearByTypeSelection' });
+
+		const result = performCmdAction({ action: 'downloadBackupThenClearGraveyardByType' });
+
+		expect(result.result).toBe('no types selected');
+		expect(mockDownloadBackupThenClearGraveyardByType).not.toHaveBeenCalled();
+	});
+
+	test('/facC sends selected graveyard types to provider and resets submenu toggles', () => {
+		performCmdAction({ action: 'resetGraveyardClearByTypeSelection' });
+		performCmdAction({ action: 'toggleGraveyardClearTypeSECTION' });
+		performCmdAction({ action: 'toggleGraveyardClearTypePLUGIN' });
+
+		const result = performCmdAction({ action: 'downloadBackupThenClearGraveyardByType' });
+
+		expect(result.result).toBe('cleared: SECTION (1)');
+		expect(mockDownloadBackupThenClearGraveyardByType).toHaveBeenCalledWith(['PLUGIN', 'SECTION']);
+		expect(getValue('graveyardClearByTypeSECTION')).toBe('false');
+		expect(getValue('graveyardClearByTypePLUGIN')).toBe('false');
 	});
 
 	test('selectRadioNoteType enters paint mode before selecting a note type when CLEAR mode is active', () => {

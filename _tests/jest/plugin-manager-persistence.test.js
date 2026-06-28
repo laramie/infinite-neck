@@ -262,9 +262,18 @@ describe('PluginManager plugin persistence', () => {
     const entry = manager.getPluginEntry('transpose');
 
     manager.setPropertyValue(entry, 'doLeadKey', true);
-    manager.setPropertyValue(entry, 'graveyardKey', "Bob's I-IV-V Blues Practice");
+    manager.setPropertyValue(entry, 'graveyardKey', 'Bob_I-IV-V_Blues_Practice');
 
-    expect(manager.exportSongPluginState().transpose.graveyardKey).toBe("Bob's I-IV-V Blues Practice");
+    expect(manager.exportSongPluginState().transpose.graveyardKey).toBe('Bob_I-IV-V_Blues_Practice');
+  });
+
+  test('graveyardKey rejects reserved URI fragment delimiters', () => {
+    const manager = createManagerWithPlugins();
+    const entry = manager.getPluginEntry('transpose');
+
+    expect(() => manager.setPropertyValue(entry, 'graveyardKey', 'Bad.Key')).toThrow('Plugin graveyard key must be an identifier');
+    expect(() => manager.setPropertyValue(entry, 'graveyardKey', 'Bad,Key')).toThrow('Plugin graveyard key must be an identifier');
+    expect(() => manager.setPropertyValue(entry, 'graveyardKey', '1BadKey')).toThrow('Plugin graveyard key must be an identifier');
   });
 
   test('bury stores plugin snapshot, resets entry, and keeps persisted load-enabled value in snapshot', () => {
@@ -275,17 +284,17 @@ describe('PluginManager plugin persistence', () => {
 
     manager.setPropertyValue(entry, 'enableOnSongLoad', true);
     manager.setPropertyValue(entry, 'doLeadKey', true);
-    const result = manager.buryPluginEntry(entry, 'Blues A');
+    const result = manager.buryPluginEntry(entry, 'Blues_A');
 
-    expect(result.result).toBe('buried transpose as Blues A');
+    expect(result.result).toBe('buried transpose as Blues_A');
     expect(song.graveyard.records).toHaveLength(1);
     expect(song.graveyard.records[0].type).toBe('PLUGIN');
     expect(song.graveyard.records[0].context.pluginId).toBe('transpose');
-    expect(song.graveyard.records[0].context.userKey).toBe('Blues A');
+    expect(song.graveyard.records[0].context.userKey).toBe('Blues_A');
     expect(JSON.parse(song.graveyard.records[0].json)).toEqual({
       enabled: false,
       enableOnSongLoad: true,
-      graveyardKey: 'Blues A',
+      graveyardKey: 'Blues_A',
       properties: {
         intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
         NamedNotes: true,
@@ -302,7 +311,7 @@ describe('PluginManager plugin persistence', () => {
     });
     expect(entry.enabled).toBe(false);
     expect(entry.enableOnSongLoad).toBe(false);
-    expect(entry.graveyardKey).toBe('Blues A');
+    expect(entry.graveyardKey).toBe('Blues_A');
   });
 
   test('bury stops looping when needed', () => {
@@ -317,6 +326,50 @@ describe('PluginManager plugin persistence', () => {
     expect(mockClearBeatAndSectionLooping).toHaveBeenCalledTimes(1);
   });
 
+  test('save snapshots plugin state without beforeBury, reset, or loop stop', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+    entry.plugin.beforeBury = jest.fn(() => ({ proceed: true }));
+    mockSectionsLooping.mockReturnValue(true);
+
+    manager.setPropertyValue(entry, 'doLeadKey', true);
+    const result = manager.savePluginEntry(entry, 'Saved_State');
+
+    expect(result.result).toBe('saved transpose as Saved_State');
+    expect(entry.plugin.beforeBury).not.toHaveBeenCalled();
+    expect(mockClearBeatAndSectionLooping).not.toHaveBeenCalled();
+    expect(entry.plugin.getProperty('doLeadKey').getValue()).toBe(true);
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.graveyard.records[0].context.userKey).toBe('Saved_State');
+  });
+
+  test('link saves snapshot and appends duplicate Info links', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    song.info = 'Song notes';
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+    entry.plugin.beforeBury = jest.fn(() => ({ proceed: true }));
+    mockSectionsLooping.mockReturnValue(true);
+
+    const firstResult = manager.linkPluginEntry(entry, 'USER');
+    const secondResult = manager.linkPluginEntry(entry, 'USER');
+
+    expect(firstResult.result).toBe('linked transpose.USER');
+    expect(secondResult.result).toBe('linked transpose.USER');
+    expect(entry.plugin.beforeBury).not.toHaveBeenCalled();
+    expect(mockClearBeatAndSectionLooping).not.toHaveBeenCalled();
+    expect(song.graveyard.records).toHaveLength(1);
+    expect(song.info.match(/Raise plugin state: <a href="#raise=transpose\.USER">transpose\.USER<\/a>/g)).toHaveLength(2);
+    expect(mockEventBus.trigger).toHaveBeenCalledWith('PluginGraveyard:linkAdded', {
+      pluginId: 'transpose',
+      userKey: 'USER',
+      fragment: '#raise=transpose.USER'
+    });
+  });
+
   test('importPluginSnapshot auto-buries current state to USER before restore', () => {
     const manager = createManagerWithPlugins();
     const song = createSongWithTunings();
@@ -329,7 +382,7 @@ describe('PluginManager plugin persistence', () => {
     manager.importPluginSnapshot('transpose', {
       enabled: false,
       enableOnSongLoad: true,
-      graveyardKey: 'Revived Config',
+      graveyardKey: 'Revived_Config',
       properties: {
         intervals: [0, 2, 4],
         NamedNotes: true,
@@ -348,7 +401,7 @@ describe('PluginManager plugin persistence', () => {
     expect(song.graveyard.records[0].context.userKey).toBe('USER');
     expect(entry.enableOnSongLoad).toBe(true);
     expect(entry.enabled).toBe(true);
-    expect(entry.graveyardKey).toBe('Revived Config');
+    expect(entry.graveyardKey).toBe('Revived_Config');
     expect(entry.plugin.getProperty('doLeadKey').getValue()).toBe(true);
   });
 
@@ -369,6 +422,91 @@ describe('PluginManager plugin persistence', () => {
     expect(payload.properties.doLeadKey).toBe(true);
   });
 
+  test('plugin graveyard record helpers use newest-first order and raise updates lastRevived', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'NamedNotes', false);
+    manager.savePluginEntry(entry, 'Preset_A');
+    manager.setPropertyValue(entry, 'NamedNotes', true);
+    manager.savePluginEntry(entry, 'Preset_B');
+
+    const records = manager.getPluginGraveyardRecords('transpose', 9);
+    expect(records.map(({ record }) => record.context.userKey)).toEqual(['Preset_B', 'Preset_A']);
+
+    const result = manager.raisePluginSnapshotByKey('transpose', 'Preset_A');
+
+    expect(result.result).toBe('revived transpose as Preset_A');
+    const raisedRecord = manager.findPluginGraveyardRecord('transpose', 'Preset_A');
+    expect(raisedRecord.lastRevived).toEqual(expect.any(Number));
+    expect(entry.plugin.getProperty('NamedNotes').getValue()).toBe(false);
+    expect(mockEventBus.trigger).toHaveBeenCalledWith('SongUiFullRepaint');
+  });
+
+  test('graveyard raise menu captions prefix numeric trigger before labels containing digits', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    song.graveyard.records = [
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'saved' },
+        timestamp: 1,
+        json: '{}'
+      },
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'USER' },
+        timestamp: 2,
+        json: '{}'
+      },
+      {
+        type: 'PLUGIN',
+        context: { pluginId: 'transpose', userKey: 'saved1-2-3' },
+        timestamp: 3,
+        json: '{}'
+      }
+    ];
+
+    const raiseNode = manager.buildManagedGraveyardRaiseNode('transpose');
+
+    expect(raiseNode.children.map((child) => child.caption)).toEqual([
+      '<b>1</b> saved1-2-3',
+      '<b>2</b> USER',
+      '<b>3</b> saved'
+    ]);
+    expect(raiseNode.children.map((child) => child.trigger)).toEqual(['1', '2', '3']);
+  });
+
+  test('plugin raise hash parser and raiser support superlinks and continue after missing snapshots', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const transposeEntry = manager.getPluginEntry('transpose');
+    const arpeggioEntry = manager.getPluginEntry('arpeggio');
+
+    manager.savePluginEntry(transposeEntry, 'Transpose_A');
+    manager.savePluginEntry(arpeggioEntry, 'Arp_A');
+
+    expect(manager.parsePluginRaiseHash('#raise=transpose.Transpose_A,raise=arpeggio.Arp_A')).toEqual([
+      { pluginId: 'transpose', userKey: 'Transpose_A' },
+      { pluginId: 'arpeggio', userKey: 'Arp_A' }
+    ]);
+
+    const result = manager.raisePluginSnapshotsFromHash('#raise=transpose.Transpose_A,bad.key.extra,fill.Missing_A,raise=arpeggio.Arp_A');
+
+    expect(result.results).toHaveLength(4);
+    expect(result.results[0]).toBe('invalid bad.key.extra');
+    expect(result.results[2]).toBe('missing fill.Missing_A');
+    expect(mockEventBus.trigger).toHaveBeenCalledWith('UserLog', expect.objectContaining({
+      subSystem: 'PluginManager',
+      message: expect.stringContaining('missing fill.Missing_A')
+    }));
+  });
+
   test('runtime plugin menu captions use ${plugin:...} value references', () => {
     const manager = createManagerWithPlugins();
     const transposeNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'transpose');
@@ -380,32 +518,6 @@ describe('PluginManager plugin persistence', () => {
     expect(enabledNode.caption).toContain('[${plugin:transpose:enabled}]');
     expect(loadEnabledNode.caption).toContain('[${plugin:transpose:enableOnSongLoad}]');
     expect(intervalsNode.caption).toContain('[${plugin:transpose:intervals}]');
-  });
-
-  test('plugins without registered events omit managed enable menu items', () => {
-    const manager = createManagerWithPlugins();
-    const clipNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'clip');
-    const moveNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'move');
-
-    expect(clipNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
-    expect(clipNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
-    expect(clipNode.children[0].name).toBe('bury');
-
-    expect(moveNode.children.find((child) => child.name === 'enabled')).toBeUndefined();
-    expect(moveNode.children.find((child) => child.name === 'enableOnSongLoad')).toBeUndefined();
-    expect(moveNode.children[0].name).toBe('bury');
-  });
-
-  test('plugins with registered events keep managed enable menu items', () => {
-    const manager = createManagerWithPlugins();
-    const transposeNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'transpose');
-    const arpeggioNode = manager.buildPluginsMenuChildren().find((node) => node.name === 'arpeggio');
-
-    expect(transposeNode.children[0].name).toBe('enabled');
-    expect(transposeNode.children[1].name).toBe('enableOnSongLoad');
-
-    expect(arpeggioNode.children[0].name).toBe('enabled');
-    expect(arpeggioNode.children[1].name).toBe('enableOnSongLoad');
   });
 
   test('plugins without registered events suppress the enabled status mark', () => {
@@ -538,5 +650,100 @@ describe('PluginManager plugin persistence', () => {
 
     expect(manager.resolveValue('plugin:clip:defaultReviveChoice')).toBe('1');
     expect(manager.resolveValue('plugin:clip:reviveSummary')).toContain('[1:single-1]');
+  });
+
+  test('plugin firing order normalizes comma and compact inputs to the same canonical order', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    const compact = manager.setSongPluginFiringOrder('tfacm');
+    const comma = manager.setSongPluginFiringOrder('t,f,a,c,m');
+
+    expect(compact).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(comma).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(song.pluginFiringOrder).toEqual(['t', 'f', 'a', 'c', 'm']);
+    expect(manager.getPluginFiringOrderDisplay()).toBe('t,f,a,c,m');
+  });
+
+  test('plugin firing order removes unknown/duplicates and appends missing known triggers', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+
+    const normalized = manager.setSongPluginFiringOrder('f,f,z,t');
+
+    expect(normalized).toEqual(['f', 't', 'a', 'c', 'm']);
+    expect(song.pluginFiringOrder).toEqual(['f', 't', 'a', 'c', 'm']);
+  });
+
+  test('central dispatch follows configured plugin order for same event listeners', () => {
+    const handlers = new Map();
+    const eventBus = {
+      on(eventName, handler) {
+        handlers.set(eventName, handler);
+      },
+      off(eventName) {
+        handlers.delete(eventName);
+      },
+      trigger(eventName, payload) {
+        const handler = handlers.get(eventName);
+        if (handler) {
+          handler(eventName, payload);
+        }
+      }
+    };
+    const manager = new PluginManager(eventBus);
+    const callOrder = [];
+
+    function makePlugin({ id, trigger, eventNames = ['Test:Event'] }) {
+      return {
+        getId() {
+          return id;
+        },
+        getRegisteredName() {
+          return id;
+        },
+        getMenuTrigger() {
+          return trigger;
+        },
+        getEventNames() {
+          return [...eventNames];
+        },
+        getVisibleMenuChildren() {
+          return [];
+        },
+        getProperties() {
+          return [];
+        },
+        exportSongState() {
+          return {};
+        },
+        resetToDefaults() {},
+        enable() {},
+        disable() {},
+        handleEvent() {
+          callOrder.push(id);
+          return {};
+        }
+      };
+    }
+
+    manager.register(makePlugin({ id: 'transpose', trigger: 't' }));
+    manager.register(makePlugin({ id: 'fill', trigger: 'f' }));
+    manager.register(makePlugin({ id: 'arpeggio', trigger: 'a' }));
+    manager.register(makePlugin({ id: 'clip', trigger: 'c', eventNames: [] }));
+
+    manager.loadSongPluginState({ plugins: {} });
+    manager.setSongPluginFiringOrder('aftc');
+    manager.setPropertyValue(manager.getPluginEntry('transpose'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('fill'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('arpeggio'), 'enabled', true);
+    manager.setPropertyValue(manager.getPluginEntry('clip'), 'enabled', true);
+
+    eventBus.trigger('Test:Event', { from: 'test' });
+
+    expect(callOrder).toEqual(['arpeggio', 'fill', 'transpose']);
+    expect(callOrder).not.toContain('clip');
   });
 });

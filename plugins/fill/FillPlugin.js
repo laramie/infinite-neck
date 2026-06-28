@@ -3,10 +3,21 @@ import { PluginProperty, buildCaption, buildValueReference } from '../PluginProp
 import { MenuItemProxy } from '../MenuItemProxy.js';
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
+import {
+  canonicalizeChordForStorage,
+  canonicalizeModeForStorage,
+  chordTypeFromStoredChord,
+  modeTypeFromStoredMode
+} from '../chart/chart-tonal-resolver.js';
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import { PalettePresentation } from '../../presentation.js';
 import { getSong } from '../../infinite-neck.js';
+import {
+  computeRoleNoteSets as computeSharedRoleNoteSets,
+  resolveRoleDecision,
+  buildNamedRolePlan
+} from '../../fill/fill-role-engine.js';
 
 const FILL_OWNER = 'FillPlugin';
 const MODE_NONE = 'none';
@@ -17,22 +28,22 @@ const TARGET_TABLE_OPTION_LIMIT = 9;
 
 const FAMILY_CONFIG = {
   named: {
-    caption: 'NamedNote',
-    trigger: 'N',
+    caption: 'named',
+    trigger: 'n',
     styleNum: Note.STYLENUM_NAMED,
     supportsCopy: true,
     usesRange: false
   },
   single: {
-    caption: 'SingleNote',
-    trigger: 'S',
+    caption: 'single',
+    trigger: 's',
     styleNum: Note.STYLENUM_SINGLE,
     supportsCopy: false,
     usesRange: true
   },
   tiny: {
-    caption: 'TinyNote',
-    trigger: 'T',
+    caption: 'tiny',
+    trigger: 't',
     styleNum: Note.STYLENUM_TINY,
     supportsCopy: true,
     usesRange: true
@@ -60,44 +71,18 @@ const ROLE_CONFIG = {
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
+const ROLE_AUDIT_LETTER = Object.freeze({
+  root: 'r',
+  chord: 'c',
+  scale: 's'
+});
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
+const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
 const STRINGS_SUMMARY_TOKEN = 'stringsSummary';
-const CHART_CHORD_ALIASES = {
-  '4,7': ['', 'M', 'maj'],
-  '3,7': ['m', 'min'],
-  '4,8': ['aug', '+'],
-  '3,6': ['dim', 'o'],
-  '3,6,9': ['dim7', 'o7'],
-  '3,6,10': ['m7b5', 'half-diminished'],
-  '2,7': ['sus2'],
-  '5,7': ['sus4', 'sus'],
-  '4,7,11': ['maj7', 'M7', 'Maj7'],
-  '3,7,10': ['m7', 'min7'],
-  '4,7,10': ['7', 'dom', 'dom7'],
-  '4,10': ['7no5'],
-  '3,7,11': ['m/ma7', 'mMaj7', 'mM7'],
-  '3,7,10,14': ['m9'],
-  '4,7,9,14': ['6add9', '6/9', '69', 'Madd9']
-};
-const CHART_MODE_ALIASES = {
-  '0,2,4,5,7,9,11': ['major', 'ionian'],
-  '0,2,3,5,7,9,10': ['dorian'],
-  '0,1,3,5,7,8,10': ['phrygian'],
-  '0,2,4,6,7,9,11': ['lydian'],
-  '0,2,4,5,7,9,10': ['mixolydian'],
-  '0,2,3,5,7,8,10': ['minor', 'aeolian', 'natural minor'],
-  '0,1,3,5,6,8,10': ['locrian'],
-  '0,2,4,6,8,10': ['whole tone'],
-  '0,3,6,9': ['diminished'],
-  '0,3,5,7,10': ['minor pentatonic'],
-  '0,2,4,7,9': ['major pentatonic'],
-  '0,2,3,5,7,8,11': ['harmonic minor'],
-  '0,2,3,5,7,9,11': ['melodic minor'],
-  '0,2,4,6,7,9,10': ['lydian dominant'],
-  '0,1,4,5,7,8,10': ['gypsy'],
-  '0,1,3,5,7,9,11': ['neopolitanmaj'],
-  '0,1,3,5,7,8,11': ['neopolitanmin']
-};
+const POSITIONS_UNSET_DISPLAY = '[]';
+const POSITIONS_MENU_DEFAULT = '[[0,3],[4,7],[8,12]]';
+const POSITION_NOT_PLAYED_YET = -1;
+const ARPEGGIO_POSITIONS_REQUEST_PATH = 'arpeggio/p';
 
 function getRoleShortLabel(roleName) {
   return roleName === 'root' ? 'r' : roleName === 'chord' ? 'c' : 's';
@@ -113,14 +98,6 @@ function toMessageCaption(text) {
     .replace(/&[A-Za-z0-9#]+;/g, '')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-function normalizeAliasKey(text) {
-  return `${text || ''}`.trim().toLowerCase();
-}
-
-function normalizeChordAliasKey(text) {
-  return `${text || ''}`.trim();
 }
 
 function cloneOptions(options = []) {
@@ -139,13 +116,54 @@ function cellKey(row, col) {
   return `${row}:${col}`;
 }
 
+const LEGACY_CHORD_FORMULA_TO_TONAL = Object.freeze({
+  '4,7': 'M',
+  '3,7': 'm',
+  '4,8': 'aug',
+  '3,6': 'dim',
+  '3,6,9': 'dim7',
+  '3,6,10': 'm7b5',
+  '2,7': 'sus2',
+  '5,7': 'sus4',
+  '4,7,11': 'maj7',
+  '3,7,10': 'm7',
+  '4,7,10': '7',
+  '4,10': '7no5',
+  '3,7,11': 'm/ma7',
+  '3,7,10,14': 'm9',
+  '4,7,9,14': '6add9',
+  '': ''
+});
+
+const LEGACY_MODE_FORMULA_TO_TONAL = Object.freeze({
+  '0,2,4,5,7,9,11': 'major',
+  '0,2,3,5,7,9,10': 'dorian',
+  '0,1,3,5,7,8,10': 'phrygian',
+  '0,2,4,6,7,9,11': 'lydian',
+  '0,2,4,5,7,9,10': 'mixolydian',
+  '0,2,3,5,7,8,10': 'minor',
+  '0,1,3,5,6,8,10': 'locrian',
+  '0,2,4,6,8,10': 'whole tone',
+  '0,3,6,9': 'diminished',
+  '0,3,5,7,10': 'minor pentatonic',
+  '0,2,4,7,9': 'major pentatonic',
+  '0,2,3,5,7,8,11': 'harmonic minor',
+  '0,2,3,5,7,9,11': 'melodic minor',
+  '0,2,4,6,7,9,10': 'lydian dominant',
+  '0,1,4,5,7,8,10': 'double harmonic major',
+  '0,1,3,5,7,9,11': 'neapolitan major',
+  '0,1,3,5,7,8,11': 'balinese',
+  '': ''
+});
+
 export class FillPlugin {
   constructor() {
     this.id = 'fill';
     this.registeredName = 'fill';
     this.menuTrigger = 'f';
-    this.eventNames = ['DaCapo:OnSectionBegin', 'Looper:OnResetSong'];
+    this.eventNames = ['DaCapo:OnSectionBegin', 'DaCapo:OnSongEnd', 'Looper:OnResetSong'];
     this.rowBoundsInitialized = false;
+    this.songLoopCountForPositionPair = 0;
     this.properties = properties.map((spec) => new PluginProperty(spec));
     this.propertyMap = new Map(this.properties.map((property) => [property.name, property]));
     this.applyStaticDefaults();
@@ -319,8 +337,8 @@ export class FillPlugin {
   isLegacyEmptyPersistedState(persistedProperties = {}) {
     const legacyStub = {
       targetTable: '',
-      chordFormula: '4,7',
-      scaleFormula: '0,2,4,5,7,9,11',
+      chordFormula: 'M',
+      scaleFormula: 'major',
       minFret: 0,
       maxFret: 0,
       minRow: 0,
@@ -339,7 +357,29 @@ export class FillPlugin {
       return false;
     }
 
-    return legacyKeys.every((key) => valuesEqual(persistedProperties[key], legacyStub[key]));
+    const legacyChordValues = new Set(['4,7', 'M']);
+    const legacyModeValues = new Set(['0,2,4,5,7,9,11', 'major']);
+
+    return legacyKeys.every((key) => {
+      if (key === 'chordFormula') {
+        return legacyChordValues.has(`${persistedProperties[key]}`);
+      }
+      if (key === 'scaleFormula') {
+        return legacyModeValues.has(`${persistedProperties[key]}`);
+      }
+      return valuesEqual(persistedProperties[key], legacyStub[key]);
+    });
+  }
+
+  normalizeLegacyFormulaValue(name, rawValue) {
+    const text = `${rawValue || ''}`;
+    if (name === 'chordFormula') {
+      return LEGACY_CHORD_FORMULA_TO_TONAL[text] ?? text;
+    }
+    if (name === 'scaleFormula') {
+      return LEGACY_MODE_FORMULA_TO_TONAL[text] ?? text;
+    }
+    return rawValue;
   }
 
   normalizeLegacyPersistedProperties(persistedProperties = {}) {
@@ -465,6 +505,7 @@ export class FillPlugin {
       trigger: 'o',
       children: [
         this.buildUseChartMenuNode(),
+        this.getProperty('automaticFromChart').getMenuNodeSpec(this),
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
         this.buildPositionsMenuNode(),
@@ -503,25 +544,257 @@ export class FillPlugin {
   }
 
   buildPositionsMenuNode() {
-    const token = `plugin:${this.id}:${POSITIONS_SUMMARY_TOKEN}`;
+    const summaryToken = `plugin:${this.id}:${POSITIONS_SUMMARY_TOKEN}`;
+    const token = `plugin:${this.id}:${POSITIONS_VALUE_TOKEN}`;
     return new MenuItemProxy(this, {
       name: 'positions',
-      caption: `${buildCaption('positions', 'p')} [${buildValueReference(token)}]`,
+      caption: `${buildCaption('positions', 'p')} [${buildValueReference(summaryToken)}]`,
       trigger: 'p',
-      vars: [token],
+      vars: [summaryToken],
       children: [
         this.getProperty('minFret').getMenuNodeSpec(this),
-        this.getProperty('maxFret').getMenuNodeSpec(this)
+        this.getProperty('maxFret').getMenuNodeSpec(this),
+        new MenuItemProxy(this, {
+          name: 'positions:clearAllSections',
+          caption: buildCaption('cLear all sections', 'L'),
+          trigger: 'L',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:clearAllSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:clearCurrentSection',
+          caption: buildCaption('clear This section', 'T'),
+          trigger: 'T',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:clearCurrentSection',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:copyToAllSections',
+          caption: buildCaption('Copy to all sections', 'C'),
+          trigger: 'C',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:copyToAllSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:copyToUnsetSections',
+          caption: buildCaption('copy to Unset sections', 'U'),
+          trigger: 'U',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:copyToUnsetSections',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:refreshCurrentSection',
+          caption: buildCaption('Refresh values', 'R'),
+          trigger: 'R',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:refreshCurrentSection',
+          popOnBang: true
+        }),
+        new MenuItemProxy(this, {
+          name: 'positions:setCurrentSection',
+          caption: `${buildCaption('values this section', 'v')} [${buildValueReference(token)}]`,
+          trigger: 'v',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:setCurrentSection',
+          vars: [token],
+          popOnBang: true,
+          input: {
+            type: 'input',
+            caption: 'arrays of positions',
+            default: POSITIONS_MENU_DEFAULT,
+            datatype: 'String',
+            id: 'value'
+          }
+        }),
+        this.getProperty('songLoopsPerPositionPair').getMenuNodeSpec(this),
+        new MenuItemProxy(this, {
+          name: 'positions:importFromArpeggio',
+          caption: buildCaption('Import from arpeggio', 'I'),
+          trigger: 'I',
+          action: 'pluginAction:invoke',
+          pluginId: this.id,
+          actionName: 'positions:importFromArpeggio',
+          popOnBang: true
+        })
       ]
     });
+  }
+
+  exportMenuOptions(menuPath, context = {}) {
+    const normalizedMenuPath = `${menuPath || ''}`.trim();
+    if (normalizedMenuPath !== 'op') {
+      return {
+        status: 'error',
+        code: 'route-mismatch',
+        message: `Fill export supports only path op, received ${normalizedMenuPath || '<empty>'}`
+      };
+    }
+
+    const sectionRef = `${context.sectionRef || ''}`;
+    const instrumentRef = `${context.instrumentRef || ''}`;
+    if (sectionRef !== '' || instrumentRef !== '') {
+      return {
+        status: 'error',
+        code: 'unsupported-scope',
+        message: 'Fill export currently supports only Current section and instrument'
+      };
+    }
+
+    const song = context.song || this.manager?.song || getSong();
+    const section = this.getCurrentSection(song);
+    const positions = this.getSectionPositions(section) || [];
+    return {
+      status: 'ok',
+      pluginId: this.id,
+      menuPath: normalizedMenuPath,
+      payload: {
+        minFret: Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0,
+        maxFret: Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0,
+        songLoopsPerPositionPair: this.getSongLoopsPerPositionPair(),
+        positions: this.clonePositions(positions)
+      }
+    };
+  }
+
+  parseImportedInteger(payload, fieldName) {
+    const value = payload?.[fieldName];
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) {
+      throw new Error(`Imported ${fieldName} must be an integer`);
+    }
+    return parsed;
+  }
+
+  normalizeImportedPositionsPayload(payload, song = getSong()) {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw new Error('Imported payload must be an object');
+    }
+
+    const section = this.getCurrentSection(song);
+    if (!section) {
+      throw new Error('No current section selected');
+    }
+
+    const tuning = this.getSelectedTargetTuning(song);
+    if (!tuning) {
+      throw new Error('No target instrument available in myTunings');
+    }
+
+    const minFret = this.parseImportedInteger(payload, 'minFret');
+    const maxFret = this.parseImportedInteger(payload, 'maxFret');
+    const songLoopsPerPositionPair = this.parseImportedInteger(payload, 'songLoopsPerPositionPair');
+    if (songLoopsPerPositionPair < 1) {
+      throw new Error('Imported songLoopsPerPositionPair must be >= 1');
+    }
+
+    const rawPositions = payload.positions;
+    if (!Array.isArray(rawPositions)) {
+      throw new Error('Imported positions must be an array');
+    }
+    const positions = this.validatePositionsValue(rawPositions, tuning);
+    return {
+      section,
+      minFret,
+      maxFret,
+      songLoopsPerPositionPair,
+      positions
+    };
+  }
+
+  importPositionsFromPlugin(requestPath, song = getSong()) {
+    const pluginManager = this.manager;
+    if (!pluginManager || typeof pluginManager.getPluginMenuOptions !== 'function') {
+      return {
+        result: 'positions import failed',
+        message: 'Fill positions import failed: plugin manager export route unavailable'
+      };
+    }
+
+    const supplierResponse = pluginManager.getPluginMenuOptions(requestPath);
+    if (!supplierResponse || supplierResponse.status !== 'ok') {
+      return {
+        result: 'positions import failed',
+        message: `Fill positions import failed: ${supplierResponse?.message || 'supplier request failed'}`
+      };
+    }
+
+    try {
+      const imported = this.normalizeImportedPositionsPayload(supplierResponse.payload, song);
+      this.setPropertyValue('minFret', imported.minFret, { song });
+      this.setPropertyValue('maxFret', imported.maxFret, { song });
+      this.setPropertyValue('songLoopsPerPositionPair', imported.songLoopsPerPositionPair, { song });
+
+      if (imported.positions.length === 0) {
+        this.clearSectionPositions(imported.section);
+      } else {
+        this.setSectionPositions(imported.section, imported.positions);
+        this.setLastPositionIndex(imported.section, POSITION_NOT_PLAYED_YET);
+      }
+      this.refreshCurrentSectionUi(song);
+
+      const positionsSummary = imported.positions.length === 0
+        ? 'positions=cleared'
+        : `positions=${this.formatPositionsValue(imported.positions)}`;
+      return {
+        result: `Fill imported from arpeggio: minFret=${imported.minFret} maxFret=${imported.maxFret} loops=${imported.songLoopsPerPositionPair} ${positionsSummary}`
+      };
+    } catch (error) {
+      return {
+        result: 'positions import failed',
+        message: `Fill positions import failed: ${error?.message || 'invalid payload'}`
+      };
+    }
+  }
+
+  getSongLoopsPerPositionPair() {
+    const value = Number.parseInt(this.getProperty('songLoopsPerPositionPair')?.getValue(), 10);
+    if (!Number.isFinite(value) || value < 1) {
+      return 1;
+    }
+    return value;
+  }
+
+  incrementSongLoopCounter() {
+    this.songLoopCountForPositionPair += 1;
+    if (!Number.isFinite(this.songLoopCountForPositionPair) || this.songLoopCountForPositionPair < 0) {
+      this.songLoopCountForPositionPair = 0;
+    }
+  }
+
+  resetSongLoopCounter() {
+    this.songLoopCountForPositionPair = 0;
+  }
+
+  getSectionPositionIndexForCurrentSongLoop(section, positions = []) {
+    const safePositions = Array.isArray(positions) ? positions : [];
+    if (safePositions.length === 0) {
+      return null;
+    }
+
+    const loopsPerPositionPair = this.getSongLoopsPerPositionPair();
+    const songLoopCount = Math.max(0, Number.parseInt(this.songLoopCountForPositionPair, 10) || 0);
+    const pairCycleCount = Math.floor(songLoopCount / loopsPerPositionPair);
+    const nextIndex = pairCycleCount % safePositions.length;
+    this.setLastPositionIndex(section, nextIndex);
+    return nextIndex;
   }
 
   buildStringsMenuNode(song = getSong()) {
     const token = `plugin:${this.id}:${STRINGS_SUMMARY_TOKEN}`;
     return new MenuItemProxy(this, {
       name: 'strings',
-      caption: `${buildCaption('strings', 's')} [${buildValueReference(token)}]`,
-      trigger: 's',
+      caption: `${buildCaption('Strings', 'S')} [${buildValueReference(token)}]`,
+      trigger: 'S',
       vars: [token],
       children: [
         this.getProperty('minRow').getMenuNodeSpec(this),
@@ -638,6 +911,7 @@ export class FillPlugin {
   resetToDefaults() {
     this.properties.forEach((property) => property.reset());
     this.rowBoundsInitialized = false;
+    this.songLoopCountForPositionPair = 0;
     this.applyStaticDefaults();
     this.setStaticSelectOptions();
   }
@@ -705,7 +979,8 @@ export class FillPlugin {
     }
 
     const previousTargetTable = name === 'targetTable' ? `${property.getValue() || ''}` : '';
-    const nextValue = property.setValue(rawValue);
+    const normalizedRawValue = this.normalizeLegacyFormulaValue(name, rawValue);
+    const nextValue = property.setValue(normalizedRawValue);
     if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
       this.resetStringLimitDefaultsForTarget(song);
     }
@@ -732,7 +1007,10 @@ export class FillPlugin {
       return this.resolveSingleAddTinyDisplay(song);
     }
     if (fieldName === POSITIONS_SUMMARY_TOKEN) {
-      return `${this.getProperty('minFret')?.getValue()}:${this.getProperty('maxFret')?.getValue()}`;
+      return this.getCurrentSectionPositionsSummary(song);
+    }
+    if (fieldName === POSITIONS_VALUE_TOKEN) {
+      return this.getCurrentSectionPositionsDisplay(song);
     }
     if (fieldName === STRINGS_SUMMARY_TOKEN) {
       return `${this.resolveValue('minRow', { song })}:${this.resolveValue('maxRow', { song })}`;
@@ -778,8 +1056,16 @@ export class FillPlugin {
   }
 
   handleEvent(eventName, payload = {}, context = {}) {
+    if (eventName === 'DaCapo:OnSongEnd') {
+      this.incrementSongLoopCounter();
+      return {};
+    }
+
     if (eventName === 'Looper:OnResetSong') {
-      return this.clearSong(context.song || getSong());
+      const song = context.song || getSong();
+      this.resetSongLoopCounter();
+      this.resetAllSectionPositionIndexes(song);
+      return this.clearSong(song);
     }
 
     if (eventName !== 'DaCapo:OnSectionBegin') {
@@ -787,7 +1073,12 @@ export class FillPlugin {
     }
 
     const song = context.song || getSong();
-    return this.applyToSection(song, this.getSectionForPayload(song, payload));
+    const section = this.getSectionForPayload(song, payload);
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      this.applyAutomaticFromChart(song, section);
+      return this.applyToSection(song, section, { useSectionChart: true });
+    }
+    return this.applyToSection(song, section);
   }
 
   invokeAction(actionName, context = {}) {
@@ -820,6 +1111,20 @@ export class FillPlugin {
     }
 
     switch (actionName) {
+      case 'positions:importFromArpeggio':
+        return this.importPositionsFromPlugin(ARPEGGIO_POSITIONS_REQUEST_PATH, song);
+      case 'positions:setCurrentSection':
+        return this.setPositionsForCurrentSection(song, context.args?.value);
+      case 'positions:clearCurrentSection':
+        return this.clearPositionsForCurrentSection(song);
+      case 'positions:clearAllSections':
+        return this.clearPositionsForAllSections(song);
+      case 'positions:copyToAllSections':
+        return this.copyPositionsToSections(song, { onlyUnset: false });
+      case 'positions:copyToUnsetSections':
+        return this.copyPositionsToSections(song, { onlyUnset: true });
+      case 'positions:refreshCurrentSection':
+        return { result: `positions=${this.getCurrentSectionPositionsDisplay(song)}` };
       case 'useChartChord':
         return this.useChartChord(song);
       case 'useChartMode':
@@ -886,18 +1191,32 @@ export class FillPlugin {
     return { result: `${familyName} set to all none` };
   }
 
+  applyAutomaticFromChart(song = getSong(), section = this.getCurrentSection(song)) {
+    this.useChartChordForSection(song, section, { emptySetsNone: true });
+    this.useChartModeForSection(song, section, { emptySetsNone: true });
+  }
+
   useChartChord(song = getSong()) {
-    const rawValue = `${this.getCurrentSection(song)?.chartChord || ''}`.trim();
-    if (!rawValue) {
+    return this.useChartChordForSection(song, this.getCurrentSection(song));
+  }
+
+  useChartChordForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
+    const rawValue = `${section?.chartChord || ''}`.trim();
+    if (!rawValue || rawValue.toLowerCase() === MODE_NONE) {
+      if (options.emptySetsNone) {
+        this.setPropertyValue('chordFormula', '', { song });
+        return { result: 'No chartChord -> none' };
+      }
       return { result: 'No chartChord' };
     }
 
-    const normalizedValue = this.normalizeChartChord(rawValue);
-    const match = this.matchChartChordToFillOption(normalizedValue);
+    const canonicalValue = canonicalizeChordForStorage(rawValue);
+    const chordType = chordTypeFromStoredChord(canonicalValue);
+    const match = (Constants.FILL_CHORD_OPTIONS || []).find((option) => `${option.value}` === `${chordType}`) || null;
     if (!match) {
       return {
-        result: `No fill match for chartChord="${rawValue}" normalized="${normalizedValue}"`,
-        message: this.buildChartMissMessage('chord', 'chartChord', rawValue, normalizedValue, Constants.FILL_CHORD_OPTIONS)
+        result: `No fill subset match for chartChord="${rawValue}" tonalType="${chordType || '<none>'}"`,
+        message: this.buildChartMissMessage('chord', 'chartChord', rawValue, chordType || '<none>', Constants.FILL_CHORD_OPTIONS)
       };
     }
 
@@ -906,59 +1225,31 @@ export class FillPlugin {
   }
 
   useChartMode(song = getSong()) {
-    const rawValue = `${this.getCurrentSection(song)?.chartMode || ''}`.trim();
-    if (!rawValue) {
+    return this.useChartModeForSection(song, this.getCurrentSection(song));
+  }
+
+  useChartModeForSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
+    const rawValue = `${section?.chartMode || ''}`.trim();
+    if (!rawValue || rawValue.toLowerCase() === MODE_NONE) {
+      if (options.emptySetsNone) {
+        this.setPropertyValue('scaleFormula', '', { song });
+        return { result: 'No chartMode -> none' };
+      }
       return { result: 'No chartMode' };
     }
 
-    const normalizedValue = this.normalizeChartMode(rawValue);
-    const match = this.matchChartModeToFillOption(normalizedValue);
+    const canonicalValue = canonicalizeModeForStorage(rawValue);
+    const modeType = modeTypeFromStoredMode(canonicalValue);
+    const match = (Constants.FILL_SCALE_OPTIONS || []).find((option) => `${option.value}` === `${modeType}`) || null;
     if (!match) {
       return {
-        result: `No fill match for chartMode="${rawValue}" normalized="${normalizedValue}"`,
-        message: this.buildChartMissMessage('mode', 'chartMode', rawValue, normalizedValue, Constants.FILL_SCALE_OPTIONS)
+        result: `No fill subset match for chartMode="${rawValue}" tonalType="${modeType || '<none>'}"`,
+        message: this.buildChartMissMessage('mode', 'chartMode', rawValue, modeType || '<none>', Constants.FILL_SCALE_OPTIONS)
       };
     }
 
     this.setPropertyValue('scaleFormula', match.value, { song });
     return { result: `chartMode -> ${this.getOptionMessageCaption(match)}` };
-  }
-
-  normalizeChartChord(rawChord) {
-    const trimmed = `${rawChord || ''}`.trim();
-    if (!trimmed) {
-      return '';
-    }
-    const withoutSlashBass = trimmed.split('/')[0].trim();
-    const rootMatch = withoutSlashBass.match(/^([A-Ga-g](?:#{1,2}|b{1,2}|x)?)/);
-    const suffix = rootMatch ? withoutSlashBass.slice(rootMatch[0].length).trim() : withoutSlashBass;
-    return suffix || 'M';
-  }
-
-  normalizeChartMode(rawMode) {
-    const trimmed = `${rawMode || ''}`.trim();
-    if (!trimmed) {
-      return '';
-    }
-    const tonicMatch = trimmed.match(/^[A-Ga-g](?:#{1,2}|b{1,2}|x)?\s+(.+)$/);
-    const modeText = tonicMatch ? tonicMatch[1] : trimmed;
-    return normalizeAliasKey(modeText);
-  }
-
-  matchChartChordToFillOption(normalizedChord) {
-    const normalizedKey = normalizeChordAliasKey(normalizedChord);
-    return Constants.FILL_CHORD_OPTIONS.find((option) => {
-      const aliases = CHART_CHORD_ALIASES[option.value] || [];
-      return aliases.some((alias) => normalizeChordAliasKey(alias) === normalizedKey);
-    }) || null;
-  }
-
-  matchChartModeToFillOption(normalizedMode) {
-    const normalizedKey = normalizeAliasKey(normalizedMode);
-    return Constants.FILL_SCALE_OPTIONS.find((option) => {
-      const aliases = CHART_MODE_ALIASES[option.value] || [];
-      return aliases.some((alias) => normalizeAliasKey(alias) === normalizedKey);
-    }) || null;
   }
 
   getOptionMessageCaption(option) {
@@ -980,9 +1271,10 @@ NamedNote, SingleNote, and TinyNote fill.
 - mode = ${this.resolveValue('scaleFormula', { song })}
 - fret range = ${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()}
 - upper/lower string limit = ${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })}
-- NamedNote = ${this.buildFamilySummary('named')}
-- SingleNote = ${this.buildFamilySummary('single')}; add TinyNote = ${this.resolveValue('singleAddTiny', { song })}
-- TinyNote = ${this.buildFamilySummary('tiny')}
+- song loops per position = ${this.getSongLoopsPerPositionPair()}
+- named = ${this.buildFamilySummary('named')}
+- single = ${this.buildFamilySummary('single')}; add TinyNote = ${this.resolveValue('singleAddTiny', { song })}
+- tiny = ${this.buildFamilySummary('tiny')}
 
 NamedNote ignores fret and string limits.
 SingleNote and standalone TinyNote obey the configured fret and string limits.
@@ -996,7 +1288,202 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   buildSummary(song = getSong()) {
-    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord=${this.resolveValue('chordFormula', { song })} mode=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
+    return `target table=${this.resolveValue('targetTable', { song }) || '<none>'} chord=${this.resolveValue('chordFormula', { song })} mode=${this.resolveValue('scaleFormula', { song })} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow', { song })}..${this.resolveValue('maxRow', { song })} song loops per position=${this.getSongLoopsPerPositionPair()} named=${this.buildFamilySummary('named')} single=${this.buildFamilySummary('single')} addTiny=${this.resolveValue('singleAddTiny', { song })} tiny=${this.buildFamilySummary('tiny')}`;
+  }
+
+  getAuditInputs({ song = getSong() } = {}) {
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      return 'auto-chart:true';
+    }
+
+    const chord = `${this.resolveValue('chordFormula', { song }) || ''}`.trim();
+    const mode = `${this.resolveValue('scaleFormula', { song }) || ''}`.trim();
+    const lines = [];
+    if (chord) {
+      lines.push(`chord:${chord}`);
+    }
+    if (mode) {
+      lines.push(`mode:${mode}`);
+    }
+    return lines.length > 0 ? lines.join('<br>') : undefined;
+  }
+
+  getAuditFamilyOutputSummary(familyName) {
+    const roles = ROLE_NAMES
+      .filter((roleName) => this.getFamilyRoleMode(familyName, roleName) !== MODE_NONE)
+      .map((roleName) => ROLE_AUDIT_LETTER[roleName]);
+    return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
+  }
+
+  getAuditOutputs() {
+    const lines = FAMILY_NAMES
+      .map((familyName) => this.getAuditFamilyOutputSummary(familyName))
+      .filter((line) => line.length > 0);
+    return lines.length > 0 ? lines.join('<br>') : undefined;
+  }
+
+  getSectionPositionsDisplay(section) {
+    const positions = this.getSectionPositions(section);
+    return positions ? this.formatPositionsValue(positions) : POSITIONS_UNSET_DISPLAY;
+  }
+
+  getCurrentSectionPositionsDisplay(song = getSong()) {
+    return this.getSectionPositionsDisplay(this.getCurrentSection(song));
+  }
+
+  getCurrentSectionPositionsSummary(song = getSong()) {
+    const section = this.getCurrentSection(song);
+    const positions = this.getSectionPositions(section);
+    if (positions) {
+      return this.formatPositionsValue(positions);
+    }
+    const minFret = Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0;
+    const maxFret = Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0;
+    return `${minFret}:${maxFret}`;
+  }
+
+  setPositionsForCurrentSection(song = getSong(), rawValue = '') {
+    const section = this.getCurrentSection(song);
+    if (!section) {
+      return { result: 'positions skipped: no current section selected' };
+    }
+    const tuning = this.getSelectedTargetTuning(song);
+    if (!tuning) {
+      return { result: 'positions skipped: no target instrument available in myTunings' };
+    }
+    if (`${rawValue ?? ''}`.trim() === '') {
+      this.clearSectionPositions(section);
+      return { result: 'positions cleared for current section' };
+    }
+    try {
+      const positions = this.normalizePositionsValue(rawValue, tuning);
+      if (positions.length === 0) {
+        this.clearSectionPositions(section);
+        return { result: 'positions cleared for current section' };
+      }
+      this.setSectionPositions(section, positions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      this.refreshCurrentSectionUi(song);
+      return { result: `positions=${this.formatPositionsValue(positions)}` };
+    } catch (error) {
+      return this.buildPositionsRejectResponse(error?.message || 'invalid positions', rawValue);
+    }
+  }
+
+  clearPositionsForCurrentSection(song = getSong()) {
+    const section = this.getCurrentSection(song);
+    if (!section) {
+      return { result: 'positions skipped: no current section selected' };
+    }
+    this.clearSectionPositions(section);
+    return { result: 'positions cleared for current section' };
+  }
+
+  clearPositionsForAllSections(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return { result: 'positions skipped: no song loaded' };
+    }
+    let clearedCount = 0;
+    song.sections.forEach((section) => {
+      if (this.getSectionPositions(section) || this.getLastPositionIndex(section) !== null) {
+        this.clearSectionPositions(section);
+        clearedCount += 1;
+      }
+    });
+    return { result: `positions cleared across ${clearedCount} sections` };
+  }
+
+  copyPositionsToSections(song = getSong(), { onlyUnset = false } = {}) {
+    if (!song || !Array.isArray(song.sections)) {
+      return { result: 'positions skipped: no song loaded' };
+    }
+    const currentSection = this.getCurrentSection(song);
+    const sourcePositions = this.getSectionPositions(currentSection);
+    if (!sourcePositions) {
+      return { result: 'positions copy skipped: current section unset' };
+    }
+    this.setLastPositionIndex(currentSection, POSITION_NOT_PLAYED_YET);
+    let copiedCount = 0;
+    song.sections.forEach((section) => {
+      if (section === currentSection) {
+        return;
+      }
+      if (onlyUnset && this.getSectionPositions(section)) {
+        return;
+      }
+      this.setSectionPositions(section, sourcePositions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      copiedCount += 1;
+    });
+    return {
+      result: onlyUnset
+        ? `positions copied to ${copiedCount} unset sections`
+        : `positions copied to ${copiedCount} sections`
+    };
+  }
+
+  resolveEffectiveFretWindow(section, tuning) {
+    const positions = this.getSectionPositions(section);
+    const defaultMinFret = Math.max(0, Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0);
+    const maxAllowedFret = this.getMaxAllowedFret({ myTunings: [tuning], wirings: [] });
+    const defaultMaxFret = Math.min(maxAllowedFret, Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0);
+
+    if (!positions) {
+      return {
+        minFret: defaultMinFret,
+        maxFret: defaultMaxFret,
+        positionsUsed: false,
+        appliedIndex: null
+      };
+    }
+
+    const appliedIndex = this.getSectionPositionIndexForCurrentSongLoop(section, positions);
+    const [minFret, maxFret] = positions[appliedIndex];
+    return {
+      minFret,
+      maxFret,
+      positionsUsed: true,
+      appliedIndex
+    };
+  }
+
+  getApprovedCaptionState(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    const section = context.section || this.getCurrentSection(song);
+    const positions = this.getSectionPositions(section);
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    const lastPositionIndex = this.getLastPositionIndex(section);
+    const currentIndex = Array.isArray(positions) && positions.length > 0
+      ? ((lastPositionIndex !== null && lastPositionIndex >= 0) ? lastPositionIndex : 0)
+      : lastPositionIndex;
+    return {
+      enabled,
+      hasSection: !!section,
+      positions,
+      currentIndex,
+      lowerString: this.resolveValue('minRow', { song }),
+      upperString: this.resolveValue('maxRow', { song })
+    };
+  }
+
+  buildPositionsStatusWidget(state) {
+    if (!state.enabled || !state.hasSection || !Array.isArray(state.positions) || state.positions.length === 0) {
+      return '';
+    }
+    const rangeCell = `<td class="fillStringRange"><span class="fillLowerString">${state.lowerString}</span>:<span class="fillUpperString">${state.upperString}</span></td>`;
+    const tds = state.positions.map((position, index) => {
+      const tdClass = index === state.currentIndex ? ' class="fillCurrentPositionPair"' : '';
+      return `<td${tdClass}>${position[0]}</td><td${tdClass}>${position[1]}</td>`;
+    }).join('');
+    return `<span class="fillPositionsStatus"><table><tr>${rangeCell}${tds}</tr></table></span>`;
+  }
+
+  getApprovedCaptionValue(tokenName, context = {}) {
+    const state = this.getApprovedCaptionState(context);
+    if (tokenName === 'fillPositionsStatus') {
+      return this.buildPositionsStatusWidget(state);
+    }
+    return '';
   }
 
   buildFamilySummary(familyName) {
@@ -1053,32 +1540,231 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return this.getCurrentSection(song);
   }
 
-  getCurrentRootNoteName(section) {
-    const rootID = Number.parseInt(section?.rootID, 10) || 0;
-    return Constants.NOTE_NAMES_ARRAY[rootID] || Constants.NOTE_NAMES_ARRAY[0];
+  getFillSectionData(section) {
+    if (!section || typeof section !== 'object') {
+      return null;
+    }
+    const pluginData = section.pluginData;
+    if (!pluginData || typeof pluginData !== 'object') {
+      return null;
+    }
+    const fill = pluginData.fill;
+    return fill && typeof fill === 'object' ? fill : null;
   }
 
-  parseFormulaValues(propertyName) {
-    const text = `${this.getProperty(propertyName)?.getValue() || ''}`;
-    if (!text) {
+  ensureFillSectionData(section) {
+    if (!section || typeof section !== 'object') {
+      return null;
+    }
+    if (!section.pluginData || typeof section.pluginData !== 'object') {
+      section.pluginData = {};
+    }
+    if (!section.pluginData.fill || typeof section.pluginData.fill !== 'object') {
+      section.pluginData.fill = {};
+    }
+    return section.pluginData.fill;
+  }
+
+  pruneEmptyFillSectionData(section) {
+    if (!section || !section.pluginData || typeof section.pluginData !== 'object') {
+      return;
+    }
+    const fill = section.pluginData.fill;
+    if (fill && typeof fill === 'object' && Object.keys(fill).length === 0) {
+      delete section.pluginData.fill;
+    }
+  }
+
+  clonePositions(positions = []) {
+    return (positions || []).map((position) => [...position]);
+  }
+
+  getSectionPositions(section) {
+    const fill = this.getFillSectionData(section);
+    if (!Array.isArray(fill?.positions) || fill.positions.length === 0) {
+      return null;
+    }
+    return fill.positions
+      .filter((position) => Array.isArray(position) && position.length === 2)
+      .map((position) => position.map((value) => Number.parseInt(value, 10)));
+  }
+
+  setSectionPositions(section, positions) {
+    if (!Array.isArray(positions) || positions.length === 0) {
+      this.clearSectionPositions(section);
+      return;
+    }
+    const fill = this.ensureFillSectionData(section);
+    fill.positions = this.clonePositions(positions);
+  }
+
+  clearSectionPositions(section) {
+    const fill = this.getFillSectionData(section);
+    if (!fill) {
+      return;
+    }
+    delete fill.positions;
+    delete fill.lastPositionIndex;
+    this.pruneEmptyFillSectionData(section);
+  }
+
+  getLastPositionIndex(section) {
+    const fill = this.getFillSectionData(section);
+    if (!fill || fill.lastPositionIndex === undefined || fill.lastPositionIndex === null || fill.lastPositionIndex === '') {
+      return null;
+    }
+    const value = Number.parseInt(fill.lastPositionIndex, 10);
+    return Number.isInteger(value) ? value : null;
+  }
+
+  setLastPositionIndex(section, index) {
+    const fill = this.ensureFillSectionData(section);
+    fill.lastPositionIndex = Number.parseInt(index, 10);
+  }
+
+  resetSectionPositionIndex(section) {
+    const positions = this.getSectionPositions(section);
+    if (!positions) {
+      this.clearSectionPositions(section);
+      return;
+    }
+    this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+  }
+
+  resetAllSectionPositionIndexes(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return 0;
+    }
+    let count = 0;
+    song.sections.forEach((section) => {
+      const positions = this.getSectionPositions(section);
+      if (!positions) {
+        this.clearSectionPositions(section);
+        return;
+      }
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+      count += 1;
+    });
+    return count;
+  }
+
+  normalizeSectionPositionsOnLoad(song = getSong()) {
+    if (!song || !Array.isArray(song.sections)) {
+      return;
+    }
+    song.sections.forEach((section) => {
+      const positions = this.getSectionPositions(section);
+      if (!positions) {
+        this.clearSectionPositions(section);
+        return;
+      }
+      this.setSectionPositions(section, positions);
+      this.setLastPositionIndex(section, POSITION_NOT_PLAYED_YET);
+    });
+  }
+
+  parsePositionsInput(rawValue) {
+    const text = `${rawValue ?? ''}`.trim();
+    if (text === '') {
       return [];
     }
-    return text.split(',').map((value) => Number.parseInt(value, 10)).filter((value) => Number.isFinite(value));
+
+    if (text.includes(';')) {
+      return text.split(';')
+        .map((segment) => segment.trim())
+        .filter(Boolean)
+        .map((segment) => {
+          const parts = segment.split(',').map((part) => part.trim()).filter(Boolean);
+          if (parts.length === 1) {
+            const start = this.parsePositionInteger(parts[0], rawValue);
+            return [start, start + 4];
+          }
+          if (parts.length === 2) {
+            return [this.parsePositionInteger(parts[0], rawValue), this.parsePositionInteger(parts[1], rawValue)];
+          }
+          throw new Error(`Invalid positions segment: ${segment}`);
+        });
+    }
+
+    if (!text.startsWith('[')) {
+      const parts = text.split(',').map((part) => part.trim()).filter(Boolean);
+      if (parts.length < 2) {
+        throw new Error(`Invalid positions input: ${rawValue}`);
+      }
+      const numbers = parts.map((part) => this.parsePositionInteger(part, rawValue));
+      if (numbers.length >= 2) {
+        return Array.from({ length: numbers.length - 1 }, (_, idx) => [numbers[idx], numbers[idx + 1]]);
+      }
+    }
+
+    const parsed = JSON.parse(text);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Expected positions array');
+    }
+    return parsed;
   }
 
-  computeRoleNoteSets(section) {
-    const rootName = this.getCurrentRootNoteName(section);
-    const rootID = Number.parseInt(section?.rootID, 10) || 0;
+  parsePositionInteger(value, rawValue) {
+    const text = `${value}`.trim();
+    if (!/^-?\d+$/.test(text)) {
+      throw new Error(`Expected integer in positions input: ${rawValue}`);
+    }
+    return Number.parseInt(text, 10);
+  }
 
+  normalizePositionsValue(rawValue, tuning) {
+    const parsed = this.parsePositionsInput(rawValue);
+    const normalized = this.validatePositionsValue(parsed, tuning);
+    return this.clonePositions(normalized);
+  }
+
+  validatePositionsValue(positions, tuning) {
+    if (!Array.isArray(positions)) {
+      throw new Error('Expected positions array');
+    }
+    return positions.map((position) => {
+      if (!Array.isArray(position) || position.length !== 2) {
+        throw new Error(`Invalid position pair: ${JSON.stringify(position)}`);
+      }
+      const minFret = this.parsePositionInteger(position[0], JSON.stringify(position));
+      const maxFret = this.parsePositionInteger(position[1], JSON.stringify(position));
+      if (minFret < 0 || maxFret < 0) {
+        throw new Error(`Negative frets are not allowed: ${JSON.stringify(position)}`);
+      }
+      if (minFret > maxFret) {
+        throw new Error(`Reversed position pair: ${JSON.stringify(position)}`);
+      }
+      const maxAllowedFret = Number.parseInt(tuning?.frets, 10);
+      if (Number.isInteger(maxAllowedFret) && maxFret > maxAllowedFret) {
+        throw new Error(`Position exceeds target tuning fret range 0..${maxAllowedFret}: ${JSON.stringify(position)}`);
+      }
+      return [minFret, maxFret];
+    });
+  }
+
+  formatPositionsValue(positions) {
+    return JSON.stringify(this.clonePositions(positions));
+  }
+
+  buildPositionsRejectResponse(reason, rawValue) {
     return {
-      root: new Set([rootName]),
-      chord: new Set(
-        this.parseFormulaValues('chordFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
-      ),
-      scale: new Set(
-        this.parseFormulaValues('scaleFormula').map((interval) => Constants.NOTE_NAMES_ARRAY[(rootID + interval) % 12])
-      )
+      result: 'positions rejected',
+      message: `Fill positions rejected: ${reason}. Attempted: ${rawValue}`
     };
+  }
+
+  computeRoleNoteSets(section, options = {}) {
+    const rootID = Number.parseInt(section?.rootID, 10) || 0;
+    return computeSharedRoleNoteSets({
+      rootID,
+      chordSource: options.useSectionChart
+        ? `${section?.chartChord || ''}`
+        : `${this.getProperty('chordFormula')?.getValue() || ''}`,
+      modeSource: options.useSectionChart
+        ? `${section?.chartMode || ''}`
+        : `${this.getProperty('scaleFormula')?.getValue() || ''}`,
+      useSectionChart: !!options.useSectionChart
+    });
   }
 
   collectCandidateCells(tuning) {
@@ -1120,75 +1806,38 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return candidates;
   }
 
-  isCandidateInRange(candidate) {
-    const minFret = Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0;
-    const maxFret = Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0;
+  isCandidateInRange(candidate, fretWindow = null) {
+    const minFret = Number.parseInt(fretWindow?.minFret, 10);
+    const maxFret = Number.parseInt(fretWindow?.maxFret, 10);
+    const resolvedMinFret = Number.isFinite(minFret) ? minFret : (Number.parseInt(this.getProperty('minFret')?.getValue(), 10) || 0);
+    const resolvedMaxFret = Number.isFinite(maxFret) ? maxFret : (Number.parseInt(this.getProperty('maxFret')?.getValue(), 10) || 0);
     const upperRowLimit = Number.parseInt(this.getProperty('minRow')?.getValue(), 10) || 0;
     const lowerRowLimit = Number.parseInt(this.getProperty('maxRow')?.getValue(), 10) || 0;
-    return candidate.row >= upperRowLimit && candidate.row <= lowerRowLimit && candidate.col >= minFret && candidate.col <= maxFret;
+    return candidate.row >= upperRowLimit && candidate.row <= lowerRowLimit && candidate.col >= resolvedMinFret && candidate.col <= resolvedMaxFret;
   }
 
   resolveFamilyDecision(familyName, noteName, roleNoteSets) {
-    let matched = false;
-    let preserveExisting = false;
-    let outputColorValue = null;
-
-    ROLE_PASS_ORDER.forEach((roleName) => {
-      if (!roleNoteSets[roleName]?.has(noteName)) {
-        return;
-      }
-
-      matched = true;
-      const modeValue = this.getFamilyRoleMode(familyName, roleName);
-      if (modeValue === MODE_KEEP) {
-        preserveExisting = true;
-        return;
-      }
-
-      preserveExisting = false;
-      if (modeValue === MODE_ROLE) {
-        outputColorValue = this.getFamilyRoleColor(familyName, roleName);
-        return;
-      }
-
-      outputColorValue = null;
+    return resolveRoleDecision(noteName, roleNoteSets, {
+      getModeForRole: (roleName) => this.getFamilyRoleMode(familyName, roleName),
+      getColorForRole: (roleName) => this.getFamilyRoleColor(familyName, roleName),
+      rolePassOrder: ROLE_PASS_ORDER
     });
-
-    return {
-      matched,
-      preserveExisting,
-      outputColorValue
-    };
   }
 
   buildNamedPlan(roleNoteSets) {
-    const notePlans = [];
-    const noteNames = new Set();
-    Object.values(roleNoteSets).forEach((noteSet) => {
-      (noteSet || []).forEach((noteName) => noteNames.add(noteName));
+    return buildNamedRolePlan(roleNoteSets, {
+      getModeForRole: (roleName) => this.getFamilyRoleMode('named', roleName),
+      getColorForRole: (roleName) => this.getFamilyRoleColor('named', roleName),
+      rolePassOrder: ROLE_PASS_ORDER,
+      buildNamedNote: (noteName, colorValue) => this.buildNamedNote(noteName, colorValue)
     });
-
-    noteNames.forEach((noteName) => {
-      const decision = this.resolveFamilyDecision('named', noteName, roleNoteSets);
-      if (!decision.matched) {
-        return;
-      }
-      notePlans.push({
-        noteName,
-        preserveExisting: decision.preserveExisting,
-        outputNote: decision.outputColorValue
-          ? this.buildNamedNote(noteName, decision.outputColorValue)
-          : null
-      });
-    });
-
-    return { notePlans };
   }
 
-  buildPlayedFamilyPlan(familyName, section, tuning, roleNoteSets) {
+  buildPlayedFamilyPlan(familyName, section, tuning, roleNoteSets, options = {}) {
+    const fretWindow = options.fretWindow || null;
     const cellPlans = [];
     this.collectCandidateCells(tuning)
-      .filter((candidate) => !this.getFamilyConfig(familyName).usesRange || this.isCandidateInRange(candidate))
+      .filter((candidate) => !this.getFamilyConfig(familyName).usesRange || this.isCandidateInRange(candidate, fretWindow))
       .forEach((candidate) => {
         const decision = this.resolveFamilyDecision(familyName, candidate.noteName, roleNoteSets);
         if (!decision.matched) {
@@ -1249,11 +1898,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     };
   }
 
-  buildApplyPlan(song, section, tuning) {
-    const roleNoteSets = this.computeRoleNoteSets(section);
+  buildApplyPlan(song, section, tuning, options = {}) {
+    const roleNoteSets = this.computeRoleNoteSets(section, options);
+    const rangeOptions = { fretWindow: options.fretWindow || null };
     const namedPlan = this.buildNamedPlan(roleNoteSets);
-    const singlePlan = this.buildPlayedFamilyPlan('single', section, tuning, roleNoteSets);
-    const tinyPlan = this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets);
+    const singlePlan = this.buildPlayedFamilyPlan('single', section, tuning, roleNoteSets, rangeOptions);
+    const tinyPlan = this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets, rangeOptions);
     const standaloneTinyActive = tinyPlan.cellPlans.some((cellPlan) => cellPlan.outputNote);
     const overlayTinyPlan = standaloneTinyActive
       ? { cellPlans: [] }
@@ -1309,14 +1959,17 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return false;
     }
     const roleNoteSets = this.computeRoleNoteSets(section);
-    return this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets).cellPlans.some((cellPlan) => cellPlan.outputNote);
+    const effectiveWindow = this.resolveEffectiveFretWindow(section, tuning);
+    return this.buildPlayedFamilyPlan('tiny', section, tuning, roleNoteSets, { fretWindow: effectiveWindow })
+      .cellPlans
+      .some((cellPlan) => cellPlan.outputNote);
   }
 
   applyToCurrentSection(song = getSong()) {
     return this.applyToSection(song, this.getCurrentSection(song));
   }
 
-  applyToSection(song = getSong(), section = this.getCurrentSection(song)) {
+  applyToSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {
     const tuning = this.getSelectedTargetTuning(song);
     const tableID = this.getSelectedTargetTableID();
 
@@ -1327,7 +1980,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const sectionNotes = section.getSectionNotes(tableID);
     this.clearOwnedFillNotesInSection(sectionNotes);
 
-    const plan = this.buildApplyPlan(song, section, tuning);
+    const effectiveWindow = this.resolveEffectiveFretWindow(section, tuning);
+    const plan = this.buildApplyPlan(song, section, tuning, {
+      ...options,
+      fretWindow: effectiveWindow
+    });
     const counts = this.applyPlanToSection(sectionNotes, plan);
 
     this.refreshCurrentSectionUi(song);

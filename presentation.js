@@ -159,10 +159,10 @@ export class PalettePresentation {
         const remembered = gPresentation.palette.lastRestorableColor;
         const caption = remembered && remembered.caption ? remembered.caption : "Emboss";
         const isAligned = PalettePresentation.isRestoreButtonAligned();
-        const prefix = isAligned ? "\u2713 " : "";
+        const postfix = isAligned ? "  \u2713 " : "";
 
         $label.toggleClass("chooseLastColorAligned", isAligned);
-        $caption.text(prefix + "Color: " + caption);
+        $caption.text("Color: " + caption + postfix);
     }
 
     static setExtraColorsVisible(isVisible) {
@@ -306,6 +306,10 @@ export class PalettePresentation {
         gPresentation.palette.suppressRbColorRemember = !remember;
 
         $radio.prop("checked", true).trigger("change");
+
+        if (remember) {
+            PalettePresentation.rememberRestorableRbColor($radio[0]);
+        }
 
         gPresentation.palette.suppressRbColorRemember = prevSuppress;
         return true;

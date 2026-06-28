@@ -254,6 +254,98 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "pluginFiringOrder",
+              "caption": "<b>p</b>lugin firing order [${pluginFiringOrderDisplay}]",
+              "trigger": "p",
+              "action": "setPluginFiringOrder",
+              "vars": [
+                "pluginFiringOrderDisplay"
+              ],
+              "input": {
+                "type": "input",
+                "caption": "t,f,a,o,c,m or tfaocm",
+                "default": "pluginFiringOrderInput",
+                "datatype": "string",
+                "id": "value"
+              }
+            },
+            {
+              "name": "clearGraveyardByType",
+              "caption": "<b>c</b>lear graveyard by type",
+              "trigger": "c",
+              "action": "resetGraveyardClearByTypeSelection",
+              "guardBeforeDive": true,
+              "children": [
+                {
+                  "name": "clearGraveyardTypeCLIP",
+                  "caption": "<b>c</b>) CLIP [${graveyardClearByTypeCLIP}]",
+                  "trigger": "c",
+                  "action": "toggleGraveyardClearTypeCLIP",
+                  "vars": [
+                    "graveyardClearByTypeCLIP"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeINSTRUMENT",
+                  "caption": "<b>i</b>) INSTRUMENT [${graveyardClearByTypeINSTRUMENT}]",
+                  "trigger": "i",
+                  "action": "toggleGraveyardClearTypeINSTRUMENT",
+                  "vars": [
+                    "graveyardClearByTypeINSTRUMENT"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypePLUGIN",
+                  "caption": "<b>p</b>) PLUGIN [${graveyardClearByTypePLUGIN}]",
+                  "trigger": "p",
+                  "action": "toggleGraveyardClearTypePLUGIN",
+                  "vars": [
+                    "graveyardClearByTypePLUGIN"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeSECTION",
+                  "caption": "<b>s</b>) SECTION [${graveyardClearByTypeSECTION}]",
+                  "trigger": "s",
+                  "action": "toggleGraveyardClearTypeSECTION",
+                  "vars": [
+                    "graveyardClearByTypeSECTION"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeTUNING",
+                  "caption": "<b>t</b>) TUNING [${graveyardClearByTypeTUNING}]",
+                  "trigger": "t",
+                  "action": "toggleGraveyardClearTypeTUNING",
+                  "vars": [
+                    "graveyardClearByTypeTUNING"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardTypeSTYLESHEET",
+                  "caption": "<b>y</b>) STYLESHEET [${graveyardClearByTypeSTYLESHEET}]",
+                  "trigger": "y",
+                  "action": "toggleGraveyardClearTypeSTYLESHEET",
+                  "vars": [
+                    "graveyardClearByTypeSTYLESHEET"
+                  ],
+                  "popOnBang": false
+                },
+                {
+                  "name": "clearGraveyardSelectedTypes",
+                  "caption": "<b>C</b>) Clear selected types, with backup",
+                  "trigger": "C",
+                  "action": "downloadBackupThenClearGraveyardByType",
+                  "popOnBang": true
+                }
+              ]
+            },
+            {
               "caption": "<b>C</b>lear graveyard, with backup",
               "trigger": "C",
               "children": [
@@ -916,6 +1008,42 @@ export var gMenuFile =    {
           ]
         },
         {
+          "caption": "<b>t</b>oggle",
+          "trigger": "t",
+          "children": [
+            {
+              "caption": "f<b>u</b>llscreen",
+              "trigger": "u",
+              "action": "toggleFullscreen"
+            },
+            {
+              "caption": "<b>a</b>ll note names",
+              "trigger": "a",
+              "action": "toggleShowAllNoteNames"
+            },
+            {
+              "caption": "<b>n</b>amedNotes",
+              "trigger": "n",
+              "action": "toggleNamedNotes"
+            },
+            {
+              "caption": "<b>s</b>ingleNotes",
+              "trigger": "s",
+              "action": "toggleSingleNotes"
+            },
+            {
+              "caption": "<b>t</b>inyNotes",
+              "trigger": "t",
+              "action": "toggleTinyNotes"
+            },
+            {
+              "caption": "<b>f</b>ingering",
+              "trigger": "f",
+              "action": "toggleFingering"
+            }
+          ]
+        },
+        {
           "caption": "<b>o</b>pacity",
           "trigger": "o",
           "children": [
@@ -1018,6 +1146,16 @@ export var gMenuFile =    {
               "action": "showViewDiagnosticsVariables"
             },
             {
+              "caption": "<b>u</b>ser log",
+              "trigger": "u",
+              "action": "showUserLog"
+            },
+            {
+              "caption": "<b>C</b>lear user log",
+              "trigger": "C",
+              "action": "clearUserLog"
+            },
+            {
               "caption": "<b>h</b>ide",
               "trigger": "h",
               "action": "hideViewMessages"
@@ -1033,11 +1171,6 @@ export var gMenuFile =    {
           "caption": "<b>f</b>ullscreen",
           "trigger": "f",
           "action": "viewFullscreen"
-        },
-        {
-          "caption": "<b>t</b>oggle fullscreen",
-          "trigger": "t",
-          "action": "toggleFullscreen"
         },
         {
           "caption": "<b>w</b>indow",
@@ -1100,6 +1233,16 @@ export var gMenuFile =    {
                 "displayOptionsClearState"
               ],
               "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>v</b>iew DisplayOptions",
+              "trigger": "v",
+              "action": "showViewDiagnosticsDisplayOptions"
+            },
+            {
+              "caption": "<b>;</b>&nbsp;dialog",
+              "trigger": ";",
+              "action": "showDialog-view"
             }
           ]
         },

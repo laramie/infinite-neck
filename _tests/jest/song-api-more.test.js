@@ -475,7 +475,28 @@ describe('Song section navigation APIs on loaded JSON', () => {
         song.gotoPrevSection(true);
         expect(song.getSectionsCurrentIndex()).toBe(lastIndex);
 
-        expect(triggerSpy).toHaveBeenCalled();
+        expect(triggerSpy).not.toHaveBeenCalled();
+        triggerSpy.mockRestore();
+    });
+
+    test.each(LOADED_SONG_FIXTURES)('non-headless goto section navigation publishes one SectionChanged UI transaction for $label', ({ filename }) => {
+        const data = readSongJson(filename);
+        const song = new Song(data);
+        song.ensureDefaultSection();
+        song.fixupCurrentIndexForLoadedSong();
+        const triggerSpy = jest.spyOn(EventBus, 'trigger').mockImplementation(() => {});
+
+        song.gotoNextSection(true);
+
+        const eventNames = triggerSpy.mock.calls.map((call) => call[0]);
+        expect(eventNames).toEqual(['SectionChanged']);
+        expect(triggerSpy.mock.calls[0][1]).toMatchObject({
+            previousSectionIndex: 0,
+            reason: 'next',
+            sectionIndex: 1,
+            source: 'song'
+        });
+
         triggerSpy.mockRestore();
     });
 });

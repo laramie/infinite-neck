@@ -1,0 +1,99 @@
+.productsmaller {
+    /* From help.html */
+    font-size: 100%;
+    color: darkorange;
+    font-family: "Kode Mono", monospace;
+    -webkit-text-stroke: 0.7px black;
+}
+
+
+#divSongList {
+    background-color: white;
+    display: block;
+    width: 95%;
+    margin-top: 0.4em;
+    border: 1px solid #333;
+    padding: 0.4em;
+}
+
+#divSongList a {
+    display: inline-block;
+    padding: 0.2em 0;
+}
+#divSongList em {
+    font-weight: 600;
+    color: rgb(85, 32, 1);
+}
+#divSongList i {
+    font-weight: 800;
+    color: rgb(40, 110, 2);
+}
+
+.songLibraryRootDetails,
+.songLibraryDirectoryDetails {
+    margin: 0.2em 0;
+}
+
+.songLibrarySummary {
+    background-color: #f4a460;
+    border: 1px solid #663300;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.35em 0.5em;
+}
+
+.songLibraryDirectorySummary {
+    background-color: #ffd39b;
+    margin-left: 0.8em;
+}
+
+.songLibraryBody,
+.songLibraryDirectoryBody {
+    padding: 0.3em 0;
+}
+
+.songLibraryRows {
+    display: block;
+    margin-left: 1.2em;
+}
+
+.songLibraryRow {
+    display: grid;
+    grid-template-columns: minmax(20em, 44%) 1fr;
+    gap: 0.6em;
+    padding: 0.25em 0.4em;
+}
+
+.songLibraryRows .songLibraryRow:nth-of-type(odd) {
+    background-color: rgb(177, 255, 255);
+}
+
+.songLibraryRows .songLibraryRow:nth-of-type(even) {
+    background-color: rgb(235, 253, 148);
+}
+
+.songLibraryCell {
+    min-width: 0;
+    padding: 0.2em;
+}
+
+.songLibraryCellLink {
+    overflow-wrap: anywhere;
+    font-family: "Courier New", monospace;
+}
+
+.songLibraryCellDescription {
+    overflow-wrap: anywhere;
+}
+
+.songLibraryIntroRow {
+    font-style: normal;
+}
+
+.songLibraryCellIntro {
+    grid-column: 1 / -1;
+    padding: 0.2em 0;
+    font-size: 130%;
+}
+
