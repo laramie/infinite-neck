@@ -45,6 +45,14 @@ const SONG_LEVEL_AUDIT_COLUMNS = Object.freeze([
   { label: 'outputs', propertyName: 'auditOutputs', kind: 'audit' }
 ]);
 
+const SONG_LEVEL_STATUS_COLUMNS = Object.freeze([
+  { label: 'enabled', propertyName: 'enabled' },
+  { label: 'persisted', propertyName: 'persisted' }
+]);
+
+const ENABLED_MARK = '&#x1F5F9;';
+const PERSISTED_MARK = '&#x1F5BA;';
+
 function getPluginsInAuditOrder(pluginManager) {
   const registeredPlugins = Array.isArray(pluginManager?.getRegisteredPlugins?.())
     ? pluginManager.getRegisteredPlugins()
@@ -121,6 +129,21 @@ function buildSongLevelTable(song, pluginManager) {
     const pluginId = `${plugin?.getId?.() || ''}`;
     const pluginName = `${plugin?.getRegisteredName?.() || pluginId}`;
     const persistedProperties = getSongPluginProperties(song, pluginId);
+    const pluginEntry = pluginManager?.getPluginEntry?.(pluginId) || null;
+    const pluginCanEnable = Array.isArray(plugin?.getEventNames?.()) && plugin.getEventNames().length > 0;
+
+    const statusCells = SONG_LEVEL_STATUS_COLUMNS.map((column) => {
+      if (column.propertyName === 'enabled') {
+        if (!pluginCanEnable) {
+          return "<td style='background-color: #555;'>&nbsp;</td>";
+        }
+        return `<td>${pluginEntry?.enabled ? ENABLED_MARK : '&nbsp;'}</td>`;
+      }
+      const persisted = typeof pluginManager?.hasPersistedSongState === 'function'
+        ? pluginManager.hasPersistedSongState(pluginId)
+        : false;
+      return `<td>${persisted ? PERSISTED_MARK : '&nbsp;'}</td>`;
+    }).join('');
 
     const cells = SONG_LEVEL_AUDIT_COLUMNS.map((column) => {
       if (column.kind === 'audit') {
@@ -141,8 +164,12 @@ function buildSongLevelTable(song, pluginManager) {
       return `<td>${formatSongLevelCellValue(column, rawValue)}</td>`;
     }).join('');
 
-    return `<tr><td>${escapeHtml(pluginName)}</td>${cells}</tr>`;
+    return `<tr><td>${escapeHtml(pluginName)}</td>${statusCells}${cells}</tr>`;
   });
+
+  const statusHeaderCells = SONG_LEVEL_STATUS_COLUMNS
+    .map((column) => `<th class='vertical-header'><span>${escapeHtml(column.label)}</span></th>`)
+    .join('');
 
   const headerCells = SONG_LEVEL_AUDIT_COLUMNS
     .map((column) => `<th class='vertical-header'><span>${escapeHtml(column.label)}</span></th>`)
@@ -151,7 +178,7 @@ function buildSongLevelTable(song, pluginManager) {
   return [
     "<table border='1' class='tblDisplayOptions pluginAuditTable pluginAuditSongTable'>",
     '<caption>Plugin Audit: Song-Level Persisted Properties</caption>',
-    `<tr><th scope='col'>plugin</th>${headerCells}</tr>`,
+    `<tr><th scope='col'>plugin</th>${statusHeaderCells}${headerCells}</tr>`,
     rows.join('\n'),
     '</table>'
   ].join('\n');

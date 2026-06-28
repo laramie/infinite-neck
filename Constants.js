@@ -58,6 +58,7 @@ export const noteNamesFuncArrDEFAULT = [
     "&Delta;" // 12 - say 
 ];
 export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+export const NOTE_NAMES_ARRAY_SHARPS = "A,A#,B,C,C#,D,D#,E,F,F#,G,G#".split(',');
 export const SHARP_IDS = ['A', 'B', 'C', 'D', 'E', 'G'];
 export const FUNCTION_OFFSETS = ["I+0","&tau;+1","II+2","m+3","III+4","IV+5","&Theta;+6","V+7","&sigma;+8","6+9","&delta;+10","&Delta;+11"];
 

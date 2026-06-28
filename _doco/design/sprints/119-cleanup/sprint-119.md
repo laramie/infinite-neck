@@ -55,7 +55,7 @@ Here are the work items, grouped by status.
   - COMPLETE (actually a complete refactor of the four radio buttons)
 
 #### default spacebar to looper is getting trapped so you must hit ESC to use it again.
-  - CLOSED. Can't replicate.
+  - CLOSED. Can't replicate. [EDIT 20260627: actually this happens when LOOP button gets focus, so that SPACE triggers it.]
 
 #### in /fpoa "Refresh" should be "Refresh [section 1]" 
   - DONE

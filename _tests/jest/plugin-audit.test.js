@@ -157,6 +157,8 @@ describe('Plugin audit', () => {
     const manager = createManager();
     const song = createSongWithSectionPluginData();
     manager.loadSongPluginState(song);
+    const arpeggioEntry = manager.getPluginEntry('arpeggio');
+    manager.setPropertyValue(arpeggioEntry, 'enabled', true);
 
     const result = manager.invokeMenuAction({ action: 'pluginAction:audit' });
 
@@ -166,6 +168,8 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('arpeggioCurrentPositionPair');
     expect(result.message).toContain('fillCurrentPositionPair');
     expect(result.message).toContain('<th scope=\'col\'>plugin</th>');
+    expect(result.message).toContain('<span>enabled</span>');
+    expect(result.message).toContain('<span>persisted</span>');
     expect(result.message).toContain('<span>Instrument</span>');
     expect(result.message).toContain('<span>chroma</span>');
     expect(result.message).toContain('<span>inputs</span>');
@@ -175,6 +179,10 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('<td>fill</td>');
     expect(result.message).toContain('<td>move</td>');
     expect(result.message).toContain('<td>transpose</td>');
+    expect(result.message).toContain('&#x1F5F9;');
+    expect(result.message).toContain('&#x1F5BA;');
+    expect(result.message).toContain('<tr><td>move</td><td style=\'background-color: #555;\'>&nbsp;</td>');
+    expect(result.message).toContain('<tr><td>clip</td><td style=\'background-color: #555;\'>&nbsp;</td>');
     expect(result.message).toContain('include:n,s,t,b,f,r');
     expect(result.message).toContain('played');
     expect(result.message).toContain("background-color: #555;");
