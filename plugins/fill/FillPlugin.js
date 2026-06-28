@@ -71,10 +71,10 @@ const ROLE_CONFIG = {
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
-const ROLE_AUDIT_LETTER = Object.freeze({
-  root: 'r',
-  chord: 'c',
-  scale: 's'
+const ROLE_AUDIT_LABEL = Object.freeze({
+  root: 'root',
+  chord: 'chord',
+  scale: 'scale'
 });
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
@@ -1311,7 +1311,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   getAuditFamilyOutputSummary(familyName) {
     const roles = ROLE_NAMES
       .filter((roleName) => this.getFamilyRoleMode(familyName, roleName) !== MODE_NONE)
-      .map((roleName) => ROLE_AUDIT_LETTER[roleName]);
+      .map((roleName) => ROLE_AUDIT_LABEL[roleName]);
     return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
   }
 
