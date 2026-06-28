@@ -409,6 +409,11 @@ export var gMenuFile =    {
           "action": "printSectionsSummary"
         },
         {
+          "caption": "<b>i</b>nput",
+          "trigger": "i",
+          "action": "printSectionsInput"
+        },
+        {
           "caption": "<b>n</b>otes",
           "trigger": "n",
           "action": "printSectionsNotes"

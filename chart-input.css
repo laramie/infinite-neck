@@ -1,0 +1,63 @@
+.chartInputPanel {
+    padding: 0.8em;
+    background: white;
+    color: black;
+    border: 1px solid #7aa9c7;
+    border-radius: 0.4em;
+    max-width: 100%;
+}
+
+.chartInputToolbar {
+    text-align: right;
+    margin-bottom: 0.4em;
+}
+
+.chartInputCurrentValues {
+    background-color: #1a0e03;
+    border: 1px solid black;
+    box-shadow: 4pt 4pt 2pt 0.2pt gray;
+    margin-bottom: 0.8em;
+    padding: 0.4em;
+}
+
+.chartInputSuggestionList {
+    min-height: 7.5em;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+    margin-bottom: 0.6em;
+    padding: 0.4em;
+    background: white;
+    border: 1px solid #bbb;
+    border-radius: 0.25em;
+    overflow-x: auto;
+}
+
+.chartInputSuggestionColumn {
+    min-width: 8em;
+}
+
+.chartInputSuggestion {
+    padding: 0.1em 0.35em;
+    white-space: nowrap;
+    color: black;
+    background: white;
+    font-weight: normal;
+}
+
+.chartInputSuggestion--current {
+    color: cyan;
+    background: black;
+    font-weight: bold;
+}
+
+.chartInputRow {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex-wrap: wrap;
+}
+
+.chartInputField {
+    min-width: 12em;
+}

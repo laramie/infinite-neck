@@ -119,7 +119,7 @@ ANSWER: Yes.
 ANSWER: Summary remains default.
 
 
-13. Should the floated Chart Input window have a custom title/handle text beyond the generic dockable handle?
+13. Should the floated Chart Input windodivFilw have a custom title/handle text beyond the generic dockable handle?
 ANSWER: No.
 
 
@@ -132,4 +132,62 @@ ANSWER: Always discard.
 
 Additionally, ensure `/ci` shows parked tab panel.
 
+## Fixes after Iteration 1
+
+We fixed the following:
+
+- Suggestion entries now carry root metadata.
+
+- chord and mode selected shown in div above suggestions with same styling as 
+```
+<span class="lblSectionChartChord"></span>
+<span class="lblSectionMode"></span>
+```
+
+- chart-input.css created.
+
+# Iteration 2
+
+## Help button
+
+We need the Help button, which give somewhat context-sensitive help linkage, to provide a bit more depth than just the active menu button, without breaking `AllMenuDivs` which is special in that it allows divs to be closed up when the ESC key is hit, for example.
+
+So when the tabs are selected, the help topic links should now include: 
+
+Chart > Summary : divChartSummaryTab : help.html#divChartSummaryTab
+Chart > Input  : divChartInputTab : help.html#divChartInputTab
+Chart > Notes : divChartNotesTab : help.html#divChartNotesTab
+Chart > Details : divChartDetailsTab : help.html#divChartDetailsTab
+Chart > Options  : divChartOptionsTab : help.html#divChartOptionsTab
+Chart > Line : divChartTab : help.html#divChartTab
+Chart > Line : divChartLineTab : help.html#divChartLineTab
+
+Tunings > Tunings in Song : divSongTuningControls : help.html#divSongTuningControls
+Tunings > Tunings Library  : divAllTuningsTab : help.html#divAllTuningsTab
+
+Don't worry about the help.html file: we will make the topics manually.
+
+## Easter egg "New Section"
+
+We need a special handling of typing in the chord edit box: 
+- when the User types `!F/C` or `!f/c` followed by ENTER, a new Section is created after the current section, in the Key of C, with a LeadKey of F.
+- when the User types `!C` or `!c`  followed by ENTER, a new Section is created after the current section, in the Key of C, with a LeadKey defaulted.
+- when the User types `!/C` or `!/c`  followed by ENTER, a new Section is created after the current section, in the Key of C, with a LeadKey defaulted.
+- when the User types `!`  followed by ENTER, a new Section is create after the current Section, in the default Key the system already creates, which should be C.
+
+Before the ENTER key is pressed, and the Key has been detected the suggestion should be: 
+`Create new Section in Key of ${Key}`
+or, if LeadKey is provided:
+`Create new Section in Key of ${Key} with LeadKey of ${LeadKey}`
+
+When just the `!` has been parsed, the suggestion is 
+`Create new Section in Key of ${default-Key}`
+
+This means that when the User is at `!F/` the suggestion is 
+`Create new Section in Key of ${default-Key} with LeadKey of F`
+
+This means that when the User is at `!/` the suggestion is 
+`Create new Section in Key of ${default-Key}`
+
+Don't worry about help.html contents: we will create documentation of the Easter egg in the help topic #divChartInputTab.
 

@@ -118,6 +118,7 @@ function handleBtnControlsToDisplayOptions(...args) { return requireProvider('ha
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
+function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
 function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
 function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
@@ -1044,6 +1045,10 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "printSectionsSummary":
 			printSections(false);
+			hideCmdLine();
+			break;
+		case "printSectionsInput":
+			printSectionsInput();
 			hideCmdLine();
 			break;
 		case "printSectionsNotes":

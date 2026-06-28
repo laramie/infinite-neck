@@ -54,6 +54,7 @@ import {
 	document_keypress,
 	document_keyup
 } from './key-handlers.js';
+import { createChartInputController } from './ChartInput.js';
 import {
 	beatsLooping,
 	restartLoopSections,
@@ -168,8 +169,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	var gSong = null;  //constructed in document ready.
 	let gFullscreenLeadSheetLineVisible = false;
+	let chartInputController = null;
 	export function getSong(){
 		return gSong;
+	}
+
+	function getChartInputController() {
+		if (!chartInputController) {
+			chartInputController = createChartInputController({
+				getSong,
+				getSectionsCurrentIndex,
+				linkToSectionChartChord,
+				linkToSectionChartMode,
+				createNewSectionAfterCurrent: createChartInputSectionAfterCurrent,
+				firstSection: () => getTransportController().goFirstSection(),
+				prevSection: () => getTransportController().prevSection(),
+				nextSection: () => getTransportController().nextSection(),
+				lastSection: () => getTransportController().lastSection()
+			});
+		}
+		return chartInputController;
 	}
 
 	const transportController = new TransportController();
@@ -285,6 +304,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
+			printSectionsInput,
 			printSectionsNotes,
 			printSectionsOptions,
 			printSectionsChart,
@@ -1149,6 +1169,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function getHelpTopic(){
+		const tabAnchors = [
+			'#divChartSummaryTab',
+			'#divChartInputTab',
+			'#divChartNotesTab',
+			'#divChartDetailsTab',
+			'#divChartOptionsTab',
+			'#divChartTab',
+			'#divChartLineTab',
+			'#divSongTuningControls',
+			'#divAllTuningsTab'
+		];
+		for (const selector of tabAnchors) {
+			const jTab = $(selector);
+			if (jTab.length > 0 && jTab.is(':visible')) {
+				return 'help.html' + selector;
+			}
+		}
 		 var anchor = "";
 		 for (const [key, value] of Object.entries(AllMenuDivs)){
 			 var jStrMenuDiv = $(key);
@@ -1158,6 +1195,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
  			 }
  		 }
 		 return  'help.html'+anchor;
+	}
+
+	export function createChartInputSectionAfterCurrent({ rootID = 3, rootIDLead = -1 } = {}) {
+		const section = getSong().constructSection();
+		section.rootID = rootID;
+		section.rootIDLead = Number.parseInt(rootIDLead, 10) >= 0 ? Number.parseInt(rootIDLead, 10) : '-1';
+		section.sharps = Constants.noteIdPrefersSharps(rootID);
+		getSong().addSectionAfterCurrent(section);
+		sectionChanged();
+		return section;
 	}
 
 	export function turnOnKeep(){
@@ -1872,6 +1919,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divChartOptionsTab").html(SectionPrinter.printChartOptions(getSong()));
 		$("#divChartTab")       .html(SectionPrinter.printChart(getSong(), getSections()));
 		$("#divChartLineTab")   .html(SectionPrinter.printLeadSheetLine(getSong(), getSections()));
+		getChartInputController().ensurePanel('#divChartInputTab');
 		updateFullscreenLeadSheetLineHost();
 	}
 
@@ -1888,6 +1936,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function printSectionsNotes(){
 		updatePrintSections();
 		showChartTab("Notes");
+		showOneMenu("#divChart", true);
+	}
+
+	export function printSectionsInput(){
+		updatePrintSections();
+		showChartTab("Input");
 		showOneMenu("#divChart", true);
 	}
 
@@ -2545,12 +2599,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function showChartTab(which) {
 		var showNotesTab = which === "Notes";
 		var showSummaryTab = which === "Summary";
+		var showInputTab = which === "Input";
 		var showDetailsTab = which === "Details";
 		var showOptionsTab = which === "Options";
 		var showChartOnlyTab = which === "Chart";
 		var showLineTab = which === "Line";
 		
 		$('#divChartSummaryTab').toggle(showSummaryTab);
+		$('#divChartInputTab').toggle(showInputTab);
 		$('#divChartNotesTab').toggle(showNotesTab);
 		$('#divChartDetailsTab').toggle(showDetailsTab);
 		$('#divChartOptionsTab').toggle(showOptionsTab);
@@ -2560,6 +2616,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnChartSummaryTab')
 			.toggleClass('BtnPunchedIn', showSummaryTab)
 			.toggleClass('BtnPunchedOut', !showSummaryTab);
+		$('#btnChartInputTab')
+			.toggleClass('BtnPunchedIn', showInputTab)
+			.toggleClass('BtnPunchedOut', !showInputTab);
 		$('#btnChartNotesTab')
 			.toggleClass('BtnPunchedIn', showNotesTab)
 			.toggleClass('BtnPunchedOut', !showNotesTab);
@@ -2783,6 +2842,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnChartSummaryTab', function() {
 			showChartTab("Summary");
+		});
+		bindEvent('click', '#btnChartInputTab', function() {
+			showChartTab("Input");
+			getChartInputController().ensurePanel('#divChartInputTab');
 		});
 		bindEvent('click', '#btnChartNotesTab', function() {
 			showChartTab("Notes");
