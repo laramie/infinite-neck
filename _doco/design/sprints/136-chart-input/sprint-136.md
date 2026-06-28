@@ -4,13 +4,14 @@ sprint number: 136
 
 sprint chart-input:
 
-date: 20260000
+date: 20260628
 
 Index of all sprints for reference: [sprint planning index](../../../lifecycle/sprints.md)
 
 ## Purpose
 
-Purpose of this sprint is to: 
+Purpose of this sprint is to:
+- Create a pop-up float window that accepts text input, navigation commands, and acceptance keystrokes, and populates Section.chartChord and Section.chartMode.
 
 ## Sprint document locations
 

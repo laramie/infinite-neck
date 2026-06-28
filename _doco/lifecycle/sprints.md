@@ -173,6 +173,10 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Create an accordion list for all songs on File menu page, with categories (demo, practice,...)
   - Add features so that `songs/song-list.json` drives this list, with descriptions and directory info.
 
+[sprint-135-plugin-audit](../design/sprints/135-plugin-audit/sprint-135.md)
+
+[sprint-136-chart-input](../design/sprints/136-chart-input/sprint-136.md)
+
 - 902-song-import
   - Notes/Sections
   - Color schemes

@@ -68,3 +68,68 @@ When in one of the chord or mode edit boxes, then, these character do the follow
 `>` : lastSection
 
 Other navigation can be achieved by leaving the focus of the inputs, and using the Transport.  Therefore, when the Section changes, input box values are lost and are replaced by Section.chartChord and Section.chartMode when present, and the suggestion div is updated if the input boxes are visible in `Chart > Input` or if the Input is floated.
+
+## Questions for Design team - ANSWERED
+
+1. Should accepting typed text with `ENTER` require a highlighted suggestion, or should arbitrary typed chord/mode text be accepted when no suggestion matches?
+ANSWER: Require highlighted suggestion.
+
+
+2. Should major chords display/store as bare roots (`C`, `Db`) or explicit Tonal major symbols (`CM`, `DbM`) when the Tonal suffix is `M`?
+ANSWER: No bare roots. Tonal is happiest when explict major symbols are present.
+
+
+3. Should the suggestions include an explicit `none` / clear item for chord and mode, or is clearing the input and pressing `ENTER` expected to clear the section value?
+ANSWER: explicit `none` seems like it will be the best way to clear Section.chartChord and Section.chartMode.  It seems pressing ENTER with a blank field would lead to inadvertant clearing, so don't support that. 
+
+
+4. When a suggestion is accepted, should the input show the raw selected text or the canonicalized stored text after `linkToSectionChartChord(...)` / `linkToSectionChartMode(...)` runs?
+ANSWER: show/replace with canonicalized.
+
+
+5. If the user edits text but navigates away without `ENTER`, should those edits always be discarded as specified, or should there be a dirty-state warning?
+ANSWER: discarded and allowed as discarded.  Log warning (without popping up warning) via UserLog.
+
+
+6. Should a click on a suggestion accept it, cycle to it, or do nothing in Iteration 1?
+ANSWER: Do nothing.  Let's stay keyboard driven.
+
+
+7. Should `SPACE` cycle suggestions even when the suggestion list is empty, or should it be ignored until suggestions exist?
+ANSWER: ignored.
+
+
+8. Should filtering match only prefixes, or should compact contains/fuzzy matches be allowed after prefix matches?
+ANSWER: contains/fuzzy matching allowed. 
+
+
+9. Should mode filtering allow mode-only text such as `minor pentatonic` without a key, then accept by applying the current section root?
+ANSWER: Yes. 
+
+
+10. Should chord filtering allow suffix-only text such as `m7` without a key, then accept by applying the current section root?
+ANSWER: Yes.
+
+
+11. Should the current section's root preference determine whether suggestions initially prefer flat or sharp spellings, while still accepting both?
+ANSWER: Yes.
+
+
+12. Should the new `Input` tab be the default visible tab when clicking top-level `Chart`, or should `Summary` remain the default?
+ANSWER: Summary remains default.
+
+
+13. Should the floated Chart Input window have a custom title/handle text beyond the generic dockable handle?
+ANSWER: No.
+
+
+14. Should the panel have an explicit `Dock`/`Float` button label in addition to the existing dockable pin icon?
+ANSWER: Should behave as `/fi` so `Float` button needed when docked, pin icon sufficient when floated.
+
+
+15. Should section navigation keys `,`, `.`, `<`, `>` also accept pending input before navigating, or always discard pending edits as the current design says?
+ANSWER: Always discard.
+
+Additionally, ensure `/ci` shows parked tab panel.
+
+
