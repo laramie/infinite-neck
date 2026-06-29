@@ -21,6 +21,7 @@ mkdir -p "$OUT_DIR"
 
 INCLUDE_DIRS=(
   "img"
+  "fill"
   "songs"
   "plugins"
   "templates"
