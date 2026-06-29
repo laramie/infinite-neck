@@ -67,6 +67,9 @@ returned the broader test list under jest
 
 ## Push new version
 
+*New build script, still debugging*
+  - `bin/build.sh`
+
  - [Run Jest Tests](#run-jest-tests)
  
  - Create a TAG in CHANGELOG.md, **_but not in git yet_**:
