@@ -554,6 +554,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		
 		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
 	    $("#lblSectionsStatus").html(txt);
+	    $("#lblSectionsStatusChartInput").html(txt);
 		
 		// .lblRootID and .lblRootIDLead have controls in 
 		//     Fill, Transport, and Song Caption:

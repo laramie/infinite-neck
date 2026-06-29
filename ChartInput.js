@@ -311,8 +311,8 @@ export function resolveAcceptedSuggestion(rawValue = '', suggestions = [], curre
 
 export function buildChartInputHtml() {
   return "<div id='divChartInput' class='chartInputPanel'>"
-    + "<div class='chartInputToolbar'><button id='btnFloatChartInput' type='button' class='BtnPunchedOut'>Float</button></div>"
-    + "<div class='chartInputCurrentValues'><span class='lblSectionChartChord'></span><span class='lblSectionMode'></span></div>"
+    + "<div class='chartInputToolbar'><span class='chartInputInstructions'><b>!c</b> new &sect; in C <b>!f/c</b> new &sect; in C LeadKey F  <b>,</b> prevSection  <b>.</b> nextSection  <b>ENTER</b> accept  <b>SPACE</b> next suggestion &nbsp;</span><button id='btnFloatChartInput' type='button' class='BtnPunchedOut'>Float</button></div>"
+    + "<div class='chartInputCurrentValues'><span style='color: green;'>&sect;</span><span id='lblSectionsStatusChartInput'></span>&nbsp;&nbsp;&nbsp;<span class='lblSectionChartChord'></span><span class='lblSectionMode'></span></div>"
     + "<div id='chartInputSuggestions' class='chartInputSuggestionList' aria-live='polite'></div>"
     + "<div class='chartInputRow'>"
     + "<label for='txtChartInputChord'>chord: </label><input id='txtChartInputChord' class='chartInputField' data-chart-input-kind='chord' type='text' autocomplete='off'>"

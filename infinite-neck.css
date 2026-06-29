@@ -1190,6 +1190,9 @@ td.fillStringRange {
     text-align: left;
     color: black;
 }
+#lblSectionsStatusChartInput{
+    color: brown;
+}
 #sectionOrder{
     margin-left: 1em;
 }

@@ -12,6 +12,21 @@
     margin-bottom: 0.4em;
 }
 
+.chartInputInstructions {
+  padding: 0.1em;
+  font-size: 80%;
+}
+.chartInputInstructions b {
+    font-size: 120%;
+    margin-left: 0.6em;
+    padding: 0.2em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+  font-weight: bold;
+  color: rgb(2, 59, 0);
+  background-color: rgb(251, 203, 121);
+}
+
 .chartInputCurrentValues {
     font-size: 160%;
     background-color: #1a0e03;
