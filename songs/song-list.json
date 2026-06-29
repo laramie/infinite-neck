@@ -63,6 +63,22 @@
     {
       "href": "name-that-note/name-that-note-bass-4.json",
       "description": "<em>name-that-note</em> game for the <em>4-string bass</em>."
+    },
+    {
+      "href": "theory/mode-major-transposed.json",
+      "description": "<em>major mode</em> shown with a green, light color-theme, transposed through all 12 Keys on a P4-tuning Guitar, so you can see the pattern in all positions."
+    },
+    {
+      "href": "theory/mode-nat-minor-transposed.json",
+      "description": "<em>natural minor mode</em> shown with a blue, light color-theme, transposed through all 12 Keys on a P4-tuning Guitar, so you can see the pattern in all positions."
+    },
+    {
+      "href": "theory/mode-major-transposed-S6.json",
+      "description": "<em>major mode</em> shown with a green, light color-theme, transposed through all 12 Keys on a Standard-tuning Guitar, so you can see the pattern in all positions."
+    },
+    {
+      "href": "theory/mode-nat-minor-transposed-S6.json",
+      "description": "<em>natural minor mode</em> shown with a blue, light color-theme, transposed through all 12 Keys on a Standard-tuning Guitar, so you can see the pattern in all positions."
     }
   ],
   "directoryIntros": [
@@ -79,8 +95,8 @@
       "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, <i>scales</i>, and <em>name-that-note</em> games."
     },
     {
-      "introFor": "name-that-note",
-      "html": "Practice songs for <em>name-that-note</em> games."
+      "introFor": "theory",
+      "html": "Songs that demonstrate some aspect of music theory."
     }
   ],
   "ignoredSongs": [],
