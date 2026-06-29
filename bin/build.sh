@@ -1,5 +1,5 @@
 ## Adjust the date: 
-bin/update-git-log.bash --since "2026-06-21" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-06-28" > _doco/lifecycle/CHANGELOG-new.md
 
 vi _doco/lifecycle/CHANGELOG.md
 
@@ -10,6 +10,8 @@ node bin/version-update.js ./version.json
 vi ./version.json
 
 node bin/version-read.js
+
+## NOW tag and commit
 
 npm run package:deploy 
 
