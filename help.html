@@ -976,15 +976,15 @@
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
                         <ul class="LinkList">
-                            <li><a href=#divChartSummaryTab>divChartSummaryTab</a></li>  
-                            <li><a href=#divChartInputTab>divChartInputTab</a></li>
-                            <li><a href=#divChartNotesTab>divChartNotesTab</a></li>
-                            <li><a href=#divChartDetailsTab>divChartDetailsTab</a></li>
-                            <li><a href=#divChartOptionsTab>divChartOptionsTab</a></li>
-                            <li><a href=#divChartTab>divChartTab</a></li>
-                            <li><a href=#divChartLineTab>divChartLineTab</a></li>
-                            <li><a href=#divSongTuningControls>divSongTuningControls</a></li>
-                            <li><a href=#divAllTuningsTab>divAllTuningsTab</a></li>
+                            <li><a href=#divChartSummaryTab>Chart &gt; Summary Tab</a></li>  
+                            <li><a href=#divChartInputTab>Chart &gt; Input Tab</a></li>
+                            <li><a href=#divChartNotesTab>Chart &gt; Notes Tab</a></li>
+                            <li><a href=#divChartDetailsTab>Chart &gt; Details Tab</a></li>
+                            <li><a href=#divChartOptionsTab>Chart &gt; Options Tab</a></li>
+                            <li><a href=#divChartTab>Chart &gt; Chart Tab</a></li>
+                            <li><a href=#divChartLineTab>Chart &gt; Line Tab</a></li>
+                            <li><a href=#divSongTuningControls>My Tunings</a></li>
+                            <li><a href=#divAllTuningsTab>All Tunings</a></li>
                         </ul>
                         <li><a href="#divFileControls">File</a>
                             <ul class="LinkList">
@@ -2484,10 +2484,30 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 
 <a name="divTunings"></a>
 <h3>Tunings</h3>
-  <p>Look under the "Tunings" menu to turn on and off various installed tunings,
+    <a name='divSongTuningControls'></a>
+    <h4>My Tunings</h4>
+
+    <a name='divAllTuningsTab'></a>
+    <h4>All Tunings</h4>
+
+    <p>Look under the "Tunings" menu to turn on and off various installed tunings,
       and customize them (number of frets, left-handed).  These controls update the
       instruments in real-time, but you may have to scroll down to see them.
     </p>
+
+    <p>
+        See: <br>
+        <br><a href="#instruments">Instruments and the Tunings Library</a>
+        <br><a href="#instrumentsInAction">Instruments In Action</a>
+        <br><a href="#glossaryInstrument">Glossary: Instrument</a>
+        <br><a href="#glossaryTunings">Glossary: Tunings</a>
+        <br><a href="#glossarySpecialRows">Glossary: SpecialRows</a>
+        <br><a href="#glossaryDiamondRows">Glossary: DiamondRows</a>
+        <br><a href="#glossaryBanjoNut">Glossary: BanjoNut</a>
+    </p>
+
+
+
     <a name="tunings-special-rows"></a>
     <h4>Special Rows</h4>
     <p>
@@ -3236,7 +3256,9 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 <a name="tonalChordNames"></a>
 <h3>Tonal.js Chord Names</h3>
 
-<p>Tonal.js constructs your chord suggestion from the root note of the chord (C), plus the chord name (m7#5), to get (Em7#5), plus, possibly, a "slash" chord, e.g. (Em7#5/C).
+<p>Tonal.js constructs your chord suggestion from the root note of the chord (C), 
+    plus the chord name (m7#5), to get (Em7#5), plus, possibly, a "slash" chord, e.g. (Em7#5/C).
+    Additionally, <span class='productsmaller'>infinite-neck</span> allows you to place a <a href="#glossarynoteRoot">noteRoot</a> on any Instrument to root the Section in a particular note.
    <br>
    <br>Here is the full list of chord names from Tonal.js:
 <pre style="margin-left: 4em; border: 2px solid green; padding: 2em;">
@@ -3272,7 +3294,47 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 <a name="tonalModeNames"></a>
 <h3>Tonal.js Mode Names</h3>
 
-<p>Here is a list of Tonal modes when you have an empty Section in the key of C.  You can generate this with <span class="menuExampleLine">/fpop</span></p>
+<p><span class='productsmaller'>infinite-neck</span> only allows you to use a Western Subset 
+of Tonal.js modes. These will all be accepted in the <span class="GUIReferenceInline">Chart &gt; Input</span> Tab.
+<br>(Full list Tonal.js supports is below this.)
+</p>
+<pre style="margin-left: 4em; border: 2px solid green; padding: 2em;">
+aeolian
+altered
+balinese 
+blues
+chromatic
+diminished
+dominant diminished
+dorian
+double harmonic major
+double harmonic minor
+half-diminished
+harmonic minor
+ionian
+locrian
+lydian
+major blues
+major pentatonic
+major
+melodic minor
+minor blues
+minor pentatonic
+minor
+mixolydian
+neapolitan major
+neapolitan minor
+phrygian
+super locrian
+augmented
+ultralocrian
+whole tone
+</pre>
+
+<br>
+<p>Here is a list of Tonal modes when you have an empty Section in the key of C.  This is 
+    for pedagogy.  You can't 
+    actually use all of these in <span class='productsmaller'>infinite-neck</span>.  You can generate this with <span class="menuExampleLine">/fpop</span></p>
 
 <pre style="margin-left: 4em; border: 2px solid green; padding: 2em;">
 Tonal extra modes: section 1, table P46_1
@@ -3449,30 +3511,146 @@ in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>
 
 
 
-<a name='divChartSummaryTab'>divChartSummaryTab</a>
-<h3>divChartSummaryTab</h3>
+<a name='divChartSummaryTab'></a>
+<h3>Chart &gt; Summary Tab</h3>
 
-<a name='divChartInputTab'>divChartInputTab</a>
-<h3>divChartInputTab</h3>
+<p>Summarizes all the Sections.  Shows the <b>Chord</b> and <b>Mode</b> of each Section as they are stored in the song, 
+    as well as the values of <b>KEY</b> during transposition while looping with TransposePlugin Enabled.</p>
 
-<a name='divChartNotesTab'>divChartNotesTab</a>
-<h3>divChartNotesTab</h3>
+<a name='divChartInputTab'></a>
+<h3>Chart &gt; Input Tab</h3>
+<p>See: <a href="#tonalChordNames">All Tonal Chord Names</a></p>
+<p>See: <a href="#tonalModeNames">All Tonal Mode Names</a></p>
+<p>Enter the chord name with root, such as <b>Cm7</b> or <b>CM</b>, then press <span class="key">SPACE</span> to cycle
+    through
+    suggestions, or hit <span class="key">ENTER</span> to accept the suggestion and move on to entering the mode.</p>
+<p>When entering the mode of the Key the Section is in, you can skip the Key and just enter <b>mix</b> and <b>C
+        mixolydian</b> will be suggested. You only need to enter the Key if you want to play in a Key mode different
+    than the Section Key.</p>
+<p>For mode, you can start with the Key and type the mode. The very first space after the Key not needed but is allowed, and
+    after that you should just skip spaces, because the <span class="key">SPACE</span> key is for cycling through the
+    suggestions. If you want, you can type a space with <span class="key">SHIFT</span>+<span class="key">SPACE</span>,
+    but the suggestions will work without spaces. So you can enter <b>Cmixolydian</b>, or <b>C mix</b>, or <b>Cmix</b>
+    and the suggestions will pop up.</p>
+<p>There is a special letter while focus is in the chord input box: <b>!</b> creates a new Section, with options shown
+    in the table below.
+    While in the chord or mode input boxes, the special letters <b>,</b> and <b>.</b> navigate Section as shown below.
+</p>
 
-<a name='divChartDetailsTab'>divChartDetailsTab</a>
-<h3>divChartDetailsTab</h3>
+<style>
+.chartInputHelp td {
+    border: 1px solid gray;
 
-<a name='divChartOptionsTab'>divChartOptionsTab</a>
-<h3>divChartOptionsTab</h3>
+}
+.chartInputHelp tr td:first-child {
+    font-size: 120%;
+    margin-left: 0.6em;
+    padding: 0.2em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    font-weight: bold;
+    color: rgb(2, 59, 0);
+    background-color: rgb(251, 203, 121);
+}
+</style>
+<table class="chartInputHelp">
+    <tr>
+        <th colspan="2">Special characters in chord input box</th>
+    </tr>
+    <tr>
+        <td><b>!</b></td>
+        <td>new &sect; in C </td>
+    </tr>
+    <tr>
+        <td><b>!d</b></td>
+        <td>new &sect; in D </td>
+    </tr>
+    <tr>
+        <td><b>!/D</b></td>
+        <td>new &sect; in D </td>
+    </tr>
+    <tr>
+        <td><b>!f/d</b></td>
+        <td>create new &sect; in D, LeadKey in F </td>
+    </tr>
+    <tr>
+        <td><b>!f/</b></td>
+        <td>create new &sect; in C, LeadKey in F </td>
+    </tr>
+</table>
+<br>
+<table class="chartInputHelp">
+        <tr>
+        <th colspan="2">Special characters in chord or mode input boxes</th>
+    </tr>
 
-<a name='divChartTab'>divChartTab</a>
-<h3>divChartTab</h3>
+    <tr>
+        <td><b>,</b></td>
+        <td>goto prevSection </td>
+    </tr>
+    <tr>
+        <td><b>.</b></td>
+        <td>goto nextSection </td>
+    </tr>
+    <tr>
+        <td><b>ENTER</b></td>
+        <td>accept chord or mode and move to other input box</td>
+    </tr>
+    <tr>
+        <td><b>SPACE</b></td>
+        <td>next suggestion (cycles around at end)</td>
+    </tr>
+</table>
 
-<a name='divChartLineTab'>divChartLineTab</a>
-<h3>divChartLineTab</h3>
-<a name='divSongTuningControls'>divSongTuningControls</a>
-<h3>divSongTuningControls</h3>
-<a name='divAllTuningsTab'>divAllTuningsTab</a>
-<h3>divAllTuningsTab</h3>
+    
+
+<a name='divChartNotesTab'></a>
+<h3>Chart &gt; Notes Tab</h3>
+<p>Provides more note detail than the Summary Tab. Follows the current Section. Shows NamedNotes, PlayedNotes, and RecordedNotes.  Also provides fully functional TonalPickers 
+    that update in real-time </p>
+
+<p>Each Instrument has its notes shown, and this is essential for figuring out who 
+    is on "Bass".  The Instrument playing a <a href="#glossarynoteRoot">noteRoot</a> is shown, and this is who determines the root used for Tonal chord and mode suggestions.  Under <b>Chords</b> column,
+    you'll see <b>noteRoot:Player: P46_1:F&raquo;</b> if the P4 tuned 6-string guitar P46_1 has a <a href="#glossarynoteRoot">noteRoot</a>.  If an Instrument does not
+    play a <a href="#glossarynoteRoot">noteRoot</a>, then another player can play a <a href="#glossarynoteRoot">noteRoot</a> and this will be detected and reported in that column.
+    The order is: look in the current Instrument, then look in other Instruments, in the order in which they first entered notes in the Section.  So it's 
+    a bit brittle to depend on that order, so it is best to limit one "other" player to play noteRoot. </p> 
+    
+    <p>That is, a guitar can play a <a href="#glossarynoteRoot">noteRoot</a> and this takes
+    precedence for that guitar.  If the guitar doesn't, and the Bass player does, it all works well.  Two guitars could both have <a href="#glossarynoteRoot">noteRoot</a> and each would get 
+suggestions based on their own notes.  But if one guitar doesn't, a Bass player does, and a second guitar does, then which <a href="#glossarynoteRoot">noteRoot</a> the first guitar sees is unstable.</p>
+
+<a name='divChartDetailsTab'></a>
+<h3>Chart &gt; Details Tab</h3>
+<p>This is the place where you can set how the Chart sorts the Song Sections into Chart Positions (INTRO, HEAD, CHORUS, ...).</p>
+
+<p><b>Beats</b> is a number that determines how many beats to show in a Bar.  So if you have 12 beats in a Section, and you enter 4 in the <b>Beats</b> input box, 
+then you'll get three bars on the Chart, the first with the chord, the second two with the chord-repeat symbol: <b>%</b></p>
+<p><b>Caption Width</b> allows you to place (or hide) captions on the chart.</p>
+
+<p><b>Caption</b> allows you to quickly edit all the Captions in one place.</p>
+
+<a name='divChartOptionsTab'></a>
+<h3>Chart &gt; Options Tab</h3>
+<p>There are two Charts, really. The first is the chart seen in the Chart Tab <span class="GUIReferenceInline">Chart
+        &gt; Chart</span>. The second is seen
+    in the Line Tab: <span class="GUIReferenceInline">Chart &gt; Line</span>. Within the Chart Tab, you also get style
+    options set by <b>Bar Style</b>. <b>Line</b> uses a condensed version of Bar Style: LeadSheet, so you can't put <b>Line</b> into
+    "Bare" Bar Style, for example.</p>
+    <p>In fullscreen mode, you can show only show <b>Line</b>.  Trying to show the full Chart in fullscreen mode exits fullscreen.  To show the 
+    <b>Line</b> chart in fullscreen, enter fullscreen with keyboard shortcut <span class="key">f</span> then use command-line <span class="menuExampleLine"><b>/cl</b></span>.  Under Options, choose 
+   <b>Show Next Line</b> to have the <b>Line</b> chart show the upcoming chart line in addition to the chart line the current Section is on.</p>
+<p>The <b>Chart Names</b> textarea determines which additional Chart Positions will be available in <span class="GUIReferenceInline">Chart &gt; Details :: <b>Position</b></span>.  You 
+can add your own, or edit the list.  Some built-in Chart Positions will remain.</p>
+<a name='divChartTab'></a>
+<h3>Chart &gt; Chart  Tab</h3>
+<p>A full LeadSheet chart appears here, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span>.</p>
+
+<a name='divChartLineTab'></a>
+<h3>Chart &gt; Line Tab</h3>
+<p>A condensed version of the LeadSheet chart, available in one or two-line versions, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span> </p>
+
+
 
 <hr>
 <a name="keymap"></a>
