@@ -1,17 +1,19 @@
+As of 20260629 these are all CLOSED.
+
 =============BUGS===================
 Order: Latest bugs are now listed First in this file
 ====================================
 
 20263018 : Move Section to END does nothing
 
-20262024 : namedNote "G":{} is valid and means there are no G's played.  
+20260224 : namedNote "G":{} is valid and means there are no G's played.  
            TODO: in strict mode in the Jest test, we might check this
                   _tests/jest/song-load.test.js 
                   ==> if the Song object ever cleans up empty notes.  
            But for now it is valid.
     
 
-2026023 : validate that songs/All-Chords-in-C-old-file-format.json should maybe fail the Jest test?  Or maybe I have code that handles the old file format so it passes?  Either way, we wanna know.
+20260223 : validate that songs/All-Chords-in-C-old-file-format.json should maybe fail the Jest test?  Or maybe I have code that handles the old file format so it passes?  Either way, we wanna know.
 
 
 20260223: When customizing USER tuning, if you click Cancel when you clone: 
@@ -49,6 +51,7 @@ Clone sticks new ones at the end, should be just next.
 =============FEATURES===============
 
 User-customizable highlight colorSingleNotes
+- DONE
 
 User-customizable button spacing: 1) between table cells, and 2) IvoryEbony space.
 
