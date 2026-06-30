@@ -55,9 +55,15 @@
       "fromBaseID": "P46"
     }
   ],
-  "visibleNoteTables": [
-    "tblPiano_1",
-    "tblP46_1"
+  "noteTablesLayout": [
+    {
+      "tableID": "tblPiano_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
   ],
   "colorDicts": {
     "piano": {
@@ -92,7 +98,12 @@
         ],
         "NamedNotes": true,
         "SingleNotes": false,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
         "octaves": "",
+        "useOctavesForRecorded": false,
         "autoSharpsFlats": true,
         "doLeadKey": false
       }
@@ -105,6 +116,7 @@
         "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
+        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 5,
         "lowToHigh": true,
@@ -122,10 +134,12 @@
       "graveyardKey": "USER",
       "properties": {
         "targetTable": "tblP46_1",
-        "chordFormula": "4,7",
-        "scaleFormula": "0,2,4,5,7,9,11",
+        "chordFormula": "M",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
         "minFret": 0,
         "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 0,
         "namedRootMode": "role",
@@ -157,12 +171,30 @@
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": true,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": true,
     "showNextLine": true,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
     "barClass": "LeadSheet",
+    "chartSpacing": "relaxed",
     "chordFontsize": "100%",
     "lineCaptionFontsize": "100%",
     "boxCaptionFontsize": "100%"
@@ -171,8 +203,8 @@
   "sharps": true,
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
-  "songfileVersion": "V2",
-  "songName": "piano+guitar+wite-out",
+  "songfileVersion": "V2.1",
+  "songName": "piano-listener-guitar-wite-out-fixture",
   "theme": "USER",
   "sections": [
     {
@@ -533,7 +565,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 10,
-      "currentBeat": 9,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {

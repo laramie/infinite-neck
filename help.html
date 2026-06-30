@@ -5392,33 +5392,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <p>
 <div style="border: 2px solid green; margin-left:4em;">
 <pre>
-        In the object model, and therefore the file format, here are the objects:
-            sections - An array of section objects in song order.
-            section - An object in the sections array that represents one Section.
-            namedNotes - A dictionary of note objects that apply to all instruments 
-                              in that Section.
-                         Named Notes appear at every cell on the neck 
-                              that corresponds to that note name, e.g. "B".
-            section :: noteTables - a dictionary of arrays that store all played notes in that Section 
-                              on one instrument instance. 
-                         Played notes are all notes that are not namedNotes: 
-                              they have a single spot in a note cell. 
-            visibleNoteTables - An array of instrument instance names, 
-                              that corresponds to the keys used to store section :: noteTable objects.
-                            Save the file makes the memory model reports this correctly.           
-
         In Chrome::Inspect you can use Developer tools Console
            to directly access the ObjectModel of the Song:
                 getSong()
-
-        Synopsize the "noteTables" collection:
-           getSong().sections.forEach(function(a){console.log("id"+JSON.stringify(a.noteTables))});
-
-        Delete all played notes (noteTables) in a song, leaving Named and Recorded notes only :
-           getSong().sections.forEach(function(a){a.noteTables = {}; });
-
-        Delete all Recorded notes:
-           getSong().sections.forEach(function(a){a.recordedNotes = {}; });
 
         Set entire song to sharps:
            getSong().sections.forEach(function(a){a.sharps = true; });
