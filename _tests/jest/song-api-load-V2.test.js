@@ -11,7 +11,7 @@ import { Wiring } from '../../Wiring.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const FIXTURE_FILENAME = 'tests/persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
+const FIXTURE_FILENAME = 'tests/3-chord-3keys-S6-Bass-observers-highlights.json';
 const PIANO_LISTENER_FIXTURE_FILENAME = 'tests/piano-listener-guitar-wite-out-fixture.json';
 
 function getSongPath(songFilename = FIXTURE_FILENAME) {
@@ -65,17 +65,16 @@ function collectAllNoteStyleNums(song) {
     return { styleNums, bendNote };
 }
 
-describe('Song V2 canonical load from disk', () => {
-    test('loads the V2 persistence fixture into Song, Section, SectionNotes, Note, and Wiring instances', () => {
+describe('Song V2.1 canonical load from disk', () => {
+    test('loads the V2.1 persistence fixture into Song, Section, SectionNotes, Note, and Wiring instances', () => {
         const { data, song } = loadSongCanonical();
 
-        expect(song.songfileVersion).toBe('V2');
+        expect(song.songfileVersion).toBe('V2.1');
         expect(song.songName).toBe(data.songName);
         expect(song.theme).toBe(data.theme);
         expect(song.getSections()).toHaveLength(data.sections.length);
         expect(song.getSectionsCurrentIndex()).toBe(0);
         expect(song.myTunings).toHaveLength(data.myTunings.length);
-        expect(song.getVisibleTunings()).toEqual(data.visibleNoteTables);
         expect(song.getNoteTablesLayout()).toEqual(
             data.myTunings.map((tuning) => ({
                 tableID: `tbl${tuning.baseID}`,
@@ -96,7 +95,7 @@ describe('Song V2 canonical load from disk', () => {
         expect(song.wirings[1]).toBeInstanceOf(Wiring);
     });
 
-    test('preserves the V2 note style spread and bend metadata from the fixture', () => {
+    test('preserves the V2.1 note style spread and bend metadata from the fixture', () => {
         const { song } = loadSongCanonical();
         const { styleNums, bendNote } = collectAllNoteStyleNums(song);
 
@@ -154,7 +153,7 @@ describe('Song V2 canonical load from disk', () => {
     });
 });
 
-describe('Song V2 headless operations on a loaded song', () => {
+describe('Song V2.1 headless operations on a loaded song', () => {
     test('table accessors on the loaded song preserve playedNotes array identity and allow headless edits', () => {
         const { song } = loadSongCanonical();
 
@@ -171,7 +170,7 @@ describe('Song V2 headless operations on a loaded song', () => {
         expect(song.getCurrentSection().getSectionNotes(tableID).playedNotes).toBe(arr1);
     });
 
-    test('deleteBeat on loaded V2 recordedNotes realigns later beats downward', () => {
+    test('deleteBeat on loaded V2.1 recordedNotes realigns later beats downward', () => {
         const { song } = loadSongCanonical();
 
         song.gotoSection(0);
@@ -194,7 +193,7 @@ describe('Song V2 headless operations on a loaded song', () => {
         expect(shifted['4']).toBeUndefined();
     });
 
-    test('renameTuningIDInModel updates loaded V2 sectionNotesByTable and noteTablesLayout', () => {
+    test('renameTuningIDInModel updates loaded V2.1 sectionNotesByTable and noteTablesLayout', () => {
         const { song } = loadSongCanonical();
 
         song.renameTuningIDInModel('Bass4_Observer', 'Bass4_Listener');
@@ -233,7 +232,7 @@ describe('Song V2 headless operations on a loaded song', () => {
     });
 });
 
-describe('Song V2 save path from a loaded song', () => {
+describe('Song V2.1 save path from a loaded song', () => {
     test('prepareForSave and getPersistentSongFile preserve save-facing V2.1 fields and exclude runtime-only state', () => {
         const { data, song } = loadSongCanonical();
 

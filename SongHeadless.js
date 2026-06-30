@@ -15,7 +15,7 @@ function loadSong(songFileRelPath){
 }
 
 function main(){
-    const SONGFILE = process.argv[2] || './songs/tests/persistence/forward-backward-observers.json';
+    const SONGFILE = process.argv[2] || './songs/tests/forward-backward-observers.json';
     let song = loadSong(SONGFILE);
     //console.log("Song round-trip: \n"+JSON.stringify(song, null, 4));
     console.log(JSON.stringify(song, null, 4));
@@ -34,7 +34,7 @@ function main(){
 /** run with something like this: 
     laramie@penguin:~/infinite-neck$ export FORCE_COLOR=1
     laramie@penguin:~/infinite-neck$ node SongHeadless.js
-        laramie@penguin:~/infinite-neck$ node SongHeadless.js ./songs/tests/persistence/forward-backward-observers.json
+        laramie@penguin:~/infinite-neck$ node SongHeadless.js ./songs/tests/forward-backward-observers.json
  */
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();

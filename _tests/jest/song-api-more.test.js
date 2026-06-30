@@ -20,7 +20,7 @@ import { Wiring } from '../../Wiring.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PRIMARY_SONG_FILENAME = 'tests/persistence/3-chord-3keys-S6-Bass-observers-highlights.json';
+const PRIMARY_SONG_FILENAME = 'tests/3-chord-3keys-S6-Bass-observers-highlights.json';
 const PRIMARY_TABLE_ID = 'tblS6_1';
 const AUX_TABLE_ID = 'tblP46_1';
 
@@ -249,7 +249,7 @@ describe('Song API bootstrap from JSON', () => {
         expect(Array.isArray(data.sections)).toBe(true);
         expect(data.sections.length).toBeGreaterThan(0);
         expect(song.getSections().length).toBe(data.sections.length);
-        expect(song.songfileVersion).toBe('V2');
+        expect(song.songfileVersion).toBe('V2.1');
     });
 
     test.each(LOADED_SONG_FIXTURES)('leaves $label ready for headless API tests', ({ filename }) => {
