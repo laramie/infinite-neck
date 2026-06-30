@@ -182,6 +182,8 @@ with
 
 ## Iteration 3: song-multi-instrument
 
+We are finding an explosion of songs needed, and we would prefer to add multi-instrument authoring into the songs, rather than having the same song duplicated for, say, P46 and S6, with all the transpositions, positions, etc.  The songs, of course, support this, and we do this all the time.  What is slightly new is that we want to be guilt-free knowing that we are not slowing down the song looping by putting in more instruments as options for various players' preferred tunings, and making them not visible by using the checkbox in the MyTunings page.
+
 ### Goals
 1) Ensure that replay() and friends are optimized for Instruments that are not Visible, especially anything that affects time showing the next Section or things we are trying to optimize with caching.
 2) Ensure that TransposePlugin and positions for Fill and Arpeggio are updated in Instruments that are not visible, but that resources that affect time spent in tickBeat, beat looping, and Section looping are not wasting.
