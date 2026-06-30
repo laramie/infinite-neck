@@ -36,56 +36,33 @@
       "fromBaseID": "P46"
     }
   ],
-  "noteTablesLayout": [
-    {
-      "tableID": "tblP46_1",
-      "visible": true
-    }
+  "visibleNoteTables": [
+    "tblP46_1"
   ],
-  "colorDicts": {},
   "plugins": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "80",
   "info": "",
-  "namedNoteOpacity": "1",
+  "namedNoteOpacity": "1.00",
   "openInfo": "none",
   "presentationMode": false,
-  "pluginFiringOrder": [
-    "t",
-    "f",
-    "a",
-    "o",
-    "c",
-    "m"
-  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": true,
-    "showNextLine": false,
-    "stripTonalRoots": false,
-    "addTransposedRootToChord": false,
-    "HEADNames": [
-      "HEAD",
-      "BRIDGE",
-      "CHORUS",
-      "SOLO",
-      "CODA"
-    ],
     "barClass": "LeadSheet",
-    "chartSpacing": "relaxed",
-    "chordFontsize": "100%",
     "lineCaptionFontsize": "100%",
     "boxCaptionFontsize": "100%"
   },
   "rootID": "3",
   "sharps": false,
-  "singleNoteOpacity": "1",
-  "tinyNoteOpacity": "1",
-  "songfileVersion": "V2.1",
+  "singleNoteOpacity": "1.00",
+  "tinyNoteOpacity": "1.00",
+  "songfileVersion": "V2",
   "songName": "chart-test",
   "theme": "Autobahn",
+  "userInstrumentTuning": null,
   "sections": [
     {
       "sectionNotesByTable": {

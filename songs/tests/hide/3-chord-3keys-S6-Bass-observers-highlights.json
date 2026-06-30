@@ -19,7 +19,7 @@
         1
       ],
       "doSpecialRows": true,
-      "showDiamonds": true,
+      "showDiamonds": false,
       "diamonds": [
         3,
         5,
@@ -51,7 +51,41 @@
         33,
         28
       ],
-      "showDiamonds": true,
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0",
+      "frets": 15,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "Bass4"
+    },
+    {
+      "instance": true,
+      "baseID": "Bass4_Observer",
+      "baseInstrument": "Bass",
+      "caption": "Bass",
+      "nStrings": 4,
+      "rowRange": [
+        43,
+        38,
+        33,
+        28
+      ],
+      "showDiamonds": false,
       "diamonds": [
         3,
         5,
@@ -72,62 +106,61 @@
       "reverse": false,
       "visible": true,
       "fromBaseID": "Bass4"
-    }
-  ],
-  "noteTablesLayout": [
-    {
-      "tableID": "tblS6_1",
-      "visible": true
     },
     {
-      "tableID": "tblBass4_1",
-      "visible": true
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
     }
   ],
-  "colorDicts": {},
-  "plugins": {},
+  "visibleNoteTables": [
+    "tblS6_1",
+    "tblBass4_1",
+    "tblBass4_Observer",
+    "tblP46_1"
+  ],
   "activeStylesheets": "Default",
   "captionsRowShowing": true,
   "defaultBPM": "80",
-  "info": "",
-  "namedNoteOpacity": "1",
-  "openInfo": "none",
+  "namedNoteOpacity": "0.6",
   "presentationMode": false,
-  "pluginFiringOrder": [
-    "t",
-    "f",
-    "a",
-    "o",
-    "c",
-    "m"
-  ],
-  "chartOptions": {
-    "modes": true,
-    "detailLine": true,
-    "showCaptions": true,
-    "showNextLine": false,
-    "stripTonalRoots": false,
-    "addTransposedRootToChord": false,
-    "HEADNames": [
-      "HEAD",
-      "BRIDGE",
-      "CHORUS",
-      "SOLO",
-      "CODA"
-    ],
-    "barClass": "Box",
-    "chartSpacing": "relaxed",
-    "chordFontsize": "100%",
-    "lineCaptionFontsize": "100%",
-    "boxCaptionFontsize": "100%"
-  },
   "rootID": "3",
   "sharps": false,
   "singleNoteOpacity": "1",
-  "tinyNoteOpacity": "1",
-  "songfileVersion": "V2.1",
-  "songName": "3-chord-3keys-S6-Bass",
+  "songfileVersion": "V2",
+  "songName": "3-chord-3keys-S6-Bass-observers-highlights",
   "theme": "PoolShark",
+  "userInstrumentTuning": null,
   "sections": [
     {
       "sectionNotesByTable": {
@@ -159,6 +192,15 @@
                 "row": "4",
                 "col": "3",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "Ab",
+                "styleNum": 5,
+                "midinum": "68",
+                "row": "0",
+                "col": "4",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone1"
               }
             ],
             "2": [
@@ -169,6 +211,15 @@
                 "row": "4",
                 "col": "4",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "Bb",
+                "styleNum": 5,
+                "midinum": "70",
+                "row": "0",
+                "col": "6",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone1"
               }
             ],
             "3": [
@@ -179,6 +230,15 @@
                 "row": "4",
                 "col": "5",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "Db",
+                "styleNum": 5,
+                "midinum": "73",
+                "row": "0",
+                "col": "9",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone1"
               }
             ],
             "4": [
@@ -189,26 +249,29 @@
                 "row": "4",
                 "col": "6",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "F",
+                "styleNum": 5,
+                "midinum": "65",
+                "row": "1",
+                "col": "6",
+                "colorClass": "noteTransparent",
+                "bendValue": "semitone3"
               }
             ]
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblP46_1": {
           "namedNotes": {
-            "C": {
-              "noteName": "C",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            }
+            "C": {}
           },
           "recordedNotes": {},
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -233,6 +296,12 @@
                 "row": "3",
                 "col": "0",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "B",
+                "styleNum": 3,
+                "midinum": "35",
+                "row": "2"
               }
             ],
             "2": [
@@ -243,6 +312,12 @@
                 "row": "3",
                 "col": "2",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "E",
+                "styleNum": 3,
+                "midinum": "40",
+                "row": "1"
               }
             ],
             "3": [
@@ -253,6 +328,12 @@
                 "row": "3",
                 "col": "3",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "A",
+                "styleNum": 3,
+                "midinum": "45",
+                "row": "0"
               }
             ],
             "4": [
@@ -268,15 +349,12 @@
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
@@ -313,6 +391,15 @@
                 "row": "4",
                 "col": "2",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "C",
+                "styleNum": 5,
+                "midinum": "60",
+                "row": "2",
+                "col": "5",
+                "colorClass": "noteTransparent",
+                "bendValue": "updown3"
               }
             ],
             "2": [
@@ -323,6 +410,15 @@
                 "row": "4",
                 "col": "3",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "G",
+                "styleNum": 5,
+                "midinum": "55",
+                "row": "3",
+                "col": "5",
+                "colorClass": "noteTransparent",
+                "bendValue": "updown1"
               }
             ],
             "3": [
@@ -333,6 +429,15 @@
                 "row": "4",
                 "col": "4",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "D",
+                "styleNum": 5,
+                "midinum": "50",
+                "row": "4",
+                "col": "5",
+                "colorClass": "noteTransparent",
+                "bendValue": "updown2"
               }
             ],
             "4": [
@@ -343,12 +448,20 @@
                 "row": "4",
                 "col": "5",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "A",
+                "styleNum": 5,
+                "midinum": "45",
+                "row": "5",
+                "col": "5",
+                "colorClass": "noteTransparent",
+                "bendValue": "prebend2"
               }
             ]
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -373,6 +486,12 @@
                 "row": "2",
                 "col": "0",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "45",
+                "row": "0"
               }
             ],
             "2": [
@@ -383,6 +502,12 @@
                 "row": "2",
                 "col": "1",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "40",
+                "row": "1"
               }
             ],
             "3": [
@@ -393,24 +518,44 @@
                 "row": "2",
                 "col": "2",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "41",
+                "row": "1"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "36",
+                "row": "2"
               }
             ]
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {}
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
       "rootID": "2",
-      "rootIDLead": "-1",
+      "rootIDLead": "11",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 3,
       "sharps": true
     },
     {
@@ -477,7 +622,6 @@
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -502,6 +646,20 @@
                 "row": "2",
                 "col": "3",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "41",
+                "row": "1"
+              },
+              {
+                "noteName": "A",
+                "styleNum": 1,
+                "midinum": "45",
+                "row": "0",
+                "col": "2",
+                "colorClass": "noteTransparent"
               }
             ],
             "2": [
@@ -511,6 +669,20 @@
                 "midinum": "37",
                 "row": "2",
                 "col": "4",
+                "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "47",
+                "row": "0"
+              },
+              {
+                "noteName": "Bb",
+                "styleNum": 1,
+                "midinum": "46",
+                "row": "0",
+                "col": "3",
                 "colorClass": "noteTransparent"
               }
             ],
@@ -522,29 +694,116 @@
                 "row": "2",
                 "col": "5",
                 "colorClass": "noteTransparent"
+              },
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "48",
+                "row": "0"
+              },
+              {
+                "noteName": "B",
+                "styleNum": 1,
+                "midinum": "47",
+                "row": "0",
+                "col": "4",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "45",
+                "row": "1"
+              },
+              {
+                "noteName": "C",
+                "styleNum": 1,
+                "midinum": "48",
+                "row": "0",
+                "col": "5",
+                "colorClass": "noteTransparent"
               }
             ]
           },
           "chord": "",
           "mode": "",
-          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblBass4_Observer": {
+          "namedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "Ab",
+                "styleNum": 1,
+                "midinum": "44",
+                "row": "0",
+                "col": "1",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "A",
+                "styleNum": 1,
+                "midinum": "45",
+                "row": "0",
+                "col": "2",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "Bb",
+                "styleNum": 1,
+                "midinum": "46",
+                "row": "0",
+                "col": "3",
+                "colorClass": "noteTransparent"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "C",
+                "styleNum": 1,
+                "midinum": "48",
+                "row": "0",
+                "col": "5",
+                "colorClass": "noteTransparent"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
       "rootID": "10",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     }
   ],
-  "wirings": [],
+  "wirings": [
+    {
+      "tablename": "tblBass4_Observer",
+      "relativeSection": "-1",
+      "listenToTablename": "tblBass4_1"
+    },
+    {
+      "tablename": "tblP46_1",
+      "relativeSection": "",
+      "listenToTablename": "tblS6_1"
+    }
+  ],
   "graveyard": {
     "records": []
-  }
+  },
+  "tinyNoteOpacity": "1"
 }

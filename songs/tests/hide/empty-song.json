@@ -36,18 +36,13 @@
       "fromBaseID": "P46"
     }
   ],
-  "noteTablesLayout": [
-    {
-      "tableID": "tblP46_1",
-      "visible": true
-    }
+  "visibleNoteTables": [
+    "tblP46_1"
   ],
-  "colorDicts": {},
   "plugins": {
     "transpose": {
       "enabled": false,
       "enableOnSongLoad": false,
-      "graveyardKey": "USER",
       "properties": {
         "intervals": [
           0,
@@ -64,88 +59,40 @@
           11
         ],
         "NamedNotes": true,
-        "SingleNotes": true,
-        "TinyNotes": true,
-        "BendNotes": true,
-        "FingeringNotes": true,
-        "RecordedNotes": false,
-        "octaves": "",
-        "useOctavesForRecorded": false,
-        "autoSharpsFlats": false,
-        "doLeadKey": false
+        "PlayedNotes": false,
+        "RecordedNotes": false
       }
     },
     "arpeggio": {
       "enabled": false,
       "enableOnSongLoad": false,
-      "graveyardKey": "USER",
       "properties": {
-        "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
-        "minRow": 0,
-        "maxRow": 5,
         "lowToHigh": true,
         "upOnly": false,
-        "style": "alternate",
-        "type": "NamedNote",
-        "showNoteName": "off",
-        "colorNotes": false,
-        "flashcard": false
+        "style": "alternate"
       }
     }
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "80",
-  "info": "",
-  "namedNoteOpacity": "1",
-  "openInfo": "none",
+  "namedNoteOpacity": "1.00",
   "presentationMode": false,
-  "pluginFiringOrder": [
-    "t",
-    "f",
-    "a",
-    "o",
-    "c",
-    "m"
-  ],
-  "chartOptions": {
-    "modes": true,
-    "detailLine": true,
-    "showCaptions": true,
-    "showNextLine": false,
-    "stripTonalRoots": false,
-    "addTransposedRootToChord": false,
-    "HEADNames": [
-      "HEAD",
-      "BRIDGE",
-      "CHORUS",
-      "SOLO",
-      "CODA"
-    ],
-    "barClass": "Box",
-    "chartSpacing": "relaxed",
-    "chordFontsize": "100%",
-    "lineCaptionFontsize": "100%",
-    "boxCaptionFontsize": "100%"
-  },
   "rootID": "3",
   "sharps": false,
-  "singleNoteOpacity": "1",
-  "tinyNoteOpacity": "1",
-  "songfileVersion": "V2.1",
+  "singleNoteOpacity": "1.00",
+  "songfileVersion": "V2",
   "songName": "empty-song",
   "theme": "Autobahn",
+  "userInstrumentTuning": null,
   "sections": [
     {
       "sectionNotesByTable": {},
       "caption": "",
       "chartChord": "",
       "chartMode": "",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,

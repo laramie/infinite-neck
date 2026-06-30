@@ -143,24 +143,68 @@
       "fromBaseID": "P46"
     }
   ],
-  "visibleNoteTables": [
-    "tblS6_1",
-    "tblBass4_1",
-    "tblBass4_Observer",
-    "tblP46_1"
+  "noteTablesLayout": [
+    {
+      "tableID": "tblS6_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblBass4_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblBass4_Observer",
+      "visible": true
+    },
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
   ],
+  "colorDicts": {},
+  "plugins": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": true,
   "defaultBPM": "80",
-  "namedNoteOpacity": "0.6",
+  "info": "",
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
   "presentationMode": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
   "rootID": "3",
-  "sharps": false,
+  "sharps": true,
   "singleNoteOpacity": "1",
-  "songfileVersion": "V2",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
   "songName": "3-chord-3keys-S6-Bass-observers-highlights",
   "theme": "PoolShark",
-  "userInstrumentTuning": null,
   "sections": [
     {
       "sectionNotesByTable": {
@@ -263,6 +307,7 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblP46_1": {
@@ -272,6 +317,7 @@
           "recordedNotes": {},
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -349,16 +395,19 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 1,
+      "currentBeat": 4,
       "sharps": false
     },
     {
@@ -462,6 +511,7 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -537,6 +587,7 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblP46_1": {
@@ -546,12 +597,15 @@
           "recordedNotes": {},
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
       "rootID": "2",
       "rootIDLead": "11",
       "beats": 4,
@@ -622,6 +676,7 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_1": {
@@ -729,6 +784,7 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         },
         "tblBass4_Observer": {
@@ -777,12 +833,15 @@
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
       "rootID": "10",
       "rootIDLead": "-1",
       "beats": 4,
@@ -804,6 +863,5 @@
   ],
   "graveyard": {
     "records": []
-  },
-  "tinyNoteOpacity": "1"
+  }
 }
