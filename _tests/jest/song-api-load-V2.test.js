@@ -237,7 +237,6 @@ describe('Song V2.1 save path from a loaded song', () => {
         const { data, song } = loadSongCanonical();
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables,
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
@@ -249,13 +248,8 @@ describe('Song V2.1 save path from a loaded song', () => {
         expect(savedObj.songfileVersion).toBe('V2.1');
         expect(savedObj.songName).toBe(data.songName);
         expect(savedObj.theme).toBe(data.theme);
-        expect(savedObj).not.toHaveProperty('visibleNoteTables');
-        expect(savedObj.noteTablesLayout).toEqual(
-            data.myTunings.map((tuning) => ({
-                tableID: `tbl${tuning.baseID}`,
-                visible: true
-            }))
-        );
+        expect(savedObj).toHaveProperty('noteTablesLayout');
+        expect(savedObj.noteTablesLayout).toEqual(data.noteTablesLayout);
         expect(savedObj.sections).toHaveLength(data.sections.length);
         expect(savedObj.wirings).toEqual(data.wirings);
         expect(savedObj).not.toHaveProperty('isHeadless');
@@ -321,7 +315,6 @@ describe('Song V2.1 save path from a loaded song', () => {
         };
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables,
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),

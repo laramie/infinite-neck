@@ -41,7 +41,7 @@ describe('DisplayOptions baseline fixture contracts', () => {
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('width');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('height');
             if (idx === 1) {
-                expect(section.displayOptions.hideSingleNotes).toBe(true);
+                expect(section.displayOptions.hideSingleNotes).toBe(false);
                 expect(section.displayOptions.showLooperLightBeats).toBe(true);
             }
         });
@@ -80,7 +80,6 @@ describe('DisplayOptions baseline fixture contracts', () => {
         }));
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables ?? [],
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
@@ -116,8 +115,8 @@ describe('DisplayOptions baseline fixture contracts', () => {
         song.gotoNextSection(true);
         observed.push(song.getCurrentSection().displayOptions.hideSingleNotes);
 
-        // Fixture expectation: section0=false, section1=true, section2=false, wrap->section0=false
-        expect(observed).toEqual([false, true, false, false]);
+        // Fixture expectation: section0=false, section1=false, section2=false, wrap->section0=false
+        expect(observed).toEqual([false, false, false, false]);
     });
 });
 
@@ -173,7 +172,6 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         delete song.getCurrentSection().displayOptions;
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables ?? [],
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),

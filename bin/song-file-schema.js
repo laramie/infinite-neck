@@ -308,10 +308,6 @@ export const songFileV2Schema = {
                 { type: 'null' }
             ]
         },
-        visibleNoteTables: {
-            type: 'array',
-            items: { type: 'string', minLength: 1 }
-        },
         noteTablesLayout: {
             type: 'array',
             items: noteTableLayoutEntrySchema

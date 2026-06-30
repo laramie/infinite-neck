@@ -1454,24 +1454,7 @@ export class Song extends SongPersistence {
         }
     }
 
-    markVisibleTablesForFileSave(visibleTableIds){
-        if (!Array.isArray(visibleTableIds)) {
-            return;
-        }
-        const visibleSet = new Set(visibleTableIds);
-        const layout = this.getNoteTablesLayout();
-        layout.forEach((entry) => {
-            entry.visible = visibleSet.has(entry.tableID);
-        });
-        visibleTableIds.forEach((tableID) => {
-            if (!layout.some((entry) => entry.tableID === tableID)) {
-                layout.push({ tableID, visible: true });
-            }
-        });
-    }
-
-    prepareForSave({ visibleTableIds, songName, theme, bpm, userColors, plugins }){
-        this.markVisibleTablesForFileSave(visibleTableIds);
+    prepareForSave({ songName, theme, bpm, userColors, plugins }){
         this.ensureNoteTablesLayout();
         this.removeUnusedTablesFromMemoryModel();
         this.songName = songName;
@@ -1479,7 +1462,6 @@ export class Song extends SongPersistence {
         this.userColors = userColors;
         this.theme = theme;
         this.songfileVersion = 'V2.1';
-        delete this.visibleNoteTables;
         if (plugins && typeof plugins === 'object') {
             this.plugins = { ...plugins };
         }

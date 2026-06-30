@@ -73,7 +73,7 @@ function normalizeLayoutEntry(entry) {
     };
 }
 
-function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTunings }) {
+function normalizeNoteTablesLayout({ noteTablesLayout, myTunings }) {
     const seen = new Set();
     const layout = [];
 
@@ -86,18 +86,9 @@ function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTuni
             seen.add(normalized.tableID);
             layout.push(normalized);
         });
-    } else if (Array.isArray(visibleNoteTables)) {
-        visibleNoteTables.forEach((tableID) => {
-            const key = `${tableID || ''}`.trim();
-            if (!key || seen.has(key)) {
-                return;
-            }
-            seen.add(key);
-            layout.push({ tableID: key, visible: true });
-        });
     }
 
-    // Legacy songs may have incomplete visible tables. Ensure all song tunings are represented.
+    // Ensure all song tunings are represented in the current layout model.
     if (Array.isArray(myTunings)) {
         myTunings.forEach((tuning) => {
             if (!tuning || !tuning.baseID) {
@@ -166,7 +157,6 @@ export class SongPersistence {
         //do these first for non-null defaults, though they may get overwritten by obj.
         this.randomSectionHistory = [];
         this.myTunings = [];
-        this.visibleNoteTables = [];
         this.noteTablesLayout = [];
         this.colorDicts = {};
         this.plugins = {};
@@ -184,7 +174,6 @@ export class SongPersistence {
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
         this.noteTablesLayout = normalizeNoteTablesLayout({
             noteTablesLayout: obj.noteTablesLayout,
-            visibleNoteTables: obj.visibleNoteTables,
             myTunings: this.myTunings
         });
         this.plugins = obj.plugins && typeof obj.plugins === 'object' ? { ...obj.plugins } : {};
@@ -226,7 +215,6 @@ export class SongPersistence {
             || key === 'recording'
             || key === 'tunings'
             || key === 'userInstrumentTuning'
-            || key === 'visibleNoteTables'
             ) 
         {
             return undefined;

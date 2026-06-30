@@ -765,12 +765,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			options {rootID, rootIDLead, cellIsFunction
 			resetSharps(options)
 				buildCells
-					theVisibleNoteTables.forEach(tableID => {
+					visibleTableIds.forEach(tableID => {
 						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
 				resetSharpsControls
 			resetFlats(options)
 				buildCells
-					theVisibleNoteTables.forEach(tableID => {
+					visibleTableIds.forEach(tableID => {
 						NoteTableController.buildCellsForTable(sharps, options, `#${tableID}`)
 				resetFlatsControls
 			replay()	
@@ -825,8 +825,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function buildCells(sharps, options) {
-		let theVisibleNoteTables = updateVisibleTablesInMemoryModel();
-		theVisibleNoteTables.forEach(tableID => {
+		let visibleTableIds = updateVisibleTablesInMemoryModel();
+		visibleTableIds.forEach(tableID => {
 		    buildCellsForTable(sharps, options, tableID);
 		});
 	}
