@@ -110,44 +110,44 @@
       "checked": true,
       "dict": {
         "note1": {
-          "colorClass": "noteAnthracite",
+          "colorClass": "noteBlue7",
           "MOJOcaptionClass": "noteBlack",
           "caption": "I"
         },
         "note2": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "&tau;"
         },
         "note3": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "II"
         },
         "note4": {
-          "colorClass": "noteBlue2",
+          "colorClass": "noteBlue4",
           "caption": "m"
         },
         "note5": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteGreen7",
           "caption": "III"
         },
         "note6": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "IV"
         },
         "note7": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "&Theta;"
         },
         "note8": {
-          "colorClass": "noteGreen2",
+          "colorClass": "noteBlue5",
           "caption": "V"
         },
         "note9": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "&sigma;"
         },
         "note10": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "6"
         },
         "note11": {
@@ -155,7 +155,7 @@
           "caption": "&delta;"
         },
         "note12": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteGreen7",
           "caption": "&Delta;"
         },
         "noteRoot": {
@@ -201,7 +201,7 @@
     }
   },
   "activeStylesheets": "Default+light+light-minor",
-  "captionsRowShowing": false,
+  "captionsRowShowing": true,
   "defaultBPM": "333",
   "info": "",
   "namedNoteOpacity": "1",
@@ -247,8 +247,18 @@
       "sectionNotesByTable": {
         "tblS6_1": {
           "namedNotes": {
-            "C": {
-              "noteName": "C",
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
@@ -257,28 +267,18 @@
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "F": {
-              "noteName": "F",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "G": {
-              "noteName": "G",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "D": {
-              "noteName": "D",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Ab": {
-              "noteName": "Ab",
+            "Gb": {
+              "noteName": "Gb",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
             "Bb": {
               "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -295,11 +295,57 @@
       "chartMode": "C minor",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 3,
+      "rootID": 11,
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "currentColorDict": "light-minor",
+        "NoteDisplaySizes": {
+          "caption": "140x50:22",
+          "width": "140px",
+          "height": "50px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     }
   ],
   "wirings": [],
@@ -375,6 +421,18 @@
           "which": "UserStylesheet"
         },
         "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782771418096,
+        "date": "6/29/2026",
+        "time": "3:16:58 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteRoot\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
         "lastRevived": null
       }
     ]

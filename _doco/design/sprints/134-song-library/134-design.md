@@ -180,3 +180,106 @@ e.g. replace
 with 
 `piano-follows-guitar-basic-blues.json`
 
+## Iteration 3: song-multi-instrument
+
+### Goals
+1) Ensure that replay() and friends are optimized for Instruments that are not Visible, especially anything that affects time showing the next Section or things we are trying to optimize with caching.
+2) Ensure that TransposePlugin and positions for Fill and Arpeggio are updated in Instruments that are not visible, but that resources that affect time spent in tickBeat, beat looping, and Section looping are not wasting.
+3) Create a utility in `./bin/update-song-list.js` that can be run anytime, especially as part of the build, that will update `./songs/song-list.json` to have the field `instruments` be up-to-date with the status of the song on disk.  The song should not be modified, but song-list.json should be modified after reading the songs.  If a developer goes in and modifies a song by making an instrument visible, or not visible, or a Listener, or an Observer, and runs the utility, then the song-list.json should be updated.  Only songs in song-list.json need be read.  Other songs not added to the song-list.json are not read.  There may be other test songs that are added to other lists, but these also are not read.
+4) Make changes to the display of song-list.json in SongLibrary.js and song-library.css so that the categories of Instruments in the songs are displayed differently in the song list as it appears in the `File > Song Library` accordion directory listings.
+
+### Design
+
+#### Display of categories of Instrument stati
+
+These live in song-library.css and are attached to directory listing elements, not Instruments or tuning objects elsewhere in the app.
+
+For each Instrument/tuning, the baseID, or fromBaseID is used, so we get things like `["P46", "S6", "Bass4", "Piano"]`
+
+CSS Classes: 
+
+Instrument not Listener, not Observer: `.instrumentMain`
+
+Instrument is wired as Listener: `.instrumentListener`
+
+Instrument is wired as Observer: `.instrumentObserver`
+
+Instrument not visible: `.instrumentNotVisible`
+
+So `song-list.json` would get new entries such as:
+```
+{ 
+  "songs": [
+    {
+      "href": "theory/mode-nat-minor-transposed-S6.json",
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {"fromBaseID":"P46", "wiring":"Listener", "visible": true},
+        {"fromBaseID":"S6", "wiring":"Observer", "visible": false},
+        {"fromBaseID":"S6", "wiring":"Main", "visible": true},
+        {"fromBaseID":"Piano", "wiring":"Listener", "visible": false}  
+      ]
+    }
+  ]
+}
+```
+
+The new "instruments" property will be generated from reading the song files and written to song-list.json, while preserving the hand-authored properties such as "href" and "description".  We will not tweak or edit the "instruments" property.
+
+Note that this does not show the wiring, whom which is wired to, etc.  We don't care about that.  We just care that these instruments are in the song in their roles, and are persisted as visible or not visible.  If I'm a P4 player, I'm going to look for songs that already are authored for P4 players, that is, they have P4 as "Main" and may have other Listeners and Observers.  I may also want to see if there is a P4 hidden in the song if it is the only one available with that purpose, (for example, to show natural minor mode with color-themes), and when I see that P4 is invisible then I know I can open the song and hit the visible checkmark and be in business.
+
+We will tweak the CSS, so just make basic CSS rules in separate categories for each:
+
+```
+.instrumentMain {
+  background-color: white;
+  color: brown;
+  border: 2px solid brown;
+}
+.instrumentMain.instrumentNotVisible {
+  background-color: #aaa;
+  color: brown;
+  border: 1px solid brown;
+}
+.instrumentListener {
+  background-color: #ffe57b;
+  color: #0a0;
+  border: 2px solid #0a0;
+}
+.instrumentListener.instrumentNotVisible {
+  background-color: #bdaa5d;
+  color: #0a0;
+  border: 1px solid #0a0;
+}
+.instrumentObserver {
+  background-color: rgb(213, 255, 213);
+  color: #00a;
+  border: 2px solid #00a;
+}
+.instrumentObserver.instrumentNotVisible {
+  background-color: rgb(136, 164, 136);
+  color: #00a;
+  border: 1px solid #00a;
+}
+```
+
+#### Display of Instruments in "Song Library" entries
+
+Each Instrument in a song should get a span with the above CSS classes, and all the Instruments in a song together should occupy a new third column in the per-song listings.
+
+e.g.
+
+```
+<div class="songLibraryRow"><div class="songLibraryCell songLibraryCellLink"><a href="#" data-action="loadSong" data-action-args="[&quot;demo/piano-follows-guitar-basic-blues.json&quot;]">piano-follows-guitar-basic-blues.json</a></div><div class="songLibraryCell songLibraryCellDescription">A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em></div><div class="songLibraryCell songLibraryCellInstruments"></div></div>
+```
+
+with the Instruments in the song being spans, one span per instrument, with the above CSS classes, inside `div class="songLibraryCell songLibraryCellInstruments"`.
+
+### Iteration 3 Request
+
+Please provide an implementation plan for the parts of this design that make sense, and provide analysis and questions for anything that doesn't especially holes in the strategy of making invisible instruments be low-performance-impact.
+
+Please suggest any changes that would make the CSS more idiomatic, efficient, or maintainable
+
+Please provide this plan in [Iteration 3 implementation plan](134-it3-implementation-plan.md)
+    

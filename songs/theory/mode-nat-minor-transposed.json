@@ -99,50 +99,50 @@
         }
       }
     },
-    "light-minor": {
+   "light-minor": {
       "readOnly": false,
       "computed": false,
       "checked": true,
       "dict": {
         "note1": {
-          "colorClass": "noteAnthracite",
+          "colorClass": "noteBlue7",
           "MOJOcaptionClass": "noteBlack",
           "caption": "I"
         },
         "note2": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "&tau;"
         },
         "note3": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "II"
         },
         "note4": {
-          "colorClass": "noteBlue2",
+          "colorClass": "noteBlue4",
           "caption": "m"
         },
         "note5": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteGreen7",
           "caption": "III"
         },
         "note6": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "IV"
         },
         "note7": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "&Theta;"
         },
         "note8": {
-          "colorClass": "noteGreen2",
+          "colorClass": "noteBlue5",
           "caption": "V"
         },
         "note9": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteBlue2",
           "caption": "&sigma;"
         },
         "note10": {
-          "colorClass": "noteBlue7",
+          "colorClass": "notePink3",
           "caption": "6"
         },
         "note11": {
@@ -150,7 +150,7 @@
           "caption": "&delta;"
         },
         "note12": {
-          "colorClass": "noteBlue7",
+          "colorClass": "noteGreen7",
           "caption": "&Delta;"
         },
         "noteRoot": {

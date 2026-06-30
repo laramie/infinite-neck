@@ -66,25 +66,25 @@
     },
     {
       "href": "theory/mode-major-transposed.json",
-      "description": "<em>major mode</em> shown with a green, light color-theme, transposed through all 12 Keys on a P4-tuning Guitar, so you can see the pattern in all positions."
-    },
-    {
-      "href": "theory/mode-nat-minor-transposed.json",
-      "description": "<em>natural minor mode</em> shown with a blue, light color-theme, transposed through all 12 Keys on a P4-tuning Guitar, so you can see the pattern in all positions."
+      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions."
     },
     {
       "href": "theory/mode-major-transposed-S6.json",
-      "description": "<em>major mode</em> shown with a green, light color-theme, transposed through all 12 Keys on a Standard-tuning Guitar, so you can see the pattern in all positions."
+      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions."
+    },
+    {
+      "href": "theory/mode-nat-minor-transposed.json",
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions."
     },
     {
       "href": "theory/mode-nat-minor-transposed-S6.json",
-      "description": "<em>natural minor mode</em> shown with a blue, light color-theme, transposed through all 12 Keys on a Standard-tuning Guitar, so you can see the pattern in all positions."
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions."
     }
   ],
   "directoryIntros": [
     {
       "introFor": "root",
-      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, and arpeggios. <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions.</p>"
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, and arpeggios. <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions. <b>theory</b> demonstrates topics of music theory.</p>"
     },
     {
       "introFor": "demo",
