@@ -6,7 +6,6 @@
   },
   "songs": [
     "All-Chords-A.json",
-    "tests/old-file-format-styleNum-missing.json",
     "tests/empty-song-missing-noteTables.json"
   ],
   "ignoredSongs": [
