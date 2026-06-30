@@ -17,6 +17,10 @@
       "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords."
     },
     {
+      "href": "demo/bass-player-noteRoot-sets-context.json",
+      "description": "Shows how to have the <em>Bass</em> player set a <i>noteRoot</i>."
+    },
+    {
       "href": "practice/All-Chords.json",
       "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar."
     },
