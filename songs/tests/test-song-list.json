@@ -1,14 +1,14 @@
 {
     "songs": [
-         "persistence/All-Chords.json",
-         "persistence/forward-backward-observers.json",
-         "persistence/3-chord-3keys-S6-Bass.json",
-         "persistence/3-chord-3keys-S6-Bass-observers-highlights.json",
+         "forward-backward-observers.json",
+         "3-chord-3keys-S6-Bass-tunings-without-views.json",
+         "3-chord-3keys-S6-Bass-observers-highlights.json",
          "arpeggio-bach-sec2-manual.json",
          "empty-song.json",
          "chart-test-fixture.json",
          "piano-listener-guitar-wite-out-fixture.json"
     ],
     "ignoredSongs": [
-    ]
+    ],
+    "dev-notes": "3-chord-3keys-S6-Bass-tunings-without-views.json has a warning message that would be good to keep testing. It shows up in showMessages."
 }
