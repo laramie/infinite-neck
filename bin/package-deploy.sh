@@ -26,7 +26,6 @@ INCLUDE_DIRS=(
   "plugins"
   "templates"
   "bin"
-  "css"
   "jsonTree80kg"
 )
 

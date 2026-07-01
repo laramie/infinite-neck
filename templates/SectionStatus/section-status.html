@@ -5,13 +5,13 @@
                 <td class="instrumentSectionBox SectionStatus_loopLight">
                     <table class="section-status-vertical-table-inner">
                         <tr>
-                            <td>
-                                <span class='SectionStatus_relativeSection'></span>
+                            <td class="SectionsStatus_td_RecordDot">
+                                <span class="RecordDot RecordButton"></span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="SectionsStatus_td_RecordDot">
-                                <span class="RecordDot RecordButton"></span>
+                            <td style="text-align: center;">
+                                <span class='SectionStatus_relativeSection'></span>
                             </td>
                         </tr>
                         <tr>
@@ -44,9 +44,9 @@
 <template id="section-status-horizontal-template">
     <span id="${widgetID}" class="${widgetClasses} section-status-horizontal-widget" data-tablename="${ownerID}" data-placement-id="${placementID}">
         <span class="instrumentSectionBox SectionStatus_loopLight">
+            <span class="RecordDot RecordButton"></span>
             <span class='SectionStatus_relativeSection'></span>
-            <span class="instrumentSectionMark"><span class="RecordDot RecordButton"></span>&sect;</span>
-            
+            <span class="instrumentSectionMark">&sect;</span>
             <span class="SectionsStatus_SectionNumber"></span>
             <span class="SectionStatus_beatWrap"><span class="SectionStatus_beatColon">:</span><span class="SectionStatus_beatNumber"></span></span>
         </span>
