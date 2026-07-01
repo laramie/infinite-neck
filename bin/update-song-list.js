@@ -268,7 +268,7 @@ export function main(argv = process.argv.slice(2)) {
             console.log(`Updated ${args.songList}.`);
         }
     } else if (!args.quiet) {
-        console.log(`${args.songList} is already up to date.`);
+        console.log(`${args.songList} is up to date.`);
     }
 }
 

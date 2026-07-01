@@ -118,7 +118,7 @@
   border: 2px solid brown;
 }
 .instrumentMain.instrumentNotVisible {
-  background-color: #aaa;
+  background-color: #5f5f5f;
   color: brown;
   border: 1px solid brown;
 }
@@ -128,17 +128,17 @@
   border: 2px solid #0a0;
 }
 .instrumentListener.instrumentNotVisible {
-  background-color: #bdaa5d;
-  color: #0a0;
-  border: 1px solid #0a0;
+  background-color: #6e6232;
+  color: rgb(112, 167, 112);
+  border: 1px solid rgb(112, 167, 112);
 }
 .instrumentObserver {
   background-color: rgb(213, 255, 213);
   color: #00a;
-  border: 2px solid #00a;
+  border: 2px solid #00a
 }
 .instrumentObserver.instrumentNotVisible {
-  background-color: rgb(136, 164, 136);
+  background-color: rgb(84, 105, 84);
   color: #00a;
   border: 1px solid #00a;
 }

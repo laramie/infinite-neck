@@ -52,7 +52,7 @@
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": true,
+      "visible": false,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,

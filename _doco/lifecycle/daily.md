@@ -14,7 +14,9 @@ cd ~/infinite-neck
 bin/index.md-update-all.sh
 bin/documentation.sh 
 ```
-
+## New song-list updater: 
+cd infinite-neck/
+npm run update:song-list
 
 ### To validate the command-line menu
 ```
@@ -32,6 +34,10 @@ cd ~/infinite-neck
 export INFINITE_NECK_VERBOSE=-1
 node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose  --runInBand
 ```
+
+This is now done succinctly: 
+
+bin/test.bash
     
 ### Run Jest Tests with more output
  - This gives a quiet output.
@@ -67,8 +73,10 @@ returned the broader test list under jest
 
 ## Push new version
 
-*New build script, still debugging*
+**New Build Script**   *still debugging*
   - `bin/build.sh`
+
+## Push new version Old steps (definitive, but try New Build Script above)
 
  - [Run Jest Tests](#run-jest-tests)
  
@@ -188,8 +196,3 @@ tar xcv infinite-neck-deploy.tar.gz
 #### Old Jest strategy
 
 
-## New song-list updater: 
-     
-
-cd infinite-neck/
-npm run update:song-list

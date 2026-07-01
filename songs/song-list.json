@@ -59,6 +59,32 @@
       ]
     },
     {
+      "href": "demo/guitar-basic-blues-fwd-back-observers.json",
+      "description": "<b>Guitar</b>, with forward and back <em>Observers</em>",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Observer",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Observer",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Listener",
+          "visible": false
+        }
+      ]
+    },
+    {
       "href": "demo/C-chords-w-tiny-modes.json",
       "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords.",
       "instruments": [
