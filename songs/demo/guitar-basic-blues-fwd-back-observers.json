@@ -159,7 +159,7 @@
   "noteTablesLayout": [
     {
       "tableID": "tblS6_back",
-      "visible": false
+      "visible": true
     },
     {
       "tableID": "tblS6_lead",
@@ -171,7 +171,7 @@
     },
     {
       "tableID": "tblP46_1",
-      "visible": false
+      "visible": true
     }
   ],
   "colorDicts": {
@@ -760,7 +760,7 @@
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {

@@ -65,7 +65,7 @@
         {
           "fromBaseID": "S6",
           "wiring": "Observer",
-          "visible": false
+          "visible": true
         },
         {
           "fromBaseID": "S6",
@@ -80,7 +80,7 @@
         {
           "fromBaseID": "P46",
           "wiring": "Listener",
-          "visible": false
+          "visible": true
         }
       ]
     },
