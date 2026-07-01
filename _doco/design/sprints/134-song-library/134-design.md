@@ -287,7 +287,7 @@ Please provide this plan in [Iteration 3 implementation plan](134-it3-implementa
 
 ### Iteration 3 Revisions for implementation
 
-Please revise [Iteration 3 implementation plan](134-it3-implementation-plan.md)
+Please revise [Iteration 3 implementation plan](134-it3-implementation-plan.md) with the information below, then proceed to coding.
 
 #### Revised CSS
 
