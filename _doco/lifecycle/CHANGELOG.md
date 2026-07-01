@@ -1,5 +1,42 @@
 # ChangeLog
 
+### 20260701
+
+Tag: v2.1-beta-8
+
+- 1cbe7af **2026-07-01** Added demo with Observer, tweaked update-song-list, tweaked CSS for not visibles.
+- 7dbd776 **2026-06-30** 134-it3 done
+- 9bc6762 **2026-06-30** Ready for implementation 134-it3
+- 1c6803d **2026-06-30** Ready for implementation 134-it3
+- 8170176 **2026-06-30** fixed tests for, and removed legacy handling of, visibleNoteTables.
+- d4bf098 **2026-06-30** getting rid of visibleNoteTables
+- 692a3bd **2026-06-30** finally got rid of all songs with visibleNoteTables.
+- 47ae7be **2026-06-30** test no longer needed
+- 7889ec5 **2026-06-30** song cleanup
+- b908a63 **2026-06-30** song cleanup
+- a2af138 **2026-06-30** song cleanup
+- 3c17f57 **2026-06-30** cleanup
+- 43aa2fb **2026-06-30** song cleanup
+- 541a5a0 **2026-06-30** old test song cleanup
+- 3a5f2ef **2026-06-30** removed obviated visibleNoteTables
+- de55171 **2026-06-30** bad copy
+- f88a6b0 **2026-06-30** song cleanup
+- 352d81a **2026-06-30** song cleanup
+- 2e45d7a **2026-06-30** cleaning
+- faa288d **2026-06-30** cleaning up obviated songs
+- a82f436 **2026-06-30** plan reviewed
+- d8e1c08 **2026-06-29** Ready for sprint-134-it3
+- 45b2a0b **2026-06-29** Ready for 134-it3
+- 3c6621f **2026-06-29** added theory/*S6*
+- e09af16 **2026-06-29** Add ChartInput
+- 818aecf **2026-06-29** New directory for songs/theory, with two songs showing transposing modes with light themes.
+- 1cc60ef **2026-06-29** Added ./fill/ to deploy
+- 86c3885 **2026-06-29** Cleanup
+- 45a3b4c **2026-06-29** Added Section to ChartInput
+- 15b611a **2026-06-29** Cleanup _doco and bin.  All are obviated, some are moved to _doco/archive
+- 718e65f **2026-06-29** migration complete, plus this thing had a bug that lost some information.
+- a4d48a6 **2026-06-28** v2.1-beta-7
+
 ### 20260628
 
 Tag: v2.1-beta-7

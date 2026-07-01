@@ -301,7 +301,7 @@
   "directoryIntros": [
     {
       "introFor": "root",
-      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, and arpeggios. <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions. <b>theory</b> demonstrates topics of music theory.</p>"
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features.  <b>practice</b> has songs with drills such as chords, modes, and arpeggios. <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions. <b>theory</b> demonstrates topics of music theory. Each song shows tags for which Instruments are used.  'Main' is a regular instrument (neither Listener nor Observer), and you can have multiple Main instruments. Instruments may be hidden (you un-hide them in 'My Tunings'), and are shown with grayed tags. <br>The tags look like:  <span class='songLibraryInstrument instrumentMain'>Main</span> <span class='songLibraryInstrument instrumentMain instrumentNotVisible'>Main-hidden</span> <span class='songLibraryInstrument instrumentListener'>Listener</span> <span class='songLibraryInstrument instrumentListener instrumentNotVisible'>Listener-hidden</span> <span class='songLibraryInstrument instrumentObserver'>Observer</span> <span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>Observer-hidden</span></p>"
     },
     {
       "introFor": "demo",
@@ -309,7 +309,7 @@
     },
     {
       "introFor": "practice",
-      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, <i>scales</i>, and <em>name-that-note</em> games."
+      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, and <i>scales</i>."
     },
     {
       "introFor": "theory",

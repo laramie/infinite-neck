@@ -1,5 +1,5 @@
 ## Adjust the date after you run this to the date you ran it: 
-bin/update-git-log.bash --since "2026-06-28" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-06-30" > _doco/lifecycle/CHANGELOG-new.md
 
 vi _doco/lifecycle/CHANGELOG.md
 
