@@ -97,3 +97,45 @@
     font-size: 130%;
 }
 
+.songLibraryInstrument {
+		display: inline-block;
+		margin: 0.1em 0.2em 0.1em 0;
+		padding: 0.1em 0.35em;
+		border-radius: 0.35em;
+		font-family: "Kode Mono", "Courier New", monospace;
+		font-size: 85%;
+		font-weight: 700;
+		white-space: nowrap;
+}
+
+.instrumentMain {
+  background-color: white;
+  color: brown;
+  border: 2px solid brown;
+}
+.instrumentMain.instrumentNotVisible {
+  background-color: #aaa;
+  color: brown;
+  border: 1px solid brown;
+}
+.instrumentListener {
+  background-color: #ffe57b;
+  color: #0a0;
+  border: 2px solid #0a0;
+}
+.instrumentListener.instrumentNotVisible {
+  background-color: #bdaa5d;
+  color: #0a0;
+  border: 1px solid #0a0;
+}
+.instrumentObserver {
+  background-color: rgb(213, 255, 213);
+  color: #00a;
+  border: 2px solid #00a;
+}
+.instrumentObserver.instrumentNotVisible {
+  background-color: rgb(136, 164, 136);
+  color: #00a;
+  border: 1px solid #00a;
+}
+

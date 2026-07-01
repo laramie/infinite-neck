@@ -284,4 +284,113 @@ Please provide an implementation plan for the parts of this design that make sen
 Please suggest any changes that would make the CSS more idiomatic, efficient, or maintainable
 
 Please provide this plan in [Iteration 3 implementation plan](134-it3-implementation-plan.md)
+
+### Iteration 3 Revisions for implementation
+
+Please revise [Iteration 3 implementation plan](134-it3-implementation-plan.md)
+
+#### Revised CSS
+
+We appreciate the suggested CSS edits.  However, in this codebase, we use css vars heavily and almost exclusively for dealing with themes and DisplayOptions where we set the vars at runtime.  So we don't want to confuse our programmers and external programming consumers with css vars that are merely for maintenance centralization efficiency yet are statically known at load time.  So we have the CSS here installed in song-library.css now:
+
+
+```css
+.songLibraryInstrument {
+		display: inline-block;
+		margin: 0.1em 0.2em 0.1em 0;
+		padding: 0.1em 0.35em;
+		border-radius: 0.35em;
+		font-family: "Kode Mono", "Courier New", monospace;
+		font-size: 85%;
+		font-weight: 700;
+		white-space: nowrap;
+}
+
+.instrumentMain {
+  background-color: white;
+  color: brown;
+  border: 2px solid brown;
+}
+.instrumentMain.instrumentNotVisible {
+  background-color: #aaa;
+  color: brown;
+  border: 1px solid brown;
+}
+.instrumentListener {
+  background-color: #ffe57b;
+  color: #0a0;
+  border: 2px solid #0a0;
+}
+.instrumentListener.instrumentNotVisible {
+  background-color: #bdaa5d;
+  color: #0a0;
+  border: 1px solid #0a0;
+}
+.instrumentObserver {
+  background-color: rgb(213, 255, 213);
+  color: #00a;
+  border: 2px solid #00a;
+}
+.instrumentObserver.instrumentNotVisible {
+  background-color: rgb(136, 164, 136);
+  color: #00a;
+  border: 1px solid #00a;
+}
+```
+
+
+#### Revised visibleNoteTables and song-list.json
+
+We completed an edit where we removed visibleNoteTables from songs in the repository on our branch, and a chat where Copilot removed visibleNoteTables from the repository, and adjusted a few tests, on our branch.  So the implementation plan should reflect these changes and not have to deal with visibleNoteTables.
+
+In this revision, we also ensured that song-list.json has no "legacy" format simple one-line song references, only the new href/description objects.  There may be song lists for testing, but those are not shown in the Song Library, and may be ignored.
+
+Order in song-list.json must be display order.
+
+#### Revised Clarity on baseID/fromBaseID
+
+Unless we have an errant song, we believe all songs in the library now properly use `fromBaseID` as their class/inheritance, and so should be appropriate for the badge display.  We should not have to deal with, or want to display, `baseID`.  The canonical set of songs should be those listed in `./songs/song-list.json`.  Other lists may include test songs that may have intentional errors, or at the least, are not readily available to Users.
+
+#### Clarifying Observer
+
+Yes, the definition of an Observer is one who is wired with a relative section specifier.  This definition from the implementation plan is a good one: 
+
+  "Observer: wiring exists and relativeSection is non-empty."
+
+#### implementation plan Questions Answered
+
+
+1. **Generated field ownership:** Should developers ever hand-edit `instruments`, or should `bin/update-song-list.js` be treated as the sole owner? Recommendation: generated-only; hand edits will be overwritten.
+ANSWER: generated-only.
+
+2. **String song-list entries:** Is converting legacy strings to objects acceptable in the primary curated list when running the updater? Recommendation: yes, because adding `instruments` requires object entries.
+ANSWER:  Skip it, and warn.  We'd prefer to fix the song-list files if found.  We believe the main one is up-to-date, and others are for testing only. 
+
+
+3. **Observer label source:** The proposed role mapping assumes `relativeSection` means Observer. This matches current code comments, but the plan should be confirmed before implementation.
+ANSWER: The roles definition in `### Role model` in the implementation plan is perfectly correct.
+
+
+4. **Duplicate `fromBaseID` display:** Songs may intentionally have two S6-derived instruments, such as an S6 Main and an S6 Observer. Recommendation: render duplicate badges separately because role/visibility may differ.
+ANSWER: Yes, render duplicates.  Especially for Observers, where there may be a look-ahead and a look-behind and the Main.  For now, look-ahead and look-behind will be identical badges and that is OK.  We like that there will be duplicates to show that there are different ones. 
+
+
+5. **`Piano` vs `PianoSkeuomorphic`:** The design examples show `Piano`, but current sample songs may have `fromBaseID: "PianoSkeuomorphic"`. Recommendation: use exact `fromBaseID` for generation now. Add a later display-label map only if users dislike the raw base IDs.
+ANSWER:  Yes, use exact `fromBaseID`.   
+
+
+6. **Visibility source of truth:** Runtime currently prefers `noteTablesLayout`; generation should also prefer it. If a song has conflicting `myTunings[].visible`, `noteTablesLayout` should win.
+ANSWER: Yes.  Log warning to UserLog.
+
+
+7. **Updater error policy:** If a listed song is missing or invalid JSON, should the updater fail the whole run or keep going? Recommendation: keep going, report all errors, and exit non-zero without writing partial changes unless an explicit `--force` is added later.
+ANSWER: Keep going and report. 
+
+
+8. **Performance acceptance target:** The design asks for low impact but does not define a threshold. Recommendation: record baseline counts/timing for replay/prewarm tasks before and after adding hidden instruments; use “hidden tables produce zero replay/prewarm tasks” as the first pass criterion.
+ANSWER: Recommendation approved.
+
+
+
+
     
