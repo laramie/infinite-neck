@@ -4,6 +4,10 @@
 
 export const ROOT_DIRECTORY_KEY = 'root';
 
+const WIRING_MAIN = 'Main';
+const WIRING_LISTENER = 'Listener';
+const WIRING_OBSERVER = 'Observer';
+
 function escapeHtml(text) {
 	return String(text)
 		.replaceAll('&', '&amp;')
@@ -33,20 +37,43 @@ function parseSongEntry(songEntry) {
 		const href = songEntry.trim();
 		return {
 			href,
-			description: ''
+			description: '',
+			instruments: []
 		};
 	}
 	if (!songEntry || typeof songEntry !== 'object' || Array.isArray(songEntry)) {
 		return {
 			href: '',
-			description: ''
+			description: '',
+			instruments: []
 		};
 	}
 	const href = typeof songEntry.href === 'string' ? songEntry.href.trim() : '';
 	const description = typeof songEntry.description === 'string' ? songEntry.description : '';
+	const instruments = Array.isArray(songEntry.instruments) ? songEntry.instruments : [];
 	return {
 		href,
-		description
+		description,
+		instruments
+	};
+}
+
+function normalizeInstrumentEntry(instrument) {
+	if (!instrument || typeof instrument !== 'object' || Array.isArray(instrument)) {
+		return null;
+	}
+	const fromBaseID = typeof instrument.fromBaseID === 'string' ? instrument.fromBaseID.trim() : '';
+	if (!fromBaseID) {
+		return null;
+	}
+	let wiring = WIRING_MAIN;
+	if (instrument.wiring === WIRING_LISTENER || instrument.wiring === WIRING_OBSERVER) {
+		wiring = instrument.wiring;
+	}
+	return {
+		fromBaseID,
+		wiring,
+		visible: instrument.visible !== false
 	};
 }
 
@@ -79,6 +106,7 @@ export function normalizeSongListEntries(songListJson) {
 			return {
 				href,
 				description: parsed.description,
+				instruments: parsed.instruments.map(normalizeInstrumentEntry).filter(Boolean),
 				directory: getDirectoryFromHref(href),
 				filename
 			};
@@ -151,15 +179,35 @@ function renderIntroRow(introHtml) {
 	return "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'>" + introHtml + '</div></div>';
 }
 
+function getInstrumentRoleClass(instrument) {
+	if (instrument.wiring === WIRING_LISTENER) {
+		return 'instrumentListener';
+	}
+	if (instrument.wiring === WIRING_OBSERVER) {
+		return 'instrumentObserver';
+	}
+	return 'instrumentMain';
+}
+
+function renderInstrumentBadges(instruments = []) {
+	return instruments.map((instrument) => {
+		const visibilityClass = instrument.visible === false ? ' instrumentNotVisible' : '';
+		const classes = 'songLibraryInstrument ' + getInstrumentRoleClass(instrument) + visibilityClass;
+		return "<span class='" + classes + "'>" + escapeHtml(instrument.fromBaseID) + '</span>';
+	}).join('');
+}
+
 function renderSongRow(song) {
 	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
 	const safeLinkText = escapeHtml(song.filename || song.href);
+	const instrumentBadges = renderInstrumentBadges(song.instruments || []);
 	return (
 		"<div class='songLibraryRow'>"
 			+ "<div class='songLibraryCell songLibraryCellLink'>"
 			+ "<a href='#' data-action='loadSong' data-action-args='" + argsAttr + "'>" + safeLinkText + '</a>'
 			+ '</div>'
 			+ "<div class='songLibraryCell songLibraryCellDescription'>" + (song.description || '') + '</div>'
+			+ "<div class='songLibraryCell songLibraryCellInstruments'>" + instrumentBadges + '</div>'
 			+ '</div>'
 	);
 }

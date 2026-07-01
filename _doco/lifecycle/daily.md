@@ -188,5 +188,8 @@ tar xcv infinite-neck-deploy.tar.gz
 #### Old Jest strategy
 
 
-
+## New song-list updater: 
      
+
+cd infinite-neck/
+npm run update:song-list

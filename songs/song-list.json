@@ -2,87 +2,274 @@
   "songs": [
     {
       "href": "demo/piano-follows-guitar-basic-blues.json",
-      "description": "A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em>"
+      "description": "A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em>",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSkeuomorphic",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "PianoSkeuomorphic",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "demo/guitar-follows-piano-basic-blues.json",
-      "description": "A Basic Blues progression on <b>Piano</b> with a <em>Guitar Listener</em>"
+      "description": "A Basic Blues progression on <b>Piano</b> with a <em>Guitar Listener</em>",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSkeuomorphic",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "demo/piano-follows-guitar-chorus-coda.json",
-      "description": "<em>Piano</em> listening to <b>Guitar</b>, showing how to use a Coda in the <em>Chart</em>"
+      "description": "<em>Piano</em> listening to <b>Guitar</b>, showing how to use a Coda in the <em>Chart</em>",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSkeuomorphic",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "PianoSkeuomorphic",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "demo/C-chords-w-tiny-modes.json",
-      "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords."
+      "description": "Shows how to use <b>TinyNote</b> as fill for modes over <em>SingleNote</em> and <em>NamedNote</em> for the chords.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "demo/bass-player-noteRoot-sets-context.json",
-      "description": "Shows how to have the <em>Bass</em> player set a <i>noteRoot</i>."
+      "description": "Shows how to have the <em>Bass</em> player set a <i>noteRoot</i>.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Bass4",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/All-Chords.json",
-      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar."
+      "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
-      "description": "<b>All-Chords</b> on a <em>P4-tuning</em> Guitar, with added <em>Piano</em> listening to the <i>Guitar</i>, and a light <em>color theme</em> instead of AutoColor."
+      "description": "<b>All-Chords</b> on a <em>P4-tuning</em> Guitar, with added <em>Piano</em> listening to the <i>Guitar</i>, and a light <em>color theme</em> instead of AutoColor.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/All-Chords-fill-mode-S8-light.json",
-      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string</em> Guitar.  (Just add a <i>Listener</i> to make it like the P4 version.)"
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 8-string</em> Guitar.  (Just add a <i>Listener</i> to make it like the P4 version.)",
+      "instruments": [
+        {
+          "fromBaseID": "S8",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/All-Chords-fill-mode-S6-light.json",
-      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string</em> Guitar. (Just add a <i>Listener</i> to make it like the P4 version.)"
+      "description": "<b>All-Chords</b> on a <em>standard-tuning 6-string</em> Guitar. (Just add a <i>Listener</i> to make it like the P4 version.)",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys.json",
-      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill."
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys. Basic chord shape, no mode fill.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
-      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>."
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
-      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme."
+      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "name-that-note/name-that-note-S6.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar."
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "name-that-note/name-that-note-S6-positions.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions."
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
-    {                   
+    {
       "href": "name-that-note/name-that-note-S6-positions-by-section.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section."
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "name-that-note/name-that-note-P4.json",
-      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string</em> Guitar."
+      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string</em> Guitar.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "name-that-note/name-that-note-bass-4.json",
-      "description": "<em>name-that-note</em> game for the <em>4-string bass</em>."
+      "description": "<em>name-that-note</em> game for the <em>4-string bass</em>.",
+      "instruments": [
+        {
+          "fromBaseID": "Bass4",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "theory/mode-major-transposed.json",
-      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions."
+      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "theory/mode-major-transposed-S6.json",
-      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions."
+      "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "theory/mode-nat-minor-transposed.json",
-      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions."
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     },
     {
       "href": "theory/mode-nat-minor-transposed-S6.json",
-      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions."
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     }
   ],
   "directoryIntros": [

@@ -10,7 +10,15 @@ describe('SongLibrary model', () => {
         const result = normalizeSongListEntries({
             songs: [
                 'dir-a/song-a.json',
-                { href: 'dir-b/song-b.json', description: '<i>desc</i>' },
+                {
+                    href: 'dir-b/song-b.json',
+                    description: '<i>desc</i>',
+                    instruments: [
+                        { fromBaseID: 'P46', wiring: 'Main', visible: true },
+                        { fromBaseID: 'S6', wiring: 'Observer', visible: false },
+                        { fromBaseID: '', wiring: 'Listener', visible: true }
+                    ]
+                },
                 { href: 'song-at-root.json', description: 'root desc' },
                 { href: '', description: 'skip me' },
                 { description: 'skip me too' },
@@ -24,6 +32,10 @@ describe('SongLibrary model', () => {
             'song-at-root.json'
         ]);
         expect(result[1].description).toBe('<i>desc</i>');
+        expect(result[1].instruments).toEqual([
+            { fromBaseID: 'P46', wiring: 'Main', visible: true },
+            { fromBaseID: 'S6', wiring: 'Observer', visible: false }
+        ]);
         expect(result[2].directory).toBe(ROOT_DIRECTORY_KEY);
     });
 
@@ -52,7 +64,15 @@ describe('SongLibrary model', () => {
     test('renderSongLibraryHtml emits top-level and directory details blocks', () => {
         const html = renderSongLibraryHtml({
             songs: [
-                { href: 'sprint-121/song-a.json', description: 'A <b>bold</b> desc' },
+                {
+                    href: 'sprint-121/song-a.json',
+                    description: 'A <b>bold</b> desc',
+                    instruments: [
+                        { fromBaseID: 'P46', wiring: 'Main', visible: true },
+                        { fromBaseID: 'S6', wiring: 'Listener', visible: false },
+                        { fromBaseID: 'Bass4', wiring: 'Observer', visible: true }
+                    ]
+                },
                 { href: 'song-root.json', description: 'Root desc' }
             ],
             directoryIntros: [
@@ -71,5 +91,19 @@ describe('SongLibrary model', () => {
         expect(html).toContain('song-a.json');
         expect(html).toContain('song-root.json');
         expect(html).toContain('A <b>bold</b> desc');
+        expect(html).toContain("<div class='songLibraryCell songLibraryCellInstruments'>");
+        expect(html).toContain("<span class='songLibraryInstrument instrumentMain'>P46</span>");
+        expect(html).toContain("<span class='songLibraryInstrument instrumentListener instrumentNotVisible'>S6</span>");
+        expect(html).toContain("<span class='songLibraryInstrument instrumentObserver'>Bass4</span>");
+    });
+
+    test('renderSongLibraryHtml keeps an empty instrument cell when instruments are missing', () => {
+        const html = renderSongLibraryHtml({
+            songs: [
+                { href: 'demo/song-a.json', description: 'No generated instruments yet' }
+            ]
+        });
+
+        expect(html).toContain("<div class='songLibraryCell songLibraryCellInstruments'></div>");
     });
 });

@@ -9,6 +9,8 @@
     "knip": "knip",
     "package:deploy": "bash bin/package-deploy.sh",
     "update:help": "node bin/help.html-updater.js",
+    "update:song-list": "node bin/update-song-list.js",
+    "check:song-list": "node bin/update-song-list.js --check",
     "validate:cmdmenu": "node bin/validate-command-menu.js",
     "validate:song-schema": "node bin/validate-song-schema.js",
     "validate:song-schema:strict": "node bin/validate-song-schema.js --strict",
