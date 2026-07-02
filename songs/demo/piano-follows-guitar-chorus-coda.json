@@ -55,7 +55,7 @@
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
       "stringDividerHeight": "0",
-      "fromBaseID": "PianoSkeuomorphic"
+      "fromBaseID": "Piano"
     },
     {
       "instance": true,
@@ -73,7 +73,7 @@
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
       "stringDividerHeight": "0",
-      "fromBaseID": "PianoSkeuomorphic"
+      "fromBaseID": "Piano"
     }
   ],
   "noteTablesLayout": [

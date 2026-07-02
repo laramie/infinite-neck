@@ -10,12 +10,12 @@
           "visible": true
         },
         {
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "wiring": "Main",
           "visible": false
         },
         {
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "wiring": "Listener",
           "visible": true
         }
@@ -31,7 +31,7 @@
           "visible": true
         },
         {
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "wiring": "Main",
           "visible": true
         }
@@ -47,12 +47,12 @@
           "visible": true
         },
         {
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "wiring": "Main",
           "visible": false
         },
         {
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "wiring": "Listener",
           "visible": true
         }
