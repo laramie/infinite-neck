@@ -495,6 +495,173 @@ then in the section-status.css we just want:
 We'd like your analysis on the cleanest and least disturbing way to make this happen.
 
 
+## Copilot response, approved, installed
 
+Created 3 todos
 
-    
+Searched for files matching `**/*section-status*`, 6 matches
+
+Searched for regex `ssKey_relative|ssKey_listener|leftRailCaptionHost|fretTableLeftCaption|captionRowInstrument|ssCaptionWrapper` (`**/*.{js,css,html}`), 27 results
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#160-160), lines 160 to 230
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#230-230), lines 230 to 285
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.builder.js)
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.css#1-1), lines 1 to 140
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#2490-2490), lines 2490 to 2535
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.html)
+
+Searched for regex `Widget:SectionStatus:statusChanged|ReplayOptions.Type|new ReplayOptions|publish.*Status|SectionStatus` (`**/*.js`), 100 results
+
+Read [](file:///home/laramie/infinite-neck/ReplayOptions.js)
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#560-560), lines 560 to 650
+
+Read [](file:///home/laramie/infinite-neck/Song.js#990-990), lines 990 to 1015
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#980-980), lines 980 to 1130
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#1700-1700), lines 1700 to 1785
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#285-285), lines 285 to 330
+
+Searched for regex `tuningIDCaption|captionRowInstrument|fretTableLeftCaption|baseID.*caption|rename.*baseID|inputTuningID` (`**/*.js`), 32 results
+
+Read [](file:///home/laramie/infinite-neck/TuningsLibrary.js#985-985), lines 985 to 1045
+
+Completed: *Inspect caption code* (1/3)
+
+Short answer: the cleanest path is to reuse the existing Section Status widget event flow, but **not** move the left-rail caption into the widget template unless that becomes necessary.
+
+The good news: this repo already has Section Status widgets in both relevant places:
+
+- Left rail widget is created in TableBuilder.js.
+- Caption-row widget is created in TableBuilder.js.
+- Section Status already receives `keyMode` and toggles `ssKey_relative` / `ssKey_listener` on key fields in section-status.builder.js.
+
+So the least disturbing design is:
+
+## Recommended approach
+
+### 1. Keep captions where they are
+
+Leave the current left-rail DOM concept intact:
+
+- `.leftRailCaptionHost`
+- `.fretTableLeftCaption`
+
+This preserves the existing `C` button behavior, which currently toggles `.leftRailCaptionHost` in infinite-neck.js.
+
+Also preserve `.captionRowInstrument` in the caption row.
+
+### 2. Add stable target classes / data attributes
+
+Change the two caption outputs in TableBuilder.js to expose a small, explicit “role class target”.
+
+For caption row, instead of:
+
+```html
+<span class="captionRowInstrument"><span>S6_forward:</span></span>
+```
+
+prefer conceptually:
+
+```html
+<span class="captionRowInstrument ssCaptionWrapper">
+  <span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="tblS6_forward">S6_forward:</span>
+</span>
+```
+
+For left rail:
+
+```html
+<div class="leftRailCaptionHost ssCaptionWrapper">
+  <span class="fretTableLeftCaption SectionStatus_captionRoleTarget" data-tablename="tblS6_forward">S6_forward</span>
+</div>
+```
+
+This keeps the ID text target present, makes future rename/update code easier, and avoids forcing caption ownership into the widget template.
+
+### 3. Extend `SectionStatusWidget` role-class application
+
+In section-status.builder.js, the widget currently does:
+
+- remove `ssKey_relative ssKey_listener`
+- add `ssKey_relative` for `ReplayOptions.Type.RELATIVE`
+- add `ssKey_listener` for `ReplayOptions.Type.LISTENER`
+
+Refactor that into a helper like `applyKeyModeClasses($targets, keyMode)`, then call it for:
+
+- `.SectionStatus_rootKey`
+- `.SectionStatus_rootKeyLead`
+- nearby / registered `.SectionStatus_captionRoleTarget`
+
+This means captions “get the news” via the same event that already updates key widgets.
+
+### 4. Prefer widget-registered targets over global selectors
+
+Best implementation shape:
+
+- Add an optional options parameter to `SectionStatusBuilder.createWidget()`, e.g. `{ roleClassTargets: [...] }`.
+- In TableBuilder.js, create the caption target elements first, then pass them into the local Section Status widget.
+- The widget stores those elements and toggles classes when `keyMode` changes.
+
+That is cleaner than having `SectionStatusWidget` query the whole document for `data-tablename`.
+
+### 5. CSS belongs in section-status.css
+
+Yes, styling these role classes in section-status.css is appropriate because the semantic state is Section Status / replay status.
+
+Suggested corrected CSS shape:
+
+```css
+.ssCaptionWrapper .fretTableLeftCaption,
+.ssCaptionWrapper .tuningIDCaption {
+  border: 2px solid red;
+}
+
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_relative,
+.ssCaptionWrapper .tuningIDCaption.ssKey_relative {
+  border: 2px solid blue;
+  background-color: white;
+}
+
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener,
+.ssCaptionWrapper .tuningIDCaption.ssKey_listener {
+  border: 2px solid green;
+  background-color: white;
+}
+```
+
+Note: the design text has `ssky_listener`; implementation should consistently use `ssKey_listener`.
+
+## Why I would not move the left-rail caption into the widget template first
+
+Moving it into section-status.html is workable, but more disruptive:
+
+- The vertical Section Status template is currently generic.
+- It would need a caption label parameter.
+- The `showLeftCaption` toggle currently expects `.leftRailCaptionHost` under `.instrumentBackground`.
+- The widget would start owning UI that is not really status UI; it is instrument caption UI.
+
+That increases coupling. The lighter option is better: **caption remains TableBuilder-owned, but SectionStatus owns the role-class updates.**
+
+## Event behavior
+
+This should update naturally because `replayTable()` emits `Widget:SectionStatus:statusChanged` with `keyMode` in NoteTableController.js. Wiring add/remove also already triggers replay/status refresh paths.
+
+For removal, the replay event should clear the classes because `keyMode` is empty/undefined, and the existing code already removes both classes before applying a new one.
+
+## Recommended implementation plan
+
+1. Add `ssCaptionWrapper`, `tuningIDCaption`, and `SectionStatus_captionRoleTarget` markup in TableBuilder.js.
+2. Add optional `roleClassTargets` support to `SectionStatusBuilder.createWidget()`.
+3. Refactor the existing key-mode class logic in section-status.builder.js into one helper and apply it to both key fields and caption targets.
+4. Add CSS rules in section-status.css.
+5. Add a focused Jest test around Section Status class application if practical.
+
+That is the cleanest, least disturbing approach: no badge dependency, no broad DOM scanning, no ownership move, and it reuses the Section Status event system that already understands Listener vs Observer.

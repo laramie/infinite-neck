@@ -117,6 +117,21 @@
     background-color: var(--section-status-key-live-bg);
 }
 
+.ssCaptionWrapper .fretTableLeftCaption,
+.ssCaptionWrapper .tuningIDCaption {
+    border: 2px solid red;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_relative,
+.ssCaptionWrapper .tuningIDCaption.ssKey_relative {
+    border: 2px solid blue;
+    background-color: white;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener,
+.ssCaptionWrapper .tuningIDCaption.ssKey_listener {
+    border: 2px solid green;
+    background-color: white;
+}
+
 .RecordDot {
   display: inline-block;
   width: 0.75em;

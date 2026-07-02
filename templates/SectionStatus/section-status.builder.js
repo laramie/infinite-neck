@@ -22,6 +22,28 @@ export function normalizeSectionStatusBeatState(data = {}, currentState = {}) {
     };
 }
 
+export function getSectionStatusKeyModeClass(keyMode) {
+    switch (keyMode) {
+        case ReplayOptions.Type.RELATIVE:
+            return 'ssKey_relative';
+        case ReplayOptions.Type.LISTENER:
+            return 'ssKey_listener';
+        default:
+            return '';
+    }
+}
+
+export function applySectionStatusKeyModeClasses($targets, keyMode) {
+    if (!$targets || !$targets.length) {
+        return;
+    }
+    $targets.removeClass('ssKey_relative ssKey_listener');
+    const keyModeClass = getSectionStatusKeyModeClass(keyMode);
+    if (keyModeClass) {
+        $targets.addClass(keyModeClass);
+    }
+}
+
 export class SectionStatusBuilder {
     static registry = new Map(); // ownerID -> array of widgets
 
@@ -34,15 +56,15 @@ export class SectionStatusBuilder {
      * @param {string} layout - 'vertical' or 'horizontal'
      * @returns {SectionStatusWidget}
      */
-    static addToDest(destSelector, ownerID, placementID, layout = 'vertical') {
+    static addToDest(destSelector, ownerID, placementID, layout = 'vertical', options = {}) {
         let destEl = document.querySelector(destSelector);
-        const widget = new SectionStatusWidget(destEl, ownerID, placementID, layout);
+        const widget = new SectionStatusWidget(destEl, ownerID, placementID, layout, options);
         SectionStatusBuilder.registerWidget(ownerID, widget);
         return widget;
     }
 
-    static createWidget(destEl, ownerID, placementID, layout = 'vertical'){
-        const widget = new SectionStatusWidget(destEl, ownerID, placementID, layout);
+    static createWidget(destEl, ownerID, placementID, layout = 'vertical', options = {}){
+        const widget = new SectionStatusWidget(destEl, ownerID, placementID, layout, options);
         SectionStatusBuilder.registerWidget(ownerID, widget);
         return widget;
     }
@@ -82,12 +104,13 @@ export class SectionStatusBuilder {
 }
 
 class SectionStatusWidget {
-    constructor(destEl, ownerID, placementID, layout) {
+    constructor(destEl, ownerID, placementID, layout, options = {}) {
         this.ownerID = ownerID;
         this.placementID = placementID;
         this.layout = layout;
         this.widgetID = `${ownerID}_${placementID}_SectionStatus`;
         this.container = destEl && destEl.jquery ? destEl[0] : destEl;
+        this.roleClassTargets = options.roleClassTargets || [];
         this.eventHandlers = [];
         this.loopActive = false;
         this.showBeatCounter = false;
@@ -134,6 +157,20 @@ class SectionStatusWidget {
             return new Function(...keys, `return \`${str}\`;`)(...vals);
         };
         return expandRuntime(templateString, vars); 
+    }
+
+    getRoleClassTargets() {
+        const targets = Array.isArray(this.roleClassTargets)
+            ? this.roleClassTargets
+            : [this.roleClassTargets];
+        let $targets = $();
+        targets.forEach((target) => {
+            if (!target) {
+                return;
+            }
+            $targets = $targets.add(target.jquery ? target : $(target));
+        });
+        return $targets;
     }
 
     subscribeEvents() {
@@ -234,19 +271,7 @@ class SectionStatusWidget {
         if (hasOwnStatusValue(status, 'keyMode')) {
             // jQuery and DOM both do class changes efficiently, no need to optimize the following:
             //These are all defined in section-status.css
-            $rootKey.removeClass('ssKey_relative ssKey_listener');
-            $rootKeyLead.removeClass('ssKey_relative ssKey_listener');
-            switch (status.keyMode) {
-                case ReplayOptions.Type.RELATIVE:
-                    $rootKey.addClass('ssKey_relative');
-                    $rootKeyLead.addClass('ssKey_relative');
-                    break;
-                case ReplayOptions.Type.LISTENER:
-                    $rootKey.addClass('ssKey_listener');
-                    $rootKeyLead.addClass('ssKey_listener');
-                    break;
-                // SELF or default: no extra class
-            }
+            applySectionStatusKeyModeClasses($rootKey.add($rootKeyLead).add(this.getRoleClassTargets()), status.keyMode);
         }
 
         if (hasOwnStatusValue(status, 'isLoopActive') && typeof status.isLoopActive === 'boolean') {
