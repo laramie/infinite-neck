@@ -455,6 +455,45 @@ This means that even in new songs, messing around with the visible checkbox gets
 
 Please produce the implementation plan, with any questions, in [sprint-134 Iteration 4 Implementation Plan](134-it4-implementation-plan.md)
 
+## Iteration 5
+
+Here is an example from the DOM of an Instrument with ID "S6_forward", showing its caption inside `.captionRow` and then inside `.captionRowInstrument`:
+`<span class="captionRowInstrument"><span>S6_forward:</span></span>`
+
+Then this one comes from the left-rail below the looper light and section status.
+
+`<div class="leftRailCaptionHost"><span class="fretTableLeftCaption">S6_forward</span></div>`
+
+We would like both of these to get the news when wiring has changed, so that they get a new class, and we can style that class.
+
+We want a similar class to the Role badges we just installed.  However, we don't want to tie that code in with this caption row and left-rail code.  Merely copying the CSS will suit most of our needs of that implementation.  However, we suspect that the easiest way to do this is to add the Caption inside the Section-Status widget and output the left-rail caption where it is but inside the widget so that it can get events when wiring changes happen.  We want the same as the Key fields, which have css for Observer and Listener, but they are called `ssKey_relative` and `ssKey_listener`
+
+However, this means the code in TableBuilder.js:186-211 will need to be modified somehow.  The span that gets inserted there for the caption has a destination for changing the Instrument ID dynamically.  So we want that target destination span to still be there, but the span that sorrounds the caption and its necessary destination classes for finding it still inside.  This way, we can get the ID updated as it is today, and the Observer/Listener (ssKey_relative/ssky_listener) class so we can add CSS rules to putting the caption classes in section-status.css.
+
+Please advise if this is the cleanest way to do this without disturbing too much.
+
+So since inside the SectionStatus widget output we have:
+
+`<span class="ssCaptionWrapper"><span class="fretTableLeftCaption">S6_forward</span></span>`
+
+then in the section-status.css we just want: 
+
+.fretTableLeftCaption :: defined in instrument.css, could be moved
+
+.ssCaptionWrapper .fretTableLeftCaption {
+   border 2px solid red;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_relative {
+  border 2px solid blue;
+  background-color: white;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener {
+  border 2px solid green;
+  background-color: white;
+}
+
+We'd like your analysis on the cleanest and least disturbing way to make this happen.
+
 
 
 
