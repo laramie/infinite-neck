@@ -391,6 +391,71 @@ ANSWER: Keep going and report.
 ANSWER: Recommendation approved.
 
 
+## Iteration 4 : Badges, instrument.visible cleanup
+
+### Instrument Role Badges in My Tunings
+
+We like the fromBaseID badges.  We want to use them in other parts of the app.  So the function that produces them should be clean and re-useable.  Hopefull this is already so.  If not, small refactoring would be in order.
+
+We want to use them in the "My Tunings" grid.  Where it currently has a column (6th) called "from" we now want the caption to be "Role", and the value in the column instead of being the text value of fromBaseID, should be the badge for this fromBaseID, using the CSS stylings from `song-library.css`, which should already be available since this is on the same host page as "Song Library".  
+
+When a User changed wiring, the "My Tunings" page will need to be rebuilt when shown next.  If this is already handled then fine.  However, since the wiring panels in each instrument can be shown while the "My Tunings" menu page is showing, the "My Tunings" menu page will probably have to be kicked with an event to get the update to happen.
+
+
+### Instrument Role Badges in approved expansion and thence in File > Info
+
+We also want the badges to be available to an approved text expansion, and that text expansion should be available to "File > Info" in the User-entered HTML in the editable textarea.
+
+This means all values allowed should be allowed in "File > Info" the same way they are allowed in Section Caption, even though they may not always make sense outside of a particular Section. This is how the Caption is expanded:
+`var caption = expandApprovedTemplate(rawCaption);`
+
+This means any widgets we expose this way will be available in Caption and in File > Info.
+
+In particular, we'd like to add a widget that dumps out what the song-library dumps out for badges when listing the songs.  A User could put this in "File > Info" if they wanted to share that in the Info landing page for opening a Song, without us making every song show this in Info.
+
+So in parallel with things like `${arpeggioPositionsStatus}` we'd like this widget to be called via `${songInstrumentBadges}` and also a longer version in a table called 
+`${songInstrumentTable}`.
+
+Here is the format of songInstrumentTable:
+
+```
+<table>
+    <tr>
+        <th>Role</th>
+        <th>ID</th>
+    </tr>
+    <tr>
+        <td>Instrument1-badge</td>
+        <td>Instrument1-ID</td>
+    </tr>
+    <tr>
+        <td>Instrument2-badge</td>
+        <td>Instrument2-ID</td>
+    </tr>
+</table>
+```
+
+### Tuning "visible" is out of date and out of sync
+
+Additionally, we found during testing that this message kept being produced:
+```
+npm run update:song-list
+
+> infinite-neck@1.0.0 update:song-list
+> node bin/update-song-list.js
+
+WARN UserLog SongListUpdater warning: guitar-basic-blues-fwd-back-observers tblS6_back tuning.visible=false conflicts with noteTablesLayout=true; using noteTablesLayout.
+WARN UserLog SongListUpdater warning: guitar-basic-blues-fwd-back-observers tblP46_1 tuning.visible=false conflicts with noteTablesLayout=true; using noteTablesLayout.
+songs/song-list.json is up to date.
+```
+This means that even in new songs, messing around with the visible checkbox gets the Model out of sync.  noteTablesLayout has been working well, and we don't see any need for `visible` in tunings.js,  or in "My Tunings" runtime, or in the songfiles.  We'd like to remove it from these. 
+
+
+### Request
+
+Please produce the implementation plan, with any questions, in [sprint-134 Iteration 4 Implementation Plan](134-it4-implementation-plan.md)
+
+
 
 
     
