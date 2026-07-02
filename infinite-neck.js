@@ -120,6 +120,7 @@ import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 import * as SongLibrary from './SongLibrary.js';
+import { renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
@@ -194,6 +195,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const transportController = new TransportController();
 	export function getTransportController() {
 		return transportController;
+	}
+
+	function refreshFileMenuSongInstrumentBadges() {
+		const target = $('#fileMenuSongInstrumentBadges');
+		if (target.length === 0 || !getSong()) {
+			return;
+		}
+		target.html(renderSongInstrumentBadges(getSong(), { allowUnknown: true }));
 	}
 
 	export function copyApprovedPattern(name) {
@@ -1519,6 +1528,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyStylesheetsTo_gUserColorDict();
 		buildColorDicts();
 		requestReloadTuningsDisplays();
+		refreshFileMenuSongInstrumentBadges();
 		EventBus.trigger('ReinstallAllTuningsTables');
 		EventBus.trigger('UpdateAllWiringSelects');
 		
@@ -3457,6 +3467,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var currentFilename = $("#txtFilename").val();
 		$(".lblSongName").html(currentFilename);
 		getSong().songName = currentFilename;
+		refreshFileMenuSongInstrumentBadges();
 		$('.topControlsCaptions').show();
 
 		
@@ -3583,6 +3594,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 //==================== New handling of the EventBus =======================
 
 function requestReloadTuningsDisplays() {
+	refreshFileMenuSongInstrumentBadges();
 	EventBus.trigger('ReloadTuningsDisplays');
 }
 
@@ -3674,6 +3686,12 @@ EventBus.on('Wiring:added', function() {
 EventBus.on('Wiring:removed', function() {
 	requestReloadTuningsDisplays();
 	refreshPluginMenus();
+});
+EventBus.on('TableVisibility:changed', function() {
+	refreshFileMenuSongInstrumentBadges();
+});
+EventBus.on('TableLayout:changed', function() {
+	refreshFileMenuSongInstrumentBadges();
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
 	$('#btnLoopBeats').addClass('ButtonOn');
