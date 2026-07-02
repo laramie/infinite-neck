@@ -159,6 +159,8 @@ describe('Plugin audit', () => {
     manager.loadSongPluginState(song);
     const arpeggioEntry = manager.getPluginEntry('arpeggio');
     manager.setPropertyValue(arpeggioEntry, 'enabled', true);
+    manager.setPropertyValue(arpeggioEntry, 'type', 'SingleNote');
+    manager.setPropertyValue(arpeggioEntry, 'colorNotes', true);
 
     const result = manager.invokeMenuAction({ action: 'pluginAction:audit' });
 
@@ -186,6 +188,8 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('include:n,s,t,b,f,r');
     expect(result.message).toContain('played');
     expect(result.message).toContain("background-color: #555;");
+    expect(result.message).toContain("background-color: chartreuse;");
+    expect(result.message).toMatch(/<tr><td>arpeggio<\/td>[\s\S]*?<td style='background-color: chartreuse;'>single<\/td>[\s\S]*?<td style='background-color: chartreuse;'>played<br>color:true<\/td>/);
     expect(result.message).toContain('fill.customExtra');
     expect(result.message).toContain('Plugin Audit: Song-Level Persisted Properties');
     expect(result.message).toContain('Plugin Audit: Section-Level pluginData');

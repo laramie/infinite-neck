@@ -1292,8 +1292,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   getAuditInputs({ song = getSong() } = {}) {
+    const automaticFromChart = this.getProperty('automaticFromChart')?.getValue();
     if (this.getProperty('automaticFromChart')?.getValue()) {
-      return 'auto-chart:true';
+      const changed = !valuesEqual(
+        automaticFromChart,
+        this.getProperty('automaticFromChart')?.getDefaultValue()
+      );
+      return { value: 'auto-chart:true', changed };
     }
 
     const chord = `${this.resolveValue('chordFormula', { song }) || ''}`.trim();
@@ -1305,7 +1310,17 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (mode) {
       lines.push(`mode:${mode}`);
     }
-    return lines.length > 0 ? lines.join('<br>') : undefined;
+    const changed = !valuesEqual(
+      this.getProperty('chordFormula')?.getValue(),
+      this.getProperty('chordFormula')?.getDefaultValue()
+    ) || !valuesEqual(
+      this.getProperty('scaleFormula')?.getValue(),
+      this.getProperty('scaleFormula')?.getDefaultValue()
+    ) || !valuesEqual(
+      automaticFromChart,
+      this.getProperty('automaticFromChart')?.getDefaultValue()
+    );
+    return lines.length > 0 ? { value: lines.join('<br>'), changed } : undefined;
   }
 
   getAuditFamilyOutputSummary(familyName) {
@@ -1319,7 +1334,22 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const lines = FAMILY_NAMES
       .map((familyName) => this.getAuditFamilyOutputSummary(familyName))
       .filter((line) => line.length > 0);
-    return lines.length > 0 ? lines.join('<br>') : undefined;
+
+    const defaultLines = FAMILY_NAMES
+      .map((familyName) => {
+        const roles = ROLE_NAMES
+          .filter((roleName) => {
+            const property = this.getProperty(this.getFamilyModePropertyName(familyName, roleName));
+            const modeValue = `${property?.getDefaultValue() || MODE_NONE}`;
+            return modeValue !== MODE_NONE;
+          })
+          .map((roleName) => ROLE_AUDIT_LABEL[roleName]);
+        return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
+      })
+      .filter((line) => line.length > 0);
+
+    const changed = !valuesEqual(lines, defaultLines);
+    return lines.length > 0 ? { value: lines.join('<br>'), changed } : undefined;
   }
 
   getSectionPositionsDisplay(section) {

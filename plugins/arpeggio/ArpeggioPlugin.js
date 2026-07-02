@@ -442,8 +442,20 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return SOURCE_TYPE_LABELS[sourceType] || `${sourceType || ''}`;
   }
 
+  buildAuditValue(value, changed = false) {
+    return { value, changed: changed === true };
+  }
+
+  isPropertyChangedFromDefault(propertyName) {
+    const property = this.getProperty(propertyName);
+    if (!property) {
+      return false;
+    }
+    return JSON.stringify(property.getValue()) !== JSON.stringify(property.getDefaultValue());
+  }
+
   getAuditInputs() {
-    return this.getSourceTypeLabel();
+    return this.buildAuditValue(this.getSourceTypeLabel(), this.isPropertyChangedFromDefault('type'));
   }
 
   getAuditOutputs() {
@@ -454,7 +466,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (this.getFlashcardEnabled()) {
       outputs.push('flashcard:true');
     }
-    return outputs.join('<br>');
+    const changed = this.isPropertyChangedFromDefault('colorNotes')
+      || this.isPropertyChangedFromDefault('flashcard');
+    return this.buildAuditValue(outputs.join('<br>'), changed);
   }
 
   buildPositionsMenuNode() {

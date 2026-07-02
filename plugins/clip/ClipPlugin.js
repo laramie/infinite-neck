@@ -82,6 +82,10 @@ function arraysEqual(left = [], right = []) {
     && left.every((value, index) => `${value}` === `${right[index]}`);
 }
 
+function valuesEqual(leftValue, rightValue) {
+  return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
 function getMaxRecordedCol(payload) {
   let maxCol = 0;
   Object.values(payload?.recordedNotesByBeat || {}).forEach((notes = []) => {
@@ -662,7 +666,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (include.tiny) active.push('t');
     if (include.bend) active.push('b');
     if (include.fingering) active.push('f');
-    return active.length > 0 ? `include:${active.join(',')}` : 'include:';
+    const includePropertyNames = ['includeNamed', 'includeSingle', 'includeTiny', 'includeBend', 'includeFingering'];
+    const changed = includePropertyNames.some((propertyName) => {
+      const property = this.getProperty(propertyName);
+      return property ? !valuesEqual(property.getValue(), property.getDefaultValue()) : false;
+    });
+    const value = active.length > 0 ? `include:${active.join(',')}` : 'include:';
+    return { value, changed };
   }
 
   getAuditOutputs() {
