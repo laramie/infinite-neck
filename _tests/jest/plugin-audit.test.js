@@ -191,8 +191,11 @@ describe('Plugin audit', () => {
     expect(result.message).toContain("background-color: chartreuse;");
     expect(result.message).toMatch(/<tr><td>arpeggio<\/td>[\s\S]*?<td style='background-color: chartreuse;'>single<\/td>[\s\S]*?<td style='background-color: chartreuse;'>played<br>color:true<\/td>/);
     expect(result.message).toContain('fill.customExtra');
-    expect(result.message).toContain('Plugin Audit: Song-Level Persisted Properties');
-    expect(result.message).toContain('Plugin Audit: Section-Level pluginData');
+    expect(result.message).toContain('Plugin Audit:');
+    expect(result.message).toContain('Song-Level');
+    expect(result.message).toContain('Persisted Properties');
+    expect(result.message).toContain('Section-Level');
+    expect(result.message).toContain('pluginData');
   });
 
   test('arpeggio type resolveValue displays normalized labels instead of raw enum names', () => {

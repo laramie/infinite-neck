@@ -1,4 +1,4 @@
-<!DOCTYPE html>
++<!DOCTYPE html>
 <html lang="en">
 <!--   Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com -->
 <head>
@@ -526,6 +526,8 @@
         }
 
     </style>
+    <link rel="stylesheet" type="text/css" href="song-library.css" />
+
 </head>
 <body>
     <div class="menunav">
@@ -1626,6 +1628,34 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
  <p>
  </p>
 
+<a name="fileSongLibrary"></a>
+<h4>Song Library</h4>
+
+<p>
+
+<p>Songs are grouped: 
+    <ul>
+        <li><b>demo</b> shows <span class="productsmaller">infinite-neck</span> features.
+        <li><b>practice</b> has
+            songs with drills such as chords, modes, and arpeggios.
+        <li><b>name-that-note</b> has games for memorizing where all the
+            notes are on the neck for various instruments and positions.
+        <li><b>theory</b> demonstrates topics of music theory.
+    </ul>
+</p>
+<p>Each song shows <b>Role tags</b> for which Instruments are used. <i>Main</i> is a regular instrument (neither Listener nor Observer),
+    and you can have multiple <i>Main</i> instruments. Instruments may be hidden (you un-hide them in 'My Tunings'), and
+    are shown with grayed tags. 
+    <br>
+    <br>
+    The <b>Role tags</b> look like: <span class="songLibraryInstrument instrumentMain">Main</span>
+    <span class="songLibraryInstrument instrumentMain instrumentNotVisible">Main-hidden</span> <span
+        class="songLibraryInstrument instrumentListener">Listener</span> <span
+        class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span> <span
+        class="songLibraryInstrument instrumentObserver">Observer</span> <span
+        class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span></p>
+
+</p>
 <a name="songfileInfo"></a>
 <h4>Songfile Info</h4>
 

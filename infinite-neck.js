@@ -199,7 +199,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	function refreshFileMenuSongInstrumentBadges() {
 		const target = $('#fileMenuSongInstrumentBadges');
-		if (target.length === 0 || !getSong()) {
+		if (target.length === 0 || !getSong() || typeof target.html !== 'function') {
 			return;
 		}
 		target.html(renderSongInstrumentBadges(getSong(), { allowUnknown: true }));
