@@ -1105,6 +1105,12 @@ td.fillStringRange {
     font-size: 60%;
 }
 
+.fileRolesCaption {
+    font-weight: 400;
+    margin-left: 2em;
+    padding: 0.5em;
+}
+
 
 /***************************** Un-organized *****************************/
 

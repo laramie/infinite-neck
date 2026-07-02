@@ -117,19 +117,43 @@
     background-color: var(--section-status-key-live-bg);
 }
 
+.fretTableLeftCaption {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-align: center;
+}
+
+.ssCaptionWrapper  .SectionStatus_captionRoleTarget {
+    display: inline-block;
+    margin-top: 0.1em;
+    font-weight: 600;
+    font-size: 130%;
+    padding: 0.35em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+.ssCaptionWrapper .fretTableLeftCaption {
+    padding: 0.4em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
 .ssCaptionWrapper .fretTableLeftCaption,
 .ssCaptionWrapper .tuningIDCaption {
-    border: 2px solid red;
+    border: 2px solid rgb(73, 0, 0);
+    border-radius: 0.2em;
+    corner-shape: notch;
 }
 .ssCaptionWrapper .fretTableLeftCaption.ssKey_relative,
 .ssCaptionWrapper .tuningIDCaption.ssKey_relative {
     border: 2px solid blue;
-    background-color: white;
+    border-radius: 0.2em;
+    corner-shape: notch;
 }
 .ssCaptionWrapper .fretTableLeftCaption.ssKey_listener,
 .ssCaptionWrapper .tuningIDCaption.ssKey_listener {
     border: 2px solid green;
-    background-color: white;
+    border-radius: 0.2em;
+    corner-shape: notch;
 }
 
 .RecordDot {

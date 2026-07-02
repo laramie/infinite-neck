@@ -156,12 +156,8 @@
     color: brown;
     background-color: lightgreen;
 }
-.fretTableLeftCaption {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 120%;
-    text-align: center;
-}
+
+
 
 .tdLeftRailStack {
     vertical-align: top;
