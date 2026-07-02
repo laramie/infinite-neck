@@ -37,7 +37,6 @@
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "S6"
     },
     {
@@ -52,7 +51,6 @@
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
@@ -71,7 +69,6 @@
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": true,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,

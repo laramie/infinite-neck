@@ -39,7 +39,6 @@
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "pianoNamesRow": false,
       "fromBaseID": "S8"
     },
@@ -75,7 +74,6 @@
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "P46"
     }
   ],

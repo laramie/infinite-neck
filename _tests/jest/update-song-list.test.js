@@ -23,10 +23,10 @@ describe('update-song-list helpers', () => {
         const songJson = {
             songName: 'badge-test',
             myTunings: [
-                { baseID: 'P46_1', fromBaseID: 'P46', visible: true },
-                { baseID: 'S6_main', fromBaseID: 'S6', visible: true },
-                { baseID: 'S6_ahead', fromBaseID: 'S6', visible: true },
-                { baseID: 'NoLineage', visible: true }
+                { baseID: 'P46_1', fromBaseID: 'P46', visible: false },
+                { baseID: 'S6_main', fromBaseID: 'S6' },
+                { baseID: 'S6_ahead', fromBaseID: 'S6' },
+                { baseID: 'NoLineage' }
             ],
             noteTablesLayout: [
                 { tableID: 'tblP46_1', visible: true },
@@ -46,7 +46,7 @@ describe('update-song-list helpers', () => {
             { fromBaseID: 'S6', wiring: 'Observer', visible: true }
         ]);
         expect(warnings).toEqual(expect.arrayContaining([
-            expect.stringContaining('tblS6_main tuning.visible=true conflicts with noteTablesLayout=false'),
+            expect.stringContaining('tblP46_1 has stale tuning.visible; ignoring it and using noteTablesLayout'),
             expect.stringContaining('tblNoLineage has no fromBaseID')
         ]));
     });
@@ -61,8 +61,8 @@ describe('update-song-list helpers', () => {
             noteTablesLayout: []
         }, warnings);
 
-        expect(visibility.get('tblP46_1')).toBe(false);
-        expect(warnings[0]).toContain('has no noteTablesLayout entry for tblP46_1');
+        expect(visibility.get('tblP46_1')).toBe(true);
+        expect(warnings[0]).toContain('has no noteTablesLayout entry for tblP46_1; using visible=true');
     });
 
     test('tableIDForBaseID uses the app table prefix', () => {
@@ -73,13 +73,13 @@ describe('update-song-list helpers', () => {
         const songByHref = new Map([
             ['demo/song-a.json', {
                 songName: 'song-a',
-                myTunings: [{ baseID: 'P46_1', fromBaseID: 'P46', visible: true }],
+                myTunings: [{ baseID: 'P46_1', fromBaseID: 'P46' }],
                 noteTablesLayout: [{ tableID: 'tblP46_1', visible: true }],
                 wirings: []
             }],
             ['demo/song-b.json', {
                 songName: 'song-b',
-                myTunings: [{ baseID: 'S6_1', fromBaseID: 'S6', visible: true }],
+                myTunings: [{ baseID: 'S6_1', fromBaseID: 'S6' }],
                 noteTablesLayout: [{ tableID: 'tblS6_1', visible: false }],
                 wirings: [{ tablename: 'tblS6_1', listenToTablename: 'tblP46_1', relativeSection: '+1' }]
             }]

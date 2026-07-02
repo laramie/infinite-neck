@@ -106,6 +106,18 @@ function normalizeNoteTablesLayout({ noteTablesLayout, myTunings }) {
     return layout;
 }
 
+function normalizeMyTunings(rawMyTunings) {
+    const myTunings = Array.isArray(rawMyTunings) ? rawMyTunings : [];
+    return myTunings.map((tuning) => {
+        if (!tuning || typeof tuning !== 'object' || Array.isArray(tuning)) {
+            return tuning;
+        }
+        const normalized = { ...tuning };
+        delete normalized.visible;
+        return normalized;
+    });
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -169,6 +181,7 @@ export class SongPersistence {
         };
         this.chartOptions.HEADNames = normalizeChartHeadNames(this.chartOptions.HEADNames);
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
+        this.myTunings = normalizeMyTunings(this.myTunings);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

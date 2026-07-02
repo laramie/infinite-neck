@@ -1,6 +1,6 @@
 {
   "myTunings": [
-     {
+    {
       "instance": true,
       "baseID": "S6_1",
       "baseInstrument": "Guitar",
@@ -37,7 +37,6 @@
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "S6"
     }
   ],

@@ -2,20 +2,13 @@
 
 /* Find styles in song-library.css */
 
+import {
+	normalizeInstrumentSummary,
+	renderInstrumentBadges,
+	escapeHtml
+} from './InstrumentRoleBadges.js';
+
 export const ROOT_DIRECTORY_KEY = 'root';
-
-const WIRING_MAIN = 'Main';
-const WIRING_LISTENER = 'Listener';
-const WIRING_OBSERVER = 'Observer';
-
-function escapeHtml(text) {
-	return String(text)
-		.replaceAll('&', '&amp;')
-		.replaceAll('<', '&lt;')
-		.replaceAll('>', '&gt;')
-		.replaceAll('"', '&quot;')
-		.replaceAll("'", '&#39;');
-}
 
 function escapeAttribute(text) {
 	return String(text).replaceAll('&', '&amp;').replaceAll("'", '&#39;');
@@ -58,25 +51,6 @@ function parseSongEntry(songEntry) {
 	};
 }
 
-function normalizeInstrumentEntry(instrument) {
-	if (!instrument || typeof instrument !== 'object' || Array.isArray(instrument)) {
-		return null;
-	}
-	const fromBaseID = typeof instrument.fromBaseID === 'string' ? instrument.fromBaseID.trim() : '';
-	if (!fromBaseID) {
-		return null;
-	}
-	let wiring = WIRING_MAIN;
-	if (instrument.wiring === WIRING_LISTENER || instrument.wiring === WIRING_OBSERVER) {
-		wiring = instrument.wiring;
-	}
-	return {
-		fromBaseID,
-		wiring,
-		visible: instrument.visible !== false
-	};
-}
-
 function getDirectoryFromHref(href) {
 	if (typeof href !== 'string' || !href.trim()) {
 		return ROOT_DIRECTORY_KEY;
@@ -106,7 +80,7 @@ export function normalizeSongListEntries(songListJson) {
 			return {
 				href,
 				description: parsed.description,
-				instruments: parsed.instruments.map(normalizeInstrumentEntry).filter(Boolean),
+				instruments: parsed.instruments.map(normalizeInstrumentSummary).filter(Boolean),
 				directory: getDirectoryFromHref(href),
 				filename
 			};
@@ -177,24 +151,6 @@ function renderIntroRow(introHtml) {
 		return '';
 	}
 	return "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'>" + introHtml + '</div></div>';
-}
-
-function getInstrumentRoleClass(instrument) {
-	if (instrument.wiring === WIRING_LISTENER) {
-		return 'instrumentListener';
-	}
-	if (instrument.wiring === WIRING_OBSERVER) {
-		return 'instrumentObserver';
-	}
-	return 'instrumentMain';
-}
-
-function renderInstrumentBadges(instruments = []) {
-	return instruments.map((instrument) => {
-		const visibilityClass = instrument.visible === false ? ' instrumentNotVisible' : '';
-		const classes = 'songLibraryInstrument ' + getInstrumentRoleClass(instrument) + visibilityClass;
-		return "<span class='" + classes + "'>" + escapeHtml(instrument.fromBaseID) + '</span>';
-	}).join('');
 }
 
 function renderSongRow(song) {

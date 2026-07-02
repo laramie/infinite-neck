@@ -32,7 +32,6 @@
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "P46"
     },
     {
@@ -66,7 +65,6 @@
       "frets": 15,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "Bass4"
     }
   ],

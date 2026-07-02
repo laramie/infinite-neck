@@ -14,7 +14,18 @@ describe('approved values', () => {
         namedNoteOpacity: '1.00',
         singleNoteOpacity: '1.00',
         tinyNoteOpacity: '1.00',
-        songName: 'Song'
+        songName: 'Song',
+        myTunings: [
+          { baseID: 'P46_1', fromBaseID: 'P46' },
+          { baseID: 'S6_1', fromBaseID: 'S6' }
+        ],
+        noteTablesLayout: [
+          { tableID: 'tblP46_1', visible: true },
+          { tableID: 'tblS6_1', visible: false }
+        ],
+        wirings: [
+          { tablename: 'tblS6_1', listenToTablename: 'tblP46_1', relativeSection: '+1' }
+        ]
       }),
       getRootKey: () => 'F',
       getRootKeyLead: () => 'A',
@@ -73,5 +84,10 @@ describe('approved values', () => {
     expect(html).toContain("data-action-args='[\"rootKey\"]'");
     expect(html).toContain("src='img/clipboard-arrow.png'");
     expect(html).toContain("title='Copy ${rootKey}'");
+  });
+
+  test('resolves whole-song instrument badge approved values', () => {
+    expect(approvedValues.resolveApprovedValue('songInstrumentBadges')).toBe("<span class='songLibraryInstrument instrumentMain'>P46</span><span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>S6</span>");
+    expect(approvedValues.resolveApprovedValue('songInstrumentTable')).toBe('<table class="songInstrumentTable"><tr><th>Role</th><th>ID</th></tr><tr><td><span class=\'songLibraryInstrument instrumentMain\'>P46</span></td><td>P46_1</td></tr><tr><td><span class=\'songLibraryInstrument instrumentObserver instrumentNotVisible\'>S6</span></td><td>S6_1</td></tr></table>');
   });
 });

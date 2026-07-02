@@ -3668,9 +3668,11 @@ EventBus.on('InstrumentAdded', function() {
 	refreshPluginMenus();
 });
 EventBus.on('Wiring:added', function() {
+	requestReloadTuningsDisplays();
 	refreshPluginMenus();
 });
 EventBus.on('Wiring:removed', function() {
+	requestReloadTuningsDisplays();
 	refreshPluginMenus();
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {

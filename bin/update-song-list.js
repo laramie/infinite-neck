@@ -3,13 +3,15 @@
 import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import * as Constants from '../Constants.js';
+import {
+    classifyInstrumentRole,
+    normalizeInstrumentSummary,
+    tableIDForBaseID
+} from '../InstrumentRoleBadges.js';
 
 const DEFAULT_SONG_LIST = 'songs/song-list.json';
-const WIRING_MAIN = 'Main';
-const WIRING_LISTENER = 'Listener';
-const WIRING_OBSERVER = 'Observer';
-const VALID_WIRINGS = new Set([WIRING_MAIN, WIRING_LISTENER, WIRING_OBSERVER]);
+
+export { tableIDForBaseID };
 
 function printUsage() {
     console.log('Usage: node bin/update-song-list.js [--song-list <path>] [--check] [--quiet] [--help]');
@@ -79,11 +81,6 @@ export function normalizeSongListHref(entry) {
     return typeof entry.href === 'string' ? entry.href.trim() : '';
 }
 
-export function tableIDForBaseID(baseID) {
-    const id = `${baseID || ''}`.trim();
-    return id ? `${Constants.TABLE_ID_PREFIX}${id}` : '';
-}
-
 export function buildVisibilityMap(songJson = {}, warnings = []) {
     const map = new Map();
     const layout = Array.isArray(songJson.noteTablesLayout) ? songJson.noteTablesLayout : [];
@@ -104,13 +101,12 @@ export function buildVisibilityMap(songJson = {}, warnings = []) {
             return;
         }
         if (!map.has(tableID)) {
-            const fallback = tuning?.visible !== false;
-            map.set(tableID, fallback);
-            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} has no noteTablesLayout entry for ${tableID}; using tuning.visible=${fallback}.`);
+            map.set(tableID, true);
+            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} has no noteTablesLayout entry for ${tableID}; using visible=true.`);
             return;
         }
-        if (typeof tuning.visible === 'boolean' && tuning.visible !== map.get(tableID)) {
-            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} ${tableID} tuning.visible=${tuning.visible} conflicts with noteTablesLayout=${map.get(tableID)}; using noteTablesLayout.`);
+        if (Object.prototype.hasOwnProperty.call(tuning, 'visible')) {
+            pushMessage(warnings, `UserLog SongListUpdater warning: ${songJson.songName || '<unnamed song>'} ${tableID} has stale tuning.visible; ignoring it and using noteTablesLayout.`);
         }
     });
 
@@ -118,35 +114,7 @@ export function buildVisibilityMap(songJson = {}, warnings = []) {
 }
 
 export function classifyWiring(tableID, wirings = []) {
-    const wiring = Array.isArray(wirings)
-        ? wirings.find((entry) => entry?.tablename === tableID)
-        : null;
-    if (!wiring) {
-        return WIRING_MAIN;
-    }
-    if (`${wiring.relativeSection || ''}`.trim()) {
-        return WIRING_OBSERVER;
-    }
-    if (`${wiring.listenToTablename || ''}`.trim()) {
-        return WIRING_LISTENER;
-    }
-    return WIRING_MAIN;
-}
-
-export function normalizeInstrumentSummary(instrument) {
-    if (!instrument || typeof instrument !== 'object' || Array.isArray(instrument)) {
-        return null;
-    }
-    const fromBaseID = `${instrument.fromBaseID || ''}`.trim();
-    if (!fromBaseID) {
-        return null;
-    }
-    const wiring = VALID_WIRINGS.has(instrument.wiring) ? instrument.wiring : WIRING_MAIN;
-    return {
-        fromBaseID,
-        wiring,
-        visible: instrument.visible !== false
-    };
+    return classifyInstrumentRole(tableID, wirings);
 }
 
 export function extractInstrumentSummaries(songJson = {}, warnings = []) {

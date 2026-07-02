@@ -87,10 +87,9 @@ const tuningSchema = {
         frets: { type: 'integer', minimum: 0 },
         nut: { type: 'boolean' },
         reverse: { type: 'boolean' },
-        visible: { type: 'boolean' },
         fromBaseID: { type: 'string', minLength: 1 }
     },
-    required: ['baseID', 'baseInstrument', 'caption', 'nStrings', 'rowRange', 'frets', 'nut', 'reverse', 'visible'],
+    required: ['baseID', 'baseInstrument', 'caption', 'nStrings', 'rowRange', 'frets', 'nut', 'reverse'],
     additionalProperties: true
 };
 

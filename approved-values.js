@@ -1,5 +1,10 @@
 let approvedValueProviders = {};
 
+import {
+	renderSongInstrumentBadges,
+	renderSongInstrumentTable
+} from './InstrumentRoleBadges.js';
+
 export const APPROVED_VALUES_HELP_BLOCK_START = '<!-- BEGIN GENERATED APPROVED VALUES -->';
 export const APPROVED_VALUES_HELP_BLOCK_END = '<!-- END GENERATED APPROVED VALUES -->';
 export const APPROVED_VALUE_SAMPLE_CAVEAT = 'Sample values are live snapshots from the current song and current section, so they change as you edit, navigate, or load another song.';
@@ -232,6 +237,18 @@ const approvedValueEntries = [
 		name: 'fillPositionsStatus',
 		description: 'widget of current-section Fill positions',
 		resolve: () => getFillCaptionValue('fillPositionsStatus'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'songInstrumentBadges',
+		description: 'whole-song instrument role badges',
+		resolve: () => renderSongInstrumentBadges(getSong(), { allowUnknown: true }),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'songInstrumentTable',
+		description: 'whole-song instrument role badge table',
+		resolve: () => renderSongInstrumentTable(getSong(), { allowUnknown: true }),
 		sampleFormat: 'html'
 	}
 ];
