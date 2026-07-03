@@ -243,19 +243,8 @@
       ]
     },
     {
-      "href": "name-that-note/name-that-note-bass-4.json",
-      "description": "<em>name-that-note</em> game for the <em>4-string bass</em>.",
-      "instruments": [
-        {
-          "fromBaseID": "Bass4",
-          "wiring": "Main",
-          "visible": true
-        }
-      ]
-    },
-    {
       "href": "name-that-note/name-that-note-bass-ALL.json",
-      "description": "<em>name-that-note</em> game for the <em>ALL basses</em>.",
+      "description": "<em>name-that-note</em> game for <em>ALL basses</em>. (Select with links in <i>Info</i>)",
       "instruments": [
         {
           "fromBaseID": "Bass4",
