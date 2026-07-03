@@ -990,6 +990,8 @@
                         <li><a href="#divFileControls">File</a>
                             <ul class="LinkList">
                                 <li><a href="#songfileInfo">Songfile Info</a></li>
+                                <li><a href="#songfileInfoAllowedHTML">Allowed HTML</a></li>
+                                <li><a href="#songfileInfoSuperlinks">Superlinks</a></li>
                             </ul>
                         </li>
                         <li><a href="#transport">Transport</a>
@@ -1659,7 +1661,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 <a name="songfileInfo"></a>
 <h4>Songfile Info</h4>
 
-<p>The Songfile Info page lets you keep comments right in the song file itself.  This is handy for things like instruction on how plugins are set up, reminders about using flashcard mode, or a short formatted description of the song. You can format your comments with simple HTML.</p>
+<p>The Songfile Info page lets you keep comments right in the song file itself.  This is handy for things like instruction on how plugins are set up, reminders about using flashcard mode, or a short formatted description of the song. It is also the place to store <a href="#songfileInfoSuperlinks">superlinks</a> which you can use to activate saved plugin settings and run macros.  You can format your comments with <a href="#songfileInfoAllowedHTML">simple HTML</a>.</p>
 
 <p>You can open Songfile Info in any of these ways:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click the <span class="GUIReferenceInline">Info</span> button in the top menu button row.
@@ -1681,8 +1683,9 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; or click the little Save checkmark button.
 </p>
 
+<a name="songfileInfoAllowedHTML"></a>
 <h4>Allowed HTML</h4>
-<p>Allowed HTML is intentionally limited to simple formatting.  Think of it as safe document markup such as:
+<p>Allowed HTML in <span class="GUIReferenceInline">File > Info</span> is intentionally limited to simple formatting.  Think of it as safe document markup such as:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; paragraphs and line breaks,
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; headings,
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; lists,
@@ -1703,8 +1706,9 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
 <p>If the Songfile Info content is empty, the app treats that as no Info and will not auto-open it, even if the selector had been set earlier.</p>
 
+<a name="songfileInfoSuperlinks"></a>
 <h4>Links and superlinks</h4>
-<p>A link within <span class='productsmaller'>infinite-neck</span> is allowed, because it just invokes an action within the app
+<p>In <span class="GUIReferenceInline">File > Info</span> a link within <span class='productsmaller'>infinite-neck</span> is allowed, because it just invokes an action within the app
 without taking the User anywhere else.  A "superlink" is a reference to multiple actions.  These are tags like: 
 <ul>
     <li>
