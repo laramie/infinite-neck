@@ -119,3 +119,84 @@ Menu would be:
     l) list
     i) id        
 ```
+
+# Iteration 1 implementation
+
+The implementation plan looks solid, and has minimal impact on current system, so we are ready to move forward on a first implementation.  We have answered design questions below.
+
+A few general points.
+
+In describing our menu system, we have stuck to some short-hand document conventions, and we'd like to stick to these.
+
+1) When we say `/fpa` we mean the User actually types this in the command-line prompt input box.  So we refer to all menu-item nodes by this path.  So we prefer not to use a directory-like syntax such as `/f/p/a` so as not to confuse programmers and Users, since the `/` character is a reserved character in the command-line that always jumps to the root menu-item.  Please adjust the implementation plan to use the syntax `/fpa` always, and refrain from using the `/f/p/a` syntax.
+
+2) When we say `f) file` we mean `f` is the trigger, and the menu item is rendered as `<b>f</b>ile` in the menu system.  When we say `1) first-item macro` we mean a literal `1` is the display `<b>1</b> first-item` and `1` is the generated trigger.
+
+The menu item `/t` is currently a placeholder for "tunings", and therefore is the place to add menu items we are discussing.  It currently only allows `;` which shows the "Tunings in Song" tab page.  When we say `/ts` for `show` we mean `s) show` sub-menu will be added to menu `/t` as a child, and as a sibling to `;`.  We aren't providing access to "Tunings Library" in this Iteration.  So a listing for `/tsl` would just list MyTunings, i.e."Tunings in Song", and "ID" means a tuning ID found in the "ID" column such as "P46_1" or "S6_1", which is actually `baseID`.
+
+Options in macro edit UI: we would like the Save button, and the status aread, since the proposed status area could warn about invalid JSON.  We do not want the Delete button, or a Run button.  These we would prefer to do through the command-line.
+
+## Implementation plan questions answered
+
+
+### 1. Should macro verbose mode persist in the song?
+
+Recommendation: no for Iteration 1.  Keep it runtime-only.
+
+ANSWER: Accept Recommendation.
+
+### 2. Should invalid macro JSON be rejected on save?
+
+Recommendation: yes.  It is much friendlier than accepting a macro that cannot run.
+
+ANSWER: Accept Recommendation.
+
+### 3. Should macro paths be validated on save?
+
+Recommendation: no.  Dynamic/plugin menus can depend on song state, selected section, selected instrument, plugin enablement, or runtime conditions.  Validate paths at run time.
+
+ANSWER: Accept Recommendation.
+
+### 4. Should delete require confirmation?
+
+Recommendation: yes, or postpone delete.  Do not silently delete persisted macro definitions.
+
+ANSWER: Accept Recommendation.
+
+### 5. How many number-list macros/tunings should `/n` and `/l` support?
+
+Recommendation: support `1` through `9` for Iteration 1 and rely on ID input for larger collections.  Multi-character menu triggers are a separate command-line design issue.
+
+ANSWER: Accept Recommendation.
+
+### 6. Should macros be allowed to run macros?
+
+Recommendation: not in Iteration 1.  Prevent or ignore macro-run actions while a macro is already running, or enforce a recursion depth limit of `1` with a clear UserLog message.
+
+ANSWER: Accept Recommendation.  
+
+### 7. Should macro execution roll back partial changes on failure?
+
+Recommendation: no.  Existing command actions are imperative UI/application mutations with no transaction model.  Log the partial-failure state clearly.
+
+ANSWER: Accept Recommendation.
+
+### 8. Should macro execution use command-line UI state?
+
+Recommendation: no.  Macro execution should traverse and invoke the menu tree directly.  The command-line UI may show status, but it should not be required for execution.
+
+ANSWER: Accept Recommendation.
+
+### 9. Should select parent nodes accept JSON values?
+
+Recommendation: not in Iteration 1.  Use full child paths such as `/fpaye`.  Consider parent select-by-value later.
+
+ANSWER: Accept Recommendation.
+
+### 10. Should toggle value-setting be available interactively too?
+
+Recommendation: not initially.  Add idempotent toggle-with-value behavior for macro execution only, unless there is explicit UX demand for interactive value setting.
+
+ANSWER: No.  We won't add this as a feature.  Accept Recommendation: "Add idempotent toggle-with-value behavior for macro execution only."
+
+
