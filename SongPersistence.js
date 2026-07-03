@@ -118,6 +118,27 @@ function normalizeMyTunings(rawMyTunings) {
     });
 }
 
+function normalizeSongMacros(rawMacros) {
+    if (!rawMacros || typeof rawMacros !== 'object' || Array.isArray(rawMacros)) {
+        return {};
+    }
+    const macros = {};
+    Object.entries(rawMacros).forEach(([id, macro]) => {
+        const macroId = `${id || ''}`.trim();
+        if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(macroId)) {
+            return;
+        }
+        const lines = Array.isArray(macro?.lines)
+            ? macro.lines.map((line) => `${line}`.trim()).filter((line) => line.length > 0)
+            : [];
+        macros[macroId] = {
+            ...(macro && typeof macro === 'object' && !Array.isArray(macro) ? macro : {}),
+            lines
+        };
+    });
+    return macros;
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -172,6 +193,7 @@ export class SongPersistence {
         this.noteTablesLayout = [];
         this.colorDicts = {};
         this.plugins = {};
+        this.macros = {};
 
         Object.assign(this, songDefaults, obj);
         const incomingChartOptions = obj.chartOptions && typeof obj.chartOptions === 'object' ? obj.chartOptions : {};
@@ -190,6 +212,7 @@ export class SongPersistence {
             myTunings: this.myTunings
         });
         this.plugins = obj.plugins && typeof obj.plugins === 'object' ? { ...obj.plugins } : {};
+        this.macros = normalizeSongMacros(obj.macros);
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
     }

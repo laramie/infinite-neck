@@ -259,6 +259,18 @@ const noteTableLayoutEntrySchema = {
     additionalProperties: false
 };
 
+const macroSchema = {
+    type: 'object',
+    properties: {
+        lines: {
+            type: 'array',
+            items: { type: 'string' }
+        }
+    },
+    required: ['lines'],
+    additionalProperties: true
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -318,6 +330,11 @@ export const songFileV2Schema = {
         plugins: {
             type: 'object',
             additionalProperties: pluginSchema
+        },
+        macros: {
+            type: 'object',
+            propertyNames: { pattern: '^[A-Za-z][A-Za-z0-9_-]*$' },
+            additionalProperties: macroSchema
         },
         graveyard: {
             type: 'object',

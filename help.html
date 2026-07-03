@@ -1716,9 +1716,12 @@ without taking the User anywhere else.  A "superlink" is a reference to multiple
     <li>
         superlink: <span class="htmlElement">&lt;a href="#raise=transpose.blues,arpeggio.firstPosition"&gt;</span>Blues, First Position<span class="htmlElement">&lt;/a&gt;</span>
     </li>
+    <li>
+        superlink with macro: <span class="htmlElement">&lt;a href="#raise=arpeggio.color,macro=show-instruments"&gt;</span>Arpeggio Color + Show Instruments<span class="htmlElement">&lt;/a&gt;</span>
+    </li>
 </ul>
 </p>
-<p>Note that the superlink supports two formats: one where <b>action=</b> is repeated separated by commas, and one where the <b>action=</b> appears only once and its values are listed separated by commas.  The values are the name of the plugin, plus a dot, plus the name you saved the plugins settings as--preserve these values.
+<p>Note that the superlink supports two formats for plugin raise links: one where <b>raise=</b> is repeated separated by commas, and one where the <b>raise=</b> appears only once and its values are listed separated by commas.  The values are the name of the plugin, plus a dot, plus the name you saved the plugins settings as--preserve these values.  A superlink can also include <b>macro=</b> followed by a song macro id, so one Info link can raise plugin settings and then run a macro.
 </p>
 <p>
     These links can be crafted from links put in Info for you by the
@@ -3716,6 +3719,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#changeHeightOfCells">h</a> 
     <a href="#changeHeightOfCells">H</a>
      <a href="#showHideFill">i</a>
+     <a href="#songFileInfoRow">I</a>
      <a href="#showHideChart">r</a>
      <a href="#transposeNamedNotesUp">j</a>
      <a href="#transposeNamedNotesDown">J</a>
@@ -3819,7 +3823,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#showHideTransport">t</a></td>
         <td>y</td>
         <td><a href="#raiseRootKeyAnd">u</a><a href="#lowerRootKeyAnd">U</a></td>
-        <td><a href="#showHideFill">i</a></td>
+        <td><a href="#songFileInfoRow">I</a><a href="#showHideFill">i</a></td>
         <td><a href="#useAFingeringOpen">o</a></td>
         <td><a href="#showHidePalette">p</a><a href="#showHidePalette">P</a></td>
         <td><a href="#usethePitchHighlighter">[</a> {</td>
@@ -3916,7 +3920,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#showHideTransport" class="MBtn"><b>t</b>ransport</a></td>
         <td>y</td>
         <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
-        <td><a href="#showHideFill" class="MBtn">f<b>i</b>ll</a></td>
+        <td><a href="#songFileInfoRow" class="MBtn"><b>I</b>nfo</a><br><a href="#showHideFill" class="MBtn">f<b>i</b>ll</a></td>
         <td><a href="#useAFingeringOpen" class="Fingering"><i>o</i>pen fingering</a></td>
         <td><a href="#showHidePalette" class="MBtn"><b>P</b> plugins</a><br><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a></td>
         <td><a href="#usethePitchHighlighter" class="Note"><b>[</b><br>pitch</a></td>
@@ -4032,6 +4036,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>show/hide View menu
+                </td>
+            </tr>
+            <tr id="songFileInfoRow">
+                <td><span class="key">I</span>
+                </td>
+                <td>
+                </td>
+                <td>show/hide File Info menu <a href="#songfileInfo">See File <b>I</b>nfo</a>
                 </td>
             </tr>
             <tr id="showHideFill">

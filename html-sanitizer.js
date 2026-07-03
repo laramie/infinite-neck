@@ -1,3 +1,5 @@
+import { isAllowedAppActionFragment } from './app-action-fragment.js';
+
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
@@ -39,12 +41,11 @@ const ALLOWED_TAGS = new Set([
 	'kbd'
 ]);
 
-const PLUGIN_RAISE_FRAGMENT_PATTERN = /^#raise=[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*(?:,(?:raise=)?[A-Za-z_][A-Za-z0-9_-]*\.[A-Za-z_][A-Za-z0-9_-]*)*$/;
 const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;
 
 export function isAllowedInfoAnchorHref(href = '') {
 	const normalized = String(href || '').trim();
-	return PLUGIN_RAISE_FRAGMENT_PATTERN.test(normalized)
+	return isAllowedAppActionFragment(normalized)
 		|| HELP_PAGE_FRAGMENT_PATTERN.test(normalized);
 }
 

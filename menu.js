@@ -393,6 +393,123 @@ export var gMenuFile =    {
           "trigger": "p"
         },
         {
+          "name": "macros",
+          "caption": "<b>m</b>acro",
+          "trigger": "m",
+          "children": [
+            {
+              "name": "macroAdd",
+              "caption": "<b>a</b>dd",
+              "trigger": "a",
+              "action": "macroAdd",
+              "input": {
+                "type": "input",
+                "caption": "id",
+                "datatype": "string",
+                "id": "id"
+              }
+            },
+            {
+              "name": "macroDelete",
+              "caption": "<b>d</b>elete",
+              "trigger": "d",
+              "children": [
+                {
+                  "name": "macroDeleteNumber",
+                  "caption": "<b>n</b>umber",
+                  "trigger": "n",
+                  "runtimeChildren": "macroDeleteNumber"
+                },
+                {
+                  "name": "macroDeleteId",
+                  "caption": "<b>i</b>d",
+                  "trigger": "i",
+                  "action": "macroQueueDeleteById",
+                  "input": {
+                    "type": "input",
+                    "caption": "id",
+                    "datatype": "string",
+                    "id": "id"
+                  }
+                },
+                {
+                  "name": "macroDeleteConfirmPending",
+                  "caption": "<b>Y</b>es: delete pending id",
+                  "trigger": "Y",
+                  "action": "macroDeleteConfirmed",
+                  "popOnBang": true
+                },
+                {
+                  "name": "macroDeleteCancel",
+                  "caption": "<b>c</b>ancel pending delete",
+                  "trigger": "c",
+                  "action": "macroDeleteCancel",
+                  "popOnBang": true
+                }
+              ]
+            },
+            {
+              "name": "macroEdit",
+              "caption": "<b>e</b>dit",
+              "trigger": "e",
+              "children": [
+                {
+                  "name": "macroEditNumber",
+                  "caption": "<b>n</b>umber",
+                  "trigger": "n",
+                  "runtimeChildren": "macroEditNumber"
+                },
+                {
+                  "name": "macroEditId",
+                  "caption": "<b>i</b>d",
+                  "trigger": "i",
+                  "action": "macroEditById",
+                  "input": {
+                    "type": "input",
+                    "caption": "id",
+                    "datatype": "string",
+                    "id": "id"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "macroRun",
+              "caption": "<b>r</b>un",
+              "trigger": "r",
+              "children": [
+                {
+                  "name": "macroRunNumber",
+                  "caption": "<b>n</b>umber",
+                  "trigger": "n",
+                  "runtimeChildren": "macroRunNumber"
+                },
+                {
+                  "name": "macroRunId",
+                  "caption": "<b>i</b>d",
+                  "trigger": "i",
+                  "action": "macroRunById",
+                  "input": {
+                    "type": "input",
+                    "caption": "id",
+                    "datatype": "string",
+                    "id": "id"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "macroVerbose",
+              "caption": "<b>v</b>erbose mode [${macroVerbose}]",
+              "trigger": "v",
+              "action": "toggleMacroVerbose",
+              "vars": [
+                "macroVerbose"
+              ]
+            }
+          ]
+        },
+        {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",
           "action": "showDialog-song"
@@ -1273,6 +1390,68 @@ export var gMenuFile =    {
       "caption": "<b>t</b>unings",
       "trigger": "t",
       "children": [
+        {
+          "name": "tuningShow",
+          "caption": "<b>s</b>how",
+          "trigger": "s",
+          "children": [
+            {
+              "name": "showAllTunings",
+              "caption": "<b>a</b>ll",
+              "trigger": "a",
+              "action": "showAllTunings"
+            },
+            {
+              "name": "showTuningList",
+              "caption": "<b>l</b>ist",
+              "trigger": "l",
+              "runtimeChildren": "tuningShowList"
+            },
+            {
+              "name": "showTuningId",
+              "caption": "<b>i</b>d",
+              "trigger": "i",
+              "action": "showTuningById",
+              "input": {
+                "type": "input",
+                "caption": "id",
+                "datatype": "string",
+                "id": "id"
+              }
+            }
+          ]
+        },
+        {
+          "name": "tuningHide",
+          "caption": "<b>h</b>ide",
+          "trigger": "h",
+          "children": [
+            {
+              "name": "hideAllTunings",
+              "caption": "<b>a</b>ll",
+              "trigger": "a",
+              "action": "hideAllTunings"
+            },
+            {
+              "name": "hideTuningList",
+              "caption": "<b>l</b>ist",
+              "trigger": "l",
+              "runtimeChildren": "tuningHideList"
+            },
+            {
+              "name": "hideTuningId",
+              "caption": "<b>i</b>d",
+              "trigger": "i",
+              "action": "hideTuningById",
+              "input": {
+                "type": "input",
+                "caption": "id",
+                "datatype": "string",
+                "id": "id"
+              }
+            }
+          ]
+        },
         {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",

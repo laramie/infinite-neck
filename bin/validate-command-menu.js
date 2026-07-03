@@ -21,6 +21,22 @@ const runtimeChildrenActionMap = new Map([
     ]],
     ['sectionEditInstrument', [
         'sectionEditInstrumentSelect'
+    ]],
+    ['macroEditNumber', [
+        'macroEditById'
+    ]],
+    ['macroRunNumber', [
+        'macroRunById'
+    ]],
+    ['macroDeleteNumber', [
+        'macroDeleteConfirmed',
+        'macroDeleteCancel'
+    ]],
+    ['tuningShowList', [
+        'showTuningById'
+    ]],
+    ['tuningHideList', [
+        'hideTuningById'
     ]]
 ]);
 

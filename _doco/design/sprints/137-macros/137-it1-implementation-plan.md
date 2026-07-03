@@ -41,7 +41,7 @@ There is also an existing helper, `parkCommandLineAtPath(triggerPath)`, in [key-
 
 The plugin menu lives under File > Plugins:
 
-- [menu.js](../../../../menu.js) has a `pluginsRuntime` marker node under `/f/p`.
+- [menu.js](../../../../menu.js) has a `pluginsRuntime` marker node at `/fp`.
 - [plugins/PluginManager.js](../../../../plugins/PluginManager.js) rebuilds that marker node with `refreshPluginsMenuNode()`.
 - `buildPluginMenuNode(plugin)` combines managed plugin property nodes with `plugin.getVisibleMenuChildren()`.
 - Plugin property nodes are built by [plugins/PluginProperty.js](../../../../plugins/PluginProperty.js).
@@ -89,7 +89,7 @@ A macro editor can follow the same pattern: a page-level/menu-level div, builder
 
 ### Tuning visibility support
 
-The requested `/t/s` and `/t/h` menu is viable because tuning visibility is already modeled.  [TuningsLibrary.js](../../../../TuningsLibrary.js) exports show/hide style helpers and [InstrumentRoleBadges.js](../../../../InstrumentRoleBadges.js) reads `song.noteTablesLayout[].visible` as the visibility model.
+The requested `/ts` and `/th` menu is viable because tuning visibility is already modeled.  [TuningsLibrary.js](../../../../TuningsLibrary.js) exports show/hide style helpers and [InstrumentRoleBadges.js](../../../../InstrumentRoleBadges.js) reads `song.noteTablesLayout[].visible` as the visibility model.
 
 The main implementation choice is whether `/t` should be a new top-level command menu branch, or whether the existing command menu already has a competing trigger or concept that should absorb it.  Based on the current design, top-level `/t` is acceptable if trigger validation passes.
 
@@ -283,7 +283,7 @@ Initial design menu:
 
 Recommended implementation details:
 
-### `/f/m/a` add
+### `/fma` add
 
 Input:
 
@@ -297,7 +297,7 @@ Action:
 2. Open the macro editor for that ID.
 3. Preserve menu stack if needed so the editor action does not unexpectedly pop.
 
-### `/f/m/e/n` edit by number
+### `/fmen` edit by number
 
 Runtime children from current `song.macros` keys:
 
@@ -306,19 +306,19 @@ Runtime children from current `song.macros` keys:
 
 Recommendation: support numbered triggers `1` through `9` in Iteration 1 and document the limit.  Use edit-by-id for larger collections.
 
-### `/f/m/e/i` edit by ID
+### `/fmei` edit by ID
 
 Input ID, validate existence, open editor.
 
-### `/f/m/r/n` run by number
+### `/fmrn` run by number
 
 Runtime children from current `song.macros` keys.  Same `1` through `9` caveat.
 
-### `/f/m/r/i` run by ID
+### `/fmri` run by ID
 
 Input ID, validate existence, execute macro.
 
-### `/f/m/d/n` and `/f/m/d/i` delete
+### `/fmdn` and `/fmdi` delete
 
 Deletion should probably require a confirmation step to prevent accidental loss.
 
@@ -330,7 +330,7 @@ Iteration 1 decision options:
 
 Recommendation: implement confirmation, or postpone delete.  Do not implement silent deletion.
 
-### `/f/m/v` verbose mode
+### `/fmv` verbose mode
 
 The design says this is a toggle with default `false`.
 
@@ -481,7 +481,7 @@ Because macro JSON requires strings to be quoted, macro lines should use:
 /thi "S6"
 ```
 
-Open design problem: the design says `/t/s/i INPUT: id`; the command-line input UI accepts raw strings, while macro JSON syntax requires JSON strings.  This difference is acceptable but should be documented in macro help.
+Open design problem: the design says `/tsi INPUT: id`; the command-line input UI accepts raw strings, while macro JSON syntax requires JSON strings.  This difference is acceptable but should be documented in macro help.
 
 Implementation details:
 
@@ -546,7 +546,7 @@ Add or extend song load tests so songs with no macros and songs with macros both
 
 ### Manual acceptance tests
 
-1. Create a macro through `/f/m/a`.
+1. Create a macro through `/fma`.
 2. Edit and save macro lines.
 3. Run macro by ID.
 4. Run macro by number.
@@ -628,7 +628,7 @@ Files likely affected:
 
 Work:
 
-1. Add `/f/m` menu structure.
+1. Add `/fm` menu structure.
 2. Add runtime child dispatcher.
 3. Add action cases for add, edit, run, delete, verbose toggle.
 4. Wire actions to `MacroExecutor` helpers.
@@ -692,7 +692,7 @@ Files likely affected:
 
 Work:
 
-1. Add `/t/s` and `/t/h` branches.
+1. Add `/ts` and `/th` branches.
 2. Add show/hide all actions.
 3. Add runtime list children.
 4. Add show/hide by ID input actions.

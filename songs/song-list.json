@@ -254,6 +254,32 @@
       ]
     },
     {
+      "href": "name-that-note/name-that-note-bass-ALL.json",
+      "description": "<em>name-that-note</em> game for the <em>ALL basses</em>.",
+      "instruments": [
+        {
+          "fromBaseID": "Bass4",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Bass5",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Bass6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Bass8",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
       "href": "theory/mode-major-transposed.json",
       "description": "<i>major mode</i> shown with a green, light color-theme, transposed through all 12 Keys on a <em>P4-tuning Guitar</em>, so you can see the pattern in all positions.",
       "instruments": [

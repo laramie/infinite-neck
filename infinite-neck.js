@@ -7,6 +7,7 @@ import {
 	expandApprovedTemplate,
 	setApprovedValueProviders
 } from './approved-values.js';
+import { parseAppActionFragment } from './app-action-fragment.js';
 import {
 	chuseStylesheet,
 	deleteUserStylesheet,
@@ -45,6 +46,7 @@ import {
 	hideGraveyard,
 	getNoteFontSize,
 	runActionByName,
+	runSongMacroById,
 	setUIFontSize,
 	setNoteFontSize,
 	setKeyHandlerProviders,
@@ -120,12 +122,13 @@ import { installFillPageSelects } from './fillPageSelectBuilder.js';
 
 import { installLoopTimingModeControls } from './looper-timing-select-handler.js';
 import * as SongLibrary from './SongLibrary.js';
-import { renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
+import { escapeHtml, renderSongInstrumentBadges } from './InstrumentRoleBadges.js';
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
 import { InfoBuilder } from './templates/info/info.builder.js';
+import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
@@ -169,6 +172,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	var gSong = null;  //constructed in document ready.
+	let gUrlMacroRunAttempted = false;
 	let gFullscreenLeadSheetLineVisible = false;
 	let chartInputController = null;
 	export function getSong(){
@@ -328,7 +332,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			showAllNoteNames,
 			toggleShowAllNoteNames,
 			showInfoDialog,
+			showMacroDialog,
 			showOneMenu,
+			getMyTunings: TuningsLibrary.getMyTunings,
+			showTuning: TuningsLibrary.showTuning,
+			hideTuning: TuningsLibrary.hideTuning,
 			toggleCaption,
 			toggleFullscreen,
 			toggleInstrumentCaptionRow,
@@ -1082,6 +1090,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const AllMenuDivs = {
 		"#palette": "#btnPalette",
 		"#info": "#btnInfo",
+		"#macros": undefined,
 		"#divFileControls": "#btnFileControls",
 		"#divViewControls": "#btnViewControls",
 		"#divThemeControls": "#btnThemeControls",
@@ -1098,6 +1107,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				TransportBuilder.hideSectionDrawer();
 			} else if (key === "#info") {
 				InfoBuilder.hide();
+			} else if (key === "#macros") {
+				MacroBuilder.persistMacro();
+				MacroBuilder.hide();
 			} else {
 				$(key).hide();
 			}
@@ -1176,6 +1188,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		InfoBuilder.show(forceMode);
+	}
+
+	export function showMacroDialog(macroId = '') {
+		MacroBuilder.show(macroId);
+	}
+
+	function handleInfoActionFragment(href = '') {
+		const parsed = parseAppActionFragment(href);
+		if (parsed.errors.length > 0) {
+			addToUserLog('InfoLink', parsed.errors.map((error) => escapeHtml(error)).join('<br>'));
+		}
+		parsed.items.forEach((item) => {
+			if (item.action === 'raise') {
+				pluginManager.raisePluginSnapshotsFromHash(`#raise=${item.value}`);
+				return;
+			}
+			if (item.action === 'macro') {
+				runSongMacroById(item.macroId);
+			}
+		});
+		return parsed;
 	}
 
 	export function getHelpTopic(){
@@ -1557,6 +1590,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 		InfoBuilder.renderFromSong(getSong());
 		InfoBuilder.handleSongLoaded(getSong());
+		scheduleUrlMacroRun();
 	}
 
 	export function resolveLoadedThemeId(themeId, hasUserTheme = false){
@@ -1582,6 +1616,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		} else {
 			TuningsLibrary.showDefaultTuning();
 		}
+	}
+
+	function scheduleUrlMacroRun(){
+		if (gUrlMacroRunAttempted || typeof window === 'undefined') {
+			return;
+		}
+		const params = new URLSearchParams(window.location.search);
+		const macroId = `${params.get('macro') || ''}`.trim();
+		if (!macroId) {
+			return;
+		}
+		gUrlMacroRunAttempted = true;
+		setTimeout(() => {
+			const result = runSongMacroById(macroId);
+			if (!result.ok) {
+				addToUserLog('Macro', `URL macro ${macroId} failed: ${result.error}`);
+			}
+		}, 0);
 	}
 
 	export function installDefaultColorDicts(){
@@ -2729,14 +2781,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="]', function(e) {
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="], #divInfoRendered a[href^="#macro="]', function(e) {
 			e.preventDefault();
 			const href = $(this).attr('href') || '';
 			if (href) {
 				if (window.history && typeof window.history.pushState === 'function') {
 					window.history.pushState(null, '', href);
 				}
-				pluginManager.raisePluginSnapshotsFromHash(href);
+				handleInfoActionFragment(href);
 			}
 		});
 
@@ -3538,6 +3590,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadTemplates('templates/info/info.html').then(() => {
 				InfoBuilder.addToDest('#divInfo');
 				InfoBuilder.renderFromSong(getSong());
+			}),
+
+			loadTemplates('templates/macros/macros.html').then(() => {
+				MacroBuilder.addToDest('#divMacros');
 			}),
 
 			loadTemplates('templates/themes.html').then(() => {

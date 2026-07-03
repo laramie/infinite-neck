@@ -206,4 +206,45 @@ Recommendation: not initially.  Add idempotent toggle-with-value behavior for ma
 
 ANSWER: No.  We won't add this as a feature.  Accept Recommendation: "Add idempotent toggle-with-value behavior for macro execution only."
 
+# Iteration 2
 
+For this Iteration, we are just tweaking two things:
+1) Macros need to be re-ordered in the song file by the User, via a new Move sub-menu.
+2) All plugins that set `I) Instrument` need to have a new sub-menu `i) id` for choosing Instrument by `baseID`.
+
+## Macro re-order
+
+New menu `/fmm`: 
+```
+/fm
+  m) move
+    1) first macro --> INPUT: the destination number
+    2) second macro --> INPUT: the destination number
+    3) third macro --> INPUT: the destination number
+```
+- INPUT get the 1-based destination number from User, bumps current item at that number, re-orders list. Pops back to /fmm which shows new, ordered list.
+- must be 1-based.  If 0 entered, bump into location 1, 1-based. 
+- If length+1, add at end, renumber list from 1.
+- If greater than list length+1, add at end with correct sequential numbering for list, 1-based.
+
+
+## set menu item Instrument by baseID
+
+Since the order of Instrument is generated from the current display order, macros need a stable target for macro calls such as `/fpaI1` which should now instead call new menu item `/fpaIi` with INPUT "Bass4_1" in other words, a macro would have a line:
+```
+/fpaIi "Bass4_1"
+```
+This being what the User sees.  It would of course be escaped in the song file.
+
+The menus should be retained in the command-line so Users can still choose by number.  We are just adding `i) id` at the end of the number list.
+
+New menu, for ArpeggioPlugin, but all plugins that have an `I) Instrument` menu item will need this.
+
+```
+/fpaI
+  1) Bass4_1
+  2) Bass5_1
+  3) Bass6_1
+  4) Bass8_1
+  i) id --> INPUT: the baseID
+```

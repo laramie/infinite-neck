@@ -1,0 +1,39 @@
+<template id="macros-template">
+    <div id="macros" style="display: none;" class="sectionPageControlsGroup">
+        <div class="infoTabsTop">
+            <span class="infoTabsButtons">
+                <button id="btnMacrosTabEdit" type="button" class="MenuTabBtn BtnPunchedIn">Macro Editor</button>
+            </span>
+            <span class="infoTabsFill"></span>
+        </div>
+
+        <div class="infoTabsBody">
+            <div class="infoTabsPaper">
+                <div class="infoEditControls">
+                    <div class="infoActionRow">
+                        <div class="infoActionLeft">
+                            <div class="infoTitle">Song Macro</div>
+                            <div class="infoEditControlsInner">
+                                <span class="infoEditGroup">
+                                    <label for="txtMacroId">id:</label>
+                                    <input id="txtMacroId" type="text" readonly>
+                                </span>
+                                <span class="infoEditGroup infoEditGroupSave">
+                                    <span class="infoSaveCaption">save:</span>
+                                    <button id="btnSaveMacro" type="button" title="Closing or tabbing away also saves when the macro is valid.">&check;</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="infoActionRight">
+                            <span class="infoCloseCaption">ESC or</span>
+                            <button id="btnCloseMacros" type="button" class="MenuButton BtnPunchedOut">Close</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divMacroStatus" class="macroStatus"></div>
+                <textarea id="textareaMacroLines" class="scalingTextarea infoTextarea" spellcheck="false"></textarea>
+            </div>
+        </div>
+    </div>
+</template>

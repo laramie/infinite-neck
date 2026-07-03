@@ -63,6 +63,7 @@ jest.unstable_mockModule('../../menu.js', () => ({
 	dumpMenus: jest.fn(() => ''),
 	gMenuFile: {},
 	gMenuPointer: {},
+	refreshRuntimeChildren: jest.fn(),
 	setMenuRuntimeChildrenResolver: jest.fn(),
 	setMenuValueResolver: jest.fn(),
 	setMenuAtRoot: jest.fn(),
