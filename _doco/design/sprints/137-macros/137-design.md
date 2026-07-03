@@ -126,6 +126,13 @@ The implementation plan looks solid, and has minimal impact on current system, s
 
 A few general points.
 
+We like all the proposals, and have commented below on the options.
+
+We like the proposed templates structure for the "Macro editor UI".
+
+We like this option: `macro=macro1` matches the design language and is concise.
+
+
 In describing our menu system, we have stuck to some short-hand document conventions, and we'd like to stick to these.
 
 1) When we say `/fpa` we mean the User actually types this in the command-line prompt input box.  So we refer to all menu-item nodes by this path.  So we prefer not to use a directory-like syntax such as `/f/p/a` so as not to confuse programmers and Users, since the `/` character is a reserved character in the command-line that always jumps to the root menu-item.  Please adjust the implementation plan to use the syntax `/fpa` always, and refrain from using the `/f/p/a` syntax.
