@@ -148,6 +148,37 @@ export function deleteSongMacro(song, id) {
     return true;
 }
 
+export function moveSongMacro(song, id, destinationNumber) {
+    const macroId = `${id || ''}`.trim();
+    const macros = getSongMacros(song);
+    if (!Object.prototype.hasOwnProperty.call(macros, macroId)) {
+        return { moved: false, reason: `macro not found: ${macroId}` };
+    }
+    const entries = Object.entries(macros);
+    if (entries.length <= 1) {
+        return { moved: true, macroId, from: 1, to: 1, ids: entries.map(([entryId]) => entryId) };
+    }
+    const fromIndex = entries.findIndex(([entryId]) => entryId === macroId);
+    const rawDestination = Number.parseInt(destinationNumber, 10);
+    const destination = Number.isInteger(rawDestination) ? rawDestination : entries.length;
+    const clampedDestination = Math.max(1, Math.min(entries.length, destination));
+    const [movingEntry] = entries.splice(fromIndex, 1);
+    entries.splice(clampedDestination - 1, 0, movingEntry);
+
+    Object.keys(macros).forEach((entryId) => delete macros[entryId]);
+    entries.forEach(([entryId, record]) => {
+        macros[entryId] = record;
+    });
+
+    return {
+        moved: true,
+        macroId,
+        from: fromIndex + 1,
+        to: clampedDestination,
+        ids: entries.map(([entryId]) => entryId)
+    };
+}
+
 function formatPathNotFound(path, trigger, offset) {
     return `Command-line path not found at trigger ${trigger} (${offset + 1}) in ${path}`;
 }

@@ -69,6 +69,13 @@ function normalizeIntegerArray(rawValue) {
   });
 }
 
+function supportsSelectByBaseID(property) {
+  return property.name === 'targetTable'
+    && property.caption === 'Instrument'
+    && property.trigger === 'I'
+    && property.datatype === 'org.dynamide.Select';
+}
+
 export class PluginProperty {
   constructor(spec = {}) {
     this.name = spec.name || '';
@@ -175,6 +182,23 @@ export class PluginProperty {
         value: option.value,
         popOnBang: true
       }));
+      if (supportsSelectByBaseID(this)) {
+        children.push(new MenuItemProxy(plugin, {
+          name: `${this.name}:id`,
+          caption: buildCaption('id', 'i'),
+          trigger: 'i',
+          action: 'pluginProperty:selectByBaseID',
+          pluginId,
+          propertyName: this.name,
+          popOnBang: true,
+          input: {
+            type: 'input',
+            caption: 'baseID',
+            datatype: 'string',
+            id: 'value'
+          }
+        }));
+      }
       return new MenuItemProxy(plugin, {
         name: this.name,
         caption: captionWithValue,

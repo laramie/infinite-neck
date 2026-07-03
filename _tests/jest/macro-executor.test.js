@@ -3,6 +3,7 @@ import {
     executeMacroLine,
     executeMacroLines,
     getSongMacroIds,
+    moveSongMacro,
     normalizeMacroLines,
     parseMacroLine,
     upsertSongMacro,
@@ -56,6 +57,28 @@ describe('MacroExecutor', () => {
         upsertSongMacro(song, 'macro1', [' /a ', '', '/b true']);
         expect(getSongMacroIds(song)).toEqual(['macro1']);
         expect(song.macros.macro1.lines).toEqual(['/a', '/b true']);
+    });
+
+    test('moveSongMacro reorders macros using 1-based destinations', () => {
+        const song = {};
+        upsertSongMacro(song, 'first', ['/a']);
+        upsertSongMacro(song, 'second', ['/b']);
+        upsertSongMacro(song, 'third', ['/c']);
+
+        expect(moveSongMacro(song, 'third', 1)).toEqual({
+            moved: true,
+            macroId: 'third',
+            from: 3,
+            to: 1,
+            ids: ['third', 'first', 'second']
+        });
+        expect(getSongMacroIds(song)).toEqual(['third', 'first', 'second']);
+
+        moveSongMacro(song, 'third', 99);
+        expect(getSongMacroIds(song)).toEqual(['first', 'second', 'third']);
+
+        moveSongMacro(song, 'second', 0);
+        expect(getSongMacroIds(song)).toEqual(['second', 'first', 'third']);
     });
 
     test('executeMacroLine passes input values by input id', () => {

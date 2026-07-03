@@ -474,6 +474,12 @@ export var gMenuFile =    {
               ]
             },
             {
+              "name": "macroMove",
+              "caption": "<b>m</b>ove",
+              "trigger": "m",
+              "runtimeChildren": "macroMoveNumber"
+            },
+            {
               "name": "macroRun",
               "caption": "<b>r</b>un",
               "trigger": "r",

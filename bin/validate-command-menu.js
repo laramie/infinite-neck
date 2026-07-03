@@ -16,6 +16,7 @@ const runtimeChildrenActionMap = new Map([
         'pluginAction:graveyardRaise',
         'pluginAction:graveyardLink',
         'pluginProperty:select',
+        'pluginProperty:selectByBaseID',
         'pluginProperty:set',
         'pluginProperty:toggle'
     ]],
@@ -31,6 +32,9 @@ const runtimeChildrenActionMap = new Map([
     ['macroDeleteNumber', [
         'macroDeleteConfirmed',
         'macroDeleteCancel'
+    ]],
+    ['macroMoveNumber', [
+        'macroMoveById'
     ]],
     ['tuningShowList', [
         'showTuningById'

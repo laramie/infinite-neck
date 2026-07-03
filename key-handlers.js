@@ -65,6 +65,7 @@ import {
 	getMacroIdValidationMessage,
 	getSongMacro,
 	getSongMacroIds,
+	moveSongMacro,
 	upsertSongMacro
 } from './MacroExecutor.js';
 
@@ -291,6 +292,24 @@ function getMacroDeleteNumberOptions() {
 	}));
 }
 
+function getMacroMoveNumberOptions() {
+	const song = getSong();
+	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+		name: `macroMove:${macroId}`,
+		caption: `<b>${index + 1}</b>) ${macroId}`,
+		trigger: `${index + 1}`,
+		action: 'macroMoveById',
+		value: macroId,
+		popOnBang: true,
+		input: {
+			type: 'input',
+			caption: 'destination number',
+			datatype: 'int',
+			id: 'destination'
+		}
+	}));
+}
+
 function getMyTuningOptions(actionName) {
 	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
 	return tunings.slice(0, 9).map((tuning, index) => ({
@@ -318,6 +337,9 @@ function refreshMacroAndTuningRuntimeChildren(menu) {
 	}
 	if (menu?.runtimeChildren === 'macroDeleteNumber') {
 		return getMacroDeleteNumberOptions();
+	}
+	if (menu?.runtimeChildren === 'macroMoveNumber') {
+		return getMacroMoveNumberOptions();
 	}
 	if (menu?.runtimeChildren === 'tuningShowList') {
 		return getMyTuningOptions('showTuningById');
@@ -1151,6 +1173,23 @@ export function performCmdAction(menuItem, args){
 			pendingMacroDeleteID = '';
 			actionResult.result = 'delete canceled';
 			break;
+		case "macroMoveById": {
+			const macroId = `${menuItem.value || ''}`.trim();
+			const destinationText = `${argByInputID || ''}`.trim();
+			if (!/^-?\d+$/.test(destinationText)) {
+				actionResult.result = `destination must be a number: ${destinationText}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			const moveResult = moveSongMacro(getSong(), macroId, Number.parseInt(destinationText, 10));
+			if (!moveResult.moved) {
+				actionResult.result = moveResult.reason || `macro not moved: ${macroId}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			actionResult.result = `moved ${macroId} ${moveResult.from}→${moveResult.to}`;
+			break;
+		}
 		case "toggleMacroVerbose":
 			macroVerbose = !macroVerbose;
 			actionResult.result = `macro verbose=${macroVerbose}`;
@@ -1650,6 +1689,7 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:set":
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
+		case "pluginProperty:selectByBaseID":
 		case "pluginAction:invoke":
 		case "pluginAction:audit":
 		case "pluginAction:graveyardBury":

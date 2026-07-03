@@ -143,7 +143,7 @@
   "noteTablesLayout": [
     {
       "tableID": "tblBass4_1",
-      "visible": false
+      "visible": true
     },
     {
       "tableID": "tblBass5_1",
@@ -155,7 +155,7 @@
     },
     {
       "tableID": "tblBass8_1",
-      "visible": true
+      "visible": false
     }
   ],
   "colorDicts": {},
@@ -196,12 +196,12 @@
       "enableOnSongLoad": true,
       "graveyardKey": "flashcard-0-7",
       "properties": {
-        "targetTable": "tblBass6_1",
+        "targetTable": "tblBass4_1",
         "minFret": 0,
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
         "minRow": 0,
-        "maxRow": 5,
+        "maxRow": 3,
         "lowToHigh": true,
         "upOnly": false,
         "style": "random",
@@ -218,7 +218,7 @@
         "/tha",
         "/tsi \"Bass4_1\"",
         "/fpaC",
-        "/fpaI1",
+        "/fpaIi \"Bass4_1\"",
         "/rsR"
       ]
     },
@@ -227,7 +227,7 @@
         "/tha",
         "/tsi \"Bass5_1\"",
         "/fpaC",
-        "/fpaI2",
+        "/fpaIi \"Bass5_1\"",
         "/rsR"
       ]
     },
@@ -236,7 +236,7 @@
         "/tha",
         "/tsi \"Bass6_1\"",
         "/fpaC",
-        "/fpaI3",
+        "/fpaIi \"Bass6_1\"",
         "/rsR"
       ]
     },
@@ -245,14 +245,14 @@
         "/tha",
         "/tsi \"Bass8_1\"",
         "/fpaC",
-        "/fpaI4",
+        "/fpaIi \"Bass8_1\"",
         "/rsR"
       ]
     }
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
-  "defaultBPM": "40",
+  "defaultBPM": "60",
   "info": "This song has four Bass instruments installed: 4, 5, 6, and 8 strings.\n<br>Use these links to select which you want to practice with:\n<br>Play with 4-string Bass: <a href=\"#macro=bass4\">Bass4</a>\n<br>Play with 5-string Bass: <a href=\"#macro=bass5\">Bass5</a>\n<br>Play with 6-string Bass: <a href=\"#macro=bass6\">Bass6</a>\n<br>Play with 8-string Bass: <a href=\"#macro=bass8\">Bass8</a>\n<br>\n<br>\n\nBy default, this song has two Sections, with the first Section running this flashcard setting for 1st position through the 7th fret:\n<br>First Position: <a href=\"#raise=arpeggio.flashcard-0-7\">arpeggio.flashcard-0-7</a>\n<br>and the second Section running this flashcard setting for 7th position through the twelfth fret:\n<br>Seventh Position: <a href=\"#raise=arpeggio.flashcard-7-12\">arpeggio.flashcard-7-12</a>\n<br>\n<br>Click LOOP to run both Sections.\n<br>Or use LOOP BEAT [∞] to work on one Section only.\n<br>\n<br>Use <kbd>/vsn</kbd> to show all NamedNotes in every cell transposed into the current key.\n<br>Use <kbd>/vhn</kbd> to hide all NamedNotes again.\n<br>Use <kbd>/vtn</kbd> to toggle all NamedNotes, and leave command-line showing. (Use <a href=\"help.html#one-line-CommandLine\">one-line command-line</a> to make the command-line smaller.)\n<br>\n<br>\n<br>Run without transposition (Key of C only): \n<br>&nbsp;&nbsp;&nbsp;<a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>\n<br>Run with chromatic transposition (Key of C start):\n<br>&nbsp;&nbsp;&nbsp;<a href=\"#raise=transpose.chromatic\">transpose.chromatic</a>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
@@ -373,7 +373,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 11,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -383,7 +383,7 @@
               7
             ]
           ],
-          "lastPositionIndex": 0
+          "lastPositionIndex": -1
         }
       },
       "__arpeggioRuntimeIdentity": "s1",
@@ -514,7 +514,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 1,
+      "currentBeat": 29,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
