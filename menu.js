@@ -108,8 +108,8 @@ export var gMenuFile =    {
           "action": "showGraveyard"
         },
         {
-          "caption": "<b>m</b>ap spacebar",
-          "trigger": "m",
+          "caption": "<b>s</b>pacebar mapping",
+          "trigger": "s",
           "children": [
             {
               "caption": "current: [${spacebarActionName}]",

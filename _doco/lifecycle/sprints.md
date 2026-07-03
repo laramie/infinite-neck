@@ -195,6 +195,8 @@ The sprints toward this effort are documented here, as well as sprints planned b
     - const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
 	  - const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
 
+[sprint-137-macros](../design/sprints/137-macros/sprint-137.md)    
+
 # Future Sprints Unscheduled 
 
 - 901-floating-windows
