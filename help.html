@@ -43,7 +43,7 @@
             border-radius: 5px;
             margin-top: 1.6em;
        }
-       
+
        P {
            padding-left: 4em;
        }
@@ -1174,6 +1174,7 @@
                     <li><a href="#viewDiagnostics">View Diagnostics</a></li>
                     <li><a href="#chromeDevTools">Spelunking with Chrome DevTools</a></li>
                     <li><a href="#variableNames">Variables for Captions</a></li>
+                    <li><a href="#macros">Macros</a></li>
                     <li><a href="#transposeProgression">transposeProgression Family of Variables</a></li>
                     <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
                 </ul>
@@ -5601,13 +5602,39 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
 <a name="macros"></a>
 <h3>Macros ( /fm )</h3>
-<h5>Macro: "first-position</h5>
+<p>You can create macros with the command-line: <span class="menuExampleLine"><b>/fm</b></span>.  The basic interface lets you 
+add macros, delete, reorder, edit,and run them.  Turn on verbose mode with <span class="menuExampleLine"><b>/fmv</b></span> and output and debugging info will show up in the UserLog which you can show with <span class="menuExampleLine"><b>/vdu</b></span>.</p>
+
+<p>The basic syntax is one of:
+</p>
+ <p>First Syntax: <b>command-line-path</b> is the string you type into the command-line, which starts with a slash, <b>/</b> and has no spaces.  If you get to an INPUT in the command line, you must use the second syntax.</p>
+
+ <p class="codeExample">
+ command-line-path</p>
+
+ <p>or</p>
+<p>Second Syntax: <b>JSON</b> is a JSON-formatted string that is the argument you type at a command-line INPUT.  It adds double-quotes around single string values you type.  If you type array brackets or curly braces, use those but don't add the double-quotes.</p>
+
+ <p class="codeExample">
+ command-line-path JSON</p>
+<h4>Macro Examples</h4>
+<p>There are examples you can see in the Song Library in 
+    <span class="GUIReferenceInline">name-that-note > name-that-note-bass-ALL.json</span>
+    and 
+    <span class="GUIReferenceInline">practice > pentatonics-7-m-V7-in-6-keys-with-fill-ALL.json</span>
+    <br>Here are some short macro examples.  You can see what they do by walking through the command-line letter by letter, 
+    for example for /snf you would type / then s then n then see what f will do.  Or for /fpapv "0,5" you could type / then f then p then a then p and when you type v 
+    you'll see that you are at an INPUT where it is expecting you to type in a value.  At that prompt you would type 0,5 without the quotes, so 
+    in the macro, you just add the quotes.
+
+</p>
+<h5>Macro: "first-position"</h5>
 <p class="codeExample">
 /snf
 /fpapv "0,5"
 /fpapC
 </p>
-<h5>Macro: "fifth-position</h5>
+<h5>Macro: "fifth-position"</h5>
 <p class="codeExample">
 /snf
 /fpapv "5,9"
