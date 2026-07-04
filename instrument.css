@@ -46,12 +46,18 @@
 }
 
 .instrumentBackgroundOuter {
-  box-sizing: border-box;
-  padding: 1em; /* or whatever you want for box-shadow space */
-  width: 100vw;
-  max-width: 100vw;
-  overflow-x: auto; /* allow scrolling if needed */
-  background: transparent;
+        box-sizing: border-box;
+        /* Keep padding off by default so hidden instruments don't consume space. */
+        padding: 0;
+        width: 100vw;
+        max-width: 100vw;
+        overflow-x: auto; /* allow scrolling if needed */
+        background: transparent;
+}
+
+/* Apply box-shadow breathing room only when the instrument is actually visible. */
+.instrumentBackgroundOuter:has(> .instrumentBackground:not([style*="display: none"]):not([style*="display:none"])) {
+        padding: 1em;
 }
 
 .instrumentBackground {

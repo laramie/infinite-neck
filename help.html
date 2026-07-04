@@ -174,7 +174,7 @@
            display: inline-block;
            font-size: 90%;
            font-weight: bold;
-           padding: 0.3em;
+           padding: 0.1em;
            padding-left: 1em;
            padding-right: 1em;
            background-color: #dfd;
@@ -605,6 +605,10 @@
         <li><a href="#walkthrough">infinite-neck Walk-through</a></li>
     </ul>
 
+    <p class="bigpoint">Getting started with <span class="productsmaller">infinite-neck</span></p>
+    <p>The best way to get started is to <button style="background-color: #d98eff;   box-shadow: 2pt 2pt 2pt 0.2pt gray;"  onclick="window.location.href='index.html'">Launch Infinite Neck</button> and open some songs from <span class="GUIReferenceInline">File > Song Library</span>.  Usually the first thing you want to do is hit LOOP on the Transport,
+        but you can also use the Transport to walk through the Sections manually.  Then go through the menu buttons on the top of the page to find most of the features.
+    </p>
     <p class="bigpoint"><span class="productsmaller">infinite-neck</span> helps you visualize notes across the neck of your instrument.
     </p>
 
@@ -788,6 +792,7 @@
         present as the chord set.
     </p>    
 
+ <p  class="bigpoint">You can use color to represent musical moods and fabrics.</p>
 
     <p>To show four chord changes over, say, a Dmin mood, you could use one Section with four Beats,
         or you could use four Sections.</p>
@@ -812,6 +817,22 @@
         and so draw your eyes to the chosen notes/positions within a whole fabric of playable notes.
         You can also add beats (Highlights) to these Sections for more expression.</p>
 
+        <p>
+            The Library song <b style="color: green;">theory &gt; mode-major-transposed.json</b> uses blue tones to represent a minor mode:
+            <br>
+            <img src="img/help/light-blue-minor-scheme.png" width="95%" style="background-color: gray; padding: 0.5em;">
+            <br>
+
+            <br>
+            <br>The Library song <b style="color: green;">theory &gt; mode-nat-minor-transposed.json</b> uses green tones to represent a major mode:
+            <br>
+        <img src="img/help/light-green-major-scheme.png" width="95%" style="background-color: gray; padding: 0.5em;">
+        <div style="text-align: right"></div>
+            
+        </p>
+
+        <p class="bigpoint">You can create Charts.</p>
+    
         <p>Because placing notes on the neck creates chords and modes, <span class="productsmaller">infinite-neck</span> can
             generate a chart and let you edit it as you edit the notes. Here is a chart for a jazzy Blues song, showing just the
             guitar with the full LeadSheet.
@@ -826,6 +847,8 @@
             <img src="img/help/chart-line-gtr-piano.png" width="95%">
         </p>
 
+        <p class="bigpoint">"Thinking Piano"</p>
+    
         <p>I find it essential, when communicating with musicians, to "think Piano".  So in addition to the note
             markers, or fret positions that you <i>should</i> play, <i>should <b>not</b></i> play, <i>could</i> play...etc.,
             I have styled the guitar necks with piano key coloring embeded as ivory and ebony box inlay.
@@ -833,6 +856,9 @@
         <p style="text-align: center;">
             <img src="img/help/ebony-ivory-p4.png" width="70%">
         </p>
+
+        <p class="bigpoint">You can get creative.</p>
+    
         <p>Here is an extreme bit of styling just to have fun with the software, so it looks more like lit-up MIDI controllers built
         into your guitar neck like Guitar Hero with half of Synthesia bolted on.</p>
 
@@ -976,6 +1002,20 @@
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
                 <li><a href="#contextHelp">Context Help Topics</a>
                     <ul class="LinkList">
+                        
+                        <li><a href="#divFileControls">File</a>
+                            <ul class="LinkList">
+                                <li><a href="#fileSongLibrary">Song Library</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#songfileInfo">Info (Song)</a>
+                            <ul class="LinkList">
+                                <li><a href="#songfileInfoAllowedHTML">Allowed HTML</a></li>
+                                <li><a href="#songfileInfoSuperlinks">Superlinks</a></li>
+                            </ul>
+                        </li>
+
+                        <li><a href="#divChart">Chart</a>
                         <ul class="LinkList">
                             <li><a href=#divChartSummaryTab>Chart &gt; Summary Tab</a></li>  
                             <li><a href=#divChartInputTab>Chart &gt; Input Tab</a></li>
@@ -984,16 +1024,9 @@
                             <li><a href=#divChartOptionsTab>Chart &gt; Options Tab</a></li>
                             <li><a href=#divChartTab>Chart &gt; Chart Tab</a></li>
                             <li><a href=#divChartLineTab>Chart &gt; Line Tab</a></li>
-                            <li><a href=#divSongTuningControls>My Tunings</a></li>
-                            <li><a href=#divAllTuningsTab>All Tunings</a></li>
                         </ul>
-                        <li><a href="#divFileControls">File</a>
-                            <ul class="LinkList">
-                                <li><a href="#songfileInfo">Songfile Info</a></li>
-                                <li><a href="#songfileInfoAllowedHTML">Allowed HTML</a></li>
-                                <li><a href="#songfileInfoSuperlinks">Superlinks</a></li>
-                            </ul>
-                        </li>
+
+
                         <li><a href="#transport">Transport</a>
                             <ul class="LinkList">
                                 <li><a href="#SpacebarMapping">Special SPACEBAR Mapping</a></li>
@@ -1009,7 +1042,6 @@
                                     </ul>
                                 </li>
                                 <li><a href="#divSectionKeyChange">Key Change</a></li>
-                                <li><a href="#SectionPrintTopic">Section Print</a></li>
                             </ul>
                         </li>
                         <li><a href="#divViewControls">View</a>
@@ -1021,6 +1053,10 @@
                         <li><a href="#divThemeControls">Themes Menu</a></li>
                         <li><a href="#divFillNotes">Fill</a></li>
                         <li><a href="#divTunings">Tunings</a></li>
+                        <ul class="LinkList">
+                            <li><a href=#divSongTuningControls>My Tunings</a></li>
+                            <li><a href=#divAllTuningsTab>All Tunings</a></li>
+                        </ul>
                         <li><a href="#palette">Palette</a></li>
                         <ul class="LinkList">
                             <li><a href='#specialColors'>Special Colors</a></li>
@@ -1645,12 +1681,12 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
         <li><b>theory</b> demonstrates topics of music theory.
     </ul>
 </p>
-<p>Each song shows <b>Role tags</b> for which Instruments are used. <i>Main</i> is a regular instrument (neither Listener nor Observer),
+<p>Each song shows <a href="#glossaryRoleBadges"></a>Role</a> badges for which Instruments are used. <i>Main</i> is a regular instrument (neither <a href="#glossaryListener">Listener</a> nor <a href="#glossaryObserver">Observer</a>),
     and you can have multiple <i>Main</i> instruments. Instruments may be hidden (you un-hide them in 'My Tunings'), and
     are shown with grayed tags. 
     <br>
     <br>
-    The <b>Role tags</b> look like: <span class="songLibraryInstrument instrumentMain">Main</span>
+    The  <a href="#glossaryRoleBadges"></a>Role</a> badges look like: <span class="songLibraryInstrument instrumentMain">Main</span>
     <span class="songLibraryInstrument instrumentMain instrumentNotVisible">Main-hidden</span> <span
         class="songLibraryInstrument instrumentListener">Listener</span> <span
         class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span> <span
@@ -1659,12 +1695,12 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
 
 </p>
 <a name="songfileInfo"></a>
-<h4>Songfile Info</h4>
+<h3>Info (Song)</h3>
 
 <p>The Songfile Info page lets you keep comments right in the song file itself.  This is handy for things like instruction on how plugins are set up, reminders about using flashcard mode, or a short formatted description of the song. It is also the place to store <a href="#songfileInfoSuperlinks">superlinks</a> which you can use to activate saved plugin settings and run macros.  You can format your comments with <a href="#songfileInfoAllowedHTML">simple HTML</a>.</p>
 
 <p>You can open Songfile Info in any of these ways:
-    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click the <span class="GUIReferenceInline">Info</span> button in the top menu button row.
+    <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Click the <button class="BtnPunchedOut"><b><u>I</u></b>nfo</button> button in the top menu button row.
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; Use the File menu command <span class="menuExampleLine"><b><small>/fi</small></b></span>.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Some songs may also open it automatically when the song is loaded.
 </p>
@@ -1674,7 +1710,7 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>Edit</b> shows the raw HTML in a textarea, so you can type or change it directly.
 </p>
 
-<p>To close Songfile Info, click <span class="GUIReferenceInline">Close</span> or press <span class="key">ESC</span>.</p>
+<p>To close <b>Info</b>, click <button class="BtnPunchedOut">Close</button> or press <span class="key">ESC</span>.</p>
 
 <p>There is no separate Save dialog.  Changes are kept when you:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; leave the textarea,
@@ -1695,8 +1731,25 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Scripts, links, forms, images, styles, and other active or external content are stripped out.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>EXCEPT</b>: links to URI fragments (#...) are allowed, because they jump to actions within <span class='productsmaller'>infinite-neck</span>.  See superlinks below.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special tags</b>: &lt;kbd&gt; will create a formatted command-line keyboard examples, and &lt;i&gt;  and &lt;b&gt; within that create prompts and triggers.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special expansions</b>: Any variable in <span class="menuExampleLine"><b>/vdv</b></span> can be pasted into the <b>Edit</b> area and will expand in the <b>Info</b> area, reflecting values from the Song and Current Section.
+    <ul>
+        <li>${songInstrumentBadges} - this expands to the <a href="#glossaryRoleBadges"></a>Roles</a> the Instruments play in this Song.</li>
+        <li>${songInstrumentTable} - this expands to the  <a href="#glossaryRoleBadges"></a>Roles</a>, listing each Instrument.</li>
+    </ul>
+</p>
+<p>Example of <b>${songInstrumentBadges}</b>
+    <br>
+    <br>
+    <span style="display: inline-block; margin-left: 2em; padding: 1em; border: 1px solid green;">This song has four Bass instruments installed: 4, 5, 6, and 8 strings: <span class="songLibraryInstrument instrumentMain">Bass4</span><span class="songLibraryInstrument instrumentMain instrumentNotVisible">Bass5</span><span class="songLibraryInstrument instrumentMain instrumentNotVisible">Bass6</span><span class="songLibraryInstrument instrumentMain instrumentNotVisible">Bass8</span></span>
+</p>
+<p>
+    Example of  <b>${songInstrumentTable}</b>
+    <br>
+    <br>
+    <table class="ExamplesTable songInstrumentTable"><tbody><tr><th>Role</th><th>ID</th></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_back</td></tr><tr><td><span class="songLibraryInstrument instrumentMain">S6</span></td><td>S6_lead</td></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_forward</td></tr><tr><td><span class="songLibraryInstrument instrumentListener">P46</span></td><td>P46_1</td></tr></tbody></table>
 </p>
 
+<br>
 <p>The <b>show on open</b> selector has three meanings:
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>none</b> means do not automatically show Songfile Info when the song opens.
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; <b>parked</b> means open it in its normal parked place in the app.
@@ -1746,6 +1799,164 @@ without taking the User anywhere else.  A "superlink" is a reference to multiple
     such as <b>I-IV-V-progression</b> . Names can include hyphens, underscores, and alphanumerics, but can't start with
     a digit.
 </p>
+
+
+
+<a name='divChart'></a>
+<h2>Chart</h2>
+
+<a name='divChartSummaryTab'></a>
+<h3>Chart &gt; Summary Tab</h3>
+
+<p>Summarizes all the Sections.  Shows the <b>Chord</b> and <b>Mode</b> of each Section as they are stored in the song, 
+    as well as the values of <b>KEY</b> during transposition while looping with TransposePlugin Enabled.</p>
+    <p>    
+    <br><br><img class="floatingScreenshot" width="60%" src="img/help/context/section-print-summary.png">
+</p> 
+
+<a name='divChartInputTab'></a>
+<h3>Chart &gt; Input Tab</h3>
+<p>See: <a href="#tonalChordNames">All Tonal Chord Names</a></p>
+<p>See: <a href="#tonalModeNames">All Tonal Mode Names</a></p>
+<p>Enter the chord name with root, such as <b>Cm7</b> or <b>CM</b>, then press <span class="key">SPACE</span> to cycle
+    through
+    suggestions, or hit <span class="key">ENTER</span> to accept the suggestion and move on to entering the mode.</p>
+<p>When entering the mode of the Key the Section is in, you can skip the Key and just enter <b>mix</b> and <b>C
+        mixolydian</b> will be suggested. You only need to enter the Key if you want to play in a Key mode different
+    than the Section Key.</p>
+<p>For mode, you can start with the Key and type the mode. The very first space after the Key not needed but is allowed, and
+    after that you should just skip spaces, because the <span class="key">SPACE</span> key is for cycling through the
+    suggestions. If you want, you can type a space with <span class="key">SHIFT</span>+<span class="key">SPACE</span>,
+    but the suggestions will work without spaces. So you can enter <b>Cmixolydian</b>, or <b>C mix</b>, or <b>Cmix</b>
+    and the suggestions will pop up.</p>
+<p>There is a special letter while focus is in the chord input box: <b>!</b> creates a new Section, with options shown
+    in the table below.
+    While in the chord or mode input boxes, the special letters <b>,</b> and <b>.</b> navigate Section as shown below.
+</p>
+
+<style>
+.chartInputHelp td {
+    border: 1px solid gray;
+
+}
+.chartInputHelp tr td:first-child {
+    font-size: 120%;
+    margin-left: 0.6em;
+    padding: 0.2em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    font-weight: bold;
+    color: rgb(2, 59, 0);
+    background-color: rgb(251, 203, 121);
+}
+</style>
+<table class="chartInputHelp">
+    <tr>
+        <th colspan="2">Special characters in chord input box</th>
+    </tr>
+    <tr>
+        <td><b>!</b></td>
+        <td>new &sect; in C </td>
+    </tr>
+    <tr>
+        <td><b>!d</b></td>
+        <td>new &sect; in D </td>
+    </tr>
+    <tr>
+        <td><b>!/D</b></td>
+        <td>new &sect; in D </td>
+    </tr>
+    <tr>
+        <td><b>!f/d</b></td>
+        <td>create new &sect; in D, LeadKey in F </td>
+    </tr>
+    <tr>
+        <td><b>!f/</b></td>
+        <td>create new &sect; in C, LeadKey in F </td>
+    </tr>
+</table>
+<br>
+<table class="chartInputHelp">
+        <tr>
+        <th colspan="2">Special characters in chord or mode input boxes</th>
+    </tr>
+
+    <tr>
+        <td><b>,</b></td>
+        <td>goto prevSection </td>
+    </tr>
+    <tr>
+        <td><b>.</b></td>
+        <td>goto nextSection </td>
+    </tr>
+    <tr>
+        <td><b>ENTER</b></td>
+        <td>accept chord or mode and move to other input box</td>
+    </tr>
+    <tr>
+        <td><b>SPACE</b></td>
+        <td>next suggestion (cycles around at end)</td>
+    </tr>
+</table>
+
+    
+
+<a name='divChartNotesTab'></a>
+<h3>Chart &gt; Notes Tab</h3>
+<p>Provides more note detail than the Summary Tab. Follows the current Section. Shows NamedNotes, PlayedNotes, and RecordedNotes.  Also provides fully functional TonalPickers 
+    that update in real-time </p>
+
+<p>Each Instrument has its notes shown, and this is essential for figuring out who 
+    is on "Bass".  The Instrument playing a <a href="#glossarynoteRoot">noteRoot</a> is shown, and this is who determines the root used for Tonal chord and mode suggestions.  Under <b>Chords</b> column,
+    you'll see <b>noteRoot:Player: P46_1:F&raquo;</b> if the P4 tuned 6-string guitar P46_1 has a <a href="#glossarynoteRoot">noteRoot</a>.  If an Instrument does not
+    play a <a href="#glossarynoteRoot">noteRoot</a>, then another player can play a <a href="#glossarynoteRoot">noteRoot</a> and this will be detected and reported in that column.
+    The order is: look in the current Instrument, then look in other Instruments, in the order in which they first entered notes in the Section.  So it's 
+    a bit brittle to depend on that order, so it is best to limit one "other" player to play noteRoot. </p> 
+    
+    <p>That is, a guitar can play a <a href="#glossarynoteRoot">noteRoot</a> and this takes
+    precedence for that guitar.  If the guitar doesn't, and the Bass player does, it all works well.  Two guitars could both have <a href="#glossarynoteRoot">noteRoot</a> and each would get 
+suggestions based on their own notes.  But if one guitar doesn't, a Bass player does, and a second guitar does, 
+then which <a href="#glossarynoteRoot">noteRoot</a> the first guitar  sees is unstable.</p>
+
+<p>See also: <a href="#TonalPickerChartNotes">TonalPicker in Chart Notes</a>.</p>
+
+<p>    
+    <br><br><img class="floatingScreenshot" width="90%" src="img/help/context/section-print-notes.png">
+</p>
+
+<a name='divChartDetailsTab'></a>
+<h3>Chart &gt; Details Tab</h3>
+<p>This is the place where you can set how the Chart sorts the Song Sections into Chart Positions (INTRO, HEAD, CHORUS, ...).</p>
+
+<p><b>Beats</b> is a number that determines how many beats to show in a Bar.  So if you have 12 beats in a Section, and you enter 4 in the <b>Beats</b> input box, 
+then you'll get three bars on the Chart, the first with the chord, the second two with the chord-repeat symbol: <b>%</b></p>
+<p><b>Caption Width</b> allows you to place (or hide) captions on the chart.</p>
+
+<p><b>Caption</b> allows you to quickly edit all the Captions in one place.</p>
+
+<a name='divChartOptionsTab'></a>
+<h3>Chart &gt; Options Tab</h3>
+<p>There are two Charts, really. The first is the chart seen in the Chart Tab <span class="GUIReferenceInline">Chart
+        &gt; Chart</span>. The second is seen
+    in the Line Tab: <span class="GUIReferenceInline">Chart &gt; Line</span>. Within the Chart Tab, you also get style
+    options set by <b>Bar Style</b>. <b>Line</b> uses a condensed version of Bar Style: LeadSheet, so you can't put <b>Line</b> into
+    "Bare" Bar Style, for example.</p>
+    <p>In fullscreen mode, you can show only show <b>Line</b>.  Trying to show the full Chart in fullscreen mode exits fullscreen.  To show the 
+    <b>Line</b> chart in fullscreen, enter fullscreen with keyboard shortcut <span class="key">f</span> then use command-line <span class="menuExampleLine"><b>/cl</b></span>.  Under Options, choose 
+   <b>Show Next Line</b> to have the <b>Line</b> chart show the upcoming chart line in addition to the chart line the current Section is on.</p>
+<p>The <b>Chart Names</b> textarea determines which additional Chart Positions will be available in <span class="GUIReferenceInline">Chart &gt; Details :: <b>Position</b></span>.  You 
+can add your own, or edit the list.  Some built-in Chart Positions will remain.</p>
+<a name='divChartTab'></a>
+<h3>Chart &gt; Chart  Tab</h3>
+<p>A full LeadSheet chart appears here, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span>.</p>
+
+<a name='divChartLineTab'></a>
+<h3>Chart &gt; Line Tab</h3>
+<p>A condensed version of the LeadSheet chart, available in one or two-line versions, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span> </p>
+
+
+
+
 <a name="transport"></a>
 <h3>Transport</h3>
 <p>The Transport lets you:
@@ -2370,23 +2581,6 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     <img class="floatingScreenshot"  src="img/help/context/section-key-Gminor-sharps.png">
 </p>
 
-<a name="SectionPrintTopic"></a>
-<h4>Section Print</h4>
-<b>This section is out of date: it needs a re-write, because these have been moved to Chart, key shortcut 'r'.</b>
-<p>You can see three tabular views of the Sections and their Notes:
-</p>    
-<p>    
-    <span class="menuExampleLine">/spn</span> - Section Print Notes:
-    <br><br><img class="floatingScreenshot" width="90%" src="img/help/context/section-print-notes.png">
-</p>    
-<p>    
-    <span class="menuExampleLine">/spd</span> - Section Print Details:
-    <br><br><img class="floatingScreenshot" width="60%" src="img/help/context/section-print-details.png">
-</p>    
-<p>    
-    <span class="menuExampleLine">/sps</span> - Section Print Summary:
-    <br><br><img class="floatingScreenshot" width="60%" src="img/help/context/section-print-summary.png">
-</p>    
 
 
 <a name="divViewControls"></a>
@@ -2522,6 +2716,7 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <h3>Tunings</h3>
     <a name='divSongTuningControls'></a>
     <h4>My Tunings</h4>
+    <p>Column "Role" uses one of the  <a href="#glossaryRoleBadges"></a>Role</a> badges.</p>
 
     <a name='divAllTuningsTab'></a>
     <h4>All Tunings</h4>
@@ -2781,23 +2976,36 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <a name="event-wiring"></a>
 <h3>Event Wiring Controls</h3>
  <p> 
-    <span class="productsmaller">infinite-neck</span> allows you to have "Listener" and "Observer" instruments in your song.  
+    <span class="productsmaller">infinite-neck</span> allows you to have <a href="#glossaryListener">Listener</a> and <a href="#glossaryObserver">Observer</a> instruments in your song.  
     <ul>
         <li>
-            Listeners can have their 
+            <b>Listeners</b> can have their 
             own notes (named, played, and recorded), but then on top of these they show the notes of all types from the instrument they are listening to.
             This is called "Wiring", because you wire the input of one Instrument to the output of another, the way you would with MIDI instruments in 
             Ableton or ProTools.  Listeners have an empty value in "Relative Section", otherwise they become Observers.  
             Listeners can copy playedNotes and NamedNotes (but not recordedNotes) they are listening to with the "Capture" button.
         </li>
         <li>
-            Observers do not get their own notes, because they become read-only, and stop displaying notes they may own,
+            <b>Observers</b> do not get their own notes, because they become read-only, and stop displaying notes they may own,
              but then listen to other instruments.  The real use of Observers
             is to listen to another Section on another Instrument.  This is used for look-ahead or look-behind like a piano roll, or Guitar-Hero or Synthesia.
             Setting the "Relative Section" amount will make this Instrument an Observer.  Setting the "Instrument" dropdown to "none" in the Wiring controls will make this 
             Instrument stop observing. Observers cannot "Capture" notes--use the instrument as a Listener for doing that.
         </li>
+        <li><b>Main</b> is any Instrument that is not an Observer or Listener.</li>
+        <li>Show the Event Wiring Controls with the <b>Wiring</b> button in the Instrument toolbars, or with keyboard shortcut <span class="key">e</span>.</li>
     </ul>
+ </p>
+
+ <p style="margin-left: 4em;">
+Main: 
+<br><img width="400" src="img/help/context/EventWiringControls-Main.png">
+<br><br>Listener:
+<br><img width="400"  src="img/help/context/EventWiringControls-Listener.png">
+<br><br>Observer:
+<br><img width="400"  src="img/help/context/EventWiringControls-Observer.png">
+<br>
+<br>
  </p>
     
  <p> <span class="productsmaller">infinite-neck</span>  sends and recieves events on it's own internal EventBus, in its internal replay() loop (and some day, on the MIDI bus).  
@@ -3545,146 +3753,6 @@ Stylesheet order
 in the <a href="#commandLineUsefulCommands">Useful Commands</a> table. </p>    
 
 
-
-
-<a name='divChartSummaryTab'></a>
-<h3>Chart &gt; Summary Tab</h3>
-
-<p>Summarizes all the Sections.  Shows the <b>Chord</b> and <b>Mode</b> of each Section as they are stored in the song, 
-    as well as the values of <b>KEY</b> during transposition while looping with TransposePlugin Enabled.</p>
-
-<a name='divChartInputTab'></a>
-<h3>Chart &gt; Input Tab</h3>
-<p>See: <a href="#tonalChordNames">All Tonal Chord Names</a></p>
-<p>See: <a href="#tonalModeNames">All Tonal Mode Names</a></p>
-<p>Enter the chord name with root, such as <b>Cm7</b> or <b>CM</b>, then press <span class="key">SPACE</span> to cycle
-    through
-    suggestions, or hit <span class="key">ENTER</span> to accept the suggestion and move on to entering the mode.</p>
-<p>When entering the mode of the Key the Section is in, you can skip the Key and just enter <b>mix</b> and <b>C
-        mixolydian</b> will be suggested. You only need to enter the Key if you want to play in a Key mode different
-    than the Section Key.</p>
-<p>For mode, you can start with the Key and type the mode. The very first space after the Key not needed but is allowed, and
-    after that you should just skip spaces, because the <span class="key">SPACE</span> key is for cycling through the
-    suggestions. If you want, you can type a space with <span class="key">SHIFT</span>+<span class="key">SPACE</span>,
-    but the suggestions will work without spaces. So you can enter <b>Cmixolydian</b>, or <b>C mix</b>, or <b>Cmix</b>
-    and the suggestions will pop up.</p>
-<p>There is a special letter while focus is in the chord input box: <b>!</b> creates a new Section, with options shown
-    in the table below.
-    While in the chord or mode input boxes, the special letters <b>,</b> and <b>.</b> navigate Section as shown below.
-</p>
-
-<style>
-.chartInputHelp td {
-    border: 1px solid gray;
-
-}
-.chartInputHelp tr td:first-child {
-    font-size: 120%;
-    margin-left: 0.6em;
-    padding: 0.2em;
-    padding-left: 0.4em;
-    padding-right: 0.4em;
-    font-weight: bold;
-    color: rgb(2, 59, 0);
-    background-color: rgb(251, 203, 121);
-}
-</style>
-<table class="chartInputHelp">
-    <tr>
-        <th colspan="2">Special characters in chord input box</th>
-    </tr>
-    <tr>
-        <td><b>!</b></td>
-        <td>new &sect; in C </td>
-    </tr>
-    <tr>
-        <td><b>!d</b></td>
-        <td>new &sect; in D </td>
-    </tr>
-    <tr>
-        <td><b>!/D</b></td>
-        <td>new &sect; in D </td>
-    </tr>
-    <tr>
-        <td><b>!f/d</b></td>
-        <td>create new &sect; in D, LeadKey in F </td>
-    </tr>
-    <tr>
-        <td><b>!f/</b></td>
-        <td>create new &sect; in C, LeadKey in F </td>
-    </tr>
-</table>
-<br>
-<table class="chartInputHelp">
-        <tr>
-        <th colspan="2">Special characters in chord or mode input boxes</th>
-    </tr>
-
-    <tr>
-        <td><b>,</b></td>
-        <td>goto prevSection </td>
-    </tr>
-    <tr>
-        <td><b>.</b></td>
-        <td>goto nextSection </td>
-    </tr>
-    <tr>
-        <td><b>ENTER</b></td>
-        <td>accept chord or mode and move to other input box</td>
-    </tr>
-    <tr>
-        <td><b>SPACE</b></td>
-        <td>next suggestion (cycles around at end)</td>
-    </tr>
-</table>
-
-    
-
-<a name='divChartNotesTab'></a>
-<h3>Chart &gt; Notes Tab</h3>
-<p>Provides more note detail than the Summary Tab. Follows the current Section. Shows NamedNotes, PlayedNotes, and RecordedNotes.  Also provides fully functional TonalPickers 
-    that update in real-time </p>
-
-<p>Each Instrument has its notes shown, and this is essential for figuring out who 
-    is on "Bass".  The Instrument playing a <a href="#glossarynoteRoot">noteRoot</a> is shown, and this is who determines the root used for Tonal chord and mode suggestions.  Under <b>Chords</b> column,
-    you'll see <b>noteRoot:Player: P46_1:F&raquo;</b> if the P4 tuned 6-string guitar P46_1 has a <a href="#glossarynoteRoot">noteRoot</a>.  If an Instrument does not
-    play a <a href="#glossarynoteRoot">noteRoot</a>, then another player can play a <a href="#glossarynoteRoot">noteRoot</a> and this will be detected and reported in that column.
-    The order is: look in the current Instrument, then look in other Instruments, in the order in which they first entered notes in the Section.  So it's 
-    a bit brittle to depend on that order, so it is best to limit one "other" player to play noteRoot. </p> 
-    
-    <p>That is, a guitar can play a <a href="#glossarynoteRoot">noteRoot</a> and this takes
-    precedence for that guitar.  If the guitar doesn't, and the Bass player does, it all works well.  Two guitars could both have <a href="#glossarynoteRoot">noteRoot</a> and each would get 
-suggestions based on their own notes.  But if one guitar doesn't, a Bass player does, and a second guitar does, then which <a href="#glossarynoteRoot">noteRoot</a> the first guitar sees is unstable.</p>
-
-<a name='divChartDetailsTab'></a>
-<h3>Chart &gt; Details Tab</h3>
-<p>This is the place where you can set how the Chart sorts the Song Sections into Chart Positions (INTRO, HEAD, CHORUS, ...).</p>
-
-<p><b>Beats</b> is a number that determines how many beats to show in a Bar.  So if you have 12 beats in a Section, and you enter 4 in the <b>Beats</b> input box, 
-then you'll get three bars on the Chart, the first with the chord, the second two with the chord-repeat symbol: <b>%</b></p>
-<p><b>Caption Width</b> allows you to place (or hide) captions on the chart.</p>
-
-<p><b>Caption</b> allows you to quickly edit all the Captions in one place.</p>
-
-<a name='divChartOptionsTab'></a>
-<h3>Chart &gt; Options Tab</h3>
-<p>There are two Charts, really. The first is the chart seen in the Chart Tab <span class="GUIReferenceInline">Chart
-        &gt; Chart</span>. The second is seen
-    in the Line Tab: <span class="GUIReferenceInline">Chart &gt; Line</span>. Within the Chart Tab, you also get style
-    options set by <b>Bar Style</b>. <b>Line</b> uses a condensed version of Bar Style: LeadSheet, so you can't put <b>Line</b> into
-    "Bare" Bar Style, for example.</p>
-    <p>In fullscreen mode, you can show only show <b>Line</b>.  Trying to show the full Chart in fullscreen mode exits fullscreen.  To show the 
-    <b>Line</b> chart in fullscreen, enter fullscreen with keyboard shortcut <span class="key">f</span> then use command-line <span class="menuExampleLine"><b>/cl</b></span>.  Under Options, choose 
-   <b>Show Next Line</b> to have the <b>Line</b> chart show the upcoming chart line in addition to the chart line the current Section is on.</p>
-<p>The <b>Chart Names</b> textarea determines which additional Chart Positions will be available in <span class="GUIReferenceInline">Chart &gt; Details :: <b>Position</b></span>.  You 
-can add your own, or edit the list.  Some built-in Chart Positions will remain.</p>
-<a name='divChartTab'></a>
-<h3>Chart &gt; Chart  Tab</h3>
-<p>A full LeadSheet chart appears here, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span>.</p>
-
-<a name='divChartLineTab'></a>
-<h3>Chart &gt; Line Tab</h3>
-<p>A condensed version of the LeadSheet chart, available in one or two-line versions, based on the options in <span class="GUIReferenceInline">Chart &gt; Options</span> </p>
 
 
 
@@ -4812,21 +4880,6 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td>Prints out a plaintext listing of the entire command-line heirarchy. 
                 </tr>
                 <tr>
-                    <td>/sps</td>
-                    <td><b>s</b>ection | <b>p</b>rint | <b>s</b>ummary</td>
-                    <td>Prints out all Sections, no Notes. See <a href="#SectionPrintTopic">Section Print</a> 
-                </tr>
-                <tr>
-                    <td>/spd</td>
-                    <td><b>s</b>ection | <b>p</b>rint | <b>d</b>etails</td>
-                    <td>Prints out all Sections, all NamedNotes, summary of PlayedNotes and RecordedNotes.  See <a href="#SectionPrintTopic">Section Print</a>
-                </tr>
-                <tr>
-                    <td>/spn</td>
-                    <td><b>s</b>ection | <b>p</b>rint | <b>n</b>otes</td>
-                    <td>Prints out all Sections, all Instruments, all Notes. See <a href="#SectionPrintTopic">Section Print</a>
-                </tr>
-                <tr>
                     <td>/fp</td>
                     <td><b>f</b>ile | <b>p</b>lugins </td>
                     <td>Opens the <b>plugins</b> menu. Lots of useful stuff in here.  See <a href="help-plugins.html">Plugin Help</a>
@@ -5566,15 +5619,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <a href="#glossaryInstrument">Instrument</a>
         <a href="#glossaryKey">Key</a>
         <a href="#glossaryLeadKey">LeadKey</a>
+        <a href="#glossaryListener">Listener</a>
         <a href="#glossaryMIDINumber">MIDINumber</a>
         <a href="#glossaryMulti">Multi</a>
         <a href="#glossaryNamedNote">NamedNote</a>
         <a href="#glossaryNoteFunctions">Note Functions</a>
         <a href="#glossaryNoteNames">Note Names</a>
         <a href="#glossarynoteRoot">noteRoot</a>
+        <a href="#glossaryObserver">Observer</a>
         <a href="#glossaryPitch">Pitch</a>
         <a href="#glossaryPlayedNote">PlayedNote</a>
         <a href="#glossarypre-bend">pre-bend</a>
+        <a href="#glossaryRoleBadges">Role Badges</a>
         <a href="#glossaryRecordedNote">RecordedNote</a>
         <a href="#glossaryRootChordScale">Root/Chord/Scale</a>
         <a href="#glossaryRoot">Root</a>
@@ -5783,6 +5839,45 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
             </td>
         </tr>
+        <tr id="glossaryRoleBadges">
+            <td>Role Badges
+            </td>
+            <td>
+                The <b>Role Badges</b> look like: <span class="songLibraryInstrument instrumentMain">Main</span>
+                    <span class="songLibraryInstrument instrumentMain instrumentNotVisible">Main-hidden</span> <span
+                    class="songLibraryInstrument instrumentListener">Listener</span> <span
+                    class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span> <span
+                    class="songLibraryInstrument instrumentObserver">Observer</span> <span
+                    class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span>
+                <br>Here "hidden" means that in <span class="GUIReferenceInline">Tunings > Tunings in Song</span> that the checkbox in column one is not checked, so the Instrument is not displayed.
+                <br><b>Main</b> is any regular Instrument that is not a <a href="#glossaryListener">Listener</a> or <a href="#glossaryObserver">Observer</a>.
+                <br>The Role badges are used in the <span class="GUIReferenceInline">Tunings > Tunings in Song</span> table, the <span class="GUIReferenceInline">File > Download</span> page, and in the <span class="GUIReferenceInline">File > Song Library</span>.  They can also be shown with a widget in the <span class="GUIReferenceInline">Info page</span>.
+            </td>
+        </tr>
+        <tr id="glossaryListener">
+            <td>
+                Listener
+            </td>
+            <td>Listeners are Instruments that take their input (by being wired with the <a href="#event-wiring">Event Wiring Controls</a>) from another Instrument.  
+                <br>They are marked with 
+                <a href="#glossaryRoleBadges">Role</a> badges that look like: 
+                    <span class="songLibraryInstrument instrumentListener">Listener</span>
+                    <span class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span>
+            </td>
+        </tr>
+        <tr id="glossaryObserver">
+            <td>
+                Observer
+            </td>
+            <td>Observers are Instruments that take their input (by being wired with the <a href="#event-wiring">Event Wiring Controls</a>) from another Instrument, but they 
+                do so with a "relativeSectionAmount" so that they listen to another Section.  They become read-only when wired.  They do not show
+                beats, but they show the last beat played when they are look-behind, and the first beat played when they are look-ahead.
+                <br>They are marked with 
+                <a href="#glossaryRoleBadges">Role</a> badges that look like: 
+                    <span class="songLibraryInstrument instrumentObserver">Observer</span>
+                    <span class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span>
+            </td>
+        </tr>
         <tr id="glossaryDiamondRows">
             <td>Diamond Rows
             </td>
@@ -5984,7 +6079,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <span class="productsmaller">infinite-neck</span> uses Tonal.js in the <a href="#TonalPicker">TonalPicker</a> 
                 above each instrument, in the Chart &gt; Notes page, and 
                 in the <a href="help-plugins.html#plugin-tonal">TonalPlugin</a> where you can also print out all the modes (including
-                all non-Western modes) with command-line <span class="CmdLineExample">/fpop</span>
+                all non-Western modes) with command-line <span class="menuExampleLine">/fpop</span>
                 <br> - <b>See:</b> <a href="#TonalPicker">TonalPicker</a>
                 <br> - <b>See:</b> <a href="#tonalChordNames">Tonal.js Chord Names</a>
                 <br> - <b>See:</b> <a href="#tonalModeNames">Tonal.js Mode Names</a>
