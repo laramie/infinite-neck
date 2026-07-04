@@ -95,10 +95,11 @@
       }
     }
   },
+  "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "40",
-  "info": "By default, this song has two Sections, with the first Section running this flashcard setting for 1st position through the 7th fret:\n<br>First Position: <a href=\"#raise=arpeggio.flashcard-0-7\">arpeggio.flashcard-0-7</a>\n<br>and the second Section running this flashcard setting for 7th position through the twelfth fret:\n<br>Seventh Position: <a href=\"#raise=arpeggio.flashcard-7-12\">arpeggio.flashcard-7-12</a>\n<br>\n<br>Click LOOP to run both Sections.\n<br>Or use LOOP BEAT [∞] to work on one Section only.\n<br>\n<br>Use <kbd>/vsn</kbd> to show all NamedNotes in every cell transposed into the current key.\n<br>Use <kbd>/vhn</kbd> to hide all NamedNotes again.\n<br>Use <kbd>/vtn</kbd> to toggle all NamedNotes, and leave command-line showing. (Use <a href=\"help.html#one-line-CommandLine\">one-line command-line</a> to make the command-line smaller.)\n<br>\n<br>\n<br>Run without transposition (Key of C only): \n<br>&nbsp;&nbsp;&nbsp;<a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
+  "info": "This song has two Sections, with the first Section running this flashcard setting: <a href=\"#raise=arpeggio.flashcard-0-7\">arpeggio.flashcard-0-7</a>\n<br>The first Section is in First Postion through the 7th fret.\n<br>The second Section is in Seventh Position through the 12th fret.\n<br>\n<br>Click LOOP to run both Sections.\n<br>Or use LOOP BEAT [∞] to work on one Section only.\n<br>\n<br>Use <kbd>/vsn</kbd> to show all NamedNotes in every cell transposed into the current key.\n<br>Use <kbd>/vhn</kbd> to hide all NamedNotes again.\n<br>Use <kbd>/vtn</kbd> to toggle all NamedNotes, and leave command-line showing. (Use <a href=\"help.html#one-line-CommandLine\">one-line command-line</a> to make the command-line smaller.)\n<br>\n<br>\n<br>Run without transposition (Key of C only): \n<br>&nbsp;&nbsp;&nbsp;<a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
@@ -203,7 +204,328 @@
               "colorClass": "noteTransparent"
             }
           },
-          "recordedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "68",
+                "row": "0",
+                "col": "3",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "45",
+                "row": "4",
+                "col": "0",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "Gb",
+                "styleNum": 4,
+                "midinum": "54",
+                "row": "3",
+                "col": "4",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "Gb",
+                "styleNum": 4,
+                "midinum": "66",
+                "row": "1",
+                "col": "6",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "5": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "55",
+                "row": "3",
+                "col": "5",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "6": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "56",
+                "row": "3",
+                "col": "6",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "7": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "55",
+                "row": "2",
+                "col": "0",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "8": [
+              {
+                "noteName": "Db",
+                "styleNum": 4,
+                "midinum": "61",
+                "row": "1",
+                "col": "1",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "9": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "56",
+                "row": "2",
+                "col": "1",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "10": [
+              {
+                "noteName": "Eb",
+                "styleNum": 4,
+                "midinum": "51",
+                "row": "4",
+                "col": "6",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "11": [
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "53",
+                "row": "3",
+                "col": "3",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "12": [
+              {
+                "noteName": "Bb",
+                "styleNum": 4,
+                "midinum": "46",
+                "row": "4",
+                "col": "1",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "13": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "64",
+                "row": "1",
+                "col": "4",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "14": [
+              {
+                "noteName": "Bb",
+                "styleNum": 4,
+                "midinum": "46",
+                "row": "5",
+                "col": "6",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "15": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "52",
+                "row": "4",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "16": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "60",
+                "row": "2",
+                "col": "5",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "17": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "47",
+                "row": "4",
+                "col": "2",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "18": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "71",
+                "row": "0",
+                "col": "6",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "19": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "44",
+                "row": "5",
+                "col": "4",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "20": [
+              {
+                "noteName": "Eb",
+                "styleNum": 4,
+                "midinum": "63",
+                "row": "1",
+                "col": "3",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "21": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "67",
+                "row": "0",
+                "col": "2",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "22": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "67",
+                "row": "1",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "23": [
+              {
+                "noteName": "Db",
+                "styleNum": 4,
+                "midinum": "49",
+                "row": "4",
+                "col": "4",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "24": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "47",
+                "row": "5",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "25": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "57",
+                "row": "2",
+                "col": "2",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "26": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "69",
+                "row": "0",
+                "col": "4",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "27": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "72",
+                "row": "0",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "28": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "52",
+                "row": "3",
+                "col": "2",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "29": [
+              {
+                "noteName": "Eb",
+                "styleNum": 4,
+                "midinum": "51",
+                "row": "3",
+                "col": "1",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "30": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "48",
+                "row": "4",
+                "col": "3",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "31": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "40",
+                "row": "5",
+                "col": "0",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "32": [
+              {
+                "noteName": "Bb",
+                "styleNum": 4,
+                "midinum": "70",
+                "row": "0",
+                "col": "5",
+                "owner": "ArpeggioPlugin"
+              }
+            ]
+          },
           "chord": "",
           "mode": "",
           "tonalSourceSet": "",
@@ -218,7 +540,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 1,
+      "currentBeat": 32,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -228,7 +550,7 @@
               7
             ]
           ],
-          "lastPositionIndex": -1
+          "lastPositionIndex": 0
         }
       },
       "__arpeggioRuntimeIdentity": "s1",
@@ -250,9 +572,9 @@
         "tinyNoteOpacity": "1",
         "currentColorDict": "",
         "NoteDisplaySizes": {
-          "caption": "100x50:22",
+          "caption": "100x30:22",
           "width": "100px",
-          "height": "50px",
+          "height": "30px",
           "NoteFontSize": 22
         },
         "dropDownFunctionSymbols": {
@@ -344,7 +666,328 @@
               "colorClass": "noteTransparent"
             }
           },
-          "recordedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "67",
+                "row": "1",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "65",
+                "row": "2",
+                "col": "10",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "52",
+                "row": "4",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "Db",
+                "styleNum": 4,
+                "midinum": "61",
+                "row": "3",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "5": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "68",
+                "row": "1",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "6": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "57",
+                "row": "3",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "7": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "59",
+                "row": "3",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "8": [
+              {
+                "noteName": "Bb",
+                "styleNum": 4,
+                "midinum": "70",
+                "row": "1",
+                "col": "10",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "9": [
+              {
+                "noteName": "Db",
+                "styleNum": 4,
+                "midinum": "49",
+                "row": "5",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "10": [
+              {
+                "noteName": "Ab",
+                "styleNum": 4,
+                "midinum": "56",
+                "row": "4",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "11": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "48",
+                "row": "5",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "12": [
+              {
+                "noteName": "Eb",
+                "styleNum": 4,
+                "midinum": "51",
+                "row": "5",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "13": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "57",
+                "row": "4",
+                "col": "12",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "14": [
+              {
+                "noteName": "Db",
+                "styleNum": 4,
+                "midinum": "73",
+                "row": "0",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "15": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "60",
+                "row": "3",
+                "col": "10",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "16": [
+              {
+                "noteName": "Bb",
+                "styleNum": 4,
+                "midinum": "58",
+                "row": "3",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "17": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "64",
+                "row": "2",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "18": [
+              {
+                "noteName": "D",
+                "styleNum": 4,
+                "midinum": "62",
+                "row": "3",
+                "col": "12",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "19": [
+              {
+                "noteName": "D",
+                "styleNum": 4,
+                "midinum": "50",
+                "row": "5",
+                "col": "10",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "20": [
+              {
+                "noteName": "Gb",
+                "styleNum": 4,
+                "midinum": "54",
+                "row": "4",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "21": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "76",
+                "row": "0",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "22": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "55",
+                "row": "4",
+                "col": "10",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "23": [
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "52",
+                "row": "5",
+                "col": "12",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "24": [
+              {
+                "noteName": "D",
+                "styleNum": 4,
+                "midinum": "74",
+                "row": "0",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "25": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "47",
+                "row": "5",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "26": [
+              {
+                "noteName": "Gb",
+                "styleNum": 4,
+                "midinum": "66",
+                "row": "2",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "27": [
+              {
+                "noteName": "C",
+                "styleNum": 4,
+                "midinum": "72",
+                "row": "0",
+                "col": "7",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "28": [
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "53",
+                "row": "4",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "29": [
+              {
+                "noteName": "B",
+                "styleNum": 4,
+                "midinum": "71",
+                "row": "1",
+                "col": "11",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "30": [
+              {
+                "noteName": "G",
+                "styleNum": 4,
+                "midinum": "67",
+                "row": "2",
+                "col": "12",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "31": [
+              {
+                "noteName": "Eb",
+                "styleNum": 4,
+                "midinum": "63",
+                "row": "2",
+                "col": "8",
+                "owner": "ArpeggioPlugin"
+              }
+            ],
+            "32": [
+              {
+                "noteName": "A",
+                "styleNum": 4,
+                "midinum": "69",
+                "row": "1",
+                "col": "9",
+                "owner": "ArpeggioPlugin"
+              }
+            ]
+          },
           "chord": "",
           "mode": "",
           "tonalSourceSet": "",
@@ -359,7 +1002,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 1,
+      "currentBeat": 11,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -369,7 +1012,7 @@
               12
             ]
           ],
-          "lastPositionIndex": -1
+          "lastPositionIndex": 0
         }
       },
       "__arpeggioRuntimeIdentity": "s2"

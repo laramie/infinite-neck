@@ -188,6 +188,32 @@
       ]
     },
     {
+      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-ALL.json",
+      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can choose a <em>P46</em> with an <i>S6</i> Listener, or an <em>S6</em> with a <i>P46</i> Listener.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Listener",
+          "visible": false
+        }
+      ]
+    },
+    {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
       "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme.",
       "instruments": [
@@ -199,19 +225,34 @@
       ]
     },
     {
-      "href": "name-that-note/name-that-note-S6.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar.",
+      "href": "name-that-note/name-that-note-ALL.json",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, and also <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
       "instruments": [
         {
           "fromBaseID": "S6",
           "wiring": "Main",
           "visible": true
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
         }
       ]
     },
     {
       "href": "name-that-note/name-that-note-S6-positions.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions.",
+      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, automatically looping through three positions.",
       "instruments": [
         {
           "fromBaseID": "S6",
@@ -316,7 +357,7 @@
   "directoryIntros": [
     {
       "introFor": "root",
-      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features;  <b>practice</b> has songs with drills such as chords, modes, and arpeggios; <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions; <b>theory</b> demonstrates topics of music theory. <br><i>Each song shows Instrument</i> <a href='help.html#fileSongLibrary' target='infinitehelp'>Role Tags</a>:  <span class='songLibraryInstrument instrumentMain'>Main</span> <span class='songLibraryInstrument instrumentMain instrumentNotVisible'>Main-hidden</span> <span class='songLibraryInstrument instrumentListener'>Listener</span> <span class='songLibraryInstrument instrumentListener instrumentNotVisible'>Listener-hidden</span> <span class='songLibraryInstrument instrumentObserver'>Observer</span> <span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>Observer-hidden</span></p>"
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features;  <b>practice</b> has songs with drills such as chords, modes, and arpeggios; <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions; <b>theory</b> demonstrates topics of music theory. <br><i>Each song shows Instrument</i> <a href='help.html#fileSongLibrary' target='infinitehelp'>Role Badges</a>:  <span class='songLibraryInstrument instrumentMain'>Main</span> <span class='songLibraryInstrument instrumentMain instrumentNotVisible'>Main-hidden</span> <span class='songLibraryInstrument instrumentListener'>Listener</span> <span class='songLibraryInstrument instrumentListener instrumentNotVisible'>Listener-hidden</span> <span class='songLibraryInstrument instrumentObserver'>Observer</span> <span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>Observer-hidden</span></p>"
     },
     {
       "introFor": "demo",

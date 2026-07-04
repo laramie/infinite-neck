@@ -43,12 +43,24 @@
             border-radius: 5px;
             margin-top: 1.6em;
        }
+       
        P {
            padding-left: 4em;
        }
        P.example {
            padding-left: 10em;
        }
+       P.codeExample {
+           margin-left: 6em;
+           padding: 0.3em;
+           border: 1px solid green;
+           font-family: "Kode Mono", monospace;
+           white-space: pre;
+       }
+       P.codeExample::first-line {
+           line-height: 0;
+       }
+
        UL {
            padding-left: 8em;
            font-size: 90%;
@@ -5583,6 +5595,25 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized Function+distance steps</td></tr></tbody>
 </table>
 <!-- END GENERATED APPROVED VALUES -->
+<br />
+<br />
+
+
+<a name="macros"></a>
+<h3>Macros ( /fm )</h3>
+<h5>Macro: "first-position</h5>
+<p class="codeExample">
+/snf
+/fpapv "0,5"
+/fpapC
+</p>
+<h5>Macro: "fifth-position</h5>
+<p class="codeExample">
+/snf
+/fpapv "5,9"
+/fpapC
+</p>
+
 
 <br />
 <br />
