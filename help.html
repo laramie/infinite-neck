@@ -231,9 +231,11 @@
        }
 
        .menuExamplePrompt {
+            font-size: 88%;
             font-family: "Kode Mono", monospace;
             display: inline-block;
-            padding: 0.3em;
+            padding: 0.1em;
+            padding-bottom: 0;
             border: 1px solid black;
             font-weight: normal;
             background-color: lightgreen;
@@ -2493,7 +2495,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     and all the notes that match the key letter are highlighted until you do something else.
 </p>
 
-<p>The "Sharps" and "Flats" buttons in the Section menu let you choose whether to show the notes on the neck with sharps or flats.  
+<p>The "Sharps" and "Flats" buttons in the Section Drawer let you choose whether to show the notes on the neck with sharps or flats.  
     This is just a display option, and does not change the actual notes on the neck, which are always the same MIDI pitches.  
     So if you have a C# note, it will be shown as C# if you choose "Sharps", and as D&flat; 
     if you choose "Flats".  The <a href="#commandline">command-line</a> shortcut for doing this is 
@@ -2502,7 +2504,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     [<i>After any <a href="#commandline">command-line</a> command, hit <span class="key">ESC</span> to close the <a href="#commandline">command-line</a>.</i>] 
 </p>
 
-<p>Just like using the dropdown "<a href="#glossaryKey">Key</a>" or "<a href="#glossaryLeadKey">LeadKey</a>" on the Section menu page, on the <a href="#commandline">command-line</a> you can also set the key of a Section with the command 
+<p>Just like using the dropdown "<a href="#glossaryKey">Key</a>" or "<a href="#glossaryLeadKey">LeadKey</a>" on the Section Drawer, on the <a href="#commandline">command-line</a> you can also set the key of a Section with the command 
     <span class="menuExampleLine"><b><small>/sk</small></b></span>.  This brings
     you to the menus choices of <span class="menuExampleLine"><b><small>white keys</small></b></span>
     where you can choose the keys: <span class="menuExampleLine"><b><small>a, b, c, d, e, f, g</small></b></span>, 
@@ -2604,7 +2606,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <p>Click <span class="GUIReferenceInline">View | Save Display Options</span> to overwrite previously saved options for just the current Section. (Also <span class="menuExampleLine"><b><small>/vps</small></b></span>)
 </p>
 
-<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete these options for just the current Section, after which they will inherit the options in effect from previous Sections.  (Also <span class="menuExampleLine"><b><small>/vpc</small></b></span>)
+<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete these options for just the current Section. Later Sections will now inherit the options in effect from previous Sections.  (Also <span class="menuExampleLine"><b><small>/vpc</small></b></span>)
 </p>
 
 <p>You can audit all the Display Options for all Sections that have them set with the <a href="#commandline">command-line</a> <span class="menuExampleLine"><b><small>/vdd</small></b></span>
@@ -2617,7 +2619,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <p>
     You can also sit on the View page and
      watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( <span class="key">&lt;</span> and <span class="key">&gt;</span> ).
-     Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
+     Remember that if one of the controls traps the keyboard, click in some blank spot of the screen, or hit <span class="key">ESC</span>, and then V to
      come back to the View menu.
  </p>
 
@@ -2636,10 +2638,12 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <ul>
     <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
     <li><b>currentColorDict</b> - <span class="GUIReferenceInline">palette &gt; Stylesheets</span></li>
+    <li>
+        These are shown below the Save/Clear buttons so you can monitor them from the View page: 
+        <br><img style="border: 20px solid green; width: 260px;" src="img/help/context/DisplayOptions-from-other-pages.png" width="200">
+    </li>
 </ul>
-
-
- </p>
+</p>
 
  <p>There's a bit more info in the <a href="#glossaryDisplayOptions">Glossary::Display Options</a> entry</p>
 
@@ -3782,11 +3786,12 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#previousBeat">b</a> 
     <a href="#previousBeat">B</a>
      <a href="#toggleAutoColor">c</a>
+     <a href="#keyShowClipPlugin">C</a>
      <a href="#lowerRootKeyAnd">d</a> 
     <a href="#raiseRootKeyAnd">D</a>
      <a href="#toggleWiringOpenState">e</a> 
      <a href="#toggleFullscreenMode">f</a> 
-    <a href="#divFileControls">F</a>
+    <a href="#toggleFileMenuPage">F</a>
     <a href="#showHideTunings">g</a>
      <a href="#changeHeightOfCells">h</a> 
     <a href="#changeHeightOfCells">H</a>
@@ -3805,16 +3810,17 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <a href="#nextBeat">N</a>
      <a href="#useAFingeringOpen">o</a>
      <a href="#showHidePalette">p</a> 
-    <a href="#showHidePalette">P</a>
+    <a href="#showPluginsMenu">P</a>
      <a href="#showHideQuick">q</a>
      <a href="#chart">r</a>
      <a href="#toggleRecording">R</a>
      <a href="#showHideSection">s</a> 
-    <a href="#showHideSection">S</a>
+    <a href="#keyCreateSection">S</a>  
      <a href="#showHideTransport">t</a>
      <a href="#raiseRootKeyAnd">u</a> 
      <a href="#lowerRootKeyAnd">U</a>
      <a href="#showHideView">v</a>
+     <a href="#showHideView">V</a>
      <a href="#changeWidthOfCells">w</a> 
     <a href="#changeWidthOfCells">W</a>
 
@@ -3906,7 +3912,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <tr>
         <td>Caps Lock</td>
         <td><a href="#showHideSongTitle">a</a><a href="#showHideInstrumentToolbar">A</a></td>
-        <td><a href="#showHideSection">s</a><a href="#showHideSection">S</a></td>
+        <td><a href="#showHideSection">s</a><a href="#keyCreateSection">S</a></td>
         <td><a href="#lowerRootKeyAnd">d</a><a href="#raiseRootKeyAnd">D</a></td>
         <td><a href="#toggleFullscreenMode">f</a><a href="#divFileControls">F</a></td>
         <td><a href="#showHideTunings">g</a></td>
@@ -3923,8 +3929,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Shift</td>
         <td>z</td>
         <td>x</td>
-        <td><a href="#toggleAutoColor">c</a><a href="#toggleAutoColor">C</a></td>
-        <td><a href="#showHideView">v</a></td>
+        <td><a href="#toggleAutoColor">c</a><a href="#keyShowClipPlugin">C</a></td>
+        <td><a href="#showHideView">v</a><a href="#showHideView">V</a></td>
         <td><a href="#previousBeat">b</a><a href="#previousBeat">B</a></td>
         <td><a href="#nextBeat">n</a><a href="#nextBeat">N</a></td>
         <td><a href="#showHideCommand">m</a><a href="#showHideCommand">M</a></td>
@@ -3994,7 +4000,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
         <td><a href="#songFileInfoRow" class="MBtn"><b>I</b>nfo</a><br><a href="#showHideFill" class="MBtn">f<b>i</b>ll</a></td>
         <td><a href="#useAFingeringOpen" class="Fingering"><i>o</i>pen fingering</a></td>
-        <td><a href="#showHidePalette" class="MBtn"><b>P</b> plugins</a><br><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a></td>
+        <td><a href="#showPluginsMenu" class="MBtn"><b>P</b> plugins</a><br><a href="#showHidePalette" class="MBtn"><b>p</b>alette</a></td>
         <td><a href="#usethePitchHighlighter" class="Note"><b>[</b><br>pitch</a></td>
         <td><a href="#usetheMultiHighlighter" class="Note"><b>]</b><br>multi</a></td>
         <td>|<br>\</td>
@@ -4003,7 +4009,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <tr>
         <td>Caps Lock</td>
         <td><a href="#showHideInstrumentToolbar">instrument c<b>A</b>ption</a> <a href="#showHideSongTitle">c<b>a</b>ption</a></td>
-        <td><a href="#showHideSection" class="MBtn"><b>S</b> add section</a><br><a href="#showHideSection" class="MBtn"><b>s</b>ection</a></td>
+        <td><a href="#showHideSection" class="MBtn"><b>S</b> add section</a><br><a href="#showHideSection" class="MBtn"><b>s</b>ection drawer</a></td>
         <td><a href="#raiseRootKeyAnd"><b>D</b><br><small>transpose</small> up</a> <a href="#lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</a></td>
         <td><a href="#divFileControls"><b>F</b>ile</a><br><a href="#toggleFullscreenMode"><b>f</b>ullscreen</a></td> 
         <td><a href="#showHideTunings" class="MBtn">tunin<b>g</b>s</a></td>
@@ -4020,8 +4026,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td>Shift</td>
         <td>z</td>
         <td>x</td>
-        <td><a href="#toggleAutoColor"><b>C</b> clip plugin</a><br><a href="#toggleAutoColor"><b>c</b>olor</a></td>
-        <td><a href="#showHideView" class="MBtn"><b>v</b>iew</a></td>
+        <td><a href="#keyShowClipPlugin"><b>C</b> clip plugin</a><br><a href="#toggleAutoColor">auto <b>c</b>olor</a></td>
+        <td><a href="#showHideView" class="MBtn"><b>V</b>,<b>v</b>iew</a></td>
         <td><a href="#previousBeat">prev <b>b</b>eat</a></td>
         <td><a href="#nextBeat"><b>n</b>ext beat</a></td>
         <td><a href="#showHideCommand"  class="MBtn"><b>m</b>enu</a></td>
@@ -4072,15 +4078,23 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <tr id="showHidePalette">
                 <td><span class="key">p</span>
                 </td>
+                <td>
+                </td>
+                <td><span class="key">p</span> show/hide Palette; 
+                </td>
+            </tr>
+            <tr id="showPluginsMenu">   
                 <td><span class="key">P</span>
                 </td>
-                <td><span class="key">p</span> show/hide Palette; <span class="key">P</span> opens the command-line at <span class="menuExampleLine">/fp</span> plugins
+                <td>
+                </td>
+                <td><span class="key">P</span> opens the command-line at <span class="menuExampleLine">/fp</span> plugins
                 </td>
             </tr>
             <tr id="chart">
                 <td><span class="key">r</span>
                 </td>
-                <td><span class="key"></span>
+                <td>
                 </td>
                 <td><span class="key">r</span> show/hide Chart
                 </td>
@@ -4088,24 +4102,39 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <tr id="toggleRecording">
                 <td><span class="key">R</span>
                 </td>
-                <td><span class="key"></span>
+                <td>
                 </td>
                 <td><span class="key">R</span> Toggle REC recording beats button
                 </td>
             </tr>
-            
+            <tr id="toggleFileMenuPage">
+                <td><span class="key">F</span>
+                </td>
+                <td>
+                </td>
+                <td><span class="key">F</span> show/hide File menu page
+                </td>
+            </tr>
             <tr id="showHideSection">
                 <td><span class="key">s</span>
                 </td>
+                <td>
+                </td>
+                <td>show/hide Section Drawer
+                </td>
+            </tr>
+            <tr id="keyCreateSection">
                 <td><span class="key">S</span>
                 </td>
-                <td><span class="key">s</span> show/hide Section menu; <span class="key">S</span> adds a new Section
+                <td>
+                </td>
+                <td>adds a new Section
                 </td>
             </tr>
             <tr id="showHideView">
                 <td><span class="key">v</span>
                 </td>
-                <td>
+                <td><span class="key">V</span>
                 </td>
                 <td>show/hide View menu
                 </td>
@@ -4179,9 +4208,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <tr id="toggleFullscreenMode">
                 <td><span class="key">f</span>
                 </td>
-                <td><span class="key">F</span>
+                <td>
                 </td>
                 <td>toggle Fullscreen mode
+                </td>
+            </tr>
+            <tr id="toggleFileMenuPage">
+                <td>
+                    <span class="key">F</span>
+                </td>
+                <td>
+                </td>
+                <td>show File menu page
                 </td>
             </tr>
             
@@ -4338,9 +4376,18 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
             <tr id="toggleAutoColor">
                 <td><span class="key">c</span>
                 </td>
-                <td><span class="key">C</span>
+                <td>
                 </td>
-                <td><span class="key">c</span> toggles Auto-color; <span class="key">C</span> opens the command-line at ClipPlugin
+                <td>toggles Auto-color; 
+                </td>
+            </tr>
+            <tr id="keyShowClipPlugin">
+                <td>
+                    <span class="key">C</span>
+                </td>
+                <td>
+                </td>
+                <td>opens the command-line at ClipPlugin
                 </td>
             </tr>
             
