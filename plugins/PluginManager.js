@@ -608,6 +608,21 @@ export class PluginManager {
         pluginId
       })];
 
+    children.push(new MenuItemProxy(this, {
+      name: 'raise:id',
+      caption: buildCaption('id', 'i'),
+      trigger: 'i',
+      action: 'pluginAction:graveyardRaiseByKey',
+      pluginId,
+      popOnBang: true,
+      input: {
+        type: 'input',
+        caption: 'graveyard ID',
+        datatype: 'string',
+        id: 'value'
+      }
+    }));
+
     return new MenuItemProxy(this, {
       name: 'raise',
       caption: buildCaption('raise', 'r'),
@@ -692,6 +707,10 @@ export class PluginManager {
       case 'pluginAction:graveyardLink': {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.linkPluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardRaiseByKey': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.raisePluginSnapshotByKey(pluginId, rawValue);
       }
       case 'pluginAction:graveyardRaise':
         return this.raisePluginSnapshotByGraveyardIndex(pluginId, menuItem.value);

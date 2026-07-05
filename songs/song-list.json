@@ -210,6 +210,11 @@
           "fromBaseID": "P46",
           "wiring": "Listener",
           "visible": false
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
         }
       ]
     },
@@ -365,7 +370,11 @@
     },
     {
       "introFor": "practice",
-      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, and <i>scales</i>."
+      "html": "Practice songs for <i>chords</i>, <i>arpeggios</i>, <i>modes</i>, and <i>scales</i>. The <i>ALL</i> versions have multiple tunings you can switch with links in <i>Info</i>."
+    },
+    {
+      "introFor": "name-that-note",
+      "html": "Games for memorizing where all the notes are on the neck for various instruments and positions. The <i>ALL</i> versions have multiple tunings you can switch with links in <i>Info</i>."
     },
     {
       "introFor": "theory",
