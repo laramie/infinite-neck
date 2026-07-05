@@ -333,6 +333,7 @@
         "/tha",
         "/tsi \"P48_main\"",
         "/fpaC",
+        "/fptgri \"blues\"",
         "/fpaIi \"P48_main\"",
         "/fpfIi \"P48_main\"",
         "/rsR"
@@ -342,7 +343,7 @@
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "120",
-  "info": "To see notes, just hit LOOP!\n<br>\n<br>\nThis song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.\n<br>\n<br>\nThis song is a small variant of the similarly-named song, that adds the FillPlugin to fill in chords in SingleNotes and mode in TinyNotes.\n<br>\n<br>\nAs written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.\n<br>\n<br>You can change what keys you practice by setting <kbd>/fptc</kbd>\n<br>Here are some presets:\n<ul>\n<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>\n</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>\n</li></ul>\n\n<br>You can choose to practice chords, or modes, and you can run with different Instruments:\n<ul>\n<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=S6\">chords</a></li>\n<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=S6\">modes</a></li>\n<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=P46\">chords</a></li>\n<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=P46\">modes</a></li>\n</ul>",
+  "info": "To see notes, just hit LOOP!\n<br>\n<br>\nThis song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.\n<br>\n<br>\nThis song is a small variant of the similarly-named song, that adds the FillPlugin to fill in chords in SingleNotes and mode in TinyNotes.\n<br>\n<br>\nAs written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.\n<br>\n<br>You can change what keys you practice by setting <kbd>/fptc</kbd>\n<br>Here are some presets:\n<ul>\n<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>\n</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>\n</li></ul>\n\n<br>You can choose to practice chords, or modes, and you can run with different Instruments:\n<ul>\n<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=S6\">chords</a></li>\n<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=S6\">modes</a></li>\n<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=P46\">chords</a></li>\n<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=P46\">modes</a></li>\n<li>Run <em>P48_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=P48\">chords</a> with a \"blues\" transposition.</li>\n<li>Run <em>P48_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=P48\">modes</a> with a \"blues\" transposition.</li>\n</ul>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
@@ -375,7 +376,7 @@
     "boxCaptionFontsize": "100%"
   },
   "rootID": "3",
-  "sharps": false,
+  "sharps": true,
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
@@ -389,11 +390,11 @@
       "chartMode": "C mixolydian",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 8,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 1,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
@@ -484,11 +485,11 @@
       "chartMode": "C minor pentatonic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 8,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 12,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [
@@ -533,11 +534,11 @@
       "chartMode": "G mixolydian",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 8,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
       "currentBeat": 12,
-      "sharps": false,
+      "sharps": true,
       "pluginData": {
         "arpeggio": {
           "positions": [

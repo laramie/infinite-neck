@@ -1695,6 +1695,7 @@ export function performCmdAction(menuItem, args){
 		case "pluginAction:graveyardBury":
 		case "pluginAction:graveyardSave":
 		case "pluginAction:graveyardRaise":
+		case "pluginAction:graveyardRaiseByKey":
 		case "pluginAction:graveyardLink": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';

@@ -102,6 +102,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 }));
 
 const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders, getValue } = await import('../../key-handlers.js');
+const pluginRuntimeModule = await import('../../plugins/pluginRuntime.js');
 let mockDownloadBackupThenClearGraveyardByType;
 
 function createSong() {
@@ -598,6 +599,22 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(result.result).toBe('REC toggled');
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
+	});
+
+	test('pluginAction:graveyardRaiseByKey dispatches through plugin manager runtime', () => {
+		const invokeMenuAction = jest.fn(() => ({ result: 'revived transpose as blues' }));
+		pluginRuntimeModule.default.invokeMenuAction = invokeMenuAction;
+
+		const result = performCmdAction(
+			{ action: 'pluginAction:graveyardRaiseByKey', pluginId: 'transpose', input: { id: 'value' } },
+			{ value: 'blues' }
+		);
+
+		expect(invokeMenuAction).toHaveBeenCalledWith(
+			expect.objectContaining({ action: 'pluginAction:graveyardRaiseByKey', pluginId: 'transpose' }),
+			{ value: 'blues' }
+		);
+		expect(result.result).toBe('revived transpose as blues');
 	});
 
 	test('/fac toggle actions update graveyard type state and keep menu stack', () => {
