@@ -178,38 +178,27 @@
     },
     {
       "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill.json",
-      "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>.",
-      "instruments": [
-        {
-          "fromBaseID": "P46",
-          "wiring": "Main",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-ALL.json",
       "description": "A <b>dom7-minor-Vdom7</b> progression, using pentatonic modes, and transposing through 6 keys.  You can choose a <em>P46</em> with an <i>S6</i> Listener, or an <em>S6</em> with a <i>P46</i> Listener.  You can adjust the transpositions.  Uses <em>FillPlugin</em> to fill in <em>TinyNotes</em> to show the mode notes you could play while soloing, but doesn't arpeggiate them.  Uses theme <em>Autobahn</em>.",
       "instruments": [
         {
           "fromBaseID": "P46",
           "wiring": "Main",
-          "visible": true
+          "visible": false
         },
         {
           "fromBaseID": "S6",
           "wiring": "Listener",
-          "visible": true
+          "visible": false
         },
         {
           "fromBaseID": "S6",
           "wiring": "Main",
-          "visible": false
+          "visible": true
         },
         {
           "fromBaseID": "P46",
           "wiring": "Listener",
-          "visible": false
+          "visible": true
         },
         {
           "fromBaseID": "P48",
@@ -219,19 +208,8 @@
       ]
     },
     {
-      "href": "practice/pentatonics-7-m-V7-in-6-keys-with-fill-strings-theme.json",
-      "description": "Same as <i>pentatonics-7-m-V7-in-6-keys-with-fill.json</i> but with theme <em>Guitar Black Glow</em> showing a skeuomorphic guitar <i>'strings'</i> theme.",
-      "instruments": [
-        {
-          "fromBaseID": "P46",
-          "wiring": "Main",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "href": "name-that-note/name-that-note-ALL.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, and also <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
+      "href": "name-that-note/name-that-note.json",
+      "description": "<em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
       "instruments": [
         {
           "fromBaseID": "S6",
@@ -256,41 +234,60 @@
       ]
     },
     {
-      "href": "name-that-note/name-that-note-S6-positions.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, automatically looping through three positions.",
+      "href": "name-that-note/name-that-note-positions.json",
+      "description": "<em>name-that-note</em> game for Guitars, automatically looping through three positions.",
       "instruments": [
         {
           "fromBaseID": "S6",
           "wiring": "Main",
           "visible": true
-        }
-      ]
-    },
-    {
-      "href": "name-that-note/name-that-note-S6-positions-by-section.json",
-      "description": "<em>name-that-note</em> game for the <em>Standard-tuning 6-string</em> Guitar, with choice of positions by Section.",
-      "instruments": [
+        },
         {
-          "fromBaseID": "S6",
+          "fromBaseID": "DropD",
           "wiring": "Main",
-          "visible": true
-        }
-      ]
-    },
-    {
-      "href": "name-that-note/name-that-note-P4.json",
-      "description": "<em>name-that-note</em> game for the <em>P4-tuning 6-string</em> Guitar.",
-      "instruments": [
+          "visible": false
+        },
         {
           "fromBaseID": "P46",
           "wiring": "Main",
-          "visible": true
+          "visible": false
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
         }
       ]
     },
     {
-      "href": "name-that-note/name-that-note-bass-ALL.json",
-      "description": "<em>name-that-note</em> game for <em>ALL basses</em>. (Select with links in <i>Info</i>)",
+      "href": "name-that-note/name-that-note-positions-by-section.json",
+      "description": "<em>name-that-note</em> game for Guitars, with choice of positions by Section.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-bass.json",
+      "description": "<em>name-that-note</em> game for <em>basses</em>. (Select with links in <i>Info</i>)",
       "instruments": [
         {
           "fromBaseID": "Bass4",
@@ -374,7 +371,7 @@
     },
     {
       "introFor": "name-that-note",
-      "html": "Games for memorizing where all the notes are on the neck for various instruments and positions. The <i>ALL</i> versions have multiple tunings you can switch with links in <i>Info</i>."
+      "html": "Games for memorizing where all the notes are on the neck for various instruments and positions. You can switch Instrument with links in <i>Info</i>."
     },
     {
       "introFor": "theory",
