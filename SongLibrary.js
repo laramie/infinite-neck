@@ -155,12 +155,17 @@ function renderIntroRow(introHtml) {
 
 function renderSongRow(song) {
 	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
+	const copyArgsAttr = escapeAttribute(JSON.stringify([song.href]));
 	const safeLinkText = escapeHtml(song.filename || song.href);
+	const copyLabel = escapeAttribute(`Copy song link for ${song.filename || song.href}`);
 	const instrumentBadges = renderInstrumentBadges(song.instruments || []);
 	return (
 		"<div class='songLibraryRow'>"
 			+ "<div class='songLibraryCell songLibraryCellLink'>"
 			+ "<a href='#' data-action='loadSong' data-action-args='" + argsAttr + "'>" + safeLinkText + '</a>'
+			+ "<button type='button' class='songLibraryCopyButton' data-action='copySongLink' data-action-args='" + copyArgsAttr + "' aria-label='" + copyLabel + "' title='" + copyLabel + "'>"
+			+ "<img src='img/clipboard-arrow.png' alt='' aria-hidden='true'>"
+			+ '</button>'
 			+ '</div>'
 			+ "<div class='songLibraryCell songLibraryCellDescription'>" + (song.description || '') + '</div>'
 			+ "<div class='songLibraryCell songLibraryCellInstruments'>" + instrumentBadges + '</div>'

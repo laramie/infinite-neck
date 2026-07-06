@@ -1532,12 +1532,12 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
         generally sets Scaling Prefs, and certainly has its own instruments displayed.
     
 </p>
-<p><span class="productsmaller">infinite-neck</span> will also accept a few parameters from the URL:
+<p><span class="productsmaller">infinite-neck</span> will also accept URL query params and fragments:
 <table class="ExamplesTable">
     <tr>
-        <th>Query Param
+        <th>URL input
         </th>
-        <th>Values
+        <th>Meaning
         </th>
         <th>Example
         </th>
@@ -1545,12 +1545,37 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
     <tr>
         <td>tuning
         </td>
-        <td><span class="GUIReferenceInline">Tunings | Tunings Library :: ID</span> e.g. Bass4, P46, S6
+        <td>Show a default tuning when launching without opening a song. Values are <span class="GUIReferenceInline">Tunings | Tunings Library :: ID</span>, e.g. Bass4, P46, S6.
         </td>
         <td>http://demo.laramiecrocker.com/infinite-neck?tuning=Bass4
         </td>
     </tr>
+    <tr>
+        <td>song
+        </td>
+        <td>Open a Song Library file by path under <span class="GUIReferenceInline">songs/</span>.
+        </td>
+        <td>http://demo.laramiecrocker.com/infinite-neck?song=name-that-note/name-that-note.json
+        </td>
+    </tr>
+    <tr>
+        <td>macro
+        </td>
+        <td>Run a macro id after song load. If no matching macro exists in the current song, this safely does nothing except writing a log message.
+        </td>
+        <td>http://demo.laramiecrocker.com/infinite-neck?song=name-that-note/name-that-note.json&macro=P46
+        </td>
+    </tr>
+    <tr>
+        <td>fragment: raise/macro
+        </td>
+        <td>Run Info-link actions from a hash fragment: one or more <b>raise=plugin.savedKey</b> entries and optional <b>macro=macroId</b>.
+        </td>
+        <td>http://demo.laramiecrocker.com/infinite-neck#raise=transpose.blues,raise=arpeggio.firstPosition,macro=S6
+        </td>
+    </tr>
 </table>
+<small>Precedence: if <b>song=</b> is present, startup <b>tuning=</b> is ignored because loaded songs already contain tuning state.</small>
 </p>
 <a name="copy-paste-delete-undo-o-my"></a>
 <h3>Copy, Paste, Delete, Save, Versions, O My!</h3>

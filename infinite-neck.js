@@ -217,6 +217,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		void navigator.clipboard.writeText(text);
 	}
 
+	export function copySongLink(songName, macroId = '') {
+		const songPath = `${songName || ''}`.trim();
+		if (!songPath || typeof window === 'undefined') {
+			return;
+		}
+		const url = new URL(window.location.href);
+		url.search = '';
+		url.hash = '';
+		url.searchParams.set('song', songPath);
+		const fallbackMacro = `${macroId || ''}`.trim()
+			|| `${new URLSearchParams(window.location.search).get('macro') || ''}`.trim();
+		if (fallbackMacro) {
+			url.searchParams.set('macro', fallbackMacro);
+		}
+		void navigator.clipboard.writeText(url.toString());
+	}
+
 	let WIRING_OPEN = false;
 	export function restoreWiringOpenState(){
 		setWiringOpenState(WIRING_OPEN);
@@ -1606,6 +1623,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function showDefaultTunings(){
 		let preferredTuningArray = applyInstrumentPrefs();
 		const params = new URLSearchParams(window.location.search);
+		const songParam = normalizeUrlSongPath(params.get('song'));
+		if (songParam) {
+			// song= opens a saved song, and that song's own tunings should win.
+			return;
+		}
 		const tuning = params.get('tuning');
 		if (tuning){
 			TuningsLibrary.showDefaultTuning(tuning);
@@ -1616,6 +1638,41 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		} else {
 			TuningsLibrary.showDefaultTuning();
 		}
+	}
+
+	function normalizeUrlSongPath(rawSongPath = '') {
+		let text = `${rawSongPath || ''}`.trim();
+		if (!text) {
+			return '';
+		}
+		try {
+			text = decodeURIComponent(text);
+		} catch {
+			// Keep original if decodeURIComponent fails.
+		}
+		text = text
+			.trim()
+			.replace(/\\/g, '/')
+			.replace(/^\/+/, '')
+			.replace(/^songs\//i, '')
+			.replace(/\s+\.json$/i, '.json');
+		if (!text || text.includes('..')) {
+			return '';
+		}
+		return text;
+	}
+
+	function loadSongFromUrlQueryParam(){
+		if (typeof window === 'undefined') {
+			return false;
+		}
+		const params = new URLSearchParams(window.location.search);
+		const songPath = normalizeUrlSongPath(params.get('song'));
+		if (!songPath) {
+			return false;
+		}
+		loadSong(songPath);
+		return true;
 	}
 
 	function scheduleUrlMacroRun(){
@@ -3299,7 +3356,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			saveInstrumentPrefs,
 			applyInstrumentPrefs,
 			clearInstrumentPrefs,
-			copyApprovedPattern
+			copyApprovedPattern,
+			copySongLink
 		};
 
 		$(document).on('click', '[data-action]', function(e) {
@@ -3618,6 +3676,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			EventBus.trigger('UpdateAllWiringSelects');
 			setWiringOpenState(false);
 			gAppInit_running = false;
+			loadSongFromUrlQueryParam();
 			fullRepaint();
 			scrollToTop();
 		});

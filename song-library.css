@@ -81,6 +81,26 @@
 .songLibraryCellLink {
     overflow-wrap: anywhere;
     font-family: "Courier New", monospace;
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+}
+
+.songLibraryCopyButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1em;
+    margin-left: 0.2em;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.songLibraryCopyButton img {
+    width: 1.1em;
+    height: 1.1em;
+    display: block;
 }
 
 .songLibraryCellDescription {
