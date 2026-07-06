@@ -1563,15 +1563,15 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
         </td>
         <td>Run a macro id after song load. If no matching macro exists in the current song, this safely does nothing except writing a log message.
         </td>
-        <td>http://demo.laramiecrocker.com/infinite-neck?song=name-that-note/name-that-note.json&macro=P46
+        <td>http://demo.laramiecrocker.com/infinite-neck?song=name-that-note/name-that-note.json&amp;macro=P46
         </td>
     </tr>
     <tr>
         <td>fragment: raise/macro
         </td>
-        <td>Run Info-link actions from a hash fragment: one or more <b>raise=plugin.savedKey</b> entries and optional <b>macro=macroId</b>.
+        <td>Run Info-link actions from a hash fragment: one or more <b>raise=plugin.savedKey</b> entries and optional <b>macro=macroId</b>. These only work with a loaded song.
         </td>
-        <td>http://demo.laramiecrocker.com/infinite-neck#raise=transpose.blues,raise=arpeggio.firstPosition,macro=S6
+        <td>#raise=transpose.blues,raise=arpeggio.firstPosition,macro=S6
         </td>
     </tr>
 </table>
