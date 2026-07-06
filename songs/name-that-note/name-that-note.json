@@ -311,8 +311,26 @@
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
-  "defaultBPM": "333",
-  "info": "Run without transposition (Key of C only): <a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>\n<br>Run with chromatic transposition: <a href=\"#raise=transpose.chromatic\">transpose.chromatic</a>\n<br>\n<br>Play <a href=\"#macro=S6\">Standard-tuning 6-string</a>\n<br>Play <a href=\"#macro=DropD\">Drop-D 6-string</a>\n<br>Play <a href=\"#macro=P46\">P4-tuning 6-string</a>\n<br>Play <a href=\"#macro=P48\">P4-tuning 8-string</a>\n\n<br>\n<br>Play in <a href=\"#macro=position-1\">First Position</a>\n<br>Play in <a href=\"#macro=position-3\">Third Position</a>\n<br>Play in <a href=\"#macro=position-4\">Fourth Position</a>\n<br>Play in <a href=\"#macro=position-7\">Seventh Position</a>\n<br>Play in <a href=\"#macro=position-9\">Ninth Position</a>\n<br>Play in <a href=\"#macro=position-12\">Twelth Position</a>",
+  "defaultBPM": "60",
+  "info": {
+    "lines": [
+      "Run without transposition (Key of C only): <a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
+      "<br>Run with chromatic transposition: <a href=\"#raise=transpose.chromatic\">transpose.chromatic</a>",
+      "<br>",
+      "<br>Play <a href=\"#macro=S6\">Standard-tuning 6-string</a>",
+      "<br>Play <a href=\"#macro=DropD\">Drop-D 6-string</a>",
+      "<br>Play <a href=\"#macro=P46\">P4-tuning 6-string</a>",
+      "<br>Play <a href=\"#macro=P48\">P4-tuning 8-string</a>",
+      "",
+      "<br>",
+      "<br>Play in <a href=\"#macro=position-1\">First Position</a>",
+      "<br>Play in <a href=\"#macro=position-3\">Third Position</a>",
+      "<br>Play in <a href=\"#macro=position-4\">Fourth Position</a>",
+      "<br>Play in <a href=\"#macro=position-7\">Seventh Position</a>",
+      "<br>Play in <a href=\"#macro=position-9\">Ninth Position</a>",
+      "<br>Play in <a href=\"#macro=position-12\">Twelth Position</a>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
@@ -349,7 +367,7 @@
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
-  "songName": "name-that-note-ALL",
+  "songName": "name-that-note",
   "theme": "Autobahn",
   "sections": [
     {
