@@ -271,6 +271,18 @@ const macroSchema = {
     additionalProperties: true
 };
 
+const infoLinesSchema = {
+    type: 'object',
+    properties: {
+        lines: {
+            type: 'array',
+            items: { type: 'string' }
+        }
+    },
+    required: ['lines'],
+    additionalProperties: false
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -295,6 +307,12 @@ export const songFileV2Schema = {
         },
         songName: { type: 'string', minLength: 1 },
         theme: { type: 'string', minLength: 1 },
+        info: {
+            anyOf: [
+                { type: 'string' },
+                infoLinesSchema
+            ]
+        },
         userTheme: {
             anyOf: [
                 { type: 'string' },

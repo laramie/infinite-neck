@@ -139,6 +139,29 @@ function normalizeSongMacros(rawMacros) {
     return macros;
 }
 
+function normalizeSongInfo(rawInfo) {
+    if (typeof rawInfo === 'string') {
+        return rawInfo;
+    }
+    if (Array.isArray(rawInfo)) {
+        return rawInfo.map((line) => `${line ?? ''}`).join('\n');
+    }
+    if (rawInfo && typeof rawInfo === 'object' && Array.isArray(rawInfo.lines)) {
+        return rawInfo.lines.map((line) => `${line ?? ''}`).join('\n');
+    }
+    if (rawInfo == null) {
+        return '';
+    }
+    return `${rawInfo}`;
+}
+
+function persistSongInfo(rawInfo) {
+    const infoText = normalizeSongInfo(rawInfo);
+    return {
+        lines: infoText.length > 0 ? infoText.split('\n') : []
+    };
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -204,6 +227,7 @@ export class SongPersistence {
         this.chartOptions.HEADNames = normalizeChartHeadNames(this.chartOptions.HEADNames);
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
         this.myTunings = normalizeMyTunings(this.myTunings);
+        this.info = normalizeSongInfo(this.info);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
@@ -237,6 +261,9 @@ export class SongPersistence {
     static persistentSongFileReplacer(key, value){
         if (key === 'colorDicts'){
             return SongPersistence.filterPersistentColorDicts(value);
+        }
+        if (key === 'info') {
+            return persistSongInfo(value);
         }
         if (   key === 'userColors' 
             || key === 'fretLengths' 
