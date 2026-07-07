@@ -556,6 +556,10 @@
             scroll-margin-top: 2.3em; 
         }
 
+        .infoRendered {
+            margin-left: 2em;
+        
+        }
         /* infoRendered from  templates/info/info.css */
         .infoRendered table {
             border-collapse: collapse;
@@ -1616,8 +1620,31 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 <h4>Raising Plugin Settings</h4>
 <p>Many of the songs in the Song Library use links to raise a plugin setting from the Graveyard.  This enables you to swap out plugin settings on the fly, so you can switch transpositions, arpeggio positions, etc.  Just click the link and restart the looping, since a raise link stops looping.
 </p>
-<p>To change transposition intervals (chroma) yourself, you can just go into the TransposePlugin and change the property <b>chroma</b>.  Hit <span class="key">ESC</span>, then <span class="menuExampleLine"><b>/fptc</b></span>.  The numbers of each chromatic step are separated by commas, so <b>3,6,9</b> would set the intervals to <b>[0,3,6,9]</b> since the array brackets are added for you, and the inititial key (0) is added for you.
+<p>For example, the <b>name-that-note</b> songs allow you to change TransposePlugin settings with a handy table: 
+
+<div class="infoRendered">
+<table>
+<caption>Transposition</caption>
+<tbody>
+<tr>
+<td>Key of C only</td>
+<td><a href="#raise=transpose.chromatic">transpose.chromatic</a></td>
+</tr>
+<tr>
+<td>Chromatic</td>
+<td><a href="#raise=transpose.no-transposition">transpose.no-transposition</a></td>
+</tr>
+</tbody></table>
+</div>
 </p>
+<p>To change transposition intervals (chroma) yourself, you can just go into the TransposePlugin and change the property <b>chroma</b>.  
+    Hit <span class="key">ESC</span>, then <span class="menuExampleLine"><b>/fptc</b></span>.  
+    The numbers of each chromatic step are separated by commas, 
+    so <b>3,6,9</b> would set the intervals to <b>[0,3,6,9]</b> 
+    since the array brackets are added for you, and the inititial key (0) is added for you.  You would enter that like this:</p>
+<p style="margin-left: 1.5em;"><span class="menuExamplePromptBox"><b>c</b>hroma: <span class="menuExampleLine">3,6,9</span></span></p>
+
+
 
 <p>Songs in the Song Library use ArpeggioPlugin's <b>positions</b> property to set the range of 
     frets to select for rendering the notes in the arpeggio.  Playing in "First Position" on a guitar means your
@@ -1638,12 +1665,13 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
     </div>
 </p>
 
+<h4>Setting Positions Manually</h4>
 <p>If you want to set other positions manually, edit the ArpeggioPlugin's positions property with <span class="menuExampleLine"><b>/fpapv</b></span> then enter the values:
-<p><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,4],[5,8],[8,12]]</span></span></p>
+<p style="margin-left: 1.5em;"><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,4],[5,8],[8,12]]</span></span></p>
 <p>This is equivalent to 1st, 5th, 8th (1st should start at 0 so you get open strings)</p>
 <br>
 <p>Or set the values to 1st, and 7th positions: </p>
-<p><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,7],[7,12]]</span></span></p>
+<p style="margin-left: 1.5em;"><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,7],[7,12]]</span></span></p>
 
 <h4>Changing View Settings</h4>
 <p>If you set any <span class="GUIReferenceInline">View</span> options, it is best to save them by being in the 
@@ -1651,6 +1679,19 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
     For example, <span class="GUIReferenceInline">View > Hide Named Notes</span> or 
     <span class="GUIReferenceInline">View > Show All Note Names</span>
 </p>
+
+<h4>Song Resets</h4>
+<p>If you change settings and want to get back to the start of the song, you can usually just navigate with the <a href="#transport">Transport</a> to the first Section, or 
+    use the command-line <span class="menuExampleLine"><b>/rsf</b></span>.
+</p>
+<p>However, sometimes if you are partway through Transpositions, you can reset to the beginning of the Transposition cycle and any ArpeggioPlugin internal values such as positions. 
+    To do this, performa a "Reset song (hard)" with <span class="menuExampleLine"><b>/rsR</b></span>.  The "hard reset" resets the TransposePlugin to the initial state.  A "reset song" with <span class="menuExampleLine"><b>/rsr</b></span> resets the Arpeggio, but might not fully reset the Tranposition.
+</p>
+<p>If you get into using the <b>practice</b> songs, you may want to continually go back to the first Section, or fast-forward to the next Section, or go to the last beat in the Song so that the TransposePlugin transposes and then the song restarts.  These can be accomplished
+with the <a href="#SpacebarMapping">spacebar mappings</a>, for example "Restart song": <span class="menuExampleLine"><b>/fsR</b></span> or "Last beat in song":<span class="menuExampleLine"><b>/fssL</b></span></p>
+
+<p>With these <a href="#SpacebarMapping">spacebar mappings</a> you can just hit the <span class="key">SPACE</span> key and your chosen action happens.  This is useful when you have your instrument on your knee and you just want to swat at the keyboard during exercises.</p>
+
 
 
 

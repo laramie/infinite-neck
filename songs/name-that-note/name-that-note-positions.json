@@ -266,10 +266,10 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
-      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a>",
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
       "<br>",
       "<br>",
-      "This song has one Section, but ArpeggioPlugin runs flashcard mode, with three positions (First Position, Fifth Position, Eighth Position) which is <b>position</b> <em>[[0,4],[5,8],[8,12]]</em>.  ",
+      "This song has one Section, but ArpeggioPlugin runs flashcard mode, with three positions (First Position, Fifth Position, Eighth Position) which is <b>positions</b> <em>[[0,4],[5,8],[8,12]]</em>.  ",
       "<br>",
       "<br>To exercise one position, loop until that position is active, then pause looping.  Then hit the little infinity beat loop button [∞] in the Transport.  This will loop beats in this Section, without crossing the Song boundary so that Arpeggio never jumps to the next position.  When you are ready for the next position, use Section LOOP button to loop the Song, which crosses to the next position value.",
       "<br>",

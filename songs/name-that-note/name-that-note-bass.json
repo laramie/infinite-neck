@@ -255,6 +255,7 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
       "This song has four Bass instruments installed: 4, 5, 6, and 8 strings:",
       "<br>",
       "<table>",

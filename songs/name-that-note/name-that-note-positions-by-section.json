@@ -266,7 +266,7 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
-      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a>",
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
       "<br>",
       "<br>",
       "This song has six Sections, each with a different position for ArpeggioPlugin.  To exercise one position, jump to the Section with the position you want.  Then hit the little infinity beat loop button [∞] in the Transport.  This will loop beats in this Section, without going to the next Section.  When you are ready for the next position, goto the next Section and loop beats there.",

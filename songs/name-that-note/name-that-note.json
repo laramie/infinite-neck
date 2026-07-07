@@ -314,7 +314,7 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
-      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a>",
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
       "<br>",
       "<br>",
       "Default is S6, positions [0,4], and Chromatic Transposition.  Use the links below to set other Tunings, Positions, and Transpositions.",

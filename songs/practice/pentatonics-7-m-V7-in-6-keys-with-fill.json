@@ -328,7 +328,8 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
-      "To see notes, just hit LOOP!",
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
+      "<br><br>To see notes, just hit LOOP!",
       "<br>",
       "<br>",
       "This song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.",
@@ -339,7 +340,7 @@
       "<br>",
       "As written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.",
       "<br>",
-      "<br>You can change what keys you practice by setting <kbd>/fptc</kbd>",
+      "<br>You can change what keys you practice by setting <menu>/fptc</menu>",
       "<br>Here are some presets:",
       "<ul>",
       "<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>",
