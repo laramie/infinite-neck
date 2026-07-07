@@ -217,7 +217,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		void navigator.clipboard.writeText(text);
 	}
 
-	export function copySongLink(songName, macroId = '') {
+	export function copySongLink(songName) {
 		const songPath = `${songName || ''}`.trim();
 		if (!songPath || typeof window === 'undefined') {
 			return;
@@ -226,11 +226,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		url.search = '';
 		url.hash = '';
 		url.searchParams.set('song', songPath);
-		const fallbackMacro = `${macroId || ''}`.trim()
-			|| `${new URLSearchParams(window.location.search).get('macro') || ''}`.trim();
-		if (fallbackMacro) {
-			url.searchParams.set('macro', fallbackMacro);
-		}
 		void navigator.clipboard.writeText(url.toString());
 	}
 

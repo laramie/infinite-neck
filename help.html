@@ -1011,6 +1011,7 @@
                     </ul>
                 </li>
                 <li><a href="#usage">Usage</a></li>
+                <li><a href="#runningSongFromLibrary">Running a Song from the Library</a></li>
                 <li><a href="#startup">Startup</a></li>
                 <li><a href="#copy-paste-delete-undo-o-my">Copy, Paste, Delete, Save, Versions, O My!</a></li>
                 <li><a href="#note-types-special-handling">Note Types -- special handling</a></li>
@@ -1515,6 +1516,51 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
  <p><img src="img/help/clear.png"></p>
 
+
+<a name="runningSongFromLibrary"></a>
+ <hr>
+<h3>Running a Song from the Library</h3>
+
+<p>From <span class="GUIReferenceInline">File > Song Library</span> you can launch one of our demo songs or practice songs.  The <b>demo</b> songs show features of <span class='productsmaller'>infinite-neck</span>.  The <b>practice</b> and <b>name-that-note</b> songs provide drills such as arpeggios and flashcards, and are a great way to get familiar with what <span class='productsmaller'>infinite-neck</span> can do and to learn the program.  This section goes over some keyboard shortcuts and command-lines that help you run the songs without having to know about how to set up brand new songs or set up plugins.</p>
+
+<p><small><i>Note: the keyboard shortcuts work best when you hit <span class="key">ESC</span> first to get rid of elements that trap keystrokes like the Palette, the View page, the command-line, etc.</i></small></p>
+
+<h4>LOOP</h4>
+
+<p>The songs in the <span class="GUIReferenceInline">File > Song Library</span> are all designed for looping.  Make sure the <a href="#transport">Transport</a> is showing with keyboard shortcut <span class="key">t</span> so you can hit the <button class="BtnPunchedOut">LOOP</button> button.  There are several <a href="#SectionStatusWidget">LooperLights</a> (one in the Song Caption, and one in each Instrument Caption or Left-side rail) and if these are visible, they show a green border when not looping, and a magenta border when looping.  So once you are familiar with these, you don't need the Transport: you can just toggle (start/stop) looping with keyboard shortcut <span class="key">l</span> <small>(see: <a href="#loop">looping shortcuts</a>)</small>.</p>
+
+<p>You can also use the command-line. <span class="key">ESC</span> followed by <span class="menuExampleLine"><b>/rl</b></span> toggles looping.  <span class="menuExampleLine"><b>/re</b></span> toggles beat looping.</p>
+
+<p>Once you are looping, you can watch the Section numbers and the beats to figure out where you are in the song.  These appear in the <a href="#transport">Transport</a> and the <a href="#SectionStatusWidget">LooperLights</a>. Many of the Song Library songs are built with plugins that generate notes during looping, so they will look blank until you start looping.</p>
+
+<h4>Showing Note Names</h4>
+
+<p>The notes that are played in a Section can display Note Names, or Note Functions, depending on the settings in the View page.  However, when you want to just view all the Note Names for the entire neck, it is handy to toggle them all on and off.
+<br>Use <span class="menuExampleLine"><b>/vsn</b></span> to show all NamedNotes in every cell transposed into the current key.
+<br>Use <span class="menuExampleLine"><b>/vhn</b></span> to hide all NamedNotes again.
+<br>Use <span class="menuExampleLine"><b>/vtn</b></span> to toggle all NamedNotes, and leave command-line showing. 
+<br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;Note: these are <a href="#command-line">command-line</a> commands, follow the link to learn how to use the.  Basically, hit <span class="key">ESC</span> and then just start typing the letters, including the leading <span class="key">/</span>.
+<br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;Use <a href="help.html#one-line-CommandLine">one-line command-line</a> to make the command-line smaller.
+</p>
+
+
+
+<h4>Changing BPM</h4>
+
+<p>When practicing with the Song Library songs for <b>practice</b> and <b>name-that-note</b>, you'll want to change the Beats Per Minute (BPM) as you get faster.  Start very slowly, such as 20 BPM. To set it, use <span class="menuExampleLine"><b>/fb</b></span> and then type <i>20</i> and hit ENTER.
+</p>
+
+<h4>Changing Instruments</h4>
+<p>Many of the songs in the Song Library use macros in links you can click that will swap out Instruments.  Simply click on a link to choose one of the pre-wired Instruments.  <i><small>(To add an instrument not in the selections, use the Tunings button, add your Instrument, and wire it in by creating a new <a href="#macros">macro</a> for it.  Mostly the macros just reset the <b>Instrument</b> setting in the various plugins used.)</small></i></p>
+
+<h4>Raising Plugin Settings</h4>
+<p>Many of the songs in the Song Library use links to raise a plugin setting from the Graveyard.  This enables you to swap out plugin settings on the fly, so you can switch transpositions, arpeggio positions, etc.  Just click the link and restart the looping, since a raise link stops looping.
+</p>
+<p>To change transposition intervals (chroma) yourself, you can just go into the TransposePlugin and change the property <b>chroma</b>.  Hit <span class="key">ESC</span>, then <span class="menuExampleLine"><b>/fptc</b></span>.  The numbers of each chromatic step are separated by commas, so <b>3,6,9</b> would set the intervals to <b>[0,3,6,9]</b> since the array brackets are added for you, and the inititial key (0) is added for you.
+</p>
+
+
+<hr>
 <a name="startup"></a>
 <h3>Startup</h3>
 <p><span class="productsmaller">infinite-neck</span> starts up with a blank song, and default instrument you
@@ -3428,27 +3474,60 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 
 <a name="SectionStatusWidget"></a>
 <h3>section-status widget</h3>         
-<p>We need to pause here and point out the section-status widget, which appears in various parts of the app.
-    For our purpose here, we'll show the hideable one that lives in the left rail of the Instrument. Among other things, it
+<p>We need to pause here and point out the <b>section-status</b> widget, which appears in various parts of the app.
+    Among other things, it
     shows the
-    <a href="#glossaryKey">Key</a> we are in. It contains a LooperLight,
+    <a href="#glossaryKey">Key</a> we are in. It contains a <b>LooperLight</b>,
     a green border here (around the section number and beat number) because we aren't looping. While looping, the
-    LooperLight is magenta.
-    Below the LooperLight are two boxes [Key, LeadKey], one has a white background for Key (the root key of the Section) and one has a gray background because
+    <b>LooperLight</b> is magenta.
+    Below the <b>LooperLight</b> are two boxes [Key, LeadKey], one has a white background for Key (the root key of the Section) and one has a gray background because
      is <a href="#glossaryLeadKey">LeadKey</a> is absent.
     Below these, is the Instrument name, P46_1, the first instance in our song of a P4 6-string guitar.
+
+    <br>
+    <br>
+    <i><small>NOTE: you can turn off beat display in the <b>LooperLights</b> and just view Section numbers with <span class="GUIReferenceInline">View > Show LooperLight Beats</span>  
+    </small></i>
+    <br>
+
     <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
-        <li>Here is the section-status widget with the LooperLight showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C.
+        <li>Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C.
             <br>
-            <img src="img/help/context/section-status-C.png" width="36">
+            <img src="img/help/context/section-status-C.png" width="50">
         </li>
         <li style="padding-top: 1em;">
-            Here is the section-status widget with the LooperLight showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the root<a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.
+            Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the <a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.  The Instrument caption (P46_1) is shown below.
             <br>
-            <img src="img/help/context/section-status-C-Eb.png" width="36">
+            <img src="img/help/context/section-status-C-Eb.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the <a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.  Also, the red REC light is on, because we have clicked REC in the <a href="#transport">Transport</a>. The Instrument caption is shown below.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget in the Instrument Caption row. The Instrument caption (P46_1) is shown to the left.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC-caption-row.png" width="300">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget in the Song Caption row.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC-song-caption.png" width="200">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget, showing a magenta border while looping.
+            <br>
+            <img src="img/help/context/section-status-looping.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget, showing a magenta border while looping, and showing the red REC light.
+            <br>
+            <img src="img/help/context/section-status-looping-REC.png" width="50">
         </il>
     </ol>
 
+    
 </p>
 
 <a name="settingNoteRootTonal"></a>
@@ -4268,7 +4347,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td><span class="key">l</span> toggles looping, starting from the beat and section where you are, or stopping at the current beat if you are currently looping.
                     <br>
-                    <br><span class="key">L</span> stops beat and Section looping. 
+                    <br><span class="key">L</span> stops beat and Section looping.&nbsp;&nbsp;&nbsp;<span class="key">l</span> <i>toggles looping, while </i><span class="key">L</span> <i>definitely stops looping, so to guarantee that you will start looping "blind" (not looking at the screen) you can type</i> <span class="key">ESC</span><span class="key">L</span><span class="key">l</span>.
                     <br>
                     <br>Turn on with <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button> from the the Quick Menu <span class="key">Q</span>, or from the command-line toggle: <span class="menuExampleLine"><b>/rr</b> (<b>r</b>un <b>r</b>andom)</span>, looking for "RANDOM ON" at the top of the command-line menu results display. 
                 </td>
@@ -5672,6 +5751,31 @@ add macros, delete, reorder, edit,and run them.  Turn on verbose mode with <span
 <p class="codeExample">
 /fptgri "blues"
 </p>
+
+<h5>Macro: swap in another Tuning/Instrument</h5>
+<p>Many of the macros used in the Song Library simply swap in another Instrument by changing the <b>Instrument</b> used by the plugins.  So to add another Instrument, 
+you can add a new macro, copy the macro from the song that does another Instrument, and change the Instrument's ID in the macro. </p>
+
+<p>In this example from song "pentatonics-7-m-V7-in-6-keys-with-fill", in the macro called "S6", Tuning/Instrument "S6_main" is the Instrument that the macro installs.  So add a DADGAD into your song with <span class="GUIReferenceInline">Tunings > Tunings Library > DADGAD > Clone</span>.  Then copy an existing macro with <span class="menuExampleLine"><b>/fmen</b></span>.  Here's the macro to set up an S6 that is already in the song.</p>
+<p class="codeExample">
+/tha
+/tsi "P46_listener"
+/tsi "S6_main"
+/fpaC
+/fpaIi "S6_main"
+/fpfIi "S6_main"
+/rsR</p>
+
+<p>To add your new Instrument, "DADGAD_1", create a new macro with <span class="menuExampleLine"><b>/fma</b></span>, paste the code from the S6 macro, make the replacements and save the macro.
+<p class="codeExample">
+/tha
+/tsi "P46_listener"
+/tsi "DADGAD_1"
+/fpaC
+/fpaIi "DADGAD_1"
+/fpfIi "DADGAD_1"
+/rsR</p>
+
 
 <br />
 <br />

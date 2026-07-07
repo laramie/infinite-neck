@@ -314,7 +314,8 @@
   "defaultBPM": "60",
   "info": {
     "lines": [
-      "Run without transposition (Key of C only): <a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
+      "See: <a href='help.html#runningSongFromLibrary'>Tips for running from the Song Library</a>",
+      "<br><br>Run without transposition (Key of C only): <a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
       "<br>Run with chromatic transposition: <a href=\"#raise=transpose.chromatic\">transpose.chromatic</a>",
       "<br>",
       "<br>Play <a href=\"#macro=S6\">Standard-tuning 6-string</a>",
