@@ -147,20 +147,34 @@
 
 .infoRendered table {
     border-collapse: collapse;
+  width: max-content;        /* Forces the table to shrink-wrap its data */
 }
 
 .infoRendered th,
-.infoRendered td {
+.infoRendered td,
+.infoRendered caption {
     border: 1px solid #666;
-    padding: 0.3em 0.5em;
+    padding: 0.5em 0.7em;
+    background-color: white;
 }
+
+.infoRendered caption {
+  display: table-caption;    /* Retains correct semantic table structure */
+  caption-side: top;         /* Places the caption cleanly at the top */
+  background-color: #aad0ff; /* Adds the requested background color */
+  color: #6d3301;
+  font-weight: bold;         /* Emphasizes the title text */
+  /* The Secret Sauce: */
+  border-bottom: none;       /* Prevents a double-thick line where caption meets table */
+}
+
 
 .infoRendered pre,
 .infoRendered code {
     white-space: pre-wrap;
 }
 
-.infoRendered kbd {
+.infoRendered menu {
     font-size: 94%;
     font-family: "Kode Mono", monospace;
     display: inline-block;
@@ -169,13 +183,13 @@
     background-color: darkgreen;
     color: #ffaa00;
 }
-.infoRendered kbd  b {
+.infoRendered menu  b {
     font-family: "Kode Mono", monospace;
     color: #ffaa00;
     font-weight: bold;
     font-size: 120%;
 }
-.infoRendered kbd  i {
+.infoRendered menu  i {
     padding: 0.1em;
     padding-left: 0.3em;
     padding-right: 0.3em;
@@ -185,11 +199,21 @@
     color: black;
     font-weight: normal;
 }
-.infoRendered kbd i b {
+.infoRendered menu i b {
     font-family: "Kode Mono", monospace;
     color: #ac5702;
     font-weight: bold;
     font-size: 120%;
+}
+.infoRendered kbd {
+    color: black;
+    padding: 3pt;
+    padding-bottom: 2pt;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 20%;
+    background-color: lightgray;
+    box-shadow: 0 0 1pt 1pt gray;
 }
 .infoRendered em {
     font-weight: 600;

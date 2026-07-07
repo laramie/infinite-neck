@@ -207,12 +207,12 @@
       "enableOnSongLoad": true,
       "graveyardKey": "flashcard-0-7",
       "properties": {
-        "targetTable": "tblP48_1",
+        "targetTable": "tblS6_1",
         "minFret": 0,
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
         "minRow": 0,
-        "maxRow": 7,
+        "maxRow": 5,
         "lowToHigh": true,
         "upOnly": false,
         "style": "random",
@@ -240,10 +240,10 @@
         "/rsR"
       ]
     },
-    "position-4": {
+    "position-5": {
       "lines": [
         "/snf",
-        "/fpapv \"4,7\"",
+        "/fpapv \"5,8\"",
         "/fpapC",
         "/rsR"
       ]
@@ -316,9 +316,13 @@
     "lines": [
       "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a>",
       "<br>",
-      "<br><i>Choose Instrument:</i>",
+      "<br>",
+      "Default is S6, positions [0,4], and Chromatic Transposition.  Use the links below to set other Tunings, Positions, and Transpositions.",
+      "<br>",
+      "",
       "<br>",
       "<table>",
+      "<caption>Choose Instrument:</caption>",
       "<tbody>",
       "<tr>",
       "    <td><a href=\"#macro=S6\">S6</a></td>",
@@ -330,19 +334,30 @@
       "</table>",
       "<br>",
       "",
-      "<b>Click the links to set the Position:<b>",
       "<table>",
+      "<caption>Click the links to set the Position:</caption>",
       "<tbody><tr>",
       "<td><a href=\"#macro=position-1\">First</a></td>",
       "<td><a href=\"#macro=position-3\">Third</a></td>",
-      "<td><a href=\"#macro=position-4\">Fourth</a></td>",
+      "<td><a href=\"#macro=position-5\">Fifth</a></td>",
       "<td><a href=\"#macro=position-7\">Seventh</a></td>",
       "<td><a href=\"#macro=position-9\">Ninth</a></td>",
       "<td><a href=\"#macro=position-12\">Twelth</a></td>",
       "</tr>",
       "</tbody></table>",
-      "<br><br>Run without transposition (Key of C only): <a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a>",
-      "<br>Run with chromatic transposition: <a href=\"#raise=transpose.chromatic\">transpose.chromatic</a></b></b>"
+      "<br>",
+      "<table>",
+      "<caption>Transposition</caption>",
+      "<tbody>",
+      "<tr>",
+      "<td>Key of C only</td>",
+      "<td><a href=\"#raise=transpose.chromatic\">transpose.chromatic</a></td>",
+      "</tr>",
+      "<tr>",
+      "<td>Chromatic</td>",
+      "<td><a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a></td>",
+      "</tr>",
+      "</tbody></table>"
     ]
   },
   "namedNoteOpacity": "1",
@@ -388,6 +403,16 @@
       "sectionNotesByTable": {
         "tblS6_1": {
           "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
             "G": {
               "noteName": "G",
               "styleNum": 0,
@@ -435,16 +460,6 @@
             },
             "E": {
               "noteName": "E",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "F": {
-              "noteName": "F",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Gb": {
-              "noteName": "Gb",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -457,6 +472,16 @@
         },
         "tblDropD_1": {
           "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
             "F": {
               "noteName": "F",
               "styleNum": 0,
@@ -504,16 +529,6 @@
             },
             "D": {
               "noteName": "D",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Eb": {
-              "noteName": "Eb",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "E": {
-              "noteName": "E",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -526,6 +541,16 @@
         },
         "tblP46_1": {
           "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
             "Gb": {
               "noteName": "Gb",
               "styleNum": 0,
@@ -546,13 +571,13 @@
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "Bb": {
-              "noteName": "Bb",
+            "F": {
+              "noteName": "F",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "F": {
-              "noteName": "F",
+            "C": {
+              "noteName": "C",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
@@ -571,18 +596,8 @@
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "E": {
-              "noteName": "E",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "B": {
-              "noteName": "B",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "C": {
-              "noteName": "C",
+            "Bb": {
+              "noteName": "Bb",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -595,6 +610,16 @@
         },
         "tblP48_1": {
           "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
             "Gb": {
               "noteName": "Gb",
               "styleNum": 0,
@@ -625,8 +650,13 @@
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "C": {
-              "noteName": "C",
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
@@ -635,23 +665,8 @@
               "styleNum": 0,
               "colorClass": "noteTransparent"
             },
-            "B": {
-              "noteName": "B",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "E": {
-              "noteName": "E",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "A": {
-              "noteName": "A",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "D": {
-              "noteName": "D",
+            "C": {
+              "noteName": "C",
               "styleNum": 0,
               "colorClass": "noteTransparent"
             }
@@ -668,7 +683,7 @@
       "chartMode": "C chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": 5,
+      "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
       "currentBeat": 1,
@@ -794,18 +809,6 @@
           "caption": "transpose / no-transposition"
         },
         "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"no-transposition\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": null
-      },
-      {
-        "timestamp": 1783184329505,
-        "date": "7/4/2026",
-        "time": "9:58:49 AM",
-        "type": "SECTION",
-        "context": {
-          "SectionIndex": 1,
-          "caption": ""
-        },
-        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"namedNotes\": {\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"C chromatic\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 32,\n    \"currentBeat\": 1,\n    \"sharps\": true,\n    \"pluginData\": {\n        \"arpeggio\": {\n            \"positions\": [\n                [\n                    0,\n                    4\n                ]\n            ],\n            \"lastPositionIndex\": -1\n        }\n    },\n    \"__arpeggioRuntimeIdentity\": \"s2\"\n}",
         "lastRevived": null
       },
       {

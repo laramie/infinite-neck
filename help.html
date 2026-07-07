@@ -262,6 +262,23 @@
             font-size: 130%;
             -webkit-text-stroke: 1px black;
         }
+        .menuExamplePromptBox {
+            border: 8px solid lightgreen;
+            padding: 0.4em;
+            padding-left: 3em;
+            padding-right: 1em;
+            padding-bottom: 0;
+            background-color: black;
+            font-weight: bold;
+            font-family: "Kode Mono", monospace;
+            color:lightgreen;
+            -webkit-text-stroke: 1px black;
+        }
+        .menuExamplePromptBox b {
+            color: #ffaa00;
+            font-size: 130%;
+            font-weight: bold;
+        }
 
 
        .helpButton {
@@ -538,6 +555,33 @@
         #glossaryTable tr {
             scroll-margin-top: 2.3em; 
         }
+
+        /* infoRendered from  templates/info/info.css */
+        .infoRendered table {
+            border-collapse: collapse;
+            width: max-content;        /* Forces the table to shrink-wrap its data */
+        }
+
+        .infoRendered th,
+        .infoRendered td,
+        .infoRendered caption {
+            border: 1px solid #666;
+            padding: 0.5em 0.7em;
+            background-color: white;
+        }
+
+        .infoRendered caption {
+            display: table-caption;    /* Retains correct semantic table structure */
+            caption-side: top;         /* Places the caption cleanly at the top */
+            background-color: #aad0ff; /* Adds the requested background color */
+            color: #6d3301;
+            font-weight: bold;         /* Emphasizes the title text */
+            /* The Secret Sauce: */
+            border-bottom: none;       /* Prevents a double-thick line where caption meets table */
+        }
+
+
+        
 
     </style>
     <link rel="stylesheet" type="text/css" href="song-library.css" />
@@ -1553,11 +1597,61 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 <h4>Changing Instruments</h4>
 <p>Many of the songs in the Song Library use macros in links you can click that will swap out Instruments.  Simply click on a link to choose one of the pre-wired Instruments.  <i><small>(To add an instrument not in the selections, use the Tunings button, add your Instrument, and wire it in by creating a new <a href="#macros">macro</a> for it.  Mostly the macros just reset the <b>Instrument</b> setting in the various plugins used.)</small></i></p>
 
+<p>
+    <div class="infoRendered">
+        <table>
+        <caption>Choose Instrument</caption>
+        <tbody>
+        <tr>
+            <td><a href="#macro=S6">S6</a></td>
+            <td><a href="#macro=DropD">DropD</a></td>
+            <td><a href="#macro=P46">P46</a></td>
+            <td><a href="#macro=P48">P48</a></td>
+        </tr>
+        </tbody>
+        </table>
+    </div>
+</p>
+
 <h4>Raising Plugin Settings</h4>
 <p>Many of the songs in the Song Library use links to raise a plugin setting from the Graveyard.  This enables you to swap out plugin settings on the fly, so you can switch transpositions, arpeggio positions, etc.  Just click the link and restart the looping, since a raise link stops looping.
 </p>
 <p>To change transposition intervals (chroma) yourself, you can just go into the TransposePlugin and change the property <b>chroma</b>.  Hit <span class="key">ESC</span>, then <span class="menuExampleLine"><b>/fptc</b></span>.  The numbers of each chromatic step are separated by commas, so <b>3,6,9</b> would set the intervals to <b>[0,3,6,9]</b> since the array brackets are added for you, and the inititial key (0) is added for you.
 </p>
+
+<p>Songs in the Song Library use ArpeggioPlugin's <b>positions</b> property to set the range of 
+    frets to select for rendering the notes in the arpeggio.  Playing in "First Position" on a guitar means your
+    first finger covers fret 1, and all your fingers cover frets 1 through 4.  We include the Nut in First Position so you 
+    are reminded to use open strings when running <b>name-that-note</b> for example.  So First Position has positions 0-4, then Fifth Position has frets 5-8. Since many diatonic keys play better in Fourth Position than Fifth Position, the songs may use Fourth Position instead.
+    <div class="infoRendered">
+        <table>
+        <caption>Click the links to set the Position:</caption>
+        <tbody><tr>
+        <td><a href="#macro=position-1">First</a></td>
+        <td><a href="#macro=position-3">Third</a></td>
+        <td><a href="#macro=position-4">Fourth</a></td>
+        <td><a href="#macro=position-7">Seventh</a></td>
+        <td><a href="#macro=position-9">Ninth</a></td>
+        <td><a href="#macro=position-12">Twelth</a></td>
+        </tr>
+        </tbody></table>
+    </div>
+</p>
+
+<p>If you want to set other positions manually, edit the ArpeggioPlugin's positions property with <span class="menuExampleLine"><b>/fpapv</b></span> then enter the values:
+<p><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,4],[5,8],[8,12]]</span></span></p>
+<p>This is equivalent to 1st, 5th, 8th (1st should start at 0 so you get open strings)</p>
+<br>
+<p>Or set the values to 1st, and 7th positions: </p>
+<p><span class="menuExamplePromptBox"><b>v</b>alues: <span class="menuExampleLine">[[0,7],[7,12]]</span></span></p>
+
+<h4>Changing View Settings</h4>
+<p>If you set any <span class="GUIReferenceInline">View</span> options, it is best to save them by being in the 
+    first Section and hitting "Save Display Options" so they persist when looping.  
+    For example, <span class="GUIReferenceInline">View > Hide Named Notes</span> or 
+    <span class="GUIReferenceInline">View > Show All Note Names</span>
+</p>
+
 
 
 <hr>
