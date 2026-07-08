@@ -80,18 +80,33 @@
   ],
   "colorDicts": {},
   "plugins": {},
+  "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "80",
-  "info": "",
+  "info": {
+    "lines": [
+      "This song is just to show how to have another Instrument set the noteRoot. In this case, the bass player, Bass4_1 has a noteRoot, so that tells Tonal.js where the root of the chord is for all players that don't use noteRoot, but use, instead, note1.  In this case, P46_1 is just playing note1 when it wants the first note in the scale, not specifically noteRoot."
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "none",
   "presentationMode": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": true,
     "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
     "HEADNames": [
       "HEAD",
       "BRIDGE",
