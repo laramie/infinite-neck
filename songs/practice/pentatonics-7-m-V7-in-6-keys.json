@@ -135,7 +135,7 @@
       "<br>",
       "<br>As written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.",
       "<br>",
-      "<br>You can change what keys you practice by setting <menu>/fptc</menu>",
+      "<br>You can change what keys you practice by setting <cmd-line>/fptc</cmd-line>",
       "<br>Here are some presets:",
       "<ul>",
       "<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>",

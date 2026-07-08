@@ -23,7 +23,7 @@ const ALLOWED_TAGS = new Set([
 	'i',
 	'kbd',
 	'li',
-	'menu',
+	'cmd-line',
 	'ol',
 	'p',
 	'pre',

@@ -174,7 +174,7 @@
     white-space: pre-wrap;
 }
 
-.infoRendered menu {
+.infoRendered cmd-line {
     font-size: 94%;
     font-family: "Kode Mono", monospace;
     display: inline-block;
@@ -183,13 +183,13 @@
     background-color: darkgreen;
     color: #ffaa00;
 }
-.infoRendered menu  b {
+.infoRendered cmd-line  b {
     font-family: "Kode Mono", monospace;
     color: #ffaa00;
     font-weight: bold;
     font-size: 120%;
 }
-.infoRendered menu  i {
+.infoRendered cmd-line  i {
     padding: 0.1em;
     padding-left: 0.3em;
     padding-right: 0.3em;
@@ -199,7 +199,7 @@
     color: black;
     font-weight: normal;
 }
-.infoRendered menu i b {
+.infoRendered cmd-line i b {
     font-family: "Kode Mono", monospace;
     color: #ac5702;
     font-weight: bold;

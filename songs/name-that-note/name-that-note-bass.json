@@ -278,7 +278,7 @@
       "<br>Click LOOP to run both Sections, or use keyboard shortcut <kbd>l</kbd>",
       "<br>Or use LOOP BEAT [∞] to work on one Section/Position only.",
       "<br>",
-      "<br>Use <menu>/vtn</menu> to toggle all NamedNotes, and leave command-line showing. (Use <a href=\"help.html#one-line-CommandLine\">one-line command-line</a> to make the command-line smaller.)",
+      "<br>Use <cmd-line>/vtn</cmd-line> to toggle all NamedNotes, and leave command-line showing. (Use <a href=\"help.html#one-line-CommandLine\">one-line command-line</a> to make the command-line smaller.)",
       "<br>",
       "<br>If you set any View options, it is best to save them by being in the first Section and hitting \"Save Display Options\" so they persist when looping.",
       "<br>",
