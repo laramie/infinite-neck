@@ -354,6 +354,17 @@
           "visible": true
         }
       ]
+    },
+    {
+      "href": "theory/mode-nat-minor-transposed-ebony-ivory.json",
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>P4-tuned Guitar</em>, so you can see the pattern in all positions, against the Ebony/Ivory scheme of diatonic C.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     }
   ],
   "directoryIntros": [

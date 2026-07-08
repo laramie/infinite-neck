@@ -144,6 +144,10 @@
     overflow: auto;
 }
 
+.infoRendered p {
+    margin-bottom: 1em;
+}
+
 
 .infoRendered table {
     border-collapse: collapse;
