@@ -120,6 +120,17 @@ function intervalsToNoteSet(intervals = [], rootID = 0) {
   return result;
 }
 
+function directNotesToNoteSet(notes = []) {
+  const result = new Set();
+  (notes || []).forEach((noteName) => {
+    const normalizedNoteName = normalizeText(noteName);
+    if (normalizedNoteName) {
+      result.add(normalizedNoteName);
+    }
+  });
+  return result;
+}
+
 function composeChordWithRoot(rootName, chordType) {
   const tight = `${rootName}${chordType}`.trim();
   if (!Chord.get(tight).empty) {
@@ -226,6 +237,9 @@ export function chordNotesFromStoredChord(rawChord = '', rootID = 0) {
   if (chord.empty) {
     return new Set();
   }
+  if (chord.tonic && Array.isArray(chord.notes) && chord.notes.length > 0) {
+    return directNotesToNoteSet(chord.notes);
+  }
   return intervalsToNoteSet(chord.intervals || [], ((Number.parseInt(rootID, 10) || 0) % 12 + 12) % 12);
 }
 
@@ -236,6 +250,9 @@ export function modeNotesFromStoredMode(rawMode = '', rootID = 0) {
   const mode = parseScaleBestEffort(rawMode);
   if (mode.empty) {
     return new Set();
+  }
+  if (mode.tonic && Array.isArray(mode.notes) && mode.notes.length > 0) {
+    return directNotesToNoteSet(mode.notes);
   }
   return intervalsToNoteSet(mode.intervals || [], ((Number.parseInt(rootID, 10) || 0) % 12 + 12) % 12);
 }

@@ -80,4 +80,16 @@ describe('fill role engine', () => {
     expect(legacyFillColorToRoleMode('noteHighlightSingle')).toBe(MODE_KEEP);
     expect(legacyFillColorToRoleMode('noteScale')).toBe(MODE_ROLE);
   });
+
+  test('chart-sourced chord notes use chord tonic rather than section root', () => {
+    const roleNoteSets = computeRoleNoteSets({
+      rootID: 6, // Eb
+      chordSource: 'Bb11',
+      modeSource: '',
+      useSectionChart: true
+    });
+
+    expect(roleNoteSets.chord.has('C')).toBe(true);
+    expect(roleNoteSets.chord.has('Db')).toBe(false);
+  });
 });
