@@ -625,6 +625,32 @@ describe('FillPlugin', () => {
     expect(namedScaleRoleNode.caption).toContain('[${plugin:fill:namedScaleColor}]');
   });
 
+  test('root role menu includes noteRoot, note1, and last for named, single, and tiny', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+
+    ['named', 'single', 'tiny'].forEach((familyName) => {
+      const familyNode = optionsNode.children.find((child) => child.name === familyName);
+      const rootNode = familyNode.children.find((child) => child.name === `${familyName}:root`);
+      const rootRoleMenu = rootNode.children.find((child) => child.name === `${familyName}:root:roleMenu`);
+
+      expect(rootRoleMenu.children.map((child) => child.trigger)).toEqual(['n', '1', 'l']);
+      expect(rootRoleMenu.children.map((child) => child.actionName)).toEqual([
+        `setFamilyRoleColor:${familyName}:root:noteRoot`,
+        `setFamilyRoleColor:${familyName}:root:note1`,
+        `setFamilyRoleColorLast:${familyName}:root`
+      ]);
+    });
+  });
+
   test('copy from SingleNote copies role modes and colors once for named and tiny', () => {
     const song = makeSong({
       myTunings: [createPrimaryTuning()],

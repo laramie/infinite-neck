@@ -894,6 +894,17 @@ export class FillPlugin {
               actionName: `setFamilyRoleColor:${familyName}:${roleName}:${roleConfig.canonicalColor}`,
               popOnBang: true
             }),
+            ...(roleName === 'root'
+              ? [new MenuItemProxy(this, {
+                name: `${familyName}:${roleName}:note1`,
+                caption: buildCaption('note1', '1'),
+                trigger: '1',
+                action: 'pluginAction:invoke',
+                pluginId: this.id,
+                actionName: `setFamilyRoleColor:${familyName}:${roleName}:note1`,
+                popOnBang: true
+              })]
+              : []),
             new MenuItemProxy(this, {
               name: `${familyName}:${roleName}:last`,
               caption: buildCaption('last', 'l'),
