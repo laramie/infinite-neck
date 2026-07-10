@@ -13,7 +13,10 @@ import {
   TONAL_SUGGESTION_LIMIT,
   TonalAutoWrite
 } from '../../tonalPicker-functions.js';
-import { TonalSourceSet } from '../../TonalFunctions.js';
+import { TonalSourceSet,
+         getChord,
+         getMode     
+} from '../../TonalFunctions.js';
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 
 const TARGET_TABLE_OPTION_LIMIT = 9;
@@ -261,7 +264,9 @@ export class TonalPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.buildAcceptMenuNode(song),
-      this.buildPrintExtraModesNode()
+      this.buildPrintExtraModesNode(),
+      this.buildPrintChordNode(),
+      this.buildPrintModeNode()
     ].filter(Boolean);
   }
 
@@ -276,8 +281,8 @@ export class TonalPlugin {
         this.getProperty('autoWrite').getMenuNodeSpec(this),
         this.buildSourceNoteTypeNode(),
         this.buildApplySourceNoteTypeToAllSectionsNode(),
-        this.buildActionNode('prevSection', 'prev section', 'p', false),
-        this.buildActionNode('nextSection', 'next section', 'n', false),
+        this.buildActionNode('prevSection', ', previous section', ',', false),
+        this.buildActionNode('nextSection', '. next section', '.', false),
         this.buildActionNode('acceptChordModeAndNext', 'Next :: accept Chord and Mode', 'N', false),
         this.buildSuggestionMenuNode('chord', 'chords', 'c', state),
         this.buildImmediateAcceptNode('chord', 'Chord', 'C', state),
@@ -324,6 +329,14 @@ export class TonalPlugin {
 
   buildPrintExtraModesNode() {
     return this.buildActionNode('printExtraModes', 'print extra modes', 'p', true);
+  }
+
+  buildPrintChordNode() {
+    return this.buildActionNode('printChord', 'print chord', 'c', true);
+  }
+
+  buildPrintModeNode() {
+    return this.buildActionNode('printMode', 'print mode', 'm', true);
   }
 
   buildActionNode(actionName, caption, trigger, popOnBang) {
@@ -404,6 +417,10 @@ export class TonalPlugin {
         return this.applySourceNoteTypeToAllSections(song);
       case 'printExtraModes':
         return this.printExtraModes(song);
+      case 'printChord':
+        return this.printChord(song);
+      case 'printMode':
+        return this.printMode(song);
       case 'help':
         return {
           result: 'Tonal help shown',
@@ -524,6 +541,32 @@ export class TonalPlugin {
       preserveMenuStack: true
     };
   }
+
+  printChord(song = getSong()) {
+    const sectionIndex = this.getCurrentSectionIndex(song);
+    const section = this .getCurrentSection(song);
+    const chord = getChord(section.chartChord); //from TonalFunctions
+    const header = `Tonal chord: section ${sectionIndex + 1} chartChord: ${section.chartChord}`;
+    const body = JSON.stringify(chord, null, 4);
+    return {
+      result: `printed chord ${section.chartChord}`,
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
+      preserveMenuStack: true
+    };
+  }
+  printMode(song = getSong()) {
+    const sectionIndex = this.getCurrentSectionIndex(song);
+    const section = this .getCurrentSection(song);
+    const mode = getMode(section.chartMode); //from TonalFunctions
+    const header = `Tonal mode: section ${sectionIndex + 1} chartMode: ${section.chartMode}`;
+    const body = JSON.stringify(mode, null, 4);
+    return {
+      result: `printed mode ${section.chartMode}`,
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
+      preserveMenuStack: true
+    };
+  }
+
 
   buildSummary(song = getSong()) {
     const state = this.getSuggestionState(song);

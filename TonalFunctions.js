@@ -14,6 +14,13 @@ export const TonalSourceSet = Object.freeze({
     TINYNOTE: 'TinyNote'
 });
 
+export function getChord(chordNameString){
+    return Chord.get(chordNameString);
+}
+export function getMode(modeNameString){
+    return Scale.get(modeNameString);
+}
+
 export function getTonalForTable(theSong, section, tablename, options = {}){
     let result = {};
     const applyWesternFilter = options.filterWesternScales !== false;

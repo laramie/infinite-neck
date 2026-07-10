@@ -514,7 +514,7 @@ export class FillPlugin {
         this.buildFamilyMenuNode('single', song),
         this.buildFamilyMenuNode('tiny', song),
         this.buildAutoSectionNavActionNode('auto:prevSection', ', previous section', ','),
-        this.buildAutoSectionNavActionNode('auto:nextSection', '. nextSection', '.'),
+        this.buildAutoSectionNavActionNode('auto:nextSection', '. next section', '.'),
         this.getProperty('apply').getMenuNodeSpec(this),
         this.getProperty('clear').getMenuNodeSpec(this)
       ]
