@@ -525,9 +525,11 @@ function document_keypress(e) {
                 toggleInstrumentCaptionRow();
                 break;
             case "b":
-            case "B":
-                getSong().prevBeat();
+				getSong().prevBeat();
                 break;
+			case "B":
+				getSong().addBeat();
+				break;
 			case "c": //"_C_olor"
 				$("#cbAutomaticColor").trigger('click');
                 break;
