@@ -16,9 +16,13 @@ Purpose of this sprint is to:
 
 ## Sprint document locations
 
-- [design document](138-design.md) 
+- [Iteration 1 Design](138-it1-design.md) 
+- [Copilot's Iteration 1 analysis](138-it1-copilot-design-review.md) 
+- [Iteration 2 Design](138-it2-design.md) 
+- [Iteration 2 implementation plan draft](138-it2-implementation-plan.md)
 
 ## Iterations
 
-  - "Iteration 1": 
+  - "Iteration 1": First Design phase
+  - "Iteration 2": Second Design phase
 
