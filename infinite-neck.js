@@ -1776,7 +1776,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    }
 		if (count==0){
 			var warning = $("<div class='warningMessage'>");
-			warning.html("No tunings chosen: click the Tunings button.");
+			warning.html("No tunings chosen: click the Tunings button.<br><img width='300' height='175' src='img/splash-screen-animation.gif'>");
 			$('#tabledest').append(warning);
 		}
 		buildColorDicts();
