@@ -1,18 +1,32 @@
-# TODO
+# Sprint 138 Iteration 4 Changes
 
-TODO: fix http://localhost:8000/infinite-neck/?song=name-that-note/name-that-note.json because chromatic and C links are reversed.  This also ended up in the helpfile. http://localhost:8000/infinite-neck/help.html#runningSongFromLibrary
+Each section below has changes we'd like applied to the current design, in [Iteration 3 implementation plan](138-it3-implementation-plan.md).  This should prompt [Iteration 4 implementation plan](138-it4-implementation-plan.md) which Copilot should create.  We expect that upon answering final questions in this plan, that we can then approve this for coding.
 
+# InstrumentCaption / LooperLight
 
+Under the left rail SectionStatus/LooperLight there is an InstrumentCaption.  In the Instrument Caption Row, we have two buttons that toggle the visibility of these.  We want another button between buttons `C` and `S` that will be button `⥮` (U+296E) so the buttons lay out like this: 
+`[C] [⥮] [S]`
+When clicked, this new button toggles Instrument Caption to the left of the pair on one row, or to the bottom of the pair in one column: 
+one row: 
+`InstrumentCaption LooperLight`
+one column: 
+```
+LooperLight
+InstrumentCaption
+```
+We want to keep is simple and not have the button have state of its own, so it won't change icon or text, or disappear if the C or S buttons change the state of the LooperLight or InstrumentCaption.  If someone mashes on `⥮` while these are hidden, it is OK if they swap position as the normal action would be, even if that swap can't be seen.
 
-# NOTES
+The default state should be one-row on song load or app startup, and the default visibility is as it is now: both shown.
 
-Add sideways left rail instrument caption to strict mode.
+Since tutorialMode==strict won't allow access to these control buttons, these widgets will remain seen for tutorials, and will default to one-row, both of which are good.
 
-"Current sanitizer class-attribute handling must be inspected. If classes are stripped, pseudo-button styling can target .tutorialPromptHtmlRow a without requiring class preservation." ANSWER: this is fine.  We are OK having *all* hyperlinks be pseudo-buttons that behave like fragment links.  This fits the visual model of the Tutorial or Wizard asking the User to mash on a (pseudo-)button and having them expect action, rather than navigation away.  So we can default all `A` tags in Prompt Area html text to use that style.  Thus we avoid the `class=` attribute.  We will probably install a rule for links inside tables to be more like normal links, since we use these in `Info` today to present groups of superlinks.
+# Simplified 'A' tag sanitizing
+
+Implementation plan currently says: "Current sanitizer class-attribute handling must be inspected. If classes are stripped, pseudo-button styling can target .tutorialPromptHtmlRow a without requiring class preservation." ANSWER: this is fine.  We are OK having *all* hyperlinks be pseudo-buttons that behave like fragment links.  This fits the visual model of the Tutorial or Wizard asking the User to mash on a (pseudo-)button and having them expect action, rather than navigation away.  So we can default all `A` tags in Prompt Area html text to use that style.  Thus we avoid the `class=` attribute.  We will want installed a rule for links inside tables to be more like normal links, since we use these in `Info` today to present groups of superlinks.
 
 # Updated format for progress badges
 
-  `[&sect;5 (3/12) &#x261E;7]`  where `[]` means the badge CSS styling, and where 5 is the highest "Done" Section 1-based number, 3 is the count of "Done" Sections, 12 is the count of Sections in the tutorial song, and 7 is the 1-based number of the Bookmarked Section.
+  New format is compact and adds new info: `[&sect;5 (3/12) &#x261E;7]`  where `[]` means the badge CSS styling, and where 5 is the highest "Done" Section 1-based number, 3 is the count of "Done" Sections, 12 is the count of Sections in the tutorial song, and 7 is the 1-based number of the Bookmarked Section.
 
 # New Feature: Loop Marked Sections
 
@@ -75,4 +89,12 @@ When Looping normally in a song, hitting the Next button takes you to the next S
 As stated, this list of "IncludeInLooping" will not be persisted, and is reset on opening a song, so we won't have the issue of someone opening a song and missing Sections.  This is strictly for Users who want to focus on certain sections while practicing the lesson in LOOP mode.  
 
 IncludeInLooping does not apply to BEAT LOOPING.
+
+# Example Tutorial Song in place
+
+We have added `songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html` and a tutorial song in `songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json` and added the song to `songs/song-list.json`, as well as putting the proposed courses in directories under `songs/tutorials/`.  These should comport with the previously specified course and song layouts.  We can test this song's .prompts.html to test the authoring and build process.
+
+# Request
+
+Copilot, please include these changes and produce Iteration 4 implementation plan at the document location specified at the top of this document.  Include a section of questions we need to answer to be able to proceed to coding after plan review.
 

@@ -365,6 +365,17 @@
           "visible": true
         }
       ]
+    },
+    {
+      "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
+      "description": "One-string Intro",
+      "instruments": [
+        {
+          "fromBaseID": "S1",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
     }
   ],
   "directoryIntros": [
@@ -387,6 +398,10 @@
     {
       "introFor": "theory",
       "html": "Songs that demonstrate some aspect of music theory."
+    },
+    {
+      "introFor": "tutorials",
+      "html": "Tutorial Songs"
     }
   ],
   "ignoredSongs": [],
