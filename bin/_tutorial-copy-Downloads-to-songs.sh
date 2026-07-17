@@ -1,5 +1,5 @@
 export SRC=~/Downloads
-export DEST=~/infinite-neck/songs
+export DEST=~/infinite-neck/songs/tutorials
 
 mv $SRC/L001-1.json $DEST/C000-intro/L001-one-string-intro/
 mv $SRC/L002-1.json $DEST/C000-intro/L002-bass-intro/
