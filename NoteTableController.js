@@ -1428,7 +1428,6 @@ export function showHighlightsForBeat(nBeat){
     });
 }
 
-//This doesn't currently support the hideSingleNotes, hideTinyNotes, hideFingerin, but it should.
 export function showHighlightsForBeatForOptions(nBeat, options){
     const currSection = getReplaySection(options);
     const lookupContext = createNotetableLookupContext(currSection, options.tablename);
@@ -1469,7 +1468,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     tdNote
                         .addClass("noteHighlightSingle");
-                } else if (note.styleNum == Note.STYLENUM_FINGERING){
+                } else if (note.styleNum == Note.STYLENUM_FINGERING && !options.hideFingering){
                     tdNote
                         .find("div.Fingering")
                         .addClass("FingeringPlayed")
@@ -1480,21 +1479,21 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                     if (tdNote.hasClass("noteBlackKey")) {
 						tdNote.addClass("OverlayRaisedForPiano");
                     }
-                }  else if (note.styleNum == Note.STYLENUM_SINGLE){
+                }  else if (note.styleNum == Note.STYLENUM_SINGLE && !options.hideSingleNotes){
                     tdNote
                         .find("div.singleNote")
                         .addClass("singleNotePlayed")
                         .addClass("Playback")
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
-                }  else if (note.styleNum == Note.STYLENUM_TINY){
+                }  else if (note.styleNum == Note.STYLENUM_TINY && !options.hideTinyNotes){
                     tdNote
                         .find("div.tinyNote")
                         .addClass("tinyNotePlayed")
                         .addClass("Playback")
                         .addClass(lookupUserColorClass(note, lookupContext))
                         .show();
-                }  else if (note.styleNum == Note.STYLENUM_BEND){
+                }  else if (note.styleNum == Note.STYLENUM_BEND && !options.hideTinyNotes){
                     tdNote
                         .find("div.tinyNote")
                         .addClass("tinyNotePlayedBend")

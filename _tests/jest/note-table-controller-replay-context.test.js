@@ -13,6 +13,7 @@ function installJqueryStub(onAddClass) {
       removeClass() { return this; },
       attr() { return this; },
       hide() { return this; },
+      hasClass() { return false; },
       addClass(className) {
         if (typeof onAddClass === 'function') {
           onAddClass(selector, className);
@@ -114,5 +115,70 @@ describe('NoteTableController observer replay color context', () => {
 
     expect(addedClasses).toContain('color-from-observed');
     expect(addedClasses).not.toContain('color-from-current');
+  });
+
+  test('recorded fingering replay respects hideFingering display option', () => {
+    const addedClasses = [];
+    installJqueryStub((selector, className) => {
+      if (`${selector}`.includes('div.Fingering')) {
+        addedClasses.push(className);
+      }
+    });
+
+    const currentSection = {
+      rootID: 3,
+      rootIDLead: -1,
+      sectionNotesByTable: {
+        tblS1: {
+          recordedNotes: {
+            '1': [
+              {
+                noteName: 'E',
+                styleNum: Note.STYLENUM_FINGERING,
+                colorClass: 'noteFinger1',
+                midinum: '40',
+                row: '0',
+                finger: '1'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    const song = {
+      sections: [currentSection],
+      getSections() {
+        return this.sections;
+      }
+    };
+
+    setNotetableProviders({
+      getSong: () => song,
+      getCurrentSection: () => currentSection,
+      getBeatNumber: () => 1,
+      hideNoteClickedCaption: () => {},
+      resetNoteNames: () => {},
+      setNoteClickedCaption: () => {},
+      showBeats: () => {},
+      turnOffHiding: () => {}
+    });
+
+    setColorFunctionsProviders({
+      getSong: () => song,
+      getCurrentSection: () => currentSection,
+      doingAutomaticColor: () => false,
+      fullRepaint: () => {}
+    });
+
+    showHighlightsForBeatForOptions(1, {
+      tablename: 'tblS1',
+      listenToTablename: 'tblS1',
+      type: ReplayOptions.Type.SELF,
+      hideFingering: true
+    });
+
+    expect(addedClasses).not.toContain('FingeringPlayed');
+    expect(addedClasses).not.toContain('Playback');
   });
 });

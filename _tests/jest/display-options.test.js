@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const FIXTURE_FILE = path.join(__dirname, '../../songs/tests/display-options.json');
+const APP_CSS_FILE = path.join(__dirname, '../../infinite-neck.css');
 
 function readFixture() {
     return JSON.parse(fs.readFileSync(FIXTURE_FILE, 'utf8'));
@@ -217,5 +218,14 @@ describe('getDisplayOptionsInEffect contracts', () => {
         const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
 
         expect(inEffect).toEqual(fallbackOptions);
+    });
+});
+
+describe('recorded note playback display options', () => {
+    test('Playback marker does not override fingering display-option font size', () => {
+        const css = fs.readFileSync(APP_CSS_FILE, 'utf8');
+
+        expect(css).toContain('font-size: var(--fingering-font-size);');
+        expect(css).not.toMatch(/\.Playback\s*\{[^}]*font-size/s);
     });
 });

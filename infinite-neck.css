@@ -1687,14 +1687,6 @@ td.nut div.NoteActive .CenterCell {
     color: yellow;
     background-color: black;
 }
-.Playback {
-    font-size: 0.9em;
-}
-
-
-
-
-
 .noteBlackKey {
     background-color: green;
     color: green;
