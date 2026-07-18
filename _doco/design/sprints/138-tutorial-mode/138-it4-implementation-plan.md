@@ -1,0 +1,1199 @@
+# sprint-138-tutorial-mode — Iteration 4 Implementation Plan Draft
+
+Date: 2026-07-17
+
+Inputs:
+
+- [Iteration 1 Design](_doco/design/sprints/138-tutorial-mode/138-it1-design.md)
+- [Copilot Iteration 1 Design Review](_doco/design/sprints/138-tutorial-mode/138-it1-copilot-design-review.md)
+- [Iteration 2 Design](_doco/design/sprints/138-tutorial-mode/138-it2-design.md)
+- [Iteration 2 Implementation Plan Draft](_doco/design/sprints/138-tutorial-mode/138-it2-implementation-plan.md)
+- [Iteration 3 Design](_doco/design/sprints/138-tutorial-mode/138-it3-design.md)
+- [Iteration 3 Implementation Plan Draft](_doco/design/sprints/138-tutorial-mode/138-it3-implementation-plan.md)
+- [Iteration 4 Design Changes](_doco/design/sprints/138-tutorial-mode/138-it4-design.md)
+
+## Purpose of this document
+
+This document is the Iteration 4 implementation-plan draft for sprint 138 tutorial mode. It incorporates the Iteration 4 design changes into the Iteration 3 plan and is intended to be close to coding-ready after the final questions in this document are answered.
+
+Iteration 4 keeps the Iteration 3 simplification stance:
+
+1. Wizard mode is normal mode plus prompts only.
+2. Strict mode is the only tutorial mode with special tutorial chrome and loop filtering.
+3. Prompt-authored controls remain ordinary sanitized `A` links, not buttons.
+4. Runtime tutorial prompt authoring mode remains out of scope.
+5. `IncludeInLooping` is transient runtime state only.
+6. Learner Done and Bookmark progress are browser-local only.
+
+Iteration 4 adds or refines:
+
+1. Instrument Caption / LooperLight row-vs-column layout toggle.
+2. Prompt Area pseudo-button styling for all prompt hyperlinks, with table links styled more link-like.
+3. Compact progress badge format: `[§5 (3/12) ☞7]`.
+4. `LessonSectionList` in strict mode.
+5. Per-Section `Done` persisted as a sparse array.
+6. Per-Section transient `IncludeInLooping` set for strict tutorial Section Looping only.
+7. Breadcrumb row retained in strict mode.
+8. Prompt Area layout updated to include the collapsible Section list.
+9. Example tutorial song and `.prompts.html` source are now available for build-tool testing.
+
+## Iteration 4 scope
+
+### In scope
+
+1. Add Instrument Caption / LooperLight layout toggle button `⥮` between existing `C` and `S` buttons.
+2. Default Instrument Caption / LooperLight layout to one row on app startup and song load.
+3. Keep existing default visibility for Instrument Caption and LooperLight.
+4. Add strict-mode `LessonSectionList` under [divTutorialPrompt](index.html), opened from a `Sections` button in the Tutorial Caption row.
+5. Keep Breadcrumbs visible in strict mode.
+6. Show Lesson rows for every Section in a tutorial, even when tutorial metadata/captions are missing.
+7. Persist `Done` Sections as an array of Section indexes in browser storage.
+8. Keep one Bookmark Section index in browser storage.
+9. Add transient `IncludeInLooping` state for strict mode only, defaulting every Section to included on song load.
+10. Make strict tutorial Section Looping skip unchecked `IncludeInLooping` Sections.
+11. Keep `Next` and `Prev` sequential through all Sections, whether or not a Section is included in looping.
+12. Keep `IncludeInLooping` out of wizard and none modes.
+13. Keep `IncludeInLooping` out of BEAT LOOPING.
+14. Update Prompt Area LOOP button caption to show `[LOOPING first..last]` when looping and some Sections are omitted.
+15. Update Song Library runtime progress badges to `[§highestDone (doneCount/sectionCount) ☞bookmark]` format.
+16. Use Prompt Area CSS to style ordinary prompt hyperlinks as pseudo-buttons.
+17. Style prompt hyperlinks inside tables more like normal links.
+18. Use the existing tutorial example song and `.prompts.html` for build-process fixtures where practical.
+
+### Out of scope
+
+1. Persisting `IncludeInLooping` in song JSON.
+2. Persisting `IncludeInLooping` in browser storage.
+3. Applying `IncludeInLooping` outside strict tutorial mode.
+4. Applying `IncludeInLooping` to BEAT LOOPING.
+5. Special wizard lockdown or wizard `allowedUI`.
+6. Runtime `tutorialAuthoring` query handling.
+7. Prompt-authored `button` elements.
+8. Prompt `class=` attribute dependence for pseudo-button styling.
+9. Automatic `song-list.json` caption extraction.
+10. Full chart jump / DaCapo / coda navigation algorithms.
+11. Multiple bookmarks.
+12. Auto-opening Bookmark on tutorial song load.
+
+## Current architecture seams
+
+Relevant files likely to be touched during implementation:
+
+- [infinite-neck.js](infinite-neck.js)
+- [infinite-neck.css](infinite-neck.css)
+- [instrument.css](instrument.css)
+- [index.html](index.html)
+- [presentation.js](presentation.js)
+- [key-handlers.js](key-handlers.js)
+- [looper.js](looper.js)
+- [transport-controller.js](transport-controller.js)
+- [Song.js](Song.js)
+- [SongPersistence.js](SongPersistence.js)
+- [Section.js](Section.js)
+- [SectionPersistence.js](SectionPersistence.js)
+- [SongLibrary.js](SongLibrary.js)
+- [html-sanitizer.js](html-sanitizer.js)
+- [bin/song-file-schema.js](bin/song-file-schema.js)
+- [bin/build-tutorial-prompts.js](bin/build-tutorial-prompts.js)
+- [templates/tutorial/tutorial.html](templates/tutorial/tutorial.html)
+- [templates/tutorial/tutorial.css](templates/tutorial/tutorial.css)
+- [templates/tutorial/tutorial.builder.js](templates/tutorial/tutorial.builder.js)
+- [templates/splash/splash.html](templates/splash/splash.html)
+- [templates/splash/splash.css](templates/splash/splash.css)
+- [templates/splash/splash.builder.js](templates/splash/splash.builder.js)
+
+Existing seams to inspect before coding:
+
+1. Instrument Caption / SectionStatus / LooperLight template and builder location.
+2. Existing `C` and `S` button event handlers.
+3. Existing Section loop next-Section decision path.
+4. Existing transport `Next`/`Prev` paths.
+5. Existing looper button state and caption logic.
+6. Existing Song Library row rendering and copy-link glyph placement.
+7. Existing Info sanitizer and superlink dispatch.
+8. Existing Chart > Notes ID column link styling for Lesson row-number links.
+
+Recommendation:
+
+- Implement [Tutorial.js](Tutorial.js) as the central pure state/helper module and keep the DOM-specific LessonSectionList rendering in [templates/tutorial/tutorial.builder.js](templates/tutorial/tutorial.builder.js).
+- Add a small loop-selection hook at the Song/Looper boundary rather than baking tutorial-specific logic deep into general transport or Song navigation.
+
+## Data model
+
+### Song-level tutorial data
+
+Keep the Iteration 3 shape:
+
+```json
+{
+  "tutorial": {
+    "level": "strict",
+    "caption": "Chromatic Scale on one string",
+    "storageKey": "tutorials/C000-intro/L001-one-string-intro/L001-1"
+  }
+}
+```
+
+Fields:
+
+- `level`: one of `none`, `strict`, `wizard`.
+- `caption`: optional tutorial/song caption populated by build tooling.
+- `storageKey`: optional stable key for local progress.
+
+Do not add `allowedUI` for sprint 138.
+
+### Section-level tutorial data
+
+Keep the Iteration 3 shape:
+
+```json
+{
+  "tutorial": {
+    "caption": "Section 1 - Getting Started",
+    "prompt": {
+      "lines": [
+        "<p>Prompt for Section 1 goes here.</p>"
+      ]
+    }
+  }
+}
+```
+
+LessonSectionList row requirements:
+
+1. Every Section gets a row.
+2. Missing `section.tutorial` produces blank tutorial caption cells.
+3. Missing `section.tutorial.caption` produces blank tutorial caption cells.
+4. Missing prompt lines do not suppress the row.
+5. Current Section row is highlighted live.
+
+Recommendation:
+
+- Treat missing Section tutorial metadata as a build-tool warning, not a runtime blocker. The blank rows are useful authoring reminders.
+
+### Browser-local tutorial progress data
+
+Iteration 4 changes Done storage from a single highest-completed index to an array.
+
+Recommended local storage shape:
+
+```json
+{
+  "version": 2,
+  "storageKey": "tutorials/C000-intro/L001-one-string-intro/L001-1",
+  "doneSectionIndexes": [0, 1, 4],
+  "bookmarkSectionIndex": 6,
+  "updatedAt": "2026-07-17T00:00:00.000Z"
+}
+```
+
+Rules:
+
+1. `doneSectionIndexes` is an array of zero-based Section indexes.
+2. It may be sparse from a learner perspective; it does not imply all earlier Sections are done.
+3. Store the array sorted ascending and de-duplicated for predictable rendering.
+4. Ignore out-of-range values when loading progress.
+5. `bookmarkSectionIndex` is one zero-based Section index or `null`.
+6. Bookmark does not auto-jump on song open.
+7. Version should increment to `2` because the meaning changed from highest-only to an array.
+
+Derived values:
+
+- `highestDoneSectionNumber`: highest index in `doneSectionIndexes` plus 1.
+- `doneCount`: number of valid unique done indexes.
+- `sectionCount`: number of Sections in the tutorial song.
+- `bookmarkSectionNumber`: bookmark index plus 1.
+
+Recommendation:
+
+- If old version-1 progress exists, migrate `completedSectionIndex` to a dense or single-entry array only after a final decision. Given the repo no-legacy preference, a clean reset for sprint-development tutorial progress is acceptable if confirmed.
+
+### Runtime-only IncludeInLooping data
+
+Add runtime state, not persisted:
+
+```js
+includeInLoopingSectionIndexes: new Set([0, 1, 2, 3])
+```
+
+Rules:
+
+1. Exists only while the tutorial song is loaded.
+2. Defaults to all Sections included on song load.
+3. Resets to all Sections included every time a song is opened.
+4. Used only when `tutorialMode === 'strict'` and Section Looping is active.
+5. Not used for BEAT LOOPING.
+6. Not used in wizard mode.
+7. Not used in none mode.
+
+Recommendation:
+
+- Store it in [Tutorial.js](Tutorial.js) runtime state, not persisted in `gSong` or saved JSON.
+- Expose pure helper functions that take arrays/Sets and return the next included Section index for tests.
+
+## Runtime presentation state
+
+Extend [presentation.js](presentation.js) with a small serializable tutorial state object:
+
+```js
+gPresentation.tutorial = {
+  mode: 'none',
+  active: false,
+  strict: false,
+  wizard: false,
+  currentSectionIndex: -1,
+  promptVisible: false,
+  lessonSectionListOpen: false,
+  commandLineEasterEggActive: false,
+  lastBlockedKey: ''
+};
+```
+
+Keep `IncludeInLooping` out of `gPresentation` if it is a `Set`; either:
+
+1. Store it privately in [Tutorial.js](Tutorial.js), or
+2. Store a serializable array in `gPresentation.tutorial.includeInLoopingSectionIndexes`.
+
+Recommendation:
+
+- Use private [Tutorial.js](Tutorial.js) runtime state for `Set` operations and expose serializable view models to the builder.
+
+## Instrument Caption / LooperLight layout toggle
+
+### Desired UI
+
+Existing Instrument Caption row has buttons:
+
+```text
+[C] [S]
+```
+
+Add a new button between them:
+
+```text
+[C] [⥮] [S]
+```
+
+Button:
+
+- Text: `⥮`
+- Unicode: U+296E
+- Meaning: toggle Instrument Caption / LooperLight layout orientation.
+- Stateless visually: do not change icon/text based on current layout.
+
+### Layout modes
+
+One-row layout:
+
+```text
+InstrumentCaption LooperLight
+```
+
+One-column layout:
+
+```text
+LooperLight
+InstrumentCaption
+```
+
+Rules:
+
+1. Default layout is one row on app startup.
+2. Default layout resets to one row on song load.
+3. Existing default visibility remains unchanged: both shown.
+4. The `⥮` button toggles layout even if one or both widgets are hidden.
+5. The `⥮` button does not track state independently from CSS/body/layout state.
+6. Strict tutorial mode does not expose these control buttons, so strict tutorials simply see the default one-row visible widgets.
+
+Implementation recommendation:
+
+- Add a CSS class to the Instrument Caption / LooperLight container, for example:
+  - `.instrumentCaptionLooperLayoutRow`
+  - `.instrumentCaptionLooperLayoutColumn`
+- Add a small presentation helper or local module helper:
+  - `setInstrumentCaptionLooperLayout('row')`
+  - `toggleInstrumentCaptionLooperLayout()`
+- Reset to row during app startup and song load lifecycle.
+
+Design hole:
+
+- Exact template/builder file for the `C` and `S` buttons needs to be located before coding. The implementation should insert the new button next to the existing controls rather than creating a separate floating control.
+
+## Prompt Area layout
+
+Iteration 4 strict layout, LessonSectionList closed:
+
+```text
+<Widget-Row>
+<Breadcrumbs>
+<[ 🞂 Sections ] Tutorial-Caption>
+<Section.tutorial.caption>
+<Prompt-Lines>
+```
+
+Iteration 4 strict layout, LessonSectionList open:
+
+```text
+<Widget-Row>
+<Breadcrumbs>
+| [ 🞃 Sections ] Tutorial-Caption |
+
+| Section  | Done | LOOP | Section.tutorial.caption |
+| -------- | ---- | ---- | ------------------------ |
+| 1        |  x   |      | Section 1: getting started |
+| <b>2</b> |  x   |  x   | <b>Section 2: playing the first chord</b> |
+| 3        |      |  x   | Section 3: playing the second chord |
+| 4        |      |      | Section 4: playing the difficult third chord |
+
+<Section.tutorial.caption>
+<Prompt-Lines>
+```
+
+Notes:
+
+- Use `&#x1F782;` or equivalent closed icon for the closed Sections button.
+- Use `&#x1F783;` or equivalent open icon for the open Sections button.
+- Keep Breadcrumbs in strict mode.
+- LessonSectionList expands below the Tutorial Caption row and above the Section tutorial caption row.
+
+Recommended DOM IDs/classes:
+
+- `#divTutorialPrompt`
+- `#tutorialPrompt`
+- `.tutorialPromptWidgetRow`
+- `.tutorialPromptBreadcrumbRow`
+- `.tutorialPromptTutorialCaptionRow`
+- `.tutorialSectionsToggleButton`
+- `#divLessonSectionList`
+- `.lessonSectionList`
+- `.lessonSectionListTable`
+- `.lessonSectionListCurrentRow`
+- `.lessonSectionListSectionLink`
+- `.lessonSectionListDoneCheckbox`
+- `.lessonSectionListLoopCheckbox`
+- `.lessonSectionListCaptionCell`
+- `.tutorialPromptSectionCaptionRow`
+- `.tutorialPromptHtmlRow`
+
+Current Section highlight:
+
+```css
+.lessonSectionListCurrentRow {
+  background-color: #a1fde9;
+}
+```
+
+Recommendation:
+
+- Keep LessonSectionList rendering fully model-driven from a Prompt Area view model. Avoid direct DOM row patching except event delegation and full refresh after Section change/progress change.
+
+## LessonSectionList behavior
+
+### Visibility
+
+- Available only in strict tutorial mode.
+- Opened/closed by `[Sections]` button in the Tutorial Caption row.
+- Remains open during looping and Section changes until the user closes it.
+- Not available in `none` mode.
+- Not available in `wizard` mode.
+
+### Rows
+
+Each tutorial Section row contains:
+
+1. Section number link.
+2. Done checkbox.
+3. LOOP checkbox for IncludeInLooping.
+4. `section.tutorial.caption`, blank if absent.
+
+Row interactions:
+
+1. Clicking Section number navigates to that Section.
+2. Section number should be underlined like an ordinary hyperlink, similar to Chart > Notes ID column.
+3. Current Section row is highlighted live.
+4. Bookmark row should be visually distinct. The design example uses bold for bookmarked Section. Recommendation: apply a `.lessonSectionListBookmarkedRow` or `.lessonSectionListBookmarkedToken` class rather than bolding the whole row by default.
+
+### Done column
+
+Rules:
+
+1. Done checkbox toggles the current row Section in browser-local `doneSectionIndexes`.
+2. Widget-row Done checkbox toggles the current Section in the same array.
+3. LessonSectionList Done checkboxes and widget Done checkbox stay synchronized.
+4. Done persists in browser storage.
+5. Done can be sparse.
+6. Done does not change when Next/Prev is clicked.
+7. Done does not change when a Section is skipped by IncludeInLooping.
+
+### LOOP column / IncludeInLooping
+
+Rules:
+
+1. LOOP checkbox means IncludeInLooping.
+2. All Sections default checked on song load.
+3. Header `LOOP` toggles all checked/all unchecked.
+4. If all are checked, clicking header clears all.
+5. If any are unchecked, clicking header checks all. This gives a quick path back to normal looping.
+6. IncludeInLooping changes live during looping.
+7. Changing IncludeInLooping should not restart looping.
+8. The next loop navigation decision uses the latest IncludeInLooping state.
+9. IncludeInLooping is ignored outside strict tutorial Section Looping.
+10. IncludeInLooping is ignored for BEAT LOOPING.
+
+Edge-case recommendation:
+
+- If all Sections are unchecked and the learner starts LOOP, treat the set as all included for loop navigation or disable loop start with a quiet no-op. Recommendation: treat empty IncludeInLooping as all included for playback safety and show unchecked state visually. This prevents a loop dead-end.
+
+Design hole:
+
+- Confirm empty IncludeInLooping behavior before coding. The most user-friendly choice is needed.
+
+## Widget row updates
+
+### Navigation buttons
+
+Keep existing Iteration 3 controls:
+
+- Compact logo/link.
+- `⇤ First`.
+- `« Previous`.
+- `LOOP` / active loop caption.
+- `BEAT-LOOP`.
+- Done checkbox.
+- Bookmark widget.
+- `Next »`.
+- `Last ⇥`.
+
+Navigation rules:
+
+1. First/Previous/Next/Last are sequential and include all Sections.
+2. These navigation buttons do not skip unchecked IncludeInLooping Sections when not looping.
+3. During active LOOP, if normal app behavior keeps looping while Next is pressed, the next loop-selection decision should apply IncludeInLooping after the app navigates.
+4. Next/Prev do not alter Done.
+
+### LOOP caption
+
+When not Section Looping:
+
+```text
+[LOOP]
+```
+
+When Section Looping and all Sections are included:
+
+```text
+[LOOPING]
+```
+
+When Section Looping and some Sections are omitted:
+
+```text
+[LOOPING 2..3]
+```
+
+For sparse IncludeInLooping such as `[2, 3, 4, 7, 8, 9]`, show:
+
+```text
+[LOOPING 2..9]
+```
+
+Rules:
+
+1. Display first included one-based Section and last included one-based Section.
+2. Do not attempt to display every range in sprint 138.
+3. Update caption live when IncludeInLooping changes during active LOOP.
+4. Do not show range when not looping.
+5. If IncludeInLooping is empty and empty means all included, show `[LOOPING]` or `[LOOPING all]`. Recommendation: `[LOOPING]`.
+
+### BEAT-LOOP
+
+Rules:
+
+1. IncludeInLooping does not apply.
+2. BEAT-LOOP caption and behavior should remain aligned with existing transport behavior.
+
+## Bookmark behavior
+
+Keep one bookmark.
+
+Widget when bookmark is set:
+
+```text
+bookmark: [§1] [Set]
+```
+
+Widget when bookmark is not set:
+
+```text
+bookmark: [Set]
+```
+
+Iteration 4 clarifications:
+
+1. On tutorial song open, start at Section 1 like all songs.
+2. The bookmark goto button is how users pick up where they left off.
+3. Bookmark is shown in progress badge as `☞7` where 7 is one-based Section number.
+4. LessonSectionList may visually emphasize the bookmarked row.
+5. Bookmark remains one Section only.
+
+Recommendation:
+
+- Use `&#x261E;` / `☞` consistently for badges. Keep `§` for the widget goto button unless the design later asks to match glyphs.
+
+## Progress badges in Song Library
+
+### New format
+
+```text
+[§5 (3/12) ☞7]
+```
+
+Meaning:
+
+- `§5`: highest Done Section is Section 5.
+- `(3/12)`: three Done Sections out of twelve total Sections.
+- `☞7`: Bookmark is Section 7.
+
+Rules:
+
+1. Show only for tutorial songs.
+2. Derive tutorial detection by path under `tutorials/` for sprint 138 unless `song-list.json` metadata is already available.
+3. Derive `sectionCount` from song metadata if available in listing, or from cached/opened song data if the listing already has it.
+4. If `sectionCount` is not available without loading song JSON, the implementation may need to enrich `song-list.json` manually or lazily read JSON for tutorial entries only.
+5. Show badge after Copy song link glyphs in the first column.
+6. Use CSS class initially resembling `songLibraryInstrument instrumentObserver` plus tutorial-specific classes.
+
+Recommended markup:
+
+```html
+<span class="songLibraryTutorialProgressBadge songLibraryInstrument instrumentObserver">
+  <span class="songLibraryTutorialHighestDone">&sect;5</span>
+  <span class="songLibraryTutorialDoneCount">(3/12)</span>
+  <span class="songLibraryTutorialBookmark">&#x261E;7</span>
+</span>
+```
+
+Display cases:
+
+1. Done and bookmark both present: `[§5 (3/12) ☞7]`.
+2. Done present, no bookmark: `[§5 (3/12)]`.
+3. Bookmark present, no Done: `[(0/12) ☞7]` or `[☞7]`.
+4. No Done and no bookmark: no badge, or optional `[(0/12)]` if progress visibility is desired.
+
+Recommendation:
+
+- Show no badge when there is no Done and no Bookmark.
+- If Bookmark exists but no Done, show `[(0/12) ☞7]` because the denominator gives useful lesson scope.
+- If Done exists but highest Done cannot be derived due to bad data, sanitize bad data away and show no Done glyph.
+
+Design hole:
+
+- Confirm whether `sectionCount` is cheaply available in Song Library listings. If not, decide between manually adding Section counts to `song-list.json` for tutorials or lazily loading tutorial JSON when rendering badges.
+
+## Prompt HTML sanitization and link styling
+
+### Simplified A tag styling
+
+Iteration 4 answers the class-handling question:
+
+- Prompt Area `A` tags can all be styled as pseudo-buttons by default.
+- Avoid depending on `class=` attributes in prompt HTML.
+- Links inside tables should be styled more like ordinary links.
+
+Recommended CSS:
+
+```css
+.tutorialPromptHtmlRow a {
+  display: inline-block;
+  padding: 0.25em 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 0.35em;
+  background: #f4fff9;
+  text-decoration: none;
+}
+
+.tutorialPromptHtmlRow table a {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-decoration: underline;
+}
+```
+
+Rules:
+
+1. Prompt HTML sanitizer should preserve safe anchors and safe hrefs.
+2. Prompt HTML sanitizer does not need to preserve `class` for pseudo-button styling.
+3. Prompt-authored `button` remains disallowed.
+4. Prompt-authored `img` remains disallowed.
+5. Links behave like fragment/superlinks rather than navigation-away controls.
+
+Recommendation:
+
+- Reuse Info-style sanitizer and superlink dispatch where possible.
+- Make Prompt Area CSS responsible for visual pseudo-button behavior.
+
+## Prompt build process and example tutorial song
+
+Iteration 4 notes these files are now in place:
+
+- [songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json](songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)
+- [songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html](songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html)
+
+The plan should use them to validate:
+
+1. Course/Lesson/Tutorial path convention.
+2. Prompt marker extraction.
+3. Writing `song.tutorial.caption`.
+4. Writing `section.tutorial.caption`.
+5. Writing `section.tutorial.prompt.lines[]`.
+6. Handling missing tutorial metadata/captions in LessonSectionList.
+7. Song Library listing path under `songs/tutorials/`.
+
+Implementation recommendation:
+
+- Use copied fixtures under [_tests/jest/fixtures/](_tests/jest/fixtures/) rather than modifying live tutorial song files during Jest tests.
+- A focused integration/manual test can run the build tool against the real example song after a backup/diff check.
+
+Parser recommendation remains:
+
+- Use `parse5` for build-tool HTML parsing.
+
+## Tutorial loop-selection hook
+
+Iteration 4 introduces `IncludeInLooping`, which needs a hook in the loop next-Section path.
+
+### Desired behavior
+
+When strict tutorial LOOP is active:
+
+1. Loop starts from current Section as normal.
+2. If current Section is not included, the next included Section plays.
+3. Song loops normally, including existing song-end behavior and future DaCapo events.
+4. If a Section is not in IncludeInLooping, it is skipped for Section Looping.
+5. IncludeInLooping changes are live and affect the next navigation decision.
+6. This filtering applies only to strict tutorial Section Looping.
+7. This filtering does not apply to BEAT LOOPING.
+8. This filtering does not affect normal Next/Prev outside the active loop-selection path.
+
+### Recommended hook shape
+
+Add a narrow next-section filter function to a central place:
+
+```js
+function getNextLoopSectionIndex(currentIndex, direction, context) {
+  const candidateIndex = existingSongLoopDecision(currentIndex, direction, context);
+  return Tutorial.filterStrictLoopSectionIndex(candidateIndex, direction, context);
+}
+```
+
+Or expose a hook registration:
+
+```js
+SongNavigationHooks.setLoopSectionFilter((candidateIndex, context) => {
+  return Tutorial.filterStrictLoopSectionIndex(candidateIndex, context);
+});
+```
+
+Recommendation:
+
+- Prefer a small explicit hook over direct import cycles between [looper.js](looper.js), [Song.js](Song.js), and [Tutorial.js](Tutorial.js).
+- Keep hook input minimal: current/candidate Section index, direction if needed, Section count, and a flag identifying Section Looping.
+- Do not add loop history to the API in sprint 138.
+
+### Pure helper tests
+
+Add pure tests for:
+
+1. All included: candidate passes through.
+2. Candidate unchecked: returns next checked Section.
+3. Current Section 1 unchecked with 2 and 3 checked: loop starts at 2.
+4. Sparse set `[1, 2, 3, 6, 7, 8]` displays `2..9` one-based if indexes are `[1,2,3,6,7,8]`.
+5. Empty set behavior follows final decision.
+6. Non-strict mode passes through.
+7. Beat loop passes through.
+
+Design hole:
+
+- Need code archaeology to find the exact Section Looping next-decision location. Avoid implementing the hook in multiple places.
+
+## Schema updates
+
+Update [bin/song-file-schema.js](bin/song-file-schema.js) for tutorial data from Iteration 3.
+
+No schema fields are needed for:
+
+- Done progress.
+- Bookmark progress.
+- IncludeInLooping.
+- LessonSectionList open/closed state.
+- Instrument Caption / LooperLight layout state.
+
+Recommended tutorial schema remains:
+
+```js
+const tutorialLevelSchema = { type: 'string', enum: ['none', 'strict', 'wizard'] };
+
+const sectionTutorialSchema = {
+  type: 'object',
+  properties: {
+    caption: { type: 'string' },
+    prompt: {
+      type: 'object',
+      properties: {
+        lines: { type: 'array', items: { type: 'string' } }
+      },
+      required: ['lines'],
+      additionalProperties: false
+    }
+  },
+  additionalProperties: false
+};
+
+const songTutorialSchema = {
+  type: 'object',
+  properties: {
+    level: tutorialLevelSchema,
+    caption: { type: 'string' },
+    storageKey: { type: 'string' }
+  },
+  required: ['level'],
+  additionalProperties: false
+};
+```
+
+## Persistence updates
+
+### Song/Section JSON persistence
+
+Persist only tutorial metadata:
+
+1. `song.tutorial.level`.
+2. `song.tutorial.caption`.
+3. `song.tutorial.storageKey`.
+4. `section.tutorial.caption`.
+5. `section.tutorial.prompt.lines[]`.
+
+Do not persist:
+
+1. Done array.
+2. Bookmark.
+3. IncludeInLooping.
+4. LessonSectionList open/closed state.
+5. Instrument Caption / LooperLight layout.
+
+### Browser progress persistence
+
+Use a local storage key such as:
+
+```text
+infinite-neck:tutorial-progress:<storageKey>
+```
+
+Recommended progress helpers:
+
+- `Tutorial.loadProgress(song)`
+- `Tutorial.saveProgress(song, progress)`
+- `Tutorial.normalizeProgress(rawProgress, sectionCount)`
+- `Tutorial.toggleDone(sectionIndex, song)`
+- `Tutorial.setDone(sectionIndex, value, song)`
+- `Tutorial.toggleBookmark(sectionIndex, song)`
+- `Tutorial.getProgressBadgeModel(songListEntry, progress, sectionCount)`
+
+## App integration work plan
+
+### Phase 1: Code archaeology and stable seams
+
+1. Locate Instrument Caption / LooperLight markup and existing `C` / `S` controls.
+2. Locate SectionStatus / LooperLight container CSS.
+3. Locate Section Looping next-section decision path.
+4. Locate transport Next/Prev handlers.
+5. Locate Song Library row rendering and copy-link glyph insertion point.
+6. Locate Info sanitizer and superlink dispatch APIs.
+7. Locate Chart > Notes ID column link styling for row-number link precedent.
+
+Deliverable:
+
+- A short implementation note or commit message summary identifying exact files/functions to modify.
+
+### Phase 2: Model, schema, and pure Tutorial helpers
+
+1. Add tutorial schemas to [bin/song-file-schema.js](bin/song-file-schema.js).
+2. Add tutorial normalization in [SongPersistence.js](SongPersistence.js) and [SectionPersistence.js](SectionPersistence.js).
+3. Add [Tutorial.js](Tutorial.js) pure helpers:
+   - mode normalization.
+   - prompt visibility.
+   - progress normalization.
+   - Done array toggling.
+   - Bookmark toggling.
+   - IncludeInLooping toggling.
+   - IncludeInLooping range caption model.
+   - progress badge model.
+   - strict key allowlist.
+   - app-base URL extraction.
+4. Add Jest tests for pure helpers.
+
+### Phase 3: Prompt build tool
+
+1. Add `parse5` dependency.
+2. Add [bin/build-tutorial-prompts.js](bin/build-tutorial-prompts.js).
+3. Add package script `build:tutorial-prompts`.
+4. Implement single-song mode.
+5. Use fixture copies based on [songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html](songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html).
+6. Test extraction of tutorial caption, Section captions, prompt lines, duplicate markers, and out-of-range markers.
+7. Warn when strict tutorials have missing prompt/caption data.
+
+### Phase 4: Prompt Area shell and wizard mode
+
+1. Add tutorial template/CSS/builder files.
+2. Add [divTutorialPrompt](index.html) host.
+3. Load template during `appInit()`.
+4. Render wizard Prompt Area without widget row and without LessonSectionList.
+5. Style Prompt Area anchors as pseudo-buttons, table anchors as ordinary links.
+6. Reuse Info sanitizer/superlink handling.
+
+### Phase 5: Strict Prompt Area and LessonSectionList
+
+1. Render strict widget row.
+2. Render Breadcrumb row.
+3. Render Tutorial Caption row with Sections toggle.
+4. Render closed/open LessonSectionList states.
+5. Render all Section rows, blank captions when missing.
+6. Highlight current Section row live.
+7. Bind Section number links to navigation.
+8. Bind Done checkboxes to browser progress.
+9. Bind LOOP checkboxes to runtime IncludeInLooping.
+10. Bind LOOP header toggle all.
+11. Keep LessonSectionList open while looping/changing Sections.
+
+### Phase 6: Strict mode commands, keyboard, and chrome
+
+1. Add View > Presentation > Tutorial Mode actions.
+2. Ensure `/vptn`, `/vpts`, `/vptw` work.
+3. Apply strict body classes and CSS chrome hiding.
+4. Keep Breadcrumbs visible in strict mode.
+5. Keep left rail LooperLight and Instrument Caption visible in strict mode.
+6. Add `Meta+Shift+m` command-line Easter egg.
+7. Add strict `document_keypress()` allowlist gate.
+8. Ensure ESC hides command-line but does not stop looping or exit tutorial.
+
+### Phase 7: Instrument Caption / LooperLight toggle
+
+1. Insert `⥮` button between `C` and `S` controls.
+2. Add layout CSS classes.
+3. Add event handler to toggle row/column layout.
+4. Reset layout to row on app startup.
+5. Reset layout to row on song load.
+6. Validate strict tutorial default remains one-row and visible.
+
+### Phase 8: Widget actions, Done, Bookmark, and loop caption
+
+1. Bind navigation buttons to existing transport navigation.
+2. Bind LOOP and BEAT-LOOP to existing looper paths.
+3. Update LOOP caption while active and filtered.
+4. Bind widget Done checkbox to Done array.
+5. Bind Bookmark widget `[§n] [Set]`.
+6. Keep widget and LessonSectionList synchronized.
+7. Persist progress to browser storage.
+
+### Phase 9: Strict IncludeInLooping hook
+
+1. Add narrow hook in Section Looping next-decision path.
+2. Implement [Tutorial.js](Tutorial.js) filter helper.
+3. Ensure hook only applies in strict tutorial Section Looping.
+4. Ensure BEAT LOOPING passes through unchanged.
+5. Ensure none/wizard mode pass through unchanged.
+6. Ensure Next/Prev remain sequential when not in loop next-decision path.
+7. Add pure helper tests and browser acceptance tests.
+
+### Phase 10: Song Library progress badges
+
+1. Update Song Library row rendering to add tutorial badge after copy-link glyphs.
+2. Derive tutorial storage key from tutorial path for sprint 138.
+3. Determine section count strategy.
+4. Render `[§highest (doneCount/sectionCount) ☞bookmark]` format.
+5. Add CSS classes for highest Done, count, and Bookmark.
+6. Keep Instrument badges unchanged.
+7. Add pure badge model tests.
+
+### Phase 11: Splash screen
+
+1. Add splash template/CSS/builder.
+2. Implement full-screen overlay startup flow.
+3. Add buttons:
+   - Open Tutorial.
+   - Open Song from Library.
+   - Author Song / Play Instruments.
+   - Open Local Song File.
+4. Route Song Library root/tutorial branch/local-file flows.
+5. Keep splash independent of tutorial state.
+
+### Phase 12: Chart `/cl` and `/cc` chrome adjustments
+
+1. Identify `/cl` and `/cc` action paths.
+2. Ensure `/cc` displays configured Chart style without tab-button chrome in fullscreen/strict contexts.
+3. Ensure `/cl` remains Chart Line without tab-button chrome.
+4. Ensure strict prompt links/macros can invoke `/cl` and `/cc`.
+
+### Phase 13: Documentation and final acceptance
+
+1. Update [sprint-138.md](_doco/design/sprints/138-tutorial-mode/sprint-138.md).
+2. Update [_doco/developer/globals-programmers-reference.md](_doco/developer/globals-programmers-reference.md).
+3. Add tutorial prompt authoring docs.
+4. Add build tool usage docs.
+5. Document LessonSectionList behavior.
+6. Document IncludeInLooping behavior.
+7. Document progress badge format.
+8. Document Instrument Caption / LooperLight layout toggle.
+
+## Testing strategy
+
+### Jest targets
+
+Use the repo ESM test command pattern:
+
+```text
+node --experimental-vm-modules node_modules/.bin/jest _tests/jest/ --verbose --runInBand
+```
+
+Add focused tests for:
+
+1. Tutorial schema validation.
+2. Song/Section tutorial normalization.
+3. Prompt build extraction from fixture copied from example tutorial source.
+4. Prompt sanitizer wrapper keeps safe anchors and rejects buttons/images.
+5. Prompt CSS contains pseudo-button default and table-link override.
+6. Progress normalization with Done arrays.
+7. Done toggle and sparse Done behavior.
+8. Bookmark toggle.
+9. Progress badge model.
+10. IncludeInLooping default all-checked model.
+11. IncludeInLooping header toggle all/none model.
+12. IncludeInLooping next-section filter.
+13. LOOP button caption model.
+14. LessonSectionList row model with missing captions.
+15. Strict prompt visibility and Breadcrumb presence.
+16. Strict key allowlist and `Meta+Shift+m` helper.
+17. Instrument Caption / LooperLight layout state helper, if implemented as a pure helper.
+18. Splash route decision helper.
+
+### Browser/manual acceptance
+
+Manual acceptance checklist:
+
+1. Existing non-tutorial songs behave normally.
+2. Example tutorial song loads from [songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json](songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json).
+3. Prompt build tool embeds data from [songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html](songs/tutorials/C000-intro/L001-one-string-intro/L001-1.prompts.html).
+4. Strict Prompt Area shows Widget row, Breadcrumbs, Tutorial Caption row, Section caption, and prompt lines.
+5. Sections button opens/closes LessonSectionList.
+6. LessonSectionList remains open through Section changes and looping.
+7. Current Section row highlights live in `#a1fde9`.
+8. Section number links navigate to Sections.
+9. Done checkboxes in LessonSectionList and widget row synchronize.
+10. Done array persists after reload.
+11. Bookmark widget sets, jumps, and clears.
+12. Bookmark row/token is visible in LessonSectionList.
+13. IncludeInLooping checkboxes default all checked after song load.
+14. LOOP header toggles all checked/unchecked.
+15. Strict LOOP skips unchecked Sections.
+16. IncludeInLooping changes are live during looping and do not restart looping.
+17. IncludeInLooping does not affect BEAT LOOPING.
+18. IncludeInLooping does not affect wizard/none mode.
+19. Next/Prev remain sequential through all Sections.
+20. LOOP button shows `[LOOPING 2..3]` or equivalent when filtered and active.
+21. Song Library badge shows `[§5 (3/12) ☞7]` format.
+22. Prompt hyperlinks appear as pseudo-buttons outside tables.
+23. Prompt hyperlinks inside tables appear link-like.
+24. Prompt `button` and `img` are stripped or inert.
+25. Instrument Caption controls display `[C] [⥮] [S]`.
+26. `⥮` toggles row/column layout.
+27. Instrument Caption / LooperLight default to one row on app startup and song load.
+28. Strict tutorial mode keeps Instrument Caption / LooperLight visible and one-row by default.
+29. `Meta+Shift+m` opens command-line in strict mode.
+30. `/vptn`, `/vpts`, `/vptw` switch tutorial modes.
+31. ESC hides command-line but does not stop loop or exit tutorial.
+32. `/cl` and `/cc` display without tab chrome in fullscreen/strict contexts.
+33. Splash startup choices work.
+
+## Recommendations summary
+
+1. Keep [Tutorial.js](Tutorial.js) responsible for tutorial state, progress, IncludeInLooping helpers, and view models.
+2. Render LessonSectionList from a model rather than mutating rows one at a time.
+3. Keep Breadcrumbs visible in strict mode.
+4. Store Done as an array of zero-based indexes; derive highest Done and count for badges.
+5. Keep IncludeInLooping runtime-only and reset on every song load.
+6. Add a narrow loop-selection hook rather than spreading tutorial loop logic across transport and Song functions.
+7. Treat empty IncludeInLooping as a final design decision before coding; safest recommendation is loop as all included.
+8. Style all Prompt Area anchors as pseudo-buttons by default; style table anchors as normal links.
+9. Do not depend on prompt `class=` preservation.
+10. Use `parse5` for prompt build parsing.
+11. Use example tutorial files as fixture sources, but copy them for Jest tests.
+12. Use path-based tutorial detection in Song Library unless Section count forces a richer metadata strategy.
+13. Implement Instrument Caption / LooperLight layout with CSS classes and a stateless `⥮` button.
+
+## Questions to answer before coding approval
+
+### 1. Empty IncludeInLooping behavior
+
+If the user clears every LOOP checkbox and starts or continues Section Looping, what should happen?
+
+Options:
+
+1. Treat empty as all included. Recommended for safety.
+2. Disable LOOP start until at least one Section is checked.
+3. Let LOOP stop quietly.
+4. Show a warning in the Prompt Area.
+
+Need answer before coding the loop hook.
+
+### 2. Song Library section count source
+
+The badge format needs total Section count, for example `(3/12)`. Where should the Song Library get `12`?
+
+Options:
+
+1. Add/manual-maintain Section count in `song-list.json` for tutorials.
+2. Lazily load tutorial song JSON for tutorial entries only.
+3. Cache Section count after the song has been opened once and show partial badge before then.
+4. Extend existing song-list update tooling to write Section count without extracting captions.
+
+Recommendation: lazily load tutorial JSON only for tutorial entries, unless this creates visible delay.
+
+### 3. Version-1 progress migration
+
+If browser storage contains old `completedSectionIndex`, should it be migrated?
+
+Options:
+
+1. No migration; reset progress for sprint-development tutorial data.
+2. Convert `completedSectionIndex = 4` to `[0, 1, 2, 3, 4]`.
+3. Convert `completedSectionIndex = 4` to `[4]`.
+
+Recommendation: no migration unless real users already have progress data.
+
+### 4. Bookmark visual in LessonSectionList
+
+Should the bookmarked row be bold like the design example, or should only the Section number/goto token be bold/styled?
+
+Recommendation: style only the Section number or add a bookmark glyph/class, preserving row readability.
+
+### 5. LOOP header toggle semantics
+
+When the LOOP header is clicked and the current state is mixed, should it check all or uncheck all?
+
+Recommendation: if any unchecked, check all; if all checked, uncheck all.
+
+### 6. IncludeInLooping and direct row navigation while looping
+
+If the user clicks a Section number row that is unchecked while LOOP is active, should the app briefly navigate there and then skip on next loop decision, or should it immediately jump to next included Section?
+
+Recommendation: navigate directly, then the next loop decision applies the filter.
+
+### 7. IncludeInLooping with First/Last buttons while looping
+
+If First/Last are pressed while LOOP is active and the target is unchecked, should the first/last navigation happen literally or be filtered immediately?
+
+Recommendation: First/Last remain literal transport navigation; the loop's next decision applies filtering.
+
+### 8. Instrument Caption / LooperLight layout persistence
+
+Should row/column layout remain runtime-only and reset on each song load, as specified, or should it persist in session presentation state?
+
+Recommendation: reset on app startup and song load per design.
+
+### 9. Prompt table link styling scope
+
+Should the table-link override apply to all tables inside Prompt Area or only tables with a specific class?
+
+Recommendation: all tables inside Prompt Area, because prompt HTML will not depend on class preservation.
+
+### 10. Example tutorial song fixture strategy
+
+Should Jest tests copy the live example tutorial files into fixtures, or is it acceptable for tests to read the live example files directly?
+
+Recommendation: copy fixtures into [_tests/jest/fixtures/](_tests/jest/fixtures/) to avoid test fragility while content is being authored.
+
+### 11. Strict LessonSectionList visibility with missing tutorial metadata
+
+Should a tutorial song with `song.tutorial.level = strict` but no Section tutorial metadata still show LessonSectionList rows for all Sections?
+
+Recommendation: yes, as specified, with blank captions.
+
+### 12. Badge display with only Bookmark and no Done
+
+Should Song Library show `[(0/12) ☞7]`, `[☞7]`, or no badge?
+
+Recommendation: show `[(0/12) ☞7]` because it communicates both progress and lesson size.
+
+### 13. LOOP button caption when empty IncludeInLooping is treated as all
+
+If all LOOP boxes are unchecked but empty is treated as all included, should active caption show `[LOOPING]`, `[LOOPING all]`, or `[LOOPING none=>all]`?
+
+Recommendation: `[LOOPING]` to avoid exposing implementation fallback.
+
+### 14. Hook location for future chart navigation algorithms
+
+Should the sprint 138 hook be named generically enough for future DaCapo/Coda navigation algorithms?
+
+Recommendation: yes, use a neutral name like `SongNavigationHooks` or `SectionNavigationPolicy`, with Tutorial as the first policy provider.
+
+## Draft acceptance checklist
+
+A first Iteration 4 implementation is ready for deeper review when:
+
+1. Non-tutorial songs behave normally.
+2. Tutorial song schema and persistence support `none | strict | wizard` and prompt metadata.
+3. Prompt build tool works against fixture derived from the example tutorial `.prompts.html`.
+4. Strict Prompt Area includes Widget row, Breadcrumbs, Tutorial Caption row, LessonSectionList toggle, Section caption, and prompt lines.
+5. Wizard mode remains normal mode plus prompts only.
+6. LessonSectionList shows all Sections and blank captions where metadata is missing.
+7. LessonSectionList current row highlights live.
+8. Done array persists and synchronizes between widget and list.
+9. Bookmark persists, jumps, clears, and appears in badge/list.
+10. IncludeInLooping defaults all checked on song load.
+11. IncludeInLooping filters strict Section Looping only.
+12. IncludeInLooping changes live during active looping.
+13. IncludeInLooping does not apply to BEAT LOOPING, wizard, none, or normal songs.
+14. Next/Prev/First/Last remain sequential transport navigation.
+15. LOOP caption reflects filtered active ranges.
+16. Song Library badge uses `[§highest (doneCount/sectionCount) ☞bookmark]` format.
+17. Prompt anchors style as pseudo-buttons outside tables and normal links inside tables.
+18. Instrument Caption controls show `[C] [⥮] [S]`.
+19. Instrument Caption / LooperLight layout toggles row/column and resets to row on song load/startup.
+20. Strict tutorial chrome keeps Instrument Caption / LooperLight visible by default.
+21. Strict command-line Easter egg works.
+22. Splash screen still works.
+23. Chart `/cl` and `/cc` strict/fullscreen chrome behavior still works.
+24. Focused Jest tests cover pure helpers and build tooling.
+25. Browser acceptance confirms visual layout and loop behavior.
+
+## Suggested implementation order
+
+Recommended order:
+
+1. Code archaeology for affected seams.
+2. Tutorial schema/persistence.
+3. Pure [Tutorial.js](Tutorial.js) progress, LessonSectionList, badge, and IncludeInLooping helpers.
+4. Prompt build tool and fixtures from example tutorial source.
+5. Prompt Area CSS for links and table links.
+6. Wizard Prompt Area rendering.
+7. Strict Prompt Area rendering with Breadcrumbs and LessonSectionList.
+8. Done/Bookmark browser progress and synchronization.
+9. IncludeInLooping UI state and LOOP caption model.
+10. Section Looping hook for strict IncludeInLooping.
+11. Instrument Caption / LooperLight `⥮` toggle.
+12. Song Library progress badges.
+13. Strict chrome/keyboard/command-line polish.
+14. Splash screen.
+15. Chart `/cl` and `/cc` chrome adjustments.
+16. Documentation and acceptance pass.
+
+Reasoning:
+
+- Pure helper work should come before browser UI to lock down the state model.
+- LessonSectionList rendering should come before the loop hook so IncludeInLooping can be inspected visually before it affects playback.
+- The loop hook is the riskiest behavioral change and should be added after tests for helper logic exist.
+- Song Library badges depend on final progress storage shape.
+- Instrument Caption / LooperLight toggle is isolated and can be implemented before or after tutorial core, but doing it after Prompt Area avoids mixing unrelated UI debugging.

@@ -78,7 +78,7 @@
   },
   "rootID": "3",
   "sharps": true,
-  "singleNoteOpacity": "1",
+  "singleNoteOpacity": "0.44",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
   "songName": "L001-1",
@@ -829,19 +829,6 @@
       "rootID": "7",
       "rootIDLead": "-1",
       "beats": 8,
-      "currentBeat": 8,
-      "sharps": true
-    },
-    {
-      "sectionNotesByTable": {},
-      "caption": "",
-      "chartChord": "",
-      "chartMode": "",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
-      "rootID": "3",
-      "rootIDLead": "-1",
-      "beats": 4,
       "currentBeat": 1,
       "sharps": true
     }
@@ -883,6 +870,18 @@
           "caption": ""
         },
         "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1784358789466,
+        "date": "7/18/2026",
+        "time": "12:13:09 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 3,\n    \"currentBeat\": 2,\n    \"sharps\": true\n}",
         "lastRevived": null
       }
     ]
