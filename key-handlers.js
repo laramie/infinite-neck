@@ -68,7 +68,9 @@ import {
 	moveSongMacro,
 	upsertSongMacro
 } from './MacroExecutor.js';
-
+import {
+	TUTORIAL_MODES
+} from './Tutorial.js';
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
@@ -506,6 +508,11 @@ function document_keypress(e) {
 		e.preventDefault();
 	}
     if ( tag != 'input' && tag != 'textarea'){
+		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
+				
+		if (strictTutorial && (!['n', 'b', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L'].includes(e.key))){
+			return;
+		}
         switch (e.key){
             case "m":
             case "M":

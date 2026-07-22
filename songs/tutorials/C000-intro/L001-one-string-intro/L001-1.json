@@ -301,8 +301,8 @@
         "caption": "Getting Started: Chromatic Scale",
         "prompt": {
           "lines": [
-            "<p><a href='#macro=macro-strict'>strict</a>  <a href='#macro=macroNone'>none</a>  <a href='#macro=macroWizard'>wizard</a> You are going to play the Chromatic scale on the E string, which is the fattest string on the 4-string bass and the guitar.\n        </p>",
-            "<p>In the next step, we'll guide you through the notes. In this step, just look at the notes so you can see\n            that each fret has a circled number next to it.  These are where your fingers go, when you play them one-by-one.\n            These are \"Fingering\" notes, and show \n            which finger you should use for each fret, 1 being your Index finger, 2 being your middle finger, \n            3 being your ring finger, and 4 being your pinkie. \n            Go to the Next step, where you can loop the notes and play along.\n        </p>"
+            "<p>You are going to play the Chromatic scale on the E string, which is the fattest string on the 4-string bass and the guitar.\n        </p>",
+            "<p>In the next step, we'll guide you through the notes. In this step, just look at the notes so you can see\n            that each fret has a circled number next to it.  These are where your fingers go, when you play them one-by-one.\n            These are \"Fingering\" notes, and show \n            which finger you should use for each fret, 1 being your Index finger, 2 being your middle finger, \n            3 being your ring finger, and 4 being your pinkie. \n            Go to the Next step, where you can loop the notes and play along.  <a href='#macro=macro-strict'>strict</a>  <a href='#macro=macroNone'>none</a>  <a href='#macro=macroWizard'>wizard</a> \n        </p>"
           ]
         }
       }

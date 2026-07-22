@@ -452,7 +452,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			level: normalizedMode
 		};
 		sectionChanged();
+		resetTutorialChrome();
 		return normalizedMode;
+	}
+
+	export function resetTutorialChrome(){
+		//reset it either direction.
+		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
+		if (strictTutorial){
+			$('#divTopCaptions').hide();
+			$(".dockable-handle").hide();
+			$('#topControlsCaptions').hide();
+			$('.captionRow').hide();
+			$('#transport').hide();
+			setWiringOpenState(false); //going fullscreen
+			turnOnKeep();
+		} else {
+			$('#divTopCaptions').show();
+			$(".dockable-handle").show();
+			$('#topControlsCaptions').show();
+			$('.captionRow').show();
+			$('#transport').show();
+			turnOffKeep();
+		}
 	}
 
 	const tutorialRuntimeState = {
@@ -495,6 +517,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.progress = null;
 		tutorialRuntimeState.includeInLoopingSectionIndexes = null;
 		tutorialRuntimeState.lessonSectionListOpen = false;
+		resetTutorialChrome();
 	}
 
 	function getTutorialProgress(){
