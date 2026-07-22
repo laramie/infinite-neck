@@ -106,6 +106,15 @@
     min-height: 1em;
     width: auto;
 }
+.captionRow.captionRowLooperColumnLayout .captionRowInstrument,
+.captionRow.captionRowLooperColumnLayout .captionRowLiveInfo {
+    display: flex;
+    width: max-content;
+}
+.captionRow.captionRowLooperColumnLayout .captionRowLiveInfo {
+    margin-left: 0.4em;
+    margin-top: 0.15em;
+}
 .captionRow .lblRootID {
     display: inline-flex;
     align-items: center;

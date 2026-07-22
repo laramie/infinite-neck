@@ -143,6 +143,17 @@ export function extractInstrumentSummaries(songJson = {}, warnings = []) {
     return result;
 }
 
+export function extractTutorialSummary(songJson = {}) {
+    const level = `${songJson?.tutorial?.level || ''}`.trim().toLowerCase();
+    if (level !== 'strict') {
+        return null;
+    }
+    return {
+        tutorial: 'strict',
+        SectionCount: Array.isArray(songJson.sections) ? songJson.sections.length : 0
+    };
+}
+
 export function updateSongListData(songListJson = {}, options = {}) {
     const warnings = [];
     const errors = [];
@@ -176,10 +187,19 @@ export function updateSongListData(songListJson = {}, options = {}) {
         }
 
         const instruments = extractInstrumentSummaries(songJson, warnings);
-        return {
+        const tutorialSummary = extractTutorialSummary(songJson);
+        const nextEntry = {
             ...entry,
             instruments
         };
+        if (tutorialSummary) {
+            nextEntry.tutorial = tutorialSummary.tutorial;
+            nextEntry.SectionCount = tutorialSummary.SectionCount;
+        } else {
+            delete nextEntry.tutorial;
+            delete nextEntry.SectionCount;
+        }
+        return nextEntry;
     });
 
     const data = {

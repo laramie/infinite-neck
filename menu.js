@@ -1345,6 +1345,33 @@ export var gMenuFile =    {
               "preserveMenuStack": true
             },
             {
+              "caption": "<b>t</b>utorial mode",
+              "trigger": "t",
+              "children": [
+                {
+                  "caption": "<b>n</b>one",
+                  "trigger": "n",
+                  "action": "setTutorialMode",
+                  "value": "none",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>s</b>trict",
+                  "trigger": "s",
+                  "action": "setTutorialMode",
+                  "value": "strict",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>w</b>izard",
+                  "trigger": "w",
+                  "action": "setTutorialMode",
+                  "value": "wizard",
+                  "preserveMenuStack": true
+                }
+              ]
+            },
+            {
               "caption": "<b>s</b>ave Display Options [${displayOptionsSaveState}]",
               "trigger": "s",
               "action": "saveViewDisplayOptions",

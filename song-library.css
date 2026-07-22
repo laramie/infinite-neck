@@ -132,6 +132,24 @@
 		white-space: nowrap;
 }
 
+.songLibraryTutorialProgressBadge {
+    display: inline-block;
+    margin: 0.1em 0.2em 0.1em 0;
+    padding: 0.1em 0.35em;
+    border-radius: 0.35em;
+    font-family: "Kode Mono", "Courier New", monospace;
+    font-size: 85%;
+    font-weight: 700;
+    white-space: nowrap;
+    background-color: white;
+    color: rgb(31, 0, 170);
+    border: 2px solid rgb(31, 0, 170);
+}
+
+.songLibraryTutorialProgressBadge span + span {
+    margin-left: 0.35em;
+}
+
 .instrumentMain {
   background-color: white;
   color: brown;

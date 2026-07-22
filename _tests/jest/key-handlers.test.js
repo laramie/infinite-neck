@@ -24,6 +24,7 @@ const restartLoopBeats = jest.fn(() => {
 const mockToggleTransport = jest.fn();
 const mockShowTransport = jest.fn();
 const mockSetCmdLineMenuMode = jest.fn();
+const mockShowCmdLine = jest.fn();
 
 jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 	jsonTree: jest.fn()
@@ -38,7 +39,7 @@ jest.unstable_mockModule('../../command-line.js', () => ({
 	hideCmdLine: jest.fn(),
 	setCmdLineMenuMode: mockSetCmdLineMenuMode,
 	setCmdActionRunner: jest.fn(),
-	showCmdLine: jest.fn(),
+	showCmdLine: mockShowCmdLine,
 	stringifyMenuItem: jest.fn(() => ''),
 	updateCmdLineView: jest.fn()
 }));
@@ -278,6 +279,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockToggleTransport.mockClear();
 		mockShowTransport.mockClear();
 		mockSetCmdLineMenuMode.mockClear();
+		mockShowCmdLine.mockClear();
 		mockEventBus.trigger.mockClear();
 
 		setKeyHandlerProviders({
@@ -313,6 +315,10 @@ describe('key-handlers spacebar mapping', () => {
 			sectionChanged: jest.fn(),
 			setPresentationMode: jest.fn((value) => {
 				song.presentationMode = !!value;
+			}),
+			setTutorialMode: jest.fn((value) => {
+				song.tutorial = { level: value };
+				return value;
 			}),
 			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
@@ -533,6 +539,11 @@ describe('key-handlers spacebar mapping', () => {
 		expect(toggleResult.preserveMenuStack).toBe(true);
 		expect(getValue('presentationModeState')).toBe(true);
 
+		const tutorialResult = performCmdAction({ action: 'setTutorialMode', value: 'strict' });
+		expect(tutorialResult.result).toBe('tutorial mode: strict');
+		expect(tutorialResult.preserveMenuStack).toBe(true);
+		expect(song.tutorial).toEqual({ level: 'strict' });
+
 		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
 		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
 		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
@@ -542,6 +553,21 @@ describe('key-handlers spacebar mapping', () => {
 		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
 		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
 		expect(clearResult.preserveMenuStack).toBe(true);
+	});
+
+	test('Meta+Shift+m opens command line in strict tutorial mode', () => {
+		song.tutorial = { level: 'strict' };
+		const event = {
+			key: 'm',
+			metaKey: true,
+			shiftKey: true,
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(event);
+
+		expect(mockShowCmdLine).toHaveBeenCalledTimes(1);
+		expect(event.preventDefault).toHaveBeenCalledTimes(1);
 	});
 
 	test('runActionByName routes remaining navigation verbs through the transport controller', () => {

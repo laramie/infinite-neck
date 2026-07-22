@@ -229,7 +229,7 @@ export function modeTypeFromStoredMode(rawMode = '') {
   return mode.type || mode.name || '';
 }
 
-export function chordNotesFromStoredChord(rawChord = '', rootID = 0) {
+export function chordNotesFromStoredChord(rawChord = '', rootID = 0, options = {}) {
   if (isNoneValue(rawChord)) {
     return new Set();
   }
@@ -237,13 +237,13 @@ export function chordNotesFromStoredChord(rawChord = '', rootID = 0) {
   if (chord.empty) {
     return new Set();
   }
-  if (chord.tonic && Array.isArray(chord.notes) && chord.notes.length > 0) {
+  if (!options.transposeToRootID && chord.tonic && Array.isArray(chord.notes) && chord.notes.length > 0) {
     return directNotesToNoteSet(chord.notes);
   }
   return intervalsToNoteSet(chord.intervals || [], ((Number.parseInt(rootID, 10) || 0) % 12 + 12) % 12);
 }
 
-export function modeNotesFromStoredMode(rawMode = '', rootID = 0) {
+export function modeNotesFromStoredMode(rawMode = '', rootID = 0, options = {}) {
   if (isNoneValue(rawMode)) {
     return new Set();
   }
@@ -251,7 +251,7 @@ export function modeNotesFromStoredMode(rawMode = '', rootID = 0) {
   if (mode.empty) {
     return new Set();
   }
-  if (mode.tonic && Array.isArray(mode.notes) && mode.notes.length > 0) {
+  if (!options.transposeToRootID && mode.tonic && Array.isArray(mode.notes) && mode.notes.length > 0) {
     return directNotesToNoteSet(mode.notes);
   }
   return intervalsToNoteSet(mode.intervals || [], ((Number.parseInt(rootID, 10) || 0) % 12 + 12) % 12);

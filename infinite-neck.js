@@ -132,6 +132,20 @@ import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
+import { TutorialPromptBuilder } from './templates/tutorial/tutorial.builder.js';
+import {
+	filterStrictLoopSectionIndex,
+	getLoopCaptionModel,
+	normalizeTutorialMode,
+	readTutorialProgressFromStorage,
+	TUTORIAL_MODES,
+	toggleAllIncludeInLooping,
+	toggleBookmarkSection,
+	toggleDoneSection,
+	toggleIncludeInLooping,
+	writeTutorialProgressToStorage
+} from './Tutorial.js';
+import { setLoopSectionFilter } from './SongNavigationHooks.js';
 
 import './plugins/registerPlugins.js';
 import pluginManager from './plugins/pluginRuntime.js';
@@ -174,6 +188,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	var gSong = null;  //constructed in document ready.
 	let gUrlMacroRunAttempted = false;
 	let gFullscreenLeadSheetLineVisible = false;
+	let gCurrentSongLibraryHref = '';
+	let gPendingSongLibraryHref = '';
 	let chartInputController = null;
 	export function getSong(){
 		return gSong;
@@ -337,6 +353,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			resetNoteNames,
 			sectionChanged,
 			setPresentationMode,
+			setTutorialMode,
 			setBPM,
 			setNamedNoteOpacity,
 			setSingleNoteOpacity,
@@ -422,6 +439,167 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		getSong().presentationMode = !!shouldAutomate;
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).trigger('change');
+	}
+
+	export function setTutorialMode(mode){
+		if (!getSong()){
+			return TUTORIAL_MODES.NONE;
+		}
+		const normalizedMode = normalizeTutorialMode(mode);
+		const existingTutorial = getSong().tutorial && typeof getSong().tutorial === 'object' ? getSong().tutorial : {};
+		getSong().tutorial = {
+			...existingTutorial,
+			level: normalizedMode
+		};
+		sectionChanged();
+		return normalizedMode;
+	}
+
+	const tutorialRuntimeState = {
+		song: null,
+		progress: null,
+		includeInLoopingSectionIndexes: null,
+		lessonSectionListOpen: false
+	};
+
+	function getTutorialStorageEntry(song = getSong()){
+		return {
+			...song,
+			href: gCurrentSongLibraryHref || $("#txtFilename").val() || song?.songName || '',
+			SectionCount: Array.isArray(song?.sections) ? song.sections.length : 0
+		};
+	}
+
+	function getTutorialFallbackStorageEntry(song = getSong()){
+		const fallbackHref = $("#txtFilename").val() || song?.songName || '';
+		if (!fallbackHref || !gCurrentSongLibraryHref || fallbackHref === gCurrentSongLibraryHref){
+			return null;
+		}
+		return {
+			...song,
+			href: fallbackHref,
+			SectionCount: Array.isArray(song?.sections) ? song.sections.length : 0
+		};
+	}
+
+	function hasTutorialProgress(progress = {}){
+		return Array.isArray(progress.doneSectionIndexes) && progress.doneSectionIndexes.length > 0
+			|| progress.bookmarkSectionIndex !== null;
+	}
+
+	function resetTutorialRuntimeForSongIfNeeded(song = getSong()){
+		if (tutorialRuntimeState.song === song){
+			return;
+		}
+		tutorialRuntimeState.song = song;
+		tutorialRuntimeState.progress = null;
+		tutorialRuntimeState.includeInLoopingSectionIndexes = null;
+		tutorialRuntimeState.lessonSectionListOpen = false;
+	}
+
+	function getTutorialProgress(){
+		const song = getSong();
+		resetTutorialRuntimeForSongIfNeeded(song);
+		if (!tutorialRuntimeState.progress){
+			const storageEntry = getTutorialStorageEntry(song);
+			let progress = readTutorialProgressFromStorage(storageEntry);
+			if (!hasTutorialProgress(progress)){
+				const fallbackStorageEntry = getTutorialFallbackStorageEntry(song);
+				if (fallbackStorageEntry){
+					const fallbackProgress = readTutorialProgressFromStorage(fallbackStorageEntry);
+					if (hasTutorialProgress(fallbackProgress)){
+						progress = writeTutorialProgressToStorage(storageEntry, fallbackProgress);
+					}
+				}
+			}
+			tutorialRuntimeState.progress = progress;
+		}
+		return tutorialRuntimeState.progress;
+	}
+
+	function saveTutorialProgress(progress){
+		tutorialRuntimeState.progress = writeTutorialProgressToStorage(getTutorialStorageEntry(), progress);
+		return tutorialRuntimeState.progress;
+	}
+
+	function renderTutorialPrompt(){
+		const song = getSong();
+		resetTutorialRuntimeForSongIfNeeded(song);
+		return TutorialPromptBuilder.renderToDest({
+			song,
+			currentSectionIndex: getSectionsCurrentIndex(),
+			progress: getTutorialProgress(),
+			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes,
+			lessonSectionListOpen: tutorialRuntimeState.lessonSectionListOpen
+		});
+	}
+
+	function refreshTutorialLoopCaption(){
+		if (!sectionsLooping()){
+			return;
+		}
+		const sectionCount = getSong()?.getSections?.().length || 0;
+		showLoopSectionsStarted({
+			caption: getLoopCaptionModel({
+				looping: true,
+				includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || [],
+				sectionCount
+			})
+		});
+	}
+
+	export function tutorialToggleSectionList(){
+		resetTutorialRuntimeForSongIfNeeded(getSong());
+		tutorialRuntimeState.lessonSectionListOpen = !tutorialRuntimeState.lessonSectionListOpen;
+		renderTutorialPrompt();
+	}
+
+	export function tutorialGotoSection(sectionIndex){
+		linkToSection(sectionIndex);
+	}
+
+	export function tutorialToggleDone(sectionIndex){
+		const sectionCount = getSong()?.getSections?.().length || 0;
+		saveTutorialProgress(toggleDoneSection(getTutorialProgress(), sectionIndex, sectionCount));
+		renderTutorialPrompt();
+	}
+
+	export function tutorialToggleBookmark(sectionIndex){
+		const sectionCount = getSong()?.getSections?.().length || 0;
+		saveTutorialProgress(toggleBookmarkSection(getTutorialProgress(), sectionIndex, sectionCount));
+		renderTutorialPrompt();
+	}
+
+	export function tutorialToggleIncludeInLooping(sectionIndex){
+		const sectionCount = getSong()?.getSections?.().length || 0;
+		tutorialRuntimeState.includeInLoopingSectionIndexes = toggleIncludeInLooping(tutorialRuntimeState.includeInLoopingSectionIndexes, sectionIndex, sectionCount);
+		renderTutorialPrompt();
+		refreshTutorialLoopCaption();
+	}
+
+	export function tutorialToggleAllIncludeInLooping(){
+		const sectionCount = getSong()?.getSections?.().length || 0;
+		tutorialRuntimeState.includeInLoopingSectionIndexes = toggleAllIncludeInLooping(tutorialRuntimeState.includeInLoopingSectionIndexes, sectionCount);
+		renderTutorialPrompt();
+		refreshTutorialLoopCaption();
+	}
+	export function tutorialNextSection(){
+		runActionByName('nextSection');
+	}
+	export function tutorialPrevSection(){
+		runActionByName('prevSection');
+	}
+	export function tutorialFirstSection(){
+		runActionByName('firstSection');
+	}
+	export function tutorialLastSection(){
+		runActionByName('lastSection');
+	}
+	export function tutorialLoopBeats(){
+		runActionByName('toggleLoopBeats');
+	}
+	export function tutorialLoopSections(){
+		runActionByName('toggleLoopSections');
 	}
 	//==================== 2) Section/song state helpers ======================
 
@@ -528,6 +706,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
+		renderTutorialPrompt();
 		captureDisplayOptionsDirtyBaseline();
 	}
 
@@ -1492,6 +1671,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var jsonObj = JSON.parse(str);
 		const importOptions = normalizeOpenSongImportOptions(append);
 		const hasSelectiveImport = importOptions.sections || importOptions.stylesheets || importOptions.replaceUserTheme || importOptions.graveyardRecords;
+		if (!hasSelectiveImport) {
+			gCurrentSongLibraryHref = gPendingSongLibraryHref;
+			gPendingSongLibraryHref = '';
+		}
 		if (gSong && hasSelectiveImport){
 			let newSong = new Song(jsonObj);
 
@@ -1721,6 +1904,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					return;
 				}
 			}
+			gPendingSongLibraryHref = normalizeUrlSongPath(songName);
 			openSong(JSON.stringify(data));
 		});
 	}
@@ -2621,6 +2805,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				.first()
 				.toggle();
 		});
+		$(".toggleCaptionLooperLayout")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+			$(this)
+				.closest('.captionRow')
+				.toggleClass('captionRowLooperColumnLayout');
+		});
 		$(".showLeftSectionMark")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
@@ -2660,6 +2851,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
             ? data.caption
             : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
         $('#btnLoopSections').html(caption).addClass('ButtonOn');
+        $('.classLoopSections').html(caption).addClass('ButtonOn');
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
 			isLoopActive: true
 		});
@@ -2667,6 +2859,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
     function showLoopSectionsStopped(){
         $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
+        $('.classLoopSections').html('LOOP').removeClass('ButtonOn');
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
 			isLoopActive: false
 		});
@@ -2833,7 +3026,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="], #divInfoRendered a[href^="#macro="]', function(e) {
+		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="], #divInfoRendered a[href^="#macro="], #divTutorialPrompt a[href^="#raise="], #divTutorialPrompt a[href^="#macro="]', function(e) {
 			e.preventDefault();
 			const href = $(this).attr('href') || '';
 			if (href) {
@@ -3347,6 +3540,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			linkToSection,
 			linkToSectionChartChord,
 			linkToSectionChartMode,
+			tutorialToggleSectionList,
+			tutorialGotoSection,
+			tutorialToggleDone,
+			tutorialToggleBookmark,
+			tutorialToggleIncludeInLooping,
+			tutorialToggleAllIncludeInLooping,
+			tutorialNextSection,
+			tutorialPrevSection,
+			tutorialFirstSection,
+			tutorialLastSection,
+			tutorialLoopBeats,
+			tutorialLoopSections,
 			hideGraveyard,
 			saveInstrumentPrefs,
 			applyInstrumentPrefs,
@@ -3583,6 +3788,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divQuick").hide();
 		$("#CmdMenu").hide();
 		SongLibrary.initializeSongLibrary('#divSongList');
+		setLoopSectionFilter((candidateIndex, context = {}) => filterStrictLoopSectionIndex(candidateIndex, {
+			...context,
+			strictTutorial: normalizeTutorialMode(getSong()?.tutorial?.level) === TUTORIAL_MODES.STRICT,
+			sectionCount: getSong()?.getSections?.().length ?? context.sectionCount,
+			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || []
+		}));
 
 		updateFontLabel();
 
@@ -3662,6 +3873,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			loadTemplates('templates/SectionStatus/section-status.html').then(() => {
 				SectionStatusBuilder.addToDest('#spanSectionStatusLeadSheetHost', 'leadsheet', 'leadSheet', 'horizontal');
+	
+			}),
+
+			loadTemplates('templates/tutorial/tutorial.html').then(() => {
+				TutorialPromptBuilder.addToDest('#divTutorialPrompt');
+				renderTutorialPrompt();
 	
 			})
 		];
@@ -3805,12 +4022,14 @@ EventBus.on('TableLayout:changed', function() {
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
 	$('#btnLoopBeats').addClass('ButtonOn');
+	$('.classLoopBeats').addClass('ButtonOn');
 	EventBus.trigger('Widget:SectionStatus:loopChanged', {
 		isLoopActive: true
 	});
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
 	$('#btnLoopBeats').removeClass('ButtonOn');
+	$('.classLoopBeats').removeClass('ButtonOn');
 	EventBus.trigger('Widget:SectionStatus:loopChanged', {
 		isLoopActive: false
 	});

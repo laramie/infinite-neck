@@ -162,6 +162,23 @@ function persistSongInfo(rawInfo) {
     };
 }
 
+function normalizeSongTutorial(rawTutorial) {
+    if (!rawTutorial || typeof rawTutorial !== 'object' || Array.isArray(rawTutorial)) {
+        return { level: 'none' };
+    }
+    const level = `${rawTutorial.level || ''}`.trim().toLowerCase();
+    const normalized = {
+        level: ['none', 'strict', 'wizard'].includes(level) ? level : 'none'
+    };
+    if (typeof rawTutorial.caption === 'string') {
+        normalized.caption = rawTutorial.caption;
+    }
+    if (typeof rawTutorial.storageKey === 'string') {
+        normalized.storageKey = rawTutorial.storageKey;
+    }
+    return normalized;
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -228,6 +245,7 @@ export class SongPersistence {
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
         this.myTunings = normalizeMyTunings(this.myTunings);
         this.info = normalizeSongInfo(this.info);
+        this.tutorial = normalizeSongTutorial(this.tutorial);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
@@ -264,6 +282,9 @@ export class SongPersistence {
         }
         if (key === 'info') {
             return persistSongInfo(value);
+        }
+        if (key === 'tutorial' && (!value || value.level === 'none')) {
+            return undefined;
         }
         if (   key === 'userColors' 
             || key === 'fretLengths' 

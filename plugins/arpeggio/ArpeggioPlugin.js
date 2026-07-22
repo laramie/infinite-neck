@@ -1790,12 +1790,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   collectAutoChartChordSourceNames(section) {
     const rootID = this.getEffectiveChartRootID(section);
-    return chordNotesFromStoredChord(`${section?.chartChord || ''}`, rootID);
+    return chordNotesFromStoredChord(`${section?.chartChord || ''}`, rootID, { transposeToRootID: true });
   }
 
   collectAutoChartModeSourceNames(section) {
     const rootID = this.getEffectiveChartRootID(section);
-    return modeNotesFromStoredMode(`${section?.chartMode || ''}`, rootID);
+    return modeNotesFromStoredMode(`${section?.chartMode || ''}`, rootID, { transposeToRootID: true });
   }
 
   collectAutoChartChordModeSourceNames(section) {

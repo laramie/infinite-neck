@@ -229,6 +229,7 @@ function buildCaptionRow(options, tableID) {
 	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
 	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
+	var hamburgerCaptionLooperLayout = "<button id='btnHamburgerCaptionLooperLayout" + options.baseID + "' class='toggleCaptionLooperLayout subcaptionButton' type='button' data-tableid='" + tableID + "' title='Toggle Instrument Caption / LooperLight layout'>&#x296E;</button>";
 	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side Section info'>S</button>";
 	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
 	var hamburgerNoteDetails = "<button id='hamburgerNoteDetails" + options.baseID + "' class='showNoteDetails subcaptionButton' type='button' >N<small>ote</small></button>";
@@ -269,6 +270,7 @@ function buildCaptionRow(options, tableID) {
 		+ hamburgerCaptionRowButtons
 		+ '<span class="captionRowButtons">'
 		+ hamburgerLeftCaption
+		+ hamburgerCaptionLooperLayout
 		+ hamburgerLeftSectionMark 
 		+ hamburgerColorDict
 		+ btnShowWiring

@@ -1,0 +1,169 @@
+.tutorialPrompt {
+    margin: 0.4em 0;
+    border: 2px solid rgb(58, 12, 0);
+    border-radius: 0.5em;
+    color: black;
+    background-color: rgb(251, 185, 99);
+    border: 1px solid brown;
+    padding: 0.75em;
+}
+
+.tutorialPrompt--none {
+    display: none;
+}
+
+.tutorialPromptContent {
+    margin-right: 1.4em;
+    margin-top: 0.8em;
+    background-color:  rgb(255, 235, 156);
+    border: 1px solid gray;
+    border-radius: 0;
+    -webkit-box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3); 
+    box-shadow: 11px 12px 9px -7px #000000, -3px 0px 9px 5px rgba(49,0,0,0.3);
+    padding: 1em;
+    overflow: auto;
+}
+.tutorialPromptContent p {
+    line-height: 1.4;
+}
+.tutorialPromptContent p:not(:last-child) {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+
+
+.tutorialPromptHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 0.35em;
+    font-weight: 700;
+}
+
+.tutorialBreadcrumbsLeader {
+    padding-left: 1em;
+    font-size: 120%;
+    color: black;
+    font-weight: bold;
+}
+
+.tutorialPromptBreadcrumbsRow {
+    margin-top: 0.2em;
+    margin-bottom: 0.5em;
+}
+.tutorialPromptBreadcrumbs {
+    margin-left: 0.5em;
+    font-size: 120%;
+    color: rgb(74, 20, 0);
+}
+
+.tutorialPromptWidgetRow {
+    display: inline-block;
+    background-color: white;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 5px;
+    padding: 0.5em;
+    text-align: center; 
+    vertical-align: middle;
+}
+
+.tutorialNavNext,
+.tutorialLoopBeats,
+.tutorialLOOP,
+.tutorialNav {
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+    padding: 0.15em;
+    padding-left: .4em;
+    padding-right: .4em;
+    font-size:  130%;
+    background: #ffbf00;
+    box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
+    border-radius: 0.2em;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+.tutorialNavNext {
+    background: #87cf0b;
+    box-shadow:   inset -4px -4px 4px#527e06, 5px 2px 4px black;
+    border-color: #527e06;
+    
+}
+.tutorialLoopBeats {
+    background: lightgreen;
+    box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
+    border-color: darkolivegreen;
+}
+.tutorialLOOP {
+    background: #6faa09;
+    box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
+    border-color: darkolivegreen;
+}
+.tutorialSectionMark {
+    font-size: 80%;
+    color: green;
+}
+.tutorialCurrOfCount {
+    font-size: 100%;
+    font-weight: normal;
+    color: brown;
+}
+
+
+
+
+.tutorialPromptCaption {
+    font-size: 115%;
+}
+
+.tutorialPrompt a {
+    display: inline-block;
+    margin: 0.15em 0.2em;
+    padding: 0.15em 0.45em;
+    border: 1px solid rgb(31, 0, 170);
+    border-radius: 0.35em;
+    background: white;
+    color: rgb(31, 0, 170);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.tutorialPrompt table a {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    text-decoration: underline;
+    font-weight: inherit;
+}
+
+.lessonSectionList {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.35em 0;
+}
+
+.lessonSectionList th,
+.lessonSectionList td {
+    border: 1px solid #ccc;
+    padding: 0.2em 0.35em;
+    vertical-align: top;
+}
+
+.lessonSectionListCurrentRow {
+    background: rgb(255, 244, 190);
+}
+
+.lessonSectionListCurrentRow .lessonSectionListSectionLink,
+.lessonSectionListCurrentRow .lessonSectionListCaption {
+    font-weight: 700;
+}
+
+.lessonSectionListBookmark {
+    color: rgb(31, 0, 170);
+    font-weight: 700;
+}

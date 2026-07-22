@@ -10,6 +10,7 @@
     "package:deploy": "bash bin/package-deploy.sh",
     "update:help": "node bin/help.html-updater.js",
     "update:song-list": "node bin/update-song-list.js",
+    "build:tutorial-prompts": "node bin/build-tutorial-prompts.js",
     "check:song-list": "node bin/update-song-list.js --check",
     "strip:tuning-visible": "node bin/strip-tuning-visible.js",
     "check:tuning-visible": "node bin/strip-tuning-visible.js --check",
@@ -40,6 +41,7 @@
     "jest": "^30.2.0",
     "jscodeshift": "^17.3.0",
     "knip": "^5.85.0",
+    "parse5": "^8.0.1",
     "typescript": "^5.9.3"
   },
   "dependencies": {

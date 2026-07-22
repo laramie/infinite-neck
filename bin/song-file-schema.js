@@ -203,6 +203,40 @@ const sectionSchema = {
     additionalProperties: true
 };
 
+const tutorialLevelSchema = { type: 'string', enum: ['none', 'strict', 'wizard'] };
+
+const sectionTutorialSchema = {
+    type: 'object',
+    properties: {
+        caption: { type: 'string' },
+        prompt: {
+            type: 'object',
+            properties: {
+                lines: {
+                    type: 'array',
+                    items: { type: 'string' }
+                }
+            },
+            required: ['lines'],
+            additionalProperties: false
+        }
+    },
+    additionalProperties: false
+};
+
+sectionSchema.properties.tutorial = sectionTutorialSchema;
+
+const songTutorialSchema = {
+    type: 'object',
+    properties: {
+        level: tutorialLevelSchema,
+        caption: { type: 'string' },
+        storageKey: { type: 'string' }
+    },
+    required: ['level'],
+    additionalProperties: false
+};
+
 const pluginSchema = {
     type: 'object',
     properties: {
@@ -313,6 +347,7 @@ export const songFileV2Schema = {
                 infoLinesSchema
             ]
         },
+        tutorial: songTutorialSchema,
         userTheme: {
             anyOf: [
                 { type: 'string' },

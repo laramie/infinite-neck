@@ -2,6 +2,7 @@ import {
     buildVisibilityMap,
     classifyWiring,
     extractInstrumentSummaries,
+    extractTutorialSummary,
     tableIDForBaseID,
     updateSongListData
 } from '../../bin/update-song-list.js';
@@ -69,6 +70,15 @@ describe('update-song-list helpers', () => {
         expect(tableIDForBaseID('P46_1')).toBe('tblP46_1');
     });
 
+    test('extractTutorialSummary reports strict tutorial level and SectionCount', () => {
+        expect(extractTutorialSummary({
+            tutorial: { level: 'strict' },
+            sections: [{}, {}, {}, {}]
+        })).toEqual({ tutorial: 'strict', SectionCount: 4 });
+
+        expect(extractTutorialSummary({ tutorial: { level: 'wizard' }, sections: [{}] })).toBeNull();
+    });
+
     test('updateSongListData preserves display order, updates object entries, and warns on legacy strings', () => {
         const songByHref = new Map([
             ['demo/song-a.json', {
@@ -79,6 +89,8 @@ describe('update-song-list helpers', () => {
             }],
             ['demo/song-b.json', {
                 songName: 'song-b',
+                tutorial: { level: 'strict' },
+                sections: [{}, {}, {}],
                 myTunings: [{ baseID: 'S6_1', fromBaseID: 'S6' }],
                 noteTablesLayout: [{ tableID: 'tblS6_1', visible: false }],
                 wirings: [{ tablename: 'tblS6_1', listenToTablename: 'tblP46_1', relativeSection: '+1' }]
@@ -106,6 +118,8 @@ describe('update-song-list helpers', () => {
         expect(result.data.songs[2].instruments).toEqual([
             { fromBaseID: 'S6', wiring: 'Observer', visible: false }
         ]);
+        expect(result.data.songs[2].tutorial).toBe('strict');
+        expect(result.data.songs[2].SectionCount).toBe(3);
         expect(result.warnings).toEqual(expect.arrayContaining([
             expect.stringContaining('legacy string')
         ]));

@@ -139,6 +139,7 @@ function printSectionsLine(...args) { return requireProvider('printSectionsLine'
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
+function setTutorialMode(...args) { return requireProvider('setTutorialMode')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
@@ -471,6 +472,11 @@ function isMappedSpacebarEvent(evt) {
 }
 
 function document_keydown(e) {
+	if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key || ''}`.toLowerCase() === 'm' && getSong()?.tutorial?.level === 'strict') {
+		showCmdLine();
+		e.preventDefault();
+		return;
+	}
 	if (isMappedSpacebarEvent(e)) {
 		e.preventDefault();
 		runActionByName(spacebarActionName);
@@ -1264,6 +1270,12 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
 			actionResult.preserveMenuStack = true;
 			break;
+		case "setTutorialMode": {
+			const mode = setTutorialMode(menuItem.value || argByInputID || 'none');
+			actionResult.result = `tutorial mode: ${mode}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
 		case "saveViewDisplayOptions":
 			handleBtnControlsToDisplayOptions();
 			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;

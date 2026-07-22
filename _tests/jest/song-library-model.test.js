@@ -17,7 +17,9 @@ describe('SongLibrary model', () => {
                         { fromBaseID: 'P46', wiring: 'Main', visible: true },
                         { fromBaseID: 'S6', wiring: 'Observer', visible: false },
                         { fromBaseID: '', wiring: 'Listener', visible: true }
-                    ]
+                    ],
+                    tutorial: 'strict',
+                    SectionCount: 12
                 },
                 { href: 'song-at-root.json', description: 'root desc' },
                 { href: '', description: 'skip me' },
@@ -36,7 +38,41 @@ describe('SongLibrary model', () => {
             { fromBaseID: 'P46', wiring: 'Main', visible: true },
             { fromBaseID: 'S6', wiring: 'Observer', visible: false }
         ]);
+        expect(result[1].tutorial).toBe('strict');
+        expect(result[1].SectionCount).toBe(12);
         expect(result[2].directory).toBe(ROOT_DIRECTORY_KEY);
+    });
+
+    test('renderSongLibraryHtml emits tutorial progress badge from song-list metadata and local storage', () => {
+        const store = new Map();
+        globalThis.localStorage = {
+            getItem(key) {
+                return store.get(key) || null;
+            }
+        };
+        store.set('infinite-neck:tutorial-progress:tutorials/course/song-a', JSON.stringify({
+            version: 2,
+            storageKey: 'tutorials/course/song-a',
+            doneSectionIndexes: [0, 2, 4],
+            bookmarkSectionIndex: 6
+        }));
+
+        const html = renderSongLibraryHtml({
+            songs: [
+                {
+                    href: 'tutorials/course/song-a.json',
+                    description: 'Tutorial',
+                    tutorial: 'strict',
+                    SectionCount: 12
+                }
+            ]
+        });
+
+        expect(html).toContain("<span class='songLibraryTutorialProgressBadge'>");
+        expect(html).toContain("<span class='songLibraryTutorialHighestDone'>&sect;5</span>");
+        expect(html).toContain("<span class='songLibraryTutorialDoneCount'>(3/12)</span>");
+        expect(html).toContain("<span class='songLibraryTutorialBookmark'>&#x261E;7</span>");
+        expect(html).not.toContain('songLibraryTutorialProgressBadge songLibraryInstrument');
     });
 
     test('buildSongLibraryModel includes intro-only directories and root intros', () => {

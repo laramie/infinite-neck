@@ -1,6 +1,7 @@
 import EventBus from './event-bus.js';
 import * as InfiniteNeck from './infinite-neck.js';
 import { createLooperTransportTimingProviders } from './looper-transport-timing.js';
+import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 
 	let isSectionsLooping = false;
 	let isBeatsLooping = false;
@@ -355,7 +356,13 @@ import { createLooperTransportTimingProviders } from './looper-transport-timing.
                     });
                 }
     
-                song.gotoNextSection(true);  //calls showBeats()
+				song.gotoNextSection(true);  //calls showBeats()
+				applyLoopSectionFilterToSong(song, {
+					sectionLooping: true,
+					beatLooping: false,
+					previousSectionIndex: currentSectionIndex,
+					sectionCount
+				});
 				result.sectionTransition = true;
 				if (isLastSection) {
 					EventBus.trigger('DaCapo:OnSongBegin', {

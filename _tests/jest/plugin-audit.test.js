@@ -23,6 +23,7 @@ jest.unstable_mockModule('../../looper.js', () => ({
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
   getSong: mockGetSong,
+  getTransportController: jest.fn(() => null),
   transposeSong: mockTransposeSong
 }));
 
