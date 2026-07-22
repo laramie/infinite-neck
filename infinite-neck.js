@@ -465,15 +465,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#topControlsCaptions').hide();
 			$('.captionRow').hide();
 			$('#transport').hide();
-			setWiringOpenState(false); //going fullscreen
-			turnOnKeep();
+			setWiringOpenState(false); 
+			PalettePresentation.lockKeep();
+			$("td.note").css({"cursor": "no-drop"});
 		} else {
 			$('#divTopCaptions').show();
 			$(".dockable-handle").show();
 			$('#topControlsCaptions').show();
-			$('.captionRow').show();
+			//leave off for now.  You can always turn them on with SHIFT+A
+			//    $('.captionRow').show();
 			$('#transport').show();
-			turnOffKeep();
+			PalettePresentation.unlockKeep();
+			$("td.note").css({"cursor": "pointer"});
 		}
 	}
 
@@ -743,6 +746,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				currentSectionIndex: getSectionsCurrentIndex(),
 				reason: 'sectionChanged'
 			});
+		}
+		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
+		if (strictTutorial){
+			turnOnKeep();
 		}
 	}
 
@@ -1480,7 +1487,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			restoreHighlightIfNeeded: true,
 			forcedKeep: false
 		});
-		$("td.note").css({"cursor": "pointer"});
+		if (!gPresentation.palette.lockKeep){
+			$("td.note").css({"cursor": "pointer"});
+		}
 	}
 
 	export function hideNoteClickedCaption(){
@@ -2049,8 +2058,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: true,
 					forcedKeep: false
 				});
-				$("td.note").css({"cursor": "pointer"});
-				turnOffHiding();
+				if (!gPresentation.palette.lockKeep){
+					$("td.note").css({"cursor": "pointer"});
+					turnOffHiding();
+				}
 			});
 	
 		$(document)
@@ -2073,8 +2084,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: false,
 					forcedKeep: false
 				});
-				$("td.note").css({"cursor": "pointer"});
-				turnOffHiding();
+				if (!gPresentation.palette.lockKeep){
+					$("td.note").css({"cursor": "pointer"});
+					turnOffHiding();
+				}
 			});
 	
 		$(document)
@@ -2085,8 +2098,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: true,
 					forcedKeep: false
 				});
-				$("td.note").css({"cursor": "pointer"});
-				turnOffHiding();
+				if (!gPresentation.palette.lockKeep){
+					$("td.note").css({"cursor": "pointer"});
+					turnOffHiding();
+				}
 			});
 	
 		PalettePresentation.initializePalettePresentation();
