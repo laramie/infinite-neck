@@ -77,7 +77,8 @@
   font-size: 0.9rem;
 }
 
-.tblThemeIdDump th, td {
+.tblThemeIdDump th, 
+.tblThemeIdDump td {
   padding: 5px 4px;       /* Gives data breathing room */
   text-align: left;         /* Aligns content systematically */
   border: 1px solid #3a3a3a; /* Super thin, subtle single border */
