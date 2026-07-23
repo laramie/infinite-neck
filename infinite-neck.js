@@ -242,7 +242,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		url.search = '';
 		url.hash = '';
 		url.searchParams.set('song', songPath);
-		void navigator.clipboard.writeText(url.toString());
+		void navigator.clipboard.writeText(url.toString().replaceAll('%2F','/')); //safe to have song= have '/' and not '%2F' for slashes.
 	}
 
 	let WIRING_OPEN = false;
@@ -468,6 +468,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setWiringOpenState(false); 
 			PalettePresentation.lockKeep();
 			$("td.note").css({"cursor": "no-drop"});
+			$(".leftRailSectionStatusHost").hide();
+			$(".fretTableLeftCaption").hide();
 		} else {
 			$('#divTopCaptions').show();
 			$(".dockable-handle").show();
@@ -750,6 +752,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
 		if (strictTutorial){
 			turnOnKeep();
+			$("td.note").css({"cursor": "no-drop"});
 		}
 	}
 
@@ -2846,11 +2849,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".toggleCaptionLooperLayout")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-			$(this)
-				.closest('.captionRow')
-				.toggleClass('captionRowLooperColumnLayout');
+				let $lrs = $('.leftRailStack');
+				let fd = $lrs.css('flex-direction');
+				if (fd == 'column'){
+					$lrs.css('flex-direction','row');
+				} else {
+					$lrs.css('flex-direction','column');
+				}
 		});
-		$(".showLeftSectionMark")
+		$(".showLeftSectionStatus")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
 			$(this)

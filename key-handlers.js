@@ -1,6 +1,9 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 import { jsonTree } from './jsonTree80kg/json-tree-80kg.js';
-import { setOneCssVar } from './themeFunctions.js';
+import { 
+	setOneCssVar, 
+	dumpThemeIds 
+} from './themeFunctions.js';
 import {
 	clearCmdResults,
 	hideCmdLine,
@@ -1243,6 +1246,15 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = `hidden ${baseID}`;
 			break;
 		}
+		case "selThemeById": {
+			const songTheme = `${menuItem.value || argByInputID || ''}`.trim();
+			$('#selThemes').val(songTheme).trigger('change');
+			actionResult.result = `shown ${songTheme}`;
+			break;
+		}
+		case "showThemeIds":
+			showMessages(dumpThemeIds());
+			break;
 		case "viewFullscreen":
 			enterFullscreen();
 			hideCmdLine();
@@ -1486,6 +1498,18 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
+			break;
+		case "showSectionStatusLeft":
+			$(".leftRailSectionStatusHost").show();//display:flex (hide seems to preserve this)
+			break;
+		case "showCaptionLeft":
+			$(".fretTableLeftCaption").show();//display:flex (hide seems to preserve this)
+			break;
+		case "hideSectionStatusLeft":
+			$(".leftRailSectionStatusHost").hide();
+			break;
+		case "hideCaptionLeft":
+			$(".fretTableLeftCaption").hide();
 			break;
 		case "hideAllNoteNames":
 			showAllNoteNames(false);

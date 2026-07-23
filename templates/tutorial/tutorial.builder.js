@@ -116,7 +116,7 @@ export function renderTutorialPrompt(model = {}) {
         : '';
     
     const sectionToggle = model.strict
-        ? '<button type="button" class="tutorialPromptSectionToggle" data-action="tutorialToggleSectionList">Tutorial Sections '+arrow+'</button>'
+        ? '<button type="button" class="tutorialPromptSectionToggle" data-action="tutorialToggleSectionList">Tutorial Sections &nbsp;&nbsp;'+arrow+'</button>'
             +'&nbsp;&nbsp;'+sectionCurrOfCount
             +'<span class="tutorialBreadcrumbsLeader">Tutorial: </span><span class="tutorialPromptBreadcrumbsRow">'
             +  breadcrumbs

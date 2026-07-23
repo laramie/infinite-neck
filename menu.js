@@ -1101,6 +1101,22 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "hideFingering"
+            },
+            {
+              "caption": "<b>w</b>idgets",
+              "trigger": "w",
+              "children": [
+                  {
+                    "caption": "<b>c</b>aption left",
+                    "trigger": "c",
+                    "action": "hideCaptionLeft"
+                  },
+                  {
+                    "caption": "<b>s</b>ection status left",
+                    "trigger": "s",
+                    "action": "hideSectionStatusLeft"
+                  }
+              ]
             }
           ]
         },
@@ -1132,6 +1148,22 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "showFingering"
+            },
+            {
+              "caption": "<b>w</b>idgets",
+              "trigger": "w",
+              "children": [
+                  {
+                    "caption": "<b>c</b>aption left",
+                    "trigger": "c",
+                    "action": "showCaptionLeft"
+                  },
+                  {
+                    "caption": "<b>s</b>ection status left",
+                    "trigger": "s",
+                    "action": "showSectionStatusLeft"
+                  }
+              ]
             }
           ]
         },
@@ -1412,6 +1444,23 @@ export var gMenuFile =    {
       "caption": "th<b>e</b>mes",
       "trigger": "e",
       "children": [
+        {
+          "name": "nameSelThemeById",
+          "caption": "<b>i</b>d",
+          "trigger": "i",
+          "action": "selThemeById",
+          "input": {
+            "type": "input",
+            "caption": "id",
+            "datatype": "string",
+            "id": "id"
+          }
+        },
+        {
+          "caption": "<b>s</b>how ids",
+          "trigger": "s",
+          "action": "showThemeIds"
+        },
         {
           "caption": "<b>;</b>&nbsp;dialog",
           "trigger": ";",

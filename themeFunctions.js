@@ -50,6 +50,18 @@ import { gThemes } from './themes.js';
 	return sel;
 }
 
+export function dumpThemeIds(){
+	let result = [];
+	result.push("<p><b style='font-size: 120%;'>Theme id values.</b> Use id with <b>/ei</b> to select themes by command-line (<b>/</b> <i>&gt; th<b>e</b>me &gt; <b>i</b>d</i>) in macros.</p>");
+	result.push("<table class='tblThemeIdDump'>");
+	result.push(`<tr><th>id</th><th>caption</th></tr>`);
+	Object.values(gThemes).forEach(theme => {
+		result.push(`<tr><td>${theme.id}</td><td>${theme.caption}</td></tr>`);
+	});
+	result.push("</table>");
+	return result.join('\n');
+}
+
     //============  Helper functions for manipulating the DOM stylesheet =======
 	/** send this to the DOM but not as a theme.
 	  *    setOneVariable("--cell-spacing", "30px");

@@ -1,11 +1,11 @@
 .tutorialPrompt {
     margin: 0.4em 0;
     border: 2px solid rgb(58, 12, 0);
-    border-radius: 0.5em;
+    border-radius: 0.1em;
     color: black;
     background-color: rgb(251, 185, 99);
     border: 1px solid brown;
-    padding: 0.75em;
+    padding: 0.2em;
 }
 
 .tutorialPrompt--none {
@@ -13,8 +13,11 @@
 }
 
 .tutorialPromptContent {
-    margin-right: 1.4em;
+    font-size: 120%;
+    margin-left: 0.6em;
+    margin-right: 1.8em;
     margin-top: 0.8em;
+    margin-bottom: 0.6em;
     background-color:  rgb(255, 235, 156);
     border: 1px solid gray;
     border-radius: 0;
@@ -40,8 +43,16 @@
     font-weight: 700;
 }
 
+.tutorialPromptSectionToggle {
+    padding: 0.05em;
+    padding-left: 0.2em;
+    padding-right: 0.8em;
+    padding-top: 0.2em;
+    font-size: 80%;
+}
+
 .tutorialBreadcrumbsLeader {
-    padding-left: 1em;
+    padding-left: 4em;
     font-size: 120%;
     color: black;
     font-weight: bold;
@@ -60,6 +71,7 @@
 .tutorialPromptWidgetRow {
     display: inline-block;
     background-color: white;
+    margin-left: 1.6em;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     box-shadow: inset 2px 5px 20px black;
@@ -73,12 +85,12 @@
 .tutorialLoopBeats,
 .tutorialLOOP,
 .tutorialNav {
-    margin-left: 0.4em;
-    margin-right: 0.4em;
-    padding: 0.15em;
+    margin-left: 0.6em;
+    margin-right: 0.6em;
+    padding: 0.25em;
     padding-left: .4em;
     padding-right: .4em;
-    font-size:  130%;
+    font-size:  110%;
     background: #ffbf00;
     box-shadow:   inset -4px -4px 4px darkorange, 5px 2px 4px black;
     border-radius: 0.2em;
@@ -142,9 +154,13 @@
 }
 
 .lessonSectionList {
-    width: 100%;
+    width: 94%;
     border-collapse: collapse;
-    margin: 0.35em 0;
+    margin-left: 2em;
+    margin-right: 0.6em;
+    margin-top: 0.2em;
+    margin-bottom: 1.6em;
+    background-color: white;
 }
 
 .lessonSectionList th,
@@ -155,7 +171,7 @@
 }
 
 .lessonSectionListCurrentRow {
-    background: rgb(255, 244, 190);
+    background-color: rgb(207, 255, 245);
 }
 
 .lessonSectionListCurrentRow .lessonSectionListSectionLink,

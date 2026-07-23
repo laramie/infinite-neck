@@ -106,15 +106,6 @@
     min-height: 1em;
     width: auto;
 }
-.captionRow.captionRowLooperColumnLayout .captionRowInstrument,
-.captionRow.captionRowLooperColumnLayout .captionRowLiveInfo {
-    display: flex;
-    width: max-content;
-}
-.captionRow.captionRowLooperColumnLayout .captionRowLiveInfo {
-    margin-left: 0.4em;
-    margin-top: 0.15em;
-}
 .captionRow .lblRootID {
     display: inline-flex;
     align-items: center;
@@ -154,6 +145,10 @@
     transform: translateY(3px); /* Move the button down slightly */
 }
 
+.toggleCaptionLooperLayout {
+    font-size: 81%;
+}
+
 
 .captionRow .lblRootID {
     font-size:  110%;
@@ -180,7 +175,7 @@
 
 .leftRailStack {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 0.35em;
 }
