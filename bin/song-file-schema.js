@@ -327,6 +327,7 @@ export const songFileV2Schema = {
         chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
+        allowThemeAutomation: { type: 'boolean' },
         pluginFiringOrder: {
             type: 'array',
             items: { type: 'string', minLength: 1 }

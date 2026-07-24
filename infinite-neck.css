@@ -477,6 +477,10 @@ table.viewControls th {
     font-weight: 600;
     color: brown;
 }
+#viewDisplayOptionCurrentSectionTheme {
+    font-weight: 600;
+    color: brown;
+}
 
 .slider {
   -webkit-appearance: none;

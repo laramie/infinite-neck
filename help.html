@@ -2853,16 +2853,30 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
  </p>
 
- <p>Note that two of the options in <span class="menuExampleLine">/vdd</span> aren't on the View page:
+ <p>Note that three of the options in <span class="menuExampleLine">/vdd</span> aren't on the View page:
 <ul>
     <li><b>autoColor</b> - <span class="GUIReferenceInline">palette &gt; AutoColor</span></li>
     <li><b>currentColorDict</b> - <span class="GUIReferenceInline">palette &gt; Stylesheets</span></li>
+    <li><b>sectionTheme</b> - <span class="GUIReferenceInline">Themes Dropdown</span></li>
     <li>
         These are shown below the Save/Clear buttons so you can monitor them from the View page: 
         <br><img style="border: 20px solid green; width: 260px;" src="img/help/context/DisplayOptions-from-other-pages.png" width="200">
     </li>
 </ul>
 </p>
+
+<p>The <i>sectionTheme</i> shows up when <span class="GUIReferenceInline">Allow Theme Automation</span> is checked, and will show <s>strikethrough</s> text
+when the currently selected Theme for the Section does not match the stored value in DisplayOptions.  To store it, make sure Allow Theme Automation is checked,
+then click <span class="GUIReferenceInline">SAVE Display Options</span>.
+</p>
+<p><i>sectionTheme</i> is a little different, in that you are not prompted to <span class="GUIReferenceInline">SAVE Display Options</span> simply because you changed a Theme
+while <span class="GUIReferenceInline">Allow Theme Automation</span> is checked.  Nonetheless, you save the Theme in the Current Section
+by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in normal text (stored/saved), or in <s>strikethrough</s> (active but not stored/saved).</p>
+<p>Normally, you would not automate Theme selection, as it is considered a User choice while playing back a song.  However, for Presentations you may wish to automate.  The Tutorials especially 
+    use automation, since the Themes dropdown is not available to tutorials (except by links to macros), and the tutorials 
+    generally want to make specific points using specific examples they can describe in the tutorial prompt text.
+</p>
+
 
  <p>There's a bit more info in the <a href="#glossaryDisplayOptions">Glossary::Display Options</a> entry</p>
 

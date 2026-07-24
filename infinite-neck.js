@@ -683,10 +683,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnControlsToDisplayOptions_View').toggleClass('riskyButtonActionRequired', !!isRequired);
 	}
 
-	function updateDisplayOptionsReadonlyValues(options = null){
+	export function updateDisplayOptionsReadonlyValues(options = null){
 		const values = options || controlsToDisplayOptions();
 		$('#viewDisplayOptionAutoColorValue').text(String(!!values.autoColor));
 		$('#viewDisplayOptionCurrentColorDictValue').text(values.currentColorDict || '');
+		
+		let displayOptionsTheme = values.sectionTheme||'';
+		let storedDisplayOptions = getSong().getCurrentSection().displayOptions;
+		let storedTheme = (storedDisplayOptions?.sectionTheme)||'';
+		let showTheme;
+		if (storedTheme === displayOptionsTheme){
+			showTheme = `${storedTheme}`;
+		} else {
+			showTheme = `${storedTheme} <s>${displayOptionsTheme}</s>`;
+		}
+		$('#viewDisplayOptionCurrentSectionTheme').html(showTheme || '');
 	}
 
 	function captureDisplayOptionsDirtyBaseline(){
@@ -1768,6 +1779,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			EventBus.trigger('UpdateAllWiringSelects');
 		}
 
+		
+
 		replay();
 		sectionChanged();
 	}
@@ -1785,6 +1798,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		$("#txtFilename").val(getSong().songName).trigger('change');
 		$("#cbPresentationMode").prop("checked", !!getSong().presentationMode).trigger('change');
+		$("#cbAllowThemeAutomation").prop("checked", !!getSong().allowThemeAutomation).trigger('change');
 
 		setBPM(getSong().defaultBPM);
 
@@ -1815,6 +1829,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (tuningsShowing == 0){
 			// Preserve loaded no-visible state; UI already provides warning and recovery flows.
 		}
+
+		leaveFullscreen();
+		hideCmdLine();
+		hideAllMenuDivs();
 
 		replay();
 		sectionChanged();
@@ -1885,6 +1903,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return false;
 		}
 		loadSong(songPath);
+		leaveFullscreen();
+		hideCmdLine();
+		hideAllMenuDivs();
 		return true;
 	}
 
@@ -2627,6 +2648,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const naturalFontScaling = options.naturalFontScaling;
 		const functionSymbolsValue = options.dropDownFunctionSymbols?.value;
 
+		if (getSong().allowThemeAutomation){
+			let sectionTheme = options.sectionTheme;
+			if (sectionTheme){
+				$('#selThemes').val(sectionTheme).trigger('change');
+			}
+
+		}
 		if (getSong().presentationMode){
 			if (sizesObj.width != null){
 				$("#dropDownCellWidth").val(String(sizesObj.width));
@@ -2801,8 +2829,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.tinyNoteWidth = $("#selTinyNoteWidth").val();
 		options.tinyNoteHPosition = $("#selTinyNoteHPosition").val();
 		options.tinyNoteRadius = $("#selTinyNoteRadius").val();
-		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		
+		//This is for storing theme, but only if allowThemeAutomation is in effect:
+		if (getSong().allowThemeAutomation){
+			options.sectionTheme = $('#selThemes').val();
+		}
+
+		//Ignore #cbPresentationMode because it really is Song-scope and not per Section.
 		return options;
 	}
 
@@ -3228,6 +3261,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#cbPresentationMode', function(){
 			getSong().presentationMode = this.checked;
 		});
+		bindEvent('change', '#cbAllowThemeAutomation', function(){
+			getSong().allowThemeAutomation = this.checked;
+			updateDisplayOptionsReadonlyValues();
+		});
 
 		bindEvent('click', '#btnMessagesTab', function() {
 			showMessagesTab('Messages');
@@ -3555,7 +3592,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
-		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode), #divViewControls select, #divViewControls textarea');
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation), #divViewControls select, #divViewControls textarea');
 		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();

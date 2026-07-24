@@ -187,6 +187,7 @@ const songDefaults = {
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
+    allowThemeAutomation: false,
     pluginFiringOrder: [...DEFAULT_PLUGIN_FIRING_ORDER],
     chartOptions: {
         modes: true,
