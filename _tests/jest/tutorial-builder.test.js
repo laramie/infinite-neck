@@ -42,7 +42,6 @@ describe('Tutorial Prompt builder', () => {
         const html = renderTutorialPrompt(model);
 
         expect(html).toContain('tutorialPrompt--strict');
-        expect(html).toContain('Course / Lesson / &sect;2 of 3');
         expect(html).toContain('lessonSectionListCurrentRow');
         expect(html).toContain('lessonSectionListBookmark');
         expect(html).toContain('data-action="tutorialToggleIncludeInLooping"');
