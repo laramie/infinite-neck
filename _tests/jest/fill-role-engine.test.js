@@ -81,7 +81,7 @@ describe('fill role engine', () => {
     expect(legacyFillColorToRoleMode('noteScale')).toBe(MODE_ROLE);
   });
 
-  test('chart-sourced chord notes use chord tonic rather than section root', () => {
+  test('chart-sourced chord notes transpose to section root', () => {
     const roleNoteSets = computeRoleNoteSets({
       rootID: 6, // Eb
       chordSource: 'Bb11',
@@ -89,7 +89,7 @@ describe('fill role engine', () => {
       useSectionChart: true
     });
 
-    expect(roleNoteSets.chord.has('C')).toBe(true);
-    expect(roleNoteSets.chord.has('Db')).toBe(false);
+    expect(roleNoteSets.chord.has('C')).toBe(false);
+    expect(roleNoteSets.chord.has('Db')).toBe(true);
   });
 });

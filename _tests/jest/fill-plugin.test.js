@@ -428,10 +428,10 @@ describe('FillPlugin', () => {
 
     expect(result.result).toContain('Fill applied:');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('11');
+    expect(noteNames.has('G')).toBe(true);
     expect(noteNames.has('Bb')).toBe(true);
-    expect(noteNames.has('Ab')).toBe(true);
     expect(noteNames.has('E')).toBe(false);
-    expect(noteNames.has('G')).toBe(false);
+    expect(noteNames.has('Ab')).toBe(false);
   });
 
   test('useChartChord adopts direct chart matches and slash-chord aliases', () => {

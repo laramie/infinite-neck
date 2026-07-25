@@ -21,11 +21,11 @@ export function computeRoleNoteSets({
   const rootName = Constants.NOTE_NAMES_ARRAY[normalizedRootID] || Constants.NOTE_NAMES_ARRAY[0];
 
   const chordSet = useSectionChart
-    ? chordNotesFromStoredChord(`${chordSource || ''}`, normalizedRootID)
+    ? chordNotesFromStoredChord(`${chordSource || ''}`, normalizedRootID, { transposeToRootID: true })
     : chordNotesFromType(`${chordSource || ''}`, normalizedRootID);
 
   const modeSet = useSectionChart
-    ? modeNotesFromStoredMode(`${modeSource || ''}`, normalizedRootID)
+    ? modeNotesFromStoredMode(`${modeSource || ''}`, normalizedRootID, { transposeToRootID: true })
     : modeNotesFromType(`${modeSource || ''}`, normalizedRootID);
 
   return {
