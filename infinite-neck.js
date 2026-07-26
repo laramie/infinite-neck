@@ -1336,15 +1336,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		"#spanSectionDrawer": "#btnEditSection"
 	}
 
-	export function hideAllMenuDivs(){
+	export function hideAllMenuDivs(openingSong=false){
 		for (const key of Object.keys(AllMenuDivs)){
 			if (key === "#spanSectionDrawer"){
 				TransportBuilder.hideSectionDrawer();
 			} else if (key === "#info") {
-				InfoBuilder.hide();
+				if (!openingSong){
+					InfoBuilder.hide();
+				}
 			} else if (key === "#macros") {
-				MacroBuilder.persistMacro();
-				MacroBuilder.hide();
+				if(!openingSong){
+					MacroBuilder.persistMacro();
+					MacroBuilder.hide();
+				}
 			} else {
 				$(key).hide();
 			}
@@ -1832,7 +1836,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		leaveFullscreen();
 		hideCmdLine();
-		hideAllMenuDivs();
+		hideAllMenuDivs(true);
 
 		replay();
 		sectionChanged();
@@ -1905,7 +1909,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		loadSong(songPath);
 		leaveFullscreen();
 		hideCmdLine();
-		hideAllMenuDivs();
+		hideAllMenuDivs(true);
 		return true;
 	}
 

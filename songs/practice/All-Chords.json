@@ -80,7 +80,7 @@
   "defaultBPM": "240",
   "info": "\n<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>",
   "namedNoteOpacity": "1",
-  "openInfo": "none",
+  "openInfo": "parked",
   "presentationMode": false,
   "chartOptions": {
     "modes": true,
