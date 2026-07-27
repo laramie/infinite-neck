@@ -253,6 +253,18 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
+		name: 'keySignatureCount',
+		description: 'tonal transposed mode sharps-flats count',
+		resolve: () => getTonalCaptionValue('keySignatureCount'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'keySignatureCountHand',
+		description: 'tonal transposed mode sharps-flats count, with leading pointer hand',
+		resolve: () => getTonalCaptionValue('keySignatureCountHand'),
+		sampleFormat: 'html'
+	},
+	{
 		name: 'songInstrumentBadges',
 		description: 'whole-song instrument role badges',
 		resolve: () => renderSongInstrumentBadges(getSong(), { allowUnknown: true }),

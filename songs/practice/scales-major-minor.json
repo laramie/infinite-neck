@@ -78,7 +78,7 @@
   "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": true,
-  "defaultBPM": "80",
+  "defaultBPM": "60",
   "info": {
     "lines": []
   },
@@ -169,7 +169,7 @@
           "playedNotes": []
         }
       },
-      "caption": "<small style=\"color: blue;\">scale notes:</small> ${enharmonicTransposedModeNotes}",
+      "caption": "<small style=\"color: blue;\">scale notes:</small> ${enharmonicTransposedModeNotes} <small style=\"color:green;\"> ${keySignatureCountHand}</small>",
       "chartChord": "CM",
       "chartMode": "C major",
       "chartPosition": "BAR",
@@ -177,7 +177,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 1,
+      "currentBeat": 2,
       "sharps": true,
       "displayOptions": {
         "autoColor": true,
@@ -272,7 +272,7 @@
           "playedNotes": []
         }
       },
-      "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}",
+      "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\"color:green;\"> ${keySignatureCountHand}</small>",
       "chartChord": "Cm7",
       "chartMode": "C minor",
       "chartPosition": "BAR",

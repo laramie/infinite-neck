@@ -594,6 +594,10 @@ export class TonalPlugin {
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
       //return [...res].join(', ');
+    } else if (tokenName === 'keySignatureCount') {
+      return this.buildKeySignatureCount(false);
+    } else if (tokenName === 'keySignatureCountHand') {
+      return this.buildKeySignatureCount(true);
     } else if (tokenName === 'enharmonicChartModeNotes') {
       const song = getSong();
       const section = this .getCurrentSection(song);
@@ -602,6 +606,26 @@ export class TonalPlugin {
       return body;
     }
     return '';
+  }
+
+  buildKeySignatureCount(wantHand){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const theMode = parseScaleBestEffort(section.chartMode);
+      const type = theMode?.type || 'no-type';
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
+      const doubleSharpsCount = mode.notes.filter(note => note.endsWith('##')).length;
+      const sharpsCount = doubleSharpsCount + mode.notes.filter(note => note.endsWith('#')).length;
+      const doubleFlatsCount  = mode.notes.filter(note => note.endsWith('bb')).length;
+      const flatsCount  = doubleFlatsCount + mode.notes.filter(note => note.endsWith('b')).length;
+      let body = ' ';
+      if (sharpsCount > 0){
+        body = (wantHand?'&#x261E; ':'')+sharpsCount+" sharp"+(sharpsCount>1?'s':'');
+      } else if (flatsCount > 0){
+        body = (wantHand?'&#x261E; ':'')+flatsCount+" flat"+(flatsCount>1?'s':'');
+      }
+      return body;
   }
 
 

@@ -207,6 +207,17 @@
         }
       ]
     },
+     {
+      "href": "practice/scales-major-minor.json",
+      "description": "<b>scales-major-minor</b>: major and natural minor keys <i>transposed</i> to all 12 keys, with key signature counts and enharmonic note names.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
     {
       "href": "name-that-note/name-that-note.json",
       "description": "<em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
