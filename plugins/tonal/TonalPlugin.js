@@ -18,6 +18,7 @@ import { TonalSourceSet,
          getMode     
 } from '../../TonalFunctions.js';
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
+import { modeNotesFromStoredMode } from  '../chart/chart-tonal-resolver.js';
 
 const TARGET_TABLE_OPTION_LIMIT = 9;
 const SOURCE_NOTE_TYPE_OPTIONS = Object.freeze([
@@ -565,6 +566,33 @@ export class TonalPlugin {
       message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
       preserveMenuStack: true
     };
+  }
+
+  getApprovedCaptionState(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    const section = context.section || this.getCurrentSection(song);
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    return {
+      enabled
+    };
+  }
+  getApprovedCaptionValue(tokenName, context = {}) {
+    const state = this.getApprovedCaptionState(context);
+    if (tokenName === 'tonalTransposedModeNotes') {
+
+      const song = getSong();
+      const sectionIndex = this.getCurrentSectionIndex(song);
+      const section = this .getCurrentSection(song);
+      const mode = getMode(section.chartMode); //from TonalFunctions
+      const body = JSON.stringify(mode.notes, null, 4);
+
+      let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
+
+
+      //return body;
+      return [...res].join(', ');
+    }
+    return '';
   }
 
 

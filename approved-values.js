@@ -30,6 +30,7 @@ function getRootKeyLead(...args) { return requireProvider('getRootKeyLead')(...a
 function getTransposeCaptionValue(...args) { return requireProvider('getTransposeCaptionValue')(...args); }
 function getArpeggioCaptionValue(...args) { return requireProvider('getArpeggioCaptionValue')(...args); }
 function getFillCaptionValue(...args) { return requireProvider('getFillCaptionValue')(...args); }
+function getTonalCaptionValue(...args) { return requireProvider('getTonalCaptionValue')(...args); }
 
 function escapeHtml(text) {
 	return `${text}`
@@ -237,6 +238,12 @@ const approvedValueEntries = [
 		name: 'fillPositionsStatus',
 		description: 'widget of current-section Fill positions',
 		resolve: () => getFillCaptionValue('fillPositionsStatus'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'tonalTransposedModeNotes',
+		description: 'tonal transposed mode notes',
+		resolve: () => getTonalCaptionValue('tonalTransposedModeNotes'),
 		sampleFormat: 'html'
 	},
 	{

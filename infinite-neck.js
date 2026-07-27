@@ -304,6 +304,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					song: getSong(),
 					section: getCurrentSection()
 				});
+			},
+			getTonalCaptionValue: (tokenName) => {
+				const plugin = pluginManager.getPluginById('tonal');
+				if (!plugin || typeof plugin.getApprovedCaptionValue !== 'function') {
+					return '';
+				}
+				return plugin.getApprovedCaptionValue(tokenName, {
+					song: getSong(),
+					section: getCurrentSection()
+				});
 			}
 		});
 		setNotetableProviders({
