@@ -241,15 +241,15 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
-		name: 'tonalTransposedModeNotes',
+		name: 'enharmonicTransposedModeNotes',
 		description: 'tonal transposed mode notes',
-		resolve: () => getTonalCaptionValue('tonalTransposedModeNotes'),
+		resolve: () => getTonalCaptionValue('enharmonicTransposedModeNotes'),
 		sampleFormat: 'html'
 	},
 	{
-		name: 'tonalChartModeNotes',
+		name: 'enharmonicChartModeNotes',
 		description: 'tonal chart mode notes',
-		resolve: () => getTonalCaptionValue('tonalChartModeNotes'),
+		resolve: () => getTonalCaptionValue('enharmonicChartModeNotes'),
 		sampleFormat: 'html'
 	},
 	{

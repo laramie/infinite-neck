@@ -582,7 +582,7 @@ export class TonalPlugin {
 
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
-    if (tokenName === 'tonalTransposedModeNotes') {
+    if (tokenName === 'enharmonicTransposedModeNotes') {
       const song = getSong();
       const section = this .getCurrentSection(song);
       const theMode = parseScaleBestEffort(section.chartMode);
@@ -594,7 +594,7 @@ export class TonalPlugin {
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
       //return [...res].join(', ');
-    } else if (tokenName === 'tonalChartModeNotes') {
+    } else if (tokenName === 'enharmonicChartModeNotes') {
       const song = getSong();
       const section = this .getCurrentSection(song);
       const mode = getMode(section.chartMode); //from TonalFunctions

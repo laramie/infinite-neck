@@ -169,7 +169,7 @@
           "playedNotes": []
         }
       },
-      "caption": "<small style=\"color: blue;\">scale notes:</small> ${tonalTransposedModeNotes}",
+      "caption": "<small style=\"color: blue;\">scale notes:</small> ${enharmonicTransposedModeNotes}",
       "chartChord": "CM",
       "chartMode": "C major",
       "chartPosition": "BAR",
@@ -272,7 +272,7 @@
           "playedNotes": []
         }
       },
-      "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${tonalTransposedModeNotes}",
+      "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}",
       "chartChord": "Cm7",
       "chartMode": "C minor",
       "chartPosition": "BAR",
