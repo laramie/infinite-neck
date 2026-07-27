@@ -589,7 +589,7 @@ export class TonalPlugin {
       const type = theMode?.type || 'no-type';
       const transposedKey = Constants.getPreferredRootName(section.rootID);
       const mode = getMode(transposedKey+' '+type); //from TonalFunctions
-      const body = mode.notes.join(', ');
+      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
       return body;
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
@@ -598,7 +598,7 @@ export class TonalPlugin {
       const song = getSong();
       const section = this .getCurrentSection(song);
       const mode = getMode(section.chartMode); //from TonalFunctions
-      const body = mode.notes.join(', ');
+      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
       return body;
     }
     return '';

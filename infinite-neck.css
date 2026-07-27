@@ -856,6 +856,7 @@ table.viewControls th {
     font-weight: 800;
     font-style: normal;
     margin-left: 0.4em;
+    margin-right: 2em;
 }
 /* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
  *  so it inherits font-size, etc. */
