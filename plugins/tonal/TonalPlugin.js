@@ -18,7 +18,7 @@ import { TonalSourceSet,
          getMode     
 } from '../../TonalFunctions.js';
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
-import { modeNotesFromStoredMode } from  '../chart/chart-tonal-resolver.js';
+import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
 
 const TARGET_TABLE_OPTION_LIMIT = 9;
 const SOURCE_NOTE_TYPE_OPTIONS = Object.freeze([
@@ -555,42 +555,51 @@ export class TonalPlugin {
       preserveMenuStack: true
     };
   }
+
   printMode(song = getSong()) {
     const sectionIndex = this.getCurrentSectionIndex(song);
     const section = this .getCurrentSection(song);
     const mode = getMode(section.chartMode); //from TonalFunctions
     const header = `Tonal mode: section ${sectionIndex + 1} chartMode: ${section.chartMode}`;
     const body = JSON.stringify(mode, null, 4);
+    let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); //from chart-tonal-resolver.js
+    const footer = "transposed notes: "+[...res].join(', ');
+    
     return {
       result: `printed mode ${section.chartMode}`,
-      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}\n${escapeHtml(footer)}</pre>`,
       preserveMenuStack: true
     };
   }
 
   getApprovedCaptionState(context = {}) {
     const song = context.song || this.manager?.song || getSong();
-    const section = context.section || this.getCurrentSection(song);
     const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
     return {
       enabled
     };
   }
+
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
     if (tokenName === 'tonalTransposedModeNotes') {
-
       const song = getSong();
-      const sectionIndex = this.getCurrentSectionIndex(song);
+      const section = this .getCurrentSection(song);
+      const theMode = parseScaleBestEffort(section.chartMode);
+      const type = theMode?.type || 'no-type';
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
+      const body = mode.notes.join(', ');
+      return body;
+      //Don't do it this way, always returns flats:
+      //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
+      //return [...res].join(', ');
+    } else if (tokenName === 'tonalChartModeNotes') {
+      const song = getSong();
       const section = this .getCurrentSection(song);
       const mode = getMode(section.chartMode); //from TonalFunctions
-      const body = JSON.stringify(mode.notes, null, 4);
-
-      let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
-
-
-      //return body;
-      return [...res].join(', ');
+      const body = mode.notes.join(', ');
+      return body;
     }
     return '';
   }

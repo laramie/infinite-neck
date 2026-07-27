@@ -130,3 +130,11 @@ export function midinumToNoteName(midinum) {
     // 21 == A0
     // 9 == A, 8 Ab, 7 G, 6 Gb, 5 F, 4 E, 3 Eb, 2 D, 1 Db, 0 C
 }
+
+export function getPreferredRootName(section_rootID, sectionSharps) {
+  const rootID = Number.parseInt(section_rootID, 10);
+  const normalizedRootID = Number.isFinite(rootID) ? ((rootID % 12) + 12) % 12 : 0;
+  const prefersSharps = sectionSharps === true || (sectionSharps !== false && noteIdPrefersSharps(normalizedRootID));
+  const noteNames = prefersSharps ? NOTE_NAMES_ARRAY_SHARPS : NOTE_NAMES_ARRAY;
+  return noteNames[normalizedRootID] || NOTE_NAMES_ARRAY[normalizedRootID] || NOTE_NAMES_ARRAY[0];
+}

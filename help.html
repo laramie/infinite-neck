@@ -972,7 +972,7 @@
                  <br><br>&nbsp;&nbsp;&#9758;&nbsp;&nbsp;<i>Classical purists note--here
                      we show your choice of [all sharps] or [all flats] in any key,
                  per Section, but no weird enharmonic names or mixed sharps and flats--sorry,
-                 no B# or C## for you!</i>
+                 no B# or C## for you! (But see:  <a href="#glossaryDoubleFlats">double flats</a>.)</i>
                  <br>
 
          <p>So I decided to share this tool and to include other tunings, and ambidexterity,
@@ -2754,7 +2754,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
    doesn't know about major and minor keys or key signatures.  
    It just lets you display all the black keys with either Flats names or Sharps names. No mixed use of sharps and flats is displayed, there is no 
    concept of accidentals,  
-   there are no double flats or double sharps, and there is no display of enharmonic names like C&flat; B&sharp; E&sharp; or F&flat;.
+   there are no <a href="#glossaryDoubleFlats">double flats</a> or double sharps, and there is no display of enharmonic names like C&flat; B&sharp; E&sharp; or F&flat;.
 
     
 </p>
@@ -6033,6 +6033,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
         <a href="#glossaryTonal-js">Tonal.js</a>
         <a href="#glossaryTunings">Tunings</a>
         <a href="#glossaryup-down">up-down</a>
+        <a href="#glossaryDoubleFlats">Double Flats</a>
     </div>
 
     <table id="glossaryTable" class="CheatSheet ExamplesTable" cellspacing="0" border="1">
@@ -6473,6 +6474,15 @@ you can add a new macro, copy the macro from the song that does another Instrume
                 <br> - <b>See:</b> <a href="#tonalChordNames">Tonal.js Chord Names</a>
                 <br> - <b>See:</b> <a href="#tonalModeNames">Tonal.js Mode Names</a>
                 <br> - <b>See:</b> <a href="help-plugins.html#plugin-tonal">TonalPlugin</a>
+            </td>
+        </tr>
+        <tr id="glossaryDoubleFlats">
+            <td>Double Flats
+            </td>
+            <td>
+                ${tonalTransposedModeNotes}  will display Double Flats when used in the Caption, such as D-flat minor shows  Db, Eb, Fb, Gb, Ab, Bbb, Cb.
+                This is because this value is run through <b>Tonal.js</b> which uses proper Classical theory, which says you can't have a sequence like "Ab, A", so it should be "Ab, Bbb" since "Bbb" <i>is</i> "A".
+
             </td>
         </tr>
     </table>

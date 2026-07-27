@@ -247,6 +247,12 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
+		name: 'tonalChartModeNotes',
+		description: 'tonal chart mode notes',
+		resolve: () => getTonalCaptionValue('tonalChartModeNotes'),
+		sampleFormat: 'html'
+	},
+	{
 		name: 'songInstrumentBadges',
 		description: 'whole-song instrument role badges',
 		resolve: () => renderSongInstrumentBadges(getSong(), { allowUnknown: true }),
@@ -254,7 +260,7 @@ const approvedValueEntries = [
 	},
 	{
 		name: 'songInstrumentTable',
-		description: 'whole-song instrument role badge table',
+		description: 'whole-song instrument role badge table (for Info)',
 		resolve: () => renderSongInstrumentTable(getSong(), { allowUnknown: true }),
 		sampleFormat: 'html'
 	}

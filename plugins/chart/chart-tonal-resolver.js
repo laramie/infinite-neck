@@ -91,7 +91,7 @@ function parseChordBestEffort(rawChord) {
   return Chord.get('');
 }
 
-function parseScaleBestEffort(rawMode) {
+export function parseScaleBestEffort(rawMode) {
   const normalized = normalizeModeAlias(rawMode);
   const direct = Scale.get(normalized);
   if (!direct.empty) {

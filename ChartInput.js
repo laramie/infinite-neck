@@ -52,11 +52,14 @@ function getModeValues(modeOptions = Constants.FILL_SCALE_OPTIONS) {
 }
 
 function getPreferredRootName(section = null) {
+  return Constants.getPreferredRootName(""+section?.rootID ?? 0, section?.sharps);
+  /*
   const rootID = Number.parseInt(section?.rootID ?? 0, 10);
   const normalizedRootID = Number.isFinite(rootID) ? ((rootID % 12) + 12) % 12 : 0;
   const prefersSharps = section?.sharps === true || (section?.sharps !== false && Constants.noteIdPrefersSharps(normalizedRootID));
   const noteNames = prefersSharps ? Constants.NOTE_NAMES_ARRAY_SHARPS : Constants.NOTE_NAMES_ARRAY;
   return noteNames[normalizedRootID] || Constants.NOTE_NAMES_ARRAY[normalizedRootID] || Constants.NOTE_NAMES_ARRAY[0];
+  */
 }
 
 function orderedNoteNamesForSection(section = null) {
