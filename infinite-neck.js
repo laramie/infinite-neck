@@ -188,6 +188,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	var gSong = null;  //constructed in document ready.
 	let gUrlMacroRunAttempted = false;
 	let gFullscreenLeadSheetLineVisible = false;
+	let gFullscreenChartVisible = false;
 	let gCurrentSongLibraryHref = '';
 	let gPendingSongLibraryHref = '';
 	let chartInputController = null;
@@ -350,6 +351,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getTransportController,
 			hideAllMenuDivs,
 			hideFullscreenLeadSheetLine,
+			hideFullscreenChart,
 			handleBtnControlsToDisplayOptions,
 			handleBtnDeleteDisplayOptions,
 			highlightOneNote,
@@ -468,8 +470,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function resetTutorialChrome(){
 		//reset it either direction.
-		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
-		if (strictTutorial){
+		if (isStrictTutorial()){
 			$('#divTopCaptions').hide();
 			$(".dockable-handle").hide();
 			$('#topControlsCaptions').hide();
@@ -770,8 +771,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				reason: 'sectionChanged'
 			});
 		}
-		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
-		if (strictTutorial){
+		if (isStrictTutorial()){
 			turnOnKeep();
 			$("td.note").css({"cursor": "no-drop"});
 		}
@@ -1367,6 +1367,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//$("#topControlsCaptions").show();
 	}
 
+	function isStrictTutorial(){
+		return getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
+	}
+
 	function isFullscreenActive(){
 		return !$('.container').is(':visible');
 	}
@@ -1376,7 +1380,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (jHost.length === 0) {
 			return;
 		}
-		if (gFullscreenLeadSheetLineVisible && isFullscreenActive() && getSong()) {
+		if (gFullscreenLeadSheetLineVisible && (isFullscreenActive() || isStrictTutorial()) && getSong()) {
 			jHost
 				.html(SectionPrinter.printLeadSheetLine(getSong(), getSections(), { rootId: 'sectionPrinterChartLineFullscreen' }))
 				.show();
@@ -1385,13 +1389,38 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		jHost.hide().empty();
 	}
 
+	function updateFullscreenChartHost(){
+		const jHost = $("#divFullscreenChartHost");
+		if (jHost.length === 0) {
+			return;
+		}
+		if (gFullscreenChartVisible && (isFullscreenActive() || isStrictTutorial()) && getSong()) {
+			jHost
+				.html(SectionPrinter.printChart(getSong(), getSections()))
+				.show();
+			return;
+		}
+		jHost.hide().empty();
+	}
+
 	function setFullscreenLeadSheetLineVisible(isVisible) {
 		gFullscreenLeadSheetLineVisible = !!isVisible;
+		if (gFullscreenLeadSheetLineVisible && gFullscreenChartVisible){
+			hideFullscreenChart();
+		}
 		updateFullscreenLeadSheetLineHost();
 	}
 
+	function setFullscreenChartVisible(isVisible) {
+		gFullscreenChartVisible = !!isVisible;
+		if (gFullscreenLeadSheetLineVisible && gFullscreenChartVisible){
+			hideFullscreenLeadSheetLine();
+		}
+		updateFullscreenChartHost();
+	}
+
 	export function hideFullscreenLeadSheetLine(){
-		if (!isFullscreenActive()) {
+		if (!(isFullscreenActive() || isStrictTutorial())) {
 			const wasChartVisible = $("#divChart").is(":visible");
 			if (wasChartVisible) {
 				hideAllMenuDivs();
@@ -1401,6 +1430,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const wasVisible = gFullscreenLeadSheetLineVisible;
 		setFullscreenLeadSheetLineVisible(false);
 		return wasVisible ? "LeadSheetLine hidden" : "LeadSheetLine not shown";
+	}
+	
+	export function hideFullscreenChart(){
+		if (!(isFullscreenActive() || isStrictTutorial())) {
+			const wasChartVisible = $("#divChart").is(":visible");
+			if (wasChartVisible) {
+				hideAllMenuDivs();
+			}
+			return wasChartVisible ? "Chart hidden" : "Chart not shown";
+		}
+		const wasVisible = gFullscreenChartVisible;
+		setFullscreenChartVisible(false);
+		return wasVisible ? "Chart hidden" : "Chart not shown";
 	}
 
 	export function isMenuShowing(strMenuDiv){
@@ -2156,6 +2198,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".dockable-handle").show();
 		$("#divESCAPE").hide();
 		updateFullscreenLeadSheetLineHost();
+		updateFullscreenChartHost();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
@@ -2165,6 +2208,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divESCAPE").show();
 		}
 		updateFullscreenLeadSheetLineHost();
+		updateFullscreenChartHost();
 	}
 	
 	export function toggleFullscreen(){
@@ -2176,6 +2220,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(".dockable-handle").hide()
 			setWiringOpenState(false); //going fullscreen
 			updateFullscreenLeadSheetLineHost();
+			updateFullscreenChartHost();
 		} else {
 			if (getSong().captionsRowShowing){
 				$('.captionRow').show();
@@ -2185,6 +2230,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$(".dockable-handle").show()
 			$("#divESCAPE").hide();
 			updateFullscreenLeadSheetLineHost();
+			updateFullscreenChartHost();
 		}
 	}
 	export function showTransport(parkMode = false) {
@@ -2296,6 +2342,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divChartLineTab")   .html(SectionPrinter.printLeadSheetLine(getSong(), getSections()));
 		getChartInputController().ensurePanel('#divChartInputTab');
 		updateFullscreenLeadSheetLineHost();
+		updateFullscreenChartHost();
 	}
 
 	export function printSections(showDetail) {
@@ -2330,13 +2377,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function printSectionsChart(){
 		updatePrintSections();
 		showChartTab("Chart");
+		if (isFullscreenActive() || isStrictTutorial()) {
+			setFullscreenChartVisible(true);
+			return "Chart shown";
+		}
 		showOneMenu("#divChart", true);
+		return "Chart shown";
 	}
 
 	export function printSectionsLine(){
 		updatePrintSections();
 		showChartTab("Line");
-		if (isFullscreenActive()) {
+		if (isFullscreenActive() || isStrictTutorial()) {
 			setFullscreenLeadSheetLineVisible(true);
 			return "LeadSheetLine shown";
 		}
@@ -3886,7 +3938,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SongLibrary.initializeSongLibrary('#divSongList');
 		setLoopSectionFilter((candidateIndex, context = {}) => filterStrictLoopSectionIndex(candidateIndex, {
 			...context,
-			strictTutorial: normalizeTutorialMode(getSong()?.tutorial?.level) === TUTORIAL_MODES.STRICT,
+			strictTutorial: normalizeTutorialMode(isStrictTutorial()),
 			sectionCount: getSong()?.getSections?.().length ?? context.sectionCount,
 			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || []
 		}));

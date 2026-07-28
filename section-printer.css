@@ -410,6 +410,11 @@
   margin-bottom: 0.75em;
 }
 
+#divFullscreenChartHost {
+  display: none;
+  margin-bottom: 0.75em;
+}
+
 .leadSheetLinePanel {
   display: block;
   width: fit-content;

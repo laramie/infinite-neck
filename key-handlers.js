@@ -131,6 +131,7 @@ function getDisplayOptionsClearState(...args) { return requireProvider('getDispl
 function getDisplayOptionsSaveState(...args) { return requireProvider('getDisplayOptionsSaveState')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
+function hideFullscreenChart(...args) { return requireProvider('hideFullscreenChart')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
@@ -1393,7 +1394,7 @@ export function performCmdAction(menuItem, args){
 			hideCmdLine();
 			break;
 		case "printSectionsChart":
-			printSectionsChart();
+			actionResult.result = printSectionsChart() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "printSectionsLine":
@@ -1402,6 +1403,10 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "hideFullscreenLeadSheetLine":
 			actionResult.result = hideFullscreenLeadSheetLine() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenChart":
+			actionResult.result = hideFullscreenChart() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "sectionDelete":

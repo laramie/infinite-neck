@@ -565,6 +565,11 @@ export var gMenuFile =    {
           "caption": "<b>h</b>ide line",
           "trigger": "h",
           "action": "hideFullscreenLeadSheetLine"
+        },
+        {
+          "caption": "<b>H</b>ide chart",
+          "trigger": "H",
+          "action": "hideFullscreenChart"
         }
       ]
     },
