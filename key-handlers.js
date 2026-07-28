@@ -560,6 +560,12 @@ function document_keypress(e) {
             case "e":
                 toggleWiringOpenState();
                 break;
+
+			case "E":
+				//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
+				$(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
+				$(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				break;
             case "f":
                 toggleFullscreen();
                 break;

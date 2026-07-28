@@ -154,7 +154,7 @@
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
-  "songName": "scales-major-minor",
+  "songName": "scales-major",
   "theme": "Autobahn",
   "sections": [
     {
@@ -259,64 +259,6 @@
         "tinyNoteHPosition": "90%",
         "tinyNoteRadius": "50%"
       }
-    },
-    {
-      "sectionNotesByTable": {
-        "tblP46_1": {
-          "namedNotes": {
-            "C": {
-              "noteName": "C",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Eb": {
-              "noteName": "Eb",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "G": {
-              "noteName": "G",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Bb": {
-              "noteName": "Bb",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "D": {
-              "noteName": "D",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "F": {
-              "noteName": "F",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            },
-            "Ab": {
-              "noteName": "Ab",
-              "styleNum": 0,
-              "colorClass": "noteTransparent"
-            }
-          },
-          "recordedNotes": {},
-          "chord": "Cm7",
-          "mode": "C minor",
-          "tonalSourceSet": "",
-          "playedNotes": []
-        }
-      },
-      "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\"color:blue;\"> ${keySignatureCountHand}</small>",
-      "chartChord": "Cm7",
-      "chartMode": "C minor",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
-      "rootID": 3,
-      "rootIDLead": "-1",
-      "beats": 4,
-      "currentBeat": 4,
-      "sharps": true
     }
   ],
   "wirings": [
@@ -339,6 +281,18 @@
           "which": "UserStylesheet"
         },
         "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"noteRoot\": {\n            \"colorClass\": \"noteHatched8 noteBlack\",\n            \"captionClass\": \"noteBlack\",\n            \"caption\": \"Root\",\n            \"tiny\": \"R\"\n        },\n        \"note1\": {\n            \"colorClass\": \"noteHatched5 noteBlack\",\n            \"MOJOcaptionClass\": \"noteBlack\",\n            \"caption\": \"I\"\n        }\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785197652305,
+        "date": "7/27/2026",
+        "time": "5:14:12 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\"color:blue;\"> ${keySignatureCountHand}</small>"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"Cm7\",\n            \"mode\": \"C minor\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"<small style=\\\"color: blue;\\\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\\\"color:blue;\\\"> ${keySignatureCountHand}</small>\",\n    \"chartChord\": \"Cm7\",\n    \"chartMode\": \"C minor\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
         "lastRevived": null
       }
     ]

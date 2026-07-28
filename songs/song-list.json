@@ -207,13 +207,34 @@
         }
       ]
     },
-     {
+    {
       "href": "practice/scales-major-minor.json",
-      "description": "<b>scales-major-minor</b>: major and natural minor keys <i>transposed</i> to all 12 keys, with key signature counts and enharmonic note names.",
+      "description": "<b>scales-major-minor</b>: major and natural minor modes <i>transposed</i> to all 12 keys, with key signature counts and enharmonic note names.",
       "instruments": [
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/scales-major.json",
+      "description": "<b>scales-major</b>: major scale <i>transposed</i> to all 12 keys, with key signature counts and enharmonic note names.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
           "visible": true
         }
       ]
