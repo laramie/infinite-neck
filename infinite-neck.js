@@ -352,6 +352,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hideAllMenuDivs,
 			hideFullscreenLeadSheetLine,
 			hideFullscreenChart,
+			hideFullscreenAllCharts,
 			handleBtnControlsToDisplayOptions,
 			handleBtnDeleteDisplayOptions,
 			highlightOneNote,
@@ -1444,6 +1445,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setFullscreenChartVisible(false);
 		return wasVisible ? "Chart hidden" : "Chart not shown";
 	}
+
+	export function hideFullscreenAllCharts(){
+		if (!(isFullscreenActive() || isStrictTutorial())) {
+			const wasChartVisible = $("#divChart").is(":visible");
+			if (wasChartVisible) {
+				hideAllMenuDivs();
+			}
+			return wasChartVisible ? "Chart hidden" : "Chart not shown";
+		}
+		const wasVisible = gFullscreenChartVisible || gFullscreenLeadSheetLineVisible;
+		setFullscreenChartVisible(false);
+		setFullscreenLeadSheetLineVisible(false);
+		return wasVisible ? "Fullscreen/Tutorial Charts hidden" : "Chart not shown";
+	}
+
 
 	export function isMenuShowing(strMenuDiv){
 		var jStrMenuDiv = $(strMenuDiv);

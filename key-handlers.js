@@ -132,6 +132,7 @@ function getDisplayOptionsSaveState(...args) { return requireProvider('getDispla
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
 function hideFullscreenChart(...args) { return requireProvider('hideFullscreenChart')(...args); }
+function hideFullscreenAllCharts(...args) { return requireProvider('hideFullscreenAllCharts')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
@@ -545,7 +546,7 @@ function document_keypress(e) {
 				getSong().prevBeat();
                 break;
 			case "B":
-				getSong().addBeat();
+				getTransportController().toggleLoopBeats();
 				break;
 			case "c": //"_C_olor"
 				$("#cbAutomaticColor").trigger('click');
@@ -598,9 +599,11 @@ function document_keypress(e) {
                 clearBeatAndSectionLooping();
                 break;
             case "n":
-            case "N":
-                getSong().nextBeat();
+				getSong().nextBeat();
                 break;
+			case "N":
+				getSong().addBeat();
+				break;
 			case "p":
                 showOneMenu("#palette");
                 break;
@@ -1407,6 +1410,10 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "hideFullscreenChart":
 			actionResult.result = hideFullscreenChart() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenAllCharts":
+			actionResult.result = hideFullscreenAllCharts() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "sectionDelete":

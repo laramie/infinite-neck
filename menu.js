@@ -562,14 +562,9 @@ export var gMenuFile =    {
           "action": "printSectionsLine"
         },
         {
-          "caption": "<b>h</b>ide line",
+          "caption": "<b>h</b>ide charts",
           "trigger": "h",
-          "action": "hideFullscreenLeadSheetLine"
-        },
-        {
-          "caption": "<b>H</b>ide chart",
-          "trigger": "H",
-          "action": "hideFullscreenChart"
+          "action": "hideFullscreenAllCharts"
         }
       ]
     },
