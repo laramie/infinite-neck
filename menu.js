@@ -1860,6 +1860,11 @@ export var gMenuFile =    {
           "action": "toggleLoopSections"
         },
         {
+          "caption": "<b>L</b>oop stop",
+          "trigger": "L",
+          "action": "clearBeatAndSectionLooping"
+        },
+        {
           "caption": "loop b<b>e</b>ats",
           "trigger": "e",
           "action": "toggleLoopBeats"

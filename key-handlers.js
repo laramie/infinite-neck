@@ -1066,6 +1066,11 @@ export function performCmdAction(menuItem, args){
 				}
 			}
 			break;
+		case "clearBeatAndSectionLooping":
+			clearBeatAndSectionLooping();
+			actionResult.result = "Looping Stopped";
+			break;
+		case "toggleLoopBeats":
 		case "toggleLoopSections":
 			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;

@@ -215,7 +215,7 @@
     padding-bottom: 2pt;
     display: inline-block;
     border: 1px solid black;
-    border-radius: 20%;
+    border-radius: 0.2em;
     background-color: lightgray;
     box-shadow: 0 0 1pt 1pt gray;
 }

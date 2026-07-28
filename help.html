@@ -685,9 +685,12 @@
     </ul>
 
     <p class="bigpoint">Getting started with <span class="productsmaller">infinite-neck</span></p>
-    <p>The best way to get started is to <button style="background-color: #d98eff;   box-shadow: 2pt 2pt 2pt 0.2pt gray;"  onclick="window.location.href='index.html'">Launch Infinite Neck</button> and open some songs from <span class="GUIReferenceInline">File > Song Library</span>.  Usually the first thing you want to do is hit LOOP on the Transport,
-        but you can also use the Transport to walk through the Sections manually.  Then go through the menu buttons on the top of the page to find most of the features.
+    <p>The best way to get started is to <button style="background-color: #d98eff;   box-shadow: 2pt 2pt 2pt 0.2pt gray;"  onclick="window.open('index.html', '_blank')">Launch Infinite Neck</button> and open some songs from <span class="GUIReferenceInline">File > Song Library</span>.  Usually the first thing you want to do is hit <button class="BtnPunchedOut">LOOP</button> on the <a href="#transport">Transport</a>,
+        but you can also use the <a href="#transport">Transport</a> to walk through the Sections manually.  Then go through the menu buttons on the top of the page to find most of the features.
     </p>
+    <p>Here is a demo song that shows a guitar, and a Piano listener.  Open the song: <a href="index.html?song=demo/piano-follows-guitar-basic-blues.json" target="_blank">piano-follows-guitar-basic-blues.json</a>, then close the Info page with <span class="key">ESC</span> or the <button class="BtnPunchedOut">Close</button> button, and hit the <button class="BtnPunchedOut">LOOP</button> button on the <a href="#transport">Transport</a>.
+    </p>    
+
     <p class="bigpoint"><span class="productsmaller">infinite-neck</span> helps you visualize notes across the neck of your instrument.
     </p>
 
@@ -1924,13 +1927,17 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     are shown with grayed tags. 
     <br>
     <br>
-    The  <a href="#glossaryRoleBadges"></a>Role</a> badges look like: <span class="songLibraryInstrument instrumentMain">Main</span>
+    The  <a href="#glossaryRoleBadges">Role badges</a> look like: <span class="songLibraryInstrument instrumentMain">Main</span>
     <span class="songLibraryInstrument instrumentMain instrumentNotVisible">Main-hidden</span> <span
         class="songLibraryInstrument instrumentListener">Listener</span> <span
         class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span> <span
         class="songLibraryInstrument instrumentObserver">Observer</span> <span
-        class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span></p>
-
+        class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span>
+</p>
+<p>However, instead of the words "Main", "Listener", etc., they will have actual instrument tunings shown:
+    <span class="songLibraryInstrument instrumentMain">S6</span> <span
+        class="songLibraryInstrument instrumentListener">P46</span> <span
+        class="songLibraryInstrument instrumentObserver">S6</span>
 </p>
 <a name="songfileInfo"></a>
 <h3>Info (Song)</h3>
@@ -2197,6 +2204,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
 
 <a name="transport"></a>
 <h3>Transport</h3>
+<p>Open the Transport with the <span class="key">t</span> keyboard shortcut if it is not showing.  Or, the command-line <span class="menuExampleLine"><b><small>/rt</small></b></span> also toggles the Transport, and you can park it on the screen bottom with <span class="menuExampleLine"><b><small>/rp</small></b></span> or screen top-right with <span class="menuExampleLine"><b><small>/rP</small></b></span>.  Once it is showing, you can drag it around with the mouse.  You can then use the keyboard shortcut <span class="key">t</span> to toggle it visible/hidden at any time.</p>
 <p>The Transport lets you:
     <ul>
     <li>View the key of the current Section.
@@ -2383,6 +2391,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
 
 
 <p>This table summarizes the transport navigation commands available in the app. 
+    The <b>Key</b> column shows the keyboard shortcut if available.
     The <b>Menu</b> column shows the command-line path, and the <b>UI</b> column 
     shows the button in the Transport.  </p>
 
@@ -2439,7 +2448,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
     </tr>
     <tr>
         <td>PrevBeat</td>
-        <td><span class="key"> b</span></td>
+        <td><span class="key">b</span></td>
         <td><span class="menuExampleLine"><b><small>/rbp</small></b></span></td>
         <td>prevBeat</td>
         <td>
@@ -2448,7 +2457,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
     </tr>
     <tr>
         <td>NextBeat</td>
-        <td></td>
+        <td><span class="key">n</span></td>
         <td><span class="menuExampleLine"><b><small>/rbn</small></b></span></td>
         <td>nextBeat</td>
         <td>
@@ -2470,17 +2479,8 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
         <td></td>
     </tr>
     <tr>
-        <td>LoopBeats</td>
-        <td></td>
-        <td><span class="menuExampleLine"><b><small>/re</small></b></span></td>
-        <td>toggleLoopBeats</td>
-        <td>
-            <button id="btnLoopBeats" class="redButton downyButton" type="button" tabindex="-1">&infin;</button>&nbsp;&nbsp;
-        </td>
-    </tr>
-    <tr>
         <td>RECORD beats</td>
-        <td><span class="key">SHIFT-R</span></td>
+        <td><span class="key">R</span></td>
         <td><span class="menuExampleLine"><b><small>/rr</small></b></span></td>
         <td>REC</td>
         <td>
@@ -2488,10 +2488,15 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
             tabindex="-1">REC</button>&nbsp;&nbsp;
         </td>
     </tr>
-
-
-
-
+    <tr>
+        <td>LoopBeats</td>
+        <td><span class="key">B</span></td>
+        <td><span class="menuExampleLine"><b><small>/re</small></b></span></td>
+        <td>toggleLoopBeats</td>
+        <td>
+            <button id="btnLoopBeats" class="redButton downyButton" type="button" tabindex="-1">&infin;</button>&nbsp;&nbsp;
+        </td>
+    </tr>
     <tr>
         <td>LoopSong</td>
         <td><span class="key"> l</span></td>
@@ -2499,6 +2504,14 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
         <td>toggleLoopSections</td>
         <td>
             <button id="btnLoopSections" class="ArmedButton" type="button" tabindex="-1">LOOP</button>&nbsp;&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>LoopStop</td>
+        <td><span class="key">L</span></td>
+        <td><span class="menuExampleLine"><b><small>/rL</small></b></span></td>
+        <td>clearBeatAndSectionLooping</td>
+        <td>
         </td>
     </tr>
     <tr>
@@ -2543,16 +2556,17 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
 
 <a name="spanSectionDrawer"></a>
 <h3>Section Drawer</h3>
-  <p><img src="img/help/context/transport-w-section-drawer.png">
-            <br><i>On the transport, the <b>Section Drawer</b> is opened, giving you access to all the Section controls..</i>
-            <br>Open the <b>Section Drawer</b> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button> or with keystroke <span class="key">s</span>
-  </p>
+  <p>
+    Open the <b>Section Drawer</b> with the button <button class="ArmedButton" type="button" tabindex="-1">&sect;</button> or with keystroke <span class="key">s</span>
+    <br><br><img width="800" src="img/help/context/transport-w-section-drawer.png">
+            <br><i>On the transport, the <b>Section Drawer</b> is opened, giving you access to all the Section controls. The Section Drawer button changes to "punched-in".</i>
+            </p>
 
 
 <p>The <b>Section Drawer</b> lets you:
 <ul>
-    <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> (while NOT editing the Caption) to show the Song
-        caption.)
+    <li>Set the <b>Caption</b> of the current Section. (Might need to hit <span class="key">a</span> while NOT editing the Caption to show the Song
+        caption in the app above all the Instruments.)
     <li>Set the <b>Key</b> of the current Section. (Also keyboard shortcut <span class="key">k</span> cycles through
         these.)
     <li>Set the <b><a href="#glossaryLeadKey">LeadKey</a></b> of the current Section (TinyNotes follow <a href="#glossaryLeadKey">LeadKey</a>) or "root" to follow the <a href="#glossaryKey">Key</a>.
@@ -2572,7 +2586,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
 
     <li>Add a beat before the existing first beat <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat"><span class="beat-icon">&#x2BAE;</span></button>
 
-    <li>Insert a beat, moving the current beat and all others later <button id="btnInsertBeat" type="button" tabindex="-1" title="Insert Beat"><span class="beat-icon"><b>+</b></span></button>
+    <li>Insert a beat, moving the current beat and all others later <button id="btnInsertBeat" type="button" tabindex="-1" title="Insert Beat"><span class="beat-icon"><b>+</b></span></button>  &nbsp;&nbsp;&nbsp;(also keystroke <span class="key">N</span>)
                     
     <li>Delete the current beat <button id="btnDeleteBeat" type="button" tabindex="-1" title="Delete Current Beat"><span class="beat-icon"><b>x</b></span></button>
                         
@@ -2776,7 +2790,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     
 </p>
 
-<p>Remember, this is just a display option, and does not change the actual notes on the neck.  So it is possible to choose B as the key with Flats, 
+<p>Again, this is just a display option, and does not change the actual notes on the neck.  So it is possible to choose B as the key with Flats, 
     and the neck will display the following notes: B&flat;, B, C, D&flat; D, etc., even though this may be enharmonically weird.  If you are playing 
     in G, set Sharps to true, and if you are playing in Gminor, set Flats to true.
 </p>
@@ -4370,10 +4384,21 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <br><a href="#" class="KeymapNoteExample">Blue-groove keys</a> mean a note style is chosen.
                 <br><span class="KeymapActionsExample" style="font-size: 80%; padding: 4px;">Elipse</span> means a
                     Fingering style is chosen.
-                <br>All the green keys, and some of the others, alternately hide and show something, when clicked again.
-                    For example: pressing <span class="key">p</span> shows the palette; pressing <span class="key">p</span> again hides the palette.
-                <br><b>Two keys</b> in one cell here means one of the keys is <span class="key">SHIFT</span>+<span class="key">key</span>, and does the opposite or
-                    complementary Action.
+                <br>
+                <hr style="border: 1px solid black;">
+                &#9758;&nbsp;Two keys in one cell here means one of the keys is <span class="key">SHIFT</span>+<span class="key">key</span>, and does an opposite,
+                complementary, or related Action.
+                <br>
+                <p style="margin: 0; padding: 0; line-height: 1;">&#9758;&nbsp;Most of the green keys, and some of the others, alternately hide and show something, when clicked again.
+                    For example: pressing <span class="key">p</span> shows the palette; pressing <span class="key">p</span> again hides the palette.  
+                    <b>Exceptions:</b> 
+                    <ul>
+                        <li><small><i><span class="key">Shift+C</span> shows the command-line Clip plugin, such that if you hit <span class="key">Shift+C</span> again, it will run the Copy command.</i></small>
+                        <li><small><i><span class="key">Shift+P</span> shows the command-line plugins list, so hitting it again gets trapped by the command-line, but tries to find the non-existent "P" plugin.<i></small>
+                        <li><small><i><span class="key">/</span> shows the command-line, so hitting it again gets trapped by the command-line and simply takes you to the root of the command line, which is what it does anyway.<i></small>
+                        <li><small><i><span class="key">m</span> shows the command-line at its last location, so hitting it again gets trapped by the command-line and tries to execute an "m" command, which is usually not present, and certainly not what you want.<i></small>
+                    </ul>
+                </p>
             </div>
         </div>
     </div>
@@ -5075,6 +5100,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     This is useful for executing commands in plugins, 
                     leaving the plugin menu page to use the Transport or keyboard shortcut to change Sections, 
                     then using <span class="key">m</span> to pick back up where you left off in the plugin (or any menu item you want to use over and over). 
+                    Note: when authoring a tutorial in strict mode, you can't get to the command-line.  So in this mode there is an Easter Egg in keyboard shortcut <span class="key">CTRL+SHIFT+M</span> (which may be different on Mac - try Command (&#8984;) key plus SHIFT).  Use this to get 
+                    to the command-line to set Song properties while authoring.
                 </td>
             </tr>
             <tr>
@@ -5789,6 +5816,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <li><a href="help-plugins.html#helpCmd-fpc">ClipPlugin</a>
         <li><a href="help-plugins.html#helpCmd-fpm">MovePlugin</a>
         <li><a href="help-plugins.html#helpCmd-fpt">TransposePlugin</a>
+        <li><a href="help-plugins.html#helpCmd-fpo">TonalPlugin</a>
     </ul>
 
     <p>In the command-line menu, plugins live under 
@@ -5798,6 +5826,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         Each plugin also has a 
         <span class="menuExampleLine"><b>h</b></span><span class="menuExamplePrompt"><b>h</b>elp</span>
          action that shows its current settings and the events it handles.</p>
+
+    <p>There is a handy utility for auditing plugin states.   <span class="menuExampleLine"><b>/fpA</b></span></p>  
 
     <a name="plugins-keyboard-menu"></a>
     <h2>Keyboard And Menu Reminders</h2>
@@ -6337,6 +6367,10 @@ you can add a new macro, copy the macro from the song that does another Instrume
                     class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span>
                 <br>Here "hidden" means that in <span class="GUIReferenceInline">Tunings > Tunings in Song</span> that the checkbox in column one is not checked, so the Instrument is not displayed.
                 <br><b>Main</b> is any regular Instrument that is not a <a href="#glossaryListener">Listener</a> or <a href="#glossaryObserver">Observer</a>.
+                <br>However, instead of the words "Main", "Listener", etc., they will have actual instrument tunings shown:
+                    <span class="songLibraryInstrument instrumentMain">S6</span> <span
+                        class="songLibraryInstrument instrumentListener">P46</span> <span
+                        class="songLibraryInstrument instrumentObserver">S6</span>
                 <br>The Role badges are used in the <span class="GUIReferenceInline">Tunings > Tunings in Song</span> table, the <span class="GUIReferenceInline">File > Download</span> page, and in the <span class="GUIReferenceInline">File > Song Library</span>.  They can also be shown with a widget in the <span class="GUIReferenceInline">Info page</span>.
             </td>
         </tr>
@@ -6349,6 +6383,11 @@ you can add a new macro, copy the macro from the song that does another Instrume
                 <a href="#glossaryRoleBadges">Role</a> badges that look like: 
                     <span class="songLibraryInstrument instrumentListener">Listener</span>
                     <span class="songLibraryInstrument instrumentListener instrumentNotVisible">Listener-hidden</span>
+                    
+                    <br>However, instead of the words "Listener", etc., they will have actual instrument tunings shown:
+                    <span class="songLibraryInstrument instrumentListener">S6</span>
+                    <span class="songLibraryInstrument instrumentListener instrumentNotVisible">P46</span>
+
             </td>
         </tr>
         <tr id="glossaryObserver">
@@ -6362,6 +6401,9 @@ you can add a new macro, copy the macro from the song that does another Instrume
                 <a href="#glossaryRoleBadges">Role</a> badges that look like: 
                     <span class="songLibraryInstrument instrumentObserver">Observer</span>
                     <span class="songLibraryInstrument instrumentObserver instrumentNotVisible">Observer-hidden</span>
+                <br>They will have actual instrument tunings shown, such as:    
+                    <span class="songLibraryInstrument instrumentObserver">S6</span>
+                    <span class="songLibraryInstrument instrumentObserver instrumentNotVisible">S6</span>
             </td>
         </tr>
         <tr id="glossaryDiamondRows">
