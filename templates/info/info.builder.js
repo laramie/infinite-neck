@@ -1,6 +1,7 @@
 import { makeDivDockable, dockDivInPage } from '../../dockable.js';
 import { getSong, showOneMenu } from '../../infinite-neck.js';
 import { getSanitizedInfo } from '../../html-sanitizer.js';
+import { expandApprovedTemplate } from '../../approved-values.js';
 
 export class InfoBuilder {
 	static div_info = null;
@@ -84,6 +85,10 @@ export class InfoBuilder {
 		return getSanitizedInfo(rawHtml);
 	}
 
+	static getRenderedInfoHtml(rawHtml) {
+		return expandApprovedTemplate(InfoBuilder.getSanitizedInfo(rawHtml));
+	}
+
 	static isVisible() {
 		return $('#info').is(':visible') || InfoBuilder.isFloated();
 	}
@@ -138,7 +143,7 @@ export class InfoBuilder {
 
 		$('#textareaSongInfo').val(song.info || '');
 		$('#selOpenInfo').val(song.openInfo);
-		$('#divInfoRendered').html(song.info || '');
+		$('#divInfoRendered').html(InfoBuilder.getRenderedInfoHtml(song.info || ''));
 
 		return song.info || '';
 	}
@@ -181,7 +186,7 @@ export class InfoBuilder {
 		}
 
 		$('#textareaSongInfo').val(song.info);
-		$('#divInfoRendered').html(song.info || '');
+		$('#divInfoRendered').html(InfoBuilder.getRenderedInfoHtml(song.info || ''));
 
 		return song.info;
 	}

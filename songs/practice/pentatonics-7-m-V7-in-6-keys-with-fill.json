@@ -2,7 +2,7 @@
   "myTunings": [
     {
       "instance": true,
-      "baseID": "P46_1",
+      "baseID": "P46_main",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,
@@ -29,17 +29,181 @@
         12,
         24
       ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "S6_listener",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "S6"
+    },
+    {
+      "instance": true,
+      "baseID": "S6_main",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "S6"
+    },
+    {
+      "instance": true,
+      "baseID": "P46_listener",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "P48_main",
+      "baseInstrument": "Guitar",
+      "caption": "P4-8",
+      "nStrings": 8,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0",
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": true,
-      "fromBaseID": "P46"
+      "fromBaseID": "P48"
     }
   ],
   "noteTablesLayout": [
     {
-      "tableID": "tblP46_1",
+      "tableID": "tblP46_main",
+      "visible": false
+    },
+    {
+      "tableID": "tblS6_listener",
+      "visible": false
+    },
+    {
+      "tableID": "tblS6_main",
       "visible": true
+    },
+    {
+      "tableID": "tblP46_listener",
+      "visible": true
+    },
+    {
+      "tableID": "tblP48_main",
+      "visible": false
     }
   ],
   "colorDicts": {},
@@ -74,7 +238,7 @@
       "enableOnSongLoad": true,
       "graveyardKey": "use-chart-chord-3-positions",
       "properties": {
-        "targetTable": "tblP46_1",
+        "targetTable": "tblS6_main",
         "minFret": 0,
         "maxFret": 4,
         "songLoopsPerPositionPair": 1,
@@ -94,9 +258,9 @@
       "enableOnSongLoad": true,
       "graveyardKey": "USER",
       "properties": {
-        "targetTable": "tblP46_1",
-        "chordFormula": "m",
-        "scaleFormula": "minor pentatonic",
+        "targetTable": "tblS6_main",
+        "chordFormula": "7",
+        "scaleFormula": "mixolydian",
         "automaticFromChart": true,
         "minFret": 0,
         "maxFret": 4,
@@ -123,28 +287,77 @@
         "tinyScaleColor": "noteScale",
         "singleAddTiny": "none"
       }
+    }
+  },
+  "macros": {
+    "P46": {
+      "lines": [
+        "/tha",
+        "/tsi \"P46_main\"",
+        "/tsi \"S6_listener\"",
+        "/fpaC",
+        "/fpaIi \"P46_main\"",
+        "/fpfIi \"P46_main\"",
+        "/rsR"
+      ]
     },
-    "move": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblP46_1",
-        "algorithm": "string",
-        "motion": "d",
-        "includeSingle": true,
-        "includeTiny": true,
-        "includeHighlights": true,
-        "includeFingering": true,
-        "includePlayed": true,
-        "includeRecorded": true
-      }
+    "S6": {
+      "lines": [
+        "/tha",
+        "/tsi \"P46_listener\"",
+        "/tsi \"S6_main\"",
+        "/fpaC",
+        "/fpaIi \"S6_main\"",
+        "/fpfIi \"S6_main\"",
+        "/rsR"
+      ]
+    },
+    "P48": {
+      "lines": [
+        "/tha",
+        "/tsi \"P48_main\"",
+        "/fpaC",
+        "/fpaIi \"P48_main\"",
+        "/fpfIi \"P48_main\"",
+        "/rsR"
+      ]
     }
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
-  "defaultBPM": "120",
-  "info": "To see notes, just hit LOOP!\n<br>\n<br>\nThis song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.\n<br>\n<br>\nThis song is a small variant of the similarly-named song, that adds the FillPlugin to fill in chords in SingleNotes and mode in TinyNotes.\n<br>\n<br>\nAs written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.\n<br>\n<br>You can change what keys you practice by setting <kbd>/fptc</kbd>\n<br>Here are some presets:\n<ul>\n<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>\n</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>\n</li></ul>\n\n<br>You can choose to practice chords, or modes.\n<br>\n<ul>\n<li>chords: <a href=\"#raise=arpeggio.use-chart-chord-3-positions\">arpeggio.use-chart-chord-3-positions</a>\n</li><li>modes: <a href=\"#raise=arpeggio.use-chart-mode-3-positions\">arpeggio.use-chart-mode-3-positions</a>\n</li></ul>",
+  "defaultBPM": "60",
+  "info": {
+    "lines": [
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
+      "<br><br>To see notes, just hit LOOP!",
+      "<br>",
+      "<br>",
+      "This song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.",
+      "<br>",
+      "<br>",
+      "This song is a small variant of the similarly-named song, that adds the FillPlugin to fill in chords in SingleNotes and mode in TinyNotes.  Uses skeuomorphic guitar theme: GuitarStringsBlackGlow.",
+      "<br>",
+      "<br>",
+      "As written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.",
+      "<br>",
+      "<br>You can change what keys you practice by setting <cmd-line>/fptc</cmd-line>",
+      "<br>Here are some presets:",
+      "<ul>",
+      "<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>",
+      "</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>",
+      "</li></ul>",
+      "",
+      "<br>You can choose to practice chords, or modes, and you can run with different Instruments:",
+      "<ul>",
+      "<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=S6\">chords</a></li>",
+      "<li>Run with a <i>P46_listener</i> and <em>S6_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=S6\">modes</a></li>",
+      "<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=P46\">chords</a></li>",
+      "<li>Run with a <i>S6_listener</i> and <em>P46_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=P46\">modes</a></li>",
+      "<li>Run <em>P48_main</em> playing <a href=\"#raise=arpeggio.use-chart-chord-3-positions,macro=P48\">chords</a> with a \"blues\" transposition.</li>",
+      "<li>Run <em>P48_main</em> playing <a href=\"#raise=arpeggio.use-chart-mode-3-positions,macro=P48\">modes</a> with a \"blues\" transposition.</li>",
+      "</ul>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
@@ -181,8 +394,8 @@
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
-  "songName": "pentatonics-7-m-V7-in-6-keys-with-Fill",
-  "theme": "Autobahn",
+  "songName": "pentatonics-7-m-V7-in-6-keys-with-fill",
+  "theme": "GuitarStringsBlackGlow",
   "sections": [
     {
       "sectionNotesByTable": {},
@@ -289,7 +502,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 1,
+      "currentBeat": 12,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -338,7 +551,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 1,
+      "currentBeat": 12,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -378,37 +591,24 @@
       }
     }
   ],
-  "wirings": [],
+  "wirings": [
+    {
+      "tablename": "tblS6_listener",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_main"
+    },
+    {
+      "tablename": "tblP46_listener",
+      "relativeSection": "",
+      "listenToTablename": "tblS6_main"
+    }
+  ],
   "graveyard": {
     "records": [
       {
-        "timestamp": 1782200130198,
-        "date": "6/23/2026",
-        "time": "12:35:30 AM",
-        "type": "SECTION",
-        "context": {
-          "SectionIndex": 1,
-          "caption": ""
-        },
-        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
-        "lastRevived": null
-      },
-      {
-        "timestamp": 1782200139769,
-        "date": "6/23/2026",
-        "time": "12:35:39 AM",
-        "type": "SECTION",
-        "context": {
-          "SectionIndex": 0,
-          "caption": ""
-        },
-        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\",\n                    \"owner\": \"FillPlugin\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
-        "lastRevived": null
-      },
-      {
-        "timestamp": 1782223791481,
-        "date": "6/23/2026",
-        "time": "7:09:51 AM",
+        "timestamp": 1783235738288,
+        "date": "7/5/2026",
+        "time": "12:15:38 AM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "transpose",
@@ -417,8 +617,8 @@
           "schemaVersion": 1,
           "caption": "transpose / blues"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"blues\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            5,\n            7\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": null
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"blues\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            5,\n            7\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": 1783235921507
       },
       {
         "timestamp": 1782223842191,
@@ -432,13 +632,13 @@
           "schemaVersion": 1,
           "caption": "arpeggio / use-chart-3-positions"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartChordMode\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_main\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartChordMode\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
         "lastRevived": null
       },
       {
-        "timestamp": 1782226527289,
-        "date": "6/23/2026",
-        "time": "7:55:27 AM",
+        "timestamp": 1783235760818,
+        "date": "7/5/2026",
+        "time": "12:16:00 AM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "transpose",
@@ -448,12 +648,12 @@
           "caption": "transpose / transpose-6-keys"
         },
         "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"transpose-6-keys\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            2,\n            3,\n            7,\n            9,\n            10\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
-        "lastRevived": null
+        "lastRevived": 1783236117548
       },
       {
-        "timestamp": 1782226640567,
-        "date": "6/23/2026",
-        "time": "7:57:20 AM",
+        "timestamp": 1783195959923,
+        "date": "7/4/2026",
+        "time": "1:12:39 PM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "arpeggio",
@@ -462,8 +662,8 @@
           "schemaVersion": 1,
           "caption": "arpeggio / use-chart-chord-3-positions"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-chord-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartChord\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
-        "lastRevived": 1782227644661
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-chord-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblS6_main\",\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartChord\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
+        "lastRevived": 1783323416053
       },
       {
         "timestamp": 1782226661954,
@@ -477,13 +677,13 @@
           "schemaVersion": 1,
           "caption": "arpeggio / use-chart-mode-3-positions"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-mode-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
-        "lastRevived": 1782226952477
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"use-chart-mode-3-positions\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_main\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
+        "lastRevived": 1783235335791
       },
       {
-        "timestamp": 1782227644618,
-        "date": "6/23/2026",
-        "time": "8:14:04 AM",
+        "timestamp": 1783323415893,
+        "date": "7/6/2026",
+        "time": "12:36:55 AM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "arpeggio",
@@ -492,22 +692,22 @@
           "schemaVersion": 1,
           "caption": "arpeggio / USER"
         },
-        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP48_main\",\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 7,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"every\",\n        \"type\": \"AutoChartChord\",\n        \"showNoteName\": \"played\",\n        \"colorNotes\": true,\n        \"flashcard\": false\n    }\n}",
         "lastRevived": null
       },
       {
-        "timestamp": 1782251504048,
-        "date": "6/23/2026",
-        "time": "2:51:44 PM",
-        "type": "SECTION",
+        "timestamp": 1783236117535,
+        "date": "7/5/2026",
+        "time": "12:21:57 AM",
+        "type": "PLUGIN",
         "context": {
-          "SectionIndex": 0,
-          "caption": "",
-          "MovePlugin": {
-            "applyNumber": "1"
-          }
+          "pluginId": "transpose",
+          "userKey": "USER",
+          "logicalKey": "transpose::USER",
+          "schemaVersion": 1,
+          "caption": "transpose / USER"
         },
-        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteRoot\",\n                    \"owner\": \"FillPlugin\"\n                }\n            },\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"46\",\n                        \"row\": \"5\",\n                        \"col\": \"6\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"2\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"4\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"3\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"4\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"5\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"64\",\n                        \"row\": \"1\",\n                        \"col\": \"4\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"6\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"1\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"7\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"70\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"8\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"9\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"70\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"10\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"1\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"11\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"64\",\n                        \"row\": \"1\",\n                        \"col\": \"4\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"12\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ]\n            },\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"76\",\n                    \"row\": \"0\",\n                    \"col\": \"11\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"70\",\n                    \"row\": \"1\",\n                    \"col\": \"10\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"64\",\n                    \"row\": \"2\",\n                    \"col\": \"9\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"67\",\n                    \"row\": \"2\",\n                    \"col\": \"12\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"55\",\n                    \"row\": \"4\",\n                    \"col\": \"10\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"58\",\n                    \"row\": \"4\",\n                    \"col\": \"13\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"5\",\n                    \"col\": \"12\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteChord\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"74\",\n                    \"row\": \"0\",\n                    \"col\": \"9\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"77\",\n                    \"row\": \"0\",\n                    \"col\": \"12\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"69\",\n                    \"row\": \"1\",\n                    \"col\": \"9\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"65\",\n                    \"row\": \"2\",\n                    \"col\": \"10\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"62\",\n                    \"row\": \"3\",\n                    \"col\": \"12\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"57\",\n                    \"row\": \"4\",\n                    \"col\": \"12\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"50\",\n                    \"row\": \"5\",\n                    \"col\": \"10\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": \"53\",\n                    \"row\": \"5\",\n                    \"col\": \"13\",\n                    \"owner\": \"FillPlugin\",\n                    \"colorClass\": \"noteScale\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"C7\",\n    \"chartMode\": \"C mixolydian\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 12,\n    \"currentBeat\": 1,\n    \"sharps\": true,\n    \"pluginData\": {\n        \"arpeggio\": {\n            \"positions\": [\n                [\n                    0,\n                    3\n                ],\n                [\n                    4,\n                    7\n                ],\n                [\n                    8,\n                    12\n                ]\n            ],\n            \"lastPositionIndex\": -1\n        }\n    }\n}",
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            5,\n            7\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
         "lastRevived": null
       }
     ]

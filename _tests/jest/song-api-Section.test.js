@@ -11,7 +11,7 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PRIMARY_SONG_FILENAME = 'All-Chords.json';
+const PRIMARY_SONG_FILENAME = 'practice/All-Chords.json';
 
 function getSongPath(songFilename = PRIMARY_SONG_FILENAME) {
     return path.join(__dirname, '../../songs', songFilename);

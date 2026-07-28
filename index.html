@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="jsonTree80kg/json-tree-80kg.css">
 
     <link rel="stylesheet" type="text/css" href="infinite-neck.css" />
+    <link rel="stylesheet" type="text/css" href="chart-input.css" />
     <link rel="stylesheet" type="text/css" href="song-library.css" />
     <link rel="stylesheet" type="text/css" href="instrument.css" />
     <link rel="stylesheet" type="text/css" href="command-line.css" />
@@ -29,8 +30,10 @@
     <link rel="stylesheet" type="text/css" href="templates/palette.css" />
     <link rel="stylesheet" type="text/css" href="templates/piano/piano-skeuomorphic.css" />
     <link rel="stylesheet" type="text/css" href="templates/info/info.css" />
+    <link rel="stylesheet" type="text/css" href="templates/macros/macros.css" />
     <link rel="stylesheet" type="text/css" href="templates/section-drawer.css" />
     <link rel="stylesheet" type="text/css" href="templates/SectionStatus/section-status.css" />
+    <link rel="stylesheet" type="text/css" href="templates/tutorial/tutorial.css" />
 
     <!--
     
@@ -62,7 +65,7 @@
                 <span id="divControls">
                     <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1"><b><u>F</u></b>ile</button>
-                    <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1">Info</button>
+                    <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1"><b><u>I</u></b>nfo</button>
                     <button id="btnChart" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1">Cha<b><u>r</u></b>t</button>
                     <button id="btnFillNotes" type="button" class="MainMenuTabBtn BtnPunchedOut"
@@ -87,6 +90,12 @@
             </div>
 
             <div id="divInfo">
+            </div>
+
+            <div id="divTutorialPrompt">
+            </div>
+
+            <div id="divMacros">
             </div>
 
             <div id="divFileControls">
@@ -125,10 +134,11 @@
                     </div>
                     <br>
                     <div class="sectionPageControlsGroup">
-                        <label for="txtFilename">Song Name:
-                            <input type="text" name="txtFilename" id="txtFilename" value="Round-midnight"><button
+                        <label for="txtFilename">Song Name:&nbsp;
+                            <input type="text" name="txtFilename" id="txtFilename" value="Round-midnight" size="50"><button
                                 type="button">&check;</button>
                         </label>
+                        <span class="fileRolesCaption">Roles:</span><span id="fileMenuSongInstrumentBadges"></span>
                         <br />
                         <button id="btnDownload" type="button">Download Song</button>&nbsp;<span
                             class="lblSongName"></span><span style="color: green;">.json</span>
@@ -472,9 +482,9 @@
                         <td>
                             <select id="dropDownCellHeight">
                                 <option value="20px">20</option>
-                                <option value="30px">30</option>
+                                <option value="30px" selected>30</option>
                                 <option value="40px">40</option>
-                                <option value="50px" selected>50</option>
+                                <option value="50px">50</option>
                                 <option value="60px">60</option>
                                 <option value="70px">70</option>
                                 <option value="80px">80</option>
@@ -543,9 +553,9 @@
                             <select id="selPianoHeightScaleFactor">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
-                                <option value="3" selected>3</option>
+                                <option value="3">3</option>
                                 <option value="4">4</option>
-                                <option value="5">5</option>
+                                <option value="5" selected>5</option>
                                 <option value="6">6</option>
                                 <option value="7">7</option>
                                 <option value="8">8</option>
@@ -943,8 +953,13 @@
                         Mode</label>
                     <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
                 </p>
+                <br>
+                <p><label for="cbAllowThemeAutomation"><input type="checkbox" id="cbAllowThemeAutomation" value="1">Allow Theme Automation</label>
+                </p>
                 <p class="viewDisplayOptionsReadOnly">autoColor: <span id="viewDisplayOptionAutoColorValue">false</span></p>
-                <p class="viewDisplayOptionsReadOnly">currentColorDict: [ <span id="viewDisplayOptionCurrentColorDictValue"></span> ]
+                <p class="viewDisplayOptionsReadOnly">currentColorDict: [ <span id="viewDisplayOptionCurrentColorDictValue"></span> ]</p>
+                <p class="viewDisplayOptionsReadOnly">sectionTheme: [ <span id="viewDisplayOptionCurrentSectionTheme"></span> ]
+                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>stored <s>current</s></i></small>
                 </p>
                 <p class="viewDisplayOptionsReadOnly"><button id="btnShowDisplayOptions" type="button" data-action="showDisplayOptions">Show Display Options</button>
                     </p>
@@ -1209,6 +1224,8 @@
                             <span style="display: flex; gap: 0; align-items: flex-end;">
                                 <button id="btnChartSummaryTab" type="button"
                                     class="MenuTabBtn BtnPunchedIn">Summary</button>
+                                <button id="btnChartInputTab" type="button"
+                                    class="MenuTabBtn BtnPunchedOut">Input</button>
                                 <button id="btnChartNotesTab" type="button"
                                     class="MenuTabBtn BtnPunchedOut">Notes</button>
                                 <button id="btnChartDetailsTab" type="button"
@@ -1227,6 +1244,7 @@
                     <div
                         style="clear: both; margin-top: 0; padding-left: 0.5em; padding-bottom: 0.5em; padding-right: 0.5em; background-color: lightblue; border-bottom-right-radius: 0.4em; border-bottom-left-radius: 0.4em;">
                         <div id="divChartSummaryTab" style="display: none;"></div>
+                        <div id="divChartInputTab" style="display: none;"></div>
                         <div id="divChartNotesTab"></div>
                         <div id="divChartDetailsTab" style="display: none;"></div>
                         <div id="divChartOptionsTab" style="display: none;"></div>
@@ -1281,6 +1299,7 @@
 
     <div>
         <div id="divFullscreenLeadSheetLineHost" style="display: none;"></div>
+        <div id="divFullscreenChartHost" style="display: none;"></div>
         <div id="topControlsCaptions">
             <nobr>
                 <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>

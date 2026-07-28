@@ -37,7 +37,6 @@
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "S6"
     },
     {
@@ -52,12 +51,11 @@
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": true,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
       "stringDividerHeight": "0",
-      "fromBaseID": "PianoSkeuomorphic"
+      "fromBaseID": "Piano"
     },
     {
       "instance": true,
@@ -71,12 +69,11 @@
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": true,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
       "stringDividerHeight": "0",
-      "fromBaseID": "PianoSkeuomorphic"
+      "fromBaseID": "Piano"
     }
   ],
   "noteTablesLayout": [
@@ -108,18 +105,64 @@
     }
   },
   "plugins": {},
+  "macros": {},
   "activeStylesheets": "Default+user",
   "captionsRowShowing": true,
   "defaultBPM": "120",
-  "info": "<p>\nThis song, has a Piano (called Piano_listener) \"Listening\" (following) a Standard-tuning guitar (called S6_lead).  \n</p>\n<br>\n<p>\nTake a look at the Chart: <b>Chart | Chart</b>.  This lets you click on a Section and navigate to it.  It has a CHORUS and a CODA, with TinyNotes as the source for Tonal.\n</p>",
+  "info": {
+    "lines": [
+      "<p>",
+      "This song has a Piano called <i>Piano_listener</i> \"listening\" to a Standard-tuning guitar called <em>S6_lead</em>.  ",
+      "</p>",
+      "<br>",
+      "<p></p>",
+      "",
+      "\"Listening\" means that notes saved in <em>S6_lead</em>'s track are wired to play through <i>Piano_listener</i>'s track.  So you can see <i>Piano_listener</i> \"following\" every note <em>S6_lead</em> plays. The notes were chosen to be playable on both guitar and piano.",
+      "<p></p>",
+      "<br>",
+      "<p></p>",
+      "",
+      "You can add more notes to <em>S6_lead</em> by chosing a note style from the palette (Named, Single, Tiny, Bend) and then clicking in a cell or string before the fret, and these will automatically appear on the Piano.  You may have to scroll the piano left and right to be in the same pitch range on both instrument.  You can hover around until you see a scrollbar, or you can do a two-finger trackpad scroll.  To know which pitches are identical, use <b>View | Show MIDI Number</b>.  To get the MIDI Number to stick around as you navigate away from this Section, click <b>SAVE Display Options</b> before you leave the <b>View</b> menu.",
+      "<p></p>",
+      "<br>",
+      "<p></p>",
+      "",
+      "To get the instruments to fit in your browser, use your browser's <kbd>CTRL +</kbd> and <kbd>CTRL -</kbd> keyboard shortcuts.",
+      "<p></p>",
+      "<br>",
+      "<p></p>",
+      "",
+      "To see a song where the Guitar listens to the Piano, open <a href=\"?song=demo/guitar-follows-piano-basic-blues.json\">guitar-follows-piano-basic-blues.json</a>.  This song has an extra coda simply to show how to write charts with extra sections.  Look at the Chart and Chart Options so see how this song is different from <a href=\"?song=demo/piano-follows-guitar-basic-blues.json\">piano-follows-guitar-basic-blues.json</a>",
+      "<p></p>",
+      "<br>",
+      "<p></p>",
+      "",
+      "Take a look at the Chart: <b>Chart | Chart</b>.  You can also open this tab page with command-line <cmd-line>/cc</cmd-line> This lets you click on a Section and navigate to it.",
+      "<p></p>",
+      "<br>",
+      "<p>",
+      "You can also toggle the \"Transport\" on an off with keyboard shortcut <kbd>t</kbd>, and you can loop from there, or toggle looping with keyboard shortcut <kbd>l</kbd> ( l for loop).",
+      "</p>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": true,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
   "chartOptions": {
     "modes": true,
     "detailLine": false,
     "showCaptions": false,
     "showNextLine": true,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
     "HEADNames": [
       "HEAD",
       "BRIDGE",

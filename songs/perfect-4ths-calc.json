@@ -1,160 +1,4 @@
 {
-  "sections": [
-    {
-      "caption": "",
-      "rootID": "3",
-      "rootIDLead": "-1",
-      "beats": "4",
-      "currentBeat": 1,
-      "sharps": false,
-      "sectionNotesByTable": {}
-    }
-  ],
-  "gSectionsCurrentIndex": 0,
-  "gFirstBeatSeen": false,
-  "gSongModelListener": null,
-  "visibleNoteTables": [
-    "tblPerfect4thsCalculator"
-  ],
-  "defaultBPM": "80",
-  "rootID": "3",
-  "namedNoteOpacity": "1.00",
-  "singleNoteOpacity": "1.00",
-  "songName": "perfect-4ths-calc",
-  "userColors": {
-    "noteTransparent": {
-      "colorClass": "noteTransparent",
-      "caption": "Emboss"
-    },
-    "noteScale": {
-      "colorClass": "noteBlue2",
-      "caption": "Scale"
-    },
-    "noteRoot": {
-      "colorClass": "noteGreen1",
-      "caption": "Root"
-    },
-    "noteChord": {
-      "colorClass": "noteRed4",
-      "caption": "Chord"
-    },
-    "noteChord2": {
-      "colorClass": "noteRed2",
-      "caption": "Ch2"
-    },
-    "noteChord3": {
-      "colorClass": "noteBrown7",
-      "caption": "Ch3"
-    },
-    "noteColornote": {
-      "colorClass": "notePink1",
-      "caption": "Colornote"
-    },
-    "noteColornote2": {
-      "colorClass": "notePink2",
-      "caption": "C4"
-    },
-    "noteColornote3": {
-      "colorClass": "notePink3",
-      "caption": "C3"
-    },
-    "noteChromatic": {
-      "colorClass": "noteYellow5",
-      "caption": "Chromatic"
-    },
-    "notePassingTone": {
-      "colorClass": "noteBlue4",
-      "caption": "Passing"
-    },
-    "noteAvoid": {
-      "colorClass": "noteBlack noteHatched2",
-      "caption": "Avoid"
-    },
-    "noteBass": {
-      "colorClass": "noteBassPlayer",
-      "captionClass": "noteBassPlayer",
-      "caption": "Bass"
-    },
-    "noteLead": {
-      "colorClass": "notePink3",
-      "caption": "Lead"
-    },
-    "noteLead2": {
-      "colorClass": "notePink6",
-      "caption": "Lead 2"
-    },
-    "noteFinger1": {
-      "colorClass": "Finger1",
-      "caption": "Finger1"
-    },
-    "noteFinger2": {
-      "colorClass": "Finger2",
-      "caption": "F2"
-    },
-    "noteFinger3": {
-      "colorClass": "Finger3",
-      "caption": "F3"
-    },
-    "noteFinger4": {
-      "colorClass": "Finger4",
-      "caption": "F4"
-    },
-    "noteFingerT": {
-      "colorClass": "FingerT",
-      "caption": "Thumb"
-    },
-    "note1": {
-      "colorClass": "noteBassPlayer",
-      "captionClass": "noteBassPlayer",
-      "caption": "I"
-    },
-    "note2": {
-      "colorClass": "notePink4",
-      "caption": "&tau;"
-    },
-    "note3": {
-      "colorClass": "noteBlue1",
-      "caption": "II"
-    },
-    "note4": {
-      "colorClass": "noteBlue8",
-      "caption": "m"
-    },
-    "note5": {
-      "colorClass": "noteGreen1",
-      "caption": "III"
-    },
-    "note6": {
-      "colorClass": "noteBrown1",
-      "caption": "IV"
-    },
-    "note7": {
-      "colorClass": "noteBrown3",
-      "caption": "&Theta;"
-    },
-    "note8": {
-      "colorClass": "noteRed4",
-      "caption": "V"
-    },
-    "note9": {
-      "colorClass": "noteGreen4",
-      "caption": "&sigma;"
-    },
-    "note10": {
-      "colorClass": "noteGreen7",
-      "caption": "6"
-    },
-    "note11": {
-      "colorClass": "noteBlue2",
-      "caption": "&delta;"
-    },
-    "note12": {
-      "colorClass": "notePink2",
-      "caption": "&Delta;"
-    }
-  },
-  "theme": "Autobahn",
-  "songfileVersion": "V2",
   "myTunings": [
     {
       "baseID": "Perfect4thsCalculator",
@@ -185,5 +29,200 @@
       "reverse": false,
       "visible": true
     }
-  ]
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblPerfect4thsCalculator",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "arpeggio": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "USER",
+      "properties": {
+        "targetTable": "tblPerfect4thsCalculator",
+        "minFret": 0,
+        "maxFret": 1,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 16,
+        "lowToHigh": true,
+        "upOnly": false,
+        "style": "every",
+        "type": "NamedNote",
+        "showNoteName": "off",
+        "colorNotes": false,
+        "flashcard": false
+      }
+    },
+    "fill": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "USER",
+      "properties": {
+        "targetTable": "tblPerfect4thsCalculator",
+        "chordFormula": "M",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
+        "minFret": 0,
+        "maxFret": 1,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 16,
+        "namedRootMode": "role",
+        "namedRootColor": "noteRoot",
+        "namedChordMode": "role",
+        "namedChordColor": "noteChord",
+        "namedScaleMode": "role",
+        "namedScaleColor": "noteScale",
+        "singleRootMode": "role",
+        "singleRootColor": "noteRoot",
+        "singleChordMode": "role",
+        "singleChordColor": "noteChord",
+        "singleScaleMode": "role",
+        "singleScaleColor": "noteScale",
+        "tinyRootMode": "none",
+        "tinyRootColor": "noteRoot",
+        "tinyChordMode": "none",
+        "tinyChordColor": "noteChord",
+        "tinyScaleMode": "none",
+        "tinyScaleColor": "noteScale",
+        "singleAddTiny": "none"
+      }
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "perfect-4ths-calc",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblPerfect4thsCalculator": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": "4",
+      "currentBeat": 1,
+      "sharps": false
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
+  }
 }

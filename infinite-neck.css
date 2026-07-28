@@ -477,6 +477,10 @@ table.viewControls th {
     font-weight: 600;
     color: brown;
 }
+#viewDisplayOptionCurrentSectionTheme {
+    font-weight: 600;
+    color: brown;
+}
 
 .slider {
   -webkit-appearance: none;
@@ -852,6 +856,7 @@ table.viewControls th {
     font-weight: 800;
     font-style: normal;
     margin-left: 0.4em;
+    margin-right: 2em;
 }
 /* in html, .lblSectionCaption is a child of .SongTitleLeadSheet,
  *  so it inherits font-size, etc. */
@@ -1105,6 +1110,12 @@ td.fillStringRange {
     font-size: 60%;
 }
 
+.fileRolesCaption {
+    font-weight: 400;
+    margin-left: 2em;
+    padding: 0.5em;
+}
+
 
 /***************************** Un-organized *****************************/
 
@@ -1189,6 +1200,9 @@ td.fillStringRange {
     width: 2.4em;
     text-align: left;
     color: black;
+}
+#lblSectionsStatusChartInput{
+    color: brown;
 }
 #sectionOrder{
     margin-left: 1em;
@@ -1678,14 +1692,6 @@ td.nut div.NoteActive .CenterCell {
     color: yellow;
     background-color: black;
 }
-.Playback {
-    font-size: 0.9em;
-}
-
-
-
-
-
 .noteBlackKey {
     background-color: green;
     color: green;

@@ -73,7 +73,7 @@ function normalizeLayoutEntry(entry) {
     };
 }
 
-function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTunings }) {
+function normalizeNoteTablesLayout({ noteTablesLayout, myTunings }) {
     const seen = new Set();
     const layout = [];
 
@@ -86,18 +86,9 @@ function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTuni
             seen.add(normalized.tableID);
             layout.push(normalized);
         });
-    } else if (Array.isArray(visibleNoteTables)) {
-        visibleNoteTables.forEach((tableID) => {
-            const key = `${tableID || ''}`.trim();
-            if (!key || seen.has(key)) {
-                return;
-            }
-            seen.add(key);
-            layout.push({ tableID: key, visible: true });
-        });
     }
 
-    // Legacy songs may have incomplete visible tables. Ensure all song tunings are represented.
+    // Ensure all song tunings are represented in the current layout model.
     if (Array.isArray(myTunings)) {
         myTunings.forEach((tuning) => {
             if (!tuning || !tuning.baseID) {
@@ -115,6 +106,79 @@ function normalizeNoteTablesLayout({ noteTablesLayout, visibleNoteTables, myTuni
     return layout;
 }
 
+function normalizeMyTunings(rawMyTunings) {
+    const myTunings = Array.isArray(rawMyTunings) ? rawMyTunings : [];
+    return myTunings.map((tuning) => {
+        if (!tuning || typeof tuning !== 'object' || Array.isArray(tuning)) {
+            return tuning;
+        }
+        const normalized = { ...tuning };
+        delete normalized.visible;
+        return normalized;
+    });
+}
+
+function normalizeSongMacros(rawMacros) {
+    if (!rawMacros || typeof rawMacros !== 'object' || Array.isArray(rawMacros)) {
+        return {};
+    }
+    const macros = {};
+    Object.entries(rawMacros).forEach(([id, macro]) => {
+        const macroId = `${id || ''}`.trim();
+        if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(macroId)) {
+            return;
+        }
+        const lines = Array.isArray(macro?.lines)
+            ? macro.lines.map((line) => `${line}`.trim()).filter((line) => line.length > 0)
+            : [];
+        macros[macroId] = {
+            ...(macro && typeof macro === 'object' && !Array.isArray(macro) ? macro : {}),
+            lines
+        };
+    });
+    return macros;
+}
+
+function normalizeSongInfo(rawInfo) {
+    if (typeof rawInfo === 'string') {
+        return rawInfo;
+    }
+    if (Array.isArray(rawInfo)) {
+        return rawInfo.map((line) => `${line ?? ''}`).join('\n');
+    }
+    if (rawInfo && typeof rawInfo === 'object' && Array.isArray(rawInfo.lines)) {
+        return rawInfo.lines.map((line) => `${line ?? ''}`).join('\n');
+    }
+    if (rawInfo == null) {
+        return '';
+    }
+    return `${rawInfo}`;
+}
+
+function persistSongInfo(rawInfo) {
+    const infoText = normalizeSongInfo(rawInfo);
+    return {
+        lines: infoText.length > 0 ? infoText.split('\n') : []
+    };
+}
+
+function normalizeSongTutorial(rawTutorial) {
+    if (!rawTutorial || typeof rawTutorial !== 'object' || Array.isArray(rawTutorial)) {
+        return { level: 'none' };
+    }
+    const level = `${rawTutorial.level || ''}`.trim().toLowerCase();
+    const normalized = {
+        level: ['none', 'strict', 'wizard'].includes(level) ? level : 'none'
+    };
+    if (typeof rawTutorial.caption === 'string') {
+        normalized.caption = rawTutorial.caption;
+    }
+    if (typeof rawTutorial.storageKey === 'string') {
+        normalized.storageKey = rawTutorial.storageKey;
+    }
+    return normalized;
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -123,6 +187,7 @@ const songDefaults = {
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
+    allowThemeAutomation: false,
     pluginFiringOrder: [...DEFAULT_PLUGIN_FIRING_ORDER],
     chartOptions: {
         modes: true,
@@ -166,10 +231,10 @@ export class SongPersistence {
         //do these first for non-null defaults, though they may get overwritten by obj.
         this.randomSectionHistory = [];
         this.myTunings = [];
-        this.visibleNoteTables = [];
         this.noteTablesLayout = [];
         this.colorDicts = {};
         this.plugins = {};
+        this.macros = {};
 
         Object.assign(this, songDefaults, obj);
         const incomingChartOptions = obj.chartOptions && typeof obj.chartOptions === 'object' ? obj.chartOptions : {};
@@ -179,15 +244,18 @@ export class SongPersistence {
         };
         this.chartOptions.HEADNames = normalizeChartHeadNames(this.chartOptions.HEADNames);
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
+        this.myTunings = normalizeMyTunings(this.myTunings);
+        this.info = normalizeSongInfo(this.info);
+        this.tutorial = normalizeSongTutorial(this.tutorial);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
         this.noteTablesLayout = normalizeNoteTablesLayout({
             noteTablesLayout: obj.noteTablesLayout,
-            visibleNoteTables: obj.visibleNoteTables,
             myTunings: this.myTunings
         });
         this.plugins = obj.plugins && typeof obj.plugins === 'object' ? { ...obj.plugins } : {};
+        this.macros = normalizeSongMacros(obj.macros);
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
     }
@@ -213,6 +281,12 @@ export class SongPersistence {
         if (key === 'colorDicts'){
             return SongPersistence.filterPersistentColorDicts(value);
         }
+        if (key === 'info') {
+            return persistSongInfo(value);
+        }
+        if (key === 'tutorial' && (!value || value.level === 'none')) {
+            return undefined;
+        }
         if (   key === 'userColors' 
             || key === 'fretLengths' 
             || key === 'noteNamesFuncArr'
@@ -226,7 +300,6 @@ export class SongPersistence {
             || key === 'recording'
             || key === 'tunings'
             || key === 'userInstrumentTuning'
-            || key === 'visibleNoteTables'
             ) 
         {
             return undefined;

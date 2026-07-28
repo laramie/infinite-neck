@@ -13,8 +13,12 @@ import {
   TONAL_SUGGESTION_LIMIT,
   TonalAutoWrite
 } from '../../tonalPicker-functions.js';
-import { TonalSourceSet } from '../../TonalFunctions.js';
+import { TonalSourceSet,
+         getChord,
+         getMode     
+} from '../../TonalFunctions.js';
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
+import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
 
 const TARGET_TABLE_OPTION_LIMIT = 9;
 const SOURCE_NOTE_TYPE_OPTIONS = Object.freeze([
@@ -261,7 +265,9 @@ export class TonalPlugin {
     this.refreshDynamicPropertyOptions(song);
     return [
       this.buildAcceptMenuNode(song),
-      this.buildPrintExtraModesNode()
+      this.buildPrintExtraModesNode(),
+      this.buildPrintChordNode(),
+      this.buildPrintModeNode()
     ].filter(Boolean);
   }
 
@@ -276,8 +282,8 @@ export class TonalPlugin {
         this.getProperty('autoWrite').getMenuNodeSpec(this),
         this.buildSourceNoteTypeNode(),
         this.buildApplySourceNoteTypeToAllSectionsNode(),
-        this.buildActionNode('prevSection', 'prev section', 'p', false),
-        this.buildActionNode('nextSection', 'next section', 'n', false),
+        this.buildActionNode('prevSection', ', previous section', ',', false),
+        this.buildActionNode('nextSection', '. next section', '.', false),
         this.buildActionNode('acceptChordModeAndNext', 'Next :: accept Chord and Mode', 'N', false),
         this.buildSuggestionMenuNode('chord', 'chords', 'c', state),
         this.buildImmediateAcceptNode('chord', 'Chord', 'C', state),
@@ -324,6 +330,14 @@ export class TonalPlugin {
 
   buildPrintExtraModesNode() {
     return this.buildActionNode('printExtraModes', 'print extra modes', 'p', true);
+  }
+
+  buildPrintChordNode() {
+    return this.buildActionNode('printChord', 'print chord', 'c', true);
+  }
+
+  buildPrintModeNode() {
+    return this.buildActionNode('printMode', 'print mode', 'm', true);
   }
 
   buildActionNode(actionName, caption, trigger, popOnBang) {
@@ -404,6 +418,10 @@ export class TonalPlugin {
         return this.applySourceNoteTypeToAllSections(song);
       case 'printExtraModes':
         return this.printExtraModes(song);
+      case 'printChord':
+        return this.printChord(song);
+      case 'printMode':
+        return this.printMode(song);
       case 'help':
         return {
           result: 'Tonal help shown',
@@ -524,6 +542,92 @@ export class TonalPlugin {
       preserveMenuStack: true
     };
   }
+
+  printChord(song = getSong()) {
+    const sectionIndex = this.getCurrentSectionIndex(song);
+    const section = this .getCurrentSection(song);
+    const chord = getChord(section.chartChord); //from TonalFunctions
+    const header = `Tonal chord: section ${sectionIndex + 1} chartChord: ${section.chartChord}`;
+    const body = JSON.stringify(chord, null, 4);
+    return {
+      result: `printed chord ${section.chartChord}`,
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}</pre>`,
+      preserveMenuStack: true
+    };
+  }
+
+  printMode(song = getSong()) {
+    const sectionIndex = this.getCurrentSectionIndex(song);
+    const section = this .getCurrentSection(song);
+    const mode = getMode(section.chartMode); //from TonalFunctions
+    const header = `Tonal mode: section ${sectionIndex + 1} chartMode: ${section.chartMode}`;
+    const body = JSON.stringify(mode, null, 4);
+    let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); //from chart-tonal-resolver.js
+    const footer = "transposed notes: "+[...res].join(', ');
+    
+    return {
+      result: `printed mode ${section.chartMode}`,
+      message: `<pre>${escapeHtml(header)}\n${escapeHtml(body)}\n${escapeHtml(footer)}</pre>`,
+      preserveMenuStack: true
+    };
+  }
+
+  getApprovedCaptionState(context = {}) {
+    const song = context.song || this.manager?.song || getSong();
+    const enabled = !!this.manager?.getPluginEntry?.(this.id)?.enabled;
+    return {
+      enabled
+    };
+  }
+
+  getApprovedCaptionValue(tokenName, context = {}) {
+    const state = this.getApprovedCaptionState(context);
+    if (tokenName === 'enharmonicTransposedModeNotes') {
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const theMode = parseScaleBestEffort(section.chartMode);
+      const type = theMode?.type || 'no-type';
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
+      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+      return body;
+      //Don't do it this way, always returns flats:
+      //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
+      //return [...res].join(', ');
+    } else if (tokenName === 'keySignatureCount') {
+      return this.buildKeySignatureCount(false);
+    } else if (tokenName === 'keySignatureCountHand') {
+      return this.buildKeySignatureCount(true);
+    } else if (tokenName === 'enharmonicChartModeNotes') {
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const mode = getMode(section.chartMode); //from TonalFunctions
+      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+      return body;
+    }
+    return '';
+  }
+
+  buildKeySignatureCount(wantHand){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const theMode = parseScaleBestEffort(section.chartMode);
+      const type = theMode?.type || 'no-type';
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
+      const doubleSharpsCount = mode.notes.filter(note => note.endsWith('##')).length;
+      const sharpsCount = doubleSharpsCount + mode.notes.filter(note => note.endsWith('#')).length;
+      const doubleFlatsCount  = mode.notes.filter(note => note.endsWith('bb')).length;
+      const flatsCount  = doubleFlatsCount + mode.notes.filter(note => note.endsWith('b')).length;
+      let body = ' ';
+      if (sharpsCount > 0){
+        body = (wantHand?'&#x261E; ':'')+sharpsCount+" sharp"+(sharpsCount>1?'s':'');
+      } else if (flatsCount > 0){
+        body = (wantHand?'&#x261E; ':'')+flatsCount+" flat"+(flatsCount>1?'s':'');
+      }
+      return body;
+  }
+
 
   buildSummary(song = getSong()) {
     const state = this.getSuggestionState(song);

@@ -30,7 +30,6 @@ describe('Headless UI smoke contracts', () => {
             song.gotoSection(2);
 
             song.prepareForSave({
-                visibleTableIds: data.visibleNoteTables ?? [],
                 songName: data.songName,
                 theme: data.theme,
                 bpm: parseInt(data.defaultBPM, 10),

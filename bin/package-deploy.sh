@@ -21,11 +21,11 @@ mkdir -p "$OUT_DIR"
 
 INCLUDE_DIRS=(
   "img"
+  "fill"
   "songs"
   "plugins"
   "templates"
   "bin"
-  "css"
   "jsonTree80kg"
 )
 

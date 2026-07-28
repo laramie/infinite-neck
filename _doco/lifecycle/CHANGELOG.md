@@ -1,5 +1,99 @@
 # ChangeLog
 
+### 20260701
+
+Tag: v2.1-beta-8
+
+- 1cbe7af **2026-07-01** Added demo with Observer, tweaked update-song-list, tweaked CSS for not visibles.
+- 7dbd776 **2026-06-30** 134-it3 done
+- 9bc6762 **2026-06-30** Ready for implementation 134-it3
+- 1c6803d **2026-06-30** Ready for implementation 134-it3
+- 8170176 **2026-06-30** fixed tests for, and removed legacy handling of, visibleNoteTables.
+- d4bf098 **2026-06-30** getting rid of visibleNoteTables
+- 692a3bd **2026-06-30** finally got rid of all songs with visibleNoteTables.
+- 47ae7be **2026-06-30** test no longer needed
+- 7889ec5 **2026-06-30** song cleanup
+- b908a63 **2026-06-30** song cleanup
+- a2af138 **2026-06-30** song cleanup
+- 3c17f57 **2026-06-30** cleanup
+- 43aa2fb **2026-06-30** song cleanup
+- 541a5a0 **2026-06-30** old test song cleanup
+- 3a5f2ef **2026-06-30** removed obviated visibleNoteTables
+- de55171 **2026-06-30** bad copy
+- f88a6b0 **2026-06-30** song cleanup
+- 352d81a **2026-06-30** song cleanup
+- 2e45d7a **2026-06-30** cleaning
+- faa288d **2026-06-30** cleaning up obviated songs
+- a82f436 **2026-06-30** plan reviewed
+- d8e1c08 **2026-06-29** Ready for sprint-134-it3
+- 45b2a0b **2026-06-29** Ready for 134-it3
+- 3c6621f **2026-06-29** added theory/*S6*
+- e09af16 **2026-06-29** Add ChartInput
+- 818aecf **2026-06-29** New directory for songs/theory, with two songs showing transposing modes with light themes.
+- 1cc60ef **2026-06-29** Added ./fill/ to deploy
+- 86c3885 **2026-06-29** Cleanup
+- 45a3b4c **2026-06-29** Added Section to ChartInput
+- 15b611a **2026-06-29** Cleanup _doco and bin.  All are obviated, some are moved to _doco/archive
+- 718e65f **2026-06-29** migration complete, plus this thing had a bug that lost some information.
+- a4d48a6 **2026-06-28** v2.1-beta-7
+
+### 20260628
+
+Tag: v2.1-beta-7
+
+
+- efd03fc **2026-06-28** Moved name-that-note* into own directory. Added new build.sh script. experimental.
+- 1434153 **2026-06-28** chart-input focus fixes
+- 8dd2258 **2026-06-28** chart-input Iteration 2 with help and easter egg to create new Sections "!f/c" creates new Section in C with LeadKey F.
+- 677793d **2026-06-28** Ready for sprint-136 it1
+- 60ef4c0 **2026-06-28** Cleaned up sprint doco and tweaked PluginAudit for more graying out of impossible audit cells.  Preparing for sprint-136
+- c28bf43 **2026-06-27** Updated FillPlugin to emit "root" instead of "r", similarly "chord" and "scale" for outputs column of audit plugins.
+- a0c9830 **2026-06-27** Iteration 3 working
+- 9d45783 **2026-06-27** Ready for Iteration 3, sprint 135
+- 0ce1df6 **2026-06-27** sprint-135 Iteration 1 done.
+- f05b9d4 **2026-06-27** Ready for Iteration 1 sprint-135
+- db05266 **2026-06-27** Ready for sprint 135.
+- d58d2f8 **2026-06-27** Rounded corners for LooperLight using em not percent. Added CSS corner-shape as themed variable noteCornerShape. Used this to fix theme 'Blade'. Added theme Mahjong. Added i, em to info.css from song-library.css Added positions to name-that-note for S6.
+- 438b0a2 **2026-06-26** moved piano-f-guitar to piano-follows-guitar.  Stylized song-list more.
+- 63a13ae **2026-06-26** Added more instruments
+- eb00c4a **2026-06-26** This song was broken.  See the remaining, similarly named songs
+- f01817c **2026-06-26** Cleaning up song-list and curating songs.
+- c326bf7 **2026-06-25** moved to demo; duplicate songs.
+- ec86d3e **2026-06-25** SongLibrary redo. sprint-134.  Also, moved songs into new folders
+- d85cb6b **2026-06-25** Ready for 134 Iteeration 1 implementation plan.
+- 2f47df5 **2026-06-25** Ready for sprint-134
+- e5b390a **2026-06-25** Added rule so that help.html and help-plugins.html can be linked from File > Info. Added help link to name-that-note-bass-4.json song.
+- c4c7716 **2026-06-25** Added one-line command-line
+- 1a58092 **2026-06-25** Cleaned graveyard, and mojo currentColorDict
+- 2493423 **2026-06-25** Added /vt (view toggle) menu.
+- 3fc9a97 **2026-06-25** Fixed id's chrome devtools was complaining about
+- 6844779 **2026-06-25** Added index to show/hide; top-aligned text for action columns.
+- e934f37 **2026-06-25** Broke the stylesheet with bad comment on :root
+- a1033c0 **2026-06-25** cleaned out graveyard, disabled Fill
+- 9c87483 **2026-06-24** name-that-note-bass-4 is working
+- 840bc88 **2026-06-24** Fixed startup keys.
+- 8397534 **2026-06-24** Same song, different USER theme.
+- 81e5d00 **2026-06-24** Song works with transpose, fill, and arpeggio in positions.  Fill puts in TinyNotes so that Arpeggio skips them and just arpeggiates the chords. Both plugins listen to chart.  This is a good baseline practice song, which you could change with plugin links.
+- 80a304c **2026-06-24** updated with file import completion
+- c53ede6 **2026-06-24** Added to themes: singleNoteShrink and singleNoteShadowColor. Added import/export between plugin properties for /fpap and /fpfop.
+- 6a523f9 **2026-06-23** Fixed cyan for Fill active position, just like Arpeggio.
+- 2ea6103 **2026-06-23** 133-it8 testing well.  Ready for positions linkage import/export between plugins.
+- fd066a8 **2026-06-23** ready
+- 045863d **2026-06-23** typo in name
+- 0883ba4 **2026-06-23** Ready for 133-it7
+- ca38502 **2026-06-23** Cleanup
+- d8172dc **2026-06-23** Added practice song that excercises Arpeggio reading from chart doing chords and/or modes.
+- d5926b5 **2026-06-23** Edits to Fill lists to line up with Tonal suggestions.  Extended Wester Filter. Fixed tests with expectations.
+- a258a8b **2026-06-22** Moved aliases and captions to match triggers.
+- 5e8ee4d **2026-06-22** Ready for 133-it6 Fill page refactor to use FillPlugin.
+- 9850f9c **2026-06-22** Refactor of Tonal normalization is working well, except Fill page has been marooned.
+- 630054a **2026-06-22** Arpeggio with auto chart is working well for chord and mode.  M7sus4 comes up empty because it is a Tonal.js set, but not in Fill defaults from infinite-neck.
+- e529c6e **2026-06-22** FillPlugin fixed for auto chart.
+- a2624b4 **2026-06-22** Added 'none' to fill mode and chord defaults.
+- 356e1df **2026-06-22** sprint-133 working. random and flashcard work based on named and single.
+- 2a1e422 **2026-06-22** arpeggio basically doing name-that-note randomly, based on SingleNotes for now.
+- ad6569b **2026-06-22** Ready for implementation of sprint-133 Iteration 3.
+
 ### 20260621
 Tag: v2.1-beta-6
 

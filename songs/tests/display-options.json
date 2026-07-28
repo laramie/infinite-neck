@@ -1,252 +1,8 @@
 {
-  "sections": [
+  "myTunings": [
     {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "49",
-            "row": "5",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "59",
-            "row": "3",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "68",
-            "row": "1",
-            "col": "8",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          }
-        ]
-      },
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
-      "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
-      "rootID": 7,
-      "rootIDLead": "-1",
-      "beats": "4",
-      "currentBeat": 1,
-      "sharps": true,
-      "displayOptions": {
-        "showCellNotes": true,
-        "showSubscriptFunctions": true,
-        "cellIsFunction": true,
-        "showMidiNum": false,
-        "useCenterForRightFunction": false,
-        "NoteDisplaySizes": {
-          "width": "120px",
-          "height": "70px"
-        },
-        "naturalFretWidths": true,
-        "showLooperLightBeats": false,
-        "hideNamedNotes": false,
-        "hideTinyNotes": false,
-        "hideSingleNotes": false,
-        "hideFingering": false,
-        "showAllNoteNames": false,
-        "namedNoteOpacity": "1",
-        "singleNoteOpacity": "1",
-        "tinyNoteOpacity": "1"
-      }
-    },
-    {
-      "noteTables": {
-        "tblP46": [
-          {
-            "midinum": "49",
-            "row": "5",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "59",
-            "row": "3",
-            "col": "9",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          },
-          {
-            "midinum": "68",
-            "row": "1",
-            "col": "8",
-            "colorClass": "noteGreen7",
-            "styleNum": 2
-          }
-        ]
-      },
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
-      "caption": "In E maj, IV and Maj7 are in \"Color Notes\"",
-      "rootID": "7",
-      "rootIDLead": "-1",
-      "beats": "4",
-      "currentBeat": 1,
-      "sharps": true,
-      "displayOptions": {
-        "showCellNotes": true,
-        "showSubscriptFunctions": true,
-        "cellIsFunction": true,
-        "showMidiNum": false,
-        "useCenterForRightFunction": false,
-        "NoteDisplaySizes": {
-          "width": "120px",
-          "height": "70px"
-        },
-        "naturalFretWidths": true,
-        "showLooperLightBeats": true,
-        "hideNamedNotes": false,
-        "hideTinyNotes": false,
-        "hideSingleNotes": true,
-        "hideFingering": false,
-        "showAllNoteNames": false,
-        "namedNoteOpacity": "1",
-        "singleNoteOpacity": "1",
-        "tinyNoteOpacity": "1"
-      }
-    },
-    {
-      "noteTables": {},
-      "namedNotes": {
-        "E": {
-          "colorClass": "noteBlue1",
-          "noteName": "E"
-        },
-        "Gb": {
-          "colorClass": "noteScale",
-          "noteName": "Gb"
-        },
-        "Ab": {
-          "colorClass": "noteScale",
-          "noteName": "Ab"
-        },
-        "B": {
-          "colorClass": "noteScale",
-          "noteName": "B"
-        },
-        "Db": {
-          "colorClass": "noteScale",
-          "noteName": "Db"
-        },
-        "Eb": {
-          "colorClass": "noteColornote2",
-          "noteName": "Eb"
-        },
-        "Bb": {},
-        "A": {
-          "colorClass": "noteChord3",
-          "noteName": "A"
-        }
-      },
-      "recordedNotes": {},
-      "caption": "In E maj, but playing MODE: G",
-      "rootID": "7",
-      "rootIDLead": "-1",
-      "beats": "4",
-      "currentBeat": 2,
-      "sharps": true,
-      "displayOptions": {
-        "showCellNotes": true,
-        "showSubscriptFunctions": true,
-        "cellIsFunction": true,
-        "showMidiNum": false,
-        "useCenterForRightFunction": false,
-        "NoteDisplaySizes": {
-          "width": "120px",
-          "height": "70px"
-        },
-        "naturalFretWidths": true,
-        "showLooperLightBeats": false,
-        "hideNamedNotes": false,
-        "hideTinyNotes": false,
-        "hideSingleNotes": false,
-        "hideFingering": false,
-        "showAllNoteNames": false,
-        "namedNoteOpacity": "1",
-        "singleNoteOpacity": "1",
-        "tinyNoteOpacity": "1"
-      }
-    }
-  ],
-  "visibleNoteTables": [
-    "tblP46"
-  ],
-  "defaultBPM": "333",
-  "rootID": "3",
-  "songName": "maj-pentatonic-practice",
-  "namedNoteOpacity": "1",
-  "singleNoteOpacity": "1",
-  "tinyNoteOpacity": "1",
-  "tunings": [
-    {
-      "baseID": "P46",
+      "instance": true,
+      "baseID": "P46_1",
       "baseInstrument": "Guitar",
       "caption": "P4",
       "nStrings": 6,
@@ -258,6 +14,7 @@
         45,
         40
       ],
+      "showDiamonds": true,
       "diamonds": [
         3,
         5,
@@ -275,86 +32,331 @@
       "frets": 24,
       "nut": true,
       "reverse": false,
+      "visible": true,
+      "fromBaseID": "P46"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
       "visible": true
     }
   ],
-  "userColors": {
-    "noteRoot": {
-      "colorClass": "noteGreen1",
-      "caption": "Root"
+  "colorDicts": {},
+  "plugins": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": "",
+  "namedNoteOpacity": "0.96",
+  "openInfo": "none",
+  "presentationMode": true,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "0.49",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "display-options",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "1",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "1",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "0.51",
+        "singleNoteOpacity": "0.49",
+        "tinyNoteOpacity": "0.46",
+        "NoteDisplaySizes": {
+          "caption": "100x50:22",
+          "width": "100px",
+          "height": "50px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     },
-    "noteScale": {
-      "colorClass": "noteBlue2",
-      "caption": "Scale"
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "2",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "0.51",
+        "singleNoteOpacity": "0.49",
+        "tinyNoteOpacity": "0.46",
+        "NoteDisplaySizes": {
+          "caption": "260x20:22",
+          "width": "260px",
+          "height": "20px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     },
-    "noteChord": {
-      "colorClass": "noteRed4",
-      "caption": "Chord"
-    },
-    "noteChord2": {
-      "colorClass": "noteRed2",
-      "caption": "Ch2"
-    },
-    "noteChord3": {
-      "colorClass": "noteBrown7",
-      "caption": "Ch3"
-    },
-    "noteColornote": {
-      "colorClass": "notePink1",
-      "caption": "Colornote"
-    },
-    "noteColornote2": {
-      "colorClass": "notePink2",
-      "caption": "C4"
-    },
-    "noteColornote3": {
-      "colorClass": "notePink3",
-      "caption": "C3"
-    },
-    "noteChromatic": {
-      "colorClass": "noteYellow5",
-      "caption": "Chromatic"
-    },
-    "notePassingTone": {
-      "colorClass": "noteBlue4",
-      "caption": "Passing"
-    },
-    "noteAvoid": {
-      "colorClass": "noteBlack noteHatched2",
-      "caption": "Avoid"
-    },
-    "noteBass": {
-      "colorClass": "noteBassPlayer",
-      "captionClass": "noteBassPlayer",
-      "caption": "Bass"
-    },
-    "noteLead": {
-      "colorClass": "notePink3",
-      "caption": "Lead"
-    },
-    "noteLead2": {
-      "colorClass": "notePink6",
-      "caption": "Lead 2"
-    },
-    "noteFinger1": {
-      "colorClass": "Finger1",
-      "caption": "Finger1"
-    },
-    "noteFinger2": {
-      "colorClass": "Finger2",
-      "caption": "F2"
-    },
-    "noteFinger3": {
-      "colorClass": "Finger3",
-      "caption": "F3"
-    },
-    "noteFinger4": {
-      "colorClass": "Finger4",
-      "caption": "F4"
-    },
-    "noteFingerT": {
-      "colorClass": "FingerT",
-      "caption": "Thumb"
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": false,
+        "cellIsFunction": true,
+        "showMidiNum": true,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "0.96",
+        "singleNoteOpacity": "0.49",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "40x60:22",
+          "width": "40px",
+          "height": "60px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
   }
 }

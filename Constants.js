@@ -58,6 +58,7 @@ export const noteNamesFuncArrDEFAULT = [
     "&Delta;" // 12 - say 
 ];
 export const NOTE_NAMES_ARRAY = "A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab".split(',');
+export const NOTE_NAMES_ARRAY_SHARPS = "A,A#,B,C,C#,D,D#,E,F,F#,G,G#".split(',');
 export const SHARP_IDS = ['A', 'B', 'C', 'D', 'E', 'G'];
 export const FUNCTION_OFFSETS = ["I+0","&tau;+1","II+2","m+3","III+4","IV+5","&Theta;+6","V+7","&sigma;+8","6+9","&delta;+10","&Delta;+11"];
 
@@ -77,6 +78,9 @@ export const FILL_CHORD_OPTIONS = [
     { value: '7no5', caption: '7no5', trigger: 'n' },
     { value: 'm/ma7', caption: 'm/ma7', trigger: 'j' },
     { value: 'm9', caption: 'm9', trigger: '9' },
+    { value: '9', caption: '9', trigger: 'k' },
+    { value: '11', caption: '11', trigger: '1' },
+    { value: '13', caption: '13', trigger: '3' },
     { value: '6add9', caption: '6add9', trigger: '6' },
     { value: '', caption: 'none', trigger: '0' }
 ];
@@ -125,4 +129,12 @@ export function midinumToNoteName(midinum) {
     return NOTE_NAMES_ARRAY[index];
     // 21 == A0
     // 9 == A, 8 Ab, 7 G, 6 Gb, 5 F, 4 E, 3 Eb, 2 D, 1 Db, 0 C
+}
+
+export function getPreferredRootName(section_rootID, sectionSharps) {
+  const rootID = Number.parseInt(section_rootID, 10);
+  const normalizedRootID = Number.isFinite(rootID) ? ((rootID % 12) + 12) % 12 : 0;
+  const prefersSharps = sectionSharps === true || (sectionSharps !== false && noteIdPrefersSharps(normalizedRootID));
+  const noteNames = prefersSharps ? NOTE_NAMES_ARRAY_SHARPS : NOTE_NAMES_ARRAY;
+  return noteNames[normalizedRootID] || NOTE_NAMES_ARRAY[normalizedRootID] || NOTE_NAMES_ARRAY[0];
 }

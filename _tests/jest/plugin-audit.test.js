@@ -23,6 +23,7 @@ jest.unstable_mockModule('../../looper.js', () => ({
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
   getSong: mockGetSong,
+  getTransportController: jest.fn(() => null),
   transposeSong: mockTransposeSong
 }));
 
@@ -157,6 +158,10 @@ describe('Plugin audit', () => {
     const manager = createManager();
     const song = createSongWithSectionPluginData();
     manager.loadSongPluginState(song);
+    const arpeggioEntry = manager.getPluginEntry('arpeggio');
+    manager.setPropertyValue(arpeggioEntry, 'enabled', true);
+    manager.setPropertyValue(arpeggioEntry, 'type', 'SingleNote');
+    manager.setPropertyValue(arpeggioEntry, 'colorNotes', true);
 
     const result = manager.invokeMenuAction({ action: 'pluginAction:audit' });
 
@@ -166,6 +171,8 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('arpeggioCurrentPositionPair');
     expect(result.message).toContain('fillCurrentPositionPair');
     expect(result.message).toContain('<th scope=\'col\'>plugin</th>');
+    expect(result.message).toContain('<span>enabled</span>');
+    expect(result.message).toContain('<span>persisted</span>');
     expect(result.message).toContain('<span>Instrument</span>');
     expect(result.message).toContain('<span>chroma</span>');
     expect(result.message).toContain('<span>inputs</span>');
@@ -175,12 +182,21 @@ describe('Plugin audit', () => {
     expect(result.message).toContain('<td>fill</td>');
     expect(result.message).toContain('<td>move</td>');
     expect(result.message).toContain('<td>transpose</td>');
+    expect(result.message).toContain('&#x1F5F9;');
+    expect(result.message).toContain('&#x1F5BA;');
+    expect(result.message).toContain('<tr><td>move</td><td style=\'background-color: #555;\'>&nbsp;</td>');
+    expect(result.message).toContain('<tr><td>clip</td><td style=\'background-color: #555;\'>&nbsp;</td>');
     expect(result.message).toContain('include:n,s,t,b,f,r');
     expect(result.message).toContain('played');
     expect(result.message).toContain("background-color: #555;");
+    expect(result.message).toContain("background-color: chartreuse;");
+    expect(result.message).toMatch(/<tr><td>arpeggio<\/td>[\s\S]*?<td style='background-color: chartreuse;'>single<\/td>[\s\S]*?<td style='background-color: chartreuse;'>played<br>color:true<\/td>/);
     expect(result.message).toContain('fill.customExtra');
-    expect(result.message).toContain('Plugin Audit: Song-Level Persisted Properties');
-    expect(result.message).toContain('Plugin Audit: Section-Level pluginData');
+    expect(result.message).toContain('Plugin Audit:');
+    expect(result.message).toContain('Song-Level');
+    expect(result.message).toContain('Persisted Properties');
+    expect(result.message).toContain('Section-Level');
+    expect(result.message).toContain('pluginData');
   });
 
   test('arpeggio type resolveValue displays normalized labels instead of raw enum names', () => {

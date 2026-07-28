@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
 
 const mockRuntime = {
-  song: null
+  song: null,
+  transportController: null
 };
 
 const mockPalettePresentation = {
@@ -13,7 +14,8 @@ const mockPalettePresentation = {
 };
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
-  getSong: () => mockRuntime.song
+  getSong: () => mockRuntime.song,
+  getTransportController: () => mockRuntime.transportController
 }));
 
 jest.unstable_mockModule('../../presentation.js', () => ({
@@ -46,13 +48,23 @@ function makeSection(sectionNotesByTable = {}) {
 }
 
 function makeSong({ myTunings, wirings = [], sections, currentSectionIndex = 0, isHeadless = true } = {}) {
+  let activeSectionIndex = currentSectionIndex;
   return {
     myTunings,
     wirings,
     sections,
     isHeadless,
     getCurrentSection() {
-      return this.sections[currentSectionIndex];
+      return this.sections[activeSectionIndex];
+    },
+    getSectionsCurrentIndex() {
+      return activeSectionIndex;
+    },
+    gotoPrevSectionStateOnly() {
+      activeSectionIndex = Math.max(0, activeSectionIndex - 1);
+    },
+    gotoNextSectionStateOnly() {
+      activeSectionIndex = Math.min((this.sections?.length || 1) - 1, activeSectionIndex + 1);
     },
     requestUiClearAll: jest.fn(),
     requestUiReplay: jest.fn(),
@@ -100,6 +112,7 @@ function setAllFamilyModes(plugin, familyName, modeValue, song) {
 describe('FillPlugin', () => {
   beforeEach(() => {
     mockPalettePresentation.getLastRestorableRbColor.mockClear();
+    mockRuntime.transportController = null;
   });
 
   test('target table options exclude wired display tables and default to the first eligible table', () => {
@@ -179,6 +192,64 @@ describe('FillPlugin', () => {
     expect(useChartNode.children.map((child) => child.actionName)).toEqual(['useChartChord', 'useChartMode']);
     const automaticNode = optionsNode.children.find((child) => child.name === 'automaticFromChart');
     expect(automaticNode.trigger).toBe('a');
+    expect(optionsNode.children.some((child) => child.trigger === ',')).toBe(true);
+    expect(optionsNode.children.some((child) => child.trigger === '.')).toBe(true);
+  });
+
+  test('enabling automatic from chart immediately syncs formulas from current section chart values', () => {
+    const section = makeSection();
+    section.chartChord = 'Cmaj7';
+    section.chartMode = 'A harmonic minor';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('M');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('major');
+
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('maj7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('harmonic minor');
+  });
+
+  test('automatic menu section navigation updates formulas from chart on each section', () => {
+    const sectionOne = makeSection();
+    sectionOne.chartChord = 'Cmaj7';
+    sectionOne.chartMode = 'C major';
+    const sectionTwo = makeSection();
+    sectionTwo.chartChord = 'Bb11';
+    sectionTwo.chartMode = 'A minor';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [sectionOne, sectionTwo],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('maj7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('major');
+
+    const navNext = plugin.invokeAction('auto:nextSection', { song });
+    expect(navNext.result).toBe('section 2');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('11');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('minor');
+
+    const navPrev = plugin.invokeAction('auto:prevSection', { song });
+    expect(navPrev.result).toBe('section 1');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('maj7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('major');
   });
 
   test('positions submenu includes Import from arpeggio action', () => {
@@ -263,6 +334,40 @@ describe('FillPlugin', () => {
     expect(plugin.getProperty('scaleFormula').getValue()).toBe('');
   });
 
+  test('automatic from chart clears formulas to none when payload section chart values are unsupported', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const firstSection = makeSection({ [targetTable]: {} });
+    const secondSection = makeSection({ [targetTable]: {} });
+    firstSection.chartChord = 'Cmaj7';
+    firstSection.chartMode = 'A harmonic minor';
+    secondSection.chartChord = 'Amb6b9';
+    secondSection.chartMode = 'A ultralocrian';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [firstSection, secondSection],
+      currentSectionIndex: 0
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleChordMode', 'none', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 0 }, { song });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('maj7');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('harmonic minor');
+
+    plugin.handleEvent('DaCapo:OnSectionBegin', { sectionIndex: 1 }, { song });
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('');
+    expect(plugin.getProperty('scaleFormula').getValue()).toBe('');
+  });
+
   test('section-begin fill keeps formulas unchanged when automatic from chart is off', () => {
     const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
     const firstSection = makeSection({ [targetTable]: {} });
@@ -291,6 +396,42 @@ describe('FillPlugin', () => {
 
     expect(plugin.getProperty('chordFormula').getValue()).toBe('m');
     expect(plugin.getProperty('scaleFormula').getValue()).toBe('minor');
+  });
+
+  test('manual apply action honors automatic-from-chart sources', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    section.rootID = 3; // C
+    section.chartChord = 'Bb11';
+    section.chartMode = '';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    plugin.setPropertyValue('maxFret', 12, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleRootMode', 'none', { song });
+    plugin.setPropertyValue('singleChordMode', 'role', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    const result = plugin.invokeAction('apply', { song });
+    const playedSingle = getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE);
+    const noteNames = new Set(playedSingle.map((note) => note.noteName));
+
+    expect(result.result).toContain('Fill applied:');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('11');
+    expect(noteNames.has('G')).toBe(true);
+    expect(noteNames.has('Bb')).toBe(true);
+    expect(noteNames.has('E')).toBe(false);
+    expect(noteNames.has('Ab')).toBe(false);
   });
 
   test('useChartChord adopts direct chart matches and slash-chord aliases', () => {
@@ -323,6 +464,11 @@ describe('FillPlugin', () => {
     result = plugin.invokeAction('useChartChord', { song });
     expect(result.result).toBe('chartChord -> 6add9');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('6add9');
+
+    section.chartChord = 'Bb11';
+    result = plugin.invokeAction('useChartChord', { song });
+    expect(result.result).toBe('chartChord -> 11');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('11');
   });
 
   test('useChartMode adopts tonic-stripped chart modes', () => {
@@ -361,7 +507,7 @@ describe('FillPlugin', () => {
     section.chartChord = 'Amb6b9';
     let result = plugin.invokeAction('useChartChord', { song });
     expect(result.result).toBe('No fill subset match for chartChord="Amb6b9" tonalType="mb6b9"');
-    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 6add9, none]');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 9, 11, 13, 6add9, none]');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('M');
 
     section.chartMode = 'A ultralocrian';
@@ -477,6 +623,32 @@ describe('FillPlugin', () => {
 
     expect(namedScaleNode.caption).toContain('[${plugin:fill:namedScaleDisplay}]');
     expect(namedScaleRoleNode.caption).toContain('[${plugin:fill:namedScaleColor}]');
+  });
+
+  test('root role menu includes noteRoot, note1, and last for named, single, and tiny', () => {
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [makeSection()]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+
+    const optionsNode = plugin.getVisibleMenuChildren().find((child) => child.name === 'options');
+
+    ['named', 'single', 'tiny'].forEach((familyName) => {
+      const familyNode = optionsNode.children.find((child) => child.name === familyName);
+      const rootNode = familyNode.children.find((child) => child.name === `${familyName}:root`);
+      const rootRoleMenu = rootNode.children.find((child) => child.name === `${familyName}:root:roleMenu`);
+
+      expect(rootRoleMenu.children.map((child) => child.trigger)).toEqual(['n', '1', 'l']);
+      expect(rootRoleMenu.children.map((child) => child.actionName)).toEqual([
+        `setFamilyRoleColor:${familyName}:root:noteRoot`,
+        `setFamilyRoleColor:${familyName}:root:note1`,
+        `setFamilyRoleColorLast:${familyName}:root`
+      ]);
+    });
   });
 
   test('copy from SingleNote copies role modes and colors once for named and tiny', () => {

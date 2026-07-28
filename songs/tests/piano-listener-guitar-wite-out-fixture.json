@@ -17,7 +17,7 @@
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5,
       "stringDividerHeight": "0",
-      "fromBaseID": "PianoSkeuomorphic"
+      "fromBaseID": "Piano"
     },
     {
       "instance": true,
@@ -55,9 +55,15 @@
       "fromBaseID": "P46"
     }
   ],
-  "visibleNoteTables": [
-    "tblPiano_1",
-    "tblP46_1"
+  "noteTablesLayout": [
+    {
+      "tableID": "tblPiano_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
   ],
   "colorDicts": {
     "piano": {
@@ -92,7 +98,12 @@
         ],
         "NamedNotes": true,
         "SingleNotes": false,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
         "octaves": "",
+        "useOctavesForRecorded": false,
         "autoSharpsFlats": true,
         "doLeadKey": false
       }
@@ -105,6 +116,7 @@
         "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
+        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 5,
         "lowToHigh": true,
@@ -122,10 +134,12 @@
       "graveyardKey": "USER",
       "properties": {
         "targetTable": "tblP46_1",
-        "chordFormula": "4,7",
-        "scaleFormula": "0,2,4,5,7,9,11",
+        "chordFormula": "M",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
         "minFret": 0,
         "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 0,
         "namedRootMode": "role",
@@ -153,16 +167,34 @@
   "activeStylesheets": "Default+piano",
   "captionsRowShowing": true,
   "defaultBPM": "80",
-  "info": "Piano_1 is a \"Listener\", following Guitar P46_1.\n\nThis song has:\n<ul>\n  <li>recordedNotes and playedNotes are Listened to by the Piano_1 using the new \"Listener projection\" of \"MIDI only, low string to high\", so that all Guitar notes map to piano notes, rather\nthan being dropped because the row doesn't match, since Pianos only have one \"row\" i.e. one \"string\".</li>\n<li>namedNotes are already Listened to because they don't have a row or string.</li>\n  <li> noteRoot should be overriding the system noteRoot with noteHatched2\n  </li>\n  <li> note1 should use colorDicts \"piano\" in the songfile which has noteHatched\n  </li>\n  <li> skeuomorphic guitar theme USER, which is like \"Guitar Strings\" but more based on \"Wite-Out\"\n  </li>\n  <li> PianoSkeuomorphic\n  </li>\n<li> Saved DisplayOptions with Presentation mode so width and height come up on song load.\n</li>\n</ul>",
+  "info": "Piano_1 is a \"Listener\", following Guitar P46_1.\n\nThis song has:\n<ul>\n  <li>recordedNotes and playedNotes are Listened to by the Piano_1 using the new \"Listener projection\" of \"MIDI only, low string to high\", so that all Guitar notes map to piano notes, rather\nthan being dropped because the row doesn't match, since Pianos only have one \"row\" i.e. one \"string\".</li>\n<li>namedNotes are already Listened to because they don't have a row or string.</li>\n  <li> noteRoot should be overriding the system noteRoot with noteHatched2\n  </li>\n  <li> note1 should use colorDicts \"piano\" in the songfile which has noteHatched\n  </li>\n  <li> skeuomorphic guitar theme USER, which is like \"Guitar Strings\" but more based on \"Wite-Out\"\n  </li>\n  <li> Piano\n  </li>\n<li> Saved DisplayOptions with Presentation mode so width and height come up on song load.\n</li>\n</ul>",
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": true,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": true,
     "showNextLine": true,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
     "barClass": "LeadSheet",
+    "chartSpacing": "relaxed",
     "chordFontsize": "100%",
     "lineCaptionFontsize": "100%",
     "boxCaptionFontsize": "100%"
@@ -171,8 +203,8 @@
   "sharps": true,
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
-  "songfileVersion": "V2",
-  "songName": "piano+guitar+wite-out",
+  "songfileVersion": "V2.1",
+  "songName": "piano-listener-guitar-wite-out-fixture",
   "theme": "USER",
   "sections": [
     {
@@ -533,7 +565,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 10,
-      "currentBeat": 9,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -1245,7 +1277,7 @@
           "logicalKey": "clip::named-3-0200",
           "tableID": "tblPianoSkeuomorphic_1",
           "baseID": "PianoSkeuomorphic_1",
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "schemaVersion": 1,
           "counts": {
             "named": 3,
@@ -1255,7 +1287,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblPianoSkeuomorphic_1\",\n        \"baseID\": \"PianoSkeuomorphic_1\",\n        \"fromBaseID\": \"PianoSkeuomorphic\",\n        \"baseInstrument\": \"Piano\",\n        \"nStrings\": 1,\n        \"rowRange\": [\n            21\n        ],\n        \"frets\": 88,\n        \"nut\": false,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblPianoSkeuomorphic_1\",\n        \"baseID\": \"PianoSkeuomorphic_1\",\n        \"fromBaseID\": \"Piano\",\n        \"baseInstrument\": \"Piano\",\n        \"nStrings\": 1,\n        \"rowRange\": [\n            21\n        ],\n        \"frets\": 88,\n        \"nut\": false,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"E\": {\n                \"noteName\": \"E\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": null
       },
       {
@@ -1269,7 +1301,7 @@
           "logicalKey": "clip::named-3-0201",
           "tableID": "tblPianoSkeuomorphic_1",
           "baseID": "PianoSkeuomorphic_1",
-          "fromBaseID": "PianoSkeuomorphic",
+          "fromBaseID": "Piano",
           "schemaVersion": 1,
           "counts": {
             "named": 3,
@@ -1279,7 +1311,7 @@
             "fingering": 0
           }
         },
-        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblPianoSkeuomorphic_1\",\n        \"baseID\": \"PianoSkeuomorphic_1\",\n        \"fromBaseID\": \"PianoSkeuomorphic\",\n        \"baseInstrument\": \"Piano\",\n        \"nStrings\": 1,\n        \"rowRange\": [\n            21\n        ],\n        \"frets\": 88,\n        \"nut\": false,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"F\": {\n                \"noteName\": \"F\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblPianoSkeuomorphic_1\",\n        \"baseID\": \"PianoSkeuomorphic_1\",\n        \"fromBaseID\": \"Piano\",\n        \"baseInstrument\": \"Piano\",\n        \"nStrings\": 1,\n        \"rowRange\": [\n            21\n        ],\n        \"frets\": 88,\n        \"nut\": false,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 3,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"F\": {\n                \"noteName\": \"F\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
         "lastRevived": null
       },
       {

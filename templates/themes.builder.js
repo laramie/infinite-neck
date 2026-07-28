@@ -35,6 +35,7 @@ export class ThemesBuilder {
         ThemeFunctions.themeToControls(selectedTheme);
         ThemeFunctions.clearThemeDiffResults();
         InfiniteNeck.refreshShowAllNoteNames();
+        InfiniteNeck.updateDisplayOptionsReadonlyValues();
         $(this).blur();  // Remove focus so keyboard doesn't change selection
     }
     

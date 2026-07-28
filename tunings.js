@@ -14,7 +14,6 @@ export const allTunings = {
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -29,7 +28,6 @@ export const allTunings = {
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -46,7 +44,20 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
+    },
+    {
+      "instance": false,
+      "baseID": "S1",
+      "baseInstrument": "Guitar",
+      "caption": "OneString",
+      "nStrings": 1,
+      "rowRange": [40],
+      "showDiamonds": true,
+      "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
+      "doubleDiamonds": [12, 24],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
     },
     {
       "instance": false,
@@ -63,7 +74,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": false
     },
     {
@@ -81,7 +91,6 @@ export const allTunings = {
       "frets": 18,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -98,7 +107,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -115,7 +123,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -131,7 +138,6 @@ export const allTunings = {
       "frets": 15,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -147,7 +153,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -163,7 +168,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -179,7 +183,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -195,7 +198,6 @@ export const allTunings = {
       "frets": 16,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -210,7 +212,6 @@ export const allTunings = {
       "frets": 15,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -226,7 +227,6 @@ export const allTunings = {
       "frets": 20,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -242,7 +242,6 @@ export const allTunings = {
       "frets": 22,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -258,7 +257,6 @@ export const allTunings = {
       "frets": 22,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -274,7 +272,6 @@ export const allTunings = {
       "frets": 20,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -290,7 +287,6 @@ export const allTunings = {
       "nut": true,
       "banjoNut": { "4": 5 },
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -306,7 +302,6 @@ export const allTunings = {
       "nut": true,
       "banjoNut": { "0": 2, "1": 2, "2": 2, "3": 2, "4": 5 },
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -322,7 +317,6 @@ export const allTunings = {
       "nut": true,
       "banjoNut": { "4": 5 },
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -338,7 +332,6 @@ export const allTunings = {
       "nut": true,
       "banjoNut": { "4": 5 },
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -354,7 +347,6 @@ export const allTunings = {
       "nut": true,
       "banjoNut": { "4": 5 },
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -366,7 +358,6 @@ export const allTunings = {
       "frets": 1,
       "nut": false,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -378,7 +369,6 @@ export const allTunings = {
       "frets": 24,
       "nut": false,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -390,7 +380,6 @@ export const allTunings = {
       "frets": 24,
       "nut": false,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -402,7 +391,6 @@ export const allTunings = {
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -415,7 +403,6 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "visible": false,
       "fixedFretWidth": true,
       "pinkKey": "C"
     },
@@ -430,7 +417,6 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "visible": false,
       "fixedFretWidth": true,
       "pinkKey": "C"
     },
@@ -444,7 +430,6 @@ export const allTunings = {
       "frets": 2,
       "nut": false,
       "reverse": false,
-      "visible": false
     },
     {
       "instance": false,
@@ -456,7 +441,6 @@ export const allTunings = {
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": true
     },
     {
@@ -469,7 +453,6 @@ export const allTunings = {
       "frets": 49,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": true
     },
     {
@@ -482,7 +465,6 @@ export const allTunings = {
       "frets": 49,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": true
     },
     {
@@ -495,23 +477,7 @@ export const allTunings = {
       "frets": 26,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": true,
-      "fixedFretWidthMult": 0.5
-    },
-    {
-      "instance": false,
-      "baseID": "PianoSkeuomorphic",
-      "baseInstrument": "Piano",
-      "caption": "Piano Skeuomorphic",
-      "nStrings": 1,
-      "rowRange": [21],
-      "frets": 88,
-      "nut": false,
-      "reverse": false,
-      "visible": false,
-      "pianoNamesRow": false,
-      "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5
     },
     {
@@ -524,7 +490,6 @@ export const allTunings = {
       "frets": 88,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5
@@ -539,7 +504,6 @@ export const allTunings = {
       "frets": 49,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5
@@ -554,7 +518,6 @@ export const allTunings = {
       "frets": 48,
       "nut": false,
       "reverse": false,
-      "visible": false,
       "pianoNamesRow": false,
       "pianoSkeuomorphic": true,
       "fixedFretWidthMult": 0.5

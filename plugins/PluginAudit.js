@@ -45,6 +45,14 @@ const SONG_LEVEL_AUDIT_COLUMNS = Object.freeze([
   { label: 'outputs', propertyName: 'auditOutputs', kind: 'audit' }
 ]);
 
+const SONG_LEVEL_STATUS_COLUMNS = Object.freeze([
+  { label: 'enabled', propertyName: 'enabled' },
+  { label: 'persisted', propertyName: 'persisted' }
+]);
+
+const ENABLED_MARK = '&#x1F5F9;';
+const PERSISTED_MARK = '&#x1F5BA;';
+
 function getPluginsInAuditOrder(pluginManager) {
   const registeredPlugins = Array.isArray(pluginManager?.getRegisteredPlugins?.())
     ? pluginManager.getRegisteredPlugins()
@@ -78,6 +86,19 @@ function pluginHasProperty(plugin, propertyName) {
   return properties.some((property) => property?.name === propertyName);
 }
 
+function getPluginPropertyDefaultValue(plugin, propertyName) {
+  const properties = Array.isArray(plugin?.getProperties?.()) ? plugin.getProperties() : [];
+  const property = properties.find((candidate) => candidate?.name === propertyName);
+  if (!property || typeof property.getDefaultValue !== 'function') {
+    return undefined;
+  }
+  return property.getDefaultValue();
+}
+
+function valuesEqual(leftValue, rightValue) {
+  return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
 function formatSongLevelCellValue(column, value) {
   if (column.propertyName === 'targetTable') {
     return formatInstrument(value);
@@ -106,12 +127,31 @@ function normalizeAuditCellContent(value) {
   return encoded.join('<br>');
 }
 
+function normalizeAuditCellValue(rawValue) {
+  if (rawValue === undefined) {
+    return { value: undefined, changed: false };
+  }
+
+  if (rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue)
+      && Object.prototype.hasOwnProperty.call(rawValue, 'value')) {
+    return {
+      value: normalizeAuditCellContent(rawValue.value),
+      changed: rawValue.changed === true
+    };
+  }
+
+  return {
+    value: normalizeAuditCellContent(rawValue),
+    changed: false
+  };
+}
+
 function getPluginAuditCellValue(plugin, song, propertyName) {
   const methodName = propertyName === 'auditInputs' ? 'getAuditInputs' : 'getAuditOutputs';
   if (!plugin || typeof plugin[methodName] !== 'function') {
-    return undefined;
+    return { value: undefined, changed: false };
   }
-  return normalizeAuditCellContent(plugin[methodName]({ song }));
+  return normalizeAuditCellValue(plugin[methodName]({ song }));
 }
 
 function buildSongLevelTable(song, pluginManager) {
@@ -121,14 +161,30 @@ function buildSongLevelTable(song, pluginManager) {
     const pluginId = `${plugin?.getId?.() || ''}`;
     const pluginName = `${plugin?.getRegisteredName?.() || pluginId}`;
     const persistedProperties = getSongPluginProperties(song, pluginId);
+    const pluginEntry = pluginManager?.getPluginEntry?.(pluginId) || null;
+    const pluginCanEnable = Array.isArray(plugin?.getEventNames?.()) && plugin.getEventNames().length > 0;
+
+    const statusCells = SONG_LEVEL_STATUS_COLUMNS.map((column) => {
+      if (column.propertyName === 'enabled') {
+        if (!pluginCanEnable) {
+          return "<td style='background-color: #555;'>&nbsp;</td>";
+        }
+        return `<td>${pluginEntry?.enabled ? ENABLED_MARK : '&nbsp;'}</td>`;
+      }
+      const persisted = typeof pluginManager?.hasPersistedSongState === 'function'
+        ? pluginManager.hasPersistedSongState(pluginId)
+        : false;
+      return `<td>${persisted ? PERSISTED_MARK : '&nbsp;'}</td>`;
+    }).join('');
 
     const cells = SONG_LEVEL_AUDIT_COLUMNS.map((column) => {
       if (column.kind === 'audit') {
-        const auditValue = getPluginAuditCellValue(plugin, song, column.propertyName);
-        if (auditValue === undefined) {
+          const auditCell = getPluginAuditCellValue(plugin, song, column.propertyName);
+          if (auditCell.value === undefined) {
           return "<td style='background-color: #555;'>&nbsp;</td>";
         }
-        return `<td>${auditValue}</td>`;
+          const style = auditCell.changed ? " style='background-color: chartreuse;'" : '';
+          return `<td${style}>${auditCell.value}</td>`;
       }
 
       const applies = pluginHasProperty(plugin, column.propertyName);
@@ -138,11 +194,18 @@ function buildSongLevelTable(song, pluginManager) {
 
       const hasPersistedValue = Object.prototype.hasOwnProperty.call(persistedProperties, column.propertyName);
       const rawValue = hasPersistedValue ? persistedProperties[column.propertyName] : undefined;
-      return `<td>${formatSongLevelCellValue(column, rawValue)}</td>`;
+      const defaultValue = getPluginPropertyDefaultValue(plugin, column.propertyName);
+      const differsFromDefault = hasPersistedValue && !valuesEqual(rawValue, defaultValue);
+      const style = differsFromDefault ? " style='background-color: chartreuse;'" : '';
+      return `<td${style}>${formatSongLevelCellValue(column, rawValue)}</td>`;
     }).join('');
 
-    return `<tr><td>${escapeHtml(pluginName)}</td>${cells}</tr>`;
+    return `<tr><td>${escapeHtml(pluginName)}</td>${statusCells}${cells}</tr>`;
   });
+
+  const statusHeaderCells = SONG_LEVEL_STATUS_COLUMNS
+    .map((column) => `<th class='vertical-header'><span>${escapeHtml(column.label)}</span></th>`)
+    .join('');
 
   const headerCells = SONG_LEVEL_AUDIT_COLUMNS
     .map((column) => `<th class='vertical-header'><span>${escapeHtml(column.label)}</span></th>`)
@@ -150,8 +213,8 @@ function buildSongLevelTable(song, pluginManager) {
 
   return [
     "<table border='1' class='tblDisplayOptions pluginAuditTable pluginAuditSongTable'>",
-    '<caption>Plugin Audit: Song-Level Persisted Properties</caption>',
-    `<tr><th scope='col'>plugin</th>${headerCells}</tr>`,
+    '<caption>Plugin Audit: <b>Song-Level</b> Persisted Properties</caption>',
+    `<tr><th scope='col'>plugin</th>${statusHeaderCells}${headerCells}</tr>`,
     rows.join('\n'),
     '</table>'
   ].join('\n');
@@ -226,7 +289,7 @@ function buildSectionLevelTable(song, pluginManager) {
 
   return [
     "<table border='1' class='tblDisplayOptions pluginAuditTable pluginAuditSectionTable'>",
-    '<caption>Plugin Audit: Section-Level pluginData</caption>',
+    '<caption>Plugin Audit: <b>Section-Level</b> pluginData</caption>',
     '<tr><th scope="col">Section #</th><th class="vertical-header"><span>arpeggioPositionsStatus</span></th><th class="vertical-header"><span>fillPositionsStatus</span></th><th class="vertical-header"><span>extra pluginData keys</span></th></tr>',
     rows.join('\n'),
     '</table>',
@@ -242,7 +305,6 @@ export function buildPluginAuditHtml({ song = null, pluginManager = null } = {})
   return [
     '<div class="pluginAuditReport">',
     '<h3>Plugin Audit</h3>',
-    '<div>Current section row is highlighted when visible in this report.</div>',
     buildSongLevelTable(song, pluginManager),
     buildSectionLevelTable(song, pluginManager),
     '</div>'

@@ -26,6 +26,7 @@ jest.unstable_mockModule('../../looper.js', () => ({
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
   getSong: mockGetSong,
+  getTransportController: jest.fn(() => null),
   transposeSong: mockTransposeSong
 }));
 
@@ -476,9 +477,28 @@ describe('PluginManager plugin persistence', () => {
     expect(raiseNode.children.map((child) => child.caption)).toEqual([
       '<b>1</b> saved1-2-3',
       '<b>2</b> USER',
-      '<b>3</b> saved'
+      '<b>3</b> saved',
+      '<b>i</b>d'
     ]);
-    expect(raiseNode.children.map((child) => child.trigger)).toEqual(['1', '2', '3']);
+    expect(raiseNode.children.map((child) => child.trigger)).toEqual(['1', '2', '3', 'i']);
+  });
+
+  test('graveyard raise menu id input raises by stable key', () => {
+    const manager = createManagerWithPlugins();
+    const song = createSongWithTunings();
+    manager.loadSongPluginState(song);
+    const entry = manager.getPluginEntry('transpose');
+
+    manager.setPropertyValue(entry, 'NamedNotes', false);
+    manager.savePluginEntry(entry, 'Preset_A');
+    manager.setPropertyValue(entry, 'NamedNotes', true);
+
+    const raiseNode = manager.buildManagedGraveyardRaiseNode('transpose');
+    const raiseByIdNode = raiseNode.children.find((child) => child.name === 'raise:id');
+    const result = manager.invokeMenuAction(raiseByIdNode, { value: 'Preset_A' });
+
+    expect(result.result).toBe('revived transpose as Preset_A');
+    expect(entry.plugin.getProperty('NamedNotes').getValue()).toBe(false);
   });
 
   test('plugin raise hash parser and raiser support superlinks and continue after missing snapshots', () => {

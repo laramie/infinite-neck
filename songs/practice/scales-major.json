@@ -1,0 +1,301 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "Piano_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "Piano"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblPiano_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {
+    "user": {
+      "readOnly": false,
+      "computed": false,
+      "checked": true,
+      "dict": {
+        "note1": {
+          "colorClass": "noteHatched8 noteBlack",
+          "MOJOcaptionClass": "noteBlack",
+          "caption": "I"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "transpose": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "USER",
+      "properties": {
+        "intervals": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "NamedNotes": true,
+        "SingleNotes": true,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
+        "octaves": "",
+        "useOctavesForRecorded": false,
+        "autoSharpsFlats": true,
+        "doLeadKey": false
+      }
+    }
+  },
+  "macros": {},
+  "activeStylesheets": "Default+user",
+  "captionsRowShowing": true,
+  "defaultBPM": "60",
+  "info": {
+    "lines": []
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": true,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": true,
+    "addTransposedRootToChord": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "scales-major",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "CM",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "<small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicTransposedModeNotes} <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "CM",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "160x30:22",
+          "width": "160px",
+          "height": "30px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "9",
+        "pianoWidthScaleFactor": "4",
+        "pianoWhiteToBlackWidthRatio": "1.6",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblPiano_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1785196679301,
+        "date": "7/27/2026",
+        "time": "4:57:59 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "user",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"noteRoot\": {\n            \"colorClass\": \"noteHatched8 noteBlack\",\n            \"captionClass\": \"noteBlack\",\n            \"caption\": \"Root\",\n            \"tiny\": \"R\"\n        },\n        \"note1\": {\n            \"colorClass\": \"noteHatched5 noteBlack\",\n            \"MOJOcaptionClass\": \"noteBlack\",\n            \"caption\": \"I\"\n        }\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785197652305,
+        "date": "7/27/2026",
+        "time": "5:14:12 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": "<small style=\"color: blue;\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\"color:blue;\"> ${keySignatureCountHand}</small>"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"Cm7\",\n            \"mode\": \"C minor\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"<small style=\\\"color: blue;\\\">minor scale notes:</small>  ${enharmonicTransposedModeNotes}  <small style=\\\"color:blue;\\\"> ${keySignatureCountHand}</small>\",\n    \"chartChord\": \"Cm7\",\n    \"chartMode\": \"C minor\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "currentColorDict": "user"
+}

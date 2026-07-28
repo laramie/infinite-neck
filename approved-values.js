@@ -1,5 +1,10 @@
 let approvedValueProviders = {};
 
+import {
+	renderSongInstrumentBadges,
+	renderSongInstrumentTable
+} from './InstrumentRoleBadges.js';
+
 export const APPROVED_VALUES_HELP_BLOCK_START = '<!-- BEGIN GENERATED APPROVED VALUES -->';
 export const APPROVED_VALUES_HELP_BLOCK_END = '<!-- END GENERATED APPROVED VALUES -->';
 export const APPROVED_VALUE_SAMPLE_CAVEAT = 'Sample values are live snapshots from the current song and current section, so they change as you edit, navigate, or load another song.';
@@ -25,6 +30,7 @@ function getRootKeyLead(...args) { return requireProvider('getRootKeyLead')(...a
 function getTransposeCaptionValue(...args) { return requireProvider('getTransposeCaptionValue')(...args); }
 function getArpeggioCaptionValue(...args) { return requireProvider('getArpeggioCaptionValue')(...args); }
 function getFillCaptionValue(...args) { return requireProvider('getFillCaptionValue')(...args); }
+function getTonalCaptionValue(...args) { return requireProvider('getTonalCaptionValue')(...args); }
 
 function escapeHtml(text) {
 	return `${text}`
@@ -232,6 +238,42 @@ const approvedValueEntries = [
 		name: 'fillPositionsStatus',
 		description: 'widget of current-section Fill positions',
 		resolve: () => getFillCaptionValue('fillPositionsStatus'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'enharmonicTransposedModeNotes',
+		description: 'tonal transposed mode notes',
+		resolve: () => getTonalCaptionValue('enharmonicTransposedModeNotes'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'enharmonicChartModeNotes',
+		description: 'tonal chart mode notes',
+		resolve: () => getTonalCaptionValue('enharmonicChartModeNotes'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'keySignatureCount',
+		description: 'tonal transposed mode sharps-flats count',
+		resolve: () => getTonalCaptionValue('keySignatureCount'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'keySignatureCountHand',
+		description: 'tonal transposed mode sharps-flats count, with leading pointer hand',
+		resolve: () => getTonalCaptionValue('keySignatureCountHand'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'songInstrumentBadges',
+		description: 'whole-song instrument role badges',
+		resolve: () => renderSongInstrumentBadges(getSong(), { allowUnknown: true }),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'songInstrumentTable',
+		description: 'whole-song instrument role badge table (for Info)',
+		resolve: () => renderSongInstrumentTable(getSong(), { allowUnknown: true }),
 		sampleFormat: 'html'
 	}
 ];

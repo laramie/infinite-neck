@@ -1,4 +1,5 @@
 import { gMenuFile } from '../menu.js';
+import { TABLE_ID_PREFIX } from '../Constants.js';
 import { clearBeatAndSectionLooping, beatsLooping, sectionsLooping } from '../looper.js';
 import { MenuItemProxy } from './MenuItemProxy.js';
 import { buildCaption, buildValueReference } from './PluginProperty.js';
@@ -62,6 +63,11 @@ function canPromptForConfirmation() {
 
 function valuesEqual(leftValue, rightValue) {
   return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
+function valueToBaseID(value) {
+  const text = `${value || ''}`;
+  return text.startsWith(TABLE_ID_PREFIX) ? text.slice(TABLE_ID_PREFIX.length) : text;
 }
 
 function normalizePluginResponse(response, fallbackResult) {
@@ -602,6 +608,21 @@ export class PluginManager {
         pluginId
       })];
 
+    children.push(new MenuItemProxy(this, {
+      name: 'raise:id',
+      caption: buildCaption('id', 'i'),
+      trigger: 'i',
+      action: 'pluginAction:graveyardRaiseByKey',
+      pluginId,
+      popOnBang: true,
+      input: {
+        type: 'input',
+        caption: 'graveyard ID',
+        datatype: 'string',
+        id: 'value'
+      }
+    }));
+
     return new MenuItemProxy(this, {
       name: 'raise',
       caption: buildCaption('raise', 'r'),
@@ -669,6 +690,10 @@ export class PluginManager {
         return this.togglePropertyValue(entry, menuItem.propertyName);
       case 'pluginProperty:select':
         return this.setPropertyValue(entry, menuItem.propertyName, menuItem.value);
+      case 'pluginProperty:selectByBaseID': {
+        const rawBaseID = args?.[menuItem.input?.id || 'value'];
+        return this.setPropertyValueByBaseID(entry, menuItem.propertyName, rawBaseID);
+      }
       case 'pluginAction:invoke':
         return this.invokePluginAction(entry, menuItem.actionName, args);
       case 'pluginAction:graveyardBury': {
@@ -682,6 +707,10 @@ export class PluginManager {
       case 'pluginAction:graveyardLink': {
         const rawValue = args?.[menuItem.input?.id || 'value'];
         return this.linkPluginEntry(entry, rawValue);
+      }
+      case 'pluginAction:graveyardRaiseByKey': {
+        const rawValue = args?.[menuItem.input?.id || 'value'];
+        return this.raisePluginSnapshotByKey(pluginId, rawValue);
       }
       case 'pluginAction:graveyardRaise':
         return this.raisePluginSnapshotByGraveyardIndex(pluginId, menuItem.value);
@@ -732,6 +761,21 @@ export class PluginManager {
     this.syncSongPlugins();
     this.refreshPluginsMenuNode();
     return { result: `${propertyName}=${formatValue(nextValue)}` };
+  }
+
+  setPropertyValueByBaseID(entry, propertyName, rawBaseID) {
+    const baseID = `${rawBaseID || ''}`.trim();
+    if (!baseID) {
+      throw new Error('Instrument baseID is required');
+    }
+    const property = entry.plugin?.getProperty?.(propertyName);
+    const options = Array.isArray(property?.options) ? property.options : [];
+    const option = options.find((candidate) => valueToBaseID(candidate?.value) === baseID);
+    if (!option) {
+      throw new Error(`Instrument baseID not found: ${baseID}`);
+    }
+    const result = this.setPropertyValue(entry, propertyName, option.value);
+    return { result: `${propertyName}=${baseID}`, preserveMenuStack: result.preserveMenuStack === true };
   }
 
   togglePropertyValue(entry, propertyName) {

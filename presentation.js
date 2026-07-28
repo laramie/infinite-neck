@@ -4,7 +4,8 @@ export const gPresentation = {
         lastRestorableColor: null,
         lastRestorableHighlight: null,
         suppressRbColorRemember: false,
-        keepWasForced: false
+        keepWasForced: false,
+        lockKeep: false
     }
 };
 
@@ -25,7 +26,23 @@ const RESTORABLE_HIGHLIGHT_IDS = new Set([
 ]);
 
 export class PalettePresentation {
+    static lockKeep(){
+        gPresentation.palette.keepLocked = true;
+        gPresentation.palette.mode = 'keep';
+    }
+    static unlockKeep(){
+        gPresentation.palette.keepLocked = false;
+        gPresentation.palette.mode = 'paint';
+        PalettePresentation.enterPaintMode({
+			restoreHighlightIfNeeded: true,
+			forcedKeep: false
+		});
+    }
+
     static getMode() {
+        if (gPresentation.palette.keepLocked){
+            return 'keep';
+        }
         if (!gPresentation.palette.mode) {
             PalettePresentation.initializePalettePresentation();
         }

@@ -1,6 +1,9 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
 import { jsonTree } from './jsonTree80kg/json-tree-80kg.js';
-import { setOneCssVar } from './themeFunctions.js';
+import { 
+	setOneCssVar, 
+	dumpThemeIds 
+} from './themeFunctions.js';
 import {
 	clearCmdResults,
 	hideCmdLine,
@@ -27,6 +30,7 @@ import {
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
+	refreshRuntimeChildren,
 	setMenuRuntimeChildrenResolver,
 	setMenuValueResolver,
 	setMenuAtRoot,
@@ -58,12 +62,26 @@ import {
 import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
 import * as paletteUtils from './paletteUtils.js';
-
+import {
+	deleteSongMacro,
+	executeSongMacro,
+	getMacroIdValidationMessage,
+	getSongMacro,
+	getSongMacroIds,
+	moveSongMacro,
+	upsertSongMacro
+} from './MacroExecutor.js';
+import {
+	TUTORIAL_MODES
+} from './Tutorial.js';
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
+let macroVerbose = false;
+let macroExecutionDepth = 0;
+let pendingMacroDeleteID = '';
 const USER_LOG_MAX_ROWS = 1000;
 const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'CLIP',
@@ -113,11 +131,14 @@ function getDisplayOptionsClearState(...args) { return requireProvider('getDispl
 function getDisplayOptionsSaveState(...args) { return requireProvider('getDisplayOptionsSaveState')(...args); }
 function hideAllMenuDivs(...args) { return requireProvider('hideAllMenuDivs')(...args); }
 function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFullscreenLeadSheetLine')(...args); }
+function hideFullscreenChart(...args) { return requireProvider('hideFullscreenChart')(...args); }
+function hideFullscreenAllCharts(...args) { return requireProvider('hideFullscreenAllCharts')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
 function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
+function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
 function printSectionsNotes(...args) { return requireProvider('printSectionsNotes')(...args); }
 function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
 function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
@@ -125,6 +146,7 @@ function printSectionsLine(...args) { return requireProvider('printSectionsLine'
 function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
+function setTutorialMode(...args) { return requireProvider('setTutorialMode')(...args); }
 function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
@@ -132,7 +154,11 @@ function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacit
 function showAllNoteNames(...args) { return requireProvider('showAllNoteNames')(...args); }
 function toggleShowAllNoteNames(...args) { return requireProvider('toggleShowAllNoteNames')(...args); }
 function showInfoDialog(...args) { return requireProvider('showInfoDialog')(...args); }
+function showMacroDialog(...args) { return requireProvider('showMacroDialog')(...args); }
 function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); }
+function getMyTunings(...args) { return requireProvider('getMyTunings')(...args); }
+function showTuning(...args) { return requireProvider('showTuning')(...args); }
+function hideTuning(...args) { return requireProvider('hideTuning')(...args); }
 function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
 function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
@@ -238,6 +264,161 @@ function refreshSectionEditRuntimeChildren(menu){
 	return getSectionEditInstrumentOptions();
 }
 
+function getMacroNumberOptions(actionName) {
+	const song = getSong();
+	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+		name: `${actionName}:${macroId}`,
+		caption: `<b>${index + 1}</b>) ${macroId}`,
+		trigger: `${index + 1}`,
+		action: actionName,
+		value: macroId,
+		popOnBang: true
+	}));
+}
+
+function getMacroDeleteNumberOptions() {
+	const song = getSong();
+	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+		name: `macroDeleteConfirm:${macroId}`,
+		caption: `<b>${index + 1}</b>) ${macroId}`,
+		trigger: `${index + 1}`,
+		children: [
+			{
+				caption: `<b>Y</b>es: delete ${macroId}`,
+				trigger: 'Y',
+				action: 'macroDeleteConfirmed',
+				value: macroId,
+				popOnBang: true
+			},
+			{
+				caption: '<b>n</b>o: keep macro',
+				trigger: 'n',
+				action: 'macroDeleteCancel',
+				popOnBang: true
+			}
+		]
+	}));
+}
+
+function getMacroMoveNumberOptions() {
+	const song = getSong();
+	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
+		name: `macroMove:${macroId}`,
+		caption: `<b>${index + 1}</b>) ${macroId}`,
+		trigger: `${index + 1}`,
+		action: 'macroMoveById',
+		value: macroId,
+		popOnBang: true,
+		input: {
+			type: 'input',
+			caption: 'destination number',
+			datatype: 'int',
+			id: 'destination'
+		}
+	}));
+}
+
+function getMyTuningOptions(actionName) {
+	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
+	return tunings.slice(0, 9).map((tuning, index) => ({
+		name: `${actionName}:${tuning.baseID}`,
+		caption: `<b>${index + 1}</b>) ${tuning.baseID}`,
+		trigger: `${index + 1}`,
+		action: actionName,
+		value: tuning.baseID,
+		popOnBang: true
+	}));
+}
+
+function hasMyTuningBaseID(baseID) {
+	const id = `${baseID || ''}`.trim();
+	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
+	return tunings.some((tuning) => `${tuning?.baseID || ''}` === id);
+}
+
+function refreshMacroAndTuningRuntimeChildren(menu) {
+	if (menu?.runtimeChildren === 'macroEditNumber') {
+		return getMacroNumberOptions('macroEditById');
+	}
+	if (menu?.runtimeChildren === 'macroRunNumber') {
+		return getMacroNumberOptions('macroRunById');
+	}
+	if (menu?.runtimeChildren === 'macroDeleteNumber') {
+		return getMacroDeleteNumberOptions();
+	}
+	if (menu?.runtimeChildren === 'macroMoveNumber') {
+		return getMacroMoveNumberOptions();
+	}
+	if (menu?.runtimeChildren === 'tuningShowList') {
+		return getMyTuningOptions('showTuningById');
+	}
+	if (menu?.runtimeChildren === 'tuningHideList') {
+		return getMyTuningOptions('hideTuningById');
+	}
+	return null;
+}
+
+function refreshRuntimeMenuChildren(menu) {
+	return refreshSectionEditRuntimeChildren(menu)
+		|| refreshMacroAndTuningRuntimeChildren(menu)
+		|| null;
+}
+
+function setPluginToggleValueForMacro(menuItem, value) {
+	const entry = pluginManager.getPluginEntry(menuItem.pluginId);
+	if (!entry) {
+		throw new Error(`Unknown plugin: ${menuItem.pluginId}`);
+	}
+	const pluginResult = pluginManager.setPropertyValue(entry, menuItem.propertyName, value);
+	return { result: pluginResult.result || '' };
+}
+
+function runMacroMenuAction(menuItem, args, context = {}) {
+	if (menuItem?.action === 'pluginProperty:toggle' && context.hasValue) {
+		return setPluginToggleValueForMacro(menuItem, context.value);
+	}
+	return performCmdAction(menuItem, args);
+}
+
+function logMacro(message) {
+	addToUserLog('Macro', message);
+}
+
+export function runSongMacroById(macroId, options = {}) {
+	const id = `${macroId || ''}`.trim();
+	if (!id) {
+		return { ok: false, error: 'macro id is required' };
+	}
+	if (macroExecutionDepth > 0) {
+		const message = `Macro recursion blocked: ${id}`;
+		logMacro(message);
+		return { ok: false, error: message };
+	}
+	macroExecutionDepth += 1;
+	try {
+		pluginManager.refreshPluginsMenuNode();
+		const result = executeSongMacro(getSong(), id, {
+			rootMenu: gMenuFile,
+			actionRunner: runMacroMenuAction,
+			refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
+			refreshRuntimeChildren,
+			verbose: options.verbose ?? macroVerbose,
+			log: logMacro
+		});
+		if (result.ok) {
+			logMacro(`Macro ${id} completed (${result.results.length} lines)`);
+		} else {
+			logMacro(`Macro ${id} stopped at line ${result.failedLineNumber}: ${result.error}`);
+		}
+		return result;
+	} catch (error) {
+		logMacro(`Macro ${id} failed: ${error.message}`);
+		return { ok: false, error: error.message };
+	} finally {
+		macroExecutionDepth -= 1;
+	}
+}
+
 function moveSelectByClampedStep(selectSelector, delta) {
 	var jSelect = $(selectSelector);
 	if (jSelect.length === 0) {
@@ -298,6 +479,11 @@ function isMappedSpacebarEvent(evt) {
 }
 
 function document_keydown(e) {
+	if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key || ''}`.toLowerCase() === 'm' && getSong()?.tutorial?.level === 'strict') {
+		showCmdLine();
+		e.preventDefault();
+		return;
+	}
 	if (isMappedSpacebarEvent(e)) {
 		e.preventDefault();
 		runActionByName(spacebarActionName);
@@ -327,6 +513,11 @@ function document_keypress(e) {
 		e.preventDefault();
 	}
     if ( tag != 'input' && tag != 'textarea'){
+		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
+				
+		if (strictTutorial && (!['n', 'b', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L'].includes(e.key))){
+			return;
+		}
         switch (e.key){
             case "m":
             case "M":
@@ -352,9 +543,11 @@ function document_keypress(e) {
                 toggleInstrumentCaptionRow();
                 break;
             case "b":
-            case "B":
-                getSong().prevBeat();
+				getSong().prevBeat();
                 break;
+			case "B":
+				getTransportController().toggleLoopBeats();
+				break;
 			case "c": //"_C_olor"
 				$("#cbAutomaticColor").trigger('click');
                 break;
@@ -369,6 +562,12 @@ function document_keypress(e) {
             case "e":
                 toggleWiringOpenState();
                 break;
+
+			case "E":
+				//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
+				$(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
+				$(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				break;
             case "f":
                 toggleFullscreen();
                 break;
@@ -381,6 +580,9 @@ function document_keypress(e) {
                 break;
             case "i":
                 showOneMenu("#divFillNotes");
+                break;
+            case "I":
+                showInfoDialog();
                 break;
             case "k":
                  cycleThruKeys(1);
@@ -397,9 +599,11 @@ function document_keypress(e) {
                 clearBeatAndSectionLooping();
                 break;
             case "n":
-            case "N":
-                getSong().nextBeat();
+				getSong().nextBeat();
                 break;
+			case "N":
+				getSong().addBeat();
+				break;
 			case "p":
                 showOneMenu("#palette");
                 break;
@@ -862,6 +1066,11 @@ export function performCmdAction(menuItem, args){
 				}
 			}
 			break;
+		case "clearBeatAndSectionLooping":
+			clearBeatAndSectionLooping();
+			actionResult.result = "Looping Stopped";
+			break;
+		case "toggleLoopBeats":
 		case "toggleLoopSections":
 			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;
@@ -933,6 +1142,134 @@ export function performCmdAction(menuItem, args){
 		case "parkTransportTopRight":
 			showTransport('top-right');
 			break;
+		case "macroAdd": {
+			const macroId = `${argByInputID || ''}`.trim();
+			const idError = getMacroIdValidationMessage(macroId);
+			if (idError) {
+				actionResult.result = idError;
+				actionResult.suppressBang = true;
+				break;
+			}
+			if (getSongMacro(getSong(), macroId)) {
+				actionResult.result = `macro exists: ${macroId}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			upsertSongMacro(getSong(), macroId, []);
+			showMacroDialog(macroId);
+			actionResult.result = `added ${macroId}`;
+			break;
+		}
+		case "macroEditById": {
+			const macroId = `${menuItem.value || argByInputID || ''}`.trim();
+			if (!getSongMacro(getSong(), macroId)) {
+				actionResult.result = `macro not found: ${macroId}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			showMacroDialog(macroId);
+			actionResult.result = `editing ${macroId}`;
+			break;
+		}
+		case "macroRunById": {
+			const macroId = `${menuItem.value || argByInputID || ''}`.trim();
+			const macroResult = runSongMacroById(macroId);
+			actionResult.result = macroResult.ok ? `ran ${macroId}` : macroResult.error;
+			actionResult.suppressBang = !macroResult.ok;
+			break;
+		}
+		case "macroQueueDeleteById": {
+			const macroId = `${argByInputID || ''}`.trim();
+			if (!getSongMacro(getSong(), macroId)) {
+				actionResult.result = `macro not found: ${macroId}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			pendingMacroDeleteID = macroId;
+			actionResult.result = `confirm delete with /fmdY: ${macroId}`;
+			break;
+		}
+		case "macroDeleteConfirmed": {
+			const macroId = `${menuItem.value || pendingMacroDeleteID || ''}`.trim();
+			if (!macroId) {
+				actionResult.result = 'no macro delete pending';
+				actionResult.suppressBang = true;
+				break;
+			}
+			const deleted = deleteSongMacro(getSong(), macroId);
+			pendingMacroDeleteID = '';
+			actionResult.result = deleted ? `deleted ${macroId}` : `macro not found: ${macroId}`;
+			actionResult.suppressBang = !deleted;
+			break;
+		}
+		case "macroDeleteCancel":
+			pendingMacroDeleteID = '';
+			actionResult.result = 'delete canceled';
+			break;
+		case "macroMoveById": {
+			const macroId = `${menuItem.value || ''}`.trim();
+			const destinationText = `${argByInputID || ''}`.trim();
+			if (!/^-?\d+$/.test(destinationText)) {
+				actionResult.result = `destination must be a number: ${destinationText}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			const moveResult = moveSongMacro(getSong(), macroId, Number.parseInt(destinationText, 10));
+			if (!moveResult.moved) {
+				actionResult.result = moveResult.reason || `macro not moved: ${macroId}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			actionResult.result = `moved ${macroId} ${moveResult.from}→${moveResult.to}`;
+			break;
+		}
+		case "toggleMacroVerbose":
+			macroVerbose = !macroVerbose;
+			actionResult.result = `macro verbose=${macroVerbose}`;
+			break;
+		case "showAllTunings": {
+			const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
+			tunings.forEach((tuning) => showTuning(tuning.baseID));
+			actionResult.result = `shown ${tunings.length}`;
+			break;
+		}
+		case "hideAllTunings": {
+			const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
+			tunings.forEach((tuning) => hideTuning(tuning.baseID));
+			actionResult.result = `hidden ${tunings.length}`;
+			break;
+		}
+		case "showTuningById": {
+			const baseID = `${menuItem.value || argByInputID || ''}`.trim();
+			if (!hasMyTuningBaseID(baseID)) {
+				actionResult.result = `tuning not found: ${baseID}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			showTuning(baseID);
+			actionResult.result = `shown ${baseID}`;
+			break;
+		}
+		case "hideTuningById": {
+			const baseID = `${menuItem.value || argByInputID || ''}`.trim();
+			if (!hasMyTuningBaseID(baseID)) {
+				actionResult.result = `tuning not found: ${baseID}`;
+				actionResult.suppressBang = true;
+				break;
+			}
+			hideTuning(baseID);
+			actionResult.result = `hidden ${baseID}`;
+			break;
+		}
+		case "selThemeById": {
+			const songTheme = `${menuItem.value || argByInputID || ''}`.trim();
+			$('#selThemes').val(songTheme).trigger('change');
+			actionResult.result = `shown ${songTheme}`;
+			break;
+		}
+		case "showThemeIds":
+			showMessages(dumpThemeIds());
+			break;
 		case "viewFullscreen":
 			enterFullscreen();
 			hideCmdLine();
@@ -967,6 +1304,12 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = `presentation mode: ${!!getSong()?.presentationMode}`;
 			actionResult.preserveMenuStack = true;
 			break;
+		case "setTutorialMode": {
+			const mode = setTutorialMode(menuItem.value || argByInputID || 'none');
+			actionResult.result = `tutorial mode: ${mode}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
 		case "saveViewDisplayOptions":
 			handleBtnControlsToDisplayOptions();
 			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
@@ -1046,6 +1389,10 @@ export function performCmdAction(menuItem, args){
 			printSections(false);
 			hideCmdLine();
 			break;
+		case "printSectionsInput":
+			printSectionsInput();
+			hideCmdLine();
+			break;
 		case "printSectionsNotes":
 			printSectionsNotes();
 			hideCmdLine();
@@ -1055,7 +1402,7 @@ export function performCmdAction(menuItem, args){
 			hideCmdLine();
 			break;
 		case "printSectionsChart":
-			printSectionsChart();
+			actionResult.result = printSectionsChart() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "printSectionsLine":
@@ -1064,6 +1411,14 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "hideFullscreenLeadSheetLine":
 			actionResult.result = hideFullscreenLeadSheetLine() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenChart":
+			actionResult.result = hideFullscreenChart() || actionResult.result;
+			hideCmdLine();
+			break;
+		case "hideFullscreenAllCharts":
+			actionResult.result = hideFullscreenAllCharts() || actionResult.result;
 			hideCmdLine();
 			break;
 		case "sectionDelete":
@@ -1166,6 +1521,18 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
+			break;
+		case "showSectionStatusLeft":
+			$(".leftRailSectionStatusHost").show();//display:flex (hide seems to preserve this)
+			break;
+		case "showCaptionLeft":
+			$(".fretTableLeftCaption").show();//display:flex (hide seems to preserve this)
+			break;
+		case "hideSectionStatusLeft":
+			$(".leftRailSectionStatusHost").hide();
+			break;
+		case "hideCaptionLeft":
+			$(".fretTableLeftCaption").hide();
 			break;
 		case "hideAllNoteNames":
 			showAllNoteNames(false);
@@ -1390,11 +1757,13 @@ export function performCmdAction(menuItem, args){
 		case "pluginProperty:set":
 		case "pluginProperty:toggle":
 		case "pluginProperty:select":
+		case "pluginProperty:selectByBaseID":
 		case "pluginAction:invoke":
 		case "pluginAction:audit":
 		case "pluginAction:graveyardBury":
 		case "pluginAction:graveyardSave":
 		case "pluginAction:graveyardRaise":
+		case "pluginAction:graveyardRaiseByKey":
 		case "pluginAction:graveyardLink": {
 			const pluginResult = pluginManager.invokeMenuAction(menuItem, args || {});
 			actionResult.result = pluginResult.result || '';
@@ -1618,6 +1987,9 @@ export function getValue(what){
 	if (what === 'pluginFiringOrderInput') {
 		return pluginManager.getPluginFiringOrderInput();
 	}
+	if (what === 'macroVerbose') {
+		return `${macroVerbose}`;
+	}
 	if (what === 'graveyardClearByTypeCLIP') {
 		return `${!!graveyardClearByTypeState.CLIP}`;
 	}
@@ -1650,6 +2022,6 @@ export function getValue(what){
 	return what;
 }
 
-setMenuRuntimeChildrenResolver(refreshSectionEditRuntimeChildren);
+setMenuRuntimeChildrenResolver(refreshRuntimeMenuChildren);
 setMenuValueResolver(getValue);
 setCmdActionRunner(performCmdAction);

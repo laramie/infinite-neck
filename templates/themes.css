@@ -70,3 +70,26 @@
     font-size: 80%;
     font-style: italic;
 }
+
+.tblThemeIdDump {
+  border-collapse: collapse; /* Merges double cell borders into single thin lines */
+  font-family: sans-serif;
+  font-size: 0.9rem;
+}
+
+.tblThemeIdDump th, 
+.tblThemeIdDump td {
+  padding: 5px 4px;       /* Gives data breathing room */
+  text-align: left;         /* Aligns content systematically */
+  border: 1px solid #3a3a3a; /* Super thin, subtle single border */
+}
+
+.tblThemeIdDump th {
+  background-color: #f7b859; /* Subtle separation for the header row */
+  font-weight: 600;
+  color: #333333;
+}
+
+.tblThemeIdDump tr:nth-child(even) {
+  background-color: #fce4c1; /* Optional: adds subtle zebra striping for easy reading */
+}

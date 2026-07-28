@@ -32,7 +32,6 @@
       "frets": 24,
       "nut": true,
       "reverse": false,
-      "visible": true,
       "fromBaseID": "P46"
     }
   ],
@@ -77,7 +76,7 @@
         "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
+        "songLoopsPerPositionPair": 6,
         "minRow": 0,
         "maxRow": 5,
         "lowToHigh": true,
@@ -100,6 +99,7 @@
         "automaticFromChart": true,
         "minFret": 0,
         "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
         "minRow": 0,
         "maxRow": 5,
         "namedRootMode": "none",
@@ -124,10 +124,32 @@
       }
     }
   },
+  "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
-  "defaultBPM": "222",
-  "info": "This song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.\n<br>\n<br>As written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.\n<br>\n<br>You can change what keys you practice by setting <kbd>/fptc</kbd>\n<br>Here are some presets:\n<ul>\n<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>\n</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>\n</li></ul>\n\n<br>You can choose to practice chords, or modes.\n<br>\n<ul>\n<li>chords: <a href=\"#raise=arpeggio.use-chart-chord-3-positions\">arpeggio.use-chart-chord-3-positions</a>\n</li><li>modes: <a href=\"#raise=arpeggio.use-chart-mode-3-positions\">arpeggio.use-chart-mode-3-positions</a>\n</li></ul>",
+  "defaultBPM": "60",
+  "info": {
+    "lines": [
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
+      "<br><br>This song has the chords and modes on the Chart, and no notes in the Sections.  The plugins are set to read the Chart, so that when looping, arpeggios will show and transpose according to a 6-key cycle.",
+      "<br>",
+      "<br>As written, it starts with C7 Cm G7, then transposes from C to D, Eb, F, G, then Bb.",
+      "<br>",
+      "<br>You can change what keys you practice by setting <cmd-line>/fptc</cmd-line>",
+      "<br>Here are some presets:",
+      "<ul>",
+      "<li>Transpose I-IV-V: <a href=\"#raise=transpose.blues\">transpose.blues</a>",
+      "</li><li>Transpose I-2-3m-IV-V-7: <a href=\"#raise=transpose.transpose-6-keys\">transpose.transpose-6-keys</a>",
+      "</li></ul>",
+      "",
+      "<br>You can choose to practice chords, or modes.",
+      "<br>",
+      "<ul>",
+      "<li>chords: <a href=\"#raise=arpeggio.use-chart-chord-3-positions\">arpeggio.use-chart-chord-3-positions</a>",
+      "</li><li>modes: <a href=\"#raise=arpeggio.use-chart-mode-3-positions\">arpeggio.use-chart-mode-3-positions</a>",
+      "</li></ul>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
@@ -209,7 +231,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 12,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {
@@ -241,7 +263,7 @@
       "rootID": 10,
       "rootIDLead": "-1",
       "beats": 12,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true,
       "pluginData": {
         "arpeggio": {

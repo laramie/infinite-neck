@@ -11,6 +11,10 @@ import {
     supportsPianoSkeuomorphic,
     normalizePianoLayoutOptions
 } from './templates/piano/piano-skeuomorphic.builder.js';
+import {
+    getInstrumentSummaryForTuning,
+    renderInstrumentBadge
+} from './InstrumentRoleBadges.js';
 
 
 
@@ -149,7 +153,6 @@ function buildDefaultSongTuningTemplate(baseInstrument = 'Guitar') {
     const isPiano = baseInstrument === 'Piano';
     return {
         instance: true,
-        visible: true,
         baseInstrument,
         caption: '',
         nStrings: 0,
@@ -275,8 +278,7 @@ export function createSongTuningFromDraft(draft = {}, {
         : buildDefaultSongTuningTemplate(normalizedDraft.baseInstrument);
 
     Object.assign(createdTuning, normalizedDraft, {
-        instance: true,
-        visible: true
+        instance: true
     });
     if (!createdTuning.banjoNut || typeof createdTuning.banjoNut !== 'object') {
         createdTuning.banjoNut = {};
@@ -297,7 +299,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
-        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>from</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
+        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
         + "<th>BN</th><th>Right/Left</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
         
     );
@@ -425,7 +427,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         }
         tr.append($("<td>").html(captionStr));
         tr.append($("<td>").html(idCellHtml));
-        if (isSongOwnedTable) {tr.append($("<td>").html(tun.fromBaseID));}
+        if (isSongOwnedTable) {
+            tr.append($("<td>").html(renderInstrumentBadge(getInstrumentSummaryForTuning(getSong(), tun, { allowUnknown: true }), { allowUnknown: true })));
+        }
         tr.append($("<td>").html(tun.nStrings + "-string"));
         tr.append($("<td>").html(tun.baseInstrument));
         tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));
@@ -510,7 +514,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
     cloned.baseID = generateNextTuningID(defaultBaseID);
     cloned.fromBaseID = defaultBaseID;
     cloned.instance = true;
-    cloned.visible = true;
+    delete cloned.visible;
     store.push(cloned);
     getSong().setTableVisibilityByBaseID(cloned.baseID, true);
 }
@@ -944,7 +948,7 @@ export function bindFormTuningsEvents() {
         cloned.baseID = newBaseID;
         cloned.fromBaseID = baseID;
         cloned.instance = true;
-        cloned.visible = true;
+        delete cloned.visible;
         getMyTuningsStore().push(cloned);
         getSong().setTableVisibilityByBaseID(cloned.baseID, true);
         reloadMyTuningsDisplay();

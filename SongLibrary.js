@@ -2,16 +2,17 @@
 
 /* Find styles in song-library.css */
 
-export const ROOT_DIRECTORY_KEY = 'root';
+import {
+	normalizeInstrumentSummary,
+	renderInstrumentBadges,
+	escapeHtml
+} from './InstrumentRoleBadges.js';
+import {
+	getProgressBadgeModel,
+	readTutorialProgressFromStorage
+} from './Tutorial.js';
 
-function escapeHtml(text) {
-	return String(text)
-		.replaceAll('&', '&amp;')
-		.replaceAll('<', '&lt;')
-		.replaceAll('>', '&gt;')
-		.replaceAll('"', '&quot;')
-		.replaceAll("'", '&#39;');
-}
+export const ROOT_DIRECTORY_KEY = 'root';
 
 function escapeAttribute(text) {
 	return String(text).replaceAll('&', '&amp;').replaceAll("'", '&#39;');
@@ -33,20 +34,28 @@ function parseSongEntry(songEntry) {
 		const href = songEntry.trim();
 		return {
 			href,
-			description: ''
+			description: '',
+			instruments: []
 		};
 	}
 	if (!songEntry || typeof songEntry !== 'object' || Array.isArray(songEntry)) {
 		return {
 			href: '',
-			description: ''
+			description: '',
+			instruments: []
 		};
 	}
 	const href = typeof songEntry.href === 'string' ? songEntry.href.trim() : '';
 	const description = typeof songEntry.description === 'string' ? songEntry.description : '';
+	const instruments = Array.isArray(songEntry.instruments) ? songEntry.instruments : [];
+	const tutorial = typeof songEntry.tutorial === 'string' ? songEntry.tutorial.trim() : '';
+	const SectionCount = Number.parseInt(songEntry.SectionCount, 10);
 	return {
 		href,
-		description
+		description,
+		instruments,
+		tutorial,
+		SectionCount: Number.isInteger(SectionCount) ? SectionCount : undefined
 	};
 }
 
@@ -79,6 +88,9 @@ export function normalizeSongListEntries(songListJson) {
 			return {
 				href,
 				description: parsed.description,
+				instruments: parsed.instruments.map(normalizeInstrumentSummary).filter(Boolean),
+				tutorial: parsed.tutorial,
+				SectionCount: parsed.SectionCount,
 				directory: getDirectoryFromHref(href),
 				filename
 			};
@@ -151,15 +163,36 @@ function renderIntroRow(introHtml) {
 	return "<div class='songLibraryRow songLibraryIntroRow'><div class='songLibraryCell songLibraryCellIntro'>" + introHtml + '</div></div>';
 }
 
+function renderTutorialProgressBadge(song) {
+	const progress = readTutorialProgressFromStorage(song);
+	const badge = getProgressBadgeModel(song, progress);
+	if (!badge) {
+		return '';
+	}
+	const doneText = badge.highestDoneSectionNumber === null ? '' : `<span class='songLibraryTutorialHighestDone'>&sect;${badge.highestDoneSectionNumber}</span>`;
+	const countText = `<span class='songLibraryTutorialDoneCount'>(${badge.doneCount}/${badge.sectionCount})</span>`;
+	const bookmarkText = badge.bookmarkSectionNumber === null ? '' : `<span class='songLibraryTutorialBookmark'>&#x261E;${badge.bookmarkSectionNumber}</span>`;
+	return `<span class='songLibraryTutorialProgressBadge'>${doneText}${countText}${bookmarkText}</span>`;
+}
+
 function renderSongRow(song) {
 	const argsAttr = escapeAttribute(JSON.stringify([song.href]));
+	const copyArgsAttr = escapeAttribute(JSON.stringify([song.href]));
 	const safeLinkText = escapeHtml(song.filename || song.href);
+	const copyLabel = escapeAttribute(`Copy song link for ${song.filename || song.href}`);
+	const instrumentBadges = renderInstrumentBadges(song.instruments || []);
+	const tutorialProgressBadge = renderTutorialProgressBadge(song);
 	return (
 		"<div class='songLibraryRow'>"
 			+ "<div class='songLibraryCell songLibraryCellLink'>"
 			+ "<a href='#' data-action='loadSong' data-action-args='" + argsAttr + "'>" + safeLinkText + '</a>'
+			+ "<button type='button' class='songLibraryCopyButton' data-action='copySongLink' data-action-args='" + copyArgsAttr + "' aria-label='" + copyLabel + "' title='" + copyLabel + "'>"
+			+ "<img src='img/clipboard-arrow.png' alt='' aria-hidden='true'>"
+			+ '</button>'
+			+ tutorialProgressBadge
 			+ '</div>'
 			+ "<div class='songLibraryCell songLibraryCellDescription'>" + (song.description || '') + '</div>'
+			+ "<div class='songLibraryCell songLibraryCellInstruments'>" + instrumentBadges + '</div>'
 			+ '</div>'
 	);
 }

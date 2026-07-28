@@ -11,6 +11,10 @@ import {
   getTableID
 } from '../../move-helpers.js';
 
+function valuesEqual(leftValue, rightValue) {
+  return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
 export class MovePlugin {
   constructor() {
     this.id = 'move';
@@ -247,7 +251,12 @@ That backup is buried in the graveyard. Revive it from the graveyard if you need
 
   getAuditInputs() {
     const include = this.buildIncludeFlagsSummary().slice(1, -1);
-    return `include:${include}`;
+    const includePropertyNames = ['includeSingle', 'includeTiny', 'includeHighlights', 'includeFingering', 'includePlayed', 'includeRecorded'];
+    const changed = includePropertyNames.some((propertyName) => {
+      const property = this.getProperty(propertyName);
+      return property ? !valuesEqual(property.getValue(), property.getDefaultValue()) : false;
+    });
+    return { value: `include:${include}`, changed };
   }
 
   getAuditOutputs() {

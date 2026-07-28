@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const FIXTURE_FILE = path.join(__dirname, '../../songs/tests/display-options.json');
+const APP_CSS_FILE = path.join(__dirname, '../../infinite-neck.css');
 
 function readFixture() {
     return JSON.parse(fs.readFileSync(FIXTURE_FILE, 'utf8'));
@@ -41,7 +42,7 @@ describe('DisplayOptions baseline fixture contracts', () => {
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('width');
             expect(section.displayOptions.NoteDisplaySizes).toHaveProperty('height');
             if (idx === 1) {
-                expect(section.displayOptions.hideSingleNotes).toBe(true);
+                expect(section.displayOptions.hideSingleNotes).toBe(false);
                 expect(section.displayOptions.showLooperLightBeats).toBe(true);
             }
         });
@@ -80,7 +81,6 @@ describe('DisplayOptions baseline fixture contracts', () => {
         }));
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables ?? [],
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
@@ -116,8 +116,8 @@ describe('DisplayOptions baseline fixture contracts', () => {
         song.gotoNextSection(true);
         observed.push(song.getCurrentSection().displayOptions.hideSingleNotes);
 
-        // Fixture expectation: section0=false, section1=true, section2=false, wrap->section0=false
-        expect(observed).toEqual([false, true, false, false]);
+        // Fixture expectation: section0=false, section1=false, section2=false, wrap->section0=false
+        expect(observed).toEqual([false, false, false, false]);
     });
 });
 
@@ -173,7 +173,6 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
         delete song.getCurrentSection().displayOptions;
 
         song.prepareForSave({
-            visibleTableIds: data.visibleNoteTables ?? [],
             songName: data.songName,
             theme: data.theme,
             bpm: parseInt(data.defaultBPM, 10),
@@ -219,5 +218,14 @@ describe('getDisplayOptionsInEffect contracts', () => {
         const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
 
         expect(inEffect).toEqual(fallbackOptions);
+    });
+});
+
+describe('recorded note playback display options', () => {
+    test('Playback marker does not override fingering display-option font size', () => {
+        const css = fs.readFileSync(APP_CSS_FILE, 'utf8');
+
+        expect(css).toContain('font-size: var(--fingering-font-size);');
+        expect(css).not.toMatch(/\.Playback\s*\{[^}]*font-size/s);
     });
 });

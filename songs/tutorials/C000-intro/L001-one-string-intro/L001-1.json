@@ -1,0 +1,984 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "S1_1",
+      "baseInstrument": "Guitar",
+      "caption": "OneString",
+      "nStrings": 1,
+      "rowRange": [
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "S1"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblS1_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {},
+  "macros": {
+    "macro-strict": {
+      "lines": [
+        "/vpts"
+      ]
+    },
+    "macro-wizard": {
+      "lines": [
+        "/vptw"
+      ]
+    },
+    "macro-none": {
+      "lines": [
+        "/vptn"
+      ]
+    },
+    "macroWizard": {
+      "lines": [
+        "/vptw"
+      ]
+    },
+    "macroNone": {
+      "lines": [
+        "/vptn"
+      ]
+    },
+    "showLeftWidgets": {
+      "lines": [
+        "/vswc",
+        "/vsws"
+      ]
+    },
+    "hideLeftWidgets": {
+      "lines": [
+        "/vhwc",
+        "/vhws"
+      ]
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": {
+    "lines": [
+      "",
+      "<br>Raise plugin state: <a href=\"#raise=transpose.USER\">transpose.USER</a>"
+    ]
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": true,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "L001-1",
+  "theme": "GuitarStringsBlackGlow",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblS1_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "E",
+              "styleNum": 6,
+              "midinum": "40",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteFinger0",
+              "finger": "0"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 6,
+              "midinum": "41",
+              "row": "0",
+              "col": "1",
+              "colorClass": "noteFinger1",
+              "finger": "1"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 6,
+              "midinum": "42",
+              "row": "0",
+              "col": "2",
+              "colorClass": "noteFinger2",
+              "finger": "2"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 6,
+              "midinum": "43",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteFinger3",
+              "finger": "3"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 6,
+              "midinum": "44",
+              "row": "0",
+              "col": "4",
+              "colorClass": "noteFinger4",
+              "finger": "4"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 6,
+              "midinum": "45",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteFinger1",
+              "finger": "1"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 6,
+              "midinum": "46",
+              "row": "0",
+              "col": "6",
+              "colorClass": "noteFinger2",
+              "finger": "2"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 6,
+              "midinum": "47",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteFinger4",
+              "finger": "4"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 6,
+              "midinum": "48",
+              "row": "0",
+              "col": "8",
+              "colorClass": "noteFinger1",
+              "finger": "1"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 6,
+              "midinum": "49",
+              "row": "0",
+              "col": "9",
+              "colorClass": "noteFinger2",
+              "finger": "2"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 6,
+              "midinum": "50",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteFinger3",
+              "finger": "3"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 6,
+              "midinum": "51",
+              "row": "0",
+              "col": "11",
+              "colorClass": "noteFinger4",
+              "finger": "4"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 6,
+              "midinum": "52",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteFinger1",
+              "finger": "1"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "7",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "140x100:22",
+          "width": "140px",
+          "height": "100px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "200%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      },
+      "tutorial": {
+        "caption": "Getting Started: Chromatic Scale",
+        "prompt": {
+          "lines": [
+            "<p>You are going to play the Chromatic scale on the E string, which is the fattest string on the 4-string bass and the guitar.\n        </p>",
+            "<p>In the next step, we'll guide you through the notes. In this step, just look at the notes so you can see\n            that each fret has a circled number next to it.  These are where your fingers go, when you play them one-by-one.\n            These are \"Fingering\" notes, and show \n            which finger you should use for each fret, 1 being your Index finger, 2 being your middle finger, \n            3 being your ring finger, and 4 being your pinkie. \n            Go to the Next step, where you can loop the notes and play along.  <a href='#macro=macro-strict'>strict</a>  <a href='#macro=macroNone'>none</a>  <a href='#macro=macroWizard'>wizard</a> <a href='#macro=showLeftWidgets'>showLeftWidgets</a> <a href='#macro=hideLeftWidgets'>hideLeftWidgets</a> \n        </p>"
+          ]
+        }
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS1_1": {
+          "namedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "40",
+                "row": "0",
+                "col": "0",
+                "colorClass": "noteFinger0",
+                "finger": "0"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "F",
+                "styleNum": 6,
+                "midinum": "41",
+                "row": "0",
+                "col": "1",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "Gb",
+                "styleNum": 6,
+                "midinum": "42",
+                "row": "0",
+                "col": "2",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "G",
+                "styleNum": 6,
+                "midinum": "43",
+                "row": "0",
+                "col": "3",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "5": [
+              {
+                "noteName": "Ab",
+                "styleNum": 6,
+                "midinum": "44",
+                "row": "0",
+                "col": "4",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ],
+            "6": [
+              {
+                "noteName": "A",
+                "styleNum": 6,
+                "midinum": "45",
+                "row": "0",
+                "col": "5",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "7": [
+              {
+                "noteName": "Bb",
+                "styleNum": 6,
+                "midinum": "46",
+                "row": "0",
+                "col": "6",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "8": [
+              {
+                "noteName": "B",
+                "styleNum": 6,
+                "midinum": "47",
+                "row": "0",
+                "col": "7",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "9": [
+              {
+                "noteName": "C",
+                "styleNum": 6,
+                "midinum": "48",
+                "row": "0",
+                "col": "8",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ],
+            "10": [
+              {
+                "noteName": "Db",
+                "styleNum": 6,
+                "midinum": "49",
+                "row": "0",
+                "col": "9",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "11": [
+              {
+                "noteName": "D",
+                "styleNum": 6,
+                "midinum": "50",
+                "row": "0",
+                "col": "10",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "12": [
+              {
+                "noteName": "Eb",
+                "styleNum": 6,
+                "midinum": "51",
+                "row": "0",
+                "col": "11",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "13": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "52",
+                "row": "0",
+                "col": "12",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "7",
+      "rootIDLead": "-1",
+      "beats": 13,
+      "currentBeat": 11,
+      "sharps": true,
+      "tutorial": {
+        "caption": "Play the Chromatic Scale",
+        "prompt": {
+          "lines": [
+            "<p>Now hit \"BEAT-LOOP\".  This will loop all the beats in this Section (tutorial step).  You'll see the \n            Fingering notes played one by one on the neck of our \"One-String Guitar\".  On your real guitar, you'll \n            follow along by playing the note at the fret on the fattest string of your guitar.  Use the finger indicated in the \n            circled note, and slide your hand up to a new position everywhere you see the (1) being played.\n        </p>"
+          ]
+        }
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS1_1": {
+          "namedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "40",
+                "row": "0",
+                "col": "0",
+                "colorClass": "noteFinger0",
+                "finger": "0"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "Gb",
+                "styleNum": 6,
+                "midinum": "42",
+                "row": "0",
+                "col": "2",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "Ab",
+                "styleNum": 6,
+                "midinum": "44",
+                "row": "0",
+                "col": "4",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "A",
+                "styleNum": 6,
+                "midinum": "45",
+                "row": "0",
+                "col": "5",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "5": [
+              {
+                "noteName": "B",
+                "styleNum": 6,
+                "midinum": "47",
+                "row": "0",
+                "col": "7",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "6": [
+              {
+                "noteName": "Db",
+                "styleNum": 6,
+                "midinum": "49",
+                "row": "0",
+                "col": "9",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "7": [
+              {
+                "noteName": "Eb",
+                "styleNum": 6,
+                "midinum": "51",
+                "row": "0",
+                "col": "11",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "8": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "52",
+                "row": "0",
+                "col": "12",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "42",
+              "row": "0",
+              "col": "2",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "0",
+              "col": "4",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "0",
+              "col": "9",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "0",
+              "col": "11",
+              "colorClass": "noteFinger1"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteFinger1"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 8,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "0.44",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "140x100:22",
+          "width": "140px",
+          "height": "100px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "200%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      },
+      "tutorial": {
+        "caption": "Scale in E Major",
+        "prompt": {
+          "lines": [
+            "<p>Now on the E string, which is the fattest string on the 4-string bass or the guitar, \n        play the E Major scale.  This is the first, and lowest, major scale you can play on the guitar.  Major scales \n    sound bright and happy, like a march or a band song, and like a lot of church hymns.  Many children's \nsongs are also in major scales.</p>"
+          ]
+        }
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS1_1": {
+          "namedNotes": {},
+          "recordedNotes": {
+            "1": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "40",
+                "row": "0",
+                "col": "0",
+                "colorClass": "noteFinger0",
+                "finger": "0"
+              }
+            ],
+            "2": [
+              {
+                "noteName": "Gb",
+                "styleNum": 6,
+                "midinum": "42",
+                "row": "0",
+                "col": "2",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "3": [
+              {
+                "noteName": "G",
+                "styleNum": 6,
+                "midinum": "43",
+                "row": "0",
+                "col": "3",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "4": [
+              {
+                "noteName": "A",
+                "styleNum": 6,
+                "midinum": "45",
+                "row": "0",
+                "col": "5",
+                "colorClass": "noteFinger1",
+                "finger": "1"
+              }
+            ],
+            "5": [
+              {
+                "noteName": "B",
+                "styleNum": 6,
+                "midinum": "47",
+                "row": "0",
+                "col": "7",
+                "colorClass": "noteFinger3",
+                "finger": "3"
+              }
+            ],
+            "6": [
+              {
+                "noteName": "C",
+                "styleNum": 6,
+                "midinum": "48",
+                "row": "0",
+                "col": "8",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ],
+            "7": [
+              {
+                "noteName": "D",
+                "styleNum": 6,
+                "midinum": "50",
+                "row": "0",
+                "col": "10",
+                "colorClass": "noteFinger2",
+                "finger": "2"
+              }
+            ],
+            "8": [
+              {
+                "noteName": "E",
+                "styleNum": 6,
+                "midinum": "52",
+                "row": "0",
+                "col": "12",
+                "colorClass": "noteFinger4",
+                "finger": "4"
+              }
+            ]
+          },
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "42",
+              "row": "0",
+              "col": "2",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "0",
+              "col": "8",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteFinger4"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteFinger4"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "7",
+      "rootIDLead": "-1",
+      "beats": 8,
+      "currentBeat": 1,
+      "sharps": true,
+      "tutorial": {
+        "caption": "Scale in A Minor",
+        "prompt": {
+          "lines": [
+            "<p>Now, on the A string, which is the second-fattest string on the bass or guitar, we are \n            going to play an A natural minor scale.  This scale is useful for playing the Blues. \n            We could also play this scale on the E string, or any string, but changing it to the A string starts\n            the scale in a different place than you've just been practicing with, so we want to have you retain the E major\n            sound as the first part of a song, and the A minor sounds as the second part of the same song.  Later we'll play \n            them together in a progression, and you'll follow the changes in sounds and moods and recognized them from your practice,\n            and recognized these changes from other songs you have heard.. \n        </p>",
+            "<p>Minor scales are said to be \"darker\", or more melancholic, or less strident than major scales.  \n            In fact many major and minor scales use the same notes but have different relative starting places,\n            so the happy/sad distinction is fairly arbitrary, and many songs, like Blues songs, go back and forth\n            between minor and major fluidly, as a way to change up the mood.  Listen for the changes and\n            think of songs they remind you of while you play. Since it sounds too \"muddy\" to play all the notes \n            at once, scales are a way to tell a story with the notes and weave a journey into the song,\n            while implying chords and \"fabrics\" of note collections that bring the distinctive sounds to different songs.\n        </p>",
+            "<p>\n            Put your fingers where the Fingering dots appear on the neck, and play along in time.\n            If you want it slower, click here ...\n        </p>"
+          ]
+        }
+      }
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1784290929045,
+        "date": "7/17/2026",
+        "time": "5:22:09 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS1_1\": {\n            \"namedNotes\": {},\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"40\",\n                        \"row\": \"0\",\n                        \"col\": \"0\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"2\": [\n                    {\n                        \"noteName\": \"Gb\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"42\",\n                        \"row\": \"0\",\n                        \"col\": \"2\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"Ab\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"44\",\n                        \"row\": \"0\",\n                        \"col\": \"4\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"4\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"45\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"5\": [\n                    {\n                        \"noteName\": \"B\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"47\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"6\": [\n                    {\n                        \"noteName\": \"Db\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"49\",\n                        \"row\": \"0\",\n                        \"col\": \"9\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"7\": [\n                    {\n                        \"noteName\": \"Eb\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"51\",\n                        \"row\": \"0\",\n                        \"col\": \"11\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ],\n                \"8\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 2,\n                        \"midinum\": \"52\",\n                        \"row\": \"0\",\n                        \"col\": \"12\",\n                        \"colorClass\": \"noteTransparent\"\n                    }\n                ]\n            },\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"7\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 8,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1784290931585,
+        "date": "7/17/2026",
+        "time": "5:22:11 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 0,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS1_1\": {\n            \"namedNotes\": {},\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"40\",\n                    \"row\": \"0\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"42\",\n                    \"row\": \"0\",\n                    \"col\": \"2\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"44\",\n                    \"row\": \"0\",\n                    \"col\": \"4\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"45\",\n                    \"row\": \"0\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"47\",\n                    \"row\": \"0\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"49\",\n                    \"row\": \"0\",\n                    \"col\": \"9\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"51\",\n                    \"row\": \"0\",\n                    \"col\": \"11\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"0\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"7\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true,\n    \"displayOptions\": {\n        \"autoColor\": true,\n        \"showCellNotes\": true,\n        \"showSubscriptFunctions\": true,\n        \"cellIsFunction\": true,\n        \"showMidiNum\": false,\n        \"useCenterForRightFunction\": true,\n        \"naturalFretWidths\": true,\n        \"hideNamedNotes\": false,\n        \"hideTinyNotes\": false,\n        \"hideSingleNotes\": false,\n        \"hideFingering\": false,\n        \"showAllNoteNames\": false,\n        \"namedNoteOpacity\": \"1\",\n        \"singleNoteOpacity\": \"1\",\n        \"tinyNoteOpacity\": \"1\",\n        \"NoteDisplaySizes\": {\n            \"caption\": \"140x70:22\",\n            \"width\": \"140px\",\n            \"height\": \"70px\",\n            \"NoteFontSize\": 22\n        },\n        \"dropDownFunctionSymbols\": {\n            \"caption\": \"\\n                                Default\",\n            \"value\": \"[\\\"I\\\",\\\"τ\\\",\\\"II\\\",\\\"m\\\",\\\"III\\\",\\\"IV\\\",\\\"Θ\\\",\\\"V\\\",\\\"σ\\\",\\\"6\\\",\\\"δ\\\",\\\"Δ\\\"]\"\n        },\n        \"naturalFontScaling\": \"60\",\n        \"pianoHeightScaleFactor\": \"5\",\n        \"pianoWidthScaleFactor\": \"3\",\n        \"pianoWhiteToBlackWidthRatio\": \"2.3\",\n        \"pianoFingeringHPosition\": \"50%\",\n        \"showLooperLightBeats\": true,\n        \"noteFont\": \"EB Garamond\",\n        \"leftSubscriptFontSize\": \"80%\",\n        \"rightSubscriptFontSize\": \"80%\",\n        \"midiFontSize\": \"80%\",\n        \"fingeringFontSize\": \"80%\",\n        \"fingeringPosition\": \"0\",\n        \"tinyNoteFontSize\": \"50%\",\n        \"tinyNoteMaxHeight\": \"45%\",\n        \"tinyNoteVPosition\": \"50%\",\n        \"tinyNoteWidth\": \"35%\",\n        \"tinyNoteHPosition\": \"90%\",\n        \"tinyNoteRadius\": \"50%\"\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1784291454617,
+        "date": "7/17/2026",
+        "time": "5:30:54 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1784358789466,
+        "date": "7/18/2026",
+        "time": "12:13:09 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 3,\n    \"currentBeat\": 2,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1784551462733,
+        "date": "7/20/2026",
+        "time": "5:44:22 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "USER",
+          "logicalKey": "transpose::USER",
+          "schemaVersion": 1,
+          "caption": "transpose / USER"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"\",\n        \"useOctavesForRecorded\": false,\n        \"autoSharpsFlats\": false,\n        \"doLeadKey\": false\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "tutorial": {
+    "level": "strict",
+    "caption": "Intro to stringed instruments: playing on one string"
+  }
+}

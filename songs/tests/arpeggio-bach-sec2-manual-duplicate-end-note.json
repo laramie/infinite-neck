@@ -36,13 +36,18 @@
       "fromBaseID": "P46"
     }
   ],
-  "visibleNoteTables": [
-    "tblP46_1"
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    }
   ],
+  "colorDicts": {},
   "plugins": {
     "transpose": {
       "enabled": false,
       "enableOnSongLoad": false,
+      "graveyardKey": "USER",
       "properties": {
         "intervals": [
           0,
@@ -59,34 +64,80 @@
           11
         ],
         "NamedNotes": true,
-        "PlayedNotes": false,
-        "RecordedNotes": false
+        "SingleNotes": true,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": false,
+        "octaves": "",
+        "useOctavesForRecorded": false,
+        "autoSharpsFlats": false,
+        "doLeadKey": false
       }
     },
     "arpeggio": {
       "enabled": true,
       "enableOnSongLoad": true,
+      "graveyardKey": "USER",
       "properties": {
+        "targetTable": "tblP46_1",
         "minFret": 2,
         "maxFret": 5,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 5,
         "lowToHigh": true,
         "upOnly": false,
-        "style": "bach"
+        "style": "bach",
+        "type": "NamedNote",
+        "showNoteName": "off",
+        "colorNotes": false,
+        "flashcard": false
       }
     }
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "140",
-  "namedNoteOpacity": "1.00",
+  "info": "",
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
   "presentationMode": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
   "rootID": "3",
   "sharps": false,
-  "singleNoteOpacity": "1.00",
-  "songfileVersion": "V2",
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
   "songName": "arpeggio-bach-sec2-manual-duplicate-end-note",
   "theme": "Snow",
-  "userInstrumentTuning": null,
   "sections": [
     {
       "sectionNotesByTable": {
@@ -398,6 +449,14 @@
                 "midinum": "48",
                 "row": "4",
                 "owner": "ArpeggioPlugin"
+              },
+              {
+                "noteName": "E",
+                "styleNum": 4,
+                "midinum": "52",
+                "row": "3",
+                "col": "2",
+                "owner": "ArpeggioPlugin"
               }
             ],
             "31": [
@@ -406,6 +465,14 @@
                 "styleNum": 4,
                 "midinum": "52",
                 "row": "3",
+                "owner": "ArpeggioPlugin"
+              },
+              {
+                "noteName": "D",
+                "styleNum": 4,
+                "midinum": "50",
+                "row": "4",
+                "col": "5",
                 "owner": "ArpeggioPlugin"
               }
             ],
@@ -416,21 +483,32 @@
                 "midinum": "50",
                 "row": "4",
                 "owner": "ArpeggioPlugin"
+              },
+              {
+                "noteName": "F",
+                "styleNum": 4,
+                "midinum": "53",
+                "row": "3",
+                "col": "3",
+                "owner": "ArpeggioPlugin"
               }
             ]
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 32,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -743,13 +821,6 @@
                 "midinum": "52",
                 "row": "3",
                 "owner": "manualExample"
-              },
-              {
-                "noteName": "C",
-                "styleNum": 4,
-                "midinum": "48",
-                "row": "4",
-                "owner": "ArpeggioPlugin"
               }
             ],
             "31": [
@@ -759,13 +830,6 @@
                 "midinum": "50",
                 "row": "4",
                 "owner": "manualExample"
-              },
-              {
-                "noteName": "E",
-                "styleNum": 4,
-                "midinum": "52",
-                "row": "3",
-                "owner": "ArpeggioPlugin"
               }
             ],
             "32": [
@@ -775,28 +839,24 @@
                 "midinum": "53",
                 "row": "3",
                 "owner": "manualExample"
-              },
-              {
-                "noteName": "D",
-                "styleNum": 4,
-                "midinum": "50",
-                "row": "4",
-                "owner": "ArpeggioPlugin"
               }
             ]
           },
           "chord": "",
           "mode": "",
+          "tonalSourceSet": "",
           "playedNotes": []
         }
       },
       "caption": "",
       "chartChord": "",
       "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 29,
+      "currentBeat": 12,
       "sharps": false
     }
   ],

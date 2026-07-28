@@ -16,11 +16,31 @@ const runtimeChildrenActionMap = new Map([
         'pluginAction:graveyardRaise',
         'pluginAction:graveyardLink',
         'pluginProperty:select',
+        'pluginProperty:selectByBaseID',
         'pluginProperty:set',
         'pluginProperty:toggle'
     ]],
     ['sectionEditInstrument', [
         'sectionEditInstrumentSelect'
+    ]],
+    ['macroEditNumber', [
+        'macroEditById'
+    ]],
+    ['macroRunNumber', [
+        'macroRunById'
+    ]],
+    ['macroDeleteNumber', [
+        'macroDeleteConfirmed',
+        'macroDeleteCancel'
+    ]],
+    ['macroMoveNumber', [
+        'macroMoveById'
+    ]],
+    ['tuningShowList', [
+        'showTuningById'
+    ]],
+    ['tuningHideList', [
+        'hideTuningById'
     ]]
 ]);
 

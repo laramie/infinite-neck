@@ -91,6 +91,10 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
+function valuesEqual(leftValue, rightValue) {
+  return JSON.stringify(leftValue) === JSON.stringify(rightValue);
+}
+
 function normalizeOctavesInput(rawValue) {
   const text = `${rawValue ?? ''}`.trim();
   if (text === '') {
@@ -821,7 +825,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getAuditInputs() {
     const include = this.buildIncludeFlagsSummary().slice(1, -1);
-    return `include:${include}`;
+    const includePropertyNames = ['NamedNotes', 'SingleNotes', 'TinyNotes', 'BendNotes', 'FingeringNotes', 'RecordedNotes'];
+    const changed = includePropertyNames.some((propertyName) => {
+      const property = this.getProperty(propertyName);
+      return property ? !valuesEqual(property.getValue(), property.getDefaultValue()) : false;
+    });
+    return { value: `include:${include}`, changed };
   }
 
   getAuditOutputs() {

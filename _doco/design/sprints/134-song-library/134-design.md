@@ -180,3 +180,488 @@ e.g. replace
 with 
 `piano-follows-guitar-basic-blues.json`
 
+## Iteration 3: song-multi-instrument
+
+We are finding an explosion of songs needed, and we would prefer to add multi-instrument authoring into the songs, rather than having the same song duplicated for, say, P46 and S6, with all the transpositions, positions, etc.  The songs, of course, support this, and we do this all the time.  What is slightly new is that we want to be guilt-free knowing that we are not slowing down the song looping by putting in more instruments as options for various players' preferred tunings, and making them not visible by using the checkbox in the MyTunings page.
+
+### Goals
+1) Ensure that replay() and friends are optimized for Instruments that are not Visible, especially anything that affects time showing the next Section or things we are trying to optimize with caching.
+2) Ensure that TransposePlugin and positions for Fill and Arpeggio are updated in Instruments that are not visible, but that resources that affect time spent in tickBeat, beat looping, and Section looping are not wasting.
+3) Create a utility in `./bin/update-song-list.js` that can be run anytime, especially as part of the build, that will update `./songs/song-list.json` to have the field `instruments` be up-to-date with the status of the song on disk.  The song should not be modified, but song-list.json should be modified after reading the songs.  If a developer goes in and modifies a song by making an instrument visible, or not visible, or a Listener, or an Observer, and runs the utility, then the song-list.json should be updated.  Only songs in song-list.json need be read.  Other songs not added to the song-list.json are not read.  There may be other test songs that are added to other lists, but these also are not read.
+4) Make changes to the display of song-list.json in SongLibrary.js and song-library.css so that the categories of Instruments in the songs are displayed differently in the song list as it appears in the `File > Song Library` accordion directory listings.
+
+### Design
+
+#### Display of categories of Instrument stati
+
+These live in song-library.css and are attached to directory listing elements, not Instruments or tuning objects elsewhere in the app.
+
+For each Instrument/tuning, the baseID, or fromBaseID is used, so we get things like `["P46", "S6", "Bass4", "Piano"]`
+
+CSS Classes: 
+
+Instrument not Listener, not Observer: `.instrumentMain`
+
+Instrument is wired as Listener: `.instrumentListener`
+
+Instrument is wired as Observer: `.instrumentObserver`
+
+Instrument not visible: `.instrumentNotVisible`
+
+So `song-list.json` would get new entries such as:
+```
+{ 
+  "songs": [
+    {
+      "href": "theory/mode-nat-minor-transposed-S6.json",
+      "description": "<i>natural minor mode</i> shown with a blue, light color-theme, transposed through all 12 Keys on a <em>Standard-tuning Guitar</em>, so you can see the pattern in all positions.",
+      "instruments": [
+        {"fromBaseID":"P46", "wiring":"Listener", "visible": true},
+        {"fromBaseID":"S6", "wiring":"Observer", "visible": false},
+        {"fromBaseID":"S6", "wiring":"Main", "visible": true},
+        {"fromBaseID":"Piano", "wiring":"Listener", "visible": false}  
+      ]
+    }
+  ]
+}
+```
+
+The new "instruments" property will be generated from reading the song files and written to song-list.json, while preserving the hand-authored properties such as "href" and "description".  We will not tweak or edit the "instruments" property.
+
+Note that this does not show the wiring, whom which is wired to, etc.  We don't care about that.  We just care that these instruments are in the song in their roles, and are persisted as visible or not visible.  If I'm a P4 player, I'm going to look for songs that already are authored for P4 players, that is, they have P4 as "Main" and may have other Listeners and Observers.  I may also want to see if there is a P4 hidden in the song if it is the only one available with that purpose, (for example, to show natural minor mode with color-themes), and when I see that P4 is invisible then I know I can open the song and hit the visible checkmark and be in business.
+
+We will tweak the CSS, so just make basic CSS rules in separate categories for each:
+
+```
+.instrumentMain {
+  background-color: white;
+  color: brown;
+  border: 2px solid brown;
+}
+.instrumentMain.instrumentNotVisible {
+  background-color: #aaa;
+  color: brown;
+  border: 1px solid brown;
+}
+.instrumentListener {
+  background-color: #ffe57b;
+  color: #0a0;
+  border: 2px solid #0a0;
+}
+.instrumentListener.instrumentNotVisible {
+  background-color: #bdaa5d;
+  color: #0a0;
+  border: 1px solid #0a0;
+}
+.instrumentObserver {
+  background-color: rgb(213, 255, 213);
+  color: #00a;
+  border: 2px solid #00a;
+}
+.instrumentObserver.instrumentNotVisible {
+  background-color: rgb(136, 164, 136);
+  color: #00a;
+  border: 1px solid #00a;
+}
+```
+
+#### Display of Instruments in "Song Library" entries
+
+Each Instrument in a song should get a span with the above CSS classes, and all the Instruments in a song together should occupy a new third column in the per-song listings.
+
+e.g.
+
+```
+<div class="songLibraryRow"><div class="songLibraryCell songLibraryCellLink"><a href="#" data-action="loadSong" data-action-args="[&quot;demo/piano-follows-guitar-basic-blues.json&quot;]">piano-follows-guitar-basic-blues.json</a></div><div class="songLibraryCell songLibraryCellDescription">A Basic Blues progression on <b>Guitar</b> with a <em>Piano Listener</em></div><div class="songLibraryCell songLibraryCellInstruments"></div></div>
+```
+
+with the Instruments in the song being spans, one span per instrument, with the above CSS classes, inside `div class="songLibraryCell songLibraryCellInstruments"`.
+
+### Iteration 3 Request
+
+Please provide an implementation plan for the parts of this design that make sense, and provide analysis and questions for anything that doesn't especially holes in the strategy of making invisible instruments be low-performance-impact.
+
+Please suggest any changes that would make the CSS more idiomatic, efficient, or maintainable
+
+Please provide this plan in [Iteration 3 implementation plan](134-it3-implementation-plan.md)
+
+### Iteration 3 Revisions for implementation
+
+Please revise [Iteration 3 implementation plan](134-it3-implementation-plan.md) with the information below, then proceed to coding.
+
+#### Revised CSS
+
+We appreciate the suggested CSS edits.  However, in this codebase, we use css vars heavily and almost exclusively for dealing with themes and DisplayOptions where we set the vars at runtime.  So we don't want to confuse our programmers and external programming consumers with css vars that are merely for maintenance centralization efficiency yet are statically known at load time.  So we have the CSS here installed in song-library.css now:
+
+
+```css
+.songLibraryInstrument {
+		display: inline-block;
+		margin: 0.1em 0.2em 0.1em 0;
+		padding: 0.1em 0.35em;
+		border-radius: 0.35em;
+		font-family: "Kode Mono", "Courier New", monospace;
+		font-size: 85%;
+		font-weight: 700;
+		white-space: nowrap;
+}
+
+.instrumentMain {
+  background-color: white;
+  color: brown;
+  border: 2px solid brown;
+}
+.instrumentMain.instrumentNotVisible {
+  background-color: #aaa;
+  color: brown;
+  border: 1px solid brown;
+}
+.instrumentListener {
+  background-color: #ffe57b;
+  color: #0a0;
+  border: 2px solid #0a0;
+}
+.instrumentListener.instrumentNotVisible {
+  background-color: #bdaa5d;
+  color: #0a0;
+  border: 1px solid #0a0;
+}
+.instrumentObserver {
+  background-color: rgb(213, 255, 213);
+  color: #00a;
+  border: 2px solid #00a;
+}
+.instrumentObserver.instrumentNotVisible {
+  background-color: rgb(136, 164, 136);
+  color: #00a;
+  border: 1px solid #00a;
+}
+```
+
+
+#### Revised visibleNoteTables and song-list.json
+
+We completed an edit where we removed visibleNoteTables from songs in the repository on our branch, and a chat where Copilot removed visibleNoteTables from the repository, and adjusted a few tests, on our branch.  So the implementation plan should reflect these changes and not have to deal with visibleNoteTables.
+
+In this revision, we also ensured that song-list.json has no "legacy" format simple one-line song references, only the new href/description objects.  There may be song lists for testing, but those are not shown in the Song Library, and may be ignored.
+
+Order in song-list.json must be display order.
+
+#### Revised Clarity on baseID/fromBaseID
+
+Unless we have an errant song, we believe all songs in the library now properly use `fromBaseID` as their class/inheritance, and so should be appropriate for the badge display.  We should not have to deal with, or want to display, `baseID`.  The canonical set of songs should be those listed in `./songs/song-list.json`.  Other lists may include test songs that may have intentional errors, or at the least, are not readily available to Users.
+
+#### Clarifying Observer
+
+Yes, the definition of an Observer is one who is wired with a relative section specifier.  This definition from the implementation plan is a good one: 
+
+  "Observer: wiring exists and relativeSection is non-empty."
+
+#### implementation plan Questions Answered
+
+
+1. **Generated field ownership:** Should developers ever hand-edit `instruments`, or should `bin/update-song-list.js` be treated as the sole owner? Recommendation: generated-only; hand edits will be overwritten.
+ANSWER: generated-only.
+
+2. **String song-list entries:** Is converting legacy strings to objects acceptable in the primary curated list when running the updater? Recommendation: yes, because adding `instruments` requires object entries.
+ANSWER:  Skip it, and warn.  We'd prefer to fix the song-list files if found.  We believe the main one is up-to-date, and others are for testing only. 
+
+
+3. **Observer label source:** The proposed role mapping assumes `relativeSection` means Observer. This matches current code comments, but the plan should be confirmed before implementation.
+ANSWER: The roles definition in `### Role model` in the implementation plan is perfectly correct.
+
+
+4. **Duplicate `fromBaseID` display:** Songs may intentionally have two S6-derived instruments, such as an S6 Main and an S6 Observer. Recommendation: render duplicate badges separately because role/visibility may differ.
+ANSWER: Yes, render duplicates.  Especially for Observers, where there may be a look-ahead and a look-behind and the Main.  For now, look-ahead and look-behind will be identical badges and that is OK.  We like that there will be duplicates to show that there are different ones. 
+
+
+5. **`Piano` vs `PianoSkeuomorphic`:** The design examples show `Piano`, but current sample songs may have `fromBaseID: "PianoSkeuomorphic"`. Recommendation: use exact `fromBaseID` for generation now. Add a later display-label map only if users dislike the raw base IDs.
+ANSWER:  Yes, use exact `fromBaseID`.   
+
+
+6. **Visibility source of truth:** Runtime currently prefers `noteTablesLayout`; generation should also prefer it. If a song has conflicting `myTunings[].visible`, `noteTablesLayout` should win.
+ANSWER: Yes.  Log warning to UserLog.
+
+
+7. **Updater error policy:** If a listed song is missing or invalid JSON, should the updater fail the whole run or keep going? Recommendation: keep going, report all errors, and exit non-zero without writing partial changes unless an explicit `--force` is added later.
+ANSWER: Keep going and report. 
+
+
+8. **Performance acceptance target:** The design asks for low impact but does not define a threshold. Recommendation: record baseline counts/timing for replay/prewarm tasks before and after adding hidden instruments; use “hidden tables produce zero replay/prewarm tasks” as the first pass criterion.
+ANSWER: Recommendation approved.
+
+
+## Iteration 4 : Badges, instrument.visible cleanup
+
+### Instrument Role Badges in My Tunings
+
+We like the fromBaseID badges.  We want to use them in other parts of the app.  So the function that produces them should be clean and re-useable.  Hopefull this is already so.  If not, small refactoring would be in order.
+
+We want to use them in the "My Tunings" grid.  Where it currently has a column (6th) called "from" we now want the caption to be "Role", and the value in the column instead of being the text value of fromBaseID, should be the badge for this fromBaseID, using the CSS stylings from `song-library.css`, which should already be available since this is on the same host page as "Song Library".  
+
+When a User changed wiring, the "My Tunings" page will need to be rebuilt when shown next.  If this is already handled then fine.  However, since the wiring panels in each instrument can be shown while the "My Tunings" menu page is showing, the "My Tunings" menu page will probably have to be kicked with an event to get the update to happen.
+
+
+### Instrument Role Badges in approved expansion and thence in File > Info
+
+We also want the badges to be available to an approved text expansion, and that text expansion should be available to "File > Info" in the User-entered HTML in the editable textarea.
+
+This means all values allowed should be allowed in "File > Info" the same way they are allowed in Section Caption, even though they may not always make sense outside of a particular Section. This is how the Caption is expanded:
+`var caption = expandApprovedTemplate(rawCaption);`
+
+This means any widgets we expose this way will be available in Caption and in File > Info.
+
+In particular, we'd like to add a widget that dumps out what the song-library dumps out for badges when listing the songs.  A User could put this in "File > Info" if they wanted to share that in the Info landing page for opening a Song, without us making every song show this in Info.
+
+So in parallel with things like `${arpeggioPositionsStatus}` we'd like this widget to be called via `${songInstrumentBadges}` and also a longer version in a table called 
+`${songInstrumentTable}`.
+
+Here is the format of songInstrumentTable:
+
+```
+<table>
+    <tr>
+        <th>Role</th>
+        <th>ID</th>
+    </tr>
+    <tr>
+        <td>Instrument1-badge</td>
+        <td>Instrument1-ID</td>
+    </tr>
+    <tr>
+        <td>Instrument2-badge</td>
+        <td>Instrument2-ID</td>
+    </tr>
+</table>
+```
+
+### Tuning "visible" is out of date and out of sync
+
+Additionally, we found during testing that this message kept being produced:
+```
+npm run update:song-list
+
+> infinite-neck@1.0.0 update:song-list
+> node bin/update-song-list.js
+
+WARN UserLog SongListUpdater warning: guitar-basic-blues-fwd-back-observers tblS6_back tuning.visible=false conflicts with noteTablesLayout=true; using noteTablesLayout.
+WARN UserLog SongListUpdater warning: guitar-basic-blues-fwd-back-observers tblP46_1 tuning.visible=false conflicts with noteTablesLayout=true; using noteTablesLayout.
+songs/song-list.json is up to date.
+```
+This means that even in new songs, messing around with the visible checkbox gets the Model out of sync.  noteTablesLayout has been working well, and we don't see any need for `visible` in tunings.js,  or in "My Tunings" runtime, or in the songfiles.  We'd like to remove it from these. 
+
+
+### Request
+
+Please produce the implementation plan, with any questions, in [sprint-134 Iteration 4 Implementation Plan](134-it4-implementation-plan.md)
+
+## Iteration 5
+
+Here is an example from the DOM of an Instrument with ID "S6_forward", showing its caption inside `.captionRow` and then inside `.captionRowInstrument`:
+`<span class="captionRowInstrument"><span>S6_forward:</span></span>`
+
+Then this one comes from the left-rail below the looper light and section status.
+
+`<div class="leftRailCaptionHost"><span class="fretTableLeftCaption">S6_forward</span></div>`
+
+We would like both of these to get the news when wiring has changed, so that they get a new class, and we can style that class.
+
+We want a similar class to the Role badges we just installed.  However, we don't want to tie that code in with this caption row and left-rail code.  Merely copying the CSS will suit most of our needs of that implementation.  However, we suspect that the easiest way to do this is to add the Caption inside the Section-Status widget and output the left-rail caption where it is but inside the widget so that it can get events when wiring changes happen.  We want the same as the Key fields, which have css for Observer and Listener, but they are called `ssKey_relative` and `ssKey_listener`
+
+However, this means the code in TableBuilder.js:186-211 will need to be modified somehow.  The span that gets inserted there for the caption has a destination for changing the Instrument ID dynamically.  So we want that target destination span to still be there, but the span that sorrounds the caption and its necessary destination classes for finding it still inside.  This way, we can get the ID updated as it is today, and the Observer/Listener (ssKey_relative/ssky_listener) class so we can add CSS rules to putting the caption classes in section-status.css.
+
+Please advise if this is the cleanest way to do this without disturbing too much.
+
+So since inside the SectionStatus widget output we have:
+
+`<span class="ssCaptionWrapper"><span class="fretTableLeftCaption">S6_forward</span></span>`
+
+then in the section-status.css we just want: 
+
+.fretTableLeftCaption :: defined in instrument.css, could be moved
+
+.ssCaptionWrapper .fretTableLeftCaption {
+   border 2px solid red;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_relative {
+  border 2px solid blue;
+  background-color: white;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener {
+  border 2px solid green;
+  background-color: white;
+}
+
+We'd like your analysis on the cleanest and least disturbing way to make this happen.
+
+
+## Copilot response, approved, installed
+
+Created 3 todos
+
+Searched for files matching `**/*section-status*`, 6 matches
+
+Searched for regex `ssKey_relative|ssKey_listener|leftRailCaptionHost|fretTableLeftCaption|captionRowInstrument|ssCaptionWrapper` (`**/*.{js,css,html}`), 27 results
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#160-160), lines 160 to 230
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#230-230), lines 230 to 285
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.builder.js)
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.css#1-1), lines 1 to 140
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#2490-2490), lines 2490 to 2535
+
+Read [](file:///home/laramie/infinite-neck/templates/SectionStatus/section-status.html)
+
+Searched for regex `Widget:SectionStatus:statusChanged|ReplayOptions.Type|new ReplayOptions|publish.*Status|SectionStatus` (`**/*.js`), 100 results
+
+Read [](file:///home/laramie/infinite-neck/ReplayOptions.js)
+
+Read [](file:///home/laramie/infinite-neck/infinite-neck.js#560-560), lines 560 to 650
+
+Read [](file:///home/laramie/infinite-neck/Song.js#990-990), lines 990 to 1015
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#980-980), lines 980 to 1130
+
+Read [](file:///home/laramie/infinite-neck/NoteTableController.js#1700-1700), lines 1700 to 1785
+
+Read [](file:///home/laramie/infinite-neck/TableBuilder.js#285-285), lines 285 to 330
+
+Searched for regex `tuningIDCaption|captionRowInstrument|fretTableLeftCaption|baseID.*caption|rename.*baseID|inputTuningID` (`**/*.js`), 32 results
+
+Read [](file:///home/laramie/infinite-neck/TuningsLibrary.js#985-985), lines 985 to 1045
+
+Completed: *Inspect caption code* (1/3)
+
+Short answer: the cleanest path is to reuse the existing Section Status widget event flow, but **not** move the left-rail caption into the widget template unless that becomes necessary.
+
+The good news: this repo already has Section Status widgets in both relevant places:
+
+- Left rail widget is created in TableBuilder.js.
+- Caption-row widget is created in TableBuilder.js.
+- Section Status already receives `keyMode` and toggles `ssKey_relative` / `ssKey_listener` on key fields in section-status.builder.js.
+
+So the least disturbing design is:
+
+## Recommended approach
+
+### 1. Keep captions where they are
+
+Leave the current left-rail DOM concept intact:
+
+- `.leftRailCaptionHost`
+- `.fretTableLeftCaption`
+
+This preserves the existing `C` button behavior, which currently toggles `.leftRailCaptionHost` in infinite-neck.js.
+
+Also preserve `.captionRowInstrument` in the caption row.
+
+### 2. Add stable target classes / data attributes
+
+Change the two caption outputs in TableBuilder.js to expose a small, explicit “role class target”.
+
+For caption row, instead of:
+
+```html
+<span class="captionRowInstrument"><span>S6_forward:</span></span>
+```
+
+prefer conceptually:
+
+```html
+<span class="captionRowInstrument ssCaptionWrapper">
+  <span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="tblS6_forward">S6_forward:</span>
+</span>
+```
+
+For left rail:
+
+```html
+<div class="leftRailCaptionHost ssCaptionWrapper">
+  <span class="fretTableLeftCaption SectionStatus_captionRoleTarget" data-tablename="tblS6_forward">S6_forward</span>
+</div>
+```
+
+This keeps the ID text target present, makes future rename/update code easier, and avoids forcing caption ownership into the widget template.
+
+### 3. Extend `SectionStatusWidget` role-class application
+
+In section-status.builder.js, the widget currently does:
+
+- remove `ssKey_relative ssKey_listener`
+- add `ssKey_relative` for `ReplayOptions.Type.RELATIVE`
+- add `ssKey_listener` for `ReplayOptions.Type.LISTENER`
+
+Refactor that into a helper like `applyKeyModeClasses($targets, keyMode)`, then call it for:
+
+- `.SectionStatus_rootKey`
+- `.SectionStatus_rootKeyLead`
+- nearby / registered `.SectionStatus_captionRoleTarget`
+
+This means captions “get the news” via the same event that already updates key widgets.
+
+### 4. Prefer widget-registered targets over global selectors
+
+Best implementation shape:
+
+- Add an optional options parameter to `SectionStatusBuilder.createWidget()`, e.g. `{ roleClassTargets: [...] }`.
+- In TableBuilder.js, create the caption target elements first, then pass them into the local Section Status widget.
+- The widget stores those elements and toggles classes when `keyMode` changes.
+
+That is cleaner than having `SectionStatusWidget` query the whole document for `data-tablename`.
+
+### 5. CSS belongs in section-status.css
+
+Yes, styling these role classes in section-status.css is appropriate because the semantic state is Section Status / replay status.
+
+Suggested corrected CSS shape:
+
+```css
+.ssCaptionWrapper .fretTableLeftCaption,
+.ssCaptionWrapper .tuningIDCaption {
+  border: 2px solid red;
+}
+
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_relative,
+.ssCaptionWrapper .tuningIDCaption.ssKey_relative {
+  border: 2px solid blue;
+  background-color: white;
+}
+
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener,
+.ssCaptionWrapper .tuningIDCaption.ssKey_listener {
+  border: 2px solid green;
+  background-color: white;
+}
+```
+
+Note: the design text has `ssky_listener`; implementation should consistently use `ssKey_listener`.
+
+## Why I would not move the left-rail caption into the widget template first
+
+Moving it into section-status.html is workable, but more disruptive:
+
+- The vertical Section Status template is currently generic.
+- It would need a caption label parameter.
+- The `showLeftCaption` toggle currently expects `.leftRailCaptionHost` under `.instrumentBackground`.
+- The widget would start owning UI that is not really status UI; it is instrument caption UI.
+
+That increases coupling. The lighter option is better: **caption remains TableBuilder-owned, but SectionStatus owns the role-class updates.**
+
+## Event behavior
+
+This should update naturally because `replayTable()` emits `Widget:SectionStatus:statusChanged` with `keyMode` in NoteTableController.js. Wiring add/remove also already triggers replay/status refresh paths.
+
+For removal, the replay event should clear the classes because `keyMode` is empty/undefined, and the existing code already removes both classes before applying a new one.
+
+## Recommended implementation plan
+
+1. Add `ssCaptionWrapper`, `tuningIDCaption`, and `SectionStatus_captionRoleTarget` markup in TableBuilder.js.
+2. Add optional `roleClassTargets` support to `SectionStatusBuilder.createWidget()`.
+3. Refactor the existing key-mode class logic in section-status.builder.js into one helper and apply it to both key fields and caption targets.
+4. Add CSS rules in section-status.css.
+5. Add a focused Jest test around Section Status class application if practical.
+
+That is the cleanest, least disturbing approach: no badge dependency, no broad DOM scanning, no ownership move, and it reuses the Section Status event system that already understands Listener vs Observer.

@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug SongHeadless.js",
             "program": "${workspaceFolder}/SongHeadless.js",
-            "args": ["./songs/tests/persistence/forward-backward-observers.json"],
+            "args": ["./songs/tests/forward-backward-observers.json"],
             "cwd": "${workspaceFolder}/",
             "console": "integratedTerminal",
             "skipFiles": ["<node_internals>/**"],

@@ -46,12 +46,18 @@
 }
 
 .instrumentBackgroundOuter {
-  box-sizing: border-box;
-  padding: 1em; /* or whatever you want for box-shadow space */
-  width: 100vw;
-  max-width: 100vw;
-  overflow-x: auto; /* allow scrolling if needed */
-  background: transparent;
+        box-sizing: border-box;
+        /* Keep padding off by default so hidden instruments don't consume space. */
+        padding: 0;
+        width: 100vw;
+        max-width: 100vw;
+        overflow-x: auto; /* allow scrolling if needed */
+        background: transparent;
+}
+
+/* Apply box-shadow breathing room only when the instrument is actually visible. */
+.instrumentBackgroundOuter:has(> .instrumentBackground:not([style*="display: none"]):not([style*="display:none"])) {
+        padding: 1em;
 }
 
 .instrumentBackground {
@@ -139,6 +145,10 @@
     transform: translateY(3px); /* Move the button down slightly */
 }
 
+.toggleCaptionLooperLayout {
+    font-size: 81%;
+}
+
 
 .captionRow .lblRootID {
     font-size:  110%;
@@ -156,12 +166,8 @@
     color: brown;
     background-color: lightgreen;
 }
-.fretTableLeftCaption {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: 120%;
-    text-align: center;
-}
+
+
 
 .tdLeftRailStack {
     vertical-align: top;
@@ -169,7 +175,7 @@
 
 .leftRailStack {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 0.35em;
 }

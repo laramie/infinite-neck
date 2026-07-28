@@ -1,4 +1,8 @@
-import { normalizeSectionStatusBeatState } from '../../templates/SectionStatus/section-status.builder.js';
+import {
+    applySectionStatusKeyModeClasses,
+    getSectionStatusKeyModeClass,
+    normalizeSectionStatusBeatState
+} from '../../templates/SectionStatus/section-status.builder.js';
 
 describe('SectionStatus beat-state normalization', () => {
     test('shows a positive beat number when the counter is enabled', () => {
@@ -30,5 +34,29 @@ describe('SectionStatus beat-state normalization', () => {
             showBeatCounter: true,
             beatNumberText: ''
         });
+    });
+});
+
+describe('SectionStatus key-mode class helpers', () => {
+    test('maps replay key modes to caption/key CSS classes', () => {
+        expect(getSectionStatusKeyModeClass('RELATIVE')).toBe('ssKey_relative');
+        expect(getSectionStatusKeyModeClass('LISTENER')).toBe('ssKey_listener');
+        expect(getSectionStatusKeyModeClass('SELF')).toBe('');
+        expect(getSectionStatusKeyModeClass(undefined)).toBe('');
+    });
+
+    test('removes prior role classes and applies listener/relative class', () => {
+        const calls = [];
+        const targets = {
+            length: 1,
+            removeClass: (classes) => calls.push(['removeClass', classes]),
+            addClass: (classes) => calls.push(['addClass', classes])
+        };
+
+        applySectionStatusKeyModeClasses(targets, 'RELATIVE');
+        expect(calls).toEqual([
+            ['removeClass', 'ssKey_relative ssKey_listener'],
+            ['addClass', 'ssKey_relative']
+        ]);
     });
 });

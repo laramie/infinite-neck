@@ -128,7 +128,7 @@ describe('TonalPlugin', () => {
     const children = plugin.getVisibleMenuChildren();
     const acceptNode = children.find((child) => child.name === 'accept');
 
-    expect(children.map((child) => child.trigger)).toEqual(['a', 'p']);
+    expect(children.map((child) => child.trigger)).toEqual(['a', 'p', 'c', 'm']);
     expect(acceptNode.children.map((child) => child.name)).toEqual([
       'targetTable',
       'autoWrite',

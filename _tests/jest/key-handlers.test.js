@@ -24,13 +24,15 @@ const restartLoopBeats = jest.fn(() => {
 const mockToggleTransport = jest.fn();
 const mockShowTransport = jest.fn();
 const mockSetCmdLineMenuMode = jest.fn();
+const mockShowCmdLine = jest.fn();
 
 jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 	jsonTree: jest.fn()
 }));
 
 jest.unstable_mockModule('../../themeFunctions.js', () => ({
-	setOneCssVar: jest.fn()
+	setOneCssVar: jest.fn(),
+	dumpThemeIds: jest.fn()
 }));
 
 jest.unstable_mockModule('../../command-line.js', () => ({
@@ -38,7 +40,7 @@ jest.unstable_mockModule('../../command-line.js', () => ({
 	hideCmdLine: jest.fn(),
 	setCmdLineMenuMode: mockSetCmdLineMenuMode,
 	setCmdActionRunner: jest.fn(),
-	showCmdLine: jest.fn(),
+	showCmdLine: mockShowCmdLine,
 	stringifyMenuItem: jest.fn(() => ''),
 	updateCmdLineView: jest.fn()
 }));
@@ -63,6 +65,7 @@ jest.unstable_mockModule('../../menu.js', () => ({
 	dumpMenus: jest.fn(() => ''),
 	gMenuFile: {},
 	gMenuPointer: {},
+	refreshRuntimeChildren: jest.fn(),
 	setMenuRuntimeChildrenResolver: jest.fn(),
 	setMenuValueResolver: jest.fn(),
 	setMenuAtRoot: jest.fn(),
@@ -101,6 +104,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 }));
 
 const { performCmdAction, document_keydown, document_keypress, runActionByName, setKeyHandlerProviders, getValue } = await import('../../key-handlers.js');
+const pluginRuntimeModule = await import('../../plugins/pluginRuntime.js');
 let mockDownloadBackupThenClearGraveyardByType;
 
 function createSong() {
@@ -276,6 +280,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockToggleTransport.mockClear();
 		mockShowTransport.mockClear();
 		mockSetCmdLineMenuMode.mockClear();
+		mockShowCmdLine.mockClear();
 		mockEventBus.trigger.mockClear();
 
 		setKeyHandlerProviders({
@@ -311,6 +316,10 @@ describe('key-handlers spacebar mapping', () => {
 			sectionChanged: jest.fn(),
 			setPresentationMode: jest.fn((value) => {
 				song.presentationMode = !!value;
+			}),
+			setTutorialMode: jest.fn((value) => {
+				song.tutorial = { level: value };
+				return value;
 			}),
 			setBPM: mockSetBPM,
 			setNamedNoteOpacity: jest.fn(),
@@ -531,6 +540,11 @@ describe('key-handlers spacebar mapping', () => {
 		expect(toggleResult.preserveMenuStack).toBe(true);
 		expect(getValue('presentationModeState')).toBe(true);
 
+		const tutorialResult = performCmdAction({ action: 'setTutorialMode', value: 'strict' });
+		expect(tutorialResult.result).toBe('tutorial mode: strict');
+		expect(tutorialResult.preserveMenuStack).toBe(true);
+		expect(song.tutorial).toEqual({ level: 'strict' });
+
 		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
 		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
 		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
@@ -540,6 +554,21 @@ describe('key-handlers spacebar mapping', () => {
 		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
 		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
 		expect(clearResult.preserveMenuStack).toBe(true);
+	});
+
+	test('Meta+Shift+m opens command line in strict tutorial mode', () => {
+		song.tutorial = { level: 'strict' };
+		const event = {
+			key: 'm',
+			metaKey: true,
+			shiftKey: true,
+			preventDefault: jest.fn()
+		};
+
+		document_keydown(event);
+
+		expect(mockShowCmdLine).toHaveBeenCalledTimes(1);
+		expect(event.preventDefault).toHaveBeenCalledTimes(1);
 	});
 
 	test('runActionByName routes remaining navigation verbs through the transport controller', () => {
@@ -597,6 +626,22 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(result.result).toBe('REC toggled');
 		expect(mockToggleRecording).toHaveBeenCalledTimes(1);
+	});
+
+	test('pluginAction:graveyardRaiseByKey dispatches through plugin manager runtime', () => {
+		const invokeMenuAction = jest.fn(() => ({ result: 'revived transpose as blues' }));
+		pluginRuntimeModule.default.invokeMenuAction = invokeMenuAction;
+
+		const result = performCmdAction(
+			{ action: 'pluginAction:graveyardRaiseByKey', pluginId: 'transpose', input: { id: 'value' } },
+			{ value: 'blues' }
+		);
+
+		expect(invokeMenuAction).toHaveBeenCalledWith(
+			expect.objectContaining({ action: 'pluginAction:graveyardRaiseByKey', pluginId: 'transpose' }),
+			{ value: 'blues' }
+		);
+		expect(result.result).toBe('revived transpose as blues');
 	});
 
 	test('/fac toggle actions update graveyard type state and keep menu stack', () => {

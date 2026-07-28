@@ -12,7 +12,7 @@ import {
 import { Note } from '../../Note.js';
 import { createLookupContext, lookupClassForNote } from '../../colorFunctions.js';
 import { PalettePresentation } from '../../presentation.js';
-import { getSong } from '../../infinite-neck.js';
+import { getSong, getTransportController } from '../../infinite-neck.js';
 import {
   computeRoleNoteSets as computeSharedRoleNoteSets,
   resolveRoleDecision,
@@ -71,10 +71,10 @@ const ROLE_CONFIG = {
 const ROLE_PASS_ORDER = ['scale', 'chord', 'root'];
 const FAMILY_NAMES = ['named', 'single', 'tiny'];
 const ROLE_NAMES = ['root', 'chord', 'scale'];
-const ROLE_AUDIT_LETTER = Object.freeze({
-  root: 'r',
-  chord: 'c',
-  scale: 's'
+const ROLE_AUDIT_LABEL = Object.freeze({
+  root: 'root',
+  chord: 'chord',
+  scale: 'scale'
 });
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
@@ -513,9 +513,23 @@ export class FillPlugin {
         this.buildFamilyMenuNode('named', song),
         this.buildFamilyMenuNode('single', song),
         this.buildFamilyMenuNode('tiny', song),
+        this.buildAutoSectionNavActionNode('auto:prevSection', ', previous section', ','),
+        this.buildAutoSectionNavActionNode('auto:nextSection', '. next section', '.'),
         this.getProperty('apply').getMenuNodeSpec(this),
         this.getProperty('clear').getMenuNodeSpec(this)
       ]
+    });
+  }
+
+  buildAutoSectionNavActionNode(name, caption, trigger) {
+    return new MenuItemProxy(this, {
+      name,
+      caption: buildCaption(caption, trigger),
+      trigger,
+      action: 'pluginAction:invoke',
+      pluginId: this.id,
+      actionName: name,
+      popOnBang: false
     });
   }
 
@@ -880,6 +894,17 @@ export class FillPlugin {
               actionName: `setFamilyRoleColor:${familyName}:${roleName}:${roleConfig.canonicalColor}`,
               popOnBang: true
             }),
+            ...(roleName === 'root'
+              ? [new MenuItemProxy(this, {
+                name: `${familyName}:${roleName}:note1`,
+                caption: buildCaption('note1', '1'),
+                trigger: '1',
+                action: 'pluginAction:invoke',
+                pluginId: this.id,
+                actionName: `setFamilyRoleColor:${familyName}:${roleName}:note1`,
+                popOnBang: true
+              })]
+              : []),
             new MenuItemProxy(this, {
               name: `${familyName}:${roleName}:last`,
               caption: buildCaption('last', 'l'),
@@ -983,6 +1008,9 @@ export class FillPlugin {
     const nextValue = property.setValue(normalizedRawValue);
     if (name === 'targetTable' && !context.persistedLoad && `${nextValue || ''}` !== previousTargetTable) {
       this.resetStringLimitDefaultsForTarget(song);
+    }
+    if (name === 'automaticFromChart' && !context.persistedLoad && !!nextValue) {
+      this.applyAutomaticFromChart(song, this.getCurrentSection(song));
     }
     this.normalizeRangeValues(song);
     return nextValue;
@@ -1129,6 +1157,10 @@ export class FillPlugin {
         return this.useChartChord(song);
       case 'useChartMode':
         return this.useChartMode(song);
+      case 'auto:prevSection':
+        return this.navigateSection('prev', song);
+      case 'auto:nextSection':
+        return this.navigateSection('next', song);
       case 'apply':
         return this.applyToCurrentSection(song);
       case 'clear':
@@ -1145,6 +1177,30 @@ export class FillPlugin {
       default:
         return { result: `Unknown fill action: ${actionName}` };
     }
+  }
+
+  navigateSection(direction, song = getSong()) {
+    const controller = typeof getTransportController === 'function' ? getTransportController() : null;
+    const methodName = direction === 'prev' ? 'prevSection' : 'nextSection';
+    if (controller && typeof controller[methodName] === 'function') {
+      controller[methodName]();
+    } else if (song) {
+      if (direction === 'prev' && typeof song.gotoPrevSectionStateOnly === 'function') {
+        song.gotoPrevSectionStateOnly(false);
+      }
+      if (direction === 'next' && typeof song.gotoNextSectionStateOnly === 'function') {
+        song.gotoNextSectionStateOnly(false);
+      }
+    }
+
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      this.applyAutomaticFromChart(song, this.getCurrentSection(song));
+    }
+
+    const sectionIndex = song && typeof song.getSectionsCurrentIndex === 'function'
+      ? song.getSectionsCurrentIndex()
+      : (song && Array.isArray(song.sections) ? song.sections.indexOf(this.getCurrentSection(song)) : 0);
+    return { result: `section ${Math.max(0, sectionIndex) + 1}` };
   }
 
   setFamilyRoleColorSelection(familyName, roleName, colorValue, song = getSong()) {
@@ -1192,8 +1248,8 @@ export class FillPlugin {
   }
 
   applyAutomaticFromChart(song = getSong(), section = this.getCurrentSection(song)) {
-    this.useChartChordForSection(song, section, { emptySetsNone: true });
-    this.useChartModeForSection(song, section, { emptySetsNone: true });
+    this.useChartChordForSection(song, section, { emptySetsNone: true, noMatchSetsNone: true });
+    this.useChartModeForSection(song, section, { emptySetsNone: true, noMatchSetsNone: true });
   }
 
   useChartChord(song = getSong()) {
@@ -1214,6 +1270,9 @@ export class FillPlugin {
     const chordType = chordTypeFromStoredChord(canonicalValue);
     const match = (Constants.FILL_CHORD_OPTIONS || []).find((option) => `${option.value}` === `${chordType}`) || null;
     if (!match) {
+      if (options.noMatchSetsNone) {
+        this.setPropertyValue('chordFormula', '', { song });
+      }
       return {
         result: `No fill subset match for chartChord="${rawValue}" tonalType="${chordType || '<none>'}"`,
         message: this.buildChartMissMessage('chord', 'chartChord', rawValue, chordType || '<none>', Constants.FILL_CHORD_OPTIONS)
@@ -1242,6 +1301,9 @@ export class FillPlugin {
     const modeType = modeTypeFromStoredMode(canonicalValue);
     const match = (Constants.FILL_SCALE_OPTIONS || []).find((option) => `${option.value}` === `${modeType}`) || null;
     if (!match) {
+      if (options.noMatchSetsNone) {
+        this.setPropertyValue('scaleFormula', '', { song });
+      }
       return {
         result: `No fill subset match for chartMode="${rawValue}" tonalType="${modeType || '<none>'}"`,
         message: this.buildChartMissMessage('mode', 'chartMode', rawValue, modeType || '<none>', Constants.FILL_SCALE_OPTIONS)
@@ -1292,8 +1354,13 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   getAuditInputs({ song = getSong() } = {}) {
+    const automaticFromChart = this.getProperty('automaticFromChart')?.getValue();
     if (this.getProperty('automaticFromChart')?.getValue()) {
-      return 'auto-chart:true';
+      const changed = !valuesEqual(
+        automaticFromChart,
+        this.getProperty('automaticFromChart')?.getDefaultValue()
+      );
+      return { value: 'auto-chart:true', changed };
     }
 
     const chord = `${this.resolveValue('chordFormula', { song }) || ''}`.trim();
@@ -1305,13 +1372,23 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (mode) {
       lines.push(`mode:${mode}`);
     }
-    return lines.length > 0 ? lines.join('<br>') : undefined;
+    const changed = !valuesEqual(
+      this.getProperty('chordFormula')?.getValue(),
+      this.getProperty('chordFormula')?.getDefaultValue()
+    ) || !valuesEqual(
+      this.getProperty('scaleFormula')?.getValue(),
+      this.getProperty('scaleFormula')?.getDefaultValue()
+    ) || !valuesEqual(
+      automaticFromChart,
+      this.getProperty('automaticFromChart')?.getDefaultValue()
+    );
+    return lines.length > 0 ? { value: lines.join('<br>'), changed } : undefined;
   }
 
   getAuditFamilyOutputSummary(familyName) {
     const roles = ROLE_NAMES
       .filter((roleName) => this.getFamilyRoleMode(familyName, roleName) !== MODE_NONE)
-      .map((roleName) => ROLE_AUDIT_LETTER[roleName]);
+      .map((roleName) => ROLE_AUDIT_LABEL[roleName]);
     return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
   }
 
@@ -1319,7 +1396,22 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const lines = FAMILY_NAMES
       .map((familyName) => this.getAuditFamilyOutputSummary(familyName))
       .filter((line) => line.length > 0);
-    return lines.length > 0 ? lines.join('<br>') : undefined;
+
+    const defaultLines = FAMILY_NAMES
+      .map((familyName) => {
+        const roles = ROLE_NAMES
+          .filter((roleName) => {
+            const property = this.getProperty(this.getFamilyModePropertyName(familyName, roleName));
+            const modeValue = `${property?.getDefaultValue() || MODE_NONE}`;
+            return modeValue !== MODE_NONE;
+          })
+          .map((roleName) => ROLE_AUDIT_LABEL[roleName]);
+        return roles.length > 0 ? `${familyName}:${roles.join(',')}` : '';
+      })
+      .filter((line) => line.length > 0);
+
+    const changed = !valuesEqual(lines, defaultLines);
+    return lines.length > 0 ? { value: lines.join('<br>'), changed } : undefined;
   }
 
   getSectionPositionsDisplay(section) {
@@ -1966,7 +2058,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   }
 
   applyToCurrentSection(song = getSong()) {
-    return this.applyToSection(song, this.getCurrentSection(song));
+    const section = this.getCurrentSection(song);
+    if (this.getProperty('automaticFromChart')?.getValue()) {
+      this.applyAutomaticFromChart(song, section);
+      return this.applyToSection(song, section, { useSectionChart: true });
+    }
+    return this.applyToSection(song, section);
   }
 
   applyToSection(song = getSong(), section = this.getCurrentSection(song), options = {}) {

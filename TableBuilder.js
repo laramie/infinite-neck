@@ -185,7 +185,6 @@ export function buildNoteTable(options) {
 
 	let widgetDest = $("<span>");
 	widgetDest.addClass('leftRailSectionStatusHost');
-	SectionStatusBuilder.createWidget(widgetDest, tableID, 'leftRail', 'vertical');
 
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
@@ -198,11 +197,17 @@ export function buildNoteTable(options) {
 		var td1 = $("<td class='tdLeftRailStack'>");
 			let leftRailStack = $("<div class='leftRailStack'>");
 			let leftRailCaptionHost = $("<div class='leftRailCaptionHost'>");
+			leftRailCaptionHost.addClass('ssCaptionWrapper');
 			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
+			fretTableLeftCaption.addClass('SectionStatus_captionRoleTarget');
+			fretTableLeftCaption.attr('data-tablename', tableID);
 			fretTableLeftCaption.html(options.baseID);
 			leftRailCaptionHost.append(fretTableLeftCaption);
-			leftRailStack.append(widgetDest);
+			SectionStatusBuilder.createWidget(widgetDest, tableID, 'leftRail', 'vertical', {
+				roleClassTargets: [fretTableLeftCaption]
+			});
 			leftRailStack.append(leftRailCaptionHost);
+			leftRailStack.append(widgetDest);
 			td1.append(leftRailStack);
 			row.append(td1);
 		var td3 = $("<td>");
@@ -224,7 +229,8 @@ function buildCaptionRow(options, tableID) {
 	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
 	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
-	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionMark subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side Section info'>S</button>";
+	var hamburgerCaptionLooperLayout = "<button id='btnHamburgerCaptionLooperLayout" + options.baseID + "' class='toggleCaptionLooperLayout subcaptionButton' type='button' data-tableid='" + tableID + "' title='Toggle Instrument Caption / LooperLight layout'>&#x21CB;</button>";
+	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionStatus subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side Section info'>S</button>";
 	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
 	var hamburgerNoteDetails = "<button id='hamburgerNoteDetails" + options.baseID + "' class='showNoteDetails subcaptionButton' type='button' >N<small>ote</small></button>";
 	var hamburgerTonalDetails = "<button id='hamburgerTonalDetails" + options.baseID + "' class='showTonalDetails subcaptionButton' type='button' >T<small>onal</small></button>";
@@ -235,7 +241,7 @@ function buildCaptionRow(options, tableID) {
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = "<span class='tuningBaseIDCaption'>" + options.caption + ':</span>';
-	var tuningIDCaption = '<span>' + options.baseID + ':</span>';
+	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
 	var tuningIDnStrings = '<span>' + options.nStrings + '-string:</span>';
 	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
 
@@ -249,15 +255,13 @@ function buildCaptionRow(options, tableID) {
 	let spanCaptionRowLiveInfo = $('<span>');
 	spanCaptionRowLiveInfo.attr('id', tableID + '_captionRowLiveInfo');
 	spanCaptionRowLiveInfo.addClass('captionRowLiveInfo');
-
-	SectionStatusBuilder.createWidget(spanCaptionRowLiveInfo, tableID, 'captionRow', 'horizontal');
 	
 		
 	const TDTD = "</td><td>";
 
 	captionRow.html(
 		hamburger 
-		+ '<span class="captionRowInstrument">'
+		+ '<span class="captionRowInstrument ssCaptionWrapper">'
 		+ tuningIDCaption
 		+ '</span>'
 		+ '<span class="subcaption">'
@@ -266,6 +270,7 @@ function buildCaptionRow(options, tableID) {
 		+ hamburgerCaptionRowButtons
 		+ '<span class="captionRowButtons">'
 		+ hamburgerLeftCaption
+		+ hamburgerCaptionLooperLayout
 		+ hamburgerLeftSectionMark 
 		+ hamburgerColorDict
 		+ btnShowWiring
@@ -301,6 +306,9 @@ function buildCaptionRow(options, tableID) {
 		+'</td></tr></table>' //end table captionRowTable
 		+ '</span>' //end span subcaption
 	);
+	SectionStatusBuilder.createWidget(spanCaptionRowLiveInfo, tableID, 'captionRow', 'horizontal', {
+		roleClassTargets: captionRow.find('.SectionStatus_captionRoleTarget')
+	});
 	captionRow.append(spanCaptionRowLiveInfo);
 	captionRow.append($("<div class='currentColorDict''></div>"));
 	return captionRow;

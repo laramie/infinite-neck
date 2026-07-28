@@ -87,10 +87,9 @@ const tuningSchema = {
         frets: { type: 'integer', minimum: 0 },
         nut: { type: 'boolean' },
         reverse: { type: 'boolean' },
-        visible: { type: 'boolean' },
         fromBaseID: { type: 'string', minLength: 1 }
     },
-    required: ['baseID', 'baseInstrument', 'caption', 'nStrings', 'rowRange', 'frets', 'nut', 'reverse', 'visible'],
+    required: ['baseID', 'baseInstrument', 'caption', 'nStrings', 'rowRange', 'frets', 'nut', 'reverse'],
     additionalProperties: true
 };
 
@@ -204,6 +203,40 @@ const sectionSchema = {
     additionalProperties: true
 };
 
+const tutorialLevelSchema = { type: 'string', enum: ['none', 'strict', 'wizard'] };
+
+const sectionTutorialSchema = {
+    type: 'object',
+    properties: {
+        caption: { type: 'string' },
+        prompt: {
+            type: 'object',
+            properties: {
+                lines: {
+                    type: 'array',
+                    items: { type: 'string' }
+                }
+            },
+            required: ['lines'],
+            additionalProperties: false
+        }
+    },
+    additionalProperties: false
+};
+
+sectionSchema.properties.tutorial = sectionTutorialSchema;
+
+const songTutorialSchema = {
+    type: 'object',
+    properties: {
+        level: tutorialLevelSchema,
+        caption: { type: 'string' },
+        storageKey: { type: 'string' }
+    },
+    required: ['level'],
+    additionalProperties: false
+};
+
 const pluginSchema = {
     type: 'object',
     properties: {
@@ -260,6 +293,30 @@ const noteTableLayoutEntrySchema = {
     additionalProperties: false
 };
 
+const macroSchema = {
+    type: 'object',
+    properties: {
+        lines: {
+            type: 'array',
+            items: { type: 'string' }
+        }
+    },
+    required: ['lines'],
+    additionalProperties: true
+};
+
+const infoLinesSchema = {
+    type: 'object',
+    properties: {
+        lines: {
+            type: 'array',
+            items: { type: 'string' }
+        }
+    },
+    required: ['lines'],
+    additionalProperties: false
+};
+
 export const songFileV2Schema = {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     type: 'object',
@@ -270,6 +327,7 @@ export const songFileV2Schema = {
         chartOptions: chartOptionsSchema,
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
+        allowThemeAutomation: { type: 'boolean' },
         pluginFiringOrder: {
             type: 'array',
             items: { type: 'string', minLength: 1 }
@@ -284,6 +342,13 @@ export const songFileV2Schema = {
         },
         songName: { type: 'string', minLength: 1 },
         theme: { type: 'string', minLength: 1 },
+        info: {
+            anyOf: [
+                { type: 'string' },
+                infoLinesSchema
+            ]
+        },
+        tutorial: songTutorialSchema,
         userTheme: {
             anyOf: [
                 { type: 'string' },
@@ -308,10 +373,6 @@ export const songFileV2Schema = {
                 { type: 'null' }
             ]
         },
-        visibleNoteTables: {
-            type: 'array',
-            items: { type: 'string', minLength: 1 }
-        },
         noteTablesLayout: {
             type: 'array',
             items: noteTableLayoutEntrySchema
@@ -323,6 +384,11 @@ export const songFileV2Schema = {
         plugins: {
             type: 'object',
             additionalProperties: pluginSchema
+        },
+        macros: {
+            type: 'object',
+            propertyNames: { pattern: '^[A-Za-z][A-Za-z0-9_-]*$' },
+            additionalProperties: macroSchema
         },
         graveyard: {
             type: 'object',
