@@ -21,9 +21,17 @@ But Version 2 of the app includes much more:
 
 We want to make sure all these are working together, and are bug-free.  We want the command-line menu to smoothly drive the existing Version 1 features, as well as the new features, and especially the command-line-driven Plugins.  The plugins have had many sprints dedicated to completing their features, and ensuring consistency between them.
 
-The sprints toward this effort are documented here, as well as sprints planned but not started or complete.
+After many of these sprints were complete, we rewrote the song library, and extended it greatly with demos, practice songs, drills such as name-that-note, and tutorial support.  
 
-# Sprints with App Version 2 features
+Along the way we installed a Macro feature, so that songs and tutorials can hide advanced features behind links and buttons that can be shown to the User in the new Song Info page, and Tutorial Prompts.   
+
+With the Macros and the Instrument Badges, the songs can cover multiple instruments, tunings, and plugin settings, thus controlling the explosion of duplicate songs for each instrument. 
+
+The tutorials are designed to hide most of the features of authoring songs in infinite-neck, and just walk the User through songs with Sections and Tutorial Prompts geared towards practice and learning.
+
+The sprints toward this effort are documented here.
+
+## Sprints with App Version 2 features
 
 - [sprint-100-my-tunings](../design/myTunings/sprint-100-my-tunings.md)
   - Split tuning management into shared allTunings and user-specific myTunings with a dedicated My Tunings view.
@@ -167,17 +175,19 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 - [sprint-132-plugin-order](../design/sprints/132-plugin-order/sprint-132.md)
 
+## Sprints for Version 2 User Entrypoint: Library of Songs, Tutorials, Supporting Features
+
 - [sprint-133-name-that-note](../design/sprints/133-name-that-note/sprint-133.md)
 
 - [sprint-134-song-library](../design/sprints/134-song-library/sprint-134.md)
   - Create an accordion list for all songs on File menu page, with categories (demo, practice,...)
   - Add features so that `songs/song-list.json` drives this list, with descriptions and directory info.
 
-[sprint-135-plugin-audit](../design/sprints/135-plugin-audit/sprint-135.md)
+- [sprint-135-plugin-audit](../design/sprints/135-plugin-audit/sprint-135.md)
 
-[sprint-136-chart-input](../design/sprints/136-chart-input/sprint-136.md)
+- [sprint-136-chart-input](../design/sprints/136-chart-input/sprint-136.md)
 
-- 902-song-import
+- sprint-902-song-import
   - Notes/Sections
   - Color schemes
   - User Themes
@@ -185,7 +195,7 @@ The sprints toward this effort are documented here, as well as sprints planned b
   - Be clear about which things in old and new song hang around
   - IMPLEMENTED.  Mostly in sprint-122, I think.
 
-- 903-timing-caching
+- [sprint-903-timing-caching](../design/sprints/903-timing-caching/sprint-903.md)
   - [903-timing-caching design chat](../design/sprints/903-timing-caching/903-design-chat.md)
   - Figure out how to get rid of loop hiccup on first beat
   - Investigate paint/rebuild optimization
@@ -195,9 +205,18 @@ The sprints toward this effort are documented here, as well as sprints planned b
     - const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
 	  - const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
 
-[sprint-137-macros](../design/sprints/137-macros/sprint-137.md)  
+- [sprint-137-macros](../design/sprints/137-macros/sprint-137.md)  
 
-[sprint-138-tutorial-mode](../design/sprints/138-tutorial-mode/sprint-138.md)
+- [sprint-138-tutorial-mode](../design/sprints/138-tutorial-mode/sprint-138.md)
+  - At the end of sprint-138, we have one tutorial working with all features: [L001-one-string-intro/L001-1.json](../../songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)      
+
+
+
+<br>
+<br>
+<br>
+
+----
 
 # Future Sprints Unscheduled 
 
@@ -205,10 +224,15 @@ The sprints toward this effort are documented here, as well as sprints planned b
 
 
     
-#### Heisenbug tonalResultSet "Tiny"
+- Heisenbug tonalResultSet "Tiny"
+  - In Chart Notes, you can select tonalResultSet of "Tiny". This informs the notes sent to Tonal.js to detect chords and modes in TonalFunctions.js::getTonalForTable().  However, we have seen NamedNotes leak into that set, so the chord detection is not based purely on TinyNotes, as the tonalSourceSet and the dropdown .tonalSourceSelect would have the User believe.  We need to keep an eye out for this case popping up again.
 
-- In Chart Notes, you can select tonalResultSet of "Tiny". This informs the notes sent to Tonal.js to detect chords and modes in TonalFunctions.js::getTonalForTable().  However, we have seen NamedNotes leak into that set, so the chord detection is not based purely on TinyNotes, as the tonalSourceSet and the dropdown .tonalSourceSelect would have the User believe.  We need to keep an eye out for this case popping up again.
 
+<br>
+<br>
+<br>
+
+----
 
 # Sprint Planning Rules
 
