@@ -10,11 +10,6 @@ import {
 import { parseAppActionFragment } from './app-action-fragment.js';
 import {
 	chuseStylesheet,
-	deleteUserStylesheet,
-	showColorPicker,
-	showHatchPicker,
-	colorPickerClicked,
-	hatchPickerClicked,
 	applyStylesheetsTo_gUserColorDict,
 	buildColorDicts,
 	buildUserColors,
@@ -60,9 +55,7 @@ import { createChartInputController } from './ChartInput.js';
 import {
 	beatsLooping,
 	restartLoopSections,
-	sectionsLooping,
-	toggleLoopBeats,
-	toggleLoopSections
+	sectionsLooping
 } from './looper.js';
 import './menu.js';
 import {
@@ -71,13 +64,11 @@ import {
 	clearAll,
 	clearHighlights,
 	colorNote,
-	colorSingleNotes,
 	fillChord,
 	highlightOneNote,
 	replay,
 	setNotetableProviders,
 	showHighlightsForBeat,
-	showMidiNotesInTable,
 	fullRepaint
 } from './NoteTableController.js';
 import * as NoteTableRenderCache from './NoteTableRenderCache.js';
@@ -160,16 +151,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 }
 
 	
-	const SHARP = "&#9839;";
-	const FLAT = "&#9837;";
-	const NATURAL = "&nbsp;";
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
 	const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
 	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
 
-	const gBEND_CLASSES = "semitone1 semitone2 semitone3 prebend1 prebend2 prebend3 updown1 updown2 updown3"
-						  +" semitone1LH semitone2LH semitone3LH prebend1LH prebend2LH prebend3LH updown1LH updown2LH updown3LH";
 
 	// Section Index (high-level)
 	// 1) Core providers and accessors
@@ -333,8 +319,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		setKeyHandlerProviders({
 			addBeat,
-			checkRB,
-			clearAndReplaySection,
 			cycleThruKeys,
 			cycleThruNutWidths: (...args) => cycleThruNutWidths(...args),
 			downloadBackupThenClearGraveyard,
@@ -363,11 +347,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			printSectionsOptions,
 			printSectionsChart,
 			printSectionsLine,
-			resetNoteNames,
 			sectionChanged,
 			setPresentationMode,
 			setTutorialMode,
-			setBPM,
 			setNamedNoteOpacity,
 			setSingleNoteOpacity,
 			setTinyNoteOpacity,

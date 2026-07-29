@@ -14,13 +14,7 @@ import {
 	updateCmdLineView
 } from './command-line.js';
 import {
-	displayOptionsTable
-} from './display-options.js';
-import {
-	beatsLooping,
 	sectionsLooping,
-	restartLoopSections,
-	toggleLoopBeats,
 	toggleLoopSections,
 	clearBeatAndSectionLooping
 } from './looper.js';
@@ -113,8 +107,6 @@ function requireProvider(name) {
 }
 
 function addBeat(...args) { return requireProvider('addBeat')(...args); }
-function checkRB(...args) { return requireProvider('checkRB')(...args); }
-function clearAndReplaySection(...args) { return requireProvider('clearAndReplaySection')(...args); }
 function cycleThruKeys(...args) { return requireProvider('cycleThruKeys')(...args); }
 function cycleThruNutWidths(...args) { return requireProvider('cycleThruNutWidths')(...args); }
 function downloadBackupThenClearGraveyard(...args) { return requireProvider('downloadBackupThenClearGraveyard')(...args); }
@@ -143,11 +135,9 @@ function printSectionsNotes(...args) { return requireProvider('printSectionsNote
 function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
 function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
 function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
-function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
 function setTutorialMode(...args) { return requireProvider('setTutorialMode')(...args); }
-function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
@@ -532,7 +522,7 @@ function document_keypress(e) {
                 clearCmdResults();
                 showCmdLine();
                 var menu = gMenuPointer;
-                var childCaptions = buildChildMenuCaptionsRow(menu);
+                buildChildMenuCaptionsRow(menu);
                 updateCmdLineView();
                 e.preventDefault();
                 break;
@@ -1070,7 +1060,6 @@ export function performCmdAction(menuItem, args){
 			clearBeatAndSectionLooping();
 			actionResult.result = "Looping Stopped";
 			break;
-		case "toggleLoopBeats":
 		case "toggleLoopSections":
 			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;
@@ -1347,7 +1336,6 @@ export function performCmdAction(menuItem, args){
             break;
         case "showViewDiagnosticsDisplayOptions":
             showDisplayOptions();
-			//showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
 		case "showViewDiagnosticsVariables":
