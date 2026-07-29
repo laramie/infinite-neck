@@ -515,7 +515,7 @@ function document_keypress(e) {
     if ( tag != 'input' && tag != 'textarea'){
 		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
 				
-		if (strictTutorial && (!['n', 'b', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L'].includes(e.key))){
+		if (strictTutorial && (!['n', 'b', 'B', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L','-','=','_','+',')'].includes(e.key))){
 			return;
 		}
         switch (e.key){
@@ -1176,6 +1176,12 @@ export function performCmdAction(menuItem, args){
 			const macroResult = runSongMacroById(macroId);
 			actionResult.result = macroResult.ok ? `ran ${macroId}` : macroResult.error;
 			actionResult.suppressBang = !macroResult.ok;
+			break;
+		}
+		case "macroListAll": {
+			const list = getSongMacroIds(getSong());
+			showMessages(list.join("<br>"));
+			actionResult.result ="listed macros";
 			break;
 		}
 		case "macroQueueDeleteById": {

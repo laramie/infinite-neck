@@ -480,6 +480,13 @@ export var gMenuFile =    {
               "runtimeChildren": "macroMoveNumber"
             },
             {
+               "name": "macroList",
+               "caption": "<b>l</b>ist all",
+               "trigger": "l",
+               "action": "macroListAll",
+               "popOnBang": false
+            },
+            {
               "name": "macroRun",
               "caption": "<b>r</b>un",
               "trigger": "r",
