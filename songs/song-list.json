@@ -399,6 +399,27 @@
       ]
     },
     {
+      "href": "theory/double-blues-scale.json",
+      "description": "double blues scale with major and minor pentatonic as explained by https://www.youtube.com/watch?v=OWt96jktlww",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "US6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
       "description": "One-string Intro",
       "instruments": [
@@ -407,9 +428,7 @@
           "wiring": "Main",
           "visible": true
         }
-      ],
-      "tutorial": "strict",
-      "SectionCount": 4
+      ]
     }
   ],
   "directoryIntros": [
