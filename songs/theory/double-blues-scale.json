@@ -133,11 +133,15 @@
   "captionsRowShowing": false,
   "defaultBPM": "80",
   "info": {
-    "lines": []
+    "lines": [
+      "<p>This guy: https://www.youtube.com/watch?v=OWt96jktlww explains how there is a \"double blues scale\" that incorporates the major and minor pentatonics and both their blue notes.</p>",
+      "",
+      "<p>You can see that he has an A minor pentatonic with its D# flat-5 blue note, plus a C major pentatonic with its D# (Eb) flat-3 blue note.</p>"
+    ]
   },
   "namedNoteOpacity": "1",
   "openInfo": "none",
-  "presentationMode": false,
+  "presentationMode": true,
   "allowThemeAutomation": false,
   "pluginFiringOrder": [
     "t",
@@ -185,14 +189,6 @@
           "tonalSourceSet": "",
           "playedNotes": [
             {
-              "noteName": "A",
-              "styleNum": 2,
-              "midinum": "45",
-              "row": "5",
-              "col": "5",
-              "colorClass": "notePassing"
-            },
-            {
               "noteName": "B",
               "styleNum": 2,
               "midinum": "47",
@@ -213,14 +209,6 @@
               "styleNum": 2,
               "midinum": "52",
               "row": "4",
-              "col": "7",
-              "colorClass": "notePassing"
-            },
-            {
-              "noteName": "A",
-              "styleNum": 2,
-              "midinum": "57",
-              "row": "3",
               "col": "7",
               "colorClass": "notePassing"
             },
@@ -261,14 +249,6 @@
               "styleNum": 2,
               "midinum": "64",
               "row": "1",
-              "col": "4",
-              "colorClass": "notePassing"
-            },
-            {
-              "noteName": "A",
-              "styleNum": 2,
-              "midinum": "69",
-              "row": "0",
               "col": "4",
               "colorClass": "notePassing"
             },
@@ -351,6 +331,30 @@
               "row": "4",
               "col": "6",
               "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "5",
+              "col": "5",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "0",
+              "col": "4",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "3",
+              "col": "7",
+              "colorClass": "noteRoot"
             }
           ]
         },
@@ -541,7 +545,52 @@
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 1,
-      "sharps": true
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "160x30:22",
+          "width": "160px",
+          "height": "30px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     }
   ],
   "wirings": [
