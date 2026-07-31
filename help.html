@@ -1974,8 +1974,9 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; code/preformatted text,
     <br>&nbsp;&nbsp;&check;&nbsp;&nbsp; and simple tables.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; Scripts, links, forms, images, styles, and other active or external content are stripped out.
-    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>EXCEPT</b>: links to URI fragments (#...) are allowed, because they jump to actions within <span class='productsmaller'>infinite-neck</span>.  See superlinks below.
-    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special tags</b>: &lt;kbd&gt; will create a formatted command-line keyboard examples, and &lt;i&gt;  and &lt;b&gt; within that create prompts and triggers.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>EXCEPT</b>: links to URI fragments (#...) are allowed, because they jump to actions within <span class='productsmaller'>infinite-neck</span>.  In other words, links to <b>raise=</b> and <b>macro=</b> and superlinks...see superlinks below.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>links as buttons</b>: If a link is allowed (because it is a link to a URI fragment such as "#macro=macro1") then you can also put it in a <b>&lt;u&gt;</b> tag and it will be styled as a button. See example below.
+    <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special tags</b>: <b>&lt;kbd&gt;</b> will create a formatted command-line keyboard examples, and <b>&lt;i&gt;</b>  and <b>&lt;b&gt;</b> within that create prompts and triggers.
     <br>&nbsp;&nbsp;&dot;&nbsp;&nbsp; <b>Special expansions</b>: Any variable in <span class="menuExampleLine"><b>/vdv</b></span> can be pasted into the <b>Edit</b> area and will expand in the <b>Info</b> area, reflecting values from the Song and Current Section.
     <ul>
         <li>${songInstrumentBadges} - this expands to the <a href="#glossaryRoleBadges"></a>Roles</a> the Instruments play in this Song.</li>
@@ -1991,8 +1992,94 @@ do Copy/Paste how you might think it does, for example (it uses the ClipPlugin, 
     Example of  <b>${songInstrumentTable}</b>
     <br>
     <br>
-    <table class="ExamplesTable songInstrumentTable"><tbody><tr><th>Role</th><th>ID</th></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_back</td></tr><tr><td><span class="songLibraryInstrument instrumentMain">S6</span></td><td>S6_lead</td></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_forward</td></tr><tr><td><span class="songLibraryInstrument instrumentListener">P46</span></td><td>P46_1</td></tr></tbody></table>
+    <table style="margin-left: 8em;" class="ExamplesTable songInstrumentTable"><tbody><tr><th>Role</th><th>ID</th></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_back</td></tr><tr><td><span class="songLibraryInstrument instrumentMain">S6</span></td><td>S6_lead</td></tr><tr><td><span class="songLibraryInstrument instrumentObserver">S6</span></td><td>S6_forward</td></tr><tr><td><span class="songLibraryInstrument instrumentListener">P46</span></td><td>P46_1</td></tr></tbody></table>
 </p>
+<p>
+  Example of  <b>Link as Button</b> :
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;(This works for any allowed <b>A</b> tag within a <b>U</b> tag inside the <b>Info</b> html. <i>This combo was chosen because you would never put an anchor inside an underline tag otherwise.</i>)
+  <br>
+  <style>
+        .infoRendered u a {
+            display: inline-block;
+            margin: 0.15em 0.2em;
+            padding: 0.15em 0.45em;
+            border: 1px solid rgb(31, 0, 170);
+            border-radius: 0.35em;
+            background: white;
+            color: rgb(31, 0, 170);
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 4px 6px black;
+            transition: all 0.1s ease;
+        }
+
+        .infoRendered u a:hover {
+            background-color: #67aefb;
+            box-shadow: 0 6px 8px black;
+            transform: translateY(-1px);
+        }
+
+        .infoRendered u a:active {
+            background-color: #67aefb;
+            box-shadow: 0 1px 2px black;
+            transform: translateY(2px);
+        }
+  </style>
+  <pre style="border: 1px solid green; margin-left: 8em; width: 80%;">
+    &lt;u>&lt;a href="#macro=themeJapan">Theme: Big in Japan&lt;/a>&lt;/u>
+    &lt;u>&lt;a href="#macro=themePool">Theme: Everyone into the Pool&lt;/a>&lt;/u></pre>
+
+  <div style="margin-left: 8em;" class="infoRendered">
+    <u><a href="#macro=themeJapan">Theme: Big in Japan</a></u> 
+    <u><a href="#macro=themePool">Theme: Everyone into the Pool</a></u>
+  </div>
+</p>
+<p>
+  &nbsp;&nbsp;&nbsp;&nbsp;When clicked, the button links invoke the macros, which we would need to define in the Song with <span class="menuExampleLine"><b>/fm</b></span>.  The buttons would still render without the macros working, though.
+  <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>macro:</b>"themeJapan"
+  <br>
+  <pre style="border: 1px solid green; margin-left: 8em; width: 80%;">
+  /ei "BiginJapan"</pre>
+  </p>
+  <p>
+  <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>macro:</b>"themePool"
+  <br>
+  <pre style="border: 1px solid green; margin-left: 8em; width: 80%;">
+  /ei "EveryoneintothePool"</pre>
+
+
+</p>
+
+<p>When putting links in Info, you can also group your links in a table, and if you provide a <b>&lt;caption></b> for your table, it will render nicely: 
+<pre  style="border: 1px solid green; margin-left: 8em; width: 80%;">
+    &lt;table>
+    &lt;caption>Choose Instrument:&lt;/caption>
+    &lt;tbody>
+    &lt;tr>
+        &lt;td>&lt;a href="#macro=S6">S6&lt;/a>&lt;/td>
+        &lt;td>&lt;a href="#macro=DropD">DropD&lt;/a>&lt;/td>
+        &lt;td>&lt;a href="#macro=P46">P46&lt;/a>&lt;/td>
+        &lt;td>&lt;a href="#macro=P48">P48&lt;/a>&lt;/td>
+    &lt;/tr>
+    &lt;/tbody>
+    &lt;/table>
+</pre>
+</p>
+
+<div style="margin-left: 8em;" class="infoRendered">
+<table>
+<caption>Choose Instrument:</caption>
+<tbody>
+<tr>
+    <td><a href="#macro=S6">S6</a></td>
+    <td><a href="#macro=DropD">DropD</a></td>
+    <td><a href="#macro=P46">P46</a></td>
+    <td><a href="#macro=P48">P48</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 
 <br>
 <p>The <b>show on open</b> selector has three meanings:

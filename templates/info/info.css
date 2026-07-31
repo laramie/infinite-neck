@@ -228,6 +228,32 @@
     color: rgb(40, 110, 2);
 }
 
+.infoRendered u a {
+    display: inline-block;
+    margin: 0.15em 0.2em;
+    padding: 0.15em 0.45em;
+    border: 1px solid rgb(31, 0, 170);
+    border-radius: 0.35em;
+    background: white;
+    color: rgb(31, 0, 170);
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 4px 6px black;
+    transition: all 0.1s ease;
+}
+
+.infoRendered u a:hover {
+  background-color: #67aefb;
+  box-shadow: 0 6px 8px black;
+  transform: translateY(-1px);
+}
+
+.infoRendered u a:active {
+  background-color: #67aefb;
+  box-shadow: 0 1px 2px black;
+  transform: translateY(2px);
+}
+
 .infoEditControls {
     display: flex;
     align-items: center;
