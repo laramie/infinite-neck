@@ -31,10 +31,13 @@ export function buildLessonSectionListModel({
     const visibleInclude = new Set(normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes));
     return Array.from({ length: sectionCount }, (_, index) => {
         const tutorial = getSectionTutorial(song, index);
+        let theSectionCaption = song?.tutorial?.useCaptionForSectionCaption 
+            ? song.getSections()[index].caption
+            : typeof tutorial.caption === 'string' ? tutorial.caption : '';
         return {
             sectionIndex: index,
             sectionNumber: index + 1,
-            caption: typeof tutorial.caption === 'string' ? tutorial.caption : '',
+            caption: theSectionCaption,
             current: index === currentSectionIndex,
             done: isSectionDone(progress, index),
             bookmarked: progress?.bookmarkSectionIndex === index,
@@ -84,12 +87,16 @@ export function buildTutorialPromptModel({
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
     const sectionCount = normalizeSectionCount(song);
+    let theSectionCaption = typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '';
+    if (song?.tutorial?.useCaptionForSectionCaption) {
+        theSectionCaption = song?.getCurrentSection().caption;
+    }
     return {
         mode,
         strict: mode === TUTORIAL_MODES.STRICT,
         wizard: mode === TUTORIAL_MODES.WIZARD,
         songCaption: typeof song?.tutorial?.caption === 'string' ? song.tutorial.caption : '',
-        sectionCaption: typeof sectionTutorial.caption === 'string' ? sectionTutorial.caption : '',
+        sectionCaption: theSectionCaption,
         currentSectionIndex,
         currentSectionNumber: currentSectionIndex + 1,
         sectionCount,
@@ -136,14 +143,21 @@ export function renderTutorialPrompt(model = {}) {
     const modeClass = model.strict ? 'tutorialPrompt--strict' : 'tutorialPrompt--wizard';
     const lessonList = model.strict && model.lessonSectionListOpen ? renderLessonSectionList(model.lessonSections) : '';
     
+    const tutorialPromptContentDiv = (model.promptHtml)
+            ?   `<div class="tutorialPromptContent">${model.promptHtml}</div>`
+            :  '';
+    const hamburger = `<button class="tutorialWidgetRowHamburger" type="button" onclick="$('#tutorialPromptBurgerControls').toggle()">&equiv;</button>`;        
     return `<div id="tutorialPrompt" class="tutorialPrompt ${modeClass}">`
+            + '<span id="tutorialPromptBurgerControls">'
             + sectionToggle 
             + lessonList
             + tutorialPromptWidgetRow
-            + '<div class="tutorialPromptHeader">'
+            + '</span>'
+            + '<span class="tutorialPromptHeader">'
+            +   hamburger
             +   sectionCurr+`<span class="tutorialPromptCaption">${escapeHtml(model.sectionCaption || model.songCaption)}</span>`
-            + '</div>'
-            + `<div class="tutorialPromptContent">${model.promptHtml}</div>`
+            + '</span>'
+            + tutorialPromptContentDiv
          + '</div>';
 }
 

@@ -1,5 +1,101 @@
 # ChangeLog
 
+### 20260803
+
+Tag: v2.1-beta-9
+
+- 1439db3 **2026-08-03** added supersong-C
+- 85305f3 **2026-08-02** added superson
+- cecdc84 **2026-07-31** Added css rule for `.infoRendered u a` which creates pseudo buttons.  Added this to help.
+- 4637792 **2026-07-30** updated double-blues-scale.json song
+- 22409c0 **2026-07-30** added double-blues-scale.json song
+- 612aa6d **2026-07-28** Added key::leadKey to LeadSheet detail line display, similar to other Bar Style displays.  You can turn it off (with the beat counts) by turning off "Show section detail line". No real reason to split it out from beat counts.  Did not add to LeadSheetLine.
+- 2f5d67a **2026-07-28** Made keymap entry smaller
+- 10f9de4 **2026-07-28** Fingerings regression is on much older version on server, so not in last commit. Fixed helpfile un-closed i tag.
+- aecb3ad **2026-07-28** Removed imports and providers that VSCode said were not being used.  Did basic testing to see if things still worked.  Only thing funny is that /pf setting of fingerings doesn't check the Fingerings radio button, which seeems like a regression because I think we fixed this already--TODO.
+- 2dffb77 **2026-07-28** Added Beat Looping keyboard shortcut to allowed keys in tutorial strict, also -,=,_,+, and ) for resizing fonts. Added menu /fml to list all macros (macroListAll) to showMessages because once you have more than 9 macros, you can't run, edit, etc. them by number, just ID.  So you can get the list of IDs by /fml. Added macros to test LeadSheet and LeadSheetLine to L001-1.json tutorial.
+- 870d6bb **2026-07-28** Cleaned up help and added help around keyboard shortcuts (beat looping, stop looping), new transport image, updated transport actions table. Fixed keyboard shortcut span radii.
+- 177cf34 **2026-07-28** simplified to just one menu item to hide charts, does the right thing in fullscreen and normal, since you can't show both LeadSheet and LeadSheetLine. Added Legend and coloring in keymap help. Added B keymap  to toggleLoopBeats(). Added N keymap (New Beat) to addBeat()
+- 9612640 **2026-07-27** Updated sprint documents
+- af236dd **2026-07-27** Added feature required by sprint-138-tutorial-mode to have fullscreen Chart in addition to existing fullscreen LeadSheetLine.  They are exclusive, in that in fullscreen or strict tutorial, only Chart or LeadSheetLine may be seen at one time only related to fullscreen.  And the choice of showing either is unrelated to non-fullscreen normal mode.  They are persistent at run-time in each of these modes.
+- 420445a **2026-07-27** Added help for keyboard E (toggle left rail)
+- e0e086a **2026-07-27** Added quick-n-dirty toggle to left rail with SHIFT+E.  Sync is a bit funny when you have instruments out of sync with toggle. Added scales-major practice song.
+- 8bd5f0e **2026-07-27** Added hand entity for sharps/flats to plugin allowed value so it can be chosen, and so that it can be absent for key of C with no sharps/flats.
+- bc79c2f **2026-07-27** tonalChartModeNotes to enharmonicTransposedModeNotes because it hints that you'll get double-flats, which happens, e.g. in Bbb in Db minor.  Also that you'll get a Cb in Ab minor.
+- a123d69 **2026-07-27** Added small to flats in getApprovedCaptionValue.  Added scales-major-minor.json which uses this.
+- 5ace326 **2026-07-27** Taught TonalPlugin show transposed notes in correct sharps/flats.  To do this, I moved  ChartInput.getPreferredRootName to call  Constants.getPreferredRootName. approved-values now has tonalChartModeNotes, in addition to recently added tonalTransposedModeNotes.
+- c72c06f **2026-07-26** Added getApprovedCaptionValue() with "tonalTransposedModeNotes" to TonalPlugin which dumps out the note names in the mode of the current Section when used in the Caption.
+- 78663a5 **2026-07-25** Added param  to hideAllMenuDivs(openingSong) so that we can hide divs without triggering mid-song-load persistence of non-existent info or openInfo.
+- cb99dd4 **2026-07-25** Fixed bug where FillPlugin was not respecting the key of the Section but using the key embedded in the chart chord and mode when "automatic from chart" was true.
+- 9f2c15f **2026-07-25** Added more space below left caption.
+- 7eb39ef **2026-07-23** Fixed tests for Tutorial layout changes, and added function in Themes.
+- 97aa362 **2026-07-23** Added 'Allow Theme Automation' checkbox and display of values to View, and its stored 'sectionTheme' variable in Song, schema, and DisplayOptions. Added collapsing of menus and hiding of command-line when a file or URL is opened, including tutorial links.  This especially hides the Song Library when you click on a song.
+- 8c2c013 **2026-07-23** td without class snuck in and corrupted all td's.
+- a776a5d **2026-07-23** Fixed left rail caption/section-status widget side-by-side versus vertical.  Removed Cody error of flipping the CaptionRow versions. Fixed %2F instead of / in URLs. Added themes by id to menu for macros. Tweaked tutorial layout (added arrow for section toggle). Added dump theme ids to menu. Added show/hide for left rail widgets to menu. Mostly fixed no-drop for tutorial cells, but some nav actions replace it with regular hand, but cells are still locked to KEEP anyway. Made Instrument Captions have background colors for Observer and Listener--mostly black but subtly green and blue.  Regular is pure black now.
+- 5fb381b **2026-07-22** Updated lockKeep in presentation.js and infinite-neck.js so that if tutorial.mode==strict, then keep button stays selected across navigation actions.
+- 95039c7 **2026-07-22** Keep, keyboard shortcut filtering, and chrome removal and reset are now working via resetTutorialChrome().
+- ab8b393 **2026-07-21** Sprint 138 basically working.  Looping tutorial buttons aren't getting all the broadcasts, so they lose captions when the section rebuilds the tutorial prompt area.  Chrome not removed, keyboard shortcuts not removed.  No splash screen.
+- 8a11334 **2026-07-18** Ready for Iteration 4 Implementation
+- 1203801 **2026-07-17** Preparing for Iteration 4.  Tutorial Song in place.
+- 815ebaf **2026-07-17** Building tutorials
+- f61d852 **2026-07-17** Fixed bug where Fingering didn't respect font size when a recordedNote, and no Fingerings were respecting hides, per comment, which Cody fixed.
+- afcb093 **2026-07-17** Building tutorials
+- 1594219 **2026-07-17** Added one-string guitar
+- ba8e7b1 **2026-07-17** fixed bad link
+- f4b4e3d **2026-07-16** Putting stub prompts files in for the course outline songs.
+- ba7fa37 **2026-07-16** working on it4
+- 4fb4c21 **2026-07-15** Ready for It3
+- 4566225 **2026-07-14** got rid of splash animation
+- 912a97c **2026-07-14** 138 it2 implementation plan done
+- df685d4 **2026-07-13** Ready for It2
+- 971e5f7 **2026-07-13** Ready for Iteration 2
+- 4166bcf **2026-07-11** Preparing for sprint-138-tutorial-mode; one small change to key-handlers to add AddBeat.
+- 535aaa9 **2026-07-10** Added tonal plugin actions: prinnt chord, print mode.
+- 66a7886 **2026-07-10** Added note1 to root in addition to already having noteRoot
+- d400fa3 **2026-07-09** Fixing FillPlugin
+- 24bf56a **2026-07-08** Added song to show natural minor against ebony/ivory
+- 16326a5 **2026-07-07** Brought Info into update with "lines"
+- 75593e6 **2026-07-07** Fixed Info in both songs
+- d6c2ccf **2026-07-07** switched from <menu> to <cmd-line>
+- 5378f70 **2026-07-07** Added helpfile link to songs Info page.  Changed kbd to menu.
+- aa5ef43 **2026-07-07** Swapped <kbd> and <menu> in Info editing.  Added more song library help notes.
+- 95f23d6 **2026-07-06** updated Info
+- b8b339e **2026-07-06** Added song library instructions to help, and updated LooperLight images.
+- 2a9c27c **2026-07-06** Help for fragments updated
+- 8786185 **2026-07-06** added URL parameter handling, and sanitizer allowance of, opening a song by URL, and pasting a song like like this in Info.
+- 456874b **2026-07-06** Updated all to 60BPM, all these now have Info.lines[] array instead of single line.
+- f041bd2 **2026-07-06** Changed Info to be array of string lines instead of one string with linefeed chars.
+- 0ee099b **2026-07-05** Condenscing songs into multi-instrument flavors with macros to turn instruments on and show them, and wire to plugins.  Moved single-instrument versions to _trash for now.
+- 9b703eb **2026-07-05** Cleaned of old notes, Cleared, Reset.
+- 7cfd6ea **2026-07-05** wired new /fptgri into key-handlers.js, fixed pantatonics song to actually use this new command in a macro for P48 only.
+- b90c4a4 **2026-07-05** added /fpfgri for example, but to all graveyard raise... now they all support raise by stable id.  Also, added superlink-style links to Info for pentatonics-7-m-V7-in-6-keys-with-fill-ALL.json so it could run with selected instruments AND set the chord/mode raise.
+- 8b608e7 **2026-07-04** Added basic Macros help
+- b881ae3 **2026-07-04** Added more multi-Instrument action to songs using macros.
+- 3682177 **2026-07-04** Fixed some keymappings.  Added screenshot for DisplayOptions-from-other-pages.png
+- 318d1a2 **2026-07-03** Added Event Wiring, Observer, Listener, Roles, and color-scheme examples.  Reordered main sections under File.
+- ebf4661 **2026-07-03** Cleaned up File Info help.
+- 70ad779 **2026-07-03** Made name-that-note-bass-ALL.json the official song.
+- 1a9cdec **2026-07-03** Obviated by name-that-note-bass-ALL.json
+- a225baa **2026-07-03** sprint-137 Iteration 2 complete.
+- 2f0fb3c **2026-07-03** Sprint-137 Iteration 1 complete.
+- a09681c **2026-07-03** More options commented on.
+- abba0c2 **2026-07-03** Ready for 137 implementation.
+- 010c737 **2026-07-03** sprint-137 opened.
+- 6637ece **2026-07-02** real file is tunings.js, this was for validation at some point, no longer needed.
+- 9eebab6 **2026-07-02** Cleaned up Song Library intro. Fixed broken tests.
+- afb4df6 **2026-07-02** Added chartreuse to changed properties, inputs, and outputs in Plugin Audit.
+- 9309ebe **2026-07-02** Removed PianoSkeuomorphic as an actual Tuning, because now it is a behavior based on the PianoSkeuo checkbox.  Now Piano is the base Piano tuning which can be skeuo'd.
+- 5aedc56 **2026-07-02** Tweaking captions in new Role borders with padding and margins
+- e95663c **2026-07-02** Iteraiton 5 implemented.
+- eb18e19 **2026-07-02** Next iteration
+- 6374762 **2026-07-01** Added badges to File save as area.
+- 3f2ee4e **2026-07-01** 134-it4 implemented
+- 7e1a058 **2026-07-01** Ready for Iteration 4 Design
+- c2eecb4 **2026-07-01** Updated visibility
+- 1b77da4 **2026-07-01** Moved relativeSection down below REC light in LooperLight.  Tweaked Song Library badges CSS.  Removed obviated directory ./css/ from build.  Defaulted row height to 30.
+- 79fae9d **2026-07-01** v2.1-beta-8
+
+
 ### 20260701
 
 Tag: v2.1-beta-8

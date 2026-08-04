@@ -231,7 +231,8 @@ const songTutorialSchema = {
     properties: {
         level: tutorialLevelSchema,
         caption: { type: 'string' },
-        storageKey: { type: 'string' }
+        storageKey: { type: 'string' },
+        useCaptionForSectionCaption: { type: 'boolean' }
     },
     required: ['level'],
     additionalProperties: false

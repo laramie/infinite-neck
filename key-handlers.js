@@ -505,7 +505,7 @@ function document_keypress(e) {
     if ( tag != 'input' && tag != 'textarea'){
 		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
 				
-		if (strictTutorial && (!['n', 'b', 'B', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L','-','=','_','+',')'].includes(e.key))){
+		if (strictTutorial && (!['n', 'b', 'B', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L','0','-','=','_','+',')'].includes(e.key))){
 			return;
 		}
         switch (e.key){

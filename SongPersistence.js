@@ -176,6 +176,9 @@ function normalizeSongTutorial(rawTutorial) {
     if (typeof rawTutorial.storageKey === 'string') {
         normalized.storageKey = rawTutorial.storageKey;
     }
+    if (typeof rawTutorial.useCaptionForSectionCaption === 'boolean') {
+        normalized.useCaptionForSectionCaption = rawTutorial.useCaptionForSectionCaption;
+    }
     return normalized;
 }
 

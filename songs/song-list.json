@@ -241,7 +241,7 @@
     },
     {
       "href": "practice/supersong-C.json",
-      "description": "<b>superson</b> in C: Other keys with chords superimposed over key of C, to practice function names in the other key relative to fixed notes in C.",
+      "description": "<b>supersong</b> in C: Other keys with chords superimposed over key of C, to practice function names in the other key relative to fixed notes in C.",
       "instruments": [
         {
           "fromBaseID": "P46",

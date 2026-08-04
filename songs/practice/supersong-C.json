@@ -1381,5 +1381,10 @@
       }
     ]
   },
+  "tutorial": {
+    "level": "wizard",
+    "caption": "Supersong C",
+    "useCaptionForSectionCaption": true
+  },
   "currentColorDict": "user"
 }

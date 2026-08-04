@@ -124,10 +124,17 @@
 }
 
 
-
+.tutorialWidgetRowHamburger {
+    margin: 0.4em;
+    font-size: 120%;
+    box-shadow: inset -4px -4px 4px darkolivegreen, 2px 2px 4px #242222;
+    border: 1px solid black;
+    background-color: darkseagreen;
+    border-radius: 0.2em;   
+}
 
 .tutorialPromptCaption {
-    font-size: 115%;
+    font-size: 200%;
 }
 
 .tutorialPrompt a {
