@@ -410,6 +410,18 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "macroCall",
+              "caption": "<b>c</b>all",
+              "trigger": "c",
+              "action": "macroCall",
+              "input": {
+                "type": "input",
+                "caption": "{\"macro\":\"id\",\"args\":{...}}",
+                "datatype": "json",
+                "id": "call"
+              }
+            },
+            {
               "name": "macroDelete",
               "caption": "<b>d</b>elete",
               "trigger": "d",
@@ -485,6 +497,18 @@ export var gMenuFile =    {
                "trigger": "l",
                "action": "macroListAll",
                "popOnBang": false
+            },
+            {
+              "name": "macroPrintf",
+              "caption": "<b>p</b>rintf",
+              "trigger": "p",
+              "action": "macroLog",
+              "input": {
+                "type": "input",
+                "caption": "\"message\"",
+                "datatype": "string",
+                "id": "message"
+              }
             },
             {
               "name": "macroRun",

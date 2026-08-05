@@ -129,7 +129,7 @@ function normalizeSongMacros(rawMacros) {
             return;
         }
         const lines = Array.isArray(macro?.lines)
-            ? macro.lines.map((line) => `${line}`.trim()).filter((line) => line.length > 0)
+            ? macro.lines.map((line) => `${line == null ? '' : line}`)
             : [];
         macros[macroId] = {
             ...(macro && typeof macro === 'object' && !Array.isArray(macro) ? macro : {}),

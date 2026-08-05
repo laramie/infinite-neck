@@ -58,11 +58,13 @@ import pluginManager from './plugins/pluginRuntime.js';
 import * as paletteUtils from './paletteUtils.js';
 import {
 	deleteSongMacro,
+	expandMacroLine,
 	executeSongMacro,
 	getMacroIdValidationMessage,
 	getSongMacro,
 	getSongMacroIds,
 	moveSongMacro,
+	validateMacroId,
 	upsertSongMacro
 } from './MacroExecutor.js';
 import {
@@ -75,6 +77,7 @@ let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
 let macroVerbose = false;
 let macroExecutionDepth = 0;
+const MAX_MACRO_EXECUTION_DEPTH = 4;
 let pendingMacroDeleteID = '';
 const USER_LOG_MAX_ROWS = 1000;
 const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
@@ -367,11 +370,71 @@ function runMacroMenuAction(menuItem, args, context = {}) {
 	if (menuItem?.action === 'pluginProperty:toggle' && context.hasValue) {
 		return setPluginToggleValueForMacro(menuItem, context.value);
 	}
-	return performCmdAction(menuItem, args);
+	const actionResult = performCmdAction(menuItem, args);
+	if (actionResult?.macroExecutionError) {
+		throw new Error(actionResult.macroExecutionError);
+	}
+	return actionResult;
 }
 
 function logMacro(message) {
 	addToUserLog('Macro', message);
+}
+
+function parseMacroCallInput(argByInputID) {
+	const rawValue = argByInputID;
+	let value = rawValue;
+	if (typeof value === 'string') {
+		const trimmed = value.trim();
+		if (!trimmed) {
+			throw new Error('macro call object is required');
+		}
+		try {
+			value = JSON.parse(trimmed);
+		} catch (error) {
+			throw new Error(`macro call input must be valid JSON: ${error.message}`);
+		}
+	}
+
+	if (!value || typeof value !== 'object' || Array.isArray(value)) {
+		throw new Error('macro call input must be a JSON object');
+	}
+	const keys = Object.keys(value);
+	const allowedKeys = new Set(['macro', 'args']);
+	const unknownKeys = keys.filter((key) => !allowedKeys.has(key));
+	if (unknownKeys.length > 0) {
+		throw new Error(`macro call input has unsupported keys: ${unknownKeys.join(', ')}`);
+	}
+	if (!Object.prototype.hasOwnProperty.call(value, 'macro')) {
+		throw new Error('macro call input must include macro');
+	}
+	if (!Object.prototype.hasOwnProperty.call(value, 'args')) {
+		throw new Error('macro call input must include args');
+	}
+
+	const macroId = `${value.macro || ''}`.trim();
+	if (!validateMacroId(macroId)) {
+		throw new Error(`invalid macro id: ${macroId}`);
+	}
+	if (!value.args || typeof value.args !== 'object' || Array.isArray(value.args)) {
+		throw new Error('macro call args must be a JSON object');
+	}
+
+	return {
+		macroId,
+		args: value.args
+	};
+}
+
+function resolveMacroExpansionValue(name, callArgs = {}) {
+	if (Object.prototype.hasOwnProperty.call(callArgs, name)) {
+		return callArgs[name];
+	}
+	const resolved = getValue(name);
+	if (resolved === name) {
+		return undefined;
+	}
+	return resolved;
 }
 
 export function runSongMacroById(macroId, options = {}) {
@@ -379,11 +442,14 @@ export function runSongMacroById(macroId, options = {}) {
 	if (!id) {
 		return { ok: false, error: 'macro id is required' };
 	}
-	if (macroExecutionDepth > 0) {
-		const message = `Macro recursion blocked: ${id}`;
+	if (macroExecutionDepth >= MAX_MACRO_EXECUTION_DEPTH) {
+		const message = `Macro call depth exceeded (${macroExecutionDepth}/${MAX_MACRO_EXECUTION_DEPTH}): ${id}`;
 		logMacro(message);
 		return { ok: false, error: message };
 	}
+	const callArgs = options.callArgs && typeof options.callArgs === 'object' && !Array.isArray(options.callArgs)
+		? options.callArgs
+		: {};
 	macroExecutionDepth += 1;
 	try {
 		pluginManager.refreshPluginsMenuNode();
@@ -392,6 +458,7 @@ export function runSongMacroById(macroId, options = {}) {
 			actionRunner: runMacroMenuAction,
 			refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
 			refreshRuntimeChildren,
+			expandLine: (line) => expandMacroLine(line, (name) => resolveMacroExpansionValue(name, callArgs)),
 			verbose: options.verbose ?? macroVerbose,
 			log: logMacro
 		});
@@ -1167,10 +1234,43 @@ export function performCmdAction(menuItem, args){
 			actionResult.suppressBang = !macroResult.ok;
 			break;
 		}
+		case "macroCall": {
+			try {
+				const parsedCall = parseMacroCallInput(argByInputID);
+				const macroResult = runSongMacroById(parsedCall.macroId, { callArgs: parsedCall.args });
+				actionResult.result = macroResult.ok ? `ran ${parsedCall.macroId}` : macroResult.error;
+				actionResult.suppressBang = !macroResult.ok;
+				if (!macroResult.ok) {
+					actionResult.macroExecutionError = macroResult.error;
+				}
+			} catch (error) {
+				logMacro(`macroCall rejected: ${error.message}`);
+				actionResult.result = error.message;
+				actionResult.suppressBang = true;
+				actionResult.macroExecutionError = error.message;
+			}
+			break;
+		}
 		case "macroListAll": {
 			const list = getSongMacroIds(getSong());
 			showMessages(list.join("<br>"));
 			actionResult.result ="listed macros";
+			break;
+		}
+		case "macroLog": {
+			if (typeof argByInputID !== 'string') {
+				actionResult.result = 'printf input must be a JSON string value';
+				actionResult.suppressBang = true;
+				actionResult.macroExecutionError = actionResult.result;
+				break;
+			}
+			const message = `${argByInputID}`;
+			if (macroVerbose) {
+				logMacro(message);
+				actionResult.result = `printf: ${message}`;
+			} else {
+				actionResult.result = 'printf skipped (macro verbose=false)';
+			}
 			break;
 		}
 		case "macroQueueDeleteById": {

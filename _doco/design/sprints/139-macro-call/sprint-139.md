@@ -12,11 +12,10 @@ Index of all sprints for reference: [sprint planning index](../../../lifecycle/s
 
 Purpose of this sprint is to: allow macros to call macros, with structured parameters, and allowed expansions.
 
-## Sprint document locations
-
-- [design document](139-design.md) 
-
 ## Iterations
 
   - "Iteration 1": 
+    - [design document](139-design.md) 
+    - [implementation-plan](139-implementation-plan.md)
+    - [plan questions answered](139-it1.md)
 

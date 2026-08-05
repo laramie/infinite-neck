@@ -34,12 +34,21 @@ export function normalizeMacroLines(textOrLines = []) {
     const sourceLines = Array.isArray(textOrLines)
         ? textOrLines
         : `${textOrLines || ''}`.split(/\r?\n/);
-    return sourceLines
-        .map((line) => `${line}`.trim())
-        .filter((line) => line.length > 0);
+    return sourceLines.map((line) => `${line == null ? '' : line}`);
 }
 
-export function parseMacroLine(line) {
+export function classifyMacroLine(line) {
+    const text = `${line == null ? '' : line}`;
+    if (text.trim().length === 0) {
+        return 'blank';
+    }
+    if (/^\s*#/.test(text)) {
+        return 'comment';
+    }
+    return 'command';
+}
+
+export function parseMacroLine(line, options = {}) {
     const trimmed = `${line || ''}`.trim();
     if (!trimmed) {
         return null;
@@ -62,6 +71,9 @@ export function parseMacroLine(line) {
     try {
         return { path, hasValue: true, value: JSON.parse(jsonText) };
     } catch (error) {
+        if (options.allowTemplateJson === true && jsonText.includes('${')) {
+            return { path, hasValue: true, value: undefined, jsonTemplate: jsonText };
+        }
         throw new Error(`Invalid JSON for ${path}: ${error.message}`);
     }
 }
@@ -70,8 +82,11 @@ export function validateMacroLines(lines = []) {
     const normalized = normalizeMacroLines(lines);
     const errors = [];
     normalized.forEach((line, index) => {
+        if (classifyMacroLine(line) !== 'command') {
+            return;
+        }
         try {
-            parseMacroLine(line);
+            parseMacroLine(line, { allowTemplateJson: true });
         } catch (error) {
             errors.push({
                 lineNumber: index + 1,
@@ -251,27 +266,100 @@ export function executeMacroLine(line, options = {}) {
     };
 }
 
+function formatMacroExpansionValue(value, name) {
+    if (value === undefined) {
+        throw new Error(`Unknown expansion name: ${name}`);
+    }
+    if (value === null) {
+        return 'null';
+    }
+    if (typeof value === 'string') {
+        return value;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+        return `${value}`;
+    }
+    try {
+        const serialized = JSON.stringify(value);
+        if (serialized === undefined) {
+            throw new Error(`cannot stringify expansion value for ${name}`);
+        }
+        return serialized;
+    } catch (error) {
+        throw new Error(`cannot stringify expansion value for ${name}: ${error.message}`);
+    }
+}
+
+export function expandMacroLine(line, resolveName) {
+    const source = `${line == null ? '' : line}`;
+    if (typeof resolveName !== 'function') {
+        return source;
+    }
+
+    let result = '';
+    let index = 0;
+    while (index < source.length) {
+        if (source.startsWith('\\${', index)) {
+            const close = source.indexOf('}', index + 3);
+            if (close < 0) {
+                result += source.substring(index + 1);
+                break;
+            }
+            result += source.substring(index + 1, close + 1);
+            index = close + 1;
+            continue;
+        }
+
+        if (source.startsWith('${', index)) {
+            const close = source.indexOf('}', index + 2);
+            if (close < 0) {
+                throw new Error('Unclosed expansion placeholder');
+            }
+            const name = source.substring(index + 2, close).trim();
+            if (!name) {
+                throw new Error('Empty expansion placeholder');
+            }
+            const resolved = resolveName(name);
+            result += formatMacroExpansionValue(resolved, name);
+            index = close + 1;
+            continue;
+        }
+
+        result += source[index];
+        index += 1;
+    }
+    return result;
+}
+
 export function executeMacroLines(lines = [], options = {}) {
     const normalized = normalizeMacroLines(lines);
     const results = [];
     for (let index = 0; index < normalized.length; index += 1) {
         const line = normalized[index];
+        if (classifyMacroLine(line) !== 'command') {
+            continue;
+        }
+        let expandedLine = line;
         try {
-            const result = executeMacroLine(line, options);
-            results.push({ ...result, lineNumber: index + 1, line });
+            expandedLine = typeof options.expandLine === 'function'
+                ? options.expandLine(line, { lineNumber: index + 1 })
+                : line;
+            const result = executeMacroLine(expandedLine, options);
+            results.push({ ...result, lineNumber: index + 1, line, expandedLine });
             if (options.verbose && typeof options.log === 'function') {
-                options.log(`${index + 1}: ${line}${result.result ? ` => ${result.result}` : ' => ok'}`);
+                options.log(`${index + 1}: ${expandedLine}${result.result ? ` => ${result.result}` : ' => ok'}`);
             }
         } catch (error) {
             const failure = {
                 ok: false,
                 lineNumber: index + 1,
                 line,
+                expandedLine,
                 error: error.message
             };
             results.push(failure);
             if (typeof options.log === 'function') {
-                options.log(`${index + 1}: ${line} => ERROR: ${error.message}`);
+                options.log(`${index + 1}: ${expandedLine} => ERROR: ${error.message}`);
             }
             return {
                 ok: false,
