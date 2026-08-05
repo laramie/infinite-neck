@@ -1,0 +1,407 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "Piano_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "Piano"
+    },
+    {
+      "instance": true,
+      "baseID": "PianoSchroeder_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano Schroeder",
+      "nStrings": 1,
+      "rowRange": [
+        48
+      ],
+      "frets": 26,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "PianoSchroeder"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblPiano_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblPianoSchroeder_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "fill": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "fill-named-diatonic-transparent",
+      "properties": {
+        "targetTable": "tblP46_1",
+        "chordFormula": "M",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
+        "minFret": 0,
+        "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 5,
+        "namedRootMode": "keep",
+        "namedRootColor": "noteTransparent",
+        "namedChordMode": "keep",
+        "namedChordColor": "noteTransparent",
+        "namedScaleMode": "role",
+        "namedScaleColor": "noteTransparent",
+        "singleRootMode": "none",
+        "singleRootColor": "noteRoot",
+        "singleChordMode": "none",
+        "singleChordColor": "noteChord",
+        "singleScaleMode": "none",
+        "singleScaleColor": "noteScale",
+        "tinyRootMode": "keep",
+        "tinyRootColor": "noteRoot",
+        "tinyChordMode": "keep",
+        "tinyChordColor": "noteChord",
+        "tinyScaleMode": "keep",
+        "tinyScaleColor": "noteScale",
+        "singleAddTiny": "none"
+      }
+    }
+  },
+  "macros": {
+    "fill-named-C": {
+      "lines": [
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "fill-tiny-automatic": {
+      "lines": [
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/sk${key}",
+        "/fpfoc${chord}",
+        "/fpfA",
+        "/fpfM",
+        "/skwc",
+        "/sl${key}",
+        "/fmp \"caption: -${caption}-\"",
+        "/sc \"${caption}\"",
+        "/fmp \"created ${key} ${chord} in Section ${currentSectionCardinal}\""
+      ]
+    },    
+    "call-all": {
+      "lines": [
+        "# Make one blank new Section with C diatonic named notes",
+        "/sa",
+        "/fmc {\"macro\":\"fill-named-C\", \"args\":{}}",
+        "",
+        "# Clone, then previous for adding the tiny note chord, always leaving a blank clone (with C diatonic named notes) at the end.",
+        "",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"M\", \"caption\":\"A major\"}}",
+        "",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"s\", \"caption\":\"A minor 7\"}}",
+        "",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"i\", \"caption\":\"A dim 7\"}}",
+        "",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"b\", \"caption\":\"A m7b5\"}}",
+        "",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"M\", \"caption\":\"B major\"}}",
+        "",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"s\", \"caption\":\"B min 7\"}}",
+        ""
+      ]
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": {
+    "lines": []
+  },
+  "namedNoteOpacity": "0.7",
+  "openInfo": "none",
+  "presentationMode": true,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "supersong-calls-w-caption",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Settings Section",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": 3,
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": false,
+        "showCellNotes": false,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": true,
+        "namedNoteOpacity": "0.7",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "200x60:22",
+          "width": "200px",
+          "height": "60px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "2",
+        "pianoWidthScaleFactor": "2",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "200%",
+        "tinyNoteMaxHeight": "70%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "50%",
+        "tinyNoteHPosition": "50%",
+        "tinyNoteRadius": "50%"
+      }
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblPianoSchroeder_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tblPiano_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1785903785995,
+        "date": "8/4/2026",
+        "time": "9:23:05 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "fill-named-diatonic-transparent",
+          "logicalKey": "fill::fill-named-diatonic-transparent",
+          "schemaVersion": 1,
+          "caption": "fill / fill-named-diatonic-transparent"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-named-diatonic-transparent\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteTransparent\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteTransparent\",\n        \"namedScaleMode\": \"role\",\n        \"namedScaleColor\": \"noteTransparent\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"keep\",\n        \"tinyRootColor\": \"noteRoot\",\n        \"tinyChordMode\": \"keep\",\n        \"tinyChordColor\": \"noteChord\",\n        \"tinyScaleMode\": \"keep\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": 1785950833168
+      },
+      {
+        "timestamp": 1785905284531,
+        "date": "8/4/2026",
+        "time": "9:48:04 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "fill-tiny-root-chord-automatic",
+          "logicalKey": "fill::fill-tiny-root-chord-automatic",
+          "schemaVersion": 1,
+          "caption": "fill / fill-tiny-root-chord-automatic"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-tiny-root-chord-automatic\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": 1785950540921
+      },
+      {
+        "timestamp": 1785950833160,
+        "date": "8/5/2026",
+        "time": "10:27:13 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "USER",
+          "logicalKey": "fill::USER",
+          "schemaVersion": 1,
+          "caption": "fill / USER"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"m7\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "tutorial": {
+    "level": "wizard",
+    "caption": "Supersong C",
+    "useCaptionForSectionCaption":true
+  }
+}
