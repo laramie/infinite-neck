@@ -21,9 +21,9 @@ We want the macro call to be available in the macro menu, with a required JSON o
 
 `/fmc {"macro": "macroC", "args":{"key":"e", "chord":"M"}}`
 
-`/fmc {"macro": "macroD", "args":{"colorKey":"we", "chord":"s"}}`
+`/fmc {"macro": "macroD", "args":{"colorKey":"we", "chord":"s", "caption":"E minor 7"}}`
 
-Within the macro, defined normally using `/fma`, allowed expansions would be expanded.  This will happen for all macros now.  Even if not called by a macro, a macro should attempt to expand each line as it executes each of its lines.  Thus, the following menu command-lines in a macro would have variable paths:
+Within the macro, defined normally using `/fma`, allowed expansions would be expanded.  This will happen for all macros now.  Even if not called by a macro, a macro should attempt to expand each line as it executes each of its lines.  Thus, the following menu command-lines in a macro would have variable paths, and "macroD" would also have an expanded value to pass to `/sc`:
 
 "macroC":
 ```
@@ -37,6 +37,7 @@ Within the macro, defined normally using `/fma`, allowed expansions would be exp
 /sk${colorKey}
 /fpfoc${chord}
 /fpfA
+/sc "${caption}"
 ```
 
 For the duration of the call, "key", "colorKey", "chord" and so on as defined, would be allowed value expansions.
