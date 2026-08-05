@@ -82,7 +82,8 @@ export function buildTutorialPromptModel({
     currentSectionIndex = 0,
     progress = {},
     includeInLoopingSectionIndexes = null,
-    lessonSectionListOpen = false
+    lessonSectionListOpen = false,
+    hamburgerControlsOpen = true
 } = {}) {
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
@@ -101,6 +102,7 @@ export function buildTutorialPromptModel({
         currentSectionNumber: currentSectionIndex + 1,
         sectionCount,
         promptHtml: renderPromptLines(sectionTutorial.prompt?.lines),
+        hamburgerControlsOpen: !!hamburgerControlsOpen,
         lessonSectionListOpen: !!lessonSectionListOpen,
         lessonSections: buildLessonSectionListModel({
             song,
@@ -116,6 +118,7 @@ export function renderTutorialPrompt(model = {}) {
         return '';
     }
     const arrow = model.lessonSectionListOpen ? "&#x1F783;" : "&#x1F782;"
+    const hamburgerArrow = model.hamburgerControlsOpen ? "&#x1F781;" : "&#x1F782;"
     const sectionCurrOfCount = `<span class="tutorialSectionMark">&sect; </span><b>${model.currentSectionNumber}</b> <small>of</small> <b>${model.sectionCount}</b>`;    
     const sectionCurr = `<span class="tutorialSectionMark">&sect;</span>${model.currentSectionNumber}:&nbsp;&nbsp;`;    
     const breadcrumbs = model.strict
@@ -146,9 +149,14 @@ export function renderTutorialPrompt(model = {}) {
     const tutorialPromptContentDiv = (model.promptHtml)
             ?   `<div class="tutorialPromptContent">${model.promptHtml}</div>`
             :  '';
-    const hamburger = `<button class="tutorialWidgetRowHamburger" type="button" onclick="$('#tutorialPromptBurgerControls').toggle()">&equiv;</button>`;        
+    
+    const hamburger = model.strict ? '<button type="button" class="tutorialWidgetRowHamburger" data-action="tutorialToggleHamburgerControls">&equiv; &nbsp;'+hamburgerArrow+'</button>' : '';
+    const hamburgerControlsStyle = (model.hamburgerControlsOpen === true) 
+           ?' style="display: inline;" '
+           : 'style="display: none;" ';
+    
     return `<div id="tutorialPrompt" class="tutorialPrompt ${modeClass}">`
-            + '<span id="tutorialPromptBurgerControls">'
+            + `<span id="tutorialPromptBurgerControls" ${hamburgerControlsStyle}>`
             + sectionToggle 
             + lessonList
             + tutorialPromptWidgetRow

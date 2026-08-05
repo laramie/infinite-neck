@@ -480,7 +480,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		song: null,
 		progress: null,
 		includeInLoopingSectionIndexes: null,
-		lessonSectionListOpen: false
+		lessonSectionListOpen: false,
+		hamburgerControlsOpen: true
 	};
 
 	function getTutorialStorageEntry(song = getSong()){
@@ -516,6 +517,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		tutorialRuntimeState.progress = null;
 		tutorialRuntimeState.includeInLoopingSectionIndexes = null;
 		tutorialRuntimeState.lessonSectionListOpen = false;
+		tutorialRuntimeState.hamburgerControlsOpen = true;
 		resetTutorialChrome();
 	}
 
@@ -552,7 +554,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			currentSectionIndex: getSectionsCurrentIndex(),
 			progress: getTutorialProgress(),
 			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes,
-			lessonSectionListOpen: tutorialRuntimeState.lessonSectionListOpen
+			lessonSectionListOpen: tutorialRuntimeState.lessonSectionListOpen,
+			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen
 		});
 	}
 
@@ -568,6 +571,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				sectionCount
 			})
 		});
+	}
+
+	export function tutorialToggleHamburgerControls(){
+		resetTutorialRuntimeForSongIfNeeded(getSong());
+		tutorialRuntimeState.hamburgerControlsOpen = !tutorialRuntimeState.hamburgerControlsOpen;
+		renderTutorialPrompt();
 	}
 
 	export function tutorialToggleSectionList(){
@@ -3686,6 +3695,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			linkToSection,
 			linkToSectionChartChord,
 			linkToSectionChartMode,
+			tutorialToggleHamburgerControls,
 			tutorialToggleSectionList,
 			tutorialGotoSection,
 			tutorialToggleDone,
