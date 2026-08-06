@@ -132,10 +132,10 @@
     "fill": {
       "enabled": false,
       "enableOnSongLoad": false,
-      "graveyardKey": "fill-named-diatonic-transparent",
+      "graveyardKey": "fill-tiny-root-chord-automatic",
       "properties": {
         "targetTable": "tblP46_1",
-        "chordFormula": "M",
+        "chordFormula": "m7",
         "scaleFormula": "major",
         "automaticFromChart": false,
         "minFret": 0,
@@ -144,22 +144,22 @@
         "minRow": 0,
         "maxRow": 5,
         "namedRootMode": "keep",
-        "namedRootColor": "noteTransparent",
+        "namedRootColor": "noteRoot",
         "namedChordMode": "keep",
-        "namedChordColor": "noteTransparent",
-        "namedScaleMode": "role",
-        "namedScaleColor": "noteTransparent",
+        "namedChordColor": "noteChord",
+        "namedScaleMode": "keep",
+        "namedScaleColor": "noteScale",
         "singleRootMode": "none",
         "singleRootColor": "noteRoot",
         "singleChordMode": "none",
         "singleChordColor": "noteChord",
         "singleScaleMode": "none",
         "singleScaleColor": "noteScale",
-        "tinyRootMode": "keep",
-        "tinyRootColor": "noteRoot",
-        "tinyChordMode": "keep",
-        "tinyChordColor": "noteChord",
-        "tinyScaleMode": "keep",
+        "tinyRootMode": "role",
+        "tinyRootColor": "noteAutomatic",
+        "tinyChordMode": "role",
+        "tinyChordColor": "noteAutomatic",
+        "tinyScaleMode": "none",
         "tinyScaleColor": "noteScale",
         "singleAddTiny": "none"
       }
@@ -177,6 +177,13 @@
     },
     "fill-tiny-automatic": {
       "lines": [
+        "# Clone from already-prepared following Section, then previous to go back from the clone to the already-prepared Section for adding the tiny note chord, always leaving a blank clone (with C diatonic named notes) at the end.",
+        "/snn",
+        "/sec",
+        "/snp",
+        "",
+        "# Now add the tiny notes in the new key, then reset key to C, then set lead key to new key",
+        "",
         "/fpfgri \"fill-tiny-root-chord-automatic\"",
         "/sk${key}",
         "/fpfoc${chord}",
@@ -192,40 +199,74 @@
     },
     "call-all": {
       "lines": [
+        "",
         "# Make one blank new Section with C diatonic named notes",
         "/sa",
         "/fmc {\"macro\":\"fill-named-C\", \"args\":{}}",
         "",
-        "# Clone, then previous for adding the tiny note chord, always leaving a blank clone (with C diatonic named notes) at the end.",
+        "# \"fill-tiny-automatic\" will (/snn) to go to the prepared Section, Clone it (/sec), ",
+        "#    then previous (/snp) for adding the tiny note chord, ",
+        "#    always leaving a blank clone (with C diatonic named notes) at the end.",
         "",
-        "/sec",
-        "/snp",
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"M\", \"caption\":\"A major\"}}",
-        "",
-        "/snn",
-        "/sec",
-        "/snp",
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"s\", \"caption\":\"A minor 7\"}}",
-        "",
-        "/snn",
-        "/sec",
-        "/snp",
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"i\", \"caption\":\"A dim 7\"}}",
-        "",
-        "/snn",
-        "/sec",
-        "/snp",
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"b\", \"caption\":\"A m7b5\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"2\", \"caption\":\"A Sus2\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"4\", \"caption\":\"A Sus4\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"a\", \"caption\":\"A Maj 7 (&Delta;)\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"7\", \"caption\":\"A dom 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"6\", \"caption\":\"A 6add9\"}}",
         "",
-        "/snn",
-        "/sec",
-        "/snp",
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"M\", \"caption\":\"B major\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"s\", \"caption\":\"B minor 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"i\", \"caption\":\"B dim 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"b\", \"caption\":\"B m7b5\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"2\", \"caption\":\"B Sus2\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"4\", \"caption\":\"B Sus4\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"a\", \"caption\":\"B Maj 7 (&Delta;)\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"7\", \"caption\":\"B dom 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"6\", \"caption\":\"B 6add9\"}}",
         "",
-        "/snn",
-        "/sec",
-        "/snp",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"s\", \"caption\":\"B min 7\"}}",
+        "",
+        "",
+        ""
+      ]
+    },
+    "fill-one-key": {
+      "lines": [
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"M\", \"caption\":\"${keyname} major\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"s\", \"caption\":\"${keyname} minor 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"i\", \"caption\":\"${keyname} dim 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"b\", \"caption\":\"${keyname} m7b5\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"2\", \"caption\":\"${keyname} Sus2\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"4\", \"caption\":\"${keyname} Sus4\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"a\", \"caption\":\"${keyname} Maj 7 (&Delta;)\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"7\", \"caption\":\"${keyname} dom 7\"}}",
+        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"6\", \"caption\":\"${keyname} 6add9\"}}",
+        ""
+      ]
+    },
+    "call-fill-one-key": {
+      "lines": [
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wf\", \"keyname\":\"F\"}}",
+        ""
+      ]
+    },
+    "do-all-keys": {
+      "lines": [
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wa\", \"keyname\":\"F\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wb\", \"keyname\":\"B\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wc\", \"keyname\":\"C\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wd\", \"keyname\":\"D\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"we\", \"keyname\":\"E\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wf\", \"keyname\":\"F\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wg\", \"keyname\":\"G\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"ba\", \"keyname\":\"A&flat;\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bb\", \"keyname\":\"B&flat;\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bd\", \"keyname\":\"D&flat;\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"be\", \"keyname\":\"E&flat;\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bg\", \"keyname\":\"G&flat;\"}}",
         ""
       ]
     }
@@ -414,7 +455,7 @@
           "caption": "fill / fill-named-diatonic-transparent"
         },
         "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-named-diatonic-transparent\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteTransparent\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteTransparent\",\n        \"namedScaleMode\": \"role\",\n        \"namedScaleColor\": \"noteTransparent\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"keep\",\n        \"tinyRootColor\": \"noteRoot\",\n        \"tinyChordMode\": \"keep\",\n        \"tinyChordColor\": \"noteChord\",\n        \"tinyScaleMode\": \"keep\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
-        "lastRevived": 1785950833168
+        "lastRevived": 1785976237676
       },
       {
         "timestamp": 1785905284531,
@@ -429,12 +470,12 @@
           "caption": "fill / fill-tiny-root-chord-automatic"
         },
         "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-tiny-root-chord-automatic\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
-        "lastRevived": 1785950540921
+        "lastRevived": 1785976770589
       },
       {
-        "timestamp": 1785950833160,
+        "timestamp": 1785976770586,
         "date": "8/5/2026",
-        "time": "10:27:13 AM",
+        "time": "5:39:30 PM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "fill",
@@ -443,7 +484,19 @@
           "schemaVersion": 1,
           "caption": "fill / USER"
         },
-        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"m7\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785977632571,
+        "date": "8/5/2026",
+        "time": "5:53:52 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
         "lastRevived": null
       }
     ]
