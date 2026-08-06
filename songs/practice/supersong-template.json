@@ -36,6 +36,45 @@
     },
     {
       "instance": true,
+      "baseID": "S6_1",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "S6"
+    },
+    {
+      "instance": true,
       "baseID": "Piano_1",
       "baseInstrument": "Piano",
       "caption": "Piano",
@@ -74,6 +113,10 @@
     {
       "tableID": "tblP46_1",
       "visible": true
+    },
+    {
+      "tableID": "tblS6_1",
+      "visible": false
     },
     {
       "tableID": "tblPiano_1",
@@ -146,7 +189,7 @@
         "/fmp \"created ${key} ${chord} in Section ${currentSectionCardinal}\"",
         "/vdu"
       ]
-    },    
+    },
     "call-all": {
       "lines": [
         "# Make one blank new Section with C diatonic named notes",
@@ -230,7 +273,7 @@
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
-  "songName": "supersong-calls-w-caption",
+  "songName": "supersong-template",
   "theme": "Autobahn",
   "sections": [
     {
@@ -349,6 +392,11 @@
       "relativeSection": "",
       "listenToTablename": "tblP46_1",
       "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tblS6_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1"
     }
   ],
   "graveyard": {
@@ -403,6 +451,6 @@
   "tutorial": {
     "level": "wizard",
     "caption": "Supersong C",
-    "useCaptionForSectionCaption":true
+    "useCaptionForSectionCaption": true
   }
 }
