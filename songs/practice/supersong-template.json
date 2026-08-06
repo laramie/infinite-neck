@@ -269,13 +269,32 @@
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bg\", \"keyname\":\"G&flat;\"}}",
         ""
       ]
+    },
+    "show-s6": {
+      "lines": [
+        "/tsi \"S6_1\"",
+        "/thi \"P46_1\""
+      ]
+    },
+    "show-p4": {
+      "lines": [
+        "/tsi \"P46_1\"",
+        "/thi \"S6_1\""
+      ]
     }
   },
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
   "defaultBPM": "80",
   "info": {
-    "lines": []
+    "lines": [
+      "",
+      "8 fret position: <a href=\"#raise=fill.fill-tiny-root-chord-automatic\">fill.fill-tiny-root-chord-automatic</a>",
+      "",
+      "<br><a href=\"#macro=show-p4\">show P4</a>",
+      "",
+      "<br><a href=\"#macro=show-s6\">show S6</a>"
+    ]
   },
   "namedNoteOpacity": "0.7",
   "openInfo": "none",
@@ -362,6 +381,20 @@
           "mode": "",
           "tonalSourceSet": "",
           "playedNotes": []
+        },
+        "tblS6_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
         }
       },
       "caption": "Settings Section",
@@ -418,6 +451,17 @@
         "tinyNoteWidth": "50%",
         "tinyNoteHPosition": "50%",
         "tinyNoteRadius": "50%"
+      },
+      "pluginData": {
+        "fill": {
+          "positions": [
+            [
+              0,
+              8
+            ]
+          ],
+          "lastPositionIndex": -1
+        }
       }
     }
   ],
@@ -458,9 +502,9 @@
         "lastRevived": 1785976237676
       },
       {
-        "timestamp": 1785905284531,
-        "date": "8/4/2026",
-        "time": "9:48:04 PM",
+        "timestamp": 1785977793152,
+        "date": "8/5/2026",
+        "time": "5:56:33 PM",
         "type": "PLUGIN",
         "context": {
           "pluginId": "fill",
@@ -469,8 +513,8 @@
           "schemaVersion": 1,
           "caption": "fill / fill-tiny-root-chord-automatic"
         },
-        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-tiny-root-chord-automatic\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
-        "lastRevived": 1785976770589
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-tiny-root-chord-automatic\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"m7\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": null
       },
       {
         "timestamp": 1785976770586,
