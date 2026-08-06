@@ -197,42 +197,6 @@
         "/vdu"
       ]
     },
-    "call-all": {
-      "lines": [
-        "",
-        "# Make one blank new Section with C diatonic named notes",
-        "/sa",
-        "/fmc {\"macro\":\"fill-named-C\", \"args\":{}}",
-        "",
-        "# \"fill-tiny-automatic\" will (/snn) to go to the prepared Section, Clone it (/sec), ",
-        "#    then previous (/snp) for adding the tiny note chord, ",
-        "#    always leaving a blank clone (with C diatonic named notes) at the end.",
-        "",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"M\", \"caption\":\"A major\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"s\", \"caption\":\"A minor 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"i\", \"caption\":\"A dim 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"b\", \"caption\":\"A m7b5\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"2\", \"caption\":\"A Sus2\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"4\", \"caption\":\"A Sus4\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"a\", \"caption\":\"A Maj 7 (&Delta;)\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"7\", \"caption\":\"A dom 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wa\", \"chord\":\"6\", \"caption\":\"A 6add9\"}}",
-        "",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"M\", \"caption\":\"B major\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"s\", \"caption\":\"B minor 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"i\", \"caption\":\"B dim 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"b\", \"caption\":\"B m7b5\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"2\", \"caption\":\"B Sus2\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"4\", \"caption\":\"B Sus4\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"a\", \"caption\":\"B Maj 7 (&Delta;)\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"7\", \"caption\":\"B dom 7\"}}",
-        "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"wb\", \"chord\":\"6\", \"caption\":\"B 6add9\"}}",
-        "",
-        "",
-        "",
-        ""
-      ]
-    },
     "fill-one-key": {
       "lines": [
         "/fmc {\"macro\":\"fill-tiny-automatic\", \"args\":{\"key\":\"${key}\", \"chord\":\"M\", \"caption\":\"${keyname} major\"}}",
@@ -253,7 +217,7 @@
         ""
       ]
     },
-    "do-all-keys": {
+    "do-all-white-keys": {
       "lines": [
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wa\", \"keyname\":\"F\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wb\", \"keyname\":\"B\"}}",
@@ -261,13 +225,16 @@
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wd\", \"keyname\":\"D\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"we\", \"keyname\":\"E\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wf\", \"keyname\":\"F\"}}",
-        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wg\", \"keyname\":\"G\"}}",
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"wg\", \"keyname\":\"G\"}}"
+      ]
+    },
+    "do-all-black-keys": {
+      "lines": [
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"ba\", \"keyname\":\"A&flat;\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bb\", \"keyname\":\"B&flat;\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bd\", \"keyname\":\"D&flat;\"}}",
         "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"be\", \"keyname\":\"E&flat;\"}}",
-        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bg\", \"keyname\":\"G&flat;\"}}",
-        ""
+        "/fmc {\"macro\":\"fill-one-key\", \"args\":{\"key\":\"bg\", \"keyname\":\"G&flat;\"}}"
       ]
     },
     "show-s6": {
