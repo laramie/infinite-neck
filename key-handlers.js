@@ -57,18 +57,24 @@ import EventBus from './event-bus.js';
 import pluginManager from './plugins/pluginRuntime.js';
 import * as paletteUtils from './paletteUtils.js';
 import {
-	classifyMacroLine,
 	deleteSongMacro,
-	expandMacroLine,
-	executeMacroLine,
-	executeSongMacro,
 	getMacroIdValidationMessage,
 	getSongMacro,
 	getSongMacroIds,
 	moveSongMacro,
-	validateMacroId,
 	upsertSongMacro
 } from './MacroExecutor.js';
+import {
+	configureMacroEngine,
+	focusMacroOverlay,
+	isAllowedDuringMacro,
+	isInMacroAction,
+	isMacroMutationLockActive,
+	logMacro,
+	parseMacroCallInput,
+	runSongMacroById as runSongMacroByIdFromEngine,
+	startSongMacroById
+} from './MacroEngine.js';
 import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
@@ -78,18 +84,7 @@ let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
 let macroVerbose = false;
-let macroExecutionDepth = 0;
-const MAX_MACRO_EXECUTION_DEPTH = 4;
-const MACRO_LINES_PER_FRAME = 8;
 let pendingMacroDeleteID = '';
-let macroInternalActionDepth = 0;
-let macroActiveEngine = null;
-const macroRunState = {
-	running: false,
-	engine: null,
-	overlayNode: null,
-	focusNode: null
-};
 const USER_LOG_MAX_ROWS = 1000;
 const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'CLIP',
@@ -100,21 +95,6 @@ const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'STYLESHEET'
 ]);
 
-const MACRO_ALLOWED_EXTERNAL_ACTIONS = new Set([
-	'noAction',
-	'showUserLog',
-	'hideViewMessages',
-	'reshowViewMessages',
-	'showDialog-info',
-	'showViewDiagnostics',
-	'showViewDiagnosticsFullModel',
-	'showViewDiagnosticsMenu',
-	'showViewDiagnosticsMenuJson',
-	'showViewDiagnosticsUserColorDict',
-	'showViewDiagnosticsDisplayOptions',
-	'showViewDiagnosticsVariables',
-	'showViewDiagnosticsSongFileFormat'
-]);
 let graveyardClearByTypeState = {
 	CLIP: false,
 	INSTRUMENT: false,
@@ -393,383 +373,21 @@ function setPluginToggleValueForMacro(menuItem, value) {
 	return { result: pluginResult.result || '' };
 }
 
-function ensureMacroOverlay() {
-	if (macroRunState.overlayNode && macroRunState.focusNode) {
-		return;
-	}
-	let overlay = document.getElementById('macroProcessingOverlay');
-	if (!overlay) {
-		overlay = document.createElement('div');
-		overlay.id = 'macroProcessingOverlay';
-		overlay.style.position = 'fixed';
-		overlay.style.inset = '0';
-		overlay.style.display = 'none';
-		overlay.style.background = 'rgba(0, 0, 0, 0.18)';
-		overlay.style.zIndex = '2147483647';
-		overlay.style.pointerEvents = 'auto';
-
-		const panel = document.createElement('div');
-		panel.style.position = 'fixed';
-		panel.style.top = '1rem';
-		panel.style.right = '1rem';
-		panel.style.padding = '0.6rem 0.9rem';
-		panel.style.background = 'rgba(20, 20, 20, 0.85)';
-		panel.style.color = '#fff';
-		panel.style.border = '1px solid rgba(255,255,255,0.35)';
-		panel.style.borderRadius = '0.35rem';
-		panel.style.fontSize = '3rem';
-		panel.style.maxWidth = '48rem';
-		panel.textContent = 'Macro running. Song edits are locked until completion.';
-
-		const trapInput = document.createElement('input');
-		trapInput.type = 'text';
-		trapInput.id = 'macroProcessingFocusTrap';
-		trapInput.autocomplete = 'off';
-		trapInput.value = 'macro processing';
-		trapInput.style.position = 'absolute';
-		trapInput.style.width = '1px';
-		trapInput.style.height = '1px';
-		trapInput.style.opacity = '0.01';
-		trapInput.style.border = '0';
-		trapInput.style.padding = '0';
-		trapInput.style.left = '-10000px';
-		trapInput.style.top = '0';
-
-		overlay.appendChild(panel);
-		overlay.appendChild(trapInput);
-		overlay.addEventListener('mousedown', (evt) => {
-			evt.preventDefault();
-			if (macroRunState.running) {
-				trapInput.focus();
-			}
-		});
-		document.body.appendChild(overlay);
-	}
-	macroRunState.overlayNode = overlay;
-	macroRunState.focusNode = document.getElementById('macroProcessingFocusTrap');
-	if (macroRunState.focusNode) {
-		macroRunState.focusNode.addEventListener('blur', () => {
-			if (macroRunState.running) {
-				setTimeout(() => {
-					if (macroRunState.running) {
-						macroRunState.focusNode?.focus();
-					}
-				}, 0);
-			}
-		});
-	}
-}
-
-function showMacroOverlay() {
-	ensureMacroOverlay();
-	if (macroRunState.overlayNode) {
-		macroRunState.overlayNode.style.display = 'block';
-	}
-	macroRunState.focusNode?.focus();
-}
-
-function hideMacroOverlay() {
-	if (macroRunState.overlayNode) {
-		macroRunState.overlayNode.style.display = 'none';
-	}
-}
-
-function scheduleMacroFrame(callback) {
-	if (typeof globalThis.requestAnimationFrame === 'function') {
-		globalThis.requestAnimationFrame(callback);
-		return;
-	}
-	setTimeout(() => callback(Date.now()), 0);
-}
-
-function isMacroMutationLockActive() {
-	return macroRunState.running && macroInternalActionDepth === 0;
-}
-
-function isAllowedDuringMacro(actionName) {
-	return MACRO_ALLOWED_EXTERNAL_ACTIONS.has(`${actionName || ''}`);
-}
-
-function runMacroMenuAction(menuItem, args, context = {}) {
-	if (menuItem?.action === 'pluginProperty:toggle' && context.hasValue) {
-		return setPluginToggleValueForMacro(menuItem, context.value);
-	}
-	if (menuItem?.action === 'macroCall' && macroActiveEngine && context.hasValue) {
-		const parsed = parseMacroCallInput(context.value);
-		macroActiveEngine.pushMacroCall(parsed.macroId, parsed.args);
-		return { result: `queued ${parsed.macroId}` };
-	}
-	macroInternalActionDepth += 1;
-	let actionResult;
-	try {
-		actionResult = performCmdAction(menuItem, args);
-	} finally {
-		macroInternalActionDepth -= 1;
-	}
-	if (actionResult?.macroExecutionError) {
-		throw new Error(actionResult.macroExecutionError);
-	}
-	return actionResult;
-}
-
-function logMacro(message) {
-	addToUserLog('Macro', message);
-	if (macroRunState.running && macroVerbose) {
-		showUserLog();
-	}
-}
-
-function createMacroFrame(song, macroId, callArgs = {}) {
-	const macro = getSongMacro(song, macroId);
-	if (!macro) {
-		throw new Error(`Macro not found: ${macroId}`);
-	}
-	const lines = Array.isArray(macro.lines) ? macro.lines : [];
-	return {
-		macroId,
-		callArgs,
-		lines,
-		nextIndex: 0
-	};
-}
-
-function createMacroEngine(rootMacroId, options = {}) {
-	const song = getSong();
-	const rootCallArgs = options.callArgs && typeof options.callArgs === 'object' && !Array.isArray(options.callArgs)
-		? options.callArgs
-		: {};
-	const engine = {
-		rootMacroId,
-		stack: [],
-		results: [],
-		linesExecuted: 0,
-		verbose: options.verbose ?? macroVerbose,
-		failed: false,
-		failure: null,
-		pushMacroCall(macroId, callArgs = {}) {
-			if (this.stack.length >= MAX_MACRO_EXECUTION_DEPTH) {
-				throw new Error(`Macro call depth exceeded (${this.stack.length}/${MAX_MACRO_EXECUTION_DEPTH}): ${macroId}`);
-			}
-			this.stack.push(createMacroFrame(song, macroId, callArgs));
-		}
-	};
-	engine.pushMacroCall(rootMacroId, rootCallArgs);
-	return engine;
-}
-
-function processMacroEngineFrame(engine) {
-	let linesInFrame = 0;
-	while (engine.stack.length > 0 && linesInFrame < MACRO_LINES_PER_FRAME) {
-		const frame = engine.stack[engine.stack.length - 1];
-		if (frame.nextIndex >= frame.lines.length) {
-			engine.stack.pop();
-			continue;
-		}
-
-		const lineNumber = frame.nextIndex + 1;
-		const line = `${frame.lines[frame.nextIndex] ?? ''}`;
-		frame.nextIndex += 1;
-		if (classifyMacroLine(line) !== 'command') {
-			continue;
-		}
-
-		try {
-			const expandedLine = expandMacroLine(line, (name) => resolveMacroExpansionValue(name, frame.callArgs));
-			macroActiveEngine = engine;
-			pluginManager.refreshPluginsMenuNode();
-			const result = executeMacroLine(expandedLine, {
-				rootMenu: gMenuFile,
-				actionRunner: runMacroMenuAction,
-				refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
-				refreshRuntimeChildren
-			});
-			macroActiveEngine = null;
-			engine.linesExecuted += 1;
-			linesInFrame += 1;
-			engine.results.push({
-				ok: true,
-				macroId: frame.macroId,
-				lineNumber,
-				line,
-				expandedLine,
-				result: result.result || ''
-			});
-			if (engine.verbose) {
-				logMacro(`${lineNumber}: ${expandedLine}${result.result ? ` => ${result.result}` : ' => ok'}`);
-			}
-		} catch (error) {
-			macroActiveEngine = null;
-			engine.failed = true;
-			engine.failure = {
-				macroId: frame.macroId,
-				lineNumber,
-				line,
-				error: error.message
-			};
-			engine.results.push({
-				ok: false,
-				macroId: frame.macroId,
-				lineNumber,
-				line,
-				error: error.message
-			});
-			if (engine.verbose) {
-				logMacro(`${lineNumber}: ${line} => ERROR: ${error.message}`);
-			}
-			return false;
-		}
-	}
-	return engine.stack.length === 0;
-}
-
-function finalizeMacroEngine(engine) {
-	macroRunState.running = false;
-	macroRunState.engine = null;
-	hideMacroOverlay();
-	if (engine.failed) {
-		logMacro(`Macro ${engine.rootMacroId} stopped at line ${engine.failure.lineNumber}: ${engine.failure.error}`);
-		return {
-			ok: false,
-			error: engine.failure.error,
-			failedLineNumber: engine.failure.lineNumber,
-			results: engine.results
-		};
-	}
-	logMacro(`Macro ${engine.rootMacroId} completed (${engine.linesExecuted} lines)`);
-	return {
-		ok: true,
-		results: engine.results
-	};
-}
-
-function pumpMacroEngine(engine) {
-	const done = processMacroEngineFrame(engine);
-	if (engine.failed || done) {
-		const finalResult = finalizeMacroEngine(engine);
-		engine.onDone?.(finalResult);
-		return;
-	}
-	scheduleMacroFrame(() => pumpMacroEngine(engine));
-}
-
-function startSongMacroById(macroId, options = {}) {
-	const id = `${macroId || ''}`.trim();
-	if (!id) {
-		return { ok: false, error: 'macro id is required' };
-	}
-	if (macroRunState.running) {
-		return { ok: false, error: 'macro is already running' };
-	}
-	try {
-		const engine = createMacroEngine(id, options);
-		engine.onDone = typeof options.onDone === 'function' ? options.onDone : null;
-		macroRunState.running = true;
-		macroRunState.engine = engine;
-		showMacroOverlay();
-		if (engine.verbose) {
-			showUserLog();
-		}
-		scheduleMacroFrame(() => pumpMacroEngine(engine));
-		return { ok: true, started: true, macroId: id };
-	} catch (error) {
-		logMacro(`Macro ${id} failed: ${error.message}`);
-		return { ok: false, error: error.message };
-	}
-}
-
-function parseMacroCallInput(argByInputID) {
-	const rawValue = argByInputID;
-	let value = rawValue;
-	if (typeof value === 'string') {
-		const trimmed = value.trim();
-		if (!trimmed) {
-			throw new Error('macro call object is required');
-		}
-		try {
-			value = JSON.parse(trimmed);
-		} catch (error) {
-			throw new Error(`macro call input must be valid JSON: ${error.message}`);
-		}
-	}
-
-	if (!value || typeof value !== 'object' || Array.isArray(value)) {
-		throw new Error('macro call input must be a JSON object');
-	}
-	const keys = Object.keys(value);
-	const allowedKeys = new Set(['macro', 'args']);
-	const unknownKeys = keys.filter((key) => !allowedKeys.has(key));
-	if (unknownKeys.length > 0) {
-		throw new Error(`macro call input has unsupported keys: ${unknownKeys.join(', ')}`);
-	}
-	if (!Object.prototype.hasOwnProperty.call(value, 'macro')) {
-		throw new Error('macro call input must include macro');
-	}
-	if (!Object.prototype.hasOwnProperty.call(value, 'args')) {
-		throw new Error('macro call input must include args');
-	}
-
-	const macroId = `${value.macro || ''}`.trim();
-	if (!validateMacroId(macroId)) {
-		throw new Error(`invalid macro id: ${macroId}`);
-	}
-	if (!value.args || typeof value.args !== 'object' || Array.isArray(value.args)) {
-		throw new Error('macro call args must be a JSON object');
-	}
-
-	return {
-		macroId,
-		args: value.args
-	};
-}
-
-function resolveMacroExpansionValue(name, callArgs = {}) {
-	if (Object.prototype.hasOwnProperty.call(callArgs, name)) {
-		return callArgs[name];
-	}
-	const resolved = getValue(name);
-	if (resolved === name) {
-		return undefined;
-	}
-	return resolved;
-}
+configureMacroEngine({
+	addToUserLog,
+	getSong,
+	getValue,
+	isMacroVerbose: () => macroVerbose,
+	performCmdAction,
+	refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
+	refreshRuntimeChildren,
+	rootMenu: () => gMenuFile,
+	setPluginToggleValueForMacro,
+	showUserLog
+});
 
 export function runSongMacroById(macroId, options = {}) {
-	const id = `${macroId || ''}`.trim();
-	if (!id) {
-		return { ok: false, error: 'macro id is required' };
-	}
-	if (macroExecutionDepth >= MAX_MACRO_EXECUTION_DEPTH) {
-		const message = `Macro call depth exceeded (${macroExecutionDepth}/${MAX_MACRO_EXECUTION_DEPTH}): ${id}`;
-		logMacro(message);
-		return { ok: false, error: message };
-	}
-	const callArgs = options.callArgs && typeof options.callArgs === 'object' && !Array.isArray(options.callArgs)
-		? options.callArgs
-		: {};
-	macroExecutionDepth += 1;
-	try {
-		pluginManager.refreshPluginsMenuNode();
-		const result = executeSongMacro(getSong(), id, {
-			rootMenu: gMenuFile,
-			actionRunner: runMacroMenuAction,
-			refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
-			refreshRuntimeChildren,
-			expandLine: (line) => expandMacroLine(line, (name) => resolveMacroExpansionValue(name, callArgs)),
-			verbose: options.verbose ?? macroVerbose,
-			log: logMacro
-		});
-		if (result.ok) {
-			logMacro(`Macro ${id} completed (${result.results.length} lines)`);
-		} else {
-			logMacro(`Macro ${id} stopped at line ${result.failedLineNumber}: ${result.error}`);
-		}
-		return result;
-	} catch (error) {
-		logMacro(`Macro ${id} failed: ${error.message}`);
-		return { ok: false, error: error.message };
-	} finally {
-		macroExecutionDepth -= 1;
-	}
+	return runSongMacroByIdFromEngine(macroId, options);
 }
 
 function moveSelectByClampedStep(selectSelector, delta) {
@@ -834,7 +452,7 @@ function isMappedSpacebarEvent(evt) {
 function document_keydown(e) {
 	if (isMacroMutationLockActive()) {
 		e.preventDefault();
-		macroRunState.focusNode?.focus();
+		focusMacroOverlay();
 		return;
 	}
 	if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key || ''}`.toLowerCase() === 'm' && getSong()?.tutorial?.level === 'strict') {
@@ -852,7 +470,7 @@ function document_keydown(e) {
 function document_keyup(evt) {
 	if (isMacroMutationLockActive()) {
 		evt.preventDefault();
-		macroRunState.focusNode?.focus();
+		focusMacroOverlay();
 		return;
 	}
     if (evt.keyCode == 27) {  // ESC key
@@ -868,7 +486,7 @@ function document_keyup(evt) {
 function document_keypress(e) {
 	if (isMacroMutationLockActive()) {
 		e.preventDefault();
-		macroRunState.focusNode?.focus();
+		focusMacroOverlay();
 		return;
 	}
 	if (isMappedSpacebarEvent(e)) {
@@ -1553,11 +1171,12 @@ export function performCmdAction(menuItem, args){
 		case "macroCall": {
 			try {
 				const parsedCall = parseMacroCallInput(argByInputID);
-				const macroResult = macroInternalActionDepth > 0
+				const inMacroAction = isInMacroAction();
+				const macroResult = inMacroAction
 					? runSongMacroById(parsedCall.macroId, { callArgs: parsedCall.args })
 					: startSongMacroById(parsedCall.macroId, { callArgs: parsedCall.args });
 				actionResult.result = macroResult.ok
-					? (macroInternalActionDepth > 0 ? `ran ${parsedCall.macroId}` : `running ${parsedCall.macroId}`)
+					? (inMacroAction ? `ran ${parsedCall.macroId}` : `running ${parsedCall.macroId}`)
 					: macroResult.error;
 				actionResult.suppressBang = !macroResult.ok;
 				if (!macroResult.ok) {

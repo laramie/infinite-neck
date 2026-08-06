@@ -25,3 +25,6 @@ Purpose of this sprint is to: allow macros to call macros, with structured param
     - towards the end we requested a screen lock, keyboard trap, and async yields so browser would remain responsive, with /vdu updates when in /fmv verbose mode.  
     - Status: **implemented**.
 
+  - "Iteration 3":
+    - refactored and moved new functions into MacroEngine.js  
+
