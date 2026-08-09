@@ -56,7 +56,7 @@ export function renderLessonSectionList(model = []) {
         const bookmark = row.bookmarked ? '<span class="lessonSectionListBookmark" aria-label="Bookmarked">&#x261E;</span> ' : '';
         return `<tr${rowClass}>`
             + `<td>${bookmark}<a href="#app-action:gotoSection:${row.sectionIndex}" class="lessonSectionListSectionLink" data-action="tutorialGotoSection" data-action-args='${sectionArgs}'>&sect;${row.sectionNumber}</a></td>`
-            + `<td class="lessonSectionListCaption">${escapeHtml(row.caption)}</td>`
+            + `<td class="lessonSectionListCaption">${row.caption}</td>`
             + `<td><input type="checkbox" data-action="tutorialToggleDone" data-action-args='${doneArgs}'${row.done ? ' checked' : ''}></td>`
             + `<td><button type="button" data-action="tutorialToggleBookmark" data-action-args='${bookmarkArgs}'>${row.bookmarked ? '&#x1F5F9;' : '&#x2610;'}</button></td>`
             + `<td><input type="checkbox" data-action="tutorialToggleIncludeInLooping" data-action-args='${loopArgs}'${row.includeInLooping ? ' checked' : ''}></td>`
@@ -163,7 +163,7 @@ export function renderTutorialPrompt(model = {}) {
             + '</span>'
             + '<span class="tutorialPromptHeader">'
             +   hamburger
-            +   sectionCurr+`<span class="tutorialPromptCaption">${escapeHtml(model.sectionCaption || model.songCaption)}</span>`
+            +   sectionCurr+`<span class="tutorialPromptCaption">${model.sectionCaption || model.songCaption}</span>`
             + '</span>'
             + tutorialPromptContentDiv
          + '</div>';
