@@ -408,6 +408,20 @@ export const allTunings = {
     },
     {
       "instance": false,
+      "baseID": "MIDI-P4",
+      "baseInstrument": "MIDI",
+      "caption": "8x8-P4",
+      "nStrings": 8,
+      "rowRange": [65, 60, 55, 50, 45, 40, 35, 30],
+      "frets": 8,
+      "nut": false,
+      "leftmargin": true,
+      "reverse": false,
+      "fixedFretWidth": true,
+      "pinkKey": "C"
+    },
+    {
+      "instance": false,
       "baseID": "Linstrument",
       "baseInstrument": "MIDI",
       "caption": "Linstrument 8x24",
