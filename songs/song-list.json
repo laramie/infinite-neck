@@ -246,6 +246,21 @@
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
           "visible": true
         }
       ]
@@ -257,6 +272,80 @@
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/supersong-black-keys.json",
+      "description": "<b>supersong</b> in C (black-keys).",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ],
+      "tutorial": "strict",
+      "SectionCount": 46
+    },
+    {
+      "href": "practice/supersong-midi8x8-black-keys.json",
+      "description": "<b>supersong</b> in C (black-keys) with MIDI 8x8 pad.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "MIDI",
+          "wiring": "Listener",
           "visible": true
         }
       ]
