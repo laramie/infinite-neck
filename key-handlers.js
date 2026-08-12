@@ -1344,6 +1344,14 @@ export function performCmdAction(menuItem, args){
 			actionResult.preserveMenuStack = true;
 			break;
 		}
+		case "useCaptionForSectionCaptionAction":
+			const song = getSong();
+			if (!song.tutorial){
+				song.tutorial = {};
+			}
+			song.tutorial.useCaptionForSectionCaption = !song.tutorial.useCaptionForSectionCaption;
+			actionResult.result = `useCaptionForSectionCaption: ${getSong().tutorial.useCaptionForSectionCaption}`
+			break;
 		case "saveViewDisplayOptions":
 			handleBtnControlsToDisplayOptions();
 			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
@@ -1572,6 +1580,12 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showCaptionWidgetRow":
 			$('.SongTitleLeadSheet').show();
+			break;		
+		case "hideSongTitle":
+			$('.lblSongName').hide();
+			break;
+		case "showSongTitle":
+			$('.lblSongName').show();
 			break;		
 		case "hideAllNoteNames":
 			showAllNoteNames(false);

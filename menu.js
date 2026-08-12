@@ -1151,6 +1151,11 @@ export var gMenuFile =    {
                     "caption": "<b>w</b>idget row",
                     "trigger": "w",
                     "action": "hideCaptionWidgetRow"
+                  },
+                  {
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "hideSongTitle"
                   }
               ]
             }
@@ -1203,6 +1208,11 @@ export var gMenuFile =    {
                     "caption": "<b>w</b>idget row",
                     "trigger": "w",
                     "action": "showCaptionWidgetRow"
+                  },
+                  {
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "showSongTitle"
                   }
               ]
             }
@@ -1416,6 +1426,13 @@ export var gMenuFile =    {
                 "presentationModeState"
               ],
               "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>u</b>se caption for tutorial",
+              "trigger": "u",
+              "action": "useCaptionForSectionCaptionAction",
+              "preserveMenuStack": true
+              
             },
             {
               "caption": "<b>t</b>utorial mode",
