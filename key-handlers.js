@@ -1567,6 +1567,12 @@ export function performCmdAction(menuItem, args){
 		case "hideCaptionLeft":
 			$(".fretTableLeftCaption").hide();
 			break;
+		case "hideCaptionWidgetRow":
+			$('.SongTitleLeadSheet').hide();
+			break;
+		case "showCaptionWidgetRow":
+			$('.SongTitleLeadSheet').show();
+			break;		
 		case "hideAllNoteNames":
 			showAllNoteNames(false);
 			break;

@@ -1146,6 +1146,11 @@ export var gMenuFile =    {
                     "caption": "<b>s</b>ection status left",
                     "trigger": "s",
                     "action": "hideSectionStatusLeft"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "hideCaptionWidgetRow"
                   }
               ]
             }
@@ -1193,6 +1198,11 @@ export var gMenuFile =    {
                     "caption": "<b>s</b>ection status left",
                     "trigger": "s",
                     "action": "showSectionStatusLeft"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "showCaptionWidgetRow"
                   }
               ]
             }
