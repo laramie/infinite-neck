@@ -1131,6 +1131,8 @@
                             <ul class="LinkList">
                                 <li><a href="#displayOptionsTopic">Display Options</a></li>
                                 <li><a href="#subscriptViewOptionsTopic">Subscript Options</a></li>
+                                <li><a href="#ViewLayout">View Layout</a></li>
+
                             </ul>
                         </li>
                         <li><a href="#divThemeControls">Themes Menu</a></li>
@@ -2999,6 +3001,85 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
  <p>There's a bit more info in the <a href="#glossaryDisplayOptions">Glossary::Display Options</a> entry</p>
 
  
+ <a name="ViewLayout"></a>
+<h4>View Layout</h4>
+
+<p>The View starts with many of the controls visible, and Song information, but can be pared down to just the Instruments, by removing information areas individulally with the following keystrokes.</p>
+<p>To group these changes, there is a "fullscreen" mode where most of the controls are stripped away, and this mode
+    rememebers many of your choices, so you can toggle fullscreen mode on and off.  
+    Use "off" to make changes and adjustments, and toggle into fullscreen "on" when you want to loop or just look at the instruments.
+</p>
+
+<div class="infoRendered">
+        <table>
+        <caption>Layout Keystrokes</caption>
+        <tbody>
+        <tr>
+            <td><span class="key">f</span></td><td>Toggle fullscreen (hides Menu)</td>
+        </tr>
+        <tr>
+            <td><span class="key">t</span></td><td>Toggle <a href="#transport">Transport</a> (with <a href="#spanSectionDrawer">Section Drawer</a>)</td>
+        </tr>
+        <tr>
+            <td><span class="key">a</span></td><td>Toggle Caption Row</td>
+        </tr>
+        <tr>
+            <td><span class="key">SHIFT-A</span></td><td>Toggle Instrument Caption Row</td>
+        </tr>
+        <tr>
+            <td><span class="key">SHIFT-E</span></td><td>Toggle Left Rail</td>
+        </tr>
+        <tr>
+            <td><span class="key">e</span></td><td>Toggle <a href="#event-wiring">Event Wiring Controls</a> left of the Left Rail</td>
+        </tr>
+        <tr>
+            <td><img style="height: 2.5em;" src="img/help/layout/Tonal-button.png"></td><td>button in Instrument Caption that toggles <a href="#TonalPicker">Tonal.js</a> picker controls</td>
+        </tr>
+        <tr>
+            <td><span class="GUIReferenceInline">/vhww</span></td><td>/  view > hide > widget > widget row</td>
+        </tr>
+        <tr>
+            <td><span class="GUIReferenceInline">/vsww</span></td><td>/  view > show > widget > widget row</td>
+        </tr>
+        <tr>
+            <td><span class="GUIReferenceInline">/vhwt</span></td><td>/  view > hide > widget > title</td>
+        </tr>
+        <tr>
+            <td><span class="GUIReferenceInline">/vswt</span></td><td>/  view > show > widget > title</td>
+        </tr>
+        </tbody>
+        </table>
+    </div>
+
+
+
+<p>Here are all the parts of the User Interface:
+   <br><br><img width="95%" src="img/help/layout/layout-marked-up.png">
+</p>
+<p>We start with everything on, including the floating <a href="#transport">Transport</a> at the bottom:
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-instrument-captions-transport.png">
+</p>
+<p>There is a little "Tonal" button:
+    <img style="height: 1.5em;" src="img/help/layout/Tonal-button.png">
+</button> that turns on the <a href="#TonalPicker">Tonal.js</a> information for each Instrument:
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-transport-tonal.png">
+</p>
+<p>The <a href="#transport">Transport</a> is hidden with <span class="key">t</span>, and the Instrument Captions (and controls) are hidden with <span class="key">SHIFT+A</span> and we have hidden the "Left Rail" which was showing the left LooperLight and the left Instrument Title with <span class="key">SHIFT-E</span>
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all.png">
+</p>
+<p>The widget row is hidden with <span class="GUIReferenceInline">/vhww</span>:
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-menu-title-caption.png">
+</p>
+<p>Toggle fullscreen "on" with <span class="key">f</span>
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-caption-widgets.png">
+</p>
+<p>With fullscreen "on", the title is hidden with <span class="GUIReferenceInline">/vhwt</span> but we still show the Caption Row (which normally includes the Widget Row, except we turned the widgets off).
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-caption.png">
+</p>
+<p>Turn off the Caption Row with <span class="key">a</span> All the controls are now hidden, and we are in fullscreen mode (hiding the menu) so we just have one instrument.
+   <br><img style="border: 20px solid green;" src="img/help/layout/layout-none.png">
+</p>
+
 
 <a name="subscriptViewOptionsTopic"></a>
 <h4>Subscript Options</h4>
