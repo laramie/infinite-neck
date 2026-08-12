@@ -1,5 +1,5 @@
 .SectionStatus_loopLight {
-    border: 2px solid green; 
+    border: 3px solid green; 
     padding: 0.18em;
     border-radius: 0.7em 0.3em 0.3em 0.7em;
     display: inline-block;
@@ -10,7 +10,7 @@
 }
 
 .SectionStatus_loopActive {
-    border: 2px solid magenta !important; 
+    border: 3px solid magenta !important; 
 }
 .SectionStatus_beatWrap {
     display: none;
