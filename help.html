@@ -3021,13 +3021,13 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
             <td><span class="key">t</span></td><td>Toggle <a href="#transport">Transport</a> (with <a href="#spanSectionDrawer">Section Drawer</a>)</td>
         </tr>
         <tr>
-            <td><span class="key">a</span></td><td>Toggle Caption Row</td>
+            <td><span class="key">a</span></td><td>Toggle Caption Row (Song Title, Section Caption, Widget Row) </td>
         </tr>
         <tr>
-            <td><span class="key">SHIFT-A</span></td><td>Toggle Instrument Caption Row</td>
+            <td><span class="key">SHIFT-A</span></td><td>Toggle Instrument Caption Row (Instrument Caption, Buttons, <a href="#SectionStatusWidget">section-status widget</a>)</td>
         </tr>
         <tr>
-            <td><span class="key">SHIFT-E</span></td><td>Toggle Left Rail</td>
+            <td><span class="key">SHIFT-E</span></td><td>Toggle Left Rail (Instrument Caption, <a href="#SectionStatusWidget">section-status widget</a>)</td>
         </tr>
         <tr>
             <td><span class="key">e</span></td><td>Toggle <a href="#event-wiring">Event Wiring Controls</a> left of the Left Rail</td>
@@ -3036,49 +3036,87 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
             <td><img style="height: 2.5em;" src="img/help/layout/Tonal-button.png"></td><td>button in Instrument Caption that toggles <a href="#TonalPicker">Tonal.js</a> picker controls</td>
         </tr>
         <tr>
-            <td><span class="GUIReferenceInline">/vhww</span></td><td>/  view > hide > widget > widget row</td>
+            <td><img style="height: 1.5em;" src="img/help/layout/left-rail-c-swap-p-buttons.png"></td>
+            <td>
+                
+                These are little buttons to toggle:
+                <br>[C] the Instrument <b>C</b>aption 
+                <br>[S] the Instrument <b>S</b>ection-status
+                <br><img style="height: 1.5em;" src="img/help/layout/left-rail-swap-button.png"> swap horizontal/vertical layout.
+                </td>
         </tr>
         <tr>
-            <td><span class="GUIReferenceInline">/vsww</span></td><td>/  view > show > widget > widget row</td>
+            <td>
+                <span class="menuExampleLine"><b>/vhww</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>w</b>idget row </span>
+                Hide widget row 
+            </td>
         </tr>
         <tr>
-            <td><span class="GUIReferenceInline">/vhwt</span></td><td>/  view > hide > widget > title</td>
+            <td>
+                <span class="menuExampleLine"><b>/vsww</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>w</b>idget row </span>
+                Show widget row
+            </td>
         </tr>
         <tr>
-            <td><span class="GUIReferenceInline">/vswt</span></td><td>/  view > show > widget > title</td>
+            <td>
+                <span class="menuExampleLine"><b>/vhwt</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>t</b>itle </span>
+                Hide Song title
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswt</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>t</b>itle </span>
+                Show Song title
+            </td>
         </tr>
         </tbody>
         </table>
     </div>
 
+    <br>
+    <p>The <b>Widget Row</b> contains a variable number of widgets, including: <a href="#SectionStatusWidget">section-status widget</a>, chart chord, chart mode, and status widgets for FillPlugin ${fillPositionsStatus}: <img src="img/help/context/fillPositionsStatus.png">, ArpeggioPlugin  ${arpeggioPositionsStatus}: <img src="img/help/context/arpeggioPositionsStatus.png">, and TransposePlugin ${transposeIntervalsStatus}: <img src="img/help/context/transposeIntervalStatus.png">, also documented here: <a href="#variableNames">Variables for Captions</a>. 
+    </p>    
+    
+    <br>
 
 
-<p>Here are all the parts of the User Interface:
+<p><b>Here are all the parts of the User Interface:</b>
    <br><br><img width="95%" src="img/help/layout/layout-marked-up.png">
 </p>
 <p>We start with everything on, including the floating <a href="#transport">Transport</a> at the bottom:
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-instrument-captions-transport.png">
 </p>
 <p>There is a little "Tonal" button:
-    <img style="height: 1.5em;" src="img/help/layout/Tonal-button.png">
-</button> that turns on the <a href="#TonalPicker">Tonal.js</a> information for each Instrument:
+    <img style="height: 2.5em;" src="img/help/layout/Tonal-button.png">
+   that turns on the <a href="#TonalPicker">Tonal.js</a> information for each Instrument in the Instrument Caption:
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-transport-tonal.png">
 </p>
+
 <p>The <a href="#transport">Transport</a> is hidden with <span class="key">t</span>, and the Instrument Captions (and controls) are hidden with <span class="key">SHIFT+A</span> and we have hidden the "Left Rail" which was showing the left LooperLight and the left Instrument Title with <span class="key">SHIFT-E</span>
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all.png">
-</p>
-<p>The widget row is hidden with <span class="GUIReferenceInline">/vhww</span>:
-   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-menu-title-caption.png">
 </p>
 <p>Toggle fullscreen "on" with <span class="key">f</span>
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-caption-widgets.png">
 </p>
-<p>With fullscreen "on", the title is hidden with <span class="GUIReferenceInline">/vhwt</span> but we still show the Caption Row (which normally includes the Widget Row, except we turned the widgets off).
+<p>(Here fullscreen is "off" again, so the Menu is showing.) The widget row is hidden with <span class="GUIReferenceInline">/vhww</span>:
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-menu-title-caption.png">
+</p>
+<p>(With fullscreen "on"...) The title is hidden with <span class="GUIReferenceInline">/vhwt</span> but we still show the Caption Row (which normally includes the Widget Row, except we turned the widgets off).
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-caption.png">
 </p>
 <p>Turn off the Caption Row with <span class="key">a</span> All the controls are now hidden, and we are in fullscreen mode (hiding the menu) so we just have one instrument.
-   <br><img style="border: 20px solid green;" src="img/help/layout/layout-none.png">
+   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-none.png">
 </p>
+
+<p>Within each Instrument, there are lots of controls on the View and Theme menu pages to turn off the Diamonds row, change cell sizes, turn the Nut on and off or resize it, change the note layout, etc.</p>
 
 
 <a name="subscriptViewOptionsTopic"></a>
@@ -6138,13 +6176,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">function-symbol steps for the active transpose chain</td></tr>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">numeric distances for the active transpose chain</td></tr>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeFunctionDistanceSteps}</code></td><td style="border: 1px solid black; padding: 0.4em;">Function+distance steps for the active transpose chain</td></tr>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeIntervalsStatus}</code></td><td style="border: 1px solid black; padding: 0.4em;">widget of active transpose chain: <img src="img/help/context/transposeIntervalStatus.png"></td></tr>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctions}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized function steps</td></tr>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized numeric distances</td></tr>
 <tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${transposeProgressionFunctionDistances}</code></td><td style="border: 1px solid black; padding: 0.4em;">root keys with emphasized Function+distance steps</td></tr></tbody>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${arpeggioPositionsStatus}</code></td><td style="border: 1px solid black; padding: 0.4em;">widget of current-section Arpeggio positions: <img src="img/help/context/arpeggioPositionsStatus.png"></td></tr></tbody>
+<tr><td style="border: 1px solid black; padding: 0.4em; white-space: nowrap;"><code>${fillPositionsStatus}</code></td><td style="border: 1px solid black; padding: 0.4em;">widget of current-section Fill positions: <img src="img/help/context/fillPositionsStatus.png"></td></tr></tbody>
 </table>
 <!-- END GENERATED APPROVED VALUES -->
 <br />
 <br />
+<p>
+The ArpeggioPositionsStatus widget and the FillPositionsStatus widget look very similar, because they work together, and usually song authors
+link the two plugins with the Positions link menu options.  Here they are together, with the FillPositionStatus on the left: 
+<br><img src="img/help/context/fill-and-arpeggio-status-widgets.png">
+</p>
+
 
 
 <a name="macros"></a>
@@ -6303,6 +6350,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
         <a href="#glossaryKey">Key</a>
         <a href="#glossaryLeadKey">LeadKey</a>
         <a href="#glossaryListener">Listener</a>
+        <a href="#glossaryLooperLight">LooperLight</a>
         <a href="#glossaryMIDINumber">MIDINumber</a>
         <a href="#glossaryMulti">Multi</a>
         <a href="#glossaryNamedNote">NamedNote</a>
@@ -6318,6 +6366,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
         <a href="#glossaryRootChordScale">Root/Chord/Scale</a>
         <a href="#glossaryRoot">Root</a>
         <a href="#glossarySection">Section</a>
+        <a href="#glossarySectionStatus">SectionStatus widget</a>
         <a href="#glossarysemitone">semitone</a>
         <a href="#glossaryShallowClone">Shallow Clone</a>
         <a href="#glossarySingleNote">SingleNote</a>
@@ -6328,6 +6377,8 @@ you can add a new macro, copy the macro from the song that does another Instrume
         <a href="#glossaryTunings">Tunings</a>
         <a href="#glossaryup-down">up-down</a>
         <a href="#glossaryDoubleFlats">Double Flats</a>
+        <a href="#glossaryLooperLight">LooperLight</a>
+        <a href="#glossarySectionStatus">section-status widget</a>
     </div>
 
     <table id="glossaryTable" class="CheatSheet ExamplesTable" cellspacing="0" border="1">
@@ -6789,6 +6840,23 @@ you can add a new macro, copy the macro from the song that does another Instrume
                 ${enharmonicTransposedModeNotes}  will display Double Flats when used in the Caption, such as D-flat minor shows  Db, Eb, Fb, Gb, Ab, Bbb, Cb.
                 This is because this value is run through <b>Tonal.js</b> which uses proper Classical theory, which says you can't have a sequence like "Ab, A", so it should be "Ab, Bbb" since "Bbb" <i>is</i> "A".
 
+            </td>
+        </tr>
+        <tr id="glossaryLooperLight">
+            <td>LooperLight
+            </td>
+            <td>
+                The LooperLight is a border around the <a href="#SectionStatusWidget">section-status widget</a>'s current Section number and current beat number, that is
+                illuminate in green for not-looping, or in magenta while looping.
+            </td>
+        </tr>
+        <tr id="glossarySectionStatus">
+            <td>section-status widget
+            </td>
+            <td>
+                The <a href="#SectionStatusWidget">section-status widget</a> comprises the LooperLight, the current Section number, the current beat (there's an option to turn beat display off), the current key, and the current LeadKey.  It additionally shows
+                whether the instrument is an Observer or Listener by the colors of the key and lead key.
+                The widget is described in detail here: <a href="#SectionStatusWidget">section-status widget</a> 
             </td>
         </tr>
     </table>
