@@ -68,10 +68,19 @@ function normalizeLayoutEntry(entry) {
     if (!tableID) {
         return null;
     }
-    return {
+    const normalized = {
         tableID,
         visible: entry.visible !== false
     };
+    Object.keys(entry).forEach((key) => {
+        if (key === 'tableID' || key === 'tablename' || key === 'visible') {
+            return;
+        }
+        if (entry[key] === true) {
+            normalized[key] = true;
+        }
+    });
+    return normalized;
 }
 
 function normalizeNoteTablesLayout({ noteTablesLayout, myTunings }) {

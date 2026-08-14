@@ -77,7 +77,16 @@ export class Song extends SongPersistence {
                 return;
             }
             seen.add(tableID);
-            normalized.push({ tableID, visible: entry.visible !== false });
+            const normalizedEntry = { tableID, visible: entry.visible !== false };
+            Object.keys(entry).forEach((key) => {
+                if (key === 'tableID' || key === 'tablename' || key === 'visible') {
+                    return;
+                }
+                if (entry[key] === true) {
+                    normalizedEntry[key] = true;
+                }
+            });
+            normalized.push(normalizedEntry);
         });
 
         this.noteTablesLayout = normalized;
@@ -102,7 +111,46 @@ export class Song extends SongPersistence {
     }
 
     setNoteTablesLayoutOption(tableID, optionName, optionValue){
-        
+        const safeTableID = `${tableID || ''}`.trim();
+        const safeOptionName = `${optionName || ''}`.trim();
+        if (!safeTableID || !safeOptionName) {
+            return;
+        }
+
+        if (safeOptionName === 'tableID' || safeOptionName === 'tablename') {
+            return;
+        }
+
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+
+        if (safeOptionName === 'visible') {
+            const nextVisible = optionValue !== false;
+            if (entry.visible === nextVisible) {
+                return;
+            }
+            entry.visible = nextVisible;
+            EventBus.trigger('TableVisibility:changed', { tableID: safeTableID, visible: nextVisible });
+            return;
+        }
+
+        const nextValue = optionValue === true;
+        const hadValue = Object.prototype.hasOwnProperty.call(entry, safeOptionName);
+        if (nextValue) {
+            if (entry[safeOptionName] === true) {
+                return;
+            }
+            entry[safeOptionName] = true;
+            return;
+        }
+
+        if (hadValue) {
+            delete entry[safeOptionName];
+        }
     }
 
     setTableVisibilityByBaseID(baseID, visible) {

@@ -3004,6 +3004,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
+	export function toggleTableLayoutsFrom
+
 	function showLoopSectionsStarted(data){
         const caption = (data && data.caption)
             ? data.caption

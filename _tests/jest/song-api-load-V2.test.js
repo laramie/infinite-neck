@@ -233,6 +233,42 @@ describe('Song V2.1 headless operations on a loaded song', () => {
 });
 
 describe('Song V2.1 save path from a loaded song', () => {
+    test('preserves noteTablesLayout option flags across load/save round-trip', () => {
+        const songJson = {
+            songfileVersion: 'V2.1',
+            songName: 'roundtrip-layout-options',
+            myTunings: [
+                { baseID: 'P46_1', fromBaseID: 'P46' }
+            ],
+            noteTablesLayout: [
+                {
+                    tableID: 'tblP46_1',
+                    visible: true,
+                    SectionStatusLeft: true,
+                    CaptionLeft: true
+                }
+            ],
+            sections: [
+                {
+                    sectionNotesByTable: {},
+                    rootID: '3',
+                    sharps: false,
+                    beats: 4,
+                    currentBeat: 1
+                }
+            ],
+            wirings: []
+        };
+
+        const song = new Song(songJson);
+        const persisted = JSON.parse(song.getPersistentSongFile());
+        expect(persisted.noteTablesLayout).toEqual(songJson.noteTablesLayout);
+
+        const reloaded = new Song(persisted);
+        const repersisted = JSON.parse(reloaded.getPersistentSongFile());
+        expect(repersisted.noteTablesLayout).toEqual(songJson.noteTablesLayout);
+    });
+
     test('prepareForSave and getPersistentSongFile preserve save-facing V2.1 fields and exclude runtime-only state', () => {
         const { data, song } = loadSongCanonical();
 
