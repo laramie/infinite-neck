@@ -3004,7 +3004,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
-	export function toggleTableLayoutsFrom
+	export function setUIFromNoteTablesLayoutOptions(){
+		with tableID
+			with SectionStatusLeft
+				$('#'+tableID+'_leftRailSectionStatusHost').toggle(SectionStatusLeft) 
+		with tableID
+			with CaptionLeft
+				$('#'+tableID+'_leftRailCaptionHost').toggle(CaptionLeft) 
+
+	}
 
 	function showLoopSectionsStarted(data){
         const caption = (data && data.caption)
