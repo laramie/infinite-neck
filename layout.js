@@ -11,16 +11,18 @@ export class Layout {
             SongTitle: true,
             WidgetRow: true,
             InstrumentCaptions: true,
-            LeftRails: true
+            LeftRails: true,
+            CaptionLooperLayout: 'column'
         };
-
+        
         this.screenList.escaped = {
             name: "escaped",
             CaptionRow: true,
             SongTitle: true,
             WidgetRow: true,
             InstrumentCaptions: true,
-            LeftRails: true
+            LeftRails: true,
+            CaptionLooperLayout: 'column'
         };
         this.screen = this.screenList.escaped;
         if (jsonObj){
@@ -52,6 +54,31 @@ export class Layout {
             $(".LeftRailLayoutButtons button").addClass("grayed-out-button").prop("disabled", true);
         }
     }
+
+    /** @direction is 'row' or 'column' which behave as setters, or undefined, which behaves as a toggle. */
+    toggleCaptionLooperLayout(direction){
+        let newDirection = 'column';
+        let $lrs = $('.leftRailStack');
+        if (direction){
+            $lrs.css('flex-direction', direction);
+            newDirection = direction;
+        } else {
+            let fd = $lrs.css('flex-direction');
+            if (fd == 'column'){
+                $lrs.css('flex-direction','row');
+                newDirection =  'row';
+            } else {
+                $lrs.css('flex-direction','column');
+                newDirection =  'column';
+            }
+        }
+        this.setCaptionLooperLayout(newDirection);
+        return newDirection;
+    }
+
+    setCaptionLooperLayout(direction){
+        this.screen.CaptionLooperLayout = direction;
+    }
     
     enterFullscreen(){
         this.screen = this.screenList.fullscreen;
@@ -65,13 +92,12 @@ export class Layout {
 
     doToggles(){  
         console.log("Layout:\n"+JSON.stringify(this.screen, null, 4));  
-        //toggleTransport(this.screen.Transport);
         this.toggleCaptionRow(this.screen.CaptionRow);
         this.toggleSongTitle(this.screen.SongTitle);
         this.toggleWidgetRow(this.screen.WidgetRow);
         this.toggleInstrumentCaptions(this.screen.InstrumentCaptions);
-        //toggleWirings(this.screen.Wiring);
         this.toggleLeftRails(this.screen.LeftRails);
+        this.toggleCaptionLooperLayout(this.screen.CaptionLooperLayout);
     }
 
 } 

@@ -1138,29 +1138,29 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>l</b>eft rail",
-                    "trigger": "l",
-                    "action": "hideLeftRail"
-                  },
-                  {
-                    "caption": "<b>c</b>aption left (all)",
+                    "caption": "<b>c</b>aption row",
                     "trigger": "c",
-                    "action": "hideCaptionLeft"
-                  },
-                  {
-                    "caption": "<b>s</b>ection status left (all)",
-                    "trigger": "s",
-                    "action": "hideSectionStatusLeft"
-                  },
-                  {
-                    "caption": "<b>w</b>idget row",
-                    "trigger": "w",
-                    "action": "hideCaptionWidgetRow"
+                    "action": "hideCaptionRow"
                   },
                   {
                     "caption": "<b>t</b>itle",
                     "trigger": "t",
                     "action": "hideSongTitle"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "hideWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "hideInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "hideLeftRail"
                   }
               ]
             }
@@ -1200,29 +1200,29 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>l</b>eft rail",
-                    "trigger": "l",
-                    "action": "showLeftRail"
-                  },
-                  {
-                    "caption": "<b>c</b>aption left (all)",
+                    "caption": "<b>c</b>aption row",
                     "trigger": "c",
-                    "action": "showCaptionLeft"
-                  },
-                  {
-                    "caption": "<b>s</b>ection status left (all)",
-                    "trigger": "s",
-                    "action": "showSectionStatusLeft"
-                  },
-                  {
-                    "caption": "<b>w</b>idget row",
-                    "trigger": "w",
-                    "action": "showCaptionWidgetRow"
+                    "action": "showCaptionRow"
                   },
                   {
                     "caption": "<b>t</b>itle",
                     "trigger": "t",
                     "action": "showSongTitle"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "showWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "showInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "showLeftRail"
                   }
               ]
             }

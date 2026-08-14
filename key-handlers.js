@@ -50,7 +50,6 @@ import {
 	showTransport,
 	toggleSectionDrawer,
 	toggleRandomLoop,
-	toggleCaptionLooperLayout,
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
@@ -160,9 +159,7 @@ function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); 
 function getMyTunings(...args) { return requireProvider('getMyTunings')(...args); }
 function showTuning(...args) { return requireProvider('showTuning')(...args); }
 function hideTuning(...args) { return requireProvider('hideTuning')(...args); }
-function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
-function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
 function toggleRecording(...args) { return requireProvider('toggleRecording')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
@@ -524,11 +521,9 @@ function document_keypress(e) {
                 e.preventDefault();
                 break;
             case "a":
-                //toggleCaption();
 				getSong().getLayout().toggleCaptionRow();
                 break;
             case "A":
-                //toggleInstrumentCaptionRow();
 				getSong().getLayout().toggleInstrumentCaptions();
                 break;
             case "b":
@@ -1567,42 +1562,40 @@ export function performCmdAction(menuItem, args){
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
-		case "showLeftRail":
-			getSong().getLayout().toggleLeftRails(true);
+		case "hideCaptionRow":
+			getSong().getLayout().toggleCaptionRow(false);
 			break;	
-		case "showSectionStatusLeft":
-			getSong().getLayout().toggleLeftRails(true);
-			$(".leftRailSectionStatusHost").show();
-			break;
-		case "showCaptionLeft":
-			getSong().getLayout().toggleLeftRails(true);
-			$(".leftRailCaptionHost").show();
-			break;
-		case "hideLeftRail":
-			getSong().getLayout().toggleLeftRails(false);
-			break;
-		case "hideSectionStatusLeft":
-			$(".leftRailSectionStatusHost").hide();
-			break;
-		case "hideCaptionLeft":
-			$(".leftRailCaptionHost").hide();
-			break;
-		case "toggleCaptionLooperLayout":
-			getSong().getLayout().toggleLeftRails(true);
-			toggleCaptionLooperLayout();
-			break;
-		case "hideCaptionWidgetRow":
-			getSong().getLayout().toggleWidgetRow(false);
-			break;
-		case "showCaptionWidgetRow":
-			getSong().getLayout().toggleWidgetRow(true);
-			break;		
+		case "showCaptionRow":
+			getSong().getLayout().toggleCaptionRow(true);
+			break;	
 		case "hideSongTitle":
 			getSong().getLayout().toggleSongTitle(false);
 			break;
 		case "showSongTitle":
 			getSong().getLayout().toggleSongTitle(true);
-			break;		
+			break;
+		case "hideInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions(false);
+			break;	
+		case "showInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions(true);
+			break;	
+		case "hideWidgetRow":
+			getSong().getLayout().toggleWidgetRow(false);
+			break;
+		case "showWidgetRow":
+			getSong().getLayout().toggleWidgetRow(true);
+			break;			
+		case "hideLeftRail":
+			getSong().getLayout().toggleLeftRails(false);
+			break;
+		case "showLeftRail":
+			getSong().getLayout().toggleLeftRails(true);
+			break;	
+		case "toggleCaptionLooperLayout":
+			getSong().getLayout().toggleLeftRails(true);
+			getSong().getLayout().toggleCaptionLooperLayout();
+			break;
 		case "hideAllNoteNames":
 			showAllNoteNames(false);
 			break;

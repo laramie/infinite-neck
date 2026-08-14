@@ -361,9 +361,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getMyTunings: TuningsLibrary.getMyTunings,
 			showTuning: TuningsLibrary.showTuning,
 			hideTuning: TuningsLibrary.hideTuning,
-			toggleCaption,
 			toggleFullscreen,
-			toggleInstrumentCaptionRow,
 			toggleRecording,
 			transpose,
 			transposeSong,
@@ -2273,12 +2271,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function toggleSectionDrawer(){
 		TransportBuilder.toggleSectionDrawer();
 	}
-	export function toggleCaption(){
-		$('#topControlsCaptions').toggle();
-	}
-	export function toggleInstrumentCaptionRow(){
-		$('.captionRow').toggle();
-	}
 
 	export function setSectionKeysFlats(){
 		getSong().sharps = false;
@@ -2952,14 +2944,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".toggleCaptionLooperLayout")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-				toggleCaptionLooperLayout();
+				getSong().getLayout().toggleCaptionLooperLayout();
 		});
 		$(".showLeftCaption")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
 				let tableID = $(this).data('tableid');
 				let CaptionLeft = $('#'+tableID+'_leftRailCaptionHost').toggle().css('display') !== 'none';
-				console.log("showLeftCaption: "+tableID+" CaptionLeft: "+CaptionLeft);
 				getSong().setNoteTablesLayoutOption(tableID, "CaptionLeft", CaptionLeft);
 		});
 		$(".showLeftSectionStatus")
@@ -2967,7 +2958,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.on(`click${eventNamespace}`, function() {
 				let tableID = $(this).data('tableid');
 				let SectionStatusLeft = $('#'+tableID+'_leftRailSectionStatusHost').toggle().css('display') !== 'none';
-				console.log("showLeftCaption: "+tableID+" SectionStatusLeft: "+SectionStatusLeft);
 				getSong().setNoteTablesLayoutOption(tableID, "SectionStatusLeft", SectionStatusLeft);
 		});
 		$(".showTuningDetails")
@@ -2993,16 +2983,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleWiringOpenState();
 		});
 
-	}
-
-	export function toggleCaptionLooperLayout(){
-		let $lrs = $('.leftRailStack');
-		let fd = $lrs.css('flex-direction');
-		if (fd == 'column'){
-			$lrs.css('flex-direction','row');
-		} else {
-			$lrs.css('flex-direction','column');
-		}
 	}
 
 	export function setUIFromNoteTablesLayoutOptions(){
@@ -3717,8 +3697,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			ChromeFullscreen,
 			enterFullscreen,
 			leaveFullscreen,
-			toggleCaption,
-			toggleInstrumentCaptionRow,
 			hideAllMenuDivs,
 			saveScalingPrefs,
 			applyScalingPrefs,
