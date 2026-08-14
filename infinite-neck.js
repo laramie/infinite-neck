@@ -3006,13 +3006,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function setUIFromNoteTablesLayoutOptions(){
-		with tableID from NoteTablesLayout
-			with SectionStatusLeft
-				$('#'+tableID+'_leftRailSectionStatusHost').toggle(SectionStatusLeft) 
-		with tableID from NoteTablesLayout
-			with CaptionLeft
-				$('#'+tableID+'_leftRailCaptionHost').toggle(CaptionLeft) 
+		const song = getSong();
+		if (!song) {
+			return;
+		}
 
+		const layout = typeof song.getNoteTablesLayout === 'function'
+			? song.getNoteTablesLayout()
+			: (Array.isArray(song.noteTablesLayout) ? song.noteTablesLayout : []);
+
+		layout.forEach((entry) => {
+			const tableID = `${entry?.tableID || ''}`.trim();
+			if (!tableID) {
+				return;
+			}
+
+			const sectionStatusLeft = entry?.SectionStatusLeft === true;
+			const captionLeft = entry?.CaptionLeft === true;
+
+			$(`#${tableID}_leftRailSectionStatusHost`).toggle(sectionStatusLeft);
+			$(`#${tableID}_leftRailCaptionHost`).toggle(captionLeft);
+		});
 	}
 
 	function showLoopSectionsStarted(data){
