@@ -1138,12 +1138,17 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption left",
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "hideLeftRail"
+                  },
+                  {
+                    "caption": "<b>c</b>aption left (all)",
                     "trigger": "c",
                     "action": "hideCaptionLeft"
                   },
                   {
-                    "caption": "<b>s</b>ection status left",
+                    "caption": "<b>s</b>ection status left (all)",
                     "trigger": "s",
                     "action": "hideSectionStatusLeft"
                   },
@@ -1195,12 +1200,17 @@ export var gMenuFile =    {
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption left",
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "showLeftRail"
+                  },
+                  {
+                    "caption": "<b>c</b>aption left (all)",
                     "trigger": "c",
                     "action": "showCaptionLeft"
                   },
                   {
-                    "caption": "<b>s</b>ection status left",
+                    "caption": "<b>s</b>ection status left (all)",
                     "trigger": "s",
                     "action": "showSectionStatusLeft"
                   },
@@ -1226,6 +1236,11 @@ export var gMenuFile =    {
               "caption": "f<b>u</b>llscreen",
               "trigger": "u",
               "action": "toggleFullscreen"
+            },
+            {
+              "caption": "<b>l</b>eft rail layout",
+              "trigger": "l",
+              "action": "toggleCaptionLooperLayout"
             },
             {
               "caption": "<b>a</b>ll note names",

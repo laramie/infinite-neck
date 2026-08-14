@@ -101,6 +101,10 @@ export class Song extends SongPersistence {
         this.ensureNoteTablesLayout();
     }
 
+    setNoteTablesLayoutOption(tableID, optionName, optionValue){
+        
+    }
+
     setTableVisibilityByBaseID(baseID, visible) {
         if (!baseID) {
             return;

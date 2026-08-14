@@ -2096,6 +2096,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearAll();
 			resetNoteNames();
 			TuningsLibrary.showHideTunings();
+			getSong().getLayout().doToggles();
 			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
 	}
 
@@ -2947,34 +2948,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$dicts.removeClass("largeColorDict").hide();
 			}
 		});
-		$(".showLeftCaption")
-			.off(`click${eventNamespace}`)
-			.on(`click${eventNamespace}`, function() {
-			$(this)
-				.closest('.instrumentBackground')
-				.find('.leftRailCaptionHost')
-				.first()
-				.toggle();
-		});
 		$(".toggleCaptionLooperLayout")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-				let $lrs = $('.leftRailStack');
-				let fd = $lrs.css('flex-direction');
-				if (fd == 'column'){
-					$lrs.css('flex-direction','row');
-				} else {
-					$lrs.css('flex-direction','column');
-				}
+				toggleCaptionLooperLayout();
+		});
+		$(".showLeftCaption")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				let tableID = $(this).data('tableid');
+				let CaptionLeft = $('#'+tableID+'_leftRailCaptionHost').toggle().css('display') !== 'none';
+				console.log("showLeftCaption: "+tableID+" CaptionLeft: "+CaptionLeft);
+				getSong().setNoteTablesLayoutOption(tableID, "CaptionLeft", CaptionLeft);
 		});
 		$(".showLeftSectionStatus")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
-			$(this)
-				.closest('.instrumentBackground')
-				.find('.leftRailSectionStatusHost')
-				.first()
-				.toggle();
+				let tableID = $(this).data('tableid');
+				let SectionStatusLeft = $('#'+tableID+'_leftRailSectionStatusHost').toggle().css('display') !== 'none';
+				console.log("showLeftCaption: "+tableID+" SectionStatusLeft: "+SectionStatusLeft);
+				getSong().setNoteTablesLayoutOption(tableID, "SectionStatusLeft", SectionStatusLeft);
 		});
 		$(".showTuningDetails")
 			.off(`click${eventNamespace}`)
@@ -2999,6 +2992,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleWiringOpenState();
 		});
 
+	}
+
+	export function toggleCaptionLooperLayout(){
+		let $lrs = $('.leftRailStack');
+		let fd = $lrs.css('flex-direction');
+		if (fd == 'column'){
+			$lrs.css('flex-direction','row');
+		} else {
+			$lrs.css('flex-direction','column');
+		}
 	}
 
 	function showLoopSectionsStarted(data){

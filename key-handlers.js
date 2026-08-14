@@ -50,6 +50,7 @@ import {
 	showTransport,
 	toggleSectionDrawer,
 	toggleRandomLoop,
+	toggleCaptionLooperLayout,
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
@@ -1566,6 +1567,9 @@ export function performCmdAction(menuItem, args){
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
+		case "showLeftRail":
+			getSong().getLayout().toggleLeftRails(true);
+			break;	
 		case "showSectionStatusLeft":
 			getSong().getLayout().toggleLeftRails(true);
 			$(".leftRailSectionStatusHost").show();
@@ -1574,11 +1578,18 @@ export function performCmdAction(menuItem, args){
 			getSong().getLayout().toggleLeftRails(true);
 			$(".leftRailCaptionHost").show();
 			break;
+		case "hideLeftRail":
+			getSong().getLayout().toggleLeftRails(false);
+			break;
 		case "hideSectionStatusLeft":
 			$(".leftRailSectionStatusHost").hide();
 			break;
 		case "hideCaptionLeft":
 			$(".leftRailCaptionHost").hide();
+			break;
+		case "toggleCaptionLooperLayout":
+			getSong().getLayout().toggleLeftRails(true);
+			toggleCaptionLooperLayout();
 			break;
 		case "hideCaptionWidgetRow":
 			getSong().getLayout().toggleWidgetRow(false);

@@ -185,6 +185,7 @@ export function buildNoteTable(options) {
 
 	let widgetDest = $("<span>");
 	widgetDest.addClass('leftRailSectionStatusHost');
+	widgetDest.attr('id', tableID+'_leftRailSectionStatusHost');
 
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
@@ -197,6 +198,7 @@ export function buildNoteTable(options) {
 		var td1 = $("<td class='tdLeftRailStack'>");
 			let leftRailStack = $("<div class='leftRailStack'>");
 			let leftRailCaptionHost = $("<div class='leftRailCaptionHost'>");
+			leftRailCaptionHost.attr('id', tableID+'_leftRailCaptionHost');
 			leftRailCaptionHost.addClass('ssCaptionWrapper');
 			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
 			fretTableLeftCaption.addClass('SectionStatus_captionRoleTarget');
