@@ -2097,6 +2097,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			resetNoteNames();
 			TuningsLibrary.showHideTunings();
 			getSong().getLayout().doToggles();
+			setUIFromNoteTablesLayoutOptions();
 			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
 	}
 
@@ -3005,10 +3006,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function setUIFromNoteTablesLayoutOptions(){
-		with tableID
+		with tableID from NoteTablesLayout
 			with SectionStatusLeft
 				$('#'+tableID+'_leftRailSectionStatusHost').toggle(SectionStatusLeft) 
-		with tableID
+		with tableID from NoteTablesLayout
 			with CaptionLeft
 				$('#'+tableID+'_leftRailCaptionHost').toggle(CaptionLeft) 
 
