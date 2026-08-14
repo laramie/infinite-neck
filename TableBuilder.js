@@ -269,14 +269,15 @@ function buildCaptionRow(options, tableID) {
 
 		+ hamburgerCaptionRowButtons
 		+ '<span class="captionRowButtons">'
-		+ hamburgerLeftCaption
-		+ hamburgerCaptionLooperLayout
-		+ hamburgerLeftSectionMark 
-		+ hamburgerColorDict
-		+ btnShowWiring
-		+ btnPopOutDiv
-		
-		+ hamburgerTuningDetails
+			+ '<span class="LeftRailLayoutButtons">'
+				+ hamburgerLeftCaption
+				+ hamburgerCaptionLooperLayout
+				+ hamburgerLeftSectionMark
+			+ '</span>' 
+		  + hamburgerColorDict
+		  + btnShowWiring
+		  + btnPopOutDiv
+		  + hamburgerTuningDetails
 		+ '<span class="spanTuningDetails">'
 		+ tuningBaseIDCaption
 		+ tuningIDnStrings

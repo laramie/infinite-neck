@@ -2206,6 +2206,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#divESCAPE").hide();
 		updateFullscreenLeadSheetLineHost();
 		updateFullscreenChartHost();
+		getSong().getLayout().leaveFullscreen();
 		return !wasVisible;
 	}
 	export function enterFullscreen(showESCButton){
@@ -2216,6 +2217,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		updateFullscreenLeadSheetLineHost();
 		updateFullscreenChartHost();
+		getSong().getLayout().enterFullscreen();
 	}
 	
 	export function toggleFullscreen(){
@@ -2228,6 +2230,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setWiringOpenState(false); //going fullscreen
 			updateFullscreenLeadSheetLineHost();
 			updateFullscreenChartHost();
+			getSong().getLayout().enterFullscreen();
 		} else {
 			if (getSong().captionsRowShowing){
 				$('.captionRow').show();
@@ -2238,6 +2241,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divESCAPE").hide();
 			updateFullscreenLeadSheetLineHost();
 			updateFullscreenChartHost();
+			getSong().getLayout().leaveFullscreen();
 		}
 	}
 	export function showTransport(parkMode = false) {
@@ -3997,6 +4001,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		showDefaultTunings();
 		showChartTab("Summary"); //choose tab but don't show Chart menu yet.
+		getSong().getLayout().leaveFullscreen();
 		scrollToTop();
 
 		const promises = [

@@ -523,10 +523,12 @@ function document_keypress(e) {
                 e.preventDefault();
                 break;
             case "a":
-                toggleCaption();
+                //toggleCaption();
+				getSong().getLayout().toggleCaptionRow();
                 break;
             case "A":
-                toggleInstrumentCaptionRow();
+                //toggleInstrumentCaptionRow();
+				getSong().getLayout().toggleInstrumentCaptions();
                 break;
             case "b":
 				getSong().prevBeat();
@@ -548,11 +550,12 @@ function document_keypress(e) {
             case "e":
                 toggleWiringOpenState();
                 break;
-
 			case "E":
-				//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
-				$(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
-				$(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				/*//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
+				 *  $(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
+				 *  $(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				*/
+				getSong().getLayout().toggleLeftRails();
 				break;
             case "f":
                 toggleFullscreen();
@@ -1564,28 +1567,30 @@ export function performCmdAction(menuItem, args){
 			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
 		case "showSectionStatusLeft":
-			$(".leftRailSectionStatusHost").show();//display:flex (hide seems to preserve this)
+			getSong().getLayout().toggleLeftRails(true);
+			$(".leftRailSectionStatusHost").show();
 			break;
 		case "showCaptionLeft":
-			$(".fretTableLeftCaption").show();//display:flex (hide seems to preserve this)
+			getSong().getLayout().toggleLeftRails(true);
+			$(".leftRailCaptionHost").show();
 			break;
 		case "hideSectionStatusLeft":
 			$(".leftRailSectionStatusHost").hide();
 			break;
 		case "hideCaptionLeft":
-			$(".fretTableLeftCaption").hide();
+			$(".leftRailCaptionHost").hide();
 			break;
 		case "hideCaptionWidgetRow":
-			$('.SongTitleLeadSheet').hide();
+			getSong().getLayout().toggleWidgetRow(false);
 			break;
 		case "showCaptionWidgetRow":
-			$('.SongTitleLeadSheet').show();
+			getSong().getLayout().toggleWidgetRow(true);
 			break;		
 		case "hideSongTitle":
-			$('.lblSongName').hide();
+			getSong().getLayout().toggleSongTitle(false);
 			break;
 		case "showSongTitle":
-			$('.lblSongName').show();
+			getSong().getLayout().toggleSongTitle(true);
 			break;		
 		case "hideAllNoteNames":
 			showAllNoteNames(false);

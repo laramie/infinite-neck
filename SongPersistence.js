@@ -1,6 +1,7 @@
 import * as Constants from './Constants.js';
 import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
+import { Layout } from './layout.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -261,6 +262,11 @@ export class SongPersistence {
         this.macros = normalizeSongMacros(obj.macros);
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
+        this.layout = new Layout(obj.layout); //If the file (obj) had a layout, let Layout constructor do Object.assign.
+    }
+
+    getLayout(){
+        return this.layout;
     }
 
     static filterPersistentColorDicts(colorDicts){

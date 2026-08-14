@@ -196,6 +196,10 @@ table {
 
 /***************************** Buttons *****************************/
 
+.grayed-out-button {
+    opacity: 0.5;
+    pointer-events: none;
+}
 
 .BtnPunchedIn {
     box-shadow: inset 2px 2px 5px 2px #555;
