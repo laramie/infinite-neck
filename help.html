@@ -1130,9 +1130,11 @@
                         <li><a href="#divViewControls">View</a>
                             <ul class="LinkList">
                                 <li><a href="#displayOptionsTopic">Display Options</a></li>
+                                <li><a href="#ViewLayout">ViewLayout</a></li>
+                                <li><a href="#SectionStatusWidget">section-status widget</a></li>
+                                <li><a href="#sectionStatusObserversListeners">section-status and Instrument ID for Observers and Listeners</a>
+                                <li><a href="#LeftRailLayout">LeftRail Layout</a></li>
                                 <li><a href="#subscriptViewOptionsTopic">Subscript Options</a></li>
-                                <li><a href="#ViewLayout">View Layout</a></li>
-
                             </ul>
                         </li>
                         <li><a href="#divThemeControls">Themes Menu</a></li>
@@ -1161,7 +1163,6 @@
                         <li><a href="#TonalPickerInstrumentToolbar">TonalPicker in InstrumentToolbar</a></li>
                         <li><a href="#TonalPickerControls">TonalPicker Controls</a></li>
                         <li><a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a></li>
-                        <li><a href="#SectionStatusWidget">section-status widget</a></li>
                         <li><a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a></li>
                         <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
                         <li><a href="#tonalModeNames">Tonal.js Mode Names</a></li>
@@ -1597,7 +1598,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
 <h4>LOOP</h4>
 
-<p>The songs in the <span class="GUIReferenceInline">File > Song Library</span> are all designed for looping.  Make sure the <a href="#transport">Transport</a> is showing with keyboard shortcut <span class="key">t</span> so you can hit the <button class="BtnPunchedOut">LOOP</button> button.  There are several <a href="#SectionStatusWidget">LooperLights</a> (one in the Song Caption, and one in each Instrument Caption or Left-side rail) and if these are visible, they show a green border when not looping, and a magenta border when looping.  So once you are familiar with these, you don't need the Transport: you can just toggle (start/stop) looping with keyboard shortcut <span class="key">l</span> <small>(see: <a href="#loop">looping shortcuts</a>)</small>.</p>
+<p>The songs in the <span class="GUIReferenceInline">File > Song Library</span> are all designed for looping.  Make sure the <a href="#transport">Transport</a> is showing with keyboard shortcut <span class="key">t</span> so you can hit the <button class="BtnPunchedOut">LOOP</button> button.  There are several <a href="#SectionStatusWidget">LooperLights</a> (one in the Song Caption, and one in each Instrument Caption Row or LeftRail) and if these are visible, they show a green border when not looping, and a magenta border when looping.  So once you are familiar with these, you don't need the Transport: you can just toggle (start/stop) looping with keyboard shortcut <span class="key">l</span> <small>(see: <a href="#loop">looping shortcuts</a>)</small>.</p>
 
 <p>You can also use the command-line. <span class="key">ESC</span> followed by <span class="menuExampleLine"><b>/rl</b></span> toggles looping.  <span class="menuExampleLine"><b>/re</b></span> toggles beat looping.</p>
 
@@ -2927,6 +2928,16 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <a name="divViewControls"></a>
 <h3>View</h3>
 
+<ul class="LinkList">
+    <li><a href="#displayOptionsTopic">Display Options</a></li>
+    <li><a href="#ViewLayout">ViewLayout</a></li>
+    <li><a href="#SectionStatusWidget">section-status widget</a></li>
+    <li><a href="#sectionStatusObserversListeners">section-status and Instrument ID for Observers and Listeners</a>
+    <li><a href="#LeftRailLayout">LeftRail Layout</a></li>
+    <li><a href="#subscriptViewOptionsTopic">Subscript Options</a></li>
+</ul>
+
+
 <a name="displayOptionsTopic"></a>
 <h4>Display Options</h4>
 
@@ -3004,15 +3015,16 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
  <a name="ViewLayout"></a>
 <h4>View Layout</h4>
 
-<p>The View starts with many of the controls visible, and Song information, but can be pared down to just the Instruments, by removing information areas individulally with the following keystrokes.</p>
+<p>The View starts with many of the controls visible, and Song information, but can be pared down to just the Instruments, 
+    by removing information areas individulally with the following keystrokes.</p>
 <p>To group these changes, there is a "fullscreen" mode where most of the controls are stripped away, and this mode
-    rememebers many of your choices, so you can toggle fullscreen mode on and off.  
-    Use "off" to make changes and adjustments, and toggle into fullscreen "on" when you want to loop or just look at the instruments.
+    rememebers many of your choices, so you can toggle fullscreen mode on and off, and keep different layouts in each.  
+    For example, use "off" to make changes and adjustments, and toggle into fullscreen "on" when you want to loop or just look at the instruments.
 </p>
 
 <div class="infoRendered">
         <table>
-        <caption>Layout Keystrokes</caption>
+        <caption>Layout Keystrokes and Buttons</caption>
         <tbody>
         <tr>
             <td><span class="key">f</span></td><td>Toggle fullscreen (hides Menu)</td>
@@ -3024,33 +3036,61 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
             <td><span class="key">a</span></td><td>Toggle Caption Row (Song Title, Section Caption, Widget Row) </td>
         </tr>
         <tr>
-            <td><span class="key">SHIFT-A</span></td><td>Toggle Instrument Caption Row (Instrument Caption, Buttons, <a href="#SectionStatusWidget">section-status widget</a>)</td>
+            <td><span class="key">SHIFT-A</span></td><td>Toggle Instrument Caption Row (Instrument ID, Buttons, <a href="#SectionStatusWidget">section-status widget</a>)</td>
         </tr>
         <tr>
-            <td><span class="key">SHIFT-E</span></td><td>Toggle Left Rail (Instrument Caption, <a href="#SectionStatusWidget">section-status widget</a>)</td>
+            <td><span class="key">SHIFT-E</span></td><td>Toggle LeftRail (Instrument ID, <a href="#SectionStatusWidget">section-status widget</a>)</td>
         </tr>
         <tr>
-            <td><span class="key">e</span></td><td>Toggle <a href="#event-wiring">Event Wiring Controls</a> left of the Left Rail</td>
+            <td><span class="key">e</span></td><td>Toggle <a href="#event-wiring">Event Wiring Controls</a> left of the LeftRail</td>
         </tr>
         <tr>
-            <td><img style="height: 2.5em;" src="img/help/layout/Tonal-button.png"></td><td>button in Instrument Caption that toggles <a href="#TonalPicker">Tonal.js</a> picker controls</td>
+            <td><img style="height: 2.5em;" src="img/help/layout/Tonal-button.png"></td><td>button in the Instrument Caption Row that toggles <a href="#TonalPicker">Tonal.js</a> picker controls</td>
         </tr>
         <tr>
             <td><img style="height: 1.5em;" src="img/help/layout/left-rail-c-swap-p-buttons.png"></td>
             <td>
                 
                 These are little buttons to toggle:
-                <br>[C] the Instrument <b>C</b>aption 
-                <br>[S] the Instrument <b>S</b>ection-status
-                <br><img style="height: 1.5em;" src="img/help/layout/left-rail-swap-button.png"> swap horizontal/vertical layout.
-                </td>
+                <br><span style="display: inline-block; padding: 0.8em; border: 1px dotted green;"</span>
+                &nbsp;&nbsp;[C] the Instrument <b>C</b>aption 
+                <br>&nbsp;&nbsp;[S] the Instrument <b>S</b>ection-status
+                <br>&nbsp;&nbsp;<img style="height: 1.5em;" src="img/help/layout/left-rail-swap-button.png"> swap horizontal/vertical layout.
+                </span>
+                <br>These options are shared between <i>fullscreen</i> and <i>escaped</i> 
+                <br>and are disabled when you hide the LeftRail with <span class="key">SHIFT-E</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vhwc</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>c</b>aption row </span>
+                Hide caption row 
+            </td>
         </tr>
         <tr>
             <td>
                 <span class="menuExampleLine"><b>/vhww</b></span>
             </td>
-            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>w</b>idget row </span>
-                Hide widget row 
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>c</b>aption row </span>
+                Show caption row 
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vhwt</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>t</b>itle </span>
+                Hide Song title 
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswt</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>t</b>itle </span>
+                Show Song title 
             </td>
         </tr>
         <tr>
@@ -3063,18 +3103,50 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
         </tr>
         <tr>
             <td>
-                <span class="menuExampleLine"><b>/vhwt</b></span>
+                <span class="menuExampleLine"><b>/vhww</b></span>
             </td>
-            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>t</b>itle </span>
-                Hide Song title
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>w</b>idget row </span>
+                Hide widget row
             </td>
         </tr>
         <tr>
             <td>
-                <span class="menuExampleLine"><b>/vswt</b></span>
+                <span class="menuExampleLine"><b>/vhwi</b></span>
             </td>
-            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>t</b>itle </span>
-                Show Song title
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>i</b>nstrument captions </span>
+                Hide Instrument Caption Rows
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswi</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>i</b>nstrument captions </span>
+                Show Instrument Caption Rows
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vhwl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>l</b>eft rail </span>
+                Hide LeftRail
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>l</b>eft rail </span>
+                Show LeftRail
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vtl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>t</b>oggle | <b>l</b>eft rail layout</span>
+                Toggle LeftRail row/column display
             </td>
         </tr>
         </tbody>
@@ -3092,15 +3164,15 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
    <br><br><img width="95%" src="img/help/layout/layout-marked-up.png">
 </p>
 <p>We start with everything on, including the floating <a href="#transport">Transport</a> at the bottom:
-   <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-instrument-captions-transport.png">
+   <br><br><img  style="border: 20px solid green;" src="img/help/layout/layout-all-instrument-captions-transport.png">
 </p>
 <p>There is a little "Tonal" button:
     <img style="height: 2.5em;" src="img/help/layout/Tonal-button.png">
-   that turns on the <a href="#TonalPicker">Tonal.js</a> information for each Instrument in the Instrument Caption:
+   that turns on the <a href="#TonalPicker">Tonal.js</a> information for each Instrument in its Instrument Caption Row:
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all-transport-tonal.png">
 </p>
 
-<p>The <a href="#transport">Transport</a> is hidden with <span class="key">t</span>, and the Instrument Captions (and controls) are hidden with <span class="key">SHIFT+A</span> and we have hidden the "Left Rail" which was showing the left LooperLight and the left Instrument Title with <span class="key">SHIFT-E</span>
+<p>The <a href="#transport">Transport</a> is hidden with <span class="key">t</span>, and the Instrument Caption Rows (and controls) are hidden with <span class="key">SHIFT+A</span> and we have hidden the "LeftRail" which was showing the left LooperLight and the left Instrument ID with <span class="key">SHIFT-E</span>
    <br><br><img style="border: 20px solid green;" src="img/help/layout/layout-all.png">
 </p>
 <p>Toggle fullscreen "on" with <span class="key">f</span>
@@ -3117,6 +3189,174 @@ by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in n
 </p>
 
 <p>Within each Instrument, there are lots of controls on the View and Theme menu pages to turn off the Diamonds row, change cell sizes, turn the Nut on and off or resize it, change the note layout, etc.</p>
+
+
+
+ <a name="SectionStatusWidget"></a>
+<h3>section-status widget</h3>         
+<p>
+    The <b>section-status</b> widget appears in the Section Caption Row, optionally in the Instrument Caption Row, and optionally in the LeftRail of each Instrument.  The examples 
+    below show the LeftRail version.
+    Among other things, it shows the
+    <a href="#glossaryKey">Key</a> we are in. It contains a <b>LooperLight</b>,
+    which has a green border here, and contains the section number and beat number.  The LooperLight has a green border because we aren't looping. While looping, the
+    <b>LooperLight</b> border is magenta.
+    Below the <b>LooperLight</b> are two boxes [Key, LeadKey], one has a white background for Key (the root key of the Section) and one has a gray background because
+     is <a href="#glossaryLeadKey">LeadKey</a> is absent.
+    Below these, is the Instrument ID, P46_1, the first instance in our song of a P4 6-string guitar.
+
+    <br>
+    <br>
+    <i><small>NOTE: you can turn off beat display in the <b>LooperLights</b> and just view Section numbers with <span class="GUIReferenceInline">View > Show LooperLight Beats</span>  
+    </small></i>
+    <br>
+
+    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
+        <li>Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C.
+            <br>
+            <img src="img/help/context/section-status-C.png" width="50">
+        </li>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the <a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.  The Instrument ID (P46_1) is shown below.
+            <br>
+            <img src="img/help/context/section-status-C-Eb.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the same <b>section-status</b> widget.  Now, the red REC light is on, because we have clicked 
+            <button class="ArmedButton" type="button" tabindex="-1" style="font-size: 70%;">REC</button> in the <a href="#transport">Transport</a>, or typed keystroke shortcut <span class="key">SHIFT-R</span>. The Instrument ID is shown below.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget in the Instrument Caption Row. The Instrument ID (P46_1) is shown to the left.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC-caption-row.png" width="300">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget in the Song Caption row.
+            <br>
+            <img src="img/help/context/section-status-C-Eb-REC-song-caption.png" width="200">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget, showing a magenta border while looping.
+            <br>
+            <img src="img/help/context/section-status-looping.png" width="50">
+        </il>
+        <li style="padding-top: 1em;">
+            Here is the <b>section-status</b> widget, showing a magenta border while looping, and showing the red REC light.
+            <br>
+            <img src="img/help/context/section-status-looping-REC.png" width="50">
+        </il>
+    </ol>
+
+</p>
+
+<a name="sectionStatusObserversListeners"></a>
+<h4>section-status and Instrument ID for Observers and Listeners</h4>
+
+<p>Main Instruments, Listeners, and Observers are described in <a href="#event-wiring">Event Wiring Controls</a>, along with how to set them up, and wire them to each other,
+    and how to set Relative Section Amounts.  
+    They are distinguished by the colors used in thier Instrument IDs, and their Key and LeadKey background colors.
+    Observers also show a relative Section amount in their section-status, such as -1, or +1.  
+
+    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
+        <li>Here is the <b>section-status</b> widget with the Instrument ID above it, in the LeftRail.
+            It is a <b>main</b> Instrument, so its Instrument ID is black with a red border, its Key is white background, its LeadKey is gray if absent, or cyan if present, as this one is.
+            <br>
+            <img src="img/help/context/left-rail-lead.png" width="50">
+        </li>
+        <li>Here is a <b>Listener</b> Instrument, its title in greens, its keys in yellow backgrounds.
+            <br>
+            <img src="img/help/context/left-rail-listener.png" width="50">
+        </li>
+        <li>Here is an <b>Observer</b> Instrument, its title in blues, its keys in lavender backgrounds, observing one Section back (-1).
+            <br>
+            <img src="img/help/context/left-rail-back.png" width="50">
+        </li>
+        <li>Here is a <b>Observer</b> Instrument, its title in blues, its keys in lavendar backgrounds, observing one Section forward (+1).
+            <br>
+            <img src="img/help/context/left-rail-forward.png" width="50">
+        </li>
+    </ol>
+
+    
+</p>
+
+
+
+<a name="LeftRailLayout">
+<h4>LeftRail Layout</h4>
+
+<p>The LeftRail widgets can be shown in row or column display:  
+
+    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
+        <li>Here is the <b>LeftRail</b> in "column" display: 
+            <br>&nbsp;&nbsp;&nbsp;the <b>section-status</b> widget is below the <b>Instrument ID</b>.
+            <br>
+            <img src="img/help/layout/left-rail-column.png">
+        </li>
+        <li>Here is <b>LeftRail</b> in "row" display: 
+            <br>&nbsp;&nbsp;&nbsp;the <b>section-status</b> widget is on the right with the <b>Instrument ID</b> to the left.
+            <br>
+            <img src="img/help/layout/left-rail-row.png">
+        </li>
+    </ol>
+</p>
+<p>
+    These shortcuts change the display: 
+    <div class="infoRendered">
+        <table>
+        <caption>Layout Keystrokes</caption>
+        <tbody>
+        <tr>
+            <td><span class="key">f</span></td><td>Toggle fullscreen (hides Menu)</td>
+        </tr>
+        <tr>
+            <td><span class="key">SHIFT-E</span></td><td>Toggle LeftRail (Instrument ID, <a href="#SectionStatusWidget">section-status widget</a>)</td>
+        </tr>
+        <tr>
+            <td><img style="height: 1.5em;" src="img/help/layout/left-rail-c-swap-p-buttons.png"></td>
+            <td>
+                
+                These are little buttons to toggle:
+                <br><span style="display: inline-block; padding: 0.8em; border: 1px dotted green;"</span>
+                &nbsp;&nbsp;[C] the Instrument <b>C</b>aption 
+                <br>&nbsp;&nbsp;[S] the Instrument <b>S</b>ection-status
+                <br>&nbsp;&nbsp;<img style="height: 1.5em;" src="img/help/layout/left-rail-swap-button.png"> swap horizontal/vertical layout.
+                </span>
+                <br>These options are shared between <i>fullscreen</i> and <i>escaped</i> 
+                <br>and are disabled when you hide the LeftRail with <span class="key">SHIFT-E</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vhwl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>h</b>ide | <b>w</b>idget | <b>l</b>eft rail </span>
+                Hide LeftRail
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vswl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>s</b>how | <b>w</b>idget | <b>l</b>eft rail </span>
+                Show LeftRail
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="menuExampleLine"><b>/vtl</b></span>
+            </td>
+            <td> <span class="menuExamplePrompt"><b>/v</b>iew | <b>t</b>oggle | <b>l</b>eft rail layout</span>
+                Toggle LeftRail row/column display
+            </td>
+        </tr>
+        </tbody>
+        </table>
+    </div>    
+</p>
+
 
 
 <a name="subscriptViewOptionsTopic"></a>
@@ -3154,7 +3394,6 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <br><img src="img/help/context/note-opt-2.png">
 
  </p>
-
 <a name="divThemeControls"></a>
 <h3>Themes Menu</h3>
  <p>Normally, you can change Themes by just selecting one from the dropdown in the main menu button bar.
@@ -3608,7 +3847,6 @@ Main:
     <li><a href="#TonalPickerInstrumentToolbar">TonalPicker in InstrumentToolbar</a></li>
     <li><a href="#TonalPickerControls">TonalPicker Controls</a></li>
     <li><a href="#noteTypes-tonalSourceSet">Using different note types with tonalSourceSet</a></li>
-    <li><a href="#SectionStatusWidget">section-status widget</a></li>
     <li><a href="#settingNoteRootTonal">Setting noteRoot for Tonal.js</a></li>
     <li><a href="#tonalChordNames">Tonal.js Chord Names</a></li>
     <li><a href="#tonalModeNames">Tonal.js Mode Names</a></li>
@@ -3858,89 +4096,10 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
 </p>
         
 
-<a name="SectionStatusWidget"></a>
-<h3>section-status widget</h3>         
-<p>We need to pause here and point out the <b>section-status</b> widget, which appears in various parts of the app.
-    Among other things, it
-    shows the
-    <a href="#glossaryKey">Key</a> we are in. It contains a <b>LooperLight</b>,
-    a green border here (around the section number and beat number) because we aren't looping. While looping, the
-    <b>LooperLight</b> is magenta.
-    Below the <b>LooperLight</b> are two boxes [Key, LeadKey], one has a white background for Key (the root key of the Section) and one has a gray background because
-     is <a href="#glossaryLeadKey">LeadKey</a> is absent.
-    Below these, is the Instrument name, P46_1, the first instance in our song of a P4 6-string guitar.
 
-    <br>
-    <br>
-    <i><small>NOTE: you can turn off beat display in the <b>LooperLights</b> and just view Section numbers with <span class="GUIReferenceInline">View > Show LooperLight Beats</span>  
-    </small></i>
-    <br>
 
-    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
-        <li>Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C.
-            <br>
-            <img src="img/help/context/section-status-C.png" width="50">
-        </li>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the <a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.  The Instrument caption (P46_1) is shown below.
-            <br>
-            <img src="img/help/context/section-status-C-Eb.png" width="50">
-        </il>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget with the <b>LooperLight</b> showing section 1 beat 1, and the <a href="#glossaryKey">Key</a> as C and since the <a href="#glossaryLeadKey">LeadKey</a> is present and is E-flat, it has a cyan background.  Also, the red REC light is on, because we have clicked REC in the <a href="#transport">Transport</a>. The Instrument caption is shown below.
-            <br>
-            <img src="img/help/context/section-status-C-Eb-REC.png" width="50">
-        </il>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget in the Instrument Caption row. The Instrument caption (P46_1) is shown to the left.
-            <br>
-            <img src="img/help/context/section-status-C-Eb-REC-caption-row.png" width="300">
-        </il>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget in the Song Caption row.
-            <br>
-            <img src="img/help/context/section-status-C-Eb-REC-song-caption.png" width="200">
-        </il>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget, showing a magenta border while looping.
-            <br>
-            <img src="img/help/context/section-status-looping.png" width="50">
-        </il>
-        <li style="padding-top: 1em;">
-            Here is the <b>section-status</b> widget, showing a magenta border while looping, and showing the red REC light.
-            <br>
-            <img src="img/help/context/section-status-looping-REC.png" width="50">
-        </il>
-    </ol>
 
-</p>
-<p>Main Instruments, Listeners, and Observers are described in <a href="#event-wiring">Event Wiring Controls</a>, along with how to set them up, and wire them to each other,
-    and how to set Relative Section Amounts.  
-    They are distinguished by the colors used in thier Instrument Captions, and their Key and LeadKey background colors.
-    Observers also show a relative Section amount in their section-status, such as -1, or +1.  
 
-    <ol style="margin-left: 4em; border: 6px solid green; width:40%; padding: 2em; ">
-        <li>Here is the <b>section-status</b> widget with the Instrument Caption above it, in the Left Rail.
-            It is a <b>main</b> Instrument, so its Instrument Caption is black with a red border, its Key is white background, its LeadKey is gray if absent, or cyan if present, as this one is.
-            <br>
-            <img src="img/help/context/left-rail-lead.png" width="50">
-        </li>
-        <li>Here is a <b>Listener</b> Instrument, its title in greens, its keys in yellow backgrounds.
-            <br>
-            <img src="img/help/context/left-rail-listener.png" width="50">
-        </li>
-        <li>Here is an <b>Observer</b> Instrument, its title in blues, its keys in lavender backgrounds, observing one Section back (-1).
-            <br>
-            <img src="img/help/context/left-rail-back.png" width="50">
-        </li>
-        <li>Here is a <b>Observer</b> Instrument, its title in blues, its keys in lavendar backgrounds, observing one Section forward (+1).
-            <br>
-            <img src="img/help/context/left-rail-forward.png" width="50">
-        </li>
-    </ol>
-
-    
-</p>
 
 <a name="settingNoteRootTonal"></a>
 <h3>Setting noteRoot for Tonal.js</h3>
@@ -3952,6 +4111,13 @@ The Instrument toolbars can be hidden and shown with keyboard shortcut
         will use the first noteRoot it finds in the Section, on any Instrument.)
         <br>See also: <a href="#glossarynoteRoot">noteRoot</a>
 </p>
+
+<p>We need to pause here and point out the <b>section-status</b> widget, which appears in various parts of the app.
+    Please consult the <a href="#SectionStatusWidget">section-status widget</a> documentation.
+    The <b>section-status</b> widget shows the Key and LeadKey of the Section, which Tonal.js uses to calculate where the 
+    chords are rooted.
+</p>
+
 <p>
     <ol style="margin-left: 4em; border: 6px solid green;">
         <li>Open the MiniPalette, click on noteRoot, which is the black square with green diagonal lines and the letter R: <img src="img/help/context/noteRoot-button-MiniPalette.png" height="30"> (to the right of <b>Auto</b>):
@@ -4529,7 +4695,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td><a href="#showHideQuick" class="MBtn"><b>q</b>uick menu</a></td>
                     <td><a href="#changeWidthOfCells"><b>W</b> narrower</a><a
                             href="#changeWidthOfCells"><b>w</b>ider</a></td>
-                    <td><a href="#toggleLeftRail" class="MBtn2"><b>E</b> left rail</a><a href="#toggleWiringOpenState"
+                    <td><a href="#toggleLeftRail" class="MBtn2"><b>E</b> LeftRail</a><a href="#toggleWiringOpenState"
                             class="MBtn2"><b>e</b>vent wiring</a></td>
                     <td><a href="#toggleRecording"><b>R</b>EC</a><a href="#showHideChart" class="MBtn">cha<b>r</b>t</a>
                     </td>
@@ -4804,7 +4970,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>
                 </td>
-                <td>toggle left rail (left caption and left section-status) 
+                <td>toggle LeftRail (left caption and left section-status) 
                 </td>
             </tr>
             
@@ -6292,6 +6458,33 @@ you can add a new macro, copy the macro from the song that does another Instrume
 /fpfIi "DADGAD_1"
 /rsR</p>
 
+<h5>Macros calling Macros</h5>
+<p>A Macro can invoke another macro, with a special syntax. Here you can see the command-line /fmc is placed inside the calling macro, but it must
+    use special JSON syntax.
+</p>
+
+<p class="codeExample">
+    /fmc {"macro":"fill-tiny-automatic", "args":{"key":"wa", "chord":"b", "caption":"A m7b5"}}
+</p>
+
+<p>The property "macro" is required, and is the ID of the called macro.  The "args" property lets you set values that are 
+    retrieved inside the called macro with syntax ${myValue}.  Here is "fill-tiny-automatic" which accesses arguments "key", "chord", and "caption" like so: 
+</p>
+
+<p class="codeExample">
+    /fpfgri "fill-tiny-root-chord-automatic"
+    /sk${key}
+    /fpfoc${chord}
+    /fpfA
+    /fpfM
+    /skwc
+    /sl${key}
+    /fmp "caption: -${caption}-"
+    /sc "${caption}"
+    /fmp "created ${key} ${chord} in Section ${currentSectionCardinal}"
+    /vdu
+</p>
+
 
 <br />
 <br />
@@ -6392,7 +6585,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
         <a href="#glossaryRootChordScale">Root/Chord/Scale</a>
         <a href="#glossaryRoot">Root</a>
         <a href="#glossarySection">Section</a>
-        <a href="#glossarySectionStatus">SectionStatus widget</a>
+        <a href="#glossarySectionStatus">section-status widget</a>
         <a href="#glossarysemitone">semitone</a>
         <a href="#glossaryShallowClone">Shallow Clone</a>
         <a href="#glossarySingleNote">SingleNote</a>
