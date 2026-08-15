@@ -1898,6 +1898,61 @@ export var gMenuFile =    {
                   "trigger": "2"
                 }
               ]
+            },
+            {
+              "caption": "<b>n</b>ote (degree)",
+              "trigger": "n",
+              "action": "selectRoleNote",
+              "children": [
+                {
+                  "caption": "<b>1</b> (1)",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>t</b>au (2)",
+                  "trigger": "t"
+                },
+                {
+                  "caption": "<b>2</b> (3)",
+                  "trigger": "2"
+                },
+                {
+                  "caption": "<b>m</b>i (4)",
+                  "trigger": "m"
+                },
+                {
+                  "caption": "<b>3</b> (5)",
+                  "trigger": "3"
+                },
+                {
+                  "caption": "<b>4</b> (6)",
+                  "trigger": "4"
+                },
+                {
+                  "caption": "t<b>r</b>i (7)",
+                  "trigger": "r"
+                },
+                {
+                  "caption": "<b>5</b> (8)",
+                  "trigger": "5"
+                },
+                {
+                  "caption": "<b>s</b>a (9)",
+                  "trigger": "s"
+                },
+                {
+                  "caption": "<b>6</b> (10)",
+                  "trigger": "6"
+                },
+                {
+                  "caption": "<b>d</b>om (11)",
+                  "trigger": "d"
+                },
+                {
+                  "caption": "<b>7</b> (12)",
+                  "trigger": "7"
+                }
+              ]
             }
           ]
         },
