@@ -668,8 +668,8 @@ function document_keypress(e) {
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
 				paletteUtils.activateUiControl('#idPaletteModePaint');
-				paletteUtils.activateUiControl('#rbFinger0');
 				paletteUtils.activateUiControl('#idRFinger0');
+				paletteUtils.activateUiControl('#rbFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
@@ -1631,30 +1631,37 @@ export function performCmdAction(menuItem, args){
 				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						paletteUtils.check("#rbFinger0");
-						paletteUtils.checkAndTrigger("#idRFinger0");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger0');
+						paletteUtils.activateUiControl('#rbFinger0');
 						break;
 					case "1":
-					    paletteUtils.check("#rbFinger1");
-						paletteUtils.checkAndTrigger("#idRFinger1");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger1');
+						paletteUtils.activateUiControl('#rbFinger1');
 						break;
 					case "2":
-					    paletteUtils.check("#rbFinger2");
-					    paletteUtils.checkAndTrigger("#idRFinger2");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger2');
+						paletteUtils.activateUiControl('#rbFinger2');
 						break;
 					case "3":
-					    paletteUtils.check("#rbFinger3");
-					    paletteUtils.checkAndTrigger("#idRFinger3");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger3');
+						paletteUtils.activateUiControl('#rbFinger3');
 						break;
 					case "4":
-					    paletteUtils.check("#rbFinger4");
-					    paletteUtils.checkAndTrigger("#idRFinger4");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger4');
+						paletteUtils.activateUiControl('#rbFinger4');
 						break;
 					case "5":
-					    paletteUtils.check("#rbFingerT");
-						paletteUtils.checkAndTrigger("#idRFingerT");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFingerT');
+						paletteUtils.activateUiControl('#rbFingerT');
 						break;
 					case "t":
+						paletteUtils.activateUiControl('#idPaletteModePaint');
 					    paletteUtils.check("#rbFingerT");
 						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
@@ -1689,16 +1696,20 @@ export function performCmdAction(menuItem, args){
 						paletteUtils.check("#idMidiPitchesSingle");
 						break;
 					case "l":
-						paletteUtils.check("#idPaletteModePaint");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.check("#idPaletteModePaint");
 						break;
 					case "k":
-						paletteUtils.checkAndTrigger("#idPaletteModeKeep");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						paletteUtils.checkAndTrigger("#idPaletteModeClear");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						paletteUtils.checkAndTrigger("#idPaletteModeDropper");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
@@ -1719,7 +1730,7 @@ export function performCmdAction(menuItem, args){
 					case "r":
 						paletteUtils.checkAndTrigger("#idRRoot");
 						break;
-					case "c":
+					case "h":
 						paletteUtils.checkAndTrigger("#idRChromatic");
 						break;
 					case "p":
@@ -1788,6 +1799,49 @@ export function performCmdAction(menuItem, args){
 						break;
 					case "2":
 						paletteUtils.checkAndTrigger("#idRLead2");
+						break;
+				}
+			}
+			break;		
+		case "selectRoleNote":
+			if (args) {
+				paletteUtils.activatePaintModeIfSpecialSelected();
+				switch (args["key"]) {
+					case "1":
+						paletteUtils.checkAndTrigger("#idR1");
+						break;
+					case "t":
+						paletteUtils.checkAndTrigger("#idR2");
+						break;
+					case "2":
+						paletteUtils.checkAndTrigger("#idR3");
+						break;
+					case "m":
+						paletteUtils.checkAndTrigger("#idR4");
+						break;
+					case "3":
+						paletteUtils.checkAndTrigger("#idR5");
+						break;
+					case "4":
+						paletteUtils.checkAndTrigger("#idR6");
+						break;
+					case "r":
+						paletteUtils.checkAndTrigger("#idR7");
+						break;
+					case "5":
+						paletteUtils.checkAndTrigger("#idR8");
+						break;
+					case "s":
+						paletteUtils.checkAndTrigger("#idR9");
+						break;
+					case "6":
+						paletteUtils.checkAndTrigger("#idR10");
+						break;
+					case "d":
+						paletteUtils.checkAndTrigger("#idR11");
+						break;
+					case "7":
+						paletteUtils.checkAndTrigger("#idR12");
 						break;
 				}
 			}
