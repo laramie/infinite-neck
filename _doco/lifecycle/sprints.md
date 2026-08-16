@@ -208,8 +208,15 @@ The sprints toward this effort are documented here.
 - [sprint-137-macros](../design/sprints/137-macros/sprint-137.md)  
 
 - [sprint-138-tutorial-mode](../design/sprints/138-tutorial-mode/sprint-138.md)
-  - At the end of sprint-138, we have one tutorial working with all features: [L001-one-string-intro/L001-1.json](../../songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)      
+  - At the end of sprint-138, we have one tutorial working with all features: [L001-one-string-intro/L001-1.json](../../songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)  
 
+  ## sprints after version 2 rollout
+
+- [sprint 139-macro-call](../design/sprints/139-macro-call/sprint-139.md)
+  - COMPLETE.  Allows macros to call macros with a JSON object of vars.
+
+- [sprint 140-tool-notesource](../design/sprints/140-tool-notesource/sprint-140.md)
+  - an investigative sprint to provide notesources for Tool windows such as Perfect4thsCalculator.
 
 
 <br>
