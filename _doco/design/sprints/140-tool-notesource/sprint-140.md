@@ -19,4 +19,5 @@ Purpose of this sprint is to:
 ## Iterations
 
   - "Iteration 1": "design-cody"
+  - "Iteration 2": "design-alt"
 
