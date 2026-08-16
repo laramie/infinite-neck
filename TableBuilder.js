@@ -227,6 +227,16 @@ export function buildNoteTable(options) {
 }
 
 function buildCaptionRow(options, tableID) {
+	var captionRow = $("<div>");
+	captionRow.addClass("captionRow");
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
+	
+	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
+	if (options.Tool === true){
+		captionRow.html(btnPopOutDiv);
+		return captionRow;
+	}
+
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
 	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
@@ -247,10 +257,7 @@ function buildCaptionRow(options, tableID) {
 	var tuningIDnStrings = '<span>' + options.nStrings + '-string:</span>';
 	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
 
-	var captionRow = $("<div>");
-	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
-	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo' class='captionRowTonalInfo'></span>";
 

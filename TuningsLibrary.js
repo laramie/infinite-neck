@@ -300,7 +300,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
         +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
+        + "<th>BN</th><th>Right/Left</th><th>Tool</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
         
     );
     table.append(trh);
@@ -332,6 +332,13 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + ' type="checkbox" name="cbnLH' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedLH + '>Left-Handed</nobr></label>';
         var leftHandCellHtml = isSongOwnedTable ? checkboxLH : (tun.reverse ? 'Left-Handed' : '');
+
+        var checkedTool = tun.Tool ? " checked " : "";
+        var checkboxTool = '<label for="cbTool' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxTool"   id="cbTool' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnTool' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedTool + '></nobr></label>';
+        var ToolCellHtml = isSongOwnedTable ? checkboxTool : (tun.reverse ? 'Tool' : '');
 
         var checkedPN = tun.pianoNamesRow ? " checked " : "";
         var disabledPN = tun.pianoSkeuomorphic ? " disabled " : "";
@@ -438,6 +445,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(specialRows));
         tr.append($("<td>").html("" + BN));
         tr.append($("<td>").html(leftHandCellHtml));
+        tr.append($("<td>").html(ToolCellHtml));
         tr.append($("<td>").html(pianoNamesCellHtml));
         tr.append($("<td>").html(pianoSkeuoCellHtml));
         tr.append($("<td>").html(showDiamondsCellHtml));
@@ -828,6 +836,12 @@ export function bindFormTuningsEvents() {
         if (tuning.reverse && tuning.baseInstrument === 'Piano') {
             revealPianoReverseWarning(tuningID);
         }
+    });
+    $('#frmTunings .checkboxTool').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.Tool = this.checked;
+        requestReinstallAllTuningsTables();
     });
     $('#frmTunings .selectFrets').change(function () {
         var tuningID = this.id.substring(SELECT_FRETS_PFX.length);

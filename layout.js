@@ -1,6 +1,4 @@
-/* This code is not live.  
- *  It is a sketch of an idea to have fullscreen mode remember which layout elements are visible.
- */   
+/*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
 export class Layout {
     constructor(jsonObj){

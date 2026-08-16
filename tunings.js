@@ -358,6 +358,7 @@ export const allTunings = {
       "frets": 1,
       "nut": false,
       "reverse": false,
+      "Tool": true
     },
     {
       "instance": false,

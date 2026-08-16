@@ -1087,6 +1087,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (tableID){
 			tableID_prefix = '#'+tableID + ' ';
 		}
+		options = checkOptionsForToolTables(tableID, options);
+
 		const timingStart = getNoteTableTimingNow();
 		const noteNamesFuncArr = Array.isArray(options.noteNamesFuncArr)
 			? options.noteNamesFuncArr
@@ -1121,6 +1123,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			rootID: options.rootID,
 			rootIDLead: options.rootIDLead
 		});
+	}
+
+	function checkOptionsForToolTables(tableID, options){
+		let noteTablesLayout = getSong().getNoteTablesLayout();
+		let entry = noteTablesLayout.find((one) => one.tableID === tableID);
+		if (entry.ToolDisplayOptions){
+			return { ...structuredClone(options), ...entry.ToolDisplayOptions };
+		}
+		return options;
 	}
 
 	let noteTablePrewarmGeneration = 0;
