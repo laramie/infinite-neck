@@ -352,7 +352,7 @@ export const allTunings = {
       "instance": false,
       "baseID": "Perfect4thsCalculator",
       "baseInstrument": "Guitar",
-      "caption": "Perfect 4ths Calculator",
+      "caption": "4ths",
       "nStrings": 17,
       "rowRange": [110, 105, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30],
       "frets": 1,

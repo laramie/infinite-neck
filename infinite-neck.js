@@ -3025,9 +3025,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		if (entry && entry.ToolDisplayOptions) {
-			button.text('U').attr('title', "Unfreeze DisplayOptions");
+			button.text('UF').attr('title', "Unfreeze DisplayOptions");
 		} else {
-			button.text('F').attr('title', 'Freeze DisplayOptions');
+			button.text('Fr').attr('title', 'Freeze DisplayOptions');
 		}
 	}
 

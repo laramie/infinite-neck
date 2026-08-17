@@ -227,16 +227,16 @@ export function buildNoteTable(options) {
 }
 
 function buildCaptionRow(options, tableID) {
-	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
-	
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
 	if (options.Tool === true){
-		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="subcaptionButton toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">F</button>`;
-		captionRow.html(tuningIDCaption + "&nbsp;&nbsp;" + btnPopOutDiv + btnToggleToolDisplayOptions);
+		var tuningID_justCaption = '<span class="tuningCaptionOnly">'+options.caption+'</span>';
+		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
+		//...That button's caption is updated here: updateToolDisplayOptionsToggleButton()
+		captionRow.html(tuningID_justCaption + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;" + btnPopOutDiv);
 		return captionRow;
 	}
 
@@ -253,6 +253,8 @@ function buildCaptionRow(options, tableID) {
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
 	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton subcaptionButton' type='button' tabindex='-1'>W<small>iring</small></button>";
 
+	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
+	
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = "<span class='tuningBaseIDCaption'>" + options.caption + ':</span>';

@@ -63,12 +63,16 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
     toggleSectionDrawer: jest.fn(),
     toggleRandomLoop: jest.fn(),
     setSectionKeysFlats: jest.fn(),
-    setSectionKeysSharps: jest.fn()
+    setSectionKeysSharps: jest.fn(),
+    getSong: jest.fn(),
+    refreshShowAllNoteNames: jest.fn()
 }));
 
 jest.unstable_mockModule('../../event-bus.js', () => ({
     default: {
         trigger: jest.fn(),
+        on: jest.fn(),
+        off: jest.fn(),
         setLogEvents: jest.fn(() => false),
         getLogEvents: jest.fn(() => false)
     }

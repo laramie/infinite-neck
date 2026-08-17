@@ -2,6 +2,8 @@ import { jest } from '@jest/globals';
 
 const mockEventBus = {
 	trigger: jest.fn(),
+	on: jest.fn(),
+	off: jest.fn(),
 	setLogEvents: jest.fn(() => false),
 	getLogEvents: jest.fn(() => false)
 };
@@ -93,7 +95,9 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	toggleRandomLoop: jest.fn(),
 	toggleCaptionLooperLayout: jest.fn(),
 	setSectionKeysFlats: jest.fn(),
-	setSectionKeysSharps: jest.fn()
+	setSectionKeysSharps: jest.fn(),
+	getSong: jest.fn(),
+	refreshShowAllNoteNames: jest.fn()
 }));
 
 jest.unstable_mockModule('../../event-bus.js', () => ({

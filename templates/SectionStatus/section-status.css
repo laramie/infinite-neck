@@ -123,6 +123,42 @@
     text-align: center;
     background-color: black;
 }
+/*For Tool windows, they just need the caption, not the baseID */
+.tuningCaptionOnly {
+    padding: 0.1em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    font-size: 100%;
+    font-weight: bold;
+    border: 2px solid orange;
+    border-radius: 0.2em;
+    corner-shape: notch;
+    background-color: black;
+    color: orange;
+}
+
+.toolDisplayOptionsToggleButton {
+    background-color: rgb(172, 113, 2);
+    color: black;
+    border-style: solid;
+    border-top-color: rgb(251, 188, 71);
+    border-left-color: rgb(251, 188, 71);
+    border-right-color: rgb(96, 53, 1);
+    border-bottom-color: rgb(96, 53, 1);
+}
+.toolDisplayOptionsToggleButton:active{
+    background-color: rgb(172, 113, 2);
+    color: black;
+    border-style: solid;
+    border-top-color: rgb(96, 53, 1);
+    border-left-color: rgb(96, 53, 1);
+    border-right-color: rgb(251, 188, 71);
+    border-bottom-color: rgb(251, 188, 71);
+}
+.toolDisplayOptionsToggleButton:hover {
+    background-color: rgb(228, 149, 2);
+    color: black;
+}
 
 .ssCaptionWrapper  .SectionStatus_captionRoleTarget {
     display: inline-block;
