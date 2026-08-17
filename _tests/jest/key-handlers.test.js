@@ -785,7 +785,7 @@ describe('key-handlers spacebar mapping', () => {
 
 		performCmdAction({ action: 'selectFingering' }, { key: '1' });
 
-		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(2);
 		expect(fingerRadio.click).toHaveBeenCalledTimes(1);
 		expect(fingerColor.click).toHaveBeenCalledTimes(1);
 	});

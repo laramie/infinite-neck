@@ -76,6 +76,10 @@ function normalizeLayoutEntry(entry) {
         if (key === 'tableID' || key === 'tablename' || key === 'visible') {
             return;
         }
+        if (key === 'ToolDisplayOptions' && entry[key] && typeof entry[key] === 'object') {
+            normalized[key] = entry[key];
+            return;
+        }
         if (entry[key] === true) {
             normalized[key] = true;
         }

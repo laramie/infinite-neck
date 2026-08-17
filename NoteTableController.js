@@ -66,6 +66,10 @@ import {
     applyNamedPlanToSectionNotes,
     legacyFillColorToRoleMode
 } from './fill/fill-role-engine.js';
+import {
+    isNotesourceID,
+    resolveNotesourceNamedNotes
+} from './fill/notesource-registry.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -114,6 +118,21 @@ function createNotetableLookupContext(section = getCurrentSection(), tableID = '
 
 function getTuningByTableID(tableID) {
     return (getSong()?.myTunings || []).find((tuning) => getTableID(tuning) === `${tableID || ''}`) || null;
+}
+
+/** Returns the namedNotes-shaped map to paint for a Listener-style wiring's
+ *  listenToTablename: either a real table's stored namedNotes, or (if
+ *  listenToTablename is a virtual notesource id) a live-computed map from
+ *  the notesource registry, keyed off the render-time Section so a Tool
+ *  table recolors/relabels itself correctly as the Section changes. */
+function getListenSourceNamedNotes(currSection, listenToTablename) {
+    if (isNotesourceID(listenToTablename)) {
+        return resolveNotesourceNamedNotes(listenToTablename, {
+            rootID: currSection?.rootID,
+            chartChord: currSection?.chartChord
+        });
+    }
+    return currSection?.sectionNotesByTable?.[listenToTablename]?.namedNotes || null;
 }
 
 function shouldProjectListenerByMidi(replayOptions) {
@@ -1122,23 +1141,21 @@ export function replayTable(replayOptions){
     }
     
     if (!replayOptions.hideNamedNotes){
-        if (currSection.sectionNotesByTable && currSection.sectionNotesByTable[listenToTablename]){
-            let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
-            if (namedNotes){
-                Object.keys(namedNotes).forEach(noteName => {
-                    var namedNote = namedNotes[noteName];
-                    var theSelect;
-                    if (namedNote.noteName){
-                        theSelect = nnTablenameSelector+".note"+namedNote.noteName;
-                    }
-                    var theClass = $(theSelect);
-                    if (!theSelect){
-                        console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
-                    }
-                    var theColorClass = lookupUserColorClass(namedNote, lookupContext);
-                    styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-                });
-            }
+        let namedNotes = getListenSourceNamedNotes(currSection, listenToTablename);
+        if (namedNotes){
+            Object.keys(namedNotes).forEach(noteName => {
+                var namedNote = namedNotes[noteName];
+                var theSelect;
+                if (namedNote.noteName){
+                    theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                }
+                var theClass = $(theSelect);
+                if (!theSelect){
+                    console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
+                }
+                var theColorClass = lookupUserColorClass(namedNote, lookupContext);
+                styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+            });
         }
     } else {
         // Keep baseline lane text (especially nut labels) visible; hide only actual placed named notes.

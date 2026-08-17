@@ -3,6 +3,9 @@ import {
     restoreWiringOpenState
 } from '../infinite-neck.js';
 import { pluginManager } from '../plugins/pluginRuntime.js';
+import * as Constants from '../Constants.js';
+import * as TuningsLibrary from '../TuningsLibrary.js';
+import { getNotesourceEntries, isNotesourceID } from '../fill/notesource-registry.js';
 
 const mutedListenerWiringByTable = new Map();
 
@@ -214,13 +217,24 @@ export function updateAllWiringSelects() {
         const selListenerProjection = $(this).find('.selListenerProjection');
         sel.empty();
         sel.append($('<option>', { value: "", text: "none" }));
-        const prefix = (typeof Constants !== 'undefined' && Constants.TABLE_ID_PREFIX) ? Constants.TABLE_ID_PREFIX : 'tbl';
+        const prefix = Constants.TABLE_ID_PREFIX;
         tuningIDs.forEach(tid => {
             if (thisTable !== tid) {
                 let displayText = tid.startsWith(prefix) ? tid.slice(prefix.length) : tid;
                 sel.append($('<option>', { value: tid, text: displayText }));
             }
         });
+        const thisTuning = TuningsLibrary.findTuningForName(thisTable);
+        if (thisTuning && thisTuning.Tool === true) {
+            const notesourceEntries = getNotesourceEntries();
+            if (notesourceEntries.length > 0) {
+                const optgroup = $('<optgroup>', { label: 'Notesources' });
+                notesourceEntries.forEach((entry) => {
+                    optgroup.append($('<option>', { value: entry.id, text: entry.caption }));
+                });
+                sel.append(optgroup);
+            }
+        }
         const wiring = wirings.find(w => w.tablename === thisTable) || {};
         const mutedWiring = mutedListenerWiringByTable.get(thisTable);
         sel.val(wiring.listenToTablename || "");
@@ -260,6 +274,10 @@ function updateWiringButtonStatus(widget) {
         (sel.val() === (wiring.listenToTablename || "")) &&
         (selListenerProjection.val() === (wiring.listenerProjection || 'row-midi'));
     const isWiredListener = isWired && isListenerWiring(wiring);
+
+    // listenerProjection only applies to real-table Listener wirings: a notesource
+    // (e.g. Perfect4ths) emits NamedNotes only, with no row/fret geometry to project.
+    selListenerProjection.prop('disabled', isNotesourceID(sel.val()));
 
     function setButtonBlocked(theButton, caption) {
         theButton
@@ -315,7 +333,13 @@ function updateWiringButtonStatus(widget) {
 
     if (isWiredListener) {
         setButtonEnabled(muteButton, 'MUTE');
-        setButtonEnabled(captureButton, 'Capture');
+        // Capture-to-clip assumes a real source tuning (see ClipPlugin.getSelectedListenerSelection());
+        // a notesource id won't resolve to one, so keep Capture blocked for notesource wirings.
+        if (isNotesourceID(wiring.listenToTablename)) {
+            setButtonBlocked(captureButton, 'Capture');
+        } else {
+            setButtonEnabled(captureButton, 'Capture');
+        }
         return;
     }
 

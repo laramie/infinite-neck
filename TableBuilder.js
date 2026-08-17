@@ -233,7 +233,9 @@ function buildCaptionRow(options, tableID) {
 	
 	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
 	if (options.Tool === true){
-		captionRow.html(btnPopOutDiv);
+		var btnFreezeToolDisplayOptions = `<button id="btnFreezeToolDisplayOptions_div${options.baseID}" class="subcaptionButton freezeToolDisplayOptionsButton" type="button" data-tableid="${tableID}" title="Freeze current View DisplayOptions (colors, opacities, fonts, etc.) onto this Tool table">F</button>`;
+		var btnUnfreezeToolDisplayOptions = `<button id="btnUnfreezeToolDisplayOptions_div${options.baseID}" class="subcaptionButton unfreezeToolDisplayOptionsButton" type="button" data-tableid="${tableID}" title="Clear frozen DisplayOptions; follow the current Section's View DisplayOptions again">U</button>`;
+		captionRow.html(btnPopOutDiv + btnFreezeToolDisplayOptions + btnUnfreezeToolDisplayOptions);
 		return captionRow;
 	}
 

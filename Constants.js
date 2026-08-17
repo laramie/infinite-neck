@@ -1,4 +1,5 @@
 export const TABLE_ID_PREFIX = "tbl";
+export const NOTESOURCE_ID_PREFIX = "ns";
 export const NUM_FRETS_MAX = 108;
 export const TABLEDIV_ID_PREFIX = "div";
 export const ALL_TUNINGS_TABLE_ID = "allTuningsTable";

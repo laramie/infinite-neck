@@ -2994,6 +2994,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleWiringOpenState();
 		});
 
+		// Tool tables: freeze/unfreeze the current View DisplayOptions (colors, opacities,
+		// fonts, etc.) into noteTablesLayout[].ToolDisplayOptions. Deliberately does NOT
+		// touch rootID/rootIDLead/sharps/noteNamesFuncArr: Tool tables must keep following
+		// the live current Section for those so the same fixed set of NamedNotes keeps
+		// recoloring/relabeling correctly as the song moves between Sections/keys.
+		$(".freezeToolDisplayOptionsButton")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+			let tableID = $(this).data('tableid');
+			getSong().setToolDisplayOptions(tableID, controlsToDisplayOptions());
+			resetNoteNames();
+		});
+		$(".unfreezeToolDisplayOptionsButton")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+			let tableID = $(this).data('tableid');
+			getSong().clearToolDisplayOptions(tableID);
+			resetNoteNames();
+		});
+
 	}
 
 	export function setUIFromNoteTablesLayoutOptions(){

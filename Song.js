@@ -82,6 +82,10 @@ export class Song extends SongPersistence {
                 if (key === 'tableID' || key === 'tablename' || key === 'visible') {
                     return;
                 }
+                if (key === 'ToolDisplayOptions' && entry[key] && typeof entry[key] === 'object') {
+                    normalizedEntry[key] = entry[key];
+                    return;
+                }
                 if (entry[key] === true) {
                     normalizedEntry[key] = true;
                 }
@@ -150,6 +154,33 @@ export class Song extends SongPersistence {
 
         if (hadValue) {
             delete entry[safeOptionName];
+        }
+    }
+
+    /** Freezes a deep copy of the given DisplayOptions object as the Tool table's
+     *  ToolDisplayOptions. Deliberately does not accept rootID/rootIDLead/sharps/
+     *  noteNamesFuncArr as part of displayOptionsObject: Tool tables must keep
+     *  following the live current Section for those fields (see checkOptionsForToolTables()
+     *  in infinite-neck.js, which merges ToolDisplayOptions last/unconditionally). */
+    setToolDisplayOptions(tableID, displayOptionsObject) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        entry.ToolDisplayOptions = structuredClone(displayOptionsObject || {});
+    }
+
+    clearToolDisplayOptions(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const entry = this.getNoteTablesLayout().find((one) => one.tableID === safeTableID);
+        if (entry) {
+            delete entry.ToolDisplayOptions;
         }
     }
 
