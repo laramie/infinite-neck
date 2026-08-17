@@ -1,5 +1,6 @@
 import * as Constants from '../../Constants.js';
 import { Note } from '../../Note.js';
+import { Song } from '../../Song.js';
 import {
   isNotesourceID,
   getNotesourceEntries,
@@ -68,6 +69,32 @@ describe('notesource-registry', () => {
     test('returns no notes when there is no chart chord', () => {
       const namedNotes = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 3, chartChord: '' });
       expect(Object.keys(namedNotes)).toEqual([]);
+    });
+  });
+
+  describe('ghost-table detection', () => {
+    const TOOL_TABLE_ID = `${Constants.TABLE_ID_PREFIX}Perfect4thsCalculator_1`;
+    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}Perfect4ths`;
+
+    test('a Wiring listening to a notesource is not reported as a ghost table', () => {
+      const song = new Song({});
+      song.wirings = [
+        { tablename: TOOL_TABLE_ID, relativeSection: 'current', listenToTablename: NOTESOURCE_ID }
+      ];
+
+      expect(song.getAllModelTableIDs()).not.toContain(NOTESOURCE_ID);
+      expect(song.getGhostTableIDs()).not.toContain(NOTESOURCE_ID);
+    });
+
+    test('a Wiring listening to a real, unviewed table is still reported as a ghost table', () => {
+      const song = new Song({});
+      const realListenToTableID = `${Constants.TABLE_ID_PREFIX}SomeOtherTable`;
+      song.wirings = [
+        { tablename: TOOL_TABLE_ID, relativeSection: 'current', listenToTablename: realListenToTableID }
+      ];
+
+      expect(song.getAllModelTableIDs()).toContain(realListenToTableID);
+      expect(song.getGhostTableIDs()).toContain(realListenToTableID);
     });
   });
 });

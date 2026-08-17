@@ -227,15 +227,16 @@ export function buildNoteTable(options) {
 }
 
 function buildCaptionRow(options, tableID) {
+	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
+	
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
 	if (options.Tool === true){
-		var btnFreezeToolDisplayOptions = `<button id="btnFreezeToolDisplayOptions_div${options.baseID}" class="subcaptionButton freezeToolDisplayOptionsButton" type="button" data-tableid="${tableID}" title="Freeze current View DisplayOptions (colors, opacities, fonts, etc.) onto this Tool table">F</button>`;
-		var btnUnfreezeToolDisplayOptions = `<button id="btnUnfreezeToolDisplayOptions_div${options.baseID}" class="subcaptionButton unfreezeToolDisplayOptionsButton" type="button" data-tableid="${tableID}" title="Clear frozen DisplayOptions; follow the current Section's View DisplayOptions again">U</button>`;
-		captionRow.html(btnPopOutDiv + btnFreezeToolDisplayOptions + btnUnfreezeToolDisplayOptions);
+		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="subcaptionButton toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">F</button>`;
+		captionRow.html(tuningIDCaption + "&nbsp;&nbsp;" + btnPopOutDiv + btnToggleToolDisplayOptions);
 		return captionRow;
 	}
 
@@ -255,7 +256,6 @@ function buildCaptionRow(options, tableID) {
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = "<span class='tuningBaseIDCaption'>" + options.caption + ':</span>';
-	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
 	var tuningIDnStrings = '<span>' + options.nStrings + '-string:</span>';
 	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
 

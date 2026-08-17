@@ -15,6 +15,7 @@ import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
 import { DEFAULT_BEATS, RANDOM_SECTION_HISTORY_MAX } from './Constants.js';
 import { SongPersistence } from './SongPersistence.js';
+import { isNotesourceID } from './fill/notesource-registry.js';
 
 
 export class Song extends SongPersistence {
@@ -268,7 +269,10 @@ export class Song extends SongPersistence {
                 if (wiring?.tablename) {
                     tableIDs.add(wiring.tablename);
                 }
-                if (wiring?.listenToTablename) {
+                // Notesources (e.g. "nsPerfect4ths") are a fixed, code-defined algorithm
+                // registry, not real persisted model tables -- exclude them here so
+                // ghost-table detection (getGhostTableIDs()) doesn't false-positive on them.
+                if (wiring?.listenToTablename && !isNotesourceID(wiring.listenToTablename)) {
                     tableIDs.add(wiring.listenToTablename);
                 }
             });

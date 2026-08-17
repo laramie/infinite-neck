@@ -2994,26 +2994,41 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleWiringOpenState();
 		});
 
-		// Tool tables: freeze/unfreeze the current View DisplayOptions (colors, opacities,
-		// fonts, etc.) into noteTablesLayout[].ToolDisplayOptions. Deliberately does NOT
-		// touch rootID/rootIDLead/sharps/noteNamesFuncArr: Tool tables must keep following
-		// the live current Section for those so the same fixed set of NamedNotes keeps
-		// recoloring/relabeling correctly as the song moves between Sections/keys.
-		$(".freezeToolDisplayOptionsButton")
+		// Tool tables: toggle freeze/unfreeze of the current View DisplayOptions (colors,
+		// opacities, fonts, etc.) into noteTablesLayout[].ToolDisplayOptions. Button reads
+		// "F" (Freeze) when no ToolDisplayOptions exists yet, or "U" (Unfreeze) once it does --
+		// mirroring how the Save Display Options button reflects section.displayOptions state.
+		// Deliberately does NOT touch rootID/rootIDLead/sharps/noteNamesFuncArr: Tool tables
+		// must keep following the live current Section for those so the same fixed set of
+		// NamedNotes keeps recoloring/relabeling correctly as the song moves between Sections/keys.
+		$(".toolDisplayOptionsToggleButton")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
 			let tableID = $(this).data('tableid');
-			getSong().setToolDisplayOptions(tableID, controlsToDisplayOptions());
-			resetNoteNames();
-		});
-		$(".unfreezeToolDisplayOptionsButton")
-			.off(`click${eventNamespace}`)
-			.on(`click${eventNamespace}`, function() {
-			let tableID = $(this).data('tableid');
-			getSong().clearToolDisplayOptions(tableID);
+			const song = getSong();
+			const existingEntry = song.getNoteTablesLayout().find((one) => one.tableID === tableID);
+			if (existingEntry && existingEntry.ToolDisplayOptions) {
+				song.clearToolDisplayOptions(tableID);
+			} else {
+				song.setToolDisplayOptions(tableID, controlsToDisplayOptions());
+			}
+			const updatedEntry = song.getNoteTablesLayout().find((one) => one.tableID === tableID);
+			updateToolDisplayOptionsToggleButton(tableID, updatedEntry);
 			resetNoteNames();
 		});
 
+	}
+
+	function updateToolDisplayOptionsToggleButton(tableID, entry){
+		const button = $(`.toolDisplayOptionsToggleButton[data-tableid="${tableID}"]`);
+		if (button.length === 0) {
+			return;
+		}
+		if (entry && entry.ToolDisplayOptions) {
+			button.text('U').attr('title', "Unfreeze DisplayOptions");
+		} else {
+			button.text('F').attr('title', 'Freeze DisplayOptions');
+		}
 	}
 
 	export function setUIFromNoteTablesLayoutOptions(){
@@ -3037,6 +3052,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			$(`#${tableID}_leftRailSectionStatusHost`).toggle(sectionStatusLeft);
 			$(`#${tableID}_leftRailCaptionHost`).toggle(captionLeft);
+			updateToolDisplayOptionsToggleButton(tableID, entry);
 		});
 	}
 
