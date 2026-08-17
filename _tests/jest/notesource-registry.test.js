@@ -9,7 +9,7 @@ import {
 
 describe('notesource-registry', () => {
   test('isNotesourceID recognizes only the reserved ns prefix', () => {
-    expect(isNotesourceID(`${Constants.NOTESOURCE_ID_PREFIX}Perfect4ths`)).toBe(true);
+    expect(isNotesourceID(`${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`)).toBe(true);
     expect(isNotesourceID(`${Constants.TABLE_ID_PREFIX}S6_1`)).toBe(false);
     expect(isNotesourceID('')).toBe(false);
     expect(isNotesourceID(undefined)).toBe(false);
@@ -30,7 +30,7 @@ describe('notesource-registry', () => {
   });
 
   describe('nsPerfect4ths (canonical Perfect4thsCalculator use case)', () => {
-    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}Perfect4ths`;
+    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`;
 
     test('always includes every named note as STYLENUM_NAMED, regardless of Section context', () => {
       const namedNotes = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 3, chartChord: 'Cmaj7' });
@@ -74,7 +74,7 @@ describe('notesource-registry', () => {
 
   describe('ghost-table detection', () => {
     const TOOL_TABLE_ID = `${Constants.TABLE_ID_PREFIX}Perfect4thsCalculator_1`;
-    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}Perfect4ths`;
+    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`;
 
     test('a Wiring listening to a notesource is not reported as a ghost table', () => {
       const song = new Song({});

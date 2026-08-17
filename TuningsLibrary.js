@@ -1058,7 +1058,7 @@ EventBus.on('ReloadTuningsDisplays', function() {
 });
 
 
-function requestReinstallAllTuningsTables() {
+export function requestReinstallAllTuningsTables() {
 	EventBus.trigger('ReinstallAllTuningsTables');
 	EventBus.trigger('UpdateAllWiringSelects');
 }
@@ -1067,7 +1067,7 @@ function requestReinstallAllTuningsTables() {
 function requestUpdateAllWiringSelects() {
    EventBus.trigger('UpdateAllWiringSelects'); 
 }
-function requestInstrumentAdded() {
+export function requestInstrumentAdded() {
    EventBus.trigger('InstrumentAdded'); 
 }
 

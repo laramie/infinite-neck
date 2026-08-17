@@ -269,7 +269,7 @@ export class Song extends SongPersistence {
                 if (wiring?.tablename) {
                     tableIDs.add(wiring.tablename);
                 }
-                // Notesources (e.g. "nsPerfect4ths") are a fixed, code-defined algorithm
+                // Notesources (e.g. "nsEveryNamedNote") are a fixed, code-defined algorithm
                 // registry, not real persisted model tables -- exclude them here so
                 // ghost-table detection (getGhostTableIDs()) doesn't false-positive on them.
                 if (wiring?.listenToTablename && !isNotesourceID(wiring.listenToTablename)) {

@@ -276,7 +276,7 @@ function updateWiringButtonStatus(widget) {
     const isWiredListener = isWired && isListenerWiring(wiring);
 
     // listenerProjection only applies to real-table Listener wirings: a notesource
-    // (e.g. Perfect4ths) emits NamedNotes only, with no row/fret geometry to project.
+    // (e.g. EveryNamedNote) emits NamedNotes only, with no row/fret geometry to project.
     selListenerProjection.prop('disabled', isNotesourceID(sel.val()));
 
     function setButtonBlocked(theButton, caption) {

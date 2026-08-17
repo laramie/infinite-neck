@@ -1225,6 +1225,17 @@ export var gMenuFile =    {
                     "action": "showLeftRail"
                   }
               ]
+            },
+            {
+              "caption": "<b>c</b>alculators",
+              "trigger": "c",
+              "children": [
+                  {
+                    "caption": "<b>p</b>erfect 4ths",
+                    "trigger": "p",
+                    "action": "showPerfect4thsCalculator"
+                  }
+              ]
             }
           ]
         },

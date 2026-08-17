@@ -78,6 +78,8 @@ import {
 import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
+import * as Calculators from './calculators.js';
+
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
@@ -1865,7 +1867,10 @@ export function performCmdAction(menuItem, args){
 			break;		
 		case "clampAllDockablesToViewport":
 			clampAllDockablesToViewport();
-			break;		
+			break;	
+		case "showPerfect4thsCalculator":
+			Calculators.createPerfect4thsCalculator(getSong());
+			break;
 		case "noAction":
 			console.log("noAction=====!");
 			actionResult.result = "none";

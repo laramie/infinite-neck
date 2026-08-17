@@ -50,7 +50,7 @@ function resolveChartChordAtRoot({ rootID = 0, chartChord = '' } = {}) {
 
 const NOTESOURCE_REGISTRY = [
   {
-    id: `${Constants.NOTESOURCE_ID_PREFIX}Perfect4ths`,
+    id: `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`,
     caption: 'Calculator (every named note)',
     resolve: () => resolveEveryNamedNote()
   },
