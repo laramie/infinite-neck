@@ -4523,7 +4523,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#chart">r</a>
      <a href="#toggleRecording">R</a>
      <a href="#showHideSection">s</a> 
-    <a href="#keyCreateSection">S</a>  
+     <a href="#keyCreateSection">S</a>  
      <a href="#showHideTransport">t</a>
      <a href="#showThemesControls">T</a>
      <a href="#raiseRootKeyAnd">u</a> 
@@ -4531,7 +4531,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#showHideView">v</a>
      <a href="#showHideView">V</a>
      <a href="#changeWidthOfCells">w</a> 
-    <a href="#changeWidthOfCells">W</a>
+     <a href="#changeWidthOfCells">W</a>
+     <a href="#dockAll">z</a>
+     <a href="#reFloatAll">Z</a>
 
     <br />
      <a href="#cycleThroughDisplay">0</a>
@@ -4637,7 +4639,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
     <!-- Row 4: ZXCV -->
     <tr>
         <td>Shift</td>
-        <td>z</td>
+        <td><a href="#dockAll">z</a><a href="#reFloatAll">Z</a></td>
         <td>x</td>
         <td><a href="#toggleAutoColor">c</a><a href="#keyShowClipPlugin">C</a></td>
         <td><a href="#showHideView">v</a><a href="#showHideView">V</a></td>
@@ -4712,7 +4714,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                             class="MBtn2"><b>e</b>vent wiring</a></td>
                     <td><a href="#toggleRecording"><b>R</b>EC</a><a href="#showHideChart" class="MBtn">cha<b>r</b>t</a>
                     </td>
-                    <td><a href="#showThemesControls"><b>T</b>hemes</a><a href="#showHideTransport" class="MBtn"><b>t</b>ransport</a></td>
+                    <td><a href="#showThemesControls" class="MBtn"><b>T</b>hemes</a><a href="#showHideTransport" class="MBtn"><b>t</b>ransport</a></td>
                     <td>y</td>
                     <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a
                             href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
@@ -4734,7 +4736,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                             class="MBtn"><b>s</b>ection drawer</a></td>
                     <td><a href="#raiseRootKeyAnd"><b>D</b><br><small>transpose</small> up</a> <a
                             href="#lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</a></td>
-                    <td><a href="#divFileControls"><b>F</b>ile</a><br><a
+                    <td><a href="#divFileControls" class="MBtn"><b>F</b>ile</a><br><a
                             href="#toggleFullscreenMode"><b>f</b>ullscreen</a></td>
                     <td><a href="#showHideTunings" class="MBtn">tunin<b>g</b>s</a></td>
                     <td><a href="#changeHeightOfCells"><b>H</b> shorter</a> <a
@@ -4750,7 +4752,8 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <!-- Row 4: ZXCV -->
                 <tr>
                     <td>Shift</td>
-                    <td>z</td>
+                    <td><a href="#reFloatAll"><b>Z</b> re-float all</a>
+                        <br><a href="#dockAll"><b>z</b> dock all</a></td>
                     <td>x</td>
                     <td><a href="#keyShowClipPlugin" class="MBtn"><b>C</b> clip plugin</a><br><a
                             href="#toggleAutoColor">auto <b>c</b>olor</a></td>
@@ -5001,6 +5004,22 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>toggle Fullscreen mode
+                </td>
+            </tr>
+            <tr id="dockAll">
+                <td><span class="key">z</span>
+                </td>
+                <td>
+                </td>
+                <td>Dock All Dockables (Instruments and Menus).  Also, <span class="key">SHIFT</span>+<span class="key">ESC</span> "Toggles Dock All" and "Re-Float All".
+                </td>
+            </tr>
+            <tr id="reFloatAll">
+                <td><span class="key">Z</span>
+                </td>
+                <td>
+                </td>
+                <td>Re-Float All Dockables (Instruments previously Floated, plus current Menu).  Also, <span class="key">SHIFT</span>+<span class="key">ESC</span> "Toggles Dock All" and "Re-Float All".
                 </td>
             </tr>
             <tr id="toggleFileMenuPage">
@@ -5363,6 +5382,15 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>Hide menus, blur focus so keypresses do the action, rather than being captured by a textbox, e.g. the SongName.
+                     Also, <span class="key">SHIFT</span>+<span class="key">ESC</span> toggles <a href="#dockAll">Dock All</a> and <a href="#reFloatAll">Re-Float All</a>.
+                </td>
+            </tr>
+            <tr id="hideMenusBlurFocus">
+                <td><span class="key">SHIFT</span>+<span class="key">ESC</span> 
+                </td>
+                <td>
+                </td>
+                <td>toggles <a href="#dockAll">Dock All</a> and <a href="#reFloatAll">Re-Float All</a>.
                 </td>
             </tr>
             <tr id="hideMenusBlurFocus">
