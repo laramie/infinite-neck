@@ -87,6 +87,10 @@ export class Song extends SongPersistence {
                     normalizedEntry[key] = entry[key];
                     return;
                 }
+                if (key === 'anchorage' && entry[key] && typeof entry[key] === 'object') {
+                    normalizedEntry[key] = entry[key];
+                    return;
+                }
                 if (entry[key] === true) {
                     normalizedEntry[key] = true;
                 }
@@ -183,6 +187,59 @@ export class Song extends SongPersistence {
         if (entry) {
             delete entry.ToolDisplayOptions;
         }
+    }
+
+    /** Marks whether this table is currently floated. This is deliberately not kept in
+     *  sync live during interactive float/dock (dockable.js's live DOM state is the
+     *  runtime source of truth for that) -- it is only consulted at song open (to
+     *  restore floating windows) and captured at song save time (see
+     *  updateMemoryModelPreFileSave() in infinite-neck.js). Preserves any
+     *  previously-saved anchorage.floatRect/zIndex. See sprint-141 Iteration 3. */
+    setTableFloated(tableID, floated) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.floated = !!floated;
+        entry.anchorage = anchorage;
+    }
+
+    /** Stores left/top/width/height as percentages of the viewport (see sprint-141
+     *  Iteration 3, point 9.2) into the table's anchorage.floatRect. Only numeric
+     *  finite values are kept; missing/invalid keys are omitted. */
+    setTableFloatRect(tableID, rect) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID || !rect || typeof rect !== 'object') {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        const floatRect = {};
+        ['left', 'top', 'width', 'height'].forEach((key) => {
+            if (typeof rect[key] === 'number' && Number.isFinite(rect[key])) {
+                floatRect[key] = rect[key];
+            }
+        });
+        anchorage.floatRect = floatRect;
+        entry.anchorage = anchorage;
+    }
+
+    getTableAnchorage(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const entry = this.getNoteTablesLayout().find((one) => one.tableID === safeTableID);
+        return entry?.anchorage || null;
     }
 
     setTableVisibilityByBaseID(baseID, visible) {

@@ -7,6 +7,7 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
+import { dockDivInPage, isDivFloating } from './dockable.js';
 import {
     supportsPianoSkeuomorphic,
     normalizePianoLayoutOptions
@@ -594,6 +595,18 @@ export function hideAllTunings() {
     getAllTunings().forEach(tuning => hideTuning(tuning.baseID));
 }
 
+/** Docks a floating instrument before a move-up/move-down, so the reorder in
+ *  noteTablesLayout/myTunings order is meaningful (docked order is the single
+ *  source of truth for all tables, floated or not -- see sprint-141 Iteration 3,
+ *  point 9.3). anchorage.floatRect is preserved (only captured at save time), so
+ *  re-floating afterward restores its prior position/size. */
+function dockIfFloating(baseID) {
+    const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
+    if (isDivFloating(divID)) {
+        dockDivInPage(divID);
+    }
+}
+
 export function moveMyTuningUp(baseID) {
     var song = getSong();
     var myTunings = getMyTuningsStore();
@@ -972,15 +985,17 @@ export function bindFormTuningsEvents() {
 
     $('#frmTunings').off('click', '.btnMoveTuningUp').on('click', '.btnMoveTuningUp', function () {
         var baseID = $(this).data('baseid');
+        dockIfFloating(baseID);
         if (!moveMyTuningUp(baseID)) {
             return;
         }
         reloadMyTuningsDisplay();
-        requestReinstallAllTuningsTables(); //todo: make this just reorder the divs, because some are floating.
+        requestReinstallAllTuningsTables();
     });
 
     $('#frmTunings').off('click', '.btnMoveTuningDown').on('click', '.btnMoveTuningDown', function () {
         var baseID = $(this).data('baseid');
+        dockIfFloating(baseID);
         if (!moveMyTuningDown(baseID)) {
             return;
         }

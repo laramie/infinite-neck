@@ -284,11 +284,36 @@ const chartOptionsSchema = {
     additionalProperties: false
 };
 
+const anchorageSchema = {
+    type: 'object',
+    properties: {
+        floated: { type: 'boolean' },
+        floatRect: {
+            type: 'object',
+            properties: {
+                left: { type: 'number' },
+                top: { type: 'number' },
+                width: { type: 'number' },
+                height: { type: 'number' }
+            },
+            additionalProperties: false
+        },
+        // Reserved for a future sprint (stacking order of multiple floated windows);
+        // not manipulated by Iteration 3. See sprint-141 Iteration 3, point 6.
+        zIndex: { type: 'number' }
+    },
+    additionalProperties: false
+};
+
 const noteTableLayoutEntrySchema = {
     type: 'object',
     properties: {
         tableID: { type: 'string', minLength: 1 },
-        visible: { type: 'boolean' }
+        visible: { type: 'boolean' },
+        ToolDisplayOptions: { type: 'object' },
+        CaptionLeft: { type: 'boolean' },
+        SectionStatusLeft: { type: 'boolean' },
+        anchorage: anchorageSchema
     },
     required: ['tableID', 'visible'],
     additionalProperties: false

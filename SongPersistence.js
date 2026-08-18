@@ -80,6 +80,10 @@ function normalizeLayoutEntry(entry) {
             normalized[key] = entry[key];
             return;
         }
+        if (key === 'anchorage' && entry[key] && typeof entry[key] === 'object') {
+            normalized[key] = entry[key];
+            return;
+        }
         if (entry[key] === true) {
             normalized[key] = true;
         }

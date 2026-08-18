@@ -30,7 +30,9 @@ import {
 	draggable
 } from './drag.js';
 import {
-	disposeAllDockables
+	disposeAllDockables,
+	makeDivDockable,
+	isDivFloating
 } from './dockable.js';
 import { 
 	gPresentation, 
@@ -1637,6 +1639,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function updateMemoryModelPreFileSave(){
 	    updateVisibleTablesInMemoryModel();
+	    captureAnchorageBeforeSave();
 	    var bpm = parseInt($("#txtBPM").val());
 	    if (Number.isNaN(bpm) || bpm == 0) { bpm = DEFAULT_BPM; }
 	    getSong().prepareForSave({
@@ -1856,6 +1859,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			requestReloadTuningsDisplays();
 			EventBus.trigger('ReinstallAllTuningsTables');
 			EventBus.trigger('UpdateAllWiringSelects');
+			applyPersistedAnchorage();
 		}
 
 		
@@ -1892,6 +1896,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		refreshFileMenuSongInstrumentBadges();
 		EventBus.trigger('ReinstallAllTuningsTables');
 		EventBus.trigger('UpdateAllWiringSelects');
+		applyPersistedAnchorage();
 		
 		var tuningsShowing = TuningsLibrary.showTuningsForTablesInFile();
 		const ghostTableIds = getSong().getGhostTableIDs();
@@ -2088,12 +2093,28 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		for (let i = 0; i < tunings.length; i++) {
 			const tuning = tunings[i];
 			const tableID = Constants.TABLE_ID_PREFIX + tuning.baseID;
-			var div = TableBuilder.buildNoteTable({ ...tuning, visible: true });
-			if (div){
-				$('#tabledest')
-				.append(div);
+			const divID = Constants.TABLEDIV_ID_PREFIX + tuning.baseID;
+			var outerDiv = TableBuilder.buildNoteTable({ ...tuning, visible: true });
+			if (outerDiv){
+				if (isDivFloating(divID)) {
+					// Rebuild-in-place: to the User, a floated instrument has only moved
+					// over a bit -- it's still "the same table" -- so MyTunings structural
+					// changes (Frets, reverse, etc.) must apply without disturbing the
+					// floating window's chrome/position. Swap just the instrumentBackground
+					// content node (id=divID) in place; the floating wrapper it lives inside
+					// is left untouched. See sprint-141 Iteration 3.
+					const newContent = outerDiv.find('#' + divID);
+					const existingContent = document.getElementById(divID);
+					if (existingContent && newContent.length > 0) {
+						$(existingContent).replaceWith(newContent);
+					} else {
+						$('#tabledest').append(outerDiv);
+					}
+				} else {
+					$('#tabledest').append(outerDiv);
+				}
 				if (!getSong().isTableVisible(tableID)) {
-					$('#' + Constants.TABLEDIV_ID_PREFIX + tuning.baseID).hide();
+					$('#' + divID).hide();
 				}
 				count++;
 			}
@@ -2107,7 +2128,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installFillPageSelects();
 	}
 
-	//TODO: make this targeted, especially watching out for un-docked tables.
 	export function reinstallAllTuningsTables(){
 			var target = $("#tabledest");
 			target.empty();
@@ -2120,6 +2140,65 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().getLayout().doToggles();
 			setUIFromNoteTablesLayoutOptions();
 			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
+	}
+
+	/** Applies each noteTablesLayout entry's saved anchorage.floated/floatRect by
+	 *  floating the corresponding table's div. Must run only once, right after a
+	 *  song is loaded (not on every reinstallAllTuningsTables() call) -- otherwise a
+	 *  table the User explicitly docks mid-session would be re-floated the next time
+	 *  any unrelated MyTunings change triggers a reinstall. See sprint-141 Iteration 3,
+	 *  section 7 (restore-on-open order) and the discussion following section 10. */
+	export function applyPersistedAnchorage(){
+		const song = getSong();
+		if (!song) {
+			return;
+		}
+		song.getNoteTablesLayout().forEach((entry) => {
+			const anchorage = entry?.anchorage;
+			if (!anchorage || anchorage.floated !== true) {
+				return;
+			}
+			const tableID = `${entry.tableID || ''}`;
+			if (!tableID.startsWith(Constants.TABLE_ID_PREFIX)) {
+				return;
+			}
+			const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
+			const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
+			makeDivDockable(divID, anchorage.floatRect || null);
+		});
+	}
+
+	/** Captures each currently-floating table's live position/size as percentages of
+	 *  the viewport into noteTablesLayout[].anchorage, right before the song file is
+	 *  serialized. Deliberately does not live-track drag/resize -- see sprint-141
+	 *  Iteration 3, point 9.1 (capture-at-save-time only). */
+	export function captureAnchorageBeforeSave(){
+		const song = getSong();
+		if (!song || typeof window === 'undefined' || typeof document === 'undefined') {
+			return;
+		}
+		const viewportWidth = window.innerWidth || 1;
+		const viewportHeight = window.innerHeight || 1;
+		song.getMyTunings().forEach((tuning) => {
+			if (!tuning || !tuning.baseID) {
+				return;
+			}
+			const tableID = Constants.TABLE_ID_PREFIX + tuning.baseID;
+			const divID = Constants.TABLEDIV_ID_PREFIX + tuning.baseID;
+			const floatWin = document.getElementById('floating-' + divID);
+			if (floatWin) {
+				const rect = floatWin.getBoundingClientRect();
+				song.setTableFloated(tableID, true);
+				song.setTableFloatRect(tableID, {
+					left: (rect.left / viewportWidth) * 100,
+					top: (rect.top / viewportHeight) * 100,
+					width: (rect.width / viewportWidth) * 100,
+					height: (rect.height / viewportHeight) * 100
+				});
+			} else {
+				song.setTableFloated(tableID, false);
+			}
+		});
 	}
 
 	export function installTDNoteClick(){

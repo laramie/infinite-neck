@@ -130,7 +130,19 @@ function applyHandleOrientation(floatWin, handle, contentHost, orientation, togg
     toggleBtn.title = isTop ? 'Move handle to left side' : 'Move handle to top';
 }
 
-export function makeDivDockable(divId) {
+export function isDivFloating(divId) {
+    if (!hasDocument) return false;
+    const floatState = getDockableFloatState();
+    return !!floatState[divId];
+}
+
+/** Detaches divId from its current parent and re-parents it into a new floating
+ *  window appended to document.body. rect, if given, is a { left, top, width,
+ *  height } object of percentages of the viewport (see sprint-141 Iteration 3,
+ *  point 9.2) used to restore a previously-saved position/size; any omitted key
+ *  falls back to the existing hardcoded default (top/left) or browser intrinsic
+ *  sizing (width/height). */
+export function makeDivDockable(divId, rect = null) {
     if (!hasDocument) return;
     const floatState = getDockableFloatState();
 
@@ -143,12 +155,23 @@ export function makeDivDockable(divId) {
         next: div.nextSibling
     };
 
+    const hasLeft = rect && typeof rect.left === 'number' && Number.isFinite(rect.left);
+    const hasTop = rect && typeof rect.top === 'number' && Number.isFinite(rect.top);
+    const hasWidth = rect && typeof rect.width === 'number' && Number.isFinite(rect.width);
+    const hasHeight = rect && typeof rect.height === 'number' && Number.isFinite(rect.height);
+
     // Create floating container
     const floatWin = document.createElement('div');
     floatWin.id = 'floating-' + divId;
     floatWin.style.position = 'fixed';
-    floatWin.style.top = '100px';
-    floatWin.style.left = '100px';
+    floatWin.style.top = hasTop ? `${rect.top}%` : '100px';
+    floatWin.style.left = hasLeft ? `${rect.left}%` : '100px';
+    if (hasWidth) {
+        floatWin.style.width = `${rect.width}%`;
+    }
+    if (hasHeight) {
+        floatWin.style.height = `${rect.height}%`;
+    }
     floatWin.style.zIndex = 200;
     //floatWin.style.background = '#96001c';
     floatWin.style.background = 'white';
