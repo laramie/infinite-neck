@@ -211,8 +211,11 @@ export class Song extends SongPersistence {
         entry.anchorage = anchorage;
     }
 
-    /** Stores left/top/width/height as percentages of the viewport (see sprint-141
-     *  Iteration 3, point 9.2) into the table's anchorage.floatRect. Only numeric
+    /** Stores left/top/width/height into the table's anchorage.floatRect. Units: left
+     *  and width are percentages of window.innerWidth; top and height are percentages
+     *  of window.innerHeight (NOT pixels, and NOT both relative to the same viewport
+     *  dimension) -- see captureAnchorageBeforeSave()/makeDivDockable() in
+     *  infinite-neck.js/dockable.js, sprint-141 Iteration 3, point 9.2. Only numeric
      *  finite values are kept; missing/invalid keys are omitted. */
     setTableFloatRect(tableID, rect) {
         const safeTableID = `${tableID || ''}`.trim();
@@ -1588,11 +1591,13 @@ export class Song extends SongPersistence {
             delete section.sectionNotesByTable[oldKey];
         });
 
+        // Preserve every other property on the entry (ToolDisplayOptions, anchorage,
+        // CaptionLeft, SectionStatusLeft, etc.) -- only the tableID key itself changes.
+        // Previously this rebuilt each entry down to just {tableID, visible}, silently
+        // discarding a floated table's anchorage (and any other per-table layout
+        // options) on every ID rename. See sprint-141 Iteration 3 bugfix.
         this.noteTablesLayout = this.getNoteTablesLayout()
-            .map((entry) => ({
-                tableID: entry.tableID === oldKey ? newKey : entry.tableID,
-                visible: entry.visible !== false
-            }))
+            .map((entry) => (entry.tableID === oldKey ? { ...entry, tableID: newKey } : entry))
             .filter((entry, index, arr) => arr.findIndex((other) => other.tableID === entry.tableID) === index);
 
         if (Array.isArray(this.wirings)) {

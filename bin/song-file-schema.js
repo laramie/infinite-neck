@@ -288,6 +288,11 @@ const anchorageSchema = {
     type: 'object',
     properties: {
         floated: { type: 'boolean' },
+        // left/width are percentages of window.innerWidth; top/height are percentages
+        // of window.innerHeight (each 0-100+). Captured from the floating window's
+        // getBoundingClientRect() at save time and applied back as CSS `%` values
+        // (position: fixed) at load time -- see captureAnchorageBeforeSave() and
+        // makeDivDockable() in infinite-neck.js/dockable.js. Not pixels.
         floatRect: {
             type: 'object',
             properties: {

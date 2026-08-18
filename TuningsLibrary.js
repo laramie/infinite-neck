@@ -7,7 +7,7 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
-import { dockDivInPage, isDivFloating } from './dockable.js';
+import { dockDivInPage, isDivFloating, renameDockableDiv } from './dockable.js';
 import {
     supportsPianoSkeuomorphic,
     normalizePianoLayoutOptions
@@ -1058,6 +1058,15 @@ export function bindFormTuningsEvents() {
         // Update the tuning's baseID
         tuning.baseID = newID;
         $(this).data('oldid', newID); // Update the stored old ID for future changes
+
+        // Keep a currently-floating table's DOM/floating-window in sync with the renamed
+        // ID -- divIds are derived from baseID (Constants.TABLEDIV_ID_PREFIX), so without
+        // this the floating window is orphaned under the old id (stale caption, no longer
+        // recognized as floating) and installAllTuningsTables() builds a brand-new docked
+        // instance under the new id instead of recognizing "same table, renamed". Must run
+        // before renameTuningIDInModel()/requestReinstallAllTuningsTables() rebuild the
+        // tables. See sprint-141 Iteration 3 bugfix.
+        renameDockableDiv(Constants.TABLEDIV_ID_PREFIX + oldID, Constants.TABLEDIV_ID_PREFIX + newID);
 
         // Rename all NoteTable references in the Song model (section noteTables keys + noteTablesLayout)
         getSong().renameTuningIDInModel(oldID, newID);

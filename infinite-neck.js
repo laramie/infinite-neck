@@ -32,7 +32,9 @@ import {
 import {
 	disposeAllDockables,
 	makeDivDockable,
-	isDivFloating
+	isDivFloating,
+	setDockCaptureHook,
+	setDragEndCaptureHook
 } from './dockable.js';
 import { 
 	gPresentation, 
@@ -2170,8 +2172,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	/** Captures each currently-floating table's live position/size as percentages of
 	 *  the viewport into noteTablesLayout[].anchorage, right before the song file is
-	 *  serialized. Deliberately does not live-track drag/resize -- see sprint-141
-	 *  Iteration 3, point 9.1 (capture-at-save-time only). */
+	 *  serialized. This is a safety net for any case the live hooks below might miss
+	 *  (e.g. a resize, which has no live end-of-resize hook) -- drags and docks are
+	 *  already captured live as they happen (see captureAnchorageOnDragEnd() and
+	 *  captureAnchorageOnDock() below), so this mostly just reaffirms their result at
+	 *  save time. See sprint-141 Iteration 3, point 9.1. */
 	export function captureAnchorageBeforeSave(){
 		const song = getSong();
 		if (!song || typeof window === 'undefined' || typeof document === 'undefined') {
@@ -2199,6 +2204,79 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				song.setTableFloated(tableID, false);
 			}
 		});
+	}
+
+	/** Resolves divId to its tableID only when it's a currently-registered Tuning's
+	 *  instrument table div (Constants.TABLEDIV_ID_PREFIX-prefixed and found via
+	 *  TuningsLibrary.findTuningForID()) -- returns '' for non-tuning-backed divs
+	 *  (Info, ChartInput, etc.), which have no anchorage to persist. */
+	function tableIDForDockableDivID(divId){
+		if (!divId.startsWith(Constants.TABLEDIV_ID_PREFIX)) {
+			return '';
+		}
+		const baseID = divId.substring(Constants.TABLEDIV_ID_PREFIX.length);
+		if (!TuningsLibrary.findTuningForID(baseID)) {
+			return '';
+		}
+		return Constants.TABLE_ID_PREFIX + baseID;
+	}
+
+	/** Registered with dockable.js via setDockCaptureHook() below: fires with
+	 *  (divId, rectPercent) at the moment any div is docked (Dock/pin button, or
+	 *  dockIfFloating() in TuningsLibrary.js before a move-up/down). Persists that
+	 *  live rect into the Song model immediately -- rather than waiting for the next
+	 *  save (captureAnchorageBeforeSave() above still runs at save time, for tables
+	 *  still floating) -- so the model is *always* current, even mid-session before
+	 *  any save. This is what re-Floating (see floatNoteTableDiv() below) reads back
+	 *  from. See sprint-141 Iteration 3 bugfix ("Float button throws away floatRect" /
+	 *  "consult the model, not a window var"). No-op for non-tuning-backed divs (Info,
+	 *  ChartInput, etc.), identified via TuningsLibrary.findTuningForID(). */
+	function captureAnchorageOnDock(divId, rect){
+		const tableID = tableIDForDockableDivID(divId);
+		const song = getSong();
+		if (!tableID || !song) {
+			return;
+		}
+		song.setTableFloated(tableID, false);
+		song.setTableFloatRect(tableID, rect);
+	}
+	setDockCaptureHook(captureAnchorageOnDock);
+
+	/** Registered with dockable.js via setDragEndCaptureHook() below: fires with
+	 *  (divId, rectPercent) right when a User finishes dragging a still-floating
+	 *  table. Persists the new position/size into anchorage.floatRect immediately
+	 *  (without touching anchorage.floated, since the table is still floating) --
+	 *  responding to the User's action live, in the in-memory model, without waiting
+	 *  for a file save. */
+	function captureAnchorageOnDragEnd(divId, rect){
+		const tableID = tableIDForDockableDivID(divId);
+		const song = getSong();
+		if (!tableID || !song) {
+			return;
+		}
+		song.setTableFloatRect(tableID, rect);
+	}
+	setDragEndCaptureHook(captureAnchorageOnDragEnd);
+
+
+	/** Global handler for the per-instrument-table Float button's inline onclick (see
+	 *  TableBuilder.js's btnPopOutDiv) -- looks up this table's saved
+	 *  anchorage.floatRect from the Song model and passes it to makeDivDockable(), so
+	 *  re-Floating (after a prior Dock) reopens exactly where the table was last left,
+	 *  the same way applyPersistedAnchorage() does at song-open time. Falls back to
+	 *  makeDivDockable's hardcoded default position when there's no saved anchorage
+	 *  yet (e.g. a table that's never been floated before). See sprint-141 Iteration 3
+	 *  bugfix ("Float button throws away floatRect"). */
+	export function floatNoteTableDiv(divId){
+		const baseID = divId.startsWith(Constants.TABLEDIV_ID_PREFIX)
+			? divId.substring(Constants.TABLEDIV_ID_PREFIX.length)
+			: '';
+		const tableID = baseID ? Constants.TABLE_ID_PREFIX + baseID : '';
+		const anchorage = tableID ? getSong()?.getTableAnchorage(tableID) : null;
+		makeDivDockable(divId, anchorage?.floatRect || null);
+	}
+	if (typeof window !== 'undefined') {
+		window.floatNoteTableDiv = floatNoteTableDiv;
 	}
 
 	export function installTDNoteClick(){

@@ -47,6 +47,44 @@ function getDockableFloatState() {
     return window._dockableFloatState;
 }
 
+function captureRectAsViewportPercent(floatWin) {
+    const viewportWidth = Math.max(window.innerWidth || 0, 1);
+    const viewportHeight = Math.max(window.innerHeight || 0, 1);
+    const rect = floatWin.getBoundingClientRect();
+    return {
+        left: (rect.left / viewportWidth) * 100,
+        top: (rect.top / viewportHeight) * 100,
+        width: (rect.width / viewportWidth) * 100,
+        height: (rect.height / viewportHeight) * 100
+    };
+}
+
+/** Optional callback invoked as dockCaptureHook(divId, rectPercent) right when a div
+ *  is docked (rect is percentages of viewport, same shape as anchorage.floatRect).
+ *  dockable.js is deliberately Song/model-agnostic (it's used for non-tuning panels
+ *  too, e.g. Info/ChartInput), so it cannot import Song itself -- instead the
+ *  model-aware caller (infinite-neck.js) registers a hook here to persist the live
+ *  rect into noteTablesLayout[].anchorage at dock time. This makes the *model* the
+ *  single source of truth for "where should this reopen", instead of a separate
+ *  window-stashed session cache. See sprint-141 Iteration 3 bugfix ("Float button
+ *  throws away floatRect" / "consult the model, not a window var"). */
+let dockCaptureHook = null;
+export function setDockCaptureHook(fn) {
+    dockCaptureHook = typeof fn === 'function' ? fn : null;
+}
+
+/** Optional callback invoked as dragEndCaptureHook(divId, rectPercent) right when a
+ *  drag on a still-floating window ends (mouseup after a drag -- see draggable()'s
+ *  onDragEnd param in drag.js). Unlike dockCaptureHook above, the div is still
+ *  floating at this point -- only its position/size changed -- so the model-aware
+ *  caller should update anchorage.floatRect without touching anchorage.floated. This
+ *  is what makes a live drag persist to the in-memory Song model immediately,
+ *  responding to the User's action, without waiting for a file save. */
+let dragEndCaptureHook = null;
+export function setDragEndCaptureHook(fn) {
+    dragEndCaptureHook = typeof fn === 'function' ? fn : null;
+}
+
 function getFloatingDockables() {
     if (!hasDocument) return [];
     const floatState = getDockableFloatState();
@@ -64,23 +102,32 @@ function clampOneDockableToViewport(floatWin, margin = 12) {
 
     const viewportWidth = Math.max(window.innerWidth || 0, 0);
     const viewportHeight = Math.max(window.innerHeight || 0, 0);
+    // Read the *rendered* position/size in px via getBoundingClientRect() rather than
+    // parsing floatWin.style.left/top: those styles may be percentage strings (e.g.
+    // makeDivDockable() restoring a saved anchorage.floatRect as "34.44%"), and
+    // parseFloat() would silently strip the '%' and misread that number as px --
+    // collapsing a restored position back to near top-left. See sprint-141 Iteration 3
+    // bugfix (saved floatRect values were being ignored on song load).
     const rect = floatWin.getBoundingClientRect();
-
-    let left = parseFloat(floatWin.style.left || '0');
-    let top = parseFloat(floatWin.style.top || '0');
-
-    if (!Number.isFinite(left)) left = rect.left;
-    if (!Number.isFinite(top)) top = rect.top;
+    const left = rect.left;
+    const top = rect.top;
 
     // Clamp position
     const maxLeft = Math.max(margin, viewportWidth - rect.width - margin);
     const maxTop = Math.max(margin, viewportHeight - rect.height - margin);
 
-    left = Math.min(Math.max(left, margin), maxLeft);
-    top = Math.min(Math.max(top, margin), maxTop);
+    const clampedLeft = Math.min(Math.max(left, margin), maxLeft);
+    const clampedTop = Math.min(Math.max(top, margin), maxTop);
 
-    floatWin.style.left = left + 'px';
-    floatWin.style.top = top + 'px';
+    // Only touch the style (switching it to a px value) when the window is actually
+    // out of bounds -- otherwise leave a percentage-based style alone so it stays
+    // responsive to viewport resizes and doesn't get needlessly pinned to px.
+    if (clampedLeft !== left) {
+        floatWin.style.left = clampedLeft + 'px';
+    }
+    if (clampedTop !== top) {
+        floatWin.style.top = clampedTop + 'px';
+    }
 
     // Adjust size if too large for viewport
     let newWidth = rect.width;
@@ -136,6 +183,31 @@ export function isDivFloating(divId) {
     return !!floatState[divId];
 }
 
+/** Renames a currently-floating div's DOM id (and its floating wrapper's id) in place,
+ *  keeping its dockable state under the new key. No-op if the div isn't currently
+ *  floating (a docked div's id is safe for the caller to rename directly). Needed
+ *  because divIds are derived from a tuning's baseID (see Constants.TABLEDIV_ID_PREFIX):
+ *  renaming a Tuning ID while its table is floated must keep the floating window in
+ *  sync, otherwise it's orphaned under the old id and a stale caption, while a fresh
+ *  docked instance gets built under the new id. See sprint-141 Iteration 3 bugfix. */
+export function renameDockableDiv(oldDivId, newDivId) {
+    if (!hasDocument || !oldDivId || !newDivId || oldDivId === newDivId) return;
+    const floatState = getDockableFloatState();
+    const state = floatState[oldDivId];
+    if (!state) return;
+
+    const div = document.getElementById(oldDivId);
+    const floatWin = document.getElementById('floating-' + oldDivId);
+    if (div) div.id = newDivId;
+    if (floatWin) floatWin.id = 'floating-' + newDivId;
+
+    delete floatState[oldDivId];
+    floatState[newDivId] = state;
+
+    const floatBtn = document.getElementById('btnFloatSection_' + oldDivId);
+    if (floatBtn) floatBtn.id = 'btnFloatSection_' + newDivId;
+}
+
 /** Detaches divId from its current parent and re-parents it into a new floating
  *  window appended to document.body. rect, if given, is a { left, top, width,
  *  height } object of percentages of the viewport (see sprint-141 Iteration 3,
@@ -155,22 +227,29 @@ export function makeDivDockable(divId, rect = null) {
         next: div.nextSibling
     };
 
-    const hasLeft = rect && typeof rect.left === 'number' && Number.isFinite(rect.left);
-    const hasTop = rect && typeof rect.top === 'number' && Number.isFinite(rect.top);
-    const hasWidth = rect && typeof rect.width === 'number' && Number.isFinite(rect.width);
-    const hasHeight = rect && typeof rect.height === 'number' && Number.isFinite(rect.height);
+    // The Song model (noteTablesLayout[].anchorage.floatRect) is the single source of
+    // truth for "where should this reopen" -- callers that want a restored position
+    // must resolve it from the model and pass it explicitly as rect (see
+    // infinite-neck.js's floatNoteTableDiv()). See sprint-141 Iteration 3 bugfix
+    // ("Float button throws away floatRect" / "consult the model, not a window var").
+    const effectiveRect = rect;
+
+    const hasLeft = effectiveRect && typeof effectiveRect.left === 'number' && Number.isFinite(effectiveRect.left);
+    const hasTop = effectiveRect && typeof effectiveRect.top === 'number' && Number.isFinite(effectiveRect.top);
+    const hasWidth = effectiveRect && typeof effectiveRect.width === 'number' && Number.isFinite(effectiveRect.width);
+    const hasHeight = effectiveRect && typeof effectiveRect.height === 'number' && Number.isFinite(effectiveRect.height);
 
     // Create floating container
     const floatWin = document.createElement('div');
     floatWin.id = 'floating-' + divId;
     floatWin.style.position = 'fixed';
-    floatWin.style.top = hasTop ? `${rect.top}%` : '100px';
-    floatWin.style.left = hasLeft ? `${rect.left}%` : '100px';
+    floatWin.style.top = hasTop ? `${effectiveRect.top}%` : '100px';
+    floatWin.style.left = hasLeft ? `${effectiveRect.left}%` : '100px';
     if (hasWidth) {
-        floatWin.style.width = `${rect.width}%`;
+        floatWin.style.width = `${effectiveRect.width}%`;
     }
     if (hasHeight) {
-        floatWin.style.height = `${rect.height}%`;
+        floatWin.style.height = `${effectiveRect.height}%`;
     }
     floatWin.style.zIndex = 200;
     //floatWin.style.background = '#96001c';
@@ -216,7 +295,10 @@ export function makeDivDockable(divId, rect = null) {
     dockBtn.style.cursor = 'pointer';
     dockBtn.onclick = function (e) {
         e.stopPropagation();
-        dockDivInPage(divId);
+        // Use the div's *current* id (not the divId parameter closed over at creation
+        // time) -- renameDockableDiv() may have updated div.id since this handler was
+        // created (e.g. a Tuning ID rename while the table was floating).
+        dockDivInPage(div.id);
     };
 
     const toggleHandleBtn = document.createElement('button');
@@ -239,8 +321,14 @@ export function makeDivDockable(divId, rect = null) {
 
     applyHandleOrientation(floatWin, handle, contentHost, 'side', toggleHandleBtn);
 
-    // Add drag logic to handle only
-    draggable(floatWin, handle);
+    // Add drag logic to handle only. On drag end, persist the live position/size to
+    // the model (via dragEndCaptureHook, if registered) using the div's *current* id
+    // -- see the dockBtn.onclick comment above for why div.id (not divId) is used.
+    draggable(floatWin, handle, function () {
+        if (dragEndCaptureHook) {
+            dragEndCaptureHook(div.id, captureRectAsViewportPercent(floatWin));
+        }
+    });
 
     // Compose window: [handle][content]
     floatWin.appendChild(handle);
@@ -261,6 +349,13 @@ export function dockDivInPage(divId) {
     const state = floatState[divId];
     const floatWin = document.getElementById('floating-' + divId);
     if (!div || !state || !floatWin) return;
+
+    // Let the model-aware caller (infinite-neck.js) persist this window's live
+    // position/size into noteTablesLayout[].anchorage.floatRect right now, so a
+    // subsequent Float reads it back from the model -- see setDockCaptureHook() above.
+    if (dockCaptureHook) {
+        dockCaptureHook(divId, captureRectAsViewportPercent(floatWin));
+    }
 
     // Restore to original parent and position
     if (state.parent && state.parent.isConnected) {
@@ -330,4 +425,5 @@ if (hasWindow) {
     window.dockAllDockables = dockAllDockables;
     window.gatherAllDockables = gatherAllDockables;
     window.clampAllDockablesToViewport = clampAllDockablesToViewport;
+    window.renameDockableDiv = renameDockableDiv;
 }

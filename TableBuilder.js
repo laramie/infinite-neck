@@ -229,7 +229,7 @@ export function buildNoteTable(options) {
 function buildCaptionRow(options, tableID) {
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
-	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="floatNoteTableDiv('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
 	if (options.Tool === true){
