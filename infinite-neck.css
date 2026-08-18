@@ -233,6 +233,10 @@ table {
     display: inline-block;
     padding: 2px;
 }
+.BtnPunchedOutLighter {
+  background-color: #314a05 !important;
+  color:  #c3fb63 !important;
+}
 
 .MainMenuTabBtn, .MenuButton, .MenuTabBtn {
     padding: 0.4em;

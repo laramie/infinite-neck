@@ -225,7 +225,7 @@
 }
 
 .divWiring {
-    width: 250px;      /* fixed width */
+    width: 100px;      /* fixed width */
     flex-shrink: 0;
     /* No overflow or scroll here */
     /* Stays visible while table scrolls */

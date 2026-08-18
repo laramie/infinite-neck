@@ -268,13 +268,20 @@ export function renameDockableDiv(oldDivId, newDivId) {
 }
 
 /** Detaches divId from its current parent and re-parents it into a new floating
- *  window appended to document.body. rect, if given, is a { left, top, width,
- *  height, zIndex, handleOrientation } object (see sprint-141 Iteration 3, point
- *  9.2 and Iteration 4, points 3-4) used to restore a previously-saved position/
- *  size/stacking-order/handle-side; any omitted key falls back to the existing
- *  hardcoded default (top/left, zIndex 200, 'side' orientation) or browser
- *  intrinsic sizing (width/height). */
-export function makeDivDockable(divId, rect = null) {
+ *  window appended to document.body. defaultZIndex, if given (a finite number), is
+ *  the stacking-order value to use when rect doesn't carry its own zIndex -- e.g.
+ *  menu/tool panels like the app's non-instrument menu divs, which aren't tracked
+ *  in noteTablesLayout and so have no per-table zIndex slot (see sprint-141
+ *  Iteration 4, "Menu Divs at zIndex 900"). Falls back to the existing hardcoded
+ *  200 if omitted. rect, if given, is a { left, top, width, height, zIndex,
+ *  handleOrientation } object (see sprint-141 Iteration 3, point 9.2 and Iteration
+ *  4, points 3-4) used to restore a previously-saved position/size/stacking-order/
+ *  handle-side; any omitted key falls back to defaultZIndex/hardcoded default
+ *  (top/left, 'side' orientation) or browser intrinsic sizing (width/height). rect
+ *  is deliberately the last param so existing (divId, rect) call sites that don't
+ *  need defaultZIndex can keep passing rect positionally without change beyond
+ *  inserting a null/omitted middle arg. */
+export function makeDivDockable(divId, defaultZIndex = null, rect = null) {
     if (!hasDocument) return;
     const floatState = getDockableFloatState();
 
@@ -298,9 +305,10 @@ export function makeDivDockable(divId, rect = null) {
     const hasTop = effectiveRect && typeof effectiveRect.top === 'number' && Number.isFinite(effectiveRect.top);
     const hasWidth = effectiveRect && typeof effectiveRect.width === 'number' && Number.isFinite(effectiveRect.width);
     const hasHeight = effectiveRect && typeof effectiveRect.height === 'number' && Number.isFinite(effectiveRect.height);
+    const fallbackZIndex = (typeof defaultZIndex === 'number' && Number.isFinite(defaultZIndex)) ? defaultZIndex : 200;
     const initialZIndex = (effectiveRect && typeof effectiveRect.zIndex === 'number' && Number.isFinite(effectiveRect.zIndex))
         ? effectiveRect.zIndex
-        : 200;
+        : fallbackZIndex;
     const initialOrientation = effectiveRect && effectiveRect.handleOrientation === 'top' ? 'top' : 'side';
 
     // Create floating container

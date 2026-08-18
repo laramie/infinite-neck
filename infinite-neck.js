@@ -1479,6 +1479,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var jStrMenuDiv = $(strMenuDiv);
 		return jStrMenuDiv.is(":visible");
 	}
+	export function getVisibleMenu(){
+		var anchor = "";
+		 for (const [key, value] of Object.entries(AllMenuDivs)){
+			 var jStrMenuDiv = $(key);
+			 if (jStrMenuDiv.is(":visible")){
+			 	anchor = key;
+				break;
+ 			 }
+ 		 }
+		 return anchor;
+	}
 
 	function stripDivHash(strMenuDiv){
 		let divNoHash = strMenuDiv;
@@ -1491,9 +1502,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function showOneMenuDiv(strMenuDiv, jMenuDiv) {
 		jMenuDiv.show();
 		if (isFloaty()){
-			makeDivDockable(stripDivHash(strMenuDiv));
+			makeDivDockable(stripDivHash(strMenuDiv),900);
 		}
-
 	}
 
 	export function showOneMenu(strMenuDiv, forceOpen = false) {
@@ -1569,14 +1579,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				return 'help.html' + selector;
 			}
 		}
-		 var anchor = "";
-		 for (const [key, value] of Object.entries(AllMenuDivs)){
-			 var jStrMenuDiv = $(key);
-			 if (jStrMenuDiv.is(":visible")){
-			 	anchor = key;
-				break;
- 			 }
- 		 }
+		 var anchor = getVisibleMenu();
 		 return  'help.html'+anchor;
 	}
 
@@ -2215,7 +2218,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 			const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
 			const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
-			makeDivDockable(divID, buildFloatRectForTable(song, tableID));
+			makeDivDockable(divID, null, buildFloatRectForTable(song, tableID));
 		});
 	}
 
@@ -2245,8 +2248,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 			const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
 			const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
-			makeDivDockable(divID, buildFloatRectForTable(song, tableID));
+			makeDivDockable(divID, null, buildFloatRectForTable(song, tableID));
 		});
+		const menuDivID = getVisibleMenu();
+		makeDivDockable(stripDivHash(menuDivID), 900, null);
 	}
 	if (typeof window !== 'undefined') {
 		window.refloatAllDockables = refloatAllDockables;
@@ -2380,7 +2385,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			? divId.substring(Constants.TABLEDIV_ID_PREFIX.length)
 			: '';
 		const tableID = baseID ? Constants.TABLE_ID_PREFIX + baseID : '';
-		makeDivDockable(divId, buildFloatRectForTable(getSong(), tableID));
+		makeDivDockable(divId, null, buildFloatRectForTable(getSong(), tableID));
 	}
 	if (typeof window !== 'undefined') {
 		window.floatNoteTableDiv = floatNoteTableDiv;

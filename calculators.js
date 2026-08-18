@@ -36,7 +36,7 @@ function createToolCalculatorSingleton(song, baseID, notesourceID){
         TuningsLibrary.requestInstrumentAdded(cloned.baseID);
         TuningsLibrary.requestReinstallAllTuningsTables(cloned.baseID);
     }
-    makeDivDockable(divID, buildFloatRectForTable(song, tableID)); //global old-school javascript function on Window, installed by dockable.js (which also exports it).
+    makeDivDockable(divID, null, buildFloatRectForTable(song, tableID)); //global old-school javascript function on Window, installed by dockable.js (which also exports it).
 }
 
 export function createPerfect4thsCalculator(song){

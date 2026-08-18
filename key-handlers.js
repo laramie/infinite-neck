@@ -637,6 +637,9 @@ function document_keypress(e) {
             case "t":
                 toggleTransport();
                 break;
+			case "T":
+				showOneMenu("#divThemeControls");
+                break;	
             case "v":
             case "V":
                 showOneMenu("#divViewControls");
@@ -679,6 +682,12 @@ function document_keypress(e) {
             case "h":
 					moveSelectByClampedStep('#dropDownCellHeight', 1);
                 break;
+			case "z":
+				runActionByName("dockAllDockables");
+				break;
+			case "Z":
+				runActionByName("refloatAllDockables");
+				break;	
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
 				paletteUtils.activateUiControl('#idPaletteModePaint');

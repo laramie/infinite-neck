@@ -47,7 +47,9 @@ export class InfoBuilder {
 			.on(`click${eventNamespace}`, function () {
 				if (!InfoBuilder.isFloated()) {
 					InfoBuilder.reopenMode = 'float';
-					makeDivDockable('info');
+					// Info is one of the Menu Divs (see infinite-neck.js's AllMenuDivs) --
+					// float above tables/Transport. See sprint-141 Iteration 4.
+					makeDivDockable('info', 900);
 				}
 			});
 
@@ -220,7 +222,7 @@ export class InfoBuilder {
 		if (mode === 'float') {
 			InfoBuilder.reopenMode = 'float';
 			if (!InfoBuilder.isFloated()) {
-				makeDivDockable('info');
+				makeDivDockable('info', 900);
 			}
 		} else if (InfoBuilder.isFloated()) {
 			InfoBuilder.reopenMode = 'parked';
