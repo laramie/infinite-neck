@@ -154,5 +154,5 @@ export function renderSongInstrumentTable(song = {}, options = {}) {
 		const badge = renderInstrumentBadge(getInstrumentSummaryForTuning(song, tuning, options), options);
 		return '<tr><td>' + badge + '</td><td>' + escapeHtml(tuning?.baseID || '') + '</td></tr>';
 	}).join('');
-	return '<table class="songInstrumentTable"><tr><th>Role</th><th>ID</th></tr>' + rows + '</table>';
+	return '<table class="songInstrumentTable"><caption>Instruments in Song</caption><tr><th>Role</th><th>ID</th></tr>' + rows + '</table>';
 }
