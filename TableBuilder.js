@@ -230,8 +230,8 @@ function buildCaptionRow(options, tableID) {
 	var captionRow = $("<div>");
 	captionRow.addClass("captionRow");
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="floatNoteTableDiv('div${options.baseID}')">F<small>loat</small></button>`;
+	var btnClearFloatRectRecord = `<button id="btnClearFloatRect${options.baseID}" data-tableid="${tableID}" class="subcaptionButton clearFloatRectRecordButton" title="Anchor: no re-float" style="font-weight: bold; font-size: 82%; padding: 0; padding-left: 5px; padding-right: 5px;">&#x2366;</button>`;
 	
-	//let entry = options.noteTablesLayout.find((one) => one.tableID === tableID);
 	if (options.Tool === true){
 		var tuningID_justCaption = '<span class="tuningCaptionOnly">'+options.caption+'</span>';
 		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
@@ -290,6 +290,7 @@ function buildCaptionRow(options, tableID) {
 		  + hamburgerColorDict
 		  + btnShowWiring
 		  + btnPopOutDiv
+		  + btnClearFloatRectRecord
 		  + hamburgerTuningDetails
 		+ '<span class="spanTuningDetails">'
 		+ tuningBaseIDCaption

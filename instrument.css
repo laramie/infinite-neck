@@ -80,6 +80,11 @@
     border-width: var(--instrument-border-thickness);
 }
 
+/* This is for when an instrument is floated, it gets put inside another div, so we don't want box shadow. */
+.toolWindowRounded .instrumentBackground {
+        box-shadow: none;
+}
+
 .instrumentBackground .captionRow {
     width: 100%;
 }

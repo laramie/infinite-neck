@@ -3223,6 +3223,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				let CaptionLeft = $('#'+tableID+'_leftRailCaptionHost').toggle().css('display') !== 'none';
 				getSong().setNoteTablesLayoutOption(tableID, "CaptionLeft", CaptionLeft);
 		});
+		$(".clearFloatRectRecordButton")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				let tableID = $(this).data('tableid');
+				let entry = getSong().noteTablesLayout.find((one) => one.tableID === tableID);
+				if (entry?.anchorage?.floatRect){
+					entry.anchorage.floatRect = {};
+				}
+		});
 		$(".showLeftSectionStatus")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {
