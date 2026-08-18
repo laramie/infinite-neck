@@ -34,7 +34,9 @@ import {
 	makeDivDockable,
 	isDivFloating,
 	setDockCaptureHook,
-	setDragEndCaptureHook
+	setDragEndCaptureHook,
+	setZIndexCaptureHook,
+	setHandleOrientationCaptureHook
 } from './dockable.js';
 import { 
 	gPresentation, 
@@ -332,6 +334,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			downloadBackupThenClearGraveyardByType,
 			downloadPlayedNotes,
 			enterFullscreen,
+			fixDockableHandlesIfFullscreen,
 			getBPM,
 			getCurrentSection,
 			getDisplayOptionsClearState,
@@ -2144,6 +2147,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
 	}
 
+	/** Resolves the { left, top, width, height, zIndex, handleOrientation } rect to
+	 *  pass to dockable.js's makeDivDockable() for tableID, reading floatRect/
+	 *  handleOrientation straight from the model's saved anchorage. If the table has
+	 *  no zIndex recorded yet (a table that's never been floated before), assigns and
+	 *  persists a new one via song.getNextAnchorageZIndex()/setTableZIndex() -- see
+	 *  sprint-141 Iteration 4, point 3. */
+	export function buildFloatRectForTable(song, tableID){
+		if (!song || !tableID) {
+			return null;
+		}
+		const anchorage = song.getTableAnchorage(tableID);
+		let zIndex = anchorage?.zIndex;
+		if (typeof zIndex !== 'number' || !Number.isFinite(zIndex)) {
+			zIndex = song.getNextAnchorageZIndex();
+			song.setTableZIndex(tableID, zIndex);
+		}
+		const rect = { ...(anchorage?.floatRect || {}), zIndex };
+		if (anchorage?.handleOrientation) {
+			rect.handleOrientation = anchorage.handleOrientation;
+		}
+		return rect;
+	}
+
 	/** Applies each noteTablesLayout entry's saved anchorage.floated/floatRect by
 	 *  floating the corresponding table's div. Must run only once, right after a
 	 *  song is loaded (not on every reinstallAllTuningsTables() call) -- otherwise a
@@ -2166,8 +2192,38 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 			const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
 			const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
-			makeDivDockable(divID, anchorage.floatRect || null);
+			makeDivDockable(divID, buildFloatRectForTable(song, tableID));
 		});
+	}
+
+	/** The opposite of dockAllDockables()/'/vwd': walks every noteTablesLayout entry
+	 *  that has a non-empty anchorage.floatRect and (re-)floats it, restoring whatever
+	 *  floating layout the User last had, regardless of anchorage.floated (a table may
+	 *  have been docked, or never explicitly marked floated, yet still carry a
+	 *  remembered floatRect worth restoring). Idempotent: makeDivDockable() is a no-op
+	 *  for a div that's already floating, so this still works correctly if some of the
+	 *  group have already been re-floated. See sprint-141 Iteration 4, point 5. */
+	export function refloatAllDockables(){
+		const song = getSong();
+		if (!song) {
+			return;
+		}
+		song.getNoteTablesLayout().forEach((entry) => {
+			const floatRect = entry?.anchorage?.floatRect;
+			if (!floatRect || typeof floatRect !== 'object' || Object.keys(floatRect).length === 0) {
+				return;
+			}
+			const tableID = `${entry.tableID || ''}`;
+			if (!tableID.startsWith(Constants.TABLE_ID_PREFIX)) {
+				return;
+			}
+			const baseID = tableID.substring(Constants.TABLE_ID_PREFIX.length);
+			const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
+			makeDivDockable(divID, buildFloatRectForTable(song, tableID));
+		});
+	}
+	if (typeof window !== 'undefined') {
+		window.refloatAllDockables = refloatAllDockables;
 	}
 
 	/** Captures each currently-floating table's live position/size as percentages of
@@ -2258,22 +2314,47 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	setDragEndCaptureHook(captureAnchorageOnDragEnd);
 
+	/** Registered with dockable.js via setZIndexCaptureHook() below: fires with
+	 *  (divId, zIndex) whenever a floating window's stacking order changes (currently:
+	 *  a .dockable-handle click, raising it to the front of the "deck"). See
+	 *  sprint-141 Iteration 4, points 1-2. */
+	function captureZIndexOnChange(divId, zIndex){
+		const tableID = tableIDForDockableDivID(divId);
+		const song = getSong();
+		if (!tableID || !song) {
+			return;
+		}
+		song.setTableZIndex(tableID, zIndex);
+	}
+	setZIndexCaptureHook(captureZIndexOnChange);
+
+	/** Registered with dockable.js via setHandleOrientationCaptureHook() below: fires
+	 *  with (divId, orientation) whenever a floating window's drag-handle orientation
+	 *  is toggled. See sprint-141 Iteration 4, point 4. */
+	function captureHandleOrientationOnChange(divId, orientation){
+		const tableID = tableIDForDockableDivID(divId);
+		const song = getSong();
+		if (!tableID || !song) {
+			return;
+		}
+		song.setTableHandleOrientation(tableID, orientation);
+	}
+	setHandleOrientationCaptureHook(captureHandleOrientationOnChange);
 
 	/** Global handler for the per-instrument-table Float button's inline onclick (see
-	 *  TableBuilder.js's btnPopOutDiv) -- looks up this table's saved
-	 *  anchorage.floatRect from the Song model and passes it to makeDivDockable(), so
-	 *  re-Floating (after a prior Dock) reopens exactly where the table was last left,
-	 *  the same way applyPersistedAnchorage() does at song-open time. Falls back to
-	 *  makeDivDockable's hardcoded default position when there's no saved anchorage
-	 *  yet (e.g. a table that's never been floated before). See sprint-141 Iteration 3
-	 *  bugfix ("Float button throws away floatRect"). */
+	 *  TableBuilder.js's btnPopOutDiv) -- looks up this table's saved anchorage from
+	 *  the Song model and passes it to makeDivDockable(), so re-Floating (after a
+	 *  prior Dock) reopens exactly where the table was last left, with the same
+	 *  stacking order and handle orientation, the same way applyPersistedAnchorage()
+	 *  does at song-open time. Falls back to makeDivDockable's hardcoded defaults when
+	 *  there's no saved anchorage yet (e.g. a table that's never been floated before).
+	 *  See sprint-141 Iteration 3 bugfix ("Float button throws away floatRect"). */
 	export function floatNoteTableDiv(divId){
 		const baseID = divId.startsWith(Constants.TABLEDIV_ID_PREFIX)
 			? divId.substring(Constants.TABLEDIV_ID_PREFIX.length)
 			: '';
 		const tableID = baseID ? Constants.TABLE_ID_PREFIX + baseID : '';
-		const anchorage = tableID ? getSong()?.getTableAnchorage(tableID) : null;
-		makeDivDockable(divId, anchorage?.floatRect || null);
+		makeDivDockable(divId, buildFloatRectForTable(getSong(), tableID));
 	}
 	if (typeof window !== 'undefined') {
 		window.floatNoteTableDiv = floatNoteTableDiv;
@@ -2378,6 +2459,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		clearHighlights();
 		getSong().addBeat();
     }
+
+	export function fixDockableHandlesIfFullscreen(){
+		if (isFullscreenActive()){
+			$(".dockable-handle").hide();
+		}
+	}
 
 	export function leaveFullscreen(){
 		var wasVisible =  $('.container').is(':visible');

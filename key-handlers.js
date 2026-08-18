@@ -79,6 +79,9 @@ import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
 import * as Calculators from './calculators.js';
+import {
+	hasAnyFloatingDockables
+} from './dockable.js';
 
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
@@ -125,6 +128,7 @@ function downloadBackupThenClearGraveyard(...args) { return requireProvider('dow
 function downloadBackupThenClearGraveyardByType(...args) { return requireProvider('downloadBackupThenClearGraveyardByType')(...args); }
 function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNotes')(...args); }
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
+function fixDockableHandlesIfFullscreen(...args) { return requireProvider('fixDockableHandlesIfFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
 function getCurrentSection(...args) { return requireProvider('getCurrentSection')(...args); }
 function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
@@ -474,6 +478,14 @@ function document_keyup(evt) {
 		return;
 	}
     if (evt.keyCode == 27) {  // ESC key
+        if (evt.shiftKey) {
+            // SHIFT+ESC toggles between floated-all and floated-none, using the same
+            // action dispatch as the /vwd (dock all) and /vwr (re-float all) menu
+            // items/commands. If any tables are currently floated, treat that as the
+            // floated-all state and dock everything; otherwise re-float everything.
+            runActionByName(hasAnyFloatingDockables() ? "dockAllDockables" : "refloatAllDockables");
+            return;
+        }
         leaveFullscreen();
         hideCmdLine();
         hideAllMenuDivs();
@@ -1864,6 +1876,7 @@ export function performCmdAction(menuItem, args){
 			break;	
 		case "refloatAllDockables":
 			refloatAllDockables();
+			fixDockableHandlesIfFullscreen();
 			break;		
 		case "gatherAllDockables":
 			gatherAllDockables();

@@ -65,7 +65,8 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
     setSectionKeysFlats: jest.fn(),
     setSectionKeysSharps: jest.fn(),
     getSong: jest.fn(),
-    refreshShowAllNoteNames: jest.fn()
+    refreshShowAllNoteNames: jest.fn(),
+    buildFloatRectForTable: jest.fn(() => null)
 }));
 
 jest.unstable_mockModule('../../event-bus.js', () => ({

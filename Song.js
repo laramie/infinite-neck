@@ -239,6 +239,60 @@ export class Song extends SongPersistence {
         entry.anchorage = anchorage;
     }
 
+    /** Stores the floating window's stacking order into the table's anchorage.zIndex.
+     *  See sprint-141 Iteration 4, points 1-2 ("deck of cards" reordering on
+     *  .dockable-handle click). Ignores non-finite values. */
+    setTableZIndex(tableID, zIndex) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID || typeof zIndex !== 'number' || !Number.isFinite(zIndex)) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.zIndex = zIndex;
+        entry.anchorage = anchorage;
+    }
+
+    /** Returns the zIndex to assign to a newly-floated table: 10 above the highest
+     *  anchorage.zIndex currently recorded across noteTablesLayout, or 200 if none of
+     *  the entries have a zIndex yet. Deliberately only considers noteTablesLayout
+     *  entries -- other floating tool windows (Info, ChartInput, Transport, etc.) are
+     *  out of scope for this calculation. See sprint-141 Iteration 4, point 3. */
+    getNextAnchorageZIndex() {
+        const zIndexes = this.getNoteTablesLayout()
+            .map((entry) => entry?.anchorage?.zIndex)
+            .filter((zIndex) => typeof zIndex === 'number' && Number.isFinite(zIndex));
+        if (zIndexes.length === 0) {
+            return 200;
+        }
+        return Math.max(...zIndexes) + 10;
+    }
+
+    /** Stores whether the floating window's drag handle is along the 'top' or 'side'
+     *  into the table's anchorage.handleOrientation, so re-Floating (from docked or
+     *  from file-load) restores the same orientation. See sprint-141 Iteration 4,
+     *  point 4. */
+    setTableHandleOrientation(tableID, orientation) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.handleOrientation = orientation === 'top' ? 'top' : 'side';
+        entry.anchorage = anchorage;
+    }
+
     getTableAnchorage(tableID) {
         const safeTableID = `${tableID || ''}`.trim();
         const entry = this.getNoteTablesLayout().find((one) => one.tableID === safeTableID);

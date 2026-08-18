@@ -85,6 +85,59 @@ export function setDragEndCaptureHook(fn) {
     dragEndCaptureHook = typeof fn === 'function' ? fn : null;
 }
 
+/** Optional callback invoked as zIndexCaptureHook(divId, zIndex) whenever a floating
+ *  window's stacking order changes (currently: raiseDockableToFront() below, fired
+ *  by a .dockable-handle click). See sprint-141 Iteration 4, points 1-2. */
+let zIndexCaptureHook = null;
+export function setZIndexCaptureHook(fn) {
+    zIndexCaptureHook = typeof fn === 'function' ? fn : null;
+}
+
+/** Optional callback invoked as handleOrientationCaptureHook(divId, orientation)
+ *  whenever a floating window's drag-handle orientation ('top'/'side') is toggled.
+ *  See sprint-141 Iteration 4, point 4. */
+let handleOrientationCaptureHook = null;
+export function setHandleOrientationCaptureHook(fn) {
+    handleOrientationCaptureHook = typeof fn === 'function' ? fn : null;
+}
+
+function getFloatWinZIndex(floatWin) {
+    const zIndex = parseInt(floatWin.style.zIndex, 10);
+    return Number.isFinite(zIndex) ? zIndex : 200;
+}
+
+/** Raises the floating window for divId to the top of the current "deck" of
+ *  floating windows: treats all currently-floating windows as a stack of cards
+ *  ordered by their current zIndex, pulls the touched card out, and re-deals the
+ *  cards above it down into the vacated slots -- the touched card takes the
+ *  topmost (highest) zIndex slot, everything below it is untouched. The *set* of
+ *  zIndex values in use never changes, only which window holds which value. Fires
+ *  zIndexCaptureHook for every window whose zIndex actually changed, so the
+ *  model-aware caller can persist the new value. See sprint-141 Iteration 4, point 1
+ *  ("deck of cards"). No-op if divId isn't currently floating. */
+export function raiseDockableToFront(divId) {
+    if (!hasDocument) return;
+    const entries = getFloatingDockables()
+        .map(({ divId: id, floatWin }) => ({ divId: id, floatWin, zIndex: getFloatWinZIndex(floatWin) }))
+        .sort((a, b) => a.zIndex - b.zIndex);
+
+    const idx = entries.findIndex((entry) => entry.divId === divId);
+    if (idx === -1) return;
+
+    const zSlots = entries.map((entry) => entry.zIndex);
+    const applyZIndex = (entry, zIndex) => {
+        entry.floatWin.style.zIndex = zIndex;
+        if (zIndexCaptureHook) {
+            zIndexCaptureHook(entry.divId, zIndex);
+        }
+    };
+
+    for (let i = idx + 1; i < entries.length; i++) {
+        applyZIndex(entries[i], zSlots[i - 1]);
+    }
+    applyZIndex(entries[idx], zSlots[zSlots.length - 1]);
+}
+
 function getFloatingDockables() {
     if (!hasDocument) return [];
     const floatState = getDockableFloatState();
@@ -95,6 +148,12 @@ function getFloatingDockables() {
             floatWin: document.getElementById('floating-' + divId)
         }))
         .filter(entry => entry.floatWin);
+}
+
+/** True if at least one dockable is currently floating. Used by the SHIFT+ESC
+ *  toggle (dock-all / re-float-all) to decide which of the two actions to run. */
+export function hasAnyFloatingDockables() {
+    return getFloatingDockables().length > 0;
 }
 
 function clampOneDockableToViewport(floatWin, margin = 12) {
@@ -210,10 +269,11 @@ export function renameDockableDiv(oldDivId, newDivId) {
 
 /** Detaches divId from its current parent and re-parents it into a new floating
  *  window appended to document.body. rect, if given, is a { left, top, width,
- *  height } object of percentages of the viewport (see sprint-141 Iteration 3,
- *  point 9.2) used to restore a previously-saved position/size; any omitted key
- *  falls back to the existing hardcoded default (top/left) or browser intrinsic
- *  sizing (width/height). */
+ *  height, zIndex, handleOrientation } object (see sprint-141 Iteration 3, point
+ *  9.2 and Iteration 4, points 3-4) used to restore a previously-saved position/
+ *  size/stacking-order/handle-side; any omitted key falls back to the existing
+ *  hardcoded default (top/left, zIndex 200, 'side' orientation) or browser
+ *  intrinsic sizing (width/height). */
 export function makeDivDockable(divId, rect = null) {
     if (!hasDocument) return;
     const floatState = getDockableFloatState();
@@ -238,6 +298,10 @@ export function makeDivDockable(divId, rect = null) {
     const hasTop = effectiveRect && typeof effectiveRect.top === 'number' && Number.isFinite(effectiveRect.top);
     const hasWidth = effectiveRect && typeof effectiveRect.width === 'number' && Number.isFinite(effectiveRect.width);
     const hasHeight = effectiveRect && typeof effectiveRect.height === 'number' && Number.isFinite(effectiveRect.height);
+    const initialZIndex = (effectiveRect && typeof effectiveRect.zIndex === 'number' && Number.isFinite(effectiveRect.zIndex))
+        ? effectiveRect.zIndex
+        : 200;
+    const initialOrientation = effectiveRect && effectiveRect.handleOrientation === 'top' ? 'top' : 'side';
 
     // Create floating container
     const floatWin = document.createElement('div');
@@ -251,7 +315,7 @@ export function makeDivDockable(divId, rect = null) {
     if (hasHeight) {
         floatWin.style.height = `${effectiveRect.height}%`;
     }
-    floatWin.style.zIndex = 200;
+    floatWin.style.zIndex = initialZIndex;
     //floatWin.style.background = '#96001c';
     floatWin.style.background = 'white';
     floatWin.style.border = '2px solid #0b4803';
@@ -281,6 +345,7 @@ export function makeDivDockable(divId, rect = null) {
     contentHost.style.flex = '1 1 auto';
     contentHost.style.minWidth = '0';
     contentHost.style.minHeight = '0';
+    contentHost.style.backgroundColor = 'black';
 
     // Dock button (emoji)
     const dockBtn = document.createElement('button');
@@ -314,12 +379,24 @@ export function makeDivDockable(divId, rect = null) {
         const nextOrientation = floatWin.dataset.handleOrientation === 'top' ? 'side' : 'top';
         applyHandleOrientation(floatWin, handle, contentHost, nextOrientation, toggleHandleBtn);
         clampDockableSizeToViewport(floatWin);
+        if (handleOrientationCaptureHook) {
+            // Use the div's *current* id -- see dockBtn.onclick's comment above.
+            handleOrientationCaptureHook(div.id, nextOrientation);
+        }
     };
 
     handle.appendChild(dockBtn);
     handle.appendChild(toggleHandleBtn);
 
-    applyHandleOrientation(floatWin, handle, contentHost, 'side', toggleHandleBtn);
+    // Bring this window to the front of the "deck" whenever its handle is clicked
+    // (dockBtn/toggleHandleBtn call e.stopPropagation() in their own click handlers,
+    // so clicking them doesn't also raise-to-front here). See sprint-141 Iteration 4,
+    // point 1.
+    handle.addEventListener('click', function () {
+        raiseDockableToFront(div.id);
+    });
+
+    applyHandleOrientation(floatWin, handle, contentHost, initialOrientation, toggleHandleBtn);
 
     // Add drag logic to handle only. On drag end, persist the live position/size to
     // the model (via dragEndCaptureHook, if registered) using the div's *current* id

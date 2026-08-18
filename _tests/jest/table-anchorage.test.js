@@ -111,3 +111,70 @@ describe('noteTablesLayout[].anchorage persistence (sprint-141 Iteration 3)', ()
     expect(entry.anchorage).toBeUndefined();
   });
 });
+
+describe('noteTablesLayout[].anchorage.zIndex/handleOrientation (sprint-141 Iteration 4)', () => {
+  test('setTableZIndex stores a finite numeric zIndex', () => {
+    const song = new Song({});
+    song.setTableZIndex(TABLE_ID, 230);
+
+    expect(song.getTableAnchorage(TABLE_ID)).toEqual({ zIndex: 230 });
+  });
+
+  test('setTableZIndex ignores non-finite values', () => {
+    const song = new Song({});
+    song.setTableZIndex(TABLE_ID, NaN);
+    song.setTableZIndex(TABLE_ID, 'nope');
+
+    expect(song.getTableAnchorage(TABLE_ID)).toBeNull();
+  });
+
+  test('getNextAnchorageZIndex returns 200 when no entries have a zIndex yet', () => {
+    const song = new Song({});
+    song.setTableFloated(TABLE_ID, true);
+
+    expect(song.getNextAnchorageZIndex()).toBe(200);
+  });
+
+  test('getNextAnchorageZIndex returns 10 above the highest recorded zIndex', () => {
+    const song = new Song({});
+    song.setTableZIndex(TABLE_ID, 200);
+    song.setTableZIndex(`${Constants.TABLE_ID_PREFIX}Other`, 220);
+
+    expect(song.getNextAnchorageZIndex()).toBe(230);
+  });
+
+  test('setTableHandleOrientation stores "top" or normalizes anything else to "side"', () => {
+    const song = new Song({});
+    song.setTableHandleOrientation(TABLE_ID, 'top');
+    expect(song.getTableAnchorage(TABLE_ID)).toEqual({ handleOrientation: 'top' });
+
+    song.setTableHandleOrientation(TABLE_ID, 'bogus');
+    expect(song.getTableAnchorage(TABLE_ID)).toEqual({ handleOrientation: 'side' });
+  });
+
+  test('zIndex and handleOrientation merge into the same anchorage object as floatRect/floated', () => {
+    const song = new Song({});
+    song.setTableFloated(TABLE_ID, true);
+    song.setTableFloatRect(TABLE_ID, { left: 10, top: 20, width: 30, height: 40 });
+    song.setTableZIndex(TABLE_ID, 210);
+    song.setTableHandleOrientation(TABLE_ID, 'top');
+
+    expect(song.getTableAnchorage(TABLE_ID)).toEqual({
+      floated: true,
+      floatRect: { left: 10, top: 20, width: 30, height: 40 },
+      zIndex: 210,
+      handleOrientation: 'top'
+    });
+  });
+
+  test('zIndex and handleOrientation survive a full save/load round trip', () => {
+    const song = new Song({});
+    song.setTableZIndex(TABLE_ID, 220);
+    song.setTableHandleOrientation(TABLE_ID, 'top');
+
+    const json = JSON.parse(song.getPersistentSongFile());
+    const reloadedSong = new Song(json);
+
+    expect(reloadedSong.getTableAnchorage(TABLE_ID)).toEqual({ zIndex: 220, handleOrientation: 'top' });
+  });
+});

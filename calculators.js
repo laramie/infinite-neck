@@ -1,5 +1,6 @@
 import * as Constants from './Constants.js';
 import * as TuningsLibrary from './TuningsLibrary.js';
+import { buildFloatRectForTable } from './infinite-neck.js';
 
 /** Creates (once) or re-shows a floating singleton "calculator" Tool table: a
  *  cloned instance of a library Tool tuning (e.g. Perfect4thsCalculator),
@@ -35,7 +36,7 @@ function createToolCalculatorSingleton(song, baseID, notesourceID){
         TuningsLibrary.requestInstrumentAdded(cloned.baseID);
         TuningsLibrary.requestReinstallAllTuningsTables(cloned.baseID);
     }
-    makeDivDockable(divID, song.getTableAnchorage(tableID)?.floatRect || null); //global old-school javascript function on Window, installed by dockable.js (which also exports it).
+    makeDivDockable(divID, buildFloatRectForTable(song, tableID)); //global old-school javascript function on Window, installed by dockable.js (which also exports it).
 }
 
 export function createPerfect4thsCalculator(song){

@@ -303,9 +303,13 @@ const anchorageSchema = {
             },
             additionalProperties: false
         },
-        // Reserved for a future sprint (stacking order of multiple floated windows);
-        // not manipulated by Iteration 3. See sprint-141 Iteration 3, point 6.
-        zIndex: { type: 'number' }
+        // Stacking order among currently-floated windows: raised to the top of the
+        // "deck" whenever the User clicks a floating window's .dockable-handle. See
+        // sprint-141 Iteration 4, points 1-3.
+        zIndex: { type: 'number' },
+        // 'top' or 'side' -- which edge of the floating window the drag handle sits
+        // along. See sprint-141 Iteration 4, point 4.
+        handleOrientation: { type: 'string', enum: ['top', 'side'] }
     },
     additionalProperties: false
 };
