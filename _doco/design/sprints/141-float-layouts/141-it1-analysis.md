@@ -199,7 +199,7 @@ conversation captured in
 document — still accurate, and directly explains today's reported bugs). Concretely,
 `installAllTuningsTables()` must stop unconditionally creating a new div/table for
 every tuning on every rebuild. Instead, for each tuning it should:
-- Check whether a live DOM node for that `tableID` already exists **anywhere in the
+- Check whether a live DOM node for that `tableID` already exists **anywhere in the## 3. Names and sample shape
   document** (docked in `#tabledest` *or* inside a `#floating-{divID}` window) before
   building a new one.
 - If it exists and is currently floating, leave it in place (don't touch `#tabledest`
