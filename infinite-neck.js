@@ -2183,7 +2183,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		song.getNoteTablesLayout().forEach((entry) => {
 			const anchorage = entry?.anchorage;
-			if (!anchorage || anchorage.floated !== true) {
+			if (!anchorage || anchorage.floated !== true || entry.visible === false) {
 				return;
 			}
 			const tableID = `${entry.tableID || ''}`;
@@ -2211,6 +2211,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		song.getNoteTablesLayout().forEach((entry) => {
 			const floatRect = entry?.anchorage?.floatRect;
 			if (!floatRect || typeof floatRect !== 'object' || Object.keys(floatRect).length === 0) {
+				return;
+			}
+			if (entry.visible === false) {
 				return;
 			}
 			const tableID = `${entry.tableID || ''}`;

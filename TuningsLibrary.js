@@ -556,6 +556,12 @@ export function showHideTuning(show, basekey) {
     var jdiv = $(divKey);
     jcb.prop("checked", show);
     //jcb.click();
+    if (!show) {
+        // Dock first so a floating table's wrapper (handle/dockBtn) is torn down
+        // instead of being left showing over an empty, hidden inner div -- same
+        // dock-before-move-up/down pattern used elsewhere. See sprint-141 Iteration 4.
+        dockIfFloating(basekey);
+    }
     if (show) {   //change the checkbox in the GUI
         jdiv.show();
     } else {
