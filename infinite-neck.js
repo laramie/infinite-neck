@@ -29,6 +29,9 @@ import {
 import {
 	draggable
 } from './drag.js';
+import {
+	disposeAllDockables
+} from './dockable.js';
 import { 
 	gPresentation, 
 	PalettePresentation 
@@ -1846,6 +1849,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		if (importOptions.sections) {
+			// Stale floating windows from whatever song was previously open must not survive
+			// into the newly-appended sections: their DOM ids can collide with the tables
+			// ReinstallAllTuningsTables is about to (re)build. See sprint-141 Iteration 1 analysis.
+			disposeAllDockables();
 			requestReloadTuningsDisplays();
 			EventBus.trigger('ReinstallAllTuningsTables');
 			EventBus.trigger('UpdateAllWiringSelects');
@@ -1858,6 +1865,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function updateAfterOpenSong(){
+		// Stale floating windows from a previously open song must not survive a new song
+		// load: they'd share DOM ids with the tables about to be (re)built below, causing
+		// duplicate-id bugs (mash-the-Float-button, UF affecting both, etc.). See
+		// sprint-141 Iteration 1 analysis.
+		disposeAllDockables();
 		getSong().resetRecording?.();
 		syncRecordingViews();
 		getSong().fixupCurrentIndexForLoadedSong();
