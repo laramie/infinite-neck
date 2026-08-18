@@ -1371,6 +1371,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					MacroBuilder.hide();
 				}
 			} else {
+				dockDivInPage(stripDivHash(key));
 				$(key).hide();
 			}
 		}
@@ -1471,27 +1472,46 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 
+	export function isFloaty(){
+		return $("#cbFloatyControls").prop("checked");  
+	}
 	export function isMenuShowing(strMenuDiv){
 		var jStrMenuDiv = $(strMenuDiv);
 		return jStrMenuDiv.is(":visible");
 	}
 
+	function stripDivHash(strMenuDiv){
+		let divNoHash = strMenuDiv;
+		if (strMenuDiv.startsWith('#')){
+			divNoHash = strMenuDiv.slice(1);
+		}
+		return divNoHash;
+	}
+
+	function showOneMenuDiv(strMenuDiv, jMenuDiv) {
+		jMenuDiv.show();
+		if (isFloaty()){
+			makeDivDockable(stripDivHash(strMenuDiv));
+		}
+
+	}
+
 	export function showOneMenu(strMenuDiv, forceOpen = false) {
 		var wasFull = leaveFullscreen();
-		var jStrMenuDiv = $(strMenuDiv);
+		var jMenuDiv = $(strMenuDiv);
 		if (wasFull) {
 			hideAllMenuDivs();
-			jStrMenuDiv.show();
+			showOneMenuDiv(strMenuDiv, jMenuDiv);
 		} else if (forceOpen) {
 			hideAllMenuDivs();
-			jStrMenuDiv.show();
+			showOneMenuDiv(strMenuDiv, jMenuDiv);
 			$(AllMenuDivs[strMenuDiv]).addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
 		} else {
-			if (jStrMenuDiv.is(":visible")) {
+			if (jMenuDiv.is(":visible")) {
 				hideAllMenuDivs();
 			} else {
 				hideAllMenuDivs();
-				jStrMenuDiv.show();
+				showOneMenuDiv(strMenuDiv, jMenuDiv);
 				$(AllMenuDivs[strMenuDiv]).addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
 			}
 		}
@@ -1503,6 +1523,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!forceOpen && InfoBuilder.isVisible()) {
 			hideAllMenuDivs();
 			return;
+		}
+		if (forceMode === null){
+			forceMode = isFloaty() ? 'float' : 'parked';
 		}
 		InfoBuilder.show(forceMode);
 	}
@@ -3683,7 +3706,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		    showOneMenu("#divFileControls")
 		});
 		bindEvent('click', '#btnInfo', function() {
-			showInfoDialog();
+			let forceMode = isFloaty() ? 'float' : 'parked';
+			showInfoDialog(forceMode);
 		});
 		bindEvent('click', '#btnTunings', function() {
 			showOneMenu("#divTunings");//toggles on

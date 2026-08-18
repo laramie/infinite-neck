@@ -61,8 +61,17 @@
                     <button id="btnHamburger" class="HamburgerClass" type="button">&equiv;</button>
                     <span class="productsmall">Laramie's </span><span class="product">infinite-neck</span>
                 </span>
-                <span id="transportLeftPoint"></span>
                 <span id="divControls">
+                    <label for="cbFloatyControls" class="MainMenuTabBtn BtnPunchedOut">
+                        <input id="cbFloatyControls" type="checkbox" tabindex="-1"
+                                    name="cbnFloatyControls" value="1">Floaty</label>
+                            <script>
+                              document.getElementById('cbFloatyControls').addEventListener('change', function() {
+                                this.blur();
+                              });
+                            </script>
+
+
                     <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1"><b><u>F</u></b>ile</button>
                     <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1"><b><u>I</u></b>nfo</button>
@@ -83,7 +92,6 @@
                     <button data-action="help" class="MainMenuTabBtn" tabindex="-1">Help</button>
                     &nbsp;&nbsp;<span id="SelectThemesDest"></span>
                 </span>
-                <span id="transportTopPoint"></span>
             </div>
 
             <div id="divPalette">
