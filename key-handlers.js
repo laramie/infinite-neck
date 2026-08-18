@@ -1861,6 +1861,9 @@ export function performCmdAction(menuItem, args){
 			break;		
 		case "dockAllDockables":
 			dockAllDockables();
+			break;	
+		case "refloatAllDockables":
+			refloatAllDockables();
 			break;		
 		case "gatherAllDockables":
 			gatherAllDockables();

@@ -1424,6 +1424,11 @@ export var gMenuFile =    {
               "action": "dockAllDockables"
             },
             {
+              "caption": "<b>r</b>e-float all",
+              "trigger": "r",
+              "action": "refloatAllDockables"
+            },
+            {
               "caption": "<b>g</b>ather",
               "trigger": "g",
               "action": "gatherAllDockables"
