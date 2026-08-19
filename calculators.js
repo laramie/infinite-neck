@@ -12,21 +12,20 @@ import { buildFloatRectForTable } from './infinite-neck.js';
  *  Singleton: only ever one instance per baseID, named `${baseID}_singleton`.
  *  If already created (registered in myTunings), just re-floats its div;
  *  otherwise clones the tuning, registers it, wires it, and shows it. */
-function createToolCalculatorSingleton(song, baseID, notesourceID){
-    var newBaseID = baseID + '_singleton';
-    var divID = Constants.TABLEDIV_ID_PREFIX + newBaseID;
-    var tableID = Constants.TABLE_ID_PREFIX + newBaseID;
+function createToolCalculatorSingleton(song, baseID, fromBaseID, notesourceID){
+    var divID = Constants.TABLEDIV_ID_PREFIX + baseID;
+    var tableID = Constants.TABLE_ID_PREFIX + baseID;
 
-    if (!TuningsLibrary.findTuningForID(newBaseID)) {
-        var original = TuningsLibrary.findTuningForID(baseID);
+    if (!TuningsLibrary.findTuningForID(baseID)) {
+        var original = TuningsLibrary.findTuningForID(fromBaseID);
         if (!original) {
             alert("Original tuning not found.");
             return;
         }
 
         var cloned = JSON.parse(JSON.stringify(original)); // Deep clone
-        cloned.baseID = newBaseID;
-        cloned.fromBaseID = baseID;
+        cloned.baseID = baseID;
+        cloned.fromBaseID = fromBaseID;
         cloned.instance = true;
         delete cloned.visible;
         TuningsLibrary.getMyTuningsStore().push(cloned);
@@ -40,5 +39,5 @@ function createToolCalculatorSingleton(song, baseID, notesourceID){
 }
 
 export function createPerfect4thsCalculator(song){
-    createToolCalculatorSingleton(song, 'Perfect4thsCalculator', `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`);
+    createToolCalculatorSingleton(song, '4ths', '4thsCalculator', `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`);
 }

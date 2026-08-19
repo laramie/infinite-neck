@@ -192,7 +192,7 @@ export function buildNoteTable(options) {
 	if (doPianoSkeuomorphic) {
 		fretTableWrapper.addClass("pianoSkeuomorphicWrapper");
 	}
-		var table3 = $("<table>");
+	var table3 = $("<table>");
 		var row = $("<row>");
 		table3.append(row);
 		var td1 = $("<td class='tdLeftRailStack'>");
@@ -215,7 +215,6 @@ export function buildNoteTable(options) {
 		var td3 = $("<td>");
 			td3.append(table);
 			row.append(td3);
-
 	fretTableWrapper.append(table3);
 	wiringAndFretTable.append(fretTableWrapper);
 
@@ -228,22 +227,28 @@ export function buildNoteTable(options) {
 
 function buildCaptionRow(options, tableID) {
 	var captionRow = $("<div>");
-	captionRow.addClass("captionRow");
+	
 	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="floatNoteTableDiv('div${options.baseID}')">F<small>loat</small></button>`;
 	var btnClearFloatRectRecord = `<button id="btnClearFloatRect${options.baseID}" data-tableid="${tableID}" class="subcaptionButton clearFloatRectRecordButton" title="Anchor: no re-float" style="font-weight: bold; font-size: 82%; padding: 0; padding-left: 5px; padding-right: 5px;">&#x2366;</button>`;
+	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
 	
 	if (options.Tool === true){
-		var tuningID_justCaption = '<span class="tuningCaptionOnly">'+options.caption+'</span>';
+		var tuningID_justCaption = '<span class="tuningCaptionOnly">'+options.baseID+'</span>';
 		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
 		//...That button's caption is updated here: updateToolDisplayOptionsToggleButton()
-		captionRow.html(tuningID_justCaption + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;" + btnPopOutDiv);
+		var captionRowSpan = $("<span>");
+		captionRowSpan.addClass("captionRow");
+		captionRowSpan.html("&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ hamburgerLeftCaption +"&nbsp;&nbsp;"+ btnPopOutDiv);
+		captionRow.append($(tuningID_justCaption));
+		captionRow.append(captionRowSpan);
 		return captionRow;
 	}
+
+	captionRow.addClass("captionRow");
 
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
 	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
-	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
 	var hamburgerCaptionLooperLayout = "<button id='btnHamburgerCaptionLooperLayout" + options.baseID + "' class='toggleCaptionLooperLayout subcaptionButton' type='button' data-tableid='" + tableID + "' title='Toggle Instrument Caption / LooperLight layout'>&#x21CB;</button>";
 	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionStatus subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side Section info'>S</button>";
 	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
