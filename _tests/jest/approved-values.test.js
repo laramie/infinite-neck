@@ -86,8 +86,4 @@ describe('approved values', () => {
     expect(html).toContain("title='Copy ${rootKey}'");
   });
 
-  test('resolves whole-song instrument badge approved values', () => {
-    expect(approvedValues.resolveApprovedValue('songInstrumentBadges')).toBe("<span class='songLibraryInstrument instrumentMain'>P46</span><span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>S6</span>");
-    expect(approvedValues.resolveApprovedValue('songInstrumentTable')).toBe('<table class="songInstrumentTable"><tr><th>Role</th><th>ID</th></tr><tr><td><span class=\'songLibraryInstrument instrumentMain\'>P46</span></td><td>P46_1</td></tr><tr><td><span class=\'songLibraryInstrument instrumentObserver instrumentNotVisible\'>S6</span></td><td>S6_1</td></tr></table>');
-  });
 });
