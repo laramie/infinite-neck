@@ -1,12 +1,14 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
 import * as Constants from './Constants.js';
+import { isNotesourceID } from './fill/notesource-registry.js';
 
 export const WIRING_MAIN = 'Main';
 export const WIRING_LISTENER = 'Listener';
+export const WIRING_LISTENER_NOTESOURCE = 'ListenerNotesource';
 export const WIRING_OBSERVER = 'Observer';
 
-const VALID_WIRINGS = new Set([WIRING_MAIN, WIRING_LISTENER, WIRING_OBSERVER]);
+const VALID_WIRINGS = new Set([WIRING_MAIN, WIRING_LISTENER, WIRING_LISTENER_NOTESOURCE, WIRING_OBSERVER]);
 const UNKNOWN_FROM_BASE_ID = '(unknown)';
 
 export function escapeHtml(text) {
@@ -34,7 +36,7 @@ export function classifyInstrumentRole(tableID, wirings = []) {
 		return WIRING_OBSERVER;
 	}
 	if (`${wiring.listenToTablename || ''}`.trim()) {
-		return WIRING_LISTENER;
+		return isNotesourceID(wiring.listenToTablename) ? WIRING_LISTENER_NOTESOURCE : WIRING_LISTENER;
 	}
 	return WIRING_MAIN;
 }
@@ -58,6 +60,9 @@ export function normalizeInstrumentSummary(instrument, options = {}) {
 export function getInstrumentRoleClass(instrument) {
 	if (instrument?.wiring === WIRING_LISTENER) {
 		return 'instrumentListener';
+	}
+	if (instrument?.wiring === WIRING_LISTENER_NOTESOURCE) {
+		return 'instrumentListenerNotesource';
 	}
 	if (instrument?.wiring === WIRING_OBSERVER) {
 		return 'instrumentObserver';

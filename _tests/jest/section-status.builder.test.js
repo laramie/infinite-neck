@@ -45,6 +45,11 @@ describe('SectionStatus key-mode class helpers', () => {
         expect(getSectionStatusKeyModeClass(undefined)).toBe('');
     });
 
+    test('maps a notesource-wired listener to its own key CSS class', () => {
+        expect(getSectionStatusKeyModeClass('LISTENER', true)).toBe('ssKey_listener_notesource');
+        expect(getSectionStatusKeyModeClass('RELATIVE', true)).toBe('ssKey_relative');
+    });
+
     test('removes prior role classes and applies listener/relative class', () => {
         const calls = [];
         const targets = {
@@ -55,8 +60,23 @@ describe('SectionStatus key-mode class helpers', () => {
 
         applySectionStatusKeyModeClasses(targets, 'RELATIVE');
         expect(calls).toEqual([
-            ['removeClass', 'ssKey_relative ssKey_listener'],
+            ['removeClass', 'ssKey_relative ssKey_listener ssKey_listener_notesource'],
             ['addClass', 'ssKey_relative']
+        ]);
+    });
+
+    test('applies the notesource-listener class when isNotesourceListener is set', () => {
+        const calls = [];
+        const targets = {
+            length: 1,
+            removeClass: (classes) => calls.push(['removeClass', classes]),
+            addClass: (classes) => calls.push(['addClass', classes])
+        };
+
+        applySectionStatusKeyModeClasses(targets, 'LISTENER', true);
+        expect(calls).toEqual([
+            ['removeClass', 'ssKey_relative ssKey_listener ssKey_listener_notesource'],
+            ['addClass', 'ssKey_listener_notesource']
         ]);
     });
 });

@@ -1122,7 +1122,8 @@ export function replayTable(replayOptions){
                                 showBeatCounter,
                                 rootKey: relSectionOptions.rootKey || '',
                                 rootKeyLead: relSectionOptions.rootKeyLead || '',
-                                keyMode: relSectionOptions.type
+                                keyMode: relSectionOptions.type,
+                                isNotesourceListener: isNotesourceID(relSectionOptions.listenToTablename)
                             }
                         );
     } else {
@@ -1135,7 +1136,8 @@ export function replayTable(replayOptions){
                 showBeatCounter,
                 rootKey: replayOptions.rootKey || '',
                 rootKeyLead: replayOptions.rootKeyLead || '',
-                keyMode: replayOptions.type
+                keyMode: replayOptions.type,
+                isNotesourceListener: isNotesourceID(replayOptions.listenToTablename)
             }
         );
     }

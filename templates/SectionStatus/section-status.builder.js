@@ -1,5 +1,6 @@
 import {ReplayOptions} from '../../ReplayOptions.js';
 import EventBus      from '../../event-bus.js';
+import { isNotesourceID } from '../../fill/notesource-registry.js';
 
 function hasOwnStatusValue(data, key) {
     return Object.prototype.hasOwnProperty.call(data || {}, key);
@@ -22,23 +23,23 @@ export function normalizeSectionStatusBeatState(data = {}, currentState = {}) {
     };
 }
 
-export function getSectionStatusKeyModeClass(keyMode) {
+export function getSectionStatusKeyModeClass(keyMode, isNotesourceListener = false) {
     switch (keyMode) {
         case ReplayOptions.Type.RELATIVE:
             return 'ssKey_relative';
         case ReplayOptions.Type.LISTENER:
-            return 'ssKey_listener';
+            return isNotesourceListener ? 'ssKey_listener_notesource' : 'ssKey_listener';
         default:
             return '';
     }
 }
 
-export function applySectionStatusKeyModeClasses($targets, keyMode) {
+export function applySectionStatusKeyModeClasses($targets, keyMode, isNotesourceListener = false) {
     if (!$targets || !$targets.length) {
         return;
     }
-    $targets.removeClass('ssKey_relative ssKey_listener');
-    const keyModeClass = getSectionStatusKeyModeClass(keyMode);
+    $targets.removeClass('ssKey_relative ssKey_listener ssKey_listener_notesource');
+    const keyModeClass = getSectionStatusKeyModeClass(keyMode, isNotesourceListener);
     if (keyModeClass) {
         $targets.addClass(keyModeClass);
     }
@@ -208,6 +209,7 @@ class SectionStatusWidget {
                 rootKey: data.replayOptions.rootKey || '',
                 rootKeyLead: data.replayOptions.rootKeyLead || '',
                 keyMode: data.replayOptions.type,
+                isNotesourceListener: isNotesourceID(data.replayOptions.listenToTablename),
                 beatNumber: data.beatNumber ?? data.replayOptions.currentBeat,
                 showBeatCounter: data.showBeatCounter,
                 isLoopActive: data.isLoopActive
@@ -271,7 +273,7 @@ class SectionStatusWidget {
         if (hasOwnStatusValue(status, 'keyMode')) {
             // jQuery and DOM both do class changes efficiently, no need to optimize the following:
             //These are all defined in section-status.css
-            applySectionStatusKeyModeClasses($rootKey.add($rootKeyLead).add(this.getRoleClassTargets()), status.keyMode);
+            applySectionStatusKeyModeClasses($rootKey.add($rootKeyLead).add(this.getRoleClassTargets()), status.keyMode, status.isNotesourceListener);
         }
 
         if (hasOwnStatusValue(status, 'isLoopActive') && typeof status.isLoopActive === 'boolean') {

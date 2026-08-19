@@ -18,8 +18,20 @@ describe('InstrumentRoleBadges', () => {
         expect(classifyInstrumentRole('tblS6Ahead', wirings)).toBe('Observer');
     });
 
+    test('classifies a listener wired to a notesource distinctly from a real-table listener', () => {
+        const wirings = [
+            { tablename: 'tblPerfect4ths', listenToTablename: 'nsEveryNamedNote', relativeSection: '' }
+        ];
+
+        expect(classifyInstrumentRole('tblPerfect4ths', wirings)).toBe('ListenerNotesource');
+    });
+
     test('renders escaped badge labels and hidden role classes', () => {
         expect(renderInstrumentBadge({ fromBaseID: 'P<46>', wiring: 'Listener', visible: false })).toBe("<span class='songLibraryInstrument instrumentListener instrumentNotVisible'>P&lt;46&gt;</span>");
+    });
+
+    test('renders the notesource-listener role class', () => {
+        expect(renderInstrumentBadge({ fromBaseID: 'Perfect4ths', wiring: 'ListenerNotesource', visible: true })).toBe("<span class='songLibraryInstrument instrumentListenerNotesource'>Perfect4ths</span>");
     });
 
     test('builds live song summaries in layout order with duplicates', () => {

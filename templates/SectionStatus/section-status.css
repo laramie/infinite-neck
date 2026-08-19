@@ -112,6 +112,13 @@
     --section-status-key-idle-bg: rgb(254, 219, 90);
     --section-status-key-live-bg: rgb(252, 172, 0);
 }
+.SectionStatus_rootKey.ssKey_listener_notesource {
+    --section-status-key-idle-bg: orange;
+}
+.SectionStatus_rootKeyLead.ssKey_listener_notesource {
+    --section-status-key-idle-bg: orange;
+    --section-status-key-live-bg: rgb(153, 92, 0);
+}
 .SectionStatus_rootKey.ssKey_hasValue,
 .SectionStatus_rootKeyLead.ssKey_hasValue {
     background-color: var(--section-status-key-live-bg);
@@ -195,6 +202,14 @@
     border-radius: 0.2em;
     corner-shape: notch;
     background-color: #091A00;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener_notesource,
+.ssCaptionWrapper .tuningIDCaption.ssKey_listener_notesource {
+    border: 2px solid orange;
+    border-radius: 0.2em;
+    corner-shape: notch;
+    color: orange;
+    background-color: black;
 }
 
 .RecordDot {
