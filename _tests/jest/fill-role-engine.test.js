@@ -92,4 +92,17 @@ describe('fill role engine', () => {
     expect(roleNoteSets.chord.has('C')).toBe(false);
     expect(roleNoteSets.chord.has('Db')).toBe(true);
   });
+
+  test('chart-sourced chord notes can remain literal charted tones', () => {
+    const roleNoteSets = computeRoleNoteSets({
+      rootID: 6, // Eb
+      chordSource: 'Bb11',
+      modeSource: '',
+      useSectionChart: true,
+      transposeChartToRootID: false
+    });
+
+    expect(roleNoteSets.chord.has('Ab')).toBe(true);
+    expect(roleNoteSets.chord.has('G')).toBe(false);
+  });
 });

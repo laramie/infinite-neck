@@ -15,17 +15,18 @@ export function computeRoleNoteSets({
   rootID = 0,
   chordSource = '',
   modeSource = '',
-  useSectionChart = false
+  useSectionChart = false,
+  transposeChartToRootID = true
 } = {}) {
   const normalizedRootID = Number.parseInt(rootID, 10) || 0;
   const rootName = Constants.NOTE_NAMES_ARRAY[normalizedRootID] || Constants.NOTE_NAMES_ARRAY[0];
 
   const chordSet = useSectionChart
-    ? chordNotesFromStoredChord(`${chordSource || ''}`, normalizedRootID, { transposeToRootID: true })
+    ? chordNotesFromStoredChord(`${chordSource || ''}`, normalizedRootID, { transposeToRootID: !!transposeChartToRootID })
     : chordNotesFromType(`${chordSource || ''}`, normalizedRootID);
 
   const modeSet = useSectionChart
-    ? modeNotesFromStoredMode(`${modeSource || ''}`, normalizedRootID, { transposeToRootID: true })
+    ? modeNotesFromStoredMode(`${modeSource || ''}`, normalizedRootID, { transposeToRootID: !!transposeChartToRootID })
     : modeNotesFromType(`${modeSource || ''}`, normalizedRootID);
 
   return {

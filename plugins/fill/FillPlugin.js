@@ -506,6 +506,7 @@ export class FillPlugin {
       children: [
         this.buildUseChartMenuNode(),
         this.getProperty('automaticFromChart').getMenuNodeSpec(this),
+        this.getProperty('literalChartedChord').getMenuNodeSpec(this),
         this.getProperty('chordFormula').getMenuNodeSpec(this),
         this.getProperty('scaleFormula').getMenuNodeSpec(this),
         this.buildPositionsMenuNode(),
@@ -1355,12 +1356,17 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   getAuditInputs({ song = getSong() } = {}) {
     const automaticFromChart = this.getProperty('automaticFromChart')?.getValue();
+    const literalChartedChord = this.getProperty('literalChartedChord')?.getValue();
     if (this.getProperty('automaticFromChart')?.getValue()) {
       const changed = !valuesEqual(
         automaticFromChart,
         this.getProperty('automaticFromChart')?.getDefaultValue()
+      ) || !valuesEqual(
+        literalChartedChord,
+        this.getProperty('literalChartedChord')?.getDefaultValue()
       );
-      return { value: 'auto-chart:true', changed };
+      const literalMode = literalChartedChord ? 'literal' : 'at-root';
+      return { value: `auto-chart:true (${literalMode})`, changed };
     }
 
     const chord = `${this.resolveValue('chordFormula', { song }) || ''}`.trim();
@@ -1381,6 +1387,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     ) || !valuesEqual(
       automaticFromChart,
       this.getProperty('automaticFromChart')?.getDefaultValue()
+    ) || !valuesEqual(
+      literalChartedChord,
+      this.getProperty('literalChartedChord')?.getDefaultValue()
     );
     return lines.length > 0 ? { value: lines.join('<br>'), changed } : undefined;
   }
@@ -1847,15 +1856,18 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
   computeRoleNoteSets(section, options = {}) {
     const rootID = Number.parseInt(section?.rootID, 10) || 0;
+    const useSectionChart = !!options.useSectionChart;
+    const transposeChartToRootID = !(useSectionChart && this.getProperty('literalChartedChord')?.getValue() === true);
     return computeSharedRoleNoteSets({
       rootID,
-      chordSource: options.useSectionChart
+      chordSource: useSectionChart
         ? `${section?.chartChord || ''}`
         : `${this.getProperty('chordFormula')?.getValue() || ''}`,
-      modeSource: options.useSectionChart
+      modeSource: useSectionChart
         ? `${section?.chartMode || ''}`
         : `${this.getProperty('scaleFormula')?.getValue() || ''}`,
-      useSectionChart: !!options.useSectionChart
+      useSectionChart,
+      transposeChartToRootID
     });
   }
 

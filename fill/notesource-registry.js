@@ -39,7 +39,25 @@ function resolveChartChordAtRoot({ rootID = 0, chartChord = '' } = {}) {
     rootID,
     chordSource: chartChord,
     modeSource: '',
-    useSectionChart: true
+    useSectionChart: true,
+    transposeChartToRootID: true
+  });
+  const namedNotes = {};
+  (roleNoteSets.chord || new Set()).forEach((noteName) => {
+    namedNotes[noteName] = buildNamedNote(noteName, 'noteChord');
+  });
+  return namedNotes;
+}
+
+/** Shows just the current chart chord's tones exactly as charted, preserving
+ *  the chart tonic instead of anchoring to Section.rootID. */
+function resolveChartChordAsCharted({ rootID = 0, chartChord = '' } = {}) {
+  const roleNoteSets = computeRoleNoteSets({
+    rootID,
+    chordSource: chartChord,
+    modeSource: '',
+    useSectionChart: true,
+    transposeChartToRootID: false
   });
   const namedNotes = {};
   (roleNoteSets.chord || new Set()).forEach((noteName) => {
@@ -58,6 +76,11 @@ const NOTESOURCE_REGISTRY = [
     id: `${Constants.NOTESOURCE_ID_PREFIX}ChartChordAtRoot`,
     caption: 'Chart chord at Section Root',
     resolve: (sectionContext) => resolveChartChordAtRoot(sectionContext)
+  },
+  {
+    id: `${Constants.NOTESOURCE_ID_PREFIX}ChartChordAsCharted`,
+    caption: 'Chart chord as charted',
+    resolve: (sectionContext) => resolveChartChordAsCharted(sectionContext)
   }
 ];
 

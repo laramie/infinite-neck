@@ -72,6 +72,29 @@ describe('notesource-registry', () => {
     });
   });
 
+  describe('nsChartChordAsCharted', () => {
+    const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}ChartChordAsCharted`;
+
+    test('resolves chart chord tones exactly as charted regardless of section rootID', () => {
+      const namedNotesInC = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 3, chartChord: 'C' });
+      expect(Object.keys(namedNotesInC).sort()).toEqual(['C', 'E', 'G'].sort());
+
+      const namedNotesInF = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 8, chartChord: 'C' });
+      expect(Object.keys(namedNotesInF).sort()).toEqual(['C', 'E', 'G'].sort());
+    });
+
+    test('returns no notes when there is no chart chord', () => {
+      const namedNotes = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 3, chartChord: '' });
+      expect(Object.keys(namedNotes)).toEqual([]);
+    });
+
+    test('normalizes sharp note names to model flat names', () => {
+      const namedNotes = resolveNotesourceNamedNotes(NOTESOURCE_ID, { rootID: 3, chartChord: 'AM' });
+      expect(Object.keys(namedNotes).sort()).toEqual(['A', 'Db', 'E'].sort());
+      expect(Object.keys(namedNotes)).not.toContain('C#');
+    });
+  });
+
   describe('ghost-table detection', () => {
     const TOOL_TABLE_ID = `${Constants.TABLE_ID_PREFIX}Perfect4thsCalculator_1`;
     const NOTESOURCE_ID = `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`;

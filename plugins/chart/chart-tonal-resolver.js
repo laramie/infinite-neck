@@ -3,7 +3,7 @@ import * as Constants from '../../Constants.js';
 const tonalNamespace = globalThis.Tonal?.Chord
   ? globalThis.Tonal
   : await import('tonal');
-const { Chord, Scale, Interval } = tonalNamespace;
+const { Chord, Scale, Interval, Note: TonalNote } = tonalNamespace;
 
 const NONE_VALUES = new Set(['none', '(none)']);
 
@@ -24,6 +24,18 @@ const MODE_ALIAS_MAP = new Map([
   ['minor (aeolian/natural)', 'minor'],
   ['major (ionian)', 'major'],
   ['major Pentatonic', 'major pentatonic']
+]);
+
+const SHARP_TO_FLAT_MAP = new Map([
+  ['A#', 'Bb'],
+  ['C#', 'Db'],
+  ['D#', 'Eb'],
+  ['F#', 'Gb'],
+  ['G#', 'Ab'],
+  ['B#', 'C'],
+  ['E#', 'F'],
+  ['Cb', 'B'],
+  ['Fb', 'E']
 ]);
 
 function normalizeText(rawValue) {
@@ -75,6 +87,27 @@ function rootIDToNoteName(rootID = 0) {
   return Constants.NOTE_NAMES_ARRAY[normalized] || Constants.NOTE_NAMES_ARRAY[0];
 }
 
+function normalizeNoteNameToModel(rawNoteName = '') {
+  const text = normalizeText(rawNoteName);
+  if (!text) {
+    return '';
+  }
+  if (Constants.NOTE_NAMES_ARRAY.includes(text)) {
+    return text;
+  }
+  if (SHARP_TO_FLAT_MAP.has(text)) {
+    return SHARP_TO_FLAT_MAP.get(text) || text;
+  }
+
+  const chroma = TonalNote?.chroma?.(text);
+  if (Number.isInteger(chroma)) {
+    const modelIndex = (chroma + 3) % 12;
+    return Constants.NOTE_NAMES_ARRAY[modelIndex] || text;
+  }
+
+  return text;
+}
+
 function parseChordBestEffort(rawChord) {
   const normalized = normalizeChordAlias(rawChord);
   const direct = Chord.get(normalized);
@@ -123,7 +156,7 @@ function intervalsToNoteSet(intervals = [], rootID = 0) {
 function directNotesToNoteSet(notes = []) {
   const result = new Set();
   (notes || []).forEach((noteName) => {
-    const normalizedNoteName = normalizeText(noteName);
+    const normalizedNoteName = normalizeNoteNameToModel(noteName);
     if (normalizedNoteName) {
       result.add(normalizedNoteName);
     }
