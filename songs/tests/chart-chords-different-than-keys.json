@@ -1,0 +1,211 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "fill": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "USER",
+      "properties": {
+        "targetTable": "tblP46_1",
+        "chordFormula": "M",
+        "scaleFormula": "",
+        "automaticFromChart": true,
+        "minFret": 0,
+        "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 5,
+        "namedRootMode": "role",
+        "namedRootColor": "noteRoot",
+        "namedChordMode": "role",
+        "namedChordColor": "noteChord",
+        "namedScaleMode": "role",
+        "namedScaleColor": "noteScale",
+        "singleRootMode": "none",
+        "singleRootColor": "noteRoot",
+        "singleChordMode": "none",
+        "singleChordColor": "noteChord",
+        "singleScaleMode": "none",
+        "singleScaleColor": "noteScale",
+        "tinyRootMode": "none",
+        "tinyRootColor": "noteRoot",
+        "tinyChordMode": "none",
+        "tinyChordColor": "noteChord",
+        "tinyScaleMode": "none",
+        "tinyScaleColor": "noteScale",
+        "singleAddTiny": "none"
+      }
+    }
+  },
+  "macros": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": {
+    "lines": [
+      "Section 2 is in A with an AM chart chord.",
+      "Section 3 is in B with an AM chart chord.",
+      "FillPlugin :: automaticFromChart behaves unexpectedly."
+    ]
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "float",
+  "presentationMode": false,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "chart-chords-different-than-keys",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {},
+      "caption": "",
+      "chartChord": "CM",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {},
+      "caption": "",
+      "chartChord": "AM",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "0",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {},
+      "caption": "",
+      "chartChord": "AM",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 2,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": []
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": true,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  }
+}

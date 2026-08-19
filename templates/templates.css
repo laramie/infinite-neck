@@ -2,7 +2,7 @@
 .divWiring {
     display: grid;
     grid-column: 1;
-    min-width: 11em; /* optional: set your preferred minimum, or remove for pure auto */
+    min-width: 15em; /* optional: set your preferred minimum, or remove for pure auto */
 }
 
 .Wiring-controls {

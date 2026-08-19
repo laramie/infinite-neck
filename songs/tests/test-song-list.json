@@ -6,7 +6,8 @@
          "arpeggio-bach-sec2-manual.json",
          "empty-song.json",
          "chart-test-fixture.json",
-         "piano-listener-guitar-wite-out-fixture.json"
+         "piano-listener-guitar-wite-out-fixture.json",
+         "chart-chords-different-than-keys.json"
     ],
     "ignoredSongs": [
     ],

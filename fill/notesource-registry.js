@@ -51,12 +51,12 @@ function resolveChartChordAtRoot({ rootID = 0, chartChord = '' } = {}) {
 const NOTESOURCE_REGISTRY = [
   {
     id: `${Constants.NOTESOURCE_ID_PREFIX}EveryNamedNote`,
-    caption: 'Calculator (every named note)',
+    caption: 'Calculator',
     resolve: () => resolveEveryNamedNote()
   },
   {
     id: `${Constants.NOTESOURCE_ID_PREFIX}ChartChordAtRoot`,
-    caption: 'Chart chord at root',
+    caption: 'Chart chord at Section Root',
     resolve: (sectionContext) => resolveChartChordAtRoot(sectionContext)
   }
 ];
