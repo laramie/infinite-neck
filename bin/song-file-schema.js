@@ -322,6 +322,8 @@ const noteTableLayoutEntrySchema = {
         ToolDisplayOptions: { type: 'object' },
         CaptionLeft: { type: 'boolean' },
         SectionStatusLeft: { type: 'boolean' },
+        TopToolCaption: { type: 'boolean' },
+        SectionStatusLeft: { type: 'boolean' },
         anchorage: anchorageSchema
     },
     required: ['tableID', 'visible'],

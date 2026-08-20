@@ -234,16 +234,28 @@ function buildCaptionRow(options, tableID) {
 	
 	if (options.Tool === true){
 		var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
-	    var _InlineToolCaptionHost =      `<span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_InlineToolCaptionHost" class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span>`;
-		var _TopToolCaptionHost    = `<div><span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_TopToolCaptionHost"    class="tuningIDCaption SectionStatus_captionRoleTarget" style="display:none;" data-tablename="${tableID}">${options.baseID}</span></span></div>`;
-		var btnSwapToolCaption = "<button  class='swapToolTopCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Swap Top Tool Caption'>T</button>";
-		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
+	    var _InlineToolCaptionHost =      `<span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_InlineToolCaptionHost" class="tuningIDCaption ToolTableTopCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span>`;
+		var _TopToolCaptionHost    = `<div id="${tableID}_TopToolCaptionHost_Div" style="display:none;"><span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_TopToolCaptionHost"   style="display:none;"  class="tuningIDCaption ToolTableTopCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span></div>`;
+		var btnSwapToolCaption = "<button  class='swapToolTopCaption ToolTableButton' type='button' data-tableid='" + tableID + "' title='Swap Top Tool Caption'>T</button>";
+		var btnToolLeftCaption = "<button id='btnToolLeftCaption" + options.baseID + "' class='showLeftCaption ToolTableButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
+	    var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
 		//...That button's caption is updated here: updateToolDisplayOptionsToggleButton()
 		var captionRowSpan = $("<span>");
 		captionRowSpan.addClass("captionRow");
-		captionRowSpan.html(_InlineToolCaptionHost + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ hamburgerLeftCaption +"&nbsp;&nbsp;"+ btnSwapToolCaption + "&nbsp;&nbsp;" + btnPopOutDiv);
+		captionRowSpan.addClass("captionRowTool");
+		captionRowSpan.html(_InlineToolCaptionHost + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ btnToolLeftCaption +"&nbsp;&nbsp;"+ btnSwapToolCaption + "&nbsp;&nbsp;" + btnPopOutDiv);
 		captionRow.append($(_TopToolCaptionHost));
 		captionRow.append(captionRowSpan);
+
+		// Detached (never appended to the DOM) -- exists only to host a SectionStatusWidget
+		// instance so Widget:SectionStatus:statusChanged events apply ssKey_* classes (e.g.
+		// ssKey_listener_notesource) to the Tool table's inline/top caption spans, mirroring
+		// the non-Tool captionRow widget below.
+		let toolCaptionRowLiveInfo = $('<span>');
+		toolCaptionRowLiveInfo.attr('id', tableID + '_toolCaptionRowLiveInfo');
+		SectionStatusBuilder.createWidget(toolCaptionRowLiveInfo, tableID, 'captionRow', 'horizontal', {
+			roleClassTargets: captionRow.find('.SectionStatus_captionRoleTarget')
+		});
 		return captionRow;
 	}
 

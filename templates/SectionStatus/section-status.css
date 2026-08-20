@@ -144,7 +144,11 @@
     color: orange;
 }
 
+.ToolTableButton,
 .toolDisplayOptionsToggleButton {
+    font-size: 90%;
+    padding-block: 0.1em;
+    padding-inline: 0.3em;
     background-color: rgb(172, 113, 2);
     color: black;
     border-style: solid;
@@ -153,6 +157,7 @@
     border-right-color: rgb(96, 53, 1);
     border-bottom-color: rgb(96, 53, 1);
 }
+.ToolTableButton:active,
 .toolDisplayOptionsToggleButton:active{
     background-color: rgb(172, 113, 2);
     color: black;
@@ -162,6 +167,7 @@
     border-right-color: rgb(251, 188, 71);
     border-bottom-color: rgb(251, 188, 71);
 }
+.ToolTableButton:hover,
 .toolDisplayOptionsToggleButton:hover {
     background-color: rgb(228, 149, 2);
     color: black;
@@ -181,6 +187,13 @@
     padding-top: 1em;
     padding-bottom: 1em;
     margin-bottom: 1.6em;
+}
+.ssCaptionWrapper .ToolTableTopCaption {
+    font-size: 90%;
+    padding: 0.2em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    margin-bottom: 0.2em;
 }
 .ssCaptionWrapper .fretTableLeftCaption,
 .ssCaptionWrapper .tuningIDCaption {

@@ -111,6 +111,10 @@
     min-height: 1em;
     width: auto;
 }
+.captionRowTool {
+    display: inline-block;
+    margin-top: 0.6em;
+}
 .captionRow .lblRootID {
     display: inline-flex;
     align-items: center;

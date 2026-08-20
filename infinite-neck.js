@@ -3256,6 +3256,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.on(`click${eventNamespace}`, function() {
 				let tableID = $(this).data('tableid');
 				let TopToolCaption = $('#'+tableID+'_TopToolCaptionHost').toggle().css('display') !== 'none';
+				//We also have a div that has to be toggled:
+				$('#'+tableID+'_TopToolCaptionHost_Div').toggle(TopToolCaption).css('display') !== 'none';
+				// Then make the inline one be the opposite:
 				let InlineToolCaption = $('#'+tableID+'_InlineToolCaptionHost').toggle(!TopToolCaption).css('display') !== 'none';
 				getSong().setNoteTablesLayoutOption(tableID, "TopToolCaption", TopToolCaption);
 		});
@@ -3353,9 +3356,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			const sectionStatusLeft = entry?.SectionStatusLeft === true;
 			const captionLeft = entry?.CaptionLeft === true;
+			const TopToolCaption = entry?.TopToolCaption === true;
 
 			$(`#${tableID}_leftRailSectionStatusHost`).toggle(sectionStatusLeft);
 			$(`#${tableID}_leftRailCaptionHost`).toggle(captionLeft);
+
+			$(`#${tableID}_TopToolCaptionHost`).toggle(TopToolCaption);
+			//We also have a div that has to be toggled:
+			$('#'+tableID+'_TopToolCaptionHost_Div').toggle(TopToolCaption);
+			// Then make the inline one be the opposite:
+			$('#'+tableID+'_InlineToolCaptionHost').toggle(!TopToolCaption);
+
 			updateToolDisplayOptionsToggleButton(tableID, entry);
 		});
 	}
