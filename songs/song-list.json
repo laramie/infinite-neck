@@ -344,8 +344,21 @@
           "visible": false
         },
         {
-          "fromBaseID": "MIDI",
+          "fromBaseID": "MIDI-P4",
           "wiring": "Listener",
+          "visible": true
+        }
+      ],
+      "tutorial": "strict",
+      "SectionCount": 46
+    },
+    {
+      "href": "practice/12-major-scales.json",
+      "description": "12 Major scales, highlighted with brown for flats on black keys, orange for sharps on black keys, black for root on black key, navy for root on white key, blue for scale note natural on white key.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
           "visible": true
         }
       ]
