@@ -3251,6 +3251,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				let CaptionLeft = $('#'+tableID+'_leftRailCaptionHost').toggle().css('display') !== 'none';
 				getSong().setNoteTablesLayoutOption(tableID, "CaptionLeft", CaptionLeft);
 		});
+		$(".swapToolTopCaption")
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function() {
+				let tableID = $(this).data('tableid');
+				let TopToolCaption = $('#'+tableID+'_TopToolCaptionHost').toggle().css('display') !== 'none';
+				let InlineToolCaption = $('#'+tableID+'_InlineToolCaptionHost').toggle(!TopToolCaption).css('display') !== 'none';
+				getSong().setNoteTablesLayoutOption(tableID, "TopToolCaption", TopToolCaption);
+		});
 		$(".clearFloatRectRecordButton")
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function() {

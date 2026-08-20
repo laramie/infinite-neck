@@ -233,13 +233,16 @@ function buildCaptionRow(options, tableID) {
 	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
 	
 	if (options.Tool === true){
-		var tuningID_justCaption = '<span class="tuningCaptionOnly">'+options.baseID+'</span>';
+		var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
+	    var _InlineToolCaptionHost =      `<span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_InlineToolCaptionHost" class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span>`;
+		var _TopToolCaptionHost    = `<div><span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_TopToolCaptionHost"    class="tuningIDCaption SectionStatus_captionRoleTarget" style="display:none;" data-tablename="${tableID}">${options.baseID}</span></span></div>`;
+		var btnSwapToolCaption = "<button  class='swapToolTopCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Swap Top Tool Caption'>T</button>";
 		var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
 		//...That button's caption is updated here: updateToolDisplayOptionsToggleButton()
 		var captionRowSpan = $("<span>");
 		captionRowSpan.addClass("captionRow");
-		captionRowSpan.html("&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ hamburgerLeftCaption +"&nbsp;&nbsp;"+ btnPopOutDiv);
-		captionRow.append($(tuningID_justCaption));
+		captionRowSpan.html(_InlineToolCaptionHost + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ hamburgerLeftCaption +"&nbsp;&nbsp;"+ btnSwapToolCaption + "&nbsp;&nbsp;" + btnPopOutDiv);
+		captionRow.append($(_TopToolCaptionHost));
 		captionRow.append(captionRowSpan);
 		return captionRow;
 	}
