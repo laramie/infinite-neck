@@ -1,5 +1,86 @@
 # ChangeLog
 
+### 20260820
+
+Tag: v2.1-beta-10
+
+- c4f20cd **2026-08-20** Fixed bug in 5thsCalculator, notes were wrong midi numbers. Added ListenerNotesource example badge to song-list description. Added 4ths calculator listener to 12-major-scales song.  This shows the notes in each key on the 4ths calculator, rather than just wiring the 4ths calc to all notes as the defailt calculator does with /vscp.  This is a cool use of 4ths calc.
+- 97bba2f **2026-08-20** Added 12-major practice song
+- 38d6d33 **2026-08-20** Song with black keys highlighted, and all 12 major scales
+- c0e45ea **2026-08-19** Swapable top captions in Tool tables is working.  Added to schema and noteTableLayout and survives persistence round trip.  Tool table top captions are smaller, but follow normal caption role coloring.
+- ca28aa8 **2026-08-19** Working on custom caption handling for Tool tables.
+- 8e91898 **2026-08-19** Added special coloring for Role badges and captions when being a Notesource listener.
+- be58bb7 **2026-08-19** Tweaking captions for Tool tables.  Kind of janky in that there are now multiples.
+- 48a08aa **2026-08-18** FillPlugin and Notesource now respect automaticFromChart && literalChartedChord.  When both are true, we use the chart chord as entered, even if it does match the notes that may be in the Section.  User has entered a Chart Chord, and expects it to be filled as such and not re-rooted to Section Key.
+- 1d1e649 **2026-08-18** Tweaks to get ready to add FillPlugin:literalChartedChord.
+- c84da83 **2026-08-18** removed BS hardcoded html tests
+- 3d84443 **2026-08-18** Spiffy changes for instrument role badges widget table and file save dialog uses white-space: nowrap now for roles.
+- 2b18283 **2026-08-18** Added dockAll reFloatAll, changed button style on keyhelp for File, SHIFT+ESC,
+- 6987cb0 **2026-08-18** Added T to show Themes menu. Added z to dock all, Z to re-float all. Added re-floating current menu if Floaty and menu is visible and re-float. Changed width on Event Wiring panel added getVisibleMenu Made all Menu floats have zIndex = 900.
+- 7b234c6 **2026-08-18** Made all menu divs floatable by the Floaty checkbox in the menu now.  palette and themes have their Float buttons removed.  Info keeps its button.
+- e11b42b **2026-08-18** Removed red border on .instrumentBackground when inside a floated .toolWindowRounded so that it is black on black. Added anchor button after Float button to anchor tables that should not be re-floated.
+- 2338722 **2026-08-18** Fixed "visible" checkbox should hide floating windows too.
+- 23a7a08 **2026-08-18** Implemented SHIFT+ESC to dock-all and float-all
+- de62f32 **2026-08-18** Ready for it4
+- aaabcb3 **2026-08-17** sprint-141 mostly complete.  Could add zIndex now.
+- 16af4c7 **2026-08-17** It3
+- 0ea16e4 **2026-08-17** Ready for Iteration 3
+- 3751b2d **2026-08-17** Fixed sprint-141 Iteration 2
+- 4ed8106 **2026-08-17** Ready for Iteration 2
+- aafd222 **2026-08-17** Iteration 1
+- e29eade **2026-08-17** Add it1 scope to request.
+- cf57fa8 **2026-08-17** Ready for analysis
+- d70a270 **2026-08-17** This test has a Perfect4ths Calculator, and it opens correctly.  However, it does not open floated.
+- 259aba9 **2026-08-17** Perfect4thsCalculator working as singleton float window from command line /vscp. Has cute Fr and UN (Freeze and UnFreeze) buttons. /vscp floats automatically.  But opening from file shows it docked. Fixed missing mocks from jest tests.
+- 1c742a6 **2026-08-17** Tool window for Perfect4thsCalculator working. Programmatic pop-up for calculator working from menu /vscp. Changed Perfect4ths to EveryNamedNote
+- e7a9d38 **2026-08-17** Fixed ghost-table warning for ns notesource tables.  Tested Tool windows without notesource wirings still freeze DisplayOptions, such as widths for Presentation mode.  Also, toggling Diamonds doesn't work when instruments are floated.  This is a bug. Added minimal instrument caption to Tool tables.
+- f5e53a8 **2026-08-16** Notesource working as a wiring source, Perfect4thsCalculator working as Tool.
+- a0c6fd2 **2026-08-16** Ready for implemention
+- 7709e44 **2026-08-16** Ready for alt analysis
+- 0f75295 **2026-08-16** Ready for sprint-140 design
+- c48571c **2026-08-16** Prep for Tool table: options looked up in Layout.ToolDisplayOptions, special Instrument Caption Row with just a Float button, Tunings now supports Tool as a checkbox and a tuning option.
+- ebbdad2 **2026-08-15** Added section-status examples and diagram of parts
+- 8e727a0 **2026-08-14** added command-line keyboard link.
+- 0078fb8 **2026-08-14** Added space
+- 1f16fd1 **2026-08-14** removed extra key displays from table.
+- 7831c42 **2026-08-14** Fixed the /p menu so that all fingerings work, especially Finger0 and the "o" shortcut, the keep and find work again, the chromatic, and added the missing /prn "n) note (degree)" choices for selecting by scale degree (note1, note2,...)
+- 6f1f903 **2026-08-14** Fixed the /p menu so that all fingerings work, especially Finger0 and the "o" shortcut, the keep and find work again, the chromatic, and added the missing /prn "n) note (degree)" choices for selecting by scale degree (note1, note2,...)
+- 32283f4 **2026-08-14** Added macro examples.
+- 374ffdd **2026-08-14** helpfile enhancements around section-status, LeftRail, and moving section-status to its own section, out of TonalPicker.
+- 99a3ba9 **2026-08-14** Moved toggleCaptionLooperLayout to layout.js, added remaining keyboard-shortcut-only actions to menu (e.g. show/hide Caption).
+- 04f0a72 **2026-08-14** Added setUIFromNoteTablesLayoutOptions which rips through noteTablesLayout and sets all LeftRail options for each table.
+- 244839b **2026-08-14** ready for implementation
+- edb53d7 **2026-08-14** NoteTablesLayout options round-tripping.
+- 69c01ed **2026-08-14** NoteTablesLayout options round-tripping.
+- f3d4423 **2026-08-14** Got the C and S buttons to read from data-tableid, and toggle thence.  Next we will persist these values.
+- 6d66b68 **2026-08-14** Installed Song.Layout to handle toggles of CaptionRow, WidgetRow, SongTitle, LeftRail, LeftRailCaption, LeftRailSectionStatus, separately in fullscreen and escaped.  Persists to file and loads on no song and on open song.  Grays out left rail layout buttons on SHIFT-E when hiding.
+- c3fbc5d **2026-08-12** Added details about roles and colors used in the Left Rail and section-status widgets.
+- e380403 **2026-08-12** More examples and images for View Layout help, and Variables for Captions, with plugin status widgets.
+- a8cbb31 **2026-08-12** Added help for View Layout and all toggling keystrokes, with images.
+- bc15421 **2026-08-12** Added ability to toggle useCaptionForSectionCaption from menu, which then persists in song.  No feedback in menu, just use /vdf to see if it is there. Added toggle for song title in /vht /vst
+- 799a4e3 **2026-08-12** show/hide widget row (caption row with widgets).
+- 8a7880f **2026-08-11** thicker border
+- cf8dc80 **2026-08-09** added midi8x8-black-keys
+- def3bcd **2026-08-09** added MIDI 8x8-P4
+- 24a05a5 **2026-08-09** removed escapeHtml() which was unnecessary
+- 8c765dc **2026-08-05** turned into two separate macros for white and black to shorten the runtime.
+- e555b22 **2026-08-05** Added switch links for P4<-->S6
+- c3b4ac9 **2026-08-05** added do-all-keys which calls fill-one-key which calls fill-tiny-automatic
+- 6099131 **2026-08-05** Added hidden S6 listener so it can be turned on by macro.
+- efd5f1a **2026-08-05** sprint-139-macro-call Iteration 3: refactor into own module MacroEngine.js
+- 721227e **2026-08-05** sprint-139 Iteration 2 to make a MacroEngine with yields is basically working, but has clogged up key-handlers.js
+- 25dda39 **2026-08-05** Added S6 listener to supersong-C, but not template yet.
+- 8c5d68d **2026-08-05** added supersong template
+- 948c051 **2026-08-05** Added working call-all macro
+- 4888dcb **2026-08-05** sprint-139-macro-calls working, and added song which uses them: supersong-calls.json
+- b026c3d **2026-08-05** sprint-139 ready for coding.
+- 5f6f0b5 **2026-08-05** ready for design
+- b1f7943 **2026-08-05** ready for sprint-139 design
+- e951de1 **2026-08-04** Added other chords to macro.  Made it so macro clones and navs rather than doing C every time.
+- e6192b0 **2026-08-04** Made tutorial strict mode controls hamburger follow Sections like the sectionList does, by cloning that toggle button into the hamburger button, including an upside-down arrow pair.   Hidden in wizard mode because wizard mode does not do sectionList or looper controls.
+- 92c3d2a **2026-08-04** macro working to fill tiny notes in chord using noteAutomatic, against noteTransparent diatonic named in C.
+- ab22fff **2026-08-04** Added handling for tutorial strict such that if song.tutorial.useCaptionForSectionCaption is present and true, then the Section.caption values are used for song.section.tutorial.caption.
+
 ### 20260803
 
 Tag: v2.1-beta-9
