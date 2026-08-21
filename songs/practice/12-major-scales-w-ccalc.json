@@ -136,6 +136,40 @@
       "baseID": "CCalc",
       "fromBaseID": "P4",
       "Tool": true
+    },
+    {
+      "instance": true,
+      "baseID": "4ths",
+      "baseInstrument": "Guitar",
+      "caption": "4ths",
+      "nStrings": 17,
+      "rowRange": [
+        110,
+        105,
+        100,
+        95,
+        90,
+        85,
+        80,
+        75,
+        70,
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30,
+        25,
+        20,
+        15
+      ],
+      "frets": 1,
+      "nut": false,
+      "reverse": false,
+      "Tool": true,
+      "fromBaseID": "4thsCalculator"
     }
   ],
   "noteTablesLayout": [
@@ -292,6 +326,20 @@
     {
       "tableID": "tblC_Calculator",
       "visible": true
+    },
+    {
+      "tableID": "tbl4ths",
+      "visible": true,
+      "anchorage": {
+        "zIndex": 250,
+        "floatRect": {
+          "left": 38.99739583333333,
+          "top": 11.574074074074074,
+          "width": 11.473795771598816,
+          "height": 97.22222222222221
+        },
+        "floated": true
+      }
     }
   ],
   "colorDicts": {},
@@ -398,7 +446,7 @@
       "rootID": 0,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true,
       "displayOptions": {
         "autoColor": false,
@@ -1103,6 +1151,11 @@
       "relativeSection": "",
       "listenToTablename": "tblP46_1",
       "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tbl4ths",
+      "relativeSection": "",
+      "listenToTablename": "nsEveryNamedNote"
     }
   ],
   "graveyard": {

@@ -391,6 +391,11 @@
           "fromBaseID": "P4",
           "wiring": "Listener",
           "visible": false
+        },
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "ListenerNotesource",
+          "visible": true
         }
       ]
     },
