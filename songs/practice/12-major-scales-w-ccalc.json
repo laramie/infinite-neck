@@ -1,0 +1,1179 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "4thsCalculator_1",
+      "baseInstrument": "Guitar",
+      "caption": "4ths",
+      "nStrings": 17,
+      "rowRange": [
+        110,
+        105,
+        100,
+        95,
+        90,
+        85,
+        80,
+        75,
+        70,
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "frets": 1,
+      "nut": false,
+      "reverse": false,
+      "Tool": true,
+      "fromBaseID": "4thsCalculator"
+    },
+    {
+      "instance": true,
+      "baseInstrument": "Guitar",
+      "caption": "CCalc60",
+      "nStrings": 3,
+      "rowRange": [
+        70,
+        65,
+        60
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 6,
+      "nut": false,
+      "reverse": false,
+      "banjoNut": {},
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": false,
+      "stringDividerHeight": "0",
+      "baseID": "CCalc60",
+      "fromBaseID": "P4C",
+      "Tool": true
+    },
+    {
+      "instance": true,
+      "baseInstrument": "Guitar",
+      "caption": "C_Calc",
+      "nStrings": 3,
+      "rowRange": [
+        69,
+        64,
+        59
+      ],
+      "showDiamonds": false,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 5,
+      "nut": false,
+      "reverse": false,
+      "banjoNut": {},
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": false,
+      "stringDividerHeight": "0",
+      "baseID": "CCalc",
+      "fromBaseID": "P4",
+      "Tool": true
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true,
+      "CaptionLeft": true,
+      "anchorage": {
+        "floated": false,
+        "zIndex": 230,
+        "floatRect": {
+          "left": 2.5520833333333335,
+          "top": 41.39756944444444,
+          "width": 91.18326822916667,
+          "height": 57.49131944444444
+        }
+      }
+    },
+    {
+      "tableID": "tbl4thsCalculator_1",
+      "visible": false,
+      "anchorage": {
+        "zIndex": 210,
+        "floatRect": {
+          "left": 89.84375,
+          "top": 1.3888888888888888,
+          "width": 6.770833333333333,
+          "height": 89.9074074074074
+        },
+        "handleOrientation": "top",
+        "floated": false
+      },
+      "TopToolCaption": true
+    },
+    {
+      "tableID": "tblCCalc",
+      "visible": false,
+      "TopToolCaption": true,
+      "anchorage": {
+        "zIndex": 220,
+        "floatRect": {
+          "left": 61.145833333333336,
+          "top": 63.70370370370371,
+          "width": 27.683105468750004,
+          "height": 28.114872685185183
+        },
+        "floated": false
+      },
+      "ToolDisplayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "100x50:22",
+          "width": "100px",
+          "height": "50px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    },
+    {
+      "tableID": "tblCCalc60",
+      "visible": true,
+      "ToolDisplayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "100x50:22",
+          "width": "100px",
+          "height": "50px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      },
+      "anchorage": {
+        "zIndex": 240,
+        "floatRect": {
+          "left": 37.552083333333336,
+          "top": 7.5,
+          "width": 26.145833333333336,
+          "height": 23.14814814814815
+        },
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblC_Calculator",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {},
+  "macros": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": true,
+  "defaultBPM": "120",
+  "info": {
+    "lines": []
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": false,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "12-major-scales-w-ccalc",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note7"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "A major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "A major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 0,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "100x30:22",
+          "width": "100px",
+          "height": "30px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteRoot"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Bb major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "Bb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 1,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "B major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "B major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 2,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteRoot"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Db major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "Db major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 4,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note7"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "D major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "D major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 5,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteRoot"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Eb major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "Eb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 6,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note7"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "E major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "E major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 7,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "F major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "F major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 8,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteRoot"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Gb major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "Gb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 9,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note4"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note7"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "G major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "G major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 10,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "note5"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteRoot"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "note6"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Ab major",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${enharmonicChartModeNotes} ${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "Ab major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 11,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tbl4thsCalculator_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tblCCalc",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tblCCalc60",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1787239420612,
+        "date": "8/20/2026",
+        "time": "8:23:40 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1787294387916,
+        "date": "8/20/2026",
+        "time": "11:39:47 PM",
+        "type": "CLIP",
+        "context": {
+          "caption": "named-10-2339",
+          "userKey": "named-10-2339",
+          "logicalKey": "clip::named-10-2339",
+          "tableID": "tblBass4_1",
+          "baseID": "Bass4_1",
+          "fromBaseID": "Bass4",
+          "schemaVersion": 1,
+          "counts": {
+            "named": 10,
+            "single": 0,
+            "tiny": 0,
+            "bend": 0,
+            "fingering": 0
+          }
+        },
+        "json": "{\n    \"schemaVersion\": 1,\n    \"source\": {\n        \"tableID\": \"tblBass4_1\",\n        \"baseID\": \"Bass4_1\",\n        \"fromBaseID\": \"Bass4\",\n        \"baseInstrument\": \"Bass\",\n        \"nStrings\": 4,\n        \"rowRange\": [\n            43,\n            38,\n            33,\n            28\n        ],\n        \"frets\": 3,\n        \"nut\": true,\n        \"reverse\": false\n    },\n    \"include\": {\n        \"named\": true,\n        \"single\": true,\n        \"tiny\": true,\n        \"bend\": true,\n        \"fingering\": true\n    },\n    \"counts\": {\n        \"named\": 10,\n        \"single\": 0,\n        \"tiny\": 0,\n        \"bend\": 0,\n        \"fingering\": 0\n    },\n    \"sectionNotes\": {\n        \"namedNotes\": {\n            \"E\": {\n                \"noteName\": \"E\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"F\": {\n                \"noteName\": \"F\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"Gb\": {\n                \"noteName\": \"Gb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"G\": {\n                \"noteName\": \"G\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"Bb\": {\n                \"noteName\": \"Bb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"B\": {\n                \"noteName\": \"B\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"C\": {\n                \"noteName\": \"C\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"Eb\": {\n                \"noteName\": \"Eb\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"Ab\": {\n                \"noteName\": \"Ab\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            },\n            \"A\": {\n                \"noteName\": \"A\",\n                \"styleNum\": 0,\n                \"colorClass\": \"noteTransparent\"\n            }\n        },\n        \"playedNotes\": []\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": true,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  }
+}

@@ -577,6 +577,9 @@ function document_keypress(e) {
                 showOneMenu("#divTunings");
 				EventBus.trigger('ReloadTuningsDisplays');
                 break;
+            case "G": //"Grabbles"
+				$(".dockable-handle").toggle();
+                break;
             case "i":
                 showOneMenu("#divFillNotes");
                 break;
