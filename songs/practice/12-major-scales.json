@@ -33,6 +33,37 @@
       "nut": true,
       "reverse": false,
       "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "4thsCalculator_1",
+      "baseInstrument": "Guitar",
+      "caption": "4ths",
+      "nStrings": 17,
+      "rowRange": [
+        110,
+        105,
+        100,
+        95,
+        90,
+        85,
+        80,
+        75,
+        70,
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "frets": 1,
+      "nut": false,
+      "reverse": false,
+      "Tool": true,
+      "fromBaseID": "4thsCalculator"
     }
   ],
   "noteTablesLayout": [
@@ -43,6 +74,22 @@
       "anchorage": {
         "floated": false
       }
+    },
+    {
+      "tableID": "tbl4thsCalculator_1",
+      "visible": true,
+      "anchorage": {
+        "zIndex": 210,
+        "floatRect": {
+          "left": 89.84375,
+          "top": 1.3888888888888888,
+          "width": 9.375,
+          "height": 97.22222222222221
+        },
+        "handleOrientation": "top",
+        "floated": true
+      },
+      "TopToolCaption": true
     }
   ],
   "colorDicts": {},
@@ -50,7 +97,7 @@
   "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": true,
-  "defaultBPM": "10",
+  "defaultBPM": "222",
   "info": {
     "lines": []
   },
@@ -87,7 +134,7 @@
     "boxCaptionFontsize": "100%"
   },
   "rootID": "3",
-  "sharps": false,
+  "sharps": true,
   "singleNoteOpacity": "1",
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
@@ -149,7 +196,7 @@
       "rootID": 0,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true,
       "displayOptions": {
         "autoColor": false,
@@ -157,7 +204,7 @@
         "showSubscriptFunctions": true,
         "cellIsFunction": true,
         "showMidiNum": false,
-        "useCenterForRightFunction": true,
+        "useCenterForRightFunction": false,
         "naturalFretWidths": true,
         "hideNamedNotes": false,
         "hideTinyNotes": false,
@@ -168,8 +215,8 @@
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1",
         "NoteDisplaySizes": {
-          "caption": "160x30:22",
-          "width": "160px",
+          "caption": "100x30:22",
+          "width": "100px",
           "height": "30px",
           "NoteFontSize": 22
         },
@@ -368,7 +415,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -658,7 +705,7 @@
       "rootID": 8,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 2,
+      "currentBeat": 4,
       "sharps": false
     },
     {
@@ -836,9 +883,29 @@
       "sharps": false
     }
   ],
-  "wirings": [],
+  "wirings": [
+    {
+      "tablename": "tbl4thsCalculator_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
   "graveyard": {
-    "records": []
+    "records": [
+      {
+        "timestamp": 1787239420612,
+        "date": "8/20/2026",
+        "time": "8:23:40 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      }
+    ]
   },
   "layout": {
     "screenList": {
