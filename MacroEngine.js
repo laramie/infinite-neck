@@ -1,3 +1,4 @@
+import { UserLog } from './UserLog.js';
 import * as Globals from './globals.js';
 import {
     classifyMacroLine,
@@ -7,7 +8,6 @@ import {
     getSongMacro,
     validateMacroId
 } from './MacroExecutor.js';
-import { UserLog } from './UserLog.js';
 
 
 const MAX_MACRO_EXECUTION_DEPTH = 4;

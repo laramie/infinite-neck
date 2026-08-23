@@ -1,4 +1,7 @@
 import { Messages } from './Messages.js';
+import { hideCmdLine } from './command-line.js';
+
+
 
 const USER_LOG_MAX_ROWS = 1000;
 
@@ -62,7 +65,7 @@ export class UserLog {
             const subSystemCell = document.createElement('td');
             const messageCell = document.createElement('td');
         
-            timeCell.textContent = getUserLogTime();
+            timeCell.textContent = UserLog.getUserLogTime();
             subSystemCell.textContent = `${subSystem || ''}`;
             messageCell.innerHTML = `${message || ''}`;
         

@@ -92,6 +92,7 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
 
 const { runSongMacroById } = await import('../../MacroEngine.js');
 const { setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { setSong } = await import('../../globals.js');
 
 function setMacroMenu() {
     menuState.gMenuFile.children = [
@@ -139,6 +140,7 @@ describe('macro nested calls', () => {
             macro5: { lines: ['/fmp "leaf"'] }
         });
 
+        setSong(song);
         setKeyHandlerProviders({
             getSong: () => song
         });
@@ -155,6 +157,7 @@ describe('macro nested calls', () => {
             macroB: { lines: ['/fmp "Key=${key}"'] }
         });
 
+        setSong(song);
         setKeyHandlerProviders({
             getSong: () => song
         });
@@ -168,6 +171,7 @@ describe('macro nested calls', () => {
             macroA: { lines: ['/fmp "${notFound}"'] }
         });
 
+        setSong(song);
         setKeyHandlerProviders({
             getSong: () => song
         });

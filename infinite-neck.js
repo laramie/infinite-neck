@@ -1840,7 +1840,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 		Globals.setSong(new Song(jsonObj));
-		Messages.clearUserLog();
+		UserLog.clearUserLog();
 		Globals.getSong().ensureDefaultSection();
 		pluginManager.loadSongPluginState(Globals.getSong());
 		updateAfterOpenSong();
@@ -3408,6 +3408,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 	}
 
+	export function runMobileCommandLine(line){
+		console.log("running one-line mobile command:"+line);
+		//TODO: implement this function
+	}
+
+
 	//==================== 4) UI event binding and control wiring =============
 
 	function showChartTab(which) {
@@ -3765,6 +3771,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		bindEvent('click', '#btnToggleTransport', function() {
 			TransportBuilder.toggleTransport();
+		});
+		bindEvent('click', '#btnRunMobileCmdLine', function() {
+			let line = $('#txtMobileCmdLine').val();
+			runMobileCommandLine(line);
 		});
 		bindEvent('click', '#btnToggleCmdLine', function() {
 			toggleCmdLine();
