@@ -1,5 +1,7 @@
 import { Messages } from './Messages.js';
 
+const USER_LOG_MAX_ROWS = 1000;
+
 export class UserLog {
 
         static getUserLogTableBody(){

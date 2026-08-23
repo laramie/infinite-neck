@@ -78,10 +78,6 @@ import {
 	getMacroDeleteNumberOptions,
 	getMacroMoveNumberOptions
 } from './MacroMenu.js';
-
-
-
-
 import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
@@ -99,7 +95,7 @@ let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
 let macroVerbose = false;
 let pendingMacroDeleteID = '';
-const USER_LOG_MAX_ROWS = 1000;
+
 const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'CLIP',
 	'INSTRUMENT',
