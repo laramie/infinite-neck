@@ -6,8 +6,8 @@
                 <tr>
                     <td><button id="btn_mobile_keyboard_hideMenusBlurFocus">ESC</button></td>
                     <td colspan="10"></td>
-                    <td><button id="btn_mobile_keyboard_learnHowToBrowser"><small>Ctrl</small> -</button></td>
-                    <td><button id="btn_mobile_keyboard_learnHowToBrowser"><small>Ctrl</small> +</button></td>
+                    <td><button id="btn_mobile_keyboard_browserZoomOut" disabled title="Use your browser or device zoom controls"><small>Ctrl</small> -</button></td>
+                    <td><button id="btn_mobile_keyboard_browserZoomIn" disabled title="Use your browser or device zoom controls"><small>Ctrl</small> +</button></td>
                     <td></td>
                 </tr>
 
@@ -15,15 +15,15 @@
                 <tr>
                     <td><b>~</b><br><b>`</b></td>
                     <td><button id="btn_mobile_keyboard_useAFingeringIndex"
-                            class="mobile-keyboard-Fingering"><i>1</i></button></td>
+                            class="mobile-keyboard-Fingering"><b><i>1</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_useAFingeringMiddle"
-                            class="mobile-keyboard-Fingering"><i>2</i></button></td>
+                            class="mobile-keyboard-Fingering"><b><i>2</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_usesAFingeringRing"
-                            class="mobile-keyboard-Fingering"><i>3</i></button></td>
+                            class="mobile-keyboard-Fingering"><b><i>3</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_useFingeringNoteFourth"
-                            class="mobile-keyboard-Fingering"><i>4</i></button></td>
+                            class="mobile-keyboard-Fingering"><b><i>4</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_userFingeringNoteThumb"
-                            class="mobile-keyboard-Fingering"><i>5</i> T<small>humb</small></button></td>
+                            class="mobile-keyboard-Fingering"><b><i>5</i></b> T<small>humb</small></button></td>
                     <td><button id="btn_mobile_keyboard_useNamedNotes"
                             class="mobile-keyboard-Note"><b>6</b><br>Named</button></td>
                     <td><button id="btn_mobile_keyboard_useSingleNotes"
@@ -36,9 +36,9 @@
                         <button id="btn_mobile_keyboard_cycleThroughDisplay"><b>0</b>
                             Nut</button></td>
                     <td><button id="btn_mobile_keyboard_decreaseCellNoteFont"><b>_</b> note font</button>
-                        <button id="decreaseUserInterfaceFont"><b>-</b> menu font</button></td>
+                        <button id="btn_mobile_keyboard_decreaseUserInterfaceFont"><b>-</b> menu font</button></td>
                     <td><button id="btn_mobile_keyboard_increaseCellNoteFont"><b>+</b> note font</button>
-                        <button id="increaseUserInterfaceFont"><b>=</b> menu font</button></td>
+                        <button id="btn_mobile_keyboard_increaseUserInterfaceFont"><b>=</b> menu font</button></td>
                     <td>Backspace</td>
                 </tr>
                 <!-- Row 2: QWERTY -->
@@ -46,10 +46,10 @@
                     <td>Tab</td>
                     <td><button id="btn_mobile_keyboard_showHideQuick" class="mobile-keyboard-MBtn"><b>q</b>uick
                             menu</button></td>
-                    <td><button id="btn_mobile_keyboard_changeWidthOfCells"><b>W</b> narrower</button>
-                        <button id="changeWidthOfCells"><b>w</b>ider</button></td>
+                    <td><button id="btn_mobile_keyboard_changeWidthOfCellsNarrower"><b>W</b> narrower</button>
+                        <button id="btn_mobile_keyboard_changeWidthOfCellsWider"><b>w</b>ider</button></td>
                     <td><button id="btn_mobile_keyboard_toggleLeftRail" class="mobile-keyboard-MBtn2"><b>E</b>
-                            LeftRail</button><button id="btn_mobile_keyboard_toggleWiringOpenState"
+                            LeftRail</button><br><button id="btn_mobile_keyboard_toggleWiringOpenState"
                             class="mobile-keyboard-MBtn2"><b>e</b>vent wiring</button></td>
                     <td><button id="btn_mobile_keyboard_toggleRecording"><b>R</b>EC</button>
                         <button id="btn_mobile_keyboard_showHideChart" class="mobile-keyboard-MBtn">cha<b>r</b>t</button>
@@ -59,16 +59,16 @@
                             <button id="btn_mobile_keyboard_showHideTransport"
                             class="mobile-keyboard-MBtn"><b>t</b>ransport</button></td>
                     <td>y</td>
-                    <td><button id="btn_mobile_keyboard_lowerRootKeyAnd"><b>U</b><br><small>transpose</small>
+                    <td><button id="btn_mobile_keyboard_transposeDownU"><b>U</b><br><small>transpose</small>
                             down</button>
-                        <button id="raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</button>
+                        <button id="btn_mobile_keyboard_transposeUpU"><small>transpose</small> <b>u</b>p</button>
                     </td>
                     <td><button id="btn_mobile_keyboard_songFileInfoRow"
                             class="mobile-keyboard-MBtn"><b>I</b>nfo</button>
                         <br><button id="btn_mobile_keyboard_showHideFill"
                             class="mobile-keyboard-MBtn">f<b>i</b>ll</button>
                     </td>
-                    <td><button id="btn_mobile_keyboard_useAFingeringOpen" class="mobile-keyboard-Fingering"><i>o</i>pen
+                    <td><button id="btn_mobile_keyboard_useAFingeringOpen" class="mobile-keyboard-Fingering"><b><i>o</i></b>pen
                             fingering</button></td>
                     <td><button id="btn_mobile_keyboard_showPluginsMenu" class="mobile-keyboard-MBtn"><b>P</b>
                             plugins</button>
@@ -86,31 +86,31 @@
                     <td>Caps Lock</td>
                     <td><button id="btn_mobile_keyboard_showHideInstrumentToolbar"
                             class="mobile-keyboard-MBtn2">instrument c<b>A</b>ption</button>
-                        <button id="showHideSongTitle" class="mobile-keyboard-MBtn2">c<b>a</b>ption</button>
+                        <button id="btn_mobile_keyboard_showHideSongTitle" class="mobile-keyboard-MBtn2">c<b>a</b>ption</button>
                     </td>
-                    <td><button id="btn_mobile_keyboard_showHideSection"><b>S</b> add section</button>
+                    <td><button id="btn_mobile_keyboard_sectionAdd"><b>S</b> add section</button>
                         <br><button id="btn_mobile_keyboard_showHideSection" class="mobile-keyboard-MBtn"><b>s</b>ection
                             drawer</button>
                     </td>
-                    <td><button id="btn_mobile_keyboard_raiseRootKeyAnd"><b>D</b><br><small>transpose</small>
+                    <td><button id="btn_mobile_keyboard_transposeUpD"><b>D</b><br><small>transpose</small>
                             up</button> 
-                            <button id="lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</button></td>
+                            <button id="btn_mobile_keyboard_transposeDownD"><small>transpose</small> <b>d</b>own</button></td>
                     <td><button id="btn_mobile_keyboard_divFileControls"
                             class="mobile-keyboard-MBtn"><b>F</b>ile</button><br>
-                            <button id="toggleFullscreenMode"><b>f</b>ullscreen</button></td>
+                            <button id="btn_mobile_keyboard_toggleFullscreenMode"><b>f</b>ullscreen</button></td>
                     <td><button id="btn_mobile_keyboard_toggleGrabbles"
                             class="mobile-keyboard-MBtn2"><b>G</b>rabbles</button>
                         <button id="btn_mobile_keyboard_showHideTunings"
                             class="mobile-keyboard-MBtn">tunin<b>g</b>s</button>
                     </td>
-                    <td><button id="btn_mobile_keyboard_changeHeightOfCells"><b>H</b> shorter</button> 
-                        <button id="changeHeightOfCells"><b>h</b>eight</button></td>
+                    <td><button id="btn_mobile_keyboard_changeHeightOfCellsShorter"><b>H</b> shorter</button> 
+                        <button id="btn_mobile_keyboard_changeHeightOfCellsTaller"><b>h</b>eight</button></td>
                     <td><button id="btn_mobile_keyboard_transposeNamedNotesDown"><b>J</b>ump down</button> 
-                        <button id="transposeNamedNotesUp"><b>j</b>ump up</button></td>
+                        <button id="btn_mobile_keyboard_transposeNamedNotesUp"><b>j</b>ump up</button></td>
                     <td><button id="btn_mobile_keyboard_lowerRootKey"><b>K</b>ey<br> down</button> 
                         <button id="btn_mobile_keyboard_raiseRootKey"><b>k</b>ey up</button> </td>
-                    <td><button id="btn_mobile_keyboard_loop"><b>L</b>oop stop</button><br>
-                        <button id="btn_mobile_keyboard_loop"><b>l</b>oop [toggle]</button></td>
+                    <td><button id="btn_mobile_keyboard_loopStop"><b>L</b>oop stop</button><br>
+                        <button id="btn_mobile_keyboard_loopToggle"><b>l</b>oop [toggle]</button></td>
                     <td>:<br>;</td>
                     <td>"<br>'</td>
                     <td colspan="2">Enter</td>
@@ -124,7 +124,7 @@
                     <td>x</td>
                     <td><button id="btn_mobile_keyboard_keyShowClipPlugin" class="mobile-keyboard-MBtn"><b>C</b> clip
                             plugin</button>
-                            <br><button id="toggleAutoColor">auto <b>c</b>olor</button></td>
+                            <br><button id="btn_mobile_keyboard_toggleAutoColor">auto <b>c</b>olor</button></td>
                     <td><button id="btn_mobile_keyboard_showHideView"
                             class="mobile-keyboard-MBtn"><b>V</b>,<b>v</b>iew</button></td>
                     <td><button id="btn_mobile_keyboard_toggleBeatLooping"><b>B</b>eat-looping</button>
@@ -134,7 +134,7 @@
                         <button id="btn_mobile_keyboard_nextBeat"><b>n</b>ext beat</button></td>
                     <td><button id="btn_mobile_keyboard_showHideCommandEasterEgg"
                             class="mobile-keyboard-MBtn">CTRL+SHIFT+<b>M</b></button>
-                            <button id="showHideCommand"
+                            <button id="btn_mobile_keyboard_showHideCommand"
                             class="mobile-keyboard-MBtn"><b>m</b>enu</button></td>
                     <td><button id="btn_mobile_keyboard_firstSection"><b>&lt;</b> first section</button>
                         <button id="btn_mobile_keyboard_previousSection"><b>,</b> prev
@@ -152,17 +152,17 @@
             <div
                 style="background-color:  rgb(181, 253, 161); padding: 0.3em; border: 2px dotted gray; line-height: 2;">
                 <b>Legend:</b>
-                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-KeymapExample">Orange keys</button> mean an
+                <br><button>Orange keys</button> mean an
                 action will be taken, which may be subtle
                 in that a dialog is not show, but something changes, like REC is toggle on, or a Section is quietly
                 added.
-                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-MBtn2Example">LightGreen keys</button> mean
+                <br><button class="mobile-keyboard-MBtn2Example">LightGreen keys</button> mean
                 a small area of the interface will be
                 shown/hidden.
-                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-MBtnExample">Green keys</button> mean a
+                <br><button class="mobile-keyboard-Example">Green keys</button> mean a
                 dialog will be popped up, or a command-line
                 shown.
-                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-KeymapNoteExample">Blue-groove
+                <br><button class="mobile-keyboard-NoteExample">Blue-groove
                     keys</button> mean a note style is chosen.
                 <br><span class="mobile-keyboard-ActionsExample" style="font-size: 80%; padding: 4px;">Elipse</span>
                 means a

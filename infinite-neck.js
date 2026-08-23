@@ -126,6 +126,7 @@ import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
 import { InfoBuilder } from './templates/info/info.builder.js';
+import { MobileKeyboardBuilder } from './templates/mobile-keyboard/mobile-keyboard.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
