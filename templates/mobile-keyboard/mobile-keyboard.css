@@ -3,12 +3,15 @@
     margin: 0;
 }
 #MobileKeyboard button {
-    font-size: 80%;
     color: #010321;
+    background-color:  #ffdd01;;
+    font-size: 140%;
     border: 1px solid gray;
     padding: 0.3em;
     margin: 0.2em;
-    background-color: orange;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 4px;
+    
 }
 
 #MobileKeyboard button:hover {
@@ -17,14 +20,15 @@
 }
 
 #mobile-keyboard-Fingering {
-    background-color: white;
+    color: #010321 !important;
+    background-color: white !important;
     border: none;
 }
 
 .mobile-keyboard-ActionsExample,
 .mobile-keyboard-Actions i {
-    color: dodgerblue;
-    background-color: black;
+    color: dodgerblue !important;
+    background-color: black !important;
     padding: 0;
     padding-bottom: 0.1em;
     font-weight: normal;
@@ -36,14 +40,6 @@
     border-radius: 50%;
 }
 
-.mobile-keyboard-Actions a {
-    margin-right: 2px;
-    font-size: 80%;
-    box-shadow: 5px 2px 4px black;
-    border-radius: 2px;
-    border: 1px solid gray;
-    transition: all 0.1s ease;
-}
 .mobile-keyboard-Actions b {
     font-size: 130%;
 }
@@ -51,9 +47,17 @@
 
 .mobile-keyboard-FingeringExample,
 .mobile-keyboard-Fingering {
-    background-color: white;
-    border: none;
-    box-shadow: none;
+    color: dodgerblue !important;
+    background-color: black !important;
+    padding: 0;
+    padding-bottom: 0.1em;
+    font-weight: normal;
+    font-family: monospace;
+    font-size: 130%;
+    text-align: center;
+    box-shadow: 0 0 4pt 4pt cornflowerblue;
+    border: 1px solid darkblue;
+    border-radius: 50% !important;
 }
 
 .mobile-keyboard-NoteExample,
@@ -61,8 +65,10 @@
     font-size: 80%;
     box-shadow: 5px 2px 4px black;
     border-radius: 2px;
-    background-color: white;
-    border: 6px groove lightgreen;
+    color: #010321 !important;
+    
+    background-color: white !important;
+    border: 6px groove lightgreen !important;
 }
 .mobile-keyboard-Example,
 .mobile-keyboard-MBtn {
@@ -70,8 +76,8 @@
     box-shadow: 5px 2px 4px black;
     border-radius: 2px;
     border-radius: 4px;
-    background-color: #6faa09;
-    color: black;
+    background-color: #6faa09 !important;
+    color: black !important;
     border: 1px solid black;
     margin-left: 0.3em;
     margin-right: 0.6em;
@@ -82,8 +88,8 @@
     box-shadow: 5px 2px 4px black;
     border-radius: 2px;
     border-radius: 4px;
-    background-color: #2def2d;
-    color: black;
+    background-color: #2def2d !important;
+    color: black !important;
     border: 1px solid black;
     margin-left: 0.3em;
     margin-right: 0.6em;

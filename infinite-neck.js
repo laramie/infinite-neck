@@ -3459,6 +3459,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.toggleClass('BtnPunchedOut', !showLineTab);	
 	}
 
+	function showDesktopTab(which) {
+		var showKeyboardTab = which !== "Buttons";
+		var showButtonsTab = !showKeyboardTab;
+
+		$('#divMobileKeyboard').toggle(showKeyboardTab);
+		$('#divDesktopButtons').toggle(showButtonsTab);
+
+		$('#btnDesktopTabKeyboard')
+			.toggleClass('BtnPunchedIn', showKeyboardTab)
+			.toggleClass('BtnPunchedOut', !showKeyboardTab);
+		$('#btnDesktopTabButtons')
+			.toggleClass('BtnPunchedIn', showButtonsTab)
+			.toggleClass('BtnPunchedOut', !showButtonsTab);
+	}
+
 	export function bindDesktopEvents(){
 		const eventNamespace = '.bindDesktopEvents';
 
@@ -3685,6 +3700,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnChartLineTab', function() {
 			showChartTab("Line");
+		});
+		//=========================================
+		bindEvent('click', '#btnDesktopTabKeyboard', function() {
+			showDesktopTab("Keyboard");
+		});
+		bindEvent('click', '#btnDesktopTabButtons', function() {
+			showDesktopTab("Buttons");
 		});
 		//=========================================
 		bindEvent('click', '#btnHelp', function() {
@@ -4363,6 +4385,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		showDefaultTunings();
 		showChartTab("Summary"); //choose tab but don't show Chart menu yet.
+		showDesktopTab("Keyboard"); //choose tab but don't show Desktop menu yet.
 		getSong().getLayout().leaveFullscreen();
 		scrollToTop();
 

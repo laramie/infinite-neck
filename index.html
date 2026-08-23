@@ -1148,9 +1148,20 @@
         </div>
 
         <div id="divDesktop" style="display: none;">
-            <div id="divMobileKeyboard">
+            <div class="infoTabsTop">
+                <span class="infoTabsButtons">
+                    <button id="btnDesktopTabKeyboard" type="button" class="MenuTabBtn BtnPunchedIn">Mobile
+                        Keyboard</button>
+                    <button id="btnDesktopTabButtons" type="button" class="MenuTabBtn BtnPunchedOut">Buttons</button>
+                </span>
+                <span class="infoTabsFill"></span>
             </div>
-            <div id="divDesktopButtons">
+
+            <div class="infoTabsBody">
+                <div class="infoTabsPaper">
+                    <div id="divMobileKeyboard" class="infoTabPanel">
+                    </div>
+                    <div id="divDesktopButtons" class="infoTabPanel" style="display: none;">
             <form id="frmDesktop" onsubmit="return false;">
                 <div class="menuDiv">
                     <div style="float: left;" class="sectionPageControlsGroup">
@@ -1224,8 +1235,11 @@
                 </div>
                 <!--end menuDiv-->
             </form>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <!-- BEGIN Chart menu page -->
         <div id="divChart" style="display: none;">
