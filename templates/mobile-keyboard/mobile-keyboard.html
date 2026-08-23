@@ -1,0 +1,200 @@
+<template id="mobile-keyboard-template">
+    <div id="MobileKeyboard">
+        <table id="mobile-keyboard-Actions" border="1" cellpadding="5" cellspacing="0"
+            style="font-family: monospace; text-align: center;">
+            <tbody>
+                <tr>
+                    <td><button id="btn_mobile_keyboard_hideMenusBlurFocus">ESC</button></td>
+                    <td colspan="10"></td>
+                    <td><button id="btn_mobile_keyboard_learnHowToBrowser"><small>Ctrl</small> -</button></td>
+                    <td><button id="btn_mobile_keyboard_learnHowToBrowser"><small>Ctrl</small> +</button></td>
+                    <td></td>
+                </tr>
+
+                <!-- Row 1: Numbers & Symbols -->
+                <tr>
+                    <td><b>~</b><br><b>`</b></td>
+                    <td><button id="btn_mobile_keyboard_useAFingeringIndex"
+                            class="mobile-keyboard-Fingering"><i>1</i></button></td>
+                    <td><button id="btn_mobile_keyboard_useAFingeringMiddle"
+                            class="mobile-keyboard-Fingering"><i>2</i></button></td>
+                    <td><button id="btn_mobile_keyboard_usesAFingeringRing"
+                            class="mobile-keyboard-Fingering"><i>3</i></button></td>
+                    <td><button id="btn_mobile_keyboard_useFingeringNoteFourth"
+                            class="mobile-keyboard-Fingering"><i>4</i></button></td>
+                    <td><button id="btn_mobile_keyboard_userFingeringNoteThumb"
+                            class="mobile-keyboard-Fingering"><i>5</i> T<small>humb</small></button></td>
+                    <td><button id="btn_mobile_keyboard_useNamedNotes"
+                            class="mobile-keyboard-Note"><b>6</b><br>Named</button></td>
+                    <td><button id="btn_mobile_keyboard_useSingleNotes"
+                            class="mobile-keyboard-Note"><b>7</b><br>Single</button></td>
+                    <td><button id="btn_mobile_keyboard_useTinyNotes"
+                            class="mobile-keyboard-Note"><b>8</b><br>Tiny</button></td>
+                    <td><button id="btn_mobile_keyboard_useBendNotes"
+                            class="mobile-keyboard-Note"><b>9</b><br>Bend</button></td>
+                    <td><button id="btn_mobile_keyboard_resetCellNoteFont"><b>)</b> reset note font</button>
+                        <button id="btn_mobile_keyboard_cycleThroughDisplay"><b>0</b>
+                            Nut</button></td>
+                    <td><button id="btn_mobile_keyboard_decreaseCellNoteFont"><b>_</b> note font</button>
+                        <button id="decreaseUserInterfaceFont"><b>-</b> menu font</button></td>
+                    <td><button id="btn_mobile_keyboard_increaseCellNoteFont"><b>+</b> note font</button>
+                        <button id="increaseUserInterfaceFont"><b>=</b> menu font</button></td>
+                    <td>Backspace</td>
+                </tr>
+                <!-- Row 2: QWERTY -->
+                <tr>
+                    <td>Tab</td>
+                    <td><button id="btn_mobile_keyboard_showHideQuick" class="mobile-keyboard-MBtn"><b>q</b>uick
+                            menu</button></td>
+                    <td><button id="btn_mobile_keyboard_changeWidthOfCells"><b>W</b> narrower</button>
+                        <button id="changeWidthOfCells"><b>w</b>ider</button></td>
+                    <td><button id="btn_mobile_keyboard_toggleLeftRail" class="mobile-keyboard-MBtn2"><b>E</b>
+                            LeftRail</button><button id="btn_mobile_keyboard_toggleWiringOpenState"
+                            class="mobile-keyboard-MBtn2"><b>e</b>vent wiring</button></td>
+                    <td><button id="btn_mobile_keyboard_toggleRecording"><b>R</b>EC</button>
+                        <button id="btn_mobile_keyboard_showHideChart" class="mobile-keyboard-MBtn">cha<b>r</b>t</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_showThemesControls"
+                            class="mobile-keyboard-MBtn"><b>T</b>hemes</button>
+                            <button id="btn_mobile_keyboard_showHideTransport"
+                            class="mobile-keyboard-MBtn"><b>t</b>ransport</button></td>
+                    <td>y</td>
+                    <td><button id="btn_mobile_keyboard_lowerRootKeyAnd"><b>U</b><br><small>transpose</small>
+                            down</button>
+                        <button id="raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_songFileInfoRow"
+                            class="mobile-keyboard-MBtn"><b>I</b>nfo</button>
+                        <br><button id="btn_mobile_keyboard_showHideFill"
+                            class="mobile-keyboard-MBtn">f<b>i</b>ll</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_useAFingeringOpen" class="mobile-keyboard-Fingering"><i>o</i>pen
+                            fingering</button></td>
+                    <td><button id="btn_mobile_keyboard_showPluginsMenu" class="mobile-keyboard-MBtn"><b>P</b>
+                            plugins</button>
+                        <br><button id="btn_mobile_keyboard_showHidePalette"
+                            class="mobile-keyboard-MBtn"><b>p</b>alette</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_usethePitchHighlighter"
+                            class="mobile-keyboard-Note"><b>[</b><br>pitch</button></td>
+                    <td><button id="btn_mobile_keyboard_usetheMultiHighlighter"
+                            class="mobile-keyboard-Note"><b>]</b><br>multi</button></td>
+                    <td>|<br>\</td>
+                </tr>
+                <!-- Row 3: ASDF -->
+                <tr>
+                    <td>Caps Lock</td>
+                    <td><button id="btn_mobile_keyboard_showHideInstrumentToolbar"
+                            class="mobile-keyboard-MBtn2">instrument c<b>A</b>ption</button>
+                        <button id="showHideSongTitle" class="mobile-keyboard-MBtn2">c<b>a</b>ption</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_showHideSection"><b>S</b> add section</button>
+                        <br><button id="btn_mobile_keyboard_showHideSection" class="mobile-keyboard-MBtn"><b>s</b>ection
+                            drawer</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_raiseRootKeyAnd"><b>D</b><br><small>transpose</small>
+                            up</button> 
+                            <button id="lowerRootKeyAnd"><small>transpose</small> <b>d</b>own</button></td>
+                    <td><button id="btn_mobile_keyboard_divFileControls"
+                            class="mobile-keyboard-MBtn"><b>F</b>ile</button><br>
+                            <button id="toggleFullscreenMode"><b>f</b>ullscreen</button></td>
+                    <td><button id="btn_mobile_keyboard_toggleGrabbles"
+                            class="mobile-keyboard-MBtn2"><b>G</b>rabbles</button>
+                        <button id="btn_mobile_keyboard_showHideTunings"
+                            class="mobile-keyboard-MBtn">tunin<b>g</b>s</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_changeHeightOfCells"><b>H</b> shorter</button> 
+                        <button id="changeHeightOfCells"><b>h</b>eight</button></td>
+                    <td><button id="btn_mobile_keyboard_transposeNamedNotesDown"><b>J</b>ump down</button> 
+                        <button id="transposeNamedNotesUp"><b>j</b>ump up</button></td>
+                    <td><button id="btn_mobile_keyboard_lowerRootKey"><b>K</b>ey<br> down</button> 
+                        <button id="btn_mobile_keyboard_raiseRootKey"><b>k</b>ey up</button> </td>
+                    <td><button id="btn_mobile_keyboard_loop"><b>L</b>oop stop</button><br>
+                        <button id="btn_mobile_keyboard_loop"><b>l</b>oop [toggle]</button></td>
+                    <td>:<br>;</td>
+                    <td>"<br>'</td>
+                    <td colspan="2">Enter</td>
+                </tr>
+                <!-- Row 4: ZXCV -->
+                <tr>
+                    <td>Shift</td>
+                    <td><button id="btn_mobile_keyboard_reFloatAll"><b>Z</b> re-float all</button>
+                        <br><button id="btn_mobile_keyboard_dockAll"><b>z</b> dock all</button>
+                    </td>
+                    <td>x</td>
+                    <td><button id="btn_mobile_keyboard_keyShowClipPlugin" class="mobile-keyboard-MBtn"><b>C</b> clip
+                            plugin</button>
+                            <br><button id="toggleAutoColor">auto <b>c</b>olor</button></td>
+                    <td><button id="btn_mobile_keyboard_showHideView"
+                            class="mobile-keyboard-MBtn"><b>V</b>,<b>v</b>iew</button></td>
+                    <td><button id="btn_mobile_keyboard_toggleBeatLooping"><b>B</b>eat-looping</button>
+                        <button id="btn_mobile_keyboard_previousBeat">prev <b>b</b>eat</button>
+                    </td>
+                    <td><button id="btn_mobile_keyboard_newBeat"><b>N</b>ew beat</button>
+                        <button id="btn_mobile_keyboard_nextBeat"><b>n</b>ext beat</button></td>
+                    <td><button id="btn_mobile_keyboard_showHideCommandEasterEgg"
+                            class="mobile-keyboard-MBtn">CTRL+SHIFT+<b>M</b></button>
+                            <button id="showHideCommand"
+                            class="mobile-keyboard-MBtn"><b>m</b>enu</button></td>
+                    <td><button id="btn_mobile_keyboard_firstSection"><b>&lt;</b> first section</button>
+                        <button id="btn_mobile_keyboard_previousSection"><b>,</b> prev
+                            section</button></td>
+                    <td><button id="btn_mobile_keyboard_lastSection"><b>&gt;</b> last section</button>
+                        <button  id="btn_mobile_keyboard_nextSection"><b>. </b>next
+                            section</button></td>
+                    <td><button id="btn_mobile_keyboard_launchCommandLine" class="mobile-keyboard-MBtn">&nbsp;<b>/</b>
+                            command<br>-line</button></td>
+                    <td colspan="3">Shift</td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="margin: 2em; margin-left: 10em; margin-right: 10em; background-color: white;">
+            <div
+                style="background-color:  rgb(181, 253, 161); padding: 0.3em; border: 2px dotted gray; line-height: 2;">
+                <b>Legend:</b>
+                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-KeymapExample">Orange keys</button> mean an
+                action will be taken, which may be subtle
+                in that a dialog is not show, but something changes, like REC is toggle on, or a Section is quietly
+                added.
+                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-MBtn2Example">LightGreen keys</button> mean
+                a small area of the interface will be
+                shown/hidden.
+                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-MBtnExample">Green keys</button> mean a
+                dialog will be popped up, or a command-line
+                shown.
+                <br><button id="btn_mobile_keyboard_" class="mobile-keyboard-KeymapNoteExample">Blue-groove
+                    keys</button> mean a note style is chosen.
+                <br><span class="mobile-keyboard-ActionsExample" style="font-size: 80%; padding: 4px;">Elipse</span>
+                means a
+                Fingering style is chosen.
+                <br>
+                <hr style="border: 1px solid black;">
+                &#9758;&nbsp;Two keys in one cell here means one of the keys is <span
+                    class="mobile-keyboard-key">SHIFT</span>+<span class="mobile-keyboard-key">key</span>, and does an
+                opposite,
+                complementary, or related Action.
+                <br>
+                <p style="margin: 0; padding: 0; line-height: 1;">&#9758;&nbsp;Most of the green keys, and some of the
+                    others, alternately hide and show something, when clicked again.
+                    For example: pressing <span class="mobile-keyboard-key">p</span> shows the palette; pressing <span
+                        class="mobile-keyboard-key">p</span> again hides the palette.
+                    <b>Exceptions:</b>
+                <ul>
+                    <li><small><i><span class="mobile-keyboard-key">Shift+C</span> shows the command-line Clip plugin,
+                                such that if you hit <span class="mobile-keyboard-key">Shift+C</span> again, it will run
+                                the Copy command.</i></small>
+                    <li><small><i><span class="mobile-keyboard-key">Shift+P</span> shows the command-line plugins list,
+                                so hitting it again gets trapped by the command-line, but tries to find the non-existent
+                                "P" plugin.</i></small>
+                    <li><small><i><span class="mobile-keyboard-key">/</span> shows the command-line, so hitting it again
+                                gets trapped by the command-line and simply takes you to the root of the command line,
+                                which is what it does anyway.</i></small>
+                    <li><small><i><span class="mobile-keyboard-key">m</span> shows the command-line at its last
+                                location, so hitting it again gets trapped by the command-line and tries to execute an
+                                "m" command, which is usually not present, and certainly not what you want.</i></small>
+                </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+</template>

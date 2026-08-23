@@ -3,6 +3,7 @@ import * as Globals from './globals.js';
 import {
     classifyMacroLine,
     executeMacroLine,
+    executeMacroLines,
     executeSongMacro,
     expandMacroLine,
     getSongMacro,
@@ -416,6 +417,51 @@ export function runSongMacroById(macroId, options = {}) {
         return result;
     } catch (error) {
         logMacro(`Macro ${id} failed: ${error.message}`);
+        return { ok: false, error: error.message };
+    } finally {
+        state.macroExecutionDepth -= 1;
+    }
+}
+
+// Runs a single, ad-hoc command-line-style line as though it were the sole
+// line of a macro, without constructing or persisting a song macro. Used for
+// mobile, where the interactive keypress-driven command line does not work.
+// Supports both macro line flavors: a bare menu trigger path (e.g. "/fmv"),
+// and a path with a JSON value (e.g. `/prn {"...":...}`).
+export function runMacroLine(line, options = {}) {
+    const deps = requireDeps();
+    const text = `${line || ''}`;
+    if (classifyMacroLine(text) !== 'command') {
+        return { ok: true, skipped: true, results: [] };
+    }
+    if (state.macroExecutionDepth >= MAX_MACRO_EXECUTION_DEPTH) {
+        const message = `Macro call depth exceeded (${state.macroExecutionDepth}/${MAX_MACRO_EXECUTION_DEPTH})`;
+        logMacro(message);
+        return { ok: false, error: message };
+    }
+    const callArgs = options.callArgs && typeof options.callArgs === 'object' && !Array.isArray(options.callArgs)
+        ? options.callArgs
+        : {};
+    state.macroExecutionDepth += 1;
+    try {
+        deps.refreshBeforePath();
+        const result = executeMacroLines([text], {
+            rootMenu: deps.rootMenu(),
+            actionRunner: runMacroMenuAction,
+            refreshBeforePath: deps.refreshBeforePath,
+            refreshRuntimeChildren: deps.refreshRuntimeChildren,
+            expandLine: (rawLine) => expandMacroLine(rawLine, (name) => resolveMacroExpansionValue(name, callArgs)),
+            verbose: options.verbose ?? deps.isMacroVerbose(),
+            log: logMacro
+        });
+        if (result.ok) {
+            logMacro(`Command line ran (${result.results.length} lines)`);
+        } else {
+            logMacro(`Command line failed: ${result.error}`);
+        }
+        return result;
+    } catch (error) {
+        logMacro(`Command line failed: ${error.message}`);
         return { ok: false, error: error.message };
     } finally {
         state.macroExecutionDepth -= 1;

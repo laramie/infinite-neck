@@ -21,7 +21,8 @@ import {
 	hideCmdLine,
 	toggleCmdLine,
 	txtCmdLine_keydown,
-	txtCmdLine_keypress 
+	txtCmdLine_keypress,
+	updateCmdLineView
 } from './command-line.js';
 import {
 	setDisplayOptionsProviders,
@@ -147,7 +148,7 @@ import { setLoopSectionFilter } from './SongNavigationHooks.js';
 import './plugins/registerPlugins.js';
 import pluginManager from './plugins/pluginRuntime.js';
 import { TransportController } from './transport-controller.js';
-import { runSongMacroById } from './MacroEngine.js';
+import { runMacroLine, runSongMacroById } from './MacroEngine.js';
 import { Messages } from './Messages.js';
 import { UserLog } from './UserLog.js';
 
@@ -3409,8 +3410,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function runMobileCommandLine(line){
-		console.log("running one-line mobile command:"+line);
-		//TODO: implement this function
+		const result = runMacroLine(line);
+		updateCmdLineView();
+		return result;
 	}
 
 
@@ -4374,6 +4376,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadTemplates('templates/info/info.html').then(() => {
 				InfoBuilder.addToDest('#divInfo');
 				InfoBuilder.renderFromSong(getSong());
+			}),
+
+			loadTemplates('templates/mobile-keyboard/mobile-keyboard.html').then(() => {
+				MobileKeyboardBuilder.addToDest('#divMobileKeyboard');
+				MobileKeyboardBuilder.renderFromSong(getSong());
 			}),
 
 			loadTemplates('templates/macros/macros.html').then(() => {
