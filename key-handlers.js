@@ -1,5 +1,4 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
-import { jsonTree } from './jsonTree80kg/json-tree-80kg.js';
 import { 
 	setOneCssVar, 
 	dumpThemeIds 
@@ -19,12 +18,12 @@ import {
 	clearBeatAndSectionLooping
 } from './looper.js';
 import {
+	refreshRuntimeChildren,
 	buildChildMenuCaptionsRow,
 	diveMenu,
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
-	refreshRuntimeChildren,
 	setMenuRuntimeChildrenResolver,
 	setMenuValueResolver,
 	setMenuAtRoot,
@@ -41,7 +40,6 @@ import {
 	toInt
 } from './utils.js';
 import {
-	showMessagesTab,
 	showDisplayOptions,
 	getVersionString,
 	getVersionObject,
@@ -72,9 +70,18 @@ import {
 	isMacroMutationLockActive,
 	logMacro,
 	parseMacroCallInput,
-	runSongMacroById as runSongMacroByIdFromEngine,
+	runSongMacroById,
 	startSongMacroById
 } from './MacroEngine.js';
+import {
+	getMacroNumberOptions,
+	getMacroDeleteNumberOptions,
+	getMacroMoveNumberOptions
+} from './MacroMenu.js';
+
+
+
+
 import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
@@ -82,6 +89,8 @@ import * as Calculators from './calculators.js';
 import {
 	hasAnyFloatingDockables
 } from './dockable.js';
+import { UserLog } from './UserLog.js';
+import { Messages } from './Messages.js'
 
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
@@ -108,6 +117,26 @@ let graveyardClearByTypeState = {
 	TUNING: false,
 	STYLESHEET: false
 };
+
+configureMacroEngine({
+    getValue,
+    isMacroVerbose: () => macroVerbose,
+    performCmdAction,
+    refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
+    refreshRuntimeChildren,
+    rootMenu: () => gMenuFile,
+    setPluginToggleValueForMacro,
+    showUserLog: () => UserLog.showUserLog
+});
+
+function setPluginToggleValueForMacro(menuItem, value) {
+    const entry = pluginManager.getPluginEntry(menuItem.pluginId);
+    if (!entry) {
+        throw new Error(`Unknown plugin: ${menuItem.pluginId}`);
+    }
+    const pluginResult = pluginManager.setPropertyValue(entry, menuItem.propertyName, value);
+    return { result: pluginResult.result || '' };
+}
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -268,60 +297,6 @@ function refreshSectionEditRuntimeChildren(menu){
 	return getSectionEditInstrumentOptions();
 }
 
-function getMacroNumberOptions(actionName) {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `${actionName}:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		action: actionName,
-		value: macroId,
-		popOnBang: true
-	}));
-}
-
-function getMacroDeleteNumberOptions() {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `macroDeleteConfirm:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		children: [
-			{
-				caption: `<b>Y</b>es: delete ${macroId}`,
-				trigger: 'Y',
-				action: 'macroDeleteConfirmed',
-				value: macroId,
-				popOnBang: true
-			},
-			{
-				caption: '<b>n</b>o: keep macro',
-				trigger: 'n',
-				action: 'macroDeleteCancel',
-				popOnBang: true
-			}
-		]
-	}));
-}
-
-function getMacroMoveNumberOptions() {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `macroMove:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		action: 'macroMoveById',
-		value: macroId,
-		popOnBang: true,
-		input: {
-			type: 'input',
-			caption: 'destination number',
-			datatype: 'int',
-			id: 'destination'
-		}
-	}));
-}
-
 function getMyTuningOptions(actionName) {
 	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
 	return tunings.slice(0, 9).map((tuning, index) => ({
@@ -366,32 +341,6 @@ function refreshRuntimeMenuChildren(menu) {
 	return refreshSectionEditRuntimeChildren(menu)
 		|| refreshMacroAndTuningRuntimeChildren(menu)
 		|| null;
-}
-
-function setPluginToggleValueForMacro(menuItem, value) {
-	const entry = pluginManager.getPluginEntry(menuItem.pluginId);
-	if (!entry) {
-		throw new Error(`Unknown plugin: ${menuItem.pluginId}`);
-	}
-	const pluginResult = pluginManager.setPropertyValue(entry, menuItem.propertyName, value);
-	return { result: pluginResult.result || '' };
-}
-
-configureMacroEngine({
-	addToUserLog,
-	getSong,
-	getValue,
-	isMacroVerbose: () => macroVerbose,
-	performCmdAction,
-	refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
-	refreshRuntimeChildren,
-	rootMenu: () => gMenuFile,
-	setPluginToggleValueForMacro,
-	showUserLog
-});
-
-export function runSongMacroById(macroId, options = {}) {
-	return runSongMacroByIdFromEngine(macroId, options);
 }
 
 function moveSelectByClampedStep(selectSelector, delta) {
@@ -553,7 +502,7 @@ function document_keypress(e) {
 				try {
 					parkCommandLineAtPath('fpc');
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
@@ -613,7 +562,7 @@ function document_keypress(e) {
 				try {
 					parkCommandLineAtPath('fp');
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
@@ -633,7 +582,7 @@ function document_keypress(e) {
 				try {
 					runActionByName('sectionAdd', {});
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
@@ -826,7 +775,7 @@ export function performCmdAction(menuItem, args){
 		case "versionMore":
 			actionResult.result = getVersionString();
 			let version = getVersionObject();
-			showMessagesJSON(JSON.stringify(version, null, 2),
+			Messages.showMessagesJSON(JSON.stringify(version, null, 2),
 			                 `<a target='_blank' href='${version.README}'>${version.README}</a><br><br>`);
 			break;
 		case "removeUnusedTablesFromMemoryModel":
@@ -1217,7 +1166,7 @@ export function performCmdAction(menuItem, args){
 		}
 		case "macroListAll": {
 			const list = getSongMacroIds(getSong());
-			showMessages(list.join("<br>"));
+			Messages.showMessages(list.join("<br>"));
 			actionResult.result ="listed macros";
 			break;
 		}
@@ -1327,7 +1276,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		}
 		case "showThemeIds":
-			showMessages(dumpThemeIds());
+			Messages.showMessages(dumpThemeIds());
 			break;
 		case "viewFullscreen":
 			enterFullscreen();
@@ -1391,19 +1340,19 @@ export function performCmdAction(menuItem, args){
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
 			break;	
 		case "showViewDiagnostics":
-			showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
+			Messages.showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
 			break;
 		case "showViewDiagnosticsFullModel":
-			showMessagesJSON(JSON.stringify(getSong(), null, 2));
+			Messages.showMessagesJSON(JSON.stringify(getSong(), null, 2));
 			break;
 		case "showViewDiagnosticsMenu":
-			showMessages(dumpMenus());
+			Messages.showMessages(dumpMenus());
 			break;
         case "showViewDiagnosticsMenuJson":
-			showMessagesJSON(gMenuLoaded);
+			Messages.showMessagesJSON(gMenuLoaded);
 			break;
         case "showViewDiagnosticsUserColorDict":
-            showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
+            Messages.showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
             actionResult.result = "ColorDictionary sent to Messages";
             break;
         case "showViewDiagnosticsDisplayOptions":
@@ -1411,11 +1360,11 @@ export function performCmdAction(menuItem, args){
             actionResult.result = "DisplayOptions sent to Messages";
             break;
 		case "showViewDiagnosticsVariables":
-			showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
+			Messages.showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
 			actionResult.result = "Approved variables sent to Messages";
 			break;
         case "showViewDiagnosticsSongFileFormat":
-			showMessagesJSON(getPersistentSongFile());
+			Messages.showMessagesJSON(getPersistentSongFile());
 			break;
         case "showViewDiagnosticsLogEvents":
 			let obj = {};
@@ -1425,11 +1374,11 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
 		case "showUserLog":
-			showUserLog();
+			UserLog.showUserLog();
 			actionResult.result = "User Log shown";
 			break;
 		case "clearUserLog":
-			clearUserLog();
+			UserLog.clearUserLog();
 			actionResult.result = "User Log cleared";
 			break;
 		case "showGraveyard":
@@ -1445,7 +1394,7 @@ export function performCmdAction(menuItem, args){
             $("#divMessages").show();
             actionResult.result = "Messages re-shown";
 			hideCmdLine();
-    		scrollToMessages();
+    		Messages.scrollToMessages();
             break;
 		case "printSectionsDetails":
 			printSections(true);
@@ -1918,12 +1867,12 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = pluginResult.result || '';
 			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;
 			if (pluginResult.messageJSON) {
-				showMessagesJSON(pluginResult.messageJSON);
+				Messages.showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {
-				if (isQuietUserLogMessage(pluginResult.message)) {
-					addToUserLog('PluginManager', pluginResult.message);
+				if (UserLog.isQuietUserLogMessage(pluginResult.message)) {
+					UserLog.addToUserLog('PluginManager', pluginResult.message);
 				} else {
-					showMessages(pluginResult.message);
+					Messages.showMessages(pluginResult.message);
 				}
 			}
 			break;
@@ -1935,122 +1884,10 @@ export function performCmdAction(menuItem, args){
 	return actionResult;
 }
 
-function scrollToMessages(){
-    var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
-    window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
-}
 
-function getUserLogTableBody(){
-	if (typeof document === 'undefined') {
-		return null;
-	}
-
-	const divUserLog = document.getElementById('divUserLog');
-	if (!divUserLog) {
-		return null;
-	}
-
-	let table = document.getElementById('tblUserLog');
-	if (!table) {
-		table = document.createElement('table');
-		table.id = 'tblUserLog';
-		const thead = document.createElement('thead');
-		const headerRow = document.createElement('tr');
-		['Time', 'SubSystem', 'Message'].forEach((caption) => {
-			const th = document.createElement('th');
-			th.textContent = caption;
-			headerRow.appendChild(th);
-		});
-		thead.appendChild(headerRow);
-		table.appendChild(thead);
-		table.appendChild(document.createElement('tbody'));
-		divUserLog.appendChild(table);
-	}
-
-	let tbody = table.querySelector('tbody');
-	if (!tbody) {
-		tbody = document.createElement('tbody');
-		table.appendChild(tbody);
-	}
-	return tbody;
-}
-
-function getUserLogTime(){
-	const now = new Date();
-	return [now.getHours(), now.getMinutes(), now.getSeconds()]
-		.map((value) => `${value}`.padStart(2, '0'))
-		.join(':');
-}
-
-function isQuietUserLogMessage(message = '') {
-	const text = `${message || ''}`.trim();
-	return text.startsWith('#raise=');
-}
-
-export function addToUserLog(subSystem, message){
-	const tbody = getUserLogTableBody();
-	if (!tbody) {
-		return false;
-	}
-
-	const row = document.createElement('tr');
-	const timeCell = document.createElement('td');
-	const subSystemCell = document.createElement('td');
-	const messageCell = document.createElement('td');
-
-	timeCell.textContent = getUserLogTime();
-	subSystemCell.textContent = `${subSystem || ''}`;
-	messageCell.innerHTML = `${message || ''}`;
-
-	row.appendChild(timeCell);
-	row.appendChild(subSystemCell);
-	row.appendChild(messageCell);
-	tbody.insertBefore(row, tbody.firstChild);
-
-	while (tbody.rows.length > USER_LOG_MAX_ROWS) {
-		tbody.deleteRow(tbody.rows.length - 1);
-	}
-
-	return true;
-}
-
-export function clearUserLog(){
-	const tbody = getUserLogTableBody();
-	if (tbody) {
-		tbody.innerHTML = '';
-	}
-}
-
-function showUserLog(){
-	getUserLogTableBody();
-	$("#divMessageAndJsonTree").show();
-	showMessagesTab("UserLog");
-	hideCmdLine();
-	scrollToMessages();
-}
-
-export function showMessagesJSON(json, preamble = ""){
-	showMessages(preamble+json);
-    const div = document.getElementById('divJsonTree');
-	div.innerHTML = '';
-	let data = JSON.parse(json);
-	jsonTree(data, div);
-}
-export function showMessages(html){
-    $("#divMessageAndJsonTree").show();
-    $("#divMessages").show();
-    $("#divMessages").html(html);
-	showMessagesTab("Messages");
-    hideCmdLine();
-    scrollToMessages();
-}
-export function hideMessages(){
-    $("#divMessages").hide();
-	$("#divMessageAndJsonTree").hide();
-}
 function showGraveyard(){
     hideAllMenuDivs();
-    showMessages(getSong().graveyard.buildGraveyardTable());
+    Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 }
 export function hideGraveyard(){
     $("#divMessages").hide();

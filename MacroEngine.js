@@ -1,3 +1,4 @@
+import * as Globals from './globals.js';
 import {
     classifyMacroLine,
     executeMacroLine,
@@ -6,6 +7,8 @@ import {
     getSongMacro,
     validateMacroId
 } from './MacroExecutor.js';
+import { UserLog } from './UserLog.js';
+
 
 const MAX_MACRO_EXECUTION_DEPTH = 4;
 const MACRO_LINES_PER_FRAME = 8;
@@ -158,9 +161,9 @@ export function isAllowedDuringMacro(actionName) {
 
 export function logMacro(message) {
     const deps = requireDeps();
-    deps.addToUserLog('Macro', message);
+    UserLog.addToUserLog('Macro', message);
     if (state.run.running && deps.isMacroVerbose()) {
-        deps.showUserLog();
+        UserLog.showUserLog();
     }
 }
 
@@ -260,7 +263,7 @@ export function createMacroFrame(song, macroId, callArgs = {}) {
 
 export function createMacroEngine(rootMacroId, options = {}) {
     const deps = requireDeps();
-    const song = deps.getSong();
+    const song = Globals.getSong();
     const rootCallArgs = options.callArgs && typeof options.callArgs === 'object' && !Array.isArray(options.callArgs)
         ? options.callArgs
         : {};
@@ -396,7 +399,7 @@ export function runSongMacroById(macroId, options = {}) {
     state.macroExecutionDepth += 1;
     try {
         deps.refreshBeforePath();
-        const result = executeSongMacro(deps.getSong(), id, {
+        const result = executeSongMacro(Globals.getSong(), id, {
             rootMenu: deps.rootMenu(),
             actionRunner: runMacroMenuAction,
             refreshBeforePath: deps.refreshBeforePath,
@@ -439,7 +442,7 @@ export function startSongMacroById(macroId, options = {}) {
         state.run.engine = engine;
         showMacroOverlay();
         if (engine.verbose) {
-            deps.showUserLog();
+            UserLog.showUserLog();
         }
         scheduleMacroFrame(() => pumpMacroEngine(engine));
         return { ok: true, started: true, macroId: id };

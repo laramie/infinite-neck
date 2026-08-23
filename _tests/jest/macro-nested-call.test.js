@@ -90,7 +90,8 @@ jest.unstable_mockModule('../../plugins/pluginRuntime.js', () => ({
     default: pluginRuntimeDefault
 }));
 
-const { runSongMacroById, setKeyHandlerProviders } = await import('../../key-handlers.js');
+const { runSongMacroById } = await import('../../MacroEngine.js');
+const { setKeyHandlerProviders } = await import('../../key-handlers.js');
 
 function setMacroMenu() {
     menuState.gMenuFile.children = [

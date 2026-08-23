@@ -1,3 +1,13 @@
+/* There are separate files for macros:
+ *   - MacroExecutor.js   :: This file.  Executes a macro, builds the command-line menu.
+ *   - MacroEngine.js     :: Groups functions for running macros, especially the calling of macros from macros,
+ *                           and the laying on of an overlay and preventing User actions during macro execution.
+ *   - templates/macros/* :: The macro editor menu page.
+ * 
+ *  key-handler.js imports these modules and runs them.
+ * 
+ */
+
 const MACRO_ID_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
 
 function cloneLines(lines) {

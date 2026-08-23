@@ -2,6 +2,7 @@
 
 
 import * as Constants from './Constants.js';
+import * as Globals from './globals.js';
 import EventBus from './event-bus.js';
 import {
 	expandApprovedTemplate,
@@ -43,19 +44,15 @@ import {
 	PalettePresentation 
 } from './presentation.js';
 import {
-	addToUserLog,
-	clearUserLog,
 	getFontSize,
 	getUIFontSize,
 	hideGraveyard,
 	getNoteFontSize,
 	runActionByName,
-	runSongMacroById,
+	
 	setUIFontSize,
 	setNoteFontSize,
 	setKeyHandlerProviders,
-	showMessages,
-	hideMessages,
 	document_keydown,
 	document_keypress,
 	document_keyup
@@ -150,6 +147,9 @@ import { setLoopSectionFilter } from './SongNavigationHooks.js';
 import './plugins/registerPlugins.js';
 import pluginManager from './plugins/pluginRuntime.js';
 import { TransportController } from './transport-controller.js';
+import { runSongMacroById } from './MacroEngine.js';
+import { Messages } from './Messages.js';
+import { UserLog } from './UserLog.js';
 
 // If running in a browser, call appInit() on DOM ready.  Browser loads DOM, then since index.html pulls in this module, this module is run after DOM loaded.  
 // This top-level code runs first, which calls appInit().
@@ -180,7 +180,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return gAppInit_running;
 	}
 
-	var gSong = null;  //constructed in document ready.
 	let gUrlMacroRunAttempted = false;
 	let gFullscreenLeadSheetLineVisible = false;
 	let gFullscreenChartVisible = false;
@@ -188,7 +187,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	let gPendingSongLibraryHref = '';
 	let chartInputController = null;
 	export function getSong(){
-		return gSong;
+		return Globals.getSong();
 	}
 
 	function getChartInputController() {
@@ -957,28 +956,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
-	export function showMessagesTab(which) {
-		var showMsgs = which !== 'JsonTree' && which !== 'UserLog';
-		var showJsonTree = which === 'JsonTree';
-		var showUserLog = which === 'UserLog';
-		   $('#divMessages').toggle(showMsgs);
-		   $('#divJsonTree').toggle(showJsonTree);
-		   $('#divUserLog').toggle(showUserLog);
-		   let selector = '#btnMessagesTab, #btnJsonTreeTab, #btnUserLog, #btnHideMessagesJsonTree';
-		   $(selector).css('display', 'inline-block');
-
-		   $('#btnMessagesTab')
-			   .toggleClass('BtnPunchedIn', showMsgs)
-			   .toggleClass('BtnPunchedOut', !showMsgs);
-		   $('#btnJsonTreeTab')
-			   .toggleClass('BtnPunchedIn', showJsonTree)
-			   .toggleClass('BtnPunchedOut', !showJsonTree);
-		   $('#btnUserLog')
-			   .toggleClass('BtnPunchedIn', showUserLog)
-			   .toggleClass('BtnPunchedOut', !showUserLog);
-	   }
+	
 	function hideMessages_KeyHandler(){
-		hideMessages();
+		Messages.hideMessages();
 	}
 
 	
@@ -1547,7 +1527,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function handleInfoActionFragment(href = '') {
 		const parsed = parseAppActionFragment(href);
 		if (parsed.errors.length > 0) {
-			addToUserLog('InfoLink', parsed.errors.map((error) => escapeHtml(error)).join('<br>'));
+			UserLog.addToUserLog('InfoLink', parsed.errors.map((error) => escapeHtml(error)).join('<br>'));
 		}
 		parsed.items.forEach((item) => {
 			if (item.action === 'raise') {
@@ -1685,7 +1665,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function downloadBackupThenClearGraveyard(){
 		downloadPlayedNotes();
 		getSong().graveyard.clear();
-		showMessages(getSong().graveyard.buildGraveyardTable());
+		Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	export function downloadBackupThenClearGraveyardByType(selectedTypes = []) {
@@ -1699,7 +1679,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		downloadPlayedNotes();
 		const removed = getSong().graveyard.clearByTypes(normalizedSelectedTypes);
-		showMessages(getSong().graveyard.buildGraveyardTable());
+		Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 		return { result: `cleared: ${normalizedSelectedTypes.join(',')} (${removed})` };
 	}
 
@@ -1830,17 +1810,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			gCurrentSongLibraryHref = gPendingSongLibraryHref;
 			gPendingSongLibraryHref = '';
 		}
-		if (gSong && hasSelectiveImport){
+		if (Globals.getSong() && hasSelectiveImport){
 			let newSong = new Song(jsonObj);
 
 			if (importOptions.sections) {
 				let sections = newSong.getSections();
 				for (const section of sections){
-					gSong.addSection(section);
+					Globals.getSong().addSection(section);
 				}
 				let newTunings = newSong.getMyTunings();
 				if (newTunings){
-					gSong.addTunings(newTunings);
+					Globals.getSong().addTunings(newTunings);
 				}
 			}
 
@@ -1859,10 +1839,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			updateAfterAppendSong(importOptions);
 			return;
 		}
-		gSong = new Song(jsonObj);
-		clearUserLog();
-		gSong.ensureDefaultSection();
-		pluginManager.loadSongPluginState(gSong);
+		Globals.setSong(new Song(jsonObj));
+		Messages.clearUserLog();
+		Globals.getSong().ensureDefaultSection();
+		pluginManager.loadSongPluginState(Globals.getSong());
 		updateAfterOpenSong();
 	}
 
@@ -1940,7 +1920,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				const fromBaseID = tuning?.fromBaseID || '(unknown)';
 				return `"${tableID}", ID: "${tuningID}", Lineage("from"): ${fromBaseID}<br>`;
 			});
-			showMessages(
+			Messages.showMessages(
 				`Tunings without views found in song:<br>${rows.join('')}`
 				+ 'These will continue to be accessible to Observers and Listeners through the Wiring page, and their Sections and Notes are visible in "Chart | Notes".<br>'
 				+ 'If you wish to attach a visible instrument to this Tuning, Clone a Tuning with a baseID equal to Lineage("from") and set its ID to the ID shown.'
@@ -2042,7 +2022,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setTimeout(() => {
 			const result = runSongMacroById(macroId);
 			if (!result.ok) {
-				addToUserLog('Macro', `URL macro ${macroId} failed: ${result.error}`);
+				UserLog.addToUserLog('Macro', `URL macro ${macroId} failed: ${result.error}`);
 			}
 		}, 0);
 	}
@@ -2091,11 +2071,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function showGraveyard(){
 		hideAllMenuDivs();
-		showMessages(getSong().graveyard.buildGraveyardTable());
+		Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 	}
 
 	export function showDisplayOptions(){
-		showMessages(displayOptionsTable());
+		Messages.showMessages(displayOptionsTable());
 	}
 
 	export function increaseUIFont(){
@@ -2732,7 +2712,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 
 		if (!/^[1-9]\d*$/.test(rawValue)) {
-			showMessages(`<b>Chart Details:</b> Section ${idx + 1} Beats must be a positive, non-zero integer.`);
+			Messages.showMessages(`<b>Chart Details:</b> Section ${idx + 1} Beats must be a positive, non-zero integer.`);
 			updatePrintSections();
 			return;
 		}
@@ -3547,7 +3527,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			const index = toInt($(this).data('grave-index'), -1);
 			if (index >= 0) {
 				getSong().graveyard.deleteRecordByIndex(index);
-				showMessages(getSong().graveyard.buildGraveyardTable());
+				Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 			}
 		});
 
@@ -3714,16 +3694,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 
 		bindEvent('click', '#btnMessagesTab', function() {
-			showMessagesTab('Messages');
+			Messages.showMessagesTab('Messages');
 		});
 		bindEvent('click', '#btnJsonTreeTab', function() {
-			showMessagesTab('JsonTree');
+			Messages.showMessagesTab('JsonTree');
 		});
 		bindEvent('click', '#btnUserLog', function() {
-			showMessagesTab('UserLog');
+			Messages.showMessagesTab('UserLog');
 		});
 		bindEvent('click', '#btnHideMessagesJsonTree', function() {
-			hideMessages_KeyHandler();
+			Messages.hideMessages_KeyHandler();
 		});
 
 		bindEvent('click', '#btnFileControls', function() {
@@ -4239,10 +4219,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	// Headless replacement for document.ready for testing
 	export function setupSongTests() {
 		installHeadlessJQueryStub();
-		gSong = new Song();   //var song global in this file (at top).
-		gSong.setHeadless(true, true);
-		gSong.ensureDefaultSection();
-		pluginManager.loadSongPluginState(gSong);
+		Globals.setSong(new Song());   //var song global in this file (at top).
+		Globals.getSong().setHeadless(true, true);
+		Globals.getSong().ensureDefaultSection();
+		pluginManager.loadSongPluginState(Globals.getSong());
 
 		installModuleProviders();
 		
@@ -4273,9 +4253,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		fetchVersionInBrowser();
 
-		gSong = new Song();
-		gSong.ensureDefaultSection();
-		pluginManager.loadSongPluginState(gSong);
+		Globals.setSong(new Song());
+		Globals.getSong().ensureDefaultSection();
+		pluginManager.loadSongPluginState(Globals.getSong());
 
 		
 		installAllTuningsTables();
@@ -4499,17 +4479,17 @@ EventBus.on('NoteTableCache:prewarmSection', function(event, data) {
 	prewarmNoteTablesForSection(data?.sectionIndex, data || {});
 });
 EventBus.on('ShowMessages', function(event, data) {
-	showMessages(data && data.html ? data.html : '');
+	Messages.showMessages(data && data.html ? data.html : '');
 });
 EventBus.on('UserLog', function(event, data) {
-	addToUserLog(data?.subSystem || '', data?.message || '');
+	UserLog.addToUserLog(data?.subSystem || '', data?.message || '');
 });
 EventBus.on('PluginManager:ShowResult', function(event, data) {
 	if (data && data.result) {
 		addCmdResults(`${data.pluginId}:${data.eventName} >> ${data.result}`);
 	}
 	if (data && data.message) {
-		addToUserLog(data?.subSystem || 'PluginManager', data.message);
+		UserLog.addToUserLog(data?.subSystem || 'PluginManager', data.message);
 	}
 });
 EventBus.on('PluginGraveyard:linkAdded', function() {
