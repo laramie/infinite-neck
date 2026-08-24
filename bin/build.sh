@@ -20,7 +20,7 @@ npm run package:deploy
 
 ## Your ssh login here:
 export SSH_LAR=    
-export DEPLOY_DATE='20260823-190706'
+export DEPLOY_DATE='20260823-221458'
 
 scp dist/infinite-neck-$DEPLOY_DATE.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
@@ -31,7 +31,7 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 ## Adjust the dates, and do something like: 
 
 export DEPLOY_VERSION='v2.1-beta-11'
-export DEPLOY_DATE='20260823-190706'
+export DEPLOY_DATE='20260823-221458'
 
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy
