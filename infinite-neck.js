@@ -20,6 +20,7 @@ import {
 	addCmdResults,
 	hideCmdLine,
 	toggleCmdLine,
+	txtCmdLine_beforeinput,
 	txtCmdLine_keydown,
 	txtCmdLine_keypress,
 	updateCmdLineView
@@ -4372,6 +4373,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(document).on('keypress', document_keypress);
 		$("#txtCmdLine").on('keydown', txtCmdLine_keydown);
 		$("#txtCmdLine").on('keypress', txtCmdLine_keypress);
+		$("#txtCmdLine").on('beforeinput', txtCmdLine_beforeinput);
 		$(document).on('keyup', document_keyup);
 
 		setWiringOpenState(false);
