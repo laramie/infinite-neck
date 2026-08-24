@@ -1,5 +1,23 @@
 # ChangeLog
 
+### 20260823
+
+Tag: v2.1-beta-11
+
+- 933450e **2026-08-23** Cleanup
+- e474b01 **2026-08-23** Desktop page working with buttons from help file, with stylesheet working too.
+- c851634 **2026-08-23** Ready for Desktop tabs group
+- ad5d728 **2026-08-23** Adding MobileKeyboard to Desktop page.
+- 519098f **2026-08-23** Adding MobileKeyboard to Desktop page.
+- 8c78074 **2026-08-23** Ready for implementation of runMobileCommandLine()
+- bf2faae **2026-08-23** Moved constant
+- 2305b4f **2026-08-23** Moved Macro calls into new MacroMenu.js and created Messages.js and UserLog.js
+- 2e590af **2026-08-21** Added 4ths calculator to test the badges.  Probably won't use that, because the wired listener to P46 is better--it shows the cycle of fourths for the key in each section.
+- 0c660a5 **2026-08-21** Added SHIFT-G for Grabbles on Floating windows toggle. Added 12-major-scale-w-ccalc.json which has a C-Calculator
+- 051f799 **2026-08-20** These files missed the tag for v2.1-beta-10 but get included in the deployment.
+- c4f20cd **2026-08-20** Fixed bug in 5thsCalculator, notes were wrong midi numbers. Added ListenerNotesource example badge to song-list description. Added 4ths calculator listener to 12-major-scales song.  This shows the notes in each key on the 4ths calculator, rather than just wiring the 4ths calc to all notes as the defailt calculator does with /vscp.  This is a cool use of 4ths calc.
+
+
 ### 20260820
 
 Tag: v2.1-beta-10
