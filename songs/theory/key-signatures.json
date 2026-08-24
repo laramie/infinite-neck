@@ -40,11 +40,11 @@
       "tableID": "tbl4thsCalculator_1",
       "visible": true,
       "anchorage": {
-        "floated": true,
+        "floated": false,
         "zIndex": 200,
         "floatRect": {
-          "left": 27.239583333333332,
-          "top": -0.5555555555555556,
+          "left": 60.3125,
+          "top": 0.6481481481481481,
           "width": 26.822916666666668,
           "height": 100
         }
@@ -209,7 +209,7 @@
             "C": {
               "noteName": "C",
               "styleNum": 0,
-              "colorClass": "noteRoot"
+              "colorClass": "noteTransparent"
             }
           },
           "recordedNotes": {},
@@ -227,46 +227,13 @@
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
-      "sharps": false
-    },
-    {
-      "sectionNotesByTable": {
-        "tbl4thsCalculator_1": {
-          "namedNotes": {
-            "Gb": {
-              "noteName": "Gb",
-              "styleNum": 0,
-              "colorClass": "noteFinger1"
-            },
-            "G": {
-              "noteName": "G",
-              "styleNum": 0,
-              "colorClass": "note12"
-            }
-          },
-          "recordedNotes": {},
-          "chord": "",
-          "mode": "",
-          "tonalSourceSet": "",
-          "playedNotes": []
-        }
-      },
-      "caption": "${keySignatureCountHand}",
-      "chartChord": "",
-      "chartMode": "G chromatic",
-      "chartPosition": "BAR",
-      "chartCaptionWidth": "none",
-      "rootID": 10,
-      "rootIDLead": "-1",
-      "beats": 4,
-      "currentBeat": 4,
-      "sharps": true,
+      "currentBeat": 1,
+      "sharps": false,
       "displayOptions": {
         "autoColor": false,
         "showCellNotes": true,
         "showSubscriptFunctions": true,
-        "cellIsFunction": false,
+        "cellIsFunction": true,
         "showMidiNum": false,
         "useCenterForRightFunction": true,
         "naturalFretWidths": true,
@@ -317,6 +284,39 @@
               "styleNum": 0,
               "colorClass": "noteFinger1"
             },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "note12"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "G chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 10,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tbl4thsCalculator_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            },
             "Db": {
               "noteName": "Db",
               "styleNum": 0,
@@ -343,7 +343,7 @@
       "rootID": 5,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -386,7 +386,7 @@
       "rootID": "0",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -434,7 +434,7 @@
       "rootID": "7",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -487,7 +487,7 @@
       "rootID": "2",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 2,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -540,7 +540,7 @@
       "rootID": "9",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": true
     },
     {
@@ -555,7 +555,7 @@
             "F": {
               "noteName": "F",
               "styleNum": 0,
-              "colorClass": "note3"
+              "colorClass": "noteTransparent"
             }
           },
           "recordedNotes": {},
@@ -573,7 +573,7 @@
       "rootID": "8",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -606,7 +606,7 @@
       "rootID": "1",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -644,7 +644,7 @@
       "rootID": "6",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -687,7 +687,7 @@
       "rootID": "11",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -735,7 +735,7 @@
       "rootID": "4",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     },
     {
@@ -788,7 +788,7 @@
       "rootID": "9",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
+      "currentBeat": 1,
       "sharps": false
     }
   ],
