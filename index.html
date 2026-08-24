@@ -1150,8 +1150,7 @@
         <div id="divDesktop" style="display: none;">
             <div class="infoTabsTop">
                 <span class="infoTabsButtons">
-                    <button id="btnDesktopTabKeyboard" type="button" class="MenuTabBtn BtnPunchedIn">Mobile
-                        Keyboard</button>
+                    <button id="btnDesktopTabKeyboard" type="button" class="MenuTabBtn BtnPunchedIn">Keyboard</button>
                     <button id="btnDesktopTabButtons" type="button" class="MenuTabBtn BtnPunchedOut">Buttons</button>
                 </span>
                 <span class="infoTabsFill"></span>
@@ -1164,10 +1163,7 @@
                     <div id="divDesktopButtons" class="infoTabPanel" style="display: none;">
             <form id="frmDesktop" onsubmit="return false;">
                 <div class="menuDiv">
-                    <div style="float: left;" class="sectionPageControlsGroup">
-                        <p>Buttons for Mobile instead of keyboard shortcuts. </p>
-                        <br>
-                        <br>
+                    <div class="sectionPageControlsGroup">
                         
                         <label for="txtMobileCmdLine"><b>Command-Line:</b>
                             <input type="text" name="txtNameMobileCmdLine"
@@ -1181,55 +1177,58 @@
 
                         <button id="btnToggleTransport" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             Transport</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnToggleCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             Command-Line</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnToggleQuick" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             QuickMenu</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnChromeFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="ChromeFullscreen">Chrome Fullscreen</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="enterFullscreen" data-action-args='[true]'>infinite-neck Fullscreen</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="increaseUIFont">Increase UI Font</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnSaveScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="saveScalingPrefs">Save Scaling Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnApplyScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="applyScalingPrefs">Apply Scaling Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnClearScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="clearScalingPrefs">Clear Scaling Prefs</button>
-                        <br>
-                        <br>
-                        <div id="divScalingPrefs"></div>
-                        <br>
-                        <br>
+                        
+                        
+                        
+                        
                         <button id="btnSaveInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="saveInstrumentPrefs">Save Instrument Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnApplyInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="applyInstrumentPrefs">Show Instrument Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnClearInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="clearInstrumentPrefs">Clear Instrument Prefs</button>
+                        
+                        
                         <br>
-                        <br>
+                        <b>Scaling Prefs:</b>
+                        <div id="divScalingPrefs"></div>
+                        <b>Instrument Prefs:</b>
                         <div id="divInstrumentPrefs"></div>
                     </div>
                 </div>
@@ -1347,6 +1346,7 @@
     <div id="divQuick" style="display: none;">
         <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note
             Names</button>
+            <button id="quickLoopToggle" class="MenuButton BtnPunchedOut" type="button">LOOP</button>
         <button id="btnRandomLoop" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
         <span class="PunchedTogether"><button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button"
                 tabindex="-1">Func</button>

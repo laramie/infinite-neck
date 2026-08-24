@@ -815,6 +815,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		//These are in Transport:
 	    $("#lblBeats").html(getSong().getBeats());
 		$("#lblBeat").html(String(getSong().getBeat()));
+		if (currentSection.sharps){
+			$('#btnFlats').removeClass("currentSectionAccidentals");
+			$('#btnSharps').addClass("currentSectionAccidentals");
+		} else {
+			$('#btnSharps').removeClass("currentSectionAccidentals");
+			$('#btnFlats').addClass("currentSectionAccidentals");
+		}
 		
 		var txt = ""+(getSong().getSectionsCurrentIndex()+1)+"/"+ getSong().sections.length;
 	    $("#lblSectionsStatus").html(txt);
@@ -3781,6 +3788,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnRandomLoop', function() {
 			toggleRandomLoop();
+		});
+		bindEvent('click', '#quickLoopToggle', function() {
+			runActionByName('toggleLoopSections');
 		});
 		bindEvent('click', '#btnNoteV', function() {
 			checkRB("#rbNotename");

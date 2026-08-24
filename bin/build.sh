@@ -30,7 +30,7 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 
 ## Adjust the dates, and do something like: 
 
-export DEPLOY_VERSION='v2.1-beta-11'
+export DEPLOY_VERSION='v2.1-beta-12'
 export DEPLOY_DATE='20260823-223859'
 
 cd sites/demo.laramiecrocker.com

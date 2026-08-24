@@ -61,3 +61,7 @@
 #btnAddBeat {
     color: blue;
 }
+
+.currentSectionAccidentals {
+    background-color: rgb(252, 249, 61) !important;
+}

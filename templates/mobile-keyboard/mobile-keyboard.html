@@ -1,19 +1,16 @@
 <template id="mobile-keyboard-template">
     <div id="MobileKeyboard">
 
-
+<!-- The most useless button:                         
+     <button id="btn_mobile_keyboard_hideMenusBlurFocus">ESC</button>
+-->
         <table id="mobile-keyboard-Actions" border="1" cellpadding="5" cellspacing="0" style="font-family: monospace; text-align: center;">
             <tbody>
-                <tr>
-                    <td><button id="btn_mobile_keyboard_hideMenusBlurFocus">ESC</button></td>
-                    <td colspan="9"></td>
-                    <td><button id="btn_mobile_keyboard_browserZoomOut" disabled title="Use your browser or device zoom controls"><small>Ctrl</small> -</button></td>
-                    <td><button id="btn_mobile_keyboard_browserZoomIn" disabled title="Use your browser or device zoom controls"><small>Ctrl</small> +</button></td>
-                </tr>
-
                 <!-- Row 1: Numbers & Symbols -->
                 <tr>
-                    <td><button id="btn_mobile_keyboard_useAFingeringIndex" class="mobile-keyboard-Fingering"><b><i>1</i></b></button></td>
+                    <td>
+                        <button id="btn_mobile_keyboard_useAFingeringIndex" class="mobile-keyboard-Fingering"><b><i>1</i></b></button>
+                    </td>
                     <td><button id="btn_mobile_keyboard_useAFingeringMiddle" class="mobile-keyboard-Fingering"><b><i>2</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_usesAFingeringRing" class="mobile-keyboard-Fingering"><b><i>3</i></b></button></td>
                     <td><button id="btn_mobile_keyboard_useFingeringNoteFourth" class="mobile-keyboard-Fingering"><b><i>4</i></b></button></td>
@@ -134,9 +131,10 @@
                 </tr>
             </tbody>
         </table>
-        <div style="margin: 2em; margin-left: 10em; margin-right: 10em; background-color: white;">
+        <button id="MobileKeyboardHelpBtn" onclick="$('#MobileKeyboardLegend').toggle()">Help: Button Color Legend &#x1F782;</button>
+        <div id="MobileKeyboardLegend" style="display: none; margin-left: 10em; margin-right: 10em; background-color: white;">
             <div style="background-color:  rgb(181, 253, 161); padding: 0.3em; border: 2px dotted gray; line-height: 2;">
-                <b>Legend:</b>
+                <b>Legend</b>
                 <br><button>Orange keys</button> mean an
                 action will be taken, which may be subtle
                 in that a dialog is not show, but something changes, like REC is toggle on, or a Section is quietly

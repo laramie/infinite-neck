@@ -43,11 +43,56 @@
         "floated": true,
         "zIndex": 200,
         "floatRect": {
-          "left": 21.331459471053826,
-          "top": 39.83217875162761,
-          "width": 23.81557173087348,
-          "height": 89.91609700520833
+          "left": 27.239583333333332,
+          "top": -0.5555555555555556,
+          "width": 26.822916666666668,
+          "height": 100
         }
+      },
+      "ToolDisplayOptions": {
+        "autoColor": false,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "260x30:22",
+          "width": "260px",
+          "height": "30px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
       }
     }
   ],
@@ -174,9 +219,9 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "C chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
       "rootID": "3",
@@ -207,9 +252,9 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "G chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
       "rootID": 10,
@@ -290,9 +335,9 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "D chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
       "rootID": 5,
@@ -333,12 +378,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "A chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "0",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -381,12 +426,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "E chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "7",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -434,12 +479,65 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "B chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "2",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 2,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tbl4thsCalculator_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "note12"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteFinger1"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "${keySignatureCountHand}",
+      "chartChord": "",
+      "chartMode": "F# chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "9",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -467,12 +565,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "F chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "8",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -500,12 +598,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "Bb chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "1",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -538,12 +636,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "Eb chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "6",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -581,12 +679,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "Ab chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "11",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -629,12 +727,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "Db chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "4",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
@@ -682,12 +780,12 @@
           "playedNotes": []
         }
       },
-      "caption": "",
+      "caption": "${keySignatureCountHand}",
       "chartChord": "",
-      "chartMode": "",
+      "chartMode": "Gb chromatic",
       "chartPosition": "BAR",
       "chartCaptionWidth": "none",
-      "rootID": "3",
+      "rootID": "9",
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 4,
