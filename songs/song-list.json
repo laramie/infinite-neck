@@ -596,6 +596,32 @@
       ]
     },
     {
+      "href": "theory/4-minors.json",
+      "description": "Four minor scales in C: Natural, Harmonic, Melodic, Dorian.",
+      "instruments": [
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
       "description": "One-string Intro",
       "instruments": [
