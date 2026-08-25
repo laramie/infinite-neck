@@ -1,13 +1,13 @@
 ## Adjust the date after you run this to the date you ran it: 
-bin/update-git-log.bash --since "2026-08-23" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-08-24" > _doco/lifecycle/CHANGELOG-new.md
+
+cat _doco/lifecycle/CHANGELOG-new.md
 
 vi _doco/lifecycle/CHANGELOG.md
 
-rm _doco/lifecycle/CHANGELOG-new.md
-
 node bin/version-update.js ./version.json
 
-# Use v2.1-beta-11
+# Use v2.1-beta-13 
 
 vi ./version.json
 

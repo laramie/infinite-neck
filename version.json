@@ -1,6 +1,6 @@
 {
     "gitCommand": "git describe --tags --always",
-    "gitTag": "v2.1-beta-12",
-    "date": "20260823",
+    "gitTag": "v2.1-beta-13",
+    "date": "20260824",
     "README": "https://github.com/laramie/infinite-neck/blob/master/README.md"
 }

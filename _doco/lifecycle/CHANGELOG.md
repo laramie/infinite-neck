@@ -1,5 +1,17 @@
 # ChangeLog
 
+### 20260824
+
+Tag: v2.1-beta-13
+
+
+- 1e30808 **2026-08-24** reordered to cycle of fourths
+- 33fabaa **2026-08-24** fixed autocolor section 1, changed C and F to Emboss
+- d6a7956 **2026-08-24** Added color to sharps/flats buttons in SectionDrawer. Added more to key-signatures.json Fixed up mobile-keyboard page more.
+- abe029f **2026-08-24** added key-signatures.json song to show sharps and flats for each key on a 2-fret 4ths calculator; added build"
+- 922838b **2026-08-23** beta-12
+- 45d9ee2 **2026-08-23** Possible fix for mobile command-line keyhandler.
+
 ### 20260823
 
 Tag: v2.1-beta-11

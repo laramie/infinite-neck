@@ -580,6 +580,22 @@
       ]
     },
     {
+      "href": "theory/key-signatures.json",
+      "description": "key signatures as seen on a Perfect 4ths Calculator with two frets.  Watch the signatures move around the cycle of fifths.",
+      "instruments": [
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
       "description": "One-string Intro",
       "instruments": [
