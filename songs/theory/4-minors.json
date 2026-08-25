@@ -104,64 +104,7 @@
     }
   ],
   "colorDicts": {},
-  "plugins": {
-    "arpeggio": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblminor",
-        "minFret": 0,
-        "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
-        "minRow": 0,
-        "maxRow": 0,
-        "lowToHigh": true,
-        "upOnly": false,
-        "style": "every",
-        "type": "NamedNote",
-        "showNoteName": "off",
-        "colorNotes": false,
-        "flashcard": false
-      }
-    },
-    "fill": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblminor",
-        "chordFormula": "M",
-        "scaleFormula": "major",
-        "automaticFromChart": false,
-        "literalChartedChord": false,
-        "minFret": 0,
-        "maxFret": 4,
-        "songLoopsPerPositionPair": 1,
-        "minRow": 0,
-        "maxRow": 0,
-        "namedRootMode": "role",
-        "namedRootColor": "noteRoot",
-        "namedChordMode": "role",
-        "namedChordColor": "noteChord",
-        "namedScaleMode": "role",
-        "namedScaleColor": "noteScale",
-        "singleRootMode": "role",
-        "singleRootColor": "noteRoot",
-        "singleChordMode": "role",
-        "singleChordColor": "noteChord",
-        "singleScaleMode": "role",
-        "singleScaleColor": "noteScale",
-        "tinyRootMode": "none",
-        "tinyRootColor": "noteRoot",
-        "tinyChordMode": "none",
-        "tinyChordColor": "noteChord",
-        "tinyScaleMode": "none",
-        "tinyScaleColor": "noteScale",
-        "singleAddTiny": "none"
-      }
-    }
-  },
+  "plugins": {},
   "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": false,
@@ -171,7 +114,7 @@
   },
   "namedNoteOpacity": "1",
   "openInfo": "none",
-  "presentationMode": false,
+  "presentationMode": true,
   "allowThemeAutomation": false,
   "pluginFiringOrder": [
     "t",
@@ -513,7 +456,52 @@
       "rootIDLead": "-1",
       "beats": 4,
       "currentBeat": 1,
-      "sharps": false
+      "sharps": false,
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "260x80:22",
+          "width": "260px",
+          "height": "80px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Default",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
     }
   ],
   "wirings": [],
@@ -546,20 +534,20 @@
       },
       "escaped": {
         "name": "escaped",
-        "CaptionRow": true,
+        "CaptionRow": false,
         "SongTitle": true,
         "WidgetRow": true,
-        "InstrumentCaptions": true,
+        "InstrumentCaptions": false,
         "LeftRails": true,
         "CaptionLooperLayout": "column"
       }
     },
     "screen": {
       "name": "escaped",
-      "CaptionRow": true,
+      "CaptionRow": false,
       "SongTitle": true,
       "WidgetRow": true,
-      "InstrumentCaptions": true,
+      "InstrumentCaptions": false,
       "LeftRails": true,
       "CaptionLooperLayout": "column"
     }
