@@ -966,12 +966,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    return fBpm;
 	}
 
-	
-	function hideMessages_KeyHandler(){
-		Messages.hideMessages();
-	}
-
-	
 	function updateAllWiringSelects() {
 		WiringBuilder.updateAllWiringSelects();
 	}
@@ -3742,7 +3736,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			Messages.showMessagesTab('UserLog');
 		});
 		bindEvent('click', '#btnHideMessagesJsonTree', function() {
-			Messages.hideMessages_KeyHandler();
+			Messages.hideMessages();
 		});
 
 		bindEvent('click', '#btnFileControls', function() {
