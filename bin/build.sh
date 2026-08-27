@@ -7,7 +7,7 @@ vi _doco/lifecycle/CHANGELOG.md
 
 node bin/version-update.js ./version.json
 
-# Use v2.1-beta-13 
+# Use v2.1-beta-14 
 
 vi ./version.json
 
@@ -23,7 +23,7 @@ npm run package:deploy
 
 ## Your ssh login here:
 export SSH_LAR=    
-export DEPLOY_DATE='20260824-192606'
+export DEPLOY_DATE='20260825-235240'
 
 scp dist/infinite-neck-$DEPLOY_DATE.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
@@ -33,8 +33,8 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 
 ## Adjust the dates, and do something like: 
 
-export DEPLOY_VERSION='v2.1-beta-13'
-export DEPLOY_DATE='20260824-192606'
+export DEPLOY_VERSION='v2.1-beta-14'
+export DEPLOY_DATE='20260825-235240'
 
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy

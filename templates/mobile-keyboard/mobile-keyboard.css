@@ -112,3 +112,14 @@
     margin-right: 0.6em;
 }
 
+/* Tabs */
+
+.infoTabsButtons #btnDesktopTabKeyboard {
+    padding: 1em;
+}
+
+.infoTabsButtons #btnDesktopTabButtons {
+
+    padding: 1em;
+}
+
