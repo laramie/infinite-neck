@@ -18,6 +18,11 @@
     gap: 0;
     white-space: nowrap;
 }
+.SectionStatus_beatNumber.SectionStatus_showBeatBorder{
+    border: 1px solid magenta;
+    border-radius: 3px;
+    
+}
 .SectionStatus_showBeatCounter .SectionStatus_beatWrap {
     display: inline-flex;
 }
@@ -28,6 +33,9 @@
 }
 .SectionStatus_beatNumber {
     color: chartreuse;
+    border: 1px solid transparent;
+    padding-left: 0;
+    text-align: center;
 }
 .SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
     color: magenta;

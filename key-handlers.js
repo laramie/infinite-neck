@@ -724,6 +724,9 @@ function document_keypress(e) {
 				paletteUtils.activateUiControl('#idPaletteModePaint');
 				paletteUtils.activateUiControl('#idMidiPitchesSingle');
                 break;
+			case "*":
+				$('.diamondsRow').toggle();
+				break;	
             default:
         }
     }

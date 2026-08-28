@@ -7,6 +7,12 @@ const { Chord } = globalThis.Tonal?.Chord
 const { Scale } = globalThis.Tonal?.Scale
     ? globalThis.Tonal
     : await import('tonal');
+const { Key } = globalThis.Tonal?.Key
+    ? globalThis.Tonal
+    : await import('tonal');
+const { Note: TonalNote } = globalThis.Tonal?.Note
+    ? globalThis.Tonal
+    : await import('tonal');
 
 export const TonalSourceSet = Object.freeze({
     NAMEDNOTE: 'NamedNote',
@@ -170,4 +176,33 @@ function todoBetterMidiDetectOfModes(){
 
 
 //==============================================================
+
+export function getKeySignatureInfo(tonicInput) {
+  // 1. Clean and simplify the root input (e.g., "G#" becomes "Ab")
+  const cleanTonic = TonalNote.simplify(tonicInput);
+  
+  // 2. Fetch the appropriate key object from @tonaljs/key
+  const keyDetails = Key.majorKey(cleanTonic);
+  const notes = keyDetails.scale;
+
+  // 3. Count the individual single-accidental signs present in the scale
+  let sharpCount = 0;
+  let flatCount = 0;
+
+  notes.forEach(note => {
+    // Note.accidentals() extracts characters like '#', '##', 'b', or 'bb'
+    const acc = TonalNote.accidentals(note); 
+    if (acc === '#') sharpCount++;
+    if (acc === 'b') flatCount++;
+  });
+
+  return {
+    requestedKey: `${tonicInput} Major`,
+    standardKey: `${cleanTonic} Major`,
+    sharps: sharpCount,
+    flats: flatCount,
+    totalAccidentals: sharpCount > 0 ? sharpCount : flatCount
+  };
+}
+
 

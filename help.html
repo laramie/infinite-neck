@@ -4563,6 +4563,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#decreaseUserInterfaceFont">-</a>
      <a href="#increaseCellNoteFont">+</a>
      <a href="#increaseUserInterfaceFont">=</a>
+     <a href="#toggleDiamonds">*</a>
     <br />
      <a href="#hideMenusBlurFocus">ESC</a>
      <a href="#learnHowToBrowser">Cmd -/+</a> 
@@ -4596,7 +4597,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#userFingeringNoteThumb">5</a> %</td>
         <td><a href="#useNamedNotes">6</a> ^</td>
         <td><a href="#useSingleNotes">7</a> &</td>
-        <td><a href="#useTinyNotes">8</a> *</td>
+        <td><a href="#useTinyNotes">8</a> <a href="#toggleDiamonds">*</a></td>
         <td><a href="#useBendNotes">9</a> (</td>
         <td><a href="#cycleThroughDisplay">0</a><a href="#resetCellNoteFont">)</a></td>
         <td><a href="#decreaseUserInterfaceFont">-</a><a href="#decreaseCellNoteFont">_</a></td>
@@ -4693,10 +4694,10 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td><a href="#usesAFingeringRing" class="Fingering"><i>3</i></a></td>
                     <td><a href="#useFingeringNoteFourth" class="Fingering"><i>4</i></a></td>
                     <td><a href="#userFingeringNoteThumb" class="Fingering"><i>5</i> T<small>humb</small></a></td>
-                    <td><a href="#useNamedNotes" class="Note"><b>6</b><br>Named</a></td>
-                    <td><a href="#useSingleNotes" class="Note"><b>7</b><br>Single</a></td>
-                    <td><a href="#useTinyNotes" class="Note"><b>8</b><br>Tiny</a></td>
-                    <td><a href="#useBendNotes" class="Note"><b>9</b><br>Bend</a></td>
+                    <td style="vertical-align: bottom;"><a href="#useNamedNotes" class="Note"><b>6</b><br>Named</a></td>
+                    <td style="vertical-align: bottom;"><a href="#useSingleNotes" class="Note"><b>7</b><br>Single</a></td>
+                    <td style="vertical-align: bottom;"><a href="#toggleDiamonds"><b>*</b> DiamondRows</a><br> <a href="#useTinyNotes" class="Note"><b>8</b><br>Tiny</a></td>
+                    <td style="vertical-align: bottom;"><a href="#useBendNotes" class="Note"><b>9</b><br>Bend</a></td>
                     <td><a href="#resetCellNoteFont"><b>)</b> reset note font</a><a href="#cycleThroughDisplay"><b>0</b>
                             Nut</a></td>
                     <td><a href="#decreaseCellNoteFont"><b>_</b> note font</a><a
@@ -5370,6 +5371,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>
                 </td>
                 <td>Reset Cell/Note font size to Default
+                </td>
+            </tr>
+            <tr id="toggleDiamonds">
+                <td><span class="key">*</span>
+                </td>
+                <td>
+                </td>
+                <td>Toggle all DiamondRows
                 </td>
             </tr>
         

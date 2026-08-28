@@ -15,7 +15,8 @@ import {
 } from '../../tonalPicker-functions.js';
 import { TonalSourceSet,
          getChord,
-         getMode     
+         getMode,
+         getKeySignatureInfo    
 } from '../../TonalFunctions.js';
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
@@ -598,6 +599,8 @@ export class TonalPlugin {
       return this.buildKeySignatureCount(false);
     } else if (tokenName === 'keySignatureCountHand') {
       return this.buildKeySignatureCount(true);
+    } else if (tokenName === 'keySignatureSimplified') {
+      return this.buildKeySignatureSimplified();
     } else if (tokenName === 'enharmonicChartModeNotes') {
       const song = getSong();
       const section = this .getCurrentSection(song);
@@ -608,7 +611,7 @@ export class TonalPlugin {
     return '';
   }
 
-  buildKeySignatureCount(wantHand){
+  buildKeySignatureCountOLD(wantHand){
       const song = getSong();
       const section = this .getCurrentSection(song);
       const theMode = parseScaleBestEffort(section.chartMode);
@@ -626,6 +629,28 @@ export class TonalPlugin {
         body = (wantHand?'&#x261E; ':'')+flatsCount+" flat"+(flatsCount>1?'s':'');
       }
       return body;
+  }
+
+  buildKeySignatureCount(wantHand){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const info = getKeySignatureInfo(transposedKey);
+      let body = ' ';
+      if (info.sharps > 0){
+        body = (wantHand?'&#x261E; ':'')+info.sharps+" sharp"+(info.sharps>1?'s':'');
+      } else if (info.flats > 0){
+        body = (wantHand?'&#x261E; ':'')+info.flats+" flat"+(info.flats>1?'s':'');
+      }
+      return body;
+  }
+
+  buildKeySignatureSimplified(){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const info = getKeySignatureInfo(transposedKey);
+      return info.standardKey;
   }
 
 

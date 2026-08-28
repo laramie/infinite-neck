@@ -26,7 +26,17 @@
     margin: 0.2em;
     box-shadow: 5px 2px 4px black;
     border-radius: 4px;
-    
+}
+#MobileKeyboard  .mobile-keyboard-skinny {
+    color: #010321;
+    background-color:  #ffdd01;;
+    font-size: 90%;
+    border: 1px solid gray;
+    padding: 0.4em;
+    margin: 0;
+    margin-bottom: 0.2em;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 4px;
 }
 
 #MobileKeyboard b {

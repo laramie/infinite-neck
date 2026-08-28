@@ -334,7 +334,9 @@ table {
 }
 
 #divQuick {
-    margin-left: 4em;
+    margin: 0;
+    margin-left: 2em;
+
 }
 
 #divControls {
@@ -1369,7 +1371,7 @@ small {
 }
 td.note small {
     font-size: 0.55em;
-    padding: 0;
+    padding: 0.2em; /*this is the space between a note letter and sharp or flat symbol*/
     margin: 0;
 }
 

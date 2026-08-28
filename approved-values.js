@@ -265,6 +265,12 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
+		name: 'keySignatureSimplified',
+		description: 'tonal simplified key signature (major only)',
+		resolve: () => getTonalCaptionValue('keySignatureSimplified'),
+		sampleFormat: 'html'
+	},
+	{
 		name: 'songInstrumentBadges',
 		description: 'whole-song instrument role badges',
 		resolve: () => renderSongInstrumentBadges(getSong(), { allowUnknown: true }),

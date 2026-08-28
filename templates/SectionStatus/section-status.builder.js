@@ -1,6 +1,7 @@
 import {ReplayOptions} from '../../ReplayOptions.js';
 import EventBus      from '../../event-bus.js';
 import { isNotesourceID } from '../../fill/notesource-registry.js';
+import {beatsLooping} from '../../looper.js'
 
 function hasOwnStatusValue(data, key) {
     return Object.prototype.hasOwnProperty.call(data || {}, key);
@@ -293,7 +294,8 @@ class SectionStatusWidget {
         const $container = $(this.container);
         $container.attr('data-loop-active', this.loopActive ? 'true' : 'false');
         $container.find('.SectionStatus_loopLight').toggleClass('SectionStatus_loopActive', this.loopActive);
-    }
+       $container.find('.SectionStatus_beatNumber').toggleClass('SectionStatus_showBeatBorder', beatsLooping());
+     }
 
     applyBeatState() {
         if (!this.container) return;

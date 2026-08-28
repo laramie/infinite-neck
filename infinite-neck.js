@@ -3786,6 +3786,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#quickLoopToggle', function() {
 			runActionByName('toggleLoopSections');
 		});
+		bindEvent('click', '#quickBeatLoopToggle', function() {
+			runActionByName('toggleLoopBeats');
+		});
+		bindEvent('click', '#quickTransportToggle', function() {
+			runActionByName('toggleTransport');
+		});
 		bindEvent('click', '#btnNoteV', function() {
 			checkRB("#rbNotename");
 			resetNoteNames();
