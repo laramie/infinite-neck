@@ -1,5 +1,20 @@
 # ChangeLog
 
+### 20260828
+
+Tag: v2.1-beta-15
+
+
+- 3c87b85 **2026-08-28** Added message about what toggling diamondRows does to help. Fixed ambiguous captions for Add One User Tuning.
+- a443935 **2026-08-28** Moved Quick menu up. Added transport and beat loop to Quick menu. Added beat looper border to looper light. Fixed TonalPlugin buildKeySignatureCount. Added '*' key shortcut to toggle all diamondRows.  Added to mobile keyboard. Updated help.
+- 286d9a5 **2026-08-26** Organized widths and hard returns in mobile keyboard so it stretches well for mobile and desktop. Added p4-voicings song. Added decrease UI font button (plumbing was already there).
+- 6fe40df **2026-08-25** hide messages was broken
+- b6d08be **2026-08-25** added Presentation mode
+- d430f2f **2026-08-25** Updated in song-list
+- 41337a5 **2026-08-25** Added 4-minors.json song to show natural minor, harmonic, melodic, and Dorian minors. Did a build.
+- 7ac419a **2026-08-24** v2.1-beta-13
+
+
 ### 20260824
 
 Tag: v2.1-beta-13
