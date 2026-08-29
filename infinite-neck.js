@@ -3422,9 +3422,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function runMobilePreset(){
 		TransportBuilder.hideTransport();
 		$('#divQuick').show();
+		$('.MainMenuTabBtn').addClass('BigMobileBtn');
+		$('#divQuick .MenuButton').addClass('BigMobileBtn');
 		ChromeFullscreen();
 		applyScalingPrefs(false);
 		runMacroLine("/vhwi");
+		hideAllMenuDivs();
+	}
+
+	export function runDesktopPreset(){
+		$('#divQuick').hide();
+		$('.MainMenuTabBtn').removeClass('BigMobileBtn');
+		$('#divQuick .MenuButton').removeClass('BigMobileBtn');
 		hideAllMenuDivs();
 	}
 
@@ -3824,6 +3833,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnRunMobilePreset', function() {
 			runMobilePreset();
+		});
+		bindEvent('click', '#btnRunDesktopPreset', function() {
+			runDesktopPreset();
 		});
 		bindEvent('click', '#btnToggleCmdLine', function() {
 			toggleCmdLine();
