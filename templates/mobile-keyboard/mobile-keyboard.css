@@ -1,3 +1,9 @@
+#MobileKeyboard {
+  overflow-x: auto;
+  display: block;
+  width: 100%;
+}
+
 #MobileKeyboard #MobileKeyboardHelpBtn {
     margin-top: 1em;
     font-size: 140%;
