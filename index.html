@@ -96,6 +96,7 @@
             </div>
     
     <div id="divQuick" style="display: none;">
+        <button onclick="$('#divQuick').toggle();" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">X</button>
         <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note Names</button>
         <button id="quickLoopToggle" class="MenuButton BtnPunchedOut" type="button">LOOP</button>
         <button id="quickBeatLoopToggle" class="MenuButton BtnPunchedOut" type="button">&infin;</button>
@@ -1176,14 +1177,15 @@
                 <div class="menuDiv">
                     <div class="sectionPageControlsGroup">
                         
+                        <button id="btnRunMobileCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Run</button>
                         <label for="txtMobileCmdLine"><b>Command-Line:</b>
                             <input type="text" name="txtNameMobileCmdLine"
-                            id="txtMobileCmdLine" value="" size="64">
+                            id="txtMobileCmdLine" value="" size="32">
                         </label>
-                        <button id="btnRunMobileCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Run</button>
                         <br>
                         <br>
-
+                        
+                        <button id="btnRunMobilePreset" class="BtnPunchedOut BigMobileBtn" type="button">Mobile Presets</button>
 
 
                         <button id="btnToggleTransport" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
@@ -1240,10 +1242,12 @@
                         
                         
                         <br>
-                        <b>Scaling Prefs:</b>
-                        <div id="divScalingPrefs"></div>
+                        <br>
+                        <span style="border: 1px solid green; padding: 0.2em;"><b>Scaling Prefs:</b>
+                        <span id="divScalingPrefs"></span>
+                        </span>&nbsp;&nbsp;&nbsp;<span style="border: 1px solid green; padding: 0.2em;">
                         <b>Instrument Prefs:</b>
-                        <div id="divInstrumentPrefs"></div>
+                        <span id="divInstrumentPrefs"></span></span>
                     </div>
                 </div>
                 <!--end menuDiv-->

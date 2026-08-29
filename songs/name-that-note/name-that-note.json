@@ -703,7 +703,7 @@
       "displayOptions": {
         "autoColor": true,
         "showCellNotes": true,
-        "showSubscriptFunctions": true,
+        "showSubscriptFunctions": false,
         "cellIsFunction": false,
         "showMidiNum": false,
         "useCenterForRightFunction": true,

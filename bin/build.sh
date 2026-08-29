@@ -19,11 +19,11 @@ node bin/version-read.js
 git push --tags
 
 npm run package:deploy 
-## ==>  dist/infinite-neck-20260824-192606.tar.gz
+## ==>  dist/infinite-neck-20260828-014511.tar.gz
 
 ## Your ssh login here:
 export SSH_LAR=    
-export DEPLOY_DATE='20260825-235240'
+export DEPLOY_DATE='20260828-014511'
 
 scp dist/infinite-neck-$DEPLOY_DATE.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
@@ -34,7 +34,7 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 ## Adjust the dates, and do something like: 
 
 export DEPLOY_VERSION='v2.1-beta-15'
-export DEPLOY_DATE='20260825-235240'
+export DEPLOY_DATE='20260828-014511'
 
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy

@@ -245,6 +245,9 @@ table {
     border: 1px solid black;
     border-radius: 4px;
 }
+#divQuick .MenuButton {
+    padding: 1.1em;
+}
 .MenuTabBtn {
      border-bottom-left-radius: 0; 
      border-bottom-right-radius: 0;
@@ -1304,7 +1307,7 @@ input:read-only,textarea:read-only {
 .diamondsPositionCurrent {
     background-color: chartreuse !important;
 }
-.diamondsRow td {
+.diamondsRow td.diamonds {
     background-color: var(--diamonds-background-color);
     font-size: var(--diamonds-size);
 }
@@ -1312,7 +1315,7 @@ input:read-only,textarea:read-only {
     background: none !important;
 }
 .diamondsPositionCurrent.diamondRowSupernut {
-    background-color: rgb(0, 224, 41) !important;
+    background-color: rgb(0, 224, 41, 0.4) !important;
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20px, var(--nut-gradient-color) 21px ) !important;
 }
 .diamonds {

@@ -491,7 +491,6 @@
             background-color: #6faa09;
             color: black;
             cursor: pointer;
-            position: relative;
         }
         .BigMobileBtn {
             padding: 1em;
@@ -3613,12 +3612,21 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
  <p> <span class="productsmaller">infinite-neck</span> has a menu called Desktop which provides some big buttons you can access from a phone
     or tablet when you <i>don't</i> have a Desktop with a normal keyboard.
  </p>  
+
+ <p><i><b>In the app you can find a tab for <span class="GUIReferenceInline">Desktop > Keyboard </span> that gives a map of the keyboard 
+    but with buttons you can click if you are on a phone, because the virtual keyboard is a bit unweildy,
+     and a tab for <span class="GUIReferenceInline">Desktop > Buttons  </span> that gives useful buttons for the phone environment. 
+</b></i></p>
+
  <p>   
     There are also useful functions when you are running on a Desktop, i.e. not a phone or tablet, such as 
     Chrome Fullscreen, Scaling Prefs, and Instrument Prefs.  
  </p>
 <p>
     <ul>
+        <li><button class="BtnPunchedOut BigMobileBtn" type="button">Mobile Presets</button> - Runs some presets that are useful for cleaning up and scaling the User Interface for the phone environment.  Mash 
+            on this button <i>after</> opening a song.  It calls: "Chrome Fullscreen", "Toggle Transport [off]", "Toggle Quick Menu [on]", "Apply Scaling Prefs", and "instrument c<b>A</b>ption [hide]".
+
         <li><button class="BtnPunchedOut BigMobileBtn" type="button">Chrome Fullscreen</button> - normally burried in Chrome's menu. However, this version lets you out of Chrome fullscreen
             with <span class="key">ESC</span>, which overrides the
             behavior in <span class="productsmaller">infinite-neck</span> that <span class="key">ESC</span> gets you out of
@@ -3649,17 +3657,19 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 
 <a name="QuickMenu"></a>
 <h3>Quick Menu</h3>
-<p>This is a row of buttons that are useful when running presentations:
+<p>This is a row of buttons that are useful when running presentations, and also on the phone, where the menus can be unweildy:
         <br>
         <br>
-        <span id="divQuick">
-            <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note Names</button>
-            <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
-            <span class="PunchedTogether">
-                <button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">Func</button>
-                <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button>
-            </span>
-            <button class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
+         <span id="divQuick">
+            <button class="BigMobileBtn MenuButton  BtnPunchedOut" type="button" tabindex="-1">X</button>
+            <button id="btnShowAllNoteNames" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button" tabindex="-1">Show All Note Names</button>
+            <button id="quickLoopToggle" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button">LOOP</button>
+            <button id="quickBeatLoopToggle" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button">&infin;</button>
+            <button id="btnRandomLoop" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
+            <button id="quickTransportToggle" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button">Transport</button>
+            <span class="PunchedTogether"><button id="btnFuncV" class="BigMobileBtn MenuButton  BtnPunchedIn" type="button" tabindex="-1">Func</button>
+            <button id="btnNoteV" class="BigMobileBtn MenuButton  BtnPunchedOut" type="button" tabindex="-1">Note</button></span>
+            <button id="btnAutoColor" class="BigMobileBtn MenuButton  BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
         </span>
 
 </p>
@@ -3668,8 +3678,26 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 
 <table class="ExamplesTable">
   <tr>
+    <td><b>X</b></td>
+    <td>Close the Quick Menu</td>
+  </tr>
+  <tr>
     <td><b>Show All Note Names</b></td>
-    <td>Found on View menu, shows note names in every cell.</td>
+    <td>Found on View menu, shows note names in every cell.  Same as <span class="menuExampleLine">/vsa</span></td>
+  </tr>
+  <tr>
+    <td><b>LOOP</b></td>
+    <td><p>Found also in command-line <span class="menuExampleLine">/rl</span> which 
+        toggles Section looping.
+    </p><p>Use <span class="menuExampleLine">/re</span> to start Beat looping, but Beats are not random looped, just Section looping.
+    </p>
+    </td>
+  </tr>
+  <tr>
+    <td><b>&infin;</b></td>
+    <td><p>Found also in command-line <span class="menuExampleLine">/re</span> which 
+        toggles Beat looping.</p>
+    </td>
   </tr>
   <tr>
     <td><b>Random Loop</b></td>
@@ -3681,6 +3709,10 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
     </p><p>Use <span class="menuExampleLine">/re</span> to start Beat looping, but Beats are not random looped, just Section looping.
     </p>
     </td>
+  </tr>
+  <tr>
+    <td><b>Transport</b></td>
+    <td>Toggle the Transport. Same as <span class="menuExampleLine">/rt</span></td>
   </tr>
   <tr>
     <td><b>Func</b></td>
@@ -4672,6 +4704,9 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
 
 <a name="ActionsKeyboard"></a>
 <h5  style="color: black;" >Here are the Actions in a U.S. standard keyboard layout:</h5>
+<p><i><b>These buttons jump to the help topics.  In the app there is a version of this where the buttons do the actual actions.  It is found on the Desktop menu, 
+    in <span class="GUIReferenceInline">Desktop > Keyboard  </span>
+</b></i></p>
     <div class="alphaCheatSheetLinks">
 
 

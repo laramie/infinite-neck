@@ -2559,6 +2559,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getCurrentSection().sharps = false;
 		resetNoteNames();
 		updateSectionsStatus();
+		showBeats(); //resetNoteNames() rebuilds cell DOM, so recorded/played notes need repainting for the current beat.
 	}
 	
 	export function setSectionKeysSharps(){
@@ -2566,6 +2567,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getCurrentSection().sharps = true;
 		resetNoteNames();
 		updateSectionsStatus();
+		showBeats(); //resetNoteNames() rebuilds cell DOM, so recorded/played notes need repainting for the current beat.
 	}
 	// see also: song.js :: cycleThruKeysAllSections()
 	export function cycleThruKeys(amount){
@@ -3417,6 +3419,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		updateCmdLineView();
 		return result;
 	}
+	export function runMobilePreset(){
+		TransportBuilder.hideTransport();
+		$('#divQuick').show();
+		ChromeFullscreen();
+		applyScalingPrefs(false);
+		runMacroLine("/vhwi");
+		hideAllMenuDivs();
+	}
 
 
 	//==================== 4) UI event binding and control wiring =============
@@ -3811,6 +3821,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnRunMobileCmdLine', function() {
 			let line = $('#txtMobileCmdLine').val();
 			runMobileCommandLine(line);
+		});
+		bindEvent('click', '#btnRunMobilePreset', function() {
+			runMobilePreset();
 		});
 		bindEvent('click', '#btnToggleCmdLine', function() {
 			toggleCmdLine();
