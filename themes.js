@@ -11,7 +11,7 @@ export const gThemes = {
         "instrumentMargins": "1em",
         "nutColor": "#331e01",
         "rootColor": "green",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor":"transparent",
@@ -28,8 +28,7 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "black",
         "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey": "none",
-        "borderImageBlackKey": "none",
-        "instrumentBorderImage": "none"
+        "borderImageBlackKey": "none"
     },
     "PoolShark" : {
         "id": "PoolShark",
@@ -43,7 +42,7 @@ export const gThemes = {
         "rootColor": "lightgreen",
         "diamondsColor": "red",
         "doubleDiamondsColor": "red",
-        "diamondsSize": "1.0em",
+        "diamondsSize": "1.0rem",
         "instrumentMargins": "2em",
         "noteWhiteShadowColor": "#222",
         "noteBlackShadowColor": "black",
@@ -51,7 +50,8 @@ export const gThemes = {
         "noteBlackKeyColor": "#555",
         "noteWhiteKeyFontColor": "#555",
         "noteBlackKeyFontColor": "white",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "1em"
     },
     "Mahjong" : {
         "id": "Mahjong",
@@ -65,7 +65,7 @@ export const gThemes = {
         "instrumentMargins": "2em",
         "nutColor": "lightgreen",
         "rootColor": "lightgreen",
-        "diamondsSize": "1.0em",
+        "diamondsSize": "1.0rem",
         "diamondsColor": "red",
         "doubleDiamondsColor": "red",
         "diamondsBackgroundColor": "transparent",
@@ -95,11 +95,12 @@ export const gThemes = {
         "cellSpacing": "6pt",
         "instrumentBackground": "#311900",
         "nutColor": "brown",
-        "diamondsSize": "0.6em",
+        "diamondsSize": "0.6rem",
         "diamondsColor": "red",
         "doubleDiamondsColor": "orange",
         "diamondsBackgroundColor":"black",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "0.4em"
     },
     "Autobahn" : {
         "id": "Autobahn",
@@ -113,7 +114,7 @@ export const gThemes = {
         "diamondsColor": "green",
         "doubleDiamondsColor": "red",
         "noteWhiteShadowColor": "black",
-        "noteBlackShadowColor": "black",
+        "noteBlackShadowColor": "black"
     },
     "LateNite" : {
         "id": "LateNite",
@@ -141,7 +142,7 @@ export const gThemes = {
       "instrumentBackground": "#7C4700",
       "instrumentMargins": "0",
       "nutColor": "#331e01",
-      "diamondsSize": "2em",
+      "diamondsSize": "2rem",
       "diamondsColor": "green",
       "doubleDiamondsColor": "red",
       "diamondsBackgroundColor": "transparent",
@@ -166,7 +167,8 @@ export const gThemes = {
         "noteBlackKeyFontColor": "lightgreen",
         "borderImageWhiteKey": "url('img/celtic-background-white.png')",
         "borderImageBlackKey":  "url('img/celtic-background-black.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "0.4em"
     },
     "Renfaire" : {
         "id": "Renfaire",
@@ -183,7 +185,8 @@ export const gThemes = {
         "noteBlackKeyFontColor": "#f5e0c4",
         "borderImageWhiteKey": "url('img/celtic-background-2.png')",
         "borderImageBlackKey":  "url('img/celtic-background-2.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "0.4em"
     },
     "LandauTop" : {
         "id": "LandauTop",
@@ -238,7 +241,8 @@ export const gThemes = {
         "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey":  "none",
         "borderImageBlackKey":  "none",
-        "instrumentBorderImage": "url('img/blade-border.png')"
+        "instrumentBorderImage": "url('img/blade-border.png')",
+        "instrumentBorderThickness": "1.4em"
     },
     "Piano" : {
         "id": "Piano",
@@ -351,7 +355,7 @@ export const gThemes = {
         "instrumentBackground": "#0aa",
         "nutColor": "yellow",
         "diamondsColor": "pink",
-        "diamondsSize": "3em",
+        "diamondsSize": "3rem",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor":"transparent",
         "noteWhiteShadowColor": "green",
@@ -367,7 +371,7 @@ export const gThemes = {
         "cellSpacing": "6pt",
         "instrumentBackground": "#6ebcff",
         "nutColor": "yellow",
-        "diamondsSize": "2em",
+        "diamondsSize": "2rem",
         "diamondsColor": "darkblue",
         "doubleDiamondsColor": "red",
         "diamondsBackgroundColor":"transparent"
@@ -383,7 +387,7 @@ export const gThemes = {
         "nutColor": "lightgray",
         "diamondsColor": "red",
         "doubleDiamondsColor": "red",
-        "diamondsSize": "1.0em",
+        "diamondsSize": "1.0rem",
         "instrumentMargins": "2em",
         "noteWhiteShadowColor": "#222",
         "noteBlackShadowColor": "black",
@@ -401,7 +405,7 @@ export const gThemes = {
         "cellSpacing": "10pt",
         "instrumentBackground": "brown",
         "nutColor": "yellow",
-        "diamondsSize": "4em"
+        "diamondsSize": "4rem"
     },
     "GuitarStrings" : {
         "id": "GuitarStrings",
@@ -413,7 +417,7 @@ export const gThemes = {
         "instrumentBackground": "SaddleBrown",
         "instrumentMargins": "1em",
         "nutColor": "#331e01",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor": "transparent",
@@ -442,7 +446,7 @@ export const gThemes = {
         "instrumentBackground": "SaddleBrown",
         "instrumentMargins": "1em",
         "nutColor": "#331e01",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor": "transparent",
@@ -471,7 +475,7 @@ export const gThemes = {
         "instrumentBackground": "#311900",
         "instrumentMargins": "0",
         "nutColor": "brown",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor": "transparent",
@@ -488,7 +492,7 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "1.4em"
+        "instrumentBorderThickness": "0.4em"
     },
     "GuitarStringsBlackGlow": {
         "id": "GuitarStringsBlackGlow",
@@ -500,7 +504,7 @@ export const gThemes = {
         "instrumentBackground": "#311900",
         "instrumentMargins": "0",
         "nutColor": "brown",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "pink",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor": "transparent",
@@ -516,8 +520,7 @@ export const gThemes = {
         "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "1.4em"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "GuitarStringsWhite": {
         "id": "GuitarStringsWhite",
@@ -529,7 +532,7 @@ export const gThemes = {
         "instrumentBackground": "#230404",
         "instrumentMargins": "0",
         "nutColor": "green",
-        "diamondsSize": "1.5em",
+        "diamondsSize": "1.5rem",
         "diamondsColor": "brown",
         "doubleDiamondsColor": "gold",
         "diamondsBackgroundColor": "black",
@@ -545,8 +548,7 @@ export const gThemes = {
         "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "1.4em"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')"
     },
     "USER" : {
         "id": "USER",

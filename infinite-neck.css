@@ -10,7 +10,7 @@
    *       --diamonds-color: pink;
    *       --double-diamonds-color: aqua;
    *       --diamonds-background-color: transparent;
-   *       --diamonds-size: 1em;
+   *       --diamonds-size: 1rem;  (rem, not em: must stay independent of UI/note font-size scaling, only Theme-driven)
    *       --note-white-shadow-color: black;
    *       --note-black-shadow-color: white;
    *       --instrument-margin-tb: 4em;             now just bottom, not top.

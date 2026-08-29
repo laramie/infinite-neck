@@ -144,8 +144,10 @@ export function dumpThemeIds(){
 			setVal('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
 			setVal('#dropDownBorderImageBlackKey', 'borderImageBlackKey');
 			setVal('#dropDownInstrumentBorderImage', 'instrumentBorderImage');
-			if (theme["instrumentBorderImage"]){
-				setOneCssVar('--instrument-border-thickness', '1.4em');
+			const ibi = theme["instrumentBorderImage"];
+			if (ibi && (ibi != 'none')){
+				//add *extra* space inside the border:
+				setOneCssVar('--instrument-border-thickness', theme["instrumentBorderThickness"]);
 			} else {
 				setOneCssVar('--instrument-border-thickness', '0');
 			}
@@ -197,10 +199,10 @@ export function dumpThemeIds(){
 			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage').val();
 
 			if (options.instrumentBorderImage && options.instrumentBorderImage !== "none"){
-				options.instrumentBorderThickness = '1.4em'; 
-				setOneCssVar('--instrument-border-thickness', '1.4em');
+				//This is really *extra* space for the border.  The spec says the border renders into the thickness, but that is not true.
+				setOneCssVar('--instrument-border-thickness', options.instrumentBorderThickness);
 			} else {
-				options.instrumentBorderThickness = '0.2em'; 
+				options.instrumentBorderThickness = '0'; 
 				setOneCssVar('--instrument-border-thickness', '0');
 			}
     
