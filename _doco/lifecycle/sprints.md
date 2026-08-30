@@ -218,6 +218,12 @@ The sprints toward this effort are documented here.
 - [sprint 140-tool-notesource](../design/sprints/140-tool-notesource/sprint-140.md)
   - an investigative sprint to provide notesources for Tool windows such as Perfect4thsCalculator.
 
+- [sprint 141-float-layouts](../design/sprints/141-float-layouts/sprint-141.md)
+  - fix float layouts.
+
+- [sprint 142-loop-button-central](../design/sprints/142-loop-button-central/sprint-142.md)
+  - centralize handling of loop button captions and state.
+
 
 <br>
 <br>
