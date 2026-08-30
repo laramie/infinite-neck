@@ -2660,7 +2660,15 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
         these.)
     <li>Set the <b><a href="#glossaryLeadKey">LeadKey</a></b> of the current Section (TinyNotes follow <a href="#glossaryLeadKey">LeadKey</a>) or "root" to follow the <a href="#glossaryKey">Key</a>.
     <li>Set the enharmonic choice of <b>Flats</b> or <b>Sharps</b> for the key of the Section. [See <a
-            href="#divSectionKeyChange">Key Change</a> below]
+            href="#divSectionKeyChange">Key Change</a> below] 
+    <li><b>Note:</b> Setting Flats or Sharps here does not set the default for how new Sections will be created.  To set that, use 
+        <ul>
+            <li><span class="menuExampleLine"><b>/fks</b></span> for sharps (overrides if run after /fkk)</li>
+            <li><span class="menuExampleLine"><b>/fkf</b></span> for flats (overrides if run after /fkk)</li>
+            <li><span class="menuExampleLine"><b>/fkk</b></span> to set the default key, which sets sharps/flats according to the Major key signature of the chosen key.</li>
+        </ul>
+        Note also that setting the key with the dropdown does <i>not</i> automatically choose sharps/flats based on the signature, but using the command-line <span class="menuExampleLine"><b>/fkk</b></span> will.
+    </li>        
     <li><b>Transpose</b> all NamedNotes in the Section. (Use keyboard shortcuts for these: <span
             class="GUIReferenceInline">File | Allow transposition by keyboard shortcuts</span>)
     <li><b>Add</b>, <b>Shallow</b> clone, <b>Clone</b>, and <b>Delete</b> Sections
@@ -2866,6 +2874,18 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     because whether Sharps or Flats are shown
     in the LeadKey dropdown is chosen by the Section's Sharps/Flats buttons, which also set the choices displayed for the Key dropdown.  Similarly, using 
     the <a href="#commandline">command-line</a> to set <a href="#glossaryLeadKey">LeadKey</a>, choose the correct pitch using the available "black keys" menu choice, e.g. D&flat; instead of C&sharp;, which is not available through the <a href="#commandline">command-line</a>.
+</p>
+
+<p>
+    <b>Note:</b> Setting Flats or Sharps here does not set the default for how new Sections will be created.  To set that, use 
+        <ul>
+            <li><span class="menuExampleLine"><b>/fks</b></span> for sharps (overrides if run after /fkk)</li>
+            <li><span class="menuExampleLine"><b>/fkf</b></span> for flats (overrides if run after /fkk)</li>
+            <li><span class="menuExampleLine"><b>/fkk</b></span> to set the default key, which sets sharps/flats according to the Major key signature of the chosen key.</li>
+        </ul>
+    </p>
+    <p>
+        Note also that setting the key with the dropdown does <i>not</i> automatically choose sharps/flats based on the signature, but using the command-line <span class="menuExampleLine"><b>/fkk</b></span> will.
     </p>
 
 <p>Remember, this is just a display option, and does not change the actual notes on the neck.

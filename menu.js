@@ -119,7 +119,7 @@ export var gMenuFile =    {
             },
             {
               "name": "key",
-              "caption": "<b>k</b>ey",
+              "caption": "<b>k</b>ey (default)",
               "trigger": "k",
               "children": [
                 {
