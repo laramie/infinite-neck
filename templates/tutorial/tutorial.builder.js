@@ -1,6 +1,7 @@
 import { escapeHtml } from '../../InstrumentRoleBadges.js';
 import { getSanitizedInfo } from '../../html-sanitizer.js';
 import {
+    getLoopCaptionModel,
     isSectionDone,
     normalizeIncludeInLooping,
     normalizeTutorialMode,
@@ -83,7 +84,9 @@ export function buildTutorialPromptModel({
     progress = {},
     includeInLoopingSectionIndexes = null,
     lessonSectionListOpen = false,
-    hamburgerControlsOpen = true
+    hamburgerControlsOpen = true,
+    sectionsLoopActive = false,
+    beatsLoopActive = false
 } = {}) {
     const mode = normalizeTutorialMode(song?.tutorial?.level);
     const sectionTutorial = getSectionTutorial(song, currentSectionIndex);
@@ -104,6 +107,14 @@ export function buildTutorialPromptModel({
         promptHtml: renderPromptLines(sectionTutorial.prompt?.lines),
         hamburgerControlsOpen: !!hamburgerControlsOpen,
         lessonSectionListOpen: !!lessonSectionListOpen,
+        sectionsLoopActive: !!sectionsLoopActive,
+        beatsLoopActive: !!beatsLoopActive,
+        loopSectionsCaption: getLoopCaptionModel({
+            looping: !!sectionsLoopActive,
+            random: !!song?.randomLoop,
+            includeInLoopingSectionIndexes,
+            sectionCount
+        }),
         lessonSections: buildLessonSectionListModel({
             song,
             currentSectionIndex,
@@ -139,8 +150,8 @@ export function renderTutorialPrompt(model = {}) {
          + '<button type="button" class="tutorialNavNext" data-action="tutorialNextSection">Next &raquo;</button>'
          + '<button type="button" class="tutorialNav" data-action="tutorialLastSection">Last &#x21E5;</button>'
          + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-         + '<button type="button" class="tutorialLoopBeats classLoopBeats" data-action="tutorialLoopBeats">&infin;</button>'
-         + '<button type="button" class="tutorialLOOP classLoopSections" data-action="tutorialLoopSections">LOOP</button>'
+         + `<button type="button" class="tutorialLoopBeats classLoopBeats${model.beatsLoopActive ? ' ButtonOn' : ''}" data-action="tutorialLoopBeats">&infin;</button>`
+         + `<button type="button" class="tutorialLOOP classLoopSections${model.sectionsLoopActive ? ' ButtonOn' : ''}" data-action="tutorialLoopSections">${model.loopSectionsCaption || 'LOOP'}</button>`
          + '</div>'
         :  ''; 
     const modeClass = model.strict ? 'tutorialPrompt--strict' : 'tutorialPrompt--wizard';

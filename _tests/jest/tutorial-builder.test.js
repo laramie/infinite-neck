@@ -62,4 +62,25 @@ describe('Tutorial Prompt builder', () => {
         expect(html).not.toContain('lessonSectionList');
         expect(html).not.toContain('tutorialPromptBreadcrumbs');
     });
+
+    test('bakes active loop state and caption into the LOOP buttons so re-render on Section change cannot regress it', () => {
+        const inactiveModel = buildTutorialPromptModel({
+            song: tutorialSong(),
+            currentSectionIndex: 1
+        });
+        const inactiveHtml = renderTutorialPrompt(inactiveModel);
+        expect(inactiveHtml).toContain('class="tutorialLOOP classLoopSections" data-action="tutorialLoopSections">LOOP<');
+        expect(inactiveHtml).toContain('class="tutorialLoopBeats classLoopBeats" data-action="tutorialLoopBeats">');
+
+        const activeModel = buildTutorialPromptModel({
+            song: { ...tutorialSong(), randomLoop: true },
+            currentSectionIndex: 1,
+            includeInLoopingSectionIndexes: [1, 2],
+            sectionsLoopActive: true,
+            beatsLoopActive: true
+        });
+        const activeHtml = renderTutorialPrompt(activeModel);
+        expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3....<');
+        expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
+    });
 });

@@ -28,11 +28,6 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 	let looperTimingMode = LoopTimingMode.VISUAL;
 	let looperTimingProviders = { ...defaultTimingProviders };
 
-	const LOOPING_FRAMES_CAPTION        = "LOOPING...";
-	const LOOPING_FRAMES_CAPTION_RANDOM = "RANDOM....";
-
-	const LOOPING_BEATS_CAPTION         = "LOOPING...";
-
 	function getSong(){
 		return InfiniteNeck.getSong();
 	}
@@ -227,14 +222,8 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 		isBeatsLooping = false;
 		callTimingHook('resetTimingState', { reason: 'start-loop', loopKind: 'sections' }, { ignoreTimingMode: true });
 	        showBPM();
-        var caption = LOOPING_FRAMES_CAPTION;
         var song = getSong();
-        if (song && song.randomLoop){
-            caption = LOOPING_FRAMES_CAPTION_RANDOM;
-        }
-	    EventBus.trigger('Looper:OnLoopSectionsStart', {
-			caption
-		});
+	    EventBus.trigger('Looper:OnLoopSectionsStart');
     
         if (song) {
             EventBus.trigger('DaCapo:OnSongBegin', {
@@ -257,9 +246,7 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 		isBeatsLooping = true;
 		const song = getSong();
 		callTimingHook('resetTimingState', { reason: 'start-loop', loopKind: 'beats' }, { ignoreTimingMode: true });
-		EventBus.trigger('Looper:OnLoopBeatsStart', {
-			caption: LOOPING_BEATS_CAPTION
-		});
+		EventBus.trigger('Looper:OnLoopBeatsStart');
 
 		if (song) {
 			emitSectionBeginForCurrentSong(song, {

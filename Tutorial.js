@@ -170,16 +170,18 @@ export function filterStrictLoopSectionIndex(candidateIndex, options = {}) {
     return candidate;
 }
 
-export function getLoopCaptionModel({ looping = false, includeInLoopingSectionIndexes = [], sectionCount = 0 } = {}) {
+export function getLoopCaptionModel({ looping = false, random = false, includeInLoopingSectionIndexes = [], sectionCount = 0 } = {}) {
     if (!looping) {
         return 'LOOP';
     }
+    const baseWord = random ? 'RANDOM' : 'LOOPING';
+    const suffix = random ? '....' : '...';
     const all = normalizeIncludeInLooping(sectionCount);
     const include = normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes);
     if (include.length === 0 || include.length === all.length) {
-        return 'LOOPING';
+        return `${baseWord}${suffix}`;
     }
-    return `LOOPING ${include[0] + 1}..${include[include.length - 1] + 1}`;
+    return `${baseWord} ${include[0] + 1}..${include[include.length - 1] + 1}${suffix}`;
 }
 
 export function getProgressBadgeModel(entry = {}, progress = {}) {

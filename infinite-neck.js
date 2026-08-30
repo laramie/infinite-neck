@@ -565,7 +565,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			progress: getTutorialProgress(),
 			includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes,
 			lessonSectionListOpen: tutorialRuntimeState.lessonSectionListOpen,
-			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen
+			hamburgerControlsOpen: tutorialRuntimeState.hamburgerControlsOpen,
+			sectionsLoopActive: sectionsLooping(),
+			beatsLoopActive: beatsLooping()
 		});
 	}
 
@@ -573,14 +575,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!sectionsLooping()){
 			return;
 		}
-		const sectionCount = getSong()?.getSections?.().length || 0;
-		showLoopSectionsStarted({
-			caption: getLoopCaptionModel({
-				looping: true,
-				includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || [],
-				sectionCount
-			})
-		});
+		applyLoopSectionsUi(true);
 	}
 
 	export function tutorialToggleHamburgerControls(){
@@ -3357,22 +3352,27 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 	}
 
-	function showLoopSectionsStarted(data){
-        const caption = (data && data.caption)
-            ? data.caption
-            : (getSong() && getSong().randomLoop ? 'RANDOM....' : 'LOOPING...');
-        $('#btnLoopSections').html(caption).addClass('ButtonOn');
-        $('.classLoopSections').html(caption).addClass('ButtonOn');
+	function applyLoopSectionsUi(active){
+        const song = getSong();
+        const sectionCount = song && typeof song.getSections === 'function' ? song.getSections().length : 0;
+        const caption = getLoopCaptionModel({
+            looping: active,
+            random: !!(song && song.randomLoop),
+            includeInLoopingSectionIndexes: tutorialRuntimeState.includeInLoopingSectionIndexes || [],
+            sectionCount
+        });
+        $('#btnLoopSections').html(caption).toggleClass('ButtonOn', active);
+        $('.classLoopSections').html(caption).toggleClass('ButtonOn', active);
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
-			isLoopActive: true
+			isLoopActive: active
 		});
     }
 
-    function showLoopSectionsStopped(){
-        $('#btnLoopSections').html('LOOP').removeClass('ButtonOn');
-        $('.classLoopSections').html('LOOP').removeClass('ButtonOn');
+    function applyLoopBeatsUi(active){
+        $('#btnLoopBeats').toggleClass('ButtonOn', active);
+        $('.classLoopBeats').toggleClass('ButtonOn', active);
 		EventBus.trigger('Widget:SectionStatus:loopChanged', {
-			isLoopActive: false
+			isLoopActive: active
 		});
     }
 
@@ -4609,24 +4609,16 @@ EventBus.on('TableLayout:changed', function() {
 	refreshFileMenuSongInstrumentBadges();
 });
 EventBus.on('Looper:OnLoopBeatsStart', function() {
-	$('#btnLoopBeats').addClass('ButtonOn');
-	$('.classLoopBeats').addClass('ButtonOn');
-	EventBus.trigger('Widget:SectionStatus:loopChanged', {
-		isLoopActive: true
-	});
+	applyLoopBeatsUi(true);
 });
 EventBus.on('Looper:OnLoopBeatsStop', function() {
-	$('#btnLoopBeats').removeClass('ButtonOn');
-	$('.classLoopBeats').removeClass('ButtonOn');
-	EventBus.trigger('Widget:SectionStatus:loopChanged', {
-		isLoopActive: false
-	});
+	applyLoopBeatsUi(false);
 });
-EventBus.on('Looper:OnLoopSectionsStart', function(event, data) {
-    showLoopSectionsStarted(data);
+EventBus.on('Looper:OnLoopSectionsStart', function() {
+    applyLoopSectionsUi(true);
 });
 EventBus.on('Looper:OnLoopSectionsStop', function() {
-    showLoopSectionsStopped();
+    applyLoopSectionsUi(false);
 });
 
 

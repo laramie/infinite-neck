@@ -150,13 +150,7 @@ describe('looper looping state', () => {
 		expect(mockRuntime.showBPM).toHaveBeenCalledTimes(1);
 		expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
 		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
-		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
-	});
-
-	test('toggleLoopSections emits random caption when randomLoop is enabled', () => {
-		mockRuntime.song = makeMockSong({ randomLoop: true });
-		toggleLoopSections();
-		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'RANDOM....' });
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart');
 	});
 
 	test('toggleLoopSections turns sections looping off when on', () => {
@@ -177,7 +171,7 @@ describe('looper looping state', () => {
 		expect(sectionsLooping()).toBe(false);
 		expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 125);
 		expect(triggerSpy.mock.calls).toEqual([
-			['Looper:OnLoopBeatsStart', { caption: 'LOOPING...' }],
+			['Looper:OnLoopBeatsStart'],
 			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
 
@@ -195,7 +189,7 @@ describe('looper looping state', () => {
 		toggleLoopBeats();
 
 		expect(triggerSpy.mock.calls.filter(([eventName]) => eventName === 'Looper:OnLoopBeatsStart')).toEqual([
-			['Looper:OnLoopBeatsStart', { caption: 'LOOPING...' }]
+			['Looper:OnLoopBeatsStart']
 		]);
 		expect(triggerSpy.mock.calls.filter(([eventName]) => eventName === 'Looper:OnLoopBeatsStop')).toEqual([
 			['Looper:OnLoopBeatsStop']
@@ -209,7 +203,7 @@ describe('looper looping state', () => {
 		toggleLoopSections();
 		expect(triggerSpy.mock.calls).toEqual([
 			['Looper:OnLoopBeatsStop'],
-			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
+			['Looper:OnLoopSectionsStart'],
 			['DaCapo:OnSongBegin', expect.any(Object)],
 			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
@@ -226,7 +220,7 @@ describe('looper looping state', () => {
 		expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
 		expect(triggerSpy.mock.calls).toEqual([
 			['Looper:OnLoopSectionsStop'],
-			['Looper:OnLoopSectionsStart', { caption: 'LOOPING...' }],
+			['Looper:OnLoopSectionsStart'],
 			['DaCapo:OnSongBegin', expect.any(Object)],
 			['DaCapo:OnSectionBegin', expect.any(Object)]
 		]);
@@ -236,7 +230,7 @@ describe('looper looping state', () => {
 		mockRuntime.song = null;
 		expect(() => toggleLoopSections()).not.toThrow();
 		expect(sectionsLooping()).toBe(true);
-		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart', { caption: 'LOOPING...' });
+		expect(triggerSpy).toHaveBeenCalledWith('Looper:OnLoopSectionsStart');
 	});
 
 	test('scheduled loop beat uses song.requestUiShowBeats when available', () => {
