@@ -113,6 +113,13 @@
     box-shadow:   inset -4px -4px 4px darkolivegreen, 5px 2px 4px black;
     border-color: darkolivegreen;
 }
+
+.tutorialLoopBeats.ButtonOn,
+.tutorialLOOP.ButtonOn{
+    background-color: magenta !important;
+}
+
+
 .tutorialSectionMark {
     font-size: 80%;
     color: green;

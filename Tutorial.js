@@ -175,13 +175,12 @@ export function getLoopCaptionModel({ looping = false, random = false, includeIn
         return 'LOOP';
     }
     const baseWord = random ? 'RANDOM' : 'LOOPING';
-    const suffix = random ? '....' : '...';
     const all = normalizeIncludeInLooping(sectionCount);
     const include = normalizeIncludeInLooping(sectionCount, includeInLoopingSectionIndexes);
     if (include.length === 0 || include.length === all.length) {
-        return `${baseWord}${suffix}`;
+        return `${baseWord}`;
     }
-    return `${baseWord} ${include[0] + 1}..${include[include.length - 1] + 1}${suffix}`;
+    return `${baseWord} ${include[0] + 1}..${include[include.length - 1] + 1}`;
 }
 
 export function getProgressBadgeModel(entry = {}, progress = {}) {
