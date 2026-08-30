@@ -1263,11 +1263,6 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       section.sharps = Constants.noteIdPrefersSharps(rootID);
     });
 
-    const currentSection = typeof song.getCurrentSection === 'function' ? song.getCurrentSection() : null;
-    if (currentSection) {
-      song.sharps = !!currentSection.sharps;
-    }
-
     if (!song.isHeadless && typeof song.requestUiFullRepaint === 'function') {
       song.requestUiFullRepaint();
     }

@@ -711,7 +711,7 @@ describe('TransposePlugin', () => {
 
     expect(plugin.invokeAction('apply', { song }).result).toBe('manual apply: interval 1 (delta 1)');
     expect(sections.map((section) => section.sharps)).toEqual([false, true, true]);
-    expect(song.sharps).toBe(true);
+    expect(song.sharps).toBe(false);
     expect(song.requestUiFullRepaint).toHaveBeenCalledTimes(1);
   });
 

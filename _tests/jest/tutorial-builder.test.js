@@ -80,7 +80,7 @@ describe('Tutorial Prompt builder', () => {
             beatsLoopActive: true
         });
         const activeHtml = renderTutorialPrompt(activeModel);
-        expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3....<');
+        expect(activeHtml).toContain('class="tutorialLOOP classLoopSections ButtonOn" data-action="tutorialLoopSections">RANDOM 2..3<');
         expect(activeHtml).toContain('class="tutorialLoopBeats classLoopBeats ButtonOn" data-action="tutorialLoopBeats">');
     });
 });

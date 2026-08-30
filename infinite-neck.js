@@ -987,12 +987,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function resetSharps(options) {
-		buildCells(getSong().sharps, options);
+		buildCells(true, options);
 		resetSharpsControls();
 	}
 
 	export function resetFlats(options) {
-		buildCells(getSong().sharps, options);
+		buildCells(false, options);
 		resetFlatsControls();
 	}
 
@@ -1024,7 +1024,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    let options = {};
 	    let rootID = getCurrentSection().rootID;
 		let rootIDLead = getCurrentSection().rootIDLead;
-	    getSong().sharps = getCurrentSection().sharps;
 	    if (rootID!=null && ((""+rootID).length>0)) {
 	        options.rootID = rootID;
 			options.rootIDLead = rootIDLead;
@@ -1051,7 +1050,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.pianoWhiteToBlackWidthRatio = $('#selPianoWhiteToBlackWidthRatio').val() || '2.3';
 		options.pianoFingeringHPosition = $('#selPianoFingeringHPosition').val() || '50%';
 
-	    if (getSong().sharps) {
+	    if (getCurrentSection().sharps) {
 	        resetSharps(options);
 	        resetSharpsControls();
 	    } else {
@@ -2560,7 +2559,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().sharps = true;
 	}
 	export function setSectionKeysFlats(){
-		getSong().sharps = false;
 		getCurrentSection().sharps = false;
 		resetNoteNames();
 		updateSectionsStatus();
@@ -2568,7 +2566,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 	
 	export function setSectionKeysSharps(){
-		getSong().sharps = true;
 		getCurrentSection().sharps = true;
 		resetNoteNames();
 		updateSectionsStatus();

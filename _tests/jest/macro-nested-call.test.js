@@ -62,6 +62,8 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
     showTransport: jest.fn(),
     toggleSectionDrawer: jest.fn(),
     toggleRandomLoop: jest.fn(),
+    setSongFlats: jest.fn(),
+    setSongSharps: jest.fn(),
     setSectionKeysFlats: jest.fn(),
     setSectionKeysSharps: jest.fn(),
     getSong: jest.fn(),
