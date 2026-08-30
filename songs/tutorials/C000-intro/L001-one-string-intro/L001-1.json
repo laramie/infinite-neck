@@ -335,7 +335,7 @@
                 "            These are \"Fingering\" notes, and show ",
                 "            which finger you should use for each fret, 1 being your Index finger, 2 being your middle finger, ",
                 "            3 being your ring finger, and 4 being your pinkie. ",
-                "            Go to the Next step, where you can loop the notes and play along.",
+                "            Go to the Next step, where you can loop the notes and play along.<br>",
                 " <a href='#macro=macro-strict'>strict</a>",
                 " <a href='#macro=macroNone'>none</a>",
                 " <a href='#macro=macroWizard'>wizard</a>",
