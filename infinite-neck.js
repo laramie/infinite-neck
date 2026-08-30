@@ -2552,6 +2552,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		TransportBuilder.toggleSectionDrawer();
 	}
 
+	export function setSongFlats(){
+		getSong().sharps = false;
+	}
+	
+	export function setSongSharps(){
+		getSong().sharps = true;
+	}
 	export function setSectionKeysFlats(){
 		getSong().sharps = false;
 		getCurrentSection().sharps = false;

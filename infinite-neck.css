@@ -841,6 +841,8 @@ table.viewControls th {
 #btnLoopBeats {
     border: 1px solid green;
 }
+#quickLoopToggle.ButtonOn,
+#quickBeatLoopToggle.ButtonOn,
 #btnLoopSections.ButtonOn,
 #btnLoopBeats.ButtonOn {
     background-color: magenta !important;

@@ -102,6 +102,103 @@ export var gMenuFile =    {
             "id": "bpm"
           }
         },
+
+        {
+          "caption": "<b>k</b>eys",
+          "trigger": "k",
+          "children": [
+            {
+              "caption": "<b>s</b>harps (default)",
+              "trigger": "s",
+              "action": "setSongSharps"
+            },
+            {
+              "caption": "<b>f</b>lats (default)",
+              "trigger": "f",
+              "action": "setSongFlats"
+            },
+            {
+              "name": "key",
+              "caption": "<b>k</b>ey",
+              "trigger": "k",
+              "children": [
+                {
+                "caption": "<b>w</b>hite keys",
+                "trigger": "w",
+                "children": [
+                  {
+                  "caption": "<b>a</b>",
+                  "trigger": "a",
+                  "action": "setSongKeyWhite"        
+                  },
+                  {
+                  "caption": "<b>b</b>",
+                  "trigger": "b",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>c</b>",
+                  "trigger": "c",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>d</b>",
+                  "trigger": "d",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>e</b>",
+                  "trigger": "e",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>f</b>",
+                  "trigger": "f",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>g</b>",
+                  "trigger": "g",
+                  "action": "setSongKeyWhite"
+                  }
+                ]
+                },
+                {
+                "caption": "<b>b</b>lack keys",
+                "trigger": "b",
+                "children": [
+                  {
+                  "caption": "<b>a</b>&flat;",
+                  "trigger": "a",
+                  "action": "setSongKeyBlack"    
+                  },
+                  {
+                  "caption": "<b>b</b>&flat;",
+                  "trigger": "b",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>d</b>&flat;",
+                  "trigger": "d",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>e</b>&flat;",
+                  "trigger": "e",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>g</b>&flat;",
+                  "trigger": "g",
+                  "action": "setSongKeyBlack"
+                  }
+                ]
+                }
+              ]
+            }
+          ]
+        },
+
         {
           "caption": "<b>g</b>raveyard",
           "trigger": "g",

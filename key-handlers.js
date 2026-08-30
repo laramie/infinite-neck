@@ -48,6 +48,8 @@ import {
 	showTransport,
 	toggleSectionDrawer,
 	toggleRandomLoop,
+	setSongFlats,
+	setSongSharps,
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
@@ -826,6 +828,32 @@ export function performCmdAction(menuItem, args){
 				$("#txtFilename").val(argByInputID).trigger('change');
 			}
 			break;
+
+		case "setSongFlats":
+			setSongFlats();
+			break;
+		case "setSongSharps":
+			setSongSharps();
+			break;
+		case "setSongKeyWhite":
+			var keyIdx = ['a','x','b','c','x','d','x','e','f','x','g','x',].indexOf(menuItem.trigger);
+			if (keyIdx >= 0){
+				getSong().rootID = keyIdx;
+				if (menuItem.trigger == 'f'){
+					setSongFlats();
+				} else {					
+					setSongSharps();
+				}
+			}
+			break;
+		case "setSongKeyBlack":
+			var keyIdx = ['x','b','x','x','d','x','e','x','x','g','x','a'].indexOf(menuItem.trigger);
+			if (keyIdx >= 0){
+				getSong().rootID = keyIdx;
+				setSongFlats();
+			}
+			break;
+
 		case "setSectionCaption":
 			getCurrentSection().caption = argByInputID;
 			updateSectionsStatus();
