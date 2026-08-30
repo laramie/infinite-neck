@@ -197,6 +197,9 @@ function transposeSong(...args) { return requireProvider('transposeSong')(...arg
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
 function updateFontLabel(...args) { return requireProvider('updateFontLabel')(...args); }
 function updateSectionsStatus(...args) { return requireProvider('updateSectionsStatus')(...args); }
+function toggleQuickMenu(...args) { return requireProvider('toggleQuickMenu')(...args); }
+function hideQuickMenu(...args) { return requireProvider('hideQuickMenu')(...args); }
+function showQuickMenu(...args) { return requireProvider('showQuickMenu')(...args); }
 
 
 const FONT_INCREMENT = 1;
@@ -563,7 +566,7 @@ function document_keypress(e) {
 				e.preventDefault();
 				break;
             case "q":
-                $('#divQuick').toggle();
+                toggleQuickMenu();
                 break;
 			case "r":
                 showOneMenu("#divChart");
@@ -1559,7 +1562,16 @@ export function performCmdAction(menuItem, args){
 			break;
 		case "showWidgetRow":
 			getSong().getLayout().toggleWidgetRow(true);
-			break;			
+			break;
+		case "toggleQuickMenu":
+			toggleQuickMenu();
+			break;	
+		case "hideQuickMenu":
+			hideQuickMenu();
+			break;
+		case "showQuickMenu":
+			showQuickMenu();
+			break;
 		case "hideLeftRail":
 			getSong().getLayout().toggleLeftRails(false);
 			break;

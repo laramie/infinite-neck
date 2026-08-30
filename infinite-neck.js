@@ -379,7 +379,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			transposeSong,
 			transposeSongKeys,
 			updateFontLabel,
-			updateSectionsStatus
+			updateSectionsStatus,
+			toggleQuickMenu,
+			hideQuickMenu,
+			showQuickMenu
 		});
 		setColorFunctionsProviders({
 			getSong,
@@ -3413,6 +3416,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			restartLoopSections();
 		}
 	}
+	
+	export function toggleQuickMenu(){
+		$('#divQuick').toggle();
+	}
+
+	export function hideQuickMenu(){
+		$('#divQuick').hide();
+	}
+
+	export function showQuickMenu(){
+		$('#divQuick').show();
+	}
 
 	export function runMobileCommandLine(line){
 		const result = runMacroLine(line);
@@ -3841,7 +3856,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			toggleCmdLine();
 		});
 		bindEvent('click', '#btnToggleQuick', function() {
-			$('#divQuick').toggle();
+			toggleQuickMenu();
 		});
 
 		bindEvent('click', '#btnClear', function() {

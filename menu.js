@@ -1134,6 +1134,11 @@ export var gMenuFile =    {
               "action": "hideFingering"
             },
             {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "hideQuickMenu"
+            },
+            {
               "caption": "<b>w</b>idgets",
               "trigger": "w",
               "children": [
@@ -1163,7 +1168,7 @@ export var gMenuFile =    {
                     "action": "hideLeftRail"
                   }
               ]
-            }
+            }            
           ]
         },
         {
@@ -1194,6 +1199,11 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "showFingering"
+            },
+            {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "showQuickMenu"
             },
             {
               "caption": "<b>w</b>idgets",
@@ -1275,9 +1285,14 @@ export var gMenuFile =    {
             },
             {
               "caption": "<b>f</b>ingering",
-              "trigger": "f",
+              "tigger": "f",
               "action": "toggleFingering"
-            }
+            },
+            {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "toggleQuickMenu"
+            },
           ]
         },
         {
