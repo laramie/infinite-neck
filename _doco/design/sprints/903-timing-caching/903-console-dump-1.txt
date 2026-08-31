@@ -1,0 +1,302 @@
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 98.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 100, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 309.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 207.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 76.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 73.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 79.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 71.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 83.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 88.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 39.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 36.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 48.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 35.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 94.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 149.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 63.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 44.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 33.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 29.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 37.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 28.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 30.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 30.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 37.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 29.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0.1, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 29.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 32.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 47, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 71.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 73.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 83.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 38, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 44.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 62.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 76.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 58.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 48.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 49.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 50.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 44.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 30, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 96.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 60.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 108.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 128.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 107.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 69.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 73.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 57.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 56.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 54.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 46.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 38.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 78.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 51.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 58.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 57.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 63.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 60, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 89.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 51.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 67.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 69.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 58.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 50.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 74.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 126.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 46.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 39.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 112.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 53.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 118.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 75.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 103.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 70.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 82.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 80, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 66.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 58.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 75.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 61.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 68.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 63.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 339.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 188.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 212.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 159.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 127.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 66.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 121.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 116, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 70.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 65.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 75, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 95.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 48.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 41.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 93, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 55.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0.1, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 78.2, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 78, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 79.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 59.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 48.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 44.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 64.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 62.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 58.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 55.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 78.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 51.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 49.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 45.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 56.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 72.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 100.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 69, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 54.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 51.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 63, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 51.6, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 87.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 45.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 83.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 125.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 64.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 47.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 56.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 116.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 217.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 87.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 55, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 80.4, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 54.5, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 77, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 75, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 80.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 62, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 66.9, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 45.1, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 44.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}cacheState: "no-work"durationMs: 0reason: "sectionChanged"taskCount: 0[[Prototype]]: Object
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 50.3, cacheState: 'hit', selectorCount: 12, sharps: false, …}
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 43.8, cacheState: 'hit', selectorCount: 12, sharps: false, …}cacheState: "hit"durationMs: 43.8rootID: "3"rootIDLead: "-1"selectorCount: 12sharps: falsetableID: "tblP46_1"[[Prototype]]: Object
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}cacheState: "no-work"durationMs: 0reason: "sectionChanged"taskCount: 0[[Prototype]]: Object
+infinite-neck.js:2975 showAllNoteNames: false
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 49, cacheState: 'hit', selectorCount: 12, sharps: false, …}cacheState: "hit"durationMs: 49rootID: "3"rootIDLead: "-1"selectorCount: 12sharps: falsetableID: "tblP46_1"[[Prototype]]: Object
+infinite-neck.js:1146 [NoteTableTiming] buildCellsForTable {tableID: 'tblP46_1', durationMs: 46.7, cacheState: 'hit', selectorCount: 12, sharps: false, …}cacheState: "hit"durationMs: 46.7rootID: "3"rootIDLead: "-1"selectorCount: 12sharps: falsetableID: "tblP46_1"[[Prototype]]: Object
+infinite-neck.js:1146 [NoteTableTiming] prewarmSection {cacheState: 'no-work', durationMs: 0, reason: 'sectionChanged', taskCount: 0}
+layout.js:92 Layout:
+{
+    "name": "escaped",
+    "CaptionRow": true,
+    "SongTitle": true,
+    "WidgetRow": true,
+    "InstrumentCaptions": false,
+    "LeftRails": true,
+    "CaptionLooperLayout": "column"
+}

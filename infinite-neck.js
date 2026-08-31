@@ -166,7 +166,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	const DEFAULT_BEATS_PER = 4;
 	const DEFAULT_BPM = 80;
 	const NOTE_TABLE_RENDER_CACHE_ENABLED = true;
-	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = false;
+	const NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = true;
 
 
 	// Section Index (high-level)
