@@ -1068,12 +1068,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	export function buildCells(sharps, options) {
+		markNoteTableTiming('buildCells:start');
 		let visibleTableIds = updateVisibleTablesInMemoryModel();
 		visibleTableIds.forEach(tableID => {
-		    buildCellsForTable(sharps, options, tableID);
+		    buildCellsForTable(sharps, options, tableID, 'buildCells');
 		});
+		markNoteTableTiming('buildCells:end');
+		measureNoteTableTiming('NoteTableTiming:buildCells', 'buildCells:start', 'buildCells:end');
 	}
-	export function buildCellsForTable(sharps, options, tableID=""){
+	export function buildCellsForTable(sharps, options, tableID="", callSite=''){
 		let tableID_prefix = "";
 		if (tableID){
 			tableID_prefix = '#'+tableID + ' ';
@@ -1105,10 +1108,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		dumpNoteTableTiming('buildCellsForTable', {
 			tableID: tableID || '(all tables)',
+			callSite: callSite || '(unspecified)',
 			durationMs: getNoteTableTimingNow() - timingStart,
 			cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED
 				? (renderCacheEntry ? 'hit' : 'miss')
 				: 'disabled',
+			renderCacheKeyHash: renderCacheKey ? shortHashForLog(renderCacheKey) : '',
+			hitCount: renderCacheEntry ? (renderCacheEntry.hitCount || 0) : 0,
+			cacheSize: NoteTableRenderCache.size(),
 			selectorCount,
 			sharps: !!sharps,
 			rootID: options.rootID,
@@ -1133,6 +1140,51 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return perf.now();
 		}
 		return Date.now();
+	}
+
+	// Cheap non-cryptographic hash so long JSON-stable render-cache keys stay readable
+	// in console dumps while still letting two log lines be compared for equality.
+	// See 903-timing-revisited-plan-1.md section 1.
+	function shortHashForLog(value){
+		const str = `${value || ''}`;
+		let hash = 0;
+		for (let i = 0; i < str.length; i += 1) {
+			hash = ((hash << 5) - hash) + str.charCodeAt(i);
+			hash |= 0;
+		}
+		return hash.toString(36);
+	}
+
+	// performance.mark()/measure() pairs used to bracket higher-level Section-transition
+	// callers (buildCells(), replay()) in DevTools' Timings track, so duplicate rebuilds
+	// on one Section transition are visible as separate named entries. Gated by the same
+	// timing flag as dumpNoteTableTiming(). See 903-timing-revisited-plan-1.md section 4.
+	export function markNoteTableTiming(name){
+		if (!NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED) {
+			return;
+		}
+		const perf = globalThis?.performance || globalThis?.window?.performance;
+		if (perf && typeof perf.mark === 'function') {
+			try {
+				perf.mark(name);
+			} catch (error) {
+				// Ignore environments where marks are unsupported/restricted.
+			}
+		}
+	}
+
+	export function measureNoteTableTiming(name, startMark, endMark){
+		if (!NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED) {
+			return;
+		}
+		const perf = globalThis?.performance || globalThis?.window?.performance;
+		if (perf && typeof perf.measure === 'function') {
+			try {
+				perf.measure(name, startMark, endMark);
+			} catch (error) {
+				// Ignore missing/mismatched marks (e.g. cleared performance buffer).
+			}
+		}
 	}
 
 	function dumpNoteTableTiming(label, data = {}){
@@ -1235,7 +1287,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				cacheState: NOTE_TABLE_RENDER_CACHE_ENABLED ? 'no-work' : 'disabled',
 				durationMs: getNoteTableTimingNow() - timingStart,
 				reason,
-				taskCount: 0
+				taskCount: 0,
+				...NoteTableRenderCache.stats()
 			});
 			EventBus.trigger('NoteTableCache:ready', { count: 0, reason });
 			return;
@@ -1254,7 +1307,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					completed,
 					durationMs: getNoteTableTimingNow() - timingStart,
 					reason,
-					taskCount
+					taskCount,
+					...NoteTableRenderCache.stats()
 				});
 				EventBus.trigger('NoteTableCache:ready', { count: completed, reason });
 				return;
@@ -1293,6 +1347,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (!song || song.isHeadless || sectionIndex < 0 || sectionIndex >= sections.length) {
 			return;
 		}
+
+		// Marks the boundary of one Section transition's prewarm cycle with a cache-health
+		// snapshot taken before this cycle's own sets/evictions, so console dumps can be
+		// grouped per transition instead of eyeballed by repetition. See 903-timing-revisited-plan-1.md section 1.
+		dumpNoteTableTiming('sectionBoundary', {
+			sectionIndex,
+			reason: data.reason || 'prewarmSection',
+			...NoteTableRenderCache.stats()
+		});
 
 		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 3));
 		const generation = ++noteTablePrewarmGeneration;

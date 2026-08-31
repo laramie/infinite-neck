@@ -109,4 +109,32 @@ describe('NoteTableRenderCache', () => {
         song.randomLoop = true;
         expect(NoteTableRenderCache.getNextSectionIndexForPrewarm(song)).toBe(-1);
     });
+
+    test('stats() tracks hits, misses, sets, and evictions', () => {
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: ({ noteClass, midinum }) => `${noteClass}:${midinum ?? 'default'}`
+        });
+
+        // Miss before the entry is stored.
+        expect(NoteTableRenderCache.get(key)).toBeUndefined();
+        expect(NoteTableRenderCache.stats()).toMatchObject({ hits: 0, misses: 1, sets: 0, evictions: 0 });
+
+        NoteTableRenderCache.set(key, entry);
+        expect(NoteTableRenderCache.get(key)).toBe(entry);
+        expect(NoteTableRenderCache.stats()).toMatchObject({ size: 1, hits: 1, misses: 1, sets: 1, evictions: 0 });
+
+        NoteTableRenderCache.setMaxEntries(1);
+        NoteTableRenderCache.set('anotherKey', { ...entry, key: 'anotherKey' });
+        expect(NoteTableRenderCache.stats()).toMatchObject({ size: 1, sets: 2, evictions: 1 });
+    });
 });

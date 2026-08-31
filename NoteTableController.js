@@ -42,6 +42,8 @@ import {
     appInit_running,
     controlsToDisplayOptions,
     buildCellsForTable,
+    markNoteTableTiming,
+    measureNoteTableTiming,
     turnOffAutoColorCheckbox,
     updatePrintSections
 } from './infinite-neck.js';
@@ -1068,10 +1070,13 @@ function getReplaySection(replayOptions){
           meaning replay() will be called first for your listenToTablename, then once for your own tablename.
 */    
 export function replay(){
+    markNoteTableTiming('replay:start');
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
         replayTable(opts);
     });
+    markNoteTableTiming('replay:end');
+    measureNoteTableTiming('NoteTableTiming:replay', 'replay:start', 'replay:end');
 }
 
 export function replayTable(replayOptions){
@@ -1112,7 +1117,7 @@ export function replayTable(replayOptions){
         
         Object.assign(relSectionOptions, replayOptions);
         //console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
-        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
+        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename, 'replayTable:RELATIVE');
         EventBus.trigger("Widget:SectionStatus:statusChanged",
                             {
                                 ownerID: replayOptions.tablename,

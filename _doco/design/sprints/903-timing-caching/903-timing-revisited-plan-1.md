@@ -94,4 +94,11 @@ Record a profile across 2-3 full loop iterations. With `buildCellsFromSelector` 
 
 ## Status
 
-Investigation only. No code changes were made as part of this document. Recommended next step: implement the instrumentation additions in section 1 and the mark/measure pairs in section 4, re-capture a console dump + DevTools profile, and confirm the duplicate-build hypothesis (item 2 above) before deciding on the whole-table-cache redesign.
+Investigation only for sections 1-3. The recommended next step's instrumentation has been implemented:
+
+- **`callSite`, `renderCacheKeyHash`, `cacheSize`, `hitCount`** added to the `buildCellsForTable` timing dump payload in [infinite-neck.js](../../../../infinite-neck.js#L1112-L1129), and `callSite` is now passed at both call sites (`'buildCells'` from [infinite-neck.js](../../../../infinite-neck.js#L1070-L1078), `'replayTable:RELATIVE'` from [NoteTableController.js](../../../../NoteTableController.js#L1116)).
+- **`NoteTableRenderCache.stats()`** (hits, misses, sets, evictions, size, maxEntries) added to [NoteTableRenderCache.js](../../../../NoteTableRenderCache.js), spread into the prewarm-cycle timing dumps, plus a new `'sectionBoundary'` dump fired once per Section-transition prewarm cycle so the console output can be grouped by transition instead of eyeballed by repetition.
+- **`performance.mark()`/`performance.measure()` pairs** added around `buildCells()` ([infinite-neck.js](../../../../infinite-neck.js)) and `replay()` ([NoteTableController.js](../../../../NoteTableController.js)), exported as `markNoteTableTiming()`/`measureNoteTableTiming()` from infinite-neck.js and gated by the existing `NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED` flag, so DevTools' Timings track shows each caller as a separately named entry.
+- Jest coverage added for `NoteTableRenderCache.stats()` in [_tests/jest/note-table-render-cache.test.js](../../../../_tests/jest/note-table-render-cache.test.js). Full suite validated: 65 suites / 695 tests passing.
+
+Remaining next step: with `NOTE_TABLE_RENDER_CACHE_TIMING_ENABLED = true`, re-capture a console dump + DevTools Performance profile while looping the song, and use the new `callSite`/`renderCacheKeyHash` fields to confirm the duplicate-build hypothesis (item 2 in section 3) before deciding on the whole-table-cache redesign.

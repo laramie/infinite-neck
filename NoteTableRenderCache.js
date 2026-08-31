@@ -10,6 +10,10 @@ const DEFAULT_MAX_ENTRIES = 24;
 
 const cache = new Map();
 let maxEntries = DEFAULT_MAX_ENTRIES;
+let totalHits = 0;
+let totalMisses = 0;
+let totalSets = 0;
+let totalEvictions = 0;
 
 const SHARP_NOTE_CLASS_SPECS = Object.freeze([
 	{ noteClass: 'noteAb', noteLetter: 'G', sharpflat: SHARP, noteNum: 11 },
@@ -197,6 +201,7 @@ function evictIfNeeded() {
 			return;
 		}
 		cache.delete(oldestKey);
+		totalEvictions += 1;
 	}
 }
 
@@ -210,6 +215,9 @@ export function get(key) {
 	const entry = cache.get(key);
 	if (entry) {
 		entry.hitCount = (entry.hitCount || 0) + 1;
+		totalHits += 1;
+	} else {
+		totalMisses += 1;
 	}
 	return entry;
 }
@@ -219,8 +227,22 @@ export function set(key, entry) {
 		return null;
 	}
 	cache.set(key, entry);
+	totalSets += 1;
 	evictIfNeeded();
 	return entry;
+}
+
+/** Snapshot of cache health for console/DevTools instrumentation.
+ *  See 903-timing-revisited-plan-1.md section 4. */
+export function stats() {
+	return {
+		size: cache.size,
+		maxEntries,
+		hits: totalHits,
+		misses: totalMisses,
+		sets: totalSets,
+		evictions: totalEvictions
+	};
 }
 
 export function has(key) {
@@ -252,4 +274,8 @@ export function getNextSectionIndexForPrewarm(song) {
 export function __resetForTests() {
 	cache.clear();
 	maxEntries = DEFAULT_MAX_ENTRIES;
+	totalHits = 0;
+	totalMisses = 0;
+	totalSets = 0;
+	totalEvictions = 0;
 }
