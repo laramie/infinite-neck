@@ -137,4 +137,39 @@ describe('NoteTableRenderCache', () => {
         NoteTableRenderCache.set('anotherKey', { ...entry, key: 'anotherKey' });
         expect(NoteTableRenderCache.stats()).toMatchObject({ size: 1, sets: 2, evictions: 1 });
     });
+
+    test('wasLastPainted/recordPainted track per-tableID last-painted keys independently', () => {
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyA')).toBe(false);
+
+        NoteTableRenderCache.recordPainted('tblS6_1', 'keyA');
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyA')).toBe(true);
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyB')).toBe(false);
+        expect(NoteTableRenderCache.wasLastPainted('tblOther', 'keyA')).toBe(false);
+
+        NoteTableRenderCache.recordPainted('tblS6_1', 'keyB');
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyA')).toBe(false);
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyB')).toBe(true);
+
+        NoteTableRenderCache.recordPainted('tblOther', 'keyA');
+        expect(NoteTableRenderCache.wasLastPainted('tblOther', 'keyA')).toBe(true);
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyB')).toBe(true);
+    });
+
+    test('clearPaintedTracking clears a single tableID or all tableIDs', () => {
+        NoteTableRenderCache.recordPainted('tblS6_1', 'keyA');
+        NoteTableRenderCache.recordPainted('tblOther', 'keyB');
+
+        NoteTableRenderCache.clearPaintedTracking('tblS6_1');
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', 'keyA')).toBe(false);
+        expect(NoteTableRenderCache.wasLastPainted('tblOther', 'keyB')).toBe(true);
+
+        NoteTableRenderCache.clearPaintedTracking();
+        expect(NoteTableRenderCache.wasLastPainted('tblOther', 'keyB')).toBe(false);
+    });
+
+    test('wasLastPainted returns false for empty tableID or key', () => {
+        NoteTableRenderCache.recordPainted('tblS6_1', 'keyA');
+        expect(NoteTableRenderCache.wasLastPainted('', 'keyA')).toBe(false);
+        expect(NoteTableRenderCache.wasLastPainted('tblS6_1', '')).toBe(false);
+    });
 });

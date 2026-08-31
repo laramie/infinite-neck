@@ -77,8 +77,10 @@ import {
 	replay,
 	setNotetableProviders,
 	showHighlightsForBeat,
-	fullRepaint
+	fullRepaint,
+	applyPianoSkeuomorphicTableCssVars
 } from './NoteTableController.js';
+import { isPianoSkeuomorphicEnabled } from './templates/piano/piano-skeuomorphic.builder.js';
 import * as NoteTableRenderCache from './NoteTableRenderCache.js';
 import {
 	Note
@@ -1104,13 +1106,47 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const renderCacheKey = (NOTE_TABLE_RENDER_CACHE_ENABLED && tableID)
 			? NoteTableRenderCache.buildRenderKey({ tableID, options, tuning, noteNamesFuncArr })
 			: '';
+
+		// Step A (903-implementation-plan-ph3-1.md): buildRenderKey() already covers every
+		// input that affects this table's rendered content/size, so if the key we're about
+		// to build with is identical to the key last actually painted into this table's DOM,
+		// the entire per-cell rebuild below is guaranteed to be a no-op. Skip it outright.
+		if (renderCacheKey && NoteTableRenderCache.wasLastPainted(tableID, renderCacheKey)) {
+			dumpNoteTableTiming('buildCellsForTable', {
+				tableID: tableID || '(all tables)',
+				callSite: callSite || '(unspecified)',
+				durationMs: getNoteTableTimingNow() - timingStart,
+				cacheState: 'skipped-unchanged',
+				renderCacheKeyHash: shortHashForLog(renderCacheKey),
+				hitCount: 0,
+				cacheSize: NoteTableRenderCache.size(),
+				selectorCount: 0,
+				sharps: !!sharps,
+				rootID: options.rootID,
+				rootIDLead: options.rootIDLead
+			});
+			return;
+		}
+
 		const renderCacheEntry = renderCacheKey ? NoteTableRenderCache.get(renderCacheKey) : null;
 		let selectorCount = 0;
+
+		// Step B (903-implementation-plan-ph3-1.md): piano-skeuomorphic CSS custom properties
+		// are table-scoped, not cell-scoped, so compute/write them once per table per rebuild
+		// here, instead of once per matched <td> inside buildCellsFromSelector().
+		if (tableID && tuning && isPianoSkeuomorphicEnabled(tuning)) {
+			applyPianoSkeuomorphicTableCssVars(tableID, options);
+		}
+
+		// Step C (903-implementation-plan-ph3-1.md): fetch the table's note cells with a single
+		// DOM query, then filter that already-matched set per note-class in memory below,
+		// instead of re-querying the live DOM once per note-class spec (12 queries/table).
+		const allNoteCells = tableID ? $(`${tableID_prefix}td.note`) : null;
 
 		NoteTableRenderCache.getNoteClassSpecs(sharps).forEach((spec) => {
 			selectorCount++;
 			buildCellsFromSelector(
-				tableID_prefix+`td.${spec.noteClass}`,
+				allNoteCells ? allNoteCells.filter('.' + spec.noteClass) : tableID_prefix+`td.${spec.noteClass}`,
 				spec.noteLetter,
 				spec.sharpflat,
 				spec.noteNum,
@@ -1119,6 +1155,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				spec.noteClass
 			);
 		});
+
+		if (renderCacheKey) {
+			NoteTableRenderCache.recordPainted(tableID, renderCacheKey);
+		}
+
 		dumpNoteTableTiming('buildCellsForTable', {
 			tableID: tableID || '(all tables)',
 			callSite: callSite || '(unspecified)',
@@ -1396,6 +1437,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	function invalidateNoteTableRenderCache(){
 		noteTablePrewarmGeneration++;
 		NoteTableRenderCache.clear();
+		NoteTableRenderCache.clearPaintedTracking();
 	}
 
 	// List of menu divs, accessed through .entries(), and associated button names,

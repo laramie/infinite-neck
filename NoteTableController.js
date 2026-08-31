@@ -248,6 +248,26 @@ export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, sc
     return Math.max(1, Math.round(scaledWidth * 100) / 100);
 }
 
+/** Sets the three piano-skeuomorphic CSS custom properties on the <table id=tableID> element
+ *  itself, once. These vars are table-scoped (read by CSS on descendant black/white keys),
+ *  not cell-scoped, so they only need to be written once per table per rebuild -- not once
+ *  per matched <td> as buildCellsFromSelector() used to do via cell.closest("table").
+ *  See 903-implementation-plan-ph3-1.md Step B. */
+export function applyPianoSkeuomorphicTableCssVars(tableID, options) {
+    const w = options.NoteDisplaySizes.width;
+    const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
+    const pianoWhiteToBlackWidthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(options.pianoWhiteToBlackWidthRatio);
+    const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
+        w,
+        options.pianoWidthScaleFactor,
+        pianoWhiteToBlackWidthRatio
+    ) + "px";
+    $('#' + tableID)
+        .css("--piano-white-key-width", pianoWhiteKeyWidth)
+        .css("--piano-white-to-black-width-ratio", pianoWhiteToBlackWidthRatio)
+        .css("--piano-black-key-width", pianoBlackKeyWidth);
+}
+
 
 export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinum) {
     var song = getSong() || {};
@@ -370,18 +390,7 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
 			var h = options.NoteDisplaySizes.height;
             if (pianoSkeuomorphic) {
                 const pianoHeight = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
-                const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
-                const pianoWhiteToBlackWidthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(options.pianoWhiteToBlackWidthRatio);
-                const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
-                    w,
-                    options.pianoWidthScaleFactor,
-                    pianoWhiteToBlackWidthRatio
-                ) + "px";
                 h = pianoHeight;
-                cell.closest("table")
-                    .css("--piano-white-key-width", pianoWhiteKeyWidth)
-                    .css("--piano-white-to-black-width-ratio", pianoWhiteToBlackWidthRatio)
-                    .css("--piano-black-key-width", pianoBlackKeyWidth);
             }
 			var multiplier = 1;
 			var width = w.substring(0, w.indexOf("px"));

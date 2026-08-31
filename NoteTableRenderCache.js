@@ -15,6 +15,14 @@ let totalMisses = 0;
 let totalSets = 0;
 let totalEvictions = 0;
 
+// Tracks the renderCacheKey last actually painted into the live DOM for each tableID,
+// separate from the HTML-string cache above. Since buildRenderKey() already covers every
+// input that affects a table's rendered content/size, two buildCellsForTable() calls with
+// the same key for the same tableID are guaranteed to produce identical DOM output -- so
+// the second (and any subsequent) call can skip the per-cell rebuild entirely.
+// See 903-implementation-plan-ph3-1.md Step A.
+const lastPaintedKeyByTableID = new Map();
+
 const SHARP_NOTE_CLASS_SPECS = Object.freeze([
 	{ noteClass: 'noteAb', noteLetter: 'G', sharpflat: SHARP, noteNum: 11 },
 	{ noteClass: 'noteBb', noteLetter: 'A', sharpflat: SHARP, noteNum: 1 },
@@ -257,6 +265,24 @@ export function size() {
 	return cache.size;
 }
 
+export function wasLastPainted(tableID, key) {
+	return !!tableID && !!key && lastPaintedKeyByTableID.get(tableID) === key;
+}
+
+export function recordPainted(tableID, key) {
+	if (tableID && key) {
+		lastPaintedKeyByTableID.set(tableID, key);
+	}
+}
+
+export function clearPaintedTracking(tableID) {
+	if (tableID) {
+		lastPaintedKeyByTableID.delete(tableID);
+	} else {
+		lastPaintedKeyByTableID.clear();
+	}
+}
+
 export function getNextSectionIndexForPrewarm(song) {
 	if (!song || song.randomLoop) {
 		return -1;
@@ -278,4 +304,5 @@ export function __resetForTests() {
 	totalMisses = 0;
 	totalSets = 0;
 	totalEvictions = 0;
+	lastPaintedKeyByTableID.clear();
 }

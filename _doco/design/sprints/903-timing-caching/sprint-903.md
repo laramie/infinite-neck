@@ -24,6 +24,10 @@ Purpose of this sprint is to: cache building of Sections html overhead.
   - [Copilot report](903-timing-confirmed.md)
   - [Copilot report](903-timing-confirmed-2.md)
 
+- phase-3:
+  - [implementation plan](903-implementation-plan-ph3-1.md)
+  - [implementation notes](903-implementation-notes-ph3-2.md)
+
 ## Status
 
 ### phase-1 complete 
@@ -55,4 +59,12 @@ Done, with some code points installed for future investigation.
       "Not implemented — the other, larger finding (>50% of cache-hit buildCells() time spent in jQuery's per-cell .html()/.css() DOM writes in buildCellsFromSelector()) is documented as a "design-level, not yet decided" redesign (batch whole-table markup into one DOM write instead of per-cell writes). Per the repo's SOP, that kind of structural change to top-level files needs its own design discussion/approval first, so I left it as-is rather than making that call unilaterally. Let me know if you want to proceed with a design doc for that next."
 
 - New implementation plan for phase-3: `903-implementation-plan-ph3-1.md`
+
+- **phase-3 Steps A-C implemented** — see [903-implementation-notes-ph3-2.md](903-implementation-notes-ph3-2.md):
+  - Step A: skip the entire per-cell rebuild for a table when its render-cache key hasn't changed since the last paint (new `NoteTableRenderCache.wasLastPainted`/`recordPainted`/`clearPaintedTracking`).
+  - Step B: piano-skeuomorphic table-level CSS custom properties now written once per table per rebuild, not once per matched `<td>`.
+  - Step C: one DOM query per table for `td.note`, filtered in-memory per note-class, instead of 12 separate DOM queries.
+  - Full Jest suite: 65 suites / 698 tests passing.
+  - Step D (whole-table single-write batched markup) remains deferred pending re-measurement.
+  - Not yet done: re-capture console dump/DevTools trace to measure the real-world effect, and manual UI acceptance testing for visual regressions.
 
