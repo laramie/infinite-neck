@@ -754,7 +754,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
 		var options = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
 		if (options){
-			displayOptionsToControls(cloneDisplayOptions(options));
+			// skipRepaint: sectionChanged() calls clearAndReplaySection() right after syncSectionUi(),
+			// which already does clearAll()+resetNoteNames()+showBeats(). Without this flag,
+			// displayOptionsToControls() would trigger a second full fullRepaint() (clearAll+resetNoteNames+
+			// showBeats+forced reflow) on every Section transition, doubling buildCells()/replay() cost.
+			displayOptionsToControls(cloneDisplayOptions(options), true);
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
@@ -1131,6 +1135,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		const renderCacheEntry = renderCacheKey ? NoteTableRenderCache.get(renderCacheKey) : null;
 		let selectorCount = 0;
 
+		// Populate the cache from this live build too, not just the async next-section
+		// prewarm. Previously only runNoteTablePrewarmTasks() ever called .set(), so any
+		// key reached via a path that never triggers that prewarm (e.g. transpose()/
+		// cycleThruKeys(), which bypass sectionChanged() entirely) was a guaranteed
+		// permanent cache miss no matter how many times the user returned to that key.
+		// See 903-implementation-notes-ph4-3.md / 903-timing-revisited-plan-1.md item 3.
+		let liveBuiltEntry = renderCacheEntry;
+		if (!liveBuiltEntry && renderCacheKey && tuning) {
+			liveBuiltEntry = NoteTableRenderCache.createEntry({
+				key: renderCacheKey,
+				tableID,
+				sectionIndex: getSectionsCurrentIndex(),
+				options,
+				tuning,
+				buildCellHtml: ({ noteLetter, sharpflat, noteNum, midinum, options }) => {
+					return cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
+				}
+			});
+			if (liveBuiltEntry) {
+				NoteTableRenderCache.set(renderCacheKey, liveBuiltEntry);
+			}
+		}
+
 		// Step B (903-implementation-plan-ph3-1.md): piano-skeuomorphic CSS custom properties
 		// are table-scoped, not cell-scoped, so compute/write them once per table per rebuild
 		// here, instead of once per matched <td> inside buildCellsFromSelector().
@@ -1151,7 +1178,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				spec.sharpflat,
 				spec.noteNum,
 				options,
-				renderCacheEntry,
+				liveBuiltEntry,
 				spec.noteClass
 			);
 		});
@@ -1411,7 +1438,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			...NoteTableRenderCache.stats()
 		});
 
-		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 3));
+		// Sized to comfortably hold a full chromatic-key cycle (12 keys) per visible table,
+		// plus headroom for sharps/flats key-spelling variants of the same root. A smaller
+		// budget (previously *3) causes real cache misses (full ~45-90ms rebuilds) when
+		// cycling through more than a handful of previously-seen keys, since the shared pool
+		// evicts entries long before the user returns to them. See 903-implementation-notes-ph4-2.md.
+		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 12));
 		const generation = ++noteTablePrewarmGeneration;
 		const tasks = song.getVisibleTunings()
 			.map((tableID) => buildPrewarmTaskForTable(tableID, sectionIndex))
@@ -3118,7 +3150,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	//=========================================================================
 
-	export function displayOptionsToControls(options){
+	export function displayOptionsToControls(options, skipRepaint){
 		const sizesObj = options.NoteDisplaySizes || {};
 		const naturalFontScaling = options.naturalFontScaling;
 		const functionSymbolsValue = options.dropDownFunctionSymbols?.value;
@@ -3251,7 +3283,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setOneCssVar("--fingering-position",   $("#selFingeringPosition").val());
 		setOneCssVar("--piano-fingering-hposition", $("#selPianoFingeringHPosition").val());
 		updateDisplayOptionsReadonlyValues();
-		fullRepaint();
+		if (!skipRepaint){
+			fullRepaint();
+		}
 	}
 
 	export function controlsToDisplayOptions(){
