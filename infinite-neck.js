@@ -1070,7 +1070,20 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function buildCells(sharps, options) {
 		markNoteTableTiming('buildCells:start');
 		let visibleTableIds = updateVisibleTablesInMemoryModel();
+		const song = getSong();
 		visibleTableIds.forEach(tableID => {
+		    // Skip tables wired with a relativeSection: replay()'s RELATIVE branch
+		    // (NoteTableController.replayTable) unconditionally rebuilds this same table
+		    // right after buildCells() returns (resetNoteNames() -> replay()), using the
+		    // correct relative-section options. Building it here first, with the current
+		    // Section's options, is a wasted rebuild that gets immediately clobbered.
+		    // Confirmed via trace analysis: 903-timing-confirmed-2.md.
+		    const wiring = Array.isArray(song?.wirings)
+		        ? song.wirings.find((w) => w && w.tablename === tableID)
+		        : null;
+		    if (wiring && `${wiring.relativeSection || ''}`.trim()) {
+		        return;
+		    }
 		    buildCellsForTable(sharps, options, tableID, 'buildCells');
 		});
 		markNoteTableTiming('buildCells:end');
