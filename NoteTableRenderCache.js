@@ -1,6 +1,7 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
 import * as Constants from './Constants.js';
+import { getDisplayedCellcol } from './table-column-helpers.js';
 
 const SHARP = "&#9839;";
 const FLAT = "&#9837;";
@@ -125,12 +126,18 @@ export function buildRenderKey({ tableID = '', options = {}, tuning = {}, noteNa
 	});
 }
 
+function getColumnCount(tuning = {}) {
+	const frets = Number.parseInt(tuning.frets, 10);
+	const normalizedFrets = Number.isFinite(frets) ? frets : 0;
+	return tuning.nut ? normalizedFrets + 1 : normalizedFrets;
+}
+
 function getCellMidiNumsByNoteClass(tuning = {}) {
 	const result = new Map();
 	const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
 	const frets = Number.parseInt(tuning.frets, 10);
 	const normalizedFrets = Number.isFinite(frets) ? frets : 0;
-	const nCols = tuning.nut ? normalizedFrets + 1 : normalizedFrets;
+	const nCols = getColumnCount(tuning);
 
 	rowRange.forEach((rowMidi) => {
 		for (let c = 0; c < nCols; c += 1) {
@@ -151,7 +158,7 @@ function getCellMidiNumsByNoteClass(tuning = {}) {
 	return result;
 }
 
-export function createEntry({ key, tableID = '', sectionIndex = null, options = {}, tuning = {}, buildCellHtml } = {}) {
+export function createEntry({ key, tableID = '', sectionIndex = null, options = {}, tuning = {}, buildCellHtml, buildSizing } = {}) {
 	if (!key || typeof buildCellHtml !== 'function') {
 		return null;
 	}
@@ -174,11 +181,32 @@ export function createEntry({ key, tableID = '', sectionIndex = null, options = 
 		};
 	});
 
+	// Step D1 (903-implementation-plan-step-D.md): cell SIZING (fontMultiplier, td/NoteDisplay
+	// width/height) depends only on (cellcol, isNut, options, tuning) -- never on note content --
+	// so it's cached here per-column (a ~2 x nCols state space) alongside the per-note-class HTML
+	// above, letting buildCellsFromSelector() skip the per-cell sizing recomputation it used to do
+	// on every rebuild, cache hit or miss. Iterates displayed column positions (via
+	// getDisplayedCellcol()) rather than raw loop indices, so this matches the actual `cellcol`
+	// attribute values TableBuilder.js bakes into each <td>, including for reverse tunings.
+	const sizingByColumn = {};
+	if (typeof buildSizing === 'function') {
+		const nCols = getColumnCount(tuning);
+		for (let c = 0; c < nCols; c += 1) {
+			const cellcol = getDisplayedCellcol(tuning, c);
+			if (cellcol === null || cellcol === undefined) {
+				continue;
+			}
+			sizingByColumn[`${cellcol}:0`] = buildSizing({ cellcol, isNut: false, options, tuning });
+			sizingByColumn[`${cellcol}:1`] = buildSizing({ cellcol, isNut: true, options, tuning });
+		}
+	}
+
 	return {
 		key,
 		tableID,
 		sectionIndex,
 		noteClassHtmlByNoteName,
+		sizingByColumn,
 		createdAt: Date.now(),
 		hitCount: 0
 	};
@@ -193,6 +221,13 @@ export function getHtml(entry, noteClass, midinum) {
 		return undefined;
 	}
 	return byMidi[String(midinum)] ?? byMidi.__default;
+}
+
+export function getSizing(entry, cellcol, isNut) {
+	if (!entry || cellcol === undefined || cellcol === null || cellcol === '') {
+		return undefined;
+	}
+	return entry.sizingByColumn?.[`${cellcol}:${isNut ? 1 : 0}`];
 }
 
 function evictIfNeeded() {

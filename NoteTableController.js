@@ -370,63 +370,91 @@ export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, not
      return result;
 }
 
+/** Computes cell sizing (fontMultiplier, td width/height, NoteDisplay font-size/height) for a
+ *  given displayed column position and nut-ness. Depends only on (cellcol, isNut, options,
+ *  tuning) -- never on note content/midinum -- so callers can precompute/cache this once per
+ *  distinct render key instead of recomputing it once per matched <td> on every rebuild (see
+ *  NoteTableRenderCache.createEntry()'s buildSizing callback). Also used directly here as the
+ *  fallback in buildCellsFromSelector() when no cached sizing is available (e.g. render cache
+ *  disabled), so behavior is identical either way. See 903-implementation-plan-step-D.md Step D1. */
+export function computeCellSizing(cellcol, isNut, options, tuning) {
+    const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
+    const w = options.NoteDisplaySizes.width;
+    let h = options.NoteDisplaySizes.height;
+    if (pianoSkeuomorphic) {
+        h = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
+    }
+
+    let multiplier = 1;
+    const width = w.substring(0, w.indexOf("px"));
+
+    let fretWidth = toInt(width, 60);
+    if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
+        multiplier = getSong().fretLengths[cellcol];
+        let mellowNormieRadical = 60;
+        if (options.naturalFontScaling){
+            mellowNormieRadical = options.naturalFontScaling;
+        }
+        fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
+    }
+    if (tuning.fixedFretWidthMult ){
+        fretWidth = width * tuning.fixedFretWidthMult * 0.6;
+    }
+    const sW = fretWidth+"pt";
+
+    const fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
+
+    if (isNut){
+        //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
+        return {
+            fontMultiplier,
+            tdWidth: "var(--nut-width)",
+            tdHeight: h,
+            noteDisplayFontSize: ""+(0.6*fontMultiplier)+"em",
+            noteDisplayHeight: h
+        };
+    }
+    return {
+        fontMultiplier,
+        tdWidth: sW,
+        tdHeight: h,
+        noteDisplayFontSize: ""+fontMultiplier+"em",
+        noteDisplayHeight: h
+    };
+}
+
 export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options, renderCacheEntry = null, noteClass = ''){
     var cellsSet = $(selector);
 	cellsSet.each(function(i, obj){
-        var cell=$(this);
-        var td = $(obj);
-        var midinum = td.attr("midinum");
-		var cellcol = td.attr("cellcol");
-        var celltable = td.attr("celltable");
-        if (celltable) {
-            var tuning = TuningsLibrary.findTuningForName(celltable);
-            const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
-            const cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
-            cell.html(cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
+        var midinum = obj.getAttribute("midinum");
+		var cellcol = obj.getAttribute("cellcol");
+        var celltable = obj.getAttribute("celltable");
+        if (!celltable) {
+            return;
+        }
+        var tuning = TuningsLibrary.findTuningForName(celltable);
+        var isNut = obj.classList.contains("nut") || obj.classList.contains("nutR");
 
-			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));
+        var cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
+        obj.innerHTML = cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
 
-			var w = options.NoteDisplaySizes.width;
-			var h = options.NoteDisplaySizes.height;
-            if (pianoSkeuomorphic) {
-                const pianoHeight = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
-                h = pianoHeight;
-            }
-			var multiplier = 1;
-			var width = w.substring(0, w.indexOf("px"));
-			var height = h.substring(0, h.indexOf("px"));
+        // Step D1 (903-implementation-plan-step-D.md): sizing depends only on
+        // (renderCacheKey, cellcol, isNut), never on note content, so prefer the value
+        // already cached per-column in NoteTableRenderCache.createEntry() over recomputing
+        // it here for every cell on every rebuild. Falls back to a direct computation (e.g.
+        // when the render cache is disabled, or for any key not found in the cache) so
+        // behavior is identical either way.
+        var sizing = NoteTableRenderCache.getSizing(renderCacheEntry, cellcol, isNut)
+            || computeCellSizing(cellcol, isNut, options, tuning);
 
-			var fretWidth = toInt(width,60);
-            if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
-				multiplier = getSong().fretLengths[cellcol];
-                let mellowNormieRadical = 60;
-                if (options.naturalFontScaling){
-                    mellowNormieRadical = options.naturalFontScaling;
-                }
-				fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
-			}
-            if (tuning.fixedFretWidthMult ){
-                fretWidth = width * tuning.fixedFretWidthMult * 0.6;
-            }
-            const sW = fretWidth+"pt";
+        obj.setAttribute("fontMultiplier", sizing.fontMultiplier);
+        obj.style.width = sizing.tdWidth;
+        obj.style.height = sizing.tdHeight;
 
-            var fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
-            cell.attr("fontMultiplier", fontMultiplier);
-
-            var newTDSizes;
-            var newNoteDisplaySizes;
-            if (isNut){
-                //newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
-                newTDSizes = {"width":"var(--nut-width)", "height":h};  //special for nut.
-                newNoteDisplaySizes = {"font-size":""+(0.6*fontMultiplier)+"em", "height":h};  //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
-            } else {
-                //newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
-                newTDSizes = {"width":sW, "height":h};
-                newNoteDisplaySizes = {"font-size":""+fontMultiplier+"em", "height":h};  //If you set the width for the NoteDisplay instead of td.note it gets wonky.
-            }
-			//cell.children(".NoteDisplay").css(newSizes);
-			cell.children(".NoteDisplay").css(newNoteDisplaySizes);
-			cell.css(newTDSizes);  //The calculated width must be on .td.note, not .NoteDisplay
+        var noteDisplay = obj.querySelector(".NoteDisplay");
+        if (noteDisplay) {
+            noteDisplay.style.fontSize = sizing.noteDisplayFontSize;
+            noteDisplay.style.height = sizing.noteDisplayHeight;
         }
     });
 }

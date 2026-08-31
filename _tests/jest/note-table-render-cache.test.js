@@ -172,4 +172,98 @@ describe('NoteTableRenderCache', () => {
         expect(NoteTableRenderCache.wasLastPainted('', 'keyA')).toBe(false);
         expect(NoteTableRenderCache.wasLastPainted('tblS6_1', '')).toBe(false);
     });
+
+    test('createEntry omits sizingByColumn entries when buildSizing is not provided', () => {
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: () => 'html'
+        });
+
+        expect(NoteTableRenderCache.getSizing(entry, 0, false)).toBeUndefined();
+        expect(NoteTableRenderCache.getSizing(entry, 1, true)).toBeUndefined();
+    });
+
+    test('createEntry precomputes sizingByColumn for every displayed column and nut-ness, keyed by cellcol', () => {
+        // tuning: frets=3, nut=true -> 4 columns, displayed cellcol == raw index (non-reverse).
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const buildSizing = jest.fn(({ cellcol, isNut }) => ({ cellcol, isNut }));
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: () => 'html',
+            buildSizing
+        });
+
+        // 4 columns (frets=3 + nut) x 2 (isNut true/false) = 8 calls.
+        expect(buildSizing).toHaveBeenCalledTimes(8);
+        expect(NoteTableRenderCache.getSizing(entry, 0, false)).toEqual({ cellcol: 0, isNut: false });
+        expect(NoteTableRenderCache.getSizing(entry, 0, true)).toEqual({ cellcol: 0, isNut: true });
+        expect(NoteTableRenderCache.getSizing(entry, 3, false)).toEqual({ cellcol: 3, isNut: false });
+        expect(NoteTableRenderCache.getSizing(entry, 4, false)).toBeUndefined();
+    });
+
+    test('createEntry keys sizingByColumn by displayed cellcol (getDisplayedCellcol), not raw loop index, for reverse tunings', () => {
+        // reverse + no nut: getDisplayedCellcol(options, c) = frets - c, so raw index 0..frets-1
+        // displays as cellcol frets..1, not 0..frets-1. Step D1 must key off the displayed value.
+        const reverseTuning = { ...tuning, nut: false, reverse: true };
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1R',
+            options: baseOptions,
+            tuning: reverseTuning,
+            noteNamesFuncArr: []
+        });
+        const buildSizing = jest.fn(({ cellcol }) => ({ cellcol }));
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1R',
+            options: baseOptions,
+            tuning: reverseTuning,
+            buildCellHtml: () => 'html',
+            buildSizing
+        });
+
+        // frets=3, no nut -> 3 columns, raw index 0..2, displayed cellcol = 3,2,1.
+        expect(NoteTableRenderCache.getSizing(entry, 0, false)).toBeUndefined();
+        expect(NoteTableRenderCache.getSizing(entry, 1, false)).toEqual({ cellcol: 1 });
+        expect(NoteTableRenderCache.getSizing(entry, 2, false)).toEqual({ cellcol: 2 });
+        expect(NoteTableRenderCache.getSizing(entry, 3, false)).toEqual({ cellcol: 3 });
+    });
+
+    test('getSizing returns undefined for a missing entry or an empty cellcol', () => {
+        expect(NoteTableRenderCache.getSizing(null, 0, false)).toBeUndefined();
+        expect(NoteTableRenderCache.getSizing(undefined, 0, false)).toBeUndefined();
+
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: () => 'html',
+            buildSizing: ({ cellcol }) => ({ cellcol })
+        });
+        expect(NoteTableRenderCache.getSizing(entry, '', false)).toBeUndefined();
+        expect(NoteTableRenderCache.getSizing(entry, null, false)).toBeUndefined();
+    });
 });

@@ -72,6 +72,7 @@ import {
 	clearAll,
 	clearHighlights,
 	colorNote,
+	computeCellSizing,
 	fillChord,
 	highlightOneNote,
 	replay,
@@ -1151,7 +1152,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				tuning,
 				buildCellHtml: ({ noteLetter, sharpflat, noteNum, midinum, options }) => {
 					return cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
-				}
+				},
+				buildSizing: ({ cellcol, isNut, options, tuning }) => computeCellSizing(cellcol, isNut, options, tuning)
 			});
 			if (liveBuiltEntry) {
 				NoteTableRenderCache.set(renderCacheKey, liveBuiltEntry);
@@ -1403,7 +1405,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				tuning: task.tuning,
 				buildCellHtml: ({ noteLetter, sharpflat, noteNum, midinum, options }) => {
 					return cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
-				}
+				},
+				buildSizing: ({ cellcol, isNut, options, tuning }) => computeCellSizing(cellcol, isNut, options, tuning)
 			});
 			NoteTableRenderCache.set(task.key, entry);
 			completed++;

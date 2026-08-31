@@ -2,6 +2,8 @@ const {
   buildNamedNote,
   buildUniversalNamedNote,
   cellBuilder,
+  computeCellSizing,
+  setNotetableProviders,
   getPianoSkeuomorphicCellHeightPx,
   getPianoSkeuomorphicCellHeightPxForScaleFactor,
   getPianoSkeuomorphicScaleFactor,
@@ -66,5 +68,68 @@ describe('NoteTableController note-name lane markup', () => {
     expect(getPianoSkeuomorphicBlackKeyWidthPx('200px')).toBeCloseTo(43.48, 2);
     expect(getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor('100px', 1)).toBeCloseTo(10.87, 2);
     expect(getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor('100px', 6)).toBeCloseTo(38.04, 2);
+  });
+});
+
+describe('NoteTableController computeCellSizing (Step D1 render-cache sizing)', () => {
+  const baseOptions = {
+    NoteDisplaySizes: { width: '60px', height: '40px' },
+    naturalFretWidths: false,
+    naturalFontScaling: 60
+  };
+  const tuning = {};
+
+  test('returns fixed nut-width sizing for isNut=true, independent of naturalFretWidths', () => {
+    const sizing = computeCellSizing(0, true, baseOptions, tuning);
+    expect(sizing).toEqual({
+      fontMultiplier: 1,
+      tdWidth: 'var(--nut-width)',
+      tdHeight: '40px',
+      noteDisplayFontSize: '0.6em',
+      noteDisplayHeight: '40px'
+    });
+  });
+
+  test('returns width-derived sizing for isNut=false when naturalFretWidths is off', () => {
+    const sizing = computeCellSizing(2, false, baseOptions, tuning);
+    expect(sizing).toEqual({
+      fontMultiplier: 1,
+      tdWidth: '60pt',
+      tdHeight: '40px',
+      noteDisplayFontSize: '1em',
+      noteDisplayHeight: '40px'
+    });
+  });
+
+  test('scales width and fontMultiplier per-column via fretLengths when naturalFretWidths is on', () => {
+    setNotetableProviders({ getSong: () => ({ fretLengths: { 2: 2 } }) });
+    try {
+      const options = { ...baseOptions, naturalFretWidths: true };
+      const sizing = computeCellSizing(2, false, options, tuning);
+      expect(sizing.tdWidth).toBe('72pt'); // 60 * 2 * 0.6
+      expect(sizing.fontMultiplier).toBeCloseTo(Math.pow(2, 0.6), 10);
+    } finally {
+      setNotetableProviders({ getSong: () => null });
+    }
+  });
+
+  test('uses fixedFretWidthMult over naturalFretWidths when both are set', () => {
+    const options = { ...baseOptions, naturalFretWidths: true };
+    const fixedTuning = { fixedFretWidthMult: 0.5 };
+    setNotetableProviders({ getSong: () => ({ fretLengths: { 1: 3 } }) });
+    try {
+      const sizing = computeCellSizing(1, false, options, fixedTuning);
+      expect(sizing.tdWidth).toBe('18pt'); // width(60) * 0.5 * 0.6
+    } finally {
+      setNotetableProviders({ getSong: () => null });
+    }
+  });
+
+  test('applies piano-skeuomorphic cell height when enabled on the tuning', () => {
+    const pianoTuning = { baseInstrument: 'Piano', rowRange: [1, 2, 3], pianoSkeuomorphic: true };
+    const options = { ...baseOptions, pianoHeightScaleFactor: 3 };
+    const sizing = computeCellSizing(0, false, options, pianoTuning);
+    expect(sizing.tdHeight).toBe(getPianoSkeuomorphicCellHeightPxForScaleFactor('40px', 3) + 'px');
+    expect(sizing.noteDisplayHeight).toBe(sizing.tdHeight);
   });
 });
