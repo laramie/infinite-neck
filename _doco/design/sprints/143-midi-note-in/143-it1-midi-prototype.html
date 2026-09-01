@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  -->
+<!--
+  Sprint 143 (midi-note-in), Iteration 1 prototype.
+  Standalone research tool -- not wired into the main app. See
+  143-it1-plan.md and 143-it1-design-2.md in this folder for the design
+  discussion behind this page.
+
+  Loads ../../../../midi-io.js (a new root-level module explicitly approved
+  in 143-it1-design-2.md) and exercises MIDI IN + MIDI OUT against a real
+  device (e.g. "Focusrite A.E. Ltd Launchpad Pro Standalone Port").
+-->
+<head>
+    <meta charset="utf-8" />
+    <title>infinite-neck: MIDI IN/OUT prototype (sprint 143 it1)</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 1.5em;
+            background: #1c1c1c;
+            color: #eee;
+        }
+        h1 { font-size: 1.2em; }
+        h2 { font-size: 1.05em; border-bottom: 1px solid #555; padding-bottom: 0.25em; }
+        section {
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 1em;
+            margin-bottom: 1.25em;
+            background: #262626;
+        }
+        label { display: inline-block; min-width: 6em; }
+        select, input[type="text"] {
+            font-family: inherit;
+            font-size: 1em;
+            margin: 0.15em 0.5em 0.15em 0;
+        }
+        #statusLine { font-family: monospace; }
+        #statusLine.ok { color: #7fdc7f; }
+        #statusLine.error { color: #ff8080; }
+
+        #noteInIndicator {
+            display: inline-block;
+            min-width: 22em;
+            padding: 0.6em 1em;
+            font-size: 1.3em;
+            font-family: monospace;
+            border-radius: 6px;
+            background: #333;
+            border: 2px solid #555;
+            transition: background-color 0.05s ease-out;
+        }
+        #noteInIndicator.bright {
+            background: #ffe066;
+            color: #222;
+            border-color: #fff;
+        }
+
+        .out-grid {
+            display: grid;
+            grid-template-columns: 5em 6em 8em 10em auto;
+            gap: 0.4em 0.8em;
+            align-items: center;
+            margin-top: 0.5em;
+        }
+        .out-grid .hdr { font-weight: bold; opacity: 0.8; }
+
+        #activityLog {
+            font-family: monospace;
+            font-size: 0.9em;
+            background: #111;
+            color: #b7f7b7;
+            padding: 0.75em;
+            height: 14em;
+            overflow-y: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <h1>infinite-neck &mdash; MIDI IN/OUT prototype (sprint 143, iteration 1)</h1>
+    <div id="statusLine">Requesting MIDI access&hellip;</div>
+
+    <section id="midiInSection">
+        <h2>MIDI IN</h2>
+        <label for="selInputDevice">Input device:</label>
+        <select id="selInputDevice"></select>
+        <div style="margin-top: 0.75em;">
+            <span id="noteInIndicator">no NOTE ON received yet</span>
+        </div>
+    </section>
+
+    <section id="midiOutSection">
+        <h2>MIDI OUT</h2>
+        <label for="selOutputDevice">Output device:</label>
+        <select id="selOutputDevice"></select>
+
+        <div class="out-grid">
+            <div class="hdr">message</div>
+            <div class="hdr">channel</div>
+            <div class="hdr">note</div>
+            <div class="hdr">velocity</div>
+            <div class="hdr"></div>
+
+            <div>Note Off</div>
+            <div>
+                <select id="selNoteOffChannel"></select>
+            </div>
+            <div><input type="text" id="txtNoteOffNote" value="60"></div>
+            <div><input type="text" id="txtNoteOffVelocity" value="0"></div>
+            <div><button id="btnSendNoteOff" title="Send a Note OFF message">Send</button></div>
+
+            <div>Note On</div>
+            <div>
+                <select id="selNoteOnChannel"></select>
+            </div>
+            <div><input type="text" id="txtNoteOnNote" value="60"></div>
+            <div><input type="text" id="txtNoteOnVelocity" value="127"></div>
+            <div><button id="btnSendNoteOn" title="Send a Note ON message">Send</button></div>
+        </div>
+    </section>
+
+    <section id="logSection">
+        <h2>Activity log</h2>
+        <div id="activityLog"></div>
+    </section>
+
+    <script type="module">
+        import {
+            requestMidiAccess,
+            listInputs,
+            listOutputs,
+            attachInputListener,
+            sendNoteOn,
+            sendNoteOff,
+            formatMidiBytesHex
+        } from '../../../../midi-io.js';
+
+        const statusLine = document.getElementById('statusLine');
+        const selInputDevice = document.getElementById('selInputDevice');
+        const selOutputDevice = document.getElementById('selOutputDevice');
+        const noteInIndicator = document.getElementById('noteInIndicator');
+        const activityLog = document.getElementById('activityLog');
+        const selNoteOffChannel = document.getElementById('selNoteOffChannel');
+        const selNoteOnChannel = document.getElementById('selNoteOnChannel');
+
+        const pageStart = performance.now();
+        let detachCurrentInputListener = null;
+        let brightTimeoutId = null;
+
+        // Prefer a device whose name matches this substring when populating
+        // the dropdowns, per 143-it1-design-2.md's test device.
+        const PREFERRED_DEVICE_NAME_SUBSTRING = 'Launchpad';
+
+        function logLine(direction, bytes, deviceName) {
+            const elapsedSeconds = ((performance.now() - pageStart) / 1000).toFixed(3);
+            const paddedDirection = direction.padEnd(7, ' ');
+            const line = `${elapsedSeconds} ${paddedDirection} [${formatMidiBytesHex(bytes)}] ${deviceName}`;
+            activityLog.textContent += line + '\n';
+            activityLog.scrollTop = activityLog.scrollHeight;
+        }
+
+        function populateChannelSelect(selectEl) {
+            for (let channel = 0; channel < 16; channel++) {
+                const option = document.createElement('option');
+                option.value = String(channel);
+                option.textContent = String(channel + 1);
+                selectEl.appendChild(option);
+            }
+        }
+        populateChannelSelect(selNoteOffChannel);
+        populateChannelSelect(selNoteOnChannel);
+
+        function populateDeviceSelect(selectEl, devices) {
+            selectEl.innerHTML = '';
+            devices.forEach((device, index) => {
+                const option = document.createElement('option');
+                option.value = String(index);
+                option.textContent = device.name || `(unnamed device ${index})`;
+                selectEl.appendChild(option);
+            });
+            const preferredIndex = devices.findIndex(
+                device => device.name && device.name.includes(PREFERRED_DEVICE_NAME_SUBSTRING)
+            );
+            if (preferredIndex >= 0) {
+                selectEl.value = String(preferredIndex);
+            }
+        }
+
+        function showNoteOn(parsed, deviceName) {
+            noteInIndicator.textContent =
+                `NOTE ON  ch:${parsed.channel + 1}  note:${parsed.note}  velocity:${parsed.velocity}  (${deviceName})`;
+            noteInIndicator.classList.add('bright');
+            if (brightTimeoutId) {
+                clearTimeout(brightTimeoutId);
+            }
+            brightTimeoutId = setTimeout(() => {
+                noteInIndicator.classList.remove('bright');
+            }, 200);
+        }
+
+        function showNoteOff(parsed, deviceName) {
+            noteInIndicator.textContent =
+                `note off ch:${parsed.channel + 1}  note:${parsed.note}  (${deviceName})`;
+            noteInIndicator.classList.remove('bright');
+        }
+
+        function attachToInput(input) {
+            if (detachCurrentInputListener) {
+                detachCurrentInputListener();
+                detachCurrentInputListener = null;
+            }
+            if (!input) return;
+            detachCurrentInputListener = attachInputListener(input, (parsed, event) => {
+                logLine('receive', event.data, input.name);
+                if (parsed.type === 'noteon') {
+                    showNoteOn(parsed, input.name);
+                } else if (parsed.type === 'noteoff') {
+                    showNoteOff(parsed, input.name);
+                }
+            });
+        }
+
+        async function init() {
+            let midiAccess;
+            try {
+                midiAccess = await requestMidiAccess({ sysex: false });
+            } catch (err) {
+                statusLine.textContent = 'MIDI access failed: ' + err.message;
+                statusLine.className = 'error';
+                return;
+            }
+
+            const inputs = listInputs(midiAccess);
+            const outputs = listOutputs(midiAccess);
+            statusLine.textContent =
+                `MIDI access granted. ${inputs.length} input(s), ${outputs.length} output(s).`;
+            statusLine.className = 'ok';
+
+            populateDeviceSelect(selInputDevice, inputs);
+            populateDeviceSelect(selOutputDevice, outputs);
+
+            attachToInput(inputs[Number(selInputDevice.value) || 0]);
+            selInputDevice.addEventListener('change', () => {
+                attachToInput(inputs[Number(selInputDevice.value)]);
+            });
+
+            function currentOutput() {
+                return outputs[Number(selOutputDevice.value)] || null;
+            }
+
+            document.getElementById('btnSendNoteOn').addEventListener('click', () => {
+                const output = currentOutput();
+                if (!output) return;
+                const channel = Number(selNoteOnChannel.value);
+                const note = Number(document.getElementById('txtNoteOnNote').value);
+                const velocity = Number(document.getElementById('txtNoteOnVelocity').value);
+                sendNoteOn(output, channel, note, velocity);
+                logLine('send', [0x90 | channel, note & 0x7f, velocity & 0x7f], output.name);
+            });
+
+            document.getElementById('btnSendNoteOff').addEventListener('click', () => {
+                const output = currentOutput();
+                if (!output) return;
+                const channel = Number(selNoteOffChannel.value);
+                const note = Number(document.getElementById('txtNoteOffNote').value);
+                const velocity = Number(document.getElementById('txtNoteOffVelocity').value);
+                sendNoteOff(output, channel, note, velocity);
+                logLine('send', [0x80 | channel, note & 0x7f, velocity & 0x7f], output.name);
+            });
+
+            midiAccess.onstatechange = () => {
+                const refreshedInputs = listInputs(midiAccess);
+                const refreshedOutputs = listOutputs(midiAccess);
+                populateDeviceSelect(selInputDevice, refreshedInputs);
+                populateDeviceSelect(selOutputDevice, refreshedOutputs);
+                attachToInput(refreshedInputs[Number(selInputDevice.value) || 0]);
+                statusLine.textContent =
+                    `MIDI device list changed. ${refreshedInputs.length} input(s), ${refreshedOutputs.length} output(s).`;
+            };
+        }
+
+        init();
+    </script>
+</body>
+</html>
