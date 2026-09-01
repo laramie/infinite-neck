@@ -1,4 +1,9 @@
-# Request   143-design-3
+# Iteration 3
+
+## Design 
+
+   This document:   143-design-3.md
+   Launches: Iteration 3 (it3)
 
 We have found the Launchpad device does two modes of interest: [User, Programmer] 
 - User is MIDI notes on NOTE ON with velocity > 0, and MIDI ON with velocity == 0 after it when the User releases the button on the Launchpad.   Row and column on the device cannot be calculated.  However, it has a built-in light display programmed to the C-Scale which is standard for these devices and easy to play because it is tuned like a P4 guitar.  However, Launchpad won't tell cell and row in this mode.
@@ -53,18 +58,20 @@ Velocity Color Values
 
 Each major color value has two dimmer settings.  Adding +1 or +2 to the base color number makes that respective color dimmer (e.g., if 5 is full red, 6 and 7 are dimmer shades of red).
 
-# Next iteration
+## Iteration 3 Deliverables
 
-For Iteration 2, move 143-it1-midi-prototype.html code into a new tab page on "Desktop" with tab button caption "MIDI".
+For Iteration 3, move 143-it1-midi-prototype.html code into a new tab page on "Desktop" with tab button caption "MIDI".
 Let the tab buttons now be: 
 ```
 Keyboard | Buttons | MIDI
 ```
 Where MIDI shows a div that contains the controls copied from the prototype.
 
+Let this new div be served up by our template system.  Make a sibling template to `./templates/mobile-keyboard/` in folder `./templates/midi/` in the repository.
+
 Add a toggle button, like `#btnAutoColor` in `#divQuick`.  When it is PunchedIn, it means MIDI is on, routing NOTE DOWN, through the row/column calculator, and into the Instrument.  
 
-Eventually controls will end up in the Wiring Mapping side-panel div.  For now, living on the new MIDI tab page will be sufficient.  The routing should be handled by an Instrument picker, similar to the one in the Wiring area -- its a dropdown built of all Instruments in the song that are Main instruments -- no Observers or Listeners.
+Eventually a few of the controls will end up in the Wiring Mapping side-panel div.  For now, living on the new MIDI tab page will be sufficient.  The routing should be handled by an Instrument picker, similar to the one in the Wiring area -- its a dropdown built of all Instruments in the song that are Main instruments -- no Observers or Listeners.
 
 There will need to be some state kept: we need to keep track of which buttons are lit on the device.  If a User presses a button, which we are lighting because it is a note in a Section on this Instrument, then we must highlight the button on the device with a NOTE ON in a brighter color, then when they let go, we must undo that brighter color with a NOTE OFF, but then we must restore the light corresponding to that note on the Instrument.  If the User clicks a button, they get a NOTE ON, we turn that into a hit on the Instrument, consult what Note type is in effect, and add that note to the Model.  Which means we send out a color for that button.  Then when the NOTE OFF comes, we ignore it except for removing the bright velocity and adding the color/velocity that corresponds to our note color.  We don't have to implement all that in this iteration, but wanted to specify it so classes can be implemented in the midi-io.js module. 
 
@@ -74,7 +81,9 @@ So for this next implementation step let's:
 - Whenever a note is on in the Model, during replay(), send that note to the device on MIDI OUT.  We'll worry about the ON/OFF flipping in the next iteration.  
 - Whenever a User presses a button on the device (NOTE ON), route it to the same as `TD.note click` in our instrument.  And that NOTE OFF means nothing to us.  Just use Velociy 5 / Red for every color in this iteration.  We'll worry about the semantics of how to turn notes off at Section changes and Note edits in the next iteration. 
 
+# Request
 
+Please proceed to coding the above changes.  If some features aren't clear or don't fall out correctly, that's fine--we're in prototyping mode.  
 
 
 

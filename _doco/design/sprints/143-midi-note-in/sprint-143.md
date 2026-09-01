@@ -19,4 +19,6 @@ Purpose of this sprint is to: Wire MIDI NOTE ON inputs to Note triggering.  When
 ## Iterations
 
   - "Iteration 1": Get MIDI notes coming in to the app from the MIDI USB source.
+  - "Iteration 2": Implement prototype i/o page.
+  - "Iteration 3": Wire to basic 8x8 Instrument, route NOTE ON to TD.note click, and send light info (NOTE ON [rowcolNum, velocity])
 
