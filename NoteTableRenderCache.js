@@ -207,6 +207,11 @@ export function createEntry({ key, tableID = '', sectionIndex = null, options = 
 		sectionIndex,
 		noteClassHtmlByNoteName,
 		sizingByColumn,
+		// Step D2/Flyweight (903-phase-5-flyweight-content-cache-plan.md): lazily-populated cache of
+		// detached master content Nodes, keyed the same way as getHtml()'s string lookup. Populated on
+		// first real use via getOrBuildContentNode(), not precomputed eagerly here, since the actual
+		// distinct-content count observed in practice is much smaller than the theoretical max.
+		contentNodeByKey: {},
 		createdAt: Date.now(),
 		hitCount: 0
 	};
@@ -228,6 +233,32 @@ export function getSizing(entry, cellcol, isNut) {
 		return undefined;
 	}
 	return entry.sizingByColumn?.[`${cellcol}:${isNut ? 1 : 0}`];
+}
+
+/** Flyweight content-node cache (903-phase-5-flyweight-content-cache-plan.md, Option A): returns a
+ *  detached master Node built from the same cached HTML string getHtml() would return, parsing it
+ *  (via the caller-supplied buildNode callback, kept DOM-agnostic here) only once per distinct
+ *  (noteClass, midinum) key, then returning that same cached master on every subsequent call for
+ *  the same key. Callers MUST clone the returned node before inserting it -- this function always
+ *  returns the shared master, never a fresh instance. Returns undefined whenever getHtml() would
+ *  (missing entry/noteClass/cached string), so callers can fall back to their existing string-based
+ *  path unchanged. */
+export function getOrBuildContentNode(entry, noteClass, midinum, buildNode) {
+	if (!entry || !noteClass || typeof buildNode !== 'function') {
+		return undefined;
+	}
+	const html = getHtml(entry, noteClass, midinum);
+	if (!html) {
+		return undefined;
+	}
+	entry.contentNodeByKey = entry.contentNodeByKey || {};
+	const cacheKey = `${noteClass}:${midinum ?? ''}`;
+	let master = entry.contentNodeByKey[cacheKey];
+	if (!master) {
+		master = buildNode(html);
+		entry.contentNodeByKey[cacheKey] = master;
+	}
+	return master;
 }
 
 function evictIfNeeded() {

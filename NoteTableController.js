@@ -423,6 +423,17 @@ export function computeCellSizing(cellcol, isNut, options, tuning) {
     };
 }
 
+/** Parses an HTML fragment string into a detached DOM Node via a throwaway <template> element.
+ *  Used as the buildNode callback for NoteTableRenderCache.getOrBuildContentNode() -- this is where
+ *  the one-time-per-distinct-key ParseHTML cost still happens, but only once per distinct
+ *  (noteClass, midinum) key ever, not once per cell. See
+ *  903-phase-5-flyweight-content-cache-plan.md Option A. */
+function parseHtmlToNode(html) {
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstElementChild;
+}
+
 export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options, renderCacheEntry = null, noteClass = ''){
     var cellsSet = $(selector);
 	cellsSet.each(function(i, obj){
@@ -435,9 +446,17 @@ export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum,
         var tuning = TuningsLibrary.findTuningForName(celltable);
         var isNut = obj.classList.contains("nut") || obj.classList.contains("nutR");
 
-        var cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
-        obj.innerHTML = cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
-
+        // Flyweight content-node cache (903-phase-5-flyweight-content-cache-plan.md, Option A):
+        // clone an already-parsed master node instead of forcing a fresh HTML parse via
+        // innerHTML= on every cell. Falls back to the existing string-based path whenever no
+        // cached master is available (e.g. render cache disabled, or key not found).
+        var contentNode = NoteTableRenderCache.getOrBuildContentNode(renderCacheEntry, noteClass, midinum, parseHtmlToNode);
+        if (contentNode) {
+            obj.replaceChildren(contentNode.cloneNode(true));
+        } else {
+            var cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
+            obj.innerHTML = cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
+        }
         // Step D1 (903-implementation-plan-step-D.md): sizing depends only on
         // (renderCacheKey, cellcol, isNut), never on note content, so prefer the value
         // already cached per-column in NoteTableRenderCache.createEntry() over recomputing

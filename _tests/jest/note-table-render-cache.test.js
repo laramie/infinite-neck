@@ -266,4 +266,72 @@ describe('NoteTableRenderCache', () => {
         expect(NoteTableRenderCache.getSizing(entry, '', false)).toBeUndefined();
         expect(NoteTableRenderCache.getSizing(entry, null, false)).toBeUndefined();
     });
+
+    test('getOrBuildContentNode calls buildNode once per distinct key and returns the same cached master thereafter', () => {
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: ({ noteClass, midinum }) => `${noteClass}:${midinum ?? 'default'}`
+        });
+        const buildNode = jest.fn((html) => ({ html }));
+
+        const first = NoteTableRenderCache.getOrBuildContentNode(entry, 'noteE', undefined, buildNode);
+        const second = NoteTableRenderCache.getOrBuildContentNode(entry, 'noteE', undefined, buildNode);
+        const other = NoteTableRenderCache.getOrBuildContentNode(entry, 'noteF', undefined, buildNode);
+
+        expect(buildNode).toHaveBeenCalledTimes(2);
+        expect(first).toBe(second);
+        expect(first).toEqual({ html: 'noteE:default' });
+        expect(other).toEqual({ html: 'noteF:default' });
+        expect(other).not.toBe(first);
+    });
+
+    test('getOrBuildContentNode returns undefined for a missing entry, noteClass, buildNode, or cached html', () => {
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: () => 'html'
+        });
+        const buildNode = jest.fn((html) => ({ html }));
+
+        expect(NoteTableRenderCache.getOrBuildContentNode(null, 'noteE', undefined, buildNode)).toBeUndefined();
+        expect(NoteTableRenderCache.getOrBuildContentNode(entry, '', undefined, buildNode)).toBeUndefined();
+        expect(NoteTableRenderCache.getOrBuildContentNode(entry, 'noteE', undefined, undefined)).toBeUndefined();
+        expect(NoteTableRenderCache.getOrBuildContentNode(entry, 'noteMissing', undefined, buildNode)).toBeUndefined();
+        expect(buildNode).not.toHaveBeenCalled();
+    });
+
+    test('createEntry initializes an empty contentNodeByKey on every entry', () => {
+        const key = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            noteNamesFuncArr: []
+        });
+        const entry = NoteTableRenderCache.createEntry({
+            key,
+            tableID: 'tblS6_1',
+            options: baseOptions,
+            tuning,
+            buildCellHtml: () => 'html'
+        });
+
+        expect(entry.contentNodeByKey).toEqual({});
+    });
 });

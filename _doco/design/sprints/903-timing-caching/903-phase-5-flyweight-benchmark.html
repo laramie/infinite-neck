@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>903 Phase 5 -- Flyweight content-node cache benchmark (innerHTML vs cloneNode)</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2em; max-width: 900px; }
+  h1 { font-size: 1.3em; }
+  h2 { font-size: 1.1em; margin-top: 1.5em; }
+  label { display: inline-block; width: 220px; }
+  input[type=number] { width: 100px; }
+  .row { margin: 0.4em 0; }
+  button { padding: 0.5em 1.2em; font-size: 1em; margin-top: 1em; cursor: pointer; }
+  table.results { border-collapse: collapse; margin-top: 1em; }
+  table.results th, table.results td { border: 1px solid #ccc; padding: 0.4em 0.8em; text-align: right; }
+  table.results th:first-child, table.results td:first-child { text-align: left; }
+  #status { margin-top: 1em; font-style: italic; color: #555; }
+  pre#rawResults { background: #f5f5f5; padding: 1em; overflow-x: auto; max-height: 240px; }
+  .note { color: #555; font-size: 0.92em; }
+</style>
+</head>
+<body>
+<h1>Sprint 903 Phase 5 -- Flyweight content-node cache benchmark</h1>
+<p class="note">
+  Standalone, self-contained page: no server, no app needed. Compares
+  <code>element.innerHTML = htmlString</code> (today's approach in
+  <code>NoteTableController.js</code>'s <code>buildCellsFromSelector()</code>) against
+  parsing each distinct content string into a detached master <code>Node</code>
+  <strong>once</strong> and using <code>node.cloneNode(true)</code> for every subsequent
+  cell that needs the same content. See
+  <code>903-phase-5-flyweight-content-cache-plan.md</code> for the full design writeup.
+</p>
+<p class="note">
+  The 24 content variants below were extracted directly from a real captured console log
+  (<code>903-notes-for-flyweight-cache.log</code>) -- not synthetic data. In that real capture,
+  300 total per-cell rebuilds resolved to only 24 distinct content strings (each repeated
+  12-13 times), which is why the defaults below are 300 cells / 24 variants.
+</p>
+
+<h2>Settings</h2>
+<div class="row"><label for="cellCount">Total cells per trial:</label><input type="number" id="cellCount" value="300" min="1" max="5000"></div>
+<div class="row"><label for="trialCount">Number of trials:</label><input type="number" id="trialCount" value="10" min="1" max="200"></div>
+<div class="row"><label for="variantCount">Distinct content variants to use:</label><input type="number" id="variantCount" value="24" min="1" max="24"></div>
+<button id="runBtn">Run benchmark</button>
+<div id="status"></div>
+
+<h2>Results</h2>
+<table class="results" id="resultsTable" style="display:none;">
+  <thead><tr><th>Approach</th><th>Avg total ms</th><th>Min ms</th><th>Max ms</th><th>Avg &micro;s/cell</th></tr></thead>
+  <tbody></tbody>
+</table>
+<p class="note" id="speedupNote"></p>
+
+<h2>Raw results (JSON, for sharing/pasting back)</h2>
+<pre id="rawResults">(not run yet)</pre>
+
+<script>
+// Real content extracted from 903-notes-for-flyweight-cache.log (24 distinct variants
+// among 300 total per-cell rebuild lines in one real buildCellsForTable() capture).
+const REAL_CONTENT_VARIANTS = ["<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div><div class='tinyNote'>σ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div><div class='tinyNote'>δ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div><div class='tinyNote'>τ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div><div class='tinyNote'>m</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div><div class='tinyNote'>Θ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>6</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>Δ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>I</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>II</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>III</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>IV</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>V</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div><div class='tinyNote'>τ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>τ</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div><div class='tinyNote'>m</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>m</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div><div class='tinyNote'>Θ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Θ</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div><div class='tinyNote'>σ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>σ</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div><div class='tinyNote'>Δ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>Δ</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&#9837;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>II</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>II</div><span class='tinyscriptL'><span class='enharmonicName'>A<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>III</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>III</div><span class='tinyscriptL'><span class='enharmonicName'>B<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>IV</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>IV</div><span class='tinyscriptL'><span class='enharmonicName'>C<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>V</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>V</div><span class='tinyscriptL'><span class='enharmonicName'>D<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>6</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>6</div><span class='tinyscriptL'><span class='enharmonicName'>E<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>δ</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>δ</div><span class='tinyscriptL'><span class='enharmonicName'>F<small>&nbsp;</small></span></span></div></div></div>", "<div class='NoteDisplay'><div class='universalNamedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div><div class='tinyNote'>I</div><div class='singleNote'><span class='midinumDisplay'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div><div class='Fingering'>1</div><div class='namedNote'><span class='midinumDisplayNamedNote'></span><div class='CenterCell'><div class='CenterCell'>I</div><span class='tinyscriptL'><span class='enharmonicName'>G<small>&nbsp;</small></span></span></div></div></div>"];
+
+function buildScratchTable(cellCount) {
+  // Offscreen but attached (so style/selector matching behaves like the real page),
+  // never visible, always cleaned up after each run.
+  const host = document.createElement('div');
+  host.style.cssText = 'position:absolute; left:-99999px; top:0;';
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+  const row = document.createElement('tr');
+  const cells = [];
+  for (let i = 0; i < cellCount; i += 1) {
+    const td = document.createElement('td');
+    td.className = 'note';
+    row.appendChild(td);
+    cells.push(td);
+  }
+  tbody.appendChild(row);
+  table.appendChild(tbody);
+  host.appendChild(table);
+  document.body.appendChild(host);
+  return { host, cells };
+}
+
+function benchInnerHtml(cells, variants, cellCount) {
+  const start = performance.now();
+  for (let i = 0; i < cellCount; i += 1) {
+    cells[i].innerHTML = variants[i % variants.length];
+  }
+  return performance.now() - start;
+}
+
+function buildMasters(variants) {
+  // This is the ONE-TIME parse cost per distinct variant -- happens outside the timed
+  // per-cell loop below, same as it would happen at most once per distinct key in the
+  // real implementation (NoteTableRenderCache.getOrBuildContentNode()'s lazy build).
+  return variants.map((html) => {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstElementChild;
+  });
+}
+
+function benchCloneNode(cells, masters, cellCount) {
+  const start = performance.now();
+  for (let i = 0; i < cellCount; i += 1) {
+    cells[i].replaceChildren(masters[i % masters.length].cloneNode(true));
+  }
+  return performance.now() - start;
+}
+
+function stats(samples, cellCount) {
+  const sum = samples.reduce((a, b) => a + b, 0);
+  const avgMs = sum / samples.length;
+  return {
+    avgMs: Math.round(avgMs * 1000) / 1000,
+    minMs: Math.round(Math.min(...samples) * 1000) / 1000,
+    maxMs: Math.round(Math.max(...samples) * 1000) / 1000,
+    perCellUs: Math.round((avgMs / cellCount) * 1000 * 1000) / 1000
+  };
+}
+
+function runBenchmark() {
+  const cellCount = Math.max(1, parseInt(document.getElementById('cellCount').value, 10) || 300);
+  const trialCount = Math.max(1, parseInt(document.getElementById('trialCount').value, 10) || 10);
+  const variantCount = Math.min(REAL_CONTENT_VARIANTS.length, Math.max(1, parseInt(document.getElementById('variantCount').value, 10) || 24));
+  const variants = REAL_CONTENT_VARIANTS.slice(0, variantCount);
+
+  document.getElementById('status').textContent = 'Running ' + trialCount + ' trials of ' + cellCount + ' cells each, ' + variantCount + ' distinct variants...';
+
+  // Defer to next frame so the "Running..." status actually paints before the synchronous work below.
+  requestAnimationFrame(() => {
+    const innerHtmlSamples = [];
+    const cloneNodeSamples = [];
+
+    for (let t = 0; t < trialCount; t += 1) {
+      // Fresh scratch table per trial per approach, so neither approach benefits from
+      // the other's prior DOM state (e.g. already-parsed content left over from before).
+      const scratch1 = buildScratchTable(cellCount);
+      innerHtmlSamples.push(benchInnerHtml(scratch1.cells, variants, cellCount));
+      document.body.removeChild(scratch1.host);
+
+      const scratch2 = buildScratchTable(cellCount);
+      const masters = buildMasters(variants); // rebuilt fresh each trial -- see note below
+      cloneNodeSamples.push(benchCloneNode(scratch2.cells, masters, cellCount));
+      document.body.removeChild(scratch2.host);
+    }
+
+    const innerHtmlStats = stats(innerHtmlSamples, cellCount);
+    const cloneNodeStats = stats(cloneNodeSamples, cellCount);
+    const speedup = innerHtmlStats.avgMs / cloneNodeStats.avgMs;
+
+    const tbody = document.querySelector('#resultsTable tbody');
+    tbody.innerHTML = '';
+    [['innerHTML= (current)', innerHtmlStats], ['cloneNode(true) (proposed)', cloneNodeStats]].forEach(([label, s]) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + label + '</td><td>' + s.avgMs + '</td><td>' + s.minMs + '</td><td>' + s.maxMs + '</td><td>' + s.perCellUs + '</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('resultsTable').style.display = '';
+    document.getElementById('speedupNote').textContent =
+      'cloneNode is ' + speedup.toFixed(2) + 'x faster than innerHTML for this content shape/size (masters rebuilt fresh each trial above -- '
+      + 'in the real app the master-build cost is paid at most once per distinct key for the whole session, not once per trial, so the real-world '
+      + 'speedup should be at least this good, likely better).';
+    document.getElementById('status').textContent = 'Done: ' + trialCount + ' trials, ' + cellCount + ' cells, ' + variantCount + ' variants.';
+
+    document.getElementById('rawResults').textContent = JSON.stringify({
+      cellCount, trialCount, variantCount,
+      innerHtmlSamplesMs: innerHtmlSamples,
+      cloneNodeSamplesMs: cloneNodeSamples,
+      innerHtmlStats, cloneNodeStats, speedup
+    }, null, 2);
+  });
+}
+
+document.getElementById('runBtn').addEventListener('click', runBenchmark);
+</script>
+</body>
+</html>
