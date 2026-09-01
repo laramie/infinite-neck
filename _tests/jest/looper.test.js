@@ -26,6 +26,8 @@ const {
 	restartLoopSections,
 	getLoopTimingMode,
 	LoopTimingMode,
+	getAverageSectionTransitionMs,
+	installTransportTiming,
 	__resetLooperForTests
 } = await import('../../looper.js');
 
@@ -255,14 +257,91 @@ describe('looper looping state', () => {
 		const scheduledHandler = setTimeoutSpy.mock.calls[0][0];
 		scheduledHandler();
 
-		expect(consoleLogSpy).toHaveBeenCalledWith('[LooperRealtimeTick]', expect.objectContaining({
-			loopKind: 'sections',
-			sectionIndex: 1,
-			beat: 2,
-			nowMillis: expect.any(Number),
-			nowText: expect.stringMatching(/^\d{2}:\d{2}:\d{2}\.\d{3}$/)
-		}));
+		expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringMatching(/^\[LooperRealtimeTick\] \d+\s+s:1:2$/));
 		expect(mockRuntime.updateRealtimeTickStart).toHaveBeenCalledWith(expect.stringMatching(/^\d{2}:\d{2}:\d{2}\.\d{3}$/));
 		consoleLogSpy.mockRestore();
 	});
+
+	test('predictive section-transition lead: no adjustment until a transition duration has actually been measured', () => {
+		// beats=1 means every tick is a section-transition tick (beat always >= beats), so the very
+		// first schedule (before any tick has run) has zero samples and must use the flat interval.
+		mockRuntime.song = makeMockSong({ beat: 1, beats: 1, sectionCount: 3 });
+		toggleLoopSections();
+
+		expect(getAverageSectionTransitionMs()).toBe(0);
+		expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 125);
+	});
+
+	test('predictive section-transition lead: shortens the delay for the tick right before the next boundary once a duration is measured', () => {
+		// Every Date.now() call advances the simulated clock by a fixed 10ms step, so the elapsed
+		// time measured between tickStartMillis and the post-tickBeat() read is deterministically
+		// 10ms (tickBeat() itself makes no Date.now() calls in this mock song), regardless of how
+		// many other Date.now() calls happen elsewhere (e.g. logRealtimeTick()).
+		let simulatedNowMs = 1000;
+		const dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
+			const value = simulatedNowMs;
+			simulatedNowMs += 10;
+			return value;
+		});
+		const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+		// beats=1: the very first tick is itself a section-transition tick, and immediately after
+		// it the new section's beat (still 1) is again >= beats (still 1), so the SECOND schedule
+		// (for the tick right after) is the one predicted to be the next boundary tick.
+		mockRuntime.song = makeMockSong({ beat: 1, beats: 1, sectionCount: 3 });
+		toggleLoopSections();
+		expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 125);
+
+		const firstScheduledHandler = setTimeoutSpy.mock.calls[0][0];
+		firstScheduledHandler();
+
+		expect(getAverageSectionTransitionMs()).toBe(10);
+		expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 115);
+		expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringMatching(/^\[LooperPredictiveLead\] mode=visual leadMs=10 delayMs=125 adjustedDelayMs=115$/));
+
+		dateNowSpy.mockRestore();
+		consoleLogSpy.mockRestore();
+	});
+
+	test('predictive section-transition lead also applies in Transport timing mode, without introducing schedule creep', () => {
+		// Date.now() (used only for measuring tickBeat() duration/logRealtimeTick display) uses the
+		// same auto-incrementing-by-10-per-call mock as the Visual-mode test above, so the measured
+		// section-transition duration is again deterministically 10ms.
+		let simulatedNowMs = 1000;
+		const dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => {
+			const value = simulatedNowMs;
+			simulatedNowMs += 10;
+			return value;
+		});
+		const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+		// Transport's own clock is deliberately a SEPARATE, manually-controlled value (not tied to the
+		// Date.now mock above) so its anchor arithmetic can be verified exactly, independent of how
+		// many Date.now() calls happen elsewhere.
+		let transportNowMs = 0;
+		installTransportTiming({ now: () => transportNowMs });
+
+		// beats=1: every tick looks like a section-transition (boundary) tick.
+		mockRuntime.song = makeMockSong({ beat: 1, beats: 1, sectionCount: 3 });
+		toggleLoopSections();
+		// Fresh anchor: nextTickAtMillis = transportNowMs(0) + beatDurationMillis(125) = 125.
+		expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 125);
+
+		// Simulate wall-clock time reaching the nominal boundary before the timer fires.
+		transportNowMs = 125;
+		const firstScheduledHandler = setTimeoutSpy.mock.calls[0][0];
+		firstScheduledHandler();
+
+		expect(getAverageSectionTransitionMs()).toBe(10);
+		// The anchor for the FOLLOWING boundary is fixed arithmetic (125 + 125 = 250), independent of
+		// the lead applied on this call -- so the raw/pre-lead delay computed for the next schedule is
+		// still the full nominal 125 (250 - transportNowMs(125)), proving no creep was introduced. Only
+		// the value actually handed to setTimeout is shortened by the measured 10ms lead.
+		expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringMatching(/^\[LooperPredictiveLead\] mode=transport leadMs=10 delayMs=125 adjustedDelayMs=115$/));
+		expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 115);
+
+		dateNowSpy.mockRestore();
+		consoleLogSpy.mockRestore();
+	});
 });
+

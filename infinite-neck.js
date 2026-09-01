@@ -1440,26 +1440,43 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			return;
 		}
 
-		// Marks the boundary of one Section transition's prewarm cycle with a cache-health
-		// snapshot taken before this cycle's own sets/evictions, so console dumps can be
-		// grouped per transition instead of eyeballed by repetition. See 903-timing-revisited-plan-1.md section 1.
-		dumpNoteTableTiming('sectionBoundary', {
-			sectionIndex,
-			reason: data.reason || 'prewarmSection',
-			...NoteTableRenderCache.stats()
-		});
-
-		// Sized to comfortably hold a full chromatic-key cycle (12 keys) per visible table,
-		// plus headroom for sharps/flats key-spelling variants of the same root. A smaller
-		// budget (previously *3) causes real cache misses (full ~45-90ms rebuilds) when
-		// cycling through more than a handful of previously-seen keys, since the shared pool
-		// evicts entries long before the user returns to them. See 903-implementation-notes-ph4-2.md.
-		NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 12));
+		// Bump the generation synchronously so any previously-scheduled (but not yet run) prewarm
+		// work for an older section immediately becomes stale and self-aborts below, the same
+		// generation guard runNoteTablePrewarmTasks()'s runNext() already relies on. Everything
+		// else is deferred via scheduleNoteTableCacheWork() (903-implementation-notes-ph5-3.md):
+		// building the task list below (buildRenderOptionsForSection() per visible table --
+		// cloneDisplayOptions/JSON.parse/stableStringify, not free) previously ran synchronously
+		// inside sectionChanged() -> tickBeat() -> the looper's own setTimeout handler, directly
+		// contributing to the "'setTimeout' handler took Nms" Violations measured right at Section
+		// boundaries. Deferring this whole body lets that handler return immediately after the
+		// already-required buildCellsForTable() rebuild instead of also paying prewarm-setup cost.
 		const generation = ++noteTablePrewarmGeneration;
-		const tasks = song.getVisibleTunings()
-			.map((tableID) => buildPrewarmTaskForTable(tableID, sectionIndex))
-			.filter(Boolean);
-		runNoteTablePrewarmTasks(tasks, generation, data.reason || 'prewarmSection');
+		const reason = data.reason || 'prewarmSection';
+
+		scheduleNoteTableCacheWork(() => {
+			if (generation !== noteTablePrewarmGeneration) {
+				return;
+			}
+			// Marks the boundary of one Section transition's prewarm cycle with a cache-health
+			// snapshot taken before this cycle's own sets/evictions, so console dumps can be
+			// grouped per transition instead of eyeballed by repetition. See 903-timing-revisited-plan-1.md section 1.
+			dumpNoteTableTiming('sectionBoundary', {
+				sectionIndex,
+				reason,
+				...NoteTableRenderCache.stats()
+			});
+
+			// Sized to comfortably hold a full chromatic-key cycle (12 keys) per visible table,
+			// plus headroom for sharps/flats key-spelling variants of the same root. A smaller
+			// budget (previously *3) causes real cache misses (full ~45-90ms rebuilds) when
+			// cycling through more than a handful of previously-seen keys, since the shared pool
+			// evicts entries long before the user returns to them. See 903-implementation-notes-ph4-2.md.
+			NoteTableRenderCache.setMaxEntries(Math.max(1, song.getVisibleTunings().length * 12));
+			const tasks = song.getVisibleTunings()
+				.map((tableID) => buildPrewarmTaskForTable(tableID, sectionIndex))
+				.filter(Boolean);
+			runNoteTablePrewarmTasks(tasks, generation, reason);
+		});
 	}
 
 	function prewarmNextSectionNoteTables(data = {}){
