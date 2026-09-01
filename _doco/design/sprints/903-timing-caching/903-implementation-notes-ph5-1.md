@@ -80,3 +80,5 @@ Option A's real-world effect matches the pre-implementation benchmark prediction
 phase-5 investigation is now unambiguously gone from `buildCellsFromSelector()`'s hot path. No further code
 changes made in this note. Full Jest suite (65 suites/710 tests) was already confirmed passing when Option A
 landed; not re-run here since no code changed.
+
+

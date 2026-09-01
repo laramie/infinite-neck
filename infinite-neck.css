@@ -847,6 +847,9 @@ table.viewControls th {
 #btnLoopBeats.ButtonOn {
     background-color: magenta !important;
 }
+#realtimeTickStart { /* in #divQuick */
+    color: cyan;
+}
 .LooperLight {
     border: 2px solid green; 
     padding: 0.18em;

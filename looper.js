@@ -49,6 +49,37 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 		InfiniteNeck.showBPM();
 	}
 
+	function updateRealtimeTickStart(text){
+		InfiniteNeck.updateRealtimeTickStart(text);
+	}
+
+	/** HH:MM:SS.mmm local wall-clock string -- millisecond resolution is needed to see the
+	 *  ~100-250ms hiccups reported at section-boundary ticks. See logRealtimeTick(). */
+	function formatRealtimeTick(nowMillis){
+		const d = new Date(nowMillis);
+		const hh = String(d.getHours()).padStart(2, '0');
+		const mm = String(d.getMinutes()).padStart(2, '0');
+		const ss = String(d.getSeconds()).padStart(2, '0');
+		const ms = String(d.getMilliseconds()).padStart(3, '0');
+		return `${hh}:${mm}:${ss}.${ms}`;
+	}
+
+	/** Logs sectionIndex/beat/current-time to the console, and mirrors the same time into the
+	 *  #realtimeTickStart span (divQuick, index.html), for every beat tick -- called right as the
+	 *  scheduled timer fires, BEFORE tickBeat() runs (tickBeat is what may trigger a heavy
+	 *  section-transition table rebuild). Comparing successive log-line/span timestamps against the
+	 *  LooperLight's paint flash is meant to reveal whether a perceived delay comes from the timer
+	 *  itself firing late, or from synchronous work done after the timer fires blocking the browser's
+	 *  paint of the new beat. */
+	function logRealtimeTick(song, loopKind){
+		const nowMillis = Date.now();
+		const sectionIndex = song.getSectionsCurrentIndex();
+		const beat = song.getBeat();
+		const nowText = formatRealtimeTick(nowMillis);
+		console.log(`[LooperRealtimeTick] ${nowMillis}  s:${sectionIndex}:${beat}`);
+		updateRealtimeTickStart(nowText);
+	}
+
 	function emitSectionBeginForCurrentSong(song, payload = {}){
 		if (!song) {
 			return;
@@ -186,6 +217,7 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 		if (!song || typeof song.getBeat !== 'function' || typeof song.getBeats !== 'function') {
 			return;
 		}
+		logRealtimeTick(song, loopKind);
 		const timingContext = buildTimingContext({ loopKind, song });
 		callTimingHook('beforeBeatTick', timingContext);
 		const tickResult = tickBeat(song, {

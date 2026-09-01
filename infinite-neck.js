@@ -949,6 +949,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$(".bpm").html(getSong().defaultBPM+"<small>bpm</small>");
 	}
 
+	/** Updates the #realtimeTickStart span (divQuick, index.html) with the given text, called once
+	 *  per looper beat tick (see looper.js's logRealtimeTick()) so the wall-clock time of each tick
+	 *  is visible on-screen, independent of/comparable against the LooperLight's paint flash --
+	 *  used to diagnose perceived delays at section-boundary ticks. */
+	export function updateRealtimeTickStart(text){
+		$("#realtimeTickStart").html(text);
+	}
+
 	export function setBPM(newValue){
 		$("#txtBPM").val(newValue);
 		getSong().defaultBPM = ""+newValue;

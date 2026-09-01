@@ -5,14 +5,16 @@ const mockRuntime = {
 	song: null,
 	millisForBeatClock: 125,
 	showBeats: jest.fn(),
-	showBPM: jest.fn()
+	showBPM: jest.fn(),
+	updateRealtimeTickStart: jest.fn()
 };
 
 jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	getSong: () => mockRuntime.song,
 	getMillisForBeatClock: () => mockRuntime.millisForBeatClock,
 	showBeats: () => mockRuntime.showBeats(),
-	showBPM: () => mockRuntime.showBPM()
+	showBPM: () => mockRuntime.showBPM(),
+	updateRealtimeTickStart: (text) => mockRuntime.updateRealtimeTickStart(text)
 }));
 
 const {
@@ -125,6 +127,7 @@ describe('looper looping state', () => {
 		mockRuntime.millisForBeatClock = 125;
 		mockRuntime.showBeats = jest.fn();
 		mockRuntime.showBPM = jest.fn();
+		mockRuntime.updateRealtimeTickStart = jest.fn();
 		triggerSpy = jest.spyOn(EventBus, 'trigger');
 		setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(() => 99);
 		clearTimeoutSpy = jest.spyOn(global, 'clearTimeout').mockImplementation(() => {});
@@ -242,5 +245,24 @@ describe('looper looping state', () => {
 
 		expect(mockRuntime.song.requestUiShowBeats).toHaveBeenCalledTimes(1);
 		expect(mockRuntime.showBeats).not.toHaveBeenCalled();
+	});
+
+	test('a scheduled tick logs section/beat/time to the console and mirrors it into #realtimeTickStart before tickBeat runs', () => {
+		mockRuntime.song = makeMockSong({ beat: 2, beats: 4, sectionIndex: 1 });
+		const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+		toggleLoopSections();
+
+		const scheduledHandler = setTimeoutSpy.mock.calls[0][0];
+		scheduledHandler();
+
+		expect(consoleLogSpy).toHaveBeenCalledWith('[LooperRealtimeTick]', expect.objectContaining({
+			loopKind: 'sections',
+			sectionIndex: 1,
+			beat: 2,
+			nowMillis: expect.any(Number),
+			nowText: expect.stringMatching(/^\d{2}:\d{2}:\d{2}\.\d{3}$/)
+		}));
+		expect(mockRuntime.updateRealtimeTickStart).toHaveBeenCalledWith(expect.stringMatching(/^\d{2}:\d{2}:\d{2}\.\d{3}$/));
+		consoleLogSpy.mockRestore();
 	});
 });
