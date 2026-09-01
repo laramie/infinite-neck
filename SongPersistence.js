@@ -200,6 +200,27 @@ function normalizeSongTutorial(rawTutorial) {
     return normalized;
 }
 
+// MIDI device config (sprint 143, midi-note-in): persisted per-Song so that
+// whichever physical device/mode/colorMap/orientation the User set up follows
+// the Song file. See _doco/design/sprints/143-midi-note-in/143-design-3.md.
+const MIDI_DEVICE_MODES = ['Programmer', 'Note'];
+const MIDI_DEVICE_COLOR_MAPS = ['LaunchpadCycleOfColors', 'LaunchpadColors'];
+const MIDI_DEVICE_ORIENTATIONS = ['normal', 'inverted'];
+
+function normalizeMidiDevice(rawMidiDevice) {
+    const raw = rawMidiDevice && typeof rawMidiDevice === 'object' && !Array.isArray(rawMidiDevice) ? rawMidiDevice : {};
+    const channel = Number.isInteger(raw.channel) && raw.channel >= 0 && raw.channel <= 15 ? raw.channel : 0;
+    return {
+        name: `${raw.name || ''}`,
+        mode: MIDI_DEVICE_MODES.includes(raw.mode) ? raw.mode : 'Programmer',
+        colorMap: MIDI_DEVICE_COLOR_MAPS.includes(raw.colorMap) ? raw.colorMap : 'LaunchpadCycleOfColors',
+        orientation: MIDI_DEVICE_ORIENTATIONS.includes(raw.orientation) ? raw.orientation : 'normal',
+        tableID: `${raw.tableID || ''}`,
+        channel,
+        enabled: raw.enabled === true
+    };
+}
+
 const songDefaults = {
     activeStylesheets: "Default",
     captionsRowShowing: false,
@@ -268,6 +289,7 @@ export class SongPersistence {
         this.myTunings = normalizeMyTunings(this.myTunings);
         this.info = normalizeSongInfo(this.info);
         this.tutorial = normalizeSongTutorial(this.tutorial);
+        this.midiDevice = normalizeMidiDevice(this.midiDevice);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

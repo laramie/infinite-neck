@@ -133,9 +133,10 @@
 .infoTabsButtons #btnDesktopTabKeyboard {
     padding: 1em;
 }
-
 .infoTabsButtons #btnDesktopTabButtons {
-
+    padding: 1em;
+}
+.infoTabsButtons #btnDesktopTabMIDI {
     padding: 1em;
 }
 

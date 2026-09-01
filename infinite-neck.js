@@ -131,6 +131,7 @@ import { ThemesBuilder }  from './templates/themes.builder.js';
 import { PaletteBuilder } from './templates/palette.builder.js';
 import { InfoBuilder } from './templates/info/info.builder.js';
 import { MobileKeyboardBuilder } from './templates/mobile-keyboard/mobile-keyboard.builder.js';
+import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
@@ -3680,11 +3681,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function showDesktopTab(which) {
-		var showKeyboardTab = which !== "Buttons";
-		var showButtonsTab = !showKeyboardTab;
+		var showKeyboardTab = which !== "Buttons" && which !== "MIDI";
+		var showButtonsTab = which === "Buttons";
+		var showMidiTab = which === "MIDI";
 
 		$('#divMobileKeyboard').toggle(showKeyboardTab);
 		$('#divDesktopButtons').toggle(showButtonsTab);
+		$('#divMidiTab').toggle(showMidiTab);
 
 		$('#btnDesktopTabKeyboard')
 			.toggleClass('BtnPunchedIn', showKeyboardTab)
@@ -3692,6 +3695,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnDesktopTabButtons')
 			.toggleClass('BtnPunchedIn', showButtonsTab)
 			.toggleClass('BtnPunchedOut', !showButtonsTab);
+		$('#btnDesktopTabMIDI')
+			.toggleClass('BtnPunchedIn', showMidiTab)
+			.toggleClass('BtnPunchedOut', !showMidiTab);
 	}
 
 	export function bindDesktopEvents(){
@@ -3927,6 +3933,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnDesktopTabButtons', function() {
 			showDesktopTab("Buttons");
+		});
+		bindEvent('click', '#btnDesktopTabMIDI', function() {
+			showDesktopTab("MIDI");
 		});
 		//=========================================
 		bindEvent('click', '#btnHelp', function() {
@@ -4641,6 +4650,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			loadTemplates('templates/mobile-keyboard/mobile-keyboard.html').then(() => {
 				MobileKeyboardBuilder.addToDest('#divMobileKeyboard');
 				MobileKeyboardBuilder.renderFromSong(getSong());
+			}),
+
+			loadTemplates('templates/midi/midi.html').then(() => {
+				MidiTabBuilder.addToDest('#divMidiTab');
+				MidiTabBuilder.renderFromSong(getSong());
 			}),
 
 			loadTemplates('templates/macros/macros.html').then(() => {

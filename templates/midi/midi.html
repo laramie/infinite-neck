@@ -1,0 +1,72 @@
+<!-- Sprint 143 (midi-note-in), Iteration 3. Sibling of ../mobile-keyboard/mobile-keyboard.html.
+     Ported from the Iteration 1 standalone prototype
+     (_doco/design/sprints/143-midi-note-in/143-it1-midi-prototype.html) with added
+     Instrument routing controls per 143-design-3.md. -->
+<template id="midi-template">
+    <div id="MidiTab">
+        <div class="midiSection">
+            <h4>MIDI IN</h4>
+            <label for="selMidiInDevice">Input device:</label>
+            <select id="selMidiInDevice"></select>
+            <div class="midiNoteInIndicator" id="spanMidiNoteInIndicator">no NOTE ON received yet</div>
+        </div>
+
+        <div class="midiSection">
+            <h4>MIDI OUT</h4>
+            <label for="selMidiOutDevice">Output device:</label>
+            <select id="selMidiOutDevice"></select>
+
+            <div class="midiOutTestGrid">
+                <div class="midiOutTestGridHeader">message</div>
+                <div class="midiOutTestGridHeader">channel</div>
+                <div class="midiOutTestGridHeader">note</div>
+                <div class="midiOutTestGridHeader">velocity</div>
+                <div class="midiOutTestGridHeader"></div>
+
+                <div>Note Off</div>
+                <div><select id="selMidiTestNoteOffChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOffNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOffVelocity" value="0" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOff" class="MenuButton BtnPunchedOut" type="button" title="Send a Note OFF message">Send</button></div>
+
+                <div>Note On</div>
+                <div><select id="selMidiTestNoteOnChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOnNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOnVelocity" value="127" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOn" class="MenuButton BtnPunchedOut" type="button" title="Send a Note ON message">Send</button></div>
+            </div>
+        </div>
+
+        <div class="midiSection">
+            <h4>Routing</h4>
+            <label for="selMidiRouteInstrument">Instrument:</label>
+            <select id="selMidiRouteInstrument">
+                <option value="">none</option>
+            </select>
+            <label for="selMidiRouteChannel">Channel:</label>
+            <select id="selMidiRouteChannel"></select>
+            <button id="btnMidiRouteToggle" class="MenuButton BtnPunchedOut" type="button">MIDI Routing</button>
+            <br>
+            <label for="selMidiDeviceMode">Device mode:</label>
+            <select id="selMidiDeviceMode">
+                <option value="Programmer">Programmer (grid row/col)</option>
+                <option value="Note">Note (raw MIDI note numbers)</option>
+            </select>
+            <label for="selMidiDeviceColorMap">Color map:</label>
+            <select id="selMidiDeviceColorMap">
+                <option value="LaunchpadCycleOfColors">Launchpad Cycle Of Colors</option>
+                <option value="LaunchpadColors">Launchpad Colors</option>
+            </select>
+            <label for="selMidiDeviceOrientation">Orientation:</label>
+            <select id="selMidiDeviceOrientation">
+                <option value="normal">Normal (device top = screen top)</option>
+                <option value="inverted">Inverted</option>
+            </select>
+        </div>
+
+        <div class="midiSection">
+            <h4>Activity log</h4>
+            <div id="divMidiActivityLog" class="midiActivityLog"></div>
+        </div>
+    </div>
+</template>

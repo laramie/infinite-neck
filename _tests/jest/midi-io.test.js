@@ -2,7 +2,15 @@ import {
 	parseMidiMessage,
 	formatMidiBytesHex,
 	buildNoteOnBytes,
-	buildNoteOffBytes
+	buildNoteOffBytes,
+	parseLaunchpadProgrammerGridNote,
+	launchpadGridToCell,
+	cellToLaunchpadGridNote,
+	listAllLaunchpadGridNotes,
+	clearLaunchpadGrid,
+	LAUNCHPAD_VELOCITY_RED,
+	LAUNCHPAD_ORIENTATIONS,
+	LAUNCHPAD_DEFAULT_ORIENTATION
 } from '../../midi-io.js';
 
 describe('midi-io pure helpers', () => {
@@ -67,5 +75,84 @@ describe('midi-io pure helpers', () => {
 
 	test('channel is masked to 0-15 so an out-of-range channel cannot corrupt the status byte', () => {
 		expect(Array.from(buildNoteOnBytes(16, 60, 127))[0]).toBe(0x90);
+	});
+});
+
+describe('Launchpad Programmer-mode grid mapping', () => {
+	test('parses a grid note into row/col per the documented base-10 formula', () => {
+		expect(parseLaunchpadProgrammerGridNote(36)).toEqual({ row: 3, col: 6 });
+		expect(parseLaunchpadProgrammerGridNote(11)).toEqual({ row: 1, col: 1 });
+		expect(parseLaunchpadProgrammerGridNote(88)).toEqual({ row: 8, col: 8 });
+	});
+
+	test('rejects note numbers outside the 8x8 grid (control row/column)', () => {
+		expect(parseLaunchpadProgrammerGridNote(1)).toBeNull(); // row 0
+		expect(parseLaunchpadProgrammerGridNote(10)).toBeNull(); // col 0
+		expect(parseLaunchpadProgrammerGridNote(89)).toBeNull(); // col 9
+		expect(parseLaunchpadProgrammerGridNote(99)).toBeNull(); // row 9
+	});
+
+	test('launchpadGridToCell maps 1-based grid position to 0-based cellrow/cellcol using the default (normal) orientation', () => {
+		// normal: hardware row 8 (top of device) -> cellrow 0 (top of screen).
+		expect(launchpadGridToCell(8, 1)).toEqual({ cellrow: 0, cellcol: 0 });
+		expect(launchpadGridToCell(3, 6)).toEqual({ cellrow: 5, cellcol: 5 });
+		expect(launchpadGridToCell(1, 8)).toEqual({ cellrow: 7, cellcol: 7 });
+	});
+
+	test('launchpadGridToCell supports an inverted orientation', () => {
+		expect(launchpadGridToCell(1, 1, { orientation: 'inverted' })).toEqual({ cellrow: 0, cellcol: 0 });
+		expect(launchpadGridToCell(8, 1, { orientation: 'inverted' })).toEqual({ cellrow: 7, cellcol: 0 });
+	});
+
+	test('cellToLaunchpadGridNote is the inverse of launchpadGridToCell under the default (normal) orientation', () => {
+		expect(cellToLaunchpadGridNote(0, 0)).toBe(81);
+		expect(cellToLaunchpadGridNote(5, 5)).toBe(36);
+		expect(cellToLaunchpadGridNote(7, 7)).toBe(18);
+	});
+
+	test('cellToLaunchpadGridNote supports an inverted orientation', () => {
+		expect(cellToLaunchpadGridNote(0, 0, { orientation: 'inverted' })).toBe(11);
+		expect(cellToLaunchpadGridNote(7, 0, { orientation: 'inverted' })).toBe(81);
+	});
+
+	test('LAUNCHPAD_VELOCITY_RED matches the documented red color value', () => {
+		expect(LAUNCHPAD_VELOCITY_RED).toBe(5);
+	});
+
+	test('LAUNCHPAD_DEFAULT_ORIENTATION is normal, matching the confirmed real-device mapping', () => {
+		expect(LAUNCHPAD_DEFAULT_ORIENTATION).toBe('normal');
+		expect(LAUNCHPAD_ORIENTATIONS).toEqual(['normal', 'inverted']);
+	});
+
+	test('listAllLaunchpadGridNotes lists exactly the 64 real 8x8 grid notes, no control row/column', () => {
+		const notes = listAllLaunchpadGridNotes();
+		expect(notes).toHaveLength(64);
+		expect(new Set(notes).size).toBe(64);
+		notes.forEach((note) => {
+			expect(parseLaunchpadProgrammerGridNote(note)).not.toBeNull();
+		});
+		expect(notes).toContain(11);
+		expect(notes).toContain(88);
+		expect(notes).not.toContain(19);
+		expect(notes).not.toContain(91);
+	});
+
+	test('clearLaunchpadGrid sends a velocity-0 Note On for every one of the 64 grid notes', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		clearLaunchpadGrid(fakeOutput, 0);
+		expect(sent).toHaveLength(64);
+		sent.forEach(([statusByte, note, velocity]) => {
+			expect(statusByte).toBe(0x90);
+			expect(velocity).toBe(0);
+			expect(parseLaunchpadProgrammerGridNote(note)).not.toBeNull();
+		});
+	});
+
+	test('clearLaunchpadGrid encodes the requested channel', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		clearLaunchpadGrid(fakeOutput, 3);
+		expect(sent[0][0]).toBe(0x93);
 	});
 });

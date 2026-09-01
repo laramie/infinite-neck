@@ -128,3 +128,80 @@ export function sendNoteOn(output, channel, note, velocity = 127) {
 export function sendNoteOff(output, channel, note, velocity = 0) {
 	output.send(buildNoteOffBytes(channel, note, velocity));
 }
+
+// ---------------------------------------------------------------------------
+// Launchpad Pro "Programmer mode" grid mapping.
+// Sprint 143 (midi-note-in), Iteration 3: see
+// _doco/design/sprints/143-midi-note-in/143-design-3.md (orientation
+// confirmed against the real device in this iteration's follow-up request).
+//
+// In Programmer mode the device's 8x8 grid of pads sends NOTE ON with a note
+// number encoding row/column in base-10: tens digit = row (1-8), units digit
+// = column (1-8) -- e.g. note 36 -> row 3, column 6. Notes outside that 1-8/1-8
+// range (the extra control-button row/column around the grid) are not part of
+// the 8x8 grid and are treated as "not a grid note" by parseLaunchpadProgrammerGridNote.
+//
+// Orientation: on the real Launchpad Pro used for this sprint, hardware row 8
+// (tens digit 8, e.g. notes 81-88) is the physically TOP row of the device,
+// same as this repo's "8x8" tuning's cellrow 0 is the top row of the rendered
+// table -- top matches top, mirroring how a guitar's thinnest/highest string
+// is drawn at the top. That correspondence is "normal" orientation (the
+// default). A device wired up backwards (hardware row 1 at the top) would use
+// "inverted" instead.
+// ---------------------------------------------------------------------------
+
+export const LAUNCHPAD_GRID_SIZE = 8;
+export const LAUNCHPAD_VELOCITY_RED = 5;
+export const LAUNCHPAD_ORIENTATIONS = Object.freeze(['normal', 'inverted']);
+export const LAUNCHPAD_DEFAULT_ORIENTATION = 'normal';
+
+// Returns {row, col} (both 1-8) for a real Launchpad Programmer-mode grid
+// note, or null if the note number isn't part of the 8x8 grid.
+export function parseLaunchpadProgrammerGridNote(note) {
+	const row = Math.floor(note / 10);
+	const col = note % 10;
+	if (row < 1 || row > LAUNCHPAD_GRID_SIZE || col < 1 || col > LAUNCHPAD_GRID_SIZE) {
+		return null;
+	}
+	return { row, col };
+}
+
+// Converts a 1-8/1-8 Launchpad grid position to a 0-7/0-7 (cellrow, cellcol)
+// pair matching this repo's "8x8" tuning's <td> attributes.
+export function launchpadGridToCell(row, col, { orientation = LAUNCHPAD_DEFAULT_ORIENTATION } = {}) {
+	return {
+		cellrow: orientation === 'inverted' ? (row - 1) : (LAUNCHPAD_GRID_SIZE - row),
+		cellcol: col - 1
+	};
+}
+
+// Inverse of launchpadGridToCell: builds the Launchpad Programmer-mode NOTE
+// ON note number for a given (cellrow, cellcol) on the "8x8" tuning.
+export function cellToLaunchpadGridNote(cellrow, cellcol, { orientation = LAUNCHPAD_DEFAULT_ORIENTATION } = {}) {
+	const row = orientation === 'inverted' ? (cellrow + 1) : (LAUNCHPAD_GRID_SIZE - cellrow);
+	const col = cellcol + 1;
+	return row * 10 + col;
+}
+
+// Every real Programmer-mode grid note number (11..88, decimal, row/col both
+// 1-8) -- excludes the surrounding control-button row/column, which are not
+// part of the 8x8 grid and must not be lit/cleared by grid-wide operations.
+export function listAllLaunchpadGridNotes() {
+	const notes = [];
+	for (let row = 1; row <= LAUNCHPAD_GRID_SIZE; row++) {
+		for (let col = 1; col <= LAUNCHPAD_GRID_SIZE; col++) {
+			notes.push(row * 10 + col);
+		}
+	}
+	return notes;
+}
+
+// Sends NOTE ON with velocity 0 for every grid note, per 143-design-3.md's
+// "simple algorithm...for now" (a full SysEx-based screen wipe is explicitly
+// out of scope). Intended to be called once per Section change/navigation,
+// immediately before repainting the currently active notes.
+export function clearLaunchpadGrid(output, channel = 0) {
+	listAllLaunchpadGridNotes().forEach((note) => {
+		sendNoteOn(output, channel, note, 0);
+	});
+}

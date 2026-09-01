@@ -1,0 +1,52 @@
+/* Sprint 143 (midi-note-in), Iteration 3. Sibling of ../mobile-keyboard/mobile-keyboard.css. */
+
+#MidiTab .midiSection {
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 0.5em;
+    margin-bottom: 0.75em;
+}
+
+#MidiTab .midiSection h4 {
+    margin: 0 0 0.4em 0;
+}
+
+#MidiTab .midiNoteInIndicator {
+    display: inline-block;
+    min-width: 22em;
+    margin-left: 0.6em;
+    padding: 0.3em 0.7em;
+    font-family: monospace;
+    border-radius: 4px;
+    background: #eee;
+    border: 1px solid #999;
+    transition: background-color 0.05s ease-out;
+}
+
+#MidiTab .midiNoteInIndicator.bright {
+    background: #ffe066;
+}
+
+#MidiTab .midiOutTestGrid {
+    display: grid;
+    grid-template-columns: 5em 6em 5em 5em auto;
+    gap: 0.3em 0.6em;
+    align-items: center;
+    margin-top: 0.5em;
+}
+
+#MidiTab .midiOutTestGridHeader {
+    font-weight: bold;
+    opacity: 0.75;
+}
+
+#MidiTab .midiActivityLog {
+    font-family: monospace;
+    font-size: 0.85em;
+    background: #111;
+    color: #b7f7b7;
+    padding: 0.5em;
+    height: 20em;
+    overflow-y: auto;
+    white-space: pre;
+}
