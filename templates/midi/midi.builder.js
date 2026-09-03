@@ -382,6 +382,7 @@ export class MidiTabBuilder {
 				: cellToLaunchpadGridNote(cellrow, cellcol, { orientation: device.orientation });
 			const resolvedColorClass = lookupUserColorClass(note, lookupContext);
 			const velocity = resolveLaunchpadVelocityForColorClass(device.colorMap, resolvedColorClass);
+            MidiTabBuilder.logActivityText('resolvedColorClass:'+resolvedColorClass+',velocity:'+velocity+',map:'+JSON.stringify(device.colorMap));
 			plan.set(outNote, velocity);
 		};
 
@@ -575,7 +576,7 @@ export class MidiTabBuilder {
 				const note = Number($('#txtMidiTestNoteOffNote').val());
 				const velocity = Number($('#txtMidiTestNoteOffVelocity').val());
 				sendNoteOff(output, channel, note, velocity);
-				MidiTabBuilder.logActivity('send', [0x80 | channel, note & 0x7f, velocity & 0x7f], output.name);
+				MidiTabBuilder.logActivity('send', [0x80 | channel, note & 0x7f, velocity & 0x7f], output.name+'-velocity:'+velocity);
 			});
 
 		EventBus.on('Widget:SectionStatus:statusChanged', MidiTabBuilder.onSectionStatusChanged);
