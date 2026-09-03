@@ -3,6 +3,10 @@ import {
 	LAUNCHPAD_MAJOR_COLOR_VELOCITIES,
 	resolveLaunchpadVelocityForColorClass
 } from '../../templates/midi/midiColorMaps.js';
+import { 
+    LAUNCHPAD_VELOCITY_DEFAULT 
+} from '../../midi-io.js';
+
 
 describe('midiColorMaps', () => {
 	// CYCLE_ORDER (midiColorMaps.js) is deliberately re-tunable by developers as
@@ -41,11 +45,11 @@ describe('midiColorMaps', () => {
 
 	test('unresolvable colorClasses fall back to plain red', () => {
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_COLORS, 'noteTransparent'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
+			.toBe(LAUNCHPAD_VELOCITY_DEFAULT);
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, ''))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
+			.toBe(LAUNCHPAD_VELOCITY_DEFAULT);
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, undefined))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
+			.toBe(LAUNCHPAD_VELOCITY_DEFAULT);
 	});
 
 	test('LaunchpadColors still resolves a note-function key via its cycle fallback, matching LaunchpadCycleOfColors', () => {
