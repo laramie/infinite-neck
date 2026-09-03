@@ -322,12 +322,12 @@ export function dumpThemeIds(){
 						 +" .noteWhiteKey {"
 							     +rule("background-color", "noteWhiteKeyColor")
 							     +"color: transparent; "
-								 +rule("box-shadow", "noteWhiteKeyShadowColor")
+								 //20260903 blots out outer Highlight +rule("box-shadow", "noteWhiteKeyShadowColor")
 								 +"}"
 						 +" .noteBlackKey {"
 							     +rule("background-color", "noteBlackKeyColor")
 							     +"color: transparent; "
-							     +rule("box-shadow", "noteBlackKeyShadowColor")
+							     //20260903 +rule("box-shadow", "noteBlackKeyShadowColor")
 								 +"}"
 						 +" :root { "
 									+rule("--nut-gradient-color", "nutColor")
