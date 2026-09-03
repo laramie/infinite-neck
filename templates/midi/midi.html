@@ -46,6 +46,8 @@
             <label for="selMidiRouteChannel">Channel:</label>
             <select id="selMidiRouteChannel"></select>
             <button id="btnMidiRouteToggle" class="MenuButton BtnPunchedOut" type="button">MIDI Routing</button>
+            <button id="btnMidiTriggerMode" class="MenuButton BtnPunchedOut" type="button"
+                title="Latched: press toggles the note on/off. Momentary: note follows button down/up.">Latched</button>
             <br>
             <label for="selMidiDeviceMode">Device mode:</label>
             <select id="selMidiDeviceMode">
@@ -62,6 +64,14 @@
                 <option value="normal">Normal (device top = screen top)</option>
                 <option value="inverted">Inverted</option>
             </select>
+        </div>
+
+        <div class="midiSection">
+            <h4>Forward (downstream sound device)</h4>
+            <label for="selMidiForwardDevice">Output device:</label>
+            <select id="selMidiForwardDevice"></select>
+            <label for="selMidiForwardChannel">Channel:</label>
+            <select id="selMidiForwardChannel"></select>
         </div>
 
         <div class="midiSection">

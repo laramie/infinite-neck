@@ -206,18 +206,36 @@ function normalizeSongTutorial(rawTutorial) {
 const MIDI_DEVICE_MODES = ['Programmer', 'Note'];
 const MIDI_DEVICE_COLOR_MAPS = ['LaunchpadCycleOfColors', 'LaunchpadColors'];
 const MIDI_DEVICE_ORIENTATIONS = ['normal', 'inverted'];
+// Iteration 4 (143-it4-design.md): Latch (default) ignores button-up entirely;
+// Momentary also toggles the note off on button-up, following the CURRENT
+// triggerMode at release time (not whatever was in effect when pressed) --
+// see MidiTabBuilder.handleIncomingMidiMessage()'s comment for why that's
+// the correct behavior for both Latch->Momentary and Momentary->Latch
+// transitions while a button is held.
+const MIDI_DEVICE_TRIGGER_MODES = ['Latch', 'Momentary'];
 
 function normalizeMidiDevice(rawMidiDevice) {
     const raw = rawMidiDevice && typeof rawMidiDevice === 'object' && !Array.isArray(rawMidiDevice) ? rawMidiDevice : {};
     const channel = Number.isInteger(raw.channel) && raw.channel >= 0 && raw.channel <= 15 ? raw.channel : 0;
+    // Downstream forwarding (Iteration 4) targets a SEPARATE physical device
+    // (e.g. a VoiceLive 3 on its own Class-Compliant-USB MIDI port) from the
+    // Launchpad itself, so it gets its own name/channel, independent of the
+    // Launchpad's `channel` above. Defaults to MIDI channel 2 (0-based 1) per
+    // 143-it4-design.md's "VoiceLive 3 MIDI 2".
+    const forwardChannel = Number.isInteger(raw.forwardChannel) && raw.forwardChannel >= 0 && raw.forwardChannel <= 15
+        ? raw.forwardChannel
+        : 1;
     return {
         name: `${raw.name || ''}`,
         mode: MIDI_DEVICE_MODES.includes(raw.mode) ? raw.mode : 'Programmer',
         colorMap: MIDI_DEVICE_COLOR_MAPS.includes(raw.colorMap) ? raw.colorMap : 'LaunchpadCycleOfColors',
         orientation: MIDI_DEVICE_ORIENTATIONS.includes(raw.orientation) ? raw.orientation : 'normal',
+        triggerMode: MIDI_DEVICE_TRIGGER_MODES.includes(raw.triggerMode) ? raw.triggerMode : 'Latch',
         tableID: `${raw.tableID || ''}`,
         channel,
-        enabled: raw.enabled === true
+        enabled: raw.enabled === true,
+        forwardName: `${raw.forwardName || ''}`,
+        forwardChannel
     };
 }
 

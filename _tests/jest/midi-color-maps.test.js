@@ -5,22 +5,26 @@ import {
 } from '../../templates/midi/midiColorMaps.js';
 
 describe('midiColorMaps', () => {
+	// gDefault_CycleOfColors.dict order is note1..note12; CYCLE_ORDER was
+	// manually re-ordered (see midiColorMaps.js's "Numbers re-ordered by
+	// Laramie, 20260901" comment), so these expectations follow that current
+	// positional pairing, not the original note1->RED assumption.
 	test('LaunchpadCycleOfColors resolves a direct note-function key ("note4") to its wheel position', () => {
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'note1'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
+			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.LIGHT_BLUE);
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'note4'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW);
+			.toBe(79);
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'note12'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.PINK);
+			.toBe(75);
 	});
 
 	test('LaunchpadCycleOfColors resolves the equivalent resolved palette colorClass to the same wheel position', () => {
 		// note4's colorClass in gDefault_CycleOfColors is "noteBlue1" -- same slot as 'note4'.
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'noteBlue1'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW);
+			.toBe(79);
 		// note8's colorClass is "noteRed2".
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'noteRed2'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.LIGHT_BLUE);
+			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
 	});
 
 	test('LaunchpadColors resolves a family+shade colorClass by family base + dimmer band', () => {
@@ -48,6 +52,6 @@ describe('midiColorMaps', () => {
 
 	test('LaunchpadColors still resolves a note-function key via its cycle fallback', () => {
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_COLORS, 'note9'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.BLUE);
+			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW + 2);
 	});
 });
