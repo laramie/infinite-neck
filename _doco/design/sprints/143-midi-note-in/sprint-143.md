@@ -28,3 +28,10 @@ Purpose of this sprint is to: Wire MIDI NOTE ON inputs to Note triggering.  When
     - Note OFF/NOTE ON:0; 
     - MIDI OUT to VoiceLive 3 for ProgrammerMode Highlights. 
     - Recorded Notes. 
+    - Round 2: Highlights (Multi/Pitch) + Recorded Notes lit on the Launchpad; Quick Menu
+      Latch/Momentary duplicate button.
+    - Round 3: physical Latch/Momentary control button (Launchpad Pro control-column CC 10,
+      via a new 'controlchange' MIDI message type) with its own LED indicator; defensive
+      cleanup of known real-hardware LED artifacts (right control column, spurious
+      connect-time light); top control row (CC 1-8) wired to the Palette's rbHighlight
+      (NoteType) radio group as a lit radio group (Named/Single/Tiny/Bend/Pitch/Multi).

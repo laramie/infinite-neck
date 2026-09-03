@@ -10,7 +10,13 @@ import {
 	clearLaunchpadGrid,
 	LAUNCHPAD_VELOCITY_RED,
 	LAUNCHPAD_ORIENTATIONS,
-	LAUNCHPAD_DEFAULT_ORIENTATION
+	LAUNCHPAD_DEFAULT_ORIENTATION,
+	LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC,
+	LAUNCHPAD_VELOCITY_TRIGGER_MODE_MOMENTARY,
+	sendTriggerModeIndicatorLight,
+	LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES,
+	LAUNCHPAD_KNOWN_SPURIOUS_CONNECT_NOTE,
+	clearLaunchpadEdgeArtifacts
 } from '../../midi-io.js';
 
 describe('midi-io pure helpers', () => {
@@ -45,12 +51,22 @@ describe('midi-io pure helpers', () => {
 		expect(parsed.channel).toBe(1);
 	});
 
-	test('classifies non-note channel messages as other, with no note/velocity', () => {
-		const parsed = parseMidiMessage([0xb0, 0x07, 0x7f]);
+	test('classifies genuinely unhandled channel messages (e.g. Program Change) as other, with no note/velocity', () => {
+		const parsed = parseMidiMessage([0xc0, 0x05]);
 		expect(parsed.type).toBe('other');
 		expect(parsed.note).toBeNull();
 		expect(parsed.velocity).toBeNull();
 		expect(parsed.channel).toBe(0);
+	});
+
+	test('parses a Control Change message, exposing controller/ccValue (e.g. a Launchpad Pro control button)', () => {
+		const parsed = parseMidiMessage([0xb0, 0x07, 0x7f]);
+		expect(parsed.type).toBe('controlchange');
+		expect(parsed.channel).toBe(0);
+		expect(parsed.controller).toBe(0x07);
+		expect(parsed.ccValue).toBe(0x7f);
+		expect(parsed.note).toBeNull();
+		expect(parsed.velocity).toBeNull();
 	});
 
 	test('system messages (status >= 0xf0) have no channel', () => {
@@ -154,5 +170,37 @@ describe('Launchpad Programmer-mode grid mapping', () => {
 		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
 		clearLaunchpadGrid(fakeOutput, 3);
 		expect(sent[0][0]).toBe(0x93);
+	});
+});
+
+describe('Launchpad trigger-mode control button + edge-artifact cleanup', () => {
+	test('LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC matches the confirmed real-device control number', () => {
+		expect(LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC).toBe(10);
+	});
+
+	test('sendTriggerModeIndicatorLight sends the momentary-on velocity at the control button address', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		sendTriggerModeIndicatorLight(fakeOutput, 0, true);
+		expect(sent).toEqual([[0x90, LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC, LAUNCHPAD_VELOCITY_TRIGGER_MODE_MOMENTARY]]);
+	});
+
+	test('sendTriggerModeIndicatorLight sends velocity 0 (light off) for Latch mode', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		sendTriggerModeIndicatorLight(fakeOutput, 0, false);
+		expect(sent).toEqual([[0x90, LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC, 0]]);
+	});
+
+	test('clearLaunchpadEdgeArtifacts wipes the right control column and the known spurious-connect note', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		clearLaunchpadEdgeArtifacts(fakeOutput, 0);
+		const notesSent = sent.map(([, note]) => note);
+		expect(notesSent).toEqual([...LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES, LAUNCHPAD_KNOWN_SPURIOUS_CONNECT_NOTE]);
+		sent.forEach(([statusByte, , velocity]) => {
+			expect(statusByte).toBe(0x90);
+			expect(velocity).toBe(0);
+		});
 	});
 });

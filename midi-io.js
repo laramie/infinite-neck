@@ -19,6 +19,7 @@
 
 const NOTE_ON = 0x90;
 const NOTE_OFF = 0x80;
+const CONTROL_CHANGE = 0xb0;
 
 // Parses a raw MIDI Channel Voice message (a Uint8Array-like of 1-3 bytes,
 // e.g. event.data from a MIDIMessageEvent) into a plain object.
@@ -26,6 +27,14 @@ const NOTE_OFF = 0x80;
 // A Note On message with velocity 0 is, per the MIDI spec's running-status
 // convention, treated as a Note Off (not a second Note On) -- this matters
 // for the "bright screen" indicator so it does not misreport note releases.
+//
+// Control Change (0xB0-0xBF) messages are parsed as 'controlchange', exposing
+// `controller`/`ccValue` (data[1]/data[2]) -- added per Sprint 143's real-device
+// research showing the Launchpad Pro's control-column/row buttons (e.g. the
+// bottom-left "Clear" button repurposed as the Latch/Momentary toggle, see
+// LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC below) send CC, not Note, messages.
+// `note`/`velocity` stay null for a controlchange message, matching every
+// other non-note type -- callers that care about a CC use controller/ccValue.
 export function parseMidiMessage(data) {
 	const statusByte = data[0];
 	const command = statusByte & 0xf0;
@@ -39,6 +48,8 @@ export function parseMidiMessage(data) {
 		type = velocity > 0 ? 'noteon' : 'noteoff';
 	} else if (command === NOTE_OFF) {
 		type = 'noteoff';
+	} else if (command === CONTROL_CHANGE) {
+		type = 'controlchange';
 	}
 
 	return {
@@ -46,10 +57,13 @@ export function parseMidiMessage(data) {
 		channel,
 		note: (type === 'noteon' || type === 'noteoff') ? note : null,
 		velocity: (type === 'noteon' || type === 'noteoff') ? velocity : null,
+		controller: type === 'controlchange' ? note : undefined,
+		ccValue: type === 'controlchange' ? velocity : undefined,
 		statusByte,
 		raw: Array.from(data)
 	};
 }
+
 
 // Formats raw MIDI bytes as an uppercase, space-separated hex string, e.g.
 // [144, 60, 1] -> "90 3C 01" -- matches the log format used by common MIDI
@@ -205,3 +219,60 @@ export function clearLaunchpadGrid(output, channel = 0) {
 		sendNoteOn(output, channel, note, 0);
 	});
 }
+
+// ---------------------------------------------------------------------------
+// Latch/Momentary trigger-mode physical control button (Sprint 143,
+// 143-it4-design-2.md round 2 follow-up): real-device research (a Novation
+// Launchpad Pro MK1 activity log) confirmed the control buttons surrounding
+// the 8x8 grid -- e.g. the bottom-left "Clear" button in the left control
+// column -- send Control Change messages, NOT Note On/Off, despite living at
+// the same row*10+col-style address (10 = row 1 [bottom], col 0 [left
+// control column]) this module otherwise uses for the 8x8 grid: press sends
+// [B0 0A 7F], release sends [B0 0A 00]. This button is repurposed here as a
+// physical Latch/Momentary toggle switch. Its own LED, however, IS still lit
+// via a plain NOTE ON at that same address (10) -- a real, confirmed
+// asymmetry between this button's input (CC) and output (Note) addressing,
+// not a bug in this module.
+export const LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC = 10; // 0x0A
+export const LAUNCHPAD_VELOCITY_TRIGGER_MODE_MOMENTARY = 0x21; // 33 decimal, lit while Momentary.
+export const LAUNCHPAD_VELOCITY_TRIGGER_MODE_OFF = 0; // light off, while Latch.
+
+// Lights (or unlights) the trigger-mode control button's own LED to reflect
+// isMomentary, via a plain NOTE ON at LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC
+// (see the block comment above for why this button's LED uses Note On even
+// though its own button-press is reported as a Control Change). This address
+// is outside the 64-note 8x8 grid (see listAllLaunchpadGridNotes), so
+// clearLaunchpadGrid() never touches it -- the light persists across Section
+// navigation/full-grid repaints without any extra guard needed.
+export function sendTriggerModeIndicatorLight(output, channel, isMomentary) {
+	sendNoteOn(
+		output,
+		channel,
+		LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC,
+		isMomentary ? LAUNCHPAD_VELOCITY_TRIGGER_MODE_MOMENTARY : LAUNCHPAD_VELOCITY_TRIGGER_MODE_OFF
+	);
+}
+
+// ---------------------------------------------------------------------------
+// Known real-hardware LED artifacts (Sprint 143, reported during acceptance
+// testing against a real Launchpad Pro MK1, reproducible but not explained by
+// any documented Programmer-mode addressing): (1) the right-hand control
+// column (row*10+9 for row 1-8, i.e. notes 19..89) sometimes lights up as an
+// apparent continuation of the 8x8 grid's own NOTE ON traffic; (2) the
+// 6th-from-bottom-row button in the LEFT control column (note 60) is
+// sometimes lit by the device's own power-on/connect default state. Both
+// addresses are outside the 64-note 8x8 grid this module otherwise manages,
+// so clearLaunchpadGrid() alone never reaches them.
+export const LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES = Object.freeze([19, 29, 39, 49, 59, 69, 79, 89]);
+export const LAUNCHPAD_KNOWN_SPURIOUS_CONNECT_NOTE = 60;
+
+// Explicitly wipes (velocity-0 NOTE ON) the known-spurious addresses above.
+// Safe/idempotent to call any time a full grid repaint or device
+// connection/reconnection happens -- see clearLaunchpadGrid()'s own doc
+// comment for the parallel 8x8-grid-only wipe this complements.
+export function clearLaunchpadEdgeArtifacts(output, channel = 0) {
+	[...LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES, LAUNCHPAD_KNOWN_SPURIOUS_CONNECT_NOTE].forEach((note) => {
+		sendNoteOn(output, channel, note, 0);
+	});
+}
+

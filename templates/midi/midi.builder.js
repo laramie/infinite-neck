@@ -69,12 +69,16 @@ import {
 	parseLaunchpadProgrammerGridNote,
 	launchpadGridToCell,
 	cellToLaunchpadGridNote,
-	clearLaunchpadGrid
+	clearLaunchpadGrid,
+	clearLaunchpadEdgeArtifacts,
+	LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC,
+	sendTriggerModeIndicatorLight
 } from '../../midi-io.js';
-import { resolveLaunchpadVelocityForColorClass } from './midiColorMaps.js';
+import { resolveLaunchpadVelocityForColorClass, LAUNCHPAD_MAJOR_COLOR_VELOCITIES } from './midiColorMaps.js';
 import { colorNote, findNoteCell, showMidiNotesInTable } from '../../NoteTableController.js';
 import { createLookupContext, lookupUserColorClass } from '../../colorFunctions.js';
 import { Note } from '../../Note.js';
+import * as paletteUtils from '../../paletteUtils.js';
 import {
 	classifyInstrumentRole,
 	getSongTuningsInLayoutOrder,
@@ -102,6 +106,37 @@ const PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING = 'VoiceLive';
 // td.note[midinum=...] selector, which has no cellrow filter).
 const LAUNCHPAD_VELOCITY_HIGHLIGHT_MULTI = 53; // magenta
 const LAUNCHPAD_VELOCITY_HIGHLIGHT_PITCH = 14; // yellow
+
+// Iteration 4 round 3 (physical control buttons): row 9 (the top control row,
+// ABOVE the 8x8 grid), columns 1-8 -- confirmed via a real Launchpad Pro MK1
+// activity log to send Control Change messages with controller number == the
+// column number directly (a DIFFERENT addressing scheme than the left-control-
+// column's Latch/Momentary button, which uses a row*10+col-style address --
+// see LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC in midi-io.js): col 1 sends
+// [B0 01 7F]/[B0 01 00] on press/release, col 8 sends [B0 08 7F]/[B0 08 00],
+// and so on. Per Laramie's mapping request, columns 1-6 are wired to the
+// Palette's rbHighlight ("NoteType", per NoteTableController.js's own
+// `result.NoteType = theHighlight`) radio group -- a press selects that radio
+// exactly like an on-screen click (paletteUtils.check(), see
+// handleIncomingMidiMessage() below); release is ignored, same toggle-switch
+// behavior as the CC10 Latch/Momentary button. Columns 7-8 have no entry here
+// (reserved/unused for now) -- handleIncomingMidiMessage() simply ignores any
+// controller number not present in this map.
+const LAUNCHPAD_NOTE_TYPE_CONTROL_MAP = Object.freeze({
+	1: Object.freeze({ radioSelector: '#idNamedNotes', noteType: 'Named' }),
+	2: Object.freeze({ radioSelector: '#idSingleNotes', noteType: 'Single' }),
+	3: Object.freeze({ radioSelector: '#idTinyNotes', noteType: 'Tiny' }),
+	4: Object.freeze({ radioSelector: '#rbBend', noteType: 'Bend' }),
+	5: Object.freeze({ radioSelector: '#idMidiPitches', noteType: 'MidiPitches' }),
+	6: Object.freeze({ radioSelector: '#idMidiPitchesSingle', noteType: 'MidiPitchesSingle' })
+});
+
+// "Selected" indicator color for the row above -- green, a sensible default (the
+// user's own control-button research used [90 0A 15]/green as its illustrative
+// example of lighting a control button) since no color was specified for this
+// particular row. Easy to retune later (single constant), same spirit as
+// CYCLE_ORDER's own developer-retunability in midiColorMaps.js.
+const LAUNCHPAD_VELOCITY_NOTE_TYPE_SELECTED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.GREEN;
 
 
 export class MidiTabBuilder {
@@ -310,6 +345,38 @@ export class MidiTabBuilder {
 	// (making it behave like Latch from that point on). No extra per-press
 	// state tracking is needed for either transition to work correctly.
 	static handleIncomingMidiMessage(parsed, deviceName) {
+		if (parsed.type === 'controlchange' && parsed.controller === LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC) {
+			// Bottom-left control-column button (CC 10 -- see
+			// LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC in midi-io.js for the
+			// real-device research behind this): press ([B0 0A 7F]) toggles
+			// Latch<->Momentary; release ([B0 0A 00], ccValue 0) is ignored --
+			// this button behaves like a toggle switch, not a momentary key.
+			// This fires regardless of device.enabled/tableID -- it's a
+			// device-level control, not tied to Instrument routing. The
+			// physical LED is kept in sync by toggleTriggerMode() ->
+			// applyTriggerModeButtonUi() -> syncTriggerModeIndicatorLight(),
+			// the same path a click on either on-screen trigger-mode button
+			// takes.
+			if (parsed.ccValue > 0) {
+				MidiTabBuilder.toggleTriggerMode();
+			}
+			return;
+		}
+		if (parsed.type === 'controlchange' && LAUNCHPAD_NOTE_TYPE_CONTROL_MAP[parsed.controller]) {
+			// Top-control-row NoteType button (see LAUNCHPAD_NOTE_TYPE_CONTROL_MAP
+			// above) -- fires regardless of device.enabled/tableID, same as the
+			// CC10 trigger-mode button, since it's a Palette-wide UI control, not
+			// tied to Instrument routing. paletteUtils.check() simulates a real
+			// click (including any of PalettePresentation's own bookkeeping), which
+			// naturally fires 'change' on input[name="rbHighlight"] when the
+			// selection actually changes -- picked up by the DOM listener bound in
+			// bindEvents() below, which calls syncNoteTypeControlLights() to update
+			// every button in the row (not just the one pressed).
+			if (parsed.ccValue > 0) {
+				paletteUtils.check(LAUNCHPAD_NOTE_TYPE_CONTROL_MAP[parsed.controller].radioSelector);
+			}
+			return;
+		}
 		if (parsed.type === 'noteon') {
 			MidiTabBuilder.showNoteOnIndicator(parsed, deviceName);
 		}
@@ -671,6 +738,10 @@ export class MidiTabBuilder {
 			// "simple algorithm...for now" -- a real SysEx screen-wipe is deferred).
 			clearLaunchpadGrid(output, channel);
 			MidiTabBuilder.logActivityText(`clear   64 grid notes -> velocity 0 (${output.name})`);
+			// Also defensively wipe the known real-hardware LED artifacts (right
+			// control column + the spurious-at-connect note) -- see
+			// clearLaunchpadEdgeArtifacts()'s doc comment in midi-io.js.
+			clearLaunchpadEdgeArtifacts(output, channel);
 		}
 		// Note mode's note numbers are real MIDI pitches with no fixed 64-note
 		// address space to sweep, so a full clear isn't implemented for it yet.
@@ -782,6 +853,51 @@ export class MidiTabBuilder {
 			.toggleClass('BtnPunchedIn', momentary)
 			.toggleClass('BtnPunchedOut', !momentary)
 			.text(momentary ? 'Momentary' : 'Latched');
+		MidiTabBuilder.syncTriggerModeIndicatorLight();
+	}
+
+	// Mirrors device.triggerMode onto the physical Launchpad's own
+	// control-button LED (LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC in
+	// midi-io.js) so the hardware button's light always matches the on-screen
+	// #btnMidiTriggerMode/#btnMidiTriggerModeQuick PunchedIn/PunchedOut state,
+	// regardless of which of the three (hardware button, MIDI tab button, Quick
+	// Menu button) triggered the change. Not reset by Section
+	// navigation/clearAndRepaintDevice()'s grid wipe -- that only ever touches
+	// the 64 real grid notes (11-88), never this control button's own address.
+	static syncTriggerModeIndicatorLight() {
+		const output = MidiTabBuilder.currentOutputPort();
+		if (!output) {
+			return;
+		}
+		const device = MidiTabBuilder.getDevice();
+		sendTriggerModeIndicatorLight(output, device.channel || 0, device.triggerMode === 'Momentary');
+	}
+
+	// Mirrors the currently-checked rbHighlight ("NoteType") radio button onto the
+	// Launchpad's top control row (see LAUNCHPAD_NOTE_TYPE_CONTROL_MAP): the
+	// matching control button lights up, every other mapped control button (and
+	// any not currently lit) is sent velocity 0 -- so the row behaves like a lit
+	// radio group mirroring the on-screen Palette, regardless of whether the
+	// on-screen radio changed via a click, a keystroke ('[' / ']' for
+	// Pitch/Multi), or a physical Launchpad control-button press (see
+	// handleIncomingMidiMessage() above). Bound to input[name="rbHighlight"]'s
+	// 'change' event in bindEvents(), and also called once on device
+	// connect/output-change (syncOnDeviceConnect()) so the initial default
+	// ("Named") is reflected without waiting for the first change. Guarded by
+	// device.mode !== 'Note', same rationale as clearLaunchpadEdgeArtifacts()'s
+	// guard in midi-io.js: in 'Note' mode we can't assume the connected
+	// controller is even a Launchpad with this control row at all.
+	static syncNoteTypeControlLights() {
+		const output = MidiTabBuilder.currentOutputPort();
+		if (!output || MidiTabBuilder.getDevice().mode === 'Note') {
+			return;
+		}
+		const channel = MidiTabBuilder.getDevice().channel || 0;
+		const currentNoteType = $('input[name="rbHighlight"]:checked').val();
+		Object.entries(LAUNCHPAD_NOTE_TYPE_CONTROL_MAP).forEach(([cc, entry]) => {
+			const isSelected = entry.noteType === currentNoteType;
+			MidiTabBuilder.sendNoteOnRaw(output, channel, Number(cc), isSelected ? LAUNCHPAD_VELOCITY_NOTE_TYPE_SELECTED : 0);
+		});
 	}
 
 	// Shared by both the MIDI tab's #btnMidiTriggerMode and the Quick Menu's
@@ -814,6 +930,7 @@ export class MidiTabBuilder {
 				if (output) {
 					MidiTabBuilder.getDevice().name = output.name;
 				}
+				MidiTabBuilder.syncOnDeviceConnect();
 			});
 
 		$('#selMidiRouteInstrument')
@@ -836,6 +953,8 @@ export class MidiTabBuilder {
 			.on(`change${eventNamespace}`, function () {
 				MidiTabBuilder.getDevice().mode = this.value;
 				MidiTabBuilder.clearAndRepaintDevice();
+				MidiTabBuilder.syncTriggerModeIndicatorLight();
+				MidiTabBuilder.syncNoteTypeControlLights();
 			});
 
 		$('#selMidiDeviceColorMap')
@@ -888,6 +1007,7 @@ export class MidiTabBuilder {
 					const output = MidiTabBuilder.currentOutputPort();
 					if (output && device.mode !== 'Note') {
 						clearLaunchpadGrid(output, device.channel || 0);
+						clearLaunchpadEdgeArtifacts(output, device.channel || 0);
 						MidiTabBuilder.logActivityText(`clear   64 grid notes -> velocity 0 (${output.name})`);
 					}
 					MidiTabBuilder.releaseForwardedPitches();
@@ -922,6 +1042,12 @@ export class MidiTabBuilder {
 				const velocity = Number($('#txtMidiTestNoteOffVelocity').val());
 				sendNoteOff(output, channel, note, velocity);
 				MidiTabBuilder.logActivity('send', [0x80 | channel, note & 0x7f, velocity & 0x7f], output.name+'-velocity:'+velocity);
+			});
+
+		$('input[name="rbHighlight"]')
+			.off(`change${eventNamespace}`)
+			.on(`change${eventNamespace}`, function () {
+				MidiTabBuilder.syncNoteTypeControlLights();
 			});
 
 		EventBus.on('Widget:SectionStatus:statusChanged', MidiTabBuilder.onSectionStatusChanged);
@@ -972,6 +1098,7 @@ export class MidiTabBuilder {
 			PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING
 		);
 		MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
+		MidiTabBuilder.syncOnDeviceConnect();
 
 		midiAccess.onstatechange = () => {
 			MidiTabBuilder.inputs = listInputs(midiAccess);
@@ -986,6 +1113,27 @@ export class MidiTabBuilder {
 				PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING
 			);
 			MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
+			MidiTabBuilder.syncOnDeviceConnect();
 		};
+	}
+
+	// Runs once an output port is actually available (initial MIDI access grant,
+	// and again on every onstatechange -- e.g. a Launchpad plugged in after page
+	// load, or replugged): wipes the known real-hardware LED artifacts (see
+	// clearLaunchpadEdgeArtifacts()'s doc comment in midi-io.js -- addresses
+	// "gets a light on at connection") and pushes the current trigger-mode
+	// indicator light so the physical control button reflects
+	// device.triggerMode as soon as the device is reachable, without waiting
+	// for the first click/repaint.
+	static syncOnDeviceConnect() {
+		const output = MidiTabBuilder.currentOutputPort();
+		if (!output) {
+			return;
+		}
+		if (MidiTabBuilder.getDevice().mode !== 'Note') {
+			clearLaunchpadEdgeArtifacts(output, MidiTabBuilder.getDevice().channel || 0);
+		}
+		MidiTabBuilder.syncTriggerModeIndicatorLight();
+		MidiTabBuilder.syncNoteTypeControlLights();
 	}
 }

@@ -20,9 +20,9 @@ describe('midiColorMaps', () => {
 		// regardless of what velocity CYCLE_ORDER currently assigns to that slot.
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'noteBlue1'))
 			.toBe(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'note4'));
-		// note8's colorClass is "noteRed2".
+		// note8's colorClass is "noteRed2" -- same slot as 'note8', regardless of CYCLE_ORDER.
 		expect(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'noteRed2'))
-			.toBe(LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED);
+			.toBe(resolveLaunchpadVelocityForColorClass(MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS, 'note8'));
 	});
 
 	test('LaunchpadColors resolves a family+shade colorClass by family base + dimmer band', () => {
