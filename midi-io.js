@@ -263,8 +263,18 @@ export function sendTriggerModeIndicatorLight(output, channel, isMomentary) {
 // sometimes lit by the device's own power-on/connect default state. Both
 // addresses are outside the 64-note 8x8 grid this module otherwise manages,
 // so clearLaunchpadGrid() alone never reaches them.
+//
+// Update (Sprint 143, Iteration 4 Round 4, 143-it4-round-4-design.md): the
+// right control column (19..89) is no longer JUST an artifact address --
+// templates/midi/midi.builder.js now gives these 8 buttons real meaning
+// (Section/Beat navigation actions + Looper toggles, "column 9" in the
+// design doc's own numbering). clearLaunchpadEdgeArtifacts() is still called
+// defensively (this module has no way to know these buttons now have
+// meaning), but midi.builder.js always re-syncs the real Looper-toggle
+// lights immediately afterward -- see its syncLooperControlLights().
 export const LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES = Object.freeze([19, 29, 39, 49, 59, 69, 79, 89]);
 export const LAUNCHPAD_KNOWN_SPURIOUS_CONNECT_NOTE = 60;
+
 
 // Explicitly wipes (velocity-0 NOTE ON) the known-spurious addresses above.
 // Safe/idempotent to call any time a full grid repaint or device

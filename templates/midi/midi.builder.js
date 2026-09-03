@@ -138,6 +138,66 @@ const LAUNCHPAD_NOTE_TYPE_CONTROL_MAP = Object.freeze({
 // CYCLE_ORDER's own developer-retunability in midiColorMaps.js.
 const LAUNCHPAD_VELOCITY_NOTE_TYPE_SELECTED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.GREEN;
 
+// Iteration 4 round 4 (143-it4-round-4-design.md): column 0 (REC), column 9
+// (Section/Beat navigation + Looper toggles), and row 9 cols 7-8 (Prev/Next
+// Beat) control buttons. The design doc's own row numbering (row 0 = top of
+// page, row 9 = bottom) maps onto this module's underlying Launchpad
+// hardware row numbering (1 = bottom, 8 = top -- see midi-io.js's
+// "Orientation" comment) via hardwareRow = 9 - docRow; column 0/9 button
+// addresses use the SAME row*10+col scheme as the grid and the Latch/
+// Momentary button (CC10 in midi-io.js): doc row 7 (hardware row 2), col 0 ->
+// CC/NOTE 20 for REC. Column 9's addresses (doc rows 1-8 -> hardware rows
+// 8..1) are 89,79,69,59,49,39,29,19 -- these ARE
+// LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES in midi-io.js, previously only a
+// "known edge artifact" to blank on repaint/connect; they're given real
+// meaning here (see clearColumn9ActionLights()/syncLooperControlLights()
+// below for how the full-artifact-wipe and this new meaning coexist). Row
+// 9's cols 7-8 reuse the same controller-number-is-column-number addressing
+// as cols 1-6 (LAUNCHPAD_NOTE_TYPE_CONTROL_MAP above).
+const LAUNCHPAD_CONTROL_BUTTON_REC_CC = 20;
+
+const LAUNCHPAD_COLUMN9_CONTROL_MAP = Object.freeze({
+	89: Object.freeze({ selector: '#btnNewSection', kind: 'action' }),
+	79: Object.freeze({ selector: '#btnInsertBeat', kind: 'action' }),
+	69: Object.freeze({ selector: '#btnFirstSection', kind: 'action' }),
+	59: Object.freeze({ selector: '#btnPrevSection', kind: 'action' }),
+	49: Object.freeze({ selector: '#btnNextSection', kind: 'action' }),
+	39: Object.freeze({ selector: '#btnLastSection', kind: 'action' }),
+	29: Object.freeze({ selector: '#btnLoopBeats', kind: 'loop' }),
+	19: Object.freeze({ selector: '#btnLoopSections', kind: 'loop' })
+});
+// Derived, single-source-of-truth lists so clearColumn9ActionLights()/
+// syncLooperControlLights() never have to be kept in sync by hand with the
+// map above.
+const LAUNCHPAD_COLUMN9_ACTION_CCS = Object.freeze(
+	Object.entries(LAUNCHPAD_COLUMN9_CONTROL_MAP)
+		.filter(([, entry]) => entry.kind === 'action')
+		.map(([cc]) => Number(cc))
+);
+const LAUNCHPAD_COLUMN9_LOOP_ENTRIES = Object.freeze(
+	Object.entries(LAUNCHPAD_COLUMN9_CONTROL_MAP)
+		.filter(([, entry]) => entry.kind === 'loop')
+		.map(([cc, entry]) => Object.freeze({ cc: Number(cc), selector: entry.selector }))
+);
+
+// Raw velocities given directly by 143-it4-round-4-design.md for column 9's
+// press/release feedback (not part of LAUNCHPAD_MAJOR_COLOR_VELOCITIES'
+// named 12-color wheel -- the doc calls these "magenta"/"green" but specifies
+// the exact decimal values to use, so they're used verbatim rather than
+// reusing MAGENTA=45/GREEN=25 from midiColorMaps.js).
+const LAUNCHPAD_VELOCITY_COLUMN9_PRESSED = 7; // magenta: press flash (rows 1-6); also the Looper "on" color (rows 7-8).
+const LAUNCHPAD_VELOCITY_COLUMN9_LATCHED = 21; // green: rows 1-6 only, latches after release until the next column-9 press.
+
+// Row 9, cols 7-8 (Prev/Next Beat): same addressing as
+// LAUNCHPAD_NOTE_TYPE_CONTROL_MAP (controller number == column number), but
+// non-latching -- flash LAUNCHPAD_VELOCITY_COLUMN9_PRESSED on press, clear on
+// release. Kept separate from LAUNCHPAD_NOTE_TYPE_CONTROL_MAP since these
+// aren't part of the rbHighlight radio group.
+const LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP = Object.freeze({
+	7: Object.freeze({ selector: '#btnPrevBeat' }),
+	8: Object.freeze({ selector: '#btnNextBeat' })
+});
+
 
 export class MidiTabBuilder {
 	static div_MidiTab = null;
@@ -374,6 +434,53 @@ export class MidiTabBuilder {
 			// every button in the row (not just the one pressed).
 			if (parsed.ccValue > 0) {
 				paletteUtils.check(LAUNCHPAD_NOTE_TYPE_CONTROL_MAP[parsed.controller].radioSelector);
+			}
+			return;
+		}
+		if (parsed.type === 'controlchange' && parsed.controller === LAUNCHPAD_CONTROL_BUTTON_REC_CC) {
+			// Column 0, doc row 7 (REC -- 143-it4-round-4-design.md): press simulates
+			// a real click on the on-screen REC button (toggles recording via the
+			// existing '.RecordButton' click handler in infinite-neck.js); release is
+			// ignored, same toggle-switch behavior as CC10. The LED is kept in sync
+			// by syncRecordButtonLight() (bound to '.RecordButton' click below).
+			if (parsed.ccValue > 0) {
+				$('.RecordButton').trigger('click');
+			}
+			return;
+		}
+		if (parsed.type === 'controlchange' && LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP[parsed.controller]) {
+			// Row 9 (top control row), cols 7-8 (Prev/Next Beat --
+			// 143-it4-round-4-design.md): same controller-number-is-column-number
+			// addressing as cols 1-6, but non-latching -- press triggers the action
+			// AND flashes magenta; release just clears the flash (no on-screen
+			// state to mirror, unlike the Looper buttons below).
+			const cc = Number(parsed.controller);
+			if (parsed.ccValue > 0) {
+				$(LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP[cc].selector).trigger('click');
+			}
+			MidiTabBuilder.setControlLight(cc, parsed.ccValue > 0 ? LAUNCHPAD_VELOCITY_COLUMN9_PRESSED : 0);
+			return;
+		}
+		if (parsed.type === 'controlchange' && LAUNCHPAD_COLUMN9_CONTROL_MAP[parsed.controller]) {
+			// Column 9 (right control column -- 143-it4-round-4-design.md): rows 1-6
+			// are Section/Beat navigation actions, rows 7-8 are the Looper toggles.
+			// See clearColumn9ActionLights()/syncLooperControlLights() for the full
+			// lighting-feedback rules (press flash/release latch for rows 1-6, mirror
+			// the Looper UI's own color for rows 7-8, mutual blanking between them).
+			const cc = Number(parsed.controller);
+			const entry = LAUNCHPAD_COLUMN9_CONTROL_MAP[cc];
+			if (entry.kind === 'action') {
+				if (parsed.ccValue > 0) {
+					$(entry.selector).trigger('click');
+					MidiTabBuilder.clearColumn9ActionLights(cc);
+					MidiTabBuilder.setControlLight(cc, LAUNCHPAD_VELOCITY_COLUMN9_PRESSED);
+				} else {
+					MidiTabBuilder.setControlLight(cc, LAUNCHPAD_VELOCITY_COLUMN9_LATCHED);
+				}
+			} else if (parsed.ccValue > 0) {
+				$(entry.selector).trigger('click');
+				MidiTabBuilder.clearColumn9ActionLights();
+				MidiTabBuilder.syncLooperControlLights();
 			}
 			return;
 		}
@@ -742,6 +849,11 @@ export class MidiTabBuilder {
 			// control column + the spurious-at-connect note) -- see
 			// clearLaunchpadEdgeArtifacts()'s doc comment in midi-io.js.
 			clearLaunchpadEdgeArtifacts(output, channel);
+			// Restores column 9's Looper-toggle lights (rows 7-8) immediately
+			// after the wipe above -- see LAUNCHPAD_COLUMN9_CONTROL_MAP's doc
+			// comment: those addresses ARE LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES
+			// and would otherwise be left dark on every Section navigation.
+			MidiTabBuilder.syncLooperControlLights();
 		}
 		// Note mode's note numbers are real MIDI pitches with no fixed 64-note
 		// address space to sweep, so a full clear isn't implemented for it yet.
@@ -900,6 +1012,66 @@ export class MidiTabBuilder {
 		});
 	}
 
+	// Shared low-level helper for every Round-4 (143-it4-round-4-design.md)
+	// control-button light: a plain NOTE ON at a fixed (non-grid) address,
+	// no-op if there's no output port or the device is in 'Note' mode (same
+	// guard/rationale as syncNoteTypeControlLights() -- in 'Note' mode we
+	// can't assume a Launchpad-shaped controller with these control buttons
+	// is even connected).
+	static setControlLight(outNote, velocity) {
+		const output = MidiTabBuilder.currentOutputPort();
+		if (!output || MidiTabBuilder.getDevice().mode === 'Note') {
+			return;
+		}
+		MidiTabBuilder.sendNoteOnRaw(output, MidiTabBuilder.getDevice().channel || 0, outNote, velocity);
+	}
+
+	// Column 0, doc row 7 (REC indicator/toggle -- 143-it4-round-4-design.md):
+	// mirrors the on-screen '.RecordButton' (#btnRecord) ButtonOn state (set
+	// by syncRecordingViews() in infinite-neck.js) onto
+	// LAUNCHPAD_CONTROL_BUTTON_REC_CC, red (LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED)
+	// when recording, off otherwise. Bound to '.RecordButton' click in
+	// bindEvents() below (so a mouse-driven toggle -- not just a physical
+	// button press -- keeps the light in sync), and called once on device
+	// connect (syncOnDeviceConnect()).
+	static syncRecordButtonLight() {
+		const recording = $('.RecordButton').hasClass('ButtonOn');
+		MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_REC_CC, recording ? LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED : 0);
+	}
+
+	// Column 9, rows 7-8 (Looper toggles -- 143-it4-round-4-design.md): mirrors
+	// #btnLoopBeats/#btnLoopSections's own ButtonOn state (set by
+	// applyLoopBeatsUi()/applyLoopSectionsUi() in infinite-neck.js, the
+	// "recently centralized handling of all looper buttons" the design doc
+	// refers to) onto their Launchpad addresses, magenta
+	// (LAUNCHPAD_VELOCITY_COLUMN9_PRESSED) when looping, off otherwise. Bound
+	// to their own click in bindEvents() below, called after a physical
+	// column-9 rows-7-8 press (handleIncomingMidiMessage()), on device
+	// connect, and after any full clearLaunchpadEdgeArtifacts() wipe
+	// (hardRepaint()/route-toggle-off/syncOnDeviceConnect()) since these
+	// addresses ARE LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES in midi-io.js and
+	// would otherwise be left dark by that wipe.
+	static syncLooperControlLights() {
+		LAUNCHPAD_COLUMN9_LOOP_ENTRIES.forEach(({ cc, selector }) => {
+			const active = $(selector).hasClass('ButtonOn');
+			MidiTabBuilder.setControlLight(cc, active ? LAUNCHPAD_VELOCITY_COLUMN9_PRESSED : 0);
+		});
+	}
+
+	// Blanks every column-9 rows-1-6 action-button light except exceptCC (if
+	// given) -- "When any other button is pressed in column 9, blank out all
+	// other buttons in rows 1-6" (143-it4-round-4-design.md). Called on every
+	// rows-1-6 press (excepting the just-pressed button, which lights itself
+	// separately) and on every rows-7-8 (Looper) press (no exception -- rows
+	// 7-8 don't participate in this latch group themselves).
+	static clearColumn9ActionLights(exceptCC = null) {
+		LAUNCHPAD_COLUMN9_ACTION_CCS.forEach((cc) => {
+			if (cc !== exceptCC) {
+				MidiTabBuilder.setControlLight(cc, 0);
+			}
+		});
+	}
+
 	// Shared by both the MIDI tab's #btnMidiTriggerMode and the Quick Menu's
 	// #btnMidiTriggerModeQuick click handlers (bound together below via
 	// '.classMidiTriggerMode') so either button flips the SAME device.triggerMode
@@ -955,6 +1127,8 @@ export class MidiTabBuilder {
 				MidiTabBuilder.clearAndRepaintDevice();
 				MidiTabBuilder.syncTriggerModeIndicatorLight();
 				MidiTabBuilder.syncNoteTypeControlLights();
+				MidiTabBuilder.syncRecordButtonLight();
+				MidiTabBuilder.syncLooperControlLights();
 			});
 
 		$('#selMidiDeviceColorMap')
@@ -1008,6 +1182,7 @@ export class MidiTabBuilder {
 					if (output && device.mode !== 'Note') {
 						clearLaunchpadGrid(output, device.channel || 0);
 						clearLaunchpadEdgeArtifacts(output, device.channel || 0);
+						MidiTabBuilder.syncLooperControlLights();
 						MidiTabBuilder.logActivityText(`clear   64 grid notes -> velocity 0 (${output.name})`);
 					}
 					MidiTabBuilder.releaseForwardedPitches();
@@ -1048,6 +1223,23 @@ export class MidiTabBuilder {
 			.off(`change${eventNamespace}`)
 			.on(`change${eventNamespace}`, function () {
 				MidiTabBuilder.syncNoteTypeControlLights();
+			});
+
+		// Round 4 (143-it4-round-4-design.md): mirror a mouse-driven REC/Looper
+		// toggle onto their physical Launchpad control-button lights, same idea
+		// as the rbHighlight listener above -- these elements are static markup
+		// in index.html (#transport), already present by the time the MIDI tab
+		// loads, so a direct (non-delegated) binding is safe here.
+		$('.RecordButton')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				MidiTabBuilder.syncRecordButtonLight();
+			});
+
+		$('#btnLoopSections, #btnLoopBeats')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				MidiTabBuilder.syncLooperControlLights();
 			});
 
 		EventBus.on('Widget:SectionStatus:statusChanged', MidiTabBuilder.onSectionStatusChanged);
@@ -1124,7 +1316,8 @@ export class MidiTabBuilder {
 	// "gets a light on at connection") and pushes the current trigger-mode
 	// indicator light so the physical control button reflects
 	// device.triggerMode as soon as the device is reachable, without waiting
-	// for the first click/repaint.
+	// for the first click/repaint. Round 4 (143-it4-round-4-design.md) adds the
+	// REC and Looper-toggle lights to this same initial sync.
 	static syncOnDeviceConnect() {
 		const output = MidiTabBuilder.currentOutputPort();
 		if (!output) {
@@ -1135,5 +1328,7 @@ export class MidiTabBuilder {
 		}
 		MidiTabBuilder.syncTriggerModeIndicatorLight();
 		MidiTabBuilder.syncNoteTypeControlLights();
+		MidiTabBuilder.syncRecordButtonLight();
+		MidiTabBuilder.syncLooperControlLights();
 	}
 }
