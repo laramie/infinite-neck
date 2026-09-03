@@ -15,7 +15,7 @@
 // access.
 
 import { gDefault_CycleOfColors } from '../../userColors.js';
-import { LAUNCHPAD_VELOCITY_RED } from '../../midi-io.js';
+import { LAUNCHPAD_VELOCITY_DEFAULT } from '../../midi-io.js';
 
 export const MIDI_COLOR_MAP_IDS = Object.freeze({
 	LAUNCHPAD_CYCLE_OF_COLORS: 'LaunchpadCycleOfColors',
@@ -64,9 +64,9 @@ const CYCLE_ORDER = [
 	59, //good-pink:53,                                                  //   II
 	47,                                                  //   m
 	79,               //   III
-	11, //60, //pumpkin for IV. 84, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,             //   IV
-	60, //127, //more subtle. 9, //84, //More agressive yellow-orange for tritone. 83, //62, //OR: LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,           //   Tri
-	7, //blood-red.  //120 PURE red. //blood-red:7, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED,                //   V
+	60, //11, //60, //pumpkin for IV. 84, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,             //   IV
+	11, //60, //127, //more subtle. 9, //84, //More agressive yellow-orange for tritone. 83, //62, //OR: LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,           //   Tri
+	72, // PURE red.    7, //blood-red.  //blood-red:7, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED,                //   V
 	15, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW+2,           //   sa
 	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER,       //   6
 	35, //forest green. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+1,     //   dom
@@ -150,16 +150,16 @@ function resolveLaunchpadVelocityForFamilyColorClass(colorClass) {
 
 // Resolves a played note's colorClass (e.g. "noteBlue2", "note4", "noteRoot")
 // to a Launchpad NOTE ON velocity, per the device's configured colorMap.
-// Falls back to LAUNCHPAD_VELOCITY_RED (plain red) when the colorClass isn't
+// Falls back to LAUNCHPAD_VELOCITY_DEFAULT (plain,independent color) when the colorClass isn't
 // resolvable by either scheme -- e.g. "noteTransparent"/"noteAutomatic"
 // placeholder classes, or families not covered by FAMILY_BASE_VELOCITY.
 export function resolveLaunchpadVelocityForColorClass(colorMapID, colorClass) {
 	if (colorMapID === MIDI_COLOR_MAP_IDS.LAUNCHPAD_CYCLE_OF_COLORS) {
 		return resolveLaunchpadVelocityForCycleColorClass(colorClass)
 			?? resolveLaunchpadVelocityForFamilyColorClass(colorClass)
-			?? LAUNCHPAD_VELOCITY_RED;
+			?? LAUNCHPAD_VELOCITY_DEFAULT;
 	}
 	return resolveLaunchpadVelocityForFamilyColorClass(colorClass)
 		?? resolveLaunchpadVelocityForCycleColorClass(colorClass)
-		?? LAUNCHPAD_VELOCITY_RED;
+		?? LAUNCHPAD_VELOCITY_DEFAULT;
 }

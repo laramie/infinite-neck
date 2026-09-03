@@ -8,7 +8,6 @@ import {
 	cellToLaunchpadGridNote,
 	listAllLaunchpadGridNotes,
 	clearLaunchpadGrid,
-	LAUNCHPAD_VELOCITY_RED,
 	LAUNCHPAD_ORIENTATIONS,
 	LAUNCHPAD_DEFAULT_ORIENTATION,
 	LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC,
@@ -129,10 +128,6 @@ describe('Launchpad Programmer-mode grid mapping', () => {
 	test('cellToLaunchpadGridNote supports an inverted orientation', () => {
 		expect(cellToLaunchpadGridNote(0, 0, { orientation: 'inverted' })).toBe(11);
 		expect(cellToLaunchpadGridNote(7, 0, { orientation: 'inverted' })).toBe(81);
-	});
-
-	test('LAUNCHPAD_VELOCITY_RED matches the documented red color value', () => {
-		expect(LAUNCHPAD_VELOCITY_RED).toBe(5);
 	});
 
 	test('LAUNCHPAD_DEFAULT_ORIENTATION is normal, matching the confirmed real-device mapping', () => {

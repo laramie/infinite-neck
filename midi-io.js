@@ -165,7 +165,7 @@ export function sendNoteOff(output, channel, note, velocity = 0) {
 // ---------------------------------------------------------------------------
 
 export const LAUNCHPAD_GRID_SIZE = 8;
-export const LAUNCHPAD_VELOCITY_RED = 5;
+export const LAUNCHPAD_VELOCITY_DEFAULT = 37;
 export const LAUNCHPAD_ORIENTATIONS = Object.freeze(['normal', 'inverted']);
 export const LAUNCHPAD_DEFAULT_ORIENTATION = 'normal';
 
