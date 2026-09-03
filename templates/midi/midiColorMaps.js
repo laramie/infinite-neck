@@ -50,22 +50,27 @@ export const LAUNCHPAD_MAJOR_COLOR_VELOCITIES = Object.freeze({
 //     x LAUNCHPAD_MAJOR_COLOR_VELOCITIES.PURPLE,
 //     x LAUNCHPAD_MAJOR_COLOR_VELOCITIES.TURQUOISE,       //   II
 //     x LAUNCHPAD_MAJOR_COLOR_VELOCITIES.PINK           //   Say
+//       LAUNCHPAD_MAJOR_COLOR_VELOCITIES.BLUE,          //   Was III , a lovely light blue.  Very close to the I.
+//       LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA+2,       //  Tau MAGENTA==45
+//     81, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA,       //   II
+//       LAUNCHPAD_MAJOR_COLOR_VELOCITIES.TURQUOISE+2,           //   dom GREEN + 1 GREEN + 2
+//       LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+2    //   Say 
+    
 //  Numbers used below are launchpad numbers
 
 const CYCLE_ORDER = [
-    LAUNCHPAD_MAJOR_COLOR_VELOCITIES.LIGHT_BLUE,         //   I
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA+2,       //  Tau
-	81, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA,       //   II
-	79, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA,        //   m
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.BLUE,          //   III
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,        //   IV
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,      //   Tri
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED,           //    V
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW+2,        //    sa
-	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER,   //    6
-	//LAUNCHPAD_MAJOR_COLOR_VELOCITIES.TURQUOISE+2,           //   dom GREEN + 1 GREEN + 2
-    LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+1,         //    dom
-	75, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+2    //   Say 
+    3, //white //57, // spec. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.LIGHT_BLUE,         //   I
+	51,                                                  //   Tau MAGENTA==45
+	59, //good-pink:53,                                                  //   II
+	47,                                                  //   m
+	79,               //   III
+	11, //60, //pumpkin for IV. 84, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,             //   IV
+	60, //127, //more subtle. 9, //84, //More agressive yellow-orange for tritone. 83, //62, //OR: LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,           //   Tri
+	7, //blood-red.  //120 PURE red. //blood-red:7, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED,                //   V
+	15, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW+2,           //   sa
+	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER,       //   6
+	35, //forest green. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+1,     //   dom
+	21//37,//spec.   75,                                                  //   Say 
 ];
 
 function buildCycleOfColorsVelocityByNoteKey() {

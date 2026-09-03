@@ -1789,6 +1789,10 @@ td.nut div.NoteActive .CenterCell {
 .noteHighlightSingle .NoteDisplay {
     box-shadow: 0 0 4pt 4pt red;
 }
+.noteWhiteKey.noteHighlightSingle ,
+.noteBlackKey.noteHighlightSingle {
+    box-shadow: 0 0 4pt 4pt magenta !important;
+}
 
 .midiPitch{
     color: green;

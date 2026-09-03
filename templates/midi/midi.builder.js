@@ -1,10 +1,21 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
-// Sprint 143 (midi-note-in), Iterations 3-4: see
-// _doco/design/sprints/143-midi-note-in/143-design-3.md and
-// 143-it4-design.md/143-it4-implementation-plan.md for the design discussion
-// behind this module. NoteMode is explicitly out of scope for Iteration 4;
-// only Programmer mode's Momentary/Latch + downstream forwarding are covered.
+// Sprint 143 (midi-note-in), Iterations 3-4 (+ Iteration 4 round 2): see
+// _doco/design/sprints/143-midi-note-in/143-design-3.md,
+// 143-it4-design.md/143-it4-implementation-plan.md, and 143-it4-design-2.md
+// for the design discussion behind this module. NoteMode is explicitly out
+// of scope for Iteration 4; only Programmer mode's Momentary/Latch +
+// downstream forwarding are covered.
+//
+// Iteration 4 round 2 (143-it4-design-2.md) added two more paint-plan
+// sources, both LIGHTS ONLY (never forwarded downstream, never affecting
+// pitchPlan): Highlight overlays (magenta "Highlight Multi"/yellow "Highlight
+// Pitch (MIDI)", always winning over whatever note color is underneath) and
+// Recorded Notes (the beat-keyed sectionNotes.recordedNotes[] Looper-playback
+// overlay, previously not read by this module at all) -- see
+// buildDevicePaintPlan()'s doc comment for the full read-source breakdown and
+// why recordedNotes/live-highlight-DOM reads are handled differently
+// depending on which trigger (click vs. beat-tick) is building the plan.
 //
 // Builds the "MIDI" Desktop tab: MIDI IN/OUT device pickers ported from the
 // Iteration 1 standalone prototype, plus Instrument routing (NOTE ON/OFF from
@@ -63,6 +74,7 @@ import {
 import { resolveLaunchpadVelocityForColorClass } from './midiColorMaps.js';
 import { colorNote, findNoteCell, showMidiNotesInTable } from '../../NoteTableController.js';
 import { createLookupContext, lookupUserColorClass } from '../../colorFunctions.js';
+import { Note } from '../../Note.js';
 import {
 	classifyInstrumentRole,
 	getSongTuningsInLayoutOrder,
@@ -77,6 +89,20 @@ const PREFERRED_DEVICE_NAME_SUBSTRING = 'Launchpad';
 // Same idea for the downstream sound-device forward output (Iteration 4),
 // e.g. a VoiceLive 3 reached over a Class-Compliant-USB MIDI cable.
 const PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING = 'VoiceLive';
+
+// Highlight overlay colors (Iteration 4 round 2, 143-it4-design-2.md): fixed
+// Launchpad velocities that always win over whatever named/played/recorded
+// note color would otherwise show for that exact cell, independent of the
+// device's configured colorMap -- these are performance-status indicators
+// (is this pitch/cell currently highlighted), not user-chosen chart colors.
+// 'noteHighlightSingle'/STYLENUM_MIDIPITCHESSINGLE is "Highlight Multi"
+// (keystroke ']', one specific cell); 'noteHighlight'/STYLENUM_MIDIPITCHES is
+// "Highlight Pitch (MIDI)" (keystroke '[', EVERY cell sharing that midinum
+// across the tuning -- mirrors colorNoteInner()'s own
+// td.note[midinum=...] selector, which has no cellrow filter).
+const LAUNCHPAD_VELOCITY_HIGHLIGHT_MULTI = 53; // magenta
+const LAUNCHPAD_VELOCITY_HIGHLIGHT_PITCH = 14; // yellow
+
 
 export class MidiTabBuilder {
 	static div_MidiTab = null;
@@ -367,7 +393,9 @@ export class MidiTabBuilder {
 		if (!device.enabled || !device.tableID || !data || data.sourceTableID !== device.tableID) {
 			return;
 		}
-		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID);
+		// Real-time click: DOM Highlight classes are trustworthy (see
+		// buildDevicePaintPlan()'s doc comment).
+		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: true });
 		const haveBaseline = !!MidiTabBuilder.lastPaintPlan && device.tableID === MidiTabBuilder.lastPaintTableID;
 
 		const lightOutput = MidiTabBuilder.currentOutputPort();
@@ -412,7 +440,10 @@ export class MidiTabBuilder {
 		if (!device.enabled || !device.tableID) {
 			return;
 		}
-		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID);
+		// Section-navigation/beat-tick: DOM Highlight classes may still reflect
+		// the previous beat (see buildDevicePaintPlan()'s doc comment), so only
+		// the model-driven recordedNotes[beat] highlights are trusted here.
+		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: false });
 		const tableChanged = device.tableID !== MidiTabBuilder.lastPaintTableID;
 		const output = MidiTabBuilder.currentOutputPort();
 		if (output) {
@@ -456,15 +487,25 @@ export class MidiTabBuilder {
 	//     ProgrammerMode/NoteMode". velocity here is whatever a physical press
 	//     caused (see pendingForwardVelocityByMidinum), defaulting to 127 for a
 	//     plain UI click.
-	// Covers BOTH data sources replayTable() paints from (see
-	// NoteTableController.js replayTable()):
+	// Covers THREE data sources (see NoteTableController.js replayTable() and
+	// showHighlightsForBeatForOptions()):
 	//   - namedNotes: the chart's main note-name coloring (what colorNote()
 	//     writes to in the default 'Named' highlight mode -- setNamedNote()).
 	//     A single named note colors EVERY cell sharing that note name across
 	//     the tuning, so every matching cell is included.
 	//   - playedNotes: the Tiny/Single/Fingering/Bend overlay styles, addressed
-	//     by an exact midinum+row (a single cell).
-	static buildDevicePaintPlan(tableID) {
+	//     by an exact midinum+row (a single cell) -- the LIVE (not currently
+	//     recording) performance overlay.
+	//   - recordedNotes[currentBeat] (143-it4-design-2.md "Recorded Notes"):
+	//     the SAME styles, but captured for Looper playback -- see the doc
+	//     comment just above the recordedNotes read below for why this is read
+	//     from the model rather than the DOM classes showHighlightsForBeat()
+	//     paints with (a same-tick ordering hazard).
+	// options.includeDomHighlights controls a FOURTH source, live (not
+	// necessarily recorded) Highlight overlay toggles -- see its own doc
+	// comment below; only trusted from a real-time click (onNoteColored()).
+	static buildDevicePaintPlan(tableID, options = {}) {
+		const includeDomHighlights = options.includeDomHighlights !== false;
 		const device = MidiTabBuilder.getDevice();
 		const section = getCurrentSection();
 		const sectionNotes = section && typeof section.getSectionNotes === 'function'
@@ -515,7 +556,105 @@ export class MidiTabBuilder {
 			addForCell(cell, note);
 		});
 
+		// Recorded Notes (143-it4-design-2.md): read straight from the model
+		// (sectionNotes.recordedNotes[currentBeat]) rather than the DOM
+		// classes/divs NoteTableController.js's showHighlightsForBeatForOptions()
+		// paints -- this plan is built from the SAME
+		// 'Widget:SectionStatus:statusChanged' firing that FIRES BEFORE
+		// showHighlightsForBeat() runs (see infinite-neck.js's showBeats():
+		// emitSectionStatusBeatUpdate() then showHighlightsForBeat()), so
+		// reading the DOM here would still show the PREVIOUS beat's classes.
+		// Reading the model directly sidesteps that ordering hazard entirely,
+		// and also naturally "blanks on the next beat": a note only in the
+		// previous beat's array simply isn't in this beat's lightPlan, and
+		// clearAndRepaintDevice()'s existing full hardRepaint-on-change already
+		// clears anything not in the fresh plan.
+		// Tiny/Single/Fingering/Bend recorded notes paint like a played note
+		// (their own colorClass, via the same addForCell() above);
+		// MidiPitches/MidiPitchesSingle recorded notes are Highlight overlays,
+		// collected into highlightCells so they always win over a
+		// played/named color underneath (applied after every base color below).
+		const highlightCells = new Map(); // outNote -> velocity
+		const currentBeat = getSong().getBeat();
+		const recordedNotesForBeat = (sectionNotes.recordedNotes || {})[`${currentBeat}`] || [];
+		recordedNotesForBeat.forEach((note) => {
+			if (note.styleNum === Note.STYLENUM_MIDIPITCHES || note.styleNum === Note.STYLENUM_MIDIPITCHESSINGLE) {
+				MidiTabBuilder.collectHighlightCellsForNote(tableID, device, note, highlightCells);
+				return;
+			}
+			const cell = showMidiNotesInTable(tableID, note.midinum, note.row);
+			if (!cell || cell.length === 0) {
+				return;
+			}
+			addForCell(cell, note);
+		});
+
+		// Live, click-driven Highlight toggles that AREN'T (necessarily)
+		// recorded -- colorNoteInner()'s doHighlight/doHighlightSingle branches
+		// toggle these DOM classes on every click regardless of recording
+		// state. DOM state is trustworthy here ONLY when this plan is being
+		// built synchronously from that same click (onNoteColored(), the
+		// default) -- a beat-tick/Section-navigation repaint
+		// (clearAndRepaintDevice()) passes includeDomHighlights:false since the
+		// DOM may still show the previous beat's classes at that point (same
+		// ordering hazard as recordedNotes above, but there's no model-only
+		// fallback for a highlight that isn't being recorded).
+		if (includeDomHighlights) {
+			$(`table[id='${tableID}'] td.note.noteHighlight`).each(function () {
+				MidiTabBuilder.addHighlightCellFromDom($(this), device, Note.STYLENUM_MIDIPITCHES, highlightCells);
+			});
+			$(`table[id='${tableID}'] td.note.noteHighlightSingle`).each(function () {
+				MidiTabBuilder.addHighlightCellFromDom($(this), device, Note.STYLENUM_MIDIPITCHESSINGLE, highlightCells);
+			});
+		}
+
+		highlightCells.forEach((velocity, outNote) => {
+			lightPlan.set(outNote, velocity);
+		});
+
 		return { lightPlan, pitchPlan };
+	}
+
+	static highlightVelocityForStyleNum(styleNum) {
+		return styleNum === Note.STYLENUM_MIDIPITCHESSINGLE
+			? LAUNCHPAD_VELOCITY_HIGHLIGHT_MULTI
+			: LAUNCHPAD_VELOCITY_HIGHLIGHT_PITCH;
+	}
+
+	static outNoteForCell(device, cell) {
+		const cellrow = Number(cell.attr('cellrow'));
+		const cellcol = Number(cell.attr('cellcol'));
+		const midinum = Number(cell.attr('midinum'));
+		if (!Number.isInteger(cellrow) || !Number.isInteger(cellcol)) {
+			return null;
+		}
+		return device.mode === 'Note'
+			? midinum
+			: cellToLaunchpadGridNote(cellrow, cellcol, { orientation: device.orientation });
+	}
+
+	// MidiPitches ("Highlight Pitch (MIDI)", keystroke '[') highlights EVERY
+	// cell sharing this recorded note's midinum across the tuning -- mirrors
+	// colorNoteInner()'s own td.note[midinum=...] selector (no cellrow filter).
+	// MidiPitchesSingle ("Highlight Multi", keystroke ']') is one specific cell.
+	static collectHighlightCellsForNote(tableID, device, note, highlightCells) {
+		const velocity = MidiTabBuilder.highlightVelocityForStyleNum(note.styleNum);
+		const selector = note.styleNum === Note.STYLENUM_MIDIPITCHES
+			? `table[id='${tableID}'] td.note[midinum='${note.midinum}']`
+			: `table[id='${tableID}'] td.note[midinum='${note.midinum}'][cellrow='${note.row}']`;
+		$(selector).each(function () {
+			const outNote = MidiTabBuilder.outNoteForCell(device, $(this));
+			if (outNote !== null) {
+				highlightCells.set(outNote, velocity);
+			}
+		});
+	}
+
+	static addHighlightCellFromDom(cell, device, styleNum, highlightCells) {
+		const outNote = MidiTabBuilder.outNoteForCell(device, cell);
+		if (outNote !== null) {
+			highlightCells.set(outNote, MidiTabBuilder.highlightVelocityForStyleNum(styleNum));
+		}
 	}
 
 	static sendNoteOnRaw(output, channel, outNote, velocity) {
@@ -632,12 +771,27 @@ export class MidiTabBuilder {
 			.text(enabled ? 'MIDI Routing On' : 'MIDI Routing');
 	}
 
+	// Targets EVERY element sharing '.classMidiTriggerMode' (the MIDI tab's own
+	// #btnMidiTriggerMode plus the Quick Menu's duplicate #btnMidiTriggerModeQuick,
+	// see index.html #divQuick) so both stay visually in sync with device.triggerMode
+	// no matter which one triggered the change -- mirrors the existing
+	// .classLoopSections/.classLoopBeats pattern used for the Loop quick-menu buttons.
 	static applyTriggerModeButtonUi() {
 		const momentary = MidiTabBuilder.getDevice().triggerMode === 'Momentary';
-		$('#btnMidiTriggerMode')
+		$('.classMidiTriggerMode')
 			.toggleClass('BtnPunchedIn', momentary)
 			.toggleClass('BtnPunchedOut', !momentary)
 			.text(momentary ? 'Momentary' : 'Latched');
+	}
+
+	// Shared by both the MIDI tab's #btnMidiTriggerMode and the Quick Menu's
+	// #btnMidiTriggerModeQuick click handlers (bound together below via
+	// '.classMidiTriggerMode') so either button flips the SAME device.triggerMode
+	// and both update together through applyTriggerModeButtonUi().
+	static toggleTriggerMode() {
+		const device = MidiTabBuilder.getDevice();
+		device.triggerMode = device.triggerMode === 'Momentary' ? 'Latch' : 'Momentary';
+		MidiTabBuilder.applyTriggerModeButtonUi();
 	}
 
 	static bindEvents() {
@@ -715,12 +869,10 @@ export class MidiTabBuilder {
 				MidiTabBuilder.getDevice().forwardChannel = Number(this.value) || 0;
 			});
 
-		$('#btnMidiTriggerMode')
+		$('.classMidiTriggerMode')
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function () {
-				const device = MidiTabBuilder.getDevice();
-				device.triggerMode = device.triggerMode === 'Momentary' ? 'Latch' : 'Momentary';
-				MidiTabBuilder.applyTriggerModeButtonUi();
+				MidiTabBuilder.toggleTriggerMode();
 			});
 
 		$('#btnMidiRouteToggle')
