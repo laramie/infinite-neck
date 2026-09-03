@@ -258,6 +258,20 @@
 .section-status-vertical-table  .RecordDot {
     margin-top: 0.4em;
 }
+.RecordDotMomentaryBorder {
+    border: 1px solid cyan;
+    border-radius: 0.5em 0.2em 0.2em 0.5em;
+    padding: 2px;
+}
+.RecordDotMomentaryBorderVertical {
+    border: 1px solid cyan;
+    border-radius: 0.8em 0.8em 0.2em 0.2em;
+    padding: 0.2em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    margin-top: 0.3em;
+    display: inline-block;
+}
 
 
 /*  The little box in the caption row that tells us section number, relativeSection, and pink border for looping via applied class. */
