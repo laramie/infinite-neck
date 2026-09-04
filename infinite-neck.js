@@ -2331,6 +2331,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong().getLayout().doToggles();
 			setUIFromNoteTablesLayoutOptions();
 			$('#spanFillVisibleTablesSelect').html(getVisibleTablesSelect());
+			// Tables just (re)built above are now attached to the live document, so this
+			// is the first point where the .paletteHighlightStatus/.paletteModeStatus
+			// spans TableBuilder.js's buildCaptionRow() creates can actually be found by
+			// a document-scoped $() query. Runs on every reinstall (startup, song load,
+			// append, MyTunings edits, etc.), covering the case where these tables are
+			// (re)built before templates/palette.html has finished loading -- once it
+			// does, installRBColorChangeEvents()'s own initializePalettePresentation()
+			// call refreshes them again.
+			PalettePresentation.refreshPaletteStatusSpans();
 	}
 
 	/** Resolves the { left, top, width, height, zIndex, handleOrientation } rect to

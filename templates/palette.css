@@ -191,6 +191,8 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 
 .tblColorDictOneRow{
+    display: inline-table;
+    vertical-align: middle;
     border: 1px solid #555;
 }
 .tblColorDictOneRow td {
@@ -245,6 +247,23 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 .largeColorDict td {
     padding: 0.2em;
+}
+
+/* Read-only status spans riding alongside currentColorDict/tblColorDictOneRow
+   (see TableBuilder.js's buildCaptionRow()); em-based sizing lets them scale
+   automatically with .largeColorDict's font-size bump. */
+.paletteStatusSpan {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    margin-right: 0.5em;
+    padding: 0.3em 0.6em;
+    border: 1px solid black;
+    border-radius: 0.2em;
+    font-weight: bold;
+    font-size: 90%;
+    background-color: white;
+    color: black;
 }
 
 .userColorResultCaption {

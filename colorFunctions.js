@@ -519,7 +519,7 @@ export function chuseStylesheet(dictkey){
 		});
 		var tbl = $("<table class='tblColorDictOneRow'>");
 		tbl.append(newRow);
-		$('.currentColorDict').empty().append(tbl);
+		$('.colorDictSwatchStrip').empty().append(tbl);
 	}
 
 	export function applyStylesheetsTo_gUserColorDict(){

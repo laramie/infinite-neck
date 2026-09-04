@@ -27,6 +27,21 @@ const RESTORABLE_HIGHLIGHT_IDS = new Set([
     'idMidiPitchesSingle'
 ]);
 
+// Mirrors the #selBend <option> captions in templates/palette.html -- read here
+// instead of scraping the <option> text so PalettePresentation.getHighlightStatusMarkup()
+// can compose the "Bend: <small>...</small>" status span from #selBend's plain value.
+const BEND_TYPE_CAPTIONS = {
+    semitone1: '1 semitone',
+    semitone2: '2 semitones',
+    semitone3: '3 semitones',
+    prebend1: 'prebend 1',
+    prebend2: 'prebend 2',
+    prebend3: 'prebend 3',
+    updown1: 'up-down 1',
+    updown2: 'up-down 2',
+    updown3: 'up-down 3'
+};
+
 export class PalettePresentation {
     static lockKeep(){
         gPresentation.palette.keepLocked = true;
@@ -182,6 +197,82 @@ export class PalettePresentation {
 
         $label.toggleClass("chooseLastColorAligned", isAligned);
         $caption.text("Color: " + caption + postfix);
+        PalettePresentation.refreshPaletteStatusSpans();
+    }
+
+    // Read-only status spans (see TableBuilder.js's buildCaptionRow(), which rides
+    // these along with currentColorDict): span 1 mirrors whichever restorable
+    // highlight radio (idNamedNotes/idSingleNotes/idTinyNotes/rbBend/
+    // idMidiPitches/idMidiPitchesSingle) is active; span 2 mirrors whichever
+    // palette-mode button (CLEAR/KEEP/Find Color/Color:...) is active, taking on
+    // the resolved swatch color when in paint mode.
+    static getHighlightStatusText() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        if (PalettePresentation.isRestorableHighlightRadio($checked)) {
+            return PalettePresentation.getRbHighlightCaption($checked);
+        }
+        return PalettePresentation.getLastRestorableRbHighlight().caption;
+    }
+
+    static getActiveHighlightId() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        if (PalettePresentation.isRestorableHighlightRadio($checked)) {
+            return $checked.attr('id');
+        }
+        return PalettePresentation.getLastRestorableRbHighlight().id;
+    }
+
+    static getBendSelectionCaption() {
+        const value = $('#selBend').val();
+        return BEND_TYPE_CAPTIONS[value] || value || '';
+    }
+
+    // HTML markup for the .paletteHighlightStatus span: plain caption, except for
+    // Bend, which always has a selected #selBend value (no empty slot in that
+    // dropdown) appended as a smaller sub-caption.
+    static getHighlightStatusMarkup() {
+        const caption = PalettePresentation.getHighlightStatusText();
+        if (PalettePresentation.getActiveHighlightId() === 'rbBend') {
+            return caption + ': <small>' + PalettePresentation.getBendSelectionCaption() + '</small>';
+        }
+        return caption;
+    }
+
+    static getPaletteModeStatusText() {
+        const $label = PalettePresentation.findPaletteModeRadio().closest('label');
+        return $label.length > 0 ? $.trim($label.text()) : '';
+    }
+
+    static getResolvedRbColorStyle() {
+        const FALLBACK = { backgroundColor: '#ffffff', color: '#000000' };
+        const $label = PalettePresentation.findRestorableRbColor().closest('label');
+        if ($label.length === 0 || typeof getComputedStyle !== 'function') {
+            return FALLBACK;
+        }
+        const computed = getComputedStyle($label[0]);
+        return {
+            backgroundColor: computed.backgroundColor || FALLBACK.backgroundColor,
+            color: computed.color || FALLBACK.color
+        };
+    }
+
+    static getPaletteModeStatusStyle() {
+        if (PalettePresentation.getMode() !== 'paint') {
+            return { backgroundColor: '#ffffff', color: '#000000' };
+        }
+        return PalettePresentation.getResolvedRbColorStyle();
+    }
+
+    static refreshPaletteStatusSpans() {
+        $('.paletteHighlightStatus').html(PalettePresentation.getHighlightStatusMarkup());
+
+        const modeStyle = PalettePresentation.getPaletteModeStatusStyle();
+        $('.paletteModeStatus')
+            .text(PalettePresentation.getPaletteModeStatusText())
+            .css({
+                backgroundColor: modeStyle.backgroundColor,
+                color: modeStyle.color
+            });
     }
 
     static setExtraColorsVisible(isVisible) {

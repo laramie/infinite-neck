@@ -345,7 +345,21 @@ function buildCaptionRow(options, tableID) {
 		roleClassTargets: captionRow.find('.SectionStatus_captionRoleTarget')
 	});
 	captionRow.append(spanCaptionRowLiveInfo);
-	captionRow.append($("<div class='currentColorDict''></div>"));
+
+	// Groups the two read-only palette status spans with the color-dict swatch
+	// strip so they ride around together and share the Mini Palette's
+	// hide/small/large tri-state (toggled via .currentColorDict, see
+	// installBtnHamburgerClicks() in infinite-neck.js) and its large-mode
+	// font-size scaling. The swatch strip is a distinct child (not
+	// .currentColorDict itself) because colorFunctions.js's
+	// updateCurrentColorDictStrip() empties and repopulates it on every
+	// stylesheet change; keeping the status spans as siblings protects them
+	// from being wiped out by that refresh.
+	var colorDictRow = $("<div class='currentColorDict'></div>");
+	colorDictRow.append($('<span class="paletteHighlightStatus paletteStatusSpan"></span>'));
+	colorDictRow.append($('<span class="paletteModeStatus paletteStatusSpan"></span>'));
+	colorDictRow.append($("<span class='colorDictSwatchStrip'></span>"));
+	captionRow.append(colorDictRow);
 	return captionRow;
 }
 

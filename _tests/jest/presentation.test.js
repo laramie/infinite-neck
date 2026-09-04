@@ -144,6 +144,15 @@ function installJqueryStub(elements) {
           item.classes.delete(className);
         });
         return api;
+      },
+      css(props) {
+        items.forEach((item) => {
+          item.style = item.style || {};
+          if (props && typeof props === 'object') {
+            Object.assign(item.style, props);
+          }
+        });
+        return api;
       }
     };
     items.forEach((item, index) => {
@@ -362,5 +371,100 @@ describe('PalettePresentation CLEAR and restore note type state', () => {
     expect(byId.get('showHideExtraColors').text).toBe('Less...');
     expect(byId.get('btnAutoColor').classes.has('BtnPunchedOut')).toBe(true);
     expect(byId.get('btnAutoColor2').classes.has('BtnPunchedOut')).toBe(true);
+  });
+});
+
+describe('PalettePresentation read-only status spans', () => {
+  beforeEach(() => {
+    gPresentation.palette.mode = 'paint';
+    gPresentation.palette.lastRestorableColor = null;
+    gPresentation.palette.lastRestorableHighlight = null;
+    gPresentation.palette.suppressRbColorRemember = false;
+    gPresentation.palette.keepWasForced = false;
+  });
+
+  function baseElements(overrides = {}) {
+    return [
+      createInput({ id: 'idPaletteModePaint', name: 'rbPaletteMode', value: 'paint', labelText: 'Color: Emboss', ...overrides.paint }),
+      createInput({ id: 'idPaletteModeClear', name: 'rbPaletteMode', value: 'clear', labelText: 'CLEAR', ...overrides.clear }),
+      createInput({ id: 'idPaletteModeKeep', name: 'rbPaletteMode', value: 'keep', labelText: 'KEEP', ...overrides.keep }),
+      createInput({ id: 'idPaletteModeDropper', name: 'rbPaletteMode', value: 'dropper', labelText: 'Find Color', ...overrides.dropper }),
+      createInput({ id: 'idNamedNotes', name: 'rbHighlight', value: 'Named', labelText: 'Named' }),
+      createInput({ id: 'idSingleNotes', name: 'rbHighlight', value: 'Single', labelText: 'Single' }),
+      createInput({ id: 'idTinyNotes', name: 'rbHighlight', value: 'Tiny', labelText: 'Tiny' }),
+      createInput({ id: 'rbBend', name: 'rbHighlight', value: 'Bend', labelText: 'Bend' }),
+      createInput({ id: 'idMidiPitches', name: 'rbHighlight', value: 'MidiPitches', labelText: 'Pitch' }),
+      createInput({ id: 'idMidiPitchesSingle', name: 'rbHighlight', value: 'MidiPitchesSingle', labelText: 'Multi' }),
+      createInput({ id: 'rbFinger1', name: 'rbHighlight', value: 'Fingering', labelText: '1' }),
+      createInput({ id: 'idRTransparent', name: 'rbColor', value: 'noteTransparent', labelText: 'Emboss' }),
+      { id: 'choosePaletteModePaint', tag: 'label', text: '', classes: new Set() },
+      { id: 'spanPaletteModePaintCaption', tag: 'span', text: '', classes: new Set() },
+      { id: 'paletteHighlightStatusA', tag: 'span', text: '', classes: new Set(['paletteHighlightStatus']) },
+      { id: 'paletteModeStatusA', tag: 'span', text: '', classes: new Set(['paletteModeStatus']) }
+    ];
+  }
+
+  test('mode status text reflects the checked palette-mode label caption', () => {
+    const elements = baseElements({ clear: { checked: true } });
+    installJqueryStub(elements);
+    gPresentation.palette.mode = 'clear';
+
+    expect(PalettePresentation.getPaletteModeStatusText()).toBe('CLEAR');
+  });
+
+  test('mode status style is white/black when not in paint mode', () => {
+    const elements = baseElements({ keep: { checked: true } });
+    installJqueryStub(elements);
+    gPresentation.palette.mode = 'keep';
+
+    expect(PalettePresentation.getPaletteModeStatusStyle()).toEqual({
+      backgroundColor: '#ffffff',
+      color: '#000000'
+    });
+  });
+
+  test('highlight status text reflects the checked restorable highlight radio', () => {
+    const elements = baseElements({ paint: { checked: true } });
+    elements.find((el) => el.id === 'idTinyNotes').checked = true;
+    installJqueryStub(elements);
+
+    expect(PalettePresentation.getHighlightStatusText()).toBe('Tiny');
+  });
+
+  test('highlight status text falls back to the remembered highlight when a Fingering radio is checked', () => {
+    const elements = baseElements({ paint: { checked: true } });
+    elements.find((el) => el.id === 'rbFinger1').checked = true;
+    installJqueryStub(elements);
+    gPresentation.palette.lastRestorableHighlight = {
+      id: 'idSingleNotes',
+      value: 'Single',
+      caption: 'Single'
+    };
+
+    expect(PalettePresentation.getHighlightStatusText()).toBe('Single');
+  });
+
+  test('highlight status markup appends the selected #selBend caption when Bend is checked', () => {
+    const elements = baseElements({ paint: { checked: true } });
+    elements.find((el) => el.id === 'rbBend').checked = true;
+    elements.push({ id: 'selBend', tag: 'select', value: 'prebend2' });
+    installJqueryStub(elements);
+
+    expect(PalettePresentation.getBendSelectionCaption()).toBe('prebend 2');
+    expect(PalettePresentation.getHighlightStatusMarkup()).toBe('Bend: <small>prebend 2</small>');
+  });
+
+  test('highlight status markup still shows the remembered Bend selection when a Fingering radio is checked', () => {
+    const elements = baseElements({ paint: { checked: true } });
+    elements.find((el) => el.id === 'rbFinger1').checked = true;
+    elements.push({ id: 'selBend', tag: 'select', value: 'updown3' });
+    installJqueryStub(elements);
+    gPresentation.palette.lastRestorableHighlight = {
+      id: 'rbBend',
+      value: 'Bend',
+      caption: 'Bend'
+    };
+
+    expect(PalettePresentation.getHighlightStatusMarkup()).toBe('Bend: <small>up-down 3</small>');
   });
 });
