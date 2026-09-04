@@ -273,7 +273,6 @@ export class PalettePresentation {
             statusText = statusText + extraCheckmark;
         }
         $('.paletteModeStatus')
-            //.text(PalettePresentation.getPaletteModeStatusText())
             .html(statusText)
             .css({
                 backgroundColor: modeStyle.backgroundColor,
