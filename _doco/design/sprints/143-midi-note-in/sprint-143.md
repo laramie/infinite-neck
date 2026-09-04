@@ -45,3 +45,15 @@ Purpose of this sprint is to: Wire MIDI NOTE ON inputs to Note triggering.  When
       LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES in midi-io.js previously only treated as a "known
       edge artifact" to blank -- now given real meaning, with midi.builder.js re-syncing the
       Looper lights immediately after every defensive artifact wipe.
+    - Round 4 follow-up: column 0, doc row 3 wired to the Palette's Clear-mode radio
+      (#idPaletteModeClear) as a full two-way status-mirroring toggle button (yellow-amber when
+      Clear is selected, off otherwise): pressing while unlit selects Clear (lights up); pressing
+      while lit selects Paint (turns off). Required a small presentation.js change:
+      updatePaletteModeUi() (the single choke point for every palette-mode change, including the
+      "leaving Clear" special-casing done when picking a color/highlight while in Clear mode) now
+      fires a 'Palette:modeChanged' EventBus event so midi.builder.js can stay in sync regardless
+      of which code path changed the mode.
+    - Round 4 follow-up 2: REC dot's Momentary-mode border (.RecordDotMomentaryBorder(Vertical)
+      in section-status.css) is now only visible while MIDI triggerMode is Momentary, via a
+      'MidiTriggerModeMomentary' class toggled on &lt;body&gt; by
+      MidiTabBuilder.applyTriggerModeButtonUi().

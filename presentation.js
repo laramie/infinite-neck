@@ -1,3 +1,5 @@
+import EventBus from './event-bus.js';
+
 export const gPresentation = {
     palette: {
         mode: 'paint',
@@ -368,6 +370,22 @@ export class PalettePresentation {
             $('#' + id).prop('checked', PalettePresentation.getMode() === mode);
         });
         PalettePresentation.updateRestoreRbColorButton();
+        // Sprint 143 (midi-note-in): single choke point for EVERY mode change
+        // that goes through setMode() (enterPaintMode/enterClearMode/
+        // enterKeepMode/enterDropperMode) -- unlike the rbPaletteMode radio's
+        // own native 'change' event (which only fires for a direct click/
+        // activateUiControl() on that radio), this fires for the "special
+        // handling going back and forth between paint mode and clear" too,
+        // e.g. picking a color or highlight while in Clear mode calls
+        // enterPaintMode() directly (see infinite-neck.js's rbColor/
+        // rbHighlight 'change' handlers), which reaches here without ever
+        // firing a 'change' event on input[name="rbPaletteMode"]. Consumed by
+        // templates/midi/midi.builder.js to keep the Launchpad's physical
+        // Clear-mode indicator light in sync regardless of which code path
+        // changed the mode. NOT fired by PalettePresentation.lockKeep(), which
+        // bypasses setMode()/updatePaletteModeUi() entirely (a pre-existing
+        // quirk, not introduced here).
+        EventBus.trigger('Palette:modeChanged', { mode: PalettePresentation.getMode() });
     }
 
     static initializePalettePresentation() {

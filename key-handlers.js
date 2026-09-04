@@ -1606,6 +1606,12 @@ export function performCmdAction(menuItem, args){
 		case "showLeftRail":
 			getSong().getLayout().toggleLeftRails(true);
 			break;	
+		case "hideRealtimeClock":
+			$('#realtimeTickStart').hide();
+			break;	
+		case "showRealtimeClock":
+			$('#realtimeTickStart').show();
+			break;	
 		case "toggleCaptionLooperLayout":
 			getSong().getLayout().toggleLeftRails(true);
 			getSong().getLayout().toggleCaptionLooperLayout();

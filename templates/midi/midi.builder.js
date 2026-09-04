@@ -78,6 +78,7 @@ import { resolveLaunchpadVelocityForColorClass, LAUNCHPAD_MAJOR_COLOR_VELOCITIES
 import { colorNote, findNoteCell, showMidiNotesInTable } from '../../NoteTableController.js';
 import { createLookupContext, lookupUserColorClass } from '../../colorFunctions.js';
 import { Note } from '../../Note.js';
+import { PalettePresentation } from '../../presentation.js';
 import * as paletteUtils from '../../paletteUtils.js';
 import {
 	classifyInstrumentRole,
@@ -197,6 +198,18 @@ const LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP = Object.freeze({
 	7: Object.freeze({ selector: '#btnPrevBeat' }),
 	8: Object.freeze({ selector: '#btnNextBeat' })
 });
+
+// Column 0, doc row 3 (Clear-mode toggle): confirmed via a real Launchpad
+// Pro MK1 activity log -- [B0 1E 7F]/[B0 1E 00] on press/release, same
+// row*10+col-style address as CC10 (Latch/Momentary, row 1) and CC20 (REC,
+// row 2) for this column. Latches to whether '#idPaletteModeClear' is the
+// currently selected rbPaletteMode radio (see PalettePresentation.getMode()
+// in presentation.js), lighting yellow-amber when selected. Pressing the
+// button toggles: unlit (not Clear) -> selects Clear (lights up); lit
+// (Clear) -> selects Paint (turns off). See handleIncomingMidiMessage()'s
+// branch below for the exact toggle logic.
+const LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC = 30;
+const LAUNCHPAD_VELOCITY_CLEAR_MODE_SELECTED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER;
 
 
 export class MidiTabBuilder {
@@ -445,6 +458,26 @@ export class MidiTabBuilder {
 			// by syncRecordButtonLight() (bound to '.RecordButton' click below).
 			if (parsed.ccValue > 0) {
 				$('.RecordButton').trigger('click');
+			}
+			return;
+		}
+		if (parsed.type === 'controlchange' && parsed.controller === LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC) {
+			// Column 0, doc row 3 (Clear-mode toggle -- see
+			// LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC above): press toggles between
+			// Clear and Paint, via the SAME paletteUtils.check() real-click
+			// simulation used for the NoteType row above:
+			//   - unlit (Clear NOT currently selected) -> '#idPaletteModeClear'
+			//     (lights up).
+			//   - lit (Clear currently selected) -> '#idPaletteModePaint' (turns
+			//     off).
+			// Either selection naturally goes through PalettePresentation's
+			// enterClearMode()/enterPaintMode() -> updatePaletteModeUi(), whose
+			// 'Palette:modeChanged' EventBus trigger (see presentation.js) is what
+			// actually updates the light (via syncClearModeControlLight(), bound
+			// below). Release is always a no-op.
+			if (parsed.ccValue > 0) {
+				const targetSelector = PalettePresentation.getMode() === 'clear' ? '#idPaletteModePaint' : '#idPaletteModeClear';
+				paletteUtils.check(targetSelector);
 			}
 			return;
 		}
@@ -959,12 +992,19 @@ export class MidiTabBuilder {
 	// see index.html #divQuick) so both stay visually in sync with device.triggerMode
 	// no matter which one triggered the change -- mirrors the existing
 	// .classLoopSections/.classLoopBeats pattern used for the Loop quick-menu buttons.
+	// Also toggles 'MidiTriggerModeMomentary' on <body> (same
+	// $('body').toggleClass(...) pattern infinite-neck.js uses for
+	// 'ShowAllNoteNames') so every SectionStatus widget's REC-dot Momentary
+	// border (.RecordDotMomentaryBorder/.RecordDotMomentaryBorderVertical, see
+	// section-status.css) shows/hides via a single global class, regardless of
+	// how many widget instances exist or when they're created/destroyed.
 	static applyTriggerModeButtonUi() {
 		const momentary = MidiTabBuilder.getDevice().triggerMode === 'Momentary';
 		$('.classMidiTriggerMode')
 			.toggleClass('BtnPunchedIn', momentary)
 			.toggleClass('BtnPunchedOut', !momentary)
 			.text(momentary ? 'Momentary' : 'Latched');
+		$('body').toggleClass('MidiTriggerModeMomentary', momentary);
 		MidiTabBuilder.syncTriggerModeIndicatorLight();
 	}
 
@@ -1037,6 +1077,22 @@ export class MidiTabBuilder {
 	static syncRecordButtonLight() {
 		const recording = $('.RecordButton').hasClass('ButtonOn');
 		MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_REC_CC, recording ? LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED : 0);
+	}
+
+	// Column 0, doc row 3 (Clear-mode indicator -- see
+	// LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC above): mirrors
+	// PalettePresentation.getMode() === 'clear' onto the button's LED, yellow-
+	// amber when Clear is selected, off otherwise. Bound to the
+	// 'Palette:modeChanged' EventBus event (fired by
+	// PalettePresentation.updatePaletteModeUi() in presentation.js -- the
+	// single choke point for EVERY mode change, including the "special
+	// handling going back and forth between paint mode and clear" that
+	// bypasses the rbPaletteMode radio's own native 'change' event, e.g.
+	// picking a color/highlight while in Clear mode), and called once on
+	// device connect (syncOnDeviceConnect()).
+	static syncClearModeControlLight() {
+		const active = PalettePresentation.getMode() === 'clear';
+		MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC, active ? LAUNCHPAD_VELOCITY_CLEAR_MODE_SELECTED : 0);
 	}
 
 	// Column 9, rows 7-8 (Looper toggles -- 143-it4-round-4-design.md): mirrors
@@ -1245,6 +1301,7 @@ export class MidiTabBuilder {
 		EventBus.on('Widget:SectionStatus:statusChanged', MidiTabBuilder.onSectionStatusChanged);
 		EventBus.on('Note:colored', MidiTabBuilder.onNoteColored);
 		EventBus.on('UpdateAllWiringSelects', () => MidiTabBuilder.populateInstrumentPicker());
+		EventBus.on('Palette:modeChanged', () => MidiTabBuilder.syncClearModeControlLight());
 	}
 
 	static populateDeviceSelect(selectEl, devices, preferredName = '', fallbackSubstring = PREFERRED_DEVICE_NAME_SUBSTRING) {
@@ -1330,5 +1387,6 @@ export class MidiTabBuilder {
 		MidiTabBuilder.syncNoteTypeControlLights();
 		MidiTabBuilder.syncRecordButtonLight();
 		MidiTabBuilder.syncLooperControlLights();
+		MidiTabBuilder.syncClearModeControlLight();
 	}
 }

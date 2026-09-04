@@ -1263,6 +1263,11 @@ export var gMenuFile =    {
                     "caption": "<b>l</b>eft rail",
                     "trigger": "l",
                     "action": "hideLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "hideRealtimeClock"
                   }
               ]
             }            
@@ -1330,6 +1335,11 @@ export var gMenuFile =    {
                     "caption": "<b>l</b>eft rail",
                     "trigger": "l",
                     "action": "showLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "showRealtimeClock"
                   }
               ]
             },

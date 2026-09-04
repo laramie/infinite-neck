@@ -259,18 +259,30 @@
     margin-top: 0.4em;
 }
 .RecordDotMomentaryBorder {
-    border: 1px solid cyan;
+    border: 1px solid transparent;
     border-radius: 0.5em 0.2em 0.2em 0.5em;
     padding: 2px;
 }
 .RecordDotMomentaryBorderVertical {
-    border: 1px solid cyan;
+    border: 1px solid transparent;
     border-radius: 0.8em 0.8em 0.2em 0.2em;
     padding: 0.2em;
     padding-left: 0.6em;
     padding-right: 0.6em;
     margin-top: 0.3em;
     display: inline-block;
+}
+/* Sprint 143 (midi-note-in), Iteration 4 Round 4 follow-up: the Momentary-mode
+   indicator border around the REC dot (see .RecordDotMomentaryBorder(Vertical)
+   above) is only visible while MIDI triggerMode is 'Momentary' -- toggled
+   globally on <body> by MidiTabBuilder.applyTriggerModeButtonUi() (see
+   templates/midi/midi.builder.js), same $('body').toggleClass(...) pattern
+   infinite-neck.js uses for 'ShowAllNoteNames'. The border stays present
+   (transparent, not display:none) in Latch mode so the contained REC dot's
+   layout/box never shifts when the mode toggles. */
+body.MidiTriggerModeMomentary .RecordDotMomentaryBorder,
+body.MidiTriggerModeMomentary .RecordDotMomentaryBorderVertical {
+    border-color: cyan;
 }
 
 
