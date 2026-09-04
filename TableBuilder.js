@@ -356,8 +356,10 @@ function buildCaptionRow(options, tableID) {
 	// stylesheet change; keeping the status spans as siblings protects them
 	// from being wiped out by that refresh.
 	var colorDictRow = $("<div class='currentColorDict'></div>");
-	colorDictRow.append($('<span class="paletteHighlightStatus paletteStatusSpan"></span>'));
-	colorDictRow.append($('<span class="paletteModeStatus paletteStatusSpan"></span>'));
+	var spanStatus = $("<span class='miniPaletteStatus'></span>");
+	colorDictRow.append(spanStatus);
+	spanStatus.append($('<span class="paletteHighlightStatus paletteStatusSpan"></span>'));
+	spanStatus.append($('<span class="paletteModeStatus paletteStatusSpan"></span>'));
 	colorDictRow.append($("<span class='colorDictSwatchStrip'></span>"));
 	captionRow.append(colorDictRow);
 	return captionRow;

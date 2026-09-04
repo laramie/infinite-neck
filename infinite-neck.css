@@ -1992,7 +1992,6 @@ However, don't use for Root or other things.
 .noteTransparent {
     font-family: var(--td-note-font-family) !important;
     background-color: transparent;
-    color: gold;
 }
 .noteBlackKey .noteTransparent {
     color: rgb(255, 255, 255);

@@ -254,16 +254,29 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
    automatically with .largeColorDict's font-size bump. */
 .paletteStatusSpan {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: bottom;
     box-sizing: border-box;
-    margin-right: 0.5em;
-    padding: 0.3em 0.6em;
+    margin-right: 0.1em;
+    padding: 0.2em 0.4em;
     border: 1px solid black;
-    border-radius: 0.2em;
+    border-radius: 0.1em;
     font-weight: bold;
-    font-size: 90%;
+    font-size: 70%;
     background-color: white;
     color: black;
+}
+
+.miniPaletteStatus {
+    display: inline-block;
+    background-color: #dfd;
+    padding: 0.2em;
+    padding-inline: 0.6em;
+    padding-top: 0.5em;
+    min-height: 1.6em;
+    margin-right: 1em;
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 0.3em;
+    border: 1px solid green;
 }
 
 .userColorResultCaption {

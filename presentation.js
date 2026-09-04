@@ -233,9 +233,9 @@ export class PalettePresentation {
     static getHighlightStatusMarkup() {
         const caption = PalettePresentation.getHighlightStatusText();
         if (PalettePresentation.getActiveHighlightId() === 'rbBend') {
-            return caption + ': <small>' + PalettePresentation.getBendSelectionCaption() + '</small>';
+            return caption + ': <small>' + PalettePresentation.getBendSelectionCaption() + '</small>' /*+' \u2713'*/ ;
         }
-        return caption;
+        return caption /*+' \u2713'*/ ;
     }
 
     static getPaletteModeStatusText() {
@@ -264,11 +264,17 @@ export class PalettePresentation {
     }
 
     static refreshPaletteStatusSpans() {
-        $('.paletteHighlightStatus').html(PalettePresentation.getHighlightStatusMarkup());
+        $('.paletteHighlightStatus').html(PalettePresentation.getHighlightStatusMarkup()+' <span style="color: #1e82f3;">\u2713</span>' );
 
         const modeStyle = PalettePresentation.getPaletteModeStatusStyle();
+        let extraCheckmark = ' <span style="color: lightgreen;">\u2713</span>' ;//hack, because checkmark is created for #spanPaletteModePaintCaption, but we need the checkmark always so the buttons will have the right heights, because the checkmark is a Unicode char with extra height: once you use it you have to use it everywhere to get things to line up with the other spans.
+        let statusText = PalettePresentation.getPaletteModeStatusText();
+        if (!statusText.includes('\u2713')){
+            statusText = statusText + extraCheckmark;
+        }
         $('.paletteModeStatus')
-            .text(PalettePresentation.getPaletteModeStatusText())
+            //.text(PalettePresentation.getPaletteModeStatusText())
+            .html(statusText)
             .css({
                 backgroundColor: modeStyle.backgroundColor,
                 color: modeStyle.color
