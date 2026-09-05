@@ -479,6 +479,10 @@ table.viewControls th {
   padding-left: 0;
   font-size: 110%;
 }
+#viewDisplayOptionAutoColorHighlightValue {
+    font-weight: 600;
+    color: brown;
+}
 #viewDisplayOptionAutoColorValue {
     font-weight: 600;
     color: brown;
@@ -1549,7 +1553,6 @@ body.ShowAllNoteNames .universalNamedNote {
     align-items: center;
     flex-grow: 1;
     font-size: 120%;
-    border: var(--debug-border) solid blue;
 }
 
 td.nut div.NoteActive .CenterCell {
@@ -1769,40 +1772,74 @@ td.nut div.NoteActive .CenterCell {
 
 
 .noteHighlight {
-    box-shadow: 0 0 4pt 4pt yellow;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
 .noteHighlight .namedNote {
-    box-shadow: 0 0 9pt 8pt yellow;
+    box-shadow: 0 0 9pt 8pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
 .noteHighlight .NoteDisplay {
-    box-shadow: 0 0 9pt 8pt red;
+    box-shadow: 0 0 9pt 8pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
 .noteHighlight.noteHighlightOverrideBlue {
-    box-shadow: 0 0 4pt 4pt rgb(94, 251, 244);
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color, rgb(94, 251, 244));
 }
 .noteHighlight.noteHighlightOverrideBlue .namedNote {
-    box-shadow: 0 0 9pt 8pt rgb(94, 251, 244);
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color, rgb(94, 251, 244));
 }
 .noteHighlight.noteHighlightOverrideBlue .NoteDisplay {
-    box-shadow: 0 0 9pt 8pt rgb(94, 251, 244);
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color, rgb(94, 251, 244));
 }
 
 
 /** box-shadow nums: offset-x offset-y blur-radius spread-radius
   * see: https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
  */
+
 .noteHighlightSingle {
-    box-shadow: 0 0 4pt 4pt magenta;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
 }
+
 .noteHighlightSingle .namedNote {
-    box-shadow: 0 0 4pt 4pt magenta;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
 }
+
 .noteHighlightSingle .NoteDisplay {
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
+}
+
+
+/** Highlights (H1/H2/H3) stylesheet colors -- theme-driven defaults, user-overridable via the
+ *  "Highlights" stylesheet + color picker (see userColors.js::gUserColorDictHighlightsDefault).
+ *  These are independent, self-contained classes (not stacked overrides like noteHighlight /
+ *  noteHighlightOverrideBlue above) so they can be painted directly like any other rbColor. */
+.noteHighlightH1 {
+    box-shadow: 0 0 4pt 4pt var(--system-pitch-color);
+}
+.noteHighlightH1 .namedNote {
+    box-shadow: 0 0 9pt 8pt var(--system-pitch-color);
+}
+.noteHighlightH1 .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt red;
+}
+
+.noteHighlightH2 {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+.noteHighlightH2 .namedNote {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+.noteHighlightH2 .NoteDisplay {
     box-shadow: 0 0 4pt 4pt red;
 }
-.noteWhiteKey.noteHighlightSingle ,
-.noteBlackKey.noteHighlightSingle {
-    box-shadow: 0 0 4pt 4pt magenta !important;
+
+.noteHighlightH3 {
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color);
+}
+.noteHighlightH3 .namedNote {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color);
+}
+.noteHighlightH3 .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color);
 }
 
 

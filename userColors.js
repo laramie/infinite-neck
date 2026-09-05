@@ -147,6 +147,29 @@ export const gUserColorDictFingeringsDefault = {
     }
 };
 
+export const gUserColorDictHighlightsDefault = {
+    readOnly: true,
+    computed: false,
+    checked: true,
+    dict: {
+        "noteH1":{
+            "colorClass": "noteHighlight1",
+            "caption": "H1",
+            "tiny": "H1"
+        },
+        "noteH2":{
+            "colorClass": "noteHighlight2",
+            "caption": "H2",
+            "tiny": "H2"
+        },
+        "noteH3":{
+            "colorClass": "noteHighlight3",
+            "caption": "H3",
+            "tiny": "H3"
+        }
+    }
+};
+
 export const gDefault_CycleOfColors = {
     readOnly: true,
     computed: false,
@@ -370,6 +393,21 @@ export const gAllClear = {
           "colorClass": "noteWhite",
           "caption": "Thumb",
           "tiny": "T"
+        },
+        "noteH1": {
+          "colorClass": "noteWhite",
+          "caption": "H1",
+          "tiny": "H1"
+        },
+        "noteH2": {
+          "colorClass": "noteWhite",
+          "caption": "H2",
+          "tiny": "H2"
+        },
+        "noteH3": {
+          "colorClass": "noteWhite",
+          "caption": "H3",
+          "tiny": "H3"
         }
     }
 };
@@ -382,6 +420,9 @@ gUserColorDictFingeringsDefault.readOnly = true;
 
 Object.assign(gUserColorDict.dict, gDefault_CycleOfColors.dict);
 gDefault_CycleOfColors.readOnly = true;
+
+Object.assign(gUserColorDict.dict, gUserColorDictHighlightsDefault.dict);
+gUserColorDictHighlightsDefault.readOnly = true;
 
 export const gUserColorDictOEM = {
     readOnly: true,

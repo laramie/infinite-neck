@@ -313,6 +313,15 @@ export class PalettePresentation {
             .toggleClass("BtnPunchedOut", !automatic);
     }
 
+    // AutoColorHighlight is independent of AutoColor: it only governs whether Pitch/Multi
+    // highlight notes (styleNums STYLENUM_MIDIPITCHES/STYLENUM_MIDIPITCHESSINGLE) follow the
+    // AutoColor scheme or the color explicitly picked on the highlight note. Unlike AutoColor,
+    // it never hides #manualColors/role buttons, since it doesn't affect the manual color pickers.
+    static setAutomaticColorHighlightUi(isAutomaticColorHighlight) {
+        const automatic = !!isAutomaticColorHighlight;
+        $("#cbAutomaticColorHighlight").prop("checked", automatic);
+    }
+
     static ensureColorRadioVisible($radio) {
         if (!$radio || $radio.length === 0) {
             return false;

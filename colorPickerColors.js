@@ -72,6 +72,17 @@ export const gColorPickerColors = {
         "noteBlackout2",
         "noteBlackout2",
         "noteBlackout2",
+    ],
+    [
+        "noteHighlight1",
+        "noteHighlight2",
+        "noteHighlight3",
+        "noteHighlight4",
+        "noteHighlight5",
+        "noteHighlight6",
+        "noteHighlight7",
+        "noteHighlight8",
+        "noteHighlight9"
     ]
   ]
 };

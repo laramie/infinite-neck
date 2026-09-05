@@ -130,6 +130,9 @@ export function dumpThemeIds(){
 			setVal('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			setVal('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			setVal('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
+			setVal('#dropDownSystemPitchColor', 'systemPitchColor');
+			setVal('#dropDownSystemMultiColor', 'systemMultiColor');
+			setVal('#dropDownSystemLeadColor', 'systemLeadColor');
 			setVal('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
 			setVal('#dropDownNoteBlackKeyShadowColor', 'noteBlackKeyShadowColor');
 			
@@ -184,6 +187,9 @@ export function dumpThemeIds(){
 			options.singleNoteShadowColor = $('#dropDownSingleNoteShadowColor').val();
 			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor').val();
 			options.noteBlackShadowColor = $('#dropDownNoteBlackShadowColor').val();
+			options.systemPitchColor = $('#dropDownSystemPitchColor').val();
+			options.systemMultiColor = $('#dropDownSystemMultiColor').val();
+			options.systemLeadColor = $('#dropDownSystemLeadColor').val();
 			options.noteWhiteKeyShadowColor = $('#dropDownNoteWhiteKeyShadowColor').val();
 			options.noteBlackKeyShadowColor = $('#dropDownNoteBlackKeyShadowColor').val();
 
@@ -322,11 +328,21 @@ export function dumpThemeIds(){
 						 +" .noteWhiteKey {"
 							     +rule("background-color", "noteWhiteKeyColor")
 							     +"color: transparent; "
-								 +rule("box-shadow", "noteWhiteKeyShadowColor")
 								 +"}"
 						 +" .noteBlackKey {"
 							     +rule("background-color", "noteBlackKeyColor")
 							     +"color: transparent; "
+								 +"}"
+						 // Per-key box-shadow is excluded on highlighted cells (:not(...)) so it never
+						 // fights with an active Pitch/Multi/root/lead highlight's own box-shadow -- both
+						 // are single-class selectors at equal specificity, and this rule is emitted last
+						 // (style#laramieStyle is last in <head>), so without the exclusion it would always
+						 // win and silently hide the highlight color. See NoteTableController.js's
+						 // doHighlight/doHighlightSingle and infinite-neck.css's .noteHighlight/.noteHighlightSingle.
+						 +" .noteWhiteKey:not(.noteHighlight):not(.noteHighlightSingle) {"
+								 +rule("box-shadow", "noteWhiteKeyShadowColor")
+								 +"}"
+						 +" .noteBlackKey:not(.noteHighlight):not(.noteHighlightSingle) {"
 								 +rule("box-shadow", "noteBlackKeyShadowColor")
 								 +"}"
 						 +" :root { "
@@ -345,6 +361,9 @@ export function dumpThemeIds(){
 									+rule("--single-note-shadow-color", "singleNoteShadowColor")
 									+rule("--note-white-shadow-color", "noteWhiteShadowColor")
 									+rule("--note-black-shadow-color", "noteBlackShadowColor")
+									+rule("--system-pitch-color", "systemPitchColor")
+									+rule("--system-multi-color", "systemMultiColor")
+									+rule("--system-lead-color", "systemLeadColor")
 									+"--universal-note-white-key-color: " + resolvedUniversalLaneColor('noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black') + "; "
 									+"--universal-note-black-key-color: " + resolvedUniversalLaneColor('noteBlackKeyFontColor', 'noteBlackKeyColor', 'noteWhiteKeyColor', 'white') + "; "
 									+rule("--instrument-margin-tb", "instrumentMargins")
@@ -407,6 +426,9 @@ export function dumpThemeIds(){
 			showOptions('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			showOptions('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
 			showOptions('#dropDownNoteBlackShadowColor', 'noteBlackShadowColor');
+			showOptions('#dropDownSystemPitchColor', 'systemPitchColor');
+			showOptions('#dropDownSystemMultiColor', 'systemMultiColor');
+			showOptions('#dropDownSystemLeadColor', 'systemLeadColor');
 			showOptions('#dropDownNoteWhiteKeyShadowColor', 'noteWhiteKeyShadowColor');
 			showOptions('#dropDownNoteBlackKeyShadowColor', 'noteBlackKeyShadowColor');
 

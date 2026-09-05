@@ -22,6 +22,7 @@ var colorFunctionsProviders = {
 	getSong: function () { return null; },
 	getCurrentSection: function () { return null; },
 	doingAutomaticColor: function () { return false; },
+	doingAutomaticColorHighlight: function () { return false; },
 	fullRepaint: function () { },
 	displayOptionsChanged: function () { }
 };
@@ -46,6 +47,10 @@ function doingAutomaticColor() {
 	return colorFunctionsProviders.doingAutomaticColor();
 }
 
+function doingAutomaticColorHighlight() {
+	return colorFunctionsProviders.doingAutomaticColorHighlight();
+}
+
 function fullRepaint() {
 	return colorFunctionsProviders.fullRepaint();
 }
@@ -57,12 +62,14 @@ function displayOptionsChanged() {
 export function createLookupContext({
 	section = getCurrentSection(),
 	autoColor = doingAutomaticColor(),
+	autoColorHighlight = doingAutomaticColorHighlight(),
 	colorDict = gUserColorDict.dict,
 	...rest
 } = {}) {
 	return {
 		section,
 		autoColor,
+		autoColorHighlight,
 		colorDict,
 		...rest
 	};
@@ -748,7 +755,15 @@ export function chuseStylesheet(dictkey){
 	}
 	export function lookupUserColor(note, lookupContext){  //automaticColorScheme
 		const context = resolveLookupContext(lookupContext);
-		if (context.autoColor){
+		// Multi highlights (STYLENUM_MIDIPITCHESSINGLE) are governed by their own AutoColorHighlight
+		// flag, independent of the general AutoColor flag -- users may want AutoColor for
+		// Named/Single/Bend/Tiny/Fingering notes while still picking an explicit color for Multi
+		// highlights (or vice-versa). Pitch highlights (STYLENUM_MIDIPITCHES) never participate in
+		// AutoColor/AutoColorHighlight at all -- the note-table rendering path never calls this
+		// with a Pitch note (see NoteTableController.js), so this only affects other consumers
+		// (e.g. MIDI Launchpad color mapping), which keep using the general AutoColor flag.
+		const useAutoColor = note.styleNum === Note.STYLENUM_MIDIPITCHESSINGLE ? context.autoColorHighlight : context.autoColor;
+		if (useAutoColor){
 			var res = lookupClassForNote(note, context);
 			if (res) {
 				// console.log("automatic userColor["+note.colorClass+"] -->"+res.colorClass);
@@ -769,6 +784,62 @@ export function chuseStylesheet(dictkey){
 		}
 		//console.log("userColor["+theColorClass+"] -->"+userColor.colorClass);
 		return userColor.colorClass;
+	}
+
+	/** Returns a single space-separated string of every colorClass value currently registered
+	 *  in the active colorDict (gUserColorDict.dict by default). Used to broadly strip any
+	 *  previously-applied resolved highlight color from a cell/table without needing to track
+	 *  exactly which one was applied -- the generalized replacement for the old single-slot
+	 *  gLast_noteHighlight bookkeeping. See NoteTableController.js's Pitch/Multi highlight paths.
+	 *  Reads lookupContext.colorDict directly (not via resolveLookupContext/createLookupContext)
+	 *  so this never triggers the section-lookup default-parameter chain -- callers with no
+	 *  section in scope (e.g. a bare table-clear with no active song) can call this safely. */
+	export function getAllRegisteredColorClasses(lookupContext = {}){
+		const colorDict = (lookupContext && lookupContext.colorDict) || gUserColorDict.dict;
+		return Object.values(colorDict || {})
+			.map((entry) => entry && entry.colorClass)
+			.filter(Boolean)
+			.join(' ');
+	}
+
+	let highlightColorProbeEl = null;
+	function getHighlightColorProbeElement(){
+		if (typeof document === 'undefined'){
+			return null;
+		}
+		if (!highlightColorProbeEl || !highlightColorProbeEl.isConnected){
+			highlightColorProbeEl = document.createElement('span');
+			highlightColorProbeEl.style.cssText = 'position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; visibility:hidden; pointer-events:none;';
+			document.body.appendChild(highlightColorProbeEl);
+		}
+		return highlightColorProbeEl;
+	}
+
+	/** Resolves a colorClass (any registered swatch class -- a raw picker color like
+	 *  "noteBrown2"/"noteHighlight3", or a dict-driven role like "noteHighlightH1") to the
+	 *  actual color it paints, by probing a detached DOM element with that class and reading
+	 *  its computed background-color. Used to drive the Pitch/Multi highlight "glow" box-shadow
+	 *  (see infinite-neck.css's .noteHighlight/.noteHighlightSingle and their --resolved-highlight-color
+	 *  var) so the glow ring always matches whatever the user picked in the palette -- regardless
+	 *  of whether that swatch class happens to also define its own box-shadow (which would
+	 *  otherwise only affect whichever single DOM level cascade order happens to favor, producing
+	 *  inconsistent outer/inner ring colors). Returns null if no usable color could be resolved
+	 *  (e.g. transparent swatches, or a non-browser/test environment), letting callers fall back
+	 *  to the CSS var's own default (the system Theme color). */
+	export function resolveHighlightGlowColor(colorClass){
+		if (!colorClass || typeof getComputedStyle !== 'function'){
+			return null;
+		}
+		const probe = getHighlightColorProbeElement();
+		if (!probe){
+			return null;
+		}
+		probe.className = colorClass;
+		const backgroundColor = getComputedStyle(probe).backgroundColor;
+		if (!backgroundColor || backgroundColor === 'transparent' || backgroundColor === 'rgba(0, 0, 0, 0)'){
+			return null;
+		}
+		return backgroundColor;
 	}
 
 	export function lookupClassForNote(note, lookupContext){

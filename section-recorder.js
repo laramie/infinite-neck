@@ -49,10 +49,11 @@ function cleanupRecordedBeat(recordedNotes, sBeatNum) {
       clearHighlights();
 	}
 
-    export function recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName) {
+    export function recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName, colorClass) {
         var recNote = Note.newNote(noteName, styleNum);
         recNote.midinum = midinum;
         recNote.row = cellrow;
+        recNote.colorClass = colorClass;
 
         var recordedNotes = getRecordedNotesForSection(tableID);
         var notesInBeatArr = recordedNotes[sBeatNum];
@@ -67,10 +68,11 @@ function cleanupRecordedBeat(recordedNotes, sBeatNum) {
         //console.log("noteHighlight:"+JSON.stringify(recordedNotes, null, 2));
     }
 
-    export function recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName){
+    export function recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName, colorClass){
         var recNote = Note.newNote(noteName, styleNum);
         recNote.midinum = midinum;
         recNote.row = cellrow;
+        recNote.colorClass = colorClass;
 
         var recordedNotes = getRecordedNotesForSection(tableID);
         var notesInBeatArr = recordedNotes[sBeatNum];

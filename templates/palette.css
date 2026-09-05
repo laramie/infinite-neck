@@ -142,6 +142,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
    padding: 0.7em !important;
    box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
+#lblAutomaticColorHighlight {
+   padding: 0.7em !important;
+   box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
 
 #palette label.userColorRB {
   margin: 4px;
@@ -398,6 +402,18 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     background-color: #555;
     color: #BBB;
 }
+
+/* Highlights color-picker swatches: 9 raw "glow" colors, undictionaried like notePink1-7 etc.
+   Selectable directly (behind the More... button) and reassignable to noteH1/H2/H3 via Customize. */
+.noteHighlight1 { color: blue; background-color: gold;        box-shadow: 0 0 6pt 2pt gold; }
+.noteHighlight2 { color: rgb(17, 84, 94); background-color: magenta;     box-shadow: 0 0 6pt 2pt magenta; }
+.noteHighlight3 { color: rgb(5, 5, 123); background-color: cyan;        box-shadow: 0 0 6pt 2pt cyan; }
+.noteHighlight4 { color: white; background-color: orangered;   box-shadow: 0 0 6pt 2pt orangered; }
+.noteHighlight5 { color: black; background-color: lime;        box-shadow: 0 0 6pt 2pt lime; }
+.noteHighlight6 { color: white; background-color: dodgerblue;  box-shadow: 0 0 6pt 2pt dodgerblue; }
+.noteHighlight7 { color: black; background-color: orange;      box-shadow: 0 0 6pt 2pt orange; }
+.noteHighlight8 { color: orange; background-color: maroon;     box-shadow: 0 0 6pt 2pt deeppink; }
+.noteHighlight9 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 6pt 2pt springgreen; }
 
 
 

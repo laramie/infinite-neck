@@ -27,6 +27,9 @@ export const gThemes = {
         "noteBlackKeySpecialColor": "#191919",
         "noteWhiteKeyFontColor": "black",
         "noteBlackKeyFontColor": "white",
+        "systemPitchColor": "gold",
+        "systemMultiColor": "magenta",
+        "systemLeadColor": "rgb(94, 251, 244)",
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none"
     },

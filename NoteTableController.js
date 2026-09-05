@@ -18,7 +18,9 @@ import {
 import {
 	createLookupContext,
     lookupClassForNote,
-    lookupUserColorClass
+    lookupUserColorClass,
+    getAllRegisteredColorClasses,
+    resolveHighlightGlowColor
 } from './colorFunctions.js';
 import {
     Note
@@ -687,16 +689,20 @@ export function colorNoteInner(cell) {
                     result.returnCause = Cause.CLEAR;
                     return result;
                 }
+            var matchingMidinumCells = $(parentTableSel+"td.note[midinum='"+midinum+"']");
             if (doEraseHighlight){
-                cell.removeClass("noteHighlight");
-                cell.removeClass(gLast_noteHighlight);
-                $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
+                cell.removeClass("noteHighlight").removeClass(gLast_noteHighlight).removeClass(getAllRegisteredColorClasses(lookupContext));
+                matchingMidinumCells.removeClass("noteHighlight").removeClass(getAllRegisteredColorClasses(lookupContext));
+                setResolvedHighlightColorVar(matchingMidinumCells, null);
             } else {
+                // Pitch highlights never participate in coloring (AutoColor, AutoColorHighlight, or a
+                // manually picked swatch) -- they always render via the Theme's System Pitch Color,
+                // which is the plain .noteHighlight CSS rule's default fallback. Coloring is Multi-only.
                 cell.addClass("noteHighlight");
-                $(parentTableSel+"td.note[midinum='"+midinum+"']").addClass("noteHighlight");
+                matchingMidinumCells.addClass("noteHighlight");
             }
             if (isRecording()){
-              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
+              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName, theColorClass);
             }
             result.returnCause = Cause.HIGHLIGHT;
            return result;
@@ -708,16 +714,19 @@ export function colorNoteInner(cell) {
                    result.returnCause = Cause.CLEAR;
                    return result;
                }
+           var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
            if (doEraseHighlightSingle){
-               cell.removeClass("noteHighlightSingle");
-               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
-               tdn.removeClass("noteHighlightSingle");
+               cell.removeClass("noteHighlightSingle").removeClass(getAllRegisteredColorClasses(lookupContext));
+               tdn.removeClass("noteHighlightSingle").removeClass(getAllRegisteredColorClasses(lookupContext));
+               setResolvedHighlightColorVar(tdn, null);
            } else {
-               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
-               tdn.addClass("noteHighlightSingle");
+               var resolvedHighlightSingleClass = lookupUserColorClass({noteName, styleNum, colorClass: theColorClass}, lookupContext);
+               cell.addClass("noteHighlightSingle").addClass(resolvedHighlightSingleClass);
+               tdn.addClass("noteHighlightSingle").addClass(resolvedHighlightSingleClass);
+               setResolvedHighlightColorVar(tdn, resolveHighlightGlowColor(resolvedHighlightSingleClass));
            }
            if (isRecording()){
-               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
+               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName, theColorClass);
            }
            result.returnCause = Cause.HIGHLIGHTMULTI;
            return result;
@@ -934,9 +943,30 @@ function clearNamedNoteAtPitch(tableID, noteName, parentTableSel = '') {
 }
 
 function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
-    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass('noteHighlight');
-    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass(gLast_noteHighlight);
-    $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']").removeClass('noteHighlightSingle');
+    const allColorClasses = getAllRegisteredColorClasses();
+    const midinumCells = $(parentTableSel + "td.note[midinum='" + midinum + "']");
+    midinumCells.removeClass('noteHighlight').removeClass(gLast_noteHighlight).removeClass(allColorClasses);
+    setResolvedHighlightColorVar(midinumCells, null);
+    const rowCells = $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']");
+    rowCells.removeClass('noteHighlightSingle').removeClass(allColorClasses);
+    setResolvedHighlightColorVar(rowCells, null);
+}
+
+/** Sets or clears the --resolved-highlight-color CSS var on the given cells. This var drives
+ *  both the outer (.noteHighlight/.noteHighlightSingle) and inner (.NoteDisplay) highlight glow
+ *  box-shadows in infinite-neck.css, keeping the two rings in sync with whatever palette color
+ *  was actually picked for a Pitch/Multi highlight -- see resolveHighlightGlowColor(). Bypasses
+ *  jQuery's .css() for custom properties so clearing truly removes the property (an empty-string
+ *  custom property value is a valid-but-empty token stream, which would make var()'s fallback
+ *  never kick in, rather than falling back to the Theme's system color as intended). */
+function setResolvedHighlightColorVar($cells, colorValue) {
+    $cells.each(function() {
+        if (colorValue) {
+            this.style.setProperty('--resolved-highlight-color', colorValue);
+        } else {
+            this.style.removeProperty('--resolved-highlight-color');
+        }
+    });
 }
 
 
@@ -1525,11 +1555,15 @@ export function showHighlightsForBeatForOptions(nBeat, options){
         dict = sn.recordedNotes;
     }
     if (dict){
-        $(tableSelector+"td.note").removeClass("noteHighlight");
-        $(tableSelector+"td.note").removeClass(gLast_noteHighlight);
-		$(tableSelector+"td.note").removeClass("OverlayRaisedForPiano");
+        const allColorClasses = getAllRegisteredColorClasses(lookupContext);
+        const allNoteCells = $(tableSelector+"td.note");
+        allNoteCells.removeClass("noteHighlight");
+        allNoteCells.removeClass(gLast_noteHighlight);
+		allNoteCells.removeClass("OverlayRaisedForPiano");
 
-        $(tableSelector+"td.note").removeClass("noteHighlightSingle");
+        allNoteCells.removeClass("noteHighlightSingle");
+        allNoteCells.removeClass(allColorClasses);
+        setResolvedHighlightColorVar(allNoteCells, null);
 
 		$(tableSelector+"div.Fingering.Playback")
 			.attr("class", "Fingering")    //remove marker classes: FingeringPlayed Playback, and any color
@@ -1548,11 +1582,15 @@ export function showHighlightsForBeatForOptions(nBeat, options){
             arrForBeat.forEach(note => {
                 var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $(tableSelector+"td.note[midinum='"+note.midinum+"']")
-                        .addClass("noteHighlight");
+                    // Pitch highlights never participate in coloring -- always the System Pitch Color
+                    // (plain .noteHighlight fallback). Coloring is Multi-only.
+                    $(tableSelector+"td.note[midinum='"+note.midinum+"']").addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
+                    var resolvedMultiClass = lookupUserColorClass(note, lookupContext);
                     tdNote
-                        .addClass("noteHighlightSingle");
+                        .addClass("noteHighlightSingle")
+                        .addClass(resolvedMultiClass);
+                    setResolvedHighlightColorVar(tdNote, resolveHighlightGlowColor(resolvedMultiClass));
                 } else if (note.styleNum == Note.STYLENUM_FINGERING && !options.hideFingering){
                     tdNote
                         .find("div.Fingering")
@@ -1676,9 +1714,12 @@ export function clearHighlightsForTable(tablename){
         tableSelector = '#'+tablename+' ';
     }
 
-    $(tableSelector+"td.note").removeClass("noteHighlight");
-    $(tableSelector+"td.note").removeClass("noteHighlightSingle");
-    $(tableSelector+"td.note").removeClass(gLast_noteHighlight);
+    const allNoteCells = $(tableSelector+"td.note");
+    allNoteCells.removeClass("noteHighlight");
+    allNoteCells.removeClass("noteHighlightSingle");
+    allNoteCells.removeClass(gLast_noteHighlight);
+    allNoteCells.removeClass(getAllRegisteredColorClasses());
+    setResolvedHighlightColorVar(allNoteCells, null);
 }
 
 //==================FILLING=====================================================

@@ -108,6 +108,7 @@ import {
 	gUserColorDict,
 	gUserColorDictRolesDefault,
 	gUserColorDictFingeringsDefault,
+	gUserColorDictHighlightsDefault,
 	gDefault_CycleOfColors,
 	gAllClear,
 	gUserColorDictOEM
@@ -393,6 +394,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			getSong,
 			getCurrentSection,
 			doingAutomaticColor: (...args) => doingAutomaticColor(...args),
+			doingAutomaticColorHighlight: (...args) => doingAutomaticColorHighlight(...args),
 			fullRepaint,
 			displayOptionsChanged: refreshDisplayOptionsSaveActionRequired
 		});
@@ -701,6 +703,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function updateDisplayOptionsReadonlyValues(options = null){
 		const values = options || controlsToDisplayOptions();
+		$('#viewDisplayOptionAutoColorHighlightValue').text(String(!!values.autoColorHighlight));
 		$('#viewDisplayOptionAutoColorValue').text(String(!!values.autoColor));
 		$('#viewDisplayOptionCurrentColorDictValue').text(values.currentColorDict || '');
 		
@@ -1805,6 +1808,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return $("#cbAutomaticColor").prop("checked");  //automaticColorScheme
 	}
 
+	export function doingAutomaticColorHighlight(){
+		return $("#cbAutomaticColorHighlight").prop("checked");  //independent AutoColor flag for Pitch/Multi highlights
+	}
+
 	export function turnOffHiding(){
 		var hideNamedNotes = $("#cbHideNamedNotes").prop("checked");
 		var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
@@ -2227,6 +2234,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			"CycleOfColors": gDefault_CycleOfColors,
 			"Roles": gUserColorDictRolesDefault,
 			"Fingerings": gUserColorDictFingeringsDefault,
+			"Highlights": gUserColorDictHighlightsDefault,
 			"Default": gUserColorDictOEM,
 			...userColorDicts
 		};
@@ -3292,6 +3300,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			chuseStylesheet(currentColorDict);
 		}
 
+		PalettePresentation.setAutomaticColorHighlightUi(options.autoColorHighlight);
 		PalettePresentation.setAutomaticColorUi(options.autoColor);
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
@@ -3338,6 +3347,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	export function controlsToDisplayOptions(){
 		var options = {};
+		options.autoColorHighlight = $("#cbAutomaticColorHighlight").prop("checked");
 		options.autoColor = $("#cbAutomaticColor").prop("checked");
 		options.showCellNotes = $("#cbShowCellNotes").prop("checked");
 	    options.showSubscriptFunctions = $("#cbShowSubscriptFunctions").prop("checked");
@@ -4323,6 +4333,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();
 		});
+		bindDelegatedEvent('change', '#cbAutomaticColorHighlight', function() {
+			refreshDisplayOptionsSaveActionRequired();
+		});
 	}
 	
 	export function bindDataActionHandlers(){
@@ -4618,6 +4631,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// Palette startup should use the shared AutoColor initializer directly,
 			// not a synthetic change event on a stale checkbox state.
 			PalettePresentation.setAutomaticColorUi(true);
+			PalettePresentation.setAutomaticColorHighlightUi(false);
 			fullRepaint();
 
 			// The palette loads asynchronously, so recapture the startup navigation

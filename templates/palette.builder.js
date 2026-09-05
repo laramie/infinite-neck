@@ -49,6 +49,13 @@ export class PaletteBuilder {
             NoteTableController.fullRepaint(); //TODO: this should be through EventBus.
         });
 
+        $("#cbAutomaticColorHighlight")
+            .off(`change${eventNamespace}`)
+            .on(`change${eventNamespace}`, function() {
+            PalettePresentation.setAutomaticColorHighlightUi(this.checked);
+            NoteTableController.fullRepaint(); //TODO: this should be through EventBus.
+        });
+
 
         $("#showHideExtraColors")
             .off(`click${eventNamespace}`)
