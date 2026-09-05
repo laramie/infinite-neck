@@ -552,6 +552,7 @@ export function colorNoteInner(cell) {
     let lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
+    $("td.note.noteHighlight").removeClass(gLast_noteHighlight);
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
 
     if (  theHighlight != "MidiPitchesSingle" ){
@@ -688,6 +689,7 @@ export function colorNoteInner(cell) {
                 }
             if (doEraseHighlight){
                 cell.removeClass("noteHighlight");
+                cell.removeClass(gLast_noteHighlight);
                 $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
             } else {
                 cell.addClass("noteHighlight");
@@ -722,6 +724,7 @@ export function colorNoteInner(cell) {
         } else {
             cell.css("outline", "");
             cell.removeClass("noteHighlight");
+            cell.removeClass(gLast_noteHighlight);
         }
 
         if(doDropper) {
@@ -932,6 +935,7 @@ function clearNamedNoteAtPitch(tableID, noteName, parentTableSel = '') {
 
 function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
     $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass('noteHighlight');
+    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass(gLast_noteHighlight);
     $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']").removeClass('noteHighlightSingle');
 }
 
@@ -1522,6 +1526,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
     }
     if (dict){
         $(tableSelector+"td.note").removeClass("noteHighlight");
+        $(tableSelector+"td.note").removeClass(gLast_noteHighlight);
 		$(tableSelector+"td.note").removeClass("OverlayRaisedForPiano");
 
         $(tableSelector+"td.note").removeClass("noteHighlightSingle");
@@ -1591,9 +1596,16 @@ export function showHighlightsForBeatForOptions(nBeat, options){
     }
 }
 
-export function highlightOneNote(noteName){
-	var selector = "td.note"+noteName;
-      $(selector).addClass("noteHighlight");
+var gLast_noteHighlight = "";
+
+export function highlightOneNote(noteName, noteHighlightOverride = null){
+    var selector = "td.note"+noteName;
+    $(selector).addClass("noteHighlight");
+    if (noteHighlightOverride){
+        $(selector).addClass(noteHighlightOverride);
+        gLast_noteHighlight = noteHighlightOverride;
+    } 
+    
 }
 
 //=================================CLEARING========================================
@@ -1666,6 +1678,7 @@ export function clearHighlightsForTable(tablename){
 
     $(tableSelector+"td.note").removeClass("noteHighlight");
     $(tableSelector+"td.note").removeClass("noteHighlightSingle");
+    $(tableSelector+"td.note").removeClass(gLast_noteHighlight);
 }
 
 //==================FILLING=====================================================

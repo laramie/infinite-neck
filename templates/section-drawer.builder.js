@@ -116,5 +116,8 @@ export class SectionDrawerBuilder {
     static rootIDChanged(){
         $("#dropDownRoot").val(getCurrentSection().rootID);
     }
+    static rootIDLeadChanged(){
+        $("#dropDownRootLead").val(getCurrentSection().rootIDLead);
+    }
 
 }

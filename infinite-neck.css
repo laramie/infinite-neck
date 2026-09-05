@@ -1777,6 +1777,14 @@ td.nut div.NoteActive .CenterCell {
 .noteHighlight .NoteDisplay {
     box-shadow: 0 0 9pt 8pt red;
 }
+.noteHighlight.noteHighlightOverrideBlue {
+    box-shadow: 0 0 4pt 4pt rgb(149, 216, 255);
+}
+.noteHighlight.noteHighlightOverrideBlue .namedNote {
+    box-shadow: 0 0 9pt 8pt rgb(72, 255, 0);
+}
+
+
 /** box-shadow nums: offset-x offset-y blur-radius spread-radius
   * see: https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
  */
@@ -1793,6 +1801,8 @@ td.nut div.NoteActive .CenterCell {
 .noteBlackKey.noteHighlightSingle {
     box-shadow: 0 0 4pt 4pt magenta !important;
 }
+
+
 
 .midiPitch{
     color: green;

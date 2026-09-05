@@ -150,6 +150,7 @@ function requireProvider(name) {
 
 function addBeat(...args) { return requireProvider('addBeat')(...args); }
 function cycleThruKeys(...args) { return requireProvider('cycleThruKeys')(...args); }
+function cycleThruLeadKeys(...args) { return requireProvider('cycleThruLeadKeys')(...args); }
 function cycleThruNutWidths(...args) { return requireProvider('cycleThruNutWidths')(...args); }
 function downloadBackupThenClearGraveyard(...args) { return requireProvider('downloadBackupThenClearGraveyard')(...args); }
 function downloadBackupThenClearGraveyardByType(...args) { return requireProvider('downloadBackupThenClearGraveyardByType')(...args); }
@@ -537,13 +538,18 @@ function document_keypress(e) {
                 showInfoDialog();
                 break;
             case "k":
-                 cycleThruKeys(1);
-                 highlightOneNote(getSong().getRootNoteName());
-                 break;
+				cycleThruKeys(1);
+				highlightOneNote(getSong().getRootNoteName());
+				break;
             case "K":
-                cycleThruKeys(-1);
-                highlightOneNote(getSong().getRootNoteName());
-                break;
+				if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key}` === 'K') {
+					cycleThruLeadKeys(1);
+					highlightOneNote(getSong().getLeadNoteName(), "noteHighlightOverrideBlue");
+				} else {
+					cycleThruKeys(-1);
+					highlightOneNote(getSong().getRootNoteName());
+				}
+				break;
 			case "l":
                 toggleLoopSections();
                 break;

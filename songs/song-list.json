@@ -633,6 +633,17 @@
       ]
     },
     {
+      "href": "theory//I-IV-V-C-Ionian-w-LeadKey.json",
+      "description": "I-IV-V (Maj7, Maj7, dom7) in C, showing effect of Tiny notes with LeadKeys in C, F, G.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
       "description": "One-string Intro",
       "instruments": [

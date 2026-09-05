@@ -335,6 +335,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		setKeyHandlerProviders({
 			addBeat,
 			cycleThruKeys,
+			cycleThruLeadKeys,
 			cycleThruNutWidths: (...args) => cycleThruNutWidths(...args),
 			downloadBackupThenClearGraveyard,
 			downloadBackupThenClearGraveyardByType,
@@ -2765,6 +2766,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		curr=(12+curr + amount) % 12;
 		getCurrentSection().rootID = curr;
 		SectionDrawerBuilder.rootIDChanged();
+		resetNoteNames();
+		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
+		updateSectionsStatus();
+	}
+	export function cycleThruLeadKeys(amount){
+		var curr = toInt(getCurrentSection().rootIDLead, 0);
+		curr=(12+curr + amount) % 12;
+		getCurrentSection().rootIDLead = curr;
+		SectionDrawerBuilder.rootIDLeadChanged();
 		resetNoteNames();
 		clearRecordedNotes();// TODO: make sure this is OK, and delete this comment: This clears highlights correctly, and used to be in updateSectionsStatus, but didn't belong there.
 		updateSectionsStatus();
