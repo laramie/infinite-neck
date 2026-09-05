@@ -1778,10 +1778,13 @@ td.nut div.NoteActive .CenterCell {
     box-shadow: 0 0 9pt 8pt red;
 }
 .noteHighlight.noteHighlightOverrideBlue {
-    box-shadow: 0 0 4pt 4pt rgb(149, 216, 255);
+    box-shadow: 0 0 4pt 4pt rgb(94, 251, 244);
 }
 .noteHighlight.noteHighlightOverrideBlue .namedNote {
-    box-shadow: 0 0 9pt 8pt rgb(72, 255, 0);
+    box-shadow: 0 0 9pt 8pt rgb(94, 251, 244);
+}
+.noteHighlight.noteHighlightOverrideBlue .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt rgb(94, 251, 244);
 }
 
 
