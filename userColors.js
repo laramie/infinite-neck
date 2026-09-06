@@ -153,17 +153,17 @@ export const gUserColorDictHighlightsDefault = {
     checked: true,
     dict: {
         "noteH1":{
-            "colorClass": "noteHighlight1",
+            "colorClass": "noteHighlightH1",
             "caption": "H1",
             "tiny": "H1"
         },
         "noteH2":{
-            "colorClass": "noteHighlight2",
+            "colorClass": "noteHighlightH2",
             "caption": "H2",
             "tiny": "H2"
         },
         "noteH3":{
-            "colorClass": "noteHighlight3",
+            "colorClass": "noteHighlightH3",
             "caption": "H3",
             "tiny": "H3"
         }

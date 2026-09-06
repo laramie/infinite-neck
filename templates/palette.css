@@ -158,6 +158,15 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
   border: 1px solid gray;
   box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
+#palette label.userColorRB.noteHighlightH1 {
+    box-shadow: 0 0 4pt 4pt var(--system-pitch-color);
+}
+#palette label.userColorRB.noteHighlightH2 {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+#palette label.userColorRB.noteHighlightH3 {
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color);
+}
 
 .radioFillChooser {
     background-color: white;
@@ -413,7 +422,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .noteHighlight6 { color: white; background-color: dodgerblue;  box-shadow: 0 0 6pt 2pt dodgerblue; }
 .noteHighlight7 { color: black; background-color: orange;      box-shadow: 0 0 6pt 2pt orange; }
 .noteHighlight8 { color: orange; background-color: maroon;     box-shadow: 0 0 6pt 2pt deeppink; }
-.noteHighlight9 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 6pt 2pt springgreen; }
+.noteHighlight9 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 12pt 4pt springgreen; }
 
 
 

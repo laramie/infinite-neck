@@ -221,6 +221,37 @@ describe('getDisplayOptionsInEffect contracts', () => {
     });
 });
 
+describe('getStoredDisplayOptionsInEffect contracts', () => {
+    test('returns the nearest prior saved displayOptions for sections without explicit options', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+
+        delete sections[1].displayOptions;
+        const stored = song.getStoredDisplayOptionsInEffect(sections[1]);
+
+        expect(stored).toEqual(sections[0].displayOptions);
+    });
+
+    test('returns null (never a synthetic default) when no Section in the chain has explicit displayOptions', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+
+        delete sections[0].displayOptions;
+        delete sections[1].displayOptions;
+
+        const stored = song.getStoredDisplayOptionsInEffect(sections[1]);
+
+        expect(stored).toBeNull();
+    });
+
+    test('returns null when the Section is not found in song.sections', () => {
+        const song = makeHeadlessSongFromFixture();
+        const stranger = { displayOptions: { autoColor: true } };
+
+        expect(song.getStoredDisplayOptionsInEffect(stranger)).toBeNull();
+    });
+});
+
 describe('recorded note playback display options', () => {
     test('Playback marker does not override fingering display-option font size', () => {
         const css = fs.readFileSync(APP_CSS_FILE, 'utf8');

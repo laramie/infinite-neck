@@ -497,8 +497,11 @@ function document_keypress(e) {
 			case "B":
 				getTransportController().toggleLoopBeats();
 				break;
-			case "c": //"_C_olor"
+			case "c": //"_C_olor"  see also: case "y" where we do #cbAutomaticColorHighlight
 				$("#cbAutomaticColor").trigger('click');
+                break;
+			case "y": //"yellowpen: toggle auto color for highlights."
+				$("#cbAutomaticColorHighlight").trigger('click');
                 break;
 			case "C":
 				try {
@@ -641,6 +644,7 @@ function document_keypress(e) {
             case "h":
 					moveSelectByClampedStep('#dropDownCellHeight', 1);
                 break;
+			// case "y" is handled above near case "c"	
 			case "z":
 				runActionByName("dockAllDockables");
 				break;

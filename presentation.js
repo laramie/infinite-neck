@@ -5,6 +5,7 @@ export const gPresentation = {
         mode: 'paint',
         lastRestorableColor: null,
         lastRestorableHighlight: null,
+        lastRestorableMultiColor: null,
         suppressRbColorRemember: false,
         keepWasForced: false,
         lockKeep: false
@@ -26,6 +27,18 @@ const RESTORABLE_HIGHLIGHT_IDS = new Set([
     'idMidiPitches',
     'idMidiPitchesSingle'
 ]);
+
+// Multi (STYLENUM_MIDIPITCHESSINGLE) remembers its own last-picked color, separate from the
+// general lastRestorableColor that every other note type (Named/Single/Tiny/Bend/Pitch/
+// Fingering) shares. Defaults to the "H2" role button, which by default resolves to the
+// theme's System Multi Color (see userColors.js::gUserColorDictHighlightsDefault and
+// infinite-neck.css's .noteHighlightH2), unless the User stylesheet overrides "noteH2".
+const MULTI_HIGHLIGHT_ID = 'idMidiPitchesSingle';
+const DEFAULT_MULTI_COLOR = {
+    id: 'idRH2',
+    value: 'noteH2',
+    caption: 'H2'
+};
 
 // Mirrors the #selBend <option> captions in templates/palette.html -- read here
 // instead of scraping the <option> text so PalettePresentation.getHighlightStatusMarkup()
@@ -156,6 +169,24 @@ export class PalettePresentation {
         return { ...remembered };
     }
 
+    static getLastRestorableMultiColor() {
+        if (!gPresentation.palette.lastRestorableMultiColor) {
+            PalettePresentation.initializePalettePresentation();
+        }
+
+        const remembered = gPresentation.palette.lastRestorableMultiColor || { ...DEFAULT_MULTI_COLOR };
+
+        return { ...remembered };
+    }
+
+    static isMultiHighlightRadio($radio) {
+        return !!$radio && $radio.length > 0 && $radio.attr('id') === MULTI_HIGHLIGHT_ID;
+    }
+
+    static isMultiHighlightActive() {
+        return $('#' + MULTI_HIGHLIGHT_ID).is(':checked');
+    }
+
     static getRbColorCaption($radio) {
         if (!$radio || $radio.length === 0) {
             return "";
@@ -256,6 +287,22 @@ export class PalettePresentation {
         };
     }
 
+    // Multi's own remembered swatch is never hidden, even when "Multi AC" (AutoColorHighlight)
+    // is checked -- mirrors how .paletteModeStatus keeps showing the last picked color while
+    // AutoColor is checked (see getPaletteModeStatusStyle()).
+    static getResolvedMultiColorStyle() {
+        const FALLBACK = { backgroundColor: '#ffffff', color: '#000000' };
+        const $label = PalettePresentation.findRestorableMultiColor().closest('label');
+        if ($label.length === 0 || typeof getComputedStyle !== 'function') {
+            return FALLBACK;
+        }
+        const computed = getComputedStyle($label[0]);
+        return {
+            backgroundColor: computed.backgroundColor || FALLBACK.backgroundColor,
+            color: computed.color || FALLBACK.color
+        };
+    }
+
     static getPaletteModeStatusStyle() {
         if (PalettePresentation.getMode() !== 'paint') {
             return { backgroundColor: '#ffffff', color: '#000000' };
@@ -278,6 +325,7 @@ export class PalettePresentation {
                 backgroundColor: modeStyle.backgroundColor,
                 color: modeStyle.color
             });
+        PalettePresentation.updateAutomaticColorHighlightSwatch();
     }
 
     static setExtraColorsVisible(isVisible) {
@@ -320,6 +368,21 @@ export class PalettePresentation {
     static setAutomaticColorHighlightUi(isAutomaticColorHighlight) {
         const automatic = !!isAutomaticColorHighlight;
         $("#cbAutomaticColorHighlight").prop("checked", automatic);
+    }
+
+    // Keeps #lblAutomaticColorHighlight's background/text painted with Multi's own remembered
+    // color at all times (independent of the checkbox's checked state, and independent of
+    // whichever color the shared rbColor radio group is currently showing for other note types).
+    static updateAutomaticColorHighlightSwatch() {
+        const $label = $('#lblAutomaticColorHighlight');
+        if (!$label || $label.length === 0) {
+            return;
+        }
+        const style = PalettePresentation.getResolvedMultiColorStyle();
+        $label.css({
+            backgroundColor: style.backgroundColor,
+            color: style.color
+        });
     }
 
     static ensureColorRadioVisible($radio) {
@@ -371,6 +434,22 @@ export class PalettePresentation {
         return true;
     }
 
+    static rememberRestorableMultiColor(radioEl) {
+        if (!radioEl) {
+            return;
+        }
+        const $radio = $(radioEl);
+        const value = $radio.val();
+
+        gPresentation.palette.lastRestorableMultiColor = {
+            id: $radio.attr("id"),
+            value,
+            caption: PalettePresentation.getRbColorCaption($radio)
+        };
+
+        PalettePresentation.updateAutomaticColorHighlightSwatch();
+    }
+
     static rememberCurrentRestorableRbHighlight() {
         const $checked = $('input[name="rbHighlight"]:checked').first();
         return PalettePresentation.rememberRestorableRbHighlight($checked);
@@ -410,6 +489,15 @@ export class PalettePresentation {
         let $radio = $("#" + remembered.id);
         if ($radio.length === 0 && remembered.value) {
             $radio = $('input[name="rbHighlight"][value="' + remembered.value + '"]');
+        }
+        return $radio.first();
+    }
+
+    static findRestorableMultiColor() {
+        const remembered = PalettePresentation.getLastRestorableMultiColor();
+        let $radio = $("#" + remembered.id);
+        if ($radio.length === 0 && remembered.value) {
+            $radio = $('input[name="rbColor"][value="' + remembered.value + '"]');
         }
         return $radio.first();
     }
@@ -454,6 +542,20 @@ export class PalettePresentation {
             forcedKeep: false
         });
         return colorRestored || highlightRestored;
+    }
+
+    // Called when the Multi ("idMidiPitchesSingle") highlight-type radio is selected: restores
+    // Multi's own remembered color into the shared rbColor radio group, without touching the
+    // general lastRestorableColor memory that other note types rely on.
+    static restoreLastMultiColor() {
+        const $radio = PalettePresentation.findRestorableMultiColor();
+        if ($radio.length === 0) {
+            return false;
+        }
+        return PalettePresentation.selectRbColorByElement($radio, {
+            remember: false,
+            forcedKeep: false
+        });
     }
 
     static restoreLastRbHighlightIfNeeded() {
@@ -524,6 +626,10 @@ export class PalettePresentation {
                 value: 'Named',
                 caption: 'Named'
             };
+        }
+
+        if (!gPresentation.palette.lastRestorableMultiColor) {
+            gPresentation.palette.lastRestorableMultiColor = { ...DEFAULT_MULTI_COLOR };
         }
 
         PalettePresentation.updatePaletteModeUi();

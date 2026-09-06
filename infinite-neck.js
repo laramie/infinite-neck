@@ -758,13 +758,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	function syncSectionUi(){
 		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
-		var options = getSong().getDisplayOptionsInEffect(getCurrentSection(), defaultDisplayOptions);
+		const storedOptions = getSong().getStoredDisplayOptionsInEffect(getCurrentSection());
+		var options = storedOptions || defaultDisplayOptions;
 		if (options){
+			const optionsForControls = cloneDisplayOptions(options);
+			if (!storedOptions){
+				// No Section in the chain has explicitly stored displayOptions -- don't let the
+				// synthetic startup-snapshot default silently reset AutoColor/AutoColorHighlight,
+				// since nothing in the model actually specifies them for this Section (this was
+				// resetting both checkboxes back to their startup state on every Section boundary
+				// during looping/navigation, even though the user had just toggled them).
+				delete optionsForControls.autoColor;
+				delete optionsForControls.autoColorHighlight;
+			}
 			// skipRepaint: sectionChanged() calls clearAndReplaySection() right after syncSectionUi(),
 			// which already does clearAll()+resetNoteNames()+showBeats(). Without this flag,
 			// displayOptionsToControls() would trigger a second full fullRepaint() (clearAll+resetNoteNames+
 			// showBeats+forced reflow) on every Section transition, doubling buildCells()/replay() cost.
-			displayOptionsToControls(cloneDisplayOptions(options), true);
+			displayOptionsToControls(optionsForControls, true);
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
@@ -2625,7 +2636,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			.off(`change${eventNamespace}`, 'input[name="rbColor"]:radio')
 			.on(`change${eventNamespace}`, 'input[name="rbColor"]:radio', function() {
 				if ($(this).is(":checked") && !gPresentation.palette.suppressRbColorRemember) {
-					PalettePresentation.rememberRestorableRbColor(this);
+					if (PalettePresentation.isMultiHighlightActive()) {
+						PalettePresentation.rememberRestorableMultiColor(this);
+					} else {
+						PalettePresentation.rememberRestorableRbColor(this);
+					}
 				}
 				PalettePresentation.updateRestoreRbColorButton();
 			});
@@ -2637,6 +2652,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					return;
 				}
 				PalettePresentation.rememberRestorableRbHighlight(this);
+				if (PalettePresentation.isMultiHighlightRadio($(this))) {
+					PalettePresentation.restoreLastMultiColor();
+				}
 				PalettePresentation.enterPaintMode({
 					restoreHighlightIfNeeded: false,
 					forcedKeep: false
@@ -3300,8 +3318,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			chuseStylesheet(currentColorDict);
 		}
 
-		PalettePresentation.setAutomaticColorHighlightUi(options.autoColorHighlight);
-		PalettePresentation.setAutomaticColorUi(options.autoColor);
+		// Only force these two checkboxes when the caller's options object actually specifies
+		// them (i.e. came from a real, stored section.displayOptions) -- see syncSectionUi(),
+		// which now omits these keys entirely when falling back to the synthetic navigation
+		// default, so the user's current toggle survives Section boundaries/looping untouched.
+		if ('autoColorHighlight' in options){
+			PalettePresentation.setAutomaticColorHighlightUi(options.autoColorHighlight);
+		}
+		if ('autoColor' in options){
+			PalettePresentation.setAutomaticColorUi(options.autoColor);
+		}
 
 		//ignore #cbPresentationMode because it is Song-scope, not Section-scope.
 		if (naturalFontScaling != null){
@@ -4332,9 +4358,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();
+			this.blur();
 		});
 		bindDelegatedEvent('change', '#cbAutomaticColorHighlight', function() {
 			refreshDisplayOptionsSaveActionRequired();
+			this.blur();
 		});
 	}
 	

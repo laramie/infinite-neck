@@ -1560,11 +1560,20 @@ export class Song extends SongPersistence {
 
     /** call with defaultDisplayOptions = infinite-neck:controlsToDisplayOptions() */
     getDisplayOptionsInEffect(currSection, defaultDisplayOptions){
+        return this.getStoredDisplayOptionsInEffect(currSection) ?? defaultDisplayOptions;
+    }
+
+    /** Like getDisplayOptionsInEffect(), but returns null instead of falling back to a synthetic
+     *  "current controls" default when no Section from currSection back to index 0 has an
+     *  explicitly stored displayOptions object. Lets callers distinguish "nothing in the model
+     *  actually specifies this" from "here's what's in effect" -- needed for fields (like
+     *  autoColor/autoColorHighlight) that must never be silently forced by an arbitrary startup
+     *  snapshot when the Song itself has no opinion (see infinite-neck.js::syncSectionUi()). */
+    getStoredDisplayOptionsInEffect(currSection){
         // Start at currSection and walk backwards through song.sections
         let idx = this.sections.indexOf(currSection);
         if (idx === -1) {
-            // currSection not found, fallback to default
-            return defaultDisplayOptions;
+            return null;
         }
         for (let i = idx; i >= 0; i--) {
             const section = this.sections[i];
@@ -1572,8 +1581,9 @@ export class Song extends SongPersistence {
                 return section.displayOptions;
             }
         }
-        return defaultDisplayOptions;
+        return null;
     }
+
 
     //This function works: it transposes every Section in a Song by 'amount'.
     cycleThruKeysAllSections(amount, doKeyLead = false){

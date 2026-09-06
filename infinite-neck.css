@@ -1819,7 +1819,7 @@ td.nut div.NoteActive .CenterCell {
     box-shadow: 0 0 9pt 8pt var(--system-pitch-color);
 }
 .noteHighlightH1 .NoteDisplay {
-    box-shadow: 0 0 9pt 8pt red;
+    box-shadow: 0 0 9pt 8pt var(--system-pitch-color);
 }
 
 .noteHighlightH2 {
@@ -1829,7 +1829,7 @@ td.nut div.NoteActive .CenterCell {
     box-shadow: 0 0 4pt 4pt var(--system-multi-color);
 }
 .noteHighlightH2 .NoteDisplay {
-    box-shadow: 0 0 4pt 4pt red;
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
 }
 
 .noteHighlightH3 {
