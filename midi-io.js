@@ -20,6 +20,13 @@
 const NOTE_ON = 0x90;
 const NOTE_OFF = 0x80;
 const CONTROL_CHANGE = 0xb0;
+// Channel (Aftertouch) Pressure, e.g. a Launchpad Pro pad held down with
+// varying pressure -- 2-byte message (status + pressure), no note/velocity.
+// Added per 143-it5-design.md Round 3 ("Ignore Aftertouch"): the VoiceLive 3
+// doesn't respond to these at all, so callers can cheaply filter type ===
+// 'aftertouch' out of the activity log/critical path without losing any
+// other classification.
+const CHANNEL_AFTERTOUCH = 0xd0;
 
 // Parses a raw MIDI Channel Voice message (a Uint8Array-like of 1-3 bytes,
 // e.g. event.data from a MIDIMessageEvent) into a plain object.
@@ -35,6 +42,9 @@ const CONTROL_CHANGE = 0xb0;
 // LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC below) send CC, not Note, messages.
 // `note`/`velocity` stay null for a controlchange message, matching every
 // other non-note type -- callers that care about a CC use controller/ccValue.
+//
+// Channel Aftertouch (0xD0-0xDF) messages are parsed as 'aftertouch',
+// exposing `pressure` (data[1]) -- see CHANNEL_AFTERTOUCH above.
 export function parseMidiMessage(data) {
 	const statusByte = data[0];
 	const command = statusByte & 0xf0;
@@ -50,6 +60,8 @@ export function parseMidiMessage(data) {
 		type = 'noteoff';
 	} else if (command === CONTROL_CHANGE) {
 		type = 'controlchange';
+	} else if (command === CHANNEL_AFTERTOUCH) {
+		type = 'aftertouch';
 	}
 
 	return {
@@ -59,6 +71,7 @@ export function parseMidiMessage(data) {
 		velocity: (type === 'noteon' || type === 'noteoff') ? velocity : null,
 		controller: type === 'controlchange' ? note : undefined,
 		ccValue: type === 'controlchange' ? velocity : undefined,
+		pressure: type === 'aftertouch' ? note : undefined,
 		statusByte,
 		raw: Array.from(data)
 	};
@@ -105,6 +118,16 @@ export function buildNoteOffBytes(channel, note, velocity = 0) {
 	]);
 }
 
+// Builds the 3-byte payload for a Control Change channel voice message.
+// channel is 0-based (0-15, i.e. MIDI channel 1-16).
+export function buildControlChangeBytes(channel, controller, value = 127) {
+	return new Uint8Array([
+		CONTROL_CHANGE | clampToNibble(channel),
+		clampToDataByte(controller),
+		clampToDataByte(value)
+	]);
+}
+
 // Requests access to the browser's MIDI ports. Resolves to a MIDIAccess
 // object, or rejects with a plain Error (including on browsers that don't
 // implement the Web MIDI API at all).
@@ -141,6 +164,39 @@ export function sendNoteOn(output, channel, note, velocity = 127) {
 
 export function sendNoteOff(output, channel, note, velocity = 0) {
 	output.send(buildNoteOffBytes(channel, note, velocity));
+}
+
+export function sendControlChange(output, channel, controller, value = 127) {
+	output.send(buildControlChangeBytes(channel, controller, value));
+}
+
+// ---------------------------------------------------------------------------
+// Launchpad Pro SysEx bulk-lighting (143-it5-design.md Round 3, "Speeding up
+// batch lighting"): the device's own manual documents a "Light all LEDs"
+// SysEx message that overrides EVERY pad LED (INCLUDING the round control
+// buttons around the 8x8 grid) to a single colour in one message -- a much
+// faster bulk-clear than sending 64+ individual NOTE ON velocity-0 messages
+// (clearLaunchpadGrid()) plus the edge-artifact wipe (clearLaunchpadEdgeArtifacts()).
+// Trade-off: because it touches literally every LED, a caller using this for
+// a bulk clear must resync any control-button lights it wants to stay lit
+// afterward (see midi.builder.js hardRepaint()'s SysEx branch, which does
+// exactly that). Header/command bytes are exactly as given in the manual:
+// F0 00 20 29 02 10 0E <colour> F7.
+const LAUNCHPAD_SYSEX_MANUFACTURER_HEADER = [0xf0, 0x00, 0x20, 0x29, 0x02, 0x10];
+const LAUNCHPAD_SYSEX_CMD_LIGHT_ALL = 0x0e;
+const SYSEX_END = 0xf7;
+
+export function buildLightAllLedsSysExBytes(colour = 0) {
+	return new Uint8Array([
+		...LAUNCHPAD_SYSEX_MANUFACTURER_HEADER,
+		LAUNCHPAD_SYSEX_CMD_LIGHT_ALL,
+		clampToDataByte(colour),
+		SYSEX_END
+	]);
+}
+
+export function sendLightAllLedsSysEx(output, colour = 0) {
+	output.send(buildLightAllLedsSysExBytes(colour));
 }
 
 // ---------------------------------------------------------------------------

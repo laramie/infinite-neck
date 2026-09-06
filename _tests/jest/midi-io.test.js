@@ -3,6 +3,7 @@ import {
 	formatMidiBytesHex,
 	buildNoteOnBytes,
 	buildNoteOffBytes,
+	buildLightAllLedsSysExBytes,
 	parseLaunchpadProgrammerGridNote,
 	launchpadGridToCell,
 	cellToLaunchpadGridNote,
@@ -68,6 +69,16 @@ describe('midi-io pure helpers', () => {
 		expect(parsed.velocity).toBeNull();
 	});
 
+	test('parses a Channel Aftertouch message, exposing pressure, with no note/velocity/controller', () => {
+		const parsed = parseMidiMessage([0xd0, 0x35]);
+		expect(parsed.type).toBe('aftertouch');
+		expect(parsed.channel).toBe(0);
+		expect(parsed.pressure).toBe(0x35);
+		expect(parsed.note).toBeNull();
+		expect(parsed.velocity).toBeNull();
+		expect(parsed.controller).toBeUndefined();
+	});
+
 	test('system messages (status >= 0xf0) have no channel', () => {
 		const parsed = parseMidiMessage([0xf8]);
 		expect(parsed.channel).toBeNull();
@@ -90,6 +101,11 @@ describe('midi-io pure helpers', () => {
 
 	test('channel is masked to 0-15 so an out-of-range channel cannot corrupt the status byte', () => {
 		expect(Array.from(buildNoteOnBytes(16, 60, 127))[0]).toBe(0x90);
+	});
+
+	test('buildLightAllLedsSysExBytes encodes the Launchpad Pro manual\'s exact "Light all LEDs" SysEx message', () => {
+		expect(Array.from(buildLightAllLedsSysExBytes(0))).toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0e, 0x00, 0xf7]);
+		expect(Array.from(buildLightAllLedsSysExBytes(21))).toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0e, 21, 0xf7]);
 	});
 });
 

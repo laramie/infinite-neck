@@ -57,3 +57,5 @@ Purpose of this sprint is to: Wire MIDI NOTE ON inputs to Note triggering.  When
       in section-status.css) is now only visible while MIDI triggerMode is Momentary, via a
       'MidiTriggerModeMomentary' class toggled on &lt;body&gt; by
       MidiTabBuilder.applyTriggerModeButtonUi().
+    - "Iteration 5": VoiceLive 3 Integration
+      - In this iteration we are integrating the real device "VoiceLive 3" as our sound output device, using Section info plus Notes inbound from the Launchpad.  See discussion in [143-it5-design.md](143-it5-design.md)

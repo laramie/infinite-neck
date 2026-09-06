@@ -40,6 +40,12 @@
     opacity: 0.75;
 }
 
+#MidiTab .midiActivityLogHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
 #MidiTab .midiActivityLog {
     font-family: monospace;
     font-size: 0.85em;

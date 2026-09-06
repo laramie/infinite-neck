@@ -65,6 +65,8 @@ import {
 	attachInputListener,
 	sendNoteOn,
 	sendNoteOff,
+	sendControlChange,
+	sendLightAllLedsSysEx,
 	formatMidiBytesHex,
 	parseLaunchpadProgrammerGridNote,
 	launchpadGridToCell,
@@ -94,6 +96,11 @@ const PREFERRED_DEVICE_NAME_SUBSTRING = 'Launchpad';
 // Same idea for the downstream sound-device forward output (Iteration 4),
 // e.g. a VoiceLive 3 reached over a Class-Compliant-USB MIDI cable.
 const PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING = 'VoiceLive';
+// Same idea for the debug/test-send output select (Iteration 5, Round 1,
+// 143-it5-design.md "Debug output versus wired output") -- the debug panel's
+// whole purpose is sending raw test messages straight to the Class-Compliant
+// cable (advertised as "CH345 MIDI 1"), not the Launchpad.
+const PREFERRED_DEBUG_DEVICE_NAME_SUBSTRING = 'CH345';
 
 // Highlight overlay colors (Iteration 4 round 2, 143-it4-design-2.md): fixed
 // Launchpad velocities that always win over whatever named/played/recorded
@@ -211,6 +218,29 @@ const LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP = Object.freeze({
 const LAUNCHPAD_CONTROL_BUTTON_CLEAR_MODE_CC = 30;
 const LAUNCHPAD_VELOCITY_CLEAR_MODE_SELECTED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER;
 
+// Iteration 5, Round 1 (143-it5-design.md "CC_AllClear"): column 0, doc row 8
+// (bottom of the left control column) -- confirmed via a real Launchpad Pro
+// activity log ([B0 50 7F]/[B0 50 00], 0x50=80=row8*10+col0, same address
+// scheme as CC10/CC20/CC30 for this column). Unlike those three, this button
+// is NOT a toggle/latched UI mirror -- it's a fire-once panic action: press
+// sends a single CC 123 127 ("All Notes Off", per the VoiceLive 3's own
+// documented single-message behavior) to the DOWNSTREAM forward output/
+// channel, clearing every currently-sounding note on that device regardless
+// of what this app's own NOTE ON bookkeeping thinks is still held. Release
+// is ignored. No light-feedback is specified by the design doc for this
+// button, so none is sent.
+const LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC = 80;
+const MIDI_CC_ALL_NOTES_OFF = 123;
+
+// Iteration 5, Round 2 (143-it5-design.md): the All Clear button stays lit
+// YELLOW_GREEN whenever it's not currently held (both at initial device
+// connect and immediately after every release), and flashes MAGENTA for as
+// long as it's actually held down -- purely visual feedback, independent of
+// the CC 123 127 action itself (see handleIncomingMidiMessage()'s branch
+// below and sendAllNotesOffToForwardDevice()).
+const LAUNCHPAD_VELOCITY_ALL_CLEAR_IDLE = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN;
+const LAUNCHPAD_VELOCITY_ALL_CLEAR_PRESSED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA;
+
 
 export class MidiTabBuilder {
 	static div_MidiTab = null;
@@ -241,6 +271,18 @@ export class MidiTabBuilder {
 	// 'Note:colored' handler that follows can forward the real press velocity
 	// instead of a default. Keyed by midinum since that's the forwarding unit.
 	static pendingForwardVelocityByMidinum = new Map();
+
+	// Iteration 5, Round 1 (143-it5-design.md "Mouse Clicks silent"): true only
+	// while handleIncomingMidiMessage() is synchronously inside its own
+	// colorNote(cell) call for a REAL physical Launchpad NOTE ON/OFF -- the
+	// SAME 'Note:colored' event also fires for plain mouse clicks on a td.note
+	// (NoteTableController.js's own click handler calls colorNote() directly,
+	// with no way to distinguish origin from the event payload alone). Only
+	// device-originated note events may reach the downstream sound device;
+	// mouse-driven chart editing must stay silent to the VoiceLive. Checked
+	// (and only ever true) inside onNoteColored()'s synchronous handling of
+	// that same colorNote() call, then reset to false right after.
+	static deviceOriginatedColorEvent = false;
 
 	static getDevice() {
 		return getSong().midiDevice || {};
@@ -307,6 +349,8 @@ export class MidiTabBuilder {
 		}
 		fillOneToSixteen(document.getElementById('selMidiTestNoteOffChannel'));
 		fillOneToSixteen(document.getElementById('selMidiTestNoteOnChannel'));
+		fillOneToSixteen(document.getElementById('selMidiTestNoteOnZeroChannel'));
+		fillOneToSixteen(document.getElementById('selMidiTestCCChannel'));
 		fillOneToSixteen(document.getElementById('selMidiRouteChannel'));
 		fillOneToSixteen(document.getElementById('selMidiForwardChannel'));
 	}
@@ -349,7 +393,11 @@ export class MidiTabBuilder {
 		}
 		const elapsedSeconds = ((performance.now() - MidiTabBuilder.pageStart) / 1000).toFixed(3);
 		const paddedDirection = direction.padEnd(7, ' ');
-		el.textContent += `${elapsedSeconds} ${paddedDirection} [${formatMidiBytesHex(bytes)}] ${deviceName}\n`;
+		let line = `${elapsedSeconds} ${paddedDirection} [${formatMidiBytesHex(bytes)}] ${deviceName}`;
+		if (bytes.length > 1 && (bytes[0] & 0xf0) === 0x90) {
+			line += ` pitch:${bytes[1]}`;
+		}
+		el.textContent += line + '\n';
 		el.scrollTop = el.scrollHeight;
 	}
 
@@ -391,7 +439,17 @@ export class MidiTabBuilder {
 			return;
 		}
 		MidiTabBuilder.detachCurrentInputListener = attachInputListener(input, (parsed, event) => {
-			MidiTabBuilder.logActivity('receive', event.data, input.name);
+			// Iteration 5, Round 3 (143-it5-design.md "Ignore Aftertouch"): the
+			// VoiceLive doesn't respond to Channel Aftertouch at all, so a checked
+			// #chkMidiFilterAftertouch also skips LOGGING these (keeps the log free
+			// of noise the User can't do anything about). Processing below already
+			// harmlessly no-ops for this type regardless of the checkbox (it isn't
+			// noteon/noteoff/controlchange), so only the log call is gated here --
+			// unchecked still logs it, unchanged from before this checkbox existed.
+			const filterAftertouch = document.getElementById('chkMidiFilterAftertouch');
+			if (!(parsed.type === 'aftertouch' && filterAftertouch && filterAftertouch.checked)) {
+				MidiTabBuilder.logActivity('receive', event.data, input.name);
+			}
 			MidiTabBuilder.handleIncomingMidiMessage(parsed, input.name);
 		});
 	}
@@ -481,6 +539,25 @@ export class MidiTabBuilder {
 			}
 			return;
 		}
+		if (parsed.type === 'controlchange' && parsed.controller === LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC) {
+			// Column 0, doc row 8 (All Clear -- 143-it5-design.md): fire-once panic
+			// action, unconditional of device.enabled/tableID same as the other
+			// column-0 control buttons. See sendAllNotesOffToForwardDevice()'s doc
+			// comment for why this targets the forward (downstream sound device)
+			// output, not the Launchpad's own light-feedback output.
+			// Round 2: the action itself only fires on press, but the button's OWN
+			// light (LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC, a Launchpad-light address,
+			// same CC-in/Note-out asymmetry as every other column-0 control button)
+			// flashes MAGENTA while held and returns to its normal YELLOW_GREEN idle
+			// state on release.
+			if (parsed.ccValue > 0) {
+				MidiTabBuilder.sendAllNotesOffToForwardDevice();
+				MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC, LAUNCHPAD_VELOCITY_ALL_CLEAR_PRESSED);
+			} else {
+				MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC, LAUNCHPAD_VELOCITY_ALL_CLEAR_IDLE);
+			}
+			return;
+		}
 		if (parsed.type === 'controlchange' && LAUNCHPAD_ROW9_BEAT_NAV_CONTROL_MAP[parsed.controller]) {
 			// Row 9 (top control row), cols 7-8 (Prev/Next Beat --
 			// 143-it4-round-4-design.md): same controller-number-is-column-number
@@ -551,7 +628,13 @@ export class MidiTabBuilder {
 		if (isNoteOn && Number.isInteger(midinum)) {
 			MidiTabBuilder.pendingForwardVelocityByMidinum.set(midinum, parsed.velocity);
 		}
+		// Marks this colorNote() call as device-originated (see
+		// deviceOriginatedColorEvent's doc comment) -- read synchronously by
+		// onNoteColored() below, then always reset so a later mouse click isn't
+		// mistaken for a physical press.
+		MidiTabBuilder.deviceOriginatedColorEvent = true;
 		colorNote(cell);
+		MidiTabBuilder.deviceOriginatedColorEvent = false;
 		if (isNoteOn && Number.isInteger(midinum)) {
 			MidiTabBuilder.pendingForwardVelocityByMidinum.delete(midinum);
 		}
@@ -559,6 +642,21 @@ export class MidiTabBuilder {
 
 	static currentOutputPort() {
 		const sel = document.getElementById('selMidiOutDevice');
+		if (!sel) {
+			return null;
+		}
+		return MidiTabBuilder.outputs[Number(sel.value)] || null;
+	}
+
+	// Iteration 5, Round 1 (143-it5-design.md "Debug output versus wired
+	// output"): the manual test-send grid (Note On/Off/CC buttons) has its OWN
+	// output-port select (#selMidiDebugOutDevice), completely separate from
+	// #selMidiOutDevice (the Launchpad's own light-feedback wiring output) --
+	// previously both purposes shared one select, so switching it to send a
+	// debug message elsewhere would also (silently) break the Launchpad-light
+	// wiring until switched back.
+	static currentDebugOutputPort() {
+		const sel = document.getElementById('selMidiDebugOutDevice');
 		if (!sel) {
 			return null;
 		}
@@ -605,6 +703,35 @@ export class MidiTabBuilder {
 		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: true });
 		const haveBaseline = !!MidiTabBuilder.lastPaintPlan && device.tableID === MidiTabBuilder.lastPaintTableID;
 
+		// Iteration 5, Round 2 (143-it5-design.md "latency is killing us... the
+		// forward is what creates the sound in real-time, so it must be
+		// critical-path"): forward FIRST, before anything else below -- in
+		// particular, before the Launchpad's own light feedback, which on a hard
+		// repaint sends a full 64-note clear + edge-artifact wipe + resend
+		// (~70+ MIDI messages) to a SEPARATE physical port, easily dwarfing the
+		// one or two forward messages a single button press needs. Plain
+		// synchronous reordering (not an actual async deferral) is enough here:
+		// this already guarantees every forward output.send() call for this
+		// event is issued before any light output.send() call for the same
+		// event, with no risk of the diffRepaint-vs-lastPaintPlan correctness
+		// hazard an async (setTimeout/Promise) deferral of the light repaint
+		// would introduce (diffRepaint() reads the live lastPaintPlan at call
+		// time, so deferring it while lastPaintPlan is updated in the meantime
+		// would silently turn every diff into a no-op).
+		//
+		// On the very first sync for this table (no baseline yet -- e.g. routing
+		// was just enabled or re-targeted), only ADOPT the pitchPlan; don't
+		// forward it, so pre-existing notes never retrigger the synth just
+		// because MIDI routing started watching this table.
+		//
+		// "Mouse Clicks silent" (Round 1): also gated on deviceOriginatedColorEvent
+		// -- a plain mouse click on a td.note fires this SAME 'Note:colored' event,
+		// but must never reach the downstream sound device, only a real physical
+		// Launchpad NOTE ON/OFF may.
+		if (haveBaseline && MidiTabBuilder.deviceOriginatedColorEvent) {
+			MidiTabBuilder.forwardPitchChanges(MidiTabBuilder.lastPitchPlan || new Map(), pitchPlan);
+		}
+
 		const lightOutput = MidiTabBuilder.currentOutputPort();
 		if (lightOutput) {
 			const channel = device.channel || 0;
@@ -613,14 +740,6 @@ export class MidiTabBuilder {
 			} else {
 				MidiTabBuilder.hardRepaint(lightOutput, channel, lightPlan);
 			}
-		}
-
-		// On the very first sync for this table (no baseline yet -- e.g. routing
-		// was just enabled or re-targeted), only ADOPT the pitchPlan; don't
-		// forward it, so pre-existing notes never retrigger the synth just
-		// because MIDI routing started watching this table.
-		if (haveBaseline) {
-			MidiTabBuilder.forwardPitchChanges(MidiTabBuilder.lastPitchPlan || new Map(), pitchPlan);
 		}
 
 		MidiTabBuilder.lastPaintPlan = lightPlan;
@@ -872,16 +991,37 @@ export class MidiTabBuilder {
 	// Full wipe + repaint of every entry in plan -- used at Section boundaries
 	// so no lights from a previous Section/table/device-config can persist.
 	static hardRepaint(output, channel, plan) {
-		if (MidiTabBuilder.getDevice().mode !== 'Note') {
-			// Programmer mode's row*10+col numbering has a fixed 64-note address
-			// space, so a full wipe is cheap and simple (per 143-design-3.md's
-			// "simple algorithm...for now" -- a real SysEx screen-wipe is deferred).
-			clearLaunchpadGrid(output, channel);
-			MidiTabBuilder.logActivityText(`clear   64 grid notes -> velocity 0 (${output.name})`);
-			// Also defensively wipe the known real-hardware LED artifacts (right
-			// control column + the spurious-at-connect note) -- see
-			// clearLaunchpadEdgeArtifacts()'s doc comment in midi-io.js.
-			clearLaunchpadEdgeArtifacts(output, channel);
+		const device = MidiTabBuilder.getDevice();
+		if (device.mode !== 'Note') {
+			// Iteration 5, Round 3 (143-it5-design.md "Speeding up batch lighting"):
+			// #chkMidiUseSysExClear opts into a single SysEx "Light all LEDs"
+			// message (sendLightAllLedsSysEx()) instead of the ~70-message NOTE-ON
+			// based wipe below. Unlike clearLaunchpadGrid()/clearLaunchpadEdgeArtifacts()
+			// (which only ever touch the 64 grid notes + known edge-artifact
+			// addresses, leaving column-0/9 control buttons alone), the SysEx
+			// message overrides EVERY LED including those control buttons -- so
+			// this branch must resync every one of them afterward, which the
+			// NOTE-based branch never needed to do.
+			const useSysExClear = document.getElementById('chkMidiUseSysExClear')?.checked;
+			if (useSysExClear) {
+				sendLightAllLedsSysEx(output, 0);
+				MidiTabBuilder.logActivityText(`sysex   clear all LEDs (1 message) -> velocity 0 (${output.name})`);
+				MidiTabBuilder.syncTriggerModeIndicatorLight();
+				MidiTabBuilder.syncNoteTypeControlLights();
+				MidiTabBuilder.syncRecordButtonLight();
+				MidiTabBuilder.syncClearModeControlLight();
+				MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC, LAUNCHPAD_VELOCITY_ALL_CLEAR_IDLE);
+			} else {
+				// Programmer mode's row*10+col numbering has a fixed 64-note address
+				// space, so a full wipe is cheap and simple (per 143-design-3.md's
+				// "simple algorithm...for now").
+				clearLaunchpadGrid(output, channel);
+				MidiTabBuilder.logActivityText(`clear   64 grid notes -> velocity 0 (${output.name})`);
+				// Also defensively wipe the known real-hardware LED artifacts (right
+				// control column + the spurious-at-connect note) -- see
+				// clearLaunchpadEdgeArtifacts()'s doc comment in midi-io.js.
+				clearLaunchpadEdgeArtifacts(output, channel);
+			}
 			// Restores column 9's Looper-toggle lights (rows 7-8) immediately
 			// after the wipe above -- see LAUNCHPAD_COLUMN9_CONTROL_MAP's doc
 			// comment: those addresses ARE LAUNCHPAD_RIGHT_CONTROL_COLUMN_NOTES
@@ -956,8 +1096,14 @@ export class MidiTabBuilder {
 		const channel = device.forwardChannel ?? 1;
 		previousPlan.forEach((_velocity, midinum) => {
 			if (!newPlan.has(midinum)) {
-				sendNoteOff(output, channel, midinum, 0);
-				MidiTabBuilder.logActivity('fwd-off', [0x80 | channel, midinum & 0x7f, 0], output.name);
+				// Iteration 5, Round 1 (143-it5-design.md "Prefer NOTE ON 0 to NOTE
+				// OFF"): the VoiceLive 3 was observed to behave better when told
+				// "note off" via NOTE ON velocity 0 (0x9n note 00) rather than an
+				// explicit NOTE OFF (0x8n) message, even though both are
+				// spec-equivalent -- sendNoteOn(...,0) here instead of
+				// sendNoteOff(...).
+				sendNoteOn(output, channel, midinum, 0);
+				MidiTabBuilder.logActivity('fwd-off', [0x90 | channel, midinum & 0x7f, 0], output.name);
 			}
 		});
 		newPlan.forEach((velocity, midinum) => {
@@ -977,6 +1123,27 @@ export class MidiTabBuilder {
 			MidiTabBuilder.forwardPitchChanges(MidiTabBuilder.lastPitchPlan, new Map());
 		}
 		MidiTabBuilder.lastPitchPlan = null;
+	}
+
+	// Iteration 5, Round 1 (143-it5-design.md "CC_AllClear"): fires a single
+	// CC 123 127 ("All Notes Off") to the downstream forward output/channel --
+	// the VoiceLive 3's own documented single-message panic-clear. Also drops
+	// our own "what's currently held downstream" bookkeeping (lastPitchPlan),
+	// since the device just went silent independent of any diffing this app
+	// has done -- otherwise a later diff could wrongly conclude a pitch is
+	// still sounding (and skip resending it) when the device has actually gone
+	// quiet. Just a test/panic action for now -- NOT wired to Section changes
+	// yet (deferred, per the design doc).
+	static sendAllNotesOffToForwardDevice() {
+		const device = MidiTabBuilder.getDevice();
+		const output = MidiTabBuilder.currentForwardOutputPort();
+		if (!output) {
+			return;
+		}
+		const channel = device.forwardChannel ?? 1;
+		sendControlChange(output, channel, MIDI_CC_ALL_NOTES_OFF, 127);
+		MidiTabBuilder.logActivity('fwd-cc', [0xb0 | channel, MIDI_CC_ALL_NOTES_OFF, 127], output.name);
+		MidiTabBuilder.lastPitchPlan = new Map();
 	}
 
 	static applyRoutingButtonUi() {
@@ -1250,7 +1417,7 @@ export class MidiTabBuilder {
 		$('#btnMidiTestSendNoteOn')
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function () {
-				const output = MidiTabBuilder.currentOutputPort();
+				const output = MidiTabBuilder.currentDebugOutputPort();
 				if (!output) {
 					return;
 				}
@@ -1259,12 +1426,14 @@ export class MidiTabBuilder {
 				const velocity = Number($('#txtMidiTestNoteOnVelocity').val());
 				sendNoteOn(output, channel, note, velocity);
 				MidiTabBuilder.logActivity('send', [0x90 | channel, note & 0x7f, velocity & 0x7f], output.name);
+				$('#txtMidiTestNoteOnZeroNote').val(note);
+				$('#txtMidiTestNoteOffNote').val(note);
 			});
 
 		$('#btnMidiTestSendNoteOff')
 			.off(`click${eventNamespace}`)
 			.on(`click${eventNamespace}`, function () {
-				const output = MidiTabBuilder.currentOutputPort();
+				const output = MidiTabBuilder.currentDebugOutputPort();
 				if (!output) {
 					return;
 				}
@@ -1273,6 +1442,43 @@ export class MidiTabBuilder {
 				const velocity = Number($('#txtMidiTestNoteOffVelocity').val());
 				sendNoteOff(output, channel, note, velocity);
 				MidiTabBuilder.logActivity('send', [0x80 | channel, note & 0x7f, velocity & 0x7f], output.name+'-velocity:'+velocity);
+			});
+
+		$('#btnMidiTestSendNoteOnZero')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				const output = MidiTabBuilder.currentDebugOutputPort();
+				if (!output) {
+					return;
+				}
+				const channel = Number($('#selMidiTestNoteOnZeroChannel').val());
+				const note = Number($('#txtMidiTestNoteOnZeroNote').val());
+				const velocity = Number($('#txtMidiTestNoteOnZeroVelocity').val());
+				sendNoteOn(output, channel, note, velocity);
+				MidiTabBuilder.logActivity('send', [0x90 | channel, note & 0x7f, velocity & 0x7f], output.name+'-velocity:'+velocity);
+			});
+
+		$('#btnMidiTestSendCC')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				const output = MidiTabBuilder.currentDebugOutputPort();
+				if (!output) {
+					return;
+				}
+				const channel = Number($('#selMidiTestCCChannel').val());
+				const controller = Number($('#txtMidiTestCCNumber').val());
+				const value = Number($('#txtMidiTestCCValue').val());
+				sendControlChange(output, channel, controller, value);
+				MidiTabBuilder.logActivity('send', [0xb0 | channel, controller & 0x7f, value & 0x7f], output.name);
+			});
+
+		$('#btnMidiClearActivityLog')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				const el = document.getElementById('divMidiActivityLog');
+				if (el) {
+					el.textContent = '';
+				}
 			});
 
 		$('input[name="rbHighlight"]')
@@ -1328,7 +1534,14 @@ export class MidiTabBuilder {
 	static async initMidiAccess() {
 		let midiAccess;
 		try {
-			midiAccess = await requestMidiAccess({ sysex: false });
+			// Iteration 5, Round 3 (143-it5-design.md "Speeding up batch lighting"):
+			// sysex:true is required to send the new SysEx bulk-clear message
+			// (sendLightAllLedsSysEx()); requestMidiAccess({sysex:false}) previously
+			// used here would silently make output.send() throw for any SysEx
+			// message. Requested unconditionally (not only when
+			// #chkMidiUseSysExClear is checked) since Web MIDI access/permission is
+			// granted once up front, not re-negotiable per later feature use.
+			midiAccess = await requestMidiAccess({ sysex: true });
 		} catch (err) {
 			MidiTabBuilder.logActivity('error', [], err.message);
 			return;
@@ -1346,6 +1559,12 @@ export class MidiTabBuilder {
 			MidiTabBuilder.getDevice().forwardName || '',
 			PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING
 		);
+		MidiTabBuilder.populateDeviceSelect(
+			document.getElementById('selMidiDebugOutDevice'),
+			MidiTabBuilder.outputs,
+			'',
+			PREFERRED_DEBUG_DEVICE_NAME_SUBSTRING
+		);
 		MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
 		MidiTabBuilder.syncOnDeviceConnect();
 
@@ -1360,6 +1579,12 @@ export class MidiTabBuilder {
 				MidiTabBuilder.outputs,
 				MidiTabBuilder.getDevice().forwardName || '',
 				PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING
+			);
+			MidiTabBuilder.populateDeviceSelect(
+				document.getElementById('selMidiDebugOutDevice'),
+				MidiTabBuilder.outputs,
+				'',
+				PREFERRED_DEBUG_DEVICE_NAME_SUBSTRING
 			);
 			MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
 			MidiTabBuilder.syncOnDeviceConnect();
@@ -1388,5 +1613,9 @@ export class MidiTabBuilder {
 		MidiTabBuilder.syncRecordButtonLight();
 		MidiTabBuilder.syncLooperControlLights();
 		MidiTabBuilder.syncClearModeControlLight();
+		// Round 2: All Clear button idles lit YELLOW_GREEN as soon as an output
+		// port is reachable, same rationale as the other control-button lights
+		// above (don't wait for a first press/release to show its idle state).
+		MidiTabBuilder.setControlLight(LAUNCHPAD_CONTROL_BUTTON_ALL_CLEAR_CC, LAUNCHPAD_VELOCITY_ALL_CLEAR_IDLE);
 	}
 }

@@ -15,6 +15,12 @@
             <h4>MIDI OUT</h4>
             <label for="selMidiOutDevice">Output device:</label>
             <select id="selMidiOutDevice"></select>
+        </div>
+
+        <div class="midiSection">
+            <h4>MIDI OUT (debug/test send)</h4>
+            <label for="selMidiDebugOutDevice">Output device:</label>
+            <select id="selMidiDebugOutDevice"></select>
 
             <div class="midiOutTestGrid">
                 <div class="midiOutTestGridHeader">message</div>
@@ -34,6 +40,18 @@
                 <div><input type="text" id="txtMidiTestNoteOnNote" value="60" size="4"></div>
                 <div><input type="text" id="txtMidiTestNoteOnVelocity" value="127" size="4"></div>
                 <div><button id="btnMidiTestSendNoteOn" class="MenuButton BtnPunchedOut" type="button" title="Send a Note ON message">Send</button></div>
+
+                <div>Note On</div>
+                <div><select id="selMidiTestNoteOnZeroChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOnZeroNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOnZeroVelocity" value="0" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOnZero" class="MenuButton BtnPunchedOut" type="button" title="Send a Note ON message with velocity 0 (functionally a Note Off on most devices)">Send</button></div>
+
+                <div>CC</div>
+                <div><select id="selMidiTestCCChannel"></select></div>
+                <div><input type="text" id="txtMidiTestCCNumber" value="123" size="4"></div>
+                <div><input type="text" id="txtMidiTestCCValue" value="127" size="4"></div>
+                <div><button id="btnMidiTestSendCC" class="MenuButton BtnPunchedOut" type="button" title="Send a Control Change message">Send</button></div>
             </div>
         </div>
 
@@ -65,6 +83,11 @@
                 <option value="normal">Normal (device top = screen top)</option>
                 <option value="inverted">Inverted</option>
             </select>
+            <br>
+            <br>
+            <label for="chkMidiUseSysExClear" title="Programmer mode only: use one Launchpad Pro 'Light all LEDs' SysEx message to bulk-clear the device instead of ~70 individual NOTE ON velocity-0 messages. Faster; used for the Section-navigation/beat-tick repaint, never for the downstream VoiceLive forward.">
+                <input type="checkbox" id="chkMidiUseSysExClear"> Use SysEx bulk clear (Programmer mode)
+            </label>
         </div>
 
         <div class="midiSection">
@@ -76,7 +99,13 @@
         </div>
 
         <div class="midiSection">
-            <h4>Activity log</h4>
+            <div class="midiActivityLogHeader">
+                <h4>Activity log</h4>
+                <button id="btnMidiClearActivityLog" class="MenuButton BtnPunchedOut" type="button" title="Clear the activity log">Clear</button>
+                <label for="chkMidiFilterAftertouch" title="Aftertouch (Channel Pressure) messages are never acted on -- checking this also skips logging them, to keep the log/critical path clear of this noise.">
+                    <input type="checkbox" id="chkMidiFilterAftertouch"> Filter Aftertouch
+                </label>
+            </div>
             <div id="divMidiActivityLog" class="midiActivityLog"></div>
         </div>
     </div>
