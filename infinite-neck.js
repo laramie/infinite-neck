@@ -2137,6 +2137,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 		InfoBuilder.renderFromSong(getSong());
 		InfoBuilder.handleSongLoaded(getSong());
+		MidiTabBuilder.renderFromSong(getSong());
 		scheduleUrlMacroRun();
 	}
 

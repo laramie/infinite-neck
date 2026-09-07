@@ -297,9 +297,51 @@ export class MidiTabBuilder {
 		return MidiTabBuilder.div_MidiTab;
 	}
 
+	// Iteration 5, Round 10 (real-hardware feature request: "all the controls
+	// on the Desktop > MIDI page [should] save to the song... when opened
+	// again, we'd like all those controls back"): called both at app init
+	// (once, via the loadTemplates()... promise in infinite-neck.js) AND on
+	// every subsequent song load/switch (updateAfterOpenSong() in
+	// infinite-neck.js, covering File > Open, loadSong(), URL ?song=, and
+	// /vdf-style loads -- all of them funnel through openSong()). Previously
+	// this was ONLY called once at app init, so switching to a different
+	// Song never resynced the MIDI tab's controls (or re-selected the IN/OUT/
+	// Forward device pickers, or re-attached the input listener) to the
+	// newly-loaded Song's own persisted midiDevice -- the tab kept showing
+	// whatever the PREVIOUSLY loaded Song had configured.
 	static renderFromSong(song = getSong()) {
 		MidiTabBuilder.populateInstrumentPicker(song);
+		MidiTabBuilder.syncDeviceSelectsFromSong(song);
 		MidiTabBuilder.syncControlsFromDevice(song);
+	}
+
+	// Re-selects the IN/OUT/Forward device pickers to match THIS song's
+	// persisted device.name/forwardName, and re-attaches the input listener to
+	// whatever that leaves selected -- needed because populateDeviceSelect()
+	// is otherwise only ever called from initMidiAccess()/its onstatechange
+	// handler, which read getDevice() at THEIR OWN call time, not whenever a
+	// different Song is later loaded.
+	// No-ops if MIDI access hasn't been granted/enumerated yet (midiAccess
+	// still null) -- in that case initMidiAccess() itself will read the
+	// CURRENT song's midiDevice fresh once its requestMidiAccess() promise
+	// resolves (it already does -- see MidiTabBuilder.getDevice() calls
+	// inside it), so there's nothing to duplicate/race here; this only needs
+	// to handle the case where MIDI access was ALREADY granted before this
+	// (different) Song loaded, e.g. switching Songs mid-session.
+	static syncDeviceSelectsFromSong(song = getSong()) {
+		if (!MidiTabBuilder.midiAccess) {
+			return;
+		}
+		const device = song.midiDevice || {};
+		MidiTabBuilder.populateDeviceSelect(document.getElementById('selMidiInDevice'), MidiTabBuilder.inputs, device.name || '');
+		MidiTabBuilder.populateDeviceSelect(document.getElementById('selMidiOutDevice'), MidiTabBuilder.outputs, device.name || '');
+		MidiTabBuilder.populateDeviceSelect(
+			document.getElementById('selMidiForwardDevice'),
+			MidiTabBuilder.outputs,
+			device.forwardName || '',
+			PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING
+		);
+		MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
 	}
 
 	static syncControlsFromDevice(song = getSong()) {
@@ -331,6 +373,16 @@ export class MidiTabBuilder {
 		}
 		MidiTabBuilder.applyRoutingButtonUi();
 		MidiTabBuilder.applyTriggerModeButtonUi();
+		// If this Song was saved with Routing on (device.enabled) and a real
+		// output is already reachable (e.g. the Launchpad was already
+		// connected/selected above), finish reconnecting immediately -- no
+		// need to "mash the routing button". clearAndRepaintDevice() is
+		// already a safe no-op when disabled/no tableID/no output (see its own
+		// doc comment), so this is harmless when Routing was saved OFF -- per
+		// the request, an OFF Song must NOT auto-reconnect, only restore the
+		// controls' displayed values (already done above).
+		MidiTabBuilder.lastPaintTableID = ''; // force a hard repaint against the freshly-loaded Song's state
+		MidiTabBuilder.clearAndRepaintDevice();
 	}
 
 	static populateChannelSelects() {
