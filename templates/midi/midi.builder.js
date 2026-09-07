@@ -8,14 +8,14 @@
 // downstream forwarding are covered.
 //
 // Iteration 4 round 2 (143-it4-design-2.md) added two more paint-plan
-// sources, both LIGHTS ONLY (never forwarded downstream, never affecting
-// pitchPlan): Highlight overlays (magenta "Highlight Multi"/yellow "Highlight
-// Pitch (MIDI)", always winning over whatever note color is underneath) and
-// Recorded Notes (the beat-keyed sectionNotes.recordedNotes[] Looper-playback
-// overlay, previously not read by this module at all) -- see
-// buildDevicePaintPlan()'s doc comment for the full read-source breakdown and
-// why recordedNotes/live-highlight-DOM reads are handled differently
-// depending on which trigger (click vs. beat-tick) is building the plan.
+// sources, both LIGHTS ONLY (never forwarded downstream): Highlight overlays
+// (magenta "Highlight Multi"/yellow "Highlight Pitch (MIDI)", always winning
+// over whatever note color is underneath) and Recorded Notes (the beat-keyed
+// sectionNotes.recordedNotes[] Looper-playback overlay, previously not read
+// by this module at all) -- see buildDevicePaintPlan()'s doc comment for the
+// full read-source breakdown and why recordedNotes/live-highlight-DOM reads
+// are handled differently depending on which trigger (click vs. beat-tick)
+// is building the plan.
 //
 // Builds the "MIDI" Desktop tab: MIDI IN/OUT device pickers ported from the
 // Iteration 1 standalone prototype, plus Instrument routing (NOTE ON/OFF from
@@ -33,30 +33,32 @@
 // keeping its own mirrored copy.
 //
 // Per 143-design-3.md, Latch mode (the default) ignores button-up (NOTE OFF)
-// entirely. Per 143-it4-design.md, Momentary mode ALSO toggles the note off
-// on button-up (see handleIncomingMidiMessage()'s comment for the exact
-// Latch<->Momentary transition semantics). MIDI OUT tracks a "paint plan"
-// (Map<outNote, velocity>) of whatever should currently be lit on the
-// Launchpad, PLUS a parallel "pitch plan" (Map<midinum, velocity>) of true
-// MIDI pitches for downstream forwarding -- both rebuilt from the routed
-// table's namedNotes/playedNotes on two triggers:
+// for the on-screen Section model; Momentary ALSO calls colorNote() again on
+// button-up. See handleIncomingMidiMessage()'s comment for the exact
+// Latch<->Momentary transition semantics.
+//
+// Iteration 5, Round 9 (real-hardware mission-critical requirement: "note on
+// and off from a button press must go one-to-one with note on and off to the
+// VoiceLive at that pitch... lights/Session are secondary"): downstream pitch
+// forwarding is now COMPLETELY DECOUPLED from the Section model/paint plan,
+// for BOTH Latch and Momentary -- forwardDeviceEvent() echoes every real
+// physical NOTE ON/OFF straight through to the forward output 1:1, before
+// colorNote() ever runs. See its doc comment for why Rounds 5-8's approach of
+// deriving forwarding from a diff of the chart's highlighted-cells snapshot
+// (a "pitch plan") kept surfacing new failure modes and was abandoned.
+//
+// MIDI OUT still tracks a "paint plan" (Map<outNote, velocity>) of whatever
+// should currently be lit on the Launchpad -- LIGHTS ONLY now, rebuilt from
+// the routed table's namedNotes/playedNotes/etc. on two triggers:
 //   - 'Widget:SectionStatus:statusChanged' (replayTable() fires this once per
 //     visible table on Section navigation and every Looper beat tick) -> full
-//     clear-and-repaint of the LIGHTS ONLY, skipped entirely if the freshly
-//     computed light-plan is identical to what's already lit (avoids visibly
+//     clear-and-repaint of the lights, skipped entirely if the freshly
+//     computed plan is identical to what's already lit (avoids visibly
 //     re-flashing the grid for redundant back-to-back firings of this event
-//     for the same Section). The pitch-plan baseline is still silently
-//     refreshed here (no forwarding message sent) so a later click's diff
-//     stays accurate.
+//     for the same Section).
 //   - 'Note:colored' (colorNote() fires this on every td.note click/press) ->
-//     a targeted diff against the previous plan for lights (only changed
-//     notes get a message, so composing on the neck doesn't flash the whole
-//     grid) -- see forwardSinglePitchChange()'s doc comment for why pitch
-//     forwarding does NOT use a whole-pitchPlan diff (Iteration 5 Round 5
-//     "NamedNote forward bug" fix: a NamedNote/Multi-type highlight can
-//     light up many cells/pitches for one physical press, but only the ONE
-//     pitch actually pressed may ever reach the downstream device), and why
-//     forwarding only ever happens from here, never from Section navigation.
+//     a targeted diff against the previous plan (only changed notes get a
+//     message, so composing on the neck doesn't flash the whole grid).
 // Neither hook required any changes to NoteTableController.js.
 
 import { getSong, getCurrentSection } from '../../infinite-neck.js';
@@ -266,45 +268,16 @@ export class MidiTabBuilder {
 	static lastPaintPlan = null;
 	static lastPaintTableID = '';
 
-	// Downstream forwarding (Iteration 4, 143-it4-design.md; refined Iteration 5
-	// Round 5): the SINGLE source of truth for "is this pitch currently believed
-	// sounding on the forward output" -- a Map<midinum, velocity>, maintained
-	// ONLY by forwardSinglePitchChange()/sendAllNotesOffToForwardDevice()/
-	// releaseForwardedPitches(). Deliberately NOT derived from pitchPlan (the
-	// chart's full highlighted-cells snapshot, see buildDevicePaintPlan()) --
-	// pitchPlan can include many pitches for one physical press (e.g. a
-	// NamedNote spreads across every octave of that note letter), but only the
-	// ONE pitch actually pressed may ever be forwarded, per "one Launchpad
-	// button == one MIDI NOTE ON" (143-it5-design.md Round 5 "NamedNote forward
-	// bug").
+	// Downstream forwarding (Iteration 4, 143-it4-design.md; rewritten Iteration
+	// 5 Round 9): the SINGLE source of truth for "is this pitch currently
+	// believed sounding on the forward output" -- a Map<midinum, velocity>,
+	// maintained ONLY by forwardDeviceEvent()/sendAllNotesOffToForwardDevice()/
+	// releaseForwardedPitches(). No longer derived from any chart/highlight
+	// snapshot at all -- forwardDeviceEvent() is a direct echo of the raw
+	// physical MIDI event, so this Map simply mirrors "what NOTE ON/OFF have we
+	// actually sent downstream so far" (used only by the panic/cleanup
+	// functions above to know what still needs a NOTE OFF).
 	static forwardedPitches = new Map();
-
-	// A physical NOTE ON's velocity, captured just before the resulting
-	// colorNote() call (see handleIncomingMidiMessage()) so the SYNCHRONOUS
-	// 'Note:colored' handler that follows can forward the real press velocity
-	// instead of a default. Keyed by midinum since that's the forwarding unit.
-	static pendingForwardVelocityByMidinum = new Map();
-
-	// Iteration 5, Round 5 (143-it5-design.md "NamedNote forward bug"): the
-	// exact midinum of the ONE cell a real physical Launchpad press/release
-	// targets -- captured just before calling colorNote() (same call site as
-	// pendingForwardVelocityByMidinum above), so the SYNCHRONOUS 'Note:colored'
-	// handler that follows (onNoteColored()) forwards only this one pitch,
-	// never the extra cells a NamedNote/Multi-type highlight spreads across.
-	// Reset to null right after, same pattern as deviceOriginatedColorEvent.
-	static pendingForwardMidinum = null;
-
-	// Iteration 5, Round 1 (143-it5-design.md "Mouse Clicks silent"): true only
-	// while handleIncomingMidiMessage() is synchronously inside its own
-	// colorNote(cell) call for a REAL physical Launchpad NOTE ON/OFF -- the
-	// SAME 'Note:colored' event also fires for plain mouse clicks on a td.note
-	// (NoteTableController.js's own click handler calls colorNote() directly,
-	// with no way to distinguish origin from the event payload alone). Only
-	// device-originated note events may reach the downstream sound device;
-	// mouse-driven chart editing must stay silent to the VoiceLive. Checked
-	// (and only ever true) inside onNoteColored()'s synchronous handling of
-	// that same colorNote() call, then reset to false right after.
-	static deviceOriginatedColorEvent = false;
 
 	static getDevice() {
 		return getSong().midiDevice || {};
@@ -510,11 +483,15 @@ export class MidiTabBuilder {
 	// Launchpad's row*10+col grid encoding; 'Note' treats the incoming note
 	// number as a real MIDI pitch and matches it directly against the
 	// Instrument's own midinum attributes (whatever device sent it).
-	// device.triggerMode selects how button-up (NOTE OFF) is handled:
-	//   - 'Latch' (default): button-up means nothing; a note only toggles on
-	//     the next button-down (matches the long-standing td.note click model).
-	//   - 'Momentary': button-up ALSO calls colorNote() again, so it behaves
-	//     like a synth key -- down adds the note, up removes it.
+	// device.triggerMode now ONLY selects whether button-up (NOTE OFF) reaches
+	// the SECTION/on-screen model (see forwardDeviceEvent()'s doc comment for
+	// why downstream forwarding itself no longer depends on triggerMode at
+	// all):
+	//   - 'Latch' (default): button-up means nothing for the model; a note
+	//     only toggles on the next button-down (matches the long-standing
+	//     td.note click model).
+	//   - 'Momentary': button-up ALSO calls colorNote() again, so the model
+	//     behaves like a synth key -- down adds the note, up removes it.
 	// The CURRENT triggerMode is checked at release time, not whatever mode was
 	// in effect when the button went down: switching Latch->Momentary while a
 	// button is held means its eventual release now fires one extra toggle-off
@@ -650,9 +627,6 @@ export class MidiTabBuilder {
 		if (!device.enabled || !device.tableID || (!isNoteOn && !isNoteOff)) {
 			return;
 		}
-		if (isNoteOff && device.triggerMode !== 'Momentary') {
-			return;
-		}
 		let cell;
 		if (device.mode === 'Note') {
 			cell = showMidiNotesInTable(device.tableID, parsed.note);
@@ -667,30 +641,76 @@ export class MidiTabBuilder {
 		if (!cell || cell.length === 0) {
 			return;
 		}
-		// Only a physical button-DOWN carries a meaningful press velocity to
-		// forward downstream (button-up always forwards NOTE OFF at velocity 0,
-		// per 143-it4-design.md) -- stash it so the synchronous 'Note:colored'
-		// handler triggered by colorNote() below can pick it up.
 		const midinum = Number(cell.attr('midinum'));
-		if (isNoteOn && Number.isInteger(midinum)) {
-			MidiTabBuilder.pendingForwardVelocityByMidinum.set(midinum, parsed.velocity);
+
+		// Iteration 5, Round 9 (real-hardware mission-critical requirement, see
+		// forwardDeviceEvent()'s doc comment): forward the raw physical event
+		// DIRECTLY and UNCONDITIONALLY here, for BOTH Latch and Momentary, BEFORE
+		// colorNote() runs any Section-model/highlight side effects -- sound-
+		// critical path first, lights/Session strictly secondary.
+		MidiTabBuilder.forwardDeviceEvent(midinum, isNoteOn, parsed.velocity);
+
+		// triggerMode now ONLY controls whether the on-screen Section model
+		// reacts to button-up: Latch (default) ignores release entirely here
+		// (matches the long-standing td.note click model); Momentary also calls
+		// colorNote() on release, toggling the model off. The forward above
+		// already happened unconditionally either way.
+		if (isNoteOff && device.triggerMode !== 'Momentary') {
+			return;
 		}
-		// Iteration 5, Round 5 (143-it5-design.md "NamedNote forward bug"): also
-		// stash the exact midinum of THIS physically-pressed cell -- see
-		// pendingForwardMidinum's doc comment -- so onNoteColored() forwards only
-		// this one pitch, not every cell a NamedNote/Multi-type highlight spreads
-		// across.
-		MidiTabBuilder.pendingForwardMidinum = Number.isInteger(midinum) ? midinum : null;
-		// Marks this colorNote() call as device-originated (see
-		// deviceOriginatedColorEvent's doc comment) -- read synchronously by
-		// onNoteColored() below, then always reset so a later mouse click isn't
-		// mistaken for a physical press.
-		MidiTabBuilder.deviceOriginatedColorEvent = true;
 		colorNote(cell);
-		MidiTabBuilder.deviceOriginatedColorEvent = false;
-		MidiTabBuilder.pendingForwardMidinum = null;
-		if (isNoteOn && Number.isInteger(midinum)) {
-			MidiTabBuilder.pendingForwardVelocityByMidinum.delete(midinum);
+	}
+
+	// Iteration 5, Round 9 (real-hardware mission-critical requirement: "note
+	// on and off from a button press must go one-to-one with note on and off
+	// to the VoiceLive at that pitch that was pressed with the button...
+	// [lights/Session are] secondary... fastest and most reliable way... no
+	// other rules should prevent simple forwarding"): forwards the raw
+	// physical MIDI event straight through, 1:1, for BOTH Latch and Momentary
+	// trigger modes -- a real NOTE ON always produces exactly one forwarded
+	// NOTE ON at that pitch/velocity; a real NOTE OFF always produces exactly
+	// one forwarded NOTE ON velocity-0 at that pitch. Completely independent
+	// of whatever colorNoteInner()'s highlight/Section-model side effects
+	// decide to do with the cell (e.g. NamedNote's "press an already-lit cell
+	// to flash it off" feature) -- the physical button press/release IS the
+	// forwarding signal, full stop.
+	//
+	// SUPERSEDES Rounds 5-8's pitchPlan/forwardedPitches DIFFING approach
+	// (deriving forward on/off from comparing the chart's highlighted-cells
+	// snapshot before/after colorNote() ran) entirely -- that approach kept
+	// surfacing new failure modes (NamedNote's shared-per-letter model could
+	// silence the wrong pitch or double-forward, and Latch mode's NOTE OFF
+	// never even reached the forwarding code, since it was ignored before
+	// resolving a cell at all) because it tried to INFER the physical event
+	// from a side effect of it, rather than just echoing the event itself.
+	// Latch and Momentary are not different EVENT MODELS for forwarding
+	// purposes -- both already deliver an unambiguous real NOTE ON and a real
+	// NOTE OFF from the hardware; only what the SECTION MODEL does with a
+	// release differs between them (see handleIncomingMidiMessage()'s
+	// triggerMode gate, applied strictly AFTER this call).
+	//
+	// Called from handleIncomingMidiMessage() BEFORE colorNote() -- sound-
+	// critical path first, lights/session strictly secondary (same ordering
+	// lesson as Round 2's latency fix, taken to its logical conclusion: zero
+	// model dependency at all, not just "goes first").
+	static forwardDeviceEvent(midinum, isNoteOn, velocity) {
+		const device = MidiTabBuilder.getDevice();
+		const output = MidiTabBuilder.currentForwardOutputPort();
+		if (!output || !Number.isInteger(midinum)) {
+			return;
+		}
+		const channel = device.forwardChannel ?? 0;
+		if (isNoteOn) {
+			sendNoteOn(output, channel, midinum, velocity);
+			MidiTabBuilder.logActivity('fwd-on', [0x90 | channel, midinum & 0x7f, velocity & 0x7f], output.name);
+			MidiTabBuilder.forwardedPitches.set(midinum, velocity);
+		} else {
+			// Iteration 5, Round 1 (143-it5-design.md "Prefer NOTE ON 0 to NOTE
+			// OFF"): the VoiceLive 3 responds better to NOTE ON velocity 0 than an
+			// explicit NOTE OFF (0x8n), even though both are spec-equivalent.
+			sendNoteOn(output, channel, midinum, 0);
+			MidiTabBuilder.logActivity('fwd-off', [0x90 | channel, midinum & 0x7f, 0], output.name);
+			MidiTabBuilder.forwardedPitches.delete(midinum);
 		}
 	}
 
@@ -782,11 +802,15 @@ export class MidiTabBuilder {
 	// td.note click (or anything else that calls colorNote()) fires this;
 	// react with a targeted diff so composing on the neck doesn't flash the
 	// whole grid -- only the note(s) that actually changed get a message.
-	// Also drives downstream pitch forwarding (Iteration 4): the ONLY place
-	// forwarding happens, since real add/remove clicks/presses are the only
-	// events meant to reach the downstream sound device (see
-	// forwardSinglePitchChange()'s doc comment for why Section navigation must
-	// not, and for why forwarding never diffs the whole pitchPlan).
+	//
+	// Iteration 5, Round 9: no longer drives downstream pitch forwarding at
+	// all -- forwarding now happens directly in handleIncomingMidiMessage()
+	// via forwardDeviceEvent(), completely decoupled from whatever colorNote()
+	// does here (see forwardDeviceEvent()'s doc comment). This also means a
+	// plain mouse click on a td.note (which also calls colorNote(), and so
+	// also fires this same 'Note:colored' event) naturally stays silent to the
+	// downstream device with no special-case flag needed -- mouse clicks never
+	// go through handleIncomingMidiMessage() at all.
 	static onNoteColored(event, data) {
 		const device = MidiTabBuilder.getDevice();
 		if (!device.enabled || !device.tableID || !data || data.sourceTableID !== device.tableID) {
@@ -794,41 +818,8 @@ export class MidiTabBuilder {
 		}
 		// Real-time click: DOM Highlight classes are trustworthy (see
 		// buildDevicePaintPlan()'s doc comment).
-		const { lightPlan, pitchPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: true });
+		const { lightPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: true });
 		const haveBaseline = !!MidiTabBuilder.lastPaintPlan && device.tableID === MidiTabBuilder.lastPaintTableID;
-
-		// Iteration 5, Round 2 (143-it5-design.md "latency is killing us... the
-		// forward is what creates the sound in real-time, so it must be
-		// critical-path"): forward FIRST, before anything else below -- in
-		// particular, before the Launchpad's own light feedback, which on a hard
-		// repaint sends a full 64-note clear + edge-artifact wipe + resend
-		// (~70+ MIDI messages) to a SEPARATE physical port, easily dwarfing the
-		// one or two forward messages a single button press needs. Plain
-		// synchronous reordering (not an actual async deferral) is enough here:
-		// this already guarantees every forward output.send() call for this
-		// event is issued before any light output.send() call for the same
-		// event, with no risk of the diffRepaint-vs-lastPaintPlan correctness
-		// hazard an async (setTimeout/Promise) deferral of the light repaint
-		// would introduce (diffRepaint() reads the live lastPaintPlan at call
-		// time, so deferring it while lastPaintPlan is updated in the meantime
-		// would silently turn every diff into a no-op).
-		//
-		// On the very first sync for this table (no baseline yet -- e.g. routing
-		// was just enabled or re-targeted), only ADOPT the pitchPlan; don't
-		// forward it, so pre-existing notes never retrigger the synth just
-		// because MIDI routing started watching this table.
-		//
-		// "Mouse Clicks silent" (Round 1): also gated on deviceOriginatedColorEvent
-		// -- a plain mouse click on a td.note fires this SAME 'Note:colored' event,
-		// but must never reach the downstream sound device, only a real physical
-		// Launchpad NOTE ON/OFF may.
-		//
-		// Iteration 5, Round 5 ("NamedNote forward bug"): forward exactly the ONE
-		// pitch this press/release targeted (pendingForwardMidinum), never a full
-		// pitchPlan diff -- see forwardSinglePitchChange()'s doc comment.
-		if (haveBaseline && MidiTabBuilder.deviceOriginatedColorEvent && Number.isInteger(MidiTabBuilder.pendingForwardMidinum)) {
-			MidiTabBuilder.forwardSinglePitchChange(MidiTabBuilder.pendingForwardMidinum, pitchPlan);
-		}
 
 		const lightOutput = MidiTabBuilder.currentOutputPort();
 		if (lightOutput) {
@@ -867,10 +858,9 @@ export class MidiTabBuilder {
 		// Section-navigation/beat-tick: DOM Highlight classes may still reflect
 		// the previous beat (see buildDevicePaintPlan()'s doc comment), so only
 		// the model-driven recordedNotes[beat] highlights are trusted here.
-		// pitchPlan is deliberately unused here -- Section navigation never
-		// forwards (see this method's own doc comment), and forwarding's on/off
-		// bookkeeping (forwardedPitches) is no longer derived from pitchPlan
-		// snapshots at all (Iteration 5 Round 5 "NamedNote forward bug" fix).
+		// Section navigation never forwards downstream at all (see this
+		// method's own doc comment) -- forwarding is now entirely independent of
+		// paint plans (see forwardDeviceEvent()'s doc comment).
 		const { lightPlan } = MidiTabBuilder.buildDevicePaintPlan(device.tableID, { includeDomHighlights: false });
 		const output = MidiTabBuilder.currentOutputPort();
 		if (!output) {
@@ -918,20 +908,13 @@ export class MidiTabBuilder {
 		});
 	}
 
-	// Builds this table's current paint state as TWO parallel maps:
+	// Builds this table's current LIGHTS-ONLY paint state as a single map:
 	//   - lightPlan: Map<outNote, velocity> for the Launchpad's own lights,
 	//     encoded per device.mode/colorMap/orientation (as before).
-	//   - pitchPlan: Map<midinum, velocity> of true MIDI pitches, ALWAYS the
-	//     real note number regardless of device.mode -- per 143-it4-design.md,
-	//     downstream forwarding must be true MIDI "regardless of
-	//     ProgrammerMode/NoteMode". velocity here is whatever a physical press
-	//     caused (see pendingForwardVelocityByMidinum), defaulting to 127 for a
-	//     plain UI click. NOTE (143-it5-design.md Round 5 "NamedNote forward
-	//     bug"): this Map legitimately contains MANY pitches for one physical
-	//     press (a NamedNote spreads across every octave of that note letter)
-	//     -- callers that forward downstream must never diff the whole Map;
-	//     see forwardSinglePitchChange()'s doc comment for why only ONE
-	//     pitch (the one physically pressed) may ever be forwarded.
+	// Iteration 5, Round 9: no longer also builds a parallel "pitch plan" for
+	// downstream forwarding -- forwarding is now a direct echo of the raw
+	// physical MIDI event (see forwardDeviceEvent()'s doc comment), completely
+	// independent of this chart-state snapshot.
 	// Covers THREE data sources (see NoteTableController.js replayTable() and
 	// showHighlightsForBeatForOptions()):
 	//   - namedNotes: the chart's main note-name coloring (what colorNote()
@@ -957,9 +940,8 @@ export class MidiTabBuilder {
 			? section.getSectionNotes(tableID)
 			: null;
 		const lightPlan = new Map();
-		const pitchPlan = new Map();
 		if (!sectionNotes) {
-			return { lightPlan, pitchPlan };
+			return { lightPlan };
 		}
 		const lookupContext = MidiTabBuilder.buildLookupContext(section, tableID);
 
@@ -976,10 +958,6 @@ export class MidiTabBuilder {
 			const resolvedColorClass = lookupUserColorClass(note, lookupContext);
 			const velocity = resolveLaunchpadVelocityForColorClass(device.colorMap, resolvedColorClass);
 			lightPlan.set(outNote, velocity);
-			if (Number.isInteger(midinum)) {
-				const forwardVelocity = MidiTabBuilder.pendingForwardVelocityByMidinum.get(midinum) ?? 127;
-				pitchPlan.set(midinum, forwardVelocity);
-			}
 		};
 
 		const namedNotes = sectionNotes.namedNotes || {};
@@ -1057,7 +1035,7 @@ export class MidiTabBuilder {
 			lightPlan.set(outNote, velocity);
 		});
 
-		return { lightPlan, pitchPlan };
+		return { lightPlan };
 	}
 
 	static highlightVelocityForStyleNum(styleNum) {
@@ -1212,72 +1190,6 @@ export class MidiTabBuilder {
 			}
 		}
 		return true;
-	}
-
-	// Sends true MIDI NOTE ON/OFF to the downstream sound device (e.g.
-	// VoiceLive 3) for ONE pitch only -- `midinum`, the exact pitch a single
-	// physical Launchpad press/release targeted (see pendingForwardMidinum's
-	// doc comment).
-	//
-	// Iteration 5, Round 5 (143-it5-design.md "NamedNote forward bug"): a
-	// NamedNote (or Multi-type Highlight) click can light up MANY cells across
-	// many octaves of the same note letter/pitch-class in one go -- pitchPlan
-	// reflects all of them -- but the User only physically pressed ONE
-	// Launchpad button, so only ONE pitch may ever be forwarded for it: "one
-	// Launchpad button == one MIDI NOTE ON", regardless of note type
-	// (Named/Single/Tiny/Fingering/Bend/Pitch/Multi all forward exactly the
-	// one pressed pitch, never the calculated spread). This is why this
-	// function takes a single `midinum`, never a whole previous/new plan pair
-	// to diff.
-	//
-	// forwardedPitches (not pitchPlan) is the single source of truth for "is
-	// this pitch currently believed sounding downstream": pitchPlan reflects
-	// the chart's full highlighted state (including every spread cell above)
-	// and would wrongly re-derive multiple forwards from one press if used
-	// directly for this decision. `pitchPlan.has(midinum)` still correctly
-	// answers "is THIS ONE pitch lit after the click" (whether lit via the
-	// direct press or coincidentally via a different source), which combined
-	// with forwardedPitches' before-state gives a clean on/off/no-op decision
-	// for just this pitch. Diffs by PITCH PRESENCE ONLY (ignores a
-	// velocity-only change on an already-forwarded pitch) -- a recolor on
-	// screen must never retrigger the downstream synth, per
-	// 143-it4-design.md's "we are doing nothing downstream to upset the notes
-	// sent to VoiceLive 3".
-	//
-	// Deliberately called ONLY from onNoteColored() (real add/remove
-	// clicks/presses) and never from Section-navigation's
-	// clearAndRepaintDevice() -- the downstream device should behave as if
-	// hard-wired straight to the physical controller; infinite-neck is a
-	// man-in-the-middle only for drawing pictures in the browser and lighting
-	// the Launchpad, and must not inject or suppress notes based on which
-	// Section happens to be displayed.
-	static forwardSinglePitchChange(midinum, pitchPlan) {
-		const device = MidiTabBuilder.getDevice();
-		const output = MidiTabBuilder.currentForwardOutputPort();
-		if (!output) {
-			return;
-		}
-		const channel = device.forwardChannel ?? 0;
-		const wasForwarded = MidiTabBuilder.forwardedPitches.has(midinum);
-		const isNowLit = pitchPlan.has(midinum);
-		if (wasForwarded && !isNowLit) {
-			// Iteration 5, Round 1 (143-it5-design.md "Prefer NOTE ON 0 to NOTE
-			// OFF"): the VoiceLive 3 was observed to behave better when told
-			// "note off" via NOTE ON velocity 0 (0x9n note 00) rather than an
-			// explicit NOTE OFF (0x8n) message, even though both are
-			// spec-equivalent -- sendNoteOn(...,0) here instead of
-			// sendNoteOff(...).
-			sendNoteOn(output, channel, midinum, 0);
-			MidiTabBuilder.logActivity('fwd-off', [0x90 | channel, midinum & 0x7f, 0], output.name);
-			MidiTabBuilder.forwardedPitches.delete(midinum);
-		} else if (!wasForwarded && isNowLit) {
-			const velocity = pitchPlan.get(midinum);
-			sendNoteOn(output, channel, midinum, velocity);
-			MidiTabBuilder.logActivity('fwd-on', [0x90 | channel, midinum & 0x7f, velocity & 0x7f], output.name);
-			MidiTabBuilder.forwardedPitches.set(midinum, velocity);
-		}
-		// else: no change for this pitch (e.g. re-coloring an already-lit note,
-		// or a KEEP/DROPPER palette click that didn't toggle it) -- no-op.
 	}
 
 	// Releases (NOTE OFF) any pitches we're currently holding open downstream
