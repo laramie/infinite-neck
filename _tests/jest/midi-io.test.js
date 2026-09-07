@@ -4,6 +4,9 @@ import {
 	buildNoteOnBytes,
 	buildNoteOffBytes,
 	buildLightAllLedsSysExBytes,
+	buildLightLedsSysExBytes,
+	sendLightLedsSysEx,
+	LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE,
 	parseLaunchpadProgrammerGridNote,
 	launchpadGridToCell,
 	cellToLaunchpadGridNote,
@@ -106,6 +109,44 @@ describe('midi-io pure helpers', () => {
 	test('buildLightAllLedsSysExBytes encodes the Launchpad Pro manual\'s exact "Light all LEDs" SysEx message', () => {
 		expect(Array.from(buildLightAllLedsSysExBytes(0))).toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0e, 0x00, 0xf7]);
 		expect(Array.from(buildLightAllLedsSysExBytes(21))).toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0e, 21, 0xf7]);
+	});
+
+	test('buildLightLedsSysExBytes encodes repeated LED/colour pairs per the Launchpad Pro manual\'s "Light LED using SysEx" message', () => {
+		expect(Array.from(buildLightLedsSysExBytes([[11, 5], [88, 21]])))
+			.toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0a, 11, 5, 88, 21, 0xf7]);
+	});
+
+	test('buildLightLedsSysExBytes accepts a Map\'s entries iterator directly (a paint plan is already [led, colour] pairs)', () => {
+		const plan = new Map([[11, 5], [22, 21]]);
+		expect(Array.from(buildLightLedsSysExBytes(plan)))
+			.toEqual([0xf0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0a, 11, 5, 22, 21, 0xf7]);
+	});
+
+	test('sendLightLedsSysEx sends nothing for an empty plan', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		sendLightLedsSysEx(fakeOutput, new Map());
+		expect(sent).toHaveLength(0);
+	});
+
+	test('sendLightLedsSysEx sends one message for a typical (well under 97-pair) grid-sized plan', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		const plan = new Map(Array.from({ length: 64 }, (_, i) => [11 + i, 5]));
+		sendLightLedsSysEx(fakeOutput, plan);
+		expect(sent).toHaveLength(1);
+		expect(sent[0]).toHaveLength(6 + 1 + 64 * 2 + 1);
+	});
+
+	test('sendLightLedsSysEx chunks more than LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE pairs into multiple messages', () => {
+		const sent = [];
+		const fakeOutput = { send: (bytes) => sent.push(Array.from(bytes)) };
+		const pairCount = LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE + 3;
+		const pairs = Array.from({ length: pairCount }, (_, i) => [i, i % 128]);
+		sendLightLedsSysEx(fakeOutput, pairs);
+		expect(sent).toHaveLength(2);
+		expect(sent[0]).toHaveLength(6 + 1 + LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE * 2 + 1);
+		expect(sent[1]).toHaveLength(6 + 1 + 3 * 2 + 1);
 	});
 });
 

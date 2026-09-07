@@ -56,3 +56,14 @@
     overflow-y: auto;
     white-space: pre;
 }
+
+/* Iteration 5 Round 4 close-out: color-code activity log lines by direction.
+   'receive' (inbound) lines are left unstyled, inheriting the log's own base
+   color above. See MidiTabBuilder.appendActivityLogLine(). */
+#MidiTab .midiActivityLog .midiLogForward {
+    color: #39ff14;
+}
+
+#MidiTab .midiActivityLog .midiLogSend {
+    color: #ffd700;
+}

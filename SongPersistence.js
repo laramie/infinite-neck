@@ -220,11 +220,14 @@ function normalizeMidiDevice(rawMidiDevice) {
     // Downstream forwarding (Iteration 4) targets a SEPARATE physical device
     // (e.g. a VoiceLive 3 on its own Class-Compliant-USB MIDI port) from the
     // Launchpad itself, so it gets its own name/channel, independent of the
-    // Launchpad's `channel` above. Defaults to MIDI channel 2 (0-based 1) per
-    // 143-it4-design.md's "VoiceLive 3 MIDI 2".
+    // Launchpad's `channel` above. Defaults to MIDI channel 1 (0-based 0) --
+    // Iteration 5 Round 4 close-out: channel 2 (0-based 1, the previous
+    // default per 143-it4-design.md's "VoiceLive 3 MIDI 2") was found to be
+    // unreliable over the Class-Compliant USB cable in practice; channel 1 is
+    // the confirmed-working default.
     const forwardChannel = Number.isInteger(raw.forwardChannel) && raw.forwardChannel >= 0 && raw.forwardChannel <= 15
         ? raw.forwardChannel
-        : 1;
+        : 0;
     return {
         name: `${raw.name || ''}`,
         mode: MIDI_DEVICE_MODES.includes(raw.mode) ? raw.mode : 'Programmer',

@@ -178,4 +178,50 @@ So we want to try SysEx for these when painting because of Replay.  Single notes
 
 So we'd think some kind of in-memory structure is called for when optimizing for the 8x8 grid, and the notes that replay() called for, that at the end of replay() you'd call with rows sliced up however the most efficient write is and necessary for SysEx.  If possible as a matrix, then the matrix, but if only possible by rows or columns, then sliced up.
 
-And, Yes, we do want to wait on repainting control notes when doing SysEx.  They are currently re-lighting as needed.
+And, Yes, we do like how the code sits currently as you have it: The display shows repainting control notes when doing SysEx.  They are currently re-lighting as needed.
+
+## Iteration 5, Round 5
+
+### NamedNote forward bug
+
+In NamedNote, with Momentary on, this is the log after a single punch (press down, release) on a button on Launchpad.
+
+```
+
+ Use SysEx bulk clear+paint (Programmer mode)
+Forward (downstream sound device)
+Output device: 
+CH345 MIDI 1
+ Channel: 
+1
+Activity log
+Clear
+ Filter Aftertouch
+8861.323 receive [90 2C 7A] Launchpad Pro Standalone Port pitch:44
+8861.330 fwd-on  [90 4E 7F] CH345 MIDI 1 pitch:78
+8861.332 fwd-on  [90 42 7F] CH345 MIDI 1 pitch:66
+8861.333 fwd-on  [90 36 7A] CH345 MIDI 1 pitch:54
+8861.333 fwd-on  [90 2A 7F] CH345 MIDI 1 pitch:42
+8861.334 send    [90 58 3B] Launchpad Pro Standalone Port pitch:88
+8861.334 send    [90 47 3B] Launchpad Pro Standalone Port pitch:71
+8861.335 send    [90 42 3B] Launchpad Pro Standalone Port pitch:66
+8861.335 send    [90 2C 3B] Launchpad Pro Standalone Port pitch:44
+8861.336 send    [90 16 3B] Launchpad Pro Standalone Port pitch:22
+8861.336 send    [90 11 3B] Launchpad Pro Standalone Port pitch:17
+8861.391 receive [90 2C 00] Launchpad Pro Standalone Port pitch:44
+8861.394 fwd-off [90 4E 00] CH345 MIDI 1 pitch:78
+8861.396 fwd-off [90 42 00] CH345 MIDI 1 pitch:66
+8861.396 fwd-off [90 36 00] CH345 MIDI 1 pitch:54
+8861.397 fwd-off [90 2A 00] CH345 MIDI 1 pitch:42
+8861.398 send    [90 58 00] Launchpad Pro Standalone Port pitch:88
+8861.399 send    [90 47 00] Launchpad Pro Standalone Port pitch:71
+8861.400 send    [90 42 00] Launchpad Pro Standalone Port pitch:66
+8861.402 send    [90 2C 00] Launchpad Pro Standalone Port pitch:44
+8861.402 send    [90 16 00] Launchpad Pro Standalone Port pitch:22
+8861.403 send    [90 11 00] Launchpad Pro Standalone Port pitch:17
+
+```
+
+The error is that the forwards are using the calculated spread of the NamedNotes because one Gb at pitch 44 turns into 6 displayed cells in the 8x8 grid, and we get 4 forwards each time, not just the note played. So we get four pitches sent to VoiceLive, when we should just get one--the one played.
+
+It is already true that no NamedNotes are every replayed over the sound chanel (path to VoiceLive).  With this, it will be true that no generated pitches or calculated pitches get through either.

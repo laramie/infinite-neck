@@ -199,6 +199,58 @@ export function sendLightAllLedsSysEx(output, colour = 0) {
 	output.send(buildLightAllLedsSysExBytes(colour));
 }
 
+// Iteration 5, Round 4 (143-it5-design.md "Output LED Optimization"): the
+// manual's "Light LED using SysEx" message can address an arbitrary SPARSE
+// set of individual LEDs (unlike the row/column/all variants, which always
+// touch every LED in that row/column/the whole grid, forcing an "off" value
+// to be picked even for cells outside the caller's actual paint plan) --
+// <LED><Colour> pairs may repeat up to 97 times in ONE message. This maps
+// directly onto this module's own paint-plan shape (a sparse
+// Map<outNote, velocity>, e.g. MidiTabBuilder.buildDevicePaintPlan()'s
+// lightPlan): a Map's default iteration already yields [key, value] pairs in
+// exactly the [led, colour] shape this needs, so a plan can be passed to
+// sendLightLedsSysEx() directly with no conversion. Chosen over the doc's
+// row/column-sliced alternative because a typical lit-note plan is well
+// under the 97-pair cap (the whole 8x8 grid is only 64 addresses), so this
+// always paints an entire replay()/Section-navigation repaint in ONE SysEx
+// message -- fewer messages, and no risk of stomping an address that isn't
+// actually part of the plan (which the row/column variants would require
+// explicitly compensating for). Chunks defensively at
+// LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE pairs per message for the
+// (currently unreachable, since 64 < 97) case of a larger plan.
+export const LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE = 97;
+const LAUNCHPAD_SYSEX_CMD_LIGHT_LEDS = 0x0a;
+
+export function buildLightLedsSysExBytes(ledColourPairs) {
+	const body = [];
+	// Array.from() rather than a direct .forEach() so a Map (whose own
+	// .forEach() callback signature is (value, key), NOT a [key, value] pair)
+	// works identically to a plain Array of [led, colour] pairs -- Array.from()
+	// on a Map iterates its default entries() ([key, value] pairs), matching
+	// this function's documented [led, colour] shape either way.
+	Array.from(ledColourPairs).forEach(([led, colour]) => {
+		body.push(clampToDataByte(led), clampToDataByte(colour));
+	});
+	return new Uint8Array([
+		...LAUNCHPAD_SYSEX_MANUFACTURER_HEADER,
+		LAUNCHPAD_SYSEX_CMD_LIGHT_LEDS,
+		...body,
+		SYSEX_END
+	]);
+}
+
+// ledColourPairs may be any iterable of [led, colour] pairs (an Array, or a
+// Map -- see this function's own doc comment above for why a paint-plan Map
+// works here with no conversion). No-ops (sends nothing) for an empty
+// iterable, matching the "nothing to paint" case of the individual-NOTE-ON
+// loop it replaces.
+export function sendLightLedsSysEx(output, ledColourPairs) {
+	const pairs = Array.from(ledColourPairs);
+	for (let i = 0; i < pairs.length; i += LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE) {
+		output.send(buildLightLedsSysExBytes(pairs.slice(i, i + LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE)));
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Launchpad Pro "Programmer mode" grid mapping.
 // Sprint 143 (midi-note-in), Iteration 3: see

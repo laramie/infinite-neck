@@ -85,8 +85,8 @@
             </select>
             <br>
             <br>
-            <label for="chkMidiUseSysExClear" title="Programmer mode only: use one Launchpad Pro 'Light all LEDs' SysEx message to bulk-clear the device instead of ~70 individual NOTE ON velocity-0 messages. Faster; used for the Section-navigation/beat-tick repaint, never for the downstream VoiceLive forward.">
-                <input type="checkbox" id="chkMidiUseSysExClear"> Use SysEx bulk clear (Programmer mode)
+            <label for="chkMidiUseSysExClear" title="Programmer mode only: use SysEx messages (one 'Light all LEDs' + one 'Light LED' batch) to bulk-clear AND bulk-paint the device instead of ~70+ individual NOTE ON messages. Faster; used only for the Section-navigation/beat-tick repaint (replay()), never for single button-press lights or the downstream VoiceLive forward.">
+                <input type="checkbox" id="chkMidiUseSysExClear" checked> Use SysEx bulk clear+paint (Programmer mode)
             </label>
         </div>
 
