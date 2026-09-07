@@ -355,8 +355,11 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .notePink3 { color: lightblue; background-color:#1D0075;  }
 .notePink4 { color: yellow; background-color:purple;  }
 .notePink5 { color: black; background-color:magenta;  }
-.notePink6 { color: black; background-color:pink;  }
-.notePink7 { color: black; background-color:RosyBrown;  }
+.notePink6 { color: black; background-color: rgb(252, 76, 199); }
+.notePink7 { color: black; background-color:pink;  }
+.notePink8 { color: black; background-color:RosyBrown;  }
+
+
 
 .noteBlue1 { color: Wheat; background-color:Navy; }
 .noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
@@ -417,12 +420,12 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .noteHighlight1 { color: blue; background-color: gold;        box-shadow: 0 0 6pt 2pt gold; }
 .noteHighlight2 { color: rgb(17, 84, 94); background-color: magenta;     box-shadow: 0 0 6pt 2pt magenta; }
 .noteHighlight3 { color: rgb(5, 5, 123); background-color: cyan;        box-shadow: 0 0 6pt 2pt cyan; }
-.noteHighlight4 { color: white; background-color: orangered;   box-shadow: 0 0 6pt 2pt orangered; }
-.noteHighlight5 { color: black; background-color: lime;        box-shadow: 0 0 6pt 2pt lime; }
-.noteHighlight6 { color: white; background-color: dodgerblue;  box-shadow: 0 0 6pt 2pt dodgerblue; }
+.noteHighlight4 { color: black; background-color: lime;        box-shadow: 0 0 6pt 2pt lime; }
+.noteHighlight5 { color: white; background-color: dodgerblue;  box-shadow: 0 0 6pt 2pt dodgerblue; }
+.noteHighlight6 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 12pt 4pt springgreen; }
 .noteHighlight7 { color: black; background-color: orange;      box-shadow: 0 0 6pt 2pt orange; }
-.noteHighlight8 { color: orange; background-color: maroon;     box-shadow: 0 0 6pt 2pt deeppink; }
-.noteHighlight9 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 12pt 4pt springgreen; }
+.noteHighlight8 { color: white; background-color: orangered;   box-shadow: 0 0 6pt 2pt orangered; }
+.noteHighlight9 { color: orange; background-color: maroon;     box-shadow: 0 0 6pt 2pt deeppink; }
 
 
 

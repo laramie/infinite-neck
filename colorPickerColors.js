@@ -26,7 +26,8 @@ export const gColorPickerColors = {
         "notePink4",
         "notePink5",
         "notePink6",
-        "notePink7"
+        "notePink7",
+        "notePink8"
     ],
     [
         "noteBlue1",

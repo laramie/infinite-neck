@@ -101,7 +101,7 @@ export const gUserColorDictRolesDefault = {
             "tiny": "L"
         },
         "noteLead2":{
-            "colorClass": "notePink6",
+            "colorClass": "notePink7",
             "caption": "Lead 2",
             "tiny": "L2"
         }
@@ -176,16 +176,15 @@ export const gDefault_CycleOfColors = {
     checked: true,
     dict: {
         "note1": {
-            "colorClass": "noteBlack",
-            "MOJOcaptionClass": "noteBlack",
+            "colorClass": "noteHatchedRoot noteWhite",
             "caption": "I"
         },
         "note2": {
-            "colorClass": "notePink3",
+            "colorClass": "notePink6",
             "caption": "&tau;"
         },
         "note3": {
-            "colorClass": "notePink5",
+            "colorClass": "notePink3",
             "caption": "II"
         },
         "note4": {
@@ -221,7 +220,7 @@ export const gDefault_CycleOfColors = {
             "caption": "&delta;"
         },
         "note12": {
-            "colorClass": "noteGreen7",
+            "colorClass": "noteGreen6",
             "caption": "&Delta;"
         }
     }
