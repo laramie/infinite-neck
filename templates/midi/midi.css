@@ -40,6 +40,28 @@
     opacity: 0.75;
 }
 
+#MidiTab .midiColorPageButtons {
+    margin-top: 0.5em;
+}
+
+/* Iteration 5 Round 6 "Forwarding indicator": at-a-glance status of whether
+   forwarding is on, to which device/channel, and whether that device is
+   actually connected right now. See
+   MidiTabBuilder.updateForwardStatusIndicator(). */
+#MidiTab .midiForwardStatus {
+    display: inline-block;
+    margin-top: 0.4em;
+    font-weight: bold;
+}
+
+#MidiTab .midiForwardStatus.midiForwardStatusOk {
+    color: #2e7d32;
+}
+
+#MidiTab .midiForwardStatus.midiForwardStatusWarn {
+    color: #c62828;
+}
+
 #MidiTab .midiActivityLogHeader {
     display: flex;
     align-items: center;

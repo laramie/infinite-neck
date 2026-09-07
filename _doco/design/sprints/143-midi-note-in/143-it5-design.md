@@ -225,3 +225,32 @@ Clear
 The error is that the forwards are using the calculated spread of the NamedNotes because one Gb at pitch 44 turns into 6 displayed cells in the 8x8 grid, and we get 4 forwards each time, not just the note played. So we get four pitches sent to VoiceLive, when we should just get one--the one played.
 
 It is already true that no NamedNotes are every replayed over the sound chanel (path to VoiceLive).  With this, it will be true that no generated pitches or calculated pitches get through either.
+
+## Iteration 5, Round 6
+
+### LED ColorMap
+
+We need two buttons on the Desktop > MIDI page, in the `MIDI OUT (debug/test send)` group, after the CC row.
+
+One says "send color page 1" the other says "send color page 2"
+
+Color page one is the velocities 1-63, and color page 2 is the velocities 64-127.  These should be sent so that of the 8x8 grid, cell 1,1 gets velocity 1, cell 1,2 gets velocity 2, and so on.
+Since there are 127-1 colors, and two pages of 64 in the 8x8, we need the two pages to show all the colors.
+
+### Forwarding indicator
+
+We need some way to verify that the Forwarding is on, to which port, which device, and that the devicee is actually connected.  We've had some problems figuring out how to get things going to the right channel when going to CH345, so if there were log lines or status span that could reflect this state, that would be helpful.
+
+## Color Updates
+
+Best browns: 
+
+83: slight greenish tinge toffee colored, dark.
+
+11: best orange brown, darkest of these, but no green hint.  Solid pumpkin.
+
+9: best orangy pumpkin. bright.
+84. very orange bright, good for tritone.
+
+
+126: best light orange, good for tritone.

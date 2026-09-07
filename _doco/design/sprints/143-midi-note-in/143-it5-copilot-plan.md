@@ -267,3 +267,43 @@ decision):
 - Full suite unaffected: 67 suites / 762 tests passing (no `midi-io.js` changes this round; all
   `midi.builder.js`-only bookkeeping/logic, no new pure-layer surface to test).
 
+## Round 6
+
+Per the User's request, no Jest tests/runs this round (full suite to be run by the User separately).
+Both features are entirely within `templates/midi/midi.builder.js`/`midi.html`/`midi.css` -- no
+`midi-io.js` changes.
+
+### LED ColorMap
+
+Two new buttons in the `MIDI OUT (debug/test send)` group, right after the CC row:
+`#btnMidiSendColorPage1` ("send color page 1") and `#btnMidiSendColorPage2` ("send color page 2"),
+wired to a new `MidiTabBuilder.sendColorPage(pageIndex)`. Sends 64 raw NOTE ON messages (row 1-8
+outer, col 1-8 inner -- "cell 1,1 gets velocity 1, cell 1,2 gets velocity 2, and so on") to whichever
+port is currently selected in `#selMidiDebugOutDevice` (same debug output every other button in this
+group uses), using the SAME raw Launchpad `row*10+col` address every other grid-lighting call in this
+file uses -- deliberately NOT `cellToLaunchpadGridNote()`'s orientation-aware on-screen-tuning
+translation, since this is a direct hardware test independent of any routed Instrument. Page 1 sends
+velocities 1-64, Page 2 sends velocities 64-127 (one intentional 1-value overlap at 64, since 127
+non-zero colours can't split evenly across two 64-pad pages). Channel reused from `device.channel`
+(Routing section), same as `hardRepaint()`'s Launchpad-light writes. Bypasses `lightPlan`/
+`hardRepaint()`/`buildDevicePaintPlan()` entirely -- this is a one-off debug send, not tied to any
+routed Instrument's paint state.
+
+### Forwarding indicator
+
+New `#spanMidiForwardStatus` status span at the bottom of the "Forward (downstream sound device)"
+section, driven by new `MidiTabBuilder.updateForwardStatusIndicator()`. Answers the User's stated
+pain point ("problems figuring out how to get things going to the right channel when going to
+CH345") in one glance: shows whether routing/forwarding is ON or OFF, which output device name and
+1-based channel forwarding currently targets, and whether that device is actually connected right now
+(`output.state === 'connected'`, from the Web MIDI `MIDIPort.state` property -- distinct from merely
+being the selected `<option>`, which `listOutputs()` keeps returning even after the real device is
+unplugged). Styled green (`.midiForwardStatusOk`) when on+connected, red
+(`.midiForwardStatusWarn`) for every other case (routing off, no device selected, or selected device
+not currently connected). Called from every place that can change any of those three facts:
+`applyRoutingButtonUi()` (covers the routing toggle button AND `syncControlsFromDevice()`'s
+render-time call), the `#selMidiForwardDevice`/`#selMidiForwardChannel` change handlers, and both
+places `initMidiAccess()` populates the forward device select (initial load, and every
+`onstatechange` -- so plugging/unplugging the forward device updates the indicator live with no
+other interaction needed).
+

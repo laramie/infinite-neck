@@ -53,6 +53,10 @@
                 <div><input type="text" id="txtMidiTestCCValue" value="127" size="4"></div>
                 <div><button id="btnMidiTestSendCC" class="MenuButton BtnPunchedOut" type="button" title="Send a Control Change message">Send</button></div>
             </div>
+            <div class="midiColorPageButtons">
+                <button id="btnMidiSendColorPage1" class="MenuButton BtnPunchedOut" type="button" title="Send NOTE ON to all 64 grid pads with velocities 1-64, one velocity per pad (cell 1,1=1, cell 1,2=2, ... row by row) -- the first half of the Launchpad's colour palette.">send color page 1</button>
+                <button id="btnMidiSendColorPage2" class="MenuButton BtnPunchedOut" type="button" title="Send NOTE ON to all 64 grid pads with velocities 64-127, one velocity per pad -- the second half of the Launchpad's colour palette.">send color page 2</button>
+            </div>
         </div>
 
         <div class="midiSection">
@@ -96,6 +100,8 @@
             <select id="selMidiForwardDevice"></select>
             <label for="selMidiForwardChannel">Channel:</label>
             <select id="selMidiForwardChannel"></select>
+            <br>
+            <span id="spanMidiForwardStatus" class="midiForwardStatus">Forwarding: OFF</span>
         </div>
 
         <div class="midiSection">

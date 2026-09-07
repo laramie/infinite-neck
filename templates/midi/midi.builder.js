@@ -72,6 +72,7 @@ import {
 	sendLightAllLedsSysEx,
 	sendLightLedsSysEx,
 	LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE,
+	LAUNCHPAD_GRID_SIZE,
 	formatMidiBytesHex,
 	parseLaunchpadProgrammerGridNote,
 	launchpadGridToCell,
@@ -716,6 +717,45 @@ export class MidiTabBuilder {
 		return MidiTabBuilder.outputs[Number(sel.value)] || null;
 	}
 
+	// Iteration 5, Round 6 (143-it5-design.md "LED ColorMap"): fires 64 raw
+	// Launchpad Programmer-mode grid NOTE ON messages (bypassing
+	// lightPlan/hardRepaint entirely -- this is a one-off debug/test send,
+	// unrelated to any routed Instrument) so the User can visually verify how
+	// the physical device renders every one of its Launchpad velocity/colour
+	// values, page by page. Iterates row 1-8 (outer) then col 1-8 (inner) --
+	// "cell 1,1 gets velocity 1, cell 1,2 gets velocity 2" -- using the SAME
+	// raw row*10+col Launchpad address every other grid-lighting call in this
+	// file uses (NOT the on-screen tuning's cellrow/cellcol, and NOT
+	// cellToLaunchpadGridNote()'s orientation-aware translation -- this is a
+	// direct Launchpad hardware test, independent of any routed Instrument's
+	// orientation setting). Uses the DEBUG output select (#selMidiDebugOutDevice,
+	// see currentDebugOutputPort()'s doc comment), same as every other button
+	// in this "MIDI OUT (debug/test send)" group.
+	//
+	// pageIndex 0 sends velocities 1-64, pageIndex 1 sends velocities 64-127 --
+	// together covering all 127 non-zero Launchpad colour velocities across
+	// the 64 physical grid pads (64+64=128 slots for 127 colours -- velocity
+	// 64 intentionally appears once on each page, the one unavoidable overlap
+	// from covering an odd total with two even-sized 64-pad pages).
+	static sendColorPage(pageIndex) {
+		const output = MidiTabBuilder.currentDebugOutputPort();
+		if (!output) {
+			return;
+		}
+		const channel = MidiTabBuilder.getDevice().channel || 0;
+		const pageSize = LAUNCHPAD_GRID_SIZE * LAUNCHPAD_GRID_SIZE;
+		for (let row = 1; row <= LAUNCHPAD_GRID_SIZE; row++) {
+			for (let col = 1; col <= LAUNCHPAD_GRID_SIZE; col++) {
+				const index = (row - 1) * LAUNCHPAD_GRID_SIZE + (col - 1);
+				const velocity = pageIndex === 0 ? (index + 1) : (index + pageSize);
+				const note = row * 10 + col;
+				sendNoteOn(output, channel, note, velocity);
+			}
+		}
+		const velocityRange = pageIndex === 0 ? `1-${pageSize}` : `${pageSize}-127`;
+		MidiTabBuilder.logActivityText(`send    color page ${pageIndex + 1} (${pageSize} grid notes -> velocities ${velocityRange}) (${output.name})`);
+	}
+
 	// The downstream sound device (e.g. VoiceLive 3) is a separate physical
 	// output port from the Launchpad's own light-feedback output.
 	static currentForwardOutputPort() {
@@ -1285,6 +1325,46 @@ export class MidiTabBuilder {
 			.toggleClass('BtnPunchedIn', enabled)
 			.toggleClass('BtnPunchedOut', !enabled)
 			.text(enabled ? 'MIDI Routing On' : 'MIDI Routing');
+		MidiTabBuilder.updateForwardStatusIndicator();
+	}
+
+	// Iteration 5, Round 6 (143-it5-design.md "Forwarding indicator"): a single
+	// glance answer to "is forwarding on, to which port/device and channel, and
+	// is that device actually connected right now" -- the user reported
+	// trouble figuring out whether forwarding was correctly wired to the right
+	// channel on the real hardware. Called from every place that can change any
+	// of those three facts: the routing toggle (via applyRoutingButtonUi()),
+	// the forward device/channel selects, and MIDI port connect/disconnect (via
+	// initMidiAccess()'s onstatechange, so unplugging/replugging the forward
+	// device updates the indicator live with no other interaction needed).
+	static updateForwardStatusIndicator() {
+		const el = document.getElementById('spanMidiForwardStatus');
+		if (!el) {
+			return;
+		}
+		const device = MidiTabBuilder.getDevice();
+		el.classList.remove('midiForwardStatusOk', 'midiForwardStatusWarn');
+		if (device.enabled !== true) {
+			el.textContent = 'Forwarding: OFF (MIDI Routing is off)';
+			el.classList.add('midiForwardStatusWarn');
+			return;
+		}
+		const output = MidiTabBuilder.currentForwardOutputPort();
+		if (!output) {
+			el.textContent = 'Forwarding: ON, but no forward output device is selected';
+			el.classList.add('midiForwardStatusWarn');
+			return;
+		}
+		const channelLabel = (device.forwardChannel ?? 0) + 1;
+		// Web MIDI's MIDIPort.state reflects whether the underlying port is
+		// actually present right now ('connected'/'disconnected') -- distinct
+		// from merely being the CURRENTLY SELECTED option, which persists even
+		// after the real device is unplugged (listOutputs() keeps returning
+		// every port MIDIAccess has ever seen, not just the currently-present
+		// ones).
+		const connected = output.state === 'connected';
+		el.textContent = `Forwarding: ON -> ${output.name} (channel ${channelLabel}) ${connected ? '[connected]' : '[NOT CONNECTED]'}`;
+		el.classList.add(connected ? 'midiForwardStatusOk' : 'midiForwardStatusWarn');
 	}
 
 	// Targets EVERY element sharing '.classMidiTriggerMode' (the MIDI tab's own
@@ -1509,6 +1589,7 @@ export class MidiTabBuilder {
 				if (output) {
 					MidiTabBuilder.getDevice().forwardName = output.name;
 				}
+				MidiTabBuilder.updateForwardStatusIndicator();
 			});
 
 		$('#selMidiForwardChannel')
@@ -1516,6 +1597,7 @@ export class MidiTabBuilder {
 			.on(`change${eventNamespace}`, function () {
 				MidiTabBuilder.releaseForwardedPitches();
 				MidiTabBuilder.getDevice().forwardChannel = Number(this.value) || 0;
+				MidiTabBuilder.updateForwardStatusIndicator();
 			});
 
 		$('.classMidiTriggerMode')
@@ -1603,6 +1685,18 @@ export class MidiTabBuilder {
 				const value = Number($('#txtMidiTestCCValue').val());
 				sendControlChange(output, channel, controller, value);
 				MidiTabBuilder.logActivity('send', [0xb0 | channel, controller & 0x7f, value & 0x7f], output.name);
+			});
+
+		$('#btnMidiSendColorPage1')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				MidiTabBuilder.sendColorPage(0);
+			});
+
+		$('#btnMidiSendColorPage2')
+			.off(`click${eventNamespace}`)
+			.on(`click${eventNamespace}`, function () {
+				MidiTabBuilder.sendColorPage(1);
 			});
 
 		$('#btnMidiClearActivityLog')
@@ -1700,6 +1794,7 @@ export class MidiTabBuilder {
 		);
 		MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
 		MidiTabBuilder.syncOnDeviceConnect();
+		MidiTabBuilder.updateForwardStatusIndicator();
 
 		midiAccess.onstatechange = () => {
 			MidiTabBuilder.inputs = listInputs(midiAccess);
@@ -1721,6 +1816,7 @@ export class MidiTabBuilder {
 			);
 			MidiTabBuilder.attachToInput(MidiTabBuilder.inputs[Number($('#selMidiInDevice').val()) || 0]);
 			MidiTabBuilder.syncOnDeviceConnect();
+			MidiTabBuilder.updateForwardStatusIndicator();
 		};
 	}
 
