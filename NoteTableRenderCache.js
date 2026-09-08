@@ -96,6 +96,7 @@ export function buildTuningFingerprint(tuning = {}) {
 		frets: tuning?.frets ?? null,
 		nut: !!tuning?.nut,
 		pianoNamesRow: !!tuning?.pianoNamesRow,
+		pinkKey: tuning?.pinkKey || 'none',
 		reverse: !!tuning?.reverse,
 		rowRange: Array.isArray(tuning?.rowRange) ? tuning.rowRange.map(Number) : [],
 		specialBackgroundIDRows: Array.isArray(tuning?.specialBackgroundIDRows) ? tuning.specialBackgroundIDRows.map(Number) : []

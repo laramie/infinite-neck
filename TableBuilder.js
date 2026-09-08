@@ -101,7 +101,7 @@ export function buildNoteTable(options) {
 			noteName = Constants.midinumToNoteName(midinum);
 			var noteClass = "note" + noteName;//"noteD";
 			var notePinkClass = "";
-			if (options.pinkKey && noteName == options.pinkKey) {
+			if (options.pinkKey && options.pinkKey !== 'none' && noteName == options.pinkKey) {
 				notePinkClass = "notePinkKey";
 			}
 			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + '" noteName="' + noteName + '">';

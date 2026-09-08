@@ -167,7 +167,8 @@ function buildDefaultSongTuningTemplate(baseInstrument = 'Guitar') {
         banjoNut: {},
         pianoNamesRow: false,
         pianoSkeuomorphic: false,
-        stringDividerHeight: '0.5em'
+        stringDividerHeight: '0.5em',
+        pinkKey: 'none'
     };
 }
 
@@ -284,6 +285,9 @@ export function createSongTuningFromDraft(draft = {}, {
     if (!createdTuning.banjoNut || typeof createdTuning.banjoNut !== 'object') {
         createdTuning.banjoNut = {};
     }
+    // MyTunings always carries an explicit pinkKey: either the value inherited from the
+    // library/lineage tuning, or the literal sentinel 'none' when the source has no pinkKey.
+    createdTuning.pinkKey = createdTuning.pinkKey || 'none';
     return createdTuning;
 }
 
@@ -301,7 +305,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     trh.html("<th>" + primaryHeader + "</th>"
         + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
         +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>Tool</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
+        + "<th>BN</th><th>Right/Left</th><th>Tool</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th><th>Pink Key</th>"
         
     );
     table.append(trh);
@@ -404,6 +408,10 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             ? generateBaseInstrumentSelect(tun.baseID, tun.baseInstrument)
             : escapeHtmlText(tun.baseInstrument);
 
+        var pinkKeyCellHtml = isSongOwnedTable
+            ? generatePinkKeySelect(tun.baseID, tun.pinkKey)
+            : escapeHtmlText(tun.pinkKey || 'none');
+
         var rowRangeText = '' + tun.rowRange;
         var midiCellHtml = isSongOwnedTable
             ? formatTuningInlineEditor('rowRange', tun.baseID, rowRangeText)
@@ -461,8 +469,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(nutCellHtml));
         tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
         tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
-        
-        
+        tr.append($("<td>").html(pinkKeyCellHtml));
 
         table.append(tr);
     }
@@ -499,6 +506,17 @@ function generateBaseInstrumentSelect(baseID, currentValue) {
         return '<option value="' + name + '"' + selected + '>' + name + '</option>';
     }).join('');
     return '<select class="selectBaseInstrument" data-baseid="' + baseID + '">' + options + '</select>';
+}
+
+const PINK_KEY_OPTIONS = ['none', ...Constants.NOTE_NAMES_ARRAY];
+
+function generatePinkKeySelect(baseID, currentValue) {
+    const effectiveValue = currentValue || 'none';
+    const options = PINK_KEY_OPTIONS.map((name) => {
+        const selected = name === effectiveValue ? ' selected' : '';
+        return '<option value="' + name + '"' + selected + '>' + name + '</option>';
+    }).join('');
+    return '<select class="selectPinkKey" data-baseid="' + baseID + '">' + options + '</select>';
 }
 
 export function generateSelect(ID, frets) {
@@ -560,6 +578,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
     cloned.baseID = generateNextTuningID(defaultBaseID);
     cloned.fromBaseID = defaultBaseID;
     cloned.instance = true;
+    cloned.pinkKey = original.pinkKey || 'none';
     delete cloned.visible;
     store.push(cloned);
     getSong().setTableVisibilityByBaseID(cloned.baseID, true);
@@ -1064,6 +1083,12 @@ export function bindFormTuningsEvents() {
         reloadMyTuningsDisplay();
         requestReinstallAllTuningsTables();
     });
+    $('#frmTunings .selectPinkKey').change(function () {
+        var tuningID = $(this).data('baseid');
+        var tuning = findTuningForID(tuningID);
+        tuning.pinkKey = this.value;
+        requestReinstallAllTuningsTables();
+    });
     $('#frmTunings .tuningInlineFieldDisplay').on('click', function () {
         openTuningInlineEditor($(this).closest('.tuningInlineField'));
     });
@@ -1160,6 +1185,7 @@ export function bindFormTuningsEvents() {
         cloned.baseID = newBaseID;
         cloned.fromBaseID = baseID;
         cloned.instance = true;
+        cloned.pinkKey = original.pinkKey || 'none';
         delete cloned.visible;
         getMyTuningsStore().push(cloned);
         getSong().setTableVisibilityByBaseID(cloned.baseID, true);
