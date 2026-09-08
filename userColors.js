@@ -176,7 +176,7 @@ export const gDefault_CycleOfColors = {
     checked: true,
     dict: {
         "note1": {
-            "colorClass": "noteHatchedRoot noteWhite",
+            "colorClass": "noteHatchedRootPink noteWhite",
             "caption": "I"
         },
         "note2": {
