@@ -619,6 +619,47 @@ table.viewControls th {
 #myTuningsTable tr:not(:first-child):hover {
     background-color: lightgreen;
 }
+
+/* Unified click-to-edit fields on MyTunings (Tuning caption, MIDI, BanjoNut, Special Rows).
+   Display is a bordered span; clicking it swaps in a text input (blur/Enter commits,
+   Escape cancels) -- see TuningsLibrary.js formatTuningInlineEditor()/bindFormTuningsEvents(). */
+#myTuningsTable .tuningInlineField {
+    --tuning-inline-edit-width: 25ch;
+    display: inline-block;
+    vertical-align: middle;
+}
+#myTuningsTable .tuningInlineFieldDisplay {
+    display: inline-block;
+    border: 1px solid #6faa09;
+    border-radius: 3px;
+    padding: 1px 4px;
+    cursor: pointer;
+    min-width: 2em;
+    max-width: 20em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+#myTuningsTable .tuningInlineFieldDisplay:empty::before {
+    content: '\00a0\00a0\00a0\00a0';
+}
+#myTuningsTable .tuningInlineFieldDisplay:hover,
+#myTuningsTable .tuningInlineFieldDisplay:focus {
+    background-color: #eaffda;
+    outline: none;
+}
+#myTuningsTable .tuningInlineFieldInput {
+    width: var(--tuning-inline-edit-width);
+    border: 1px solid #6faa09;
+    border-radius: 3px;
+    padding: 1px 4px;
+    font: inherit;
+}
+#myTuningsTable .tuningInlineFieldDisplay[hidden],
+#myTuningsTable .tuningInlineFieldInput[hidden] {
+    display: none !important;
+}
 .btnRefreshInMemGate {
     padding: 0;
     padding-right: 0.4em;
@@ -1722,7 +1763,8 @@ td.nut div.NoteActive .CenterCell {
     box-shadow: 0 0 2pt 1pt pink;
 }
 .notePinkKey {
-    background-color:pink !important;
+    /* was-for-note-mode: background-color:pink !important;*/
+    background-color:rgb(246, 177, 189) !important;
     color: black;
     box-shadow: 0 0 2pt 1pt cornflowerblue;
 }

@@ -318,7 +318,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             ? " checked "
             : (!isSongOwnedTable && tun.visible ? " checked " : "");
 
-        var captionStr = '<nobr>' + tun.caption + '</nobr>';
+        var captionCellHtml = '<nobr>' + (isSongOwnedTable
+            ? formatTuningInlineEditor('caption', tun.baseID, tun.caption)
+            : escapeHtmlText(tun.caption)) + '</nobr>';
         var primaryControlHtml = '<button type="button" class="btnCloneTuning" data-baseid="' + tun.baseID + '">Clone</button>';
         if (primaryControl === "visibility") {
             primaryControlHtml = '<label for="cb' + tun.baseID + '"><input id="cb' + tun.baseID + '" '
@@ -383,18 +385,29 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var nutCellHtml = isSongOwnedTable ? checkboxNut : (tun.nut ? 'Yes' : '');
 
         var checked_doSpecialRows = tun.doSpecialRows ? " checked " : "";
-        var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.doSpecialRows + '"><nobr>'
-            + '<input class="checkboxDoSpecialRows"   id="cbDoSpecialRows' + tun.doSpecialRows + '" '
-            + ' type="checkbox" name="cbnDoSpecialRows' + tun.doSpecialRows + '" value="'
+        var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxDoSpecialRows"   id="cbDoSpecialRows' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnDoSpecialRows' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checked_doSpecialRows + '></nobr></label>';
 
-            
+        var specialRowsText = Array.isArray(tun.specialBackgroundIDRows) ? tun.specialBackgroundIDRows.join(', ') : '';
+        var specialRowsCellHtml = isSongOwnedTable
+            ? checkboxDoSpecialRows + ' ' + formatTuningInlineEditor('specialBackgroundIDRows', tun.baseID, specialRowsText)
+            : (specialRowsText || (tun.doSpecialRows ? 'Yes' : ''));
 
+        var banjoNutText = tun.banjoNut ? JSON.stringify(tun.banjoNut) : '';
+        var banjoNutCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('banjoNut', tun.baseID, banjoNutText)
+            : escapeHtmlText(banjoNutText);
 
-        var BN = tun.banjoNut ? JSON.stringify(tun.banjoNut) : "";
-        if (BN) {
-            BN = BN.replaceAll(",", ",<br>");
-        }
+        var baseInstrumentCellHtml = isSongOwnedTable
+            ? generateBaseInstrumentSelect(tun.baseID, tun.baseInstrument)
+            : escapeHtmlText(tun.baseInstrument);
+
+        var rowRangeText = '' + tun.rowRange;
+        var midiCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('rowRange', tun.baseID, rowRangeText)
+            : escapeHtmlText(rowRangeText);
 
         sInMemCount = "";
         if (tuningsInMemoryHash[tun.baseID]) {
@@ -423,28 +436,23 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         } else {
             idCellHtml = tun.baseID;
         }
-        let specialRows = (tun.specialBackgroundIDRows) 
-                            ? checkboxDoSpecialRows+' '+tun.specialBackgroundIDRows 
-                            : "";
-
         var tr = $("<tr>");
         tr.append($("<td>").html(primaryControlHtml));
         if (showMoveColumn) {
             tr.append($("<td>").html(moveButtonHtml));
             tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
         }
-        tr.append($("<td>").html(captionStr));
+        tr.append($("<td>").html(captionCellHtml));
         tr.append($("<td>").html(idCellHtml));
         if (isSongOwnedTable) {
             tr.append($("<td>").html(renderInstrumentBadge(getInstrumentSummaryForTuning(getSong(), tun, { allowUnknown: true }), { allowUnknown: true })));
         }
-        tr.append($("<td>").html(tun.nStrings + "-string"));
-        tr.append($("<td>").html(tun.baseInstrument));
-        tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));
-        tr.append($("<td>").html("" + tun.rowRange));
-        tr.append($("<td>").html());
-        tr.append($("<td>").html(specialRows));
-        tr.append($("<td>").html("" + BN));
+        tr.append($("<td class='tuningStringsCell'>").html(tun.nStrings + "-string"));
+        tr.append($("<td>").html(baseInstrumentCellHtml));
+        tr.append($("<td class='tuningNotesCell'>").html(rowRangeToNoteNames(tun.rowRange, tun)));
+        tr.append($("<td>").html(midiCellHtml));
+        tr.append($("<td>").html(specialRowsCellHtml));
+        tr.append($("<td>").html(banjoNutCellHtml));
         tr.append($("<td>").html(leftHandCellHtml));
         tr.append($("<td>").html(ToolCellHtml));
         tr.append($("<td>").html(pianoNamesCellHtml));
@@ -463,6 +471,35 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
 
 const SELECT_FRETS_PFX = "selFrets";
 const SELECT_STRINGDIVIDER_PFX = "selDivider";
+
+const BASE_INSTRUMENT_OPTIONS = ['Guitar', 'Bass', 'Cello', 'Ukulele', 'Mandolin', 'Banjo', 'ChampmanStick', 'MIDI', 'Piano'];
+
+function escapeHtmlText(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+}
+
+/** Unified click-to-edit mechanism for MyTunings fields: renders a bordered span that
+ *  swaps to a text input (blur/Enter commits, Escape cancels) -- see bindFormTuningsEvents()
+ *  for the delegated wiring and TUNING_INLINE_FIELD_HANDLERS for the per-field parse/apply. */
+function formatTuningInlineEditor(fieldName, baseID, value) {
+    const safeValue = escapeHtmlText(value);
+    return '<span class="tuningInlineField" data-tuning-field="' + fieldName + '" data-baseid="' + baseID + '">'
+        + '<span class="tuningInlineFieldDisplay" tabindex="0" title="Click to edit">' + safeValue + '</span>'
+        + '<input type="text" class="tuningInlineFieldInput" value="' + safeValue + '" hidden>'
+        + '</span>';
+}
+
+function generateBaseInstrumentSelect(baseID, currentValue) {
+    const options = BASE_INSTRUMENT_OPTIONS.map((name) => {
+        const selected = name === currentValue ? ' selected' : '';
+        return '<option value="' + name + '"' + selected + '>' + name + '</option>';
+    }).join('');
+    return '<select class="selectBaseInstrument" data-baseid="' + baseID + '">' + options + '</select>';
+}
 
 export function generateSelect(ID, frets) {
     var sel = "<select class='selectFrets' id='" + SELECT_FRETS_PFX + ID + "'>";
@@ -826,6 +863,112 @@ function resetSongTuningForm() {
     $('#dropDownBaseInstrument').val('Guitar');
 }
 
+//===================== MyTunings inline field editing =======================================
+// Unified click-to-edit mechanism (see formatTuningInlineEditor()): a bordered display span
+// swaps to a text input on click/Enter/Space; blur or Enter commits via the handler below
+// keyed by data-tuning-field; Escape cancels without committing.
+
+const TUNING_INLINE_FIELD_HANDLERS = {
+    caption: {
+        parse: (raw) => {
+            const value = raw.trim();
+            if (!value) {
+                throw new Error('Tuning caption cannot be empty.');
+            }
+            return value;
+        },
+        apply: (tuning, value) => {
+            tuning.caption = value;
+            return value;
+        },
+        invalidMessage: () => 'Tuning caption cannot be empty.'
+    },
+    rowRange: {
+        parse: (raw) => convertStringToIntArray(raw.trim()),
+        apply: (tuning, value, row) => {
+            tuning.rowRange = value;
+            tuning.nStrings = value.length;
+            row.find('.tuningNotesCell').text(rowRangeToNoteNames(tuning.rowRange, tuning));
+            row.find('.tuningStringsCell').text(tuning.nStrings + '-string');
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'MIDI rowRange invalid: "' + raw + '". Use comma-separated integers.'
+    },
+    banjoNut: {
+        parse: (raw) => {
+            const trimmed = raw.trim();
+            if (!trimmed) {
+                return {};
+            }
+            const parsed = JSON.parse(trimmed);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                throw new Error('BanjoNut must be a JSON object.');
+            }
+            return parsed;
+        },
+        apply: (tuning, value) => {
+            tuning.banjoNut = value;
+            requestReinstallAllTuningsTables();
+            return JSON.stringify(value);
+        },
+        invalidMessage: (raw) => 'BanjoNut invalid JSON: "' + raw + '"'
+    },
+    specialBackgroundIDRows: {
+        parse: (raw) => {
+            const trimmed = raw.trim();
+            return trimmed ? convertStringToIntArray(trimmed) : [];
+        },
+        apply: (tuning, value) => {
+            tuning.specialBackgroundIDRows = value;
+            requestReinstallAllTuningsTables();
+            refreshShowAllNoteNames();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Special Rows invalid: "' + raw + '". Use comma-separated integers.'
+    }
+};
+
+function openTuningInlineEditor(wrap) {
+    const jWrap = $(wrap);
+    const display = jWrap.find('.tuningInlineFieldDisplay');
+    const input = jWrap.find('.tuningInlineFieldInput');
+    input.val(display.text());
+    display.prop('hidden', true);
+    input.prop('hidden', false);
+    input.trigger('focus');
+    const inputEl = input.get(0);
+    if (inputEl && typeof inputEl.select === 'function') {
+        inputEl.select();
+    }
+}
+
+function closeTuningInlineEditor(wrap) {
+    const jWrap = $(wrap);
+    jWrap.find('.tuningInlineFieldInput').prop('hidden', true);
+    jWrap.find('.tuningInlineFieldDisplay').prop('hidden', false);
+}
+
+function commitTuningInlineEdit(wrap, rawValue) {
+    const jWrap = $(wrap);
+    const fieldName = jWrap.data('tuningField');
+    const baseID = jWrap.data('baseid');
+    const handler = TUNING_INLINE_FIELD_HANDLERS[fieldName];
+    const tuning = findTuningForID(baseID);
+    if (!handler || !tuning) {
+        return;
+    }
+    let parsedValue;
+    try {
+        parsedValue = handler.parse(rawValue);
+    } catch (error) {
+        alert(handler.invalidMessage ? handler.invalidMessage(rawValue) : ('Invalid value: "' + rawValue + '"'));
+        return;
+    }
+    const displayText = handler.apply(tuning, parsedValue, jWrap.closest('tr'));
+    jWrap.find('.tuningInlineFieldDisplay').text(displayText);
+}
+
 export function bindFormTuningsEvents() {
     $('#frmTunings').off('submit').on('submit', function (event) {
         event.preventDefault();
@@ -913,6 +1056,42 @@ export function bindFormTuningsEvents() {
         var tuning = findTuningForID(tuningID);
         tuning.nut = this.checked;
         requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .selectBaseInstrument').change(function () {
+        var tuningID = $(this).data('baseid');
+        var tuning = findTuningForID(tuningID);
+        tuning.baseInstrument = this.value;
+        reloadMyTuningsDisplay();
+        requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .tuningInlineFieldDisplay').on('click', function () {
+        openTuningInlineEditor($(this).closest('.tuningInlineField'));
+    });
+    $('#frmTunings .tuningInlineFieldDisplay').on('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openTuningInlineEditor($(this).closest('.tuningInlineField'));
+        }
+    });
+    $('#frmTunings .tuningInlineFieldInput').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.blur();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            $(this).data('cancelEdit', true);
+            this.blur();
+        }
+    });
+    $('#frmTunings .tuningInlineFieldInput').on('blur', function () {
+        var jInput = $(this);
+        var cancelled = jInput.data('cancelEdit');
+        jInput.removeData('cancelEdit');
+        var wrap = jInput.closest('.tuningInlineField');
+        if (!cancelled) {
+            commitTuningInlineEdit(wrap, jInput.val());
+        }
+        closeTuningInlineEditor(wrap);
     });
     $('#btnShowHideAddSongTuning').off('click').on('click', function () {
         $('#divAddSongTuning').toggle();
