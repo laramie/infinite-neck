@@ -3165,12 +3165,19 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (gNutSizeState === 0) {
 				newValue = "0";
 				show = false;
-				$('.nut').hide();
+				$('.nut, .nutR, .diamondRowSupernut').hide();
 			} else {
 				newValue = arr[gNutSizeState];
 			}
 			setOneCssVar("--nut-width", newValue);
-			if (show) $('.nut').show();
+			// .diamondRowSupernut must be hidden/shown together with the note-row nut cells
+			// (.nut / .nutR): it's a separate <td> sharing the same table column, has no
+			// width of its own (relies on that column's width being driven by the note-row
+			// nut cell), and previously wasn't touched here at all -- so hiding just the note
+			// nut cells left this cell visible with only its tiny "&nbsp;"/diamond content to
+			// size the column, shifting every diamond fret marker over by one column. Likewise
+			// .nutR (reverse-tuning nut cells) was never hidden here either.
+			if (show) $('.nut, .nutR, .diamondRowSupernut').show();
 		};
 	})();
 

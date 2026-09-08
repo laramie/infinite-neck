@@ -348,6 +348,24 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "white",
         "noteBlackKeyFontColor": "white"
     },
+    "BlackPad" : {
+        "id": "BlackPad",
+        "caption":"BlackPad",
+        "noteRadius": "12%",
+        "namedNoteRadius": "10%",
+        "notePadding": "12pt",
+        "cellSpacing": "0.5pt",
+        "instrumentBackground": "black",
+        "nutColor": "brown",
+        "noteWhiteShadowColor": "black",
+        "noteBlackShadowColor": "black",
+        "noteWhiteKeyShadowColor": "0 0 2pt 1pt SaddleBrown",
+        "noteBlackKeyShadowColor": "0 0 2pt 1pt SaddleBrown",
+        "noteWhiteKeyColor": "black",
+        "noteBlackKeyColor": "black",
+        "noteWhiteKeyFontColor": "white",
+        "noteBlackKeyFontColor": "white"
+    },
     "AdultSwim" : {
         "id": "AdultSwim",
         "caption":"Adult Swim",
