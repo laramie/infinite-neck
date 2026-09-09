@@ -455,6 +455,16 @@ export const allTunings = {
       "caption": "8x8",
       "nStrings": 8,
       "rowRange": [71, 66, 61, 56, 51, 46, 41, 36],
+      "doubleDiamonds": [
+        4
+      ],
+      "faceTinyDiamondsStrings": [],
+      "faceDoubleDiamondsStrings": [
+        3
+      ],
+      "showDiamonds": false,
+      "showFaceDiamonds": true,
+      "faceDoubleDiamondsLeft": "100%",
       "frets": 8,
       "nut": false,
       "leftmargin": true,
