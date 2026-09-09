@@ -740,8 +740,10 @@ function document_keypress(e) {
 				paletteUtils.activateUiControl('#idMidiPitchesSingle');
                 break;
 			case "*":
-				$('.diamondsRow').toggle();
-				$('body').toggleClass('HideFaceDiamonds');
+				let $el = $('body');
+				$el.toggleClass('HideFaceDiamonds');
+				let hideFace = $el.hasClass('HideFaceDiamonds');
+				$('.diamondsRow').toggle(!hideFace);
 				break;	
             default:
         }
