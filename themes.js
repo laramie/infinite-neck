@@ -36,7 +36,9 @@ export const gThemes = {
         "systemMultiColor": "magenta",
         "systemLeadColor": "rgb(94, 251, 244)",
         "borderImageWhiteKey": "none",
-        "borderImageBlackKey": "none"
+        "borderImageBlackKey": "none",
+        "instrumentBorderThickness": "0",
+        "instrumentBorderSlice": "0"
     },
     "PoolShark" : {
         "id": "PoolShark",
@@ -59,7 +61,7 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "#555",
         "noteBlackKeyFontColor": "white",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "20px",
         "instrumentBorderSlice": "30"
     },
     "Mahjong" : {
@@ -110,7 +112,7 @@ export const gThemes = {
         "doubleDiamondsColor": "orange",
         "diamondsBackgroundColor":"black",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "20px",
         "instrumentBorderSlice": "30"
     },
     "Autobahn" : {
