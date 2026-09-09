@@ -1584,17 +1584,54 @@ export class Song extends SongPersistence {
         return null;
     }
 
+    /** Sprint 146 Iteration 2: derives the canonical id/caption/baseid/basecaption a per-table
+     *  Theme block should carry once it's saved for a specific Table+Section, so the Theme
+     *  Matrix can show something like "Autobahn+P46_1:S1" instead of the generic
+     *  "Autobahn+Autobahn" controlsToTheme() produces on its own (see 143-it2-design.md point 2).
+     *  themeObject.baseid/basecaption (set by themeFunctions.js's controlsToTheme()) are
+     *  preferred so re-tagging (e.g. via setTableThemeAtSection() writing to a different
+     *  Table+Section than the one the controls were last loaded from) never has to re-parse an
+     *  already-suffixed caption; falls back to id/caption if a theme predates baseid/basecaption. */
+    _computeTableThemeIdentity(themeObject, tableID, sectionIndex) {
+        const baseId = themeObject?.baseid || themeObject?.id || 'Theme';
+        const baseCaption = themeObject?.basecaption || themeObject?.caption || 'Theme';
+        const safeTableID = `${tableID || ''}`;
+        const displayTableID = safeTableID.startsWith(Constants.TABLE_ID_PREFIX)
+            ? safeTableID.slice(Constants.TABLE_ID_PREFIX.length)
+            : safeTableID;
+        const sectionNum = sectionIndex + 1;
+        return {
+            id: `${baseId}-${displayTableID}-S${sectionNum}`,
+            caption: `${baseCaption}+${displayTableID}:S${sectionNum}`,
+            baseid: baseId,
+            basecaption: baseCaption
+        };
+    }
+
     /** Sprint 146 (table-themes): freezes a copy of the given Theme object (same shape as
-     *  themeFunctions.js's controlsToTheme() / getSong().userTheme) onto the CURRENT section's
+     *  themeFunctions.js's controlsToTheme() / getSong().userTheme) onto sectionIndex's
      *  sectionNotesByTable[tableID].theme. Mirrors setToolDisplayOptions()/the displayOptions
-     *  Save button exactly, just scoped to one table instead of the whole song. */
-    setTableTheme(tableID, themeObject) {
+     *  Save button, just scoped to one Table+Section instead of the whole Section/song. Re-tags
+     *  the id/caption to identify this Table+Section (see _computeTableThemeIdentity()). Returns
+     *  false (no-op) if tableID is blank or sectionIndex doesn't resolve to a real Section. */
+    setTableThemeAtSection(tableID, sectionIndex, themeObject) {
         const safeTableID = `${tableID || ''}`.trim();
         if (!safeTableID) {
-            return;
+            return false;
         }
-        const sectionNotes = this.getCurrentSection().getSectionNotes(safeTableID);
-        sectionNotes.theme = structuredClone(themeObject || {});
+        const section = this.sections[sectionIndex];
+        if (!section) {
+            return false;
+        }
+        const identity = this._computeTableThemeIdentity(themeObject, safeTableID, sectionIndex);
+        section.getSectionNotes(safeTableID).theme = { ...structuredClone(themeObject || {}), ...identity };
+        return true;
+    }
+
+    /** Convenience wrapper for setTableThemeAtSection() scoped to the CURRENT Section --
+     *  see that method for the shared implementation/semantics. */
+    setTableTheme(tableID, themeObject) {
+        this.setTableThemeAtSection(tableID, this.getSectionsCurrentIndex(), themeObject);
     }
 
     /** Removes a table's saved Theme from the CURRENT section only (mirrors

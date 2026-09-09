@@ -783,6 +783,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SectionDrawerBuilder.sectionChanged();
 		renderTutorialPrompt();
 		captureDisplayOptionsDirtyBaseline();
+		refreshAllTableThemeDisplays();
 	}
 
 	export function sectionChanged(){
@@ -3677,6 +3678,25 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		refreshTableThemeDisplay(tableID);
 	}
 
+	/** Sprint 146 Iteration 2 (143-it2-design.md point 3, revised per user feedback): writes the
+	 *  Theme page's CURRENT control values (same as handleBtnControlsToTableTheme(), via
+	 *  controlsToTheme()) onto destTableID's Theme at destSectionIndex -- an arbitrary Table+
+	 *  Section, not necessarily the one #selThemeTable/the current Section point at. Despite the
+	 *  "Copy" name/button label, this is always a fresh write (never reads any existing stored
+	 *  Theme) -- the "copy" framing is just the convenience of having arrived at these control
+	 *  values by first selecting a source Section+Table (or leaving "default" selected, which
+	 *  works identically since controlsToTheme() only reads the DOM controls, not #selThemeTable).
+	 *  Only refreshes the live display if destSectionIndex IS the current Section (writing to a
+	 *  different Section doesn't change what's on-screen). */
+	export function handleBtnCopyThemeToSection(destTableID, destSectionIndex) {
+		var themeObject = controlsToTheme();
+		const copied = getSong().setTableThemeAtSection(destTableID, destSectionIndex, themeObject);
+		if (copied && destSectionIndex === getSectionsCurrentIndex()) {
+			refreshTableThemeDisplay(destTableID);
+		}
+		return copied;
+	}
+
 	/** Sprint 146 Phase 5: re-resolves tableID's Theme-in-effect and re-applies it directly to
 	 *  that table's live element, so Save/Clear Table Theme show up immediately without a full
 	 *  reinstallAllTuningsTables() rebuild. No-op if the table isn't currently on-screen (e.g.
@@ -3692,6 +3712,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		const themeInEffect = getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
 		applyThemeToTableElement(instrumentBackgroundEl, themeInEffect);
+	}
+
+	/** Sprint 146 Iteration 2 (143-it2-design.md point 5): re-applies every known table's
+	 *  resolved per-table Theme on every Section change (navigation, next/prev, looping) --
+	 *  called from syncSectionUi() so an Instrument's Theme correctly "rolls over" once you
+	 *  cross into a Section (or loop back around) with a different stored Theme for it. */
+	export function refreshAllTableThemeDisplays() {
+		TuningsLibrary.getMyTunings().forEach((tuning) => {
+			if (tuning && tuning.baseID) {
+				refreshTableThemeDisplay(Constants.TABLE_ID_PREFIX + tuning.baseID);
+			}
+		});
 	}
 
 	export function toggleRandomLoop(){
@@ -4090,6 +4122,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnThemeControls', function() {
 		    showOneMenu("#divThemeControls");
 		    ThemesBuilder.updateThemeTableSelect();  //sprint 146: instrument list may have changed since last shown.
+		    ThemesBuilder.updateThemeTableDestSelect();  //sprint 146 it2: same for the Copy destination picker.
 		});
 
 

@@ -31,6 +31,23 @@ import { gThemes } from './themes.js';
     export function getWidget_SelectThemes(){
         return generateSelectThemes(gThemes);
     }
+
+    //========= tracks whichever Theme is currently reflected in the Theme controls ============
+    let lastAppliedTheme = null;
+    /** Sprint 146 Iteration 2 (per user feedback): records the Theme object that themes.builder.js
+     *  just loaded into the Theme controls via themeToControls() -- e.g. the per-table Theme in
+     *  effect for whatever #selThemeTable is currently picked -- so controlsToTheme() can chain
+     *  baseid/basecaption from IT when the user hits Save, instead of blindly re-consulting
+     *  #selThemes (which doesn't move when a Matrix cell/table is picked, and may be stale).
+     *  Only call this for "real" load flows (selThemeTableChange()/selThemesChange()) -- NOT from
+     *  auditThemes()'s informational loop over every catalog theme, or Save would pick up
+     *  whatever theme was last audited instead of what's actually on screen. */
+    export function setLastAppliedTheme(theme){
+        lastAppliedTheme = theme;
+    }
+    export function getLastAppliedTheme(){
+        return lastAppliedTheme;
+    }
     //==========================================================================
 
     function generateSelectThemes(themes){
@@ -166,13 +183,27 @@ export function dumpThemeIds(){
 	export function controlsToTheme(){
 		var defaultOptions = JSON.parse(JSON.stringify(getDefaultTheme()));
 		var options = JSON.parse(JSON.stringify(defaultOptions));
-		var origThemeOptions = getThemes()[$('#selThemes').val()];
+		// Sprint 146 Iteration 2 (per user feedback): prefer whichever Theme is actually reflected
+		// in the controls right now (tracked via setLastAppliedTheme() -- e.g. a per-table Theme
+		// walked back from an earlier Section) over #selThemes, which is a separate picker that
+		// doesn't move when a table/Matrix cell is picked and can be stale. Falls back to #selThemes
+		// only if nothing has been explicitly loaded yet (e.g. before the Theme page's first use).
+		var origThemeOptions = getLastAppliedTheme() || getThemes()[$('#selThemes').val()];
 
 		function overwriteDefaultWithThemeValue(defOptions, themeOptions){
 			Object.assign(defOptions, themeOptions);
 		}
 		//this applies current controls to default options.
 		function overwriteDefaultWithControlValue(options){
+			// Sprint 146 Iteration 2: capture the pre-suffix base id/caption (e.g. "Autobahn")
+			// BEFORE appending the "-"/"+" + #selThemes suffix below, so callers that re-tag a
+			// saved Theme for a specific Table+Section (see Song.js's _computeTableThemeIdentity())
+			// can rebuild a clean "<base>+<table>:S<n>" caption without string-parsing games.
+			// Prefer any baseid/basecaption ALREADY on options (merged in from origThemeOptions,
+			// e.g. when origThemeOptions is itself a previously-concocted per-table Theme) so we
+			// chain from the true root instead of re-basing off an already-suffixed id/caption.
+			options.baseid = options.baseid || options.id;
+			options.basecaption = options.basecaption || options.caption;
 			options.id = options.id + "-"+$('#selThemes').val();
 			options.caption = options.caption + "+"+$('#selThemes option:selected').text();
 			options.noteRadius = $('#dropDownNoteRadius').val();

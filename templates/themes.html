@@ -20,6 +20,28 @@
                 <button id="btnDeleteTableTheme" class="safeButton" type="button" disabled>Clear Table Theme</button>
                 <br>
 
+                <!-- Sprint 146 Iteration 2 (143-it2-design.md point 3, revised per user feedback):
+                     writes the CURRENT Theme controls (however they got that way -- Save button,
+                     #selThemeTable pick, or "default") onto an arbitrary destination Table+Section.
+                     Neither destination select navigates or changes the displayed controls. -->
+                <label for="selThemeTableDest">Copy Table Theme to Table:
+                    <select id="selThemeTableDest"></select>
+                </label>
+                <label for="selThemeSectionNumDest">Section:
+                    <select id="selThemeSectionNumDest"></select>
+                </label>
+                <button id="btnCopyThemeToSection" class="safeButton" type="button">Copy to Section</button>
+                <br>
+
+                <!-- Sprint 146 Iteration 2 (143-it2-design.md point 1-2): Section x Instrument
+                     matrix of saved per-table Themes, collapsed by default like
+                     #tutorialPromptSectionToggle. -->
+                <button id="btnToggleThemeMatrix" class="safeButton" type="button">Theme Matrix <span id="spanThemeMatrixArrow">&#x25B6;</span></button>
+                <div id="divThemeMatrixWrap" style="display:none;">
+                    <table id="tblThemeMatrix" class="themeMatrixTable" border="1" cellpadding="3" cellspacing="0"></table>
+                </div>
+                <br>
+
                 <!-- Theme Controls -->
                 <div id="divThemeControlsFlex">
                     <table class="themeTableControls" border="1" cellpadding='3' cellspacing='0'>

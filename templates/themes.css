@@ -71,6 +71,43 @@
     font-style: italic;
 }
 
+/* Sprint 146 Iteration 2: Section x Instrument Theme matrix (143-it2-design.md points 1-3). */
+#spanThemeMatrixArrow {
+    font-size: 80%;
+}
+.themeMatrixTable {
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 0.5em;
+}
+.themeMatrixTable th,
+.themeMatrixTable td {
+    border: 1px solid gray;
+    padding: 0.3em 0.6em;
+    text-align: left;
+}
+.themeMatrixTable th {
+    background-color: rgb(249, 201, 98);
+}
+.themeMatrixCell {
+    cursor: pointer;
+}
+.themeMatrixCell:hover {
+    background-color: #eee;
+}
+.themeMatrixSectionCell {
+    cursor: pointer;
+    font-weight: bold;
+}
+.themeMatrixSectionCell:hover {
+    background-color: #eee;
+}
+/* Same highlight color as section-printer.css's .chartBAR--currentSection, marking the row for
+   whichever Section is currently navigated to -- see 143-it2-design.md point 3. */
+.themeMatrixRow--current {
+    background-color: #a1fde9;
+}
+
 .tblThemeIdDump {
   border-collapse: collapse; /* Merges double cell borders into single thin lines */
   font-family: sans-serif;
