@@ -1358,12 +1358,13 @@ input:read-only,textarea:read-only {
    custom properties directly on one <table class="fretTable"> element to override the
    :root default for just that instrument, using the same mechanism already proven for
    --face-diamonds-left/--stringDividerHeight. See themeFunctions.js's theme() for the
-   corresponding :root rule() calls. */
+   corresponding :root rule() calls.
+   NOTE: .instrumentBackground's own var(--instrument-background-color, ...) rule lives in
+   instrument.css (it already had a real, more complete rule block for this selector, found
+   during the Phase 5 bugfix -- a duplicate rule here would be a silently-dead no-op, since
+   instrument.css loads after this file and wins on equal specificity). */
 table.fretTable {
     border-spacing: var(--cell-spacing, 6pt);
-}
-.instrumentBackground {
-    background-color: var(--instrument-background-color, #7C4700);
 }
 
 .diamondsPositionCurrent {

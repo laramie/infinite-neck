@@ -2,7 +2,7 @@
 
 
 import * as Constants from './Constants.js';
-import { setOneCssVar } from './themeFunctions.js';
+import { setOneCssVar, applyThemeToTableElement } from './themeFunctions.js';
 import { decoratePianoSkeuomorphicTable } from './templates/piano/piano-skeuomorphic.builder.js';
 import { getDiamondMarkerFret, getDisplayedCellcol } from './table-column-helpers.js';
 
@@ -204,6 +204,16 @@ export function buildNoteTable(options) {
 	var instrumentBackground = $('<div>');
 	instrumentBackground.addClass("instrumentBackground");
 	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
+	// Sprint 146 Phase 5: options.themeInEffect is this table's resolved per-instrument Theme
+	// override (set by infinite-neck.js from getSong().getStoredTableThemeInEffect()), or
+	// null/undefined if this table has no override. Applied to instrumentBackground (NOT
+	// tableEl) because several vars (--instrument-background-color, --instrument-border-image,
+	// --instrument-margin-tb, --instrument-border-thickness) are consumed by .instrumentBackground
+	// itself, an ANCESTOR of table.fretTable -- a var set on a descendant can never affect an
+	// ancestor's resolved value. Setting it here still cascades correctly down into the table
+	// and its cells for every other (note/diamond/etc.) var, since instrumentBackground is an
+	// ancestor of the table either way.
+	applyThemeToTableElement(instrumentBackground.get(0), options.themeInEffect || null);
 
 	let captionRow = buildCaptionRow(options, tableID);
 	instrumentBackground.append(captionRow);

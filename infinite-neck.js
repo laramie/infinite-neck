@@ -100,7 +100,8 @@ import {
 	installUserTheme,
 	controlsToTheme,
 	THEME_INFO,
-	setOneCssVar
+	setOneCssVar,
+	applyThemeToTableElement
 } from './themeFunctions.js';
 import * as SectionPrinter from './section-printer.js';
 import * as TableBuilder from './TableBuilder.js';
@@ -2307,7 +2308,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			const tuning = tunings[i];
 			const tableID = Constants.TABLE_ID_PREFIX + tuning.baseID;
 			const divID = Constants.TABLEDIV_ID_PREFIX + tuning.baseID;
-			var outerDiv = TableBuilder.buildNoteTable({ ...tuning, visible: true });
+			// Sprint 146 Phase 5: resolve this table's per-instrument Theme override (if any,
+			// walking back through earlier Sections) so buildNoteTable() can apply it as an
+			// inline-style override, letting two instruments render two different Themes at once.
+			const themeInEffect = getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
+			var outerDiv = TableBuilder.buildNoteTable({ ...tuning, visible: true, themeInEffect });
 			if (outerDiv){
 				if (isDivFloating(divID)) {
 					// Rebuild-in-place: to the User, a floated instrument has only moved
@@ -3660,6 +3665,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function handleBtnControlsToTableTheme(tableID) {
 		var themeObject = controlsToTheme();
 		getSong().setTableTheme(tableID, themeObject);
+		refreshTableThemeDisplay(tableID);
 		return themeObject;
 	}
 
@@ -3668,6 +3674,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	 *  are untouched -- see Song.getStoredTableThemeInEffect(). */
 	export function handleBtnDeleteTableTheme(tableID) {
 		getSong().clearTableTheme(tableID);
+		refreshTableThemeDisplay(tableID);
+	}
+
+	/** Sprint 146 Phase 5: re-resolves tableID's Theme-in-effect and re-applies it directly to
+	 *  that table's live element, so Save/Clear Table Theme show up immediately without a full
+	 *  reinstallAllTuningsTables() rebuild. No-op if the table isn't currently on-screen (e.g.
+	 *  hidden/not installed). Applies to the instrumentBackground div (id="div"+baseID), NOT
+	 *  the table.fretTable element itself -- see buildNoteTable()'s matching comment for why. */
+	export function refreshTableThemeDisplay(tableID) {
+		const baseID = `${tableID || ''}`.startsWith(Constants.TABLE_ID_PREFIX)
+			? tableID.slice(Constants.TABLE_ID_PREFIX.length)
+			: tableID;
+		const instrumentBackgroundEl = document.getElementById(Constants.TABLEDIV_ID_PREFIX + baseID);
+		if (!instrumentBackgroundEl) {
+			return;
+		}
+		const themeInEffect = getSong().getStoredTableThemeInEffect(getCurrentSection(), tableID);
+		applyThemeToTableElement(instrumentBackgroundEl, themeInEffect);
 	}
 
 	export function toggleRandomLoop(){

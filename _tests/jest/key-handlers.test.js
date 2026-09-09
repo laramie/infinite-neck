@@ -34,6 +34,7 @@ jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 
 jest.unstable_mockModule('../../themeFunctions.js', () => ({
 	setOneCssVar: jest.fn(),
+	applyThemeToTableElement: jest.fn(),
 	dumpThemeIds: jest.fn()
 }));
 

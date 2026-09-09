@@ -373,6 +373,101 @@ export function dumpThemeIds(){
 		THEME_INFO("style sent to DOM: <br>"+styleBody);
 	}
 
+	// Sprint 146 Phase 5: the same cssVarName/themeKey pairs theme()'s rule() calls write into
+	// the global :root block above, kept here as a flat list (rather than refactoring theme()
+	// itself, to avoid touching its already-verified string-building logic) so a single table's
+	// element can get the identical set of vars applied as an inline-style override -- higher
+	// specificity than :root, but scoped to just that table, not document-wide.
+	const TABLE_THEME_CSS_VARS = [
+		['--nut-gradient-color', 'nutColor'],
+		['--note-root-color', 'rootColor'],
+		['--diamonds-color', 'diamondsColor'],
+		['--diamonds-background-color', 'diamondsBackgroundColor'],
+		['--double-diamonds-color', 'doubleDiamondsColor'],
+		['--diamonds-size', 'diamondsSize'],
+		['--face-diamonds-size', 'faceDiamondsSize'],
+		['--face-diamonds-color', 'faceDiamondsColor'],
+		['--face-double-diamonds-size', 'faceDoubleDiamondsSize'],
+		['--face-double-diamonds-color', 'faceDoubleDiamondsColor'],
+		['--face-tiny-diamonds-size', 'faceTinyDiamondsSize'],
+		['--single-note-shrink', 'singleNoteShrink'],
+		['--note-white-color', 'noteWhiteColor'],
+		['--note-white-key-special-color', 'noteWhiteKeySpecialColor'],
+		['--note-black-key-special-color', 'noteBlackKeySpecialColor'],
+		['--single-note-shadow-color', 'singleNoteShadowColor'],
+		['--note-white-shadow-color', 'noteWhiteShadowColor'],
+		['--note-black-shadow-color', 'noteBlackShadowColor'],
+		['--system-pitch-color', 'systemPitchColor'],
+		['--system-multi-color', 'systemMultiColor'],
+		['--system-lead-color', 'systemLeadColor'],
+		['--instrument-margin-tb', 'instrumentMargins'],
+		['--cell-spacing', 'cellSpacing'],
+		['--note-padding', 'notePadding'],
+		['--note-radius', 'noteRadius'],
+		['--note-corner-shape', 'noteCornerShape'],
+		['--named-note-radius', 'namedNoteRadius'],
+		['--instrument-background-color', 'instrumentBackground'],
+		['--note-white-key-color', 'noteWhiteKeyColor'],
+		['--note-black-key-color', 'noteBlackKeyColor'],
+		['--note-white-key-shadow-color', 'noteWhiteKeyShadowColor'],
+		['--note-black-key-shadow-color', 'noteBlackKeyShadowColor'],
+		['--border-image-black-key', 'borderImageBlackKey'],
+		['--border-image-white-key', 'borderImageWhiteKey'],
+		['--instrument-border-image', 'instrumentBorderImage'],
+		['--instrument-border-thickness', 'instrumentBorderThickness'],
+	];
+
+	function isUsableContrastColorValue(value){
+		return !!value && `${value}`.trim() !== '' && `${value}`.trim().toLowerCase() !== 'transparent';
+	}
+	function normalizeColorTokenValue(value){
+		return `${value || ''}`.trim().toLowerCase();
+	}
+	// Same derivation as theme()'s resolvedUniversalLaneColor(), but reads directly off a
+	// complete themeOptions object (no defaultOptions fallback needed -- controlsToTheme()
+	// already guarantees every key is filled in before a per-table Theme is ever saved).
+	function resolvedUniversalLaneColorFromOptions(themeOptions, fontOption, ownKeyColorOption, oppositeKeyColorOption, fallbackValue){
+		const fontColor = themeOptions[fontOption];
+		const ownKeyColor = themeOptions[ownKeyColorOption];
+		if (isUsableContrastColorValue(fontColor) && normalizeColorTokenValue(fontColor) !== normalizeColorTokenValue(ownKeyColor)){
+			return fontColor;
+		}
+		const oppositeKeyColor = themeOptions[oppositeKeyColorOption];
+		if (isUsableContrastColorValue(oppositeKeyColor)){
+			return oppositeKeyColor;
+		}
+		return fallbackValue;
+	}
+
+	/** Sprint 146 Phase 5: applies (or clears) one table's per-instrument Theme override.
+	 *  themeOptions must be a complete frozen theme object (same shape controlsToTheme()
+	 *  produces -- every key already filled in from defaults), or null/undefined to clear a
+	 *  previously-applied override (e.g. after "Clear Table Theme"), letting the table fall
+	 *  back to inheriting the global :root theme written by theme() above. Called from
+	 *  TableBuilder.js's buildNoteTable() (initial/rebuild) and infinite-neck.js's
+	 *  refreshTableThemeDisplay() (immediate Save/Clear feedback, no full rebuild needed). */
+	export function applyThemeToTableElement(tableEl, themeOptions){
+		if (!tableEl || !tableEl.style){
+			return;
+		}
+		if (!themeOptions || typeof themeOptions !== 'object'){
+			TABLE_THEME_CSS_VARS.forEach(([cssVarName]) => tableEl.style.removeProperty(cssVarName));
+			tableEl.style.removeProperty('--universal-note-white-key-color');
+			tableEl.style.removeProperty('--universal-note-black-key-color');
+			return;
+		}
+		TABLE_THEME_CSS_VARS.forEach(([cssVarName, themeKey]) => {
+			const value = themeOptions[themeKey];
+			if (value !== undefined && value !== null && value !== ''){
+				tableEl.style.setProperty(cssVarName, value);
+			} else {
+				tableEl.style.removeProperty(cssVarName);
+			}
+		});
+		tableEl.style.setProperty('--universal-note-white-key-color', resolvedUniversalLaneColorFromOptions(themeOptions, 'noteWhiteKeyFontColor', 'noteWhiteKeyColor', 'noteBlackKeyColor', 'black'));
+		tableEl.style.setProperty('--universal-note-black-key-color', resolvedUniversalLaneColorFromOptions(themeOptions, 'noteBlackKeyFontColor', 'noteBlackKeyColor', 'noteWhiteKeyColor', 'white'));
+	}
+
 	function WARN(message){
 		warny("WARNING: "+message, true);
 	}

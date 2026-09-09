@@ -70,7 +70,7 @@
     box-sizing: border-box;
     padding: 0.5em;
     color: gold;
-    background-color: #0aa; 
+    background-color: var(--instrument-background-color, #7C4700);
     border: 1px solid rgb(0, 0, 0);
     box-shadow: 0 0 6pt 3pt maroon;
     border-radius: 0.3em;
