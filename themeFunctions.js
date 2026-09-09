@@ -169,10 +169,13 @@ export function dumpThemeIds(){
 			setVal('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
 			setVal('#dropDownBorderImageBlackKey', 'borderImageBlackKey');
 			setVal('#dropDownInstrumentBorderImage', 'instrumentBorderImage');
+			setVal('#dropDownInstrumentBorderThickness', 'instrumentBorderThickness');
+			setVal('#dropDownInstrumentBorderSlice', 'instrumentBorderSlice');
 			const ibi = theme["instrumentBorderImage"];
 			if (ibi && (ibi != 'none')){
 				//add *extra* space inside the border:
 				setOneCssVar('--instrument-border-thickness', theme["instrumentBorderThickness"]);
+				setOneCssVar('--instrument-border-slice', theme["instrumentBorderSlice"]);
 			} else {
 				setOneCssVar('--instrument-border-thickness', '0');
 			}
@@ -244,10 +247,13 @@ export function dumpThemeIds(){
 			options.borderImageWhiteKey = $('#dropDownBorderImageWhiteKey').val();
 			options.borderImageBlackKey = $('#dropDownBorderImageBlackKey').val();
 			options.instrumentBorderImage = $('#dropDownInstrumentBorderImage').val();
+			options.instrumentBorderThickness = $('#dropDownInstrumentBorderThickness').val();
+			options.instrumentBorderSlice = $('#dropDownInstrumentBorderSlice').val();
 
 			if (options.instrumentBorderImage && options.instrumentBorderImage !== "none"){
-				//This is really *extra* space for the border.  The spec says the border renders into the thickness, but that is not true.
+				//This is really *extra* space for the border.  Check the CSS declaration in instrument.css :: .instrumentBackground
 				setOneCssVar('--instrument-border-thickness', options.instrumentBorderThickness);
+				setOneCssVar('--instrument-border-slice', options.instrumentBorderSlice);
 			} else {
 				options.instrumentBorderThickness = '0'; 
 				setOneCssVar('--instrument-border-thickness', '0');
@@ -393,6 +399,7 @@ export function dumpThemeIds(){
 									+rule("--border-image-white-key", "borderImageWhiteKey")
 									+rule("--instrument-border-image", "instrumentBorderImage")
 									+rule("--instrument-border-thickness", "instrumentBorderThickness")
+									+rule("--instrument-border-slice", "instrumentBorderSlice")
 									//+rule("--td-note-font-family", "tdNoteFontFamily")
 									//+rule("--right-subscript-font-size", "rightSubscriptFontSize")
 
@@ -446,6 +453,7 @@ export function dumpThemeIds(){
 		['--border-image-white-key', 'borderImageWhiteKey'],
 		['--instrument-border-image', 'instrumentBorderImage'],
 		['--instrument-border-thickness', 'instrumentBorderThickness'],
+		['--instrument-border-slice', 'instrumentBorderSlice'],
 	];
 
 	function isUsableContrastColorValue(value){
@@ -561,6 +569,8 @@ export function dumpThemeIds(){
 			showOptions('#dropDownBorderImageWhiteKey', 'borderImageWhiteKey');
 			showOptions('#dropDownBorderImageBlackKey', 'borderImageBlackKey');
 			showOptions('#dropDownInstrumentBorderImage', 'instrumentBorderImage');
+			showOptions('#dropDownInstrumentBorderThickness', 'instrumentBorderThickness');
+			showOptions('#dropDownInstrumentBorderSlice', 'instrumentBorderSlice');
 		}	
 		auditThemesShowOptions();
 

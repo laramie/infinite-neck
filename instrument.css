@@ -76,7 +76,7 @@
     border-radius: 0.3em;
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    border-image: var(--instrument-border-image) 30 / 19px round;
+    border-image: var(--instrument-border-image) var(--instrument-border-slice) / var(--instrument-border-thickness) round;
     border-width: var(--instrument-border-thickness);
 }
 

@@ -59,7 +59,8 @@ export const gThemes = {
         "noteWhiteKeyFontColor": "#555",
         "noteBlackKeyFontColor": "white",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "1em"
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "Mahjong" : {
         "id": "Mahjong",
@@ -92,7 +93,8 @@ export const gThemes = {
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "1.4em"
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "Zinfandel" : {
         "id": "Zinfandel",
@@ -108,7 +110,8 @@ export const gThemes = {
         "doubleDiamondsColor": "orange",
         "diamondsBackgroundColor":"black",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "0.4em"
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "Autobahn" : {
         "id": "Autobahn",
@@ -162,7 +165,9 @@ export const gThemes = {
             "noteBlackKeyFontColor": "lightgreen",
       "borderImageWhiteKey": "url('img/celtic-background-white.png')",
       "borderImageBlackKey": "url('img/celtic-background-black.png')",
-      "instrumentBorderImage": "url('img/celtic-background-black.png')"
+      "instrumentBorderImage": "url('img/celtic-background-black.png')",
+      "instrumentBorderThickness": "160px",
+      "instrumentBorderSlice": "160"
     },
     "Shire" : {
         "id": "Shire",
@@ -176,7 +181,8 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/celtic-background-white.png')",
         "borderImageBlackKey":  "url('img/celtic-background-black.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "0.4em"
+        "instrumentBorderThickness": "60px",
+        "instrumentBorderSlice": "100"
     },
     "Renfaire" : {
         "id": "Renfaire",
@@ -194,7 +200,8 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/celtic-background-2.png')",
         "borderImageBlackKey":  "url('img/celtic-background-2.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "0.4em"
+        "instrumentBorderThickness": "160px",
+        "instrumentBorderSlice": "160"
     },
     "LandauTop" : {
         "id": "LandauTop",
@@ -249,8 +256,9 @@ export const gThemes = {
         "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey":  "none",
         "borderImageBlackKey":  "none",
-        "instrumentBorderImage": "url('img/blade-border.png')",
-        "instrumentBorderThickness": "1.4em"
+        "instrumentBorderImage": "url('img/blade-fullbox.jpeg')",
+        "instrumentBorderThickness": "40px",
+        "instrumentBorderSlice": "160"
     },
     "Piano" : {
         "id": "Piano",
@@ -518,7 +526,8 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "0.4em"
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "GuitarStringsBlackGlow": {
         "id": "GuitarStringsBlackGlow",
@@ -546,7 +555,9 @@ export const gThemes = {
         "noteBlackKeyFontColor": "white",
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "GuitarStringsWhite": {
         "id": "GuitarStringsWhite",
@@ -574,7 +585,9 @@ export const gThemes = {
         "noteBlackKeyFontColor": "black",
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
-        "instrumentBorderImage": "url('img/celtic-background-black.png')"
+        "instrumentBorderImage": "url('img/celtic-background-black.png')",
+        "instrumentBorderThickness": "30px",
+        "instrumentBorderSlice": "30"
     },
     "USER" : {
         "id": "USER",
