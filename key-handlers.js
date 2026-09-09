@@ -741,6 +741,7 @@ function document_keypress(e) {
                 break;
 			case "*":
 				$('.diamondsRow').toggle();
+				$('body').toggleClass('HideFaceDiamonds');
 				break;	
             default:
         }

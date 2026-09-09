@@ -126,6 +126,11 @@ export function dumpThemeIds(){
 			setVal('#dropDownDiamondsColor', 'diamondsColor');
 			setVal('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			setVal('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			setVal('#dropDownFaceDiamondsSize', 'faceDiamondsSize');
+			setVal('#dropDownFaceDiamondsColor', 'faceDiamondsColor');
+			setVal('#dropDownFaceDoubleDiamondsSize', 'faceDoubleDiamondsSize');
+			setVal('#dropDownFaceDoubleDiamondsColor', 'faceDoubleDiamondsColor');
+			setVal('#dropDownFaceTinyDiamondsSize', 'faceTinyDiamondsSize');
 			setVal('#dropDownSingleNoteShrink', 'singleNoteShrink');
 			setVal('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			setVal('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');
@@ -183,6 +188,11 @@ export function dumpThemeIds(){
 			options.diamondsColor = $('#dropDownDiamondsColor').val();
 			options.doubleDiamondsColor = $('#dropDownDoubleDiamondsColor').val();
 			options.diamondsBackgroundColor = $('#dropDownDiamondsBackgroundColor').val();
+			options.faceDiamondsSize = $('#dropDownFaceDiamondsSize').val();
+			options.faceDiamondsColor = $('#dropDownFaceDiamondsColor').val();
+			options.faceDoubleDiamondsSize = $('#dropDownFaceDoubleDiamondsSize').val();
+			options.faceDoubleDiamondsColor = $('#dropDownFaceDoubleDiamondsColor').val();
+			options.faceTinyDiamondsSize = $('#dropDownFaceTinyDiamondsSize').val();
 			options.singleNoteShrink = $('#dropDownSingleNoteShrink').val();
 			options.singleNoteShadowColor = $('#dropDownSingleNoteShadowColor').val();
 			options.noteWhiteShadowColor = $('#dropDownNoteWhiteShadowColor').val();
@@ -352,6 +362,11 @@ export function dumpThemeIds(){
 									+rule("--diamonds-background-color", "diamondsBackgroundColor")
 									+rule("--double-diamonds-color", "doubleDiamondsColor")
 									+rule("--diamonds-size", "diamondsSize")
+									+rule("--face-diamonds-size", "faceDiamondsSize")
+									+rule("--face-diamonds-color", "faceDiamondsColor")
+									+rule("--face-double-diamonds-size", "faceDoubleDiamondsSize")
+									+rule("--face-double-diamonds-color", "faceDoubleDiamondsColor")
+									+rule("--face-tiny-diamonds-size", "faceTinyDiamondsSize")
 									+rule("--single-note-shrink", "singleNoteShrink")
 									+rule("--note-white-color", "noteWhiteColor")
 			
@@ -422,6 +437,11 @@ export function dumpThemeIds(){
 			showOptions('#dropDownDiamondsColor', 'diamondsColor');
 			showOptions('#dropDownDoubleDiamondsColor', 'doubleDiamondsColor');
 			showOptions('#dropDownDiamondsBackgroundColor', 'diamondsBackgroundColor');
+			showOptions('#dropDownFaceDiamondsSize', 'faceDiamondsSize');
+			showOptions('#dropDownFaceDiamondsColor', 'faceDiamondsColor');
+			showOptions('#dropDownFaceDoubleDiamondsSize', 'faceDoubleDiamondsSize');
+			showOptions('#dropDownFaceDoubleDiamondsColor', 'faceDoubleDiamondsColor');
+			showOptions('#dropDownFaceTinyDiamondsSize', 'faceTinyDiamondsSize');
 			showOptions('#dropDownSingleNoteShrink', 'singleNoteShrink');
 			showOptions('#dropDownSingleNoteShadowColor', 'singleNoteShadowColor');
 			showOptions('#dropDownNoteWhiteShadowColor', 'noteWhiteShadowColor');

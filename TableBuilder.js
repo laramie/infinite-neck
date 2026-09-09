@@ -31,6 +31,10 @@ export function buildNoteTable(options) {
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
 	table.addClass("fretTable");
+	const tableEl = table.get(0);
+	tableEl.style.setProperty('--face-diamonds-left', options.faceDiamondsLeft || '50%');
+	tableEl.style.setProperty('--face-double-diamonds-left', options.faceDoubleDiamondsLeft || '50%');
+	tableEl.style.setProperty('--face-tiny-diamonds-left', options.faceTinyDiamondsLeft || '50%');
 	const doPianoSkeuomorphic = decoratePianoSkeuomorphicTable(table, options);
 	if (options.leftmargin) {
 		table.addClass("leftmarginInstrument");
@@ -44,6 +48,17 @@ export function buildNoteTable(options) {
 	var tuningNoteNames = "";
 
 	let addBackgroundImageWithoutTheme = false;
+
+	// "Face" diamond marker-fret sets (sprint 145): same fret columns as the regular
+	// diamondsRow (see diamondsRow() below / getDiamondMarkerFret()), but rendered
+	// directly on the fretboard face, per-string, via faceDiamondsStrings/
+	// faceDoubleDiamondsStrings/faceTinyDiamondsStrings (zero-based row indices, same
+	// convention as specialBackgroundIDRows).
+	const faceDiamondsFrets = Array.isArray(options.diamonds) ? options.diamonds : [];
+	const faceDoubleDiamondsFrets = Array.isArray(options.doubleDiamonds) ? options.doubleDiamonds : [];
+	const faceDiamondsStrings = Array.isArray(options.faceDiamondsStrings) ? options.faceDiamondsStrings : [];
+	const faceDoubleDiamondsStrings = Array.isArray(options.faceDoubleDiamondsStrings) ? options.faceDoubleDiamondsStrings : [];
+	const faceTinyDiamondsStrings = Array.isArray(options.faceTinyDiamondsStrings) ? options.faceTinyDiamondsStrings : [];
 
 	for (var r = 0; r < numRows; r++) {
 		tuningNoteNames = Constants.midinumToNoteName(options.rowRange[r]) + tuningNoteNames;
@@ -104,7 +119,30 @@ export function buildNoteTable(options) {
 			if (options.pinkKey && options.pinkKey !== 'none' && noteName == options.pinkKey) {
 				notePinkClass = "notePinkKey";
 			}
-			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + '" noteName="' + noteName + '">';
+
+			var faceDiamondClasses = "";
+			// showFaceDiamonds is a per-instrument master on/off (defaults to visible when
+			// unset, e.g. tunings saved before this field existed).
+			if (options.showFaceDiamonds !== false) {
+				var markerFret = getDiamondMarkerFret(options, c);
+				// Mirrors diamondsRow()'s else-if precedence: doubleDiamonds frets win, so a
+				// fret that is (mistakenly, or per convention) present in both arrays never
+				// gets the single/tiny diamond markers -- avoids needing CSS winner/loser rules.
+				var isFaceDiamondColumn = faceDiamondsFrets.includes(markerFret) && !faceDoubleDiamondsFrets.includes(markerFret);
+				if (isFaceDiamondColumn) {
+					if (faceDiamondsStrings.includes(r)) {
+						faceDiamondClasses += " faceDiamonds";
+					}
+					if (faceTinyDiamondsStrings.includes(r)) {
+						faceDiamondClasses += " faceTinyDiamonds";
+					}
+				}
+				if (faceDoubleDiamondsFrets.includes(markerFret) && faceDoubleDiamondsStrings.includes(r)) {
+					faceDiamondClasses += " faceDoubleDiamonds";
+				}
+			}
+
+			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + faceDiamondClasses + '" noteName="' + noteName + '">';
 			var cell = $(tdline).html("");
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);

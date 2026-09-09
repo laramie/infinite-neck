@@ -10,6 +10,21 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        3
+      ],
+      "faceDoubleDiamondsStrings": [
+        2,
+        4
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6
+      ],
       "stringDividerHeight": "0",
       "frets": 24,
       "nut": true,
@@ -25,6 +40,19 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        3,
+        4
+      ],
       "frets": 24,
       "nut": true,
       "reverse": false,
@@ -41,6 +69,19 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        3,
+        4
+      ],
       "frets": 16,
       "nut": true,
       "reverse": false,

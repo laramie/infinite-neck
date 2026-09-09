@@ -1405,7 +1405,62 @@ small {
     display: none;
 }
 
-
+/* "Face" diamonds (sprint 145-face-diamonds): fret-position markers on the fretboard
+   face itself (as opposed to the separate .diamondsRow), for the same fret columns as
+   the tuning's diamonds/doubleDiamonds arrays. TableBuilder.js's buildNoteTable() adds
+   these classes to individual td.note cells based on the tuning's faceDiamondsStrings/
+   faceDoubleDiamondsStrings/faceTinyDiamondsStrings (zero-based string/row indices, same
+   convention as specialBackgroundIDRows). td.note already sets position:relative, so the
+   marker positions itself with a ::before pseudo-element anchored to the cell's bottom
+   edge (a diamond on the bottom of a cell reads as a marker on the fret boundary below
+   that string; there is deliberately no top-edge variant, since a mark on the bottom of
+   the last string is the lowest meaningful position). Horizontal placement is per-tuning
+   (--face-diamonds-left/--face-double-diamonds-left/--face-tiny-diamonds-left, set as
+   inline CSS vars on the table by buildNoteTable()); color/size are Theme-driven
+   (--face-diamonds-color/--face-diamonds-size/--face-double-diamonds-color/
+   --face-double-diamonds-size/--face-tiny-diamonds-size, see themeFunctions.js's
+   theme()). FaceTinyDiamonds intentionally reuses FaceDiamonds' color, not its own.
+   All three are additionally nudged right and down by half of --cell-spacing (the
+   dropDownCellSpacing theme control) on top of the usual -50%/50% centering, so the
+   marker visually sits within the cell's spacing gap rather than dead-center on the
+   fret boundary. */
+.faceDiamonds::before,
+.faceDoubleDiamonds::before,
+.faceTinyDiamonds::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    pointer-events: none;
+    transform: translate(calc(-50% + (var(--cell-spacing, 0px) / 2)), calc(50% + (var(--cell-spacing, 0px) / 2))) rotate(45deg);
+}
+.faceDiamonds::before {
+    left: var(--face-diamonds-left, 50%);
+    width: var(--face-diamonds-size, 0.8rem);
+    height: var(--face-diamonds-size, 0.8rem);
+    background-color: var(--face-diamonds-color, pink);
+}
+.faceDoubleDiamonds::before {
+    left: var(--face-double-diamonds-left, 100%);
+    width: var(--face-double-diamonds-size, 0.8rem);
+    height: var(--face-double-diamonds-size, 0.8rem);
+    background-color: var(--face-double-diamonds-color, gold);
+}
+.faceTinyDiamonds::before {
+    left: var(--face-tiny-diamonds-left, 50%);
+    width: var(--face-tiny-diamonds-size, 0.35rem);
+    height: var(--face-tiny-diamonds-size, 0.35rem);
+    background-color: var(--face-diamonds-color, pink);
+}
+/* Global blanket toggle for the "*" key shortcut (see key-handlers.js), mirroring the
+   plain .diamondsRow.toggle() -- a display-only override that doesn't touch any
+   per-instrument showFaceDiamonds/tuning model state. ::before pseudo-elements can't be
+   jQuery .toggle()'d directly, so a body class flips them all off via CSS instead. */
+body.HideFaceDiamonds .faceDiamonds::before,
+body.HideFaceDiamonds .faceDoubleDiamonds::before,
+body.HideFaceDiamonds .faceTinyDiamonds::before {
+    display: none;
+}
 
 #EXAMPLECmdMenuOptionsTable  td:nth-child(2) {width: 100pt;}
 

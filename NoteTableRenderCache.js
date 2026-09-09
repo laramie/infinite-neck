@@ -91,7 +91,15 @@ export function buildTuningFingerprint(tuning = {}) {
 	return stableStringify({
 		banjoNut: tuning?.banjoNut || null,
 		baseID: tuning?.baseID || '',
+		diamonds: Array.isArray(tuning?.diamonds) ? tuning.diamonds.map(Number) : [],
 		doSpecialRows: !!tuning?.doSpecialRows,
+		doubleDiamonds: Array.isArray(tuning?.doubleDiamonds) ? tuning.doubleDiamonds.map(Number) : [],
+		faceDiamondsLeft: tuning?.faceDiamondsLeft || '',
+		faceDiamondsStrings: Array.isArray(tuning?.faceDiamondsStrings) ? tuning.faceDiamondsStrings.map(Number) : [],
+		faceDoubleDiamondsLeft: tuning?.faceDoubleDiamondsLeft || '',
+		faceDoubleDiamondsStrings: Array.isArray(tuning?.faceDoubleDiamondsStrings) ? tuning.faceDoubleDiamondsStrings.map(Number) : [],
+		faceTinyDiamondsLeft: tuning?.faceTinyDiamondsLeft || '',
+		faceTinyDiamondsStrings: Array.isArray(tuning?.faceTinyDiamondsStrings) ? tuning.faceTinyDiamondsStrings.map(Number) : [],
 		fixedFretWidthMult: tuning?.fixedFretWidthMult ?? null,
 		frets: tuning?.frets ?? null,
 		nut: !!tuning?.nut,
@@ -99,6 +107,8 @@ export function buildTuningFingerprint(tuning = {}) {
 		pinkKey: tuning?.pinkKey || 'none',
 		reverse: !!tuning?.reverse,
 		rowRange: Array.isArray(tuning?.rowRange) ? tuning.rowRange.map(Number) : [],
+		showDiamonds: !!tuning?.showDiamonds,
+		showFaceDiamonds: tuning?.showFaceDiamonds !== false,
 		specialBackgroundIDRows: Array.isArray(tuning?.specialBackgroundIDRows) ? tuning.specialBackgroundIDRows.map(Number) : []
 	});
 }
