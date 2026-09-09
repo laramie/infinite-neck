@@ -1,5 +1,6 @@
 import * as ThemeFunctions from '../themeFunctions.js';
 import * as InfiniteNeck from '../infinite-neck.js';
+import * as Constants from '../Constants.js';
 
 export class ThemesBuilder {
     static divThemes = null; //Singleton
@@ -24,6 +25,62 @@ export class ThemesBuilder {
         $('#warny').hide();
         $('#themeTableResults').hide();
         $('#selThemes').on('change', ThemesBuilder.selThemesChange);
+        ThemesBuilder.updateThemeTableSelect();
+    }
+
+    /** Sprint 146 (table-themes): (re)populates the "Save/Clear Theme for:" picker with every
+     *  Instrument/table in the model (mirrors WiringBuilder.updateAllWiringSelects()'s use of
+     *  getAllModelTableIDs()), keeping the leading "default" (whole song) option selected if
+     *  nothing else was chosen yet. Call whenever the Theme page is shown, since Instruments can
+     *  be added/removed while it's hidden. */
+    static updateThemeTableSelect(){
+        const sel = $('#selThemeTable');
+        if (sel.length === 0) {
+            return;
+        }
+        const previousValue = sel.val();
+        const prefix = Constants.TABLE_ID_PREFIX;
+        const tableIDs = InfiniteNeck.getSong().getAllModelTableIDs().slice().sort();
+        sel.empty();
+        sel.append($('<option>', { value: '', text: 'default (whole song)' }));
+        tableIDs.forEach((tableID) => {
+            const displayText = tableID.startsWith(prefix) ? tableID.slice(prefix.length) : tableID;
+            sel.append($('<option>', { value: tableID, text: displayText }));
+        });
+        if (previousValue && tableIDs.includes(previousValue)) {
+            sel.val(previousValue);
+        }
+        ThemesBuilder.updateThemeTableButtons();
+    }
+
+    /** Sprint 146: enables/disables "Clear Table Theme" based on whether the CURRENT Section
+     *  (not the walk-back-resolved value) has its own saved Theme for the picked table --
+     *  mirrors infinite-neck.js's showHideDisplayOptionsPresent(). */
+    static updateThemeTableButtons(){
+        const tableID = $('#selThemeTable').val();
+        if (!tableID) {
+            $('#btnDeleteTableTheme').prop('disabled', true);
+            return;
+        }
+        const sectionNotes = InfiniteNeck.getCurrentSection().sectionNotesByTable?.[tableID];
+        $('#btnDeleteTableTheme').prop('disabled', !sectionNotes?.theme);
+    }
+
+    /** Sprint 146: when a table is picked, reflect that table's Theme-in-effect (walking back
+     *  through earlier Sections, falling back to the live global Theme) into the Theme controls,
+     *  same shape as selThemesChange() above. Picking "default" restores the live global Theme. */
+    static selThemeTableChange(){
+        const tableID = $('#selThemeTable').val();
+        const globalTheme = ThemeFunctions.getThemes()[$('#selThemes').val()] || ThemeFunctions.getDefaultTheme();
+        ThemeFunctions.themeToControls(ThemeFunctions.getDefaultTheme());  //reset all dropdowns first, not every theme has every value.
+        if (!tableID) {
+            ThemeFunctions.themeToControls(globalTheme);
+        } else {
+            const currentSection = InfiniteNeck.getCurrentSection();
+            const tableTheme = InfiniteNeck.getSong().getTableThemeInEffect(currentSection, tableID, globalTheme);
+            ThemeFunctions.themeToControls(tableTheme);
+        }
+        ThemesBuilder.updateThemeTableButtons();
     }
 
     static selThemesChange(){
@@ -42,11 +99,26 @@ export class ThemesBuilder {
     static bindEvents(){
         //======= themes  =======
         $('#btnTheme').click(function() {
-            var newTheme = ThemeFunctions.controlsToTheme();
-            InfiniteNeck.getSong().userTheme = newTheme;
-            ThemeFunctions.installUserTheme(newTheme);
-            $('#selThemes').val('USER').trigger('change');
+            const tableID = $('#selThemeTable').val();
+            if (!tableID) {
+                var newTheme = ThemeFunctions.controlsToTheme();
+                InfiniteNeck.getSong().userTheme = newTheme;
+                ThemeFunctions.installUserTheme(newTheme);
+                $('#selThemes').val('USER').trigger('change');
+            } else {
+                InfiniteNeck.handleBtnControlsToTableTheme(tableID);
+                ThemesBuilder.updateThemeTableButtons();
+            }
         });
+        $('#btnDeleteTableTheme').click(function() {
+            const tableID = $('#selThemeTable').val();
+            if (!tableID) {
+                return;
+            }
+            InfiniteNeck.handleBtnDeleteTableTheme(tableID);
+            ThemesBuilder.selThemeTableChange();  //controls now reflect whatever's in effect after Clear.
+        });
+        $('#selThemeTable').on('change', ThemesBuilder.selThemeTableChange);
         $('#btnToggleThemeTableResults').click(function() {
             $('#themeTableResults').toggle();
         });

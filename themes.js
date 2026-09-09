@@ -19,7 +19,7 @@ export const gThemes = {
         "faceDiamondsColor": "dodgerblue",
         "faceDoubleDiamondsSize": "0.8rem",
         "faceDoubleDiamondsColor": "gold",
-        "faceTinyDiamondsSize": "0.40rem",
+        "faceTinyDiamondsSize": "0.4rem",
         "singleNoteShrink": "5%",
         "singleNoteShadowColor": "#56fa00",
         "noteWhiteShadowColor": "aqua",

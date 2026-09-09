@@ -18,5 +18,5 @@ Purpose of this sprint is to: Allow each table/instrument to have it's own Theme
 
 ## Iterations
 
-  - "Iteration 1": 
+  - "Iteration 1": Defined what could be replaced, carved the work into phases.
 

@@ -195,7 +195,10 @@ export class Section extends SectionPersistence {
 		return noteCount === 0;
 	}
 
-	// V2: removeEmptyTables removes NoteTables with no notes
+	// V2: removeEmptyTables removes NoteTables with no notes and no saved Theme
+	// (sprint 146 table-themes: a table with a stored .theme but no notes yet must survive
+	// this pruning pass, or its Theme would be silently lost the next time the model is
+	// cleaned up -- see Song.removeUnusedTablesFromMemoryModel()).
 	removeEmptyTables() {
 		const compact = {};
 		Object.entries(this.sectionNotesByTable).forEach(([tableID, sn]) => {
@@ -205,7 +208,8 @@ export class Section extends SectionPersistence {
 			pruneEmptyRecordedBeats(sn.recordedNotes);
 			const hasNotes = (Array.isArray(sn.playedNotes) && sn.playedNotes.length > 0)
 				|| countNamedNotes(sn.namedNotes) > 0
-				|| countRecordedNotes(sn.recordedNotes) > 0;
+				|| countRecordedNotes(sn.recordedNotes) > 0
+				|| !!sn.theme;
 			if (hasNotes) {
 				compact[tableID] = sn;
 			}

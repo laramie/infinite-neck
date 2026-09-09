@@ -1351,6 +1351,21 @@ input:read-only,textarea:read-only {
 
 /***************************** Instrument / NoteTable / FretTable *****************************/
 
+/* Sprint 146 (table-themes): these rules used to be injected as literal computed values
+   directly by themeFunctions.js's theme(), document-wide, on every render. They are now
+   plain var()-driven CSS with the current Default theme's value as fallback, which is what
+   makes per-table (per-instrument) theming possible: TableBuilder.js can set any of these
+   custom properties directly on one <table class="fretTable"> element to override the
+   :root default for just that instrument, using the same mechanism already proven for
+   --face-diamonds-left/--stringDividerHeight. See themeFunctions.js's theme() for the
+   corresponding :root rule() calls. */
+table.fretTable {
+    border-spacing: var(--cell-spacing, 6pt);
+}
+.instrumentBackground {
+    background-color: var(--instrument-background-color, #7C4700);
+}
+
 .diamondsPositionCurrent {
     background-color: chartreuse !important;
 }
@@ -1481,7 +1496,7 @@ td.note small {
 }
 
 .nut {
-    border: 2px solid brown;
+    border: 2px solid var(--nut-gradient-color, #331e01);
     border-right: 20px double brown;
     margin: 4px;
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20.5px, var(--nut-gradient-color) 21px );
@@ -1542,6 +1557,9 @@ td.note {
     vertical-align: middle;
     font-family: var(--td-note-font-family), sans-serif;
     position: relative;
+    padding: var(--note-padding, 8pt);
+    border-radius: var(--note-radius, 20%);
+    corner-shape: var(--note-corner-shape, round);
       /* below 3 highlight is mushed.
                     * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
     /* LOL Best effect yet!   -webkit-transform: rotate(-90deg);   */
@@ -1585,13 +1603,13 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
                        * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
         padding: 0;
         position: relative;  /* By taking 'relative' the position coordinates of children are relative to this div. */
-        border-radius: 10px;
+        border-radius: var(--named-note-radius, 16%);
         min-height: 20px;
         min-width: 20px;
 }
 .namedNote {
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
     display: block;
     height: 100%;
     width: 100%;
@@ -1601,7 +1619,7 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
 
 .universalNamedNote {
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
     display: none;
     height: 100%;
     width: 100%;
@@ -1629,7 +1647,8 @@ body.ShowAllNoteNames .universalNamedNote {
 
     display:none;
     z-index: 4;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
+    border-top-left-radius: var(--singleNote-top-left-radius);
     /* make it a bit smaller to fit within NamedNote when they are both there, so highlights work better. */
     width: calc(100% - (2 * var(--single-note-shrink, 0)));
     height: calc(100% - (2 * var(--single-note-shrink, 0)));
@@ -1822,14 +1841,28 @@ td.nut div.NoteActive .CenterCell {
     background-color: black;
 }
 .noteBlackKey {
-    background-color: green;
-    color: green;
+    background-color: var(--note-black-key-color, #555);
+    color: transparent;
     box-shadow: 0 0 2pt 1pt cornflowerblue;
 }
 .noteWhiteKey {
-    background-color:white;
-    color: blue;
+    background-color: var(--note-white-key-color, white);
+    color: transparent;
     box-shadow: 0 0 2pt 1pt pink;
+}
+/* Per-key theme-driven box-shadow, excluded on highlighted cells (:not(...)) so it never
+   fights with an active Pitch/Multi/root/lead highlight's own box-shadow -- both are
+   single-class-equivalent selectors, and this higher-specificity :not() selector always
+   wins over the plain .noteWhiteKey/.noteBlackKey literal box-shadow above when NOT
+   highlighted. When a highlight class IS present, this rule doesn't match at all, so the
+   plain rule's literal box-shadow above intentionally applies instead. See
+   NoteTableController.js's doHighlight/doHighlightSingle and .noteHighlight/
+   .noteHighlightSingle below. */
+.noteWhiteKey:not(.noteHighlight):not(.noteHighlightSingle) {
+    box-shadow: var(--note-white-key-shadow-color, 0 0 2pt 1pt pink);
+}
+.noteBlackKey:not(.noteHighlight):not(.noteHighlightSingle) {
+    box-shadow: var(--note-black-key-shadow-color, 0 0 2pt 1pt cornflowerblue);
 }
 .notePinkKey {
     /* was-for-note-mode: background-color:pink !important;*/

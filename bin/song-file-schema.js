@@ -152,7 +152,11 @@ const sectionNotesSchema = {
         },
         chord: { type: 'string' },
         mode: { type: 'string' },
-        tonalSourceSet: { type: 'string' }
+        tonalSourceSet: { type: 'string' },
+        // Sprint 146 (table-themes): a frozen Theme object (same shape as controlsToTheme()'s
+        // output / song.userTheme), saved per-table per-Section via handleBtnControlsToTableTheme().
+        // Loosely typed since Theme's own key set is intentionally open-ended (see themes.js).
+        theme: { type: 'object' }
     },
     required: ['playedNotes', 'namedNotes', 'recordedNotes'],
     additionalProperties: false

@@ -9,6 +9,17 @@
                 <button id="btnShowWarny" class="safeButton" type="button">Show Theme Messages</button>
                 <br>
 
+                <!-- Sprint 146 (table-themes): scope the Theme/Clear buttons above to one Instrument
+                     instead of the whole song. "default" (empty value) keeps the pre-existing global
+                     USER-theme behavior. -->
+                <label for="selThemeTable">Save/Clear Theme for:
+                    <select id="selThemeTable">
+                        <option value="" selected>default (whole song)</option>
+                    </select>
+                </label>
+                <button id="btnDeleteTableTheme" class="safeButton" type="button" disabled>Clear Table Theme</button>
+                <br>
+
                 <!-- Theme Controls -->
                 <div id="divThemeControlsFlex">
                     <table class="themeTableControls" border="1" cellpadding='3' cellspacing='0'>

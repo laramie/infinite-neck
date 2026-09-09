@@ -311,51 +311,17 @@ export function dumpThemeIds(){
 		//This is pure CSS, so use things like {border-radius: 10%;}  and NOT JSON: {"border-radius": "10%"}
 		//  which doesn't pass the CSS parser.
 
-		var styleBody = "td.note {"
-						         +rule("padding", "notePadding")
-						         +rule("border-radius", "noteRadius")
-						         +rule("corner-shape", "noteCornerShape")
-								 +"}"
-						 +" .namedNote, .NoteDisplay {"
-						         +rule("border-radius", "namedNoteRadius")
-								 +"}"
-					 +" .universalNamedNote {"
-						         +rule("border-radius", "namedNoteRadius")
-								 +"}"
-						 +" .singleNote {"
-						         +rule("border-radius", "namedNoteRadius")
-								 +" border-top-left-radius: var(--singleNote-top-left-radius);"
-								 +"}"
-						 +" table.fretTable {"
-						         +rule("border-spacing", "cellSpacing")
-								 +"}"
-						 +" .instrumentBackground {"
-						         +rule("background-color", "instrumentBackground")
-								 +"}"
-						 +" .nut {"
-						         +rule("border-color", "nutColor")
-							     +"}"
-						 +" .noteWhiteKey {"
-							     +rule("background-color", "noteWhiteKeyColor")
-							     +"color: transparent; "
-								 +"}"
-						 +" .noteBlackKey {"
-							     +rule("background-color", "noteBlackKeyColor")
-							     +"color: transparent; "
-								 +"}"
-						 // Per-key box-shadow is excluded on highlighted cells (:not(...)) so it never
-						 // fights with an active Pitch/Multi/root/lead highlight's own box-shadow -- both
-						 // are single-class selectors at equal specificity, and this rule is emitted last
-						 // (style#laramieStyle is last in <head>), so without the exclusion it would always
-						 // win and silently hide the highlight color. See NoteTableController.js's
-						 // doHighlight/doHighlightSingle and infinite-neck.css's .noteHighlight/.noteHighlightSingle.
-						 +" .noteWhiteKey:not(.noteHighlight):not(.noteHighlightSingle) {"
-								 +rule("box-shadow", "noteWhiteKeyShadowColor")
-								 +"}"
-						 +" .noteBlackKey:not(.noteHighlight):not(.noteHighlightSingle) {"
-								 +rule("box-shadow", "noteBlackKeyShadowColor")
-								 +"}"
-						 +" :root { "
+		// Sprint 146: the 11 "hard" rule blocks that used to be emitted directly onto class
+		// selectors here (td.note padding/border-radius/corner-shape, .namedNote/.NoteDisplay/
+		// .universalNamedNote/.singleNote border-radius, table.fretTable border-spacing,
+		// .instrumentBackground background-color, .nut border-color, .noteWhiteKey/.noteBlackKey
+		// background-color+box-shadow) have all been converted to var-driven CSS -- see
+		// infinite-neck.css's "Instrument / NoteTable / FretTable" section. This is what makes
+		// per-table (per-instrument) theming possible: TableBuilder.js can set any of these vars
+		// directly on a single table element to override the :root default below, using the same
+		// mechanism already proven for --face-diamonds-left/--stringDividerHeight. Only the :root
+		// assignments (which drive ALL tables unless a table overrides one itself) remain here.
+		var styleBody = " :root { "
 									+rule("--nut-gradient-color", "nutColor")
 									+rule("--note-root-color", "rootColor")
 									+rule("--diamonds-color", "diamondsColor")
@@ -384,7 +350,14 @@ export function dumpThemeIds(){
 									+rule("--instrument-margin-tb", "instrumentMargins")
 									+rule("--cell-spacing", "cellSpacing")
 									+rule("--note-padding", "notePadding")
+									+rule("--note-radius", "noteRadius")
+									+rule("--note-corner-shape", "noteCornerShape")
 									+rule("--named-note-radius", "namedNoteRadius")
+									+rule("--instrument-background-color", "instrumentBackground")
+									+rule("--note-white-key-color", "noteWhiteKeyColor")
+									+rule("--note-black-key-color", "noteBlackKeyColor")
+									+rule("--note-white-key-shadow-color", "noteWhiteKeyShadowColor")
+									+rule("--note-black-key-shadow-color", "noteBlackKeyShadowColor")
 									+rule("--border-image-black-key", "borderImageBlackKey")
 									+rule("--border-image-white-key", "borderImageWhiteKey")
 									+rule("--instrument-border-image", "instrumentBorderImage")

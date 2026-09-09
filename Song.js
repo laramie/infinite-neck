@@ -1584,6 +1584,60 @@ export class Song extends SongPersistence {
         return null;
     }
 
+    /** Sprint 146 (table-themes): freezes a copy of the given Theme object (same shape as
+     *  themeFunctions.js's controlsToTheme() / getSong().userTheme) onto the CURRENT section's
+     *  sectionNotesByTable[tableID].theme. Mirrors setToolDisplayOptions()/the displayOptions
+     *  Save button exactly, just scoped to one table instead of the whole song. */
+    setTableTheme(tableID, themeObject) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const sectionNotes = this.getCurrentSection().getSectionNotes(safeTableID);
+        sectionNotes.theme = structuredClone(themeObject || {});
+    }
+
+    /** Removes a table's saved Theme from the CURRENT section only (mirrors
+     *  clearToolDisplayOptions()/the displayOptions Clear button). Earlier sections' saved
+     *  Themes for this table (if any) are untouched, and remain in effect per
+     *  getStoredTableThemeInEffect()'s walk-back. */
+    clearTableTheme(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const sectionNotes = this.getCurrentSection().sectionNotesByTable?.[safeTableID];
+        if (sectionNotes) {
+            delete sectionNotes.theme;
+        }
+    }
+
+    /** Like getStoredDisplayOptionsInEffect(), but for a single table's Theme: walks backwards
+     *  from currSection through song.sections looking for the first section (at or before
+     *  currSection) whose sectionNotesByTable[tableID].theme is set. Returns null if no section
+     *  from currSection back to index 0 has ever saved a Theme for this table. */
+    getStoredTableThemeInEffect(currSection, tableID){
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return null;
+        }
+        let idx = this.sections.indexOf(currSection);
+        if (idx === -1) {
+            return null;
+        }
+        for (let i = idx; i >= 0; i--) {
+            const section = this.sections[i];
+            const theme = section?.sectionNotesByTable?.[safeTableID]?.theme;
+            if (theme) {
+                return theme;
+            }
+        }
+        return null;
+    }
+
+    /** call with defaultTheme = the tier-1/"default" Theme currently in effect (i.e. whatever
+     *  #selThemes/getSong().userTheme resolves to today) -- see getStoredTableThemeInEffect(). */
+    getTableThemeInEffect(currSection, tableID, defaultTheme){
+        return this.getStoredTableThemeInEffect(currSection, tableID) ?? defaultTheme;
+    }
+
 
     //This function works: it transposes every Section in a Song by 'amount'.
     cycleThruKeysAllSections(amount, doKeyLead = false){

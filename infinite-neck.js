@@ -98,6 +98,7 @@ import {
 	getDefaultTheme,
 	getThemes,
 	installUserTheme,
+	controlsToTheme,
 	THEME_INFO,
 	setOneCssVar
 } from './themeFunctions.js';
@@ -3653,6 +3654,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		captureDisplayOptionsDirtyBaseline();
 	}
 
+	/** Sprint 146 (table-themes): saves the Theme page's current control values as tableID's
+	 *  Theme on the current Section (mirrors handleBtnControlsToDisplayOptions() exactly, just
+	 *  scoped to one table via getSong().setTableTheme() instead of the whole Section). */
+	export function handleBtnControlsToTableTheme(tableID) {
+		var themeObject = controlsToTheme();
+		getSong().setTableTheme(tableID, themeObject);
+		return themeObject;
+	}
+
+	/** Removes tableID's saved Theme from the CURRENT Section only (mirrors
+	 *  handleBtnDeleteDisplayOptions()). Earlier Sections' saved Themes for this table, if any,
+	 *  are untouched -- see Song.getStoredTableThemeInEffect(). */
+	export function handleBtnDeleteTableTheme(tableID) {
+		getSong().clearTableTheme(tableID);
+	}
+
 	export function toggleRandomLoop(){
 		getSong().randomLoop = ! getSong().randomLoop;
 		if (getSong().randomLoop){
@@ -4048,6 +4065,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnThemeControls', function() {
 		    showOneMenu("#divThemeControls");
+		    ThemesBuilder.updateThemeTableSelect();  //sprint 146: instrument list may have changed since last shown.
 		});
 
 
