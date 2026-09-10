@@ -102,6 +102,19 @@
 .themeMatrixSectionCell:hover {
     background-color: #eee;
 }
+/* Sprint 146 Iteration 2 (per user feedback): informational "default" column -- shows the
+   whole-song Theme-automation value (section.displayOptions.sectionTheme, only when "Allow
+   Theme Automation" is on) for each Section. Clicking only navigates to that Section (see
+   ThemesBuilder.themeMatrixDefaultCellClick()), so it gets the same pointer/hover affordance
+   as the other clickable cells, but italic to mark it as informational-only, not a per-table
+   Theme slot. */
+.themeMatrixDefaultCell {
+    cursor: pointer;
+    font-style: italic;
+}
+.themeMatrixDefaultCell:hover {
+    background-color: #eee;
+}
 /* Same highlight color as section-printer.css's .chartBAR--currentSection, marking the row for
    whichever Section is currently navigated to -- see 143-it2-design.md point 3. */
 .themeMatrixRow--current {

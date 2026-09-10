@@ -4087,6 +4087,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#cbAllowThemeAutomation', function(){
 			getSong().allowThemeAutomation = this.checked;
 			updateDisplayOptionsReadonlyValues();
+			ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column only shows when this is on.
 		});
 
 		bindEvent('click', '#btnMessagesTab', function() {

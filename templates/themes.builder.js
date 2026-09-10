@@ -165,8 +165,9 @@ export class ThemesBuilder {
         const tableIDs = song.getAllModelTableIDs().slice().sort();
         const sections = song.sections || [];
         const currentSectionIndex = song.getSectionsCurrentIndex();
+        const allowThemeAutomation = !!song.allowThemeAutomation;
 
-        let html = '<thead><tr><th>Section</th>';
+        let html = '<thead><tr><th>Section</th><th>default</th>';
         tableIDs.forEach((tableID) => {
             const displayText = tableID.startsWith(prefix) ? tableID.slice(prefix.length) : tableID;
             html += `<th>${escapeHtml(displayText)}</th>`;
@@ -176,6 +177,8 @@ export class ThemesBuilder {
         sections.forEach((section, sectionIndex) => {
             const rowClass = sectionIndex === currentSectionIndex ? ' class="themeMatrixRow--current"' : '';
             html += `<tr${rowClass}><td class="themeMatrixSectionCell" data-section-index="${sectionIndex}">${sectionIndex + 1}</td>`;
+            const sectionTheme = allowThemeAutomation ? (section?.displayOptions?.sectionTheme || '') : '';
+            html += `<td class="themeMatrixDefaultCell" data-section-index="${sectionIndex}">${escapeHtml(sectionTheme)}</td>`;
             tableIDs.forEach((tableID) => {
                 const caption = section?.sectionNotesByTable?.[tableID]?.theme?.caption || '';
                 html += `<td class="themeMatrixCell" data-section-index="${sectionIndex}" data-table-id="${escapeHtml(tableID)}">${escapeHtml(caption)}</td>`;
@@ -216,6 +219,18 @@ export class ThemesBuilder {
         InfiniteNeck.linkToSection(sectionIndex);
         ThemesBuilder.updateThemeTableSelect();
         $('#selThemeTable').val('').trigger('change');
+        ThemesBuilder.renderThemeMatrix();
+    }
+
+    /** Sprint 146 Iteration 2 (per user feedback): the "default" column is purely informational --
+     *  it shows the whole-song Theme-automation value stored on this Section (section.displayOptions
+     *  .sectionTheme, only ever meaningful when "Allow Theme Automation" -- getSong().allowThemeAutomation
+     *  -- is on; see infinite-neck.js's controlsToDisplayOptions()/updateDisplayOptionsReadonlyValues(),
+     *  same source as the sectionTheme column in /vdd's "All Sections with Display Options" dump).
+     *  Clicking a cell in this column does nothing beyond navigating to that Section -- unlike
+     *  themeMatrixSectionCellClick()/themeMatrixCellClick(), it never touches #selThemeTable. */
+    static themeMatrixDefaultCellClick(sectionIndex){
+        InfiniteNeck.linkToSection(sectionIndex);
         ThemesBuilder.renderThemeMatrix();
     }
     
@@ -271,6 +286,13 @@ export class ThemesBuilder {
                 return;
             }
             ThemesBuilder.themeMatrixCellClick(sectionIndex, tableID);
+        });
+        $('#tblThemeMatrix').on('click', 'td.themeMatrixDefaultCell', function() {
+            const sectionIndex = parseInt($(this).data('section-index'), 10);
+            if (Number.isNaN(sectionIndex)) {
+                return;
+            }
+            ThemesBuilder.themeMatrixDefaultCellClick(sectionIndex);
         });
         $('#btnToggleThemeTableResults').click(function() {
             $('#themeTableResults').toggle();

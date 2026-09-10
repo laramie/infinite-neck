@@ -316,6 +316,7 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         + "<th class='TuningsTableSkinny'>Diamond Frets</th><th class='TuningsTableSkinny'>Dbl Diamond Frets</th>"
         + "<th class='TuningsTableSkinny'>F.Str</th><th class='TuningsTableSkinny'>FD.Str</th><th class='TuningsTableSkinny'>FT.Str</th>"
         + "<th class='TuningsTableSkinny'>F.Left</th><th class='TuningsTableSkinny'>FD.Left</th><th class='TuningsTableSkinny'>FT.Left</th>"
+        + "<th>FixedWidthMult</th><th>FixedHeightMult</th>"
         + "<th>Nut</th><th>Frets</th><th>Divider</th><th>Pink Key</th>"
         
     );
@@ -432,6 +433,14 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             ? formatTuningInlineEditor('faceTinyDiamondsLeft', tun.baseID, tun.faceTinyDiamondsLeft || '50%')
             : escapeHtmlText(tun.faceTinyDiamondsLeft || '50%');
 
+        var fixedFretWidthMultCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('fixedFretWidthMult', tun.baseID, tun.fixedFretWidthMult || '')
+            : escapeHtmlText(tun.fixedFretWidthMult || '');
+
+        var fixedFretHeightMultCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('fixedFretHeightMult', tun.baseID, tun.fixedFretHeightMult || '')
+            : escapeHtmlText(tun.fixedFretHeightMult || '');
+
         var checkedNut = tun.nut ? " checked " : "";
         var disabledNut = isPianoTuning ? ' disabled ' : '';
         var nutTitle = isPianoTuning
@@ -530,6 +539,8 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(faceDiamondsLeftCellHtml));
         tr.append($("<td>").html(faceDoubleDiamondsLeftCellHtml));
         tr.append($("<td>").html(faceTinyDiamondsLeftCellHtml));
+        tr.append($("<td>").html(fixedFretWidthMultCellHtml));
+        tr.append($("<td>").html(fixedFretHeightMultCellHtml));
         tr.append($("<td>").html(nutCellHtml));
         tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
         tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
@@ -1103,6 +1114,30 @@ const TUNING_INLINE_FIELD_HANDLERS = {
             }
             requestReinstallAllTuningsTables();
             return value || '50%';
+        }
+    },
+    fixedFretWidthMult: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.fixedFretWidthMult = value;
+            } else {
+                delete tuning.fixedFretWidthMult;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '';
+        }
+    },
+    fixedFretHeightMult: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.fixedFretHeightMult = value;
+            } else {
+                delete tuning.fixedFretHeightMult;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '';
         }
     }
 };

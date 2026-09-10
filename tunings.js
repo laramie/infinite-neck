@@ -469,7 +469,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidth": true,
+      "fixedFretWidthMult": 2.0,
+      "fixedFretHeightMult": 2.0,
       "pinkKey": "C"
     },
     {
@@ -483,7 +484,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidth": true,
+      "fixedFretWidthMult": 2.4,
+      "fixedFretHeightMult": 2.4,
       "pinkKey": "C"
     },
     {
@@ -497,7 +499,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidth": true,
+      "fixedFretWidthMult": 1.0,
+      "fixedFretHeightMult": 1.0,
       "pinkKey": "C"
     },
     {

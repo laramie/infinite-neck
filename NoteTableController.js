@@ -386,6 +386,12 @@ export function computeCellSizing(cellcol, isNut, options, tuning) {
     if (pianoSkeuomorphic) {
         h = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
     }
+    if (tuning.fixedFretHeightMult ){
+        const height = h.substring(0, w.indexOf("px"));
+        let iHeight = toInt(height, 60);
+        iHeight = iHeight * tuning.fixedFretHeightMult;
+        h = iHeight + "px";
+    }
 
     let multiplier = 1;
     const width = w.substring(0, w.indexOf("px"));

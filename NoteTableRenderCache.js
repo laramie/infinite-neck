@@ -101,6 +101,7 @@ export function buildTuningFingerprint(tuning = {}) {
 		faceTinyDiamondsLeft: tuning?.faceTinyDiamondsLeft || '',
 		faceTinyDiamondsStrings: Array.isArray(tuning?.faceTinyDiamondsStrings) ? tuning.faceTinyDiamondsStrings.map(Number) : [],
 		fixedFretWidthMult: tuning?.fixedFretWidthMult ?? null,
+		fixedFretHeightMult: tuning?.fixedFretHeightMult ?? null,
 		frets: tuning?.frets ?? null,
 		nut: !!tuning?.nut,
 		pianoNamesRow: !!tuning?.pianoNamesRow,

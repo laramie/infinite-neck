@@ -1436,10 +1436,24 @@ small {
    (--face-diamonds-color/--face-diamonds-size/--face-double-diamonds-color/
    --face-double-diamonds-size/--face-tiny-diamonds-size, see themeFunctions.js's
    theme()). FaceTinyDiamonds intentionally reuses FaceDiamonds' color, not its own.
-   All three are additionally nudged right and down by half of --cell-spacing (the
+   All three are additionally nudged down by half of --cell-spacing (the
    dropDownCellSpacing theme control) on top of the usual -50%/50% centering, so the
    marker visually sits within the cell's spacing gap rather than dead-center on the
-   fret boundary. */
+   fret boundary. This vertical nudge is safe because every td.note in a row shares the
+   same fixed height regardless of fret/column.
+   IMPORTANT: there is deliberately NO horizontal (--cell-spacing-based) nudge here, even
+   though one existed in an earlier version. `left: 50%`/`100%` above is a PERCENTAGE of
+   THIS cell's own width, which already self-scales correctly no matter how wide the
+   column is. But --cell-spacing is a single absolute length shared by the whole table,
+   the same for every column; adding it via translateX() on top of that percentage-based
+   left mixes two different scales, so the SAME absolute nudge becomes a much bigger
+   fraction of a narrow column than a wide one. Since column widths shrink hard toward
+   higher frets under "Natural Fret Widths" (and any nudge grows even larger the higher
+   Cell Spacing is cranked), that old horizontal term made the marker visibly "creep"
+   rightward, worse at higher frets, worse still with Natural Fret Widths -- see
+   _doco/design/sprints/145-face-diamonds/ for the bugfix writeup. Keeping translateX at
+   a plain -50% (relative to the marker's OWN fixed box, not the cell) avoids any
+   cell-width dependency entirely, so there is nothing left to creep. */
 .faceDiamonds::before,
 .faceDoubleDiamonds::before,
 .faceTinyDiamonds::before {
@@ -1448,7 +1462,7 @@ small {
     bottom: 0;
     z-index: 10;
     pointer-events: none;
-    transform: translate(calc(-50% + (var(--cell-spacing, 0px) / 2)), calc(50% + (var(--cell-spacing, 0px) / 2))) rotate(45deg);
+    transform: translate(-50%, calc(50% + (var(--cell-spacing, 0px) / 2))) rotate(45deg);
 }
 .faceDiamonds::before {
     left: var(--face-diamonds-left, 50%);

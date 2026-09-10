@@ -95,7 +95,7 @@ export const gThemes = {
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "31px",
         "instrumentBorderSlice": "30"
     },
     "Zinfandel" : {
@@ -168,7 +168,7 @@ export const gThemes = {
       "borderImageWhiteKey": "url('img/celtic-background-white.png')",
       "borderImageBlackKey": "url('img/celtic-background-black.png')",
       "instrumentBorderImage": "url('img/celtic-background-black.png')",
-      "instrumentBorderThickness": "160px",
+      "instrumentBorderThickness": "161px",
       "instrumentBorderSlice": "160"
     },
     "Shire" : {
@@ -202,7 +202,7 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/celtic-background-2.png')",
         "borderImageBlackKey":  "url('img/celtic-background-2.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "160px",
+        "instrumentBorderThickness": "161px",
         "instrumentBorderSlice": "160"
     },
     "LandauTop" : {
@@ -528,7 +528,7 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "31px",
         "instrumentBorderSlice": "30"
     },
     "GuitarStringsBlackGlow": {
@@ -558,7 +558,7 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "32px",
         "instrumentBorderSlice": "30"
     },
     "GuitarStringsWhite": {
@@ -588,7 +588,7 @@ export const gThemes = {
         "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
         "borderImageBlackKey": "url('img/guitar-string-fret.png')",
         "instrumentBorderImage": "url('img/celtic-background-black.png')",
-        "instrumentBorderThickness": "30px",
+        "instrumentBorderThickness": "31px",
         "instrumentBorderSlice": "30"
     },
     "USER" : {
