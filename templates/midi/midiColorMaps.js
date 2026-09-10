@@ -61,16 +61,16 @@ export const LAUNCHPAD_MAJOR_COLOR_VELOCITIES = Object.freeze({
 const CYCLE_ORDER = [
     3, //white //57, // spec. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.LIGHT_BLUE,         //   I
 	59, //51,                                                  //   Tau MAGENTA==45
-	51, //59: was purple for tau, now moving to Sade II. 59, //good-pink:53,                                                  //   II
-	47,                                                  //   m
-	79,               //   III
+	81,//51, //59: was purple for tau, now moving to Sade II. 59, //good-pink:53,                                                  //   II
+	45,//:bluer.  47,                                                  //   m
+	78,//:brighter.  79,               //   III
 	//83/84 make the best pair for IV and Tri.
-	83, //:the greenest brown, dark and toffee.  11: pumpkin and dark, //60, //pumpkin for IV. 84, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,             //   IV
-	84, //11, //60, //127, //more subtle. 9, //84, //More agressive yellow-orange for tritone. 83, //62, //OR: LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,           //   Tri
+	84, //:the greenest brown, dark and toffee.  11: pumpkin and dark, //60, //pumpkin for IV. 84, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE,             //   IV
+	83, //11, //60, //127, //more subtle. 9, //84, //More agressive yellow-orange for tritone. 83, //62, //OR: LAUNCHPAD_MAJOR_COLOR_VELOCITIES.ORANGE+2,           //   Tri
 	72, // PURE red.    7, //blood-red.  //blood-red:7, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.RED,                //   V
 	15, //LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW+2,           //   sa
 	LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_AMBER,       //   6
-	64,//35, //forest green. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+1,     //   dom
+	87,//:apple green.  64,//35, //forest green. LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN+1,     //   dom
 	89,//21//37,//spec.   75,                                                  //   Say 
 ];
 const CYCLE_ORDER_WORKING = [
