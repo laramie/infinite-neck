@@ -83,7 +83,7 @@ import { applyLoopSectionFilterToSong } from './SongNavigationHooks.js';
 		const sectionIndex = song.getSectionsCurrentIndex();
 		const beat = song.getBeat();
 		const nowText = formatRealtimeTick(nowMillis);
-		console.log(`[LooperRealtimeTick] ${nowMillis}  s:${sectionIndex}:${beat}`);
+		//console.log(`[LooperRealtimeTick] ${nowMillis}  s:${sectionIndex}:${beat}`);
 		updateRealtimeTickStart(nowText);
 	}
 

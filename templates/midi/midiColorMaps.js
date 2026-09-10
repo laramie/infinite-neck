@@ -94,7 +94,7 @@ function buildCycleOfColorsVelocityByNoteKey() {
 	noteKeys.forEach((noteKey, index) => {
 		map[noteKey] = CYCLE_ORDER[index % CYCLE_ORDER.length];
 	});
-    console.log("buildCycleOfColorsVelocityByNoteKey:"+JSON.stringify(map));
+    //console.log("buildCycleOfColorsVelocityByNoteKey:"+JSON.stringify(map));
 	return map;
 }
 const LAUNCHPAD_CYCLE_OF_COLORS_VELOCITY_BY_NOTE_KEY = buildCycleOfColorsVelocityByNoteKey();

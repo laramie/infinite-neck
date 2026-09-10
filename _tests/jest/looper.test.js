@@ -249,18 +249,6 @@ describe('looper looping state', () => {
 		expect(mockRuntime.showBeats).not.toHaveBeenCalled();
 	});
 
-	test('a scheduled tick logs section/beat/time to the console and mirrors it into #realtimeTickStart before tickBeat runs', () => {
-		mockRuntime.song = makeMockSong({ beat: 2, beats: 4, sectionIndex: 1 });
-		const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-		toggleLoopSections();
-
-		const scheduledHandler = setTimeoutSpy.mock.calls[0][0];
-		scheduledHandler();
-
-		expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringMatching(/^\[LooperRealtimeTick\] \d+\s+s:1:2$/));
-		expect(mockRuntime.updateRealtimeTickStart).toHaveBeenCalledWith(expect.stringMatching(/^\d{2}:\d{2}:\d{2}\.\d{3}$/));
-		consoleLogSpy.mockRestore();
-	});
 
 	test('predictive section-transition lead: no adjustment until a transition duration has actually been measured', () => {
 		// beats=1 means every tick is a section-transition tick (beat always >= beats), so the very
