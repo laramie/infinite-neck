@@ -4585,6 +4585,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
      <a href="#showHideView">V</a>
      <a href="#changeWidthOfCells">w</a> 
      <a href="#changeWidthOfCells">W</a>
+     <a href="#toggleAutoColorMulti">y</a>
      <a href="#dockAll">z</a>
      <a href="#reFloatAll">Z</a>
 
@@ -4665,7 +4666,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
         <td><a href="#showHideChart">r</a><a href="#toggleRecording">R</a></td>
         <td></td>
         <td><a href="#showThemesControls">T</a><a href="#showHideTransport">t</a></td>
-        <td>y</td>
+        <td><a href="#toggleAutoColorMulti" >y</a></td>
         <td><a href="#raiseRootKeyAnd">u</a><a href="#lowerRootKeyAnd">U</a></td>
         <td><a href="#songFileInfoRow">I</a><a href="#showHideFill">i</a></td>
         <td><a href="#useAFingeringOpen">o</a></td>
@@ -4772,7 +4773,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                     <td><a href="#toggleRecording"><b>R</b>EC</a><a href="#showHideChart" class="MBtn">cha<b>r</b>t</a>
                     </td>
                     <td><a href="#showThemesControls" class="MBtn"><b>T</b>hemes</a><a href="#showHideTransport" class="MBtn"><b>t</b>ransport</a></td>
-                    <td>y</td>
+                    <td><a href="#toggleAutoColorMulti"><b>y</b> Multi AutoColor</a></td>
                     <td><a href="#lowerRootKeyAnd"><b>U</b><br><small>transpose</small> down</a><a
                             href="#raiseRootKeyAnd"><small>transpose</small> <b>u</b>p</a></td>
                     <td><a href="#songFileInfoRow" class="MBtn"><b>I</b>nfo</a><br><a href="#showHideFill"
@@ -5264,6 +5265,14 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 <td>Show/hide Instrument Toolbar
                 </td>
             </tr>
+            <tr id="toggleAutoColorMulti">
+                <td><span class="key">y</span>
+                </td>
+                <td>
+                </td>
+                <td>toggles Auto-color Multi highlights.  Normally, this is unchecked and Multi highlights follow the system highlight color, but you can have them follow AutoColor instead.  There is a checkbox "Multi AC" on the Palette next to the AutoColor checkbox.
+                </td>
+            </tr>
             <tr id="toggleAutoColor">
                 <td><span class="key">c</span>
                 </td>
@@ -5433,7 +5442,7 @@ to hide menus and the <a href="#commandline">command-line</a>.</p>
                 </td>
                 <td>
                 </td>
-                <td>Toggle all DiamondRows visible/hidden.  Normally you would do this per-instrument on the My, Tunings table with the Diamonds checkbox.  With this shortcut, you can temporarily hide all DiamondRows on all Instruments.
+                <td>Toggle all DiamondRows visible/hidden.  Normally you would do this per-instrument on the MyTunings table with the Diamonds checkbox or the Face diamonds checkbox.  With this shortcut, you can temporarily hide all DiamondRows and Face diamonds on all Instruments.
                 </td>
             </tr>
         
