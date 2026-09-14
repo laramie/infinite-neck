@@ -31,3 +31,50 @@ describe('SectionNotes named note mutations', () => {
         expect(sectionNotes.namedNotes).not.toHaveProperty('B');
     });
 });
+
+describe('SectionNotes removeNotesByOwner', () => {
+    test('removes only playedNotes and namedNotes matching the given owner', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [
+                { noteName: 'C', styleNum: 1, owner: 'Momentary' },
+                { noteName: 'D', styleNum: 1 }
+            ],
+            namedNotes: {
+                E: { noteName: 'E', colorClass: 'noteRoot', owner: 'Momentary' },
+                F: { noteName: 'F', colorClass: 'noteRoot' }
+            }
+        });
+
+        sectionNotes.removeNotesByOwner('Momentary');
+
+        expect(sectionNotes.playedNotes).toHaveLength(1);
+        expect(sectionNotes.playedNotes[0].noteName).toBe('D');
+        expect(sectionNotes.namedNotes).not.toHaveProperty('E');
+        expect(sectionNotes.namedNotes).toHaveProperty('F');
+    });
+
+    test('is a no-op for a falsy owner, never clearing unowned notes', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [{ noteName: 'C', styleNum: 1 }],
+            namedNotes: { E: { noteName: 'E', colorClass: 'noteRoot' } }
+        });
+
+        sectionNotes.removeNotesByOwner('');
+        sectionNotes.removeNotesByOwner(undefined);
+
+        expect(sectionNotes.playedNotes).toHaveLength(1);
+        expect(sectionNotes.namedNotes).toHaveProperty('E');
+    });
+
+    test('leaves both collections untouched when no note matches the given owner', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [{ noteName: 'C', styleNum: 1, owner: 'ArpeggioPlugin' }],
+            namedNotes: { E: { noteName: 'E', colorClass: 'noteRoot', owner: 'ArpeggioPlugin' } }
+        });
+
+        sectionNotes.removeNotesByOwner('Momentary');
+
+        expect(sectionNotes.playedNotes).toHaveLength(1);
+        expect(sectionNotes.namedNotes).toHaveProperty('E');
+    });
+});

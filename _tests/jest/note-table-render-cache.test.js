@@ -56,6 +56,29 @@ describe('NoteTableRenderCache', () => {
         expect(changed).not.toBe(left);
     });
 
+    // Regression test for the bug where toggling Section.sharps rendered no visible change
+    // (e.g. "Eb" stayed "Eb" instead of becoming "D#"): infinite-neck.js's buildCellsForTable()
+    // previously never copied its own `sharps` parameter onto the `options` object this function
+    // reads, so both this key AND createEntry()'s cached HTML always resolved sharps as falsy
+    // regardless of the actual Section.sharps value, causing wasLastPainted() to wrongly treat a
+    // sharps<->flats toggle as an unchanged, already-painted key and skip the rebuild entirely.
+    test('render key changes when only options.sharps differs', () => {
+        const flats = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: { ...baseOptions, sharps: false },
+            tuning,
+            noteNamesFuncArr: ['1', 'b2']
+        });
+        const sharps = NoteTableRenderCache.buildRenderKey({
+            tableID: 'tblS6_1',
+            options: { ...baseOptions, sharps: true },
+            tuning,
+            noteNamesFuncArr: ['1', 'b2']
+        });
+
+        expect(sharps).not.toBe(flats);
+    });
+
     test('createEntry stores default html when midi numbers are hidden', () => {
         const key = NoteTableRenderCache.buildRenderKey({
             tableID: 'tblS6_1',

@@ -60,6 +60,22 @@ export class SectionNotesPersistence {
             }
         });
     }
-    
+
+    /** Removes every playedNote and namedNote whose `owner` field matches the given owner string
+     *  (same owner-tagging convention as ArpeggioPlugin/FillPlugin's generated notes). Used by MIDI
+     *  Momentary mode to sweep up notes left behind when a Section change happens while a button is
+     *  still held -- see templates/midi/midi.builder.js's cleanupMomentaryNotes(). No-op for a falsy
+     *  owner, so it can never accidentally clear unowned (regular) notes. */
+    removeNotesByOwner(owner){
+        if (!owner) {
+            return;
+        }
+        this.removePlayedNotesWhere((note) => note?.owner === owner);
+        Object.entries(this.namedNotes || {}).forEach(([noteName, note]) => {
+            if (note?.owner === owner) {
+                this.clearNamedNote(noteName);
+            }
+        });
+    }
 
 }

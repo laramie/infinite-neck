@@ -1882,7 +1882,7 @@ td.nut div.NoteActive .CenterCell {
 .notePinkKey {
     /* was-for-note-mode: background-color:pink !important;*/
     background-color:rgb(246, 177, 189) !important;
-    color: black;
+    FOOcolor: black;
     box-shadow: 0 0 2pt 1pt cornflowerblue;
 }
 

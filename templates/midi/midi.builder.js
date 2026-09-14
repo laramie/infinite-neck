@@ -110,6 +110,18 @@ const PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING = 'VoiceLive';
 // cable (advertised as "CH345 MIDI 1"), not the Launchpad.
 const PREFERRED_DEBUG_DEVICE_NAME_SUBSTRING = 'CH345';
 
+// Owner tag stamped (via colorNote()'s new `options.owner`) onto any Note created/toggled by a
+// Momentary-mode button press/release, same convention as ArpeggioPlugin/FillPlugin's own
+// owner-tagged generated notes. Real-hardware testing found that a button held down across a
+// Section change (while looping) sends its NOTE OFF into whatever Section is CURRENT at release
+// time, not the Section it was pressed in -- colorNote() always operates on getCurrentSection()
+// -- so the original Section's note never gets toggled off and is stuck lit forever, and/or a
+// spurious note can get created in the new Section instead. Tagging every Momentary-created note
+// with this owner lets cleanupMomentaryNotes() (called from onSectionStatusChanged() below,
+// exactly once per real Section transition) sweep away anything left behind, self-healing the
+// stuck-note case regardless of which Section it ended up orphaned in.
+const MOMENTARY_NOTE_OWNER = 'Momentary';
+
 // Highlight overlay colors (Iteration 4 round 2, 143-it4-design-2.md): fixed
 // Launchpad velocities that always win over whatever named/played/recorded
 // note color would otherwise show for that exact cell, independent of the
@@ -267,6 +279,14 @@ export class MidiTabBuilder {
 	// what actually changed instead of blindly re-sending everything.
 	static lastPaintPlan = null;
 	static lastPaintTableID = '';
+
+	// Tracks the `sectionNumber` (1-based, from the 'Widget:SectionStatus:statusChanged' payload --
+	// see NoteTableController.js replayTable(), always populated for both SELF and RELATIVE replay
+	// options) last observed for the routed table, so cleanupMomentaryNotes() below runs exactly
+	// once per genuine Section transition rather than on every Looper beat tick (this same event
+	// fires on both). Reset to null whenever routing is (re)enabled/switched so the very next status
+	// event always establishes a fresh baseline instead of comparing against a stale table's numbering.
+	static lastMomentarySectionNumber = null;
 
 	// Downstream forwarding (Iteration 4, 143-it4-design.md; rewritten Iteration
 	// 5 Round 9): the SINGLE source of truth for "is this pitch currently
@@ -710,7 +730,10 @@ export class MidiTabBuilder {
 		if (isNoteOff && device.triggerMode !== 'Momentary') {
 			return;
 		}
-		colorNote(cell);
+		// Tag Momentary-created/toggled notes with MOMENTARY_NOTE_OWNER (see its doc comment) so a
+		// Section change occurring while a button is held doesn't leave a permanently stuck note
+		// behind. Latch mode passes no owner, unchanged from a plain td.note click.
+		colorNote(cell, device.triggerMode === 'Momentary' ? { owner: MOMENTARY_NOTE_OWNER } : {});
 	}
 
 	// Iteration 5, Round 9 (real-hardware mission-critical requirement: "note
@@ -848,7 +871,34 @@ export class MidiTabBuilder {
 		if (!device.enabled || !data || data.ownerID !== device.tableID) {
 			return;
 		}
+		// Only a genuine Section change (sectionNumber actually differs from what we last saw for
+		// this table), not every beat tick, triggers the Momentary-owned-note sweep -- see
+		// cleanupMomentaryNotes()'s doc comment for why this must run before clearAndRepaintDevice()
+		// so the repaint reflects the cleaned-up model.
+		if (data.sectionNumber !== '' && data.sectionNumber !== MidiTabBuilder.lastMomentarySectionNumber) {
+			MidiTabBuilder.lastMomentarySectionNumber = data.sectionNumber;
+			MidiTabBuilder.cleanupMomentaryNotes();
+		}
 		MidiTabBuilder.clearAndRepaintDevice();
+	}
+
+	// Bug fix (real-hardware testing while looping with Momentary + TinyNotes/SingleNotes wired to
+	// Launchpad + VoiceLive): a button held down across a Section boundary sends its NOTE OFF after
+	// getCurrentSection() has already advanced, so colorNote() toggles (or creates) a note in the
+	// NEW Section instead of turning off the one actually lit in the OLD Section -- the old Section's
+	// note is then stuck lit forever (never toggled off), and/or a stray note gets left in the new
+	// Section. Since every Momentary-created/toggled note is tagged owner:'Momentary' (see
+	// MOMENTARY_NOTE_OWNER, stamped via colorNote()'s options.owner in handleIncomingMidiMessage()),
+	// sweeping ALL owner:'Momentary' notes from every Section/table on each real Section transition
+	// guarantees nothing can survive past one boundary, regardless of which Section it got orphaned
+	// in -- self-healing without needing to track exactly which Section/note was the "correct" one
+	// to release. Cheap (a handful of Sections x tables x small arrays) and safe to call unconditionally.
+	static cleanupMomentaryNotes(song = getSong()) {
+		(song?.sections || []).forEach((section) => {
+			(typeof section.getAllSectionNotes === 'function' ? section.getAllSectionNotes() : []).forEach(([, sectionNotes]) => {
+				sectionNotes.removeNotesByOwner(MOMENTARY_NOTE_OWNER);
+			});
+		});
 	}
 
 	// td.note click (or anything else that calls colorNote()) fires this;

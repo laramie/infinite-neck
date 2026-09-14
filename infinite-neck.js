@@ -1129,6 +1129,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			tableID_prefix = '#'+tableID + ' ';
 		}
 		options = checkOptionsForToolTables(tableID, options);
+		// BUGFIX: this function's own `sharps` parameter (the actual current value) was never
+		// copied onto `options`, so NoteTableRenderCache.buildRenderKey()/createEntry() (which both
+		// read options.sharps, not this parameter) always saw it as falsy/unset regardless of the
+		// real Section.sharps setting. That made every sharps<->flats toggle produce the SAME
+		// render-cache key as before, so wasLastPainted() below short-circuited the whole rebuild
+		// (and even a genuine cache miss would have built+cached flats-spelled content forever).
+		// Setting it here, on the actual object used for the rest of this call, fixes both.
+		options.sharps = !!sharps;
 
 		const timingStart = getNoteTableTimingNow();
 		const noteNamesFuncArr = Array.isArray(options.noteNamesFuncArr)

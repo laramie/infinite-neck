@@ -500,8 +500,13 @@ export const Cause = Object.freeze({
     HIGHLIGHTMULTI: "HighlightMulti" // for historical reasons, HighlightSingle==HighlightMulti
 });
 
-// td.note click calls just this from infinite-neck.js::installTDNoteClick()
-export function colorNote(cell) {
+// td.note click calls just this from infinite-neck.js::installTDNoteClick().
+// `options.owner`, if provided, is stamped onto any Note created/updated by this call (same
+// convention as ArpeggioPlugin/FillPlugin's owner-tagged generated notes) -- used by MIDI
+// Momentary mode (templates/midi/midi.builder.js) to mark notes so they can be swept up on
+// Section change, since a Momentary button-up landing in a different Section than its
+// button-down would otherwise leave a stuck, un-toggleable note behind.
+export function colorNote(cell, options = {}) {
     // Observer tables (relative-section wiring) should not accept direct note clicks.
     const clickedTableID = cell && typeof cell.closest === 'function'
         ? cell.closest('table').attr('id')
@@ -516,7 +521,7 @@ export function colorNote(cell) {
 
     let res = {returnCause: Cause.ERROR};
     try {
-        res = colorNoteInner(cell);
+        res = colorNoteInner(cell, options);
     } finally {
         EventBus.trigger('Note:colored', {
             sourceTableID: res.tableID,
@@ -538,7 +543,8 @@ export function colorNote(cell) {
         updatePrintSections(); //infinite-neck, rather than updateSectionStatus, which is too heavy.
     }
 }
-export function colorNoteInner(cell) {
+export function colorNoteInner(cell, options = {}) {
+    const owner = options?.owner || '';
     let tableID = "";
     let result = {returnCause:Cause.ERROR, tableID: ""};
     var styleNum = Note.STYLENUM_NAMED;
@@ -643,7 +649,7 @@ export function colorNoteInner(cell) {
                 unRecordPlayedNote(tableID, sBeatNum, proxyNote);
                 cell.find('.'+className).attr("class", className).hide();
         } else {
-            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext);
+            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext, owner);
             recordPlayedNote(tableID, sBeatNum, thatNote);
             cell.find('.'+className).addClass("Playback").show();
         }
@@ -678,11 +684,11 @@ export function colorNoteInner(cell) {
                                ||  styleNum == Note.STYLENUM_BEND){
                             handleRecordedNote(tableID, "tinyNote");
                         } else {
-                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext);//no recording for namedNote.
+                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext, owner);//no recording for namedNote.
                         }
                     }
                 } else {
-                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext); //not sure why we want to drop in here with noteClear.... TODO!
+                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext, owner); //not sure why we want to drop in here with noteClear.... TODO!
                 }
             }
             result.returnCause = Cause.PLAYEDNOTE;
@@ -768,6 +774,9 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.NAMEDNOTE;
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
+            if (owner) {
+                note.owner = owner;
+            }
 
             // When placing a noteRoot note, the model hasn't been updated yet so getNoteRoot
             // won't find it. Rebuild context with explicit ownership so noteRoot styling
@@ -976,7 +985,7 @@ function setResolvedHighlightColorVar($cells, colorValue) {
 }
 
 
-export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
+export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null, owner = null) {
     lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection(), tableID);
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
@@ -1011,6 +1020,9 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     notePlayed.row = r;
     notePlayed.col = c;
     notePlayed.colorClass = theColorClass;
+    if (owner) {
+        notePlayed.owner = owner;
+    }
 
     var sn = jCell.attr("stylenum");
     var sns = sn ? sn : "";
