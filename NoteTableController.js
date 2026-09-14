@@ -727,8 +727,8 @@ export function colorNoteInner(cell) {
                setResolvedHighlightColorVar(tdn, null);
            } else {
                var resolvedHighlightSingleClass = lookupUserColorClass({noteName, styleNum, colorClass: theColorClass}, lookupContext);
-               cell.addClass("noteHighlightSingle").addClass(resolvedHighlightSingleClass);
-               tdn.addClass("noteHighlightSingle").addClass(resolvedHighlightSingleClass);
+               cell.addClass("noteHighlightSingle");
+               tdn.addClass("noteHighlightSingle");
                setResolvedHighlightColorVar(tdn, resolveHighlightGlowColor(resolvedHighlightSingleClass));
            }
            if (isRecording()){
@@ -1594,8 +1594,7 @@ export function showHighlightsForBeatForOptions(nBeat, options){
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
                     var resolvedMultiClass = lookupUserColorClass(note, lookupContext);
                     tdNote
-                        .addClass("noteHighlightSingle")
-                        .addClass(resolvedMultiClass);
+                        .addClass("noteHighlightSingle");
                     setResolvedHighlightColorVar(tdNote, resolveHighlightGlowColor(resolvedMultiClass));
                 } else if (note.styleNum == Note.STYLENUM_FINGERING && !options.hideFingering){
                     tdNote
