@@ -464,13 +464,13 @@ export const allTunings = {
       ],
       "showDiamonds": false,
       "showFaceDiamonds": true,
-      "faceDoubleDiamondsLeft": "100%",
+      "faceDoubleDiamondsLeft": "calc(100% + var(--cell-spacing) / 2)",
       "frets": 8,
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidthMult": 2.0,
-      "fixedFretHeightMult": 2.0,
+      "fixedFretWidthMult": 0.8,
+      "fixedFretHeightMult": 3.0,
       "pinkKey": "C"
     },
     {
@@ -480,12 +480,22 @@ export const allTunings = {
       "caption": "8x8-P4",
       "nStrings": 8,
       "rowRange": [65, 60, 55, 50, 45, 40, 35, 30],
+      "doubleDiamonds": [
+        4
+      ],
+      "faceTinyDiamondsStrings": [],
+      "faceDoubleDiamondsStrings": [
+        3
+      ],
+      "showDiamonds": false,
+      "showFaceDiamonds": true,
+      "faceDoubleDiamondsLeft": "calc(100% + var(--cell-spacing) / 2)",
       "frets": 8,
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidthMult": 2.4,
-      "fixedFretHeightMult": 2.4,
+      "fixedFretWidthMult": 0.8,
+      "fixedFretHeightMult": 3,
       "pinkKey": "C"
     },
     {
