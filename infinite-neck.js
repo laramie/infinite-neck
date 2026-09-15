@@ -3660,12 +3660,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
 		showHideDisplayOptionsPresent();
 		captureDisplayOptionsDirtyBaseline();
+		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's just-saved sectionTheme.
 	}
 	
 	export function handleBtnDeleteDisplayOptions() {
 		delete getCurrentSection().displayOptions;
 		showHideDisplayOptionsPresent();
 		captureDisplayOptionsDirtyBaseline();
+		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's now-cleared sectionTheme.
 	}
 
 	/** Sprint 146 (table-themes): saves the Theme page's current control values as tableID's

@@ -47,6 +47,19 @@
 // deriving forwarding from a diff of the chart's highlighted-cells snapshot
 // (a "pitch plan") kept surfacing new failure modes and was abandoned.
 //
+// Iteration 5, Round 11 ("PlayForward", #chkPlayForwardSingle/Tiny/Multi in
+// midi.html): a SEPARATE, purely REPLAY-driven kind of forwarding, layered on
+// top of Round 9's live-button forwardDeviceEvent() path (both funnel through
+// the same function/forwardedPitches bookkeeping, they just have different
+// triggers). Workflow: record a pass through the song once (REC on for
+// beats), placing Single/Tiny/"Highlight Multi" notes as usual; on Looper
+// replay, whichever of the three checkboxes is checked causes THOSE recorded
+// note types, for the current beat on the routed Instrument, to be forwarded
+// downstream automatically every beat -- as if the buttons were still being
+// pressed live, with no further action needed from the User. See
+// applyPlayForwardForBeat()'s doc comment. All three checkboxes default
+// unchecked and are intentionally session-only (never persisted to the Song).
+//
 // MIDI OUT still tracks a "paint plan" (Map<outNote, velocity>) of whatever
 // should currently be lit on the Launchpad -- LIGHTS ONLY now, rebuilt from
 // the routed table's namedNotes/playedNotes/etc. on two triggers:
@@ -260,6 +273,16 @@ const MIDI_CC_ALL_NOTES_OFF = 123;
 const LAUNCHPAD_VELOCITY_ALL_CLEAR_IDLE = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.YELLOW_GREEN;
 const LAUNCHPAD_VELOCITY_ALL_CLEAR_PRESSED = LAUNCHPAD_MAJOR_COLOR_VELOCITIES.MAGENTA;
 
+// Iteration 5, Round 11 ("PlayForward" -- see the file-header doc comment
+// above): maps each #chkPlayForward* checkbox id (midi.html) to the
+// Note.STYLENUM_* it replays downstream. Read fresh every beat (see
+// getPlayForwardStyleNums()), never persisted to the Song.
+const PLAY_FORWARD_STYLE_NUM_BY_CHECKBOX_ID = Object.freeze({
+	chkPlayForwardSingle: Note.STYLENUM_SINGLE,
+	chkPlayForwardTiny: Note.STYLENUM_TINY,
+	chkPlayForwardMulti: Note.STYLENUM_MIDIPITCHESSINGLE
+});
+
 
 export class MidiTabBuilder {
 	static div_MidiTab = null;
@@ -309,6 +332,16 @@ export class MidiTabBuilder {
 	// actually sent downstream so far" (used only by the panic/cleanup
 	// functions above to know what still needs a NOTE OFF).
 	static forwardedPitches = new Map();
+
+	// PlayForward (Iteration 5, Round 11 -- see file-header doc comment): a
+	// Map<midinum, true> of what this REPLAY-driven feature currently believes
+	// it has forwarded as "sounding" for the current beat, diffed every beat
+	// (applyPlayForwardForBeat()) so an already-sounding pitch is never
+	// re-triggered -- only genuine on/off transitions are forwarded. Reset
+	// (alongside forwardedPitches) by releaseForwardedPitches()/
+	// sendAllNotesOffToForwardDevice(), since those already mean "the
+	// downstream device just went/was made silent".
+	static lastPlayForwardPlan = new Map();
 
 	static getDevice() {
 		return getSong().midiDevice || {};
@@ -960,7 +993,88 @@ export class MidiTabBuilder {
 				MidiTabBuilder.cleanupMomentaryNotes();
 			}
 		}
+		MidiTabBuilder.applyPlayForwardForBeat(device.tableID);
 		MidiTabBuilder.clearAndRepaintDevice();
+	}
+
+	// Reads which of the three #chkPlayForward* checkboxes (midi.html) are
+	// currently checked, returning the corresponding set of Note.STYLENUM_*
+	// values to include in this beat's PlayForward plan (see
+	// PLAY_FORWARD_STYLE_NUM_BY_CHECKBOX_ID's doc comment). Read fresh every
+	// call, never cached, so toggling a checkbox mid-playback takes effect on
+	// the very next beat -- same convention as #chkMidiUseSysExClear/
+	// #chkMidiUseMomentaryCleanup elsewhere in this file.
+	static getPlayForwardStyleNums() {
+		const styleNums = new Set();
+		Object.entries(PLAY_FORWARD_STYLE_NUM_BY_CHECKBOX_ID).forEach(([checkboxId, styleNum]) => {
+			if (document.getElementById(checkboxId)?.checked) {
+				styleNums.add(styleNum);
+			}
+		});
+		return styleNums;
+	}
+
+	// Builds the PlayForward plan for the CURRENT beat: every recorded note
+	// (sectionNotes.recordedNotes[currentBeat] -- the same beat-keyed Looper-
+	// replay source buildDevicePaintPlan() reads for lighting, see its own doc
+	// comment) whose styleNum is one of the checked types, keyed by the true
+	// MIDI pitch (midinum) rather than any grid/outNote address, since this
+	// always forwards the real pitch regardless of device.mode.
+	static buildPlayForwardPlan(tableID, styleNums) {
+		const plan = new Map();
+		if (styleNums.size === 0) {
+			return plan;
+		}
+		const section = getCurrentSection();
+		const sectionNotes = section && typeof section.getSectionNotes === 'function'
+			? section.getSectionNotes(tableID)
+			: null;
+		if (!sectionNotes) {
+			return plan;
+		}
+		const currentBeat = getSong().getBeat();
+		const recordedNotesForBeat = (sectionNotes.recordedNotes || {})[`${currentBeat}`] || [];
+		recordedNotesForBeat.forEach((note) => {
+			const midinum = Number(note.midinum);
+			if (styleNums.has(note.styleNum) && Number.isInteger(midinum)) {
+				plan.set(midinum, true);
+			}
+		});
+		return plan;
+	}
+
+	// Called once per 'Widget:SectionStatus:statusChanged' firing for the
+	// routed table (every Looper beat tick and Section navigation -- same
+	// trigger as clearAndRepaintDevice(), see onSectionStatusChanged() above):
+	// diffs this beat's PlayForward plan against the previous one and
+	// forwards only genuine on/off transitions, via the SAME
+	// forwardDeviceEvent() a real physical button press/release uses -- so
+	// these notes share the same forwardedPitches bookkeeping (panic
+	// All-Clear / routing-off release both reach them too), and downstream,
+	// replay is indistinguishable from the User actually pressing the
+	// buttons. Bails out with no state change if there's no forward output
+	// port configured yet (mirrors clearAndRepaintDevice()'s own "no output
+	// port yet" bail), so PlayForward starts fresh (no stale "already
+	// sounding" assumptions) as soon as one becomes available. Velocity 127
+	// on note-on -- no real physical velocity exists for a replayed note.
+	static applyPlayForwardForBeat(tableID) {
+		const output = MidiTabBuilder.currentForwardOutputPort();
+		if (!output) {
+			return;
+		}
+		const styleNums = MidiTabBuilder.getPlayForwardStyleNums();
+		const newPlan = MidiTabBuilder.buildPlayForwardPlan(tableID, styleNums);
+		MidiTabBuilder.lastPlayForwardPlan.forEach((_value, midinum) => {
+			if (!newPlan.has(midinum)) {
+				MidiTabBuilder.forwardDeviceEvent(midinum, false, 0);
+			}
+		});
+		newPlan.forEach((_value, midinum) => {
+			if (!MidiTabBuilder.lastPlayForwardPlan.has(midinum)) {
+				MidiTabBuilder.forwardDeviceEvent(midinum, true, 127);
+			}
+		});
+		MidiTabBuilder.lastPlayForwardPlan = newPlan;
 	}
 
 	// SAFETY NET (secondary defense -- see handleIncomingMidiMessage()'s doc comment for the PRIMARY,
@@ -1387,6 +1501,7 @@ export class MidiTabBuilder {
 			});
 		}
 		MidiTabBuilder.forwardedPitches = new Map();
+		MidiTabBuilder.lastPlayForwardPlan = new Map();
 	}
 
 	// Iteration 5, Round 1 (143-it5-design.md "CC_AllClear"): fires a single
@@ -1408,6 +1523,7 @@ export class MidiTabBuilder {
 		sendControlChange(output, channel, MIDI_CC_ALL_NOTES_OFF, 127);
 		MidiTabBuilder.logActivity('fwd-cc', [0xb0 | channel, MIDI_CC_ALL_NOTES_OFF, 127], output.name);
 		MidiTabBuilder.forwardedPitches = new Map();
+		MidiTabBuilder.lastPlayForwardPlan = new Map();
 	}
 
 	static applyRoutingButtonUi() {
