@@ -4,10 +4,9 @@
             <span id='warny' class="floater"><span class="floaterClose">CLOSE</span>MESSAGES:<br></span>
             <div class="sectionPageControlsGroup">
 
-                <button id="btnTheme" class="safeButton" type="button">Theme</button>
-                <button id="btnToggleThemeTableResults" class="safeButton" type="button">Results</button>
-                <button id="btnShowWarny" class="safeButton" type="button">Show Theme Messages</button>
-                <br>
+                
+                
+            
 
                 <!-- Sprint 146 (table-themes): scope the Theme/Clear buttons above to one Instrument
                      instead of the whole song. "default" (empty value) keeps the pre-existing global
@@ -17,7 +16,12 @@
                         <option value="" selected>default (whole song)</option>
                     </select>
                 </label>
+                <button id="btnTheme" class="safeButton" type="button">Theme</button>
                 <button id="btnDeleteTableTheme" class="safeButton" type="button" disabled>Clear Table Theme</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="btnToggleThemeTableResults" class="safeButton" type="button">Results</button>
+                <button id="btnShowWarny" class="safeButton" type="button">Show Theme Messages</button>
+                <br>
                 <br>
 
                 <!-- Sprint 146 Iteration 2 (143-it2-design.md point 3, revised per user feedback):
@@ -31,6 +35,7 @@
                     <select id="selThemeSectionNumDest"></select>
                 </label>
                 <button id="btnCopyThemeToSection" class="safeButton" type="button">Copy to Section</button>
+                <br>
                 <br>
 
                 <!-- Sprint 146 Iteration 2 (143-it2-design.md point 1-2): Section x Instrument
@@ -421,6 +426,8 @@
                                     <option value="1.0rem">1.0rem</option>
                                     <option value="1.2rem">1.2rem</option>
                                     <option value="1.5rem">1.5rem</option>
+                                    <option value="2.0rem">2.0rem</option>
+                                    <option value="2.5rem">2.5rem</option>
                                 </select>
                             </td>
                         </tr>
@@ -508,6 +515,11 @@
                                     <option value="0.4rem" selected>0.4rem</option>
                                     <option value="0.5rem">0.5rem</option>
                                     <option value="0.6rem">0.6rem</option>
+                                    <option value="0.7rem">0.7rem</option>
+                                    <option value="0.8rem">0.8rem</option>
+                                    <option value="0.9rem">0.9rem</option>
+                                    <option value="1.0rem">1.0rem</option>
+                                    <option value="1.2rem">1.2rem</option>
                                 </select>
                             </td>
                         </tr>

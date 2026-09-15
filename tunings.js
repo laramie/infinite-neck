@@ -129,7 +129,7 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
-      "frets": 18,
+      "frets": 16,
       "nut": true,
       "reverse": false,
     },
@@ -469,8 +469,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidthMult": 0.8,
-      "fixedFretHeightMult": 3.0,
+      "fixedFretWidthMult": 0.6,
+      "fixedFretHeightMult": 2.2,
       "pinkKey": "C"
     },
     {
@@ -494,8 +494,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidthMult": 0.8,
-      "fixedFretHeightMult": 3,
+      "fixedFretWidthMult": 0.6,
+      "fixedFretHeightMult": 2.2,
       "pinkKey": "C"
     },
     {

@@ -610,10 +610,10 @@ table.viewControls th {
 #myTuningsTable th {
     font-size:  90%;
     height: 3em;
+    border: 1px solid gray;
 }
 .TuningsTableSkinny{
     max-width: 6em;
-
 }
 #allTuningsTable tr:not(:first-child):hover,
 #myTuningsTable tr:not(:first-child):hover {
@@ -660,6 +660,21 @@ table.viewControls th {
 #myTuningsTable .tuningInlineFieldInput[hidden] {
     display: none !important;
 }
+
+
+#allTuningsTable .faceDiamondsSpanTH,
+#myTuningsTable  .faceDiamondsSpanTH {
+    background-color: rgb(240, 223, 75);
+}
+#allTuningsTable .edgeDiamondsSpanTH,
+#myTuningsTable  .edgeDiamondsSpanTH {
+    background-color: rgb(240, 177, 75);
+}
+#allTuningsTable .padControllerSpanTH,
+#myTuningsTable  .padControllerSpanTH {
+    background-color: rgb(240, 125, 75);
+}
+
 .btnRefreshInMemGate {
     padding: 0;
     padding-right: 0.4em;
@@ -1533,12 +1548,10 @@ td.note small {
   background: repeating-linear-gradient(
     45deg,
     transparent,
-    transparent 20px,
-    rgba(255, 0, 255, 0.174) 25px, /* Soft fade-in */
-    rgba(251, 103, 251, 0.786) 30px,   /* Solid magenta core */
-    rgba(255, 0, 255, 0.174) 35px, /* Soft fade-out */
-    transparent 40px,
-    transparent 50px
+    rgba(255, 0, 255, 0.174) 4px, /* Soft fade-in */
+    rgba(251, 103, 251, 0.9) 8px,   /* Solid magenta core */
+    rgba(255, 0, 255, 0.174) 13px, /* Soft fade-out */
+    transparent 18px
   );
 }
 .noteHatched2 {

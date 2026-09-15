@@ -167,7 +167,7 @@ export class ThemesBuilder {
         const currentSectionIndex = song.getSectionsCurrentIndex();
         const allowThemeAutomation = !!song.allowThemeAutomation;
 
-        let html = '<thead><tr><th>Section</th><th>default</th>';
+        let html = '<thead><tr><th>Section</th><th title="Shows when [Allow Theme Automation] sets a Theme for this Section">default</th>';
         tableIDs.forEach((tableID) => {
             const displayText = tableID.startsWith(prefix) ? tableID.slice(prefix.length) : tableID;
             html += `<th>${escapeHtml(displayText)}</th>`;
@@ -186,6 +186,7 @@ export class ThemesBuilder {
             html += '</tr>';
         });
         html += '</tbody>';
+        html += '<tfoot><tr><td colspan="3" style="font-size:60%;">"default" shows when [Allow Theme Automation] sets a Theme for this Section</td></tr></tfoot>'
         table.html(html);
     }
 

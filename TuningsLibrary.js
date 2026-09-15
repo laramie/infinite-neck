@@ -308,19 +308,60 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var showMoveColumn = primaryControl === "visibility";
     var inMemHeader = '<button type="button" class="moveyButton btnRefreshInMemGate" title="Refresh Notes in memory">Notes &#x1F5D8;</button>';
+    
+    var trhFace = $("<tr>");
+    let blankColumns = 16 + (showMoveColumn ? 2 : 0) + (isSongOwnedTable?1:0);
+    trhFace.html(
+              "<th colspan='"+blankColumns+"'></th>"
+            + "<th colspan='3' class='padControllerSpanTH'>Pad Controllers</th>"
+            + "<th colspan='3' class='edgeDiamondsSpanTH'>Edge Diamonds</th>"
+            + "<th colspan='7' class='faceDiamondsSpanTH'>Face Diamonds</th>"
+    );
+    table.append(trhFace);
+    
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
-        + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
-        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th>Tool</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th class='TuningsTableSkinny'>Face Diamonds</th>"
-        + "<th class='TuningsTableSkinny'>Diamond Frets</th><th class='TuningsTableSkinny'>Dbl Diamond Frets</th>"
-        + "<th class='TuningsTableSkinny'>F.Str</th><th class='TuningsTableSkinny'>FD.Str</th><th class='TuningsTableSkinny'>FT.Str</th>"
-        + "<th class='TuningsTableSkinny'>F.Left</th><th class='TuningsTableSkinny'>FD.Left</th><th class='TuningsTableSkinny'>FT.Left</th>"
-        + "<th>FixedWidthMult</th><th>FixedHeightMult</th>"
-        + "<th>Nut</th><th>Frets</th><th>Divider</th><th>Pink Key</th>"
+        + (showMoveColumn ? "<th>Move</th>"
+        + "<th>" + inMemHeader + "</th>" : "")
+        + "<th>Tuning</th>"
+        + "<th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th>"
+        + "<th>Instrument</th>"
+        + "<th>Notes&nbsp;&uarr;</th>"
+        + "<th>MIDI&nbsp;&darr;</th>"
+        + "<th title='Special Row'>SR&nbsp;&nbsp;</th>"
+        + "<th title='Banjo Nut'>BN</th>"
+        + "<th>Right/Left</th>"
+        + "<th>Tool</th>"
+        + "<th class='TuningsTableSkinny'>Piano Names</th>"
+        + "<th class='TuningsTableSkinny'>Piano<br>Skeuo</th>"
+
+        + "<th>Nut</th>"
+        + "<th>Frets</th>"
+        + "<th>Divider</th>"
         
+        + "<th>FixedWidth<br>Multiplier</th>"
+        + "<th>FixedHeight<br>Multiplier</th>"
+        + "<th>Pink Key</th>"
+
+        + "<th>Show</th>"
+        + "<th class='TuningsTableSkinny'title='Diamonds Frets (comma-separated list)'>Diamond Frets</th>"
+        + "<th class='TuningsTableSkinny' title='Double-Diamonds Frets (comma-separated list)'>DblDiamond Frets</th>"
+
+        + "<th class='TuningsTableSkinny'>Show</th>"
+        + "<th class='TuningsTableSkinny' title='Face Diamonds String  (comma-separated list)'>Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Double-Diamonds String (comma-separated list)'>Dbl Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Face Tiny-Diamonds String (comma-separated list)'>Tiny Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Face Diamonds Left Offset (0 - 100%)'>Left</th>"
+        + "<th class='TuningsTableSkinny' title='Face Double-Diamonds Left Offset (0 - 100%)'>Dbl Left</th>"
+        + "<th class='TuningsTableSkinny' title='Face Tiny-Diamonds Left offset (0 - 100%)'>Tiny Left</th>"
+
     );
     table.append(trh);
+
+    
+    
+    
+
     var sInMemCount = "";
     var rows = tunings.length;
     for (var r = 0; r < rows; r++) {
@@ -389,13 +430,6 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
         var showDiamondsCellHtml = isSongOwnedTable ? checkboxShowDiamonds : (tun.showDiamonds ? 'Yes' : '');
 
-        var checkedShowFaceDiamonds = tun.showFaceDiamonds !== false ? " checked " : "";
-        var checkboxShowFaceDiamonds = '<label for="cbShowFaceDiamonds' + tun.baseID + '"><nobr>'
-            + '<input class="checkboxShowFaceDiamonds"   id="cbShowFaceDiamonds' + tun.baseID + '" '
-            + ' type="checkbox" name="cbnShowFaceDiamonds' + tun.baseID + '" value="'
-            + tun.baseID + '" ' + checkedShowFaceDiamonds + '></nobr></label>';
-        var showFaceDiamondsCellHtml = isSongOwnedTable ? checkboxShowFaceDiamonds : (tun.showFaceDiamonds !== false ? 'Yes' : '');
-
         var diamondsText = Array.isArray(tun.diamonds) ? tun.diamonds.join(', ') : '';
         var diamondsCellHtml = isSongOwnedTable
             ? formatTuningInlineEditor('diamonds', tun.baseID, diamondsText)
@@ -405,6 +439,14 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var doubleDiamondsCellHtml = isSongOwnedTable
             ? formatTuningInlineEditor('doubleDiamonds', tun.baseID, doubleDiamondsText)
             : escapeHtmlText(doubleDiamondsText);
+
+        var checkedShowFaceDiamonds = tun.showFaceDiamonds !== false ? " checked " : "";
+        var checkboxShowFaceDiamonds = '<label for="cbShowFaceDiamonds' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxShowFaceDiamonds"   id="cbShowFaceDiamonds' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnShowFaceDiamonds' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedShowFaceDiamonds + '></nobr></label>';
+        var showFaceDiamondsCellHtml = isSongOwnedTable ? checkboxShowFaceDiamonds : (tun.showFaceDiamonds !== false ? 'Yes' : '');
+
 
         var faceDiamondsStringsText = Array.isArray(tun.faceDiamondsStrings) ? tun.faceDiamondsStrings.join(', ') : '';
         var faceDiamondsStringsCellHtml = isSongOwnedTable
@@ -529,23 +571,23 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         tr.append($("<td>").html(ToolCellHtml));
         tr.append($("<td>").html(pianoNamesCellHtml));
         tr.append($("<td>").html(pianoSkeuoCellHtml));
+        tr.append($("<td>").html(nutCellHtml));
+        tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
+        tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
+        tr.append($("<td>").html(fixedFretWidthMultCellHtml));
+        tr.append($("<td>").html(fixedFretHeightMultCellHtml));
+        tr.append($("<td>").html(pinkKeyCellHtml));
         tr.append($("<td>").html(showDiamondsCellHtml));
-        tr.append($("<td>").html(showFaceDiamondsCellHtml));
         tr.append($("<td>").html(diamondsCellHtml));
         tr.append($("<td>").html(doubleDiamondsCellHtml));
+        tr.append($("<td>").html(showFaceDiamondsCellHtml));
         tr.append($("<td>").html(faceDiamondsStringsCellHtml));
         tr.append($("<td>").html(faceDoubleDiamondsStringsCellHtml));
         tr.append($("<td>").html(faceTinyDiamondsStringsCellHtml));
         tr.append($("<td>").html(faceDiamondsLeftCellHtml));
         tr.append($("<td>").html(faceDoubleDiamondsLeftCellHtml));
         tr.append($("<td>").html(faceTinyDiamondsLeftCellHtml));
-        tr.append($("<td>").html(fixedFretWidthMultCellHtml));
-        tr.append($("<td>").html(fixedFretHeightMultCellHtml));
-        tr.append($("<td>").html(nutCellHtml));
-        tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
-        tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
-        tr.append($("<td>").html(pinkKeyCellHtml));
-
+        
         table.append(tr);
     }
     return table;

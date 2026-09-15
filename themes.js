@@ -38,7 +38,7 @@ export const gThemes = {
         "borderImageWhiteKey": "none",
         "borderImageBlackKey": "none",
         "instrumentBorderThickness": "0",
-        "instrumentBorderSlice": "0"
+        "instrumentBorderSlice": "10"
     },
     "PoolShark" : {
         "id": "PoolShark",
