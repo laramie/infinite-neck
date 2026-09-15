@@ -92,6 +92,10 @@
             <label for="chkMidiUseSysExClear" title="Programmer mode only: use SysEx messages (one 'Light all LEDs' + one 'Light LED' batch) to bulk-clear AND bulk-paint the device instead of ~70+ individual NOTE ON messages. Faster; used only for the Section-navigation/beat-tick repaint (replay()), never for single button-press lights or the downstream VoiceLive forward.">
                 <input type="checkbox" id="chkMidiUseSysExClear" checked> Use SysEx bulk clear+paint (Programmer mode)
             </label>
+            <br>
+            <label for="chkMidiUseMomentaryCleanup" title="Momentary trigger mode only: a proactive fix already prevents a button-up landing in a different Section (because the Section changed while held, e.g. while looping) from leaving a stuck/misplaced note. This checkbox controls an EXTRA safety-net sweep (owner:'Momentary' notes cleared from every Section on each Section change) that catches anything the proactive fix doesn't (e.g. combined with Recording). Safe to leave on.">
+                <input type="checkbox" id="chkMidiUseMomentaryCleanup" checked> Momentary cleanup safety net (sweep stuck notes on Section change)
+            </label>
         </div>
 
         <div class="midiSection">

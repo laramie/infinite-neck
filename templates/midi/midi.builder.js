@@ -110,17 +110,16 @@ const PREFERRED_FORWARD_DEVICE_NAME_SUBSTRING = 'VoiceLive';
 // cable (advertised as "CH345 MIDI 1"), not the Launchpad.
 const PREFERRED_DEBUG_DEVICE_NAME_SUBSTRING = 'CH345';
 
-// Owner tag stamped (via colorNote()'s new `options.owner`) onto any Note created/toggled by a
-// Momentary-mode button press/release, same convention as ArpeggioPlugin/FillPlugin's own
-// owner-tagged generated notes. Real-hardware testing found that a button held down across a
-// Section change (while looping) sends its NOTE OFF into whatever Section is CURRENT at release
-// time, not the Section it was pressed in -- colorNote() always operates on getCurrentSection()
-// -- so the original Section's note never gets toggled off and is stuck lit forever, and/or a
-// spurious note can get created in the new Section instead. Tagging every Momentary-created note
-// with this owner lets cleanupMomentaryNotes() (called from onSectionStatusChanged() below,
-// exactly once per real Section transition) sweep away anything left behind, self-healing the
-// stuck-note case regardless of which Section it ended up orphaned in.
+// Owner tag stamped (via colorNote()'s `options.owner`) onto any Note created/toggled by a
+// Momentary-mode button press, same convention as ArpeggioPlugin/FillPlugin's own owner-tagged
+// generated notes. The PRIMARY fix for the cross-Section leak this enables cleanup for is
+// proactive (see handleIncomingMidiMessage()'s doc comment: press-time Section is remembered per
+// cell and compared at release time). This owner tag remains so cleanupMomentaryNotes() (gated by
+// #chkMidiUseMomentaryCleanup) can act as a secondary safety net -- sweeping away anything the
+// proactive fix doesn't cover (e.g. combined with Recording) -- called from
+// onSectionStatusChanged() below, exactly once per real Section transition.
 const MOMENTARY_NOTE_OWNER = 'Momentary';
+
 
 // Highlight overlay colors (Iteration 4 round 2, 143-it4-design-2.md): fixed
 // Launchpad velocities that always win over whatever named/played/recorded
@@ -287,6 +286,18 @@ export class MidiTabBuilder {
 	// fires on both). Reset to null whenever routing is (re)enabled/switched so the very next status
 	// event always establishes a fresh baseline instead of comparing against a stale table's numbering.
 	static lastMomentarySectionNumber = null;
+
+	// PROACTIVE fix for the Momentary cross-Section leak (see handleIncomingMidiMessage()'s
+	// Momentary branch): Map<cellKey, Section> remembering which Section was current at NOTE-ON
+	// time for each currently-held Momentary button, keyed by momentaryCellKey(). Consulted (and
+	// the entry removed) on the matching NOTE-OFF/NOTE-ON-velocity-0 -- if the Section is still the
+	// same, the release proceeds exactly as before (colorNote() toggles it off normally); if the
+	// Section has since changed (e.g. while looping), the note is released directly in the Section
+	// it was actually pressed in instead of ever touching the currently-displayed Section, so a
+	// stray/stuck note can never be created or left behind in the first place. cleanupMomentaryNotes()
+	// (gated by #chkMidiUseMomentaryCleanup) remains only as a safety net for whatever this doesn't
+	// cover (e.g. combined with Recording -- see handleIncomingMidiMessage()'s doc comment).
+	static momentaryPressSectionByCellKey = new Map();
 
 	// Downstream forwarding (Iteration 4, 143-it4-design.md; rewritten Iteration
 	// 5 Round 9): the SINGLE source of truth for "is this pitch currently
@@ -571,6 +582,31 @@ export class MidiTabBuilder {
 	// Momentary->Latch while held just means the eventual release is ignored
 	// (making it behave like Latch from that point on). No extra per-press
 	// state tracking is needed for either transition to work correctly.
+	//
+	// Bug fix (real-hardware testing, Momentary + looping): colorNote()/colorNoteInner() always
+	// operate on getCurrentSection() -- so a button held down across a Section boundary sends its
+	// button-up into whatever Section is CURRENT at release time, not the Section it was pressed
+	// in. That toggles off (or, worse, creates) a note in the WRONG Section, leaving the original
+	// Section's note stuck lit forever. This reproduces "every time" for ANY note type (Tiny,
+	// Single, Named, etc.) since it's a logical consequence of the sequence, not a per-type quirk.
+	// Note: `isNoteOff` below already covers BOTH an explicit NOTE OFF byte AND a NOTE ON with
+	// velocity 0 (the Launchpad's -- and many other devices' -- convention for the same signal),
+	// since midi-io.js's parseMidiMessage() normalizes both to `type: 'noteoff'` already.
+	//
+	// FIX (proactive, primary defense): momentaryPressSectionByCellKey remembers which Section was
+	// current at NOTE-ON time for each held button. On the matching NOTE-OFF: if the Section is
+	// unchanged, release proceeds exactly as before (colorNote() toggles it off normally, since the
+	// currently-displayed Section is still the right one). If the Section HAS changed, colorNote()
+	// is never called at all -- instead the note is released directly against the Section it was
+	// actually pressed in (SectionNotes.removeOwnedNoteAtCell()), which never touches the
+	// currently-displayed Section's DOM/model, so nothing can ever appear (or get toggled) in the
+	// wrong Section in the first place. Every Momentary-created note is ALSO tagged
+	// owner:'Momentary' (see MOMENTARY_NOTE_OWNER) as a secondary safety net: cleanupMomentaryNotes()
+	// sweeps any owner:'Momentary' notes from every Section on each genuine Section transition,
+	// gated by #chkMidiUseMomentaryCleanup (see onSectionStatusChanged()) -- this catches whatever
+	// the proactive fix above doesn't (e.g. combined with Recording, where the created note lives in
+	// sectionNotes.recordedNotes[beat] rather than playedNotes/namedNotes and isn't covered by
+	// removeOwnedNoteAtCell()).
 	static handleIncomingMidiMessage(parsed, deviceName) {
 		if (parsed.type === 'controlchange' && parsed.controller === LAUNCHPAD_CONTROL_BUTTON_TRIGGER_MODE_CC) {
 			// Bottom-left control-column button (CC 10 -- see
@@ -730,10 +766,50 @@ export class MidiTabBuilder {
 		if (isNoteOff && device.triggerMode !== 'Momentary') {
 			return;
 		}
-		// Tag Momentary-created/toggled notes with MOMENTARY_NOTE_OWNER (see its doc comment) so a
-		// Section change occurring while a button is held doesn't leave a permanently stuck note
-		// behind. Latch mode passes no owner, unchanged from a plain td.note click.
-		colorNote(cell, device.triggerMode === 'Momentary' ? { owner: MOMENTARY_NOTE_OWNER } : {});
+
+		if (device.triggerMode !== 'Momentary') {
+			// Latch: unchanged -- always operates on whatever Section is currently displayed.
+			colorNote(cell, {});
+			return;
+		}
+
+		// Momentary -- see this method's own doc comment for the full cross-Section bug/fix
+		// explanation. momentaryPressSectionByCellKey remembers which Section was current at
+		// NOTE-ON time for this exact cell; the matching NOTE-OFF compares against whatever Section
+		// is current NOW to decide whether a normal toggle-off is safe, or whether the note must be
+		// released directly against the Section it was actually pressed in instead.
+		const cellKey = MidiTabBuilder.momentaryCellKey(device.tableID, cell);
+		if (isNoteOn) {
+			MidiTabBuilder.momentaryPressSectionByCellKey.set(cellKey, getCurrentSection());
+			colorNote(cell, { owner: MOMENTARY_NOTE_OWNER });
+			return;
+		}
+		const pressedSection = MidiTabBuilder.momentaryPressSectionByCellKey.get(cellKey);
+		MidiTabBuilder.momentaryPressSectionByCellKey.delete(cellKey);
+		if (!pressedSection || pressedSection === getCurrentSection()) {
+			// Common case: no Section change happened while this button was held (or we never saw
+			// its NOTE-ON, e.g. app was reloaded mid-hold) -- release exactly as before.
+			colorNote(cell, { owner: MOMENTARY_NOTE_OWNER });
+			return;
+		}
+		// The Section changed while this button was held: colorNote() is deliberately NOT called
+		// here (it always operates on getCurrentSection(), which is now the WRONG Section) --
+		// instead release the note directly in the Section it was actually pressed in. This never
+		// touches the currently-displayed Section's DOM/model at all, so nothing can ever appear
+		// (or get toggled) in the wrong Section in the first place.
+		pressedSection.getSectionNotes(device.tableID).removeOwnedNoteAtCell(MOMENTARY_NOTE_OWNER, {
+			noteName: cell.attr('noteName'),
+			row: cell.attr('cellrow'),
+			col: cell.attr('cellcol')
+		});
+	}
+
+	// Stable per-cell identity for momentaryPressSectionByCellKey, keyed by the routed tableID plus
+	// the resolved cell's own cellrow/cellcol attributes (NOT device.mode's raw incoming note number
+	// -- Programmer mode's grid address and Note mode's raw pitch both ultimately resolve to the
+	// same physical <td>, and cellrow/cellcol are stable, mode-independent identifiers for it).
+	static momentaryCellKey(tableID, cell) {
+		return `${tableID}|${cell.attr('cellrow')}|${cell.attr('cellcol')}`;
 	}
 
 	// Iteration 5, Round 9 (real-hardware mission-critical requirement: "note
@@ -874,25 +950,26 @@ export class MidiTabBuilder {
 		// Only a genuine Section change (sectionNumber actually differs from what we last saw for
 		// this table), not every beat tick, triggers the Momentary-owned-note sweep -- see
 		// cleanupMomentaryNotes()'s doc comment for why this must run before clearAndRepaintDevice()
-		// so the repaint reflects the cleaned-up model.
+		// so the repaint reflects the cleaned-up model. Gated by #chkMidiUseMomentaryCleanup (checked
+		// by default) since handleIncomingMidiMessage()'s proactive per-cell release is now the primary
+		// defense -- this sweep is just a safety net, kept always-tracked (lastMomentarySectionNumber
+		// updates regardless of the checkbox) so toggling it on/off never causes a stale comparison.
 		if (data.sectionNumber !== '' && data.sectionNumber !== MidiTabBuilder.lastMomentarySectionNumber) {
 			MidiTabBuilder.lastMomentarySectionNumber = data.sectionNumber;
-			MidiTabBuilder.cleanupMomentaryNotes();
+			if (document.getElementById('chkMidiUseMomentaryCleanup')?.checked) {
+				MidiTabBuilder.cleanupMomentaryNotes();
+			}
 		}
 		MidiTabBuilder.clearAndRepaintDevice();
 	}
 
-	// Bug fix (real-hardware testing while looping with Momentary + TinyNotes/SingleNotes wired to
-	// Launchpad + VoiceLive): a button held down across a Section boundary sends its NOTE OFF after
-	// getCurrentSection() has already advanced, so colorNote() toggles (or creates) a note in the
-	// NEW Section instead of turning off the one actually lit in the OLD Section -- the old Section's
-	// note is then stuck lit forever (never toggled off), and/or a stray note gets left in the new
-	// Section. Since every Momentary-created/toggled note is tagged owner:'Momentary' (see
-	// MOMENTARY_NOTE_OWNER, stamped via colorNote()'s options.owner in handleIncomingMidiMessage()),
-	// sweeping ALL owner:'Momentary' notes from every Section/table on each real Section transition
-	// guarantees nothing can survive past one boundary, regardless of which Section it got orphaned
-	// in -- self-healing without needing to track exactly which Section/note was the "correct" one
-	// to release. Cheap (a handful of Sections x tables x small arrays) and safe to call unconditionally.
+	// SAFETY NET (secondary defense -- see handleIncomingMidiMessage()'s doc comment for the PRIMARY,
+	// proactive fix): even with the proactive per-cell release, a Momentary press combined with
+	// Recording creates its note in sectionNotes.recordedNotes[beat] (via handleRecordedNote() in
+	// NoteTableController.js), which removeOwnedNoteAtCell() doesn't reach -- this sweep catches that
+	// (and anything else) by clearing every owner:'Momentary' playedNote/namedNote from every
+	// Section/table on each real Section transition. Cheap (a handful of Sections x tables x small
+	// arrays) and safe to call unconditionally. Gated by #chkMidiUseMomentaryCleanup.
 	static cleanupMomentaryNotes(song = getSong()) {
 		(song?.sections || []).forEach((section) => {
 			(typeof section.getAllSectionNotes === 'function' ? section.getAllSectionNotes() : []).forEach(([, sectionNotes]) => {

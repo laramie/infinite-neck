@@ -78,3 +78,70 @@ describe('SectionNotes removeNotesByOwner', () => {
         expect(sectionNotes.namedNotes).toHaveProperty('E');
     });
 });
+
+describe('SectionNotes removeOwnedNoteAtCell', () => {
+    test('removes only the owner-matching namedNote for the given noteName', () => {
+        const sectionNotes = new SectionNotes({
+            namedNotes: {
+                E: { noteName: 'E', colorClass: 'noteRoot', owner: 'Momentary' },
+                F: { noteName: 'F', colorClass: 'noteRoot', owner: 'Momentary' }
+            }
+        });
+
+        sectionNotes.removeOwnedNoteAtCell('Momentary', { noteName: 'E' });
+
+        expect(sectionNotes.namedNotes).not.toHaveProperty('E');
+        expect(sectionNotes.namedNotes).toHaveProperty('F');
+    });
+
+    test('does not remove a namedNote owned by a different owner', () => {
+        const sectionNotes = new SectionNotes({
+            namedNotes: { E: { noteName: 'E', colorClass: 'noteRoot', owner: 'ArpeggioPlugin' } }
+        });
+
+        sectionNotes.removeOwnedNoteAtCell('Momentary', { noteName: 'E' });
+
+        expect(sectionNotes.namedNotes).toHaveProperty('E');
+    });
+
+    test('removes only the owner-matching playedNote at the given row/col', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [
+                { noteName: 'C', styleNum: 1, row: '2', col: '3', owner: 'Momentary' },
+                { noteName: 'D', styleNum: 1, row: '2', col: '4', owner: 'Momentary' },
+                { noteName: 'E', styleNum: 1, row: '5', col: '3', owner: 'ArpeggioPlugin' }
+            ]
+        });
+
+        sectionNotes.removeOwnedNoteAtCell('Momentary', { row: '2', col: '3' });
+
+        expect(sectionNotes.playedNotes).toHaveLength(2);
+        expect(sectionNotes.playedNotes.some((note) => note.noteName === 'C')).toBe(false);
+        expect(sectionNotes.playedNotes.some((note) => note.noteName === 'D')).toBe(true);
+        expect(sectionNotes.playedNotes.some((note) => note.noteName === 'E')).toBe(true);
+    });
+
+    test('is a no-op for a falsy owner, never clearing unowned notes', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [{ noteName: 'C', styleNum: 1, row: '2', col: '3' }],
+            namedNotes: { E: { noteName: 'E', colorClass: 'noteRoot' } }
+        });
+
+        sectionNotes.removeOwnedNoteAtCell('', { noteName: 'E', row: '2', col: '3' });
+
+        expect(sectionNotes.playedNotes).toHaveLength(1);
+        expect(sectionNotes.namedNotes).toHaveProperty('E');
+    });
+
+    test('only clears the namedNote portion when row/col are omitted', () => {
+        const sectionNotes = new SectionNotes({
+            playedNotes: [{ noteName: 'C', styleNum: 1, row: '2', col: '3', owner: 'Momentary' }],
+            namedNotes: { E: { noteName: 'E', colorClass: 'noteRoot', owner: 'Momentary' } }
+        });
+
+        sectionNotes.removeOwnedNoteAtCell('Momentary', { noteName: 'E' });
+
+        expect(sectionNotes.namedNotes).not.toHaveProperty('E');
+        expect(sectionNotes.playedNotes).toHaveLength(1);
+    });
+});
