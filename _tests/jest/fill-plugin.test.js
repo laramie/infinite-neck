@@ -580,7 +580,7 @@ describe('FillPlugin', () => {
     section.chartChord = 'Amb6b9';
     let result = plugin.invokeAction('useChartChord', { song });
     expect(result.result).toBe('No fill subset match for chartChord="Amb6b9" tonalType="mb6b9"');
-    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 9, 11, 13, 6add9, none]');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 9, m11, 11, 13, 6add9, none]');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('M');
 
     section.chartMode = 'A ultralocrian';

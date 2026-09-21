@@ -233,6 +233,7 @@ export const allTunings = {
       "nStrings": 4,
       "rowRange": [57, 50, 43, 36],
       "showDiamonds": false,
+      "showFaceDiamonds": false,
       "diamonds": [],
       "doubleDiamonds": [],
       "stringDividerHeight": "0",

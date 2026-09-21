@@ -80,6 +80,7 @@ export const FILL_CHORD_OPTIONS = [
     { value: 'm/ma7', caption: 'm/ma7', trigger: 'j' },
     { value: 'm9', caption: 'm9', trigger: '9' },
     { value: '9', caption: '9', trigger: 'k' },
+    { value: 'm11', caption: 'm11', trigger: 'e' },
     { value: '11', caption: '11', trigger: '1' },
     { value: '13', caption: '13', trigger: '3' },
     { value: '6add9', caption: '6add9', trigger: '6' },

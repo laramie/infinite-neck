@@ -86,6 +86,10 @@
     color: #39ff14;
 }
 
+#MidiTab .midiActivityLog .midiLogPlayForward {
+    color: #4da6ff;
+}
+
 #MidiTab .midiActivityLog .midiLogSend {
     color: #ffd700;
 }

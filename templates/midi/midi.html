@@ -128,6 +128,22 @@
                 <label for="chkMidiFilterAftertouch" title="Aftertouch (Channel Pressure) messages are never acted on -- checking this also skips logging them, to keep the log/critical path clear of this noise.">
                     <input type="checkbox" id="chkMidiFilterAftertouch"> Filter Aftertouch
                 </label>
+                <br>
+                <label for="chkMidiFilterSend" title="Hide 'send' log lines (lights sent to the Launchpad via individual NOTE ON messages).">
+                    <input type="checkbox" id="chkMidiFilterSend"> Send (lights)
+                </label>
+                <label for="chkMidiFilterReceive" title="Hide 'receive' log lines (raw MIDI IN messages from the input device).">
+                    <input type="checkbox" id="chkMidiFilterReceive"> Receive (pad)
+                </label>
+                <label for="chkMidiFilterForward" title="Hide 'fwd-on'/'fwd-off' log lines (notes forwarded downstream from a real button press/release).">
+                    <input type="checkbox" id="chkMidiFilterForward"> Forward (notes)
+                </label>
+                <label for="chkMidiFilterSysex" title="Hide 'sysex' log lines (bulk SysEx clear/paint messages to the Launchpad).">
+                    <input type="checkbox" id="chkMidiFilterSysex"> Sysex (lights)
+                </label>
+                <label for="chkMidiFilterReplay" title="Hide 'playfwd-on'/'playfwd-off' log lines (notes forwarded downstream by PlayForward replay).">
+                    <input type="checkbox" id="chkMidiFilterReplay"> Replay (notes)
+                </label>
             </div>
             <div id="divMidiActivityLog" class="midiActivityLog"></div>
         </div>

@@ -283,6 +283,26 @@ const PLAY_FORWARD_STYLE_NUM_BY_CHECKBOX_ID = Object.freeze({
 	chkPlayForwardMulti: Note.STYLENUM_MIDIPITCHESSINGLE
 });
 
+// Activity log category filters (follow-up to PlayForward's log coloring):
+// maps every `direction` string ever passed to logActivity()/logActivityText()
+// to the #chkMidiFilter* checkbox (midi.html) that hides it -- a "paired log
+// category" (fwd-on/fwd-off, playfwd-on/playfwd-off) shares one checkbox.
+// Checked by appendActivityLogLine() before a line is ever appended (as
+// opposed to #chkMidiFilterAftertouch, which is special-cased at the
+// attachToInput() call site since it must inspect the parsed message TYPE,
+// not just the log category). Any direction not present here (e.g. 'fwd-cc',
+// 'error') is never filtered. All default unchecked and are session-only,
+// same convention as #chkMidiFilterAftertouch/#chkMidiUseMomentaryCleanup.
+const LOG_CATEGORY_FILTER_CHECKBOX_BY_DIRECTION = Object.freeze({
+	send: 'chkMidiFilterSend',
+	receive: 'chkMidiFilterReceive',
+	'fwd-on': 'chkMidiFilterForward',
+	'fwd-off': 'chkMidiFilterForward',
+	sysex: 'chkMidiFilterSysex',
+	'playfwd-on': 'chkMidiFilterReplay',
+	'playfwd-off': 'chkMidiFilterReplay'
+});
+
 
 export class MidiTabBuilder {
 	static div_MidiTab = null;
@@ -538,10 +558,21 @@ export class MidiTabBuilder {
 	// innerHTML/string interpolation into markup) since deviceName comes from
 	// the Web MIDI API (an external, untrusted device-name string) and must
 	// never be interpreted as HTML.
+	//
+	// Log-category filtering (follow-up): bails out with no DOM change at all
+	// (not even appended-then-hidden) when `direction` maps to a checked
+	// #chkMidiFilter* checkbox -- see LOG_CATEGORY_FILTER_CHECKBOX_BY_DIRECTION's
+	// doc comment.
 	static appendActivityLogLine(el, text, direction) {
+		const filterCheckboxId = LOG_CATEGORY_FILTER_CHECKBOX_BY_DIRECTION[direction];
+		if (filterCheckboxId && document.getElementById(filterCheckboxId)?.checked) {
+			return;
+		}
 		const line = document.createElement('div');
 		line.textContent = text;
-		if (direction.startsWith('fwd')) {
+		if (direction.startsWith('playfwd')) {
+			line.className = 'midiLogPlayForward';
+		} else if (direction.startsWith('fwd')) {
 			line.className = 'midiLogForward';
 		} else if (direction !== 'receive') {
 			line.className = 'midiLogSend';
@@ -877,23 +908,33 @@ export class MidiTabBuilder {
 	// critical path first, lights/session strictly secondary (same ordering
 	// lesson as Round 2's latency fix, taken to its logical conclusion: zero
 	// model dependency at all, not just "goes first").
-	static forwardDeviceEvent(midinum, isNoteOn, velocity) {
+	//
+	// Iteration 5, Round 11 ("PlayForward"): also reused by
+	// applyPlayForwardForBeat() for its own replay-driven on/off transitions --
+	// `isPlayForward` (default false) only changes the activity-log direction
+	// string ('playfwd-on'/'playfwd-off' vs 'fwd-on'/'fwd-off', see
+	// appendActivityLogLine()'s 'midiLogPlayForward' vs 'midiLogForward' CSS
+	// class) so replayed notes are visually distinguishable in the log from a
+	// real physical button press/release -- the actual MIDI bytes sent and the
+	// forwardedPitches bookkeeping are identical either way.
+	static forwardDeviceEvent(midinum, isNoteOn, velocity, isPlayForward = false) {
 		const device = MidiTabBuilder.getDevice();
 		const output = MidiTabBuilder.currentForwardOutputPort();
 		if (!output || !Number.isInteger(midinum)) {
 			return;
 		}
 		const channel = device.forwardChannel ?? 0;
+		const directionPrefix = isPlayForward ? 'playfwd' : 'fwd';
 		if (isNoteOn) {
 			sendNoteOn(output, channel, midinum, velocity);
-			MidiTabBuilder.logActivity('fwd-on', [0x90 | channel, midinum & 0x7f, velocity & 0x7f], output.name);
+			MidiTabBuilder.logActivity(`${directionPrefix}-on`, [0x90 | channel, midinum & 0x7f, velocity & 0x7f], output.name);
 			MidiTabBuilder.forwardedPitches.set(midinum, velocity);
 		} else {
 			// Iteration 5, Round 1 (143-it5-design.md "Prefer NOTE ON 0 to NOTE
 			// OFF"): the VoiceLive 3 responds better to NOTE ON velocity 0 than an
 			// explicit NOTE OFF (0x8n), even though both are spec-equivalent.
 			sendNoteOn(output, channel, midinum, 0);
-			MidiTabBuilder.logActivity('fwd-off', [0x90 | channel, midinum & 0x7f, 0], output.name);
+			MidiTabBuilder.logActivity(`${directionPrefix}-off`, [0x90 | channel, midinum & 0x7f, 0], output.name);
 			MidiTabBuilder.forwardedPitches.delete(midinum);
 		}
 	}
@@ -1014,12 +1055,28 @@ export class MidiTabBuilder {
 		return styleNums;
 	}
 
-	// Builds the PlayForward plan for the CURRENT beat: every recorded note
-	// (sectionNotes.recordedNotes[currentBeat] -- the same beat-keyed Looper-
-	// replay source buildDevicePaintPlan() reads for lighting, see its own doc
-	// comment) whose styleNum is one of the checked types, keyed by the true
-	// MIDI pitch (midinum) rather than any grid/outNote address, since this
-	// always forwards the real pitch regardless of device.mode.
+	// Builds the PlayForward plan for the CURRENT beat/Section, from TWO
+	// sources, both filtered to the checked styleNums and keyed by the true
+	// MIDI pitch (midinum) rather than any grid/outNote address (this always
+	// forwards the real pitch regardless of device.mode):
+	//   - sectionNotes.recordedNotes[currentBeat] -- the same beat-keyed
+	//     Looper-replay source buildDevicePaintPlan() reads for lighting (see
+	//     its own doc comment). On/off per-beat, exactly as before.
+	//   - sectionNotes.playedNotes -- the LIVE performance overlay (Single/
+	//     Tiny/Fingering/Bend notes placed while NOT recording -- see
+	//     colorSingleNotes() in NoteTableController.js), which is NOT
+	//     beat-keyed at all: a Section's playedNotes are constant for the
+	//     whole Section. Included here UNCONDITIONALLY on every beat of the
+	//     Section (not just the first), so applyPlayForwardForBeat()'s
+	//     diff-against-lastPlayForwardPlan naturally sounds it exactly once
+	//     when the Section is entered (it wasn't in the previous Section's
+	//     plan) and holds it "on" for every beat within the Section with no
+	//     re-triggering (already present in the plan every beat) -- then
+	//     naturally turns it off the moment the Section changes away (the new
+	//     Section's own sectionNotes/playedNotes no longer include it), right
+	//     alongside whatever recordedNotes also turn off at that same Section
+	//     boundary. No separate "Section start/end" bookkeeping is needed --
+	//     this falls out of the existing per-beat diffing for free.
 	static buildPlayForwardPlan(tableID, styleNums) {
 		const plan = new Map();
 		if (styleNums.size === 0) {
@@ -1032,14 +1089,16 @@ export class MidiTabBuilder {
 		if (!sectionNotes) {
 			return plan;
 		}
-		const currentBeat = getSong().getBeat();
-		const recordedNotesForBeat = (sectionNotes.recordedNotes || {})[`${currentBeat}`] || [];
-		recordedNotesForBeat.forEach((note) => {
+		const addIfMatching = (note) => {
 			const midinum = Number(note.midinum);
 			if (styleNums.has(note.styleNum) && Number.isInteger(midinum)) {
 				plan.set(midinum, true);
 			}
-		});
+		};
+		const currentBeat = getSong().getBeat();
+		const recordedNotesForBeat = (sectionNotes.recordedNotes || {})[`${currentBeat}`] || [];
+		recordedNotesForBeat.forEach(addIfMatching);
+		(sectionNotes.playedNotes || []).forEach(addIfMatching);
 		return plan;
 	}
 
@@ -1066,12 +1125,12 @@ export class MidiTabBuilder {
 		const newPlan = MidiTabBuilder.buildPlayForwardPlan(tableID, styleNums);
 		MidiTabBuilder.lastPlayForwardPlan.forEach((_value, midinum) => {
 			if (!newPlan.has(midinum)) {
-				MidiTabBuilder.forwardDeviceEvent(midinum, false, 0);
+				MidiTabBuilder.forwardDeviceEvent(midinum, false, 0, true);
 			}
 		});
 		newPlan.forEach((_value, midinum) => {
 			if (!MidiTabBuilder.lastPlayForwardPlan.has(midinum)) {
-				MidiTabBuilder.forwardDeviceEvent(midinum, true, 127);
+				MidiTabBuilder.forwardDeviceEvent(midinum, true, 127, true);
 			}
 		});
 		MidiTabBuilder.lastPlayForwardPlan = newPlan;
@@ -1403,7 +1462,7 @@ export class MidiTabBuilder {
 			// NOTE-based branch never needed to do.
 			if (useSysEx) {
 				sendLightAllLedsSysEx(output, 0);
-				MidiTabBuilder.logActivityText(`sysex   clear all LEDs (1 message) -> velocity 0 (${output.name})`);
+				MidiTabBuilder.logActivityText(`sysex   clear all LEDs (1 message) -> velocity 0 (${output.name})`, 'sysex');
 				MidiTabBuilder.syncTriggerModeIndicatorLight();
 				MidiTabBuilder.syncNoteTypeControlLights();
 				MidiTabBuilder.syncRecordButtonLight();
@@ -1441,7 +1500,7 @@ export class MidiTabBuilder {
 			if (plan.size > 0) {
 				sendLightLedsSysEx(output, plan);
 				const messageCount = Math.ceil(plan.size / LAUNCHPAD_SYSEX_MAX_LED_PAIRS_PER_MESSAGE);
-				MidiTabBuilder.logActivityText(`sysex   paint ${plan.size} grid notes (${messageCount} message${messageCount === 1 ? '' : 's'}) (${output.name})`);
+				MidiTabBuilder.logActivityText(`sysex   paint ${plan.size} grid notes (${messageCount} message${messageCount === 1 ? '' : 's'}) (${output.name})`, 'sysex');
 			}
 		} else {
 			plan.forEach((velocity, outNote) => {
