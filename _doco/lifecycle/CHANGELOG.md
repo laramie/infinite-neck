@@ -1,5 +1,100 @@
 # ChangeLog
 
+### 20260921
+
+Tag: v2.1-beta-16
+
+- 6f37dd6 **2026-09-21** Added m11 chord. Added colored lines and filters to log for PlayForward and Forward. Removed default 'true' from Cello for face diamonds.
+- a96a50c **2026-09-15** Added PlayForward capability to send certain note types to MIDI Forward downstream device, like a Player Piano.
+- d74118e **2026-09-15** Reorganized the Tunings tables to group features like Pad Controllers, Edge Diamonds, and Face Diamonds. Organized the buttons on the Themes page
+- fdf81ea **2026-09-14** Added fix for calc'ing half the --cell-spacing for Double Diamonds in Launchpad, where we used to use 109% but now we calc using CSS calc().  Added to 8x8 and 8x8-P4.
+- 12c5f58 **2026-09-14** Getting rid of case where holding Launchpad buttons while Section changes underneath creates notes in *incoming* Section.
+- 78e096f **2026-09-14** voicing that works in many positions, so this song shows all 12 positions: some sound great, some sound terrible, e.g. mixing the tritone and flat six
+- ab8c5da **2026-09-14** Fixed:1)  notePinkKey: removed black color from style since its a background color. 2) flats/sharps not rendering. 3) added owner:Momentary to notes so Momentary around Section changes doesn't get lost.
+- f9735d7 **2026-09-14** Fixed highlighter
+- 719e009 **2026-09-11** Added "y" Multi AutoColor to help and Desktop Keyboard map.  Autocolor Multi is filling in the whole cell, however.
+- 1d01149 **2026-09-10** Tests cleaned up.  Removed test that required console logging. :(
+- 1c985f3 **2026-09-10** Added default theme to Theme Matrix if Theme Automation. Has its own column now. Brought fixedFretHeightMult and fixedFretWidthMult up to speed for all fixed width instruments (Piano already used, but the old MIDI boards didn't have the new property name, and didn't do Height.)  If these are present, the instrument eschews fixed width and just uses the multiplier, so you can make 8x8 much bigger keys x and y than a Guitar.  Since width and height are stored on Section, you can't table-theme these, so they are built in now and adjustable by edit boxes on MyTuning.
+- 24a94af **2026-09-10** went with brighter and bolder for dom, III, m and II, swapped Iv and tri again, went with bright for IV, muted for tri.  Looks good on Launchpad.
+- 61acabd **2026-09-09** Added `0` zero as dropDownInstrumentBorderThickness for when a Theme has zero.
+- 8a63f2d **2026-09-09** Trying to clean up by setting a default for instrumentBorderThickness of 0.
+- b6976d3 **2026-09-09** Added dropDownInstrumentBorderSlice/instrumentBorderSlice/--instrument-border-slice so that different images can be sliced correctly.
+- 9df9805 **2026-09-09** sprint 146 Iteration 2 complete.
+- 297c496 **2026-09-09** Switched toggle on diamonds to be dependent on our fancy new face diamonds toggle, which is on $('body').  If that is hiding face diamonds, then we unhide and set the diamonds to match, otherwise vice-versa, so they are in lock-step.  There will sometimes be an apparent  hiccup as it turns both off but only one was off by dint of messing around with the checkboxes in MyTunings, and the reverse combination.  This is correct.
+- f3115b9 **2026-09-09** sprint 143 Iteration 1 is complete.  Per-table-per-Section themes are working.  (They don't work during Looping or Navigation yet.)
+- cd53ff1 **2026-09-08** through phase 4
+- 9ea244c **2026-09-08** Ready for sprint-146-table-themes
+- 95de370 **2026-09-08** Added center diamond to 8x8 grid like Novation does.
+- 20c6dbb **2026-09-08** Added face diamonds that show on the face of the fretboard.
+- 1d3f1bb **2026-09-08** Selectable pinkKey for MIDI grids now.
+- bb4d98d **2026-09-08** Fixed diamonds row not hiding its nut when nut widths are cycled around zero.
+- 3e101d0 **2026-09-08** added noteHatchedRootPink for a nice gradient of pink links on white for MIDI devices.  Set as default for now.
+- 2d739d5 **2026-09-08** Vertical alignment tweaks for palette status widgets.
+- 8803867 **2026-09-08** MyTunings now fully editable in grid. New pinkNote color.  Added live duplicate of PaintMode status button set to QuickMenu.
+- 6f7b675 **2026-09-07** Added opening song and reconnecting to MIDI
+- b39696a **2026-09-07** Somehow Round got bumped up to Iteration 5, Round 9 in the chat.  In Round 9 we finally got all Launchpad presses Latch AND Momentary to just forward perfectly, and not consult lights or cells.  Note button press on Launchpad is now releasing notes properly in Momentary/Latch plus Named and Single note variants.
+- a038866 **2026-09-07** Somehow Round got bumped up to Iteration 5, Round 9 in the chat.  In Round 9 we finally got all Launchpad presses Latch AND Momentary to just forward perfectly, and not consult lights or cells.  Note button press on Launchpad is now releasing notes properly in Momentary/Latch plus Named and Single note variants.
+- 20c4212 **2026-09-07** Tweaked CycleOfColors and palette.css so that the Highlights are in a better order, note II is a more subtle pink, and notePink* has a new member, and these show up on the colorPicker properly.  Maj7 is also a lighter apple green. The Maj7 and the II are to match the Launchpad light colors I settled on. On the LaunchpadCycleOfColors, I matched the IV-Tri-V set better, to match the original UI colors.  I also swapped the more purple color for the pink and adjusted the pink so it would be more subtle than the highlight pink, and so that the darker pink, almost a purple is the II, the note of Prince and Sade.
+- 803acad **2026-09-06** It5, Round 6
+- cdc5411 **2026-09-06** Sprint 143, Iteration 5, Round 5
+- e8a140d **2026-09-06** Up to Iteration 5, Round 3.  Request ready for Round 4.
+- b23bc3b **2026-09-05** Quite a few UI changes from a read-only display of active button, to big changes for highlights and autocolor of new highlight theming and auto coloring and letting highlights be real notes with colors.
+- 4939bf7 **2026-09-05** Kept autoColor and autoColorHighlight out of reset loop when no displayOptions saved. Added "y" shortcut key to toggle autoColorHighlight. Made the three H1, H2, H3 radio buttons show their box shadow representatives.
+- 90f6e0a **2026-09-05** Multi highlights can now be autocolored or not, per section via displayOptions.  Pitch is always system color, which can be themed.  Multi highlights use the color radioButton you chose before clicking a Multi note, when not in Multi AC (Multi AutoColor, which is called AutoColorHighlights).  Also fixed up the inner/outer glow areas: .noteHighlightSingle versus  .NoteDisplay
+- 25cefe3 **2026-09-04** Hacky addition of highlighting in blue for LeakKey shift.
+- 17d0833 **2026-09-04** Added ability of CTRL+SHIFT+K gives a shift of the LeadKey, where k/K shifts the root Key.  Added a hack to parallel the highlights, added a single var to hold the last blue highlight: gLast_noteHighlight.  I feel we should make this a stack of colors to be cleared.  It's possible we could make a system-wide color option instead, and have something keep track of them.  It is suspect that adding a highlight has to be done in multiple places, with multiple CSS rules, and must be remembered and cleared specifically.
+- 5e51839 **2026-09-04** Cleanup.  Checkmark appears always now, in two places.
+- 92d317d **2026-09-04** MiniPalette now has status spans that reflect the Note type and the paint color.  Read-only.
+- d261297 **2026-09-04** Added preview spans to MiniPalette which show the palette buttons so you don't have to have palette open to see stati.  Useful for when you are using Launchpad buttons to set Named/Single/Tiny/Bend/Pitch/Multi and the CLEAR button.
+- 8126c0a **2026-09-04** It4-round-4
+- 92b5e98 **2026-09-03** Added Momentary light
+- 75e0b57 **2026-09-03** Iteration 4, Round 4
+- c3561b5 **2026-09-03** Fixed test to use proper LAUNCHPAD_VELOCITY_DEFAULT instead of defaulting to RED.
+- ce02d8e **2026-09-03** Ready for sprint-143-it4-round-4
+- 9645fbd **2026-09-03** Added green Latch/Momentary button on Launchpad (Lower Left, Circle) to pair with same buttons in MIDI and Quick in the UI. Includes now handling CC control messages. Fixed light-at-startup bugs with pre-emptive edge clear.
+- 4dee431 **2026-09-03** Cleaned up Iterations
+- 1e60c3e **2026-09-03** Moved divQuick to where it can be picked up by Fullscreen. Made a better fix for noteHighlightSingle blotting out the double magenta border like the Nut column.  Used specificity to re-instate the magenta border rule. Tweaked the IV, tri, V colors for Launchpad. Added Highlight behavior to Latched and Momentary modes. Addede duplicate Latch/Momentary button to divQuick.
+- 8604296 **2026-09-03** These were covering the Highlight magenta shadows with colors from the Theme noteWhiteKeyShadowColor.  Now there are properly two borders around all cells, just like there were only in the Nut cells before.
+- 7c8e759 **2026-09-02** Iteration 4 work.
+- cc301a7 **2026-09-02** Ready for it4 analysis.
+- 8d7ceae **2026-09-02** Reorder colors a few times.  This corresponds to CycleOfColor the best, except that the I is the color of middle C in C, since that corresponds to NoteMode. However, in ProgrammerMode, we translate it so that row/column find the right key and then must transfer midi notes.  Right now, the notes are weird because of how Programmer mode wraps the keys in the row/column encoding, so you aren't getting midi notes.
+- b0b49aa **2026-09-01** MIDI with Launchpad in Programmer mode mostly working for Launchpad press==>Section and TD.note==>Launchpad.  Section repaint also sent, so nextSection and looping work.  Colors are not curated yet.  Automatic Claude mapping selects colors, and these are hard-coded in the tests for now.
+- ef05bd5 **2026-09-01** Ready for Iteration 3
+- d29eb4f **2026-09-01** Prototype working.
+- feb223d **2026-08-31** Ready for first plan.
+- 1b9d45d **2026-08-31** Starting sprint 143
+- ef91cda **2026-08-31** removed log with repeats of cache items
+- 5a9fccf **2026-08-31** phase5-5 complete.  Sprint complete.
+- e8e2e2d **2026-08-31** Ready for prewarm non-blocking fix.
+- d18947b **2026-08-31** realtimeTickStart added for testing
+- e1ba626 **2026-08-31** phase-5-1
+- 4eeef19 **2026-08-31** phase 4, steps A-C, D1.
+- a615bf0 **2026-08-31** Tweaking caching settings
+- 93c56e7 **2026-08-31** Phase 4 docs.
+- 4fa63fe **2026-08-31** Steps A-C implemented
+- 93e28b6 **2026-08-31** Ready for phase-3 implementation.
+- 3b0b96f **2026-08-31** added
+- 75b12ed **2026-08-31** Claude added timing marks.
+- d296a5b **2026-08-31** Ready for betting timing capture. Sprint 903 revisited.
+- 730f6ab **2026-08-30** Updated help about /fk menu changes.
+- c8c9009 **2026-08-30** Fixed bug where transpose and sharps/Flats buttons and others were settting Song.sharps and not Section.sharps exclusively. Removed elipses from tests around LOOP buttons.
+- 53d7f91 **2026-08-30** Adding command-line to set the song rootID and sharps, so default/new section follows that and not last chosen.
+- 4d11a2e **2026-08-30** Removed elipses from LOOPING captions.  Changed other buttons to also use magenta when looping.
+- 464a755 **2026-08-30** Added quickMenu view show/hide/toggle
+- a5dbdbd **2026-08-30** Copied L001 actual lines to prompts.html  If build tutorial gets re-run it could hose the tutorial lines, so the buttons were copied into prompts.html but we didn't check if other things are updated in song and not prompts.
+- a1cf0aa **2026-08-30** sprint-142 iterations applied.
+- f18800b **2026-08-30** plan generated
+- 13c0c29 **2026-08-30** Ready for sprint-142
+- 2c56452 **2026-08-30** Ready for sprint-142
+- 1371803 **2026-08-29** Tweaked remaining hoggy tables to be in divs with overflow-x: auto;
+- 4a4afff **2026-08-29** Tweak mobile layout buttons so quick menu and main menu have big buttons on MobileSettings, but small on DesktopSettings.  Scaling and instrument prefs displays to inline-block. Help typos.
+- f4b373b **2026-08-29** v2.1-beta-16
+- 9ba4be9 **2026-08-29** Fixed borders and resizing diamonds
+- 821b0be **2026-08-29** foo
+
+
+
+
 ### 20260828
 
 Tag: v2.1-beta-15
