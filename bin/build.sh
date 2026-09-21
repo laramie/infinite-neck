@@ -1,5 +1,5 @@
 ## Adjust the date after you run this to the date you ran it: 
-bin/update-git-log.bash --since "2026-08-28" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-09-21" > _doco/lifecycle/CHANGELOG-new.md
 
 cat _doco/lifecycle/CHANGELOG-new.md
 
@@ -19,11 +19,11 @@ node bin/version-read.js
 git push --tags
 
 npm run package:deploy 
-## ==>  dist/infinite-neck-20260829-015224.tar.gz
+## ==>  dist/infinite-neck-20260921-102749.tar.gz
 
 ## Your ssh login here:
 export SSH_LAR=    
-export DEPLOY_DATE='20260829-015224'
+export DEPLOY_DATE='20260921-102749'
 
 scp dist/infinite-neck-$DEPLOY_DATE.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
@@ -33,8 +33,8 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 
 ## Adjust the dates, and do something like: 
 
-export DEPLOY_VERSION='v2.1-beta-16'
-export DEPLOY_DATE='20260829-015224'
+export DEPLOY_VERSION='v2.1-beta-17'
+export DEPLOY_DATE='20260921-102749'
 
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy
