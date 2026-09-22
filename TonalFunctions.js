@@ -136,7 +136,7 @@ const westernScales = [
   "harmonic minor", "melodic minor", "double harmonic major",
   "diminished", "half-diminished", "dominant diminished",
   "whole tone", "altered", "ultralocrian", "super locrian","augmented",
-  "chromatic", "neapolitan major", "neapolitan minor", "balinese" 
+  /* getting annoying:"chromatic",*/ "neapolitan major", "neapolitan minor", "balinese" 
 ];
 
 /** 
