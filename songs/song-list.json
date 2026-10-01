@@ -112,6 +112,22 @@
       ]
     },
     {
+      "href": "demo/function-symbols-extensions.json",
+      "description": "Shows options for jazz function symbols and extensions, especially for piano.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "practice/All-Chords.json",
       "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
       "instruments": [
@@ -235,6 +251,17 @@
         {
           "fromBaseID": "Piano",
           "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/piano-ionian-scales.json",
+      "description": "<b>scales-ionian</b>: ionian scale in all 12 keys, for piano.",
+      "instruments": [
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Main",
           "visible": true
         }
       ]

@@ -1,0 +1,2656 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "Piano_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "Piano",
+      "pinkKey": "none"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblPiano_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
+    }
+  ],
+  "colorDicts": {
+    "ionian": {
+      "readOnly": false,
+      "computed": false,
+      "checked": true,
+      "dict": {
+        "note1": {
+          "colorClass": "noteHatched8 noteBlue1",
+          "caption": "I"
+        },
+        "note3": {
+          "colorClass": "noteBlue2",
+          "caption": "II"
+        },
+        "note5": {
+          "colorClass": "noteBlue2",
+          "caption": "III"
+        },
+        "note6": {
+          "colorClass": "noteBlue2",
+          "caption": "IV"
+        },
+        "note8": {
+          "colorClass": "noteBlue2",
+          "caption": "V"
+        },
+        "note10": {
+          "colorClass": "noteBlue2",
+          "caption": "6"
+        },
+        "note12": {
+          "colorClass": "noteBlue2",
+          "caption": "&Delta;"
+        },
+        "note2": {
+          "colorClass": "notePink1",
+          "caption": "&tau;"
+        },
+        "note4": {
+          "colorClass": "notePink1",
+          "caption": "m"
+        },
+        "note7": {
+          "colorClass": "notePink1",
+          "caption": "&Theta;"
+        },
+        "note9": {
+          "colorClass": "notePink1",
+          "caption": "&sigma;"
+        },
+        "note11": {
+          "colorClass": "notePink1",
+          "caption": "&delta;"
+        },
+        "noteRoot": {
+          "colorClass": "noteHatched7 noteGreen7",
+          "captionClass": "noteBlack",
+          "caption": "Root",
+          "tiny": "R"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "fill": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "USER",
+      "properties": {
+        "targetTable": "tblPiano_1",
+        "chordFormula": "M",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
+        "literalChartedChord": false,
+        "minFret": 0,
+        "maxFret": 32,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 0,
+        "namedRootMode": "none",
+        "namedRootColor": "noteRoot",
+        "namedChordMode": "none",
+        "namedChordColor": "noteChord",
+        "namedScaleMode": "none",
+        "namedScaleColor": "noteScale",
+        "singleRootMode": "none",
+        "singleRootColor": "noteRoot",
+        "singleChordMode": "none",
+        "singleChordColor": "noteChord",
+        "singleScaleMode": "none",
+        "singleScaleColor": "noteScale",
+        "tinyRootMode": "role",
+        "tinyRootColor": "noteRoot",
+        "tinyChordMode": "role",
+        "tinyChordColor": "noteChord",
+        "tinyScaleMode": "role",
+        "tinyScaleColor": "noteScale",
+        "singleAddTiny": "none"
+      }
+    }
+  },
+  "macros": {},
+  "activeStylesheets": "Default+ionian",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": {
+    "lines": []
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "none",
+  "presentationMode": true,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": false,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "piano-ionian-scales",
+  "theme": "Autobahn",
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "C major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": "3",
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false,
+      "displayOptions": {
+        "autoColorHighlight": false,
+        "autoColor": true,
+        "showCellNotes": false,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": true,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": true,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "currentColorDict": "ionian",
+        "NoteDisplaySizes": {
+          "caption": "260x70:22",
+          "width": "260px",
+          "height": "70px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Function (Default)",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "5",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "1.8",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "100%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "70%",
+        "tinyNoteWidth": "50%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Db major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "Db major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 4,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "D major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "D major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 5,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Eb major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "Eb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 6,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "E major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "E major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 7,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "F major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "F major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 8,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Gb major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "Gb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 9,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "G major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "G major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 10,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Ab major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "Ab major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 11,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "A major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "A major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 0,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "Bb major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 21,
+              "row": 0,
+              "col": 0,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 24,
+              "row": 0,
+              "col": 3,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 26,
+              "row": 0,
+              "col": 5,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 29,
+              "row": 0,
+              "col": 8,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 31,
+              "row": 0,
+              "col": 10,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 33,
+              "row": 0,
+              "col": 12,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 36,
+              "row": 0,
+              "col": 15,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 38,
+              "row": 0,
+              "col": 17,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 41,
+              "row": 0,
+              "col": 20,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 0,
+              "col": 22,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 1,
+              "midinum": 45,
+              "row": 0,
+              "col": 24,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 0,
+              "col": 27,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 1,
+              "midinum": 50,
+              "row": 0,
+              "col": 29,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 1,
+              "midinum": 53,
+              "row": 0,
+              "col": 32,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "Bb major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 1,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblPiano_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "B major",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 22,
+              "row": 0,
+              "col": 1,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 23,
+              "row": 0,
+              "col": 2,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 25,
+              "row": 0,
+              "col": 4,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 27,
+              "row": 0,
+              "col": 6,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 28,
+              "row": 0,
+              "col": 7,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 30,
+              "row": 0,
+              "col": 9,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 32,
+              "row": 0,
+              "col": 11,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 34,
+              "row": 0,
+              "col": 13,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 35,
+              "row": 0,
+              "col": 14,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 37,
+              "row": 0,
+              "col": 16,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 39,
+              "row": 0,
+              "col": 18,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 0,
+              "col": 19,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 1,
+              "midinum": 42,
+              "row": 0,
+              "col": 21,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 1,
+              "midinum": 44,
+              "row": 0,
+              "col": 23,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 1,
+              "midinum": 46,
+              "row": 0,
+              "col": 25,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 1,
+              "midinum": 47,
+              "row": 0,
+              "col": 26,
+              "owner": "FillPlugin",
+              "colorClass": "noteRoot"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 1,
+              "midinum": 49,
+              "row": 0,
+              "col": 28,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 1,
+              "midinum": 51,
+              "row": 0,
+              "col": 30,
+              "owner": "FillPlugin",
+              "colorClass": "noteChord"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 0,
+              "col": 31,
+              "owner": "FillPlugin",
+              "colorClass": "noteScale"
+            }
+          ]
+        }
+      },
+      "caption": "${keySignatureSimplified} <small style=\"color: chartreuse;\">scale notes:</small> ${enharmonicChartModeNotes}  <small style=\"color:chartreuse;\"> ${keySignatureCountHand}</small>",
+      "chartChord": "",
+      "chartMode": "B major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 2,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1790838549187,
+        "date": "10/1/2026",
+        "time": "12:09:09 AM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "user",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"note1\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"I\"\n        },\n        \"note3\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"II\"\n        },\n        \"note5\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"III\"\n        },\n        \"note6\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"IV\"\n        },\n        \"note8\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"V\"\n        },\n        \"note10\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"6\"\n        },\n        \"note12\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"&Delta;\"\n        },\n        \"note2\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"&tau;\"\n        },\n        \"note4\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"m\"\n        },\n        \"note7\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"&Theta;\"\n        },\n        \"note9\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"&sigma;\"\n        },\n        \"note11\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"&delta;\"\n        }\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1790839140035,
+        "date": "10/1/2026",
+        "time": "12:19:00 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 0,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblPiano_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteScale\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteColornote\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteColornote\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteColornote\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteColornote\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteColornote\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": \"3\",\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": false,
+        "WidgetRow": false,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  },
+  "currentColorDict": "ionian"
+}
