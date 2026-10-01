@@ -135,10 +135,12 @@
   "captionsRowShowing": false,
   "defaultBPM": "80",
   "info": {
-    "lines": []
+    "lines": [
+      "These scales also show the major chord role colors.  To show them, go to Section 1, turn off AutoColor, and save the displayOptions."
+    ]
   },
   "namedNoteOpacity": "1",
-  "openInfo": "none",
+  "openInfo": "parked",
   "presentationMode": true,
   "allowThemeAutomation": false,
   "pluginFiringOrder": [
@@ -389,7 +391,7 @@
       "rootID": "3",
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 1,
+      "currentBeat": 4,
       "sharps": false,
       "displayOptions": {
         "autoColorHighlight": false,
@@ -1415,7 +1417,7 @@
       "rootID": 8,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 1,
+      "currentBeat": 4,
       "sharps": false
     },
     {
