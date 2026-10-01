@@ -1520,10 +1520,21 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
     background-color: black;
 }
 td.note small {
-    font-size: 0.55em;
+    font-size: 0.5em;
     padding: 0.2em; /*this is the space between a note letter and sharp or flat symbol*/
     margin: 0;
 }
+td.note em {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 0.5em;
+  width: 0.9em;       /* Force a narrow boundary container */
+  overflow: hidden;   /* Hide the extra glyph padding that spills over */
+  text-align: center; /* Center the symbol inside its new narrow container */
+  margin-right: -0.15em; 
+}
+
 
 .nut {
     border: 2px solid var(--nut-gradient-color, #331e01);
