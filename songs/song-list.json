@@ -139,6 +139,17 @@
       ]
     },
     {
+      "href": "practice/All-Chords-flashcard.json",
+      "description": "<b>All-Chords-flashcar</b>: Flashcard mode of all the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "practice/All-Chords-fill-mode-piano-listener-light.json",
       "description": "<b>All-Chords</b> on a <em>P4-tuning</em> Guitar, with added <em>Piano</em> listening to the <i>Guitar</i>, and a light <em>color theme</em> instead of AutoColor.",
       "instruments": [
@@ -469,6 +480,22 @@
         },
         {
           "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-MIDI.json",
+      "description": "<em>name-that-note</em> game for <em>MIDI 8x8</em> and <em>Linstrument 8x24</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
+      "instruments": [
+        {
+          "fromBaseID": "MIDI",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Linstrument",
           "wiring": "Main",
           "visible": false
         }

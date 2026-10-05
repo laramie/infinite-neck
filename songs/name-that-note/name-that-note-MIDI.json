@@ -1,0 +1,567 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "MIDI_1",
+      "baseInstrument": "MIDI",
+      "caption": "8x8",
+      "nStrings": 8,
+      "rowRange": [
+        71,
+        66,
+        61,
+        56,
+        51,
+        46,
+        41,
+        36
+      ],
+      "doubleDiamonds": [
+        4
+      ],
+      "faceTinyDiamondsStrings": [],
+      "faceDoubleDiamondsStrings": [
+        3
+      ],
+      "showDiamonds": false,
+      "showFaceDiamonds": true,
+      "faceDoubleDiamondsLeft": "calc(100% + var(--cell-spacing) / 2)",
+      "frets": 8,
+      "nut": false,
+      "leftmargin": true,
+      "reverse": false,
+      "fixedFretWidthMult": 0.6,
+      "fixedFretHeightMult": 2.2,
+      "pinkKey": "C",
+      "fromBaseID": "MIDI"
+    },
+    {
+      "instance": true,
+      "baseID": "Linstrument_1",
+      "baseInstrument": "MIDI",
+      "caption": "Linstrument 8x24",
+      "nStrings": 8,
+      "rowRange": [
+        71,
+        66,
+        61,
+        56,
+        51,
+        46,
+        41,
+        36
+      ],
+      "frets": 24,
+      "nut": false,
+      "leftmargin": true,
+      "reverse": false,
+      "fixedFretWidthMult": 1,
+      "fixedFretHeightMult": 1,
+      "pinkKey": "C",
+      "fromBaseID": "Linstrument"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblMIDI_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblLinstrument_1",
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "transpose": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "no-transposition",
+      "properties": {
+        "intervals": [
+          0
+        ],
+        "NamedNotes": true,
+        "SingleNotes": true,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
+        "octaves": "0",
+        "useOctavesForRecorded": true,
+        "autoSharpsFlats": true,
+        "doLeadKey": true
+      }
+    },
+    "arpeggio": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "flashcard-0-7",
+      "properties": {
+        "targetTable": "tblMIDI_1",
+        "minFret": 0,
+        "maxFret": 8,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 7,
+        "lowToHigh": true,
+        "upOnly": false,
+        "style": "random",
+        "type": "AutoChartMode",
+        "showNoteName": "one",
+        "colorNotes": true,
+        "flashcard": true
+      }
+    }
+  },
+  "macros": {
+    "MIDI": {
+      "lines": [
+        "/tha",
+        "/tsi \"MIDI_1\"",
+        "/fpaC",
+        "/fpaIi \"MIDI_1\"",
+        "/rsR",
+        "",
+        "/snf",
+        "/fpapC",
+        "/fpapv \"0,7\"",
+        "/rsR"
+      ]
+    },
+    "Linstrument": {
+      "lines": [
+        "/tha",
+        "/tsi \"Linstrument_1\"",
+        "/fpaC",
+        "/fpaIi \"Linstrument_1\"",
+        "/rsR",
+        "",
+        "/snf",
+        "/fpapC",
+        "/fpapv \"0,23\"",
+        "/rsR"
+      ]
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "20",
+  "info": {
+    "lines": [
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
+      "<br>",
+      "<br>",
+      "Default is \"MIDI 8x8\" (like Novation Launchpad), and Chromatic Transposition.  Use the links below to set other Tunings and Transpositions.",
+      "<br>",
+      "",
+      "<br>",
+      "<table>",
+      "<caption>Choose Instrument:</caption>",
+      "<tbody>",
+      "<tr>",
+      "    <td><a href=\"#macro=MIDI\">MIDI 8x8</a></td>",
+      "    <td><a href=\"#macro=Linstrument\">Linstrument 8x24</a></td>",
+      "</tr>",
+      "</tbody>",
+      "</table>",
+      "<br>",
+      "",
+      "<br>",
+      "<table>",
+      "<caption>Transposition</caption>",
+      "<tbody>",
+      "<tr>",
+      "<td>Chromatic</td>",
+      "<td><a href=\"#raise=transpose.chromatic\">transpose.chromatic</a></td>",
+      "</tr>",
+      "<tr>",
+      "<td>Key of C only</td>",
+      "<td><a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a></td>",
+      "</tr>",
+      "</tbody></table>"
+    ]
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "parked",
+  "presentationMode": false,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": true,
+    "addTransposedRootToChord": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "name-that-note-MIDI",
+  "theme": "DJTrailMix",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblMIDI_1": {
+          "namedNotes": {
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblLinstrument_1": {
+          "namedNotes": {
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {
+        "arpeggio": {
+          "positions": [
+            [
+              0,
+              7
+            ]
+          ],
+          "lastPositionIndex": 0
+        }
+      },
+      "__arpeggioRuntimeIdentity": "s1",
+      "displayOptions": {
+        "autoColorHighlight": false,
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": false,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": true,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "currentColorDict": "",
+        "NoteDisplaySizes": {
+          "caption": "60x50:22",
+          "width": "60px",
+          "height": "50px",
+          "NoteFontSize": 22
+        },
+        "dropDownFunctionSymbols": {
+          "caption": "\n                                Function (Default)",
+          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
+        },
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%"
+      }
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1782368248425,
+        "date": "6/24/2026",
+        "time": "11:17:28 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "arpeggio",
+          "userKey": "flashcard-7-12",
+          "logicalKey": "arpeggio::flashcard-7-12",
+          "schemaVersion": 1,
+          "caption": "arpeggio / flashcard-7-12"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"flashcard-7-12\",\n    \"properties\": {\n        \"targetTable\": \"tblS6_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"random\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"one\",\n        \"colorNotes\": true,\n        \"flashcard\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1783184074468,
+        "date": "7/4/2026",
+        "time": "9:54:34 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "arpeggio",
+          "userKey": "flashcard-0-7",
+          "logicalKey": "arpeggio::flashcard-0-7",
+          "schemaVersion": 1,
+          "caption": "arpeggio / flashcard-0-7"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"flashcard-0-7\",\n    \"properties\": {\n        \"targetTable\": \"tblS6_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"random\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"one\",\n        \"colorNotes\": true,\n        \"flashcard\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1783184827649,
+        "date": "7/4/2026",
+        "time": "10:07:07 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "chromatic",
+          "logicalKey": "transpose::chromatic",
+          "schemaVersion": 1,
+          "caption": "transpose / chromatic"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"chromatic\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782370008573,
+        "date": "6/24/2026",
+        "time": "11:46:48 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "no-transposition",
+          "logicalKey": "transpose::no-transposition",
+          "schemaVersion": 1,
+          "caption": "transpose / no-transposition"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"no-transposition\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": 1791189591601
+      },
+      {
+        "timestamp": 1791189591577,
+        "date": "10/5/2026",
+        "time": "1:39:51 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "USER",
+          "logicalKey": "transpose::USER",
+          "schemaVersion": 1,
+          "caption": "transpose / USER"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "currentColorDict": "",
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  }
+}
