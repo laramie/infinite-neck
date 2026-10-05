@@ -8,7 +8,7 @@ export const gPresentation = {
         lastRestorableMultiColor: null,
         suppressRbColorRemember: false,
         keepWasForced: false,
-        lockKeep: false
+        keepLocked: false
     }
 };
 

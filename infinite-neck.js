@@ -1795,7 +1795,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			restoreHighlightIfNeeded: true,
 			forcedKeep: false
 		});
-		if (!gPresentation.palette.lockKeep){
+		if (!gPresentation.palette.keepLocked){
 			$("td.note").css({"cursor": "pointer"});
 		}
 	}
@@ -2642,9 +2642,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: true,
 					forcedKeep: false
 				});
-				if (!gPresentation.palette.lockKeep){
+				if (!gPresentation.palette.keepLocked){
 					$("td.note").css({"cursor": "pointer"});
-					turnOffHiding();
 				}
 			});
 	
@@ -2675,9 +2674,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: false,
 					forcedKeep: false
 				});
-				if (!gPresentation.palette.lockKeep){
+				if (!gPresentation.palette.keepLocked){
 					$("td.note").css({"cursor": "pointer"});
-					turnOffHiding();
 				}
 			});
 	
@@ -2689,9 +2687,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 					restoreHighlightIfNeeded: true,
 					forcedKeep: false
 				});
-				if (!gPresentation.palette.lockKeep){
+				if (!gPresentation.palette.keepLocked){
 					$("td.note").css({"cursor": "pointer"});
-					turnOffHiding();
 				}
 			});
 	
