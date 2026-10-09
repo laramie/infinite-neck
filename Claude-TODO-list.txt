@@ -1,0 +1,37 @@
+- Add background coloring to MIDI so we can send Launchpad NOTE display lights with a checkbox.
+
+- Add ability to see "include in looping" screen to Wizard tutorial mode so we can use this screen and loop selectively when not in a tutorial. (Hopefully without "Done" and "Bookmark". Maybe it is still Wizard mode, but we add "Tutorial Sections" expanding section into Wizard, just like it is in Strict.  Right now it just says "SS 3:" when in Section 3.
+
+- Function Symbols
+  - UI doesn't provide a way to name added sets, add them, (or delete them).
+  - Example use case: I want "Θ/#11" in just one Section, and I want it saved in the Section and Song, and a name for that set. (These have actually been added as "Extensions", but say I wanted to add something like it in a Song.)
+  - not exactly sure what refresh does.
+
+- Want an expansion for notes used a la Chart > Notes so we can display it in Caption.  One for NamedNotes, one for PlayedNotes.  Also an expansion for functions used: I III V d
+
+- Would be sweet to have an expansion for these so you could get a two-row display of note and function.  It is almost a widget expansion.
+   | I  III  V  Δ  |
+   | C  E    G  B  |
+
+   - use inline-table: 
+      <table style="display: inline-table;"><tr><td>III</td><td>V</td></tr><tr><td>G#</td><td>B</td></tr></table>
+   - It should use the Function Symbols, so if we switch to Jazz Extensions, that automatically gets displayed in the expansion in the Caption.
+   - Be sure to use the transposed chart chord.
+
+- Notes for me: add these to help file:
+  - document Extensions choice for Function Symbols
+  - document editing Diamonds and Face diamonds, and changes to Instruments editing in MyTunings.
+  - document under transposition that the TransposePlugin also works with Fill and Arpeggio so that you aren't transposing those notes, but they do end up transposed since they are created after the transposition.
+  - document CTRL+SHIFT+K that changes the LeadKey the same way k does for RootKey.
+  - document the new Theme matrix
+  - Under section-status widget, show screenshot of Latched mode blue border.
+  - document the changes where buttons on Desktop page were moved to Buttons tab
+  - document the new MIDI tab
+  - under Quick menu, document new Highlight AutoColor (AC)
+  - document that for TonalSourceSet, you can set them for the whole song in the TonalPlugin
+  - remove "chromatic" from documentation about the Western Subset, if you can no longer choose it.
+  - add DELETE link to doco about Graveyard.
+  - document tutorial mode and wizard mode
+
+
+Add ability to click "Save Diffs Only" button to View page.  Looks at displayOptions in effect, and saves only the differences.
