@@ -10,7 +10,7 @@ We would like a corresponding output for the current Section, the current chord,
 
 enharmonicTransposedModeNotes is found in approved-values.js::approvedValueEntries where it is then expanded in plugins/tonal/TonalPlugin.js :: getApprovedCaptionValue()
 
-The Key should be considered as the key after transposition, the same as the Chart when `stripTonalRoots` and `addTransposedRootToChord` are in effect.  So if we are in a Section and the original Key was C and the transpose plugin current chroma value is 5, then we are sitting in the key of G.  If the chart chord was Cm7, then the `#lblSectionChartChord` will be showing Gm7.  This is the transposed chord.  We want the notes for this, as calulated by Tonal.js that is:
+The Key should be considered as the key after transposition, the same as the Chart when `stripTonalRoots` and `addTransposedRootToChord` are in effect.  So if we are in a Section and the original Key was C and the transpose plugin current chroma value is 5, then we are sitting in the key of G.  If the chart chord was Cm7, then the `#lblSectionChartChord` will be showing Gm7.  This is the transposed chord.  We want the notes for transposedChordNotes, as calulated by Tonal.js that is:
 ```
 "notes": [
         "G",
@@ -19,7 +19,7 @@ The Key should be considered as the key after transposition, the same as the Cha
         "F"
 ```
 
-If the Lead Key were set to Bb (B flat), then we would want the notes to be: 
+If the Lead Key were set to Bb (B flat), then we would want the notes from transposedLeadKeyChordNotes to be: 
 ```
 "notes": [
         "Bb",
