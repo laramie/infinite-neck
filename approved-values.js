@@ -247,6 +247,18 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
+		name: 'transposedChordNotes',
+		description: 'tonal notes of the chart chord transposed to the current Key',
+		resolve: () => getTonalCaptionValue('transposedChordNotes'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'transposedLeadKeyChordNotes',
+		description: 'tonal notes of the chart chord transposed to the current LeadKey',
+		resolve: () => getTonalCaptionValue('transposedLeadKeyChordNotes'),
+		sampleFormat: 'html'
+	},
+	{
 		name: 'enharmonicChartModeNotes',
 		description: 'tonal chart mode notes',
 		resolve: () => getTonalCaptionValue('enharmonicChartModeNotes'),

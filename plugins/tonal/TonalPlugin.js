@@ -595,6 +595,10 @@ export class TonalPlugin {
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
       //return [...res].join(', ');
+    } else if (tokenName === 'transposedChordNotes') {
+      return this.buildTransposedChordNotes(false);
+    } else if (tokenName === 'transposedLeadKeyChordNotes') {
+      return this.buildTransposedChordNotes(true);
     } else if (tokenName === 'keySignatureCount') {
       return this.buildKeySignatureCount(false);
     } else if (tokenName === 'keySignatureCountHand') {
@@ -609,6 +613,23 @@ export class TonalPlugin {
       return body;
     }
     return '';
+  }
+
+  buildTransposedChordNotes(useLeadKey){
+      const song = getSong();
+      const section = this.getCurrentSection(song);
+      const chartChord = getChord(section.chartChord); //from TonalFunctions
+      if (!chartChord || chartChord.empty) {
+        return '';
+      }
+      const leadID = Number.parseInt(section.rootIDLead, 10);
+      const rootID = useLeadKey && Number.isFinite(leadID) && leadID >= 0 ? leadID : section.rootID;
+      const transposedRoot = Constants.getPreferredRootName(rootID);
+      const transposedChord = getChord(transposedRoot + (chartChord.aliases?.[0] ?? ''));
+      if (!transposedChord || transposedChord.empty) {
+        return '';
+      }
+      return transposedChord.notes.join(', ').replaceAll('b','<small>&flat;</small>');
   }
 
   buildKeySignatureCountOLD(wantHand){

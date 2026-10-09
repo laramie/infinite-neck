@@ -18,6 +18,11 @@
    - It should use the Function Symbols, so if we switch to Jazz Extensions, that automatically gets displayed in the expansion in the Caption.
    - Be sure to use the transposed chart chord.
 
+  - This has been implemented: 
+    - TonalPlugin.js::buildTransposedChordNotes()
+    - approved-values.js:: transposedChordNotes, transposedLeadKeyChordNotes
+
+
 - Notes for me: add these to help file:
   - document Extensions choice for Function Symbols
   - document editing Diamonds and Face diamonds, and changes to Instruments editing in MyTunings.
@@ -35,3 +40,4 @@
 
 
 Add ability to click "Save Diffs Only" button to View page.  Looks at displayOptions in effect, and saves only the differences.
+
