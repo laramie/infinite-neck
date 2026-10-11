@@ -259,21 +259,15 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
-		name: 'transposedLeadKeyChordNotes',
-		description: 'tonal notes of the chart chord transposed to the current LeadKey',
-		resolve: () => getTonalCaptionValue('transposedLeadKeyChordNotes'),
-		sampleFormat: 'html'
-	},
-	{
 		name: 'transposedChordNotesFunctions',
 		description: 'transposed chord notes with Functions',
 		resolve: () => getTonalCaptionValue('transposedChordNotesFunctions'),
 		sampleFormat: 'html'
 	},
 	{
-		name: 'transposedLeadKeyChordNotesFunctions',
-		description: 'transposed chord notes of LeadKey with Functions',
-		resolve: () => getTonalCaptionValue('transposedLeadKeyChordNotesFunctions'),
+		name: 'transposedChordNotesLeadKeyFunctions',
+		description: 'transposed chord notes with Functions relative to LeadKey ',
+		resolve: () => getTonalCaptionValue('transposedChordNotesLeadKeyFunctions'),
 		sampleFormat: 'html'
 	},
 	{

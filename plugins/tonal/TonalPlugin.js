@@ -601,14 +601,12 @@ export class TonalPlugin {
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
     } else if (tokenName === 'enharmonicTransposedChordNotes') {
-      return this.formatTransposedChordNotes(false, true);
-    } else if (tokenName === 'transposedChordNotes') {
-      return this.formatTransposedChordNotes(false);
-    } else if (tokenName === 'transposedLeadKeyChordNotes') {
       return this.formatTransposedChordNotes(true);
+    } else if (tokenName === 'transposedChordNotes') {
+      return this.formatTransposedChordNotes();
     } else if (tokenName === 'transposedChordNotesFunctions') {
-      return this.formatTransposedChordNotesFunctions(false);
-    } else if (tokenName === 'transposedLeadKeyChordNotesFunctions') {
+      return this.formatTransposedChordNotesFunctions();
+    } else if (tokenName === 'transposedChordNotesLeadKeyFunctions') {
       return this.formatTransposedChordNotesFunctions(true);
     } else if (tokenName === 'keySignatureCount') {
       return this.buildKeySignatureCount(false);
@@ -626,23 +624,22 @@ export class TonalPlugin {
     return '';
   }
 
-  formatTransposedChordNotes(useLeadKey, enharmonic=false){
-    return this.buildTransposedChordNotes(useLeadKey, enharmonic).join(', ').replaceAll('b','<small>&flat;</small>');
+  formatTransposedChordNotes(enharmonic=false){
+    return this.buildTransposedChordNotes(enharmonic).join(', ').replaceAll('b','<small>&flat;</small>');
   }
-  formatTransposedChordNotesFunctions(useLeadKey){
-    const noteArray = this.buildTransposedChordNotes(useLeadKey, false);
-    return SongWidgets.formatTransposedChordNotesFunctions(noteArray); 
+  formatTransposedChordNotesFunctions(relativeToLeadKey=false){
+    const noteArray = this.buildTransposedChordNotes(false);
+    return SongWidgets.formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey); 
   }
 
-  buildTransposedChordNotes(useLeadKey, enharmonic){
+  buildTransposedChordNotes(enharmonic){
       const song = getSong();
       const section = this.getCurrentSection(song);
       const chartChord = getChord(section.chartChord); //from TonalFunctions
       if (!chartChord || chartChord.empty) {
         return [];
       }
-      const leadID = Number.parseInt(section.rootIDLead, 10);
-      const rootID = useLeadKey && Number.isFinite(leadID) && leadID >= 0 ? leadID : section.rootID;
+      const rootID = section.rootID;
       const transposedRoot = Constants.getPreferredRootName(rootID);
       const transposedChord = getChord(transposedRoot + (chartChord.aliases?.[0] ?? ''));
       if (!transposedChord || transposedChord.empty) {
@@ -653,26 +650,6 @@ export class TonalPlugin {
       } else {
         return transposedChord.notes.map(TonalNote.simplify); //Tonal.js::Note.simplify removes enharmonic spellings, turning Ebb into D.
       }
-  }
-
-  buildKeySignatureCountOLD(wantHand){
-      const song = getSong();
-      const section = this .getCurrentSection(song);
-      const theMode = parseScaleBestEffort(section.chartMode);
-      const type = theMode?.type || 'no-type';
-      const transposedKey = Constants.getPreferredRootName(section.rootID);
-      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
-      const doubleSharpsCount = mode.notes.filter(note => note.endsWith('##')).length;
-      const sharpsCount = doubleSharpsCount + mode.notes.filter(note => note.endsWith('#')).length;
-      const doubleFlatsCount  = mode.notes.filter(note => note.endsWith('bb')).length;
-      const flatsCount  = doubleFlatsCount + mode.notes.filter(note => note.endsWith('b')).length;
-      let body = ' ';
-      if (sharpsCount > 0){
-        body = (wantHand?'&#x261E; ':'')+sharpsCount+" sharp"+(sharpsCount>1?'s':'');
-      } else if (flatsCount > 0){
-        body = (wantHand?'&#x261E; ':'')+flatsCount+" flat"+(flatsCount>1?'s':'');
-      }
-      return body;
   }
 
   buildKeySignatureCount(wantHand){

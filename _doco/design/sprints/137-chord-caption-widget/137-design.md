@@ -60,4 +60,21 @@ Additionally, note that we have mocked up the handling of black keys and white k
 
 Also, note the use of `em` as a nested element within `notesFunctionTable` to tighten up the display of `&flat;`.  We want this used in the real code.
 
+# Iteration 3
+
+Re: Claude question about whether the LeadKey moved notes should have functions relative to LeadKey.
+
+Good catch!  We want something slightly different than what we previously had.  We want the notes to remain as though from the transposed chart chord to the current Section key.  But we want the *functions* calculated as though those same notes were in the LeadKey.  Because taking the notes of the root key and moving them to the LeadKey is a different issue we aren't showing with this expansion.  What we want is the same notes *as viewed in the LeadKey*.  Which means the notes don't change, just the functions.  This is the same as placing TinyNote in each cell and observing that the color and Function display differently for the same notes as SingleNote and NamedNote, which is the purpose of TinyNote and LeadKey.
+
+So in TonalPlugin.js where we do: 
+```
+} else if (tokenName === 'transposedChordNotesLeadKeyFunctions') {
+      return this.formatTransposedChordNotesFunctions(true);
+```
+we have altered the code since you last saw it.   
+
+This `true` parameter  to formatTransposedChordNotesFunctions now is added and called    `relativeToLeadKey`.  It is in the signature, but is not implemented.  Please implement/fix  formatTransposedChordNotesFunctions so that if relativeToLeadKey is true, then just the *functions* and the corresponding classes are presented as though in the LeadKey, while keeping the notes the same, and in the same order. 
+
+We have removed the previous expansion `transposedLeadKeyChordNotes` that allowed the notes to be moved.  
+
 
