@@ -597,6 +597,10 @@ export class TonalPlugin {
       const transposedKey = Constants.getPreferredRootName(section.rootID);
       const mode = getMode(transposedKey+' '+type); //from TonalFunctions
       const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+
+      //TODO: this works, so factor the above code into a build* function and add an expansion for the *Functions version below.
+      if (true)return SongWidgets.formatTransposedChordNotesFunctions(mode.notes, false); 
+      
       return body;
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 

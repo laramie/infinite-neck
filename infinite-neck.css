@@ -1527,8 +1527,9 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
 }
 
 .notesFunctionTable .functionRow td {
+    font-family: var(--td-note-font-family), sans-serif;
     text-align: center;
-    font-size: 70%;
+    font-size: 60%;
     font-weight: bold;
 }
 
@@ -1540,16 +1541,32 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
 
 .notesFunctionTable .notesRow td.blackKey {
     vertical-align: top;
-    padding-bottom: 0.2em;
+    padding-bottom: 0.3em;
     background-color: white;
     color: black;
+    font-weight: bold;
 }
 
 .notesFunctionTable .notesRow td.whiteKey {
     vertical-align: bottom;
-    padding-top: 0.2em;
+    padding-top: 0.3em;
     background-color: white;
     color: brown;
+}
+
+.notesFunctionTable.relativeToLeadKey .notesRow td.blackKey {
+    vertical-align: top;
+    padding-bottom: 0.3em;
+    background-color: aqua;
+    color: black;
+    font-weight: bold;
+}
+
+.notesFunctionTable.relativeToLeadKey .notesRow td.whiteKey {
+    vertical-align: bottom;
+    padding-top: 0.3em;
+    background-color: aqua;
+    color: rgb(149, 14, 14);
 }
 
 .notesFunctionTable em {

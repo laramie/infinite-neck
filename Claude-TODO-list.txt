@@ -32,7 +32,7 @@
       - 'transposedLeadKeyChordNotesTable',
       - 'transposedLeadKeyChordNotesTableAuto',
       - The expansions that have 'Table' will output an HTML table that is the widget.
-      - The expansions that have the 'Table' and also 'Auto', that is, 'TableAuto' will be the widget plus the first row of the widget will use `[note1, note2, note3, ... note12]` coloring as though AutoColor applied to the first row, *even if AutoColor is off*.  The plain 'Table' versions will just have the note functions in the first row as plain text.
+      -   The expansions that have the 'Table' and also 'Auto', that is, 'TableAuto' will be the widget plus the first row of the widget will use `[note1, note2, note3, ... note12]` coloring as though AutoColor applied to the first row, *even if AutoColor is off*.  The plain 'Table' versions will just have the note functions in the first row as plain text.
 
 
 
