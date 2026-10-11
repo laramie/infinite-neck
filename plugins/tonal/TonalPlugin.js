@@ -19,6 +19,11 @@ import { TonalSourceSet,
          getMode,
          getKeySignatureInfo    
 } from '../../TonalFunctions.js';
+
+const { Note: TonalNote } = globalThis.Tonal?.Note
+    ? globalThis.Tonal
+    : await import('tonal');
+
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
 
@@ -595,7 +600,8 @@ export class TonalPlugin {
       return body;
       //Don't do it this way, always returns flats:
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
-      //return [...res].join(', ');
+    } else if (tokenName === 'enharmonicTransposedChordNotes') {
+      return this.formatTransposedChordNotes(false, true);
     } else if (tokenName === 'transposedChordNotes') {
       return this.formatTransposedChordNotes(false);
     } else if (tokenName === 'transposedLeadKeyChordNotes') {
@@ -620,15 +626,15 @@ export class TonalPlugin {
     return '';
   }
 
-  formatTransposedChordNotes(useLeadKey){
-    return this.buildTransposedChordNotes(useLeadKey).join(', ').replaceAll('b','<small>&flat;</small>');
+  formatTransposedChordNotes(useLeadKey, enharmonic=false){
+    return this.buildTransposedChordNotes(useLeadKey, enharmonic).join(', ').replaceAll('b','<small>&flat;</small>');
   }
   formatTransposedChordNotesFunctions(useLeadKey){
-    const noteArray = this.buildTransposedChordNotes(useLeadKey);
+    const noteArray = this.buildTransposedChordNotes(useLeadKey, false);
     return SongWidgets.formatTransposedChordNotesFunctions(noteArray); 
   }
 
-  buildTransposedChordNotes(useLeadKey){
+  buildTransposedChordNotes(useLeadKey, enharmonic){
       const song = getSong();
       const section = this.getCurrentSection(song);
       const chartChord = getChord(section.chartChord); //from TonalFunctions
@@ -642,7 +648,11 @@ export class TonalPlugin {
       if (!transposedChord || transposedChord.empty) {
         return [];
       }
-      return transposedChord.notes;
+      if (enharmonic){
+        return transposedChord.notes; 
+      } else {
+        return transposedChord.notes.map(TonalNote.simplify); //Tonal.js::Note.simplify removes enharmonic spellings, turning Ebb into D.
+      }
   }
 
   buildKeySignatureCountOLD(wantHand){

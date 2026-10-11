@@ -1528,28 +1528,28 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
 
 .notesFunctionTable .functionRow td {
     text-align: center;
-    font-size: 50%;
+    font-size: 70%;
     font-weight: bold;
 }
 
 .notesFunctionTable .notesRow td {
     text-align: center;
     font-size: 120%;
-    padding-inline: 0.4em; 
+    padding-inline: 0.05em; 
 }
 
 .notesFunctionTable .notesRow td.blackKey {
     vertical-align: top;
-    padding-bottom: 0.4em;
-    background-color: black;
-    color: white;
+    padding-bottom: 0.2em;
+    background-color: white;
+    color: black;
 }
 
 .notesFunctionTable .notesRow td.whiteKey {
     vertical-align: bottom;
-    padding-top: 0.4em;
+    padding-top: 0.2em;
     background-color: white;
-    color: black;
+    color: brown;
 }
 
 .notesFunctionTable em {
