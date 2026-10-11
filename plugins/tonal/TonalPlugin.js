@@ -4,6 +4,7 @@ import { PluginProperty, buildCaption, buildValueReference } from '../PluginProp
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { getSong, getTransportController } from '../../infinite-neck.js';
+import * as SongWidgets from '../../SongWidgets.js';
 import {
   applyTonalSelection,
   buildOverflowResultSuffix,
@@ -596,9 +597,13 @@ export class TonalPlugin {
       //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
       //return [...res].join(', ');
     } else if (tokenName === 'transposedChordNotes') {
-      return this.buildTransposedChordNotes(false);
+      return this.formatTransposedChordNotes(false);
     } else if (tokenName === 'transposedLeadKeyChordNotes') {
-      return this.buildTransposedChordNotes(true);
+      return this.formatTransposedChordNotes(true);
+    } else if (tokenName === 'transposedChordNotesFunctions') {
+      return this.formatTransposedChordNotesFunctions(false);
+    } else if (tokenName === 'transposedLeadKeyChordNotesFunctions') {
+      return this.formatTransposedChordNotesFunctions(true);
     } else if (tokenName === 'keySignatureCount') {
       return this.buildKeySignatureCount(false);
     } else if (tokenName === 'keySignatureCountHand') {
@@ -615,21 +620,29 @@ export class TonalPlugin {
     return '';
   }
 
+  formatTransposedChordNotes(useLeadKey){
+    return this.buildTransposedChordNotes(useLeadKey).join(', ').replaceAll('b','<small>&flat;</small>');
+  }
+  formatTransposedChordNotesFunctions(useLeadKey){
+    const noteArray = this.buildTransposedChordNotes(useLeadKey);
+    return SongWidgets.formatTransposedChordNotesFunctions(noteArray); 
+  }
+
   buildTransposedChordNotes(useLeadKey){
       const song = getSong();
       const section = this.getCurrentSection(song);
       const chartChord = getChord(section.chartChord); //from TonalFunctions
       if (!chartChord || chartChord.empty) {
-        return '';
+        return [];
       }
       const leadID = Number.parseInt(section.rootIDLead, 10);
       const rootID = useLeadKey && Number.isFinite(leadID) && leadID >= 0 ? leadID : section.rootID;
       const transposedRoot = Constants.getPreferredRootName(rootID);
       const transposedChord = getChord(transposedRoot + (chartChord.aliases?.[0] ?? ''));
       if (!transposedChord || transposedChord.empty) {
-        return '';
+        return [];
       }
-      return transposedChord.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+      return transposedChord.notes;
   }
 
   buildKeySignatureCountOLD(wantHand){

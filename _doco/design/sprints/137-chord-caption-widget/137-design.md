@@ -44,3 +44,22 @@ These are currently correctly calculated in Chart > Notes where the output appea
 We do not need any new Jest tests, or for the full Jest suite to be run.  We will run the full Jest suite afterwards.
 
 
+# Iteration 2
+
+## Request
+
+Now that we have the plain list of notes in chords and modes, properly transposed, we want to display them in widgets that will get expanded in the Caption row per Section, and in a later iteration, we will add a Caption row of Song widgets that can be specified for the whole song and don't need to be set in each Section.  They will still, however, continue to be evaluated per Section by infinite-neck.js::updateSectionsStatus().
+
+We feel there is a slight refactor of the output of TonalPlugin.js::buildTransposedChordNotes() such that buildTransposedChordNotes() should return an array, and all string processing delayed until the flavor of output is known.
+
+These are the levels of output that will rely on this function: 
+- 'transposedChordNotes'
+- 'transposedChordNotesTable'
+- 'transposedChordNotesTableAuto'
+- 'transposedLeadKeyChordNotes',
+- 'transposedLeadKeyChordNotesTable',
+- 'transposedLeadKeyChordNotesTableAuto',
+The expansions that have 'Table' will output an HTML table that is the widget.
+The expansions that have the 'Table' and also 'Auto', that is, 'TableAuto' will be the widget plus the first row of the widget will use `[note1, note2, note3, ... note12]` coloring as though AutoColor applied to the first row, *even if AutoColor is off*.  The plain 'Table' versions will just have the note functions in the first row as plain text.
+
+
