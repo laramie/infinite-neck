@@ -198,4 +198,4 @@ The persistence of the /vsw and /vhw choices are in this structure in the Song:
   }
 ```
 
-As a prior sibling of "WidgetRow" we are now adding "SongWidgets".
+As a prior sibling of "WidgetRow" we are now adding "SongWidgets" to this struct.

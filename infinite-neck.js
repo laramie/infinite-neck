@@ -816,11 +816,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Song Widgets row: filled BEFORE the .lblSectionChartChord/.lblSectionMode updates below so that
 		// those placeholder spans inside the Song Widgets are filled too.  Hidden entirely when empty.
 		const songWidgetsTemplate = getSanitizedSongWidgets(getSong().songWidgets || '');
-		if (songWidgetsTemplate.trim().length > 0) {
-			$("#lblSongWidgets").html(expandApprovedTemplate(songWidgetsTemplate)).show();
-		} else {
-			$("#lblSongWidgets").empty().hide();
-		}
+		$("#lblSongWidgets").html(songWidgetsTemplate.trim().length > 0 ? expandApprovedTemplate(songWidgetsTemplate) : '');
+		getSong().getLayout().applySongWidgetsVisibility(); //also honors /vsws and /vhws
 		var pluginWidgets = expandApprovedTemplate("${fillPositionsStatus} &nbsp;&nbsp;&nbsp; ${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 

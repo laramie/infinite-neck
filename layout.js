@@ -7,6 +7,7 @@ export class Layout {
             name: "fullscreen",
             CaptionRow: true,
             SongTitle: true,
+            SongWidgets: true,
             WidgetRow: true,
             InstrumentCaptions: true,
             LeftRails: true,
@@ -17,6 +18,7 @@ export class Layout {
             name: "escaped",
             CaptionRow: true,
             SongTitle: true,
+            SongWidgets: true,
             WidgetRow: true,
             InstrumentCaptions: true,
             LeftRails: true,
@@ -26,6 +28,12 @@ export class Layout {
         if (jsonObj){
             Object.assign(this, jsonObj);
         }
+        // Older song files have no SongWidgets flag in their persisted screens: default it to shown.
+        [...Object.values(this.screenList || {}), this.screen].forEach((screen) => {
+            if (screen && screen.SongWidgets === undefined) {
+                screen.SongWidgets = true;
+            }
+        });
     }
 
     toggleCaptionRow(visible){
@@ -38,6 +46,20 @@ export class Layout {
     
     toggleWidgetRow(visible){
         this.screen.WidgetRow = $('.SongTitleLeadSheet').toggle(visible).css('display') !== 'none'; 
+    }
+
+    /** Persists the User's choice (not the element's display, which is also hidden whenever the
+     *  Song Widgets are empty), then applies it. */
+    toggleSongWidgets(visible){
+        this.screen.SongWidgets = visible !== false;
+        this.applySongWidgetsVisibility();
+    }
+
+    /** #lblSongWidgets shows only when it has content AND the current screen's SongWidgets flag is on. */
+    applySongWidgetsVisibility(){
+        const jSongWidgets = $('#lblSongWidgets');
+        const hasContent = (jSongWidgets.html() || '').trim().length > 0;
+        jSongWidgets.toggle(hasContent && this.screen.SongWidgets !== false);
     }
 
     toggleInstrumentCaptions(visible){
@@ -92,6 +114,7 @@ export class Layout {
         console.log("Layout:\n"+JSON.stringify(this.screen, null, 4));  
         this.toggleCaptionRow(this.screen.CaptionRow);
         this.toggleSongTitle(this.screen.SongTitle);
+        this.toggleSongWidgets(this.screen.SongWidgets);
         this.toggleWidgetRow(this.screen.WidgetRow);
         this.toggleInstrumentCaptions(this.screen.InstrumentCaptions);
         this.toggleLeftRails(this.screen.LeftRails);

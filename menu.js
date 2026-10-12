@@ -1250,6 +1250,11 @@ export var gMenuFile =    {
                     "action": "hideSongTitle"
                   },
                   {
+                    "caption": "<b>s</b>ong widgets",
+                    "trigger": "s",
+                    "action": "hideSongWidgets"
+                  },
+                  {
                     "caption": "<b>w</b>idget row",
                     "trigger": "w",
                     "action": "hideWidgetRow"
@@ -1320,6 +1325,11 @@ export var gMenuFile =    {
                     "caption": "<b>t</b>itle",
                     "trigger": "t",
                     "action": "showSongTitle"
+                  },
+                  {
+                    "caption": "<b>s</b>ong widgets",
+                    "trigger": "s",
+                    "action": "showSongWidgets"
                   },
                   {
                     "caption": "<b>w</b>idget row",

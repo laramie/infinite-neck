@@ -1592,6 +1592,12 @@ export function performCmdAction(menuItem, args){
 		case "showSongTitle":
 			getSong().getLayout().toggleSongTitle(true);
 			break;
+		case "hideSongWidgets":
+			getSong().getLayout().toggleSongWidgets(false);
+			break;
+		case "showSongWidgets":
+			getSong().getLayout().toggleSongWidgets(true);
+			break;
 		case "hideInstrumentCaptions":
 			getSong().getLayout().toggleInstrumentCaptions(false);
 			break;	
