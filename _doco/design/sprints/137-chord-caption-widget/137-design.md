@@ -199,3 +199,9 @@ The persistence of the /vsw and /vhw choices are in this structure in the Song:
 ```
 
 As a prior sibling of "WidgetRow" we are now adding "SongWidgets" to this struct.
+
+# Iteration 7
+
+We have updated the expansions in the help file, and passed the full Jest suite.  
+
+Please port all menu items under `/vsw` and `/vhw` to new menu `/vtw`.  `/vt` exists, and has a slot open for `w)idgets` after `q)uick menu` and `w)` is available as a trigger.  Each action would behave as a bang menu item: toggle the element, place the `!` in the menu item, and stay in the same menu level, like the other menu items.

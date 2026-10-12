@@ -365,6 +365,7 @@ table {
     white-space: pre;
     margin: 0.2em;
     margin-bottom: 12em;
+    overflow: scroll;
 }
 
 #tblUserLog {
