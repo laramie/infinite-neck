@@ -1402,7 +1402,7 @@ export var gMenuFile =    {
             },
             {
               "caption": "<b>f</b>ingering",
-              "tigger": "f",
+              "trigger": "f",
               "action": "toggleFingering"
             },
             {
@@ -1410,6 +1410,47 @@ export var gMenuFile =    {
               "trigger": "q",
               "action": "toggleQuickMenu"
             },
+            {
+              "caption": "<b>w</b>idgets",
+              "trigger": "w",
+              "children": [
+                  {
+                    "caption": "<b>c</b>aption row",
+                    "trigger": "c",
+                    "action": "toggleCaptionRow"
+                  },
+                  {
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "toggleSongTitle"
+                  },
+                  {
+                    "caption": "<b>s</b>ong widgets",
+                    "trigger": "s",
+                    "action": "toggleSongWidgets"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "toggleWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "toggleInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "toggleLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "toggleRealtimeClock"
+                  }
+              ]
+            }
           ]
         },
         {

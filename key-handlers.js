@@ -1610,6 +1610,27 @@ export function performCmdAction(menuItem, args){
 		case "showWidgetRow":
 			getSong().getLayout().toggleWidgetRow(true);
 			break;
+		case "toggleCaptionRow":
+			getSong().getLayout().toggleCaptionRow();
+			break;
+		case "toggleSongTitle":
+			getSong().getLayout().toggleSongTitle();
+			break;
+		case "toggleSongWidgets":
+			getSong().getLayout().toggleSongWidgets();
+			break;
+		case "toggleWidgetRow":
+			getSong().getLayout().toggleWidgetRow();
+			break;
+		case "toggleInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions();
+			break;
+		case "toggleLeftRail":
+			getSong().getLayout().toggleLeftRails();
+			break;
+		case "toggleRealtimeClock":
+			$('#realtimeTickStart').toggle();
+			break;
 		case "toggleQuickMenu":
 			toggleQuickMenu();
 			break;	

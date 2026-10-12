@@ -49,9 +49,9 @@ export class Layout {
     }
 
     /** Persists the User's choice (not the element's display, which is also hidden whenever the
-     *  Song Widgets are empty), then applies it. */
+     *  Song Widgets are empty), then applies it.  Called with no argument, flips the current choice. */
     toggleSongWidgets(visible){
-        this.screen.SongWidgets = visible !== false;
+        this.screen.SongWidgets = typeof visible === 'boolean' ? visible : this.screen.SongWidgets === false;
         this.applySongWidgetsVisibility();
     }
 

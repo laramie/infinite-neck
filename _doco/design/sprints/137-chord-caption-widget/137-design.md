@@ -204,4 +204,44 @@ As a prior sibling of "WidgetRow" we are now adding "SongWidgets" to this struct
 
 We have updated the expansions in the help file, and passed the full Jest suite.  
 
-Please port all menu items under `/vsw` and `/vhw` to new menu `/vtw`.  `/vt` exists, and has a slot open for `w)idgets` after `q)uick menu` and `w)` is available as a trigger.  Each action would behave as a bang menu item: toggle the element, place the `!` in the menu item, and stay in the same menu level, like the other menu items.
+Please port all menu items under `/vsw` and `/vhw` to new menu `/vtw`.  `/vt` exists, and has a slot open for `w)idgets` after `q)uick menu` and `w)` is available as a trigger.  Each action would behave as a bang menu item: toggle the element, place the `!` in the menu item, and stay in the same menu level, like the other menu items.  Each item will toggle display (and persistence of option) for the current fullscreen/non-fullscreen state.
+
+# Iteration 8
+
+## Status
+
+Tests are passing.  We will continue to run the Jest tests on our side.
+
+Yes, we do want to keep all three flavors: `/vhw`, `/vsw`, and `/vtw`.  The hide/show are required for deterministic macro usage, and the toggle flavor is easier for interactive use. That work can be considered complete.
+
+## Request
+
+For this Iteration, we want to allow whitelisted classes to be used in the html-sanitized textareas we have.  For example: 
+
+`<span class="captionColor2">`
+
+or 
+
+`<small class="captionColor2">scale notes:</small> ${enharmonicTransposedModeNotes} <small class="captionColor2"> ${keySignatureCountHand}</small>`
+
+rather than what we currently use in the Section Caption (which is not sanitized yet) in song http://localhost:8000/infinite-neck/?song=practice/scales-major.json which has 
+
+`<small style="color: chartreuse;">scale notes:</small> ${enharmonicTransposedModeNotes} <small style="color:chartreuse;"> ${keySignatureCountHand}</small>`
+
+We do not need to sanitize Section Caption yet.  That is reserved for a later Iteration because it might break a few songs.
+
+We have added `html-whitelist.css` which will have the allowed classes.  We have linked this stylesheet into `index.html`.
+
+We would like to have the implementation in `html-sanitizer.js` where we have added `WHITELIST_CLASSES` and put in a stub for `buildWhitelistClassesSelect()` which should be implemented to spit out an HTML SELECT element with id `selWhitelistClasses`.
+
+The sanitizer should then allow syntax of the form `<span class="captionColor2"></span>` or `<span class="captionColor2 fontLarger"></span>` in places it is called, including from Info and SongWidgets, where the classes are in the whitelist.
+
+The Info and SongWidgets edit pages should now have controls that:
+- have the SELECT of whitelisted classes
+- have an Insert button that takes the selected class and inserts it into the textarea at the current cursor position. 
+
+`#info` .... `#infoEditControlsInner` should have the new SELECT and Insert button left of `#infoEditGroupSave`.
+
+`#songWidgetsEditor` should have the new SELECT and Insert button left of `#infoEditGroupSave`.
+
+

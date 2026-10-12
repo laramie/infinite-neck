@@ -43,6 +43,13 @@ const ALLOWED_TAGS = new Set([
 	'ul'
 ]);
 
+const WHITELIST_CLASSES = new Set([
+	'captionColor2',
+	'captionColor3',
+	'fontSmaller',
+	'fontLarger'
+]);
+
 const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;
 const MACRO_QUERY_VALUE_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
 const TUNING_QUERY_VALUE_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
@@ -191,4 +198,8 @@ export function getSanitizedSongWidgets(rawHtml = '') {
 
 export function isAllowedSanitizerTag(tagName) {
 	return ALLOWED_TAGS.has(String(tagName || '').toLowerCase());
+}
+
+export function buildWhitelistClassesSelect(){
+	//TODO: turn WHITELIST_CLASSES into a SELECT with id 'selWhitelistClasses'
 }
