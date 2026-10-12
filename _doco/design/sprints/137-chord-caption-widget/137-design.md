@@ -214,6 +214,8 @@ Tests are passing.  We will continue to run the Jest tests on our side.
 
 Yes, we do want to keep all three flavors: `/vhw`, `/vsw`, and `/vtw`.  The hide/show are required for deterministic macro usage, and the toggle flavor is easier for interactive use. That work can be considered complete.
 
+Good catch on the trigger for `/vtf`.  We have fixed that.
+
 ## Request
 
 For this Iteration, we want to allow whitelisted classes to be used in the html-sanitized textareas we have.  For example: 
@@ -238,7 +240,8 @@ The sanitizer should then allow syntax of the form `<span class="captionColor2">
 
 The Info and SongWidgets edit pages should now have controls that:
 - have the SELECT of whitelisted classes
-- have an Insert button that takes the selected class and inserts it into the textarea at the current cursor position. 
+- have an Insert button that takes the selected class and inserts it into the textarea at the current cursor position.
+- The User will add all the HTML at that position, and can be considered to be in the middle of typing this, where `|` represents the cursor location: `<span class="|">`. 
 
 `#info` .... `#infoEditControlsInner` should have the new SELECT and Insert button left of `#infoEditGroupSave`.
 
