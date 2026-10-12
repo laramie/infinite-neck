@@ -136,6 +136,9 @@
 .infoTabsButtons #btnDesktopTabButtons {
     padding: 1em;
 }
+.infoTabsButtons #btnDesktopTabSongWidgets {
+    padding: 1em;
+}
 .infoTabsButtons #btnDesktopTabMIDI {
     padding: 1em;
 }

@@ -105,12 +105,25 @@ To enable this lblSongWidgets row, we want to implement these features:
 <span class="lblSectionChartChord"></span> ${transposedChordNotesFunctions} <span class="lblSectionMode"></span> ${transposedModeNotesFunctions}
 ```
 - The location in the UI is a new tab in the tabgroup: `Desktop > SongWidgets` just like `#divDesktop` > `#divDesktopButtons`.  Its tab button will be after `#btnDesktopTabButtons` and before `#btnDesktopTabMIDI`.
+- The tab button should be captioned "SongWidgets".
 - The tab page and textarea should be built using the same strategy as `./templates/info/` and `./tamplates/macro`.
 - There does not need to be close button on the editing page, but there should be a checkmark save button that operates the same way: actual saving occurs because focus is lost, like Info and Macro.
 
+# Iteration 5
 
+## Adjustments
 
+1) 
 
+Rather than have the special pass-throughs in SONG_WIDGETS_ALLOWED_SPAN_CLASSES, let's remove those and add expansions:
+
+${chartChordCaption} ==> `<span class="lblSectionChartChord"></span>` 
+
+${chartModeCaption} ==> `<span class="lblSectionMode"></span>`
+
+2) 
+
+Do we need to add the new Song.songWidgets to the schema?
 
 
 

@@ -180,6 +180,16 @@ function persistSongInfo(rawInfo) {
     };
 }
 
+// Song Widgets (sprint 137 Iteration 4): raw HTML + ${expansions} held in memory as one string,
+// persisted as { lines: [...] } like Song.info, but omitted from the file entirely when empty.
+function persistSongWidgets(rawWidgets) {
+    const widgetsText = normalizeSongInfo(rawWidgets);
+    if (widgetsText.length === 0) {
+        return undefined;
+    }
+    return { lines: widgetsText.split('\n') };
+}
+
 function normalizeSongTutorial(rawTutorial) {
     if (!rawTutorial || typeof rawTutorial !== 'object' || Array.isArray(rawTutorial)) {
         return { level: 'none' };
@@ -247,6 +257,7 @@ const songDefaults = {
     captionsRowShowing: false,
     defaultBPM: "80",
     info: "",
+    songWidgets: "",
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
@@ -309,6 +320,7 @@ export class SongPersistence {
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
         this.myTunings = normalizeMyTunings(this.myTunings);
         this.info = normalizeSongInfo(this.info);
+        this.songWidgets = normalizeSongInfo(this.songWidgets);
         this.tutorial = normalizeSongTutorial(this.tutorial);
         this.midiDevice = normalizeMidiDevice(this.midiDevice);
 
@@ -352,6 +364,9 @@ export class SongPersistence {
         }
         if (key === 'info') {
             return persistSongInfo(value);
+        }
+        if (key === 'songWidgets') {
+            return persistSongWidgets(value);
         }
         if (key === 'tutorial' && (!value || value.level === 'none')) {
             return undefined;

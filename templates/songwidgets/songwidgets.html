@@ -1,0 +1,24 @@
+<!-- Sprint 137 (chord-caption-widget), Iteration 4. Sibling of ../info/info.html and ../macros/macros.html.
+     Lives in Desktop > SongWidgets (see index.html #divSongWidgetsTab). -->
+<template id="songwidgets-template">
+    <div id="songWidgetsEditor">
+        <div class="infoEditControls">
+            <div class="infoActionRow">
+                <div class="infoActionLeft">
+                    <div class="infoTitle">Song Widgets</div>
+                    <div class="infoEditControlsInner">
+                        <span class="infoEditGroup infoEditGroupSave">
+                            <span class="infoSaveCaption">save:</span>
+                            <button id="btnSaveSongWidgets" type="button" title="Tabbing away or clicking on another tab also saves.">&check;</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="songWidgetsHelp">
+            Raw HTML and ${expansions} shown in a row under the Song caption, for every Section. Leave empty to hide the row. Example:
+            <code>&lt;span class="lblSectionChartChord"&gt;&lt;/span&gt; ${transposedChordNotesFunctions} &lt;span class="lblSectionMode"&gt;&lt;/span&gt; ${transposedModeNotesFunctions}</code>
+        </div>
+        <textarea id="textareaSongWidgets" class="scalingTextarea infoTextarea" spellcheck="false"></textarea>
+    </div>
+</template>

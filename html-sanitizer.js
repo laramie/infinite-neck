@@ -109,7 +109,11 @@ export function isAllowedInfoAnchorHref(href = '') {
 		|| isAllowedInfoQueryHref(normalized);
 }
 
-function sanitizeNode(node, doc) {
+// Song Widgets (Desktop > SongWidgets) may hold <span class="..."> placeholders that updateSectionsStatus() fills in.
+// Only these classes survive, and only on <span>, so Users still can't inject arbitrary classes/styles.
+const SONG_WIDGETS_ALLOWED_SPAN_CLASSES = new Set(['lblSectionChartChord', 'lblSectionMode']);
+
+function sanitizeNode(node, doc, options = {}) {
 	if (!node) {
 		return null;
 	}
@@ -139,8 +143,16 @@ function sanitizeNode(node, doc) {
 		}
 		cleanNode.setAttribute('href', href.trim());
 	}
+	if (tagName === 'span' && options.allowedSpanClasses) {
+		const keptClasses = (node.getAttribute('class') || '')
+			.split(/\s+/)
+			.filter((className) => options.allowedSpanClasses.has(className));
+		if (keptClasses.length > 0) {
+			cleanNode.setAttribute('class', keptClasses.join(' '));
+		}
+	}
 	Array.from(node.childNodes).forEach((childNode) => {
-		const cleanChild = sanitizeNode(childNode, doc);
+		const cleanChild = sanitizeNode(childNode, doc, options);
 		if (cleanChild) {
 			cleanNode.appendChild(cleanChild);
 		}
@@ -153,7 +165,7 @@ export function trimTrailingWhitespacePreserveLeading(rawHtml = '') {
 	return String(rawHtml ?? '').replace(/[\s\u00a0]+$/u, '');
 }
 
-export function sanitizeHtmlFragment(rawHtml = '') {
+export function sanitizeHtmlFragment(rawHtml = '', options = {}) {
 	const trimmed = trimTrailingWhitespacePreserveLeading(rawHtml);
 	if (/^[\s\u00a0]*$/u.test(trimmed)) {
 		return '';
@@ -168,7 +180,7 @@ export function sanitizeHtmlFragment(rawHtml = '') {
 
 	const container = document.createElement('div');
 	Array.from(template.content.childNodes).forEach((childNode) => {
-		const cleanChild = sanitizeNode(childNode, document);
+		const cleanChild = sanitizeNode(childNode, document, options);
 		if (cleanChild) {
 			container.appendChild(cleanChild);
 		}
@@ -179,6 +191,14 @@ export function sanitizeHtmlFragment(rawHtml = '') {
 
 export function getSanitizedInfo(rawHtml = '') {
 	const sanitized = sanitizeHtmlFragment(rawHtml);
+	if (/^[\s\u00a0]*$/u.test(sanitized)) {
+		return '';
+	}
+	return sanitized;
+}
+
+export function getSanitizedSongWidgets(rawHtml = '') {
+	const sanitized = sanitizeHtmlFragment(rawHtml, { allowedSpanClasses: SONG_WIDGETS_ALLOWED_SPAN_CLASSES });
 	if (/^[\s\u00a0]*$/u.test(sanitized)) {
 		return '';
 	}

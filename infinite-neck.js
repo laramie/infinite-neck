@@ -136,6 +136,8 @@ import { InfoBuilder } from './templates/info/info.builder.js';
 import { MobileKeyboardBuilder } from './templates/mobile-keyboard/mobile-keyboard.builder.js';
 import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
+import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
+import { getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
 import { SectionStatusBuilder } from './templates/SectionStatus/section-status.builder.js';
@@ -811,6 +813,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		var caption = expandApprovedTemplate(rawCaption);
 	    $(".lblSectionCaption").html(caption);
 
+		// Song Widgets row: filled BEFORE the .lblSectionChartChord/.lblSectionMode updates below so that
+		// those placeholder spans inside the Song Widgets are filled too.  Hidden entirely when empty.
+		const songWidgetsTemplate = getSanitizedSongWidgets(getSong().songWidgets || '');
+		if (songWidgetsTemplate.trim().length > 0) {
+			$("#lblSongWidgets").html(expandApprovedTemplate(songWidgetsTemplate)).show();
+		} else {
+			$("#lblSongWidgets").empty().hide();
+		}
 		var pluginWidgets = expandApprovedTemplate("${fillPositionsStatus} &nbsp;&nbsp;&nbsp; ${arpeggioPositionsStatus} &nbsp;&nbsp;&nbsp; ${transposeIntervalsStatus} ${transposeProgressionFunctionDistances}");
 	    $(".lblLeadSheetWidgets").html(pluginWidgets);
 
@@ -2148,6 +2158,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		sectionChanged();
 		InfoBuilder.renderFromSong(getSong());
 		InfoBuilder.handleSongLoaded(getSong());
+		SongWidgetsBuilder.renderFromSong(getSong());
 		MidiTabBuilder.renderFromSong(getSong());
 		scheduleUrlMacroRun();
 	}
@@ -3824,12 +3835,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function showDesktopTab(which) {
-		var showKeyboardTab = which !== "Buttons" && which !== "MIDI";
+		var showKeyboardTab = which !== "Buttons" && which !== "SongWidgets" && which !== "MIDI";
 		var showButtonsTab = which === "Buttons";
+		var showSongWidgetsTab = which === "SongWidgets";
 		var showMidiTab = which === "MIDI";
+
+		if (!showSongWidgetsTab && $('#divSongWidgetsTab').is(':visible')) {
+			SongWidgetsBuilder.persistSongWidgets();
+		}
 
 		$('#divMobileKeyboard').toggle(showKeyboardTab);
 		$('#divDesktopButtons').toggle(showButtonsTab);
+		$('#divSongWidgetsTab').toggle(showSongWidgetsTab);
 		$('#divMidiTab').toggle(showMidiTab);
 
 		$('#btnDesktopTabKeyboard')
@@ -3838,6 +3855,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('#btnDesktopTabButtons')
 			.toggleClass('BtnPunchedIn', showButtonsTab)
 			.toggleClass('BtnPunchedOut', !showButtonsTab);
+		$('#btnDesktopTabSongWidgets')
+			.toggleClass('BtnPunchedIn', showSongWidgetsTab)
+			.toggleClass('BtnPunchedOut', !showSongWidgetsTab);
 		$('#btnDesktopTabMIDI')
 			.toggleClass('BtnPunchedIn', showMidiTab)
 			.toggleClass('BtnPunchedOut', !showMidiTab);
@@ -4076,6 +4096,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('click', '#btnDesktopTabButtons', function() {
 			showDesktopTab("Buttons");
+		});
+		bindEvent('click', '#btnDesktopTabSongWidgets', function() {
+			showDesktopTab("SongWidgets");
 		});
 		bindEvent('click', '#btnDesktopTabMIDI', function() {
 			showDesktopTab("MIDI");
@@ -4811,6 +4834,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			loadTemplates('templates/macros/macros.html').then(() => {
 				MacroBuilder.addToDest('#divMacros');
+			}),
+
+			loadTemplates('templates/songwidgets/songwidgets.html').then(() => {
+				SongWidgetsBuilder.addToDest('#divSongWidgetsTab');
+				SongWidgetsBuilder.renderFromSong(getSong());
 			}),
 
 			loadTemplates('templates/themes.html').then(() => {
