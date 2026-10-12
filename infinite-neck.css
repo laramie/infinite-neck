@@ -1550,6 +1550,7 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
 .notesFunctionTable .notesRow td.whiteKey {
     vertical-align: bottom;
     padding-top: 0.3em;
+    padding-inline: 0.2em;
     background-color: white;
     color: brown;
 }
@@ -1565,6 +1566,7 @@ body.HideFaceDiamonds .faceTinyDiamonds::before {
 .notesFunctionTable.relativeToLeadKey .notesRow td.whiteKey {
     vertical-align: bottom;
     padding-top: 0.3em;
+    padding-inline: 0.2em;
     background-color: aqua;
     color: rgb(149, 14, 14);
 }

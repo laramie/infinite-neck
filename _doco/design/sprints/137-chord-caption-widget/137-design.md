@@ -77,4 +77,40 @@ This `true` parameter  to formatTransposedChordNotesFunctions now is added and c
 
 We have removed the previous expansion `transposedLeadKeyChordNotes` that allowed the notes to be moved.  
 
+# Iteration 4
+
+## Goal
+
+Now that we have these expansions working, we want to enable having these expansions and other widgets work for the whole song, not just per-Section, as are expansions in the in the Song Caption.  To make this work, we have added `#lblSongWidgets` in `index.html`.  This new div is a combination of the User-specified expansions from the Section Caption, and the always-available built-in system widgets in `.SongTitleLeadSheet`.  `#lblSongWidgets` will be available any time a User wants to define widgets available for the whole song, and will be `display:none;` any time the User has not specified them.
+
+Here is a sample set of 4 widgets (two spans and two expansions), that will correctly expand and be filled in for a whole Song, and respond flexibly to Sections that have no Chart chord or mode: 
+
+```
+<span class="lblSectionChartChord"></span> ${transposedChordNotesFunctions} <span class="lblSectionMode"></span> ${transposedModeNotesFunctions}
+```
+
+## Features
+
+To enable this lblSongWidgets row, we want to implement these features:
+- updateSectionsStatus() fills in lblSongWidgets so it feels "live".
+- lblSongWidgets should completely disappear when it is empty, otherwise it should consume the whole row like a div.
+- Users can enter raw HTML and expansions as shown in the sample 4 widgets above in the Goal heading section.
+- This new textarea will be called `#textareaSongWidgets`
+- The input area for entering this HTML will be most similar to the Info input area:
+  - textarea like `#textareaSongInfo` 
+  - converted to multiple `lines` for storage in the Song and persistence like Song.info.lines.
+  - HTML validation like  `#textareaSongInfo` 
+- The sample string for `#textareaSongWidgets` that a User would enter, and that the Song would persist, is: 
+```
+<span class="lblSectionChartChord"></span> ${transposedChordNotesFunctions} <span class="lblSectionMode"></span> ${transposedModeNotesFunctions}
+```
+- The location in the UI is a new tab in the tabgroup: `Desktop > SongWidgets` just like `#divDesktop` > `#divDesktopButtons`.  Its tab button will be after `#btnDesktopTabButtons` and before `#btnDesktopTabMIDI`.
+- The tab page and textarea should be built using the same strategy as `./templates/info/` and `./tamplates/macro`.
+- There does not need to be close button on the editing page, but there should be a checkmark save button that operates the same way: actual saving occurs because focus is lost, like Info and Macro.
+
+
+
+
+
+
 

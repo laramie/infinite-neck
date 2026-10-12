@@ -590,20 +590,9 @@ export class TonalPlugin {
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
     if (tokenName === 'enharmonicTransposedModeNotes') {
-      const song = getSong();
-      const section = this .getCurrentSection(song);
-      const theMode = parseScaleBestEffort(section.chartMode);
-      const type = theMode?.type || 'no-type';
-      const transposedKey = Constants.getPreferredRootName(section.rootID);
-      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
-      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
-
-      //TODO: this works, so factor the above code into a build* function and add an expansion for the *Functions version below.
-      if (true)return SongWidgets.formatTransposedChordNotesFunctions(mode.notes, false); 
-      
-      return body;
-      //Don't do it this way, always returns flats:
-      //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
+      return this.formatEnharmonicTransposedModeNotes();
+    } else if (tokenName === 'transposedModeNotesFunctions') {
+      return this.formatTransposedModeNotes();
     } else if (tokenName === 'enharmonicTransposedChordNotes') {
       return this.formatTransposedChordNotes(true);
     } else if (tokenName === 'transposedChordNotes') {
@@ -626,6 +615,34 @@ export class TonalPlugin {
       return body;
     }
     return '';
+  }
+
+  formatEnharmonicTransposedModeNotes(){
+    const notes = this.buildTransposedModeNotes();
+    const body = notes.join(', ').replaceAll('b','<small>&flat;</small>');
+    return body;
+  }
+  formatTransposedModeNotes(){
+    const notes = this.buildTransposedModeNotes().map(TonalNote.simplify);
+    const body = SongWidgets.formatTransposedChordNotesFunctions(notes, false); 
+    return body;
+      
+  }
+  buildTransposedModeNotes(){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const theMode = parseScaleBestEffort(section.chartMode);
+      const type = theMode?.type || 'no-type';
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
+      return mode.notes;
+
+      //const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+
+      //TODO: this works, so factor the above code into a build* function and add an expansion for the *Functions version below.
+      //if (true)return SongWidgets.formatTransposedChordNotesFunctions(mode.notes, false); 
+      
+      //return body;
   }
 
   formatTransposedChordNotes(enharmonic=false){
