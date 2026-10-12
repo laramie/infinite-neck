@@ -390,6 +390,12 @@ export const songFileV2Schema = {
             ]
         },
         tutorial: songTutorialSchema,
+        songWidgets: {
+            anyOf: [
+                { type: 'string' },
+                infoLinesSchema
+            ]
+        },
         userTheme: {
             anyOf: [
                 { type: 'string' },

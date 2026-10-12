@@ -949,7 +949,24 @@ table.viewControls th {
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    
+}
+.SongTitleLeadSheet .lblSectionChartChord {
     min-width: 4.5em;
+}
+.SongTitleLeadSheet .lblSectionMode {
+    min-width: 7em;
+}
+#lblSongWidgets  {
+    
+}
+#lblSongWidgets .lblSectionChartChord {
+    font-size: 140%;
+    vertical-align: text-top;
+}
+#lblSongWidgets .lblSectionMode {
+    font-size: 140%;
+    vertical-align: text-top;
 }
 .lblSectionMode {
     display: inline-block;
@@ -958,7 +975,6 @@ table.viewControls th {
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
-    min-width: 7em;
 }
 .lblSectionNumber {
     padding: 0.2em;

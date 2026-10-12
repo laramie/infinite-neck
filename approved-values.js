@@ -162,6 +162,18 @@ const approvedValueEntries = [
 		resolve: () => getRootKeyLead()
 	},
 	{
+		name: 'chartChordCaption',
+		description: 'placeholder span that shows the current Section chart chord (filled live)',
+		resolve: () => '<span class="lblSectionChartChord"></span>',
+		sampleFormat: 'html'
+	},
+	{
+		name: 'chartModeCaption',
+		description: 'placeholder span that shows the current Section chart mode (filled live)',
+		resolve: () => '<span class="lblSectionMode"></span>',
+		sampleFormat: 'html'
+	},
+	{
 		name: 'transposeCurrentInterval',
 		description: 'Current interval in the active TransposePlugin interval list',
 		resolve: () => getTransposeCaptionValue('transposeCurrentInterval')

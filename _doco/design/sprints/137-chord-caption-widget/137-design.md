@@ -125,5 +125,77 @@ ${chartModeCaption} ==> `<span class="lblSectionMode"></span>`
 
 Do we need to add the new Song.songWidgets to the schema?
 
+## These are the testing song widgets:
+
+```
+&nbsp;&nbsp;&nbsp;&nbsp;${chartModeCaption} 
+${transposedChordNotesFunctions} 
+&nbsp;&nbsp;&nbsp;&nbsp;${chartChordCaption} 
+${transposedModeNotesFunctions}
+```
+
+# Iteration 6
+
+We would like to be able to hide and show the SongWidgets exactly as we do for `widget row` in / view > show > widgets, i.e. `/vsw`
 
 
+```
+/vsw
+  c)aption row
+  t)itle
+  w)idget row
+  ....
+```
+
+Here is the menu after the addition: 
+```
+/vsw
+  c)aption row
+  t)itle
+  s)ong widgets
+  w)idget row
+  ....
+```
+
+The action should be similar to `w)idget row`, that is:
+  - in fullscreen mode, show the lblSongWidgets and persist in `layout` shown below. 
+  - in non-fullscreen mode, show the lblSongWidgets and persist in `layout` shown below.
+
+Then, add matching `/vhw` entries for hiding lblSongWidgets  
+
+The persistence of the /vsw and /vhw choices are in this structure in the Song: 
+```
+"layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  }
+```
+
+As a prior sibling of "WidgetRow" we are now adding "SongWidgets".
