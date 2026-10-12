@@ -1,5 +1,5 @@
 import { getSong, updateSectionsStatus } from '../../infinite-neck.js';
-import { getSanitizedSongWidgets } from '../../html-sanitizer.js';
+import { getSanitizedSongWidgets, installWhitelistClassControls, isWhitelistControlActive } from '../../html-sanitizer.js';
 
 export class SongWidgetsBuilder {
 	static div_songWidgets = null;
@@ -11,6 +11,11 @@ export class SongWidgetsBuilder {
 			const clone = template.content.cloneNode(true);
 			SongWidgetsBuilder.div_songWidgets = clone.querySelector('#songWidgetsEditor');
 			$(divDestSelector).empty().append(SongWidgetsBuilder.div_songWidgets);
+			installWhitelistClassControls(
+				document.getElementById('spanWhitelistClassesSongWidgets'),
+				document.getElementById('textareaSongWidgets'),
+				'selWhitelistClassesSongWidgets'
+			);
 			SongWidgetsBuilder.bindEvents();
 		}
 		return SongWidgetsBuilder.div_songWidgets;
@@ -29,6 +34,9 @@ export class SongWidgetsBuilder {
 		$('#textareaSongWidgets')
 			.off(`blur${eventNamespace} change${eventNamespace}`)
 			.on(`blur${eventNamespace} change${eventNamespace}`, function () {
+				if (isWhitelistControlActive()) {
+					return; // reaching for the class SELECT/Insert: don't sanitize half-typed HTML yet.
+				}
 				SongWidgetsBuilder.persistSongWidgets();
 			});
 	}

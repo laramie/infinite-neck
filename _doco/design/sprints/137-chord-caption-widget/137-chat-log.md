@@ -540,3 +540,68 @@ Checked [](file:///home/laramie/infinite-neck/menu.js), [](file:///home/laramie/
 - **Not changed:** the existing `f)ingering` item under `/vt` has a typo, `"tigger"` instead of `"trigger"`, so its key probably doesn't fire.
 
 Made changes.
+
+
+# Iteration 8
+
+User: please implement Iteration 8
+
+GitHub Copilot: 
+
+Read [](file:///home/laramie/infinite-neck/html-sanitizer.js)
+
+Searched for files matching `**/html-whitelist.css`, 1 match
+
+Read [](file:///home/laramie/infinite-neck/templates/songwidgets/songwidgets.html)
+
+Read [](file:///home/laramie/infinite-neck/html-whitelist.css)
+
+Searched for regex `html-whitelist|selWhitelistClasses|WhitelistClasses` (`**/{index.html,infinite-neck.js,templates/**}`), 1 result
+
+Searched for regex `html-sanitizer|sanitizeHtmlFragment|getSanitizedInfo` (`**/{_tests/jest/*.js,tutorial/**,templates/tutorial/*.js}`), 4 results
+
+Using "Multi-Replace String in Files"
+
+Replacing 7 lines with 73 lines in [](file:///home/laramie/infinite-neck/html-sanitizer.js)
+
+
+```
+
+```
+
+
+Replacing 14 lines with 32 lines in [](file:///home/laramie/infinite-neck/templates/info/info.html), [](file:///home/laramie/infinite-neck/templates/songwidgets/songwidgets.html), [](file:///home/laramie/infinite-neck/templates/info/info.builder.js), [](file:///home/laramie/infinite-neck/templates/songwidgets/songwidgets.builder.js)
+
+Checked [](file:///home/laramie/infinite-neck/html-sanitizer.js), [](file:///home/laramie/infinite-neck/templates/info/info.builder.js), [](file:///home/laramie/infinite-neck/templates/songwidgets/songwidgets.builder.js), no problems found
+
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+The sanitizer now keeps whitelisted classes, and both the Info and SongWidgets edit pages have the class SELECT and Insert button. I haven't run it in the browser or run Jest; the editor shows no errors in the changed JS files.
+
+**Sanitizer (html-sanitizer.js)**
+- **Class filtering:** on any allowed tag, `class="..."` is cut down to the classes in `WHITELIST_CLASSES`. `<span class="captionColor2 fontLarger">` survives. `<span class="captionColor2 evil">` becomes `<span class="captionColor2">`. If no class is whitelisted, the attribute is dropped. This applies to Info, SongWidgets and the tutorial prompts, since they all use the same sanitizer. The Section Caption is untouched.
+- **Select builder:** `buildWhitelistClassesSelect(id = 'selWhitelistClasses')` returns the SELECT markup.
+- **Insert helper:** `installWhitelistClassControls(host, textarea, selectId)` fills a host element with `class:`, the SELECT and an Insert button. Insert puts the selected class name at the cursor, or over the selection, and moves the cursor to the end of the inserted text. It adds a leading space if the character before the cursor is part of a class name, so you can chain classes inside `class="|"`.
+
+**Edit pages**
+- **Placement:** the controls sit left of the save group in `#infoEditControlsInner` and in the `#songWidgetsEditor` controls row, via placeholder spans in info.html and songwidgets.html.
+- **Blur handling:** the textareas sanitize and save on blur. Without a guard, clicking the SELECT or Insert while you're mid-way through `<span class="|">` would sanitize your half-typed HTML away first. The two builders now skip the blur/change save while the pointer is on those controls. Tabbing away with the keyboard still saves as before.
+- **Select ids:** Info and SongWidgets are both in the page at once, so I gave the selects distinct ids, `selWhitelistClassesInfo` and `selWhitelistClassesSongWidgets`, to avoid duplicate ids. `selWhitelistClasses` is still the function's default if you want it for a single page.
+
+The whitelist currently has `captionColor2`, `captionColor3`, `fontSmaller` and `fontLarger`, and these match the rules in html-whitelist.css. Adding a class means editing both places.
+
+Made changes.

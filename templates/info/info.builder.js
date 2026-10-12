@@ -1,6 +1,6 @@
 import { makeDivDockable, dockDivInPage } from '../../dockable.js';
 import { getSong, showOneMenu } from '../../infinite-neck.js';
-import { getSanitizedInfo } from '../../html-sanitizer.js';
+import { getSanitizedInfo, installWhitelistClassControls, isWhitelistControlActive } from '../../html-sanitizer.js';
 import { expandApprovedTemplate } from '../../approved-values.js';
 
 export class InfoBuilder {
@@ -16,6 +16,11 @@ export class InfoBuilder {
 			const clone = template.content.cloneNode(true);
 			InfoBuilder.div_info = clone.querySelector('#info');
 			$(divDestSelector).empty().append(InfoBuilder.div_info);
+			installWhitelistClassControls(
+				document.getElementById('spanWhitelistClassesInfo'),
+				document.getElementById('textareaSongInfo'),
+				'selWhitelistClassesInfo'
+			);
 			InfoBuilder.bindEvents();
 		}
 		return InfoBuilder.div_info;
@@ -64,6 +69,9 @@ export class InfoBuilder {
 		$('#textareaSongInfo')
 			.off(`blur${eventNamespace} change${eventNamespace}`)
 			.on(`blur${eventNamespace} change${eventNamespace}`, function () {
+				if (isWhitelistControlActive()) {
+					return; // reaching for the class SELECT/Insert: don't sanitize half-typed HTML yet.
+				}
 				InfoBuilder.persistInfo();
 			});
 

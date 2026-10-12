@@ -1,3 +1,4 @@
+/* These also need to appear in html-sanitizer.js::WHITELIST_CLASSES */
 .captionColor2 {
     color:chartreuse;
 }
