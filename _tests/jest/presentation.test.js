@@ -58,8 +58,14 @@ function installJqueryStub(elements) {
         }
         return wrap(items.filter((item) => matchesSelector(item, selector)));
       },
-      attr(name) {
-        return items[0]?.[name];
+      attr(name, value) {
+        if (value === undefined) {
+          return items[0]?.[name];
+        }
+        items.forEach((item) => {
+          item[name] = value;
+        });
+        return api;
       },
       val() {
         return items[0]?.value;
