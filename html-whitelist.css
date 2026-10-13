@@ -43,3 +43,13 @@
 .rightJustifyWidgets {
     text-align: right;
 }
+.linkBox {
+  display: inline-block;
+  text-decoration: none;
+  border: 2px solid transparent;
+  padding: 4px;
+}
+.linkBox:hover {
+  border: 2px solid cyan;
+  padding: 4px;
+}

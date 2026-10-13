@@ -58,7 +58,8 @@ const WHITELIST_CLASSES = new Set([
 	'spacer8',
 	'centerWidgets',
 	'leftJustifyWidgets',
-	'rightJustifyWidgets'
+	'rightJustifyWidgets',
+	'linkBox'
 ]);
 
 const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;

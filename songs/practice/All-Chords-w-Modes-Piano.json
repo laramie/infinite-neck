@@ -263,11 +263,11 @@
     "lines": [
       "<div class=\"fullWidth centerWidgets\">",
       "",
-      "<a href=\"#macro=showChords\"><span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span></a>",
+      "<a href=\"#macro=showChords\"  class=\"linkBox\"><span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span></a>",
       "",
       "<span class=\"spacer2\"></span><span class=\"spacer2\"></span>",
       "",
-      "<a href=\"#macro=showModes\"><span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span></a> ",
+      "<a href=\"#macro=showModes\"  class=\"linkBox\"><span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span></a> ",
       "",
       "</div>"
     ]
@@ -539,7 +539,7 @@
     },
     {
       "sectionNotesByTable": {},
-      "caption": "<a href=\"#macro=showModes\">showModes</a>",
+      "caption": "",
       "chartChord": "C7",
       "chartMode": "C mixolydian",
       "chartPosition": "LINE",
