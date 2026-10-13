@@ -326,7 +326,7 @@ export class PalettePresentation {
     static refreshPaletteHidingStatus() {
         const kinds = PalettePresentation.getHiddenNoteKinds();
         $('.paletteHidingStatus')
-            .html('Hiding <span>\u2327</span>')
+            .html('Hiding <span style="color: red;">\u2713</span>') // <span>\u2327</span>
             .attr('title', kinds.length > 0 ? 'Hidden: ' + kinds.join(', ') : '')
             .toggle(kinds.length > 0);
     }

@@ -283,7 +283,7 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 
 .paletteHidingStatus {
-    background-color: #fdd;
+    background-color: white; /*#fdd;*/
     color: #900;
     border-color: #900;
 }
