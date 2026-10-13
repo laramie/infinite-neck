@@ -958,9 +958,6 @@ table.viewControls th {
 .SongTitleLeadSheet .lblSectionMode {
     min-width: 7em;
 }
-#lblSongWidgets  {
-    
-}
 #lblSongWidgets .lblSectionChartChord {
     font-size: 140%;
     vertical-align: text-top;

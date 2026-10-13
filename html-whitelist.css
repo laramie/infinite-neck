@@ -8,6 +8,38 @@
 .fontSmaller {
     font-size: 70%;
 }
-.fontLarger {
+.fontLarger140 {
     font-size: 140%;
+}
+.fontLarger160 {
+    font-size: 160%;
+}
+.fontLarger200 {
+    font-size: 200%;
+}
+.fontLarger250 {
+    font-size: 250%;
+}
+.fontLarger300 {
+    font-size: 300%;
+}
+.fullWidth {
+    width: 100%;
+}
+.spacer2 {
+    display: inline-block;
+    width: 2em;
+}
+.spacer8 {
+    display: inline-block;
+    width: 8em;
+}
+.centerWidgets {
+    text-align: center;
+}
+.leftJustifyWidgets {
+    text-align: left;
+}
+.rightJustifyWidgets {
+    text-align: right;
 }

@@ -1737,6 +1737,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		MacroBuilder.show(macroId);
 	}
 
+	//Also, see ACTION_LINK_CONTAINERS which has allowed link containers like ['#divInfoRendered', '#divTutorialPrompt', '#lblSongWidgets', '.lblSectionCaption'];
 	function handleInfoActionFragment(href = '') {
 		const parsed = parseAppActionFragment(href);
 		if (parsed.errors.length > 0) {
@@ -3941,7 +3942,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		});
 
-		bindDelegatedEvent('click', '#divInfoRendered a[href^="#raise="], #divInfoRendered a[href^="#macro="], #divTutorialPrompt a[href^="#raise="], #divTutorialPrompt a[href^="#macro="]', function(e) {
+		const ACTION_LINK_CONTAINERS = ['#divInfoRendered', '#divTutorialPrompt', '#lblSongWidgets', '.lblSectionCaption'];
+		const ACTION_LINK_SELECTOR = ACTION_LINK_CONTAINERS
+			.flatMap((container) => [`${container} a[href^="#raise="]`, `${container} a[href^="#macro="]`])
+			.join(', ');
+		bindDelegatedEvent('click', ACTION_LINK_SELECTOR, function(e) {
 			e.preventDefault();
 			const href = $(this).attr('href') || '';
 			if (href) {

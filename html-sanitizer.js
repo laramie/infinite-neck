@@ -48,7 +48,17 @@ const WHITELIST_CLASSES = new Set([
 	'captionColor2',
 	'captionColor3',
 	'fontSmaller',
-	'fontLarger'
+	'fontLarger140',
+	'fontLarger160',
+	'fontLarger200',
+	'fontLarger250',
+	'fontLarger300',
+	'fullWidth',
+	'spacer2',
+	'spacer8',
+	'centerWidgets',
+	'leftJustifyWidgets',
+	'rightJustifyWidgets'
 ]);
 
 const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;
@@ -75,6 +85,8 @@ function parseInfoQueryHref(href = '') {
 	return new URLSearchParams(query);
 }
 
+//Also, see infinite-neck.js::ACTION_LINK_CONTAINERS which has allowed link containers like ['#divInfoRendered', '#divTutorialPrompt', '#lblSongWidgets', '.lblSectionCaption'];
+		
 function isAllowedInfoQueryHref(href = '') {
 	const params = parseInfoQueryHref(href);
 	if (!params) {
