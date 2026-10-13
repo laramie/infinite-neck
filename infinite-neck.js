@@ -1855,6 +1855,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#lblHideWarning").hide();
 	
 		turnOffKeep();
+		PalettePresentation.refreshPaletteHidingStatus();
 	
 		if (hideNamedNotes || hideTinyNotes || hideSingleNotes || hideFingering){
 			clearAll();
@@ -3318,6 +3319,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#lblHideWarning").hide();
 			turnOffKeep();
 		}
+		PalettePresentation.refreshPaletteHidingStatus();
 
 		getSong().namedNoteOpacity = options.namedNoteOpacity;
 		getSong().singleNoteOpacity = options.singleNoteOpacity;
@@ -4381,6 +4383,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				$("#lblHideWarning").hide();
 				turnOffKeep();
 			}
+			PalettePresentation.refreshPaletteHidingStatus();
 			clearAll();
 			replay();
 		});

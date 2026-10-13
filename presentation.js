@@ -310,7 +310,29 @@ export class PalettePresentation {
         return PalettePresentation.getResolvedRbColorStyle();
     }
 
+    // Names of the Display Options "Hide ..." checkboxes currently checked; non-empty means something is hidden.
+    static getHiddenNoteKinds() {
+        const kinds = [];
+        if ($('#cbHideNamedNotes').prop('checked')) { kinds.push('Named'); }
+        if ($('#cbHideSingleNotes').prop('checked')) { kinds.push('Single'); }
+        if ($('#cbHideTinyNotes').prop('checked')) { kinds.push('Tiny'); }
+        if ($('#cbHideFingering').prop('checked')) { kinds.push('Fingering'); }
+        return kinds;
+    }
+
+    // .paletteHidingStatus is display:none (inline style) until something is hidden, so it takes no
+    // space in .miniPaletteStatus; jQuery toggle(true) removes the inline style, restoring the
+    // stylesheet's inline-block from .paletteStatusSpan.
+    static refreshPaletteHidingStatus() {
+        const kinds = PalettePresentation.getHiddenNoteKinds();
+        $('.paletteHidingStatus')
+            .html('Hiding <span>\u2327</span>')
+            .attr('title', kinds.length > 0 ? 'Hidden: ' + kinds.join(', ') : '')
+            .toggle(kinds.length > 0);
+    }
+
     static refreshPaletteStatusSpans() {
+        PalettePresentation.refreshPaletteHidingStatus();
         $('.paletteHighlightStatus').html(PalettePresentation.getHighlightStatusMarkup()+' <span style="color: #1e82f3;">\u2713</span>' );
 
         const modeStyle = PalettePresentation.getPaletteModeStatusStyle();

@@ -282,6 +282,12 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     color: black;
 }
 
+.paletteHidingStatus {
+    background-color: #fdd;
+    color: #900;
+    border-color: #900;
+}
+
 .miniPaletteStatus {
     display: inline-block;
     background-color: #dfd;

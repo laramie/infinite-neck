@@ -408,6 +408,7 @@ function buildCaptionRow(options, tableID) {
 	colorDictRow.append(spanStatus);
 	spanStatus.append($('<span class="paletteHighlightStatus paletteStatusSpan"></span>'));
 	spanStatus.append($('<span class="paletteModeStatus paletteStatusSpan"></span>'));
+	spanStatus.append($('<span class="paletteHidingStatus paletteStatusSpan" style="display: none;"></span>'));
 	colorDictRow.append($("<span class='colorDictSwatchStrip'></span>"));
 	captionRow.append(colorDictRow);
 	return captionRow;
