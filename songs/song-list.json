@@ -140,11 +140,27 @@
     },
     {
       "href": "practice/All-Chords-flashcard.json",
-      "description": "<b>All-Chords-flashcar</b>: Flashcard mode of all the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
+      "description": "<b>All-Chords-flashcard</b>: Flashcard mode of all the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
       "instruments": [
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/All-Chords-w-Modes-Piano.json",
+      "description": "<b>All-Chords with Modes</b> for <i>Piano</i> (Listens to a backing <em>P4-tuning</em> Guitar, and standard <em>color theme</em>.  Click SongWidgets to swap between Chords and Modes.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
           "visible": true
         }
       ]

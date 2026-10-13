@@ -333,8 +333,6 @@
         "showMidiNum": false,
         "useCenterForRightFunction": true,
         "naturalFretWidths": true,
-        "hideNamedNotes": true,
-        "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
         "showAllNoteNames": false,
