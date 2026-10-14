@@ -2,7 +2,7 @@
 
 sprint number: 147
 
-sprint chord-caption-widget:
+sprint shortname: chord-caption-widget
 
 date: 20261009
 
@@ -12,6 +12,7 @@ Index of all sprints for reference: [sprint planning index](../../../lifecycle/s
 
 Purpose of this sprint is to: 
 - create a widget to show the notes in the current Section Caption of the current chart chord, with variations for transposed and LeadKey.
+- Also, this sprint is where SongWidgets is introduced.
 
 ## Sprint document locations
 
@@ -19,5 +20,5 @@ Purpose of this sprint is to:
 
 ## Iterations
 
-  - "Iteration 1": 
+  - Iterations are documented directly in [design document](147-design.md)
 
