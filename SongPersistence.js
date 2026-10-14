@@ -180,7 +180,7 @@ function persistSongInfo(rawInfo) {
     };
 }
 
-// Song Widgets (sprint 137 Iteration 4): raw HTML + ${expansions} held in memory as one string,
+// Song Widgets (sprint 147 Iteration 4): raw HTML + ${expansions} held in memory as one string,
 // persisted as { lines: [...] } like Song.info, but omitted from the file entirely when empty.
 function persistSongWidgets(rawWidgets) {
     const widgetsText = normalizeSongInfo(rawWidgets);

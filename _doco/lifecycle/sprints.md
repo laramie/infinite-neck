@@ -224,6 +224,31 @@ The sprints toward this effort are documented here.
 - [sprint 142-loop-button-central](../design/sprints/142-loop-button-central/sprint-142.md)
   - centralize handling of loop button captions and state.
 
+- [143-midi-note-in](../design/sprints/143-midi-note-in/sprint-143.md)
+  - Creation of Desktop > MIDI page and handling of the Launchpad Pro in Programmer mode, and sending notes to the VoiceLive 3.
+  
+- [144-highlights-palette-ui](../design/sprints/144-highlights-palette-ui/sprint-144.md)
+  - Added H1, H2, H3 and handling of custom highlight colors.
+
+- [145-face-diamonds](../design/sprints/145-face-diamonds/sprint-145.md)
+  - Theme control of diamonds on the face of the Instruments (guitar and Launchpad mostly) in between the cells.
+
+- [146-table-themes](../design/sprints/146-table-themes/sprint-146.md)
+  - Allows automation of Themes per Section, and the Theme Matrix on the Themes page. 
+
+- [147-chord-caption-widget](../design/sprints/147-chord-caption-widget/sprint-147.md)
+  - Also called sprint-137 erroneously in commit messages
+  - Chord and Mode widgets that show the notes in order in a small table with Function values and CSS rules for display of black key notes.
+  - Also the genesis of SongWidgets 
+
+- [148-displayOptions-diff](../design/sprints/148-displayOptions-diff/sprint-148.md)
+  - 
+
+- [](../design/sprints//sprint-.md)
+  - 
+
+
+
 
 <br>
 <br>

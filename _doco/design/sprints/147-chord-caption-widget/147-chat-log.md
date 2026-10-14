@@ -1,4 +1,4 @@
-User: Please fulfill the request in _doco/design/sprints/137-chord-caption-widget/137-design.md
+User: Please fulfill the request in _doco/design/sprints/147-chord-caption-widget/147-design.md
 
 GitHub Copilot: Searched for text `enharmonicTransposedModeNotes` (`**/*.js`), 3 results
 
@@ -70,7 +70,7 @@ Flats are rendered with the same `<small>&flat;</small>` replacement as `enharmo
 Made changes.
 
 User: Iteration 1 worked perfectly.  
-We are now ready for Iteration 2, specified in _doco/design/sprints/137-chord-caption-widget/137-design.md which is attached, in heading `# Iteration 2`
+We are now ready for Iteration 2, specified in _doco/design/sprints/147-chord-caption-widget/147-design.md which is attached, in heading `# Iteration 2`
 
 GitHub Copilot: Searched for files matching `**/SongWidgets.js`, 1 match
 

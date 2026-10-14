@@ -1,6 +1,6 @@
-# sprint-137-chord-caption-widget
+# sprint-147-chord-caption-widget
 
-sprint number: 137
+sprint number: 147
 
 sprint chord-caption-widget:
 
@@ -15,7 +15,7 @@ Purpose of this sprint is to:
 
 ## Sprint document locations
 
-- [design document](137-design.md) 
+- [design document](147-design.md) 
 
 ## Iterations
 
