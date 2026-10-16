@@ -347,7 +347,7 @@
           "NoteFontSize": 22
         },
         "dropDownFunctionSymbols": {
-          "caption": "\n                                Function (Default)",
+          "caption": "Function",
           "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
         },
         "naturalFontScaling": "60",

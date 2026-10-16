@@ -140,3 +140,7 @@ Please provide `148-it2-analysis.md` and therein tell us if there are any holes 
 Also provide a separate section analyzing our answers, and also whether the answers plus your proposed solution covers our use-cases.  
 
 No coding is requested for this sprint work yet.  After reading your analysis we will approve work on the Function Symbols UX as an Iteration so that that work is complete before we finish the sprint analysis around "Save Diff".
+
+# Iteration 3
+
+We have defined the layout and UX of the Function Symbols editing area in [Iteration 3 Function Symbols chooser/editing panel](148-it3-functions-panel.md) . Please digest that file and provide an implementation plan with necessary questions for the design team in `148-it3-implementation-plan.md`.  The implementation plan should cover creating the new widget from the new template and inserting it into the View page to replace the current controls.  The remaining work of SaveDiff is not in scope yet, since we are treating the Function Symbols as a blocker to that work.

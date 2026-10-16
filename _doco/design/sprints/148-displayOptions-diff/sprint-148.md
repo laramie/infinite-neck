@@ -18,3 +18,5 @@ Purpose of this sprint is to:
 
 - [design document](148-design.md) 
 - [Iteration 1 analysis](148-it1-analysis.md)
+- [Iteration 2 analysis](148-it2-analysis.md)
+- [Iteration 3 Function Symbols chooser/editing panel](148-it3-functions-panel.md)
