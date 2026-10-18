@@ -195,7 +195,7 @@ There are three levels of controls for DisplayOptionsMatrix:
 
 ## Iteration 4 Round 1 Request
 
-For this Round, please evaluate our proposed future UI for DisplayOptionsMatrix, and analyze whether it causes changes in the design for SaveDiff/SaveAll.  Especially the ideas that we can granularly allow read, write, and clear for Section DisplayOptions (cells).  Recall that DisplayOptionsMatrix is in the planning stage, and will not be implemented yet.  We provided the above detail to ensure that this Iteration will provide the necessary primitives to support granular clearing, blocking, and automation.
+For this Round, please evaluate our proposed future UI for DisplayOptionsMatrix, and analyze whether it causes changes in the design for SaveDiff/SaveAll.  Especially the ideas that we can granularly allow read, write, and clear for Section DisplayOptions (cells).  Recall that DisplayOptionsMatrix is in the planning stage, and will not be implemented yet.  We provided the above detail to ensure that this Iteration 4 will provide the necessary primitives to support granular clearing, blocking, and automation.
 
 Please note that as we look at the current design, SaveDiff should be the normal button clicked by Users, and SaveAll is the special button. It is even possible that SaveAll will only appear somewhere as part of DisplayOptionsMatrix, since it is a heavy-handed freeze of all options.
 

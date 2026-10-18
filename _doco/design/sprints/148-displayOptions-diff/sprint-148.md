@@ -21,4 +21,5 @@ Purpose of this sprint is to:
 - [Iteration 2 analysis](148-it2-analysis.md)
 - [Iteration 3 Function Symbols chooser/editing panel](148-it3-functions-panel.md)
 - [Iteration 3 implementation plan](148-it3-implementation-plan.md)
-  - Status: implemented (pure module `templates/function-symbols/functionSymbolSets.js`, widget builder, persistence, `bin/migrate-function-symbols.js`, songs migrated). Browser acceptance testing pending.
+  - Status: implemented and accepted in the browser (pure module `templates/function-symbols/functionSymbolSets.js`, widget builder, persistence, `bin/migrate-function-symbols.js`, songs migrated).
+- [Iteration 4 Round 1 analysis](148-it4-round-1-analysis.md) (effect of the DisplayOptionsMatrix on SaveDiff/SaveAll)
