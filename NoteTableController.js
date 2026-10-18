@@ -1672,6 +1672,8 @@ export function fullRepaint(){
     clearAll();
     resetNoteNames();
     showBeats();
+    // Sprint 148 it3: the Function Symbols preview follows AutoColor/stylesheet/theme changes.
+    EventBus.trigger('FunctionSymbols:refresh');
     // After resizing cells
     const wrapper = document.querySelector('.fretTableWrapper');
     if (wrapper) {

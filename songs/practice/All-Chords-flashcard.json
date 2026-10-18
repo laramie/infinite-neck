@@ -205,10 +205,7 @@
           "height": "60px",
           "NoteFontSize": 38
         },
-        "dropDownFunctionSymbols": {
-          "caption": "Function",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",

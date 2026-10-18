@@ -509,10 +509,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -774,10 +771,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -1047,10 +1041,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -1312,10 +1303,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -1553,10 +1541,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -1786,10 +1771,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -2067,10 +2049,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -2340,10 +2319,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -2661,10 +2637,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -2902,10 +2875,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -3183,10 +3153,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -3456,10 +3423,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -3729,10 +3693,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -3978,10 +3939,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -4219,10 +4177,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -4500,10 +4455,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -4781,10 +4733,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -5102,10 +5051,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -5343,10 +5289,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -5608,10 +5551,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -5881,10 +5821,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -6146,10 +6083,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -6379,10 +6313,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -6612,10 +6543,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -6893,10 +6821,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -7166,10 +7091,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -7479,10 +7401,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -7720,10 +7639,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -7985,10 +7901,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -8258,10 +8171,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -8523,10 +8433,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -8764,10 +8671,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -9005,10 +8909,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -9278,10 +9179,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -9551,10 +9449,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -9872,10 +9767,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -10105,10 +9997,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -10370,10 +10259,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -10643,10 +10529,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -10916,10 +10799,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -11149,10 +11029,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -11374,10 +11251,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -11647,10 +11521,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -11912,10 +11783,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -12217,10 +12085,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",
@@ -12345,10 +12210,7 @@
           "height": "60px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "2",
         "pianoWidthScaleFactor": "2",

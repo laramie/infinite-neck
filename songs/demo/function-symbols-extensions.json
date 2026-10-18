@@ -336,10 +336,7 @@
           "height": "70px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "Function",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "2",
@@ -534,10 +531,7 @@
           "height": "70px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Extensions",
-          "value": "[\"I\",\"τ<small> ♭9</small>\",\"II<small> 9</small>\",\"m\",\"III\",\"IV<small> 11</small>\",\"Θ<small> #11</small>\",\"V\",\"σ<small> ♭13</small>\",\"6<small> 13</small>\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "extensions",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "2",
@@ -732,10 +726,7 @@
           "height": "70px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Extensions (only)",
-          "value": "[\"I\",\"<small>♭9</small>\",\"<small>9</small>\",\"m\",\"III\",\"IV<small>11</small>\",\"<small>#11</small>\",\"V\",\"<small>♭13</small>\",\"<small>13</small>\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "extensions-only",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "2",
@@ -930,10 +921,7 @@
           "height": "70px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Jazz",
-          "value": "[\"1\",\"<em>♭</em>2\",\"2\",\"<em>♭</em>3\",\"3\",\"4\",\"<em>♭</em>5\",\"5\",\"<em>♭</em>6\",\"6\",\"<em>♭</em>7\",\"7\"]"
-        },
+        "functionSymbols": "jazz",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "2",
@@ -1128,10 +1116,7 @@
           "height": "70px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Jazz Extensions",
-          "value": "[\"1\",\"<em>♭</em>9\",\"9\",\"<em>♭</em>3\",\"3\",\"11\",\"<em>#</em>11\",\"5\",\"<em>♭</em>13\",\"13\",\"<em>♭</em>7\",\"7\"]"
-        },
+        "functionSymbols": "jazz-extensions",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "2",

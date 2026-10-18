@@ -2,6 +2,7 @@ import * as Constants from './Constants.js';
 import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
 import { Layout } from './layout.js';
+import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -323,6 +324,8 @@ export class SongPersistence {
         this.songWidgets = normalizeSongInfo(this.songWidgets);
         this.tutorial = normalizeSongTutorial(this.tutorial);
         this.midiDevice = normalizeMidiDevice(this.midiDevice);
+        // Sprint 148 it3: User Function Symbols sets (registry = built-ins + these).  Per-Song, not a shared default.
+        this.functionSymbolSets = normalizeUserSets(obj.functionSymbolSets);
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
@@ -369,6 +372,9 @@ export class SongPersistence {
             return persistSongWidgets(value);
         }
         if (key === 'tutorial' && (!value || value.level === 'none')) {
+            return undefined;
+        }
+        if (key === 'functionSymbolSets' && Array.isArray(value) && value.length === 0) {
             return undefined;
         }
         if (   key === 'userColors' 

@@ -369,6 +369,24 @@ export const songFileV2Schema = {
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
         allowThemeAutomation: { type: 'boolean' },
+        functionSymbolSets: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string', pattern: '^u-[a-z0-9]+(-[a-z0-9]+)*$' },
+                    caption: { type: 'string', minLength: 1, maxLength: 40 },
+                    symbols: {
+                        type: 'array',
+                        minItems: 12,
+                        maxItems: 12,
+                        items: { type: 'string', minLength: 1, maxLength: 40 }
+                    }
+                },
+                required: ['id', 'caption', 'symbols'],
+                additionalProperties: false
+            }
+        },
         pluginFiringOrder: {
             type: 'array',
             items: { type: 'string', minLength: 1 }

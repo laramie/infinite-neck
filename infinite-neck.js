@@ -137,6 +137,8 @@ import { MobileKeyboardBuilder } from './templates/mobile-keyboard/mobile-keyboa
 import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
+import { FunctionSymbolsBuilder } from './templates/function-symbols/function-symbols.builder.js';
+import { resolveSet as resolveFunctionSymbolSet, BUILTIN_SETS as FUNCTION_SYMBOL_BUILTIN_SETS } from './templates/function-symbols/functionSymbolSets.js';
 import { getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
 import { TransportBuilder } from './templates/transport.builder.js';
@@ -1332,13 +1334,11 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function parseNoteNamesFuncArrForOptions(options = {}){
-		const optionValue = options.dropDownFunctionSymbols?.value;
-		if (optionValue) {
-			try {
-				return JSON.parse(optionValue);
-			} catch (error) {
-				// Fall back to the current song symbols below.
-			}
+		if (options.functionSymbols) {
+			// Same fallback as FunctionSymbolsBuilder.applyFunctionSymbols(): an unknown id shows the default set.
+			const set = resolveFunctionSymbolSet(options.functionSymbols, getSong()?.functionSymbolSets)
+				|| FUNCTION_SYMBOL_BUILTIN_SETS[0];
+			return [...set.symbols];
 		}
 		return Array.isArray(getSong()?.noteNamesFuncArr)
 			? [...getSong().noteNamesFuncArr]
@@ -2107,6 +2107,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		getSong().resetRecording?.();
 		syncRecordingViews();
 		getSong().fixupCurrentIndexForLoadedSong();
+		// Sprint 148 it3: the SELECT is built from built-ins + THIS Song's User sets; sectionChanged() below
+		// re-applies whichever set Section 1's stored DisplayOptions name.
+		FunctionSymbolsBuilder.onSongOpened();
 		hideGraveyard();
 		installDefaultColorDicts();
 		const hasUserTheme = !!installUserTheme(getSong().userTheme);
@@ -3257,7 +3260,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	export function displayOptionsToControls(options, skipRepaint){
 		const sizesObj = options.NoteDisplaySizes || {};
 		const naturalFontScaling = options.naturalFontScaling;
-		const functionSymbolsValue = options.dropDownFunctionSymbols?.value;
 
 		if (getSong().allowThemeAutomation){
 			let sectionTheme = options.sectionTheme;
@@ -3328,18 +3330,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
 		$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
 
-		if (functionSymbolsValue != null){
-			$('#dropDownFunctionSymbols').val(functionSymbolsValue);
-			$('#textareaFunctionSymbols').val(functionSymbolsValue);
-		}
-		try {
-			getSong().noteNamesFuncArr = JSON.parse(functionSymbolsValue ?? $('#dropDownFunctionSymbols').val());
-		} catch (error) {
-			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
-				? [...getSong().noteNamesFuncArrDEFAULT]
-				: JSON.parse($('#dropDownFunctionSymbols').val());
-			getSong().noteNamesFuncArr = fallback;
-			$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
+		// Sprint 148 it3: Sections store the set's id; FunctionSymbolsBuilder works with no widget mounted
+		// (appInit applies DisplayOptions before the template loads) and falls back to the default set.
+		if (options.functionSymbols != null){
+			FunctionSymbolsBuilder.applyFunctionSymbols(options.functionSymbols, { skipRepaint: true });
 		}
 
 
@@ -3431,10 +3425,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 										"height":$("#dropDownCellHeight").val(),
 										"NoteFontSize":getNoteFontSize()
 									};
-		options.dropDownFunctionSymbols = {
-										"caption":	$("#dropDownFunctionSymbols option:selected").text(),
-										"value":  $("#dropDownFunctionSymbols").val()
-									};
+		options.functionSymbols = FunctionSymbolsBuilder.getCurrentID();
 		options.naturalFontScaling = $("#selNaturalFontScaling").val();
 		options.pianoHeightScaleFactor = $("#selPianoHeightScaleFactor").val();
 		options.pianoWidthScaleFactor = $("#selPianoWidthScaleFactor").val();
@@ -3669,12 +3660,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		showHideDisplayOptionsPresent();
 		captureDisplayOptionsDirtyBaseline();
 		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's just-saved sectionTheme.
+		FunctionSymbolsBuilder.refresh();   //usage count of a User Function Symbols set may have changed.
 	}
 	
 	export function handleBtnDeleteDisplayOptions() {
 		delete getCurrentSection().displayOptions;
 		showHideDisplayOptionsPresent();
 		captureDisplayOptionsDirtyBaseline();
+		FunctionSymbolsBuilder.refresh();
 		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's now-cleared sectionTheme.
 	}
 
@@ -4413,39 +4406,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('change', '#cbMidiNum', function() {
 	        resetNoteNames();
 	    });
-		bindEvent('change', '#textareaFunctionSymbols', function() {
-			var txtVal = $('#textareaFunctionSymbols').val();
-		    try {
-				//Since we are allowing the user to put something in, validate before accepting.
-				getSong().noteNamesFuncArr = JSON.parse(txtVal);
-				if (!getSong().noteNamesFuncArr.length){
-					throw new TypeError("NoteFunction array is empty -- check commas and quotes.");
-				}
-				if (!getSong().noteNamesFuncArr[0]){
-					throw new TypeError("First NoteFunction is empty");
-				}
-				if (!getSong().noteNamesFuncArr[11]){
-					throw new TypeError("Last NoteFunction is empty");
-				}
-			} catch (error){
-				const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
-					? [...getSong().noteNamesFuncArrDEFAULT]
-					: JSON.parse($('#dropDownFunctionSymbols').val());
-				getSong().noteNamesFuncArr = fallback;
-				alert("Error setting NoteFunction names: "+error);
-			}
-			fullRepaint();
-		});
-		// CODE-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols")
-		bindEvent('click', '#btnFunctionSymbolsReset', function() {
-			const fallback = Array.isArray(getSong().noteNamesFuncArrDEFAULT)
-				? [...getSong().noteNamesFuncArrDEFAULT]
-				: JSON.parse($('#dropDownFunctionSymbols').val());
-			getSong().noteNamesFuncArr = fallback;
-			$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
-			fullRepaint();
-		});
-		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
+		// Sprint 148 it3: Function Symbols (select, textarea, buttons) is built and bound by
+		// templates/function-symbols/function-symbols.builder.js.
 		// CODE-EXAMPLE("TextAreaWButtonWidget", "BanjoNut")
 		bindEvent('click', '#btnBanjoNutExamples', function() {
 			$("#divBanjoNutExamples").toggle();
@@ -4456,13 +4418,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			$("#divBanjoNutExamples").hide();
 		});
 		// END-CODE-EXAMPLE("TextAreaWButtonWidget") 
-		bindEvent('change', '#dropDownFunctionSymbols', function() {
-            var value = $('#dropDownFunctionSymbols').val();
-			getSong().noteNamesFuncArr = JSON.parse(value);  //this one is safe--comes from our built SELECT.
-			$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
-            fullRepaint();
-	    });
-
 		bindEvent('click', '#btnFillChord', function() {
 	        fillChord();
 	    });
@@ -4473,8 +4428,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
-		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation), #divViewControls select, #divViewControls textarea');
-		bindDisplayOptionsDirtyEvent('click', '#btnFunctionSymbolsReset');
+		// Function Symbols widget controls are drafts, not DisplayOptions: they are bound separately
+		// (see EventBus 'FunctionSymbols:changed'), and typing in them must not light up Save.
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation):not(#widgetFunctionSymbols *), #divViewControls select:not(#widgetFunctionSymbols *), #divViewControls textarea:not(#widgetFunctionSymbols *)');
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();
 			this.blur();
@@ -4737,8 +4693,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		captureDisplayOptionsNavigationDefault();
 		captureDisplayOptionsDirtyBaseline();
 		
-		$('#textareaFunctionSymbols').val(JSON.stringify(getSong().noteNamesFuncArr));
-		
 		setOneCssVar("--cmd-menu-opacity", "90%");
 
 		var currentFilename = $("#txtFilename").val();
@@ -4846,6 +4800,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				SongWidgetsBuilder.renderFromSong(getSong());
 			}),
 
+			loadTemplates('templates/function-symbols/function-symbols.html').then(() => {
+				FunctionSymbolsBuilder.addToDest('#divFunctionSymbols');
+			}),
+
 			loadTemplates('templates/themes.html').then(() => {
 				ThemesBuilder.addToDest('#divThemeControls');
 				rebuildThemesDropdown();
@@ -4916,6 +4874,9 @@ EventBus.on('UpdateSectionStatus', function(event, data) {
 });
 EventBus.on('SectionChanged', function(event, data) {
   sectionChanged();
+});
+EventBus.on('FunctionSymbols:changed', function() {
+  refreshDisplayOptionsSaveActionRequired();  //the widget's SELECT is a DisplayOption; its draft controls are not.
 });
 EventBus.on('SectionMoved', function(event, data) {
   updateSectionsStatus();
