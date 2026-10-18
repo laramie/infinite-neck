@@ -144,3 +144,51 @@ No coding is requested for this sprint work yet.  After reading your analysis we
 # Iteration 3
 
 We have defined the layout and UX of the Function Symbols editing area in [Iteration 3 Function Symbols chooser/editing panel](148-it3-functions-panel.md) . Please digest that file and provide an implementation plan with necessary questions for the design team in `148-it3-implementation-plan.md`.  The implementation plan should cover creating the new widget from the new template and inserting it into the View page to replace the current controls.  The remaining work of SaveDiff is not in scope yet, since we are treating the Function Symbols as a blocker to that work.
+
+# Iteration 4
+
+Iteration 3 is a complete success, and User Acceptance testing passes in the Browser.  The Song files JSON storage looks good.  
+
+We are now ready to resume the main goal of sprint-148.  However, we have planned a future Iteration for adding UI that is an interactive version of `/vdd`.  The only thing this changes is that certain rules around gating and allowing interactions for some of the use-cases may be obviated.  Therefore, we will sketch out the new UI without specifying it completely.  The purpose here is to remove complexity from this Iteration if possible.
+
+## Sketch of new UI DisplayOptionsMatrix
+
+Let the current table dumped out by the command `/vdd` be called DisplayOptionsTable.  Let the upcoming UI that will be an interactive table very much like `/vdd`, but with User controls and live updates, be called DisplayOptionsMatrix.
+
+The Matrix will have a body that is in the main rows of Sections, and columns of DisplayOptions, such that a cell is just like DisplayOptionsTable: one DisplayOption for that Section.
+
+The Matrix will have Tools buttons above it.  These would be radio buttons so they are exclusive.  They will be used to make the clicks in the Matrix be segragated into intentional zones: 1) special rows, 2) special columns, 3) "Section x DisplayOptions" cells.
+
+Then the Matrix will have special rows at the start, before the main Sections display:
+- DEFAULT: a printout of the values for the Song as defined in the new DEFAULTS settings for Song startup from this sprint.
+- LIVE: a printout of the values as read live from the controls in the current Section, after the Section is stably rendered.  This is calculated and read-only.  The controls should continue to be the source of truth for not-yet-Saved DisplayOptions.  
+- AllowRead: a row of clickable cells (effectively a button, without the extra glop of html button code, instead resolved through the TD.click, possibly using TD attributes or data- values) that is rendered in a gradient of 45 degree hatch as an example, that will be applied to (or cleared from) all cells in this column, implying that these cells will be allowed to be read when calculating the cascade of DisplayOptions when looping or navigating.  This is effectively the gate for "Allow *" we have discussed.  Examples now include "Allow Theme Automation", "Allow AutoColor Automation", "Presentation Mode", and so on.  The hatching is the display of whether AllowRead is in effect for the cells.  The Song and Sections DisplayOptions will need to hold that state actually, so that when looping or navigating, these values come from the Model.  The visual values would be: 
+  - blue lines sloping up left to right for when the cell (button) in "AllowRead" special row is clicked.
+  - blue lines sloping down left to right for when only one cell is clicked in a Section row. These should be implemented as CSS classes with transparent background so we can see at the same time: AllowRead set for the whole column, as well as AllowRead set for one or more Sections.
+- AllowWrite: a special row with cells containing the example hatch. A click in the special row cell sets the value and the hatch for all Sections in the column for this DisplayOption.  Same as AllowRead, but allows writing.  This gate means we can granularly, separately, allow a click on SaveAll or SaveDiff to record to the Section's DisplayOptions.  If AllowWrite is not in effect for a cell (Section x DisplayOption) then clicking SaveDiff or SaveAll would not write a DisplayOption to that Section. Any other Display options in cells not protected would be written.
+  - orange lines sloping up left to right for when the special row is clicked, applied to all cells in that column.
+  - Will need a slightly different gradient offset so that when all hatches are in place, they can all be seen.  
+  - orange lines sloping down left to right for when just one cell is clicked. 
+  - Will need the different gradient offset too. 
+- Clear : Will require a Tool selection of "Clear Column" as a safety, similar to "Clear" for Section rows described below.  When clicked, this special row cell would clear all instances of one DisplayOption from this column for all Sections.  To be worked out is how this interacts with empty/null/tombstone values and behaviors.  On first blush, it seems it should be the same as our initial intention of graying out "HideNamedNotes" such that that DisplayOption is not automated and not changed while looping or navigating.  The cell would probably be a candidate for future values if not protected also by `AllowWrite: false`.  
+
+Then the Matrix will have special columns on the left:
+- Apply : applies *this* row's Section DisplayOptions to the Current Section.  The CurrentSection will be a regular Section row, but should have at least its Section number highlighted in a different background color.  Coloring the whole row may be problematic since we are going to load up the Matrix with so many meanings, including the current green for changed values in the cascade, and the gray background for missing values which may be extended to show gray or other indicator for null tombstones.  May require a Tool choice as described below for "Clear".
+- Clear : Clears the entire row for this Section of DisplayOptions.  Will probably be guarded by making the user choose the "ClearSection" Tool.  So they select the Tool, click on the row in the special column, and the row is cleared.  Clicking any other Tool makes the "Clear" column inert.
+- Navigate: We may allow clicking on the hyperlink of the Section number to navigate to that Section, as we do in some of the Chart tables.  If this gets squirrelly with dealing with losing the state of the current View controls, we would ditch this idea.
+
+There are three levels of controls for DisplayOptionsMatrix:
+
+1. Selecting "Single Cell" Tool then clicking in a cell sets the state of that cell depending on which "Tool" is chosen in a controls row above the Matrix.  The Tools will allow changing a single cell's values of:  "Allow Write Automation", "Allow Read Automation", "Store DisplayOption", and probably "Allow Inherit Cascade of DisplayOption".  These will be worked out in the future Iteration, but for now know that when clicking one cell with the right Tool, its state can be set at the most granular level: one Section, one DisplayOption, all possibilities.
+
+2. Clicking in a cell in a header row called "Allow Read Automation" will allow all DisplayOptions in that column (e.g. `HideNamedNotes` for all Sections) to be gated for Read Automation.  Read Automation means that if a value is in a cell for that DisplayOption (`HideNamedNotes` in this example)
+
+3. Clicking on a special cell at the beginning of each row, as described above: Apply, Clear, Navigate.
+
+## Iteration 4 Round 1 Request
+
+For this Round, please evaluate our proposed future UI for DisplayOptionsMatrix, and analyze whether it causes changes in the design for SaveDiff/SaveAll.  Especially the ideas that we can granularly allow read, write, and clear for Section DisplayOptions (cells).  Recall that DisplayOptionsMatrix is in the planning stage, and will not be implemented yet.  We provided the above detail to ensure that this Iteration will provide the necessary primitives to support granular clearing, blocking, and automation.
+
+Please note that as we look at the current design, SaveDiff should be the normal button clicked by Users, and SaveAll is the special button. (SaveAll being the action of the current "SAVE Display Options" button.)  It is even possible that SaveAll will only appear somewhere as part of DisplayOptionsMatrix, since it is a heavy-handed freeze of all options.
+
+Please produce an analysis that shows just the changes in plan and any new questions that need addressing.  This analysis should assume that we are back on the plan implied by Iteration 2, especially `148-it2-analysis.md`.  Your response is in Round 1.  Thus your report should be `148-it4-round-1-analysis.md`.  After reading your report, we will then request an implementation plan.
