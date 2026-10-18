@@ -200,3 +200,111 @@ For this Round, please evaluate our proposed future UI for DisplayOptionsMatrix,
 Please note that as we look at the current design, SaveDiff should be the normal button clicked by Users, and SaveAll is the special button. It is even possible that SaveAll will only appear somewhere as part of DisplayOptionsMatrix, since it is a heavy-handed freeze of all options.
 
 Please produce an analysis that shows just the changes in plan and any new questions that need addressing.  This analysis should assume that we are back on the plan implied by Iteration 2, especially `148-it2-analysis.md`, and that Iteration 3 is a success and is committed.  Your response is in Round 1.  Thus your report should be `148-it4-round-1-analysis.md`.  After reading your report, we will then request an implementation plan.
+
+## Iteration 4 Round 2
+
+For this round, we'd like to have an implementation plan with final questions.  We'll be answering outstanding questions now.
+
+### Discussion of Future DisplayOptionsMatrix
+
+Thank you for your analysis of the Matrix.  We are working on layers for display of read-blocked, write-blocked, read-blocked-by-column, write-blocked-by-column, so that Users can toggle display of these variants. (We will probably use a transparent div in the cell so they are view layers.)  In short, `*-by-column` will look identical until a User checks a control that hides this Song-level value for the whole Matrix. In other words, most use-cases don't care who is responsible for read-blocked and write-blocked, so they will display the same in the default view.  For this Iteration, we only care that they are stored as you said: separate per-cell storage, and per-Song storage as needed so we can show these variants in the Matrix Iteration.
+
+### Outstanding Questions Answered
+
+
+#### Iteration 2 point 4. Open Questions with Answers
+
+1. H1: always show the selected set's own caption (read-only for built-ins, proposal as placeholder), as recommended?
+  - ANSWER: Obviated by completion of Iteration 3.
+
+2. H2: Clear on a referenced set: confirm-then-delete with fallback to `default` (recommended) or refuse while referenced?  Bury in the Graveyard?
+  - ANSWER:  Obviated by completion of Iteration 3.
+
+3. H6: textarea as draft committed only by Save (recommended), or live preview of the draft?
+  - ANSWER:  Obviated by completion of Iteration 3.
+
+4. H5: Section reference by id with a one-time migration of the 97 blocks (recommended), using a plain key such as `functionSymbols` (or keep the key name `dropDownFunctionSymbols` and change its shape)?
+  - ANSWER:  Obviated by completion of Iteration 3.
+
+5. H3: user-id prefix `user-` acceptable?  Maximum number of user sets and maximum caption length (suggested about 20 and about 40)?
+  - ANSWER:  Obviated by completion of Iteration 3.
+
+6. 2.2(a): confirm sparse apply (the control is left alone when no stored key exists) and DEFAULTS used only for init, baseline and render completion.
+  - ANSWER: We think this is handled better by the design fixed for Matrix primitives. 
+
+7. 2.2(c): Song-level "Allow AutoColor Automation" gate instead of per-Save Automate checkboxes; does it also gate `currentColorDict`?  Default closed for new Songs and open (with a report) for existing Songs that store `autoColor`?
+  - ANSWER: No longer a special gate.  Default to AutoColor true, then we don't need to specially programatically set it in infinite-neck.js startup.
+
+8. 3.5: should `autoColor`/`autoColorHighlight` reset to default on Song open?
+  - ANSWER: Yes, this will *not* be session-level, but use Song defaults.  We don't think there should be any session-level values of DisplayOptions.  If a Song does not open in Presentation Mode because Presentation Mode is stored in the song, obviously cell sizes and fonts would be set.  Otherwise they should not.
+
+9. 3.4: adopt "resolved state is truth, blocks are the encoding" for move/delete/deep-clone/import and compaction?
+  - ANSWER: Not sure, given the design and analysis changes.  In general, values stored in the Section should always be copied for deep clone, even if it means it changes something about the Song in the Section's new location.  That's what the Matrix will be for: seeing and fixing these funny cases.  We'd rather that than dropping information about a Section.  However, Song-level read-blocked and write-blocked are not Section properties so should *not* be calculated and written to the Section on Clone or move.
+
+10. 3.1: is "keys written" Messages output plus one level of undo enough for the "macro toggle captured by SaveDiff" gap?
+  - ANSWER: Yes.  Plus, we now feel that toggling Song-level special-row column-at-once values does not write to the Section, so that would not trigger a dirty flag.  We think this is the same for Song-level Section special-column row-at-once clicks.
+
+#### Iteration 4 Round 1, point 6 New Questions, Answered  
+
+**Q1. What does "hatched" mean, and is the column click a stored flag?**  Recommendation: hatch = "this gate has been explicitly set to the non-default (denied)" for both read and write.  The special-row click sets a **Song-level column flag** (also covers Sections added later); a Section-cell click sets a cell flag; the two use the up and down slopes as you described.
+  - ANSWER: 
+    a. Yes, use a Song-level column flag.  
+    b. There is a use-case need for clicking a whole row such that automation is read-blocked for just that Section for all DisplayOption values.  This pops up in Tutorials, where we are driving things for the User and don't want/let them poke around with granular details.  So we are unsure of the implementation detail of whether this is Song-level, or a special pair of values in the Section that says "OK, for this *one* Section don't read automation or don't write automation".  Regardless of implementation, we want to support that statement.
+
+
+**Q2. How do column and cell gates combine?**  Recommendation: store booleans at both levels, evaluate **deny wins** (read allowed = column not `false` and cell not `false`).  Limitation to accept: for a default-closed key such as `autoColor` you cannot open it for one Section only.  If you want that ("AutoColor automated in Section 3 only"), evaluation becomes "cell value overrides column"; the stored format already allows it, so this is a rule change, not a migration.
+  - ANSWER: Accept recommendation.  Also, it does seem that for sanity, Song-level column flag wins always.  Because in the UI, the default view will be an entire column hatched out, so we won't even see cell-level choices.  Similarly, if we successfully implement Section-level whole-row hatched out, then that should win always over cell choices.
+  
+
+**Q3. What does a read-blocked cell do for later Sections?**  Recommendation: it is transparent: at that Section the key is not applied (neither its own nor inherited value), and later Sections inherit as if the cell were absent.  Alternative: a barrier that also stops inheritance forward (that is the tombstone, C4).
+  - ANSWER: Accept the recommendation.  This seems the simplest way to avoid complexity and insanity.
+  
+
+**Q4. Does "read-blocked" imply "not written by bulk Save"?**  Your Hide\* example says "set AllowRead false and optionally AllowWrite false".  Recommendation: bulk operations (SaveDiff, SaveAll, Clear row/column) skip a cell unless it is both readable and writable (C3), so "optionally" becomes "never needed for that case", and AllowWrite:false is reserved for "apply the stored value, but protect it from re-saving" (a hand-authored size in Section 1).  The explicit single-cell Store tool is the intentional override.  If you prefer fully independent flags, the engine changes by one condition but the macro-capture hazard (it2 3.1 gap 1) returns.
+  - ANSWER: Accept the recommendation for simplicity and sanity again.
+  
+
+**Q5. Gate defaults for existing Songs.**  Carried from it2 Q7 (unanswered).  Recommendation: default-closed for the opt-in keys in new Songs; for existing Songs, the compaction/migration tool opens the AutoColor column for Songs that store `autoColor`, `autoColorHighlight` or `currentColorDict` and reports them, as it2 proposed.
+  - ANSWER:  Accept the recommendation.
+  
+
+**Q6. Migrate `presentationMode` and `allowThemeAutomation` into the gate structure, or adapt?**  Recommendation: adapt in Iteration 4 (no data change, API untouched), and unify in a clean-up sprint.  Migrating now touches the macro API and about a dozen call sites for no user-visible gain.
+  - ANSWER: Accept the recommendation.
+  
+
+**Q7. Meaning of the Matrix Apply column.**  Recommendation: push that Section's resolved values to the live controls (verb "Apply", non-destructive), then SaveDiff commits if wanted.  Writing the block copy is already doable with Store on a row.
+  - ANSWER: Accept the recommendation.
+  
+
+**Q8. Do Clear and structural operations honor AllowWrite?**  Recommendation: Clear (cell, row, column, and the existing CLEAR button) honors it; move, delete, clone and import do not (they re-encode, C9), and report if a protected cell had to change.
+  - ANSWER: Accept the recommendation.
+  
+
+**Q9. Names.**  Recommendation: one-time rename by role, for example `btnSaveDiff_View` / `btnSaveDiff_Section` / `btnSaveAll_View`, handlers `handleBtnSaveDiff` / `handleBtnSaveAll`, menu actions `saveViewDisplayOptions` (SaveDiff) and `saveViewDisplayOptionsAll`.  The affected sites were listed in it1 4.5 (including the `key-handlers` mock in the Jest tests).  Alternative: keep the old ids for SaveDiff and name only SaveAll anew, which is less churn but makes the ids lie about history.
+  - ANSWER: Accept the recommendation.
+  
+
+**Q10. Undo (C8).**  Primitive only in Iteration 4, or also a visible button?
+  - ANSWER: Primitive only in Iteration 4.  We'll add the button in the Matrix.
+  
+
+**Q11. Section clone and gates.**  Recommendation: both clones copy cell gates; the shallow clone still drops the value block.
+  - ANSWER: Accept the recommendation.
+  
+
+**Q12. Group header cells in the Matrix.**  Worth reserving `group` in the metadata now (C6) even if the Matrix ships later.  Confirm or drop.
+  - ANSWER: Confirm.
+  
+
+**Q13. Unanswered questions carried from Iteration 2 section 4.**  Iteration 4 text did not answer them.  Unless you object I will assume: 6 (sparse apply) accepted; 7 superseded by C1 and Q5; 8 (reset non-automated controls to DEFAULTS on Song open) **still needed**, because sparse apply would otherwise leak live toggles between Songs; recommendation: reset everything except `autoColor` and `autoColorHighlight` (a per-session preference); 9 (resolved state is truth) accepted with the two rules in C9; 10 answered by C3 (keys-written report) and C8 (undo).
+  - ANSWER: We think this was answered above.  We don't want per-session preferences.  Discussion in `#### Iteration 2 point 4. Open Questions with Answers`.
+
+
+### Request for Iteration 4 Round 2
+
+Please produce the implementation plan.  Please provide a question section for anything we have answered ambiguously or with conflicts.  The Matrix is still in design phase and will not be implemented yet.  Iteration 3 is still accepted and committed.
+  
+
+
+
+
