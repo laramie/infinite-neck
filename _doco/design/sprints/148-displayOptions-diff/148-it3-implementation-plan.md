@@ -122,7 +122,7 @@ Pure-module surface (all take plain data, no `document`, no `getSong()`):
 
 - `BUILTIN_SETS`, `getAllSets(userSets)`, `resolveSet(id, userSets)` (returns the set or `null`; the caller falls back to `function`).
 - `proposeCaption(selectedCaption, allSets)`, `squeezeId(caption)`, `validateCaption(caption, allSets, { exceptId })`.
-- `validateSymbols(text)` returns `{ ok, symbols, message }`: valid JSON, array of exactly 12 strings, each non-empty after trim, at most 40 characters, only whitelisted tags without attributes (`small em sub sup b i s span`, matching ALLOWED_TAGS in [html-sanitizer.js](../../../../html-sanitizer.js#L7)) and well-formed entities (`&name;` or `&#nnn;` / `&#xhh;`).  Messages name the problem ("11 entries, need 12", "entry 5 is empty", "entry 3: tag <script> not allowed").
+- `validateSymbols(text)` returns `{ ok, symbols, message }`: valid JSON, array of exactly 12 strings, each non-empty after trim, at most 40 characters, only whitelisted tags without attributes (`small em sub sup b i s span`, matching ALLOWED_TAGS in [html-sanitizer.js](../../../../html-sanitizer.js#L7)) and well-formed entities (`&name;` or `&#nnn;` / `&#xhh;`).  Messages name the problem ("11 entries, need 12", "entry 5 is empty", "entry 3: tag `script` not allowed").
 - `findUsage(song-like { sections }, id)` returns the 1-based Section numbers whose stored block has `functionSymbols === id`.
 - `buildPreviewGrid(symbols)` returns 3 rows by 5 columns, bottom row `1..5`, middle `6..10`, top `11, 12`, remaining cells `null`; the builder maps it to HTML (and the colors).
 - `moveUserSet(userSets, id, delta)` returns a new array, never crossing the built-in boundary.

@@ -110,6 +110,32 @@ Moves the current selected User Function Symbols set up in the SELECT and redisp
 #### btnMoveDownUserFunctionSymbols
 Moves the current selected User Function Symbols set down, with matching contrary rules to btnMoveUpUserFunctionSymbols. 
 
+# sprint 148 Iteration 3 Round 2
 
+## Answers to Section 8 in 148-it3-implementation-plan.md
 
+We think this is in the plan, but the idea is that there is a registry of "Function Symbols" sets, and they are keyed by ID, and after loading contain the built-in sets plus the User sets.  On persistence, the User sets would be saved in the file.  So if the system updates built-in sets per-note definitions, and doesn't change an ID of a set, then the User would still see those updates on the next song load.
 
+Accept all proposals in `4.`.
+
+Change yellow warning labels to `color: brown;` text.
+
+Approve changes in `5.`
+
+Section 8 answers:
+1. use functionSymbols as "<id>" and migrate stored blocks.
+2. Upsate a set in place so it can be edited.
+3. Yes, strip one leading U.
+4. approved recommended
+5. Auto-validate.  If auto-validation works, we don't need the validate button.
+6. accept limits proposed.
+7. Only count stored in sections.
+8. Immediate delete.
+9. Defer import/append.
+10. migrate test fixtures.
+11. warning color `color: brown;`
+12. blank no-border positions 13-15.  Show the symbol only.
+13. Replace the whole "Function Symbols" inside the second View card.
+14. Approved go-ahead for the files in 5.2 
+
+Not exactly sure about the details, but do make it so that once a User function symbol set has been created, it can be edited and deleted in a normal way by selecting it.  The ID never needs to change one it has been accepted the first time by the User.  If the caption is edited later, it won't match the ID and that is OK.
