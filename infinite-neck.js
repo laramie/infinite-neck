@@ -99,7 +99,6 @@ import {
 	getThemes,
 	installUserTheme,
 	controlsToTheme,
-	THEME_INFO,
 	setOneCssVar,
 	applyThemeToTableElement
 } from './themeFunctions.js';
@@ -138,6 +137,12 @@ import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
 import { FunctionSymbolsBuilder } from './templates/function-symbols/function-symbols.builder.js';
+import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey } from './templates/display-options/displayOptionsMeta.js';
+import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
+import {
+	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
+	undoLastDisplayOptionsOp, canUndoDisplayOptionsOp
+} from './templates/display-options/displayOptionsPlan.js';
 import { resolveSet as resolveFunctionSymbolSet, BUILTIN_SETS as FUNCTION_SYMBOL_BUILTIN_SETS } from './templates/function-symbols/functionSymbolSets.js';
 import { getSanitizedSongWidgets } from './html-sanitizer.js';
 import { SectionDrawerBuilder } from './templates/section-drawer.builder.js';
@@ -361,8 +366,12 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			hideFullscreenLeadSheetLine,
 			hideFullscreenChart,
 			hideFullscreenAllCharts,
-			handleBtnControlsToDisplayOptions,
+			handleBtnSaveDiff,
+			handleBtnSaveAll,
 			handleBtnDeleteDisplayOptions,
+			clearDisplayOptionsCell,
+			setDisplayOptionsGate,
+			undoDisplayOptionsOp,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
@@ -681,7 +690,6 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		SectionDrawerBuilder.setDisplayOptionsPresent(!!options);
 	}
 
-	let defaultDisplayOptionsForNavigation = null;
 	let displayOptionsDirtyBaseline = null;
 
 	function cloneDisplayOptions(options){
@@ -691,20 +699,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return JSON.parse(JSON.stringify(options));
 	}
 
-	function ensureDefaultDisplayOptionsForNavigation(){
-		if (!defaultDisplayOptionsForNavigation) {
-			defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
-		}
-		return cloneDisplayOptions(defaultDisplayOptionsForNavigation);
-	}
-
-	function captureDisplayOptionsNavigationDefault(){
-		defaultDisplayOptionsForNavigation = cloneDisplayOptions(controlsToDisplayOptions());
-		return ensureDefaultDisplayOptionsForNavigation();
+	/** Sprint 148 it4: puts the Song-level defaults (DISPLAY_OPTIONS_DEFAULTS) into the controls.
+	 *  There is no session-level DisplayOptions: on startup and on every Song open the controls start from here,
+	 *  then sectionChanged() applies whatever the Song's Sections store. */
+	export function applyDisplayOptionDefaults(){
+		displayOptionsToControls(cloneDisplayOptions(DISPLAY_OPTIONS_DEFAULTS), true);
 	}
 
 	function setDisplayOptionsSaveActionRequired(isRequired){
-		$('#btnControlsToDisplayOptions_View').toggleClass('riskyButtonActionRequired', !!isRequired);
+		$('#btnSaveDiff_View').toggleClass('riskyButtonActionRequired', !!isRequired);
 	}
 
 	export function updateDisplayOptionsReadonlyValues(options = null){
@@ -763,25 +766,15 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function syncSectionUi(){
-		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
-		const storedOptions = getSong().getStoredDisplayOptionsInEffect(getCurrentSection());
-		var options = storedOptions || defaultDisplayOptions;
-		if (options){
-			const optionsForControls = cloneDisplayOptions(options);
-			if (!storedOptions){
-				// No Section in the chain has explicitly stored displayOptions -- don't let the
-				// synthetic startup-snapshot default silently reset AutoColor/AutoColorHighlight,
-				// since nothing in the model actually specifies them for this Section (this was
-				// resetting both checkboxes back to their startup state on every Section boundary
-				// during looping/navigation, even though the user had just toggled them).
-				delete optionsForControls.autoColor;
-				delete optionsForControls.autoColorHighlight;
-			}
+		// Sprint 148 it4: the 'apply' resolve -- sparse; absent keys leave their controls alone (so a user's
+		// toggle of AutoColor etc. survives Section boundaries the Song does not automate).
+		const applied = getSong().getStoredDisplayOptionsInEffect(getCurrentSection());
+		if (applied){
 			// skipRepaint: sectionChanged() calls clearAndReplaySection() right after syncSectionUi(),
 			// which already does clearAll()+resetNoteNames()+showBeats(). Without this flag,
 			// displayOptionsToControls() would trigger a second full fullRepaint() (clearAll+resetNoteNames+
 			// showBeats+forced reflow) on every Section transition, doubling buildCells()/replay() cost.
-			displayOptionsToControls(optionsForControls, true);
+			displayOptionsToControls(applied, true);
 		}
 		showHideDisplayOptionsPresent();
 		SectionDrawerBuilder.sectionChanged();
@@ -1346,8 +1339,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function buildRenderOptionsForSection(section){
-		const defaultDisplayOptions = ensureDefaultDisplayOptionsForNavigation();
-		const displayOptions = cloneDisplayOptions(getSong().getDisplayOptionsInEffect(section, defaultDisplayOptions));
+		// Sprint 148 it4: the 'render' resolve = the sparse cascade completed from the live controls (a fresh object).
+		const displayOptions = getSong().getDisplayOptionsInEffect(section, controlsToDisplayOptions());
 		const options = {
 			...displayOptions,
 			rootID: section?.rootID ?? 0,
@@ -2110,6 +2103,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Sprint 148 it3: the SELECT is built from built-ins + THIS Song's User sets; sectionChanged() below
 		// re-applies whichever set Section 1's stored DisplayOptions name.
 		FunctionSymbolsBuilder.onSongOpened();
+		// Sprint 148 it4: no session-level DisplayOptions -- every Song open starts the controls from the Song
+		// defaults; sectionChanged() below then applies whatever this Song's Sections store.
+		applyDisplayOptionDefaults();
 		hideGraveyard();
 		installDefaultColorDicts();
 		const hasUserTheme = !!installUserTheme(getSong().userTheme);
@@ -3258,6 +3254,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	//=========================================================================
 
 	export function displayOptionsToControls(options, skipRepaint){
+		// Sprint 148 it4: `options` is SPARSE (the resolver's 'apply' result): a key that is absent leaves
+		// its control alone.  Never assume a key is present.
+		const has = (key) => options[key] !== undefined;
+		const setSelect = (selector, key) => { if (has(key)) { $(selector).val(String(options[key])); } };
 		const sizesObj = options.NoteDisplaySizes || {};
 		const naturalFontScaling = options.naturalFontScaling;
 
@@ -3280,55 +3280,69 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			}
 		}
 
-		if (options.showAllNoteNames){
-			$("#cbShowAllNoteNames").prop("checked", true);
-			$('#btnShowAllNoteNames').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
-		} else {
-			$("#cbShowAllNoteNames").prop("checked", false);
-			$('#btnShowAllNoteNames').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
-		}
-		showAllNoteNames(options.showAllNoteNames);
-
-		$("#cbShowCellNotes").prop("checked", options.showCellNotes);
-		if (options.showCellNotes){
-			$("#cbCenterForRightFunction").prop("checked", options.useCenterForRightFunction);  //otherwise unchecked.
-		} else {
-			$("#cbCenterForRightFunction").prop("checked", false);
+		if (has('showAllNoteNames')){
+			if (options.showAllNoteNames){
+				$("#cbShowAllNoteNames").prop("checked", true);
+				$('#btnShowAllNoteNames').addClass("BtnPunchedIn").removeClass("BtnPunchedOut");
+			} else {
+				$("#cbShowAllNoteNames").prop("checked", false);
+				$('#btnShowAllNoteNames').addClass("BtnPunchedOut").removeClass("BtnPunchedIn");
+			}
+			showAllNoteNames(options.showAllNoteNames);
 		}
 
-		if (options.cellIsFunction){
-			$('input[name=rbnFunctionNotename][value=showFunction]').prop('checked', true);
-		} else {
-			$('input[name=rbnFunctionNotename][value=showNotename]').prop('checked', true);
+		if (has('showCellNotes')){
+			$("#cbShowCellNotes").prop("checked", options.showCellNotes);
+		}
+		if (has('showCellNotes') || has('useCenterForRightFunction')){
+			if ($("#cbShowCellNotes").prop("checked")){
+				if (has('useCenterForRightFunction')){
+					$("#cbCenterForRightFunction").prop("checked", options.useCenterForRightFunction);
+				}
+			} else {
+				$("#cbCenterForRightFunction").prop("checked", false);  //otherwise unchecked.
+			}
 		}
 
-	    $("#cbShowSubscriptFunctions").prop("checked", options.showSubscriptFunctions);
-	    $("#cbMidiNum").prop("checked", options.showMidiNum);
-
-
-	 	$("#cbNaturalFretWidths").prop("checked", options.naturalFretWidths);
-
-		$("#cbShowAllNoteNames").prop("checked", options.showAllNoteNames);
-		$("#cbHideNamedNotes").prop("checked", options.hideNamedNotes);
-	    $("#cbHideTinyNotes").prop("checked", options.hideTinyNotes);
-	    $("#cbHideSingleNotes").prop("checked", options.hideSingleNotes);
-	    $("#cbHideFingering").prop("checked", options.hideFingering);
-
-		if (options.hideNamedNotes || options.hideTinyNotes || options.hideSingleNotes || options.hideFingering){
-			turnOnKeep();
-			$("#lblHideWarning").show();
-		} else {
-			$("#lblHideWarning").hide();
-			turnOffKeep();
+		if (has('cellIsFunction')){
+			if (options.cellIsFunction){
+				$('input[name=rbnFunctionNotename][value=showFunction]').prop('checked', true);
+			} else {
+				$('input[name=rbnFunctionNotename][value=showNotename]').prop('checked', true);
+			}
 		}
-		PalettePresentation.refreshPaletteHidingStatus();
 
-		getSong().namedNoteOpacity = options.namedNoteOpacity;
-		getSong().singleNoteOpacity = options.singleNoteOpacity;
-		getSong().tinyNoteOpacity = options.tinyNoteOpacity;
-		$("#rangeNamedNoteOpacity").val(options.namedNoteOpacity);
-		$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
-		$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
+	    if (has('showSubscriptFunctions')){ $("#cbShowSubscriptFunctions").prop("checked", options.showSubscriptFunctions); }
+	    if (has('showMidiNum')){ $("#cbMidiNum").prop("checked", options.showMidiNum); }
+
+	 	if (has('naturalFretWidths')){ $("#cbNaturalFretWidths").prop("checked", options.naturalFretWidths); }
+
+		const hideKeys = [['hideNamedNotes', '#cbHideNamedNotes'], ['hideTinyNotes', '#cbHideTinyNotes'],
+		                 ['hideSingleNotes', '#cbHideSingleNotes'], ['hideFingering', '#cbHideFingering']];
+		if (hideKeys.some(([key]) => has(key))){
+			hideKeys.forEach(([key, selector]) => { if (has(key)){ $(selector).prop("checked", options[key]); } });
+			if (hideKeys.some(([, selector]) => $(selector).prop("checked"))){
+				turnOnKeep();
+				$("#lblHideWarning").show();
+			} else {
+				$("#lblHideWarning").hide();
+				turnOffKeep();
+			}
+			PalettePresentation.refreshPaletteHidingStatus();
+		}
+
+		if (has('namedNoteOpacity')){
+			getSong().namedNoteOpacity = options.namedNoteOpacity;
+			$("#rangeNamedNoteOpacity").val(options.namedNoteOpacity);
+		}
+		if (has('singleNoteOpacity')){
+			getSong().singleNoteOpacity = options.singleNoteOpacity;
+			$("#rangeSingleNoteOpacity").val(options.singleNoteOpacity);
+		}
+		if (has('tinyNoteOpacity')){
+			getSong().tinyNoteOpacity = options.tinyNoteOpacity;
+			$("#rangeTinyNoteOpacity").val(options.tinyNoteOpacity);
+		}
 
 		// Sprint 148 it3: Sections store the set's id; FunctionSymbolsBuilder works with no widget mounted
 		// (appInit applies DisplayOptions before the template loads) and falls back to the default set.
@@ -3347,10 +3361,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// them (i.e. came from a real, stored section.displayOptions) -- see syncSectionUi(),
 		// which now omits these keys entirely when falling back to the synthetic navigation
 		// default, so the user's current toggle survives Section boundaries/looping untouched.
-		if ('autoColorHighlight' in options){
+		if (has('autoColorHighlight')){
 			PalettePresentation.setAutomaticColorHighlightUi(options.autoColorHighlight);
 		}
-		if ('autoColor' in options){
+		if (has('autoColor')){
 			PalettePresentation.setAutomaticColorUi(options.autoColor);
 		}
 
@@ -3358,23 +3372,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (naturalFontScaling != null){
 			$("#selNaturalFontScaling").val(String(naturalFontScaling));
 		}
-		$("#selPianoHeightScaleFactor").val(String(options.pianoHeightScaleFactor ?? 3));
-		$("#selPianoWidthScaleFactor").val(String(options.pianoWidthScaleFactor ?? 3));
-		$("#selPianoWhiteToBlackWidthRatio").val(String(options.pianoWhiteToBlackWidthRatio ?? '2.3'));
-			$("#selPianoFingeringHPosition").val(String(options.pianoFingeringHPosition ?? '50%'));
-		$("#cbShowLooperLightBeats").prop("checked", options.showLooperLightBeats ?? true);
-		$("#selNoteFont").val(options.noteFont);
-		$("#selLeftSubscriptFontSize").val(options.leftSubscriptFontSize);
-		$("#selRightSubscriptFontSize").val(options.rightSubscriptFontSize);
-		$("#selMidiFontSize").val(options.midiFontSize);
-		$("#selFingeringFontSize").val(options.fingeringFontSize);
-		$("#selFingeringPosition").val(options.fingeringPosition);
-		$("#selTinyNoteFontSize").val(options.tinyNoteFontSize);
-		$("#selTinyNoteMaxHeight").val(options.tinyNoteMaxHeight);
-		$("#selTinyNoteVPosition").val(options.tinyNoteVPosition);
-		$("#selTinyNoteWidth").val(options.tinyNoteWidth);
-		$("#selTinyNoteHPosition").val(options.tinyNoteHPosition);
-		$("#selTinyNoteRadius").val(options.tinyNoteRadius);
+		setSelect("#selPianoHeightScaleFactor", 'pianoHeightScaleFactor');
+		setSelect("#selPianoWidthScaleFactor", 'pianoWidthScaleFactor');
+		setSelect("#selPianoWhiteToBlackWidthRatio", 'pianoWhiteToBlackWidthRatio');
+		setSelect("#selPianoFingeringHPosition", 'pianoFingeringHPosition');
+		if (has('showLooperLightBeats')){ $("#cbShowLooperLightBeats").prop("checked", !!options.showLooperLightBeats); }
+		setSelect("#selNoteFont", 'noteFont');
+		setSelect("#selLeftSubscriptFontSize", 'leftSubscriptFontSize');
+		setSelect("#selRightSubscriptFontSize", 'rightSubscriptFontSize');
+		setSelect("#selMidiFontSize", 'midiFontSize');
+		setSelect("#selFingeringFontSize", 'fingeringFontSize');
+		setSelect("#selFingeringPosition", 'fingeringPosition');
+		setSelect("#selTinyNoteFontSize", 'tinyNoteFontSize');
+		setSelect("#selTinyNoteMaxHeight", 'tinyNoteMaxHeight');
+		setSelect("#selTinyNoteVPosition", 'tinyNoteVPosition');
+		setSelect("#selTinyNoteWidth", 'tinyNoteWidth');
+		setSelect("#selTinyNoteHPosition", 'tinyNoteHPosition');
+		setSelect("#selTinyNoteRadius", 'tinyNoteRadius');
 		
 		setOneCssVar("--td-note-font-family",  $("#selNoteFont").val());
 		setOneCssVar("--left-subscript-font-size", $("#selLeftSubscriptFontSize").val());
@@ -3653,22 +3667,102 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		resetNoteNames();
 	}
 
-	export function handleBtnControlsToDisplayOptions() {
-		var options = controlsToDisplayOptions();
-		getCurrentSection().displayOptions = options;
-		THEME_INFO("controlsToDisplayOptions: <br>"+JSON.stringify(options, null, 2));
-		showHideDisplayOptionsPresent();
-		captureDisplayOptionsDirtyBaseline();
-		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's just-saved sectionTheme.
-		FunctionSymbolsBuilder.refresh();   //usage count of a User Function Symbols set may have changed.
+	//====== Sprint 148 it4: DisplayOptions matrix commands (SaveDiff, SaveAll, Clear, cell clear, gates, undo) ======
+	// The rules live in templates/display-options/ (pure modules, Jest-tested); these functions only
+	// plan, apply, then refresh the UI and report.
+
+	function currentSectionIndex(){
+		return getSong().getSections().indexOf(getCurrentSection());
 	}
-	
+
+	function finishDisplayOptionsModelChange(result){
+		if (result.changed){
+			showHideDisplayOptionsPresent();
+			captureDisplayOptionsDirtyBaseline();
+			ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's sectionTheme.
+			FunctionSymbolsBuilder.refresh();   //usage count of a User Function Symbols set may have changed.
+			EventBus.trigger('DisplayOptionsModel:changed', { report: result.report });
+		}
+		const html = escapeHtml(result.report);
+		UserLog.addToUserLog('DisplayOptions', html);
+		Messages.showMessages(html);
+		return result;
+	}
+
+	/** Parses a 1-based "Section number" typed in the command line into a 0-based index. */
+	function sectionIndexFromNumberText(text){
+		const number = parseInt(`${text ?? ''}`.trim(), 10);
+		const idx = number - 1;
+		if (!Number.isInteger(number) || idx < 0 || idx >= getSong().getSections().length){
+			throw new Error(`no Section "${text}" (1..${getSong().getSections().length})`);
+		}
+		return idx;
+	}
+
+	function runDisplayOptionsCommand(fn){
+		try {
+			return finishDisplayOptionsModelChange(fn());
+		} catch (e) {
+			return finishDisplayOptionsModelChange({ changed: false, report: `DisplayOptions: ${e.message}` });
+		}
+	}
+
+	/** SAVE Diff: writes only the cells whose control value differs from what this Section inherits. */
+	export function handleBtnSaveDiff() {
+		return runDisplayOptionsCommand(() => {
+			const song = getSong();
+			return applyPlan(song, planSaveDiff(song, currentSectionIndex(), controlsToDisplayOptions(), displayOptionsDirtyBaseline));
+		});
+	}
+
+	/** Save All: writes every writable cell from the controls to this Section.  Callers confirm first. */
+	export function handleBtnSaveAll() {
+		return runDisplayOptionsCommand(() => {
+			const song = getSong();
+			return applyPlan(song, planSaveAll(song, currentSectionIndex(), controlsToDisplayOptions()));
+		});
+	}
+
+	/** CLEAR: removes this Section's stored cells (a write block stops it; a read block does not). */
 	export function handleBtnDeleteDisplayOptions() {
-		delete getCurrentSection().displayOptions;
-		showHideDisplayOptionsPresent();
-		captureDisplayOptionsDirtyBaseline();
-		FunctionSymbolsBuilder.refresh();
-		ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's now-cleared sectionTheme.
+		return runDisplayOptionsCommand(() => {
+			const song = getSong();
+			return applyPlan(song, planClear(song, currentSectionIndex()));
+		});
+	}
+
+	/** /vpm c : clear one cell.  sectionNumberText is 1-based. */
+	export function clearDisplayOptionsCell(sectionNumberText, key) {
+		return runDisplayOptionsCommand(() => {
+			const song = getSong();
+			return applyPlan(song, planClearCell(song, sectionIndexFromNumberText(sectionNumberText), `${key ?? ''}`.trim()));
+		});
+	}
+
+	/** /vpm g : scope 'column' (key), 'row' (Section number), 'cell' (Section number + key).
+	 *  valueText: read-blocked | write-blocked | blocked (default). */
+	export function setDisplayOptionsGate({ scope, sectionNumberText = null, key = null, valueText = '', on = true }) {
+		return runDisplayOptionsCommand(() => {
+			const direction = parseGateDirection(valueText);
+			if (!direction){
+				throw new Error(`unknown gate value "${valueText}" (use read-blocked, write-blocked or blocked)`);
+			}
+			const trimmedKey = key == null ? null : `${key}`.trim();
+			if (trimmedKey !== null && !isDisplayOptionKey(trimmedKey)){
+				throw new Error(`unknown DisplayOptions key "${trimmedKey}"`);
+			}
+			const song = getSong();
+			const sectionIndex = scope === 'column' ? null : sectionIndexFromNumberText(sectionNumberText);
+			return applyPlan(song, planGate(song, { scope, sectionIndex, key: trimmedKey, direction, on }));
+		});
+	}
+
+	/** One level of undo for the last Save/Clear/gate command (covers gate edits).  */
+	export function undoDisplayOptionsOp() {
+		const result = canUndoDisplayOptionsOp(getSong())
+			? undoLastDisplayOptionsOp(getSong())
+			: { changed: false, report: 'nothing to undo' };
+		return finishDisplayOptionsModelChange(result);
 	}
 
 	/** Sprint 146 (table-themes): saves the Theme page's current control values as tableID's
@@ -4422,8 +4516,14 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        fillChord();
 	    });
 
-		bindEvent('click', '#btnControlsToDisplayOptions_View', function() {
-	        handleBtnControlsToDisplayOptions();
+		bindEvent('click', '#btnSaveDiff_View', function() {
+	        handleBtnSaveDiff();
+	    });
+		bindEvent('click', '#btnSaveAll_View', function() {
+			const sectionNumber = currentSectionIndex() + 1;
+			if (window.confirm(`Save ALL Display Options (every writable control value) to Section ${sectionNumber}?\n\nSAVE Diff stores only what changed; Save All stores everything, which pins those values at this Section.`)){
+				handleBtnSaveAll();
+			}
 	    });
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
@@ -4676,21 +4776,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		installBtnHamburgerClicks();
 		setupOpenFile();
 
-		/* This presto-magico grabs all the View menu page options 
-		 *  and routes them as defaults, as though you had Save Display Options on Section 1.
-		 *  This way, if you haven't, you still get the defaults we coded into the controls in index.html
-		 */  
-		let options = controlsToDisplayOptions();
-		if (options){
-			displayOptionsToControls(options);
-		}
+		/* Sprint 148 it4: no session-level DisplayOptions.  The controls start from the Song defaults
+		 * (DISPLAY_OPTIONS_DEFAULTS); the Color defaults are applied again once the palette has loaded.
+		 */
+		applyDisplayOptionDefaults();
 
 		sectionChanged();
 		installTDNoteClick();
 		bindDesktopEvents();
 		installLoopTimingModeControls();
 		applyScalingPrefs(true);
-		captureDisplayOptionsNavigationDefault();
 		captureDisplayOptionsDirtyBaseline();
 		
 		setOneCssVar("--cmd-menu-opacity", "90%");
@@ -4729,15 +4824,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			buildUserColors();
 			installRBColorChangeEvents();
 
-			// Palette startup should use the shared AutoColor initializer directly,
-			// not a synthetic change event on a stale checkbox state.
-			PalettePresentation.setAutomaticColorUi(true);
-			PalettePresentation.setAutomaticColorHighlightUi(false);
+			// Palette startup applies the Color defaults (AutoColor on, AutoColorHighlight off) through the
+			// same path as every Song open, now that the palette controls really exist.
+			applyDisplayOptionDefaults();
 			fullRepaint();
-
-			// The palette loads asynchronously, so recapture the startup navigation
-			// defaults only after AutoColor and the palette controls really exist.
-			captureDisplayOptionsNavigationDefault();
 			captureDisplayOptionsDirtyBaseline();
 		});
 

@@ -1666,12 +1666,18 @@ export var gMenuFile =    {
               ]
             },
             {
-              "caption": "<b>s</b>ave Display Options [${displayOptionsSaveState}]",
+              "caption": "<b>s</b>ave Diff Display Options [${displayOptionsSaveState}]",
               "trigger": "s",
               "action": "saveViewDisplayOptions",
               "vars": [
                 "displayOptionsSaveState"
               ],
+              "preserveMenuStack": true
+            },
+            {
+              "caption": "save <b>a</b>ll Display Options (no confirmation)",
+              "trigger": "a",
+              "action": "saveViewDisplayOptionsAll",
               "preserveMenuStack": true
             },
             {
@@ -1682,6 +1688,126 @@ export var gMenuFile =    {
                 "displayOptionsClearState"
               ],
               "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>m</b>atrix",
+              "trigger": "m",
+              "children": [
+                {
+                  "caption": "<b>c</b>lear cell",
+                  "trigger": "c",
+                  "action": "matrixClearCell",
+                  "preserveMenuStack": true,
+                  "input": {
+                    "type": "input",
+                    "caption": "section-number,key",
+                    "datatype": "string",
+                    "id": "sectionAndKey"
+                  }
+                },
+                {
+                  "caption": "<b>g</b>ate",
+                  "trigger": "g",
+                  "children": [
+                    {
+                      "caption": "<b>a</b>dd",
+                      "trigger": "a",
+                      "children": [
+                        {
+                          "caption": "<b>k</b>ey (column)",
+                          "trigger": "k",
+                          "action": "matrixGateKey",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "key,value  (value: read-blocked | write-blocked | blocked)",
+                            "datatype": "string",
+                            "id": "keyAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>s</b>ection (row)",
+                          "trigger": "s",
+                          "action": "matrixGateSection",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number[,value]",
+                            "datatype": "string",
+                            "id": "sectionAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>c</b>ell",
+                          "trigger": "c",
+                          "action": "matrixGateCell",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number,key[,value]",
+                            "datatype": "string",
+                            "id": "sectionKeyAndValue"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "caption": "<b>d</b>elete",
+                      "trigger": "d",
+                      "children": [
+                        {
+                          "caption": "<b>k</b>ey (column)",
+                          "trigger": "k",
+                          "action": "matrixGateKey",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "key[,value]  (no value removes both gates)",
+                            "datatype": "string",
+                            "id": "keyAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>s</b>ection (row)",
+                          "trigger": "s",
+                          "action": "matrixGateSection",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number[,value]",
+                            "datatype": "string",
+                            "id": "sectionAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>c</b>ell",
+                          "trigger": "c",
+                          "action": "matrixGateCell",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number,key[,value]",
+                            "datatype": "string",
+                            "id": "sectionKeyAndValue"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "caption": "<b>u</b>ndo last Matrix/Save/Clear change",
+                  "trigger": "u",
+                  "action": "matrixUndo",
+                  "preserveMenuStack": true
+                }
+              ]
             },
             {
               "caption": "<b>v</b>iew DisplayOptions",

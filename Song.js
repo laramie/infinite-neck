@@ -16,6 +16,7 @@ import { Wiring } from './Wiring.js';
 import { DEFAULT_BEATS, RANDOM_SECTION_HISTORY_MAX } from './Constants.js';
 import { SongPersistence } from './SongPersistence.js';
 import { isNotesourceID } from './fill/notesource-registry.js';
+import { resolveDisplayOptions } from './templates/display-options/displayOptionsResolver.js';
 
 
 export class Song extends SongPersistence {
@@ -1558,30 +1559,31 @@ export class Song extends SongPersistence {
 
     //=============== Model Management/Cleanup Functions ==========================================
 
-    /** call with defaultDisplayOptions = infinite-neck:controlsToDisplayOptions() */
-    getDisplayOptionsInEffect(currSection, defaultDisplayOptions){
-        return this.getStoredDisplayOptionsInEffect(currSection) ?? defaultDisplayOptions;
+    /** Sprint 148 it4: the 'render' resolve for currSection -- the sparse cascade (see
+     *  templates/display-options/displayOptionsResolver.js) completed from `liveOptions`
+     *  (call with infinite-neck:controlsToDisplayOptions()).  Always a fresh object. */
+    getDisplayOptionsInEffect(currSection, liveOptions){
+        const idx = this.sections.indexOf(currSection);
+        if (idx === -1) {
+            return liveOptions;
+        }
+        return resolveDisplayOptions(this, idx, { purpose: 'render', live: liveOptions }).values;
     }
 
-    /** Like getDisplayOptionsInEffect(), but returns null instead of falling back to a synthetic
-     *  "current controls" default when no Section from currSection back to index 0 has an
-     *  explicitly stored displayOptions object. Lets callers distinguish "nothing in the model
-     *  actually specifies this" from "here's what's in effect" -- needed for fields (like
-     *  autoColor/autoColorHighlight) that must never be silently forced by an arbitrary startup
-     *  snapshot when the Song itself has no opinion (see infinite-neck.js::syncSectionUi()). */
+    /** Sprint 148 it4: the 'apply' resolve -- the sparse set of keys navigation pushes into the
+     *  controls for currSection (gates, absent-cell policy and provenance: see the resolver).
+     *  Fresh object (never a live block); null if currSection is not in this Song. */
     getStoredDisplayOptionsInEffect(currSection){
-        // Start at currSection and walk backwards through song.sections
-        let idx = this.sections.indexOf(currSection);
+        const idx = this.sections.indexOf(currSection);
         if (idx === -1) {
             return null;
         }
-        for (let i = idx; i >= 0; i--) {
-            const section = this.sections[i];
-            if (section && section.displayOptions) {
-                return section.displayOptions;
-            }
-        }
-        return null;
+        return resolveDisplayOptions(this, idx, { purpose: 'apply' }).values;
+    }
+
+    /** Sprint 148 it4: resolve with provenance for the Section at `idx` (used by /vdd and the plan engine). */
+    resolveDisplayOptionsAt(idx, options = {}){
+        return resolveDisplayOptions(this, idx, options);
     }
 
     /** Sprint 146 Iteration 2: derives the canonical id/caption/baseid/basecaption a per-table

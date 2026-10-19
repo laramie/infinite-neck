@@ -1,3 +1,5 @@
+import { normalizeSectionGates } from './templates/display-options/displayOptionsGates.js';
+
 const sectionDefaults = {
       "caption": "",
       "chartChord": "",
@@ -34,6 +36,13 @@ export class SectionPersistence {
         this.sectionNotesByTable = {};
         Object.assign(this, sectionDefaults, obj);
         this.tutorial = normalizeSectionTutorial(this.tutorial);
+        // Sprint 148 it4: deny-only gates for this Section's DisplayOptions cells ('*' = whole Section).
+        const gates = normalizeSectionGates(obj.displayOptionGates);
+        if (gates) {
+            this.displayOptionGates = gates;
+        } else {
+            delete this.displayOptionGates;
+        }
         for (const [k, v] of Object.entries(obj.sectionNotesByTable||{})) {
             this.sectionNotesByTable[k] = new SectionNotes_Class(v);
         }

@@ -1,4 +1,5 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
+import { splitMatrixArgs } from './templates/display-options/displayOptionsGates.js';
 import { 
 	setOneCssVar, 
 	dumpThemeIds 
@@ -170,8 +171,12 @@ function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFull
 function hideFullscreenChart(...args) { return requireProvider('hideFullscreenChart')(...args); }
 function hideFullscreenAllCharts(...args) { return requireProvider('hideFullscreenAllCharts')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
-function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
+function handleBtnSaveDiff(...args) { return requireProvider('handleBtnSaveDiff')(...args); }
+function handleBtnSaveAll(...args) { return requireProvider('handleBtnSaveAll')(...args); }
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
+function clearDisplayOptionsCell(...args) { return requireProvider('clearDisplayOptionsCell')(...args); }
+function setDisplayOptionsGate(...args) { return requireProvider('setDisplayOptionsGate')(...args); }
+function undoDisplayOptionsOp(...args) { return requireProvider('undoDisplayOptionsOp')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
@@ -1369,14 +1374,48 @@ export function performCmdAction(menuItem, args){
 			song.tutorial.useCaptionForSectionCaption = !song.tutorial.useCaptionForSectionCaption;
 			actionResult.result = `useCaptionForSectionCaption: ${getSong().tutorial.useCaptionForSectionCaption}`
 			break;
-		case "saveViewDisplayOptions":
-			handleBtnControlsToDisplayOptions();
-			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
+		case "saveViewDisplayOptions":   //SAVE Diff
+			handleBtnSaveDiff();
+			actionResult.result = `Display Options saved (diff): ${getDisplayOptionsSaveState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "saveViewDisplayOptionsAll":
+			handleBtnSaveAll();
+			actionResult.result = `Display Options saved (all): ${getDisplayOptionsSaveState()}`;
 			actionResult.preserveMenuStack = true;
 			break;
 		case "clearViewDisplayOptions":
 			handleBtnDeleteDisplayOptions();
 			actionResult.result = `Display Options cleared: ${getDisplayOptionsClearState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		// Sprint 148 it4: static /vpm (Matrix) commands.  Inputs are comma-separated, no quotes: "3,noteFont".
+		case "matrixClearCell": {
+			const [sectionNumber, key] = splitMatrixArgs(argByInputID);
+			actionResult.result = clearDisplayOptionsCell(sectionNumber, key).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateKey": {        // key[,value]
+			const [key, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'column', key, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateSection": {    // sectionNumber[,value]
+			const [sectionNumber, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'row', sectionNumberText: sectionNumber, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateCell": {       // sectionNumber,key[,value]
+			const [sectionNumber, key, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'cell', sectionNumberText: sectionNumber, key, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixUndo":
+			actionResult.result = undoDisplayOptionsOp().report;
 			actionResult.preserveMenuStack = true;
 			break;
 		case "cmdBackgroundOpacity":

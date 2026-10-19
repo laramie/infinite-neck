@@ -1700,7 +1700,7 @@ With "Pitch" and "Multi" notes, you'll just highlight those notes:
 
 <h4>Changing View Settings</h4>
 <p>If you set any <span class="GUIReferenceInline">View</span> options, it is best to save them by being in the 
-    first Section and hitting "Save Display Options" so they persist when looping.  
+    first Section and hitting "SAVE Diff" so they persist when looping.  
     For example, <span class="GUIReferenceInline">View > Hide Named Notes</span> or 
     <span class="GUIReferenceInline">View > Show All Note Names</span>
 </p>
@@ -2681,7 +2681,7 @@ can add your own, or edit the list.  Some built-in Chart Positions will remain.<
                 Highlights, and no Display Options.
         </ul>
     <li> <b>Move</b> Sections to a Destination of a Section number or BEGIN or END, bumping any Sections there later.
-    <li><b>Save</b> and <b>Clear</b> the Display Options, which include the Root Key and Lead Root Key, plus all the
+    <li><b>Save Diff</b> and <b>Clear</b> the Display Options, which include the Root Key and Lead Root Key, plus all the
         items on the View menu, plus Theme and Stylesheets.
 
     <li>Add a beat before the existing first beat <button id="btnInsertFirstBeat" type="button" tabindex="-1" title="Insert First Beat"><span class="beat-icon">&#x2BAE;</span></button>
@@ -2975,15 +2975,30 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
      if the View menu is showing, you'll see the option controls get updated.
 </p>
 
-<p>Click <span class="GUIReferenceInline">View | Save Display Options</span> to overwrite previously saved options for just the current Section. (Also <span class="menuExampleLine"><b><small>/vps</small></b></span>)
+<p>Click <span class="GUIReferenceInline">View | SAVE Diff</span> to store, for just the current Section, the options that <i>differ</i> from what this Section already inherits from earlier Sections.  A Section stores only the options it changes, so later Sections keep following the earlier ones.  (Also <span class="menuExampleLine"><b><small>/vps</small></b></span>)
 </p>
 
-<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete these options for just the current Section. Later Sections will now inherit the options in effect from previous Sections.  (Also <span class="menuExampleLine"><b><small>/vpc</small></b></span>)
+<p>Click <span class="GUIReferenceInline">View | Save All...</span> to store every option value on this page in the current Section, after a confirmation.  (Also <span class="menuExampleLine"><b><small>/vpa</small></b></span>, with no confirmation)
+</p>
+
+<p>Click <span class="GUIReferenceInline">View | Clear Display Options</span> to delete the options stored in just the current Section. Later Sections will now inherit the options in effect from previous Sections.  (Also <span class="menuExampleLine"><b><small>/vpc</small></b></span>)
+</p>
+
+<p><b>Gates</b> (command line, <span class="menuExampleLine"><b><small>/vpm</small></b></span>) can stop an option, a Section, or one cell from being applied (<i>read-blocked</i>) or from being changed by SAVE Diff, Save All and Clear (<i>write-blocked</i>).
+    <ul>
+        <li><span class="menuExampleLine"><b><small>/vpmgak</small></b></span> add a gate on one option for the whole Song, input <span class="menuExampleLine">key,value</span>, for example <span class="menuExampleLine">noteFont,read-blocked</span> (value: <i>read-blocked</i>, <i>write-blocked</i>, or leave it out for both)</li>
+        <li><span class="menuExampleLine"><b><small>/vpmgas</small></b></span> add a gate on a whole Section, input <span class="menuExampleLine">section-number[,value]</span></li>
+        <li><span class="menuExampleLine"><b><small>/vpmgac</small></b></span> add a gate on one cell, input <span class="menuExampleLine">section-number,key[,value]</span></li>
+        <li><span class="menuExampleLine"><b><small>/vpmgd</small></b></span> then <b>k</b>, <b>s</b> or <b>c</b> removes a gate, same inputs</li>
+        <li><span class="menuExampleLine"><b><small>/vpmc</small></b></span> clear one cell, input <span class="menuExampleLine">section-number,key</span></li>
+        <li><span class="menuExampleLine"><b><small>/vpmu</small></b></span> undo the last Save, Clear or gate change (one level)</li>
+    </ul>
+    Type the commas and the <span class="menuExampleLine">*</span> literally, without quotes.  The <span class="menuExampleLine"><b><small>/vdd</small></b></span> audit marks gates with <b>r</b> and <b>w</b>.
 </p>
 
 <p>You can audit all the Display Options for all Sections that have them set with the <a href="#commandline">command-line</a> <span class="menuExampleLine"><b><small>/vdd</small></b></span>
      Scroll down to see the audit
-     of all Sections with Display Options.  The options that change are highlighted.  
+     of all Sections with Display Options.  An option that differs from what its Section inherits is highlighted green.  
  </p>
 <p>
     <img style="border: 20px solid green; width: 60%;" src="img/help/display-options-printout.png">
@@ -3020,9 +3035,9 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <p>The <i>sectionTheme</i> shows up when <span class="GUIReferenceInline">Allow Theme Automation</span> is checked, and will show <s>strikethrough</s> text
 when the currently selected Theme for the Section does not match the stored value in DisplayOptions.  To store it, make sure Allow Theme Automation is checked,
-then click <span class="GUIReferenceInline">SAVE Display Options</span>.
+then click <span class="GUIReferenceInline">SAVE Diff</span>.
 </p>
-<p><i>sectionTheme</i> is a little different, in that you are not prompted to <span class="GUIReferenceInline">SAVE Display Options</span> simply because you changed a Theme
+<p><i>sectionTheme</i> is a little different, in that you are not prompted to <span class="GUIReferenceInline">SAVE Diff</span> simply because you changed a Theme
 while <span class="GUIReferenceInline">Allow Theme Automation</span> is checked.  Nonetheless, you save the Theme in the Current Section
 by clicking SAVE anyway.  Your choice is shown in whether the Theme appears in normal text (stored/saved), or in <s>strikethrough</s> (active but not stored/saved).</p>
 <p>Normally, you would not automate Theme selection, as it is considered a User choice while playing back a song.  However, for Presentations you may wish to automate.  The Tutorials especially 
@@ -7162,7 +7177,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
             <td>Display Options
             </td>
             <td>Each Section can remember the options set on the View menu,
-                when you click Save Display Options on the Section or View menu pages.
+                when you click SAVE Diff (or Save All) on the Section or View menu pages.
                 <br>
                 <br>
                 Some size options are not automated on playback if Presentation Mode is not checked.
@@ -7176,7 +7191,7 @@ you can add a new macro, copy the macro from the song that does another Instrume
                 <br>
                 <br>
                 When these get out of control or confusing, audit them with the keyboard command-line <span class="menuExampleLine"><b><small>/vdd</small></b></span>  Scroll down to see the audit
-                of all Sections with Display Options.  The options that change are highlighted.  You can also sit on the View page and
+                of all Sections with Display Options.  An option that differs from what its Section inherits is highlighted green.  You can also sit on the View page and
                 watch the controls change while you hit the Transport next section buttons, or the keyboard shortcuts ( &lt; and &gt; ).
                 Remember that if one of the controls traps the keyboard, click in some blank spot of the screen or hit <span class="key">ESC</span> and then V to
                 come back to the View menu.

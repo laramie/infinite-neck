@@ -93,8 +93,8 @@ export class SectionDrawerBuilder {
             InfiniteNeck.updateSectionsStatus();
             NoteTableController.fullRepaint();
         });
-        $("#btnControlsToDisplayOptions_Section").click(function() {
-	        InfiniteNeck.handleBtnControlsToDisplayOptions();
+        $("#btnSaveDiff_Section").click(function() {
+	        InfiniteNeck.handleBtnSaveDiff();
 	    });
 		$("#btnDeleteDisplayOptions_Section").click(function() {
 			InfiniteNeck.handleBtnDeleteDisplayOptions();

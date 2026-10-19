@@ -188,60 +188,86 @@ describe('Save and Clear DisplayOptions baseline contracts', () => {
 });
 
 describe('getDisplayOptionsInEffect contracts', () => {
-    test('inherits nearest prior saved displayOptions for sections without explicit options', () => {
-        const song = makeHeadlessSongFromFixture();
-        const sections = song.getSections();
-        const fallbackOptions = {
-            hideSingleNotes: false,
-            NoteDisplaySizes: { width: '77px', height: '44px' }
-        };
-
-        delete sections[1].displayOptions;
-        const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
-
-        expect(inEffect).toEqual(sections[0].displayOptions);
-        expect(inEffect).not.toEqual(fallbackOptions);
-    });
-
-    test('uses provided default options when no earlier section has explicit displayOptions', () => {
+    // Sprint 148 it4: sparse blocks + per-key resolver (see display-options-matrix.test.js for the full rules).
+    test('inherits nearest prior saved cells for sections without explicit options', () => {
         const song = makeHeadlessSongFromFixture();
         const sections = song.getSections();
         const fallbackOptions = {
             hideSingleNotes: true,
-            showCellNotes: false,
-            NoteDisplaySizes: { width: '91px', height: '52px' }
+            NoteDisplaySizes: { width: '77px', height: '44px' }
+        };
+
+        delete sections[1].displayOptions;
+        song.presentationMode = false;
+        const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
+
+        expect(inEffect.hideSingleNotes).toBe(sections[0].displayOptions.hideSingleNotes);
+        expect(inEffect.showCellNotes).toBe(sections[0].displayOptions.showCellNotes);
+        // presentationMode is off: NoteDisplaySizes is adapter-gated, so the live value is used
+        expect(inEffect.NoteDisplaySizes).toEqual(fallbackOptions.NoteDisplaySizes);
+
+        song.presentationMode = true;
+        expect(song.getDisplayOptionsInEffect(sections[1], fallbackOptions).NoteDisplaySizes)
+            .toEqual(sections[0].displayOptions.NoteDisplaySizes);
+    });
+
+    test('returns a fresh object, never the live stored block', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+
+        const inEffect = song.getDisplayOptionsInEffect(sections[1], {});
+        inEffect.hideSingleNotes = 'mutated';
+
+        expect(sections[1].displayOptions.hideSingleNotes).not.toBe('mutated');
+    });
+
+    test('uses the live options for keys no readable cell specifies', () => {
+        const song = makeHeadlessSongFromFixture();
+        const sections = song.getSections();
+        const fallbackOptions = {
+            hideSingleNotes: true,
+            currentColorDict: 'LiveDict'
         };
 
         delete sections[0].displayOptions;
         delete sections[1].displayOptions;
+        sections[2].displayOptions = { showCellNotes: false };
 
         const inEffect = song.getDisplayOptionsInEffect(sections[1], fallbackOptions);
 
-        expect(inEffect).toEqual(fallbackOptions);
+        expect(inEffect.currentColorDict).toBe('LiveDict');
+        expect(inEffect.hideSingleNotes).toBe(true);
+        // showCellNotes is stored at Section 3 only, so it is "automated": default before its first cell
+        expect(inEffect.showCellNotes).toBe(true);
+    });
+
+    test('falls back to the live options when the Section is not in the Song', () => {
+        const song = makeHeadlessSongFromFixture();
+        const live = { hideSingleNotes: true };
+
+        expect(song.getDisplayOptionsInEffect({}, live)).toBe(live);
     });
 });
 
 describe('getStoredDisplayOptionsInEffect contracts', () => {
-    test('returns the nearest prior saved displayOptions for sections without explicit options', () => {
+    test('returns the nearest prior saved cells for sections without explicit options', () => {
         const song = makeHeadlessSongFromFixture();
         const sections = song.getSections();
 
         delete sections[1].displayOptions;
         const stored = song.getStoredDisplayOptionsInEffect(sections[1]);
 
-        expect(stored).toEqual(sections[0].displayOptions);
+        expect(stored.hideSingleNotes).toBe(sections[0].displayOptions.hideSingleNotes);
+        expect(stored.showCellNotes).toBe(sections[0].displayOptions.showCellNotes);
     });
 
-    test('returns null (never a synthetic default) when no Section in the chain has explicit displayOptions', () => {
+    test('returns a fresh sparse object (never a synthetic live default) when no Section stores anything', () => {
         const song = makeHeadlessSongFromFixture();
         const sections = song.getSections();
 
-        delete sections[0].displayOptions;
-        delete sections[1].displayOptions;
+        sections.forEach((s) => delete s.displayOptions);
 
-        const stored = song.getStoredDisplayOptionsInEffect(sections[1]);
-
-        expect(stored).toBeNull();
+        expect(song.getStoredDisplayOptionsInEffect(sections[1])).toEqual({});
     });
 
     test('returns null when the Section is not found in song.sections', () => {

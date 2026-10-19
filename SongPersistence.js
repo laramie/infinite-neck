@@ -3,6 +3,7 @@ import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
 import { Layout } from './layout.js';
 import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
+import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -326,6 +327,13 @@ export class SongPersistence {
         this.midiDevice = normalizeMidiDevice(this.midiDevice);
         // Sprint 148 it3: User Function Symbols sets (registry = built-ins + these).  Per-Song, not a shared default.
         this.functionSymbolSets = normalizeUserSets(obj.functionSymbolSets);
+        // Sprint 148 it4: Song-level (column) gates for the DisplayOptions matrix; omitted when empty.
+        const displayOptionGates = normalizeSongGates(obj.displayOptionGates);
+        if (displayOptionGates) {
+            this.displayOptionGates = displayOptionGates;
+        } else {
+            delete this.displayOptionGates;
+        }
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));

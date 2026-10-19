@@ -1,5 +1,6 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import { SECTION_CHART_CAPTION_WIDTH, SONG_CHART_BAR_CLASS } from '../Constants.js';
+import { DISPLAY_OPTION_KEYS } from '../templates/display-options/displayOptionsMeta.js';
 
 const INTEGER_LIKE_PATTERN = '^-?\\d+$';
 const ALLOWED_NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
@@ -162,9 +163,21 @@ const sectionNotesSchema = {
     additionalProperties: false
 };
 
+// Sprint 148 it4: deny-only gates.  Song: column gates.  Section: '*' (whole Section) or a key.
+function displayOptionGatesSchema(allowRow) {
+    const keys = { type: 'string', enum: allowRow ? ['*', ...DISPLAY_OPTION_KEYS] : [...DISPLAY_OPTION_KEYS] };
+    const list = { type: 'array', items: keys, minItems: 1, uniqueItems: true };
+    return {
+        type: 'object',
+        properties: { readBlocked: list, writeBlocked: list },
+        additionalProperties: false
+    };
+}
+
 const sectionSchema = {
     type: 'object',
     properties: {
+        displayOptionGates: displayOptionGatesSchema(true),
         sectionNotesByTable: {
             type: 'object',
             additionalProperties: sectionNotesSchema
@@ -369,6 +382,7 @@ export const songFileV2Schema = {
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
         allowThemeAutomation: { type: 'boolean' },
+        displayOptionGates: displayOptionGatesSchema(false),
         functionSymbolSets: {
             type: 'array',
             items: {

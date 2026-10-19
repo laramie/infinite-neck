@@ -246,8 +246,12 @@ describe('key-handlers spacebar mapping', () => {
 	let mockGetBPM;
 	let mockToggleRecording;
 	let mockShowAllNoteNames;
-	let mockHandleBtnControlsToDisplayOptions;
+	let mockHandleBtnSaveDiff;
+	let mockHandleBtnSaveAll;
 	let mockHandleBtnDeleteDisplayOptions;
+	let mockClearDisplayOptionsCell;
+	let mockSetDisplayOptionsGate;
+	let mockUndoDisplayOptionsOp;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -276,8 +280,12 @@ describe('key-handlers spacebar mapping', () => {
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
 		mockShowAllNoteNames = jest.fn();
-		mockHandleBtnControlsToDisplayOptions = jest.fn();
+		mockHandleBtnSaveDiff = jest.fn();
+		mockHandleBtnSaveAll = jest.fn();
 		mockHandleBtnDeleteDisplayOptions = jest.fn();
+		mockClearDisplayOptionsCell = jest.fn(() => ({ changed: true, report: 'cleared' }));
+		mockSetDisplayOptionsGate = jest.fn(() => ({ changed: true, report: 'gated' }));
+		mockUndoDisplayOptionsOp = jest.fn(() => ({ changed: true, report: 'undone' }));
 		mockDownloadBackupThenClearGraveyardByType = jest.fn(() => ({ result: 'cleared: SECTION (1)' }));
 		updateSectionsStatus = jest.fn();
 
@@ -312,8 +320,12 @@ describe('key-handlers spacebar mapping', () => {
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
 			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
-			handleBtnControlsToDisplayOptions: mockHandleBtnControlsToDisplayOptions,
+			handleBtnSaveDiff: mockHandleBtnSaveDiff,
+			handleBtnSaveAll: mockHandleBtnSaveAll,
 			handleBtnDeleteDisplayOptions: mockHandleBtnDeleteDisplayOptions,
+			clearDisplayOptionsCell: mockClearDisplayOptionsCell,
+			setDisplayOptionsGate: mockSetDisplayOptionsGate,
+			undoDisplayOptionsOp: mockUndoDisplayOptionsOp,
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
@@ -554,13 +566,39 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
 		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
-		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(mockHandleBtnSaveDiff).toHaveBeenCalledTimes(1);
 		expect(saveResult.preserveMenuStack).toBe(true);
+
+		const saveAllResult = performCmdAction({ action: 'saveViewDisplayOptionsAll' });
+		expect(mockHandleBtnSaveAll).toHaveBeenCalledTimes(1);
+		expect(saveAllResult.preserveMenuStack).toBe(true);
 
 		expect(getValue('displayOptionsClearState')).toBe('present');
 		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
 		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
 		expect(clearResult.preserveMenuStack).toBe(true);
+	});
+
+	test('Sprint 148 it4: /vpm Matrix actions split their comma-separated input and pass it to the providers', () => {
+		const menuNode = (action, id, extra = {}) => ({ action, input: { id }, ...extra });
+
+		const clearCell = performCmdAction(menuNode('matrixClearCell', 'sectionAndKey'), { sectionAndKey: '3, noteFont' });
+		expect(mockClearDisplayOptionsCell).toHaveBeenCalledWith('3', 'noteFont');
+		expect(clearCell.result).toBe('cleared');
+
+		performCmdAction(menuNode('matrixGateKey', 'keyAndValue', { on: true }), { keyAndValue: 'noteFont,read-blocked' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'column', key: 'noteFont', valueText: 'read-blocked', on: true }));
+
+		performCmdAction(menuNode('matrixGateSection', 'sectionAndValue', { on: false }), { sectionAndValue: '2' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'row', sectionNumberText: '2', valueText: '', on: false }));
+
+		performCmdAction(menuNode('matrixGateCell', 'sectionKeyAndValue', { on: true }), { sectionKeyAndValue: '1,showMidiNum,write-blocked' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'cell', sectionNumberText: '1', key: 'showMidiNum', valueText: 'write-blocked', on: true }));
+
+		expect(performCmdAction({ action: 'matrixUndo' }).result).toBe('undone');
 	});
 
 	test('Meta+Shift+m opens command line in strict tutorial mode', () => {
