@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <style>
+            .multi-gradient-pattern {
+            /* Ensure the background element has a base size or container */
+            display: inline-block;
+            width: 100%;
+            height: 400px;
+            background-color: #fff; /* Base background color */
+
+            background-image: 
+                /* 4. Red lines (3px wide, 10px spacing, shifted 5px right) */
+                repeating-linear-gradient(135deg, 
+                transparent 0px, 
+                transparent 5px, 
+                rgb(251, 196, 196) 5px, 
+                rgb(255, 207, 207) 8px, 
+                transparent 8px, 
+                transparent 13px
+                ),
+                /* 3. Blue lines (3px wide, 10px spacing, shifted 5px right) */
+                repeating-linear-gradient(45deg, 
+                transparent 0px, 
+                transparent 5px, 
+                rgb(188, 188, 246) 5px, 
+                rgb(200, 200, 252) 8px, 
+                transparent 8px, 
+                transparent 13px
+                ),
+                /* 2. Red lines (1px wide, 10px spacing, 135 degrees) */
+                repeating-linear-gradient(135deg, 
+                red, 
+                red 1px, 
+                transparent 1px, 
+                transparent 11px
+                ),
+                /* 1. Blue lines (1px wide, 10px spacing, 45 degrees) */
+                repeating-linear-gradient(45deg, 
+                blue, 
+                blue 1px, 
+                transparent 1px, 
+                transparent 11px
+                );
+            }
+
+        </style>    
+    </head>
+    <body>
+        <div class="multi-gradient-pattern">
+mojo
+        </div>
+    </body>
+</html>

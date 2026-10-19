@@ -303,6 +303,96 @@ Thank you for your analysis of the Matrix.  We are working on layers for display
 ### Request for Iteration 4 Round 2
 
 Please produce the implementation plan.  Please provide a question section for anything we have answered ambiguously or with conflicts.  The Matrix is still in design phase and will not be implemented yet.  Iteration 3 is still accepted and committed.
+
+## Iteration 4 Round 3 - Implementation
+
+Below are answers to remaining questions from implementation plan produced in Iteration 4 Round 2.
+
+After these answers, we are ready for implementation / coding.
+
+### Answers to 8. Questions (conflicts and ambiguities only)
+
+**Q1. What does an absent, readable cell do at a Section boundary?**  Your answers say "no session-level DisplayOptions" and "Matrix primitives handle sparse apply", which can be read three ways (3.4): (A) leave the control alone, (B) always apply the default unless read-blocked, (C) apply the default only for keys that some Section stores, leave never-stored keys alone.  Recommendation: **C**.  A is simpler but leaks values backward across a loop wrap; B needs gate UI that does not exist yet.  This decides the Hide-macro behavior and the browser checks 3, 8 and 10.
+
+- ANSWER: C.
+
+
+**Q1b / Q2. Where does "block this whole Section" live?**  You were unsure (Song-level or Section-level), and the Iteration 2 Q10 answer calls the row action "Song-level".  Recommendation: Section-level, as the entry `"*"` in `section.displayOptionGates`, because it travels with the Section on move, clone, bury and append (which a Song-level list keyed by Section index would not), and it is a property of that musical position.  It is a Section property, so it is copied on clone, as Q11 says for cell gates.  Please confirm.
+
+- ANSWER: Section-level.
+
+**Q3. Gate value format.**  Round 1 said gates are booleans so a later `true` override would need no format change; your Q2 answer says deny always wins, which makes a stored `true` meaningless.  Recommendation: deny-only lists (3.3).  If you want per-Section "open" overrides later, that is a new field, not a migration.
+
+- ANSWER: Accept recommendation.
+
+**Q4. Conflict: Round 1 Q5 versus Iteration 2 Q7.**  Q5 (accepted) kept the opt-in keys default-closed and opened the AutoColor column for existing Songs.  Iteration 2 Q7 says AutoColor is no longer a special gate.  This plan follows Iteration 2 Q7: the three Color keys are default-open ordinary columns, and nothing is migrated.  The cost, from my last message: after `c`, a SaveDiff of something else writes `autoColor: false` into the block (reported, undoable).  Please confirm.
+
+- ANSWER: Confirm: Iteraion 2 Q7. 
+
+**Q5. Keys without a default.**  `NoteDisplaySizes`, `currentColorDict` and `sectionTheme` are not in the defaults, and their SaveDiff baseline is the live value at the last Section sync (3.5).  With Presentation Mode off, "not set" then means the browser scaling prefs apply.  Is that what "otherwise they should not" meant?  The alternative is a Song-level default size, which adds a stored field.
+
+- ANSWER: Yes. "not set" then means the browser scaling prefs apply.
+
+**Q6. CLEAR and read-blocked cells.**  Round 1 Q4 says bulk Clear skips a cell unless it is both readable and writable; Q8 says Clear honors AllowWrite.  The plan applies Q4's stricter rule, so a read-blocked but writable cell survives CLEAR until the read block is lifted (the single-cell Matrix Clear overrides).  Is that the intent?
+
+- ANSWER:  It would seem read-blocked means don't read automation and apply it.  But performing cleanup in the Matrix can read the state anyway, so read-blocked should not stop the cleanup.  So read block does not need to be lifted to clear.
+
+**Q7. Button labels and SaveAll placement.**  Iteration 2 answer 5 said to keep the label "SAVE" and call the new button "Save Diff"; now SaveDiff is the normal button.  Assumed: primary button caption "SAVE Diff" (same position and style as today's SAVE), SaveAll as a small "Save All..." button on the View page only with a confirmation, no SaveAll in the Section drawer.  Confirm or change.
+
+- ANSWER: Confirm.
+
+**Q8. A way to set gates in this Iteration.**  There is no UI, so the Hide-column case, CLEAR protection and the Tutorial row case cannot be exercised in the browser.  Recommendation: a small command-line command (for example `/gate read|write on|off <key|*> [section|song]`) plus the same call exported for macros, marked "temporary until the Matrix".  Without it, acceptance testing of gates is Jest only.
+
+- ANSWER: Minimal command-line static in menu.js. (Not dynamic menus like the Plugins build.)
+
+  - Menu description: 
+    - shows trigger `t` for caption `<b>t</b>rigger` as `t)rigger`
+    - indentation shows menu hierarchy
+    - INPUT means an input node
+    - since keys are identifiers, quotes are not needed from User on command-line.  
+    - Commas `,` and asterisk `*` are literals typed by User without quotes.
+    - ES6 inline quote style: ` /* implementation meaning of this menu item goes here */`
+
+  - Desired Menu additions within existing menu `/vp`:
+
+```
+/vpm : 
+  / 
+    v)iew 
+      p)resentation 
+        m)atrix
+          c)lear
+            INPUT: section-number,key  /* clear a cell */
+          g)ate
+            a)add
+              k)ey
+                INPUT: key,value  /* add a column gate.  Please come up with value that matches the API or a string such as "read-blocked" etc.  We don't want to specify what you come up with, we'd prefer it to match the API logically and cleanly. */
+              s)ection
+                INPUT: section-number,n   /* add a Section row gate for Section-number n.  Add ",value" if needed. */
+              c)ell
+                INPUT: section-number,key /* add a cell gate.  Add ",value" if needed. */
+            d)elete
+               /* create complimentary menu as /vpmga if needed, otherwise adding a negating key there is fine if sufficient.    
+```
+
+If the User values in the above menu INPUTs are a bit clunky and need careful reading of the documentation and INPUT prompt, that is fine.  This is really for testing, and seems like it can be left in place for Macro use. If the proposed menu spec has holes in it, please implement best-effort and we'll fix it in UA testing.
+
+**Q9. Compaction.**  Run `bin/compact-display-options.js --write` on `songs/` in this Iteration, or deliver the tool with a dry-run report and decide after browser acceptance?  Recommendation: dry run only.  Writing changes how a few Songs behave (see 5.1) and the old blocks are harmless.
+
+- ANSWER: Accept the recommendation.  Remind us of usage in the test plan for UI acceptance testing. 
+
+**Q10. Apply after a gate change on the current Section.**  If the User lifts a read block while the current Section holds a stored value, should the controls update immediately, or at the next boundary (or by Apply)?  Recommendation: not immediately, so live edits are never lost without a dirty prompt; the `applyResolved` primitive covers an explicit Apply.
+
+- ANSWER: Accept the recommendation.
+
+**Q11. Undo and gate edits.**  Should the one-level undo also cover gate edits (as planned), or only block writes?  Recommendation: both, since a column click in the Matrix can be as destructive as a Clear.
+
+- ANSWER: Accept the recommendation.
+
+### Request
+
+With the above answers, please proceed to coding.  The list of files to be touched is CORE-APPROVED and APPROVED.
+
   
 
 
