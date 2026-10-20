@@ -17,6 +17,7 @@ Implements the CORE-APPROVED design in [148-it4-round-2-implementation-plan.md](
 ## Rules as implemented
 
 - A Section stores a sparse block (only cells it changes).  Value at Section k = last readable cell at Sections <= k.
+- **Round 4 fix:** a cell-level read gate (`cell:r`) makes that one cell *absent*: the key inherits from an earlier Section or gets its default, and still counts as "automated".  Column (Song) and row (`*`) read gates, and adapter blocks, still mean "leave the control alone" at the target Section; column and adapter gates also stop the key counting as automated.
 - Absent-cell policy C (`defaultIfAutomated`): a key some Section stores readably gets its default before its first cell; a key never stored is left alone.  Keys with no default (`currentColorDict`, `NoteDisplaySizes`, `sectionTheme`) are never defaulted.
 - Gates are deny-only lists: Song `{readBlocked, writeBlocked}` per key; Section the same, with `*` for the whole Section.  Adapter blocks: `NoteDisplaySizes` while Presentation Mode is off, `sectionTheme` while Allow Theme Automation is off.
 - SAVE Diff and Save All skip read-blocked and write-blocked cells.  Clear skips only explicit write-blocked cells (Round 3 Q6).  Gates are never changed by Save/Clear.

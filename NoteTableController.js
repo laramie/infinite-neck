@@ -105,7 +105,7 @@ function hideNoteClickedCaption() { return notetableProviders.hideNoteClickedCap
 function resetNoteNames() { return notetableProviders.resetNoteNames(); }
 function setNoteClickedCaption(...args) { return notetableProviders.setNoteClickedCaption(...args); }
 function showBeats() { return notetableProviders.showBeats(); }
-function turnOffHiding() { return notetableProviders.turnOffHiding(); }
+function turnOffHiding(noteType) { return notetableProviders.turnOffHiding(noteType); }
 
 function createNotetableLookupContext(section = getCurrentSection(), tableID = '') {
     // Table-scoped lookup context lets AutoColor see whether this table owns the
@@ -636,7 +636,7 @@ export function colorNoteInner(cell, options = {}) {
     }
 
     if (!doKeep){
-        turnOffHiding();
+        turnOffHiding(theHighlight);
     }
     setNoteClickedCaption(cell, theColorClass, styleNum);
 

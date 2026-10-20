@@ -152,16 +152,37 @@ describe('displayOptionsResolver', () => {
         expect(resolveDisplayOptions(song, 2).values.noteFont).toBe('Cardo');
     });
 
-    test('R2: a key read-blocked at the target Section is not applied', () => {
-        const song = mkSong([{ noteFont: 'Cardo' }, null]);
+    test('cell read gate = cell ignored: the key inherits an earlier value or the default', () => {
+        const song = mkSong([{ noteFont: 'Cardo' }, { noteFont: 'Eczar' }]);
         song.sections[1].displayOptionGates = { readBlocked: ['noteFont'] };
+        const r = resolveDisplayOptions(song, 1);
+        expect(r.values.noteFont).toBe('Cardo');
+        expect(r.entries.noteFont).toEqual({ source: 'stored', sectionIndex: 0 });
+    });
+
+    test('cell read gate on the only stored cell: the key still counts as automated, so the default applies', () => {
+        // autoColor OFF stored in Section 0 only, then cell-read-blocked
+        const song = mkSong([{ autoColor: false }, null]);
+        song.sections[0].displayOptionGates = { readBlocked: ['autoColor'] };
+        expect(getAutomatedKeys(song).has('autoColor')).toBe(true);
+        for (const idx of [0, 1]) {
+            const r = resolveDisplayOptions(song, idx);
+            expect(r.values.autoColor).toBe(true);
+            expect(r.entries.autoColor.source).toBe('default');
+        }
+    });
+
+    test('R2: row and column read gates at the target Section leave the control alone', () => {
+        const song = mkSong([{ noteFont: 'Cardo' }, null]);
+        song.sections[1].displayOptionGates = { readBlocked: ['*'] };
+        expect(Object.keys(resolveDisplayOptions(song, 1).values)).toEqual([]);
+        song.sections[1].displayOptionGates = undefined;
+        song.displayOptionGates = { readBlocked: ['noteFont'] };
         const r = resolveDisplayOptions(song, 1);
         expect('noteFont' in r.values).toBe(false);
         expect(r.entries.noteFont.source).toBe('blocked');
-        // row gate
-        song.sections[1].displayOptionGates = { readBlocked: ['*'] };
-        expect(Object.keys(resolveDisplayOptions(song, 1).values)).toEqual([]);
     });
+
 
     test('column read gate blocks everywhere; adapter blocks NoteDisplaySizes until presentationMode', () => {
         const size = { width: '40px', height: '30px', NoteFontSize: 12 };

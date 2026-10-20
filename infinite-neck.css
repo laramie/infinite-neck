@@ -828,13 +828,14 @@ table.viewControls th {
 /***************************** key-handlers: display-options *****************************/
 .tblDisplayOptions {
     border: 2px solid black;
+    border-spacing: 5px;
 }
 .tblDisplayOptions th {
     border: 1px solid gray;
 }
 /* Sprint 148 it4: Matrix gates in /vdd: r = read-blocked, w = write-blocked */
-.tblDisplayOptions .gateRead  { outline: 2px solid crimson; outline-offset: -2px; }
-.tblDisplayOptions .gateWrite { box-shadow: inset 0 -4px 0 royalblue; }
+.tblDisplayOptions .gateRead  { outline: 4px solid rgb(0, 50, 251); outline-offset: -4px; }
+.tblDisplayOptions .gateWrite { box-shadow: inset 0 0 5px 5px brown; }
 .tblDisplayOptions .gateMark  { font-size: 70%; color: #444; margin-left: 0.2em; }
 
 /***************************** Transport *****************************/

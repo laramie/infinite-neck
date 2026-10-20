@@ -1835,22 +1835,29 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return $("#cbAutomaticColorHighlight").prop("checked");  //independent AutoColor flag for Pitch/Multi highlights
 	}
 
-	export function turnOffHiding(){
-		var hideNamedNotes = $("#cbHideNamedNotes").prop("checked");
-		var hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
-		var hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
-		var hideFingering = $("#cbHideFingering").prop("checked");
-	
-		$("#cbHideNamedNotes").prop("checked", false);
-		$("#cbHideTinyNotes").prop("checked", false);
-		$("#cbHideSingleNotes").prop("checked", false);
-		$("#cbHideFingering").prop("checked", false);
+	//The rbHighlight note type that placing a note will reveal, mapped to the HIDE checkbox that hides it.
+	//Highlight types (MidiPitches, MidiPitchesSingle) place no hidden kind, so they clear nothing.
+	const HIDE_CHECKBOX_FOR_NOTE_TYPE = {
+		Named: '#cbHideNamedNotes',
+		Single: '#cbHideSingleNotes',
+		Tiny: '#cbHideTinyNotes',
+		Bend: '#cbHideTinyNotes',
+		Fingering: '#cbHideFingering'
+	};
+
+	//Unchecks only the HIDE checkbox matching noteType; the rest stay as the user set them.
+	export function turnOffHiding(noteType){
+		const selector = HIDE_CHECKBOX_FOR_NOTE_TYPE[noteType];
+		const wasChecked = selector ? $(selector).prop("checked") : false;
+		if (wasChecked) {
+			$(selector).prop("checked", false);
+		}
+		//Placing a note means we are no longer in the forced Keep mode, whichever flags remain.
 		$("#lblHideWarning").hide();
-	
 		turnOffKeep();
 		PalettePresentation.refreshPaletteHidingStatus();
-	
-		if (hideNamedNotes || hideTinyNotes || hideSingleNotes || hideFingering){
+		if (wasChecked){
+			refreshDisplayOptionsSaveActionRequired();  //programmatic flip fires no change event
 			clearAll();
 			replay();
 		}

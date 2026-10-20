@@ -7,8 +7,8 @@
 // A Section's stored `displayOptions` block is SPARSE: it holds only the cells that Section changed.
 //
 // Cascade rule: the value of a key at Section k is the last READABLE stored cell at a Section <= k.
-// A read-blocked cell contributes nothing (R1); a key that is read-blocked AT the target Section is
-// not applied at all, so its control keeps whatever it holds (R2).
+// A read-blocked cell contributes nothing (R1), as if it were absent; a key whose column, row or adapter
+// is read-blocked AT the target Section is not applied at all, so its control keeps its value (R2).
 //
 // Absent cells (no stored cell at or before k) -- see ABSENT_CELL_POLICY:
 //   'leave'              : omit the key; the control is left alone
@@ -26,7 +26,7 @@
 import {
     DISPLAY_OPTIONS_DEFAULTS, DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, isDisplayOptionKey, cloneValue
 } from './displayOptionsMeta.js';
-import { isReadBlocked } from './displayOptionsGates.js';
+import { isReadBlocked, isRegionReadBlocked } from './displayOptionsGates.js';
 
 export const POLICY_LEAVE = 'leave';
 export const POLICY_DEFAULT = 'default';
@@ -35,14 +35,14 @@ export const ABSENT_CELL_POLICY = POLICY_DEFAULT_IF_AUTOMATED;
 
 const POLICIES = [POLICY_LEAVE, POLICY_DEFAULT, POLICY_DEFAULT_IF_AUTOMATED];
 
-/** Keys that at least one Section stores in a readable cell. */
+/** Keys that at least one Section stores (a cell-gated or row-gated cell still counts; column/adapter-gated keys do not). */
 export function getAutomatedKeys(song) {
     const automated = new Set();
     for (const section of song?.sections ?? []) {
         const block = section?.displayOptions;
         if (!block) continue;
         for (const key of Object.keys(block)) {
-            if (isDisplayOptionKey(key) && !isReadBlocked(song, section, key)) {
+            if (isDisplayOptionKey(key) && !isRegionReadBlocked(song, null, key)) {
                 automated.add(key);
             }
         }
@@ -108,9 +108,9 @@ export function resolveDisplayOptions(song, sectionIndex, options = {}) {
             entries[key] = { source: 'default' };
         }
     }
-    // R2
+    // R2: adapter/column/row gates leave the control alone; a cell gate only made that cell absent (R1).
     for (const key of DISPLAY_OPTION_KEYS) {
-        if (isReadBlocked(song, target, key)) {
+        if (isRegionReadBlocked(song, target, key)) {
             delete values[key];
             entries[key] = { source: 'blocked' };
         }

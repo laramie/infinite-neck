@@ -127,6 +127,13 @@ export function isCellBlocked(section, key, side) {
     return listHas(section?.displayOptionGates, side, key);
 }
 
+/** adapter OR column OR row: the whole key/Section is off-limits, not just one stored cell. */
+export function isRegionReadBlocked(song, section, key) {
+    return adapterBlocked(song, key)
+        || isColumnBlocked(song, key, 'read')
+        || isRowBlocked(section, 'read');
+}
+
 /** column OR row OR cell OR adapter. */
 export function isReadBlocked(song, section, key) {
     return adapterBlocked(song, key)
