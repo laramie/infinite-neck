@@ -54,6 +54,12 @@ function gateClasses(...gateStrings){
     return classes.join(' ');
 }
 
+// Classes for a cell-level gate only (the `cell:r` / `cell:w` / `cell:rw` marks), for styling in infinite-neck.css.
+const CELL_GATE_CLASS = { r: 'cellGateRead', w: 'cellGateWrite', rw: 'cellGateReadWrite' };
+
+//For debugging turn this to true, and it will spit out "cell:r", "cell:w", "cell:rw", otherwise you just get the css classes.
+const WANT_LITERAL_CELLMARK_TEXT = false;
+
 function columnGateDescription(song){
     const gates = song.displayOptionGates;
     if (!gates) return 'no Song (column) gates';
@@ -95,12 +101,15 @@ export function displayOptionsTable(){
         for (const key of DISPLAY_OPTION_KEYS) {
             const blocks = describeBlocks(song, section, key);
             const hasCell = !!block && Object.prototype.hasOwnProperty.call(block, key);
-            const classes = gateClasses(blocks.column, blocks.row, blocks.cell);
+            const classes = [gateClasses(blocks.column, blocks.row, blocks.cell), CELL_GATE_CLASS[blocks.cell]]
+                .filter(Boolean).join(' ');
             const cellMarks = [];
-            if (blocks.cell) cellMarks.push(`cell:${blocks.cell}`);
+            if (WANT_LITERAL_CELLMARK_TEXT){
+                if (blocks.cell) cellMarks.push(`cell:${blocks.cell}`);
+            }
             const markHtml = sup(cellMarks);
             if (!hasCell) {
-                cells.push(`<td class='${classes}' style='background-color: darkgray;'>${markHtml || '&nbsp;'}</td>`);
+                cells.push(`<td class='${classes}' style='background-color: #303030;'>${markHtml || ''}</td>`);
                 continue;
             }
             const differs = !(key in baseline) || !valuesEqual(key, block[key], baseline[key]);

@@ -831,12 +831,54 @@ table.viewControls th {
     border-spacing: 5px;
 }
 .tblDisplayOptions th {
-    border: 1px solid gray;
+    border: 1px solid green;
+    background-color: rgb(250, 235, 94);
+}
+.tblDisplayOptions td {
+    text-align: center;
+    padding: 4px;
 }
 /* Sprint 148 it4: Matrix gates in /vdd: r = read-blocked, w = write-blocked */
-.tblDisplayOptions .gateRead  { outline: 4px solid rgb(0, 50, 251); outline-offset: -4px; }
-.tblDisplayOptions .gateWrite { box-shadow: inset 0 0 5px 5px brown; }
+.tblDisplayOptions .gateRead  { color: rgb(166, 64, 0); outline: 4px solid rgb(252, 97, 1); outline-offset: -4px; text-decoration: line-through rgb(252, 97, 1);}
+.tblDisplayOptions .gateWrite { box-shadow: inset 0 0 5px 6px rgb(0, 50, 251); }
 .tblDisplayOptions .gateMark  { font-size: 70%; color: #444; margin-left: 0.2em; }
+.tblDisplayOptions .cellGateRead {
+    /* Don't do outline here: it visually implies that cell-level wins over row or column, but it doesn't. Leaving it here so we can see how to do it if we want some variant. outline: 4px solid rgb(252, 239, 1); outline-offset: -4px;*/
+    background-image: 
+                repeating-linear-gradient(135deg, 
+                    red, 
+                    red 1px, 
+                    transparent 1px, 
+                    transparent 11px
+                )
+                !important;
+}
+
+.tblDisplayOptions .cellGateWrite {
+    background-image: 
+                repeating-linear-gradient(45deg, 
+                    blue, 
+                    blue 1px, 
+                    transparent 1px, 
+                    transparent 11px
+                ) !important;
+}
+
+.tblDisplayOptions .cellGateReadWrite {
+    background-image: 
+                repeating-linear-gradient(135deg, 
+                    red, 
+                    red 1px, 
+                    transparent 1px, 
+                    transparent 11px
+                ),
+                repeating-linear-gradient(45deg, 
+                    blue, 
+                    blue 1px, 
+                    transparent 1px, 
+                    transparent 11px
+                ) !important;
+}
 
 /***************************** Transport *****************************/
 
