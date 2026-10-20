@@ -137,7 +137,7 @@ import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
 import { FunctionSymbolsBuilder } from './templates/function-symbols/function-symbols.builder.js';
-import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey } from './templates/display-options/displayOptionsMeta.js';
+import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType } from './templates/display-options/displayOptionsMeta.js';
 import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
 import {
 	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
@@ -1835,19 +1835,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return $("#cbAutomaticColorHighlight").prop("checked");  //independent AutoColor flag for Pitch/Multi highlights
 	}
 
-	//The rbHighlight note type that placing a note will reveal, mapped to the HIDE checkbox that hides it.
-	//Highlight types (MidiPitches, MidiPitchesSingle) place no hidden kind, so they clear nothing.
-	const HIDE_CHECKBOX_FOR_NOTE_TYPE = {
-		Named: '#cbHideNamedNotes',
-		Single: '#cbHideSingleNotes',
-		Tiny: '#cbHideTinyNotes',
-		Bend: '#cbHideTinyNotes',
-		Fingering: '#cbHideFingering'
-	};
+	//Maps a HIDE DisplayOptions key to its checkbox: hideNamedNotes -> #cbHideNamedNotes, etc.
+	function hideCheckboxSelector(hideKey){
+		return `#cb${hideKey.charAt(0).toUpperCase()}${hideKey.slice(1)}`;
+	}
 
-	//Unchecks only the HIDE checkbox matching noteType; the rest stay as the user set them.
+	//Unchecks only the HIDE checkbox matching noteType (see hideKeyForNoteType); the rest stay as the user set them.
+	//Highlight types (MidiPitches, MidiPitchesSingle) clear nothing.
 	export function turnOffHiding(noteType){
-		const selector = HIDE_CHECKBOX_FOR_NOTE_TYPE[noteType];
+		const hideKey = hideKeyForNoteType(noteType);
+		const selector = hideKey ? hideCheckboxSelector(hideKey) : null;
 		const wasChecked = selector ? $(selector).prop("checked") : false;
 		if (wasChecked) {
 			$(selector).prop("checked", false);
@@ -2636,6 +2633,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				}
 
 				const mode = $(this).val();
+				if (mode !== 'keep') {
+					//Keep is no longer selected, so the forced-Keep warning is stale (a HIDE box may still be checked).
+					$("#lblHideWarning").hide();
+				}
 				if (mode === 'keep') {
 					PalettePresentation.enterKeepMode();
 					$("td.note").css({"cursor": "no-drop"});
@@ -2692,6 +2693,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				});
 				if (!gPresentation.palette.keepLocked){
 					$("td.note").css({"cursor": "pointer"});
+					turnOffHiding($(this).val());
+				}
+			});
+
+		//A click on an already-selected radio fires 'click' but not 'change', and pressing 6/7 etc. when that note
+		//type is already selected is exactly that case, so the reveal is also bound to 'click'.
+		$(document)
+			.off(`click${eventNamespace}`, 'input[name="rbHighlight"]')
+			.on(`click${eventNamespace}`, 'input[name="rbHighlight"]', function() {
+				if (!gPresentation.palette.keepLocked){
+					turnOffHiding($(this).val());
 				}
 			});
 	

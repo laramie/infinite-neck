@@ -31,7 +31,7 @@ describe('/vdd displayOptionsTable (static Matrix columns)', () => {
         song.sections.forEach((s) => { s.displayOptions = { noteFont: 'Cardo' }; });
         song.sections[1].displayOptions = { noteFont: 'Cardo', showMidiNum: true };
         const html = displayOptionsTable();
-        expect(html).toContain('background-color: darkgray');
+        expect(html).toContain('background-color: #303030');
         // Section 2's noteFont repeats the inherited value -> white; its showMidiNum is new -> green
         const row2 = html.split('<tr>')[3];
         expect(row2).toContain("background-color: white;'>Cardo");
@@ -49,7 +49,9 @@ describe('/vdd displayOptionsTable (static Matrix columns)', () => {
         expect(html).toContain('col:r');
         expect(html).toContain('col:w');
         expect(html).toContain('row:w');
-        expect(html).toContain('cell:r');
+        // the literal `cell:r` text is off (WANT_LITERAL_CELLMARK_TEXT); the cell is marked by classes instead
+        expect(html).toContain('cellGateRead');
+        expect(html).not.toContain('cellGateWrite');
         expect(html).toContain('&lt;b&gt;x&lt;/b&gt;');
         expect(html).not.toContain('<b>x</b>');
     });

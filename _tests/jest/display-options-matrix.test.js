@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-    DISPLAY_OPTIONS_DEFAULTS, DISPLAY_OPTION_META, DISPLAY_OPTION_KEYS, valuesEqual
+    DISPLAY_OPTIONS_DEFAULTS, DISPLAY_OPTION_META, DISPLAY_OPTION_KEYS, valuesEqual,
+    HIDE_KEY_FOR_NOTE_TYPE, hideKeyForNoteType
 } from '../../templates/display-options/displayOptionsMeta.js';
 import {
     normalizeSongGates, normalizeSectionGates, setGate, parseGateDirection,
@@ -65,6 +66,22 @@ describe('displayOptionsMeta', () => {
 });
 
 describe('displayOptionsGates', () => {
+    test('note type -> HIDE key (Round 5): the reveal granularity for note placement and note-type choice', () => {
+        expect(hideKeyForNoteType('Named')).toBe('hideNamedNotes');
+        expect(hideKeyForNoteType('Single')).toBe('hideSingleNotes');
+        expect(hideKeyForNoteType('Tiny')).toBe('hideTinyNotes');
+        expect(hideKeyForNoteType('Bend')).toBe('hideTinyNotes');
+        expect(hideKeyForNoteType('Fingering')).toBe('hideFingering');
+        // highlights reveal nothing; unknown values and inherited Object keys are safe
+        expect(hideKeyForNoteType('MidiPitches')).toBeNull();
+        expect(hideKeyForNoteType('MidiPitchesSingle')).toBeNull();
+        expect(hideKeyForNoteType(undefined)).toBeNull();
+        expect(hideKeyForNoteType('toString')).toBeNull();
+        for (const key of Object.values(HIDE_KEY_FOR_NOTE_TYPE)) {
+            expect(DISPLAY_OPTION_META[key]).toBeDefined();
+        }
+    });
+
     test('normalization drops unknown keys, duplicates, empties; row only in Section gates', () => {
         expect(normalizeSongGates({ readBlocked: ['bogus', 'noteFont', 'noteFont', '*'], writeBlocked: [] }))
             .toEqual({ readBlocked: ['noteFont'] });
@@ -244,6 +261,18 @@ describe('displayOptionsPlan', () => {
         expect(plan.ops).toEqual([{ type: 'deleteCell', sectionIndex: 1, key: 'showCellNotes', note: 'redundant' }]);
         applyPlan(song, plan);
         expect(song.sections[1].displayOptions).toBeUndefined();
+    });
+
+    test('Round 5: an undefined/null live value (e.g. no currentColorDict yet) is never stored', () => {
+        const song = mkSong([null]);
+        const live = { noteFont: 'Cardo', currentColorDict: undefined, sectionTheme: null };
+        // the dirty baseline is JSON-cloned, so undefined keys vanish from it: mirror that
+        const syncLive = JSON.parse(JSON.stringify(live));
+        const diff = planSaveDiff(song, 0, live, syncLive);
+        expect(diff.ops.map((o) => o.key)).toEqual(['noteFont']);
+        expect(planSaveAll(song, 0, live).ops.map((o) => o.key)).toEqual(['noteFont']);
+        applyPlan(song, diff);
+        expect(Object.keys(song.sections[0].displayOptions)).toEqual(['noteFont']);
     });
 
     test('SaveDiff updates an existing cell and skips blocked cells', () => {

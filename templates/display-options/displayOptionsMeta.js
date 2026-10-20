@@ -112,6 +112,23 @@ export const DISPLAY_OPTION_META = Object.freeze(Object.fromEntries(
 /** Keys in column order. */
 export const DISPLAY_OPTION_KEYS = Object.freeze(META_ROWS.map(([key]) => key));
 
+/** rbHighlight note type (the radio's value) -> the HIDE DisplayOptions key that hides notes of that type.
+ *  Highlight types (MidiPitches, MidiPitchesSingle) place no hidden kind, so they are absent. */
+export const HIDE_KEY_FOR_NOTE_TYPE = Object.freeze({
+    Named: 'hideNamedNotes',
+    Single: 'hideSingleNotes',
+    Tiny: 'hideTinyNotes',
+    Bend: 'hideTinyNotes',
+    Fingering: 'hideFingering'
+});
+
+/** @returns {string|null} the HIDE key for a note type, or null when that type reveals nothing. */
+export function hideKeyForNoteType(noteType) {
+    return Object.prototype.hasOwnProperty.call(HIDE_KEY_FOR_NOTE_TYPE, noteType)
+        ? HIDE_KEY_FOR_NOTE_TYPE[noteType]
+        : null;
+}
+
 export function isDisplayOptionKey(key) {
     return Object.prototype.hasOwnProperty.call(DISPLAY_OPTION_META, key);
 }

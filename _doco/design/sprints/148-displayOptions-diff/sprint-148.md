@@ -26,3 +26,9 @@ Purpose of this sprint is to:
 - [Iteration 4 Round 2 implementation plan](148-it4-round-2-implementation-plan.md) (SaveDiff, SaveAll, gates)
 - [Iteration 4 Round 3 implementation report and acceptance test plan](148-it4-round-3-implementation-report.md)
   - Status: implemented, Jest green (74 suites, 866 tests), awaiting browser acceptance.
+- [Iteration 4 Round 4 testing report 1](148-it4-round-4-testing-report.md) (bugs fixed and re-tested: PASS)
+- [Iteration 4 Round 4 testing report 2](148-it4-round-4-testing-report-2.md)
+- [Iteration 4 Round 4 analysis](148-it4-round-4-analysis.md) (HIDE reveal by note type, gate test results, SaveDiff `currentColorDict`)
+- [Iteration 4 Round 5 design (Design Team answers)](148-it4-round-5-design.md)
+- [Iteration 4 Round 5 implementation report and test recipes 13-15](148-it4-round-5-implementation-report.md)
+  - Status: implemented, Jest green (74 suites, 870 tests), browser acceptance steps 13, 14 and 15 PASS.

@@ -49,8 +49,10 @@ function newPlan(kind, sectionIndex) {
     return { kind, sectionIndex, ops: [], skipped: [], unchanged: 0 };
 }
 
+/** Keys with a real live value.  An undefined/null control value (e.g. a Song with no currentColorDict yet)
+ *  means "nothing to store": it would be dropped by JSON on save, leaving the model and the file disagreeing. */
 function knownKeysOf(live) {
-    return DISPLAY_OPTION_KEYS.filter((key) => live && key in live);
+    return DISPLAY_OPTION_KEYS.filter((key) => live && live[key] !== undefined && live[key] !== null);
 }
 
 export function planSaveDiff(song, idx, live, syncLive = null) {
