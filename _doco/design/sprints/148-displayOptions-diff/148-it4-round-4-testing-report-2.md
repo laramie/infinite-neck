@@ -1,8 +1,13 @@
-# Changes to code since implementation
+# Status
 
-Please note that we have changed, and we have requested Copilot to change, a few things in the code since implementation. In particular, we had you fix the bug in `_doco/design/sprints/148-displayOptions-diff/148-it4-round-4-testing-report.md` and that was successful.  Also, we have fiddled a lot with `infinite-neck.css` and had you change `display-options.js` which was also successful.  These changes are committed.  They affect how we see the results and reported them below.  Mostly, they allow us to see visual display of everything in /vdd.
+The sections below marked INFORMATIONAL, COMPLETED need no action.
+The sections below marked OPEN need action or response at this point.
 
-# Clarify automation rule
+# Changes to code since implementation (INFORMATIONAL)
+
+Please note that we have changed, and we have requested Copilot to change, a few things in the code since implementation. In particular, we had you fix the bug in `_doco/design/sprints/148-displayOptions-diff/148-it4-round-4-testing-report.md` and that was successful.  Also, we have fiddled a lot with `infinite-neck.css` and had you change `display-options.js` which was also successful.  These changes are committed.  They affect how we see the results and reported them below.  Mostly, they allow us to see visual display of everything in /vdd. We will keep these changes going forward as they fix most of the UX questions for planned Iteration which will built DisplayOptionsMatrix as an interactive version of `/vdd`.
+
+# Clarify automation rule (COMPLETED)
 
 ## Design Team Question
 
@@ -62,7 +67,7 @@ The Design Team accepts the explanation and confirms that this is the desired be
 
 As a side note, we now confirm that going into `http://localhost:8000/infinite-neck/?song=practice/All-Chords-w-Modes-Piano.json` and *CLEARing* the DisplayOptions puts us in a state where the macros work perfectly and automation doesn't undo the link clicks in Song Widgets.  Because this removes the hack where we manually deleted these keys in DisplayOptions in the JSON. So that use-case is solved.
 
-# Change Requested for presentation.js handling
+# Change Requested for presentation.js handling (OPEN)
 
 1. Clearing HIDE waits for actual notes to be placed before unhiding.
 
@@ -75,7 +80,7 @@ Now that the checkboxes are behaving correctly, we want to go back to state befo
 - Other note styles (SingleNote, TinyNote, Fingering) remain hidden if their HIDE checkboxes were checked.
 
  
-# Acceptance test plan (browser) Results
+# Acceptance test plan (browser) Results (OPEN)
 
 1. **Startup**: AutoColor is checked, Highlight unchecked, View controls at their markup values.  `/vdd` shows an empty table with the full column list.
 - RESULT: PASS
