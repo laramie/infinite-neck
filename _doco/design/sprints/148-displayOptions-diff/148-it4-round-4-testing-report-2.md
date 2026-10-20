@@ -1,3 +1,7 @@
+# Changes to code since implementation
+
+Please note that we have changed, and we have requested Copilot to change, a few things in the code since implementation. In particular, we had you fix the bug in `_doco/design/sprints/148-displayOptions-diff/148-it4-round-4-testing-report.md` and that was successful.  Also, we have fiddled a lot with `infinite-neck.css` and had you change `display-options.js` which was also successful.  These changes are committed.  They affect how we see the results and reported them below.  Mostly, they allow us to see visual display of everything in /vdd.
+
 # Clarify automation rule
 
 ## Design Team Question
@@ -70,6 +74,61 @@ Now that the checkboxes are behaving correctly, we want to go back to state befo
 - "HIDE NamedNotes" is automatically unchecked, existing NamedNotes are now shown (desired)
 - Other note styles (SingleNote, TinyNote, Fingering) remain hidden if their HIDE checkboxes were checked.
 
-# More testing
+ 
+# Acceptance test plan (browser) Results
+
+1. **Startup**: AutoColor is checked, Highlight unchecked, View controls at their markup values.  `/vdd` shows an empty table with the full column list.
+- RESULT: PASS
+
+2. **SAVE Diff basics**: on Section 1 change Note Font, click SAVE Diff.  Messages says `wrote noteFont`.  `/vdd` shows one row with only `noteFont` filled, the rest gray.
+- RESULT: PASS
+  - Note that message says `Section 1: saveDiff: wrote currentColorDict, noteFont; skipped NoteDisplaySizes (presentationMode is off)` and the background color is the "changed" green. We have been noticing that it really wants to write the blank+changed value for `currentColorDict`.  So far, this is not a problem.
+
+3. **Inheritance**: add Section 2; navigate 1 -> 2: Note Font stays.  On Section 2 change Show Left Subscript, SAVE Diff: row 2 holds only that cell.  Go back to Section 1: the subscript checkbox returns to its default (policy C).
+- RESULT: PASS
+
+4. **Revert**: on Section 2 set Show Left Subscript back to the default, SAVE Diff: the cell is removed (`removed showSubscriptFunctions`).
+- RESULT: PASS
+
+5. **Save All...**: click it; cancel keeps the model unchanged; OK writes every writable key.  `/vpa` writes without asking.
+- RESULT: PASS
+
+6. **Clear**: CLEAR on Section 2 removes its cells; Section 1 is untouched.
+- RESULT: PASS
+
+7. **AutoColor**: toggle it with `c`; move between Sections: it stays as you left it (no AutoColor cell is stored unless you SAVE Diff after changing it).
+- RESULT: PASS
+
+8. **Gates**
+   1. `/vpmgak` then `noteFont,read-blocked`: navigating no longer applies Note Font; `/vdd` header shows `col:r`.
+   2. `/vpmgdk` then `noteFont`: removes it.
+   3. `/vpmgac` then `2,showMidiNum,write-blocked`: on Section 2, SAVE Diff after toggling MIDI numbers reports `skipped showMidiNum (write-blocked)`; CLEAR leaves that cell.
+   4. `/vpmgas` then `2,read-blocked`: Section 2 applies nothing.
+   5. `/vpmc` then `2,noteFont`: clears one cell.
+   6. `/vpmu`: undoes the last change, including a gate.
+- RESULT: 
+  1. `/vpmgak` then `noteFont,read-blocked`: navigating no longer applies Note Font :: *only after clearing the live control*.  When the control is left as it was, that font just stays and displays in the Instrument.  When the control is set to some other font, *that font* stays and displays.
+  2. PASS
+  3. PASS
+  4. FAIL. At the end of sequence 3. we have showMidiNum write-blocked, and all other cells gray.  When we perform step **`/vpmgas` then `2,read-blocked`: Section 2 applies nothing** the read-blocked is duly applied to the row, and the write-block on cell showMidiNum is preserved.
+  5. **`/vpmc` then `2,noteFont`: clears one cell.** clears nothing because our state was that noteFont was in Section 1 but not Section 2.  **`/vpmc` then `1,noteFont`: clears one cell.** works.
+
+9. **Presentation Mode**: with it off, SAVE Diff reports `skipped NoteDisplaySizes (presentationMode is off)`; turn it on and change cell width: SAVE Diff stores `NoteDisplaySizes`.
+- RESULT: PASS
+
+10. **Song round trip**: Save the Song, reload it: gates, sparse cells and the controls are as before.  The View > diagnostics "Song file format" item shows `displayOptionGates` only when set.
+- RESULT: PASS
+
+11. **Clone**: Clone copies cells and gates; Shallow clone keeps the Section's gates and drops its cells.
+- RESULT: PASS
+
+12. **Looping**: loop through 3 Sections with the View page open: controls follow the cascade; nothing flickers back to defaults at the loop wrap.
+- RESULT: PASS
+
+## Results Discussion
+
+We would like analysis of the results, and if there are more detailed tests we need to run for the FAIL case and the ambiguous ones.
+
+
 
 
