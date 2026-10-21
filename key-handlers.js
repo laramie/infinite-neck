@@ -177,6 +177,7 @@ function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handle
 function clearDisplayOptionsCell(...args) { return requireProvider('clearDisplayOptionsCell')(...args); }
 function setDisplayOptionsGate(...args) { return requireProvider('setDisplayOptionsGate')(...args); }
 function undoDisplayOptionsOp(...args) { return requireProvider('undoDisplayOptionsOp')(...args); }
+function showDisplayOptionsMatrix(...args) { return requireProvider('showDisplayOptionsMatrix')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
@@ -1418,6 +1419,11 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = undoDisplayOptionsOp().report;
 			actionResult.preserveMenuStack = true;
 			break;
+		case "matrixOpen":
+			showDisplayOptionsMatrix();
+			actionResult.result = 'DisplayOptions Matrix opened';
+			actionResult.preserveMenuStack = true;
+			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
 			break;	
@@ -1952,6 +1958,7 @@ export function performCmdAction(menuItem, args){
 			paletteUtils.check("#rbBend");
 			break;
 		case "disposeAllDockables":
+			dockDivInPage('divDisplayOptionsMatrix');  //Sprint 148 it5: dispose would delete a floating Matrix (no-op when docked).
 			disposeAllDockables();
 			EventBus.trigger('ReinstallAllTuningsTables');
 			EventBus.trigger('UpdateAllWiringSelects');

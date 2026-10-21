@@ -121,7 +121,7 @@ Round 2's deliverable is a working first implementation of the DisplayOptionsMat
 
 **Q2.  Re-apply after an edit (H2).**  Add an **Apply** button (= `sectionChanged()`) to Additional Buttons, and show `controls not re-applied: Apply, or navigate` in the status line after a gate, clear or undo on the Current Section?  And should there also be an "Auto-apply" toggle (default off)?  Recommendation: **Apply button yes, Auto-apply no** (it would silently overwrite unsaved live edits on every click).
 
-- ANSWER: Apply button yes.  Auto-apply with checkbox: yes.  When SaveDiff would turn magenta and Auto-apply is checked, put warning in Status area: "Live controls changed: SaveDiff before next Apply" 
+- ANSWER: Apply button: yes.  Auto-apply with checkbox: yes.  When SaveDiff would turn magenta and Auto-apply is checked, put warning in Status area: "Live controls changed: SaveDiff before next Apply" 
 
 
 **Q3.  Quiet reporting (H3).**  Matrix actions skip `Messages.showMessages()`, still write a UserLog row, and show the report in a status line in the Matrix.  Is that what you want, or should the status line also be hidden until the planned "hide Messages" checkbox lands?  Recommendation: **as described**.
@@ -146,7 +146,7 @@ Round 2's deliverable is a working first implementation of the DisplayOptionsMat
 
 **Q7.  Floating (H8).**  Handle disposal by calling `dockBeforeDispose()` in `updateAfterOpenSong()`, the append-sections import and the `disposeAllDockables` command (no change to `dockable.js`).  Recommendation: **yes**.  (Alternative: let `disposeAllDockables` accept a keep list, a change in `dockable.js`.)
 
-- ANSWER: yes.
+- ANSWER: yes.  Not sure if this is a needed decision, but there will be no option to persist floating state, so default is parked in page, like every other Menu Page div.  User must click something to float the widget.  "Info" may be the only system widget/page/div that stores a float option.
 
 
 **Q8.  SAVE Diff in the Matrix.**  Add a SAVE Diff button (with the magenta dirty highlight) to Additional Buttons, next to Save All, Apply, Undo and Float?  Recommendation: **yes**: SAVE Diff is the main action and a floating Matrix is far from the View card.  CLEAR (Current) is covered by the Clear Section Tool on the Current row.

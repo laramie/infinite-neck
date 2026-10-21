@@ -34,3 +34,5 @@ Purpose of this sprint is to:
   - Status: implemented, Jest green (74 suites, 870 tests), browser acceptance steps 13, 14 and 15 PASS.
 - [Iteration 5 design (DisplayOptionsMatrix)](148-it5-design.md)
 - [Iteration 5 Round 1 implementation plan with questions](148-it5-round-1-implementation-plan.md)
+- [Iteration 5 Round 2 implementation report and test recipes 16-25](148-it5-round-2-implementation-report.md)
+  - Status: implemented, awaiting browser acceptance (see report for the not-verified list).

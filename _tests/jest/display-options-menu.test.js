@@ -35,6 +35,7 @@ describe('Sprint 148 it4: /vpm Matrix menu', () => {
         expect(walk('vpmgds').on).toBe(false);
         expect(walk('vpmgdc').on).toBe(false);
         expect(walk('vpmu').action).toBe('matrixUndo');
+        expect(walk('vpmo').action).toBe('matrixOpen');
         expect(walk('vpmgak').input.datatype).toBe('string');
     });
 
@@ -45,7 +46,7 @@ describe('Sprint 148 it4: /vpm Matrix menu', () => {
 
     test('every Matrix action has a case in key-handlers.js', () => {
         const src = fs.readFileSync(path.join(here, '../../key-handlers.js'), 'utf8');
-        for (const action of ['matrixClearCell', 'matrixGateKey', 'matrixGateSection', 'matrixGateCell', 'matrixUndo',
+        for (const action of ['matrixClearCell', 'matrixGateKey', 'matrixGateSection', 'matrixGateCell', 'matrixUndo', 'matrixOpen',
                               'saveViewDisplayOptionsAll']) {
             expect(src).toContain(`case "${action}"`);
         }

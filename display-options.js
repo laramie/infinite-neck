@@ -7,8 +7,9 @@
 //   - gates: column gates on the header, row gates on the Section number, cell gates on the cell.
 //     Marks: r = read-blocked, w = write-blocked; a = derived from presentationMode / allowThemeAutomation.
 
-import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, valuesEqual } from './templates/display-options/displayOptionsMeta.js';
+import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META } from './templates/display-options/displayOptionsMeta.js';
 import { describeBlocks } from './templates/display-options/displayOptionsGates.js';
+import { escapeHtml, cellText, gateClasses, CELL_GATE_CLASS, cellState } from './templates/display-options/displayOptionsCellRules.js';
 
 let getSongProvider = function () {
     return null;
@@ -22,40 +23,12 @@ export function setDisplayOptionsProviders(providers){
     // providers.controlsToDisplayOptions is accepted for compatibility but no longer used: the columns are static.
 }
 
-function escapeHtml(text){
-    return `${text}`
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-function cellText(value){
-    if (value === undefined || value === null) return '';
-    if (typeof value === 'boolean') return value ? '\u2713' : '';
-    if (typeof value === 'object') {
-        if (value.caption) return `${value.caption}`;
-        return JSON.stringify(value);
-    }
-    return `${value}`;
-}
+// escapeHtml, cellText, gateClasses, CELL_GATE_CLASS and cellState are shared with the interactive Matrix (Sprint 148 it5).
 
 function sup(parts){
     const text = escapeHtml(parts.join(' '));
     return parts.length ? `<sup class='gateMark' title='${text}'>${text}</sup>` : '';
 }
-
-function gateClasses(...gateStrings){
-    const text = gateStrings.join('');
-    const classes = [];
-    if (text.includes('r')) classes.push('gateRead');
-    if (text.includes('w')) classes.push('gateWrite');
-    return classes.join(' ');
-}
-
-// Classes for a cell-level gate only (the `cell:r` / `cell:w` / `cell:rw` marks), for styling in infinite-neck.css.
-const CELL_GATE_CLASS = { r: 'cellGateRead', w: 'cellGateWrite', rw: 'cellGateReadWrite' };
 
 //For debugging turn this to true, and it will spit out "cell:r", "cell:w", "cell:rw", otherwise you just get the css classes.
 const WANT_LITERAL_CELLMARK_TEXT = false;
@@ -100,7 +73,7 @@ export function displayOptionsTable(){
         const cells = [`<td${topBorder} class='${gateClasses(rowGate)}'>${sectionIdx + 1}${sup(rowGate ? [`row:${rowGate}`] : [])}</td>`];
         for (const key of DISPLAY_OPTION_KEYS) {
             const blocks = describeBlocks(song, section, key);
-            const hasCell = !!block && Object.prototype.hasOwnProperty.call(block, key);
+            const state = cellState(block, key, baseline);
             const classes = [gateClasses(blocks.column, blocks.row, blocks.cell), CELL_GATE_CLASS[blocks.cell]]
                 .filter(Boolean).join(' ');
             const cellMarks = [];
@@ -108,13 +81,12 @@ export function displayOptionsTable(){
                 if (blocks.cell) cellMarks.push(`cell:${blocks.cell}`);
             }
             const markHtml = sup(cellMarks);
-            if (!hasCell) {
+            if (state === 'absent') {
                 cells.push(`<td class='${classes}' style='background-color: #303030;'>${markHtml || ''}</td>`);
                 continue;
             }
-            const differs = !(key in baseline) || !valuesEqual(key, block[key], baseline[key]);
             const text = escapeHtml(cellText(block[key])) || '&nbsp;';
-            cells.push(`<td class='${classes}' style='background-color: ${differs ? 'chartreuse' : 'white'};'>${text}${markHtml}</td>`);
+            cells.push(`<td class='${classes}' style='background-color: ${state === 'changed' ? 'chartreuse' : 'white'};'>${text}${markHtml}</td>`);
         }
         res.push(`<tr>${cells.join('')}</tr>`);
         skippedRow = false;

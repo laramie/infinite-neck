@@ -39,6 +39,7 @@
     <link rel="stylesheet" type="text/css" href="templates/SectionStatus/section-status.css" />
     <link rel="stylesheet" type="text/css" href="templates/tutorial/tutorial.css" />
     <link rel="stylesheet" type="text/css" href="templates/function-symbols/function-symbols.css" />
+    <link rel="stylesheet" type="text/css" href="templates/display-options/display-options.css" />
 
     <!--
     
@@ -949,7 +950,12 @@
                 </p>
                 <p class="viewDisplayOptionsReadOnly"><button id="btnShowDisplayOptions" type="button" data-action="showDisplayOptions">Show Display Options</button>
                     </p>
+                <p class="viewDisplayOptionsReadOnly"><button id="btnToggleDisplayOptionsMatrix" type="button" class="safeButton" title="The interactive Display Options Matrix (command line: /vpmo)">Display Options Matrix <span id="spanDisplayOptionsMatrixArrow">&#x25B6;</span></button>
+                    </p>
             </div>
+
+            <!-- Sprint 148 it5: the interactive Matrix, built from templates/display-options/ by DisplayOptionsMatrixBuilder.  Page-wide (flex: 1 0 100%). -->
+            <div id="divDisplayOptionsMatrixHost"></div>
 
         </div>
         <!-- END divViewControls -->

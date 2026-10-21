@@ -12,6 +12,7 @@
 //   planClear     : remove the Section's stored cells.  Skips ONLY explicitly write-blocked cells
 //                   (Round 3 Q6: a read block does not stop Clear).
 //   planClearCell : remove one cell.  Honors only the write block.
+//   planStoreCell : write ONE cell from the live control (Matrix 'Store Cell' tool).  Skips read- and write-blocked.
 //   planGate      : add/remove a column, row ('*') or cell gate.  Gates are never touched by the
 //                   Save/Clear plans.
 //
@@ -117,6 +118,28 @@ export function planClearCell(song, idx, key) {
         plan.skipped.push({ key, reason: 'write-blocked' });
     } else {
         plan.ops.push({ type: 'deleteCell', sectionIndex: idx, key });
+    }
+    return plan;
+}
+
+/** Sprint 148 it5: write one cell from the live controls (the Matrix 'Store Cell' tool). */
+export function planStoreCell(song, idx, key, live) {
+    const plan = newPlan('storeCell', idx);
+    if (!isDisplayOptionKey(key)) {
+        throw new Error(`unknown DisplayOptions key: ${key}`);
+    }
+    if (!song.sections[idx]) {
+        throw new Error(`no Section at index ${idx}`);
+    }
+    const reason = skipReason(song, idx, key);
+    if (live?.[key] === undefined || live?.[key] === null) {
+        plan.skipped.push({ key, reason: 'no live value' });
+    } else if (reason) {
+        plan.skipped.push({ key, reason });
+    } else if (hasCell(song, idx, key) && valuesEqual(key, live[key], blockOf(song, idx)[key])) {
+        plan.unchanged++;
+    } else {
+        plan.ops.push({ type: 'setCell', sectionIndex: idx, key, value: cloneValue(live[key]) });
     }
     return plan;
 }

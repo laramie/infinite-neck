@@ -1806,6 +1806,12 @@ export var gMenuFile =    {
                   "trigger": "u",
                   "action": "matrixUndo",
                   "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>o</b>pen the interactive Matrix (View page)",
+                  "trigger": "o",
+                  "action": "matrixOpen",
+                  "preserveMenuStack": true
                 }
               ]
             },

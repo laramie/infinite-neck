@@ -3000,6 +3000,20 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
      Scroll down to see the audit
      of all Sections with Display Options.  An option that differs from what its Section inherits is highlighted green.  
  </p>
+<p><b>The interactive Display Options Matrix.</b>  On the View page click <span class="GUIReferenceInline">Display Options Matrix</span> (or type <span class="menuExampleLine"><b><small>/vpmo</small></b></span>)
+    to open a live version of the <span class="menuExampleLine">/vdd</span> table: every Section is a row, the Current Section is highlighted, and the DEFAULTS and LIVE (the controls) rows sit above the Sections.
+    Pick a <b>Tool</b>, then click a column header, a Section number, or a cell.  It never opens the Messages panel; each action reports in the line under the Tools.
+    <ul>
+        <li><b>Inspect</b> (the default) changes nothing.  Click a Section number to go to that Section, or any other cell to see what is stored, what is inherited, which gates apply and what they do.</li>
+        <li><b>Key read-block / Key write-block</b>: click a column header or any cell in the column (or in DEFAULTS or LIVE) to toggle that option's Song gate.  Click again to remove it.</li>
+        <li><b>Section read-block / Section write-block</b>: click a Section number or any cell in the row to toggle the Section gate.</li>
+        <li><b>Cell read-block / Cell write-block</b>: toggle the gate on one cell.  A cell read-block means the stored cell is ignored (the option is inherited); a column or Section read-block means the control is left alone.</li>
+        <li><b>Clear Section</b> and <b>Clear Cell</b> remove stored values (never gates); <b>Store Cell</b> writes one control's current value into one cell.  These three work once and then return to Inspect.</li>
+    </ul>
+    Gate and clear edits do not touch the controls until the Section is applied again.  Click <b>Apply</b> (or navigate) to see the effect in the Instruments; with <b>Auto-apply</b> checked the Matrix does it for you,
+    unless the controls have unsaved changes, in which case it warns you to SAVE Diff first.  <b>SAVE Diff</b>, <b>Save All...</b> and <b>Undo</b> (one level, shared with <span class="menuExampleLine">/vpmu</span>) are on the Matrix too.
+    <b>View Column Gates</b> and <b>View Row Gates</b> switch those overlays off to show only values and cell gates.  <b>Float</b> puts the Matrix in a window; <b>Legend</b> explains every look.
+ </p>
 <p>
     <img style="border: 20px solid green; width: 60%;" src="img/help/display-options-printout.png">
 </p>

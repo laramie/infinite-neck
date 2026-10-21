@@ -1,0 +1,218 @@
+/* Sprint 148 Iteration 5: the interactive DisplayOptions Matrix.  Markup: display-options.html; HTML of the table: displayOptionsMatrixView.js.
+   Everything is scoped under #divDisplayOptionsMatrix (the div moves into a body-level window when floated).
+   The gate looks are ported from infinite-neck.css's .tblDisplayOptions (/vdd) so the Matrix opens looking like /vdd;
+   tune them here.  Differences from /vdd: per-source classes (dmColGate*, dmRowGate*, dmCellGate*), so "View Column Gates"
+   and "View Row Gates" can be switched off independently (wrapper classes dmShowColGates / dmShowRowGates). */
+
+#divDisplayOptionsMatrix {
+    flex: 1 0 100%;              /* a page-wide card in #divViewControls (a flex-wrap container) */
+    box-sizing: border-box;
+    background: white;
+    color: black;
+    padding: 0.4em;
+    min-width: 24em;
+    max-width: 100%;
+    text-align: left;
+}
+#divDisplayOptionsMatrixHost {
+    flex: 1 0 100%;
+    box-sizing: border-box;
+}
+
+#divDisplayOptionsMatrix .dmRow {
+    margin: 0.25em 0;
+}
+#divDisplayOptionsMatrix .dmRowLabel {
+    font-weight: bold;
+    margin-right: 0.4em;
+}
+#divDisplayOptionsMatrix .dmCheck {
+    margin: 0 0.4em;
+    white-space: nowrap;
+}
+#divDisplayOptionsMatrix .dmTools label {
+    display: inline-block;
+    margin-right: 0.8em;
+    white-space: nowrap;
+}
+#divDisplayOptionsMatrix .dmTools input {
+    margin-right: 0.2em;
+}
+
+#divDisplayOptionsMatrix .dmStatus {
+    min-height: 1.3em;
+    margin: 0.25em 0;
+    padding: 0.15em 0.4em;
+    background: #f4f4f4;
+    border-left: 4px solid #999;
+    font-size: 90%;
+    white-space: normal;
+}
+#divDisplayOptionsMatrix .dmStatus.dmStatusWarn {
+    background: #fff0f0;
+    border-left-color: #c00;
+    color: #800;
+}
+#divDisplayOptionsMatrix .dmStatus.dmStatusHint {
+    border-left-color: #c80;
+}
+#divDisplayOptionsMatrix .dmStatus .dmStatusTitle {
+    font-weight: bold;
+}
+
+/* ------------- the table: scroll container with sticky header rows and a sticky Section column ------------- */
+#divDisplayOptionsMatrix .dmScroll {
+    position: relative;
+    isolation: isolate;
+    overflow: auto;
+    max-height: 65vh;
+    max-width: 100%;
+    border: 1px solid #666;
+}
+#divDisplayOptionsMatrix .dmTable {
+    border-collapse: separate;     /* sticky cells lose collapsed borders */
+    border-spacing: 0;
+}
+#divDisplayOptionsMatrix .dmTable :where(th, td) {
+    position: relative;
+    border: 1px solid #777;
+    padding: 2px 4px;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+}
+#divDisplayOptionsMatrix .dmTable :where(td) {
+    min-width: 3.2em;
+    max-width: 9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 1.7em;
+}
+
+/* the sticky offsets of the key, DEFAULTS and LIVE rows are measured by the builder (--dm-top-*) */
+#divDisplayOptionsMatrix .dmGroupRow > *    { position: sticky; top: 0;                                z-index: 4; }
+#divDisplayOptionsMatrix .dmKeyRow > *      { position: sticky; top: var(--dm-top-key, 1.7em);         z-index: 4; }
+#divDisplayOptionsMatrix .dmDefaultsRow > * { position: sticky; top: var(--dm-top-defaults, 9em);      z-index: 4; }
+#divDisplayOptionsMatrix .dmLiveRow > *     { position: sticky; top: var(--dm-top-live, 10.7em);       z-index: 4; }
+#divDisplayOptionsMatrix .dmSectionHeader,
+#divDisplayOptionsMatrix .dmSectionLabel    { position: sticky; left: 0; z-index: 3; }
+#divDisplayOptionsMatrix thead .dmCorner,
+#divDisplayOptionsMatrix thead .dmSpecialLabel { left: 0; z-index: 6; }
+
+#divDisplayOptionsMatrix .dmGroupHeader { background: rgb(250, 235, 94); font-size: 85%; }
+#divDisplayOptionsMatrix .dmCorner      { background: #ddd; }
+#divDisplayOptionsMatrix .dmKeyHeader   { background: #ddd; text-align: left; vertical-align: bottom; }
+#divDisplayOptionsMatrix .dmKeyHeader span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+#divDisplayOptionsMatrix .dmSpecialLabel,
+#divDisplayOptionsMatrix .dmSpecialCell { background: white; }
+#divDisplayOptionsMatrix .dmSpecialLabel { font-size: 85%; text-align: left; }
+#divDisplayOptionsMatrix .dmSectionLabel,
+#divDisplayOptionsMatrix .dmSectionLabelFill { background: #eee; text-align: left; }
+#divDisplayOptionsMatrix .dmSectionHeader { background: #ddd; font-weight: bold; }
+#divDisplayOptionsMatrix .dmSectionLink { color: inherit; text-decoration: underline; }
+
+/* cell state */
+#divDisplayOptionsMatrix .dmAbsent  { background-color: #303030; }
+#divDisplayOptionsMatrix .dmStored  { background-color: white; }
+#divDisplayOptionsMatrix .dmChanged { background-color: chartreuse; }
+
+/* the Current Section */
+#divDisplayOptionsMatrix th.dmCurrentRow { background: gold; }
+#divDisplayOptionsMatrix tr.dmCurrentRow > th,
+#divDisplayOptionsMatrix tr.dmCurrentRow > td {
+    border-top: 2px solid navy;
+    border-bottom: 2px solid navy;
+}
+
+#divDisplayOptionsMatrix .gateMark {
+    font-size: 70%;
+    color: #444;
+    margin-left: 0.2em;
+}
+
+/* ------------- gates ------------- */
+/* column and row gates: read = orange outline + strike-through, write = blue inset glow.  Shown while the matching
+   wrapper class (dmShowColGates / dmShowRowGates) is on, and they win over a cell gate (no !important on the cell rules). */
+.dmShowColGates .dmColGateR,
+.dmShowRowGates .dmRowGateR,
+.dmShowColGates .dmAdapter {
+    color: rgb(166, 64, 0) !important;
+    outline: 4px solid rgb(252, 97, 1) !important;
+    outline-offset: -4px;
+    text-decoration: line-through rgb(252, 97, 1) !important;
+}
+.dmShowColGates .dmColGateW,
+.dmShowRowGates .dmRowGateW,
+.dmShowColGates .dmAdapter {
+    box-shadow: inset 0 0 5px 6px rgb(0, 50, 251);
+}
+
+/* cell gates: always shown */
+#divDisplayOptionsMatrix .dmCellGateR {
+    color: rgb(76, 0, 0);
+    outline: 4px solid red;
+    outline-offset: -4px;
+    text-decoration: line-through red;
+    background-image: repeating-linear-gradient(135deg, red, red 1px, transparent 1px, transparent 11px);
+}
+#divDisplayOptionsMatrix .dmCellGateW {
+    outline: 4px solid blue;
+    outline-offset: -4px;
+    background-image: repeating-linear-gradient(45deg, blue, blue 1px, transparent 1px, transparent 11px);
+}
+#divDisplayOptionsMatrix .dmCellGateR.dmCellGateW {
+    outline: 4px solid red;
+    outline-offset: -4px;
+    background-image:
+        repeating-linear-gradient(135deg, red, red 1px, transparent 1px, transparent 11px),
+        repeating-linear-gradient(45deg, blue, blue 1px, transparent 1px, transparent 11px);
+}
+
+/* ------------- clicking and hover preview ------------- */
+#divDisplayOptionsMatrix .dmTable [data-zone] { cursor: pointer; }
+#divDisplayOptionsMatrix .dmTable [data-zone='corner'],
+#divDisplayOptionsMatrix .dmTable [data-zone='groupHeader'],
+#divDisplayOptionsMatrix .dmTable [data-zone='specialLabel'],
+#divDisplayOptionsMatrix .dmTable [data-zone='sectionLabel'] { cursor: default; }
+#divDisplayOptionsMatrix .dmTable .dmIllegal { cursor: not-allowed; }
+#divDisplayOptionsMatrix .dmTable .dmHot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 0, 200, 0.28);
+    outline: 2px solid magenta;
+    outline-offset: -2px;
+    pointer-events: none;
+}
+
+/* ------------- Legend ------------- */
+#divDisplayOptionsMatrix .dmLegend {
+    margin-top: 0.3em;
+    padding: 0.4em;
+    border: 1px solid #666;
+    background: #fafafa;
+    overflow: auto;
+    max-width: 100%;
+    font-size: 90%;
+}
+#divDisplayOptionsMatrix .dmLegend .dmTable [data-zone] { cursor: default; }
+#divDisplayOptionsMatrix .dmLegendSwatch {
+    display: inline-block;
+    padding: 0 0.5em;
+    border: 1px solid #777;
+}
+#divDisplayOptionsMatrix .dmLegend .dmKeyHeader span { font-size: 90%; }
+#spanDisplayOptionsMatrixArrow,
+#spanDisplayOptionsMatrixLegendArrow {
+    font-size: 80%;
+}
+
+/* a floating Matrix: the window's content host is black, so keep our own background and give the table room */
+#floating-divDisplayOptionsMatrix #divDisplayOptionsMatrix {
+    flex: none;
+    height: 100%;
+    overflow: auto;
+}

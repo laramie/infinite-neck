@@ -137,6 +137,7 @@ import { MidiTabBuilder } from './templates/midi/midi.builder.js';
 import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
 import { FunctionSymbolsBuilder } from './templates/function-symbols/function-symbols.builder.js';
+import { DisplayOptionsMatrixBuilder } from './templates/display-options/display-options.builder.js';
 import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType } from './templates/display-options/displayOptionsMeta.js';
 import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
 import {
@@ -372,6 +373,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			clearDisplayOptionsCell,
 			setDisplayOptionsGate,
 			undoDisplayOptionsOp,
+			showDisplayOptionsMatrix,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
@@ -707,7 +709,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	}
 
 	function setDisplayOptionsSaveActionRequired(isRequired){
-		$('#btnSaveDiff_View').toggleClass('riskyButtonActionRequired', !!isRequired);
+		$('#btnSaveDiff_View, #btnSaveDiff_Matrix').toggleClass('riskyButtonActionRequired', !!isRequired);
 	}
 
 	export function updateDisplayOptionsReadonlyValues(options = null){
@@ -732,6 +734,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		displayOptionsDirtyBaseline = cloneDisplayOptions(controlsToDisplayOptions());
 		updateDisplayOptionsReadonlyValues(displayOptionsDirtyBaseline);
 		setDisplayOptionsSaveActionRequired(false);
+		// Sprint 148 it5: the Matrix's LIVE row follows the controls (this runs on every Section sync and after Apply).
+		EventBus.trigger('DisplayOptions:liveChanged', { dirty: false });
 	}
 
 	function areDisplayOptionsEqual(left, right){
@@ -745,7 +749,23 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		const currentOptions = controlsToDisplayOptions();
 		updateDisplayOptionsReadonlyValues(currentOptions);
-		setDisplayOptionsSaveActionRequired(!areDisplayOptionsEqual(currentOptions, displayOptionsDirtyBaseline));
+		const dirty = !areDisplayOptionsEqual(currentOptions, displayOptionsDirtyBaseline);
+		setDisplayOptionsSaveActionRequired(dirty);
+		EventBus.trigger('DisplayOptions:liveChanged', { dirty });
+	}
+
+	/** Sprint 148 it5: what the interactive Matrix needs to read at render and click time (it keeps no state of its own). */
+	export function getDisplayOptionsMatrixContext(){
+		const song = getSong();
+		const live = controlsToDisplayOptions();
+		return {
+			song,
+			currentIndex: currentSectionIndex(),
+			live,
+			syncLive: displayOptionsDirtyBaseline,
+			dirty: !!displayOptionsDirtyBaseline && !areDisplayOptionsEqual(live, displayOptionsDirtyBaseline),
+			canUndo: canUndoDisplayOptionsOp(song)
+		};
 	}
 
 	export function getDisplayOptionsSaveState(){
@@ -1690,6 +1710,9 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (isFloaty()){
 			makeDivDockable(stripDivHash(strMenuDiv),900);
 		}
+		if (strMenuDiv === '#divViewControls'){
+			DisplayOptionsMatrixBuilder.refreshIfStale();  //the Matrix idles while hidden.
+		}
 	}
 
 	export function showOneMenu(strMenuDiv, forceOpen = false) {
@@ -2082,6 +2105,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// Stale floating windows from whatever song was previously open must not survive
 			// into the newly-appended sections: their DOM ids can collide with the tables
 			// ReinstallAllTuningsTables is about to (re)build. See sprint-141 Iteration 1 analysis.
+			DisplayOptionsMatrixBuilder.dockBeforeDispose();  //disposeAllDockables() would delete a floating Matrix.
 			disposeAllDockables();
 			requestReloadTuningsDisplays();
 			EventBus.trigger('ReinstallAllTuningsTables');
@@ -2100,6 +2124,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// load: they'd share DOM ids with the tables about to be (re)built below, causing
 		// duplicate-id bugs (mash-the-Float-button, UF affecting both, etc.). See
 		// sprint-141 Iteration 1 analysis.
+		DisplayOptionsMatrixBuilder.dockBeforeDispose();  //disposeAllDockables() would delete a floating Matrix.
 		disposeAllDockables();
 		getSong().resetRecording?.();
 		syncRecordingViews();
@@ -2107,6 +2132,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Sprint 148 it3: the SELECT is built from built-ins + THIS Song's User sets; sectionChanged() below
 		// re-applies whichever set Section 1's stored DisplayOptions name.
 		FunctionSymbolsBuilder.onSongOpened();
+		DisplayOptionsMatrixBuilder.onSongOpened();
 		// Sprint 148 it4: no session-level DisplayOptions -- every Song open starts the controls from the Song
 		// defaults; sectionChanged() below then applies whatever this Song's Sections store.
 		applyDisplayOptionDefaults();
@@ -3694,17 +3720,26 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return getSong().getSections().indexOf(getCurrentSection());
 	}
 
-	function finishDisplayOptionsModelChange(result){
+	/** options.quiet (Sprint 148 it5, the interactive Matrix): still logs to the UserLog, but does not open Messages
+	 *  (which scrolls the page and hides the command line); the caller shows result.report itself.
+	 *  options.keepDirty: leave the SAVE Diff "dirty" baseline alone, so unsaved live edits keep their magenta highlight. */
+	function finishDisplayOptionsModelChange(result, options = {}){
 		if (result.changed){
 			showHideDisplayOptionsPresent();
-			captureDisplayOptionsDirtyBaseline();
+			if (options.keepDirty){
+				refreshDisplayOptionsSaveActionRequired();
+			} else {
+				captureDisplayOptionsDirtyBaseline();
+			}
 			ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's sectionTheme.
 			FunctionSymbolsBuilder.refresh();   //usage count of a User Function Symbols set may have changed.
 			EventBus.trigger('DisplayOptionsModel:changed', { report: result.report });
 		}
 		const html = escapeHtml(result.report);
 		UserLog.addToUserLog('DisplayOptions', html);
-		Messages.showMessages(html);
+		if (!options.quiet){
+			Messages.showMessages(html);
+		}
 		return result;
 	}
 
@@ -3718,28 +3753,34 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return idx;
 	}
 
-	function runDisplayOptionsCommand(fn){
+	function runDisplayOptionsCommand(fn, finishOptions = {}){
 		try {
-			return finishDisplayOptionsModelChange(fn());
+			return finishDisplayOptionsModelChange(fn(), finishOptions);
 		} catch (e) {
-			return finishDisplayOptionsModelChange({ changed: false, report: `DisplayOptions: ${e.message}` });
+			return finishDisplayOptionsModelChange({ changed: false, report: `DisplayOptions: ${e.message}` }, finishOptions);
 		}
 	}
 
-	/** SAVE Diff: writes only the cells whose control value differs from what this Section inherits. */
-	export function handleBtnSaveDiff() {
+	/** Sprint 148 it5: applies a plan from the interactive Matrix.  Quiet (no Messages panel); the dirty highlight is kept. */
+	export function runDisplayOptionsPlan(plan, { quiet = true } = {}) {
+		return runDisplayOptionsCommand(() => applyPlan(getSong(), plan), { quiet, keepDirty: true });
+	}
+
+	/** SAVE Diff: writes only the cells whose control value differs from what this Section inherits.
+	 *  Pass { quiet: true } from the Matrix to skip the Messages panel. */
+	export function handleBtnSaveDiff(options) {
 		return runDisplayOptionsCommand(() => {
 			const song = getSong();
 			return applyPlan(song, planSaveDiff(song, currentSectionIndex(), controlsToDisplayOptions(), displayOptionsDirtyBaseline));
-		});
+		}, { quiet: options?.quiet === true });
 	}
 
 	/** Save All: writes every writable cell from the controls to this Section.  Callers confirm first. */
-	export function handleBtnSaveAll() {
+	export function handleBtnSaveAll(options) {
 		return runDisplayOptionsCommand(() => {
 			const song = getSong();
 			return applyPlan(song, planSaveAll(song, currentSectionIndex(), controlsToDisplayOptions()));
-		});
+		}, { quiet: options?.quiet === true });
 	}
 
 	/** CLEAR: removes this Section's stored cells (a write block stops it; a read block does not). */
@@ -3776,12 +3817,21 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 	}
 
-	/** One level of undo for the last Save/Clear/gate command (covers gate edits).  */
-	export function undoDisplayOptionsOp() {
+	/** One level of undo for the last Save/Clear/gate command (covers gate edits).
+	 *  Pass { quiet: true } from the Matrix to skip the Messages panel. */
+	export function undoDisplayOptionsOp(options) {
 		const result = canUndoDisplayOptionsOp(getSong())
 			? undoLastDisplayOptionsOp(getSong())
 			: { changed: false, report: 'nothing to undo' };
-		return finishDisplayOptionsModelChange(result);
+		return finishDisplayOptionsModelChange(result, { quiet: options?.quiet === true, keepDirty: options?.quiet === true });
+	}
+
+	/** Sprint 148 it5 (/vpmo): opens the interactive Matrix, bringing the View page up if the Matrix is not floating. */
+	export function showDisplayOptionsMatrix() {
+		if (!DisplayOptionsMatrixBuilder.isFloating() && !$('#divViewControls').is(':visible')) {
+			showOneMenu('#divViewControls', true);
+		}
+		DisplayOptionsMatrixBuilder.setOpen(true);
 	}
 
 	/** Sprint 146 (table-themes): saves the Theme page's current control values as tableID's
@@ -4223,11 +4273,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		});
 		bindEvent('change', '#cbPresentationMode', function(){
 			getSong().presentationMode = this.checked;
+			EventBus.trigger('DisplayOptionsModel:changed', { report: `presentationMode: ${this.checked}`, adapter: true });  //the Matrix's NoteDisplaySizes marks
 		});
 		bindEvent('change', '#cbAllowThemeAutomation', function(){
 			getSong().allowThemeAutomation = this.checked;
 			updateDisplayOptionsReadonlyValues();
 			ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column only shows when this is on.
+			EventBus.trigger('DisplayOptionsModel:changed', { report: `allowThemeAutomation: ${this.checked}`, adapter: true });  //the Matrix's sectionTheme marks
 		});
 
 		bindEvent('click', '#btnMessagesTab', function() {
@@ -4549,7 +4601,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	    });
 		// Function Symbols widget controls are drafts, not DisplayOptions: they are bound separately
 		// (see EventBus 'FunctionSymbols:changed'), and typing in them must not light up Save.
-		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation):not(#widgetFunctionSymbols *), #divViewControls select:not(#widgetFunctionSymbols *), #divViewControls textarea:not(#widgetFunctionSymbols *)');
+		// Likewise the interactive Matrix (Sprint 148 it5): its tool radios and Auto-apply checkbox are not DisplayOptions.
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation):not(#widgetFunctionSymbols *):not(#divDisplayOptionsMatrix *), #divViewControls select:not(#widgetFunctionSymbols *), #divViewControls textarea:not(#widgetFunctionSymbols *)');
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();
 			this.blur();
@@ -4911,6 +4964,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 			loadTemplates('templates/function-symbols/function-symbols.html').then(() => {
 				FunctionSymbolsBuilder.addToDest('#divFunctionSymbols');
+			}),
+
+			loadTemplates('templates/display-options/display-options.html').then(() => {
+				DisplayOptionsMatrixBuilder.addToDest('#divDisplayOptionsMatrixHost');
 			}),
 
 			loadTemplates('templates/themes.html').then(() => {
