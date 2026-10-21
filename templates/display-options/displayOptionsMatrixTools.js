@@ -4,9 +4,9 @@
 //
 // A click in the Matrix is (tool, zone, {sectionIndex, key}).  planMatrixClick() turns it into one of:
 //   { kind: 'none' }                                   a zone the tool does not work in: a silent no-op
-//   { kind: 'navigate', sectionIndex }                 Inspect on a Section header
+//   { kind: 'navigate', sectionIndex }                 a Section number clicked with a Tool that does not act on rows
 //   { kind: 'inspect', title, lines }                  Inspect elsewhere: text for the status area
-//   { kind: 'plan', plan, oneShot, tool }              a DisplayOptions plan for runDisplayOptionsPlan()
+//   { kind: 'plan', plan, tool }                       a DisplayOptions plan for runDisplayOptionsPlan()
 //
 // Design: _doco/design/sprints/148-displayOptions-diff/148-it5-round-1-implementation-plan.md (3.1, 3.2, 3.3)
 
@@ -32,18 +32,23 @@ export const ZONES = Object.freeze({
 
 const Z = ZONES;
 
-/** Tool order is the order of the radio group.  `zones` are where the tool works.  `oneShot` tools revert to Inspect. */
+/**
+ * Tool order is the order of the radio group.  `zones` are where a click does something.  A Tool stays selected until the
+ * User picks another (there are no one-shot Tools).
+ * `actsOnSectionRow`: the Tool acts on the whole Section row, so a Section number is a Tool target (and the row lights up).
+ * For every other Tool a click on a Section number is normal: it navigates to that Section (the number is a link).
+ */
 export const TOOLS = Object.freeze([
-    { id: 'inspect', label: 'Inspect', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], oneShot: false, overlay: null },
-    { id: 'clearSection', label: 'Clear Section', zones: [Z.sectionHeader, Z.cell], oneShot: true, overlay: null },
-    { id: 'clearCell', label: 'Clear Cell', zones: [Z.cell], oneShot: true, overlay: null },
-    { id: 'keyRead', label: 'Key r', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
-    { id: 'keyWrite', label: 'Key w', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
-    { id: 'sectionRead', label: 'Section r', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
-    { id: 'sectionWrite', label: 'Section w', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
-    { id: 'cellRead', label: 'Cell r', zones: [Z.cell], oneShot: false, overlay: null },
-    { id: 'cellWrite', label: 'Cell w', zones: [Z.cell], oneShot: false, overlay: null },
-    { id: 'storeCell', label: 'Store Cell', zones: [Z.cell], oneShot: true, overlay: null }
+    { id: 'inspect', label: 'Inspect', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
+    { id: 'clearSection', label: 'Clear Section', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: null },
+    { id: 'clearCell', label: 'Clear Cell', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
+    { id: 'keyRead', label: 'Key r', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: 'column' },
+    { id: 'keyWrite', label: 'Key w', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: 'column' },
+    { id: 'sectionRead', label: 'Section r', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: 'row' },
+    { id: 'sectionWrite', label: 'Section w', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: 'row' },
+    { id: 'cellRead', label: 'Cell r', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
+    { id: 'cellWrite', label: 'Cell w', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
+    { id: 'storeCell', label: 'Store Cell', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null }
 ]);
 
 export const DEFAULT_TOOL_ID = 'inspect';
@@ -54,6 +59,12 @@ export function getTool(toolId) {
 
 export function isToolLegalInZone(toolId, zone) {
     return !!getTool(toolId)?.zones.includes(zone);
+}
+
+/** Does a click on a Section number navigate (instead of acting) with this Tool?  Also: the hover shows no row preview. */
+export function sectionHeaderNavigates(toolId) {
+    const tool = getTool(toolId);
+    return !!tool && !tool.actsOnSectionRow;
 }
 
 //=========================== gate toggles ============================================
@@ -185,7 +196,7 @@ export function planMatrixClick(song, toolId, zone, target = {}, context = {}) {
     if (needsSection && !song.sections[sectionIndex]) return none;
     if (needsKey && !isDisplayOptionKey(key)) return none;
 
-    if (tool.id === 'inspect') {
+    if (tool.id === 'inspect' || (zone === Z.sectionHeader && !tool.actsOnSectionRow)) {
         if (zone === Z.sectionHeader) return { kind: 'navigate', sectionIndex };
         const info = describeCell(song, needsSection ? sectionIndex : null, key, context);
         return { kind: 'inspect', ...info };
@@ -207,5 +218,5 @@ export function planMatrixClick(song, toolId, zone, target = {}, context = {}) {
             side: gate.side
         });
     }
-    return { kind: 'plan', plan, oneShot: tool.oneShot, tool };
+    return { kind: 'plan', plan, tool };
 }

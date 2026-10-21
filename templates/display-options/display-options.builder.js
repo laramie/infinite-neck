@@ -17,7 +17,7 @@ import * as InfiniteNeck from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
 import { makeDivDockable, dockDivInPage } from '../../dockable.js';
 import {
-    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, planMatrixClick, planAffectsApply
+    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, sectionHeaderNavigates, planMatrixClick, planAffectsApply
 } from './displayOptionsMatrixTools.js';
 import { buildMatrixHtml, buildLiveRowHtml, buildLegendHtml } from './displayOptionsMatrixView.js';
 import { escapeHtml } from './displayOptionsCellRules.js';
@@ -344,9 +344,6 @@ export class DisplayOptionsMatrixBuilder {
         if (out.changed && planAffectsApply(result.plan, ctx.currentIndex)) {
             kind = builder.afterEditThatChangesApply(ctx.dirty, lines);
         }
-        if (result.oneShot) {
-            builder.setTool(DEFAULT_TOOL_ID);
-        }
         builder.setStatus(lines, kind);
     }
 
@@ -385,6 +382,9 @@ export class DisplayOptionsMatrixBuilder {
         const zone = element.dataset.zone;
         if (INERT_ZONES.has(zone)) {
             return;
+        }
+        if (zone === ZONES.sectionHeader && sectionHeaderNavigates(builder.toolId)) {
+            return;   // a plain link with this Tool: no row preview, no not-allowed cursor
         }
         if (!isToolLegalInZone(builder.toolId, zone)) {
             element.classList.add('dmIllegal');

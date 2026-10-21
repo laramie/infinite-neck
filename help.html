@@ -3008,7 +3008,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
         <li><b>Key read-block / Key write-block</b>: click a column header or any cell in the column (or in DEFAULTS or LIVE) to toggle that option's Song gate.  Click again to remove it.</li>
         <li><b>Section read-block / Section write-block</b>: click a Section number or any cell in the row to toggle the Section gate.</li>
         <li><b>Cell read-block / Cell write-block</b>: toggle the gate on one cell.  A cell read-block means the stored cell is ignored (the option is inherited); a column or Section read-block means the control is left alone.</li>
-        <li><b>Clear Section</b> and <b>Clear Cell</b> remove stored values (never gates); <b>Store Cell</b> writes one control's current value into one cell.  These three work once and then return to Inspect.</li>
+        <li><b>Clear Section</b> and <b>Clear Cell</b> remove stored values (never gates); <b>Store Cell</b> writes one control's current value into one cell.  A Tool stays selected until you pick another.  A Section number is a link: it navigates to that Section with every Tool except Clear Section, <b>Section r</b> and <b>Section w</b>, which act on the whole row.</li>
     </ul>
     Gate and clear edits do not touch the controls until the Section is applied again.  Click <b>Apply</b> (or navigate) to see the effect in the Instruments; with <b>Auto-apply</b> checked the Matrix does it for you,
     unless the controls have unsaved changes, in which case it warns you to SAVE Diff first.  <b>SAVE Diff</b>, <b>Save All...</b> and <b>Undo</b> (one level, shared with <span class="menuExampleLine">/vpmu</span>) are on the Matrix too.

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, isGateSet, planToggleGate, planAffectsApply,
+    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, sectionHeaderNavigates, isGateSet, planToggleGate, planAffectsApply,
     describeCell, planMatrixClick
 } from '../../templates/display-options/displayOptionsMatrixTools.js';
 import {
@@ -40,8 +40,40 @@ describe('Matrix tools: legality', () => {
         expect(getTool('nope')).toBeNull();
     });
 
-    test('one-shot tools are exactly Clear Section, Clear Cell and Store Cell', () => {
-        expect(TOOLS.filter((t) => t.oneShot).map((t) => t.id)).toEqual(['clearSection', 'clearCell', 'storeCell']);
+    test('no Tool is one-shot: the selected Tool stays selected (Round 4)', () => {
+        expect(TOOLS.some((t) => 'oneShot' in t)).toBe(false);
+        const song = mkSong([{ noteFont: 'a' }]);
+        for (const tool of TOOLS) {
+            const result = clickOn(song, tool.id, ZONES.cell, { sectionIndex: 0, key: 'noteFont' }, { live: { noteFont: 'b' } });
+            expect(result).not.toHaveProperty('oneShot');
+        }
+    });
+
+    test('a Section number acts as a Tool target only for Clear Section, Section r and Section w; otherwise it navigates (Round 4)', () => {
+        const song = mkSong([{ noteFont: 'a' }, null]);
+        const acting = TOOLS.filter((t) => t.actsOnSectionRow).map((t) => t.id);
+        expect(acting).toEqual(['clearSection', 'sectionRead', 'sectionWrite']);
+        for (const tool of TOOLS) {
+            const result = clickOn(song, tool.id, ZONES.sectionHeader, { sectionIndex: 1 });
+            if (acting.includes(tool.id)) {
+                expect(result.kind).toBe('plan');
+                expect(sectionHeaderNavigates(tool.id)).toBe(false);
+            } else {
+                expect(result).toEqual({ kind: 'navigate', sectionIndex: 1 });
+                expect(sectionHeaderNavigates(tool.id)).toBe(true);
+            }
+            expect(isToolLegalInZone(tool.id, ZONES.sectionHeader)).toBe(true);
+        }
+    });
+
+    test('navigating from a Section number changes nothing in the model', () => {
+        const song = mkSong([{ noteFont: 'a' }, null]);
+        const before = snap(song);
+        for (const id of ['clearCell', 'keyRead', 'keyWrite', 'cellRead', 'cellWrite', 'storeCell']) {
+            clickOn(song, id, ZONES.sectionHeader, { sectionIndex: 0 }, { live: { noteFont: 'b' } });
+        }
+        expect(snap(song)).toEqual(before);
+        expect(canUndoDisplayOptionsOp(song)).toBe(false);
     });
 
     test('Key tools show the column overlay, Section tools the row overlay (Q10)', () => {
@@ -155,7 +187,7 @@ describe('Matrix tools: clear and store', () => {
         });
         song.sections[1].displayOptionGates = { readBlocked: ['showMidiNum'] };
         const result = clickOn(song, 'clearSection', ZONES.cell, { sectionIndex: 1, key: 'noteFont' });
-        expect(result.oneShot).toBe(true);
+        expect(result.kind).toBe('plan');
         applyPlan(song, result.plan);
         expect(song.sections[1].displayOptions).toBeUndefined();
         expect(song.sections[1].displayOptionGates).toEqual({ readBlocked: ['showMidiNum'] });
@@ -182,7 +214,7 @@ describe('Matrix tools: clear and store', () => {
         const song = mkSong([null, { noteFont: 'b' }]);
         const live = { noteFont: 'Live', showMidiNum: true };
         const result = clickOn(song, 'storeCell', ZONES.cell, { sectionIndex: 0, key: 'noteFont' }, { live });
-        expect(result.oneShot).toBe(true);
+        expect(result.kind).toBe('plan');
         applyPlan(song, result.plan);
         expect(song.sections[0].displayOptions).toEqual({ noteFont: 'Live' });
         expect(song.sections[1].displayOptions).toEqual({ noteFont: 'b' });
