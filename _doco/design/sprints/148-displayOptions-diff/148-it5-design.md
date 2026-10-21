@@ -246,3 +246,19 @@ When rotated for the text direction, the second line would appear to the right o
 }
 ```
 so that border-spacing was non-zero so that it matches the look of /vdd.  The extra space makes the css cell border and inset shadow work better visually.  However, this may have thrown off some of the sticky calculations.
+
+## Followup Requests
+
+Float and docked horizontal and vertical scroll working in Matrix table.
+
+Rotated header and hint look good in Matrix.   
+
+The sticky behavior is looking correct with the gaps.
+
+We *would* like /vdd to look the same and have the changes for  WANT_LITERAL_ROWMARK_TEXT and WANT_LITERAL_COLMARK_TEXT  and the rotated header hints.
+
+----
+
+Those tweaks work.
+
+For each of the Tool buttons like `#rbnDisplayOptionsMatrixTool` we'd like to have a style like `#chooseHighlightNamed` with `#idNamedNotes` from the palette.  That is, the white button with a floating-look box-shadow. The CSS rules copied from the palette should live in display-options.css. 

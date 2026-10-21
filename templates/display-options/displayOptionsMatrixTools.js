@@ -37,12 +37,12 @@ export const TOOLS = Object.freeze([
     { id: 'inspect', label: 'Inspect', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], oneShot: false, overlay: null },
     { id: 'clearSection', label: 'Clear Section', zones: [Z.sectionHeader, Z.cell], oneShot: true, overlay: null },
     { id: 'clearCell', label: 'Clear Cell', zones: [Z.cell], oneShot: true, overlay: null },
-    { id: 'keyRead', label: 'Key read-block', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
-    { id: 'keyWrite', label: 'Key write-block', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
-    { id: 'sectionRead', label: 'Section read-block', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
-    { id: 'sectionWrite', label: 'Section write-block', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
-    { id: 'cellRead', label: 'Cell read-block', zones: [Z.cell], oneShot: false, overlay: null },
-    { id: 'cellWrite', label: 'Cell write-block', zones: [Z.cell], oneShot: false, overlay: null },
+    { id: 'keyRead', label: 'Key r', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
+    { id: 'keyWrite', label: 'Key w', zones: [Z.keyHeader, Z.specialCell, Z.cell], oneShot: false, overlay: 'column' },
+    { id: 'sectionRead', label: 'Section r', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
+    { id: 'sectionWrite', label: 'Section w', zones: [Z.sectionHeader, Z.cell], oneShot: false, overlay: 'row' },
+    { id: 'cellRead', label: 'Cell r', zones: [Z.cell], oneShot: false, overlay: null },
+    { id: 'cellWrite', label: 'Cell w', zones: [Z.cell], oneShot: false, overlay: null },
     { id: 'storeCell', label: 'Store Cell', zones: [Z.cell], oneShot: true, overlay: null }
 ]);
 

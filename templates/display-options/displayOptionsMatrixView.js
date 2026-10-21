@@ -13,11 +13,14 @@
 import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, DISPLAY_OPTIONS_DEFAULTS } from './displayOptionsMeta.js';
 import { describeBlocks } from './displayOptionsGates.js';
 import { resolveDisplayOptions } from './displayOptionsResolver.js';
-import { escapeHtml, cellText, cellState } from './displayOptionsCellRules.js';
+import { escapeHtml, cellText, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './displayOptionsCellRules.js';
 import { ZONES } from './displayOptionsMatrixTools.js';
 
 /** Text longer than this gets a title attribute with the full text (the CSS clips with an ellipsis). */
 export const CLIP_TITLE_LENGTH = 12;
+
+// Shared with /vdd: see displayOptionsCellRules.js.
+export { WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT };
 
 function gateFlagClasses(prefix, marks) {
     const classes = [];
@@ -26,11 +29,7 @@ function gateFlagClasses(prefix, marks) {
     return classes;
 }
 
-function gateMark(parts) {
-    if (!parts.length) return '';
-    const text = escapeHtml(parts.join(' '));
-    return `<sup class='gateMark' title='${text}'>${text}</sup>`;
-}
+const gateMark = gateMarkHtml;
 
 function dataAttrs(interactive, zone, { sectionIndex = null, key = null } = {}) {
     if (!interactive) return '';
@@ -70,11 +69,12 @@ function keyRowHtml(song, interactive, keys) {
     const cells = keys.map((key) => {
         const blocks = describeBlocks(song, null, key);
         const marks = [];
-        if (blocks.adapter) marks.push(`a:${DISPLAY_OPTION_META[key].gate}`);
-        if (blocks.column) marks.push(`col:${blocks.column}`);
+        if (WANT_LITERAL_COLMARK_TEXT && blocks.column) marks.push(`col:${blocks.column}`);
+        // the adapter hint is its own line: in the rotated header it sits beside the key name, so the header is not taller
+        const hintText = blocks.adapter ? `a:${DISPLAY_OPTION_META[key].gate}` : '';
         const classes = ['dmKeyHeader', ...gateFlagClasses('dmColGate', blocks.column), ...(blocks.adapter ? ['dmAdapter'] : [])];
         const title = `${DISPLAY_OPTION_META[key].group}: ${key}`;
-        return `<th class='${classes.join(' ')}'${dataAttrs(interactive, ZONES.keyHeader, { key })} title='${escapeHtml(title)}'><span>${escapeHtml(key)}${gateMark(marks)}</span></th>`;
+        return `<th class='${classes.join(' ')}'${dataAttrs(interactive, ZONES.keyHeader, { key })} title='${escapeHtml(title)}'>${keyLabelHtml(key, hintText, marks)}</th>`;
     });
     return `<tr class='dmKeyRow'><th class='dmCorner'${dataAttrs(interactive, ZONES.corner)}></th>${cells.join('')}</tr>`;
 }
@@ -108,7 +108,7 @@ export function buildSectionRowHtml(song, sectionIndex, { currentIndex = -1, int
     const link = interactive
         ? `<a href='#' class='dmSectionLink' data-section='${sectionIndex}'>${number}</a>`
         : `${number}`;
-    const cells = [`<th class='${headerClasses.join(' ')}'${dataAttrs(interactive, ZONES.sectionHeader, { sectionIndex })}>${link}${gateMark(rowMarks ? [`row:${rowMarks}`] : [])}</th>`];
+    const cells = [`<th class='${headerClasses.join(' ')}'${dataAttrs(interactive, ZONES.sectionHeader, { sectionIndex })}>${link}${gateMark(WANT_LITERAL_ROWMARK_TEXT && rowMarks ? [`row:${rowMarks}`] : [])}</th>`];
     for (const key of keys) {
         const blocks = describeBlocks(song, section, key);
         const state = cellState(block, key, baseline);

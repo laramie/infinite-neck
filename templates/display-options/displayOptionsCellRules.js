@@ -38,6 +38,29 @@ export function gateClasses(...gateStrings) {
 /** Classes for a cell-level gate only, for styling in infinite-neck.css (/vdd). */
 export const CELL_GATE_CLASS = { r: 'cellGateRead', w: 'cellGateWrite', rw: 'cellGateReadWrite' };
 
+// The CSS gate classes show row and column gates, so the literal marks are off.  For debugging a case where the CSS
+// doesn't show properly, turn these to true to get "row:r", "row:w", "row:rw" in Section headers and "col:r" etc. in key headers.
+// (Both /vdd and the Matrix honor them.)
+export const WANT_LITERAL_ROWMARK_TEXT = false;
+export const WANT_LITERAL_COLMARK_TEXT = false;
+
+/** A small superscript mark, e.g. "row:w".  Empty when there are no parts. */
+export function gateMarkHtml(parts) {
+    if (!parts.length) return '';
+    const text = escapeHtml(parts.join(' '));
+    return `<sup class='gateMark' title='${text}'>${text}</sup>`;
+}
+
+/**
+ * The inside of a rotated key header: the key name, then the adapter hint (e.g. "a:allowThemeAutomation") as its own line.
+ * In vertical text the second line sits beside the first, so the hint does not make the header taller.
+ * The caller supplies the outer span that rotates (see .vertical-header > span and .dmKeyHeader > span).
+ */
+export function keyLabelHtml(key, hintText, marks = []) {
+    const hint = hintText ? `<span class='dmKeyHint' title='${escapeHtml(hintText)}'>${escapeHtml(hintText)}</span>` : '';
+    return `<span><span class='dmKeyName'>${escapeHtml(key)}${gateMarkHtml(marks)}</span>${hint}</span>`;
+}
+
 /**
  * The state of one stored/absent cell.
  *   'absent'  : the Section stores nothing for the key

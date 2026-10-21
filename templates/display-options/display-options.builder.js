@@ -250,9 +250,12 @@ export class DisplayOptionsMatrixBuilder {
         const group = height('tr.dmGroupRow');
         const key = height('tr.dmKeyRow');
         const defaults = height('tr.dmDefaultsRow');
+        const live = height('tr.dmLiveRow');
+        // Row heights only, no border-spacing: stuck rows sit flush against each other.
         scroller.style.setProperty('--dm-top-key', `${group}px`);
         scroller.style.setProperty('--dm-top-defaults', `${group + key}px`);
         scroller.style.setProperty('--dm-top-live', `${group + key + defaults}px`);
+        DisplayOptionsMatrixBuilder.stuckHeaderHeight = group + key + defaults + live;
     }
 
     static updateButtons(ctx) {
@@ -281,7 +284,8 @@ export class DisplayOptionsMatrixBuilder {
         }
         const box = scroller.getBoundingClientRect();
         const rowBox = row.getBoundingClientRect();
-        const headerHeight = scroller.querySelector('thead')?.getBoundingClientRect().height ?? 0;
+        // the height of the stuck rows (the thead rect would also include the border-spacing gaps, which are not stuck)
+        const headerHeight = DisplayOptionsMatrixBuilder.stuckHeaderHeight ?? 0;
         if (rowBox.top < box.top + headerHeight) {
             scroller.scrollTop -= (box.top + headerHeight) - rowBox.top;
         } else if (rowBox.bottom > box.bottom) {

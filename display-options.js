@@ -9,7 +9,7 @@
 
 import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META } from './templates/display-options/displayOptionsMeta.js';
 import { describeBlocks } from './templates/display-options/displayOptionsGates.js';
-import { escapeHtml, cellText, gateClasses, CELL_GATE_CLASS, cellState } from './templates/display-options/displayOptionsCellRules.js';
+import { escapeHtml, cellText, gateClasses, CELL_GATE_CLASS, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './templates/display-options/displayOptionsCellRules.js';
 
 let getSongProvider = function () {
     return null;
@@ -23,12 +23,10 @@ export function setDisplayOptionsProviders(providers){
     // providers.controlsToDisplayOptions is accepted for compatibility but no longer used: the columns are static.
 }
 
-// escapeHtml, cellText, gateClasses, CELL_GATE_CLASS and cellState are shared with the interactive Matrix (Sprint 148 it5).
+// escapeHtml, cellText, gateClasses, CELL_GATE_CLASS, cellState, the key label and the WANT_LITERAL_ROW/COLMARK_TEXT switches
+// are shared with the interactive Matrix (Sprint 148 it5).
 
-function sup(parts){
-    const text = escapeHtml(parts.join(' '));
-    return parts.length ? `<sup class='gateMark' title='${text}'>${text}</sup>` : '';
-}
+const sup = gateMarkHtml;
 
 //For debugging turn this to true, and it will spit out "cell:r", "cell:w", "cell:rw", otherwise you just get the css classes.
 const WANT_LITERAL_CELLMARK_TEXT = false;
@@ -54,9 +52,9 @@ export function displayOptionsTable(){
     const header = DISPLAY_OPTION_KEYS.map((key) => {
         const blocks = describeBlocks(song, null, key);
         const colMarks = [];
-        if (blocks.adapter) colMarks.push(`a:${DISPLAY_OPTION_META[key].gate}`);
-        if (blocks.column) colMarks.push(`col:${blocks.column}`);
-        return `<th class='vertical-header ${gateClasses(blocks.adapter, blocks.column)}'><span>${escapeHtml(key)}${sup(colMarks)}</span></th>`;
+        if (WANT_LITERAL_COLMARK_TEXT && blocks.column) colMarks.push(`col:${blocks.column}`);
+        const hintText = blocks.adapter ? `a:${DISPLAY_OPTION_META[key].gate}` : '';
+        return `<th class='vertical-header ${gateClasses(blocks.adapter, blocks.column)}'>${keyLabelHtml(key, hintText, colMarks)}</th>`;
     });
     res.push(`<tr><td style='vertical-align: bottom;'>Section&nbsp;#</td>${header.join('')}</tr>`);
 
@@ -70,7 +68,7 @@ export function displayOptionsTable(){
         const baseline = song.resolveDisplayOptionsAt(sectionIdx, { purpose: 'baseline' }).values;
         const topBorder = skippedRow ? " style='border-top: 2px dashed orange;'" : '';
         const rowGate = describeBlocks(song, section, DISPLAY_OPTION_KEYS[0]).row;
-        const cells = [`<td${topBorder} class='${gateClasses(rowGate)}'>${sectionIdx + 1}${sup(rowGate ? [`row:${rowGate}`] : [])}</td>`];
+        const cells = [`<td${topBorder} class='${gateClasses(rowGate)}'>${sectionIdx + 1}${sup(WANT_LITERAL_ROWMARK_TEXT && rowGate ? [`row:${rowGate}`] : [])}</td>`];
         for (const key of DISPLAY_OPTION_KEYS) {
             const blocks = describeBlocks(song, section, key);
             const state = cellState(block, key, baseline);

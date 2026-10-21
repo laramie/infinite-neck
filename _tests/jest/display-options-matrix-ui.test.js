@@ -7,7 +7,7 @@ import {
 } from '../../templates/display-options/displayOptionsMatrixTools.js';
 import {
     buildMatrixHtml, buildSectionRowHtml, buildLiveRowHtml, buildDefaultsRowHtml, buildLegendHtml, buildLegendSong,
-    groupRuns, LEGEND_KEYS, CLIP_TITLE_LENGTH
+    groupRuns, LEGEND_KEYS, CLIP_TITLE_LENGTH, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT
 } from '../../templates/display-options/displayOptionsMatrixView.js';
 import { cellText, cellState } from '../../templates/display-options/displayOptionsCellRules.js';
 import { DISPLAY_OPTION_KEYS } from '../../templates/display-options/displayOptionsMeta.js';
@@ -441,6 +441,36 @@ describe('Matrix view', () => {
         expect(html).toMatch(/dmKeyHeader dmAdapter'[^>]*data-key='sectionTheme'/);
         expect(html).toContain('a:allowThemeAutomation');
         expect(html).toMatch(/dmAdapterKey'[^>]*data-key='sectionTheme'/);
+    });
+
+    test('Round 3: the adapter hint is its own line beside the key name, not a superscript', () => {
+        const song = mkSong([null], { allowThemeAutomation: false });
+        const html = buildMatrixHtml(song, {});
+        expect(html).toContain("<span><span class='dmKeyName'>sectionTheme</span><span class='dmKeyHint' title='a:allowThemeAutomation'>a:allowThemeAutomation</span></span>");
+        expect(html).not.toContain('<sup');
+        const plain = buildMatrixHtml(mkSong([null]), {});
+        expect(plain).not.toContain('dmKeyHint');
+    });
+
+    test('Round 3: literal row:/col: marks are off by default, and the gate is shown by classes alone', () => {
+        expect(WANT_LITERAL_ROWMARK_TEXT).toBe(false);
+        expect(WANT_LITERAL_COLMARK_TEXT).toBe(false);
+        const song = mkSong([{ noteFont: 'a' }]);
+        song.displayOptionGates = { readBlocked: ['noteFont'] };
+        song.sections[0].displayOptionGates = { writeBlocked: ['*'] };
+        const html = buildMatrixHtml(song, {});
+        expect(html).not.toMatch(/row:[rw]/);
+        expect(html).not.toMatch(/col:[rw]/);
+        expect(html).not.toContain('gateMark');
+        expect(html).toMatch(/<th class='dmKeyHeader dmColGateR'[^>]*data-key='noteFont'/);
+        expect(html).toMatch(/<th class='dmSectionHeader dmRowGateW'/);
+    });
+
+    test('Round 3: the CSS lets the docked host shrink so the scroll container overflows', () => {
+        const css = fs.readFileSync(path.join(here, '../../templates/display-options/display-options.css'), 'utf8');
+        const rule = css.match(/#divDisplayOptionsMatrixHost \{[^}]*\}/)[0];
+        expect(rule).toContain('min-width: 0');
+        expect(rule).toMatch(/max-width: \d+%/);
     });
 
     test('clickable elements carry data attributes; special rows never carry data-section', () => {

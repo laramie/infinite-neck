@@ -61,7 +61,7 @@ table.organizer td {
     width: 5em;
     font-weight: bold;
     border: 1px solid gray;
-    background-color: buttercup;
+    background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 #chooseHighlightNamed,
@@ -108,7 +108,7 @@ table.organizer td {
     color: black;
     font-weight: bold;
     border: 1px solid gray;
-    background-color: buttercup;
+    background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 

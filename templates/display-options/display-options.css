@@ -10,12 +10,17 @@
     background: white;
     color: black;
     padding: 0.4em;
-    min-width: 24em;
+    min-width: min(24em, 100%);
     max-width: 100%;
     text-align: left;
 }
+/* The host is a flex item of #divViewControls (flex-wrap).  A flex item's automatic min-width is its min-content width,
+   i.e. the whole table, so without min-width: 0 the host grew past the window and the scroll container never overflowed
+   (floating worked because the floating window has a fixed width). */
 #divDisplayOptionsMatrixHost {
-    flex: 1 0 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 98%;
     box-sizing: border-box;
 }
 
@@ -30,13 +35,31 @@
     margin: 0 0.4em;
     white-space: nowrap;
 }
+/* Tool buttons: the look of the palette's highlight buttons (#chooseHighlightNamed, templates/palette.css):
+   a white button with a floating box-shadow.  The selected Tool gets the palette's cyan "pressed" shadow
+   (as .chooseLastColor / .chooseKeep do), in addition to its radio dot. */
 #divDisplayOptionsMatrix .dmTools label {
     display: inline-block;
-    margin-right: 0.8em;
+    box-sizing: content-box;
+    margin: 0.1em 0.4em 0.3em 0.1em;
+    padding: 0.4em 0.6em;
+    height: 1.6em;
+    line-height: 1.6em;
+    border: 1px solid gray;
+    border-radius: 2px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    box-shadow: 2pt 2pt 2pt 0.01pt gray;
+    cursor: pointer;
     white-space: nowrap;
 }
+#divDisplayOptionsMatrix .dmTools label:has(input[type="radio"]:checked) {
+    box-shadow: 1pt 1pt 3pt 0.01pt cyan;
+}
 #divDisplayOptionsMatrix .dmTools input {
-    margin-right: 0.2em;
+    margin-right: 0.3em;
+    vertical-align: middle;
 }
 
 #divDisplayOptionsMatrix .dmStatus {
@@ -67,6 +90,7 @@
     overflow: auto;
     max-height: 65vh;
     max-width: 100%;
+    min-width: 0;
     border: 1px solid #666;
 }
 #divDisplayOptionsMatrix .dmTable {
@@ -89,7 +113,9 @@
     height: 1.7em;
 }
 
-/* the sticky offsets of the key, DEFAULTS and LIVE rows are measured by the builder (--dm-top-*) */
+/* the sticky offsets of the key, DEFAULTS and LIVE rows are measured by the builder (--dm-top-*).  They are the sum of the
+   row heights, WITHOUT border-spacing: stuck rows sit flush against each other (the spacing gaps only exist in the
+   scrolling layout), and the gaps between stuck cells only show the table background of the rows scrolling underneath. */
 #divDisplayOptionsMatrix .dmGroupRow > *    { position: sticky; top: 0;                                z-index: 4; }
 #divDisplayOptionsMatrix .dmKeyRow > *      { position: sticky; top: var(--dm-top-key, 1.7em);         z-index: 4; }
 #divDisplayOptionsMatrix .dmDefaultsRow > * { position: sticky; top: var(--dm-top-defaults, 9em);      z-index: 4; }
@@ -102,9 +128,18 @@
 #divDisplayOptionsMatrix .dmGroupHeader { background: rgb(250, 235, 94); font-size: 85%; }
 #divDisplayOptionsMatrix .dmCorner      { background: #ddd; }
 #divDisplayOptionsMatrix .dmKeyHeader   { background: #ddd; text-align: left; vertical-align: bottom; }
-#divDisplayOptionsMatrix .dmKeyHeader span {
+/* vertical text, reading bottom to top.  In vertical-rl the second line goes to the left; the 180 degree rotation puts it
+   to the right of the first line, so "a:allowThemeAutomation" sits beside the key name instead of making the header taller. */
+#divDisplayOptionsMatrix .dmKeyHeader > span {
+    display: inline-block;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
+}
+#divDisplayOptionsMatrix .dmKeyName,
+#divDisplayOptionsMatrix .dmKeyHint { display: block; }
+#divDisplayOptionsMatrix .dmKeyHint {
+    font-size: 75%;
+    color: #444;
 }
 #divDisplayOptionsMatrix .dmSpecialLabel,
 #divDisplayOptionsMatrix .dmSpecialCell { background: white; }
@@ -120,7 +155,7 @@
 #divDisplayOptionsMatrix .dmChanged { background-color: chartreuse; }
 
 /* the Current Section */
-#divDisplayOptionsMatrix th.dmCurrentRow { background: gold; }
+#divDisplayOptionsMatrix th.dmCurrentRow { background: #a1fde9; }
 #divDisplayOptionsMatrix tr.dmCurrentRow > th,
 #divDisplayOptionsMatrix tr.dmCurrentRow > td {
     border-top: 2px solid navy;
@@ -204,7 +239,7 @@
     padding: 0 0.5em;
     border: 1px solid #777;
 }
-#divDisplayOptionsMatrix .dmLegend .dmKeyHeader span { font-size: 90%; }
+#divDisplayOptionsMatrix .dmLegend .dmKeyHeader > span { font-size: 90%; }
 #spanDisplayOptionsMatrixArrow,
 #spanDisplayOptionsMatrixLegendArrow {
     font-size: 80%;

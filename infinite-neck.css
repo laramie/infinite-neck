@@ -126,7 +126,7 @@ table {
   vertical-align: bottom;
   background-color: #ddd;
 }
-.vertical-header span {
+.vertical-header > span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
@@ -404,7 +404,7 @@ table {
 }
 
 .safeButton{
-    background-color: lightgreen !important;
+    background-color: #6faa09 !important;
 }
 .riskyButton {
     background-color: pink !important;
@@ -433,6 +433,7 @@ table.viewControls th {
     flex-wrap: wrap;     /* Allows cards to move to the next row */
     gap: 10px;           /* Sets spacing between cards */
     justify-content: space-around; 
+    max-width: 98%;
 }
 
 .divViewCard {
@@ -853,6 +854,19 @@ table.viewControls th {
     font-size: 70%;
     color: #444;
     margin-left: 0.2em;
+}
+/* the key header's name and its adapter hint (same markup as the interactive Matrix): the rotated outer span is
+   .vertical-header > span; the hint is a second line, which in vertical text sits beside the name. */
+.tblDisplayOptions .vertical-header > span {
+    display: inline-block;
+}
+.tblDisplayOptions .dmKeyName,
+.tblDisplayOptions .dmKeyHint {
+    display: block;
+}
+.tblDisplayOptions .dmKeyHint {
+    font-size: 75%;
+    color: #444;
 }
 .tblDisplayOptions .cellGateRead {
     /* Since row or column read-block and write-block, don't put !important here,

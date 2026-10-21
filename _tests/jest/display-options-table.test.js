@@ -20,9 +20,9 @@ describe('/vdd displayOptionsTable (static Matrix columns)', () => {
     test('has a column per DisplayOptions key even when no control provider exists', () => {
         load();
         const html = displayOptionsTable();
-        expect(html).toContain('<span>autoColor');
-        expect(html).toContain('<span>tinyNoteRadius');
-        expect(html).toContain('<span>sectionTheme');
+        expect(html).toContain("<span><span class='dmKeyName'>autoColor");
+        expect(html).toContain("<span><span class='dmKeyName'>tinyNoteRadius");
+        expect(html).toContain("<span><span class='dmKeyName'>sectionTheme");
         expect((html.match(/<tr>/g) || []).length).toBe(4); // header + the fixture's 3 Sections
     });
 
@@ -46,14 +46,25 @@ describe('/vdd displayOptionsTable (static Matrix columns)', () => {
         song.sections[2].displayOptionGates = { readBlocked: ['hideTinyNotes'] };
         const html = displayOptionsTable();
         expect(html).toContain('Song column gates');
-        expect(html).toContain('col:r');
-        expect(html).toContain('col:w');
-        expect(html).toContain('row:w');
-        // the literal `cell:r` text is off (WANT_LITERAL_CELLMARK_TEXT); the cell is marked by classes instead
+        // the literal row:/col:/cell: text is off (WANT_LITERAL_ROWMARK_TEXT etc.); gates are shown by classes instead
+        expect(html).not.toMatch(/col:[rw]/);
+        expect(html).not.toMatch(/row:[rw]/);
+        expect(html).not.toContain('cell:');
+        expect(html).toContain("<th class='vertical-header gateRead'>");
+        expect(html).toContain("<th class='vertical-header gateWrite'>");
+        expect(html).toContain("<td class='gateWrite'>2</td>");
         expect(html).toContain('cellGateRead');
         expect(html).not.toContain('cellGateWrite');
         expect(html).toContain('&lt;b&gt;x&lt;/b&gt;');
         expect(html).not.toContain('<b>x</b>');
+    });
+
+    test('an adapter-gated key shows its hint as its own line beside the name, not a superscript', () => {
+        const song = load();
+        song.presentationMode = false;
+        const html = displayOptionsTable();
+        expect(html).toContain("<span class='dmKeyName'>NoteDisplaySizes</span><span class='dmKeyHint' title='a:presentationMode'>a:presentationMode</span>");
+        expect(html).not.toContain('<sup');
     });
 
     test('a Section with only a gate gets a row; a plain Section is skipped with a dashed marker after it', () => {
