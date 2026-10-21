@@ -1521,6 +1521,11 @@ export var gMenuFile =    {
               "action": "showViewDiagnosticsSongFileFormat"
             },
             {
+              "caption": "song <b>F</b>ile format HTML",
+              "trigger": "F",
+              "action": "showViewDiagnosticsSongFileFormatHTML"
+            },
+            {
               "caption": "<b>s</b>ong model",
               "trigger": "s",
               "action": "showViewDiagnosticsFullModel"

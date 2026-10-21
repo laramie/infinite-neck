@@ -59,7 +59,10 @@ export class Layout {
     applySongWidgetsVisibility(){
         const jSongWidgets = $('#lblSongWidgets');
         const hasContent = (jSongWidgets.html() || '').trim().length > 0;
-        jSongWidgets.toggle(hasContent && this.screen.SongWidgets !== false);
+        const songWidgetWillShow = hasContent && this.screen.SongWidgets !== false;
+        jSongWidgets.toggle(songWidgetWillShow);
+        const jSongWidgetsBR = $('#lblSongWidgetsBR');
+        jSongWidgetsBR.toggle(!songWidgetWillShow);
     }
 
     toggleInstrumentCaptions(visible){

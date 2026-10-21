@@ -139,6 +139,19 @@
       "These scales also show the major chord role colors.  To show them, go to Section 1, turn off AutoColor, and save the displayOptions."
     ]
   },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"fullWidth centerWidgets\">",
+      "",
+      "<span class=\"fontLarger140\">${chartChordCaption}${transposedChordNotesFunctions}</span>",
+      "",
+      "<span class=\"spacer2\"></span><span class=\"spacer2\"></span>",
+      "",
+      "<span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span>",
+      "",
+      "</div>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": true,

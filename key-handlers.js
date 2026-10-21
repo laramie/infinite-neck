@@ -1454,6 +1454,9 @@ export function performCmdAction(menuItem, args){
         case "showViewDiagnosticsSongFileFormat":
 			Messages.showMessagesJSON(getPersistentSongFile());
 			break;
+        case "showViewDiagnosticsSongFileFormatHTML":
+			Messages.showMessagesJSON(getPersistentSongFile().replaceAll('<', "&lt;"));
+			break;
         case "showViewDiagnosticsLogEvents":
 			let obj = {};
 			if (argByInputID){
