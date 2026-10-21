@@ -43,7 +43,8 @@ We define the areas of the Matrix as:
 - Additional buttons: 
   - Save All... : Copy of "Save All..." button from View page.
   - Undo (kicks current Undo command like /vpmu)
-  - Float : floats the Matrix into a floating window like "Floaty"/`#cbFloatyControls` does for all the other main divs like View.  Thus, the Matrix may be viewed at User placement nearer the View page controls.  When not floated, the Matrix simply lives in a page-wide div below the View cards, with overflow sideways scrolling like /vdd so all keys can be seen.  
+  - Float : floats the Matrix into a floating window like "Floaty"/`#cbFloatyControls` does for all the other main divs like View.  Thus, the Matrix may be viewed at User placement nearer the View page controls.  When not floated, the Matrix simply lives in a page-wide div below the View cards, with overflow sideways scrolling like /vdd so all keys can be seen.
+- Legend with example cells showing CSS effects of combinations of values and gate.  Similar to `#MobileKeyboardLegend`.
 
   Visual order for first deliverable should be: 
 ```
@@ -56,6 +57,8 @@ Matrix proper
   LIVE
   | "Section #" | blank span td |
   | <section-number like /vdd but with hyperlink> background color for Current Section |  cells .... |
+  Legend Open/Close Button
+  Legend
 ```
 
 
