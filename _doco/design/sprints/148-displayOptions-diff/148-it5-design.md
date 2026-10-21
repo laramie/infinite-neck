@@ -99,3 +99,120 @@ You have already set up the ./templates/ folder, so we'll continue to build the 
 ## Request
 
 Please produce Iteration 5 Round 1 deliverable: the Implementation Plan with Questions, especially any holes in the design or missing controls.
+
+# sprint-148 Iteration 5 Round 2
+
+Round 1's deliverable, `_doco/design/sprints/148-displayOptions-diff/148-it5-round-1-implementation-plan.md` is accepted, with the following Answers from the Design Team.
+
+Round 2's deliverable is a working first implementation of the DisplayOptionsMatrix widget, installed in the View page.
+
+## Design Team Answers to Round 1 Questions
+
+### Iteration 5 Round 1 Implementation Plan header section 9. Questions
+
+
+**Q1.  Tool set (H1).**  Add Clear Cell, Cell read-block, Cell write-block and Store Cell to the design's six Tools (ten in all, in the order of 3.2)?  Recommendation: **yes**.  Without them cell gates stay command-line only.
+
+- ANSWER: yes.
+
+**Q2.  Re-apply after an edit (H2).**  Add an **Apply** button (= `sectionChanged()`) to Additional Buttons, and show `controls not re-applied: Apply, or navigate` in the status line after a gate, clear or undo on the Current Section?  And should there also be an "Auto-apply" toggle (default off)?  Recommendation: **Apply button yes, Auto-apply no** (it would silently overwrite unsaved live edits on every click).
+
+- ANSWER: Apply button yes.  Auto-apply with checkbox: yes.  When SaveDiff would turn magenta and Auto-apply is checked, put warning in Status area: "Live controls changed: SaveDiff before next Apply" 
+
+
+**Q3.  Quiet reporting (H3).**  Matrix actions skip `Messages.showMessages()`, still write a UserLog row, and show the report in a status line in the Matrix.  Is that what you want, or should the status line also be hidden until the planned "hide Messages" checkbox lands?  Recommendation: **as described**.
+
+- ANSWER: Yes: as described. 
+
+
+**Q4.  Every Section is a row (H4).**  Confirm, with empty rows dark gray and no dashed-border gap marker.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q5.  Per-source gate classes and the CSS (H6).**  Confirm that the Matrix gets its own per-source classes (5.2), that /vdd keeps its merged classes, and that I port the current look into `display-options.css` as a starting point for you to tune.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q6.  Destructive Tools (H7).**  Make Clear Section, Clear Cell and Store Cell **one-shot** (they revert to Inspect after one use); the gate Tools stay selected.  Or: keep all Tools selected until changed, with a `confirm()` for Clear Section.  Recommendation: **one-shot, no confirm** (the design avoids modal prompts; Undo exists).
+
+- ANSWER: one-shot, no confirm.
+
+
+**Q7.  Floating (H8).**  Handle disposal by calling `dockBeforeDispose()` in `updateAfterOpenSong()`, the append-sections import and the `disposeAllDockables` command (no change to `dockable.js`).  Recommendation: **yes**.  (Alternative: let `disposeAllDockables` accept a keep list, a change in `dockable.js`.)
+
+- ANSWER: yes.
+
+
+**Q8.  SAVE Diff in the Matrix.**  Add a SAVE Diff button (with the magenta dirty highlight) to Additional Buttons, next to Save All, Apply, Undo and Float?  Recommendation: **yes**: SAVE Diff is the main action and a floating Matrix is far from the View card.  CLEAR (Current) is covered by the Clear Section Tool on the Current row.
+
+- ANSWER: Yes.
+
+
+**Q9.  Sharing code with /vdd.**  (a) Extract the cell-state and text rules into a shared pure function, used by /vdd and the Matrix, with /vdd's output pinned byte-for-byte by a golden test written first; or (b) leave [display-options.js](../../../../display-options.js) untouched and let the Matrix renderer duplicate about 40 lines, with a test that the two agree on cell state and text for the fixture.  Recommendation: **(a)**, so the two cannot drift; **(b)** if "don't touch /vdd" also means its code.
+
+- ANSWER: (a).
+
+
+**Q10.  Tool selection turns the matching overlay on.**  Selecting a Key Tool switches "View Column Gates" on; selecting a Section Tool switches "View Row Gates" on.  Recommendation: **yes**.
+
+- ANSWER: yes. 
+
+
+**Q11.  Height and scrolling.**  Scroll container (about 60vh) with sticky header, DEFAULTS and LIVE rows and a sticky Section column; auto-scroll to the Current row only when it is out of view and only within the container.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q12.  `false` as a mark.**  The Matrix (and DEFAULTS and LIVE) draws `false` as `✗` and `true` as `✓`; /vdd stays as is.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q13.  How it is opened.**  A collapsed-by-default toggle on the View Display Options card, in the Theme Matrix style (a right/down arrow), and a `/vpm` command (`/vpmo`) to open it.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q14.  Session-only UI state.**  Open/closed, the Tool, the two View Options and the Legend are not saved with the Song or in the browser; the Tool resets to Inspect on Song open.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q15.  Group header row.**  Show a thin group row above the key headers (`Color`, `Cell text`, `Layout`, `Piano`, `Hide`, `Opacity`, `Looper`, `Fonts`, `Tiny notes`), display only in this Iteration; "a Key Tool click on a group toggles the whole group" as a fast follow (it is one plan with several ops, so one Undo)?  Recommendation: **display now, toggling later**.
+
+- ANSWER: display now, toggling later.
+
+
+**Q16.  Adapter columns.**  Key Tools toggle only the explicit Song gate on `NoteDisplaySizes` and `sectionTheme`; Presentation Mode and Allow Theme Automation stay on the View card, and Inspect explains the adapter block.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q17.  Hover preview.**  Highlight the whole column, row or cell a Tool would affect, and a `not-allowed` cursor on illegal zones (5.5).  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q18.  Inspect output.**  A status line filled on an Inspect click (3.3), with `title` text on headers only; no per-cell tooltips (up to 1,700 attributes) except the full text of clipped long values.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+
+**Q19.  LIVE-row "would change" marker.**  Mark the LIVE cells that SAVE Diff would write (`planSaveDiff(...).ops`), as the natural first step of the deferred "View Changed Cells"?  Recommendation: **defer**, as the design says; it is cheap to add later because the plan is pure.
+
+- ANSWER: defer.
+
+
+**Q20.  Concurrent edits.**  The Matrix reads the model and the controls at render and click time and holds no state of its own, so command-line `/vpm` commands, SAVE Diff buttons and the Matrix can be mixed freely, and all rebuild the Matrix through `DisplayOptionsModel:changed`.  Confirm that is acceptable, and that Undo stays **one level and shared** with `/vpmu`.  Recommendation: **yes**.
+
+- ANSWER: yes.
+
+### Change to Plan point 3.2
+
+In addition to the above answers, we can skip status line updates and any action when a dis-allowed zone is clicked.  Simply clicking in any "nothing, never clickable" zones is a no-op, with no status update.  In other words, *don't* do this: "Clicks anywhere not legal for the Tool do nothing and say so in the status line (Section tools need a Section row or cell)."  For example clicking in zone Z0 does nothing and reports no status line.
+
+## Request
+
+Please proceed to APPROVED coding. Coding is CORE-APPROVED for infinite-neck.js.
