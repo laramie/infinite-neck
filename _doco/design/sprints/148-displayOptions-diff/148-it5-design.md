@@ -262,3 +262,11 @@ We *would* like /vdd to look the same and have the changes for  WANT_LITERAL_ROW
 Those tweaks work.
 
 For each of the Tool buttons like `#rbnDisplayOptionsMatrixTool` we'd like to have a style like `#chooseHighlightNamed` with `#idNamedNotes` from the palette.  That is, the white button with a floating-look box-shadow. The CSS rules copied from the palette should live in display-options.css. 
+
+# sprint-148 Iteration 5 Round 4
+
+For this Round, we'd like to change some of the designed behaviors.
+
+1. We would like the nav links in the Section header column to work most of the time.  Right now they only work for some of the Tools.  So we'd like the link to work always except for these Tools: "Clear Section", "Section r", "Section w".  For these three tools, they highlight the entire row, so it is obvious that the hyperlink won't work.  So keep the current behavior for those three.  For all the others, don't use the Tool in the Section row header cell, that is zone ZR. Instead, do normal, which thus allows hyperlink click. (Note that to save radio button space, we changed some of the captions so "Section r" is the new caption for `<input type="radio" name="rbnDisplayOptionsMatrixTool" value="sectionRead">` and so on.)  
+
+2. We would like the one-shot behavior to go away.  We find it more ergonomic to have the Tool radio buttons stay where the User left them.  We would still like no warning or confirmation UX other than status line updates.

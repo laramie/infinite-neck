@@ -196,14 +196,14 @@
 #divDisplayOptionsMatrix .dmCellGateW {
     outline: 4px solid blue;
     outline-offset: -4px;
-    background-image: repeating-linear-gradient(45deg, blue, blue 1px, transparent 1px, transparent 11px);
+    background-image: repeating-linear-gradient(45deg, blue, blue 2px, transparent 2px, transparent 11px);
 }
 #divDisplayOptionsMatrix .dmCellGateR.dmCellGateW {
     outline: 4px solid red;
     outline-offset: -4px;
     background-image:
         repeating-linear-gradient(135deg, red, red 1px, transparent 1px, transparent 11px),
-        repeating-linear-gradient(45deg, blue, blue 1px, transparent 1px, transparent 11px);
+        repeating-linear-gradient(45deg, blue, blue 2px, transparent 2px, transparent 11px);
 }
 
 /* ------------- clicking and hover preview ------------- */
