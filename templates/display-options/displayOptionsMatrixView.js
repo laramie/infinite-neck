@@ -160,7 +160,6 @@ export function buildLegendSong() {
         ]
     };
 }
-
 /** The columns the Legend shows, in Matrix order. */
 export const LEGEND_KEYS = Object.freeze(
     ['autoColor', 'showMidiNum', 'hideTinyNotes', 'hideNamedNotes', 'naturalFontScaling', 'NoteDisplaySizes', 'tinyNoteWidth', 'noteFont']
@@ -172,14 +171,115 @@ export function buildLegendHtml() {
     const song = buildLegendSong();
     const table = buildMatrixHtml(song, { currentIndex: 1, live: { autoColor: true, noteFont: 'Cardo', showMidiNum: false }, interactive: false, keys: LEGEND_KEYS });
     return `<div class='dmLegendText'>
-<p><b>Cells</b>: <span class='dmLegendSwatch dmStored dmChanged'>green</span> stored, and differs from what the Section inherits;
-<span class='dmLegendSwatch dmStored'>white</span> stored, but repeats the inherited value;
-<span class='dmLegendSwatch dmAbsent'>gray</span> nothing stored.  The highlighted Section number is the Current Section.</p>
-<p><b>Gates</b> (r = read-block, w = write-block): a <b>column</b> gate lights the key header and its cells, a <b>row</b> gate lights the Section number and its cells,
-a <b>cell</b> gate marks one cell.  A cell read-block means <i>this stored cell is ignored</i> (the key inherits); a column, row or adapter read-block means <i>the control is left alone</i>.
-Write-blocks stop SAVE Diff, Save All and Clear.  An <b>a</b> mark means Presentation Mode or Allow Theme Automation is off.</p>
-<p>Example below: Section 2 is the Current Section.  <code>naturalFontScaling</code> has a column read-block and <code>tinyNoteWidth</code> a column write-block;
-Section 3 has a cell read-block and a cell write-block; Section 4 has a row read-block; Section 5 has a row write-block and two cell read-blocks.
-<code>NoteDisplaySizes</code> is off because Presentation Mode is off.</p>
+<table class="dmTable">
+    <tbody>
+        <tr class="dmSectionRow">
+            <th style="border: none;">Section:</th>
+            <th class="dmSectionHeader">1</th>
+        </tr>
+        <tr class="dmSectionRow dmCurrentRow">
+            <th style="border: none;">Current Section:</th>
+            <th class="dmSectionHeader dmCurrentRow">2</th>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">checked:</td>
+            <td class="dmCell dmStored">✓</td>
+        </tr>
+        <tr class="dmSectionRow">    
+            <td style="border: none;">unchecked:</td>
+            <td class="dmCell dmStored">✗</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">absent:</td>
+            <td class="dmCell dmAbsent"></td>
+        </tr>
+        <tr class="dmSectionRow">  
+            <td style="border: none;">read-blocked:</td>  
+            <td class="dmCell dmAbsent dmColGateR dmRowGateR"></td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">write-blocked:</td>
+            <td class="dmCell dmAbsent dmColGateW"></td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">read-blocked<br>write-blocked:</td>
+            <td class="dmCell dmAbsent dmColGateR dmRowGateW"></td>
+        </tr>
+        <tr class="dmSectionRow">  
+            <td style="border: none;">read-blocked:</td>  
+            <td class="dmCell  dmColGateR dmRowGateR">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">write-blocked:</td>
+            <td class="dmCell  dmColGateW">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">read-blocked<br>write-blocked:</td>
+            <td class="dmCell  dmColGateR dmRowGateW">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked:</td>
+            <td class="dmCell  dmCellGateR">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell write-blocked:</td>
+            <td class="dmCell  dmCellGateW">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Cell write-blocked:</td>
+            <td class="dmCell  dmCellGateW dmCellGateR">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Row write-blocked:</td>
+            <td class="dmCell  dmRowGateW dmCellGateR">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Row read-blocked:</td>
+            <td class="dmCell  dmRowGateR dmCellGateR">value</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmCellGateR">changed ✓</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell write-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmCellGateW">changed ✓</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">read-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmRowGateR">changed ✓</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Row write-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmRowGateW dmCellGateR">changed ✓</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Cell write-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmCellGateW dmCellGateR">changed ✓</td>
+        </tr>
+        <tr class="dmSectionRow">
+            <td style="border: none;">Cell read-blocked<br>Cell write-blocked<br>Row read-blocked<br>Row write-blocked:</td>
+            <td class="dmCell dmStored dmChanged dmCellGateW dmCellGateR dmRowGateR dmRowGateW">changed ✓</td>
+        </tr>
+    </tbody>
+</table>
+<br><p><b>Cells</b>: <ul><li><span class='dmLegendSwatch dmStored dmChanged'>green</span> stored, and differs from what the Section inherits;
+<li><span class='dmLegendSwatch dmStored'>white</span> stored, but repeats the inherited value;
+<li><span class='dmLegendSwatch dmAbsent'>gray</span> nothing stored. </ul></p>
+
+<br><p><b>Usage:</b><ul>
+<li>Click a Tool then click a row (Section), column (Key), or Cell. Clicking again toggles.
+<li>Values and blocks flow down from DEFAULTS, to Sections.
+<li>If any Section or Cell automates any value under one Key, then the DEFAULTS are consulted when Looping around from Section 1.
+<li>Cell blocks are partially obscured by Row and Column blocks.  Use the View buttons to suspend display of Row and Column blocks.
+</ul></p>
+
+
+<br><p><b>Gates</b> (r = read-block, w = write-block): <ul><li>a <b>column</b> gate lights the key header and its cells, <li>a <b>row</b> gate lights the Section number and its cells,
+<li>a <b>cell</b> gate marks one cell.  <li>A cell read-block means <i>this stored cell is ignored</i> (the key inherits); <li>a column, row or adapter read-block means <i>the control is left alone</i>.
+<li>Write-blocks stop SAVE Diff, Save All and Clear.  <li>An <b>a</b> mark means Presentation Mode or Allow Theme Automation is off.</ul></p>
+<br><p><b>Example below:</b> <ul><li>Section 2 is the Current Section.  <li><code>naturalFontScaling</code> has a column read-block and <code>tinyNoteWidth</code> a column write-block;
+<li>Section 3 has a cell read-block and a cell write-block; <li>Section 4 has a row read-block; <li>Section 5 has a row write-block and two cell read-blocks.
+<li><code>NoteDisplaySizes</code> is off because Presentation Mode is off.</ul></p>
 </div>${table}`;
 }

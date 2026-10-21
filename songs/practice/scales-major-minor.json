@@ -117,6 +117,19 @@
   "info": {
     "lines": []
   },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"fullWidth centerWidgets\">",
+      "",
+      "<span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span>",
+      "",
+      "<span class=\"spacer2\"></span><span class=\"spacer2\"></span>",
+      "",
+      "<span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span> ",
+      "",
+      "</div>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "none",
   "presentationMode": true,

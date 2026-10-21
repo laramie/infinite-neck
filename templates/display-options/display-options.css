@@ -25,14 +25,14 @@
 }
 
 #divDisplayOptionsMatrix .dmRow {
-    margin: 0.25em 0;
+    margin: 0.7em 0;
 }
 #divDisplayOptionsMatrix .dmRowLabel {
     font-weight: bold;
     margin-right: 0.4em;
 }
 #divDisplayOptionsMatrix .dmCheck {
-    margin: 0 0.4em;
+    margin: 0;
     white-space: nowrap;
 }
 /* Tool buttons: the look of the palette's highlight buttons (#chooseHighlightNamed, templates/palette.css):
@@ -250,4 +250,8 @@
     flex: none;
     height: 100%;
     overflow: auto;
+}
+
+.dmViewOptions button {
+    padding: 0.4em;
 }

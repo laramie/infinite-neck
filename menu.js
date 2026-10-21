@@ -1802,13 +1802,13 @@ export var gMenuFile =    {
                   ]
                 },
                 {
-                  "caption": "<b>u</b>ndo last Matrix/Save/Clear change",
+                  "caption": "<b>u</b>ndo last Save/Clear",
                   "trigger": "u",
                   "action": "matrixUndo",
                   "preserveMenuStack": true
                 },
                 {
-                  "caption": "<b>o</b>pen the interactive Matrix (View page)",
+                  "caption": "<b>o</b>pen Matrix",
                   "trigger": "o",
                   "action": "matrixOpen",
                   "preserveMenuStack": true

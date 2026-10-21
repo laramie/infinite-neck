@@ -34,7 +34,7 @@ beforeEach(() => resetUndoForTests());
 describe('Matrix tools: legality', () => {
     test('the tool list is the ten approved tools, Inspect first', () => {
         expect(TOOLS.map((t) => t.id)).toEqual([
-            'inspect', 'clearSection', 'clearCell', 'keyRead', 'keyWrite', 'sectionRead', 'sectionWrite', 'cellRead', 'cellWrite', 'storeCell'
+            'inspect', 'clearSection', 'clearCell', 'storeCell', 'keyRead', 'keyWrite', 'sectionRead', 'sectionWrite', 'cellRead', 'cellWrite'
         ]);
         expect(DEFAULT_TOOL_ID).toBe('inspect');
         expect(getTool('nope')).toBeNull();

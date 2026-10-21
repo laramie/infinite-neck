@@ -9,12 +9,16 @@
         <div class="dmRow dmButtons">
             <b>Display Options Matrix</b>
             <button type="button" id="btnSaveDiff_Matrix" class="riskyButton" title="SAVE Diff: stores only the controls that differ from what this Section inherits">SAVE Diff</button>
-            <button type="button" id="btnSaveAll_Matrix" title="Stores every writable control value in this Section (asks first)"><small>Save All...</small></button>
-            <button type="button" id="btnApply_Matrix" title="Re-applies this Section's DisplayOptions to the controls (same as navigating to it)">Apply</button>
+            <button type="button" id="btnSaveAll_Matrix" class="riskyButton" title="Stores every writable control value in this Section">Save All</button>
+            <button type="button" id="btnUndo_Matrix" class="shadowButton" title="Undo the last Matrix/Save/Clear change (same as /vpmu)" disabled>Undo</button>
+            &nbsp;&nbsp;&nbsp;
             <label class="dmCheck" title="After an edit that changes what Apply would do, apply it at once (not while the controls have unsaved changes)"><input type="checkbox" id="cbAutoApply_Matrix">Auto-apply</label>
-            <button type="button" id="btnUndo_Matrix" title="Undo the last Matrix/Save/Clear change (same as /vpmu)" disabled>Undo</button>
-            <button type="button" id="btnFloatSection_divDisplayOptionsMatrix" class="subcaptionButton floatDockableButton" title="Float this Matrix in a window">F<small>loat</small></button>
-            <button type="button" id="btnClose_Matrix" title="Close the Matrix (docks it first if it is floating)">Close</button>
+            <button type="button" id="btnApply_Matrix" class="shadowButton" title="Re-applies this Section's DisplayOptions to the controls (same as navigating to it)">Apply</button>
+            &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+            <button type="button" id="btnFloatSection_divDisplayOptionsMatrix" class="shadowButton floatDockableButton" title="Float this Matrix in a window">F<small>loat</small></button>
+            <button type="button" id="btnClose_Matrix" class="shadowButton" title="Close the Matrix (docks it first if it is floating)">Close</button>
         </div>
 
         <div class="dmRow dmViewOptions">

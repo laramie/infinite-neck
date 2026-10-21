@@ -42,13 +42,13 @@ export const TOOLS = Object.freeze([
     { id: 'inspect', label: 'Inspect', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
     { id: 'clearSection', label: 'Clear Section', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: null },
     { id: 'clearCell', label: 'Clear Cell', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
+    { id: 'storeCell', label: 'Store Cell', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
     { id: 'keyRead', label: 'Key r', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: 'column' },
     { id: 'keyWrite', label: 'Key w', zones: [Z.keyHeader, Z.specialCell, Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: 'column' },
     { id: 'sectionRead', label: 'Section r', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: 'row' },
     { id: 'sectionWrite', label: 'Section w', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: true, overlay: 'row' },
     { id: 'cellRead', label: 'Cell r', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
-    { id: 'cellWrite', label: 'Cell w', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null },
-    { id: 'storeCell', label: 'Store Cell', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null }
+    { id: 'cellWrite', label: 'Cell w', zones: [Z.sectionHeader, Z.cell], actsOnSectionRow: false, overlay: null }
 ]);
 
 export const DEFAULT_TOOL_ID = 'inspect';

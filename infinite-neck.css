@@ -201,6 +201,11 @@ table {
     pointer-events: none;
 }
 
+.shadowButton {
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
+}
+
 .BtnPunchedIn {
     box-shadow: inset 2px 2px 5px 2px #555;
     border-radius: 4px;
@@ -405,13 +410,19 @@ table {
 
 .safeButton{
     background-color: #6faa09 !important;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 .riskyButton {
     background-color: pink !important;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 .riskyButtonActionRequired {
     background-color: #f836f8 !important;
     font-weight: bold;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 
 /***************************** View *****************************/

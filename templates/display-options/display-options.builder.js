@@ -357,11 +357,7 @@ export class DisplayOptionsMatrixBuilder {
     }
 
     static handleSaveAll() {
-        const ctx = InfiniteNeck.getDisplayOptionsMatrixContext();
-        const sectionNumber = ctx.currentIndex + 1;
-        if (window.confirm(`Save ALL Display Options (every writable control value) to Section ${sectionNumber}?\n\nSAVE Diff stores only what changed; Save All stores everything, which pins those values at this Section.`)) {
-            DisplayOptionsMatrixBuilder.setStatus([InfiniteNeck.handleBtnSaveAll({ quiet: true }).report]);
-        }
+        DisplayOptionsMatrixBuilder.setStatus([InfiniteNeck.handleBtnSaveAll({ quiet: true }).report]);
     }
 
     static handleApply() {

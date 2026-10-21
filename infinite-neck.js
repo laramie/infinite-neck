@@ -3775,7 +3775,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}, { quiet: options?.quiet === true });
 	}
 
-	/** Save All: writes every writable cell from the controls to this Section.  Callers confirm first. */
+	/** Save All: writes every writable cell from the controls to this Section. */
 	export function handleBtnSaveAll(options) {
 		return runDisplayOptionsCommand(() => {
 			const song = getSong();
@@ -4591,10 +4591,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	        handleBtnSaveDiff();
 	    });
 		bindEvent('click', '#btnSaveAll_View', function() {
-			const sectionNumber = currentSectionIndex() + 1;
-			if (window.confirm(`Save ALL Display Options (every writable control value) to Section ${sectionNumber}?\n\nSAVE Diff stores only what changed; Save All stores everything, which pins those values at this Section.`)){
-				handleBtnSaveAll();
-			}
+			handleBtnSaveAll();
 	    });
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
