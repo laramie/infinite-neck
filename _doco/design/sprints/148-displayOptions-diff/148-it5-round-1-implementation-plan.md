@@ -279,3 +279,102 @@ Q1-Q10 change what you see or do.  **Q11-Q20 are minor: the recommendation is us
 - **/vdd regression** is the one risk to something that works today; hence phase 1 (golden test first).
 - **CSS ownership:** the hatch gradients are yours; I will port the existing look and keep the per-source class names stable so your CSS survives.
 - **No Song file change, no migration, no new gate semantics.**
+
+## Additional Clarification of Q2 from Copilot.
+
+### User Question
+
+Everything makes sense, and the recommendations look great.  We'll give a full, detailed approval list in response next.  Before that, could you please explain Q2 in more detail, with some examples of scenarios? We are having a little trouble understanding the scenarios and what they would look like and behave like.
+
+### Copilot Response
+
+Q2 is about what happens to the controls (Instruments, Looping and so on) after a Matrix click edits the model. The scenarios below are reasoned from how the apply and save code works. I haven't tried them in the browser.
+
+#### Background
+
+- **Apply** is what happens when you arrive at a Section. The Section's stored values, plus anything inherited from earlier Sections, are written into the controls.
+  - A read gate on a column, row or adapter means "leave that control alone".
+  - A read gate on a cell means "pretend that cell isn't stored", so the key inherits or gets its default.
+- Gate edits, clears and Undo change the model only. They don't re-run Apply (Round 3 Q10).
+- On the command line that is fine. With a mouse it means the model and the controls can disagree until you navigate.
+
+The proposed **Apply** button does the same as navigating to the Current Section again: re-resolve it and push the values into the controls.
+
+#### Scenarios
+
+Assume a Song with Sections 1, 2 and 3, and the Current Section is 2.
+
+- Section 1 stores `noteFont = Eczar`.
+- Section 2 stores `noteFont = Cardo`.
+- Section 3 stores nothing, so it inherits Cardo from Section 2.
+- The `noteFont` control currently shows Cardo.
+
+##### A. Cell read-block on the Current Section (visible change)
+
+1. Choose the Cell read-block tool and click cell (2, `noteFont`).
+2. The model change happens. The cell gets the cell-gate look, and the status line says:
+   `Section 2 noteFont: cell read-blocked. Controls not re-applied: press Apply.`
+3. The control still shows Cardo. Nothing seems to have happened in the Instruments.
+4. Press Apply. Section 2's cell is now ignored, so `noteFont` inherits Eczar from Section 1. The control changes to Eczar, and you see the effect of the gate.
+
+Without an Apply button, you would have to navigate to Section 1 and back to see this.
+
+##### B. Clear Section, then SAVE Diff (hazard without Apply)
+
+1. Choose Clear Section and click row 2.
+   - The row turns dark gray.
+   - The controls still show the old Section 2 values (Cardo and so on).
+2. SAVE Diff compares the controls to what Section 2 would inherit. The controls differ, so SAVE Diff would write all those values straight back into Section 2.
+3. With Apply, you press Apply first. The controls take the inherited values, the row stays empty, and a later SAVE Diff writes nothing.
+
+This is the strongest reason for the Apply button. I'm inferring the SAVE Diff behavior from how it compares live to baseline. The browser steps will confirm it.
+
+##### C. Key read-block (effect shows on navigation, not on Apply)
+
+1. Choose Key read-block and click the `noteFont` header. A Song-wide read gate is now on.
+2. Press Apply on Section 2. The control is left alone because of the column gate, so it still shows Cardo and nothing visibly changes.
+3. The effect shows when you go to another Section. `noteFont` stays at whatever it was instead of following that Section's value.
+4. Apply does show a difference in one case: you had edited the control live to "Fancy" and haven't saved. Normally Apply would reset it to Cardo. With the gate, it stays Fancy.
+
+So Apply doesn't always show a visible result. The status line should say what the gate does rather than promise a change.
+
+##### D. Write-blocks and Store Cell (no hint needed)
+
+Write gates only affect SAVE Diff, SAVE All and Clear. They never change what Apply does. Store Cell writes the live value, so Apply would give the same value back.
+
+I'd refine the plan so the "controls not re-applied" hint appears only for edits that can change what Apply produces:
+
+- read-block toggles (key, section or cell);
+- Clear Section and Clear Cell;
+- Undo of any of those.
+
+Write-block toggles and Store Cell get a plain report.
+
+##### E. Edits to a Section that isn't Current
+
+Cell, row and clear edits on Section 3 while Section 2 is Current don't affect the controls. The hint is skipped. Key gates affect every Section, so they still get the hint.
+
+#### What it would look like
+
+```
+[ Save All... ] [ SAVE Diff ] [ Apply ] [ Undo ] [ Float ]
+
+Tools: (o) Inspect ( ) Clear Section ... 
+Status: Section 2 noteFont: cell read-blocked.  Controls not re-applied: press Apply.
+```
+
+The hint is only text in the status line. It doesn't open Messages or pop a dialog, and it goes away on the next action.
+
+#### Auto-apply toggle
+
+If it were on, every edit that affects Apply would run Apply immediately. Scenario A would change the control on the click, with no Apply press.
+
+The cost is that Apply writes every unblocked control, not just the one you edited. Suppose you had tweaked other controls live, so SAVE Diff is magenta. The next gate click would silently overwrite those tweaks.
+
+That is why my recommendation was Apply button yes, Auto-apply no.
+
+#### Decision for the approval list
+
+- **(a) Recommended:** Apply button, with the hint only for edits that can change Apply (A, B, C, Undo). No Auto-apply.
+- **(b)** Same as (a), plus an Auto-apply checkbox that is off by default.
+- **(c)** No Apply button. Navigate away and back to see an edit, as today.

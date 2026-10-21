@@ -71,7 +71,7 @@
 }
 #divDisplayOptionsMatrix .dmTable {
     border-collapse: separate;     /* sticky cells lose collapsed borders */
-    border-spacing: 0;
+    border-spacing: 0.2em;
 }
 #divDisplayOptionsMatrix .dmTable :where(th, td) {
     position: relative;

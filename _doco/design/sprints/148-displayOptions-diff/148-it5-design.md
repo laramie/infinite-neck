@@ -220,3 +220,29 @@ In addition to the above answers, we can skip status line updates and any action
 ## Request
 
 Please proceed to APPROVED coding. Coding is CORE-APPROVED for infinite-neck.js.
+
+# sprint-148 Iteration 5 Round 3
+
+Implementation Report `_doco/design/sprints/148-displayOptions-diff/148-it5-round-2-implementation-report.md` is accepted.
+
+In Round 3 we'd like to apply some tweaks.
+
+1. The sticky scrolling is working for when there are many rows (Sections).  However, the horizontal scrolling when there are more columns than fit in the window is not happening when docked. If we float and scroll around a bit, then both vertical sticky scroll and horizontal sticky scroll are happening.  Going back to parked means the horizontal scroll stops, and there are columns we can't get to without decreasing Chrome's size with `Ctrl-`.
+
+2. Now that we have CSS rules, we no longer need `row:r` etc. in the Section row headers.  We'd like to turn them off with a code constant like WANT_LITERAL_CELLMARK_TEXT, call it WANT_LITERAL_ROWMARK_TEXT.  Similarly for `col:r` and variants, call it WANT_LITERAL_COLMARK_TEXT.  We would like them turned off in the code, so that later we can turn them on for debugging cases where the CSS won't show properly.
+
+3. We like the hints `a:allowThemeAutomation` and `a:presentationMode`, however, they make the column header much taller.  We'd prefer them to live next to, rather than inline as superscript.  Since the text direction is vertical, we think that means something like this would be what we want:
+```
+sectionTheme
+a:allowThemeAutomation
+```
+When rotated for the text direction, the second line would appear to the right of the first line (sectionTheme) on the page.
+
+4. We already changed display-options.css rule 
+```
+#divDisplayOptionsMatrix .dmTable {
+    border-collapse: separate;     /* sticky cells lose collapsed borders */
+    border-spacing: 0.2em;
+}
+```
+so that border-spacing was non-zero so that it matches the look of /vdd.  The extra space makes the css cell border and inset shadow work better visually.  However, this may have thrown off some of the sticky calculations.
