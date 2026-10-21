@@ -100,6 +100,10 @@ You have already set up the ./templates/ folder, so we'll continue to build the 
 
 Please produce Iteration 5 Round 1 deliverable: the Implementation Plan with Questions, especially any holes in the design or missing controls.
 
+
+
+
+
 # sprint-148 Iteration 5 Round 2
 
 Round 1's deliverable, `_doco/design/sprints/148-displayOptions-diff/148-it5-round-1-implementation-plan.md` is accepted, with the following Answers from the Design Team.
@@ -108,7 +112,7 @@ Round 2's deliverable is a working first implementation of the DisplayOptionsMat
 
 ## Design Team Answers to Round 1 Questions
 
-### Iteration 5 Round 1 Implementation Plan header section 9. Questions
+### Iteration 5 Round 1 Implementation Plan header section 9. Questions, with Answers
 
 
 **Q1.  Tool set (H1).**  Add Clear Cell, Cell read-block, Cell write-block and Store Cell to the design's six Tools (ten in all, in the order of 3.2)?  Recommendation: **yes**.  Without them cell gates stay command-line only.
