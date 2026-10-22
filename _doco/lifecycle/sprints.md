@@ -244,6 +244,9 @@ The sprints toward this effort are documented here.
 - [148-displayOptions-diff](../design/sprints/148-displayOptions-diff/sprint-148.md)
   - 
 
+- [149-hide-nut-note-name](../design/sprints//sprint-149-hide-nut-note-name.md)
+  - Hide the note names in the Nut for use by songs in name-that-note.
+
 - [](../design/sprints//sprint-.md)
   - 
 
