@@ -712,6 +712,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",

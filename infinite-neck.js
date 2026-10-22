@@ -3278,6 +3278,13 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		$('body').toggleClass('ShowAllNoteNames', !!show);
 	}
 
+	/** Sprint 149: hides the baseline Nut labels via a body class (CSS only, see infinite-neck.css).
+	 *  Unlike the HIDE Named/Single/Tiny/Fingering checkboxes this does not touch Palette::Keep or replay(). */
+	export function hideNutNames(hide){
+		$("#cbHideNutNames").prop("checked", !!hide);
+		$('body').toggleClass('HideNutNames', !!hide);
+	}
+
 	export function getVisibleTablesSelect() {
 		const tableIds = getSong().getVisibleTunings();
 		const prefix = Constants.TABLE_ID_PREFIX;
@@ -3323,6 +3330,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			if (sizesObj.NoteFontSize){
 				setNoteFontSize(sizesObj.NoteFontSize);
 			}
+		}
+
+		if (has('hideNutNames')){
+			hideNutNames(options.hideNutNames);
 		}
 
 		if (has('showAllNoteNames')){
@@ -3470,6 +3481,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		options.hideTinyNotes = $("#cbHideTinyNotes").prop("checked");
 		options.hideSingleNotes = $("#cbHideSingleNotes").prop("checked");
 		options.hideFingering = $("#cbHideFingering").prop("checked");
+		options.hideNutNames = $("#cbHideNutNames").prop("checked");
 
 		options.showAllNoteNames = $("#cbShowAllNoteNames").prop("checked");
 
@@ -4426,6 +4438,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 				   .removeClass("BtnPunchedIn");
 			}
 			showAllNoteNames(show);
+		});
+
+		bindEvent('change', '#cbHideNutNames', function() {
+			hideNutNames($("#cbHideNutNames").prop("checked"));
 		});
 
 		bindEvent('click', '.RecordButton', function() {

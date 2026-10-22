@@ -13,7 +13,7 @@ const CHECKBOXES = {
     showCellNotes: 'cbShowCellNotes', showSubscriptFunctions: 'cbShowSubscriptFunctions', showMidiNum: 'cbMidiNum',
     useCenterForRightFunction: 'cbCenterForRightFunction', naturalFretWidths: 'cbNaturalFretWidths',
     hideNamedNotes: 'cbHideNamedNotes', hideTinyNotes: 'cbHideTinyNotes', hideSingleNotes: 'cbHideSingleNotes',
-    hideFingering: 'cbHideFingering', showAllNoteNames: 'cbShowAllNoteNames', showLooperLightBeats: 'cbShowLooperLightBeats',
+    hideFingering: 'cbHideFingering', hideNutNames: 'cbHideNutNames', showAllNoteNames: 'cbShowAllNoteNames', showLooperLightBeats: 'cbShowLooperLightBeats',
     autoColor: 'cbAutomaticColor', autoColorHighlight: 'cbAutomaticColorHighlight'
 };
 const SELECTS = {

@@ -1851,6 +1851,15 @@ body.ShowAllNoteNames .universalNamedNote {
     color: var(--universal-note-black-key-color);
 }
 
+/* Sprint 149: hides only the baseline Nut label (the open-string note name that nut cells show
+   because they are excluded from .noteWhiteKey/.noteBlackKey, whose color is transparent).
+   A placed Named note has .NamedNoteActive and is left alone. The separate .universalNamedNote
+   lane is untouched, so body.ShowAllNoteNames still reveals the Nut labels. */
+body.HideNutNames td.nut .namedNote:not(.NamedNoteActive),
+body.HideNutNames td.nutR .namedNote:not(.NamedNoteActive) {
+    color: transparent;
+}
+
 
 .singleNote {
     /* these two lines from cellFn */
