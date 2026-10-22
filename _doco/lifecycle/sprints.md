@@ -242,7 +242,8 @@ The sprints toward this effort are documented here.
   - Also the genesis of SongWidgets 
 
 - [148-displayOptions-diff](../design/sprints/148-displayOptions-diff/sprint-148.md)
-  - 
+  - Added new DisplayOptionsMatrix aka "Matrix" and handling of Save Diff.
+  - Added widget to preview and CRUD the Function Symbols by Users.
 
 - [149-hide-nut-note-name](../design/sprints//sprint-149-hide-nut-note-name.md)
   - Hide the note names in the Nut for use by songs in name-that-note.
