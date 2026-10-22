@@ -20,6 +20,7 @@ const STYLE_RANDOM = 'random';
 const STYLE_BACH = 'bach';
 const SOURCE_TYPE_NAMED_NOTE = 'NamedNote';
 const SOURCE_TYPE_SINGLE_NOTE = 'SingleNote';
+const SOURCE_TYPE_PLACED_SINGLE_NOTE = 'PlacedSingleNote';
 const SOURCE_TYPE_AUTO_CHART_CHORD = 'AutoChartChord';
 const SOURCE_TYPE_AUTO_CHART_MODE = 'AutoChartMode';
 const SOURCE_TYPE_AUTO_CHART_CHORD_MODE = 'AutoChartChordMode';
@@ -39,6 +40,7 @@ const FILL_POSITIONS_REQUEST_PATH = 'fill/op';
 const SOURCE_TYPE_LABELS = Object.freeze({
   [SOURCE_TYPE_NAMED_NOTE]: 'named',
   [SOURCE_TYPE_SINGLE_NOTE]: 'single',
+  [SOURCE_TYPE_PLACED_SINGLE_NOTE]: 'placed single',
   [SOURCE_TYPE_AUTO_CHART_CHORD]: 'chord',
   [SOURCE_TYPE_AUTO_CHART_MODE]: 'mode',
   [SOURCE_TYPE_AUTO_CHART_CHORD_MODE]: 'chord+mode'
@@ -416,7 +418,8 @@ Implemented in this iteration for:
 - style = random
 - style = bach
 - type = NamedNote or SingleNote
-- type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode
+- type = NamedNote, SingleNote, PlacedSingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode
+- PlacedSingleNote uses the exact cells of placed SingleNotes (filtered by fret and string limits); style bach is not supported with it
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
@@ -1204,6 +1207,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (![STYLE_EVERY, STYLE_ALTERNATE, STYLE_RANDOM, STYLE_BACH].includes(style)) {
       return `Unknown style: ${style}. Use help for the implemented combinations.`;
     }
+    if (style === STYLE_BACH && this.getSourceType() === SOURCE_TYPE_PLACED_SINGLE_NOTE) {
+      return 'style bach is not supported with type placed single. Use every, alternate, or random.';
+    }
     return '';
   }
 
@@ -1663,7 +1669,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     const section = this.getTargetSection(song, payload);
     const tuning = this.getTargetTuning(song);
-    if (!section || !tuning) {
+    if (!section || !tuning || this.getUnsupportedConfigurationMessage()) {
       this.emitNamedNoteDisplay({ clearExisting: true, cells: [] });
       this.emitDiamondPositionDisplay({ clearExisting: true, tableID: '', minFret: null, maxFret: null });
       return;
@@ -1709,9 +1715,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
   collectCandidatesForSection(section, tuning, options = {}) {
     const tableID = this.getTableID(tuning);
     const sectionNotes = section?.sectionNotesByTable?.[tableID];
-    const targetNoteNames = this.collectCandidateNoteNames(sectionNotes, section);
+    const placedCellKeys = this.getSourceType() === SOURCE_TYPE_PLACED_SINGLE_NOTE
+      ? this.collectPlacedSingleNoteCellKeys(sectionNotes)
+      : null;
+    const targetNoteNames = placedCellKeys ? new Set() : this.collectCandidateNoteNames(sectionNotes, section);
 
-    if (targetNoteNames.size === 0) {
+    if (placedCellKeys ? placedCellKeys.size === 0 : targetNoteNames.size === 0) {
       return [];
     }
 
@@ -1739,7 +1748,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       for (const fret of frets) {
         const midinum = openMidi + fret;
         const noteName = Constants.midinumToNoteName(midinum);
-        if (!targetNoteNames.has(noteName)) {
+        const isSource = placedCellKeys
+          ? placedCellKeys.has(`${row}:${fret}`)
+          : targetNoteNames.has(noteName);
+        if (!isSource) {
           continue;
         }
         candidates.push({ noteName, midinum, row, col: fret });
@@ -1781,6 +1793,21 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         .map((note) => `${note?.noteName || ''}`.trim())
         .filter((noteName) => noteName.length > 0)
     );
+  }
+
+  collectPlacedSingleNoteCellKeys(sectionNotes) {
+    const cellKeys = new Set();
+    (sectionNotes?.playedNotes || []).forEach((note) => {
+      if (note?.styleNum !== Note.STYLENUM_SINGLE) {
+        return;
+      }
+      const row = Number.parseInt(note.row, 10);
+      const col = Number.parseInt(note.col, 10);
+      if (Number.isInteger(row) && Number.isInteger(col)) {
+        cellKeys.add(`${row}:${col}`);
+      }
+    });
+    return cellKeys;
   }
 
   getEffectiveChartRootID(section) {
@@ -2262,6 +2289,10 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       maxFret: fretWindow.maxFret
     });
     if (candidates.length === 0) {
+      const isPlacedSingle = this.getSourceType() === SOURCE_TYPE_PLACED_SINGLE_NOTE;
+      if (isPlacedSingle) {
+        this.emitUserLogMessage(`no placed SingleNotes on target table ${this.getTableID(tuning)} within fret ${fretWindow.minFret}..${fretWindow.maxFret} and the string limits`);
+      }
       this.requestSectionStatusRefresh(song);
       this.syncNamedNoteDisplay({ song, section, tableID: this.getTableID(tuning), sequence: [], eventName });
       this.syncDiamondPositionDisplay({
@@ -2274,7 +2305,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
         this.requestCurrentBeatRefresh(song, section);
       }
       return {
-        result: `Arpeggio applied: no matching named notes on target table ${this.getTableID(tuning)}; removed=${removedCount}`
+        result: `Arpeggio applied: no matching ${isPlacedSingle ? 'placed single notes' : 'named notes'} on target table ${this.getTableID(tuning)}; removed=${removedCount}`
       };
     }
 

@@ -129,6 +129,7 @@
     "options": [
       { "value": "NamedNote", "caption": "named", "trigger": "n" },
       { "value": "SingleNote", "caption": "single", "trigger": "s" },
+      { "value": "PlacedSingleNote", "caption": "placed single", "trigger": "p" },
       { "value": "AutoChartChord", "caption": "auto chord", "trigger": "c" },
       { "value": "AutoChartMode", "caption": "auto mode", "trigger": "m" },
       { "value": "AutoChartChordMode", "caption": "auto chord+mode", "trigger": "b" }

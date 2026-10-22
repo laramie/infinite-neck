@@ -156,7 +156,7 @@
         {
           "fromBaseID": "P46",
           "wiring": "Main",
-          "visible": true
+          "visible": false
         },
         {
           "fromBaseID": "Piano",
@@ -493,6 +493,32 @@
           "fromBaseID": "P46",
           "wiring": "Main",
           "visible": false
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-placed-singles.json",
+      "description": "<b>placed SingleNote</b> version of <em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
         },
         {
           "fromBaseID": "P48",

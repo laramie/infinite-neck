@@ -143,7 +143,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
-		expect(help).toContain('type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
+		expect(help).toContain('type = NamedNote, SingleNote, PlacedSingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
 	});
 
 		test('menu includes type before show note name', () => {
@@ -776,6 +776,127 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(candidateNames).toEqual(['C', 'D']);
 		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['C', 'D']);
+	});
+
+	describe('type=PlacedSingleNote', () => {
+		const single = (row, col, extra = {}) => ({ noteName: 'X', styleNum: Note.STYLENUM_SINGLE, row: `${row}`, col: `${col}`, ...extra });
+
+		test('uses the exact placed SingleNote cells, deduped, ignoring other note styles', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [
+					single(0, 2),
+					single(1, 3),
+					single(1, 3),
+					{ noteName: 'E', styleNum: Note.STYLENUM_TINY, row: '0', col: '4' }
+				]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+
+			const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+			expect(candidates.map((c) => `${c.row}:${c.col}`)).toEqual(['1:3', '0:2']);
+			expect(candidates.map((c) => c.midinum)).toEqual([48, 42]);
+		});
+
+		test('keeps same-pitch-class notes in different cells as separate candidates', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 5), single(1, 0)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+
+			const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+			expect(candidates.map((c) => c.noteName)).toEqual(['A', 'A']);
+			expect(candidates.map((c) => `${c.row}:${c.col}`)).toEqual(['1:0', '0:5']);
+		});
+
+		test('filters placed cells by fret window and string limits', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 1), single(0, 4), single(1, 4)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			const section = song.getCurrentSection();
+			const tuning = song.myTunings[0];
+
+			const byFret = plugin.collectCandidatesForSection(section, tuning, { lowToHigh: true, minFret: 3, maxFret: 5 });
+			const byRow = plugin.collectCandidatesForSection(section, tuning, { lowToHigh: true, minRow: 1, maxRow: 1 });
+
+			expect(byFret.map((c) => `${c.row}:${c.col}`)).toEqual(['1:4', '0:4']);
+			expect(byRow.map((c) => `${c.row}:${c.col}`)).toEqual(['1:4']);
+		});
+
+		test('random sequence draws only from the placed cells', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 2), single(1, 3)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			plugin.setPropertyValue('style', 'random', { song });
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			const midinums = getBeatMidinums(sectionNotes, 4);
+			expect(new Set(midinums)).toEqual(new Set([42, 48]));
+			expect(new Set(midinums.slice(0, 2)).size).toBe(2);
+		});
+
+		test('empty placed set generates nothing and logs a warning', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40],
+				frets: 3,
+				namedNotes: {},
+				playedNotes: []
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			EventBus.trigger.mockClear();
+
+			const result = plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(result.result).toContain('no matching placed single notes');
+			expect(sectionNotes.recordedNotes).toEqual({});
+			expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+				subSystem: 'ArpeggioPlugin',
+				message: expect.stringContaining('no placed SingleNotes')
+			});
+		});
+
+		test('style=bach is rejected with a UserLog message', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40],
+				frets: 3,
+				namedNotes: {},
+				playedNotes: [single(0, 1)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			plugin.setPropertyValue('style', 'bach', { song });
+			EventBus.trigger.mockClear();
+
+			const result = plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(result.result).toContain('skipped');
+			expect(sectionNotes.recordedNotes).toEqual({});
+			expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+				subSystem: 'ArpeggioPlugin',
+				message: expect.stringContaining('style bach is not supported with type placed single')
+			});
+		});
 	});
 
 	test('type=NamedNote preserves current candidate collection even when SingleNotes exist', () => {

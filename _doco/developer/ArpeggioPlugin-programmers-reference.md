@@ -96,6 +96,16 @@ The important sequence helpers are:
 - `expandRandomSequence()`
 - `expandBachSequence()`
 
+## Source type `PlacedSingleNote` (`/fpat` `p`)
+
+`type = PlacedSingleNote` uses the exact cells (`row`, `col`) of SingleNotes placed in the Section's `playedNotes`, instead of expanding their pitch classes across the whole neck the way `SingleNote` does. The placed notes may be hidden with View > HIDE Single Notes; they remain in `playedNotes`.
+
+- Cells are filtered by the effective fret window (`positions` or `minFret`/`maxFret`) and by `minRow`/`maxRow`.
+- Candidate order matches the other types, so `every` and `alternate` behave consistently; `random` and `flashcard` work unchanged.
+- `style = bach` is rejected for this type (it needs a tonic-relative pitch-class cycle); the reason is sent to UserLog.
+- An empty result (no placed SingleNotes in the window) generates nothing and logs a UserLog warning.
+- No special handling for TransposePlugin or FillPlugin interactions.
+
 ## Section-local positions
 
 Arpeggio now supports a custom `p) positions` submenu in the plugin menu.
