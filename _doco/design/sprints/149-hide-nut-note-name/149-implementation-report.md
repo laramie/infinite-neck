@@ -10,6 +10,10 @@ Per the design request, **Show All Note Names still reveals the Nut labels**. Th
 
 Placed Named notes keep their names: they carry `.NamedNoteActive`, which the rule excludes.
 
+### Follow-up: Arpeggio transient notes
+
+The Arpeggio plugin shows its temporary notes through `showNamedNoteAtCell()` in [NoteTableController.js](../../../../NoteTableController.js). That path does not add `.NamedNoteActive`, so the first version of the rule hid the name while the color and border still showed. The rule in [infinite-neck.css](../../../../infinite-neck.css) now also excludes `[data-transient-named-note-owner="ArpeggioPlugin"]`, the attribute that path stamps on the `.namedNote` div. CSS only; no JS change. Arpeggio is the only caller of that path, and the attribute is removed when the transient note is cleared, so the Nut label hides again afterwards.
+
 ## Changes
 
 | File | Change |

@@ -1,6 +1,6 @@
 # sprint-148-hide-nut-note-name
 
-sprint number: 148
+sprint number: 149
 
 sprint shortname: hide-nut-note-name
 

@@ -1853,10 +1853,12 @@ body.ShowAllNoteNames .universalNamedNote {
 
 /* Sprint 149: hides only the baseline Nut label (the open-string note name that nut cells show
    because they are excluded from .noteWhiteKey/.noteBlackKey, whose color is transparent).
-   A placed Named note has .NamedNoteActive and is left alone. The separate .universalNamedNote
+   A placed Named note has .NamedNoteActive and is left alone. So is a transient Named note shown
+   by the Arpeggio plugin (NoteTableController.js showNamedNoteAtCell(), which does not add
+   .NamedNoteActive but stamps data-transient-named-note-owner). The separate .universalNamedNote
    lane is untouched, so body.ShowAllNoteNames still reveals the Nut labels. */
-body.HideNutNames td.nut .namedNote:not(.NamedNoteActive),
-body.HideNutNames td.nutR .namedNote:not(.NamedNoteActive) {
+body.HideNutNames td.nut .namedNote:not(.NamedNoteActive):not([data-transient-named-note-owner="ArpeggioPlugin"]),
+body.HideNutNames td.nutR .namedNote:not(.NamedNoteActive):not([data-transient-named-note-owner="ArpeggioPlugin"]) {
     color: transparent;
 }
 

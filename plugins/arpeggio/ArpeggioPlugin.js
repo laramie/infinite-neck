@@ -44,6 +44,9 @@ const SOURCE_TYPE_LABELS = Object.freeze({
   [SOURCE_TYPE_AUTO_CHART_CHORD_MODE]: 'chord+mode'
 });
 
+/** Note that ArpeggioPlugin has a special rules in infinite-neck.css
+ *  especially the rules for body.HideNutNames .
+ */
 export class ArpeggioPlugin {
   constructor() {
     this.id = 'arpeggio';
