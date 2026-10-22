@@ -375,6 +375,11 @@
       "</tbody></table>"
     ]
   },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"fontLarger140 centerWidgets\">${transposedModeNotesFunctions}</div>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
