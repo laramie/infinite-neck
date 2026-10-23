@@ -170,5 +170,15 @@
     "defaultValue": false,
     "inputCaption": "true|false",
     "visibleInMenu": true
+  },
+  {
+    "name": "extraClearBeat",
+    "caption": "extra clear beat",
+    "trigger": "e",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
   }
 ]

@@ -109,6 +109,7 @@ export class ArpeggioPlugin {
       this.getProperty('showNoteName')?.getMenuNodeSpec(this),
       this.getProperty('colorNotes')?.getMenuNodeSpec(this),
       this.getProperty('flashcard')?.getMenuNodeSpec(this),
+      this.getProperty('extraClearBeat')?.getMenuNodeSpec(this),
       this.getProperty('help')?.getMenuNodeSpec(this)
     ].filter(Boolean);
   }
@@ -398,7 +399,7 @@ export class ArpeggioPlugin {
   }
 
   buildSummary() {
-    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()} song loops per position=${this.getSongLoopsPerPositionPair()}`;
+    return `target table=${this.resolveValue('targetTable') || '<none>'} fret range=${this.getProperty('minFret')?.getValue()}..${this.getProperty('maxFret')?.getValue()} upper/lower string limit=${this.resolveValue('minRow')}..${this.resolveValue('maxRow')} style=${this.getProperty('style')?.getValue()} type=${this.getSourceType()} low to high=${this.getProperty('lowToHigh')?.getValue()} up only=${this.getProperty('upOnly')?.getValue()} show note names=${this.getShowNoteNameMode()} color notes=${this.getColorNotesEnabled()} flashcard=${this.getFlashcardEnabled()} extra clear beat=${this.getExtraClearBeatEnabled()} song loops per position=${this.getSongLoopsPerPositionPair()}`;
   }
 
   buildHelpMessage(song) {
@@ -427,6 +428,7 @@ Implemented in this iteration for:
 - showNoteName = off, one, all, played, or named (named reveals every same-name cell within the fret and string limits)
 - colorNotes = true or false
 - flashcard = true or false
+- extraClearBeat = true or false (only with flashcard: highlight, reveal, then clear, one note per two beats)
 - random ignores lowToHigh and upOnly
 - random avoids replaying the same string/fret until its unique position set is exhausted
 - bach starts from the section tonic when available, then follows the rolling alternate-up pattern on the tonic-relative ascent
@@ -473,8 +475,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     if (this.getFlashcardEnabled()) {
       outputs.push('flashcard:true');
     }
+    if (this.getExtraClearBeatEnabled()) {
+      outputs.push('extraClearBeat:true');
+    }
     const changed = this.isPropertyChangedFromDefault('colorNotes')
-      || this.isPropertyChangedFromDefault('flashcard');
+      || this.isPropertyChangedFromDefault('flashcard')
+      || this.isPropertyChangedFromDefault('extraClearBeat');
     return this.buildAuditValue(outputs.join('<br>'), changed);
   }
 
@@ -1230,6 +1236,11 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return !!this.getProperty('flashcard')?.getValue();
   }
 
+  /** Extra clear beat only has meaning in flashcard mode. */
+  getExtraClearBeatEnabled() {
+    return this.getFlashcardEnabled() && !!this.getProperty('extraClearBeat')?.getValue();
+  }
+
   isLowToHigh() {
     return !!this.getProperty('lowToHigh')?.getValue();
   }
@@ -1875,11 +1886,24 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     return new Set([...chordSet, ...modeSet]);
   }
 
+  /**
+   * Returns one entry per beat. With extraClearBeat, notes sit on odd beats (1, 3, 5...)
+   * and even beats are null: highlight, then reveal, then clear and highlight the next.
+   */
   expandCandidateSequence(candidates, beatCount, context = {}) {
     if (!Array.isArray(candidates) || candidates.length === 0 || beatCount <= 0) {
       return [];
     }
 
+    if (this.getExtraClearBeatEnabled()) {
+      const noteSequence = this.expandCandidateSequenceByStyle(candidates, Math.ceil(beatCount / 2), context);
+      return Array.from({ length: beatCount }, (_, idx) => (idx % 2 === 0 ? noteSequence[idx / 2] : null));
+    }
+
+    return this.expandCandidateSequenceByStyle(candidates, beatCount, context);
+  }
+
+  expandCandidateSequenceByStyle(candidates, beatCount, context = {}) {
     const style = this.getStyle();
     switch (style) {
       case STYLE_RANDOM:
@@ -2369,6 +2393,9 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     let preservedCount = 0;
 
     sequenceWithContext.forEach((candidate, index) => {
+      if (!candidate) {
+        return;
+      }
       const beatKey = `${index + 1}`;
       if (!Array.isArray(sectionNotes.recordedNotes[beatKey])) {
         sectionNotes.recordedNotes[beatKey] = [];

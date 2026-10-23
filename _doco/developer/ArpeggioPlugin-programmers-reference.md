@@ -224,6 +224,12 @@ Examples:
 - `all + flashcard`: hide on beat 1, then reveal the whole section from beat 2 onward
 - `played + flashcard`: accumulate delayed reveals, and also reveal the final beat on the last beat
 
+### `extraClearBeat`
+
+Boolean, menu `/fpae`, effective only when `flashcard` is on (`getExtraClearBeatEnabled()`).
+
+With it on, each note takes two beats: highlight (odd beat), reveal (even beat), then the next odd beat clears the reveal and shows the next highlight. `expandCandidateSequence()` builds the style sequence for `ceil(beats / 2)` notes and returns a per-beat array with notes on odd beats and `null` on even beats, so the existing flashcard payload logic (reveal the previous beat's note, reveal the current note on the last beat) works unchanged. Generated recorded notes are written only for non-null entries. `played` mode still accumulates by design, and `all` is not changed.
+
 ## Beat-Driven Refresh Path
 
 This sprint added a second event path to Arpeggio:

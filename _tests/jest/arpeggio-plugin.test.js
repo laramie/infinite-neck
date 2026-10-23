@@ -167,6 +167,7 @@ describe('ArpeggioPlugin sequencing', () => {
 			'showNoteName',
 			'colorNotes',
 			'flashcard',
+			'extraClearBeat',
 			'help'
 		]);
 		expect(positionsNode.children.map((child) => child.name)).toEqual([
@@ -954,6 +955,83 @@ describe('ArpeggioPlugin sequencing', () => {
 			expect(lastNamedNoteCells()).toEqual([...ALL_A_CELLS].sort());
 			const lastCall = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells').pop();
 			expect(lastCall[1].clearExisting).toBe(true);
+		});
+	});
+
+	describe('extraClearBeat', () => {
+		const GUITAR = [40, 45, 50, 55, 59, 64];
+
+		function setup({ beats = 6, showNoteName = 'named', flashcard = true, extra = true, beat = 1 } = {}) {
+			const ctx = makeContext({ beats, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: beat });
+			ctx.plugin.setPropertyValue('style', 'every', { song: ctx.song });
+			ctx.plugin.setPropertyValue('showNoteName', showNoteName, { song: ctx.song });
+			ctx.plugin.setPropertyValue('flashcard', flashcard, { song: ctx.song });
+			ctx.plugin.setPropertyValue('extraClearBeat', extra, { song: ctx.song });
+			return ctx;
+		}
+
+		function showBeat({ plugin, song }, beat) {
+			plugin.skipNextSongUiShowBeats = false;
+			EventBus.trigger.mockClear();
+			song.getBeat.mockReturnValue(beat);
+			song.getCurrentSection().currentBeat = beat;
+			plugin.handleEvent('SongUiShowBeats', {}, { song });
+			const calls = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells');
+			return calls[calls.length - 1][1].cells.length;
+		}
+
+		test('defaults to false and appears in the summary', () => {
+			const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+
+			expect(plugin.getProperty('extraClearBeat').getValue()).toBe(false);
+			expect(plugin.buildSummary()).toContain('extra clear beat=false');
+		});
+
+		test('places highlights only on odd beats and uses half the notes', () => {
+			const ctx = setup({ beats: 6 });
+
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			const beatsWithNotes = Object.keys(ctx.sectionNotes.recordedNotes)
+				.filter((key) => ctx.sectionNotes.recordedNotes[key].length > 0).sort();
+			expect(beatsWithNotes).toEqual(['1', '3', '5']);
+		});
+
+		test('reveals on even beats and clears on odd beats', () => {
+			const ctx = setup({ beats: 6 });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 1)).toBe(0);
+			expect(showBeat(ctx, 2)).toBe(7);
+			expect(showBeat(ctx, 3)).toBe(0);
+			expect(showBeat(ctx, 4)).toBe(7);
+			expect(showBeat(ctx, 5)).toBe(0);
+			expect(showBeat(ctx, 6)).toBe(7);
+		});
+
+		test('odd beat count reveals the final highlighted note on the last beat', () => {
+			const ctx = setup({ beats: 5 });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 4)).toBe(7);
+			expect(showBeat(ctx, 5)).toBe(7);
+		});
+
+		test('has no effect unless flashcard is on', () => {
+			const ctx = setup({ beats: 6, flashcard: false });
+
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(ctx.plugin.getExtraClearBeatEnabled()).toBe(false);
+			expect(Object.keys(ctx.sectionNotes.recordedNotes).filter((key) => ctx.sectionNotes.recordedNotes[key].length > 0)).toHaveLength(6);
+		});
+
+		test('off keeps the existing flashcard timing (reveal previous beat on every beat)', () => {
+			const ctx = setup({ beats: 6, extra: false });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 2)).toBe(7);
+			expect(showBeat(ctx, 3)).toBe(7);
 		});
 	});
 
