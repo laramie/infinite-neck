@@ -28,6 +28,7 @@ const SHOW_NOTE_NAME_OFF = 'off';
 const SHOW_NOTE_NAME_ONE = 'one';
 const SHOW_NOTE_NAME_ALL = 'all';
 const SHOW_NOTE_NAME_PLAYED = 'played';
+const SHOW_NOTE_NAME_NAMED = 'named';
 const TARGET_TABLE_OPTION_LIMIT = 9;
 const POSITIONS_VALUE_TOKEN = 'positionsCurrentSection';
 const POSITIONS_SUMMARY_TOKEN = 'positionsSummary';
@@ -423,7 +424,7 @@ Implemented in this iteration for:
 - lowToHigh = true or false for every and alternate
 - lowToHigh = true or false for bach
 - upOnly = true or false for every, alternate, and bach
-- showNoteName = off, one, all, or played
+- showNoteName = off, one, all, played, or named (named reveals every same-name cell within the fret and string limits)
 - colorNotes = true or false
 - flashcard = true or false
 - random ignores lowToHigh and upOnly
@@ -1451,15 +1452,53 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       return [];
     }
 
+    if (this.getShowNoteNameMode() === SHOW_NOTE_NAME_NAMED) {
+      return this.getSameNoteNameNamedNoteCells(currentCandidate, song, section, tableID);
+    }
+
     return [this.buildNamedNoteCell(currentCandidate, tableID, section)].filter(Boolean);
+  }
+
+  /**
+   * For showNoteName=named: every cell holding the candidate's note name within the
+   * effective fret window and string limits. Falls back to the candidate's own cell.
+   */
+  getSameNoteNameNamedNoteCells(candidate, song, section, tableID) {
+    const tuning = song ? this.getTargetTuning(song) : null;
+    if (!tuning) {
+      return [this.buildNamedNoteCell(candidate, tableID, section)].filter(Boolean);
+    }
+
+    const fretWindow = this.resolveEffectiveFretWindow(section, tuning, { advance: false });
+    const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
+    const maxAllowedRow = Math.max(0, rowRange.length - 1);
+    const minRow = this.clampNumber(this.getProperty('minRow')?.getValue(), 0, maxAllowedRow);
+    const maxRow = this.clampNumber(this.getProperty('maxRow')?.getValue(), 0, maxAllowedRow);
+    const cells = [this.buildNamedNoteCell(candidate, tableID, section)];
+
+    for (let row = minRow; row <= maxRow; row += 1) {
+      const openMidi = Number.parseInt(rowRange[row], 10);
+      if (!Number.isFinite(openMidi)) {
+        continue;
+      }
+      for (let fret = fretWindow.minFret; fret <= fretWindow.maxFret; fret += 1) {
+        const midinum = openMidi + fret;
+        if (Constants.midinumToNoteName(midinum) !== candidate.noteName) {
+          continue;
+        }
+        cells.push(this.buildNamedNoteCell({ noteName: candidate.noteName, midinum, row, col: fret }, tableID, section));
+      }
+    }
+
+    return this.dedupeNamedNoteCells(cells.filter(Boolean));
   }
 
   getAllNamedNoteCells(sequence, tableID, section = null) {
     return this.dedupeNamedNoteCells((sequence || []).map((candidate) => this.buildNamedNoteCell(candidate, tableID, section)));
   }
 
-  getBeatNamedNoteCells(sequence, tableID, section, beatNumber) {
-    return this.getCurrentBeatNamedNoteCells(sequence, null, section, tableID, beatNumber);
+  getBeatNamedNoteCells(sequence, tableID, section, beatNumber, song = null) {
+    return this.getCurrentBeatNamedNoteCells(sequence, song, section, tableID, beatNumber);
   }
 
   getFlashcardNamedNoteDisplayPayload(sequence, song, section, tableID, eventName = 'manual') {
@@ -1470,15 +1509,16 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
     const previousBeat = currentBeat - 1;
 
     switch (mode) {
-      case SHOW_NOTE_NAME_ONE: {
+      case SHOW_NOTE_NAME_ONE:
+      case SHOW_NOTE_NAME_NAMED: {
         let cells = [];
         if (previousBeat >= 1) {
-          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat);
+          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat, song);
         }
         if (isLastBeat) {
           cells = this.dedupeNamedNoteCells([
             ...cells,
-            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat)
+            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat, song)
           ]);
         }
         return {
@@ -1498,12 +1538,12 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
       case SHOW_NOTE_NAME_PLAYED: {
         let cells = [];
         if (previousBeat >= 1) {
-          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat);
+          cells = this.getBeatNamedNoteCells(sequence, tableID, section, previousBeat, song);
         }
         if (isLastBeat) {
           cells = this.dedupeNamedNoteCells([
             ...cells,
-            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat)
+            ...this.getBeatNamedNoteCells(sequence, tableID, section, currentBeat, song)
           ]);
         }
         return {
@@ -1532,6 +1572,7 @@ ${buildPluginEventsHelpFooter(this)}</pre>`;
 
     switch (mode) {
       case SHOW_NOTE_NAME_ONE:
+      case SHOW_NOTE_NAME_NAMED:
         return {
           owner: ARPEGGIO_OWNER,
           clearExisting: true,

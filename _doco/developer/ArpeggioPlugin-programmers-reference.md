@@ -183,6 +183,7 @@ Current values:
 - `one`
 - `all`
 - `played`
+- `named`
 
 Meaning:
 
@@ -190,6 +191,7 @@ Meaning:
 - `one`: show only one beat's note-name text at a time
 - `all`: reveal all generated beat positions for the section
 - `played`: accumulate beat-by-beat named-note reveals through the pass
+- `named`: timing and clearing like `one`, but each revealed beat expands to every cell with the same note name inside the effective fret window and `minRow`/`maxRow` (`getSameNoteNameNamedNoteCells()`); works with `flashcard`
 
 ### `colorNotes`
 

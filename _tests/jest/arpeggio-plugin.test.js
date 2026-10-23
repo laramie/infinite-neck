@@ -899,6 +899,64 @@ describe('ArpeggioPlugin sequencing', () => {
 		});
 	});
 
+	describe('showNoteName=named', () => {
+		const GUITAR = [40, 45, 50, 55, 59, 64];
+		const ALL_A_CELLS = ['0:5', '1:0', '1:12', '2:7', '3:2', '4:10', '5:5'];
+
+		function lastNamedNoteCells() {
+			const calls = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells');
+			return calls[calls.length - 1][1].cells.map((cell) => `${cell.cellrow}:${cell.cellcol}`).sort();
+		}
+
+		test('reveals every cell with the same note name within the fret and string range', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			EventBus.trigger.mockClear();
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(lastNamedNoteCells()).toEqual([...ALL_A_CELLS].sort());
+		});
+
+		test('respects string limits and fret window', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			plugin.setPropertyValue('minRow', 2, { song });
+			plugin.setPropertyValue('maxRow', 4, { song });
+			plugin.setPropertyValue('maxFret', 9, { song });
+			EventBus.trigger.mockClear();
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			// 1-based minRow/maxRow 2..4 => rows 1..3; maxFret 9 drops 1:12
+			expect(lastNamedNoteCells()).toEqual(['1:0', '2:7', '3:2']);
+		});
+
+		test('flashcard reveals the previous beat note name everywhere, then clears on the next step', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			plugin.setPropertyValue('flashcard', true, { song });
+			plugin.applyToSection({ song, clearSectionFirst: true });
+			expect(lastNamedNoteCells()).toEqual([]);
+			plugin.skipNextSongUiShowBeats = false;
+			EventBus.trigger.mockClear();
+
+			song.getBeat.mockReturnValue(2);
+			song.getCurrentSection().currentBeat = 2;
+			plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+			expect(lastNamedNoteCells()).toEqual([...ALL_A_CELLS].sort());
+			const lastCall = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells').pop();
+			expect(lastCall[1].clearExisting).toBe(true);
+		});
+	});
+
 	test('type=NamedNote preserves current candidate collection even when SingleNotes exist', () => {
 		const { plugin, song } = makeContext({
 			beats: 4,
