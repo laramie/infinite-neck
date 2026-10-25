@@ -261,7 +261,7 @@
   },
   "songWidgets": {
     "lines": [
-      "<div class=\"fullWidth centerWidgets\">",
+      "<div class=\"centerWidgets\">",
       "",
       "<a href=\"#macro=showChords\" class=\"linkBox\"><span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span></a>",
       "",

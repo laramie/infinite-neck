@@ -53,13 +53,13 @@ const WHITELIST_CLASSES = new Set([
 	'fontLarger200',
 	'fontLarger250',
 	'fontLarger300',
-	'fullWidth',
 	'spacer2',
 	'spacer8',
 	'centerWidgets',
 	'leftJustifyWidgets',
 	'rightJustifyWidgets',
-	'linkBox'
+	'linkBox',
+	'ButtonTable'
 ]);
 
 const HELP_PAGE_FRAGMENT_PATTERN = /^(?:help|help-plugins)\.html#[A-Za-z][A-Za-z0-9_:-]*(?:-[A-Za-z0-9_:-]+)*$/;

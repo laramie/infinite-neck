@@ -186,7 +186,7 @@ export class ThemesBuilder {
             html += '</tr>';
         });
         html += '</tbody>';
-        html += '<tfoot><tr><td colspan="3" style="font-size:60%;">"default" shows when [Allow Theme Automation] sets a Theme for this Section</td></tr></tfoot>'
+        html += '<tfoot><tr><td colspan="3" style="font-size:60%;">"default" shows when [Allow Theme Automation] sets a Theme for this Section. See View|DisplayOptionsMatrix</td></tr></tfoot>'
         table.html(html);
     }
 

@@ -803,7 +803,7 @@ table.viewControls th {
     padding-left: 3pt;
     display: inline-block;
     border: 1px solid gray;
-    border-radius: 20%;
+    border-radius: 0.3em;
     background-color: white; 
     box-shadow: 1pt 1pt 2pt 0.5pt gray;
 }

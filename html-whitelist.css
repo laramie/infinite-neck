@@ -23,8 +23,22 @@
 .fontLarger300 {
     font-size: 300%;
 }
-.fullWidth {
-    width: 100%;
+.centerWidgets {
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+}
+.leftJustifyWidgets {
+  width: 100%;
+  display: flex;
+  justify-content: left; 
+  padding-inline: 0.5em;
+}
+.rightJustifyWidgets {
+  width: 99%;
+  display: flex;
+  justify-content: right; 
+  padding-inline: 0.5em;
 }
 .spacer2 {
     display: inline-block;
@@ -33,15 +47,6 @@
 .spacer8 {
     display: inline-block;
     width: 8em;
-}
-.centerWidgets {
-    text-align: center;
-}
-.leftJustifyWidgets {
-    text-align: left;
-}
-.rightJustifyWidgets {
-    text-align: right;
 }
 .linkBox {
   display: inline-block;
@@ -52,4 +57,55 @@
 .linkBox:hover {
   border: 2px solid cyan;
   padding: 4px;
+}
+
+
+.ButtonTable {
+  border-collapse: collapse;
+  width: max-content;        /* Forces the table to shrink-wrap its data */
+}
+
+.ButtonTable th,
+.ButtonTable td {
+    border: 1px solid #666;
+    padding: 0.3em;
+    background-color: #dfd;
+}
+
+.ButtonTable caption {
+  display: table-caption;    /* Retains correct semantic table structure */
+  caption-side: top;         /* Places the caption cleanly at the top */
+  padding: 0.1em;
+  background-color: #67abff; /* Adds the requested background color */
+  color: #361306;
+  font-weight: bold;         /* Emphasizes the title text */
+  border-bottom: none;       /* Prevents a double-thick line where caption meets table */
+}
+
+.ButtonTable a {
+    display: inline-block; 
+    text-decoration: none;
+    color: #010321;
+    border: 1px solid gray;
+    padding: 0.2em 0.8em;
+    margin: 0.2em;
+    background-color: white;
+    box-shadow: 2pt 2pt 2pt 0.01pt black;
+    position: relative;
+    transition: all 0.1s ease;
+}
+
+.ButtonTable a:hover {
+    display: inline-block; 
+    text-decoration: underline;
+    color: black;
+    border: 1px solid gray;
+    padding: 0.2em 0.8em;
+    margin: 0.2em;
+    background-color:orange;
+    box-shadow: 2pt 2pt 2pt 0.01pt black;
+}
+
+.ButtonTable a:active {
+    transform: translateY(3px); /* Move the button down slightly */
 }

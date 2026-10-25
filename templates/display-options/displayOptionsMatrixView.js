@@ -275,11 +275,31 @@ export function buildLegendHtml() {
 </ul></p>
 
 
-<br><p><b>Gates</b> (r = read-block, w = write-block): <ul><li>a <b>column</b> gate lights the key header and its cells, <li>a <b>row</b> gate lights the Section number and its cells,
-<li>a <b>cell</b> gate marks one cell.  <li>A cell read-block means <i>this stored cell is ignored</i> (the key inherits); <li>a column, row or adapter read-block means <i>the control is left alone</i>.
-<li>Write-blocks stop SAVE Diff, Save All and Clear.  <li>An <b>a</b> mark means Presentation Mode or Allow Theme Automation is off.</ul></p>
-<br><p><b>Example below:</b> <ul><li>Section 2 is the Current Section.  <li><code>naturalFontScaling</code> has a column read-block and <code>tinyNoteWidth</code> a column write-block;
-<li>Section 3 has a cell read-block and a cell write-block; <li>Section 4 has a row read-block; <li>Section 5 has a row write-block and two cell read-blocks.
-<li><code>NoteDisplaySizes</code> is off because Presentation Mode is off.</ul></p>
+<br><p><b>Gates</b> (r = read-block, w = write-block): 
+<ul>
+   <li>a <b>column</b> gate lights the key header and its cells. 
+    <br>Key read-block: <span class="dmToolsExample">Key r</span> 
+    <br>Key write-block: <span class="dmToolsExample">Key w</span> 
+   <li>a <b>row</b> gate lights the Section number and its cells. 
+    <br>Section read-block: <span class="dmToolsExample">Section r</span> 
+    <br>Section write-block: <span class="dmToolsExample">Section w</span>
+   <li>a <b>cell</b> gate marks one cell. 
+    <br>Cell read-block: <span class="dmToolsExample">Cell r</span> 
+    <br>Cell write-block: <span class="dmToolsExample">Cell w</span> 
+   <li>A cell read-block means <i>this stored cell is ignored</i> (the key inherits); 
+   <li>a column, row or adapter read-block means <i>the control is left alone</i>.
+   <li>Write-blocks stop SAVE Diff, Save All and Clear.  
+   <li>An <b>a</b> mark means Presentation Mode or Allow Theme Automation is off.
+    <br><b>a:presentationMode</b>
+    <br><b>a:allowThemeAutomation</b>
+</ul></p>
+<br><p><b>Example below:</b> 
+<ul>
+    <li>Section 2 is the Current Section.  
+    <li><code>naturalFontScaling</code> has a column read-block and <code>tinyNoteWidth</code> a column write-block;
+    <li>Section 3 has a cell read-block and a cell write-block; 
+    <li>Section 4 has a row read-block; <li>Section 5 has a row write-block and two cell read-blocks.
+    <li><code>NoteDisplaySizes</code> is off because Presentation Mode is off.
+</ul></p>
 </div>${table}`;
 }

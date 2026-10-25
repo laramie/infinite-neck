@@ -554,6 +554,32 @@
       ]
     },
     {
+      "href": "name-that-note/name-that-note-fret-flavors.json ",
+      "description": "<b>placed SingleNote</b> version of <em>name-that-note</em> game, with Sections for Perfect Frets, Diamond Frets, Black Keys, White Keys, and All Notes, nick-named \"fret flavors\". Use the link buttons in the Song Widgets.  Gives option to show all NamedNotes upon reveal, and gives an extra beat before clearing.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
       "href": "name-that-note/name-that-note-MIDI.json",
       "description": "<em>name-that-note</em> game for <em>MIDI 8x8</em> and <em>Linstrument 8x24</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
       "instruments": [

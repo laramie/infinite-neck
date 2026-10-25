@@ -244,6 +244,20 @@
 #spanDisplayOptionsMatrixLegendArrow {
     font-size: 80%;
 }
+#divDisplayOptionsMatrix .dmToolsExample {
+    display: inline-block;
+    box-sizing: content-box;
+    margin: 0;
+    margin-right: 0.4em;
+    padding: 0.2em;
+    border: 1px solid gray;
+    border-radius: 2px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    box-shadow: 2pt 2pt 2pt 0.01pt gray;
+    white-space: nowrap;
+}
 
 /* a floating Matrix: the window's content host is black, so keep our own background and give the table room */
 #floating-divDisplayOptionsMatrix #divDisplayOptionsMatrix {

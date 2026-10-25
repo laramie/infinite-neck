@@ -141,7 +141,7 @@
   },
   "songWidgets": {
     "lines": [
-      "<div class=\"fullWidth centerWidgets\">",
+      "<div class=\"centerWidgets\">",
       "",
       "<span class=\"fontLarger140\">${chartChordCaption}${transposedChordNotesFunctions}</span>",
       "",
