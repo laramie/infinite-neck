@@ -36,3 +36,5 @@ Purpose of this sprint is to:
 - [Iteration 5 Round 1 implementation plan with questions](148-it5-round-1-implementation-plan.md)
 - [Iteration 5 Round 2 implementation report and test recipes 16-25](148-it5-round-2-implementation-report.md)
   - Status: implemented, awaiting browser acceptance (see report for the not-verified list).
+- [Iteration 6](148-it6-design.md) 
+  - Add "Song-DEFAULTS" and editing buttons to move Current Section DisplayOption settings to new Song-level defaults. 
