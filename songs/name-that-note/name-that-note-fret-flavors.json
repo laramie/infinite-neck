@@ -260,58 +260,6 @@
         "flashcard": true,
         "extraClearBeat": true
       }
-    },
-    "clip": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblDropD_1",
-        "overwrite": true,
-        "automatic": true,
-        "recordedMidiPaste": true,
-        "includeNamed": false,
-        "includeSingle": true,
-        "includeTiny": false,
-        "includeBend": false,
-        "includeFingering": false
-      }
-    },
-    "fill": {
-      "enabled": false,
-      "enableOnSongLoad": false,
-      "graveyardKey": "USER",
-      "properties": {
-        "targetTable": "tblP48_1",
-        "chordFormula": "",
-        "scaleFormula": "chromatic",
-        "automaticFromChart": false,
-        "literalChartedChord": false,
-        "minFret": 0,
-        "maxFret": 12,
-        "songLoopsPerPositionPair": 1,
-        "minRow": 0,
-        "maxRow": 7,
-        "namedRootMode": "none",
-        "namedRootColor": "noteRoot",
-        "namedChordMode": "none",
-        "namedChordColor": "noteChord",
-        "namedScaleMode": "none",
-        "namedScaleColor": "noteScale",
-        "singleRootMode": "role",
-        "singleRootColor": "noteTransparent",
-        "singleChordMode": "none",
-        "singleChordColor": "noteChord",
-        "singleScaleMode": "role",
-        "singleScaleColor": "noteTransparent",
-        "tinyRootMode": "none",
-        "tinyRootColor": "noteRoot",
-        "tinyChordMode": "none",
-        "tinyChordColor": "noteChord",
-        "tinyScaleMode": "none",
-        "tinyScaleColor": "noteScale",
-        "singleAddTiny": "none"
-      }
     }
   },
   "macros": {
