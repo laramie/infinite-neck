@@ -245,7 +245,7 @@
       "enableOnSongLoad": true,
       "graveyardKey": "flashcard-0-7",
       "properties": {
-        "targetTable": "tblDropD_1",
+        "targetTable": "tblP46_1",
         "minFret": 0,
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
