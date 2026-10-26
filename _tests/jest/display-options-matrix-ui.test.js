@@ -326,7 +326,7 @@ describe('Matrix tools: Inspect', () => {
         song.displayOptionGates = { writeBlocked: ['noteFont'] };
         const info = describeCell(song, null, 'noteFont', { live: { noteFont: 'Live' } });
         expect(info.title).toBe('noteFont');
-        expect(info.lines[0]).toBe('group: Fonts; default: EB Garamond; live: Live');
+        expect(info.lines[0]).toBe('group: Fonts; default: EB Garamond; song default: (none); live: Live');
         expect(info.lines[1]).toBe('gates: column write-blocked');
         expect(describeCell(song, null, 'sectionTheme').lines[0]).toContain('(no default)');
     });
@@ -371,7 +371,8 @@ describe('Matrix wiring (source checks; the browser behavior is checked in UI ac
     test('the template has the buttons, the Float button id dockable.js expects, and the host elements', () => {
         const tpl = read('templates/display-options/display-options.html');
         for (const id of ['divDisplayOptionsMatrix', 'btnSaveDiff_Matrix', 'btnSaveAll_Matrix', 'btnApply_Matrix', 'cbAutoApply_Matrix', 'btnUndo_Matrix',
-            'btnFloatSection_divDisplayOptionsMatrix', 'btnViewColumnGates_Matrix', 'btnViewRowGates_Matrix', 'dmTools', 'dmStatus', 'dmScroll', 'dmTableHost', 'btnLegend_Matrix', 'dmLegend']) {
+            'btnFloatSection_divDisplayOptionsMatrix', 'btnViewColumnGates_Matrix', 'btnViewRowGates_Matrix', 'dmTools', 'dmStatus', 'dmScroll', 'dmTableHost', 'btnLegend_Matrix', 'dmLegend',
+            'btnCurrentSectionToSongDisplayOptions', 'btnClearSongDisplayOptions']) {
             expect(tpl).toContain(`id="${id}"`);
         }
     });
@@ -415,9 +416,9 @@ describe('Matrix view', () => {
         expect(html).not.toContain('dashed');
     });
 
-    test('visual order: group row, key row, DEFAULTS, LIVE, Section # label, then Sections', () => {
+    test('visual order: group row, key row, DEFAULTS, Song-DEFAULTS, LIVE, Section # label, then Sections', () => {
         const html = buildMatrixHtml(mkSong([null]), {});
-        const positions = ['dmGroupRow', 'dmKeyRow', 'dmDefaultsRow', 'dmLiveRow', 'dmSectionLabelRow', 'dmSectionRow'].map((c) => html.indexOf(c));
+        const positions = ['dmGroupRow', 'dmKeyRow', 'dmDefaultsRow', 'dmSongDefaultsRow', 'dmLiveRow', 'dmSectionLabelRow', 'dmSectionRow'].map((c) => html.indexOf(c));
         expect(positions.every((p) => p >= 0)).toBe(true);
         expect([...positions].sort((a, b) => a - b)).toEqual(positions);
     });

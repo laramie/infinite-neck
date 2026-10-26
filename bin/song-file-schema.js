@@ -383,6 +383,12 @@ export const songFileV2Schema = {
         presentationMode: { type: 'boolean' },
         allowThemeAutomation: { type: 'boolean' },
         displayOptionGates: displayOptionGatesSchema(false),
+        // Sprint 148 it6: Song-DEFAULTS, a sparse DisplayOptions block (same keys as a Section's displayOptions); omitted when empty.
+        displayOptionsDefault: {
+            type: 'object',
+            propertyNames: { enum: [...DISPLAY_OPTION_KEYS] },
+            minProperties: 1
+        },
         functionSymbolSets: {
             type: 'array',
             items: {

@@ -10,7 +10,12 @@
 // A read-blocked cell contributes nothing (R1), as if it were absent; a key whose column, row or adapter
 // is read-blocked AT the target Section is not applied at all, so its control keeps its value (R2).
 //
-// Absent cells (no stored cell at or before k) -- see ABSENT_CELL_POLICY:
+// Sprint 148 it6: below the Sections sits the Song-DEFAULTS block (song.displayOptionsDefault, sparse, same keys as a
+// Section's block).  A key with no readable Section cell takes its Song-DEFAULTS value, unconditionally (the author
+// said so, like a Section-1 cell).  A missing, empty or all-unknown block is the same as no tier.  Gates cannot hit the
+// block itself, but a column or adapter read block (R2) still leaves the key alone, so such a value is dormant.
+//
+// Absent cells (no stored cell at or before k, and no Song-DEFAULTS value) -- see ABSENT_CELL_POLICY:
 //   'leave'              : omit the key; the control is left alone
 //   'default'            : keys that have a default get it
 //   'defaultIfAutomated' : keys that have a default get it only if some Section stores that key
@@ -19,12 +24,13 @@
 // Purposes:
 //   'apply'    : what navigation pushes into the controls (sparse; may omit keys)
 //   'render'   : 'apply' completed from `live` (the controls), for drawing a Section's table
-//   'baseline' : what the Section at `idx` INHERITS: cascade over Sections < idx, then the
+//   'baseline' : what the Section at `idx` INHERITS: cascade over Sections < idx, then the Song-DEFAULTS, then the
 //                defaults, then `syncLive` (controls as of the last Section sync) for keys that
 //                have no default.  SaveDiff diffs the live controls against it.
 
 import {
-    DISPLAY_OPTIONS_DEFAULTS, DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, isDisplayOptionKey, cloneValue
+    DISPLAY_OPTIONS_DEFAULTS, DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, isDisplayOptionKey, cloneValue,
+    normalizeSongDisplayOptionsDefault
 } from './displayOptionsMeta.js';
 import { isReadBlocked, isRegionReadBlocked } from './displayOptionsGates.js';
 
@@ -50,6 +56,11 @@ export function getAutomatedKeys(song) {
     return automated;
 }
 
+/** The Song-DEFAULTS tier as a plain {key: value} (known keys only, so a missing, empty or hand-edited block is safe). */
+export function songDefaultValues(song) {
+    return normalizeSongDisplayOptionsDefault(song?.displayOptionsDefault) ?? {};
+}
+
 function cascade(song, lastIndex) {
     const values = {};
     const entries = {};
@@ -68,7 +79,7 @@ function cascade(song, lastIndex) {
 
 /**
  * @returns {{values:Object, entries:Object}}  `entries[key]` = { source, sectionIndex? } where source is
- *   'stored' | 'default' | 'live' | 'sync' | 'blocked' (R2: read-blocked at the target Section).
+ *   'stored' | 'songDefault' | 'default' | 'live' | 'sync' | 'blocked' (R2: read-blocked at the target Section).
  */
 export function resolveDisplayOptions(song, sectionIndex, options = {}) {
     const { purpose = 'apply', live = null, syncLive = null, policy = ABSENT_CELL_POLICY } = options;
@@ -86,9 +97,13 @@ export function resolveDisplayOptions(song, sectionIndex, options = {}) {
 
     if (purpose === 'baseline') {
         const { values, entries } = cascade(song, sectionIndex - 1);
+        const songDefaults = songDefaultValues(song);
         for (const key of DISPLAY_OPTION_KEYS) {
             if (key in values) continue;
-            if (DISPLAY_OPTION_META[key].hasDefault) {
+            if (key in songDefaults) {
+                values[key] = cloneValue(songDefaults[key]);
+                entries[key] = { source: 'songDefault' };
+            } else if (DISPLAY_OPTION_META[key].hasDefault) {
                 values[key] = cloneValue(DISPLAY_OPTIONS_DEFAULTS[key]);
                 entries[key] = { source: 'default' };
             } else if (syncLive && key in syncLive) {
@@ -100,6 +115,13 @@ export function resolveDisplayOptions(song, sectionIndex, options = {}) {
     }
 
     const { values, entries } = cascade(song, sectionIndex);
+    const songDefaults = songDefaultValues(song);
+    for (const key of Object.keys(songDefaults)) {
+        if (!(key in values)) {
+            values[key] = cloneValue(songDefaults[key]);
+            entries[key] = { source: 'songDefault' };
+        }
+    }
     const automated = policy === POLICY_DEFAULT_IF_AUTOMATED ? getAutomatedKeys(song) : null;
     for (const key of DISPLAY_OPTION_KEYS) {
         if (key in values || !DISPLAY_OPTION_META[key].hasDefault) continue;

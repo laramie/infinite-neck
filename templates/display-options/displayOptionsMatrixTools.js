@@ -14,7 +14,7 @@ import { DISPLAY_OPTION_META, DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey } fro
 import {
     describeBlocks, isColumnBlocked, isRowBlocked, isCellBlocked, ROW_KEY, GATE_READ, GATE_WRITE
 } from './displayOptionsGates.js';
-import { resolveDisplayOptions } from './displayOptionsResolver.js';
+import { resolveDisplayOptions, songDefaultValues } from './displayOptionsResolver.js';
 import { planClear, planClearCell, planGate, planStoreCell } from './displayOptionsPlan.js';
 import { cellText } from './displayOptionsCellRules.js';
 
@@ -101,6 +101,9 @@ const GATE_TOOLS = Object.freeze({
  */
 export function planAffectsApply(plan, currentIndex) {
     return plan.ops.some((op) => {
+        if (op.type === 'setSongDefault' || op.type === 'deleteSongDefault') {
+            return true;   // Sprint 148 it6: the Song-DEFAULTS tier sits under every Section
+        }
         if (op.type === 'setGate') {
             if (op.direction === GATE_WRITE) return false;
             return op.scope === 'column' || (op.sectionIndex != null && op.sectionIndex <= currentIndex);
@@ -137,7 +140,7 @@ export function describeCell(song, sectionIndex, key, { live = null, syncLive = 
     const lines = [];
     if (sectionIndex == null) {
         const columnBlocks = describeBlocks(song, null, key);
-        lines.push(`group: ${meta.group}; default: ${meta.hasDefault ? describeValue(key, DISPLAY_OPTIONS_DEFAULTS[key]) : '(no default)'}; live: ${describeValue(key, live?.[key])}`);
+        lines.push(`group: ${meta.group}; default: ${meta.hasDefault ? describeValue(key, DISPLAY_OPTIONS_DEFAULTS[key]) : '(no default)'}; song default: ${describeValue(key, songDefaultValues(song)[key])}; live: ${describeValue(key, live?.[key])}`);
         lines.push(`gates: ${gateSummary({ adapter: columnBlocks.adapter, column: columnBlocks.column, row: '', cell: '' })}`);
         if (columnBlocks.adapter) {
             lines.push(`adapter: ${meta.gate} is off, so ${key} is neither applied nor saved until it is turned on.`);

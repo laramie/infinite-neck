@@ -138,10 +138,11 @@ import { MacroBuilder } from './templates/macros/macros.builder.js';
 import { SongWidgetsBuilder } from './templates/songwidgets/songwidgets.builder.js';
 import { FunctionSymbolsBuilder } from './templates/function-symbols/function-symbols.builder.js';
 import { DisplayOptionsMatrixBuilder } from './templates/display-options/display-options.builder.js';
-import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType } from './templates/display-options/displayOptionsMeta.js';
+import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType, normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
 import {
 	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
+	planCurrentToSongDefaults, planClearSongDefaults,
 	undoLastDisplayOptionsOp, canUndoDisplayOptionsOp
 } from './templates/display-options/displayOptionsPlan.js';
 import { resolveSet as resolveFunctionSymbolSet, BUILTIN_SETS as FUNCTION_SYMBOL_BUILTIN_SETS } from './templates/function-symbols/functionSymbolSets.js';
@@ -764,7 +765,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			live,
 			syncLive: displayOptionsDirtyBaseline,
 			dirty: !!displayOptionsDirtyBaseline && !areDisplayOptionsEqual(live, displayOptionsDirtyBaseline),
-			canUndo: canUndoDisplayOptionsOp(song)
+			canUndo: canUndoDisplayOptionsOp(song),
+			// Sprint 148 it6: enable/disable the two Song-DEFAULTS buttons
+			hasSongDefaults: !!normalizeSongDisplayOptionsDefault(song.displayOptionsDefault),
+			currentStoresCells: !!normalizeSongDisplayOptionsDefault(getCurrentSection()?.displayOptions)
 		};
 	}
 
@@ -3776,6 +3780,22 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	/** Sprint 148 it5: applies a plan from the interactive Matrix.  Quiet (no Messages panel); the dirty highlight is kept. */
 	export function runDisplayOptionsPlan(plan, { quiet = true } = {}) {
 		return runDisplayOptionsCommand(() => applyPlan(getSong(), plan), { quiet, keepDirty: true });
+	}
+
+	/** Sprint 148 it6: "Current to Song-DEFAULTS" -- mirrors the Current Section's STORED cells (not the live controls)
+	 *  into song.displayOptionsDefault.  Overrides all gates; the Undo slot is untouched.  Copies the model only, so the
+	 *  controls and their dirty highlight stay as they are. */
+	export function handleBtnCurrentSectionToSongDisplayOptions(options) {
+		return runDisplayOptionsCommand(() => {
+			const song = getSong();
+			return applyPlan(song, planCurrentToSongDefaults(song, currentSectionIndex()));
+		}, { quiet: options?.quiet !== false, keepDirty: true });
+	}
+
+	/** Sprint 148 it6: "Clear Song-DEFAULTS" -- empties song.displayOptionsDefault (gates and Undo slot untouched). */
+	export function handleBtnClearSongDisplayOptions(options) {
+		return runDisplayOptionsCommand(() => applyPlan(getSong(), planClearSongDefaults(getSong())),
+			{ quiet: options?.quiet !== false, keepDirty: true });
 	}
 
 	/** SAVE Diff: writes only the cells whose control value differs from what this Section inherits.

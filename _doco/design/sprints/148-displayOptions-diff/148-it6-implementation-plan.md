@@ -4,7 +4,7 @@ date: 20261025
 
 Requested by [148-it6-design.md](148-it6-design.md).  Builds on [Iteration 5](148-it5-round-1-implementation-plan.md) (the Matrix) and [Iteration 4](148-it4-round-2-implementation-plan.md) (resolver, plans, gates).  Sprint overview: [sprint-148.md](sprint-148.md).
 
-**No code was changed.**  Everything below comes from reading the code.
+**No code was changed by this plan's drafts.**  Round 2 implemented it: see [148-it6-round-2-implementation-report.md](148-it6-round-2-implementation-report.md).  Everything below comes from reading the code.
 
 Vocabulary: **Song-DEFAULTS** = the new `song.displayOptionsDefault` block (sparse `{ key: value }`, same keys and value shapes as a Section's `displayOptions`).  **DEFAULTS** = `DISPLAY_OPTIONS_DEFAULTS` in [displayOptionsMeta.js](../../../../templates/display-options/displayOptionsMeta.js).
 

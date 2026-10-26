@@ -4,6 +4,7 @@ import { Graveyard } from './graveyard.js';
 import { Layout } from './layout.js';
 import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
 import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
+import { normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -333,6 +334,13 @@ export class SongPersistence {
             this.displayOptionGates = displayOptionGates;
         } else {
             delete this.displayOptionGates;
+        }
+        // Sprint 148 it6: Song-DEFAULTS (the tier between the Sections and DISPLAY_OPTIONS_DEFAULTS); omitted when empty.
+        const displayOptionsDefault = normalizeSongDisplayOptionsDefault(obj.displayOptionsDefault);
+        if (displayOptionsDefault) {
+            this.displayOptionsDefault = displayOptionsDefault;
+        } else {
+            delete this.displayOptionsDefault;
         }
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));

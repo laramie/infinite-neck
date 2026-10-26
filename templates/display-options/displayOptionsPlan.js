@@ -15,16 +15,20 @@
 //   planStoreCell : write ONE cell from the live control (Matrix 'Store Cell' tool).  Skips read- and write-blocked.
 //   planGate      : add/remove a column, row ('*') or cell gate.  Gates are never touched by the
 //                   Save/Clear plans.
+//   planCurrentToSongDefaults / planClearSongDefaults  (Sprint 148 it6): mirror the Current Section's STORED cells into the
+//                   Song-DEFAULTS block (song.displayOptionsDefault) / empty that block.  Both are explicit author actions
+//                   and OVERRIDE ALL GATES (nothing is skipped); gated keys are only named in the report.  Neither takes
+//                   the Undo slot (plan.noUndo): Clear is the way back.
 //
 // An empty displayOptions block is deleted.  Undo is one level and runtime-only: it restores the
 // displayOptions blocks and gates of every Section the last plan touched, and the Song gates.
 
 import {
-    DISPLAY_OPTION_KEYS, isDisplayOptionKey, valuesEqual, cloneValue, adapterGateFor
+    DISPLAY_OPTION_KEYS, isDisplayOptionKey, valuesEqual, cloneValue, adapterGateFor, normalizeSongDisplayOptionsDefault
 } from './displayOptionsMeta.js';
 import { resolveDisplayOptions } from './displayOptionsResolver.js';
 import {
-    isReadBlocked, isWriteBlocked, isExplicitWriteBlocked, setGate,
+    isReadBlocked, isWriteBlocked, isExplicitWriteBlocked, setGate, describeBlocks,
     normalizeSongGates, normalizeSectionGates, ROW_KEY, GATE_BOTH
 } from './displayOptionsGates.js';
 
@@ -161,6 +165,69 @@ export function planGate(song, { scope, sectionIndex = null, key = null, directi
     return plan;
 }
 
+//=========================== Song-DEFAULTS (Sprint 148 it6) ==========================
+
+/** 'noteFont (cell r, column w)' for a key that has any gate; '' when it has none. */
+function gateLabel(song, section, key) {
+    const blocks = describeBlocks(song, section, key);
+    const marks = ['adapter', 'column', 'row', 'cell']
+        .filter((source) => blocks[source])
+        .map((source) => `${source} ${blocks[source]}`);
+    return marks.length ? `${key} (${marks.join(', ')})` : '';
+}
+
+/** The Current Section's STORED cells (never the live controls) mirrored into Song-DEFAULTS: keys that differ are written,
+ *  block keys the Section does not store are removed.  Gates are ignored; gated keys are listed in plan.gated for the report. */
+export function planCurrentToSongDefaults(song, idx) {
+    const plan = newPlan('currentToSongDefaults', idx);
+    plan.noUndo = true;
+    plan.gated = [];
+    const section = song.sections[idx];
+    if (!section) {
+        throw new Error(`no Section at index ${idx}`);
+    }
+    const source = normalizeSongDisplayOptionsDefault(section.displayOptions);
+    if (!source) {
+        plan.note = `Section ${idx + 1} stores nothing; Song-DEFAULTS unchanged`;
+        return plan;
+    }
+    const block = normalizeSongDisplayOptionsDefault(song.displayOptionsDefault) ?? {};
+    for (const key of DISPLAY_OPTION_KEYS) {
+        const inSource = key in source;
+        const inBlock = key in block;
+        if (inSource && inBlock && valuesEqual(key, source[key], block[key])) {
+            plan.unchanged++;
+        } else if (inSource) {
+            plan.ops.push({ type: 'setSongDefault', key, value: cloneValue(source[key]) });
+            plan.gated.push(gateLabel(song, section, key));
+        } else if (inBlock) {
+            plan.ops.push({ type: 'deleteSongDefault', key });
+            plan.gated.push(gateLabel(song, null, key));
+        }
+    }
+    plan.gated = plan.gated.filter(Boolean);
+    return plan;
+}
+
+/** Empties the Song-DEFAULTS block, gated keys included. */
+export function planClearSongDefaults(song) {
+    const plan = newPlan('clearSongDefaults', null);
+    plan.noUndo = true;
+    const block = normalizeSongDisplayOptionsDefault(song.displayOptionsDefault);
+    if (!block) {
+        plan.note = 'Song-DEFAULTS is already empty; nothing to clear';
+        plan.gated = [];
+        return plan;
+    }
+    plan.gated = [];
+    for (const key of Object.keys(block)) {
+        plan.ops.push({ type: 'deleteSongDefault', key });
+        plan.gated.push(gateLabel(song, null, key));
+    }
+    plan.gated = plan.gated.filter(Boolean);
+    return plan;
+}
+
 //=========================== apply + undo ============================================
 
 let lastUndo = null;
@@ -196,8 +263,12 @@ function describeOps(plan) {
     const written = plan.ops.filter((o) => o.type === 'setCell').map((o) => o.key);
     const deleted = plan.ops.filter((o) => o.type === 'deleteCell').map((o) => o.key);
     const gates = plan.ops.filter((o) => o.type === 'setGate');
+    const songWritten = plan.ops.filter((o) => o.type === 'setSongDefault').map((o) => o.key);
+    const songDeleted = plan.ops.filter((o) => o.type === 'deleteSongDefault').map((o) => o.key);
     if (written.length) parts.push(`wrote ${written.join(', ')}`);
     if (deleted.length) parts.push(`removed ${deleted.join(', ')}`);
+    if (songWritten.length) parts.push(`Song-DEFAULTS wrote ${songWritten.join(', ')}`);
+    if (songDeleted.length) parts.push(`Song-DEFAULTS removed ${songDeleted.join(', ')}`);
     for (const g of gates) {
         const where = g.scope === 'column' ? `column ${g.key}`
             : g.scope === 'row' ? `Section ${g.sectionIndex + 1}`
@@ -207,8 +278,14 @@ function describeOps(plan) {
     if (plan.skipped.length) {
         parts.push(`skipped ${plan.skipped.map((s) => `${s.key} (${s.reason})`).join(', ')}`);
     }
-    if (!written.length && !deleted.length && !gates.length) {
+    if (!plan.ops.length) {
         parts.unshift(`nothing to change (${plan.unchanged} cell(s) already match)`);
+    }
+    if (plan.gated?.length) {
+        parts.push(`gated (overridden): ${plan.gated.join(', ')}`);
+    }
+    if (!plan.ops.length && plan.note) {
+        parts.splice(0, parts.length, plan.note);
     }
     const where = plan.sectionIndex != null && plan.kind !== 'gate' ? `Section ${plan.sectionIndex + 1}: ` : '';
     return `${where}${plan.kind}: ${parts.join('; ')}`;
@@ -220,8 +297,22 @@ export function applyPlan(song, plan) {
     if (!plan.ops.length) {
         return { changed: false, report };
     }
-    lastUndo = snapshot(song, plan);
+    // noUndo plans (the Song-DEFAULTS buttons) leave the one Undo slot alone
+    if (!plan.noUndo) {
+        lastUndo = snapshot(song, plan);
+    }
     for (const op of plan.ops) {
+        if (op.type === 'setSongDefault' || op.type === 'deleteSongDefault') {
+            const block = { ...(song.displayOptionsDefault ?? {}) };
+            if (op.type === 'setSongDefault') {
+                block[op.key] = cloneValue(op.value);
+            } else {
+                delete block[op.key];
+            }
+            // normalizing keeps column order and drops an empty block (missing == empty)
+            assignOrDelete(song, 'displayOptionsDefault', normalizeSongDisplayOptionsDefault(block));
+            continue;
+        }
         if (op.type === 'setGate') {
             if (op.scope === 'column') {
                 const next = setGate(song.displayOptionGates, op.key, op.direction, op.on, { allowRow: false });

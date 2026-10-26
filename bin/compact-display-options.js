@@ -74,6 +74,7 @@ export function findRedundantCells(songData) {
     const song = {
         sections,
         displayOptionGates: songData.displayOptionGates,
+        displayOptionsDefault: songData.displayOptionsDefault,
         presentationMode: !!songData.presentationMode,
         allowThemeAutomation: !!songData.allowThemeAutomation
     };

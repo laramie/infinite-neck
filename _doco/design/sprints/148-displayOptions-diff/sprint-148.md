@@ -39,3 +39,5 @@ Purpose of this sprint is to:
 - [Iteration 6](148-it6-design.md) 
   - Add "Song-DEFAULTS" and editing buttons to copy Current Section DisplayOption settings to new Song-level defaults. 
 - [Iteration 6 implementation plan with questions](148-it6-implementation-plan.md)
+- [Iteration 6 Round 2 implementation report and test recipes 26-30](148-it6-round-2-implementation-report.md)
+  - Status: implemented, Jest green (77 suites, 990 tests), awaiting browser acceptance.

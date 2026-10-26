@@ -119,7 +119,8 @@
 #divDisplayOptionsMatrix .dmGroupRow > *    { position: sticky; top: 0;                                z-index: 4; }
 #divDisplayOptionsMatrix .dmKeyRow > *      { position: sticky; top: var(--dm-top-key, 1.7em);         z-index: 4; }
 #divDisplayOptionsMatrix .dmDefaultsRow > * { position: sticky; top: var(--dm-top-defaults, 9em);      z-index: 4; }
-#divDisplayOptionsMatrix .dmLiveRow > *     { position: sticky; top: var(--dm-top-live, 10.7em);       z-index: 4; }
+#divDisplayOptionsMatrix .dmSongDefaultsRow > * { position: sticky; top: var(--dm-top-songdefaults, 10.7em); z-index: 4; }
+#divDisplayOptionsMatrix .dmLiveRow > *     { position: sticky; top: var(--dm-top-live, 12.4em);       z-index: 4; }
 #divDisplayOptionsMatrix .dmSectionHeader,
 #divDisplayOptionsMatrix .dmSectionLabel    { position: sticky; left: 0; z-index: 3; }
 #divDisplayOptionsMatrix thead .dmCorner,
@@ -144,6 +145,9 @@
 #divDisplayOptionsMatrix .dmSpecialLabel,
 #divDisplayOptionsMatrix .dmSpecialCell { background: white; }
 #divDisplayOptionsMatrix .dmSpecialLabel { font-size: 85%; text-align: left; }
+/* Sprint 148 it6: the Song-DEFAULTS row (tune during testing) */
+#divDisplayOptionsMatrix .dmSongDefaultsRow .dmSpecialLabel,
+#divDisplayOptionsMatrix .dmSongDefaultsRow .dmSpecialCell { background: #fff6cf; }
 #divDisplayOptionsMatrix .dmSectionLabel,
 #divDisplayOptionsMatrix .dmSectionLabelFill { background: #eee; text-align: left; }
 #divDisplayOptionsMatrix .dmSectionHeader { background: #ddd; font-weight: bold; }

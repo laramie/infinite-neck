@@ -173,3 +173,19 @@ export function cloneValue(value) {
     }
     return value;
 }
+
+/** Sprint 148 it6: the Song-DEFAULTS block (song.displayOptionsDefault).  Keeps only known keys with a real value
+ *  (deep-cloned), in column order; returns undefined when nothing is left, so a missing, empty or all-unknown block
+ *  are the same thing. */
+export function normalizeSongDisplayOptionsDefault(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        return undefined;
+    }
+    const out = {};
+    for (const key of DISPLAY_OPTION_KEYS) {
+        if (Object.prototype.hasOwnProperty.call(raw, key) && raw[key] !== undefined && raw[key] !== null) {
+            out[key] = cloneValue(raw[key]);
+        }
+    }
+    return Object.keys(out).length ? out : undefined;
+}

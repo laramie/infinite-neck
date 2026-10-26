@@ -7,12 +7,13 @@
 //   key header      th.dmKeyHeader   + dmColGateR/W (Song gate) + dmAdapter (derived)
 //   Section header  th.dmSectionHeader + dmRowGateR/W (Section '*' gate) + dmCurrentRow (the Current Section)
 //   Section cell    td.dmCell        + dmAbsent | dmStored (+ dmChanged)  + dmColGateR/W + dmRowGateR/W + dmCellGateR/W
-//   special rows    tr.dmDefaultsRow / tr.dmLiveRow, td.dmSpecialCell (never carry data-section)
+//   special rows    tr.dmDefaultsRow / tr.dmSongDefaultsRow / tr.dmLiveRow, td.dmSpecialCell (never carry data-section)
+//                   (Sprint 148 it6: the special rows are plain reports of values; they never carry gate classes)
 // Every clickable element carries data-zone, plus data-section and/or data-key.  Legend cells carry none (interactive:false).
 
 import { DISPLAY_OPTION_KEYS, DISPLAY_OPTION_META, DISPLAY_OPTIONS_DEFAULTS } from './displayOptionsMeta.js';
 import { describeBlocks } from './displayOptionsGates.js';
-import { resolveDisplayOptions } from './displayOptionsResolver.js';
+import { resolveDisplayOptions, songDefaultValues } from './displayOptionsResolver.js';
 import { escapeHtml, cellText, cellState, gateMarkHtml, keyLabelHtml, WANT_LITERAL_ROWMARK_TEXT, WANT_LITERAL_COLMARK_TEXT } from './displayOptionsCellRules.js';
 import { ZONES } from './displayOptionsMatrixTools.js';
 
@@ -90,6 +91,14 @@ export function buildDefaultsRowHtml({ interactive = true, keys = DISPLAY_OPTION
     return `<tr class='dmSpecialRow dmDefaultsRow'><th class='dmSpecialLabel'${dataAttrs(interactive, ZONES.specialLabel)}>DEFAULTS</th>${cells.join('')}</tr>`;
 }
 
+/** Sprint 148 it6: the Song-DEFAULTS row (song.displayOptionsDefault), between DEFAULTS and LIVE.  Always drawn; blank cells when
+ *  the block is missing or empty.  A plain report of the stored values: no gate classes (a gated key's value just shows). */
+export function buildSongDefaultsRowHtml(song, { interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
+    const values = songDefaultValues(song);
+    const cells = keys.map((key) => specialCellHtml(interactive, key, values[key]));
+    return `<tr class='dmSpecialRow dmSongDefaultsRow'><th class='dmSpecialLabel'${dataAttrs(interactive, ZONES.specialLabel)}>Song-DEFAULTS</th>${cells.join('')}</tr>`;
+}
+
 /** The LIVE row (values of the controls).  The builder patches this row in place when the controls change. */
 export function buildLiveRowHtml(live, { interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
     const cells = keys.map((key) => specialCellHtml(interactive, key, live ? live[key] : undefined));
@@ -132,7 +141,7 @@ export function buildSectionRowHtml(song, sectionIndex, { currentIndex = -1, int
  */
 export function buildMatrixHtml(song, { currentIndex = -1, live = null, interactive = true, keys = DISPLAY_OPTION_KEYS } = {}) {
     const rows = [];
-    rows.push(`<thead>${groupRowHtml(interactive, keys)}${keyRowHtml(song, interactive, keys)}${buildDefaultsRowHtml({ interactive, keys })}${buildLiveRowHtml(live, { interactive, keys })}</thead>`);
+    rows.push(`<thead>${groupRowHtml(interactive, keys)}${keyRowHtml(song, interactive, keys)}${buildDefaultsRowHtml({ interactive, keys })}${buildSongDefaultsRowHtml(song, { interactive, keys })}${buildLiveRowHtml(live, { interactive, keys })}</thead>`);
     rows.push('<tbody>');
     rows.push(`<tr class='dmSectionLabelRow'><th class='dmSectionLabel'${dataAttrs(interactive, ZONES.sectionLabel)}>Section&nbsp;#</th><td class='dmSectionLabelFill'${dataAttrs(interactive, ZONES.sectionLabel)} colspan='${keys.length}'></td></tr>`);
     song.sections.forEach((section, idx) => rows.push(buildSectionRowHtml(song, idx, { currentIndex, interactive, keys })));
@@ -270,6 +279,7 @@ export function buildLegendHtml() {
 <br><p><b>Usage:</b><ul>
 <li>Click a Tool then click a row (Section), column (Key), or Cell. Clicking again toggles.
 <li>Values and blocks flow down from DEFAULTS, to Sections.
+<li>The <b>Song-DEFAULTS</b> row sits between DEFAULTS and the Sections: values and blocks flow DEFAULTS, then Song-DEFAULTS, then Sections.  A Section stores only what differs from it.  "Current to Song-DEFAULTS" copies the Current Section's stored cells (it ignores blocks, and leaves the Section as it is); "Clear Song-DEFAULTS" empties the row.  The three special rows only report values; they have no blocks.
 <li>If any Section or Cell automates any value under one Key, then the DEFAULTS are consulted when Looping around from Section 1.
 <li>Cell blocks are partially obscured by Row and Column blocks.  Use the View buttons to suspend display of Row and Column blocks.
 </ul></p>

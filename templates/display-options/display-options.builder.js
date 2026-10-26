@@ -250,17 +250,21 @@ export class DisplayOptionsMatrixBuilder {
         const group = height('tr.dmGroupRow');
         const key = height('tr.dmKeyRow');
         const defaults = height('tr.dmDefaultsRow');
+        const songDefaults = height('tr.dmSongDefaultsRow');
         const live = height('tr.dmLiveRow');
         // Row heights only, no border-spacing: stuck rows sit flush against each other.
         scroller.style.setProperty('--dm-top-key', `${group}px`);
         scroller.style.setProperty('--dm-top-defaults', `${group + key}px`);
-        scroller.style.setProperty('--dm-top-live', `${group + key + defaults}px`);
-        DisplayOptionsMatrixBuilder.stuckHeaderHeight = group + key + defaults + live;
+        scroller.style.setProperty('--dm-top-songdefaults', `${group + key + defaults}px`);
+        scroller.style.setProperty('--dm-top-live', `${group + key + defaults + songDefaults}px`);
+        DisplayOptionsMatrixBuilder.stuckHeaderHeight = group + key + defaults + songDefaults + live;
     }
 
     static updateButtons(ctx) {
         $('#btnUndo_Matrix').prop('disabled', !ctx.canUndo);
         $('#btnSaveDiff_Matrix').toggleClass('riskyButtonActionRequired', !!ctx.dirty);
+        $('#btnClearSongDisplayOptions').prop('disabled', !ctx.hasSongDefaults);
+        $('#btnCurrentSectionToSongDisplayOptions').prop('disabled', !ctx.currentStoresCells);
     }
 
     /** SectionChanged: moves the highlight; no cell is replaced, so a click in progress is never lost. */
@@ -366,6 +370,17 @@ export class DisplayOptionsMatrixBuilder {
         DisplayOptionsMatrixBuilder.setStatus([`Applied Section ${sectionNumber}: controls re-applied from the model.`]);
     }
 
+    /** Sprint 148 it6: the two Song-DEFAULTS buttons.  A real change always alters what Apply would do (Song-DEFAULTS sit under
+     *  every Section), so the usual Auto-apply / hint / dirty-warning path runs.  They do not use the Undo slot. */
+    static handleSongDefaultsButton(action) {
+        const builder = DisplayOptionsMatrixBuilder;
+        const wasDirty = InfiniteNeck.getDisplayOptionsMatrixContext().dirty;
+        const out = action({ quiet: true });
+        const lines = [out.report];
+        const kind = out.changed ? builder.afterEditThatChangesApply(wasDirty, lines) : '';
+        builder.setStatus(lines, kind);
+    }
+
     //========================= hover preview =========================
 
     static clearHover() {
@@ -423,6 +438,8 @@ export class DisplayOptionsMatrixBuilder {
         press('#btnSaveDiff_Matrix', () => builder.setStatus([InfiniteNeck.handleBtnSaveDiff({ quiet: true }).report]));
         press('#btnSaveAll_Matrix', () => builder.handleSaveAll());
         press('#btnApply_Matrix', () => builder.handleApply());
+        press('#btnCurrentSectionToSongDisplayOptions', () => builder.handleSongDefaultsButton(InfiniteNeck.handleBtnCurrentSectionToSongDisplayOptions));
+        press('#btnClearSongDisplayOptions', () => builder.handleSongDefaultsButton(InfiniteNeck.handleBtnClearSongDisplayOptions));
         press('#btnUndo_Matrix', () => builder.handleUndo());
         press('#btnFloatSection_divDisplayOptionsMatrix', () => builder.float());
         press('#btnClose_Matrix', () => builder.setOpen(false));
