@@ -163,7 +163,7 @@
   "noteTablesLayout": [
     {
       "tableID": "tblS6_1",
-      "visible": true,
+      "visible": false,
       "anchorage": {
         "floated": false
       },
@@ -171,7 +171,7 @@
     },
     {
       "tableID": "tblDropD_1",
-      "visible": true,
+      "visible": false,
       "anchorage": {
         "floated": false
       },
@@ -187,7 +187,7 @@
     },
     {
       "tableID": "tblP48_1",
-      "visible": true,
+      "visible": false,
       "anchorage": {
         "floated": false
       },
@@ -245,7 +245,7 @@
       "enableOnSongLoad": true,
       "graveyardKey": "flashcard-0-7",
       "properties": {
-        "targetTable": "tblP46_1",
+        "targetTable": "tblDropD_1",
         "minFret": 0,
         "maxFret": 12,
         "songLoopsPerPositionPair": 1,
@@ -527,7 +527,7 @@
   "tinyNoteOpacity": "1",
   "songfileVersion": "V2.1",
   "songName": "name-that-note-fret-flavors",
-  "theme": "Piano",
+  "theme": "USER",
   "sections": [
     {
       "sectionNotesByTable": {
@@ -1427,11 +1427,10 @@
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
         "tinyNoteOpacity": "1",
-        "currentColorDict": "",
         "NoteDisplaySizes": {
-          "caption": "260x60:22",
-          "width": "260px",
-          "height": "60px",
+          "caption": "200x50:22",
+          "width": "200px",
+          "height": "50px",
           "NoteFontSize": 22
         },
         "functionSymbols": "function",
@@ -2753,7 +2752,7 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 32,
-      "currentBeat": 1,
+      "currentBeat": 7,
       "sharps": false,
       "pluginData": {},
       "__arpeggioRuntimeIdentity": "s1"
@@ -8729,10 +8728,5 @@
     "instrumentBorderImage": "url('img/celtic-background-black.png')",
     "baseid": "GuitarStringsBlack",
     "basecaption": "Guitar Black"
-  },
-  "displayOptionGates": {
-    "readBlocked": [
-      "hideSingleNotes"
-    ]
   }
 }
