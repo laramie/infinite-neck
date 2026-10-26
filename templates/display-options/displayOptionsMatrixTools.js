@@ -67,6 +67,13 @@ export function sectionHeaderNavigates(toolId) {
     return !!tool && !tool.actsOnSectionRow;
 }
 
+/** Sprint 148 it6 round 3: caption of the write button, naming the Current Section (one-based): "§1 → Song-DEFAULTS".
+ *  § (U+00A7) and → (U+2192) are in every common UI font and sit on the text baseline, so the button keeps its height. */
+export function songDefaultsButtonCaption(currentIndex) {
+    const number = Number.isInteger(currentIndex) && currentIndex >= 0 ? currentIndex + 1 : '?';
+    return `\u00a7${number} \u2192 Song-DEFAULTS`;
+}
+
 //=========================== gate toggles ============================================
 
 /** Is the gate that a toggle Tool would flip currently set?  scope: 'column' | 'row' | 'cell'; side: 'read' | 'write'. */

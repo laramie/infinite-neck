@@ -17,7 +17,7 @@ import * as InfiniteNeck from '../../infinite-neck.js';
 import EventBus from '../../event-bus.js';
 import { makeDivDockable, dockDivInPage } from '../../dockable.js';
 import {
-    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, sectionHeaderNavigates, planMatrixClick, planAffectsApply
+    TOOLS, ZONES, DEFAULT_TOOL_ID, getTool, isToolLegalInZone, sectionHeaderNavigates, planMatrixClick, planAffectsApply, songDefaultsButtonCaption
 } from './displayOptionsMatrixTools.js';
 import { buildMatrixHtml, buildLiveRowHtml, buildLegendHtml } from './displayOptionsMatrixView.js';
 import { escapeHtml } from './displayOptionsCellRules.js';
@@ -264,7 +264,8 @@ export class DisplayOptionsMatrixBuilder {
         $('#btnUndo_Matrix').prop('disabled', !ctx.canUndo);
         $('#btnSaveDiff_Matrix').toggleClass('riskyButtonActionRequired', !!ctx.dirty);
         $('#btnClearSongDisplayOptions').prop('disabled', !ctx.hasSongDefaults);
-        $('#btnCurrentSectionToSongDisplayOptions').prop('disabled', !ctx.currentStoresCells);
+        $('#btnCurrentSectionToSongDisplayOptions').prop('disabled', !ctx.currentStoresCells)
+            .text(songDefaultsButtonCaption(ctx.currentIndex));
     }
 
     /** SectionChanged: moves the highlight; no cell is replaced, so a click in progress is never lost. */

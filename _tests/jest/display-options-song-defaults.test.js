@@ -13,7 +13,7 @@ import {
     planCurrentToSongDefaults, planClearSongDefaults, planSaveDiff, planSaveAll, planClear, applyPlan,
     canUndoDisplayOptionsOp, undoLastDisplayOptionsOp, resetUndoForTests
 } from '../../templates/display-options/displayOptionsPlan.js';
-import { describeCell, planAffectsApply } from '../../templates/display-options/displayOptionsMatrixTools.js';
+import { describeCell, planAffectsApply, songDefaultsButtonCaption } from '../../templates/display-options/displayOptionsMatrixTools.js';
 import {
     buildMatrixHtml, buildSongDefaultsRowHtml, buildLegendHtml
 } from '../../templates/display-options/displayOptionsMatrixView.js';
@@ -384,6 +384,16 @@ describe('Matrix integration', () => {
 
     test('the Legend explains the row', () => {
         expect(buildLegendHtml()).toContain('Song-DEFAULTS');
+    });
+
+    test('round 3: the write button is captioned with the one-based Current Section, and the builder keeps it current', () => {
+        expect(songDefaultsButtonCaption(0)).toBe('\u00a71 \u2192 Song-DEFAULTS');
+        expect(songDefaultsButtonCaption(11)).toBe('\u00a712 \u2192 Song-DEFAULTS');
+        expect(songDefaultsButtonCaption(-1)).toBe('\u00a7? \u2192 Song-DEFAULTS');
+        expect(songDefaultsButtonCaption(undefined)).toBe('\u00a7? \u2192 Song-DEFAULTS');
+        const read = (file) => fs.readFileSync(path.join(here, '../..', file), 'utf8');
+        expect(read('templates/display-options/display-options.builder.js')).toContain('.text(songDefaultsButtonCaption(ctx.currentIndex))');
+        expect(read('templates/display-options/display-options.html')).toContain('&sect;1 &rarr; Song-DEFAULTS</button>');
     });
 
     test('/vdd and the Matrix wiring: the buttons are bound, the core handlers and context exist, and the Matrix stays quiet', () => {

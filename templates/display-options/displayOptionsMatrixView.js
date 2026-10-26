@@ -279,7 +279,7 @@ export function buildLegendHtml() {
 <br><p><b>Usage:</b><ul>
 <li>Click a Tool then click a row (Section), column (Key), or Cell. Clicking again toggles.
 <li>Values and blocks flow down from DEFAULTS, to Sections.
-<li>The <b>Song-DEFAULTS</b> row sits between DEFAULTS and the Sections: values and blocks flow DEFAULTS, then Song-DEFAULTS, then Sections.  A Section stores only what differs from it.  "Current to Song-DEFAULTS" copies the Current Section's stored cells (it ignores blocks, and leaves the Section as it is); "Clear Song-DEFAULTS" empties the row.  The three special rows only report values; they have no blocks.
+<li>The <b>Song-DEFAULTS</b> row sits between DEFAULTS and the Sections: values and blocks flow DEFAULTS, then Song-DEFAULTS, then Sections.  A Section stores only what differs from it.  The <b>&sect;N &rarr; Song-DEFAULTS</b> button (N is the Current Section) copies that Section's stored cells (it ignores blocks, and leaves the Section as it is); "Clear Song-DEFAULTS" empties the row.  The three special rows only report values; they have no blocks.
 <li>If any Section or Cell automates any value under one Key, then the DEFAULTS are consulted when Looping around from Section 1.
 <li>Cell blocks are partially obscured by Row and Column blocks.  Use the View buttons to suspend display of Row and Column blocks.
 </ul></p>
