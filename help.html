@@ -1783,6 +1783,35 @@ with the <a href="#SpacebarMapping">spacebar mappings</a>, for example "Restart 
 </table>
 <small>Precedence: if <b>song=</b> is present, startup <b>tuning=</b> is ignored because loaded songs already contain tuning state.</small>
 </p>
+
+<a name="startup-sizes"></a>
+<p><b>Cell sizes when you start up or open a song.</b>  The cell width, cell height and Note font size always travel together as one set.  When you open a song (<span class="GUIReferenceInline">File | Choose File</span>, the Song Library, or a <b>song=</b> link), each row below can replace the one above it.  A lower row wins only when nothing higher applies.
+</p>
+<table class="ExamplesTable">
+    <tr><th>Order</th><th>Source</th><th>When it applies</th></tr>
+    <tr>
+        <td>1 (lowest)</td>
+        <td>What is on screen now</td>
+        <td>Always there.  If you opened a blank song and resized things, and nothing below applies, your sizes stay.</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>The song's own default sizes (<b>Song-DEFAULTS</b> in the Display Options Matrix)</td>
+        <td>When the song author stored sizes there.  Applied <b>once, when the song opens</b>, whether or not Presentation Mode is on.  They give a sensible first view of the instruments.</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Your saved <span class="GUIReferenceInline">Desktop | Save Scaling Prefs</span></td>
+        <td>When you have saved them in this browser.  Applied once, when the song opens, over the song's default sizes, along with your UI font size.  To stop your prefs from winning, use <span class="GUIReferenceInline">Desktop | Clear Scaling Prefs</span>.</td>
+    </tr>
+    <tr>
+        <td>4 (highest)</td>
+        <td>Presentation Mode sizes stored in the song's Sections</td>
+        <td>When <b>Presentation Mode</b> is on in the song and a size is stored.  This wins over your Scaling Prefs, so a rehearsed presentation looks the same on any computer.</td>
+    </tr>
+</table>
+<small>Rows 2 and 3 are applied only when a song opens.  Moving between Sections or looping does not reset the sizes you chose, so you can resize freely.  Presentation Mode is different: its stored sizes are applied again each time you move to or loop around to a Section.  Turn <b>Loop</b> off to zoom in and out within a Section without them being reset.  Checking the Presentation Mode box applies its sizes at the next Section change, not immediately.  If a stored size is not one of the choices in the size menus, that one size is skipped and a note appears in the User Log.</small>
+
 <a name="copy-paste-delete-undo-o-my"></a>
 <h3>Copy, Paste, Delete, Save, Versions, O My!</h3>
 <p><span class="productsmaller">infinite-neck</span> doesn't have many of the things we associate with computer programs.  It doesn't 

@@ -140,6 +140,7 @@ import { FunctionSymbolsBuilder } from './templates/function-symbols/function-sy
 import { DisplayOptionsMatrixBuilder } from './templates/display-options/display-options.builder.js';
 import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType, normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
+import { pickOpenTimeSizes } from './templates/display-options/displayOptionsOpenSizes.js';
 import {
 	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
 	planCurrentToSongDefaults, planClearSongDefaults,
@@ -707,6 +708,35 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 	 *  then sectionChanged() applies whatever the Song's Sections store. */
 	export function applyDisplayOptionDefaults(){
 		displayOptionsToControls(cloneDisplayOptions(DISPLAY_OPTIONS_DEFAULTS), true);
+	}
+
+	/** Sprint 148 it6 round 4: the size controls (cell width, cell height, Note font size) at Song open, once.
+	 *  Song-DEFAULTS NoteDisplaySizes (even with Presentation Mode off), then Browser Scaling Prefs over it, as one blob.
+	 *  Nothing from either source: LIVE stands.  Silent (no `change` events): the repaint that follows in
+	 *  updateAfterOpenSong() draws the result.  The Presentation Mode cascade runs later, in sectionChanged(), and wins.
+	 *  Navigation and Apply never call this, so a User's own resizing survives looping. */
+	function applyOpenTimeSizes(){
+		let prefs = null;
+		try {
+			prefs = JSON.parse(localStorage.getItem(SCALING_PREFS) || 'null');
+		} catch (e){
+			prefs = null;  //a corrupt stored value is the same as none
+		}
+		const optionValues = (selector) => $(`${selector} option`).map((i, el) => el.value).get();
+		const pick = pickOpenTimeSizes({
+			songDefaultSizes: normalizeSongDisplayOptionsDefault(getSong().displayOptionsDefault)?.NoteDisplaySizes ?? null,
+			prefs,
+			widthOptions: optionValues('#dropDownCellWidth'),
+			heightOptions: optionValues('#dropDownCellHeight')
+		});
+		if (!pick){
+			return;
+		}
+		if (pick.uiFontSize !== undefined){ setUIFontSize(pick.uiFontSize); }
+		if (pick.noteFontSize !== undefined){ setNoteFontSize(pick.noteFontSize); }
+		if (pick.width !== undefined){ $("#dropDownCellWidth").val(pick.width); }
+		if (pick.height !== undefined){ $("#dropDownCellHeight").val(pick.height); }
+		pick.skipped.forEach((message) => UserLog.addToUserLog('DisplayOptions', escapeHtml(message)));
 	}
 
 	function setDisplayOptionsSaveActionRequired(isRequired){
@@ -2140,6 +2170,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		// Sprint 148 it4: no session-level DisplayOptions -- every Song open starts the controls from the Song
 		// defaults; sectionChanged() below then applies whatever this Song's Sections store.
 		applyDisplayOptionDefaults();
+		applyOpenTimeSizes();  //Song-DEFAULTS sizes, then Scaling Prefs; Presentation Mode (sectionChanged() below) wins over both.
 		hideGraveyard();
 		installDefaultColorDicts();
 		const hasUserTheme = !!installUserTheme(getSong().userTheme);
