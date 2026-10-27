@@ -1481,6 +1481,21 @@
 <p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>
 
 <p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
+
+<h3>Clearing Plugin Data</h3>
+<p>To clear plugin data from the song, you need to remove two types of settings:
+    <ul>
+        <li>Song-level plugin data: Use plugin > graveyard > bury (save+clear) :: <b>/fp > plugin > g > b</b></li>
+        <li>Section-level plugin data:
+            <ul>
+                <li>ArpeggioPlugin: positions: <b>/fpapL</b> (c<b>L</b>ear all sections)</li>
+                <li>FillPlugin: positions: <b>/fpfopL</b> (c<b>L</b>ear all sections)</li>
+            </ul>
+        </li>
+    </ul>
+
+
+
 <h2 id="plugin-arpeggio">ArpeggioPlugin</h2>
 
 <table class="helpCmdDetailHelp">
