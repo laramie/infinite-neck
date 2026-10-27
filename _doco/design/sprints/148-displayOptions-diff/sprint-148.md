@@ -41,3 +41,8 @@ Purpose of this sprint is to:
 - [Iteration 6 implementation plan with questions](148-it6-implementation-plan.md)
 - [Iteration 6 Round 2 implementation report and test recipes 26-30](148-it6-round-2-implementation-report.md)
   - Status: implemented, Jest green (77 suites, 990 tests), awaiting browser acceptance.
+- [Iteration 6 Round 4](148-it6-round-4-design.md) 
+  - Install new precedence of NoteDisplaySizes so that Song-DEFAULTS can hold reasonable defaults that are used even if Presentation Mode is off.
+- [Iteration 6 Round 4 Report](148-it6-round-4-report.md)
+  - Copilot report on our plan, with implementation notes, and questions.
+  - Contains UA testing recipes we should complete.   
