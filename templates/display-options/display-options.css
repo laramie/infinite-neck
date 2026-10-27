@@ -273,3 +273,9 @@
 .dmViewOptions button {
     padding: 0.4em;
 }
+
+#btnCurrentSectionToSongDisplayOptions,
+#btnClearSongDisplayOptions {
+    font-size: 80%;
+    padding: 0.19rem;
+}
