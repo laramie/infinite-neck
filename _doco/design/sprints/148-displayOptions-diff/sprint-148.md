@@ -36,13 +36,16 @@ Purpose of this sprint is to:
 - [Iteration 5 Round 1 implementation plan with questions](148-it5-round-1-implementation-plan.md)
 - [Iteration 5 Round 2 implementation report and test recipes 16-25](148-it5-round-2-implementation-report.md)
   - Status: implemented, awaiting browser acceptance (see report for the not-verified list).
+  - INCOMPLETE: [UA Recipes 16-25 : 148-it5-round-2-testing-report.md](148-it5-round-2-testing-report.md)
 - [Iteration 6](148-it6-design.md) 
   - Add "Song-DEFAULTS" and editing buttons to copy Current Section DisplayOption settings to new Song-level defaults. 
 - [Iteration 6 implementation plan with questions](148-it6-implementation-plan.md)
 - [Iteration 6 Round 2 implementation report and test recipes 26-30](148-it6-round-2-implementation-report.md)
   - Status: implemented, Jest green (77 suites, 990 tests), awaiting browser acceptance.
+  - INCOMPLETE: [UA Recipes 26-30 : 148-it6-round-2-testing-report.md](148-it6-round-2-testing-report.md)
 - [Iteration 6 Round 4](148-it6-round-4-design.md) 
   - Install new precedence of NoteDisplaySizes so that Song-DEFAULTS can hold reasonable defaults that are used even if Presentation Mode is off.
 - [Iteration 6 Round 4 Report](148-it6-round-4-report.md)
   - Copilot report on our plan, with implementation notes, and questions.
-  - Contains UA testing recipes we should complete.   
+  - Contains UA testing recipes we should complete.
+  - COMPLETE: [UA Recipes 31-36 : 148-it6-round-4-testing-report.md](148-it6-round-4-testing-report.md)   
