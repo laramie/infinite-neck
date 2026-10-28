@@ -142,7 +142,7 @@ import { DISPLAY_OPTIONS_DEFAULTS, isDisplayOptionKey, hideKeyForNoteType, norma
 import { parseGateDirection } from './templates/display-options/displayOptionsGates.js';
 import { pickOpenTimeSizes } from './templates/display-options/displayOptionsOpenSizes.js';
 import {
-	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
+	planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan, keysInSyncWithModel,
 	planCurrentToSongDefaults, planClearSongDefaults,
 	undoLastDisplayOptionsOp, canUndoDisplayOptionsOp
 } from './templates/display-options/displayOptionsPlan.js';
@@ -771,6 +771,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 	function areDisplayOptionsEqual(left, right){
 		return JSON.stringify(left || {}) === JSON.stringify(right || {});
+	}
+
+	/** After the model changed (or SaveDiff found nothing to write): a control that now equals what the Section stores or
+	 *  inherits is no longer an unsaved edit, so its keys leave the dirty comparison.  Keys still differing stay dirty. */
+	function reconcileDisplayOptionsDirtyBaseline(){
+		if (!displayOptionsDirtyBaseline) {
+			return;
+		}
+		const live = controlsToDisplayOptions();
+		for (const key of keysInSyncWithModel(getSong(), currentSectionIndex(), live, displayOptionsDirtyBaseline)) {
+			displayOptionsDirtyBaseline[key] = JSON.parse(JSON.stringify(live[key]));
+		}
 	}
 
 	function refreshDisplayOptionsSaveActionRequired(){
@@ -3774,6 +3786,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		if (result.changed){
 			showHideDisplayOptionsPresent();
 			if (options.keepDirty){
+				reconcileDisplayOptionsDirtyBaseline();
 				refreshDisplayOptionsSaveActionRequired();
 			} else {
 				captureDisplayOptionsDirtyBaseline();
@@ -3781,6 +3794,10 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			ThemesBuilder.renderThemeMatrix();  //Theme Matrix's "default" column reflects this Section's sectionTheme.
 			FunctionSymbolsBuilder.refresh();   //usage count of a User Function Symbols set may have changed.
 			EventBus.trigger('DisplayOptionsModel:changed', { report: result.report });
+		} else if (options.reconcileDirty){
+			// SaveDiff with nothing to write: the model already matches those controls, so they are not "unsaved".
+			reconcileDisplayOptionsDirtyBaseline();
+			refreshDisplayOptionsSaveActionRequired();
 		}
 		const html = escapeHtml(result.report);
 		UserLog.addToUserLog('DisplayOptions', html);
@@ -3835,7 +3852,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		return runDisplayOptionsCommand(() => {
 			const song = getSong();
 			return applyPlan(song, planSaveDiff(song, currentSectionIndex(), controlsToDisplayOptions(), displayOptionsDirtyBaseline));
-		}, { quiet: options?.quiet === true });
+		}, { quiet: options?.quiet === true, reconcileDirty: true });
 	}
 
 	/** Save All: writes every writable cell from the controls to this Section. */

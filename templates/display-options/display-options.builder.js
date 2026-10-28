@@ -347,17 +347,17 @@ export class DisplayOptionsMatrixBuilder {
         const lines = [out.report];
         let kind = '';
         if (out.changed && planAffectsApply(result.plan, ctx.currentIndex)) {
-            kind = builder.afterEditThatChangesApply(ctx.dirty, lines);
+            // dirty is read after the plan: a Store Cell that brings the model level with the controls leaves nothing unsaved
+            kind = builder.afterEditThatChangesApply(InfiniteNeck.getDisplayOptionsMatrixContext().dirty, lines);
         }
         builder.setStatus(lines, kind);
     }
 
     static handleUndo() {
         const builder = DisplayOptionsMatrixBuilder;
-        const wasDirty = InfiniteNeck.getDisplayOptionsMatrixContext().dirty;
         const out = InfiniteNeck.undoDisplayOptionsOp({ quiet: true });
         const lines = [out.report];
-        const kind = out.changed ? builder.afterEditThatChangesApply(wasDirty, lines) : '';
+        const kind = out.changed ? builder.afterEditThatChangesApply(InfiniteNeck.getDisplayOptionsMatrixContext().dirty, lines) : '';
         builder.setStatus(lines, kind);
     }
 
@@ -375,10 +375,9 @@ export class DisplayOptionsMatrixBuilder {
      *  every Section), so the usual Auto-apply / hint / dirty-warning path runs.  They do not use the Undo slot. */
     static handleSongDefaultsButton(action) {
         const builder = DisplayOptionsMatrixBuilder;
-        const wasDirty = InfiniteNeck.getDisplayOptionsMatrixContext().dirty;
         const out = action({ quiet: true });
         const lines = [out.report];
-        const kind = out.changed ? builder.afterEditThatChangesApply(wasDirty, lines) : '';
+        const kind = out.changed ? builder.afterEditThatChangesApply(InfiniteNeck.getDisplayOptionsMatrixContext().dirty, lines) : '';
         builder.setStatus(lines, kind);
     }
 

@@ -1,5 +1,6 @@
 # Test Recipes 31-36
 
+
 31. Blank Song, set width 140, open a Song with Song-DEFAULTS sizes, Presentation off, no Prefs: sizes become the Song-DEFAULTS.  Navigate: they stay (B).
 - RESULT: PASS
 

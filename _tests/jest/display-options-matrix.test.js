@@ -14,7 +14,7 @@ import {
     resolveDisplayOptions, getAutomatedKeys, ABSENT_CELL_POLICY
 } from '../../templates/display-options/displayOptionsResolver.js';
 import {
-    planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan,
+    planSaveDiff, planSaveAll, planClear, planClearCell, planGate, applyPlan, keysInSyncWithModel,
     undoLastDisplayOptionsOp, canUndoDisplayOptionsOp, resetUndoForTests
 } from '../../templates/display-options/displayOptionsPlan.js';
 
@@ -241,6 +241,17 @@ describe('displayOptionsResolver', () => {
 
 describe('displayOptionsPlan', () => {
     beforeEach(() => resetUndoForTests());
+
+    test('keysInSyncWithModel: a Store Cell that brings the model level with the controls leaves nothing unsaved (it6 round 2)', () => {
+        const song = mkSong([{ functionSymbols: 'kanji' }]);
+        const live = { ...DISPLAY_OPTIONS_DEFAULTS, functionSymbols: 'function' };
+        expect(keysInSyncWithModel(song, 0, live, {})).not.toContain('functionSymbols');
+        song.sections[0].displayOptions.functionSymbols = 'function';
+        expect(keysInSyncWithModel(song, 0, live, {})).toContain('functionSymbols');
+        // a key with no cell, no default and a stale snapshot stays out of sync
+        expect(keysInSyncWithModel(song, 0, { ...live, currentColorDict: 'B' }, { currentColorDict: 'A' })).not.toContain('currentColorDict');
+        expect(keysInSyncWithModel(song, 0, { ...live, currentColorDict: 'B' }, { currentColorDict: 'B' })).toContain('currentColorDict');
+    });
 
     test('SaveDiff writes only changed cells', () => {
         const song = mkSong([null, null]);

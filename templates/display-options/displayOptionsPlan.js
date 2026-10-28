@@ -60,6 +60,17 @@ function knownKeysOf(live) {
     return DISPLAY_OPTION_KEYS.filter((key) => live && live[key] !== undefined && live[key] !== null);
 }
 
+/** Keys whose live value already equals what the Section stores or inherits, i.e. SaveDiff has nothing to write for them.
+ *  The caller uses this to drop its "controls changed" snapshot for those keys once the model has caught up with the controls. */
+export function keysInSyncWithModel(song, idx, live, syncLive = null) {
+    const baseline = resolveDisplayOptions(song, idx, { purpose: 'baseline', syncLive }).values;
+    return knownKeysOf(live).filter((key) => {
+        const has = hasCell(song, idx, key);
+        const effective = has ? blockOf(song, idx)[key] : baseline[key];
+        return (has || key in baseline) && valuesEqual(key, live[key], effective);
+    });
+}
+
 export function planSaveDiff(song, idx, live, syncLive = null) {
     const plan = newPlan('saveDiff', idx);
     const baseline = resolveDisplayOptions(song, idx, { purpose: 'baseline', syncLive }).values;
