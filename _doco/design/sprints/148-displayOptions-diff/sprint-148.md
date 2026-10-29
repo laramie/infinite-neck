@@ -14,6 +14,25 @@ Purpose of this sprint is to:
 - Introduce a new button to save the Diff of DisplayOptions only
   - Currently, hitting SAVE on DisplayOptions in View saves all the DisplayOptions every time, so if all you want to change is Hide NamedNotes, then you drag in automation of everything, leading to explosion of Section View automation you don't need, and extra maintenance in Songs. 
 
+## Scope
+
+This sprint ended up with a vastly increased scope, which solves many problems encountered while authoring Songs having to do with managing all the DisplayOptions.  These are now much more sparse when there are many Sections.  The cost is the complexity of the UI manager pages, which are now in place and resembling the Palette in complexity.  However, the features are powerful, are documented in the help file, and have in-App help, legends, tips, and hints.  Pluswhich the UI is fairly intuitive and fully graphical--much better than slogging through JSON or the command-line.  Many of the features have to do with developing the DisplayOptions for Songs, so most Users won't need them, but Song authors will use them to create feature-rich songs that work well with macro scripting, Song Widgets, and Info presets. Tutorials, Wizards, and practice songs that use Theme Automation, Presentation Mode, and changing DisplayOptions to customize the User experience and display per Section benefit from full GUI editing.
+
+Features Added: 
+- SAVE Display Options has now become two commands: SaveDiff and SaveALL.
+  - SaveDiff just captures the difference from the App DEFAULTS, the author-writable Song-DEFAULTS, the LIVE controls, and the now-sparse storage of DisplayOptions in each Section as needed.  So defaults don't clobber later Sections and so on.
+  - SaveALL still takes a snapshot the way SAVE used to do.  This is useful for many situations, and is how many of the existing Songs are stored, so is still supported as a valid idiom.  SaveDiff is a less brittle idiom.
+- Song-DEFAULTS is a new "Section-zero" idiom where authors can save base DisplayOptions per Song without requiring these be set in Section 1.  This is the primary simplification.  It also means that even without Presentation Mode, default width, height, and Note font-size can be saved as Song-DEFAULTS.  
+- Display Options Matrix
+  - A full UI grid of all Sections and all DisplayOptions.
+  - read/write blocking of changes so authors can lock down changes while developing songs and playing with options.
+  - Easy writing and clearing of automation of DisplayOptions across Sections
+  - Live visual feedback on where DisplayOptions come from: DEFAULTS, Song-DEFAULTS, LIVE controls, Section storage, Browser storage, and Presentation Mode.
+- command-line control (thus macro scripting) of essential features such as setting and clearing read-blocks and write-blocks, and Clearing, Saving DisplayOptions Diffs, and Saving ALL DisplayOptions (snapshot).
+- command-line `/vdd` is still supported with new CSS display of read and write blocks.
+- simplified "Display Options" View card
+- Customizable "Function Symbols" and fixed the controls that really did not let Users create Function Symbols before.  Now Users can add many Function Symbols and manage them per Song.   
+
 ## Sprint document locations with TEST RESULTS / STATUS
 
 - [design document](148-design.md) 
