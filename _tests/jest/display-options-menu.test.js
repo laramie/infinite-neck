@@ -39,6 +39,15 @@ describe('Sprint 148 it4: /vpm Matrix menu', () => {
         expect(walk('vpmgak').input.datatype).toBe('string');
     });
 
+    test('it7: /vpms is the show-messages toggle, expanded from the checkbox state like presentation mode', () => {
+        const node = walk('vpms');
+        expect(node.action).toBe('toggleDisplayOptionsShowMessages');
+        expect(node.caption).toBe('<b>s</b>how messages [${displayOptionsShowMessagesState}]');
+        expect(node.vars).toEqual(['displayOptionsShowMessagesState']);
+        expect(node.preserveMenuStack).toBe(true);
+        expect(node.input).toBeUndefined();   // a static toggle, not an org.dynamide.toggle plugin item
+    });
+
     test('SaveDiff stays on s) and Save All is a)', () => {
         expect(walk('vps').action).toBe('saveViewDisplayOptions');
         expect(walk('vpa').action).toBe('saveViewDisplayOptionsAll');
@@ -47,7 +56,7 @@ describe('Sprint 148 it4: /vpm Matrix menu', () => {
     test('every Matrix action has a case in key-handlers.js', () => {
         const src = fs.readFileSync(path.join(here, '../../key-handlers.js'), 'utf8');
         for (const action of ['matrixClearCell', 'matrixGateKey', 'matrixGateSection', 'matrixGateCell', 'matrixUndo', 'matrixOpen',
-                              'saveViewDisplayOptionsAll']) {
+                              'toggleDisplayOptionsShowMessages', 'saveViewDisplayOptionsAll']) {
             expect(src).toContain(`case "${action}"`);
         }
     });

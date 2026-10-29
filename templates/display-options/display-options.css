@@ -97,6 +97,11 @@
     border-collapse: separate;     /* sticky cells lose collapsed borders */
     border-spacing: 0.2em;
 }
+/* Sprint 148 it7: blank space inside the scroll area, below the bottom row.  The (overlay) horizontal scrollbar thumb
+   appears when hovering the bottom row and would otherwise sit on top of the cells and swallow Tool clicks. */
+#divDisplayOptionsMatrix .dmScroll #dmTableHost {
+    padding-bottom: 18px;
+}
 #divDisplayOptionsMatrix .dmTable :where(th, td) {
     position: relative;
     border: 1px solid #777;

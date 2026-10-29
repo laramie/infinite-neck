@@ -3033,6 +3033,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
         <li><span class="menuExampleLine"><b><small>/vpmgd</small></b></span> then <b>k</b>, <b>s</b> or <b>c</b> removes a gate, same inputs</li>
         <li><span class="menuExampleLine"><b><small>/vpmc</small></b></span> clear one cell, input <span class="menuExampleLine">section-number,key</span></li>
         <li><span class="menuExampleLine"><b><small>/vpmu</small></b></span> undo the last Save, Clear or gate change (one level)</li>
+        <li><span class="menuExampleLine"><b><small>/vpms</small></b></span> toggle <b>show messages</b>, the same as the <b>Show Messages</b> checkbox in the <b>Help Tips</b> panel of the View page's Display Options card (unchecked: SAVE Diff, CLEAR, Save All and Undo results are logged to the User Log only, and <b>Messages</b> does not open)</li>
     </ul>
     Type the commas and the <span class="menuExampleLine">*</span> literally, without quotes.  The <span class="menuExampleLine"><b><small>/vdd</small></b></span> audit marks gates with <b>r</b> and <b>w</b>.
 </p>
@@ -3096,7 +3097,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     <tr><td><b>Inspect</b></td><td>a cell, a key header, a special-row cell</td><td>Changes nothing.  Reports what is stored here, what the Section would otherwise inherit and from where, which blocks apply and their effect.  On a Section number it navigates.</td></tr>
     <tr><td><b>Clear Section</b></td><td>a Section number, or any cell in its row</td><td>Removes that Section's stored values (never its blocks).  Write-blocked cells are skipped.  Works on any Section, not only the Current one.</td></tr>
     <tr><td><b>Clear Cell</b></td><td>a cell</td><td>Removes one stored value.  A write-block on the cell stops it.</td></tr>
-    <tr><td><b>Store Cell</b></td><td>a cell</td><td>Writes the <i>live control's</i> value for that key into that Section's cell.  Read-blocked and write-blocked cells are skipped and reported, as is a key whose Presentation Mode or Theme Automation switch is off.</td></tr>
+    <tr><td><b>Store Cell</b></td><td>a cell</td><td>Writes the <i>live control's</i> value for that key into that Section's cell, even when the cell is read-blocked.  A write-blocked cell is skipped and reported, as is a key whose Presentation Mode or Theme Automation switch is off.</td></tr>
     <tr><td><b>Key r</b> / <b>Key w</b></td><td>a key header, any cell in the column, or a special-row cell</td><td>Toggles a read-block or write-block for that option across the whole Song.</td></tr>
     <tr><td><b>Section r</b> / <b>Section w</b></td><td>a Section number, or any cell in the row</td><td>Toggles a read-block or write-block for that whole Section.</td></tr>
     <tr><td><b>Cell r</b> / <b>Cell w</b></td><td>a cell</td><td>Toggles a read-block or write-block on one cell.</td></tr>
@@ -3114,7 +3115,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
     <tr><th>Column or row</th><td>The Section <b>leaves the control alone</b> when you arrive: the control keeps whatever it holds.</td></tr>
     <tr><th>Adapter (<b>a:</b>)</th><td>Automatic.  <b>NoteDisplaySizes</b> is off until <b>Presentation Mode</b> is on; <b>sectionTheme</b> is off until <b>Allow Theme Automation</b> is on.  The header shows <b>a:presentationMode</b> or <b>a:allowThemeAutomation</b>.</td></tr>
 </table>
-<p>A read-block does not stop <b>Clear</b>, so you can always remove a value you can no longer see applied.  Blocks do not touch the controls until you apply the Section again (next section).
+<p>A read-block never stops a write: <b>SAVE Diff</b>, <b>Save All</b>, <b>Store Cell</b> and <b>Clear</b> all work on a read-blocked cell, so you can always change or remove a value you can no longer see applied.  (A read-blocked stored cell is <i>dormant</i>: SAVE Diff does not delete it or overwrite it just because the control shows the inherited value.)  Blocks do not touch the controls until you apply the Section again (next section).
     <b>View Column Gates</b> and <b>View Row Gates</b> switch those two glows off so you see only values and cell blocks; cell blocks are always shown.  Read blocks look orange or red, write blocks blue, and a cell with several shows each of them (see the Legend).
 </p>
 
@@ -3143,7 +3144,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 
 <h5>Saving</h5>
 <p><b>SAVE Diff</b> and <b>Save All</b> are repeated on the Matrix, with the same meaning as on the View page, and report in the status line.  <b>SAVE Diff</b> turns <b>magenta</b> (on both the View card and the Matrix) when a control differs from what the Current Section stored or inherited, and goes back to normal when the model matches the controls again, whether you saved the Section, used <b>Store Cell</b> on it, or changed the control back.
-    SAVE Diff writes only cells that differ from the inherited value, removes a Section's cell that now merely repeats the inherited value, and skips blocked cells.  A control that has no value yet (for example no stylesheet chosen) is never stored.
+    SAVE Diff writes only cells that differ from the inherited value, removes a Section's cell that now merely repeats the inherited value, and skips write-blocked cells.  A control that has no value yet (for example no stylesheet chosen) is never stored.
     <b>Undo</b> reverts the last Matrix, SAVE Diff, Save All, Clear or block change (one level, the same as <span class="menuExampleLine"><b><small>/vpmu</small></b></span>).  The Song-DEFAULTS buttons do not use Undo.
 </p>
 
@@ -3189,7 +3190,7 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 </p>
 
 <h5>Storing and clearing</h5>
-<p><b>7. Store one control into one cell.</b>  Change Note Font by hand, choose <b>Store Cell</b>, and click a <i>noteFont</i> cell in any Section.  That cell now holds the live value.  A cell that is read-blocked or write-blocked reports the skip instead.  The magenta SAVE Diff clears when the stored value matches the control, because the model and the control now agree.
+<p><b>7. Store one control into one cell.</b>  Change Note Font by hand, choose <b>Store Cell</b>, and click a <i>noteFont</i> cell in any Section.  That cell now holds the live value, even if it is read-blocked (the block stays).  A write-blocked cell reports the skip instead.  The magenta SAVE Diff clears when the stored value matches the control, because the model and the control now agree.
 </p>
 <p><b>8. Let a Section inherit again.</b>  Choose <b>Clear Section</b> and click a Section number: all its stored values go (its blocks stay), and it turns gray.  If it is the Current Section, press <b>Apply from Model</b> to see the inherited values arrive.  Use <b>Clear Cell</b> to remove just one.  <b>Undo</b> brings it back.
 </p>

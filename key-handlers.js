@@ -178,6 +178,8 @@ function clearDisplayOptionsCell(...args) { return requireProvider('clearDisplay
 function setDisplayOptionsGate(...args) { return requireProvider('setDisplayOptionsGate')(...args); }
 function undoDisplayOptionsOp(...args) { return requireProvider('undoDisplayOptionsOp')(...args); }
 function showDisplayOptionsMatrix(...args) { return requireProvider('showDisplayOptionsMatrix')(...args); }
+function isDisplayOptionsShowMessages(...args) { return requireProvider('isDisplayOptionsShowMessages')(...args); }
+function toggleDisplayOptionsShowMessages(...args) { return requireProvider('toggleDisplayOptionsShowMessages')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
@@ -1424,6 +1426,10 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = 'DisplayOptions Matrix opened';
 			actionResult.preserveMenuStack = true;
 			break;
+		case "toggleDisplayOptionsShowMessages":   // Sprint 148 it7: flips #cbShowDisplayOptionsShowMessages, the single source of truth
+			actionResult.result = `show messages: ${toggleDisplayOptionsShowMessages()}`;
+			actionResult.preserveMenuStack = true;
+			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
 			break;	
@@ -2094,6 +2100,9 @@ export function getValue(what){
 	}
 	if (what === 'presentationModeState'){
 		return !!getSong()?.presentationMode;
+	}
+	if (what === 'displayOptionsShowMessagesState'){
+		return !!isDisplayOptionsShowMessages();
 	}
 	if (what === 'displayOptionsSaveState'){
 		return getDisplayOptionsSaveState();

@@ -180,8 +180,8 @@ export function describeCell(song, sectionIndex, key, { live = null, syncLive = 
         lines.push(`effect: this stored cell is ignored when applying; ${key} is inherited from an earlier Section or the default (a cell read gate).`);
     }
     const explicitWrite = blocks.column.includes('w') || blocks.row.includes('w') || blocks.cell.includes('w');
-    if (readRegion || blocks.cell.includes('r') || blocks.adapter || explicitWrite) {
-        lines.push(`effect: SAVE Diff and Save All skip this cell${explicitWrite ? '; Clear skips it' : ''}.`);
+    if (blocks.adapter || explicitWrite) {
+        lines.push(`effect: SAVE Diff, Save All and Store Cell skip this cell${explicitWrite ? '; Clear skips it' : ''}.`);
     }
     return { title: `Section ${sectionIndex + 1}, ${key}`, lines };
 }

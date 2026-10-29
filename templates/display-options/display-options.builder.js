@@ -289,12 +289,14 @@ export class DisplayOptionsMatrixBuilder {
         }
         const box = scroller.getBoundingClientRect();
         const rowBox = row.getBoundingClientRect();
+        // the blank space under the bottom row (CSS padding of #dmTableHost) is where the scrollbar thumb lives: keep the row above it
+        const bottomSpace = parseFloat(getComputedStyle(document.getElementById('dmTableHost')).paddingBottom) || 0;
         // the height of the stuck rows (the thead rect would also include the border-spacing gaps, which are not stuck)
         const headerHeight = DisplayOptionsMatrixBuilder.stuckHeaderHeight ?? 0;
         if (rowBox.top < box.top + headerHeight) {
             scroller.scrollTop -= (box.top + headerHeight) - rowBox.top;
-        } else if (rowBox.bottom > box.bottom) {
-            scroller.scrollTop += rowBox.bottom - box.bottom;
+        } else if (rowBox.bottom > box.bottom - bottomSpace) {
+            scroller.scrollTop += rowBox.bottom - (box.bottom - bottomSpace);
         }
     }
 

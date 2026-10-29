@@ -252,6 +252,7 @@ describe('key-handlers spacebar mapping', () => {
 	let mockClearDisplayOptionsCell;
 	let mockSetDisplayOptionsGate;
 	let mockUndoDisplayOptionsOp;
+	let showMessagesChecked;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -286,6 +287,7 @@ describe('key-handlers spacebar mapping', () => {
 		mockClearDisplayOptionsCell = jest.fn(() => ({ changed: true, report: 'cleared' }));
 		mockSetDisplayOptionsGate = jest.fn(() => ({ changed: true, report: 'gated' }));
 		mockUndoDisplayOptionsOp = jest.fn(() => ({ changed: true, report: 'undone' }));
+		showMessagesChecked = false;
 		mockDownloadBackupThenClearGraveyardByType = jest.fn(() => ({ result: 'cleared: SECTION (1)' }));
 		updateSectionsStatus = jest.fn();
 
@@ -326,6 +328,11 @@ describe('key-handlers spacebar mapping', () => {
 			clearDisplayOptionsCell: mockClearDisplayOptionsCell,
 			setDisplayOptionsGate: mockSetDisplayOptionsGate,
 			undoDisplayOptionsOp: mockUndoDisplayOptionsOp,
+			isDisplayOptionsShowMessages: () => showMessagesChecked,
+			toggleDisplayOptionsShowMessages: jest.fn(() => {
+				showMessagesChecked = !showMessagesChecked;
+				return showMessagesChecked;
+			}),
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
@@ -599,6 +606,16 @@ describe('key-handlers spacebar mapping', () => {
 			expect.objectContaining({ scope: 'cell', sectionNumberText: '1', key: 'showMidiNum', valueText: 'write-blocked', on: true }));
 
 		expect(performCmdAction({ action: 'matrixUndo' }).result).toBe('undone');
+	});
+
+	test('Sprint 148 it7: /vpms toggles the Show Messages checkbox, and the menu variable reads it back (one source of truth)', () => {
+		expect(getValue('displayOptionsShowMessagesState')).toBe(false);
+		const on = performCmdAction({ action: 'toggleDisplayOptionsShowMessages' });
+		expect(on.result).toBe('show messages: true');
+		expect(on.preserveMenuStack).toBe(true);
+		expect(getValue('displayOptionsShowMessagesState')).toBe(true);
+		expect(performCmdAction({ action: 'toggleDisplayOptionsShowMessages' }).result).toBe('show messages: false');
+		expect(getValue('displayOptionsShowMessagesState')).toBe(false);
 	});
 
 	test('Meta+Shift+m opens command line in strict tutorial mode', () => {

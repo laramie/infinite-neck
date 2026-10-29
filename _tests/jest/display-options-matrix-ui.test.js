@@ -220,17 +220,27 @@ describe('Matrix tools: clear and store', () => {
         expect(song.sections[1].displayOptions).toEqual({ noteFont: 'b' });
     });
 
-    test('Store Cell honors read gates, write gates, adapter gates, and missing live values', () => {
+    test('Store Cell honors write gates and adapter gates, but a read block never stops it (it7); missing live values are skipped', () => {
         const song = mkSong([null], { presentationMode: false });
         const live = { noteFont: 'L', showMidiNum: true, NoteDisplaySizes: { width: '1px' }, hideTinyNotes: undefined };
         song.displayOptionGates = { readBlocked: ['noteFont'] };
-        song.sections[0].displayOptionGates = { writeBlocked: ['showMidiNum'] };
+        song.sections[0].displayOptionGates = { writeBlocked: ['showMidiNum'], readBlocked: ['autoColor'] };
         const why = (key) => planStoreCell(song, 0, key, live).skipped[0]?.reason;
-        expect(why('noteFont')).toBe('read-blocked');
+        expect(why('noteFont')).toBeUndefined();
+        expect(planStoreCell(song, 0, 'noteFont', live).ops).toEqual([{ type: 'setCell', sectionIndex: 0, key: 'noteFont', value: 'L' }]);
         expect(why('showMidiNum')).toBe('write-blocked');
         expect(why('NoteDisplaySizes')).toBe('presentationMode is off');
         expect(why('hideTinyNotes')).toBe('no live value');
         expect(why('autoColor')).toBe('no live value');
+    });
+
+    test('Store Cell into a cell that has its own Cell read-block writes it, and the block stays (it7)', () => {
+        const song = mkSong([{ noteFont: 'Eczar' }, { noteFont: 'Cardo' }]);
+        song.sections[1].displayOptionGates = { readBlocked: ['noteFont'] };
+        const result = clickOn(song, 'storeCell', ZONES.cell, { sectionIndex: 1, key: 'noteFont' }, { live: { noteFont: 'Live' } });
+        applyPlan(song, result.plan);
+        expect(song.sections[1].displayOptions.noteFont).toBe('Live');
+        expect(song.sections[1].displayOptionGates).toEqual({ readBlocked: ['noteFont'] });
     });
 
     test('Store Cell of an identical stored value is "unchanged"', () => {
@@ -315,7 +325,7 @@ describe('Matrix tools: Inspect', () => {
         song.sections[0].displayOptionGates = { writeBlocked: ['*'] };
         const row = describeCell(song, 0, 'noteFont').lines.join('\n');
         expect(row).toContain('row write-blocked');
-        expect(row).toContain('SAVE Diff and Save All skip this cell; Clear skips it.');
+        expect(row).toContain('SAVE Diff, Save All and Store Cell skip this cell; Clear skips it.');
         const adapter = describeCell(mkSong([{ noteFont: 'a' }], { presentationMode: false }), 0, 'NoteDisplaySizes').lines.join('\n');
         expect(adapter).toContain('presentationMode is off');
         expect(adapter).not.toContain('Clear skips it');
@@ -381,13 +391,34 @@ describe('Matrix wiring (source checks; the browser behavior is checked in UI ac
         const builder = read('templates/display-options/display-options.builder.js');
         expect(builder).not.toMatch(/showMessages/);
         expect(builder.match(/quiet: true/g).length).toBeGreaterThanOrEqual(4);
-        expect(read('infinite-neck.js')).toMatch(/if \(!options\.quiet\)\{\s*Messages\.showMessages\(html\);/);
+        expect(read('infinite-neck.js')).toMatch(/if \(!options\.quiet && isDisplayOptionsShowMessages\(\)\)\{\s*Messages\.showMessages\(html\);/);
     });
 
-    test('SAVE Diff dirty highlight reaches the Matrix button, and the Matrix inputs do not light up SAVE Diff', () => {
+    test('SAVE Diff dirty highlight reaches the View, Matrix and Section drawer buttons, and the Matrix inputs do not light up SAVE Diff', () => {
         const core = read('infinite-neck.js');
-        expect(core).toContain("$('#btnSaveDiff_View, #btnSaveDiff_Matrix').toggleClass('riskyButtonActionRequired'");
+        expect(core).toContain("$('#btnSaveDiff_View, #btnSaveDiff_Matrix, #btnSaveDiff_Section').toggleClass('riskyButtonActionRequired'");
         expect(core).toContain(':not(#divDisplayOptionsMatrix *)');
+        expect(core).toContain(':not(#cbShowDisplayOptionsShowMessages)');
+    });
+
+    test('it7: the Section drawer SAVE Diff follows the magenta state, also when the drawer is built late', () => {
+        const drawer = read('templates/section-drawer.builder.js');
+        expect(drawer).toContain('InfiniteNeck.isDisplayOptionsSaveActionRequired()');
+        expect(drawer).toContain("$('#btnSaveDiff_Section').toggleClass('riskyButtonActionRequired'");
+    });
+
+    test('it7: Help Tips start closed with the right arrow, toggle with the down arrow; Show Messages is the one gate on Messages', () => {
+        const html = read('index.html');
+        expect(html).toMatch(/<div id="displayOptionsTips" style="display:none">/);
+        expect(html).toMatch(/id="spanDisplayOptionsTipsArrow">&#x25B6;</);
+        const core = read('infinite-neck.js');
+        expect(core).toContain("bindEvent('click', '#btnToggleDisplayOptionsTips'");
+        expect(core).toContain("$('#spanDisplayOptionsTipsArrow').html(opening ? '&#x25BC;' : '&#x25B6;')");
+        expect(core).toContain("$('#cbShowDisplayOptionsShowMessages').prop('checked')");
+    });
+
+    test('it7: blank space below the bottom row keeps the scrollbar thumb off the cells', () => {
+        expect(read('templates/display-options/display-options.css')).toMatch(/#dmTableHost\s*\{\s*padding-bottom:\s*\d+px/);
     });
 
     test('the controls and adapter handlers publish the events the Matrix listens to', () => {

@@ -1817,6 +1817,15 @@ export var gMenuFile =    {
                   "trigger": "o",
                   "action": "matrixOpen",
                   "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>s</b>how messages [${displayOptionsShowMessagesState}]",
+                  "trigger": "s",
+                  "action": "toggleDisplayOptionsShowMessages",
+                  "vars": [
+                    "displayOptionsShowMessagesState"
+                  ],
+                  "preserveMenuStack": true
                 }
               ]
             },

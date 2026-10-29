@@ -7,12 +7,14 @@
 //
 //   planSaveDiff  : write only the cells whose live control value differs from what the Section
 //                   inherits (the 'baseline' resolve); a cell that already exists and now equals
-//                   the baseline is deleted as redundant.  Skips read-blocked and write-blocked cells.
-//   planSaveAll   : write every cell from the live controls.  Skips read-blocked and write-blocked.
+//                   the baseline is deleted as redundant.  Skips write-blocked cells.  A read-block never stops a write
+//                   (Sprint 148 it7); a read-blocked stored cell is dormant, so the controls do not show it and SaveDiff
+//                   neither rewrites nor deletes it while the control still shows the inherited value.
+//   planSaveAll   : write every cell from the live controls.  Skips write-blocked.
 //   planClear     : remove the Section's stored cells.  Skips ONLY explicitly write-blocked cells
 //                   (Round 3 Q6: a read block does not stop Clear).
 //   planClearCell : remove one cell.  Honors only the write block.
-//   planStoreCell : write ONE cell from the live control (Matrix 'Store Cell' tool).  Skips read- and write-blocked.
+//   planStoreCell : write ONE cell from the live control (Matrix 'Store Cell' tool).  Skips write-blocked.
 //   planGate      : add/remove a column, row ('*') or cell gate.  Gates are never touched by the
 //                   Save/Clear plans.
 //   planCurrentToSongDefaults / planClearSongDefaults  (Sprint 148 it6): mirror the Current Section's STORED cells into the
@@ -41,12 +43,13 @@ function hasCell(song, idx, key) {
     return !!block && Object.prototype.hasOwnProperty.call(block, key);
 }
 
+/** Why a write to this cell is refused, or null.  Only write blocks (and the derived adapter gates) stop a write; a read block
+ *  only decides what is APPLIED (Sprint 148 it7). */
 function skipReason(song, idx, key) {
     const section = song.sections[idx];
     const flag = adapterGateFor(key);
     if (flag && !song[flag]) return `${flag} is off`;
     if (isWriteBlocked(song, section, key)) return 'write-blocked';
-    if (isReadBlocked(song, section, key)) return 'read-blocked';
     return null;
 }
 
@@ -60,15 +63,29 @@ function knownKeysOf(live) {
     return DISPLAY_OPTION_KEYS.filter((key) => live && live[key] !== undefined && live[key] !== null);
 }
 
+/** What SaveDiff would do with one cell: 'same' (nothing to write), 'redundant' (delete the stored cell) or 'write'.
+ *  A read-blocked stored cell is dormant: the controls never show it, so a control that matches the inherited value says
+ *  nothing about it, and SaveDiff must not delete it as redundant or overwrite it with the inherited value. */
+function classifyCell(song, idx, key, value, baseline) {
+    const has = hasCell(song, idx, key);
+    const hasBaseline = key in baseline;
+    const stored = has ? blockOf(song, idx)[key] : undefined;
+    const flag = adapterGateFor(key);
+    const dormant = has && !(flag && !song[flag]) && isReadBlocked(song, song.sections[idx], key);
+    if (dormant) {
+        return (hasBaseline && valuesEqual(key, value, baseline[key])) || valuesEqual(key, value, stored) ? 'same' : 'write';
+    }
+    if ((has || hasBaseline) && valuesEqual(key, value, has ? stored : baseline[key])) {
+        return 'same';
+    }
+    return has && hasBaseline && valuesEqual(key, value, baseline[key]) ? 'redundant' : 'write';
+}
+
 /** Keys whose live value already equals what the Section stores or inherits, i.e. SaveDiff has nothing to write for them.
  *  The caller uses this to drop its "controls changed" snapshot for those keys once the model has caught up with the controls. */
 export function keysInSyncWithModel(song, idx, live, syncLive = null) {
     const baseline = resolveDisplayOptions(song, idx, { purpose: 'baseline', syncLive }).values;
-    return knownKeysOf(live).filter((key) => {
-        const has = hasCell(song, idx, key);
-        const effective = has ? blockOf(song, idx)[key] : baseline[key];
-        return (has || key in baseline) && valuesEqual(key, live[key], effective);
-    });
+    return knownKeysOf(live).filter((key) => classifyCell(song, idx, key, live[key], baseline) === 'same');
 }
 
 export function planSaveDiff(song, idx, live, syncLive = null) {
@@ -80,12 +97,10 @@ export function planSaveDiff(song, idx, live, syncLive = null) {
             plan.skipped.push({ key, reason });
             continue;
         }
-        const has = hasCell(song, idx, key);
-        const hasBaseline = key in baseline;
-        const effective = has ? blockOf(song, idx)[key] : baseline[key];
-        if ((has || hasBaseline) && valuesEqual(key, live[key], effective)) {
+        const verdict = classifyCell(song, idx, key, live[key], baseline);
+        if (verdict === 'same') {
             plan.unchanged++;
-        } else if (has && hasBaseline && valuesEqual(key, live[key], baseline[key])) {
+        } else if (verdict === 'redundant') {
             plan.ops.push({ type: 'deleteCell', sectionIndex: idx, key, note: 'redundant' });
         } else {
             plan.ops.push({ type: 'setCell', sectionIndex: idx, key, value: cloneValue(live[key]) });

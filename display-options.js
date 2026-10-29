@@ -47,7 +47,7 @@ export function displayOptionsTable(){
     const res = [];
     res.push("<table border='1' class='tblDisplayOptions'><caption>DisplayOptions: Sections with stored cells or gates"
         + `<br><small>${columnGateDescription(song)}.  green = differs from what the Section inherits; gray = no stored cell; `
-        + "marks: r read-blocked, w write-blocked, a = presentationMode / allowThemeAutomation is off</small></caption>");
+        + "marks: a = presentationMode / allowThemeAutomation is off</small></caption>");
 
     const header = DISPLAY_OPTION_KEYS.map((key) => {
         const blocks = describeBlocks(song, null, key);

@@ -376,6 +376,8 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			setDisplayOptionsGate,
 			undoDisplayOptionsOp,
 			showDisplayOptionsMatrix,
+			isDisplayOptionsShowMessages,
+			toggleDisplayOptionsShowMessages,
 			highlightOneNote,
 			leaveFullscreen,
 			printSections,
@@ -739,8 +741,16 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		pick.skipped.forEach((message) => UserLog.addToUserLog('DisplayOptions', escapeHtml(message)));
 	}
 
+	let displayOptionsSaveActionRequired = false;
+
 	function setDisplayOptionsSaveActionRequired(isRequired){
-		$('#btnSaveDiff_View, #btnSaveDiff_Matrix').toggleClass('riskyButtonActionRequired', !!isRequired);
+		displayOptionsSaveActionRequired = !!isRequired;
+		$('#btnSaveDiff_View, #btnSaveDiff_Matrix, #btnSaveDiff_Section').toggleClass('riskyButtonActionRequired', displayOptionsSaveActionRequired);
+	}
+
+	/** Sprint 148 it7: the Section drawer is built lazily, so it asks for the current magenta state when it is first built. */
+	export function isDisplayOptionsSaveActionRequired(){
+		return displayOptionsSaveActionRequired;
 	}
 
 	export function updateDisplayOptionsReadonlyValues(options = null){
@@ -3801,10 +3811,24 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		}
 		const html = escapeHtml(result.report);
 		UserLog.addToUserLog('DisplayOptions', html);
-		if (!options.quiet){
+		if (!options.quiet && isDisplayOptionsShowMessages()){
 			Messages.showMessages(html);
 		}
 		return result;
+	}
+
+	/** Sprint 148 it7: the single source of truth is the #cbShowDisplayOptionsShowMessages checkbox on the View page.
+	 *  Checked: Display Options results (SAVE Diff, CLEAR, Save All, Undo...) also open Messages.  Unchecked: UserLog only. */
+	export function isDisplayOptionsShowMessages(){
+		return $('#cbShowDisplayOptionsShowMessages').prop('checked') === true;
+	}
+
+	/** /vpms: flips the checkbox (the source of truth) and returns the new state. */
+	export function toggleDisplayOptionsShowMessages(){
+		const checkbox = $('#cbShowDisplayOptionsShowMessages');
+		const next = !checkbox.prop('checked');
+		checkbox.prop('checked', next).trigger('change');
+		return next;
 	}
 
 	/** Parses a 1-based "Section number" typed in the command line into a 0-based index. */
@@ -4680,10 +4704,17 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		bindEvent('click', '#btnDeleteDisplayOptions_View', function() {
 			handleBtnDeleteDisplayOptions();
 	    });
+		// Sprint 148 it7: the Help Tips panel starts closed (arrow right); the arrow follows the panel like the Matrix's.
+		bindEvent('click', '#btnToggleDisplayOptionsTips', function() {
+			const opening = !$('#displayOptionsTips').is(':visible');
+			$('#displayOptionsTips').toggle(opening);
+			$('#spanDisplayOptionsTipsArrow').html(opening ? '&#x25BC;' : '&#x25B6;');
+			this.blur();
+	    });
 		// Function Symbols widget controls are drafts, not DisplayOptions: they are bound separately
 		// (see EventBus 'FunctionSymbols:changed'), and typing in them must not light up Save.
 		// Likewise the interactive Matrix (Sprint 148 it5): its tool radios and Auto-apply checkbox are not DisplayOptions.
-		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation):not(#widgetFunctionSymbols *):not(#divDisplayOptionsMatrix *), #divViewControls select:not(#widgetFunctionSymbols *), #divViewControls textarea:not(#widgetFunctionSymbols *)');
+		bindDisplayOptionsDirtyEvent('change input', '#divViewControls input:not(#cbPresentationMode):not(#cbAllowThemeAutomation):not(#cbShowDisplayOptionsShowMessages):not(#widgetFunctionSymbols *):not(#divDisplayOptionsMatrix *), #divViewControls select:not(#widgetFunctionSymbols *), #divViewControls textarea:not(#widgetFunctionSymbols *)');
 		bindDelegatedEvent('change', '#cbAutomaticColor', function() {
 			refreshDisplayOptionsSaveActionRequired();
 			this.blur();

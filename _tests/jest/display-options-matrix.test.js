@@ -286,18 +286,42 @@ describe('displayOptionsPlan', () => {
         expect(Object.keys(song.sections[0].displayOptions)).toEqual(['noteFont']);
     });
 
-    test('SaveDiff updates an existing cell and skips blocked cells', () => {
+    test('SaveDiff updates an existing cell and skips write-blocked cells; a read block never stops a write (it7)', () => {
         const song = mkSong([{ noteFont: 'Cardo' }], { displayOptionGates: { writeBlocked: ['showMidiNum'] } });
         song.sections[0].displayOptionGates = { readBlocked: ['hideTinyNotes'] };
         const live = { ...DISPLAY_OPTIONS_DEFAULTS, noteFont: 'Eczar', showMidiNum: true, hideTinyNotes: true };
         const plan = planSaveDiff(song, 0, live);
-        expect(plan.ops.map((o) => `${o.type}:${o.key}`)).toEqual(['setCell:noteFont']);
+        expect(plan.ops.map((o) => `${o.type}:${o.key}`).sort()).toEqual(['setCell:hideTinyNotes', 'setCell:noteFont']);
         expect(plan.skipped).toEqual([
-            { key: 'showMidiNum', reason: 'write-blocked' },
-            { key: 'hideTinyNotes', reason: 'read-blocked' }
+            { key: 'showMidiNum', reason: 'write-blocked' }
         ]);
         applyPlan(song, plan);
         expect(song.sections[0].displayOptions.noteFont).toBe('Eczar');
+        expect(song.sections[0].displayOptions.hideTinyNotes).toBe(true);
+    });
+
+    test('it7: a read-blocked stored cell is dormant: SaveDiff does not delete or overwrite it while the control shows the inherited value', () => {
+        const song = mkSong([{ noteFont: 'Eczar' }, { noteFont: 'Cardo' }]);
+        song.sections[1].displayOptionGates = { readBlocked: ['noteFont'] };
+        // after Apply the control shows what Section 2 inherits (Section 1's Eczar), not the ignored cell
+        const live = { ...DISPLAY_OPTIONS_DEFAULTS, noteFont: 'Eczar' };
+        const plan = planSaveDiff(song, 1, live);
+        expect(plan.ops).toEqual([]);
+        expect(keysInSyncWithModel(song, 1, live, {})).toContain('noteFont');
+        // a control the author changed by hand is written, and the block stays
+        const changed = planSaveDiff(song, 1, { ...live, noteFont: 'Lora' });
+        expect(changed.ops).toEqual([{ type: 'setCell', sectionIndex: 1, key: 'noteFont', value: 'Lora' }]);
+        applyPlan(song, changed);
+        expect(song.sections[1].displayOptionGates).toEqual({ readBlocked: ['noteFont'] });
+    });
+
+    test('it7: Save All and Store Cell write read-blocked cells', () => {
+        const song = mkSong([null], { displayOptionGates: { readBlocked: ['noteFont'] } });
+        song.sections[0].displayOptionGates = { readBlocked: ['*'] };
+        const live = { ...DISPLAY_OPTIONS_DEFAULTS, noteFont: 'Eczar' };
+        const all = planSaveAll(song, 0, live);
+        expect(all.skipped.map((s) => s.reason)).not.toContain('read-blocked');
+        expect(all.ops.map((o) => o.key)).toContain('noteFont');
     });
 
     test('adapter-gated keys are skipped by SaveDiff and SaveAll', () => {
