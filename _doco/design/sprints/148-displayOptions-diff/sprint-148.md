@@ -34,18 +34,17 @@ Purpose of this sprint is to:
   - Status: implemented, Jest green (74 suites, 870 tests), browser acceptance steps 13, 14 and 15 PASS.
 - [Iteration 5 design (DisplayOptionsMatrix)](148-it5-design.md)
 - [Iteration 5 Round 1 implementation plan with questions](148-it5-round-1-implementation-plan.md)
-
 - [Iteration 5 Round 2 implementation report and test recipes 16-25](148-it5-round-2-implementation-report.md)
   - Status: implemented, awaiting browser acceptance (see report for the not-verified list).
-  - **INCOMPLETE**: [UA Recipes 16-25 : 148-it5-round-2-testing-report.md](148-it5-round-2-testing-report.md)
-
+  - COMPLETE: [UA Recipes 16-25 : 148-it5-round-2-testing-report.md](148-it5-round-2-testing-report.md)
+    - Some bugfixes/features applied, a few outstanding fixes scheduled.
 - [Iteration 6](148-it6-design.md) 
   - Add "Song-DEFAULTS" and editing buttons to copy Current Section DisplayOption settings to new Song-level defaults. 
 - [Iteration 6 implementation plan with questions](148-it6-implementation-plan.md)
 - [Iteration 6 Round 2 implementation report and test recipes 26-30](148-it6-round-2-implementation-report.md)
   - Status: implemented, Jest green (77 suites, 990 tests), awaiting browser acceptance.
-  - INCOMPLETE: [UA Recipes 26-30 : 148-it6-round-2-testing-report.md](148-it6-round-2-testing-report.md)
-    - NEED: Recipe 30 drill down.  See RESULTS in document.
+  - COMPLETE: [UA Recipes 26-30 : 148-it6-round-2-testing-report.md](148-it6-round-2-testing-report.md)
+    - SEE: Recipe 30 drill down.  See RESULTS in document.
   - TESTING PASSES, COMPLETE
     - Recipes 26-30 PASS with note on 30.
     - Recipes 30a-30e added.
@@ -57,3 +56,6 @@ Purpose of this sprint is to:
   - Copilot report on our plan, with implementation notes, and questions.
   - Contains UA testing recipes we should complete.
   - COMPLETE: [UA Recipes 31-36 : 148-it6-round-4-testing-report.md](148-it6-round-4-testing-report.md)   
+- [Iteration 7 Status update and Request](148-it7-design.md) 
+  - reports that UA testing is complete
+  - requests a few bugfixes and features found. 

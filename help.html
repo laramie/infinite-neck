@@ -3047,23 +3047,192 @@ This is the <b><i>Destination</i></b> Section number of Move, Add, <a href='#glo
 <h4>Display Options Matrix</h4>
 
 
-<p><b>The interactive Display Options Matrix.</b>  On the View page click <span class="GUIReferenceInline">Display Options Matrix</span> (or type <span class="menuExampleLine"><b><small>/vpmo</small></b></span>)
-    to open a live version of the <span class="menuExampleLine">/vdd</span> table: every Section is a row, the Current Section is highlighted, and the DEFAULTS and LIVE (the controls) rows sit above the Sections.
-    Pick a <b>Tool</b>, then click a column header, a Section number, or a cell.  It never opens the Messages panel; each action reports in the line under the Tools.
+<p>The <b>Display Options Matrix</b> is a live table of every <a href="#displayOptionsTopic">Display Option</a> a Song stores, one row per Section, with mouse Tools to inspect, store, clear and <i>block</i> values.
+    It is the clickable version of the <span class="menuExampleLine">/vdd</span> report, and it does the same work as the <a href="#displayOptionsCmdLineTopic">/vpm commands</a>.
+    Use it when a Song automates its View options and you want to see, at a glance, what each Section stores, what it inherits, and why a control is or is not following the Song.
+    See <a href="#displayOptionsMatrixExamplesTopic">Display Options Matrix Examples</a> for step-by-step uses.
+</p>
+
+<h5>Opening the Matrix</h5>
+<p>On the View page, open the Matrix with the arrow on the <span class="GUIReferenceInline">Display Options</span> card, or type <span class="menuExampleLine"><b><small>/vpmo</small></b></span> (it brings up the View page if needed).
+    <b>Close</b> collapses it, and <b>Float</b> puts it in a window you can place beside the Instruments (<b>Close</b> docks it first).  Nothing about the Matrix is remembered between sessions: it starts closed, with the <b>Inspect</b> Tool selected.
+    The Matrix never opens the Messages panel.  Each action reports in the <b>status line</b> under the Tools (and in the User Log tab).
+</p>
+
+<h5>Reading the table</h5>
+<p>Each column is one Display Option (a <b>key</b>), arranged in groups.  Each row, top to bottom:
     <ul>
-        <li><b>Inspect</b> (the default) changes nothing.  Click a Section number to go to that Section, or any other cell to see what is stored, what is inherited, which gates apply and what they do.</li>
-        <li><b>Key read-block / Key write-block</b>: click a column header or any cell in the column (or in DEFAULTS or LIVE) to toggle that option's Song gate.  Click again to remove it.</li>
-        <li><b>Section read-block / Section write-block</b>: click a Section number or any cell in the row to toggle the Section gate.</li>
-        <li><b>Cell read-block / Cell write-block</b>: toggle the gate on one cell.  A cell read-block means the stored cell is ignored (the option is inherited); a column or Section read-block means the control is left alone.</li>
-        <li><b>Clear Section</b> and <b>Clear Cell</b> remove stored values (never gates); <b>Store Cell</b> writes one control's current value into one cell.  A Tool stays selected until you pick another.  A Section number is a link: it navigates to that Section with every Tool except Clear Section, <b>Section r</b> and <b>Section w</b>, which act on the whole row.</li>
+        <li><b>DEFAULTS</b>: the built-in values.  Not every option has one.</li>
+        <li><b>Song-DEFAULTS</b>: values stored with the Song itself, below every Section (see <a href="#displayOptionsMatrixSongDefaults">Song-DEFAULTS</a>).</li>
+        <li><b>LIVE</b>: what the View controls hold right now.  It follows the controls as you change them, and as you navigate or loop.</li>
+        <li>The <b>Section #</b> label row, then <b>one row per Section</b>, including Sections that store nothing.  The Current Section's number is highlighted gold, with a navy border across its row.  A Section number is also a link to that Section.</li>
     </ul>
-    Gate and clear edits do not touch the controls until the Section is applied again.  Click <b>Apply</b> (or navigate) to see the effect in the Instruments; with <b>Auto-apply</b> checked the Matrix does it for you,
-    unless the controls have unsaved changes, in which case it warns you to SAVE Diff first.  <b>SAVE Diff</b>, <b>Save All</b> and <b>Undo</b> (one level, shared with <span class="menuExampleLine">/vpmu</span>) are on the Matrix too.
-    <b>View Column Gates</b> and <b>View Row Gates</b> switch those overlays off to show only values and cell gates.  <b>Float</b> puts the Matrix in a window; <b>Legend</b> explains every look.
- </p>
+    The three special rows (DEFAULTS, Song-DEFAULTS, LIVE) are always white.  They only report values.  They cannot hold blocks and the cell Tools do nothing on them; <b>Inspect</b> and the <b>Key</b> Tools work there.
+    Checkboxes show as &#x2713; (true) and &#x2717; (false).  A Section cell is:
+    <ul>
+        <li><b>green</b>: stored, and different from what the Section would otherwise inherit;</li>
+        <li><b>white</b>: stored, but repeating the inherited value (a later SAVE Diff will remove it);</li>
+        <li><b>gray</b>: nothing stored; the Section inherits.</li>
+    </ul>
+    <b>Legend</b> (button under the table) draws every look, including the gate combinations, using the real renderer.
+</p>
+
+<h5>Where a Section's values come from</h5>
+<p>Values and blocks flow <i>down</i> the table.  For each key, the Current Section gets:
+    <ol>
+        <li>the nearest stored cell at or above it (a Section with no cell follows the closest earlier Section that has one; later Sections follow it in turn);</li>
+        <li>otherwise the <b>Song-DEFAULTS</b> value;</li>
+        <li>otherwise the built-in <b>DEFAULTS</b> value, but only if some Section or the Song stores that key (that is, the Song "automates" it), so looping back to Section 1 returns the control to a known value;</li>
+        <li>otherwise nothing: the control is left alone and keeps what it holds.</li>
+    </ol>
+    <b>SAVE Diff</b> compares your controls with this inherited value, which is why a Section stores only the options it changes.
+</p>
+
+<h5>Tools</h5>
+<p>Pick a <b>Tool</b>, then click.  The Tool stays selected until you pick another.  Hover first: the cells the click would change light up, and a zone where the Tool does nothing shows a not-allowed cursor.  Clicking the corner, the group row or a row label does nothing.
+</p>
+<table class="ExamplesTable">
+    <tr><th>Tool</th><th>Click on</th><th>What it does</th></tr>
+    <tr><td><b>Inspect</b></td><td>a cell, a key header, a special-row cell</td><td>Changes nothing.  Reports what is stored here, what the Section would otherwise inherit and from where, which blocks apply and their effect.  On a Section number it navigates.</td></tr>
+    <tr><td><b>Clear Section</b></td><td>a Section number, or any cell in its row</td><td>Removes that Section's stored values (never its blocks).  Write-blocked cells are skipped.  Works on any Section, not only the Current one.</td></tr>
+    <tr><td><b>Clear Cell</b></td><td>a cell</td><td>Removes one stored value.  A write-block on the cell stops it.</td></tr>
+    <tr><td><b>Store Cell</b></td><td>a cell</td><td>Writes the <i>live control's</i> value for that key into that Section's cell.  Read-blocked and write-blocked cells are skipped and reported, as is a key whose Presentation Mode or Theme Automation switch is off.</td></tr>
+    <tr><td><b>Key r</b> / <b>Key w</b></td><td>a key header, any cell in the column, or a special-row cell</td><td>Toggles a read-block or write-block for that option across the whole Song.</td></tr>
+    <tr><td><b>Section r</b> / <b>Section w</b></td><td>a Section number, or any cell in the row</td><td>Toggles a read-block or write-block for that whole Section.</td></tr>
+    <tr><td><b>Cell r</b> / <b>Cell w</b></td><td>a cell</td><td>Toggles a read-block or write-block on one cell.</td></tr>
+</table>
+<p><small>With every Tool except <b>Clear Section</b>, <b>Section r</b> and <b>Section w</b>, a click on a Section number navigates to that Section (even the one you are on).  Those three act on the row instead.  A block is a toggle: click again to remove it.
+    Choosing a Key Tool turns on <b>View Column Gates</b>, and a Section Tool turns on <b>View Row Gates</b>.</small>
+</p>
+
+<h5>Blocks (gates)</h5>
+<p>A block is stored with the Song and never changed by SAVE Diff, Save All or Clear.  Blocks come in two kinds, at three scopes (a whole <b>column</b>, a whole <b>row</b>, or one <b>cell</b>):
+</p>
+<table class="ExamplesTable">
+    <tr><th></th><th>Read-block (r)</th><th>Write-block (w)</th></tr>
+    <tr><th>Cell</th><td>This stored cell is <b>ignored</b> when applying.  The option is inherited from an earlier Section or the default.</td><td rowspan="3">SAVE Diff, Save All, Store Cell and Clear Section skip this cell.  (Clear Cell honors a write-block too.)  The stored value stays as it is.</td></tr>
+    <tr><th>Column or row</th><td>The Section <b>leaves the control alone</b> when you arrive: the control keeps whatever it holds.</td></tr>
+    <tr><th>Adapter (<b>a:</b>)</th><td>Automatic.  <b>NoteDisplaySizes</b> is off until <b>Presentation Mode</b> is on; <b>sectionTheme</b> is off until <b>Allow Theme Automation</b> is on.  The header shows <b>a:presentationMode</b> or <b>a:allowThemeAutomation</b>.</td></tr>
+</table>
+<p>A read-block does not stop <b>Clear</b>, so you can always remove a value you can no longer see applied.  Blocks do not touch the controls until you apply the Section again (next section).
+    <b>View Column Gates</b> and <b>View Row Gates</b> switch those two glows off so you see only values and cell blocks; cell blocks are always shown.  Read blocks look orange or red, write blocks blue, and a cell with several shows each of them (see the Legend).
+</p>
+
+<h5>Applying the model to the controls</h5>
+<p>Edits in the Matrix change the <i>model</i> (what the Song stores).  The View controls change only when the Current Section is <b>applied</b>, which pushes the model into the controls just as arriving at the Section does.
+    <ul>
+        <li><b>Apply from Model</b> re-applies the Current Section now.  It overwrites the controls with the model; use SAVE Diff first if you want to keep a control change.</li>
+        <li>Navigating (a Section number with Inspect, Store Cell, Key or Cell Tools; the Transport; Looping) applies the Section you arrive at, whatever Auto-apply says.</li>
+        <li><b>Auto-apply</b>, when checked, applies for you after an edit that <i>changes what Apply would do</i>.</li>
+    </ul>
+    Auto-apply applies only when <b>all three</b> hold:
+    <ol>
+        <li><b>The edit could change the Current Section.</b>  Yes: a clear, an Undo, or a read-block at or above the Current Section; a Key read-block; anything that changes Song-DEFAULTS.  No: any write-block; Store Cell; any edit to a Section <i>below</i> the Current Section.</li>
+        <li><b>The controls are clean</b> (SAVE Diff is not highlighted).  Otherwise it refuses, and your unsaved control changes are protected.</li>
+        <li>The box is checked.</li>
+    </ol>
+    The status line tells you which happened:
+</p>
+<table class="ExamplesTable">
+    <tr><th>Status line says</th><th>Meaning</th></tr>
+    <tr><td><i>Controls not re-applied: press Apply, or navigate.</i> (shown as a hint)</td><td>The model changed in a way that affects the Current Section, and Auto-apply is off.  Press <b>Apply from Model</b>, or navigate.</td></tr>
+    <tr><td><i>Live controls changed: SaveDiff before next Apply</i> (shown as a warning)</td><td>Controls have unsaved changes, so nothing was applied.  SAVE Diff to keep them, or <b>Apply from Model</b> to discard them.</td></tr>
+    <tr><td><i>Applied: controls re-applied from the model.</i></td><td>Auto-apply did it.</td></tr>
+    <tr><td>(no hint, no <i>Applied</i>)</td><td>The edit cannot change the Current Section (for example a write-block, Store Cell, or an edit below the Current Section).</td></tr>
+</table>
+
+<h5>Saving</h5>
+<p><b>SAVE Diff</b> and <b>Save All</b> are repeated on the Matrix, with the same meaning as on the View page, and report in the status line.  <b>SAVE Diff</b> turns <b>magenta</b> (on both the View card and the Matrix) when a control differs from what the Current Section stored or inherited, and goes back to normal when the model matches the controls again, whether you saved the Section, used <b>Store Cell</b> on it, or changed the control back.
+    SAVE Diff writes only cells that differ from the inherited value, removes a Section's cell that now merely repeats the inherited value, and skips blocked cells.  A control that has no value yet (for example no stylesheet chosen) is never stored.
+    <b>Undo</b> reverts the last Matrix, SAVE Diff, Save All, Clear or block change (one level, the same as <span class="menuExampleLine"><b><small>/vpmu</small></b></span>).  The Song-DEFAULTS buttons do not use Undo.
+</p>
+
+<a name="displayOptionsMatrixSongDefaults"></a>
+<h5>Song-DEFAULTS</h5>
+<p>Song-DEFAULTS is a row of base values for the whole Song, between the built-in DEFAULTS and the Sections.  Put the options a Song wants everywhere there, instead of in Section 1, and every Section then stores only what differs.  It is saved in the Song file as <i>displayOptionsDefault</i> (omitted when empty).
+    Songs that keep their base options in Section 1 work exactly as before; they simply have an empty row.  Two buttons write it, beside <b>Apply from Model</b>:
+    <ul>
+        <li><b>&sect;N &rarr; Song-DEFAULTS</b> (N is the Current Section's number) copies that Section's <i>stored</i> cells into the row, <b>replacing</b> it (keys left over from before are removed).  It copies stored cells, not the live controls, so for a full copy press <b>Save All</b> on the Section first.  The Section is left as it is, so you can compare and then clean up its now-white cells.  Disabled when the Section stores nothing.</li>
+        <li><b>Clear Song-DEFAULTS</b> empties the row.  Disabled when it is already empty.</li>
+    </ul>
+    Both buttons are deliberate author actions that <b>ignore every block</b>: gated cells are copied (or removed) anyway, and the status line ends with <i>gated (overridden): ...</i> naming them, and no block is added or removed.  A copied value under a read-blocked key is <i>dormant</i>: it is not applied until the block is removed.  If you do not like the result, press Clear, or copy again.
+    The two buttons otherwise behave like any other model edit: the Apply hint, Auto-apply and the dirty-controls warning all apply.
+</p>
+<p><b>NoteDisplaySizes in Song-DEFAULTS</b> (cell width, cell height and Note font size) are different: they are applied <b>once, when the Song opens</b>, even with Presentation Mode off, and never re-applied by navigation, looping or Apply.  Saved Scaling Prefs win over them and Presentation Mode wins over both, so LIVE can differ from this row.  See <a href="#startup-sizes">Cell sizes when you start up or open a song</a>.
+</p>
+
+<h5>Keeping an eye on it</h5>
+<p>With the Matrix open you can loop: the Current row follows, the LIVE row follows the controls, and the table scrolls itself, only when the Current row leaves view and never the page.  The key, DEFAULTS, Song-DEFAULTS and LIVE rows and the Section column stay put as you scroll.
+    It redraws when Sections are added, deleted or moved, when you toggle Presentation Mode or Allow Theme Automation, and when you run <span class="menuExampleLine">/vpm</span> commands.  The static <span class="menuExampleLine">/vdd</span> report is unchanged and is still the one to export or compare before and after.
+</p>
 
 <a name="displayOptionsMatrixExamplesTopic"></a>
 <h4>Display Options Matrix Examples</h4>
+
+<p>Each example is a short recipe you can try on any Song with four or more Sections.  Open the Matrix first (<span class="menuExampleLine"><b><small>/vpmo</small></b></span>).  Rules and terms are in <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>.
+</p>
+
+<h5>Looking around</h5>
+<p><b>1. Read the table and navigate.</b>  The rows are DEFAULTS, Song-DEFAULTS, LIVE, then one per Section (Sections that store nothing are gray).  With <b>Inspect</b> selected, click a Section number: you go there and the gold highlight moves.  Loop the Song: the highlight and the LIVE row follow.  Close the Matrix and reopen it with <span class="menuExampleLine"><b><small>/vpmo</small></b></span>.
+</p>
+<p><b>2. Ask a cell what it is.</b>  With <b>Inspect</b>, click a stored cell, an empty cell, a key header, and a DEFAULTS or LIVE cell.  The status line says what is stored, what the Section would otherwise inherit and from where (<i>stored of Section 1</i>, <i>songDefault</i>, <i>default</i>), which blocks apply, and what they do.  Nothing changes.
+</p>
+
+<h5>Blocking</h5>
+<p><b>3. Stop a Song from steering one control (column read-block).</b>  Sections 1 and 2 store different Note Fonts, say Cardo and Eczar.  Choose <b>Key r</b> and click the <i>noteFont</i> header: the column glows.  Go to Section 1 and choose a third font by hand, then navigate 1, 2, 1, 2: your font stays on every Section.  Click the header again to remove the block, and the font follows the Song again.
+</p>
+<p><b>4. Protect a cell from being saved (write-block).</b>  Choose <b>Key w</b> and click <i>noteFont</i> (or <b>Cell w</b> on one cell).  Change Note Font on Section 3 and press <b>SAVE Diff</b>: the status line says <i>skipped noteFont (write-blocked)</i> and nothing is stored.  <b>Clear Section</b> and <b>Clear Cell</b> also leave that cell alone.
+</p>
+<p><b>5. Ignore one stored cell (cell read-block).</b>  Section 2 is Current and stores <i>noteFont</i>; Section 1 stores a different one.  Choose <b>Cell r</b> and click Section 2's <i>noteFont</i> cell.  The status line ends <i>Controls not re-applied: press Apply, or navigate.</i> and the control has not changed.  Press <b>Apply from Model</b>: the control now shows Section 1's font, because Section 2's cell is ignored.
+</p>
+<p><b>6. Skip a whole Section (row read-block).</b>  Section 1 stores Cardo, Section 2 stores nothing, Section 3 stores Eczar.  Go to Section 3 (Eczar).  Choose <b>Section r</b> and click Section number 2, then navigate 3 to 2: Eczar <b>stays</b>, since Section 2 applies nothing.  Without the block, Section 2 would show Cardo.  Click Section number 2 again with <b>Section r</b> to remove the block.
+</p>
+
+<h5>Storing and clearing</h5>
+<p><b>7. Store one control into one cell.</b>  Change Note Font by hand, choose <b>Store Cell</b>, and click a <i>noteFont</i> cell in any Section.  That cell now holds the live value.  A cell that is read-blocked or write-blocked reports the skip instead.  The magenta SAVE Diff clears when the stored value matches the control, because the model and the control now agree.
+</p>
+<p><b>8. Let a Section inherit again.</b>  Choose <b>Clear Section</b> and click a Section number: all its stored values go (its blocks stay), and it turns gray.  If it is the Current Section, press <b>Apply from Model</b> to see the inherited values arrive.  Use <b>Clear Cell</b> to remove just one.  <b>Undo</b> brings it back.
+</p>
+<p><b>9. SAVE Diff and Save All.</b>  Change a control: SAVE Diff turns magenta on the View card and on the Matrix.  Press the Matrix's <b>SAVE Diff</b>: the status line reports what was written, the cell turns green (or white if it repeats the inherited value), and both buttons return to normal.  Press <b>Save All</b> to store every writable control in this Section.
+</p>
+
+<h5>Apply and Auto-apply</h5>
+<p><b>10. See what Auto-apply does.</b>  Auto-apply shows only when the Current Section <i>inherits</i> a value that differs from the control, and nothing else has re-applied it.  Set up once on a Song with a Show MIDI Number cell nowhere:
+    <ol>
+        <li>Press <b>Clear Song-DEFAULTS</b> if it is enabled.</li>
+        <li>Click Section number 3, tick <b>Show MIDI Number</b>, press SAVE Diff.  Press <b>&sect;3 &rarr; Song-DEFAULTS</b>.</li>
+        <li>Click Section number 2.  Show MIDI Number is ticked, Section 2 stores nothing for it, and SAVE Diff is not highlighted.</li>
+    </ol>
+    Then, re-doing step 3 first each time (click 3, press <b>&sect;3 &rarr; Song-DEFAULTS</b>, click 2), and never navigating between the edit and your observation:
+    <ul>
+        <li><b>Auto-apply off.</b>  Press <b>Clear Song-DEFAULTS</b>.  The row empties, the status line shows the hint, but Show MIDI Number is still ticked.  Press <b>Apply from Model</b> and it unticks.</li>
+        <li><b>Auto-apply on.</b>  Press <b>Clear Song-DEFAULTS</b>.  It unticks at once and the status says <i>Applied: controls re-applied from the model.</i></li>
+        <li><b>Auto-apply on, controls changed.</b>  First untick another control, such as Show Left Subscript, so SAVE Diff is highlighted.  Press <b>Clear Song-DEFAULTS</b>: you get the SaveDiff warning, Show MIDI Number stays ticked, and your edit is protected.  SAVE Diff then press <b>Apply from Model</b> (or just Apply to discard your edit).</li>
+        <li><b>An edit that cannot matter.</b>  Choose <b>Section w</b> and click Section number 4.  No <i>Applied</i>, no hint, and nothing changes.  Click it again to remove the block.</li>
+        <li><b>Navigation re-applies regardless.</b>  With Auto-apply off, press <b>Clear Song-DEFAULTS</b> (hint shown, still ticked), then choose Inspect and click Section number 2, or use the Transport's Next and Previous: the control unticks.  That was navigation, not Auto-apply.</li>
+    </ul>
+    Pressing <b>&sect;3 &rarr; Song-DEFAULTS</b> with Section 3 as the Current Section shows nothing in the controls, because the Section's own cells beat Song-DEFAULTS.  That is why the example uses <b>Clear Song-DEFAULTS</b> from Section 2.
+</p>
+
+<h5>Song-DEFAULTS</h5>
+<p><b>11. Copy a Section into Song-DEFAULTS.</b>  On Section 2 press <b>Save All</b>, then <b>&sect;2 &rarr; Song-DEFAULTS</b>.  The Song-DEFAULTS row shows Section 2's values; Section 2's own cells are unchanged but now white (they repeat the inherited value); the status says <i>Song-DEFAULTS wrote ...</i>.  Go to Section 3, change one control, SAVE Diff, and press the button again: the row now equals Section 3's cells only, and the old keys are gone.
+</p>
+<p><b>12. How Sections inherit it.</b>  Choose <b>Clear Section</b> and click Section 1, then press <b>Apply from Model</b> on Section 1: its controls now come from Song-DEFAULTS.  In Section 4, change a control and SAVE Diff: only the cells that differ from the inherited value are stored.  A Section cell that later repeats the value is removed by the next SAVE Diff.  For instance, if Song-DEFAULTS holds <i>Jazz Extensions</i> and Section 3 holds <i>Extensions</i>, then setting Section 4 to <i>Jazz Extensions</i> and pressing SAVE Diff stores it (it differs from Section 3's).  Clear Section 3, and Section 4's cell turns white; SAVE Diff then removes it, because Song-DEFAULTS already says so.
+</p>
+<p><b>13. Clear it and keep it.</b>  Press <b>Clear Song-DEFAULTS</b>: the row is blank and the button greys out; controls return to the built-in DEFAULTS after you apply.  Press <b>&sect;N &rarr; Song-DEFAULTS</b> again, save the Song and reload it: the row is restored.  After a Clear and a save, the Song file has no <i>displayOptionsDefault</i> field.
+</p>
+<p><b>14. Blocks are ignored by the two buttons.</b>  Put a <b>Cell r</b> on one cell in Section 2, a <b>Key r</b> on <i>noteFont</i>, and <b>Section w</b> on Section 2, then press <b>&sect;2 &rarr; Song-DEFAULTS</b>.  Every stored cell of Section 2 is copied, and the status line ends with <i>gated (overridden): ...</i>.  <i>noteFont</i> is not applied while its Key r is on, and applies as soon as you remove the block.  <b>Clear Song-DEFAULTS</b> removes the gated keys too.  Neither button added or removed a block.
+</p>
+<p><b>15. Old Songs and Undo.</b>  Open a Song that keeps its base options in Section 1: its Song-DEFAULTS row is blank and it behaves as it always did.  Do a <b>Clear Section</b>, then press either Song-DEFAULTS button: <b>Undo</b> still undoes the Clear Section, because the buttons do not use it.  The buttons work in a floating Matrix too.
+</p>
+<p><b>16. Starting sizes.</b>  Store NoteDisplaySizes in Song-DEFAULTS (Presentation Mode off) and open the Song from a blank session where you resized: the Song's sizes appear, and stay as you navigate.  With saved Scaling Prefs, the prefs win; clear them and reopen, and the Song's sizes return.  With Presentation Mode on and a size stored in a Section, that Section's size wins over both and is re-applied as you loop.  With Presentation Mode on and nothing stored, your prefs (or the screen as it was) remain.  A Song with no stored sizes keeps your screen as it is.  The result is the same from File | Choose File, the Song Library, and a <b>song=</b> link.  The table is in <a href="#startup-sizes">Cell sizes when you start up or open a song</a>.
+</p>
+
+<h5>Floating and looping</h5>
+<p><b>17. Float.</b>  Press <b>Float</b>: the Matrix moves to a window you can drag, resize and scroll, and the View page is free of it.  Close the View page and the Matrix stays and keeps updating.  The pin button docks it again.  Opening another Song docks it first, then fills it with the new Song's Sections.
+</p>
+<p><b>18. Edit while looping.</b>  Loop Sections with the Matrix open and click Tools: your clicks are not lost when the table updates.  Add, delete or move a Section and the rows follow.  Toggle Presentation Mode or Allow Theme Automation and the <b>a:</b> marks on <i>NoteDisplaySizes</i> and <i>sectionTheme</i> follow.  Run <span class="menuExampleLine"><b><small>/vpmgak</small></b></span>, <span class="menuExampleLine"><b><small>/vpmc</small></b></span> or <span class="menuExampleLine"><b><small>/vpmu</small></b></span> and the Matrix redraws.
+</p>
 
  
 

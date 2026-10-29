@@ -486,9 +486,30 @@ table.viewControls th {
 #divViewDisplayOptions {
     padding: 2em;
 }
+#btnToggleDisplayOptionsTips {
+    background-color: #b9f74d;
+    margin-block: 0.8em;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+#btnToggleDisplayOptionsTips:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+#displayOptionsTips {
+    border: 1px solid gray;
+    margin: 0.2em;
+    padding: 1em;
+}
+.displayOptionsSpecialCheckbox {
+    margin-block: 0.6em;
+}
 .viewDisplayOptionsReadOnly {
   /* Read-only display of controls that are _not_ on the View page. */
-  padding-top: 1em;
+  padding-block: 0.2em;
   padding-left: 0;
   font-size: 110%;
 }

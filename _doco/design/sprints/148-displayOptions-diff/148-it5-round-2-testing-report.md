@@ -93,102 +93,102 @@ link: http://localhost:8000/infinite-neck/?song=tests/display-options.json
 
 1. Section 2 is Current and stores `noteFont`, Section 1 stores a different `noteFont`.  Choose **Cell read-block** and click Section 2's `noteFont` cell.  Status ends with "Controls not re-applied: press Apply, or navigate."  The Note Font control is unchanged.  Press **Apply**: the control shows Section 1's font.
 
-- RESULT: 
+- RESULT: PASS 
 
 2. Clear Section on the Current Section: the hint appears; **Apply** brings the inherited values.
 
-- RESULT: 
+- RESULT: PASS
 
 3. Write-block toggles and Store Cell show no hint.  A read gate on a later Section shows no hint.
 
-- RESULT: 
+- RESULT: FAIL: `#dmStatus` gets new text on every one of these actions.  Seems correct.
 
 4. Check **Auto-apply**.  Repeat step 1: the control changes at once and the status says "Applied".
 
-- RESULT: 
+- RESULT: PASS
 
 5. With Auto-apply on, change a control yourself (SAVE Diff turns magenta): the status shows "Live controls changed: SaveDiff before next Apply".  Now do a read-block edit that changes Apply: the Matrix does not apply, and keeps the warning.  Press SAVE Diff, repeat: it applies.
 
-- RESULT: 
+- RESULT: PASS.  However `Now do a read-block edit that changes Apply` is probably stale, since the "Apply" button (now captioned "Apply from Model") doesn't indicate changed state or the state of the checkbox, which may have been part of the designed behavior earlier.  However, the behavior is fine as it is now.
 
 6. Edits by Matrix Tools keep SAVE Diff magenta if it was magenta.
 
-- RESULT: 
+- RESULT: PASS
 
 
 ### 21. SAVE Diff, Save All
 
 1. Change a control: SAVE Diff turns magenta on **both** the View card and the Matrix.  Click the Matrix's SAVE Diff: the report appears in the status line (no Messages panel), the cell turns green or white in the table, both buttons stop being magenta.
 
-- RESULT: 
+- RESULT: PASS 
 
 2. **Save All...** asks first; Cancel changes nothing.
 
-- RESULT: 
+- RESULT: OBVIATED by design change.  No longer true.  Expected.
 
 
 ### 22. Live updates (the Matrix open while looping)
 
 1. Loop Sections: the Current highlight follows, the LIVE row follows the controls, the table scrolls itself only when the Current row leaves the view, and the page never scrolls.
 
-- RESULT: 
+- RESULT: PASS
 
 2. Click Tools during looping: clicks are not lost (the cells are not replaced by the loop).
 
-- RESULT: 
+- RESULT: PASS
 
 3. Add, delete or move a Section: the table gets the new list of rows.
 
-- RESULT: 
+- RESULT: PASS
 
 4. Toggle Presentation Mode and Allow Theme Automation: the `a:` marks on `NoteDisplaySizes` and `sectionTheme` follow.
 
-- RESULT: 
+- RESULT: PASS
 
 5. Run `/vpm` commands (`/vpmgak`, `/vpmc`, `/vpmu`) with the Matrix open: it redraws.  Close View: looping does nothing to the Matrix (it idles) and reopening shows current data.
 
-- RESULT: 
+- RESULT: PASS
 
 
 ### 23. Float
 
 1. Click **Float**: the Matrix goes to a window; the Float button hides; the View card is free of it.  Drag, resize, scroll inside it.  The table has a white background.
 
-- RESULT: 
+- RESULT: PASS
 
 2. Close the View page: the floating Matrix stays and still updates.
 
-- RESULT: 
+- RESULT: PASS
 
 3. Dock (the pin button), then Float again.
 
-- RESULT: 
+- RESULT: PASS
 
 4. Open another Song with the Matrix floating, and run the `disposeAllDockables` command: the Matrix is docked back first and is **not** destroyed; the new Song's Sections appear in it.  With Floaty on (the whole View page floated), the Matrix inside it floats and docks properly.
 
-- RESULT: 
+- RESULT: Opening the new Song closes View and the Matrix.  Opening View shows the Matrix is docked.  This is reasonable and expected, though different from the recipe.  Don't change behavior--this is simple and fine.  The new Song Sections are indeed shown, which is also good and expected and PASS.
 
 5. After a reload the Matrix is closed and parked (nothing persists).
 
-- RESULT: 
+- RESULT: PASS
 
 
 ### 24. Legend and hover
 
 1. **Legend** opens a table drawn like the Matrix with an explanation; clicking its cells does nothing.
 
-- RESULT: 
+- RESULT: PASS
 
 2. Hover with each Tool: Key Tools highlight the column, Section Tools and Clear Section the row, cell Tools the cell.  A Tool over a zone it does not work in (a Section Tool over a DEFAULTS cell) shows the not-allowed cursor.  The corner, group row and labels show the plain cursor.
 
-- RESULT: 
+- RESULT: PASS
 
 
 ### 25. /vdd unchanged
 
 Run `/vdd` before and after using the Matrix on the same Song: the static report is as before (skips plain Sections, merged gate classes, blank for `false`).
 
-- RESULT: 
+- RESULT: PASS
 
 # Post-testing Request
 
@@ -197,4 +197,6 @@ Run `/vdd` before and after using the Matrix on the same Song: the static report
 - Please summarize the tests in this sprint in a new help.html file section called Display Options Matrix Examples.  Should read like a help file, but retain the individual use cases from the test recipes.
 
 - Note that `displayOptionsVDDTopic` in the help file is stale.  Don't edit this section, we will integrate it into the other help sections after you have written the sections for the Matrix.
+
+STATUS: this Request has been fixed and committed.
 

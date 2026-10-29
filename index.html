@@ -932,17 +932,27 @@
                 <span style="float:left; ">
                     <button id="btnSaveAll_View" class="riskyButton" type="button" title="Stores every writable control value in this Section">Save All</button>
                 </span>
-                <p class="clearBoth"><small>Options are applied from this Section forward until another Section
-                        changes them. SAVE Diff stores only the controls that differ from what this Section inherits.
-                        <i>Tip: Set-and-forget in the first section.</i></small>
-                    </p>
-                <br>
-                <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
-                        Mode</label>
-                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
+                <p class="clearBoth">
+                    <button id="btnToggleDisplayOptionsTips" type="button"><small>Help Tips&nbsp;&nbsp;<span id="spanDisplayOptionsTipsArrow">&#x25B6;</span></small></button>
                 </p>
-                <br>
-                <p><label for="cbAllowThemeAutomation"><input type="checkbox" id="cbAllowThemeAutomation" value="1">Allow Theme Automation</label>
+                <div id="displayOptionsTips">
+                    <p><small>Options are applied from this Section forward until another Section
+                        changes them. SAVE Diff stores only the controls that differ from what this Section inherits.
+                        <i>Tip: Set-and-forget in the first section, or save to Song-DEFAULTS in Display Options Matrix.</i></small>
+                    </p>
+                    <p class="displayOptionsSpecialCheckbox"><label for="cbShowDisplayOptionsShowMessages"><input type="checkbox" id="cbShowDisplayOptionsShowMessages" value="1">Show Messages</label>
+                        <br>
+                        <small><i>Checked: every <b>Save Diff/CLEAR/Save All</b> logs to <b>Messages</b> log below Instruments.  Uncheck to suppress.</i></small>
+                    
+                    </p>
+
+                    
+                </div>    
+                <p class="displayOptionsSpecialCheckbox"><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
+                        Mode</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
+                </p>
+                <p class="displayOptionsSpecialCheckbox"><label for="cbAllowThemeAutomation"><input type="checkbox" id="cbAllowThemeAutomation" value="1">Allow Theme Automation</label>
                 </p>
                 <p class="viewDisplayOptionsReadOnly">autoColorHighlight: <span id="viewDisplayOptionAutoColorHighlightValue">false</span></p>
                 <p class="viewDisplayOptionsReadOnly">autoColor: <span id="viewDisplayOptionAutoColorValue">false</span></p>
