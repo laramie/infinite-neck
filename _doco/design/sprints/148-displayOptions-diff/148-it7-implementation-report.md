@@ -67,6 +67,14 @@ Other changes for item 2:
 - `/vpms` does not conflict with `/vps` (SAVE Diff); the new item lives under the `m)atrix` submenu, next to `o)pen Matrix`.
 - [help.html](../../../../help.html) lists `/vpms` in "Display Options Command-line".
 
+## 3a. Follow-up after testing: floated Matrix scrollbar (recipe 39.1)
+
+UA testing: PASS, with a note that the horizontal scrollbar is not visible when the Matrix is floated (two-finger scrolling works; docked is fine).
+
+Likely cause: in a floating window the Matrix div is a fixed-height scroll container, and the table scroller inside it only had a `65vh` cap, so in a window shorter than that the scroller's own scrollbar sat below the visible part of the window.  Fix (CSS only, in [display-options.css](../../../../templates/display-options/display-options.css)): only for `#floating-divDisplayOptionsMatrix`, the Matrix is a flex column and `.dmScroll` fills the remaining height (`flex: 1 1 auto; min-height: 8em; max-height: none`), so its scrollbar is at the window's bottom edge.  Docked layout is unchanged.  Jest covers only that the rule exists; **please re-check in the browser** by floating the Matrix, resizing the window, and hovering the bottom edge.  If the scrollbar still hides, it is browser overlay-scrollbar behavior: leave it, since docking fixes it.
+
+UPDATE: Design team rolled back fix and test, since no observable change was seen, and rolling back reduced code complexity.
+
 ## 5. Sprint overview review ([sprint-148.md](sprint-148.md))
 
 Checked every link target against the directory (all resolve, including `../../../lifecycle/sprints.md`).  Changes:

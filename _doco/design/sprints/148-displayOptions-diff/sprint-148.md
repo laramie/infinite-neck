@@ -72,4 +72,7 @@ Purpose of this sprint is to:
   - reports that UA testing is complete
   - requests a few bugfixes and features found. 
 - [Iteration 7 implementation report](148-it7-implementation-report.md)
-  - Status: implemented, Jest green (78 suites, 1010 tests), awaiting browser acceptance (recipes 37-42 in the report).
+  - Status: implemented, Jest green (78 suites, 1011 tests).  All three Design Team questions answered (Show Messages starts unchecked; dormant-cell rule accepted; no right-hand scrollbar space needed).
+  - COMPLETE: [UA Recipes 37-42 : 148-it7-testing-report.md](148-it7-testing-report.md) (all PASS)
+    - 39.1 note: when the Matrix is floated the horizontal scrollbar was not visible (two-finger scrolling worked; docked is fine).  A CSS layout fix (the table scroller fills the floating window) was applied after the test; re-check by floating the Matrix.  If the scrollbar still hides, leave it: docking fixes it.
+    - Fix did nothing, so rolling back to reduce complexity.
