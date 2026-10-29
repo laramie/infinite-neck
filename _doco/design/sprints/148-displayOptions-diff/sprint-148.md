@@ -20,11 +20,11 @@ This sprint ended up with a vastly increased scope, which solves many problems e
 
 Features Added: 
 - SAVE Display Options has now become two commands: SaveDiff and SaveALL.
-  - SaveDiff just captures the difference from the App DEFAULTS, the author-writable Song-DEFAULTS, the LIVE controls, and the now-sparse storage of DisplayOptions in each Section as needed.  So defaults don't clobber later Sections and so on.
+  - SaveDiff just captures the difference from the App DEFAULTS, the author-writable Song-DEFAULTS, the LIVE controls, and the now-sparse storage of DisplayOptions in each Section as needed.  So defaults don't clobber later Sections and so on. For example, `All-Chords-w-Modes-Piano.json` has Song Widgets to switch between hiding NamedNotes for chords and TinyNotes for Modes.  Without the features in this sprint, it was not possible to automate the hiding safely without getting overwritten by changes to hiding at runtime.
   - SaveALL still takes a snapshot the way SAVE used to do.  This is useful for many situations, and is how many of the existing Songs are stored, so is still supported as a valid idiom.  SaveDiff is a less brittle idiom.
 - Song-DEFAULTS is a new "Section-zero" idiom where authors can save base DisplayOptions per Song without requiring these be set in Section 1.  This is the primary simplification.  It also means that even without Presentation Mode, default width, height, and Note font-size can be saved as Song-DEFAULTS.  
 - Display Options Matrix
-  - A full UI grid of all Sections and all DisplayOptions.
+  - A full UI grid of all Sections and all DisplayOptions.  It is effectively a fully live, interactive, editable `/vdd`.
   - read/write blocking of changes so authors can lock down changes while developing songs and playing with options.
   - Easy writing and clearing of automation of DisplayOptions across Sections
   - Live visual feedback on where DisplayOptions come from: DEFAULTS, Song-DEFAULTS, LIVE controls, Section storage, Browser storage, and Presentation Mode.
