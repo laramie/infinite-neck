@@ -38,7 +38,10 @@
   "noteTablesLayout": [
     {
       "tableID": "tblP46_1",
-      "visible": true
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
     }
   ],
   "colorDicts": {},
@@ -75,19 +78,35 @@
       }
     }
   },
+  "macros": {},
   "activeStylesheets": "Default",
   "captionsRowShowing": true,
   "defaultBPM": "240",
-  "info": "\n<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>",
+  "info": {
+    "lines": [
+      "",
+      "<br>Raise plugin state: <a href=\"#raise=transpose.Chromatic\">transpose.Chromatic</a>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "parked",
   "presentationMode": false,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
   "chartOptions": {
     "modes": true,
     "detailLine": true,
     "showCaptions": true,
     "showNextLine": true,
     "stripTonalRoots": true,
+    "addTransposedRootToChord": false,
     "HEADNames": [
       "HEAD",
       "BRIDGE",
@@ -141,50 +160,8 @@
       "rootID": 3,
       "rootIDLead": "-1",
       "beats": 8,
-      "currentBeat": 4,
-      "sharps": true,
-      "displayOptions": {
-        "autoColor": false,
-        "showCellNotes": true,
-        "showSubscriptFunctions": true,
-        "cellIsFunction": true,
-        "showMidiNum": false,
-        "useCenterForRightFunction": true,
-        "naturalFretWidths": true,
-        "hideNamedNotes": false,
-        "hideTinyNotes": false,
-        "hideSingleNotes": false,
-        "hideFingering": false,
-        "showAllNoteNames": false,
-        "namedNoteOpacity": "1",
-        "singleNoteOpacity": "1",
-        "tinyNoteOpacity": "1",
-        "NoteDisplaySizes": {
-          "caption": "120x20:22",
-          "width": "120px",
-          "height": "20px",
-          "NoteFontSize": 22
-        },
-        "functionSymbols": "function",
-        "naturalFontScaling": "60",
-        "pianoHeightScaleFactor": "3",
-        "pianoWidthScaleFactor": "3",
-        "pianoWhiteToBlackWidthRatio": "2.3",
-        "pianoFingeringHPosition": "50%",
-        "showLooperLightBeats": true,
-        "noteFont": "EB Garamond",
-        "leftSubscriptFontSize": "80%",
-        "rightSubscriptFontSize": "80%",
-        "midiFontSize": "80%",
-        "fingeringFontSize": "80%",
-        "fingeringPosition": "0",
-        "tinyNoteFontSize": "50%",
-        "tinyNoteMaxHeight": "45%",
-        "tinyNoteVPosition": "50%",
-        "tinyNoteWidth": "35%",
-        "tinyNoteHPosition": "90%",
-        "tinyNoteRadius": "50%"
-      }
+      "currentBeat": 1,
+      "sharps": true
     },
     {
       "sectionNotesByTable": {
@@ -673,5 +650,54 @@
         "lastRevived": null
       }
     ]
+  },
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": true,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "SongWidgets": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": true,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  },
+  "displayOptionsDefault": {
+    "autoColor": false
   }
 }
