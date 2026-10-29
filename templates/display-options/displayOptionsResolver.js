@@ -11,9 +11,11 @@
 // is read-blocked AT the target Section is not applied at all, so its control keeps its value (R2).
 //
 // Sprint 148 it6: below the Sections sits the Song-DEFAULTS block (song.displayOptionsDefault, sparse, same keys as a
-// Section's block).  A key with no readable Section cell takes its Song-DEFAULTS value, unconditionally (the author
-// said so, like a Section-1 cell).  A missing, empty or all-unknown block is the same as no tier.  Gates cannot hit the
+// Section's block).  A missing, empty or all-unknown block is the same as no tier.  Gates cannot hit the
 // block itself, but a column or adapter read block (R2) still leaves the key alone, so such a value is dormant.
+// Sprint 148 it8: Song-DEFAULTS are STARTUP values plus the fallback for keys the Song automates.  On 'apply' and 'render'
+// (navigation, Apply from Model) a Song-DEFAULTS key is pushed only if some Section stores that key readably, exactly like
+// the app DEFAULTS tier; otherwise the control keeps its LIVE value.  The 'open' purpose pushes ALL of them, once, at Song open.
 //
 // Absent cells (no stored cell at or before k, and no Song-DEFAULTS value) -- see ABSENT_CELL_POLICY:
 //   'leave'              : omit the key; the control is left alone
@@ -23,6 +25,7 @@
 //
 // Purposes:
 //   'apply'    : what navigation pushes into the controls (sparse; may omit keys)
+//   'open'     : (it8) the Song-DEFAULTS tier alone, every key, minus R2 blocks; pushed once when a Song opens
 //   'render'   : 'apply' completed from `live` (the controls), for drawing a Section's table
 //   'baseline' : what the Section at `idx` INHERITS: cascade over Sections < idx, then the Song-DEFAULTS, then the
 //                defaults, then `syncLive` (controls as of the last Section sync) for keys that
@@ -86,7 +89,7 @@ export function resolveDisplayOptions(song, sectionIndex, options = {}) {
     if (!POLICIES.includes(policy)) {
         throw new Error(`unknown absent-cell policy: ${policy}`);
     }
-    if (!['apply', 'render', 'baseline'].includes(purpose)) {
+    if (!['apply', 'render', 'baseline', 'open'].includes(purpose)) {
         throw new Error(`unknown resolve purpose: ${purpose}`);
     }
     const sections = song?.sections ?? [];
@@ -114,15 +117,31 @@ export function resolveDisplayOptions(song, sectionIndex, options = {}) {
         return { values, entries };
     }
 
+    if (purpose === 'open') {
+        const values = {};
+        const entries = {};
+        const block = songDefaultValues(song);
+        for (const key of Object.keys(block)) {
+            if (isRegionReadBlocked(song, target, key)) {
+                entries[key] = { source: 'blocked' };
+                continue;
+            }
+            values[key] = cloneValue(block[key]);
+            entries[key] = { source: 'songDefault' };
+        }
+        return { values, entries };
+    }
+
     const { values, entries } = cascade(song, sectionIndex);
     const songDefaults = songDefaultValues(song);
+    const automated = policy === POLICY_DEFAULT_IF_AUTOMATED ? getAutomatedKeys(song) : null;
     for (const key of Object.keys(songDefaults)) {
-        if (!(key in values)) {
+        if (key in values) continue;
+        if (policy === POLICY_DEFAULT || (automated && automated.has(key))) {
             values[key] = cloneValue(songDefaults[key]);
             entries[key] = { source: 'songDefault' };
         }
     }
-    const automated = policy === POLICY_DEFAULT_IF_AUTOMATED ? getAutomatedKeys(song) : null;
     for (const key of DISPLAY_OPTION_KEYS) {
         if (key in values || !DISPLAY_OPTION_META[key].hasDefault) continue;
         if (policy === POLICY_DEFAULT || (automated && automated.has(key))) {

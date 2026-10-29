@@ -58,7 +58,7 @@ describe('pickOpenTimeSizes', () => {
     });
 });
 
-describe('how this fits the resolver (no resolver change: Song-DEFAULTS sizes stay dormant at navigation)', () => {
+describe('how this fits the resolver (Song-DEFAULTS sizes are open-time only; it8: navigation never pushes a non-automated Song-DEFAULTS key)', () => {
     const song = (presentationMode) => ({
         presentationMode,
         allowThemeAutomation: false,
@@ -74,10 +74,17 @@ describe('how this fits the resolver (no resolver change: Song-DEFAULTS sizes st
         }
     });
 
-    test('Presentation Mode on: the cascade applies Song-DEFAULTS sizes, so it wins after the open-time step', () => {
-        const { values, entries } = resolveDisplayOptions(song(true), 1, { purpose: 'apply' });
-        expect(values.NoteDisplaySizes.width).toBe('80px');
-        expect(entries.NoteDisplaySizes.source).toBe('songDefault');
+    test('Presentation Mode on: the open push applies Song-DEFAULTS sizes (after the open-time step); navigation does not', () => {
+        const open = resolveDisplayOptions(song(true), 1, { purpose: 'open' });
+        expect(open.values.NoteDisplaySizes.width).toBe('80px');
+        expect(open.entries.NoteDisplaySizes.source).toBe('songDefault');
+        const nav = resolveDisplayOptions(song(true), 1, { purpose: 'apply' });
+        expect('NoteDisplaySizes' in nav.values).toBe(false);
+    });
+
+    test('Presentation Mode off: the open push drops the sizes too (adapter gate)', () => {
+        const open = resolveDisplayOptions(song(false), 0, { purpose: 'open' });
+        expect('NoteDisplaySizes' in open.values).toBe(false);
     });
 
     test('the Legend tells the author when Song-DEFAULTS sizes apply', () => {

@@ -90,12 +90,54 @@ describe('normalizeSongDisplayOptionsDefault and persistence', () => {
 });
 
 describe('resolver: the Song-DEFAULTS tier', () => {
-    test('apply: Song-DEFAULTS beat DEFAULTS even when no Section automates the key', () => {
+    test('apply (it8): a Song-DEFAULTS key no Section automates is NOT pushed; the control keeps its LIVE value', () => {
         const song = mkSong([null, null], { displayOptionsDefault: { noteFont: 'Cardo' } });
+        for (const idx of [0, 1]) {
+            const r = resolveDisplayOptions(song, idx, { purpose: 'apply' });
+            expect('noteFont' in r.values).toBe(false);
+            expect('noteFont' in r.entries).toBe(false);
+            expect(r.values.showMidiNum).toBeUndefined();
+        }
+    });
+
+    test('apply (it8): the same rule hits the Song-DEFAULTS key whether or not DEFAULTS has an entry (autoColor, functionSymbols)', () => {
+        const song = mkSong([null, null], { displayOptionsDefault: { autoColor: false, noteFont: 'Cardo' } });
         const r = resolveDisplayOptions(song, 1, { purpose: 'apply' });
+        expect(r.values).toEqual({});
+    });
+
+    test('apply (it8): once any Section automates the key, Song-DEFAULTS is the fallback before the first cell', () => {
+        const song = mkSong([null, { noteFont: 'Eczar' }], { displayOptionsDefault: { noteFont: 'Cardo', autoColor: false } });
+        const r = resolveDisplayOptions(song, 0, { purpose: 'apply' });
         expect(r.values.noteFont).toBe('Cardo');
         expect(r.entries.noteFont).toEqual({ source: 'songDefault' });
-        expect(r.values.showMidiNum).toBeUndefined();   // defaultIfAutomated: nothing else is pushed
+        expect('autoColor' in r.values).toBe(false);   // autoColor is not automated
+    });
+
+    test('render (it8): a non-automated Song-DEFAULTS key shows the LIVE value', () => {
+        const song = mkSong([null], { displayOptionsDefault: { noteFont: 'Cardo' } });
+        const r = resolveDisplayOptions(song, 0, { purpose: 'render', live: { noteFont: 'Dosis' } });
+        expect(r.values.noteFont).toBe('Dosis');
+        expect(r.entries.noteFont.source).toBe('live');
+    });
+
+    test('open (it8): every Song-DEFAULTS key, and nothing else, regardless of Section cells', () => {
+        const song = mkSong([{ showMidiNum: true }, null], { displayOptionsDefault: { noteFont: 'Cardo', autoColor: false } });
+        const r = resolveDisplayOptions(song, 0, { purpose: 'open' });
+        expect(r.values).toEqual({ autoColor: false, noteFont: 'Cardo' });
+        expect(r.entries.noteFont).toEqual({ source: 'songDefault' });
+        expect(resolveDisplayOptions(mkSong([null]), 0, { purpose: 'open' }).values).toEqual({});
+    });
+
+    test('open (it8): column read-blocks and off adapters drop the key (dormant)', () => {
+        const song = mkSong([null], {
+            displayOptionsDefault: { noteFont: 'Cardo', sectionTheme: 'T', autoColor: false },
+            displayOptionGates: { readBlocked: ['noteFont'] },
+            allowThemeAutomation: false
+        });
+        const r = resolveDisplayOptions(song, 0, { purpose: 'open' });
+        expect(r.values).toEqual({ autoColor: false });
+        expect(r.entries.noteFont.source).toBe('blocked');
     });
 
     test('apply: a Section cell beats Song-DEFAULTS, and later Sections inherit it', () => {
@@ -105,8 +147,8 @@ describe('resolver: the Song-DEFAULTS tier', () => {
         expect(resolveDisplayOptions(song, 2, { purpose: 'apply' }).values.noteFont).toBe('Eczar');
     });
 
-    test('apply: works for keys that have no DEFAULTS entry', () => {
-        const song = mkSong([null], { displayOptionsDefault: { currentColorDict: 'D', sectionTheme: 'T' } });
+    test('apply: works for automated keys that have no DEFAULTS entry', () => {
+        const song = mkSong([null, { currentColorDict: 'X', sectionTheme: 'Y' }], { displayOptionsDefault: { currentColorDict: 'D', sectionTheme: 'T' } });
         const r = resolveDisplayOptions(song, 0, { purpose: 'apply' });
         expect(r.values.currentColorDict).toBe('D');
         expect(r.values.sectionTheme).toBe('T');
@@ -127,7 +169,7 @@ describe('resolver: the Song-DEFAULTS tier', () => {
     });
 
     test('dormant values (D5): a column read-block or an off adapter leaves the key alone', () => {
-        const song = mkSong([null], {
+        const song = mkSong([null, { noteFont: 'Eczar', sectionTheme: 'Z' }], {
             displayOptionsDefault: { noteFont: 'Cardo', sectionTheme: 'T' },
             displayOptionGates: { readBlocked: ['noteFont'] },
             allowThemeAutomation: false

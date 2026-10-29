@@ -95,3 +95,6 @@ Features Added:
   - COMPLETE: [UA Recipes 37-42 : 148-it7-testing-report.md](148-it7-testing-report.md) (all PASS)
     - 39.1 note: when the Matrix is floated the horizontal scrollbar was not visible (two-finger scrolling worked; docked is fine).  A CSS layout fix (the table scroller fills the floating window) was applied after the test; re-check by floating the Matrix.  If the scrollbar still hides, leave it: docking fixes it.
     - Fix did nothing, so rolling back to reduce complexity.
+- [Iteration 8: Song-DEFAULTS are startup values (fix)](148-it8-song-defaults-fix.md)
+  - The driving use case was missed: Song-DEFAULTS were re-pushed on every Section change, overwriting LIVE edits (AutoColor in `practice/All-Chords.json`, Note Font).  Now pushed once at Song open, and later only for keys a Section automates, the same `defaultIfAutomated` rule as DEFAULTS; Apply from Model follows navigation.
+  - Status: implemented, Jest green (78 suites, 1016 tests); UA recipes 43-46 pending in the browser.

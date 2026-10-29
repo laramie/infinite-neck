@@ -741,6 +741,18 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		pick.skipped.forEach((message) => UserLog.addToUserLog('DisplayOptions', escapeHtml(message)));
 	}
 
+	/** Sprint 148 it8: Song-DEFAULTS are startup values.  At Song open every Song-DEFAULTS key goes into the controls, once
+	 *  (silent); sectionChanged() right after lays the Section cells over them.  Afterwards navigation and Apply from Model
+	 *  push a Song-DEFAULTS key only if the Song automates it, so a User's LIVE edits survive looping.
+	 *  With Presentation Mode on, NoteDisplaySizes is part of this push and so beats the Browser Scaling Prefs that
+	 *  applyOpenTimeSizes() just applied; with it off the resolver drops it (adapter gate), and the Prefs/open-time step stands. */
+	function applySongDefaultsAtOpen(){
+		const { values } = getSong().resolveDisplayOptionsAt(currentSectionIndex(), { purpose: 'open' });
+		if (Object.keys(values).length > 0){
+			displayOptionsToControls(values, true);
+		}
+	}
+
 	let displayOptionsSaveActionRequired = false;
 
 	function setDisplayOptionsSaveActionRequired(isRequired){
@@ -2239,6 +2251,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		hideCmdLine();
 		hideAllMenuDivs(true);
 
+		applySongDefaultsAtOpen();
 		replay();
 		sectionChanged();
 		InfoBuilder.renderFromSong(getSong());
