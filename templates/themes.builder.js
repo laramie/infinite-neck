@@ -130,7 +130,7 @@ export class ThemesBuilder {
     /** Sprint 146 Iteration 2: (re)populates the "Section:" destination picker (paired with
      *  #selThemeTableDest) with every Section (1-based display, value = 0-based sectionIndex).
      *  Purely a destination choice -- selecting an option here never navigates or changes
-     *  displayed controls (143-it2-design.md point 3). Called from the 'SectionChanged' handler
+     *  displayed controls (146-it2-design.md point 3). Called from the 'SectionChanged' handler
      *  below (not just rebuildThemesDropdown()) so adding/removing/moving a Section -- which
      *  always publishes 'SectionChanged' -- keeps this list current even while the Theme page
      *  is open. */
@@ -150,11 +150,11 @@ export class ThemesBuilder {
         }
     }
 
-    /** Sprint 146 Iteration 2 (143-it2-design.md points 1-2): rebuilds the Section x Instrument
+    /** Sprint 146 Iteration 2 (146-it2-design.md points 1-2): rebuilds the Section x Instrument
      *  Theme matrix table body from the current model -- one row per Section, one column per
      *  Instrument/table (getAllModelTableIDs()), each cell showing that Table+Section's own
      *  saved theme.caption (blank if none). The CURRENT section's row gets
-     *  .themeMatrixRow--current (143-it2-design.md point 3, mirrors chartBAR--currentSection). */
+     *  .themeMatrixRow--current (146-it2-design.md point 3, mirrors chartBAR--currentSection). */
     static renderThemeMatrix(){
         const table = $('#tblThemeMatrix');
         if (table.length === 0) {
@@ -190,7 +190,7 @@ export class ThemesBuilder {
         table.html(html);
     }
 
-    /** Sprint 146 Iteration 2 (143-it2-design.md point 1): shows/hides the Theme matrix, mirroring
+    /** Sprint 146 Iteration 2 (146-it2-design.md point 1): shows/hides the Theme matrix, mirroring
      *  #tutorialPromptSectionToggle's right/down arrow indicator pair. */
     static toggleThemeMatrix(){
         const wrap = $('#divThemeMatrixWrap');
@@ -202,7 +202,7 @@ export class ThemesBuilder {
         }
     }
 
-    /** Sprint 146 Iteration 2 (143-it2-design.md point 3): a Theme matrix cell was clicked --
+    /** Sprint 146 Iteration 2 (146-it2-design.md point 3): a Theme matrix cell was clicked --
      *  navigate to that Section and select that table in #selThemeTable, which brings up the
      *  carry-forward Theme in effect for it (there may be no storage yet at this exact cell,
      *  which is fine -- that's the point of navigating there first before hitting Theme/Copy). */

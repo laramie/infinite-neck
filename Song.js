@@ -1589,7 +1589,7 @@ export class Song extends SongPersistence {
     /** Sprint 146 Iteration 2: derives the canonical id/caption/baseid/basecaption a per-table
      *  Theme block should carry once it's saved for a specific Table+Section, so the Theme
      *  Matrix can show something like "Autobahn+P46_1:S1" instead of the generic
-     *  "Autobahn+Autobahn" controlsToTheme() produces on its own (see 143-it2-design.md point 2).
+     *  "Autobahn+Autobahn" controlsToTheme() produces on its own (see 146-it2-design.md point 2).
      *  themeObject.baseid/basecaption (set by themeFunctions.js's controlsToTheme()) are
      *  preferred so re-tagging (e.g. via setTableThemeAtSection() writing to a different
      *  Table+Section than the one the controls were last loaded from) never has to re-parse an

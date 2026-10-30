@@ -3969,7 +3969,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		refreshTableThemeDisplay(tableID);
 	}
 
-	/** Sprint 146 Iteration 2 (143-it2-design.md point 3, revised per user feedback): writes the
+	/** Sprint 146 Iteration 2 (146-it2-design.md point 3, revised per user feedback): writes the
 	 *  Theme page's CURRENT control values (same as handleBtnControlsToTableTheme(), via
 	 *  controlsToTheme()) onto destTableID's Theme at destSectionIndex -- an arbitrary Table+
 	 *  Section, not necessarily the one #selThemeTable/the current Section point at. Despite the
@@ -4005,7 +4005,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 		applyThemeToTableElement(instrumentBackgroundEl, themeInEffect);
 	}
 
-	/** Sprint 146 Iteration 2 (143-it2-design.md point 5): re-applies every known table's
+	/** Sprint 146 Iteration 2 (146-it2-design.md point 5): re-applies every known table's
 	 *  resolved per-table Theme on every Section change (navigation, next/prev, looping) --
 	 *  called from syncSectionUi() so an Instrument's Theme correctly "rolls over" once you
 	 *  cross into a Section (or loop back around) with a different stored Theme for it. */
