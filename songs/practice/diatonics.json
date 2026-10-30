@@ -67,7 +67,8 @@
       "visible": true,
       "anchorage": {
         "floated": false
-      }
+      },
+      "SectionStatusLeft": true
     }
   ],
   "colorDicts": {
@@ -286,8 +287,8 @@
   },
   "macros": {},
   "activeStylesheets": "Default+light-3",
-  "captionsRowShowing": true,
-  "defaultBPM": "333",
+  "captionsRowShowing": false,
+  "defaultBPM": "40",
   "info": {
     "lines": [
       "<p>This song uses a custom Palette stylesheet, called <i>light</i>.  Unlike <i>CycleOfColors</i>, it comprises yellows to show all notes except those in the major triad which use yellowy greens.</p>",
@@ -398,17 +399,17 @@
             {
               "noteName": "C",
               "styleNum": 2,
-              "midinum": "60",
+              "midinum": "48",
               "row": "4",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "E",
               "styleNum": 2,
-              "midinum": "64",
+              "midinum": "52",
               "row": "3",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
@@ -430,17 +431,17 @@
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "79",
+              "midinum": "67",
               "row": "0",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "55",
+              "midinum": "43",
               "row": "5",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             }
           ],
@@ -601,57 +602,57 @@
             {
               "noteName": "D",
               "styleNum": 2,
-              "midinum": "74",
+              "midinum": "62",
               "row": "1",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "A",
               "styleNum": 2,
-              "midinum": "69",
+              "midinum": "57",
               "row": "2",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "55",
+              "midinum": "43",
               "row": "5",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "C",
               "styleNum": 2,
-              "midinum": "60",
+              "midinum": "48",
               "row": "4",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "79",
+              "midinum": "67",
               "row": "0",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "E",
               "styleNum": 2,
-              "midinum": "64",
+              "midinum": "52",
               "row": "3",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "F",
               "styleNum": 2,
-              "midinum": "77",
+              "midinum": "65",
               "row": "1",
-              "col": "17",
+              "col": "5",
               "colorClass": "noteTransparent"
             }
           ]
@@ -716,33 +717,33 @@
             {
               "noteName": "E",
               "styleNum": 2,
-              "midinum": "64",
+              "midinum": "52",
               "row": "3",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "D",
               "styleNum": 2,
-              "midinum": "74",
+              "midinum": "62",
               "row": "1",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "B",
               "styleNum": 2,
-              "midinum": "71",
+              "midinum": "59",
               "row": "2",
-              "col": "16",
+              "col": "4",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "79",
+              "midinum": "67",
               "row": "0",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             }
           ]
@@ -807,41 +808,41 @@
             {
               "noteName": "F",
               "styleNum": 2,
-              "midinum": "65",
+              "midinum": "53",
               "row": "3",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "A",
               "styleNum": 2,
-              "midinum": "69",
+              "midinum": "57",
               "row": "2",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "E",
               "styleNum": 2,
-              "midinum": "76",
+              "midinum": "64",
               "row": "1",
-              "col": "16",
+              "col": "4",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "C",
               "styleNum": 2,
-              "midinum": "72",
+              "midinum": "60",
               "row": "2",
-              "col": "17",
+              "col": "5",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "79",
+              "midinum": "67",
               "row": "0",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             }
           ]
@@ -906,41 +907,41 @@
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "55",
+              "midinum": "43",
               "row": "5",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "B",
               "styleNum": 2,
-              "midinum": "59",
+              "midinum": "47",
               "row": "4",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "F",
               "styleNum": 2,
-              "midinum": "65",
+              "midinum": "53",
               "row": "3",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "A",
               "styleNum": 2,
-              "midinum": "69",
+              "midinum": "57",
               "row": "2",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "D",
               "styleNum": 2,
-              "midinum": "74",
+              "midinum": "62",
               "row": "1",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             }
           ]
@@ -1005,33 +1006,33 @@
             {
               "noteName": "A",
               "styleNum": 2,
-              "midinum": "69",
+              "midinum": "57",
               "row": "2",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "C",
               "styleNum": 2,
-              "midinum": "60",
+              "midinum": "48",
               "row": "4",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "E",
               "styleNum": 2,
-              "midinum": "64",
+              "midinum": "52",
               "row": "3",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "G",
               "styleNum": 2,
-              "midinum": "55",
+              "midinum": "43",
               "row": "5",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             }
           ]
@@ -1096,33 +1097,33 @@
             {
               "noteName": "B",
               "styleNum": 2,
-              "midinum": "59",
+              "midinum": "47",
               "row": "4",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "F",
               "styleNum": 2,
-              "midinum": "65",
+              "midinum": "53",
               "row": "3",
-              "col": "15",
+              "col": "3",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "A",
               "styleNum": 2,
-              "midinum": "69",
+              "midinum": "57",
               "row": "2",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             },
             {
               "noteName": "D",
               "styleNum": 2,
-              "midinum": "74",
+              "midinum": "62",
               "row": "1",
-              "col": "14",
+              "col": "2",
               "colorClass": "noteTransparent"
             }
           ]
@@ -1136,8 +1137,21 @@
       "rootID": 2,
       "rootIDLead": "-1",
       "beats": 4,
-      "currentBeat": 4,
-      "sharps": true
+      "currentBeat": 3,
+      "sharps": true,
+      "displayOptions": {
+        "currentColorDict": "light-3",
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "6",
+        "pianoWidthScaleFactor": "2",
+        "pianoWhiteToBlackWidthRatio": "1.6",
+        "NoteDisplaySizes": {
+          "caption": "320x70:26",
+          "width": "320px",
+          "height": "70px",
+          "NoteFontSize": 26
+        }
+      }
     }
   ],
   "wirings": [
@@ -1302,9 +1316,9 @@
       "fullscreen": {
         "name": "fullscreen",
         "CaptionRow": true,
-        "SongTitle": true,
+        "SongTitle": false,
         "SongWidgets": true,
-        "WidgetRow": true,
+        "WidgetRow": false,
         "InstrumentCaptions": false,
         "LeftRails": true,
         "CaptionLooperLayout": "column"
@@ -1378,11 +1392,14 @@
   "displayOptionsDefault": {
     "currentColorDict": "light-3",
     "NoteDisplaySizes": {
-      "caption": "230x70:22",
-      "width": "230px",
+      "caption": "320x70:26",
+      "width": "320px",
       "height": "70px",
-      "NoteFontSize": 22
+      "NoteFontSize": 26
     },
+    "naturalFontScaling": "60",
+    "pianoHeightScaleFactor": "6",
+    "pianoWidthScaleFactor": "2",
     "pianoWhiteToBlackWidthRatio": "1.6"
   }
 }
