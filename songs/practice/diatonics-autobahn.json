@@ -1,0 +1,1308 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46",
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ]
+    },
+    {
+      "instance": true,
+      "baseID": "Piano_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "Piano",
+      "pinkKey": "none"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblPiano_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      },
+      "SectionStatusLeft": true
+    }
+  ],
+  "colorDicts": {
+    "light-minor": {
+      "readOnly": false,
+      "computed": false,
+      "checked": false,
+      "dict": {
+        "note1": {
+          "colorClass": "noteAnthracite",
+          "MOJOcaptionClass": "noteBlack",
+          "caption": "I"
+        },
+        "note2": {
+          "colorClass": "noteBlue7",
+          "caption": "&tau;"
+        },
+        "note3": {
+          "colorClass": "noteBlue7",
+          "caption": "II"
+        },
+        "note4": {
+          "colorClass": "noteBlue2",
+          "caption": "m"
+        },
+        "note5": {
+          "colorClass": "noteBlue7",
+          "caption": "III"
+        },
+        "note6": {
+          "colorClass": "noteBlue7",
+          "caption": "IV"
+        },
+        "note7": {
+          "colorClass": "noteBlue7",
+          "caption": "&Theta;"
+        },
+        "note8": {
+          "colorClass": "noteGreen2",
+          "caption": "V"
+        },
+        "note9": {
+          "colorClass": "noteBlue7",
+          "caption": "&sigma;"
+        },
+        "note10": {
+          "colorClass": "noteBlue7",
+          "caption": "6"
+        },
+        "note11": {
+          "colorClass": "noteBlue2",
+          "caption": "&delta;"
+        },
+        "note12": {
+          "colorClass": "noteBlue7",
+          "caption": "&Delta;"
+        },
+        "noteRoot": {
+          "colorClass": "noteAnthracite noteHatched6",
+          "captionClass": "noteBlack",
+          "caption": "Root",
+          "tiny": "R"
+        }
+      }
+    },
+    "light": {
+      "readOnly": false,
+      "computed": false,
+      "checked": false,
+      "dict": {
+        "note2": {
+          "colorClass": "noteYellow6",
+          "caption": "&tau;"
+        },
+        "note3": {
+          "colorClass": "noteYellow5",
+          "caption": "II"
+        },
+        "note4": {
+          "colorClass": "noteYellow5",
+          "caption": "m"
+        },
+        "note5": {
+          "colorClass": "noteGreen6",
+          "caption": "III"
+        },
+        "note6": {
+          "colorClass": "noteYellow5",
+          "caption": "IV"
+        },
+        "note7": {
+          "colorClass": "noteYellow5",
+          "caption": "&Theta;"
+        },
+        "note8": {
+          "colorClass": "noteGreen7",
+          "caption": "V"
+        },
+        "note9": {
+          "colorClass": "noteYellow5",
+          "caption": "&sigma;"
+        },
+        "note10": {
+          "colorClass": "noteYellow5",
+          "caption": "6"
+        },
+        "note11": {
+          "colorClass": "noteYellow5",
+          "caption": "&delta;"
+        },
+        "note12": {
+          "colorClass": "noteYellow5",
+          "caption": "&Delta;"
+        },
+        "note1": {
+          "colorClass": "noteGreen3",
+          "MOJOcaptionClass": "noteBlack",
+          "caption": "I"
+        }
+      }
+    },
+    "light-3": {
+      "readOnly": false,
+      "computed": false,
+      "checked": false,
+      "dict": {
+        "note1": {
+          "colorClass": "noteGreen3",
+          "caption": "I"
+        },
+        "note2": {
+          "colorClass": "noteYellow6",
+          "caption": "&tau;"
+        },
+        "note3": {
+          "colorClass": "noteYellow5",
+          "caption": "II"
+        },
+        "note4": {
+          "colorClass": "noteBlue1",
+          "caption": "m"
+        },
+        "note5": {
+          "colorClass": "noteBlue6",
+          "caption": "III"
+        },
+        "note6": {
+          "colorClass": "noteYellow5",
+          "caption": "IV"
+        },
+        "note7": {
+          "colorClass": "noteYellow5",
+          "caption": "&Theta;"
+        },
+        "note8": {
+          "colorClass": "noteGreen7",
+          "caption": "V"
+        },
+        "note9": {
+          "colorClass": "noteYellow5",
+          "caption": "&sigma;"
+        },
+        "note10": {
+          "colorClass": "noteYellow5",
+          "caption": "6"
+        },
+        "note11": {
+          "colorClass": "noteYellow5",
+          "caption": "&delta;"
+        },
+        "note12": {
+          "colorClass": "noteYellow5",
+          "caption": "&Delta;"
+        },
+        "noteRoot": {
+          "colorClass": "noteHatched2 notePink7",
+          "captionClass": "noteBlack",
+          "caption": "Root",
+          "tiny": "R"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "transpose": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "USER",
+      "properties": {
+        "intervals": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "NamedNotes": true,
+        "SingleNotes": true,
+        "TinyNotes": true,
+        "BendNotes": true,
+        "FingeringNotes": true,
+        "RecordedNotes": true,
+        "octaves": "",
+        "useOctavesForRecorded": false,
+        "autoSharpsFlats": true,
+        "doLeadKey": false
+      }
+    }
+  },
+  "macros": {},
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "40",
+  "info": {
+    "lines": [
+      "<p>This song uses a custom Palette stylesheet, called <i>light</i>.  Unlike <i>CycleOfColors</i>, it comprises yellows to show all notes except those in the major triad which use yellowy greens.</p>",
+      "",
+      "<p>The song then transposes chromatically through all twelve semitones, showing how the diatonic pattern shifts up the neck, preserving the basic shape on a P4 tuning, so you can see how the pattern is the same regardless of what key you are playing in.  It then becomes an excercise in knowing which frets have roots, or some other way to anchor your pattern to the neck during transposition.</p>",
+      "",
+      "<p>See also: <a href=\"?song=theory/mode-nat-minor-transposed.json\">mode-nat-minor-transposed.json</a> where we repeat the same excercise with a blue Palatte stylesheet for minor moods.</p>"
+    ]
+  },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"centerWidgets\">",
+      "",
+      "<span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span>",
+      "",
+      "<span class=\"spacer2\"></span><span class=\"spacer2\"></span>",
+      "",
+      "<span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span> ",
+      "",
+      "</div>"
+    ]
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "parked",
+  "presentationMode": false,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": true,
+    "addTransposedRootToChord": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "LeadSheet",
+    "chartSpacing": "tight",
+    "chordFontsize": "70%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "diatonics-autobahn",
+  "theme": "USER",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "CM",
+          "mode": "C major",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "4",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "2",
+              "col": "13",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "73",
+              "row": "1",
+              "col": "13",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "CM",
+      "chartMode": "C major",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 4,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 2,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Dm11",
+          "mode": "D dorian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "4",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "1",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "Dm11",
+      "chartMode": "D dorian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 6,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Em7",
+          "mode": "E phrygian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "Em7",
+      "chartMode": "E phrygian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 8,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Fmaj9",
+          "mode": "F lydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "3",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "1",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "2",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "Fmaj9",
+      "chartMode": "F lydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 9,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "G9",
+          "mode": "G mixolydian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "3",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "G9",
+      "chartMode": "G mixolydian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 11,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Am7",
+          "mode": "A minor",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "4",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "Am7",
+      "chartMode": "A minor",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 1,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": false
+    },
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "note1"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "Bm7b5",
+          "mode": "B locrian",
+          "tonalSourceSet": "SingleNote",
+          "playedNotes": [
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "3",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        }
+      },
+      "caption": "",
+      "chartChord": "Bm7b5",
+      "chartMode": "B locrian",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 4,
+      "currentBeat": 4,
+      "sharps": true
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblPiano_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1782755750453,
+        "date": "6/29/2026",
+        "time": "10:55:50 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"AbM9#5sus4\",\n    \"chartMode\": \"Ab double harmonic major\",\n    \"chartPosition\": \"LINE\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 1,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782755751687,
+        "date": "6/29/2026",
+        "time": "10:55:51 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"Gm69\",\n    \"chartMode\": \"G major pentatonic\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 0,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782755752807,
+        "date": "6/29/2026",
+        "time": "10:55:52 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"Ddim7\",\n    \"chartMode\": \"D diminished\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 5,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782755756205,
+        "date": "6/29/2026",
+        "time": "10:55:56 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {},\n    \"caption\": \"\",\n    \"chartChord\": \"Bbmaj7\",\n    \"chartMode\": \"Bb major\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": false\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782760385463,
+        "date": "6/29/2026",
+        "time": "12:13:05 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"note2\": {\n            \"colorClass\": \"noteYellow6\",\n            \"caption\": \"&tau;\"\n        },\n        \"note3\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"II\"\n        },\n        \"note4\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"m\"\n        },\n        \"note5\": {\n            \"colorClass\": \"noteGreen6\",\n            \"caption\": \"III\"\n        },\n        \"note6\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"IV\"\n        },\n        \"note7\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"&Theta;\"\n        },\n        \"note8\": {\n            \"colorClass\": \"noteGreen7\",\n            \"caption\": \"V\"\n        },\n        \"note9\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"&sigma;\"\n        },\n        \"note10\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"6\"\n        },\n        \"note11\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"&delta;\"\n        },\n        \"note12\": {\n            \"colorClass\": \"noteYellow5\",\n            \"caption\": \"&Delta;\"\n        },\n        \"note1\": {\n            \"colorClass\": \"noteGreen3\",\n            \"MOJOcaptionClass\": \"noteBlack\",\n            \"caption\": \"I\"\n        }\n    }\n}",
+        "lastRevived": 1782760415433
+      },
+      {
+        "timestamp": 1782760444019,
+        "date": "6/29/2026",
+        "time": "12:14:04 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-diatonic",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1793339788467,
+        "date": "10/29/2026",
+        "time": "10:56:28 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-both",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"noteTransparent\": {\n            \"colorClass\": \"noteTransparent\",\n            \"caption\": \"Emboss\",\n            \"readonly\": true\n        },\n        \"noteAutomatic\": {\n            \"colorClass\": \"noteAutomatic\",\n            \"caption\": \"Auto\",\n            \"readonly\": true\n        },\n        \"noteRoot\": {\n            \"colorClass\": \"noteBlack noteHatchedRoot\",\n            \"captionClass\": \"noteBlack\",\n            \"caption\": \"Root\",\n            \"tiny\": \"R\"\n        },\n        \"noteScale\": {\n            \"colorClass\": \"noteBlue2\",\n            \"caption\": \"Scale\",\n            \"tiny\": \"Sc\"\n        },\n        \"noteChord\": {\n            \"colorClass\": \"noteRed4\",\n            \"caption\": \"Chord\",\n            \"tiny\": \"Ch\"\n        },\n        \"noteChord2\": {\n            \"colorClass\": \"noteRed2\",\n            \"caption\": \"Ch2\",\n            \"tiny\": \"Ch\"\n        },\n        \"noteChord3\": {\n            \"colorClass\": \"noteBrown7\",\n            \"caption\": \"Ch3\",\n            \"tiny\": \"Ch\"\n        },\n        \"noteColornote\": {\n            \"colorClass\": \"notePink1\",\n            \"caption\": \"Colornote\",\n            \"tiny\": \"C1\"\n        },\n        \"noteColornote2\": {\n            \"colorClass\": \"notePink2\",\n            \"caption\": \"C2\",\n            \"tiny\": \"C2\"\n        },\n        \"noteColornote3\": {\n            \"colorClass\": \"notePink3\",\n            \"caption\": \"C3\",\n            \"tiny\": \"C3\"\n        },\n        \"noteChromatic\": {\n            \"colorClass\": \"noteYellow6\",\n            \"caption\": \"Chromatic\",\n            \"tiny\": \"c\"\n        },\n        \"notePassing\": {\n            \"colorClass\": \"noteBlue4\",\n            \"caption\": \"Passing\",\n            \"tiny\": \"p\"\n        },\n        \"noteAvoid\": {\n            \"colorClass\": \"noteBlackout1\",\n            \"captionClass\": \"noteBlackout1Caption\",\n            \"caption\": \"Avoid\",\n            \"tiny\": \"a1\"\n        },\n        \"noteAvoid2\": {\n            \"colorClass\": \"noteBlackout2\",\n            \"captionClass\": \"noteBlackout2Caption\",\n            \"caption\": \"Avoid\",\n            \"tiny\": \"a2\"\n        },\n        \"noteAvoid3\": {\n            \"colorClass\": \"noteBlack noteHatched2\",\n            \"caption\": \"Avoid\",\n            \"tiny\": \"a3\"\n        },\n        \"noteBass\": {\n            \"colorClass\": \"noteBassPlayer\",\n            \"captionClass\": \"noteBassPlayer\",\n            \"caption\": \"Bass\",\n            \"tiny\": \"B\"\n        },\n        \"noteLead\": {\n            \"colorClass\": \"notePink3\",\n            \"caption\": \"Lead\",\n            \"tiny\": \"L\"\n        },\n        \"noteLead2\": {\n            \"colorClass\": \"notePink7\",\n            \"caption\": \"Lead 2\",\n            \"tiny\": \"L2\"\n        },\n        \"noteFinger0\": {\n            \"colorClass\": \"Finger0\",\n            \"caption\": \"Finger0\",\n            \"tiny\": \"F0\"\n        },\n        \"noteFinger1\": {\n            \"colorClass\": \"Finger1\",\n            \"caption\": \"Finger1\",\n            \"tiny\": \"F1\"\n        },\n        \"noteFinger2\": {\n            \"colorClass\": \"Finger2\",\n            \"caption\": \"F2\",\n            \"tiny\": \"F2\"\n        },\n        \"noteFinger3\": {\n            \"colorClass\": \"Finger3\",\n            \"caption\": \"F3\",\n            \"tiny\": \"F3\"\n        },\n        \"noteFinger4\": {\n            \"colorClass\": \"Finger4\",\n            \"caption\": \"F4\",\n            \"tiny\": \"F4\"\n        },\n        \"noteFingerT\": {\n            \"colorClass\": \"FingerT\",\n            \"caption\": \"Thumb\",\n            \"tiny\": \"T\"\n        },\n        \"note1\": {\n            \"colorClass\": \"noteHatchedRootPink noteWhite\",\n            \"caption\": \"I\"\n        },\n        \"note2\": {\n            \"colorClass\": \"notePink6\",\n            \"caption\": \"&tau;\"\n        },\n        \"note3\": {\n            \"colorClass\": \"notePink3\",\n            \"caption\": \"II\"\n        },\n        \"note4\": {\n            \"colorClass\": \"noteBlue1\",\n            \"caption\": \"m\"\n        },\n        \"note5\": {\n            \"colorClass\": \"noteBlue6\",\n            \"caption\": \"III\"\n        },\n        \"note6\": {\n            \"colorClass\": \"noteBrown2\",\n            \"caption\": \"IV\"\n        },\n        \"note7\": {\n            \"colorClass\": \"noteRed3\",\n            \"caption\": \"&Theta;\"\n        },\n        \"note8\": {\n            \"colorClass\": \"noteRed2\",\n            \"caption\": \"V\"\n        },\n        \"note9\": {\n            \"colorClass\": \"noteYellow2\",\n            \"caption\": \"&sigma;\"\n        },\n        \"note10\": {\n            \"colorClass\": \"noteYellow4\",\n            \"caption\": \"6\"\n        },\n        \"note11\": {\n            \"colorClass\": \"noteGreen1\",\n            \"caption\": \"&delta;\"\n        },\n        \"note12\": {\n            \"colorClass\": \"noteGreen6\",\n            \"caption\": \"&Delta;\"\n        },\n        \"noteH1\": {\n            \"colorClass\": \"noteHighlightH1\",\n            \"caption\": \"H1\",\n            \"tiny\": \"H1\"\n        },\n        \"noteH2\": {\n            \"colorClass\": \"noteHighlightH2\",\n            \"caption\": \"H2\",\n            \"tiny\": \"H2\"\n        },\n        \"noteH3\": {\n            \"colorClass\": \"noteHighlightH3\",\n            \"caption\": \"H3\",\n            \"tiny\": \"H3\"\n        }\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1793340006603,
+        "date": "10/29/2026",
+        "time": "11:00:06 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-both-2",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1793340077345,
+        "date": "10/29/2026",
+        "time": "11:01:17 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-3",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1793340228931,
+        "date": "10/29/2026",
+        "time": "11:03:48 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-both",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {\n        \"note4\": {\n            \"colorClass\": \"noteBlue1\",\n            \"caption\": \"m\"\n        },\n        \"note5\": {\n            \"colorClass\": \"noteBlue6\",\n            \"caption\": \"III\"\n        }\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1793340263904,
+        "date": "10/29/2026",
+        "time": "11:04:23 PM",
+        "type": "STYLESHEET",
+        "context": {
+          "dictkey": "light-both",
+          "which": "UserStylesheet"
+        },
+        "json": "{\n    \"readOnly\": false,\n    \"computed\": false,\n    \"checked\": true,\n    \"dict\": {}\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "currentColorDict": "Default",
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": false,
+        "SongWidgets": true,
+        "WidgetRow": false,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "SongWidgets": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  },
+  "userTheme": {
+    "id": "Autobahn-Autobahn",
+    "caption": "Autobahn+Autobahn ",
+    "noteRadius": "4%",
+    "noteCornerShape": "round",
+    "namedNoteRadius": "4%",
+    "notePadding": "6pt",
+    "cellSpacing": "5pt",
+    "instrumentBackground": "black",
+    "instrumentMargins": "1em",
+    "nutColor": "#ab0000",
+    "rootColor": "green",
+    "diamondsSize": "1.5rem",
+    "diamondsColor": "green",
+    "doubleDiamondsColor": "red",
+    "diamondsBackgroundColor": "transparent",
+    "faceDiamondsSize": "0.8rem",
+    "faceDiamondsColor": "dodgerblue",
+    "faceDoubleDiamondsSize": "0.8rem",
+    "faceDoubleDiamondsColor": "gold",
+    "faceTinyDiamondsSize": "0.4rem",
+    "singleNoteShrink": "5%",
+    "singleNoteShadowColor": "#56fa00",
+    "noteWhiteShadowColor": "black",
+    "noteBlackShadowColor": "black",
+    "noteWhiteKeyShadowColor": "0 0 2pt 1pt pink",
+    "noteBlackKeyShadowColor": "0 0 2pt 1pt cornflowerblue",
+    "noteWhiteKeyColor": "white",
+    "noteBlackKeyColor": "black",
+    "noteWhiteKeySpecialColor": "SaddleBrown",
+    "noteBlackKeySpecialColor": "#191919",
+    "noteWhiteKeyFontColor": "black",
+    "noteBlackKeyFontColor": "white",
+    "systemPitchColor": "gold",
+    "systemMultiColor": "magenta",
+    "systemLeadColor": "rgb(94, 251, 244)",
+    "borderImageWhiteKey": "none",
+    "borderImageBlackKey": "none",
+    "instrumentBorderThickness": "0",
+    "instrumentBorderSlice": "10",
+    "baseid": "Autobahn",
+    "basecaption": "Autobahn",
+    "instrumentBorderImage": "url('img/celtic-background-black.png')"
+  },
+  "displayOptionsDefault": {
+    "currentColorDict": "light-3",
+    "NoteDisplaySizes": {
+      "caption": "320x70:26",
+      "width": "320px",
+      "height": "70px",
+      "NoteFontSize": 26
+    },
+    "naturalFontScaling": "60",
+    "pianoHeightScaleFactor": "6",
+    "pianoWidthScaleFactor": "2",
+    "pianoWhiteToBlackWidthRatio": "1.6"
+  },
+  "displayOptionGates": {
+    "readBlocked": [
+      "currentColorDict"
+    ]
+  }
+}
