@@ -3719,6 +3719,184 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
 <h4>Themes Controls Documentation</h4>
 <!-- BEGIN new Themes page documentation -->
 
+<h5>Three layers of Theme</h5>
+<p>A Song can set Themes at three levels.  Each is stored in the Song file, and each is independent of the others.
+</p>
+<table class="ExamplesTable">
+    <tr><th>Layer</th><th>Covers</th><th>Set with</th><th>Needs <i>Allow Theme Automation</i>?</th></tr>
+    <tr><td><b>1. Song Theme</b></td><td>The whole Song, every Instrument, every Section.  This is the Theme you see on opening the Song.</td><td>The Themes dropdown in the main menu bar, or the <b>Theme</b> button here with <i>default (whole song)</i> picked.</td><td>No</td></tr>
+    <tr><td><b>2. Theme by Section</b> (Theme automation)</td><td>Changes the Song Theme as you arrive at a Section.  Affects every Instrument that does not have its own Theme (layer 3).</td><td>The Themes dropdown plus <span class="GUIReferenceInline">SAVE Diff</span> on the View page (this is the <i>sectionTheme</i> Display Option).</td><td><b>Yes</b></td></tr>
+    <tr><td><b>3. Theme by Instrument by Section</b> (Table Themes)</td><td>One Instrument only, from one Section onward.</td><td>The <b>Theme</b> button here with an Instrument picked, or <b>Copy to Section</b>.</td><td>No</td></tr>
+</table>
+<p><b>Which Theme does an Instrument show?</b>  At any Section, each Instrument uses the first of these that applies:
+    <ol>
+        <li>Its own Table Theme: the nearest one stored at the Current Section or any <i>earlier</i> Section (layer 3).</li>
+        <li>Otherwise the Song Theme as it stands now.  With Allow Theme Automation on, that is the <i>sectionTheme</i> inherited at this Section (layer 2); with it off, it is whatever the Themes dropdown holds.</li>
+    </ol>
+    So an Instrument with a Table Theme ignores the Themes dropdown and Theme automation until the Song reaches a Section that stores a different Table Theme for it.
+</p>
+
+<h5>The Themes page</h5>
+<p>Open it with <span class="key">T</span>, the <span class="GUIReferenceInline">Themes</span> tab, or <span class="menuExampleLine"><b><small>/e;</small></b></span>.  The long list of dropdowns below the Matrix is the Theme being edited (see the note about the controls at the end of this topic).  The buttons and pickers at the top are the subject of this topic:
+</p>
+<table class="ExamplesTable">
+    <tr><th>Control</th><th>What it does</th></tr>
+    <tr><td><b>Save/Clear Theme for:</b> (picker)</td><td>Chooses what the <b>Theme</b> and <b>Clear Table Theme</b> buttons act on: <i>default (whole song)</i>, or one Instrument.  Choosing an Instrument also loads the Theme that Instrument has <i>in effect at the Current Section</i> into the controls (its own, or the Theme in the main menu dropdown if it has none yet).  Choosing <i>default</i> loads the Theme in the main menu dropdown.</td></tr>
+    <tr><td><b>Theme</b></td><td>Saves the controls as a Theme.  With <i>default (whole song)</i> picked it becomes the Song's <b>USER</b> Theme (layer 1).  With an Instrument picked it is stored on the <b>Current Section</b> as that Instrument's Table Theme (layer 3) and shows at once.</td></tr>
+    <tr><td><b>Clear Table Theme</b></td><td>Removes the Table Theme stored on the Current Section for the picked Instrument.  It is greyed out unless the Current Section itself stores one (an inherited one from an earlier Section does not count).  Earlier Sections are never touched, so after a Clear the Instrument falls back to the nearest earlier Table Theme, or to the Song Theme if there is none.</td></tr>
+    <tr><td><b>Copy Table Theme to Table / Section</b> and <b>Copy to Section</b></td><td>Writes the controls as a Table Theme onto <i>any</i> Instrument and Section you choose.  See <a href="#themeCopyToSection">Copying a Theme to another Section</a>.</td></tr>
+    <tr><td><b>Theme Matrix</b></td><td>A Section-by-Instrument map of what is stored, and a quick way to navigate.  See <a href="#themeMatrixTopic">The Theme Matrix</a>.</td></tr>
+    <tr><td><b>Results</b></td><td>Shows or hides a technical readout: the Theme last applied, and a table comparing the controls with the original and with the built-in default.</td></tr>
+    <tr><td><b>Show Theme Messages</b></td><td>Opens a list of warnings from the Theme code, for example a Theme value that is not among the choices in a dropdown.</td></tr>
+</table>
+
+<a name="themeSongTheme"></a>
+<h5>Layer 1: the Song Theme and USER</h5>
+<p>Choose a Theme from the main menu bar dropdown and every Instrument without a Table Theme changes.  Choosing is a User choice during playback; it is not stored until you <b>File | Download</b>, which saves the dropdown's current value as the Song's Theme.
+    To make your own, set the controls, leave the picker on <i>default (whole song)</i> and press <b>Theme</b>.  The Theme is saved with the Song as <b>USER</b> (the last entry in the dropdown), and the dropdown switches to it.
+    There is one USER Theme per Song.
+</p>
+<p><b>On opening a Song:</b> the Song's saved Theme is selected if it exists; otherwise USER if the Song carries one; otherwise the built-in default.  Then the Song's Sections are applied, including any Theme automation and Table Themes (see below).
+    From the command line, <span class="menuExampleLine"><b><small>/ei</small></b></span> selects a Theme by id and <span class="menuExampleLine"><b><small>/es</small></b></span> lists the ids.  This is the same as using the dropdown, and is not stored in the Song.
+</p>
+
+<a name="themeAutomationTopic"></a>
+<h5>Layer 2: Theme automation (a Theme per Section)</h5>
+<p>Theme automation lets a Section choose the Song Theme for you.  It is one of the Display Options, named <i>sectionTheme</i>, so it is stored, inherited and blocked exactly like the others in <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>.  It holds the <i>id</i> of a Theme from the dropdown (for example <i>Autobahn</i> or <i>USER</i>), not a copy of the Theme.
+</p>
+
+<p><b><i>Turning it on and storing a Theme on a Section</i></b></p>
+<ol>
+    <li>On the View page check <span class="GUIReferenceInline">Allow Theme Automation</span>.  The setting is saved in the Song (<i>allowThemeAutomation</i>).</li>
+    <li>Go to the Section and choose a Theme in the main menu dropdown.</li>
+    <li>On the View page press <span class="GUIReferenceInline">SAVE Diff</span> (or <b>Save All</b>, or the <b>Store Cell</b> Tool on the <i>sectionTheme</i> column of the Matrix).  The View card line <i>sectionTheme: [ stored <s>current</s> ]</i> shows the stored value, with the live choice in <s>strikethrough</s> when the two differ.</li>
+</ol>
+<p>Changing the dropdown does not turn <span class="GUIReferenceInline">SAVE Diff</span> magenta, so nothing warns you that the Theme is unsaved.  Check the <i>sectionTheme</i> line.  With the checkbox <b>off</b>, SAVE Diff, Save All and Store Cell skip <i>sectionTheme</i>, and no stored value is applied.  A stored value is not lost: it is dormant, and wakes up when you check the box again.  <b>Clear</b> still removes it.
+</p>
+
+<p><b><i>How one Section's choice cascades to the others</i></b></p>
+<p>The rule is the same as for every Display Option (see <a href="#displayOptionsMatrixTopic">Where a Section's values come from</a>), so a Section that stores nothing is <i>not</i> left alone.  Each time you arrive at a Section, with Allow Theme Automation on:
+    <ol>
+        <li>The Section's own stored <i>sectionTheme</i>, if it has one, is applied.</li>
+        <li>Otherwise the nearest stored one at an <i>earlier</i> Section is applied.  A Theme stored on Section 3 therefore carries through Sections 4, 5, 6 ... until a later Section stores a different one.</li>
+        <li>If no Section at or before this one stores one, but a Section further on does, the <i>sectionTheme</i> in <b>Song-DEFAULTS</b> is applied, if the Song has one.</li>
+        <li>Otherwise nothing is applied, and the Theme dropdown keeps whatever it holds.</li>
+    </ol>
+    The cascade only runs <i>forward</i> from the Section that stores it.  If only Section 3 stores a Theme, then Sections 1 and 2 do <b>not</b> get it.  What they show depends on how you got there: opening the Song shows the Song's saved Theme, but going back from Section 3 to Section 1 leaves Section 3's Theme showing.  To make a Song show the same Theme every time it passes through the early Sections, store a Theme on Section 1, or put it in <b>Song-DEFAULTS</b> (<a href="#displayOptionsMatrixSongDefaults">Song-DEFAULTS</a>).
+</p>
+<p>Because the stored value is applied on every Section change, a Theme you choose by hand while playing is replaced the next time you cross a Section.  To let the User choose freely again, uncheck <span class="GUIReferenceInline">Allow Theme Automation</span>, or put a <b>Key r</b> block on the <i>sectionTheme</i> column of the Matrix, which keeps the stored values in the Song but stops them being applied.
+</p>
+<p>Theme automation changes the <i>Song Theme</i> only.  An Instrument that has a Table Theme (layer 3) keeps it, and does not follow the automated Theme.
+</p>
+<p>The <b>USER</b> Theme is a good partner for automation: it travels with the Song, so a Section can switch between your own Theme and the built-in ones.  If you edit USER after saving Sections that name it, those Sections show the edited USER Theme.
+</p>
+
+<a name="themeTableThemesTopic"></a>
+<h5>Layer 3: a Theme per Instrument per Section (Table Themes)</h5>
+<p>Each Instrument can have its own look, and the look can change from Section to Section.  This is the only layer that is always on: there is no checkbox for it, and it works whether or not Allow Theme Automation is checked.
+</p>
+
+<p><b><i>Storing one</i></b></p>
+<ol>
+    <li>Go to the Section where the Instrument's look should begin.</li>
+    <li>On the Themes page pick the Instrument in <b>Save/Clear Theme for:</b>.</li>
+    <li>Change the controls as you like.</li>
+    <li>Press <b>Theme</b>.  The Instrument changes at once, and the Matrix shows the new Theme in that Section's row.</li>
+</ol>
+<p>The Theme is stored as a complete snapshot of <i>all</i> the controls, not just the ones you changed.  It does not follow later changes to the Song Theme, to Theme automation, or to the Theme it started from.  This also makes a Table Theme easy to reason about: the Instrument shows exactly what was saved.
+</p>
+
+<p><b><i>How it cascades</i></b></p>
+<p>An Instrument's Table Theme applies from the Section that stores it onward, until a later Section stores a different one for the same Instrument.  Sections that store nothing for the Instrument follow the nearest earlier one.  The rule does not depend on how you arrive: skipping straight to Section 5, going back, looping around, or opening the Song on Section 5 all give the same result.  Each Instrument is handled separately, and every Instrument is updated on every Section change, including looping.
+</p>
+<p>A Table Theme does <b>not</b> reach backward.  If the first Table Theme for an Instrument is stored on Section 4, Sections 1 to 3 show the Song Theme for that Instrument (with Theme automation, the automated one).  So to give an Instrument one look for the whole Song, store it on <b>Section 1</b>.
+</p>
+<p>There is no "none" marker.  Once an Instrument has a Table Theme, you cannot go back to the plain Song Theme from a later Section by clearing, because <b>Clear Table Theme</b> only removes the Theme on the Current Section and an earlier one carries forward again.  To return an Instrument to the Song look from a given Section, pick <i>default (whole song)</i> to load the Theme in the main menu dropdown into the controls, then use <b>Copy to Section</b> with that Instrument and Section.  Be aware this stores a snapshot of the Song Theme, which will not follow later changes to it.
+</p>
+
+<p><b><i>Things to know</i></b></p>
+<ul>
+    <li>Table Themes belong to their Section.  If you delete or move Section 1, the Table Themes stored on it go or move with it, and the Instruments' looks change for the Sections that were inheriting them.</li>
+    <li><b>Instrument Margins</b> is the exception: it is one setting for all Instruments, not a per-Instrument value, so do not rely on a Table Theme to vary it.</li>
+    <li>The Instrument picker lists every Instrument in the Song, including ones that are hidden right now.</li>
+    <li>Cell sizes, fonts and the other Display Options are not part of a Theme.  They are automated per Section by the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>, not here.</li>
+</ul>
+
+<a name="themeCopyToSection"></a>
+<h5>Copying a Theme to another Section</h5>
+<p>The second row of the page has two dropdowns, <b>Copy Table Theme to Table</b> and <b>Section</b>, and the <b>Copy to Section</b> button.  Changing the dropdowns only chooses a destination: it does not navigate, and it does not change the controls.
+    Pressing the button writes <i>whatever the controls hold right now</i> as a Table Theme on that Instrument and Section, replacing any Table Theme already stored there.  It is a fresh write of the controls, not a copy of a stored cell, so it works the same whether you arrived at the controls values by picking an Instrument, by clicking a Matrix cell, by choosing <i>default (whole song)</i>, or by editing the controls.
+    The button never writes the Song Theme, which is why the destination list has no <i>default</i>.  If the destination is the Current Section the Instrument changes at once; otherwise nothing on screen changes until you get there.
+</p>
+<p>Recipes:
+    <ul>
+        <li><b>Copy a look to another Section.</b>  Click the source cell in the Matrix (it loads the Theme in effect there), pick the destination Instrument and Section, press <b>Copy to Section</b>.</li>
+        <li><b>Give a second Instrument the same look.</b>  The same, with the other Instrument as the destination.</li>
+        <li><b>Move a Theme.</b>  Copy it, then go to the old Section and <b>Clear Table Theme</b>.</li>
+    </ul>
+</p>
+<p>Every saved Table Theme is renamed for where it is stored.  A Theme based on <i>Autobahn</i> saved for the Instrument <i>P46_1</i> on Section 1 is called <i>Autobahn+P46_1:S1</i>.  Copy it to Section 4 for <i>Piano_1</i> and the copy is <i>Autobahn+Piano_1:S4</i>: the base name carries over, and the Instrument and Section are replaced, so names do not pile up.  This name is what the Theme Matrix shows.
+</p>
+
+<a name="themeMatrixTopic"></a>
+<h5>The Theme Matrix</h5>
+<p>Press <b>Theme Matrix &#x25B6;</b> to open it (&#x25BC; when open); it starts closed.  It has one row per Section, in order, and these columns:
+</p>
+<table class="ExamplesTable">
+    <tr><th>Column</th><th>Shows</th><th>Click</th></tr>
+    <tr><td><b>Section</b></td><td>The Section number.</td><td>Goes to that Section and sets the picker back to <i>default (whole song)</i>, loading the Theme in the main menu dropdown into the controls.</td></tr>
+    <tr><td><b>default</b></td><td>The <i>sectionTheme</i> that Theme automation <b>stores on that Section</b> (layer 2).  Blank when Allow Theme Automation is off, and blank for a Section that stores none, even though that Section inherits one.</td><td>Goes to that Section.  Nothing else changes.</td></tr>
+    <tr><td>One column per Instrument (alphabetical)</td><td>The Table Theme that Instrument <b>stores on that Section</b> (layer 3), shown by its name, for example <i>Guitar Black+P46_1:S1</i>.  Blank means the Section stores nothing for the Instrument, so it inherits from an earlier Section.</td><td>Goes to that Section, picks that Instrument, and loads its Theme in effect there into the controls.  Press <b>Theme</b> then to store it at this Section, or <b>Clear Table Theme</b> to remove it.</td></tr>
+</table>
+<p>The Current Section's row is highlighted, and follows you as you navigate or loop.  The Matrix redraws when you change Section, press <b>Theme</b>, <b>Clear Table Theme</b> or <b>Copy to Section</b>, add, delete or move Sections, and when you check or uncheck Allow Theme Automation.
+    <b>Because the Matrix shows only what a Section itself stores, read down a column to see the cascade:</b> the Theme in the nearest filled cell above (or in the same row) is the one in effect for every blank cell below it, until the next filled cell.  The Matrix is a map and a navigator; you change Themes with the buttons above it, and the <i>default</i> column with the View page.
+</p>
+<p>When you move between Sections the controls on this page are <b>not</b> reloaded.  They show the last Theme loaded, which may not be the one in effect at the Section you are now on (for example after Theme automation has changed the Song Theme).  Click the Instrument's cell in the Matrix, or pick the Instrument in the picker again, before you press <b>Theme</b> or <b>Copy to Section</b>, so you do not save a stale Theme.
+</p>
+
+<a name="themeCascadeExample"></a>
+<h5>Example: how <i>diatonics</i> cascades</h5>
+<p>The Song <i>practice/diatonics.json</i> has seven Sections (C major through B locrian, one per diatonic mode) and two Instruments: a P4 Guitar (<i>P46_1</i>) and a Piano (<i>Piano_1</i>).  Its Theme data is:
+</p>
+<table class="ExamplesTable">
+    <tr><th>Section</th><th>default</th><th>P46_1</th><th>Piano_1</th></tr>
+    <tr><td>1</td><td></td><td>Guitar Black+P46_1:S1</td><td>Guitar Black+Piano_1:S1</td></tr>
+    <tr><td>2 to 7</td><td></td><td></td><td></td></tr>
+</table>
+<ul>
+    <li>The Song Theme is <b>USER</b>, a customized <i>Guitar Black</i> saved with the Song.  <b>Allow Theme Automation is off</b> and no Section stores a <i>sectionTheme</i>, so layer 2 does nothing.</li>
+    <li><b>Section 1</b> stores a Table Theme for each Instrument.  The Guitar's has the same values as the Song Theme, as stored.  The Piano's differs in two values: wider Ivory/Ebony spacing (25pt against 6pt) and a green single-note shadow (#56fa00 against red).</li>
+    <li><b>Sections 2 to 7 store nothing</b>, so every Section inherits Section 1's Table Theme for each Instrument.  You see the same Piano look on Section 2, on Section 5, and when the loop comes back round to Section 1, whichever way you navigate.  Nothing here depends on automation being checked.</li>
+    <li>If the Piano's Theme were stored on Section 4 instead, Sections 1 to 3 would show the Piano in the plain Song Theme, and Sections 4 to 7 in the Piano Theme.</li>
+</ul>
+<p>The same Song also stores Display Options on Section 7 (color dictionary, scaling and the sizes in <i>NoteDisplaySizes</i>), and has the same values in <b>Song-DEFAULTS</b>.  That is a separate cascade, described in <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>: because Section 7 stores those options, Sections 1 to 6 take them from Song-DEFAULTS.  <i>NoteDisplaySizes</i> is applied only once, when the Song opens, because Presentation Mode is off.
+</p>
+
+<h5>Which Songs use these features</h5>
+<ul>
+    <li><b>Theme by Instrument by Section:</b> only <i>practice/diatonics.json</i> uses it, so it is the Song to open to see a Matrix with filled cells.</li>
+    <li><b>Theme automation:</b> no Song in the Song Library has Allow Theme Automation checked or stores a <i>sectionTheme</i>.  To try it, build it yourself as in <i>Layer 2</i> above.</li>
+    <li><b>A custom USER Theme:</b> a handful of Songs carry one, such as <i>practice/diatonics-autobahn.json</i>, <i>practice/All-Chords-w-Modes-Piano.json</i> and the <i>name-that-note</i> Songs.  All other Songs name a built-in Theme.</li>
+</ul>
+
+<h5>Quick recipes</h5>
+<p><b>1. One look for the whole Song.</b>  Choose a Theme in the dropdown (or edit the controls and press <b>Theme</b> with <i>default (whole song)</i> picked), then <b>File | Download</b>.  No Sections are involved.
+</p>
+<p><b>2. Switch the Song Theme at Section 3 and 6.</b>  Check <span class="GUIReferenceInline">Allow Theme Automation</span>.  On Section 1 choose the opening Theme and <b>SAVE Diff</b> (so earlier Sections have something to return to), then do the same on Sections 3 and 6.  Loop the Song: the Theme changes at 3 and 6, and loops back at Section 1.  Open the <i>default</i> column of the Theme Matrix to check.
+</p>
+<p><b>3. Make the Piano different from the Guitar.</b>  Go to Section 1, pick <i>Piano_1</i> in the picker, change the controls, press <b>Theme</b>.  The Guitar and everything else keeps the Song Theme.  Click Section 2's <i>Piano_1</i> cell in the Matrix: the Piano look is loaded (inherited), the Matrix cell stays blank.
+</p>
+<p><b>4. Change the Piano's look partway through.</b>  Click the <i>Piano_1</i> cell on Section 4, change the controls, press <b>Theme</b>.  Sections 1 to 3 keep the old look and Sections 4 onward use the new one.  <b>Clear Table Theme</b> on Section 4 undoes it.
+</p>
+<p><b>5. Mix the two layers.</b>  With Theme automation on, store <i>Autobahn</i> on Section 1 and <i>DJTrailMix</i> on Section 3, and give <i>Piano_1</i> a Table Theme on Section 1.  The Guitar follows Autobahn then DJTrailMix; the Piano holds its own look throughout.
+</p>
+<p><b>6. Free the User.</b>  Leave the stored values in the Song, but put a <b>Key r</b> on the <i>sectionTheme</i> column of the <a href="#displayOptionsMatrixTopic">Display Options Matrix</a>: the dropdown is yours again.  Remove the block to let the Song steer once more.
+</p>
+
+<h5>A note about the controls</h5>
+<p>The dropdowns on this page describe <i>one Theme</i>: whichever was loaded last (the Song Theme, a catalog Theme, or an Instrument's Theme).  <b>Theme</b>, <b>Copy to Section</b> and the Matrix's cells all save or load the whole set.  How to choose each individual value is not covered here.  The picker, the Matrix and the Theme controls act on the same Song model, so a Theme saved on this page is in the Song file when you <b>File | Download</b>.
+</p>
+
 
 
 <!-- END new Themes page documentation -->
