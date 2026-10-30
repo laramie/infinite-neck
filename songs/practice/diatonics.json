@@ -518,7 +518,7 @@
             "faceDoubleDiamondsColor": "gold",
             "faceTinyDiamondsSize": "0.4rem",
             "singleNoteShrink": "5%",
-            "singleNoteShadowColor": "red",
+            "singleNoteShadowColor": "#56fa00",
             "noteWhiteShadowColor": "black",
             "noteBlackShadowColor": "black",
             "noteWhiteKeyShadowColor": "0 0 2pt 1pt black",
