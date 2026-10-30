@@ -61,6 +61,10 @@
            line-height: 0;
        }
 
+       OL {
+           padding-left: 8em;
+           font-size: 90%;
+       }
        UL {
            padding-left: 8em;
            font-size: 90%;
@@ -3748,12 +3752,12 @@ For all these examples, "Show Left Subscript" and "Show Right Subscript" are che
     <td>No</td>
   </tr>
 </table>
-<p><b>Which Theme does an Instrument show?</b> At any Section, each Instrument uses the first of these that applies:
+<p><b>Which Theme does an Instrument show?</b> At any Section, each Instrument uses the first of these that applies:</p>
 <ol>
   <li>Its own Table Theme: the nearest one stored at the Current Section or any <i>earlier</i> Section (layer 3).</li>
   <li>Otherwise the Song Theme as it stands now. With Allow Theme Automation on, that is the <i>sectionTheme</i> inherited at this Section (layer 2); with it off, it is whatever the Themes dropdown holds.</li>
 </ol>
-So an Instrument with a Table Theme ignores the Themes dropdown and Theme automation until the Song reaches a Section that stores a different Table Theme for it.
+<p>So an Instrument with a Table Theme ignores the Themes dropdown and Theme automation until the Song reaches a Section that stores a different Table Theme for it.
 </p>
 
 <h5>The Themes page</h5>
@@ -3910,6 +3914,8 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 </table>
 <p>The Current Section's row is highlighted, and follows you as you navigate or loop. The Matrix redraws when you change Section, press <b>Theme</b>, <b>Clear Table Theme</b> or <b>Copy to Section</b>, add, delete or move Sections, and when you check or uncheck Allow Theme Automation.
   <b>Because the Matrix shows only what a Section itself stores, read down a column to see the cascade:</b> the Theme in the nearest filled cell above (or in the same row) is the one in effect for every blank cell below it, until the next filled cell. The Matrix is a map and a navigator; you change Themes with the buttons above it, and the <i>default</i> column with the View page.
+</p>
+<p><b>Preview.</b>  Check <b>Preview</b> under the Matrix (it starts unchecked) to fill the blank cells with what each Section would actually apply, in <span style="color:gray;">gray</span>.  An Instrument cell shows the Table Theme carried from an earlier Section, or <i>default[PICKER]</i> when it has none and so shows the Song Theme, where PICKER is the Theme in the main menu Themes dropdown (the square brackets are part of the label).  The <i>default</i> column shows the Theme that automation applies at each Section; <i>(kept)</i> means automation applies nothing there, so the Themes dropdown keeps what it holds.  When automation applies more than one Theme across the Song, <i>default[PICKER]</i> would hide that, so it is shown as <i>default:Current</i>, where Current is the Theme applied at that Section (for example <i>default:USER</i>, then <i>default:BigInJapan</i>), or <i>(kept)</i> when automation applies none.  A stored Theme that is not applied (automation off, or read-blocked) is struck through.  Hover a gray cell to see where its value comes from.
 </p>
 <p>When you move between Sections the controls on this page are <b>not</b> reloaded. They show the last Theme loaded, which may not be the one in effect at the Section you are now on (for example after Theme automation has changed the Song Theme). Click the Instrument's cell in the Matrix, or pick the Instrument in the picker again, before you press <b>Theme</b> or <b>Copy to Section</b>, so you do not save a stale Theme.
 </p>

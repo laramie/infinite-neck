@@ -115,6 +115,59 @@
     background-color: #a1fde9;
 }
 
+/* Sprint 149 Iteration 1: Theme Matrix "Preview" (see themeMatrixPreview.js).  A Preview cell is a value the Section
+   does not store but would apply, so it is gray. */
+.themeMatrixPreviewCell {
+    color: gray;
+}
+.themeMatrixPreviewCell--held {
+    font-style: italic;
+}
+.themeMatrixPreviewCell--dormant,
+.themeMatrixPreviewCell--ignored {
+    text-decoration: line-through;
+}
+.themeMatrixPreviewToggle {
+    margin-top: 0.4em;
+}
+.themeMatrixPreviewToggle input[type="checkbox"] {
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
+.themeMatrixPreviewHelp {
+    margin-top: 0.4em;
+}
+
+/* Sprint 149 Iteration 4: informational, live Allow Theme Automation label in the Theme Matrix footer.  Same look as the
+   View page's read-only lines (.viewDisplayOptionsReadOnly in infinite-neck.css): bold brown value, not a checkbox. */
+/* The footer is a div below the table, inside #divThemeMatrixWrap (so it hides with the Matrix).  The wrapper shrinks to the
+   table, and the footer takes the table's width without widening it (width:0 + min-width:100%), so the table sizes itself. */
+#divThemeMatrixWrap {
+    display: inline-block;
+    min-width: 24em;
+    width: 98%;
+}
+.themeMatrixFooter {
+    box-sizing: border-box;
+    width: 0;
+    min-width: 100%;
+    margin-top: 0.4em;
+    padding: 0.3em 0.6em;
+    border: 1px solid gray;
+    background-color: white;
+    font-size: 100%;
+}
+.themeMatrixReadOnly {
+    padding-block: 0.2em;
+    padding-left: 0;
+    margin-block: 0.5em 0.2em;
+    font-size: 110%;
+}
+#themeMatrixAllowThemeAutomationValue {
+    font-weight: 600;
+    color: brown;
+}
+
 .tblThemeIdDump {
   border-collapse: collapse; /* Merges double cell borders into single thin lines */
   font-family: sans-serif;

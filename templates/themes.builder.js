@@ -3,9 +3,12 @@ import * as InfiniteNeck from '../infinite-neck.js';
 import * as Constants from '../Constants.js';
 import EventBus from '../event-bus.js';
 import { escapeHtml } from '../InstrumentRoleBadges.js';
+import { buildThemeMatrixPreview } from './themeMatrixPreview.js';
 
 export class ThemesBuilder {
     static divThemes = null; //Singleton
+    /** Sprint 149 it1: the Theme Matrix "Preview" checkbox (starts unchecked; not remembered between sessions). */
+    static themeMatrixPreview = false;
     static addToDest(divDestSelector) {
         if (!ThemesBuilder.divThemes){
             const template = document.getElementById('themes-template');
@@ -101,6 +104,9 @@ export class ThemesBuilder {
         ThemeFunctions.clearThemeDiffResults();
         InfiniteNeck.refreshShowAllNoteNames();
         InfiniteNeck.updateDisplayOptionsReadonlyValues();
+        if (ThemesBuilder.themeMatrixPreview) {
+            ThemesBuilder.renderThemeMatrix();  //Preview's default[PICKER] follows the Themes dropdown.
+        }
         $(this).blur();  // Remove focus so keyboard doesn't change selection
     }
 
@@ -166,6 +172,17 @@ export class ThemesBuilder {
         const sections = song.sections || [];
         const currentSectionIndex = song.getSectionsCurrentIndex();
         const allowThemeAutomation = !!song.allowThemeAutomation;
+        // Sprint 149 it1: Preview asks the Song what each Section would APPLY (see themeMatrixPreview.js).
+        const preview = ThemesBuilder.themeMatrixPreview
+            ? buildThemeMatrixPreview(song, tableIDs, { knownThemeIds: new Set(Object.keys(ThemeFunctions.getThemes())), pickerThemeId: $('#selThemes').val() || null })
+            : null;
+        // A Preview cell draws gray unless the Section itself stores and applies the value.
+        const cellAttrs = (baseClass, cell) => {
+            if (!cell || cell.kind === 'stored') {
+                return ` class="${baseClass}"${cell?.title ? ` title="${escapeHtml(cell.title)}"` : ''}`;
+            }
+            return ` class="${baseClass} themeMatrixPreviewCell themeMatrixPreviewCell--${cell.kind}"${cell.title ? ` title="${escapeHtml(cell.title)}"` : ''}`;
+        };
 
         let html = '<thead><tr><th>Section</th><th title="Shows when [Allow Theme Automation] sets a Theme for this Section">default</th>';
         tableIDs.forEach((tableID) => {
@@ -177,6 +194,16 @@ export class ThemesBuilder {
         sections.forEach((section, sectionIndex) => {
             const rowClass = sectionIndex === currentSectionIndex ? ' class="themeMatrixRow--current"' : '';
             html += `<tr${rowClass}><td class="themeMatrixSectionCell" data-section-index="${sectionIndex}">${sectionIndex + 1}</td>`;
+            if (preview) {
+                const previewRow = preview.rows[sectionIndex];
+                html += `<td${cellAttrs('themeMatrixDefaultCell', previewRow.defaultCell)} data-section-index="${sectionIndex}">${escapeHtml(previewRow.defaultCell.text)}</td>`;
+                tableIDs.forEach((tableID) => {
+                    const cell = previewRow.tableCells[tableID];
+                    html += `<td${cellAttrs('themeMatrixCell', cell)} data-section-index="${sectionIndex}" data-table-id="${escapeHtml(tableID)}">${escapeHtml(cell.text)}</td>`;
+                });
+                html += '</tr>';
+                return;
+            }
             const sectionTheme = allowThemeAutomation ? (section?.displayOptions?.sectionTheme || '') : '';
             html += `<td class="themeMatrixDefaultCell" data-section-index="${sectionIndex}">${escapeHtml(sectionTheme)}</td>`;
             tableIDs.forEach((tableID) => {
@@ -186,8 +213,28 @@ export class ThemesBuilder {
             html += '</tr>';
         });
         html += '</tbody>';
-        html += '<tfoot><tr><td colspan="3" style="font-size:60%;">"default" shows when [Allow Theme Automation] sets a Theme for this Section. See View|DisplayOptionsMatrix</td></tr></tfoot>'
+        // Sprint 149 it4: the footer is a div below the table (inside #divThemeMatrixWrap, so it hides with the Matrix), not a
+        // tfoot cell, so the table sizes itself.  The live, read-only Allow Theme Automation label sits above the Preview
+        // checkbox; renderThemeMatrix() already runs when #cbAllowThemeAutomation changes, so it stays live.
+        let previewHelp = '';
+        if (preview) {
+            previewHelp = '<div class="themeMatrixPreviewHelp">Preview: <span class="themeMatrixPreviewCell">gray</span> = not stored here, but applied here. '
+                + '<i>(kept)</i> = automation applies nothing, so the Themes dropdown keeps what it holds. '
+                + '<i>default[PICKER]</i> = the Song Theme, one fixed Theme: the one in the Themes dropdown'
+                + (preview.songThemeVaries
+                    ? `; <b>default:Current</b> = the Song Theme, which automation changes from Section to Section (${escapeHtml(preview.songThemeIds.join(', '))}), where Current is the Theme applied at that Section, or <i>(kept)</i> when none is.`
+                    : '.')
+                + (preview.automationOn ? '' : ' Theme automation is off, so stored sectionThemes are dormant (struck through).')
+                + '</div>';
+        }
         table.html(html);
+        $('#divThemeMatrixFooter').html(
+            'The <b>default</b> column shows the Theme that Theme automation stores on a Section (its <i>sectionTheme</i> Display Option), and only while Allow Theme Automation is true. '
+            + 'Each Instrument column shows the Table Theme that Instrument stores on that Section. A blank cell stores nothing. See View | Display Options Matrix.'
+            + '<p class="themeMatrixReadOnly">Allow Theme Automation: <span id="themeMatrixAllowThemeAutomationValue">' + String(allowThemeAutomation) + '</span></p>'
+            + '<div class="themeMatrixPreviewToggle"><label><input type="checkbox" id="cbThemeMatrixPreview"' + (ThemesBuilder.themeMatrixPreview ? ' checked' : '') + '> Preview</label></div>'
+            + previewHelp
+        );
     }
 
     /** Sprint 146 Iteration 2 (146-it2-design.md point 1): shows/hides the Theme matrix, mirroring
@@ -294,6 +341,10 @@ export class ThemesBuilder {
                 return;
             }
             ThemesBuilder.themeMatrixDefaultCellClick(sectionIndex);
+        });
+        $('#divThemeMatrixFooter').on('change', '#cbThemeMatrixPreview', function() {
+            ThemesBuilder.themeMatrixPreview = this.checked;
+            ThemesBuilder.renderThemeMatrix();
         });
         $('#btnToggleThemeTableResults').click(function() {
             $('#themeTableResults').toggle();
