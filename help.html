@@ -1169,10 +1169,8 @@
                         </ul>
                         <li><a href="#palette">Palette</a></li>
                         <ul class="LinkList">
-                            <li><a href='#specialColors'>Special Colors</a></li>
-                        </ul>
-                        <li><a href="#paletteUsage">Palette Usage</a></li>
-                        <ul class="LinkList">
+                            <li><a href="#paletteOverview">Palette Overview</a></li>
+                            <li><a href="#paletteUsage">Palette Usage</a></li>
                             <li><a href="#paletteHowItWorks">How the Palette works</a></li>
                             <li><a href="#paletteNoteTypes">Note types</a></li>
                             <li><a href="#paletteFingering">Fingering</a></li>
@@ -4086,12 +4084,16 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
 
 <a name="palette"></a>
 <h3>Palette</h3>
+<a name="paletteOverview"></a>
+<h4>Palette Overview</h4>
  <p>The Palette lets you choose what kind of note you'll be placing when you click in a cell,
      and what color and hatching will be used.
  </p>
 
  <p>First, choose what kind of note: Named, Single, Tiny, Bend, Pitch Highlight, Multi Highlight, or Fingering.
-     There's more detail in the <a href="#glossary">Glossary</a> about these note kinds.
+     In the next section,
+     <a href="#paletteUsage">Palette Usage</a> we'll cover this in detail. 
+     <i>(There's more detail in the <a href="#glossary">Glossary</a> about these note kinds.)</i>    
  </p>
 
  <p>Then, decide whether you'll use AutoColor.  With AutoColor, Note Functions are
@@ -4135,85 +4137,14 @@ The cascade only runs <i>forward</i> from the Section that stores it. If only Se
      you probably want AutoColor off to take advantage of this.
  </p>
 
- <p>To change ColorScheme away from CycleOfColors, click the [Customize...] button on the Palette menu.
-     Chose colors and hatches for
-     each of the Note Functions [note1, note2, ....,note12] using the little picker buttons and their pop-up pickers.
-     (Click the little button again to make the picker go away, or click a
-     color/hatch to chose it and make the picker go away.)
-     When you have colors selected for each of the Note Functions [note1,...,note12],
-     then click the [Record Stylesheet] button.  You can provide a Stylesheet name,
-     or the name "user" will be filled in for you.  Now the Stylesheets will be shown,
-     the same as if you had clicked the [Stylesheets] button, and your new Stylesheet will be a the bottom of the list.
-     The bottom row is the composite stylesheet of built-in stylesheets plus your user stylesheets, as selected with the links
-     and checkboxes, which you can play around with.  This result is your active ColorScheme, and is saved in the song.
-     To apply it to other songs, open this song first, delete any Sections, then open the Song you want to view
-     using the "Append sections to current song" checkbox on the File menu.
-     (There always has to be one Section, so just mash on the Delete Section button repeatedly in the Section
-     menu until you are down to one Section and it is blank.)  Now when you open the other song, you'll see that song's
-     Sections, along with its saved Stylesheets, and your new Stylesheet.
- </p>
-
- <p>You can also customize the colors for Fingering the same way.  You'll see that the Default stylesheets are broken up
-     into CycleOfColors for Note Functions, Fingerings for fingering colors, and Roles for Role colors.  You may overide any of the
-     individual colors in your stylesheet, and leave some Roles or Fingers or Note Functions as Default by not adding things in your stylesheet.
-     You may also have multiple stylesheets by entering different names in "Stylesheet name" before clicking "Record Stylesheet".
- </p>
-
- <p>There is another way to record a stylesheet: manually place colored NamedNotes on the neck, then click 
-    <button class="MenuButton BtnPunchedOut" type="button" tabindex="-1">FirstInstrument:NamedNotes =&gt; Stylesheet</button>.
-     This will create a stylesheet for the Note Functions only, based on the colors you chose for those Note Function locations.
-     You do not need to do all Note Functions--you could just override the II and the &Delta; for example.  Then, when AutoColor is on
-     the two notes in your stylesheet would override the Default, but other notes would use the Default.
- </p>
-
  
- <a name='specialColors'>
- <h4>Special Colors</h4>
- <p>Finally, there are several special "Color" buttons: [CLEAR, KEEP, and Find Color] and the special "Last Color" button to the right of these, and the left of "AutoColor".
-</p>
-
-<p>
-     "KEEP" disables placing new notes,
-     so is useful if you just want to click around and not change anything, or if you are doing a presentation
-     and don't want to mess things up. You can still place Highlights to call attention to notes, and these will disappear on Navigation actions, such as NextSection
-</p>
-
-<p>
- "CLEAR" lets you delete all note types from the cell you clicked.  To delete just one note type, you can select that type in the Palette, then just click on a note, and the note will go away.  
- If, instead of CLEAR, you select the Last Note button, and a different color the note will be re-colored with whatever color you currently have active.
-</p>
-
-<p>
-     To find what color you used before, make sure AutoColor is off, then click "Find Color", then click the note
-     on the neck. Only the type of note chose [NamedNote, SingleNote,...] will be searched: helpful
-     if you have multiple note types in a cell. The color name will appear in the "Last Color" button, which will be selected, and 
-     AutoColor will be turned off, and the color will be selected and highlighted on the palette 
-     radio button for that color, shown with a big glow. Click the big glow on that radio button to make the glow go away.
-     <br>
-     <br>
-     The color name will appear in the Caption of that instrument, so open up the Caption row
-     with the little hamburger on the instrument.
-     If the whole Caption on the instrument is missing, press ESC then SHIFT-A to show it.
- </p>
-
- <p>Two more colors are special: [Emboss, and Auto].  Emboss just creates a note with transparent background.  This is useful
-     if you'll be using AutoColor, so as to be obvious when AutoColor is off--all the notes will just be transparent but still have borders, highlights, etc.
-     Emboss is also useful if you'd like to just display the Named Notes so you can see their positions all the way up the neck,
-     and then use color to draw your attention to SingleNotes that you'll actually play.
- </p>
- <p>The color called "Auto" places notes with a color selected by AutoColor, but that color persists even when AutoColor is off.
-     This is useful if you want the colors from a ColorScheme to apply while placing notes, but you don't want to use AutoColor
-     because you are using color Roles, or are using Emboss.
- </p>
-
-
-
 <a name="paletteUsage"></a>
-<h3>Palette Usage</h3>
+<h4>Palette Usage</h4>
 <!-- BEGIN paletteUsage -->
 
-<p>This topic is a complete guide to the Palette: choosing what a click places, choosing its color, and building and maintaining your own Stylesheets.
-    Open the Palette with <span class="key">p</span> or the <span class="GUIReferenceInline">Palette</span> button on the menu row, and close it with <span class="key">ESC</span>.
+<p>Below is a complete guide to the Palette: choosing what a click places, choosing its color, and building and maintaining your own Stylesheets.
+</p>
+<p>Open the Palette with <span class="key">p</span> or the <span class="GUIReferenceInline">Palette</span> button on the menu row, and close it with <span class="key">ESC</span>.
 </p>
 
 <a name="paletteHowItWorks"></a>
