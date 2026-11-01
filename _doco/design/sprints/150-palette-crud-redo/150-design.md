@@ -102,6 +102,10 @@ From `150-it1-report.md` we have the following answers.  A few depend on the abo
 
 - ANSWER: Sort of.  Please use that name, but in location `templates/palette/stylesheetPlan.js` as discussed above.  We will want this directory created, and the `palette*` files moved, and a baseline test and baseline browser UA test we will perform before the rest of the implementation.  Since we are migrating the template files to these named subdirectories, now seems likes the best time to perform this migration for `palette`.  The other older template files (section-drawer, themes, etc.) will be migrated in another sprint.
 
+## Further Discussion
+
+After thinking about the above, we feel that there may be a need for the combined stack of stylesheets to have a User-facing name and that would be the name and identifier stored in the Section.  We have been calling this the "long name", e.g. `All-Clear+CycleOfColors+Roles+Fingerings+CycleOfColors-user2+Fingerings-user`.  It seems that two combinations of the elements in that long name should really be two User-facing styles. This would need some UX around it, i.e. accepting/changing the name, and managing a list of names assigned to the different possible combinations.  Please add this to your consideration in recommending approaches.
+
 ## Iteration 2 Request
 
 (Iteration numbers suggested in your report may have to be bumped up to accommodate this Iteration.  They can be left as-is in your existing report, and renumbered in the requested implementation plan).
