@@ -1,0 +1,1084 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46"
+    },
+    {
+      "instance": true,
+      "baseID": "Piano_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano",
+      "nStrings": 1,
+      "rowRange": [
+        21
+      ],
+      "frets": 88,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": false,
+      "pianoSkeuomorphic": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "Piano"
+    },
+    {
+      "instance": true,
+      "baseID": "PianoSchroeder_1",
+      "baseInstrument": "Piano",
+      "caption": "Piano Schroeder",
+      "nStrings": 1,
+      "rowRange": [
+        48
+      ],
+      "frets": 26,
+      "nut": false,
+      "reverse": false,
+      "pianoNamesRow": true,
+      "fixedFretWidthMult": 0.5,
+      "stringDividerHeight": "0",
+      "fromBaseID": "PianoSchroeder"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblP46_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblPiano_1",
+      "visible": true
+    },
+    {
+      "tableID": "tblPianoSchroeder_1",
+      "visible": true
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "fill": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "fill-tiny-root-chord-automatic",
+      "properties": {
+        "targetTable": "tblP46_1",
+        "chordFormula": "dim7",
+        "scaleFormula": "major",
+        "automaticFromChart": false,
+        "minFret": 0,
+        "maxFret": 4,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 5,
+        "namedRootMode": "keep",
+        "namedRootColor": "noteRoot",
+        "namedChordMode": "keep",
+        "namedChordColor": "noteChord",
+        "namedScaleMode": "keep",
+        "namedScaleColor": "noteScale",
+        "singleRootMode": "none",
+        "singleRootColor": "noteRoot",
+        "singleChordMode": "none",
+        "singleChordColor": "noteChord",
+        "singleScaleMode": "none",
+        "singleScaleColor": "noteScale",
+        "tinyRootMode": "role",
+        "tinyRootColor": "noteAutomatic",
+        "tinyChordMode": "role",
+        "tinyChordColor": "noteAutomatic",
+        "tinyScaleMode": "none",
+        "tinyScaleColor": "noteScale",
+        "singleAddTiny": "none"
+      }
+    }
+  },
+  "macros": {
+    "fill-named-C": {
+      "lines": [
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "fill-tiny-chord": {
+      "lines": [
+        "/fpfgri \"fill-tiny-root-chord\"",
+        "/skwd",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "doit": {
+      "lines": [
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord\"",
+        "/skwe",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "create-white-key-sections": {
+      "lines": [
+        "/fmv",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwc",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocs",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwc",
+        "/sc \"C minor 7\"",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwd",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwd",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwd",
+        "/fpfocs",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwd",
+        "/sc \"D minor 7\"",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwd",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwd",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwe",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwe",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwf",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwf",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwg",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwg",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwa",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwa",
+        "/sa",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwb",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwb"
+      ]
+    },
+    "fill-tiny-chord-transparent": {
+      "lines": [
+        "/fpfgri \"fill-tiny-root-chord-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "fill-tiny-automatic": {
+      "lines": [
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM"
+      ]
+    },
+    "all-chords": {
+      "lines": [
+        "/fmv",
+        "/sa",
+        "/fpfgri \"fill-named-diatonic-transparent\"",
+        "/skwc",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/sec",
+        "/snp",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwd",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/slwd",
+        "/skwc",
+        "/sc \"D Major\"",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwd",
+        "/fpfocs",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/skwc",
+        "/slwd",
+        "/sc \"D minor 7\"",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwe",
+        "/fpfocM",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/skwc",
+        "/slwe",
+        "/sc \"E Major\"",
+        "/snn",
+        "/sec",
+        "/snp",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwe",
+        "/fpfocs",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/skwc",
+        "/slwe",
+        "/sc \"E minor 7\"",
+        "/sec",
+        "/snp",
+        "/fpfgri \"fill-tiny-root-chord-automatic\"",
+        "/skwe",
+        "/fpfoci",
+        "/fpfom1",
+        "/fpfA",
+        "/fpfM",
+        "/skwc",
+        "/slwe",
+        "/sc \"E dim 7\""
+      ]
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "80",
+  "info": {
+    "lines": [
+      "",
+      "<br>Raise plugin state: <a href=\"#raise=fill.fill-tiny-root-chord\">fill.fill-tiny-root-chord</a>",
+      "<br>Raise plugin state: <a href=\"#raise=fill.fill-named-root-chord\">fill.fill-named-root-chord</a>",
+      "<br>Raise plugin state: <a href=\"#raise=fill.filll-named-scale-transparent\">fill.filll-named-scale-transparent</a>",
+      "<br>Raise plugin state: <a href=\"#raise=fill.fill-tiny-root-chord\">fill.fill-tiny-root-chord</a>"
+    ]
+  },
+  "namedNoteOpacity": "0.7",
+  "openInfo": "none",
+  "presentationMode": true,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": false,
+    "addTransposedRootToChord": false,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "supersong-macro-major-C-w-display",
+  "theme": "Autobahn",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblP46_1": {
+          "namedNotes": {
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 67,
+              "row": 0,
+              "col": 2,
+              "colorClass": "note8"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 60,
+              "row": 1,
+              "col": 0,
+              "colorClass": "note1"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 64,
+              "row": 1,
+              "col": 4,
+              "colorClass": "note5"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 55,
+              "row": 2,
+              "col": 0,
+              "colorClass": "note8"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 52,
+              "row": 3,
+              "col": 2,
+              "colorClass": "note5"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 1,
+              "midinum": 48,
+              "row": 4,
+              "col": 3,
+              "colorClass": "note1"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 1,
+              "midinum": 40,
+              "row": 5,
+              "col": 0,
+              "colorClass": "note5"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 1,
+              "midinum": 43,
+              "row": 5,
+              "col": 3,
+              "colorClass": "note8"
+            }
+          ]
+        }
+      },
+      "caption": "Settings Section",
+      "chartChord": "",
+      "chartMode": "",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": 3,
+      "beats": 4,
+      "currentBeat": 1,
+      "sharps": true,
+      "displayOptions": {
+        "autoColor": false,
+        "showCellNotes": false,
+        "showSubscriptFunctions": true,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": false,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideSingleNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": true,
+        "namedNoteOpacity": "0.7",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "NoteDisplaySizes": {
+          "caption": "200x60:22",
+          "width": "200px",
+          "height": "60px",
+          "NoteFontSize": 22
+        },
+        "functionSymbols": "function",
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "2",
+        "pianoWidthScaleFactor": "2",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "200%",
+        "tinyNoteMaxHeight": "70%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "50%",
+        "tinyNoteHPosition": "50%",
+        "tinyNoteRadius": "50%"
+      }
+    }
+  ],
+  "wirings": [
+    {
+      "tablename": "tblPianoSchroeder_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    },
+    {
+      "tablename": "tblPiano_1",
+      "relativeSection": "",
+      "listenToTablename": "tblP46_1",
+      "listenerProjection": "midi-low-to-high"
+    }
+  ],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1785903785995,
+        "date": "8/4/2026",
+        "time": "9:23:05 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "fill-named-diatonic-transparent",
+          "logicalKey": "fill::fill-named-diatonic-transparent",
+          "schemaVersion": 1,
+          "caption": "fill / fill-named-diatonic-transparent"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-named-diatonic-transparent\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteTransparent\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteTransparent\",\n        \"namedScaleMode\": \"role\",\n        \"namedScaleColor\": \"noteTransparent\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"keep\",\n        \"tinyRootColor\": \"noteRoot\",\n        \"tinyChordMode\": \"keep\",\n        \"tinyChordColor\": \"noteChord\",\n        \"tinyScaleMode\": \"keep\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": 1785910363796
+      },
+      {
+        "timestamp": 1785905284531,
+        "date": "8/4/2026",
+        "time": "9:48:04 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "fill-tiny-root-chord-automatic",
+          "logicalKey": "fill::fill-tiny-root-chord-automatic",
+          "schemaVersion": 1,
+          "caption": "fill / fill-tiny-root-chord-automatic"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"fill-tiny-root-chord-automatic\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"M\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": 1785910381046
+      },
+      {
+        "timestamp": 1785910381043,
+        "date": "8/4/2026",
+        "time": "11:13:01 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "fill",
+          "userKey": "USER",
+          "logicalKey": "fill::USER",
+          "schemaVersion": 1,
+          "caption": "fill / USER"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"targetTable\": \"tblP46_1\",\n        \"chordFormula\": \"m7\",\n        \"scaleFormula\": \"major\",\n        \"automaticFromChart\": false,\n        \"minFret\": 0,\n        \"maxFret\": 4,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"namedRootMode\": \"keep\",\n        \"namedRootColor\": \"noteRoot\",\n        \"namedChordMode\": \"keep\",\n        \"namedChordColor\": \"noteChord\",\n        \"namedScaleMode\": \"keep\",\n        \"namedScaleColor\": \"noteScale\",\n        \"singleRootMode\": \"none\",\n        \"singleRootColor\": \"noteRoot\",\n        \"singleChordMode\": \"none\",\n        \"singleChordColor\": \"noteChord\",\n        \"singleScaleMode\": \"none\",\n        \"singleScaleColor\": \"noteScale\",\n        \"tinyRootMode\": \"role\",\n        \"tinyRootColor\": \"noteAutomatic\",\n        \"tinyChordMode\": \"role\",\n        \"tinyChordColor\": \"noteAutomatic\",\n        \"tinyScaleMode\": \"none\",\n        \"tinyScaleColor\": \"noteScale\",\n        \"singleAddTiny\": \"none\"\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785906918994,
+        "date": "8/4/2026",
+        "time": "10:15:18 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 0,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 68,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 56,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 44,\n                    \"row\": 5,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 7,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908141908,
+        "date": "8/4/2026",
+        "time": "10:35:41 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 6,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 63,\n                    \"row\": 1,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 51,\n                    \"row\": 3,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 2,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908144565,
+        "date": "8/4/2026",
+        "time": "10:35:44 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 5,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 61,\n                    \"row\": 1,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 49,\n                    \"row\": 4,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 0,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908146592,
+        "date": "8/4/2026",
+        "time": "10:35:46 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 10,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908148687,
+        "date": "8/4/2026",
+        "time": "10:35:48 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 65,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 53,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 41,\n                    \"row\": 5,\n                    \"col\": 1,\n                    \"colorClass\": \"note1\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 8,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908150685,
+        "date": "8/4/2026",
+        "time": "10:35:50 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 68,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 56,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 44,\n                    \"row\": 5,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 7,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785908155280,
+        "date": "8/4/2026",
+        "time": "10:35:55 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 5,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910289736,
+        "date": "8/4/2026",
+        "time": "11:11:29 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 19,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910292645,
+        "date": "8/4/2026",
+        "time": "11:11:32 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 18,
+          "caption": "E minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note4\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"E minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 7,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910295459,
+        "date": "8/4/2026",
+        "time": "11:11:35 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 17,
+          "caption": "E Major"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 68,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 56,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 44,\n                    \"row\": 5,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"E Major\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 7,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910297990,
+        "date": "8/4/2026",
+        "time": "11:11:37 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 16,
+          "caption": "D minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 65,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 53,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 41,\n                    \"row\": 5,\n                    \"col\": 1,\n                    \"colorClass\": \"note4\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"D minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 5,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910300444,
+        "date": "8/4/2026",
+        "time": "11:11:40 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 15,
+          "caption": "D Major"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"D Major\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 5,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true,\n    \"displayOptions\": {\n        \"autoColor\": false,\n        \"showCellNotes\": true,\n        \"showSubscriptFunctions\": true,\n        \"cellIsFunction\": false,\n        \"showMidiNum\": false,\n        \"useCenterForRightFunction\": false,\n        \"naturalFretWidths\": true,\n        \"hideNamedNotes\": false,\n        \"hideTinyNotes\": false,\n        \"hideSingleNotes\": false,\n        \"hideFingering\": false,\n        \"showAllNoteNames\": true,\n        \"namedNoteOpacity\": \"0.7\",\n        \"singleNoteOpacity\": \"1\",\n        \"tinyNoteOpacity\": \"1\",\n        \"NoteDisplaySizes\": {\n            \"caption\": \"200x60:22\",\n            \"width\": \"200px\",\n            \"height\": \"60px\",\n            \"NoteFontSize\": 22\n        },\n        \"functionSymbols\": \"function\",\n        \"naturalFontScaling\": \"60\",\n        \"pianoHeightScaleFactor\": \"2\",\n        \"pianoWidthScaleFactor\": \"2\",\n        \"pianoWhiteToBlackWidthRatio\": \"2.3\",\n        \"pianoFingeringHPosition\": \"50%\",\n        \"showLooperLightBeats\": true,\n        \"noteFont\": \"EB Garamond\",\n        \"leftSubscriptFontSize\": \"80%\",\n        \"rightSubscriptFontSize\": \"80%\",\n        \"midiFontSize\": \"80%\",\n        \"fingeringFontSize\": \"80%\",\n        \"fingeringPosition\": \"0\",\n        \"tinyNoteFontSize\": \"200%\",\n        \"tinyNoteMaxHeight\": \"70%\",\n        \"tinyNoteVPosition\": \"50%\",\n        \"tinyNoteWidth\": \"50%\",\n        \"tinyNoteHPosition\": \"50%\",\n        \"tinyNoteRadius\": \"50%\"\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910302947,
+        "date": "8/4/2026",
+        "time": "11:11:42 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 14,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910305085,
+        "date": "8/4/2026",
+        "time": "11:11:45 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 13,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910307112,
+        "date": "8/4/2026",
+        "time": "11:11:47 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 12,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910309563,
+        "date": "8/4/2026",
+        "time": "11:11:49 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 11,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note12\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note6\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note10\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note7\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"note3\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910311695,
+        "date": "8/4/2026",
+        "time": "11:11:51 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 10,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 63,\n                    \"row\": 1,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 51,\n                    \"row\": 3,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 2,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910313794,
+        "date": "8/4/2026",
+        "time": "11:11:53 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 9,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 61,\n                    \"row\": 1,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 49,\n                    \"row\": 4,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 0,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910315985,
+        "date": "8/4/2026",
+        "time": "11:11:55 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 8,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 10,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910317994,
+        "date": "8/4/2026",
+        "time": "11:11:57 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 7,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 65,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 53,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 41,\n                    \"row\": 5,\n                    \"col\": 1,\n                    \"colorClass\": \"note1\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 8,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910320015,
+        "date": "8/4/2026",
+        "time": "11:12:00 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 6,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 68,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 56,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 44,\n                    \"row\": 5,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 7,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910322269,
+        "date": "8/4/2026",
+        "time": "11:12:02 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 5,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 5,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910326801,
+        "date": "8/4/2026",
+        "time": "11:12:06 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": "D minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 65,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 53,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 41,\n                    \"row\": 5,\n                    \"col\": 1,\n                    \"colorClass\": \"note4\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"D minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 5,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910328700,
+        "date": "8/4/2026",
+        "time": "11:12:08 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 5,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910330898,
+        "date": "8/4/2026",
+        "time": "11:12:10 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": "C minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"C minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910334822,
+        "date": "8/4/2026",
+        "time": "11:12:14 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910525341,
+        "date": "8/4/2026",
+        "time": "11:15:25 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 7,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910527581,
+        "date": "8/4/2026",
+        "time": "11:15:27 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 6,
+          "caption": "E minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note4\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"E minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 7,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910528949,
+        "date": "8/4/2026",
+        "time": "11:15:28 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 5,
+          "caption": "E dim 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 67,\n                    \"row\": 0,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 61,\n                    \"row\": 1,\n                    \"col\": 1,\n                    \"colorClass\": \"note2\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 55,\n                    \"row\": 2,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 58,\n                    \"row\": 2,\n                    \"col\": 3,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 46,\n                    \"row\": 4,\n                    \"col\": 1,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 1,\n                    \"midinum\": 49,\n                    \"row\": 4,\n                    \"col\": 4,\n                    \"colorClass\": \"note2\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 1,\n                    \"midinum\": 43,\n                    \"row\": 5,\n                    \"col\": 3,\n                    \"colorClass\": \"note8\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"E dim 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 7,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910530526,
+        "date": "8/4/2026",
+        "time": "11:15:30 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 4,
+          "caption": "E Major"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 68,\n                    \"row\": 0,\n                    \"col\": 3,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 64,\n                    \"row\": 1,\n                    \"col\": 4,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 56,\n                    \"row\": 2,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 59,\n                    \"row\": 2,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 52,\n                    \"row\": 3,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 1,\n                    \"midinum\": 47,\n                    \"row\": 4,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 1,\n                    \"midinum\": 40,\n                    \"row\": 5,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 1,\n                    \"midinum\": 44,\n                    \"row\": 5,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"E Major\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 7,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910531711,
+        "date": "8/4/2026",
+        "time": "11:15:31 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": "D minor 7"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 65,\n                    \"row\": 0,\n                    \"col\": 0,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 60,\n                    \"row\": 1,\n                    \"col\": 0,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 53,\n                    \"row\": 3,\n                    \"col\": 3,\n                    \"colorClass\": \"note4\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 1,\n                    \"midinum\": 48,\n                    \"row\": 4,\n                    \"col\": 3,\n                    \"colorClass\": \"note11\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 1,\n                    \"midinum\": 41,\n                    \"row\": 5,\n                    \"col\": 1,\n                    \"colorClass\": \"note4\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"D minor 7\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 5,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910532719,
+        "date": "8/4/2026",
+        "time": "11:15:32 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": "D Major"
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 66,\n                    \"row\": 0,\n                    \"col\": 1,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 69,\n                    \"row\": 0,\n                    \"col\": 4,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 62,\n                    \"row\": 1,\n                    \"col\": 2,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 57,\n                    \"row\": 2,\n                    \"col\": 2,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 1,\n                    \"midinum\": 50,\n                    \"row\": 3,\n                    \"col\": 0,\n                    \"colorClass\": \"note1\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 54,\n                    \"row\": 3,\n                    \"col\": 4,\n                    \"colorClass\": \"note5\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 1,\n                    \"midinum\": 45,\n                    \"row\": 4,\n                    \"col\": 0,\n                    \"colorClass\": \"note8\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 1,\n                    \"midinum\": 42,\n                    \"row\": 5,\n                    \"col\": 2,\n                    \"colorClass\": \"note5\"\n                }\n            ]\n        }\n    },\n    \"caption\": \"D Major\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 5,\n    \"rootIDLead\": 3,\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1785910535578,
+        "date": "8/4/2026",
+        "time": "11:15:35 PM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblP46_1\": {\n            \"namedNotes\": {\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 4,\n    \"currentBeat\": 1,\n    \"sharps\": true\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "tutorial": {
+    "level": "wizard"
+  }
+}

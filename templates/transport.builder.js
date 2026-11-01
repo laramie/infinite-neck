@@ -202,6 +202,10 @@ export class TransportBuilder {
 		$transport.show();
 		TransportBuilder.transportResize();
 	}
+	static hideTransport(){
+		var $transport = $('#transport');
+        $transport.hide();
+	}
 
     static transportResize(parkMode = false) {
         var $transport = $('#transport');

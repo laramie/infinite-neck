@@ -1,0 +1,145 @@
+#MobileKeyboard {
+  overflow-x: auto;
+  display: block;
+  width: 100%;
+}
+
+#MobileKeyboard #MobileKeyboardHelpBtn {
+    margin-top: 1em;
+    font-size: 140%;
+    background-color: black;
+    color:#ffdd01;
+    font-weight: bold;
+    padding: 0.3em;
+}
+
+#MobileKeyboard #MobileKeyboardHelpBtn:hover {
+    color: #ff9e01;
+}
+    
+
+#MobileKeyboard table tr td {
+    padding: 0;
+    margin: 0;
+}
+#MobileKeyboard button {
+    color: #010321;
+    background-color:  #ffdd01;;
+    font-size: 110%;
+    border: 1px solid gray;
+    padding: 0.3em;
+    padding-block: 0.6em;
+    margin: 0.2em;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 4px;
+}
+#MobileKeyboard  .mobile-keyboard-skinny {
+    color: #010321;
+    background-color:  #ffdd01;;
+    font-size: 90%;
+    border: 1px solid gray;
+    padding: 0.4em;
+    margin: 0;
+    margin-bottom: 0.2em;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 4px;
+}
+
+#MobileKeyboard b {
+    font-size: 180%;
+}
+
+#MobileKeyboard button:hover {
+    color: #ffdd01;
+    background-color: rgb(25, 6, 0);
+}
+
+#mobile-keyboard-Fingering {
+    color: #010321 !important;
+    background-color: white !important;
+    border: none;
+}
+
+.mobile-keyboard-ActionsExample,
+.mobile-keyboard-Actions i {
+    color: dodgerblue !important;
+    background-color: black !important;
+    padding: 0;
+    padding-bottom: 0.1em;
+    font-weight: normal;
+    font-family: monospace;
+    font-size: 130%;
+    text-align: center;
+    box-shadow: 0 0 4pt 4pt cornflowerblue;
+    border: 1px solid darkblue;
+    border-radius: 50%;
+}
+
+
+
+
+.mobile-keyboard-FingeringExample,
+.mobile-keyboard-Fingering {
+    color: dodgerblue !important;
+    background-color: black !important;
+    padding: 0;
+    padding-bottom: 0.1em;
+    font-weight: normal;
+    font-family: monospace;
+    font-size: 130%;
+    text-align: center;
+    box-shadow: 0 0 4pt 4pt cornflowerblue;
+    border: 1px solid darkblue;
+    border-radius: 50% !important;
+}
+
+.mobile-keyboard-NoteExample,
+.mobile-keyboard-Note {
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    color: #010321 !important;
+    
+    background-color: white !important;
+    border: 6px groove lightgreen !important;
+}
+.mobile-keyboard-Example,
+.mobile-keyboard-MBtn {
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border-radius: 4px;
+    background-color: #6faa09 !important;
+    color: black !important;
+    border: 1px solid black;
+    margin-left: 0.3em;
+    margin-right: 0.6em;
+}
+.mobile-keyboard-MBtn2Example,
+.mobile-keyboard-MBtn2 {
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border-radius: 4px;
+    background-color: #2def2d !important;
+    color: black !important;
+    border: 1px solid black;
+    margin-left: 0.3em;
+    margin-right: 0.6em;
+}
+
+/* Tabs */
+
+.infoTabsButtons #btnDesktopTabKeyboard {
+    padding: 1em;
+}
+.infoTabsButtons #btnDesktopTabButtons {
+    padding: 1em;
+}
+.infoTabsButtons #btnDesktopTabSongWidgets {
+    padding: 1em;
+}
+.infoTabsButtons #btnDesktopTabMIDI {
+    padding: 1em;
+}
+

@@ -1,10 +1,4 @@
 
-#btnShowWarny {
-    font-size: 70%;
-}
-
-
-
 #selThemes {
     font-size: 100%;
     color: black;
@@ -69,6 +63,109 @@
 .undefThemeOption {
     font-size: 80%;
     font-style: italic;
+}
+
+/* Sprint 146 Iteration 2: Section x Instrument Theme matrix (146-it2-design.md points 1-3). */
+#spanThemeMatrixArrow {
+    font-size: 80%;
+}
+.themeMatrixTable {
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 0.5em;
+}
+.themeMatrixTable th,
+.themeMatrixTable td {
+    border: 1px solid gray;
+    padding: 0.3em 0.6em;
+    text-align: left;
+}
+.themeMatrixTable th {
+    background-color: rgb(249, 201, 98);
+}
+.themeMatrixCell {
+    cursor: pointer;
+}
+.themeMatrixCell:hover {
+    background-color: #eee;
+}
+.themeMatrixSectionCell {
+    cursor: pointer;
+    font-weight: bold;
+}
+.themeMatrixSectionCell:hover {
+    background-color: #eee;
+}
+/* Sprint 146 Iteration 2 (per user feedback): informational "default" column -- shows the
+   whole-song Theme-automation value (section.displayOptions.sectionTheme, only when "Allow
+   Theme Automation" is on) for each Section. Clicking only navigates to that Section (see
+   ThemesBuilder.themeMatrixDefaultCellClick()), so it gets the same pointer/hover affordance
+   as the other clickable cells, but italic to mark it as informational-only, not a per-table
+   Theme slot. */
+.themeMatrixDefaultCell {
+    cursor: pointer;
+    font-style: italic;
+}
+.themeMatrixDefaultCell:hover {
+    background-color: #eee;
+}
+/* Same highlight color as section-printer.css's .chartBAR--currentSection, marking the row for
+   whichever Section is currently navigated to -- see 146-it2-design.md point 3. */
+.themeMatrixRow--current {
+    background-color: #a1fde9;
+}
+
+/* Sprint 149 Iteration 1: Theme Matrix "Preview" (see themeMatrixPreview.js).  A Preview cell is a value the Section
+   does not store but would apply, so it is gray. */
+.themeMatrixPreviewCell {
+    color: gray;
+}
+.themeMatrixPreviewCell--held {
+    font-style: italic;
+}
+.themeMatrixPreviewCell--dormant,
+.themeMatrixPreviewCell--ignored {
+    text-decoration: line-through;
+}
+.themeMatrixPreviewToggle {
+    margin-top: 0.4em;
+}
+.themeMatrixPreviewToggle input[type="checkbox"] {
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
+.themeMatrixPreviewHelp {
+    margin-top: 0.4em;
+}
+
+/* Sprint 149 Iteration 4: informational, live Allow Theme Automation label in the Theme Matrix footer.  Same look as the
+   View page's read-only lines (.viewDisplayOptionsReadOnly in infinite-neck.css): bold brown value, not a checkbox. */
+/* The footer is a div below the table, inside #divThemeMatrixWrap (so it hides with the Matrix).  The wrapper shrinks to the
+   table, and the footer takes the table's width without widening it (width:0 + min-width:100%), so the table sizes itself. */
+#divThemeMatrixWrap {
+    display: inline-block;
+    min-width: 24em;
+    width: 98%;
+}
+.themeMatrixFooter {
+    box-sizing: border-box;
+    width: 0;
+    min-width: 100%;
+    margin-top: 0.4em;
+    padding: 0.3em 0.6em;
+    border: 1px solid gray;
+    background-color: white;
+    font-size: 100%;
+}
+.themeMatrixReadOnly {
+    padding-block: 0.2em;
+    padding-left: 0;
+    margin-block: 0.5em 0.2em;
+    font-size: 110%;
+}
+#themeMatrixAllowThemeAutomationValue {
+    font-weight: 600;
+    color: brown;
 }
 
 .tblThemeIdDump {

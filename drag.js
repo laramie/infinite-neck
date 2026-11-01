@@ -1,6 +1,6 @@
 
 
-export function draggable(el, handle) {
+export function draggable(el, handle, onDragEnd) {
   handle = handle || el;
   handle.addEventListener('mousedown', function (e) {
     var offsetX = e.clientX - parseInt(window.getComputedStyle(el).left);
@@ -14,6 +14,9 @@ export function draggable(el, handle) {
     function reset() {
       window.removeEventListener('mousemove', mouseMoveHandler);
       window.removeEventListener('mouseup', reset);
+      if (typeof onDragEnd === 'function') {
+        onDragEnd(el);
+      }
     }
 
     window.addEventListener('mousemove', mouseMoveHandler);

@@ -1,4 +1,5 @@
 export const TABLE_ID_PREFIX = "tbl";
+export const NOTESOURCE_ID_PREFIX = "ns";
 export const NUM_FRETS_MAX = 108;
 export const TABLEDIV_ID_PREFIX = "div";
 export const ALL_TUNINGS_TABLE_ID = "allTuningsTable";
@@ -79,6 +80,7 @@ export const FILL_CHORD_OPTIONS = [
     { value: 'm/ma7', caption: 'm/ma7', trigger: 'j' },
     { value: 'm9', caption: 'm9', trigger: '9' },
     { value: '9', caption: '9', trigger: 'k' },
+    { value: 'm11', caption: 'm11', trigger: 'e' },
     { value: '11', caption: '11', trigger: '1' },
     { value: '13', caption: '13', trigger: '3' },
     { value: '6add9', caption: '6add9', trigger: '6' },

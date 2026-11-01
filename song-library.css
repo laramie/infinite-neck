@@ -170,6 +170,16 @@
   color: rgb(47, 255, 47);
   border: 1px solid rgb(16, 200, 16);
 }
+.instrumentListenerNotesource {
+  background-color: black;
+  color: orange;
+  border: 2px solid orange;
+}
+.instrumentListenerNotesource.instrumentNotVisible {
+  background-color: rgb(143, 105, 35);
+  color: yellow;
+  border: 2px solid orange;
+}
 .instrumentObserver {
   background-color: rgb(213, 255, 213);
   color: #00a;

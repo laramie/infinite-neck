@@ -1,0 +1,27 @@
+# sprint-142-loop-button-central
+
+sprint number: 142
+
+sprint loop-button-central:
+
+date: 20260830
+
+Index of all sprints for reference: [sprint planning index](../../../lifecycle/sprints.md)
+
+## Purpose
+
+Purpose of this sprint is to: centralize handling of the LOOP buttons with caption updates and latching.
+
+## Sprint document locations
+
+- [design document](142-design.md) 
+- [Copilot design plan](142-plan.md) 
+
+## Iterations
+
+  - "Iteration 1": define the problem.
+
+  - "Iterations 2-7": see [Copilot design plan](142-plan.md) 
+  
+  - "Iteration 8": After the recommended iterations 2-7 in the 142-plan.md, we went in and removed elipses "..."/"...." from the button captions.  Now with properly changing captions and colors, we don't need the extra visual of the elipses.
+

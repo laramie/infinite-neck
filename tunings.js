@@ -10,6 +10,21 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        3
+      ],
+      "faceDoubleDiamondsStrings": [
+        2,
+        4
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6
+      ],
       "stringDividerHeight": "0",
       "frets": 24,
       "nut": true,
@@ -25,6 +40,19 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        3,
+        4
+      ],
       "frets": 24,
       "nut": true,
       "reverse": false,
@@ -41,6 +69,19 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ],
+      "faceTinyDiamondsStrings": [
+        0,
+        1,
+        3,
+        4
+      ],
       "frets": 16,
       "nut": true,
       "reverse": false,
@@ -88,7 +129,7 @@ export const allTunings = {
       "showDiamonds": true,
       "diamonds": [3, 5, 7, 9, 15, 17, 19, 21],
       "doubleDiamonds": [12, 24],
-      "frets": 18,
+      "frets": 16,
       "nut": true,
       "reverse": false,
     },
@@ -192,6 +233,7 @@ export const allTunings = {
       "nStrings": 4,
       "rowRange": [57, 50, 43, 36],
       "showDiamonds": false,
+      "showFaceDiamonds": false,
       "diamonds": [],
       "doubleDiamonds": [],
       "stringDividerHeight": "0",
@@ -350,36 +392,51 @@ export const allTunings = {
     },
     {
       "instance": false,
-      "baseID": "Perfect4thsCalculator",
+      "baseID": "4thsCalculator",
       "baseInstrument": "Guitar",
-      "caption": "Perfect 4ths Calculator",
+      "caption": "4ths",
       "nStrings": 17,
-      "rowRange": [110, 105, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30],
+      "rowRange": [110, 105, 100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15],
       "frets": 1,
       "nut": false,
       "reverse": false,
+      "Tool": true
+    },
+    {
+      "instance": false,
+      "baseID": "5thsCalculator",
+      "baseInstrument": "Guitar",
+      "caption": "5ths",
+      "nStrings": 17,
+      "rowRange": [121, 114, 107, 100, 93, 86, 79, 72, 65, 58, 51, 44, 37, 30, 23, 16, 9, 2],
+      "frets": 1,
+      "nut": false,
+      "reverse": false,
+      "Tool": true
     },
     {
       "instance": false,
       "baseID": "TritoneCalculator",
       "baseInstrument": "Guitar",
-      "caption": "Tritone Calculator",
-      "nStrings": 6,
-      "rowRange": [58, 52, 46, 40, 34, 28],
-      "frets": 24,
+      "caption": "Tritones  ",
+      "nStrings": 3,
+      "rowRange": [58, 52, 46],
+      "frets": 5,
       "nut": false,
       "reverse": false,
+      "Tool": true
     },
     {
       "instance": false,
       "baseID": "ThirdsCalculator",
       "baseInstrument": "Guitar",
-      "caption": "ThirdsCalculator",
-      "nStrings": 8,
-      "rowRange": [56, 52, 48, 44, 40, 36, 32, 28],
-      "frets": 24,
+      "caption": "3rds",
+      "nStrings": 4,
+      "rowRange": [56, 52, 48, 44],
+      "frets": 4,
       "nut": false,
       "reverse": false,
+      "Tool": true
     },
     {
       "instance": false,
@@ -399,11 +456,47 @@ export const allTunings = {
       "caption": "8x8",
       "nStrings": 8,
       "rowRange": [71, 66, 61, 56, 51, 46, 41, 36],
+      "doubleDiamonds": [
+        4
+      ],
+      "faceTinyDiamondsStrings": [],
+      "faceDoubleDiamondsStrings": [
+        3
+      ],
+      "showDiamonds": false,
+      "showFaceDiamonds": true,
+      "faceDoubleDiamondsLeft": "calc(100% + var(--cell-spacing) / 2)",
       "frets": 8,
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidth": true,
+      "fixedFretWidthMult": 0.6,
+      "fixedFretHeightMult": 2.2,
+      "pinkKey": "C"
+    },
+    {
+      "instance": false,
+      "baseID": "MIDI-P4",
+      "baseInstrument": "MIDI",
+      "caption": "8x8-P4",
+      "nStrings": 8,
+      "rowRange": [65, 60, 55, 50, 45, 40, 35, 30],
+      "doubleDiamonds": [
+        4
+      ],
+      "faceTinyDiamondsStrings": [],
+      "faceDoubleDiamondsStrings": [
+        3
+      ],
+      "showDiamonds": false,
+      "showFaceDiamonds": true,
+      "faceDoubleDiamondsLeft": "calc(100% + var(--cell-spacing) / 2)",
+      "frets": 8,
+      "nut": false,
+      "leftmargin": true,
+      "reverse": false,
+      "fixedFretWidthMult": 0.6,
+      "fixedFretHeightMult": 2.2,
       "pinkKey": "C"
     },
     {
@@ -417,7 +510,8 @@ export const allTunings = {
       "nut": false,
       "leftmargin": true,
       "reverse": false,
-      "fixedFretWidth": true,
+      "fixedFretWidthMult": 1.0,
+      "fixedFretHeightMult": 1.0,
       "pinkKey": "C"
     },
     {

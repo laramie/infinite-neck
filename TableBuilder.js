@@ -2,7 +2,7 @@
 
 
 import * as Constants from './Constants.js';
-import { setOneCssVar } from './themeFunctions.js';
+import { setOneCssVar, applyThemeToTableElement } from './themeFunctions.js';
 import { decoratePianoSkeuomorphicTable } from './templates/piano/piano-skeuomorphic.builder.js';
 import { getDiamondMarkerFret, getDisplayedCellcol } from './table-column-helpers.js';
 
@@ -31,6 +31,10 @@ export function buildNoteTable(options) {
 	table.attr("reversed", options.reverse);
 	table.attr("fretTableBuilt", true);
 	table.addClass("fretTable");
+	const tableEl = table.get(0);
+	tableEl.style.setProperty('--face-diamonds-left', options.faceDiamondsLeft || '50%');
+	tableEl.style.setProperty('--face-double-diamonds-left', options.faceDoubleDiamondsLeft || '50%');
+	tableEl.style.setProperty('--face-tiny-diamonds-left', options.faceTinyDiamondsLeft || '50%');
 	const doPianoSkeuomorphic = decoratePianoSkeuomorphicTable(table, options);
 	if (options.leftmargin) {
 		table.addClass("leftmarginInstrument");
@@ -44,6 +48,17 @@ export function buildNoteTable(options) {
 	var tuningNoteNames = "";
 
 	let addBackgroundImageWithoutTheme = false;
+
+	// "Face" diamond marker-fret sets (sprint 145): same fret columns as the regular
+	// diamondsRow (see diamondsRow() below / getDiamondMarkerFret()), but rendered
+	// directly on the fretboard face, per-string, via faceDiamondsStrings/
+	// faceDoubleDiamondsStrings/faceTinyDiamondsStrings (zero-based row indices, same
+	// convention as specialBackgroundIDRows).
+	const faceDiamondsFrets = Array.isArray(options.diamonds) ? options.diamonds : [];
+	const faceDoubleDiamondsFrets = Array.isArray(options.doubleDiamonds) ? options.doubleDiamonds : [];
+	const faceDiamondsStrings = Array.isArray(options.faceDiamondsStrings) ? options.faceDiamondsStrings : [];
+	const faceDoubleDiamondsStrings = Array.isArray(options.faceDoubleDiamondsStrings) ? options.faceDoubleDiamondsStrings : [];
+	const faceTinyDiamondsStrings = Array.isArray(options.faceTinyDiamondsStrings) ? options.faceTinyDiamondsStrings : [];
 
 	for (var r = 0; r < numRows; r++) {
 		tuningNoteNames = Constants.midinumToNoteName(options.rowRange[r]) + tuningNoteNames;
@@ -101,10 +116,33 @@ export function buildNoteTable(options) {
 			noteName = Constants.midinumToNoteName(midinum);
 			var noteClass = "note" + noteName;//"noteD";
 			var notePinkClass = "";
-			if (options.pinkKey && noteName == options.pinkKey) {
+			if (options.pinkKey && options.pinkKey !== 'none' && noteName == options.pinkKey) {
 				notePinkClass = "notePinkKey";
 			}
-			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + '" noteName="' + noteName + '">';
+
+			var faceDiamondClasses = "";
+			// showFaceDiamonds is a per-instrument master on/off (defaults to visible when
+			// unset, e.g. tunings saved before this field existed).
+			if (options.showFaceDiamonds !== false) {
+				var markerFret = getDiamondMarkerFret(options, c);
+				// Mirrors diamondsRow()'s else-if precedence: doubleDiamonds frets win, so a
+				// fret that is (mistakenly, or per convention) present in both arrays never
+				// gets the single/tiny diamond markers -- avoids needing CSS winner/loser rules.
+				var isFaceDiamondColumn = faceDiamondsFrets.includes(markerFret) && !faceDoubleDiamondsFrets.includes(markerFret);
+				if (isFaceDiamondColumn) {
+					if (faceDiamondsStrings.includes(r)) {
+						faceDiamondClasses += " faceDiamonds";
+					}
+					if (faceTinyDiamondsStrings.includes(r)) {
+						faceDiamondClasses += " faceTinyDiamonds";
+					}
+				}
+				if (faceDoubleDiamondsFrets.includes(markerFret) && faceDoubleDiamondsStrings.includes(r)) {
+					faceDiamondClasses += " faceDoubleDiamonds";
+				}
+			}
+
+			var tdline = '<td class="note ' + noteClass +' '+ notePinkClass +' '+ nutClass +' '+ specialBackgroundIDRowsClass + faceDiamondClasses + '" noteName="' + noteName + '">';
 			var cell = $(tdline).html("");
 			cell.attr("midiNum", "" + midinum);
 			cell.attr("cellrow", r);
@@ -166,6 +204,16 @@ export function buildNoteTable(options) {
 	var instrumentBackground = $('<div>');
 	instrumentBackground.addClass("instrumentBackground");
 	instrumentBackground.attr("id", Constants.TABLEDIV_ID_PREFIX + options.baseID);
+	// Sprint 146 Phase 5: options.themeInEffect is this table's resolved per-instrument Theme
+	// override (set by infinite-neck.js from getSong().getStoredTableThemeInEffect()), or
+	// null/undefined if this table has no override. Applied to instrumentBackground (NOT
+	// tableEl) because several vars (--instrument-background-color, --instrument-border-image,
+	// --instrument-margin-tb, --instrument-border-thickness) are consumed by .instrumentBackground
+	// itself, an ANCESTOR of table.fretTable -- a var set on a descendant can never affect an
+	// ancestor's resolved value. Setting it here still cascades correctly down into the table
+	// and its cells for every other (note/diamond/etc.) var, since instrumentBackground is an
+	// ancestor of the table either way.
+	applyThemeToTableElement(instrumentBackground.get(0), options.themeInEffect || null);
 
 	let captionRow = buildCaptionRow(options, tableID);
 	instrumentBackground.append(captionRow);
@@ -185,18 +233,20 @@ export function buildNoteTable(options) {
 
 	let widgetDest = $("<span>");
 	widgetDest.addClass('leftRailSectionStatusHost');
+	widgetDest.attr('id', tableID+'_leftRailSectionStatusHost');
 
 	let fretTableWrapper = $("<div>");
 	fretTableWrapper.addClass("fretTableWrapper");
 	if (doPianoSkeuomorphic) {
 		fretTableWrapper.addClass("pianoSkeuomorphicWrapper");
 	}
-		var table3 = $("<table>");
+	var table3 = $("<table>");
 		var row = $("<row>");
 		table3.append(row);
 		var td1 = $("<td class='tdLeftRailStack'>");
 			let leftRailStack = $("<div class='leftRailStack'>");
 			let leftRailCaptionHost = $("<div class='leftRailCaptionHost'>");
+			leftRailCaptionHost.attr('id', tableID+'_leftRailCaptionHost');
 			leftRailCaptionHost.addClass('ssCaptionWrapper');
 			let fretTableLeftCaption = $("<span class='fretTableLeftCaption'>");
 			fretTableLeftCaption.addClass('SectionStatus_captionRoleTarget');
@@ -213,7 +263,6 @@ export function buildNoteTable(options) {
 		var td3 = $("<td>");
 			td3.append(table);
 			row.append(td3);
-
 	fretTableWrapper.append(table3);
 	wiringAndFretTable.append(fretTableWrapper);
 
@@ -225,10 +274,44 @@ export function buildNoteTable(options) {
 }
 
 function buildCaptionRow(options, tableID) {
+	var captionRow = $("<div>");
+	
+	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="floatNoteTableDiv('div${options.baseID}')">F<small>loat</small></button>`;
+	var btnClearFloatRectRecord = `<button id="btnClearFloatRect${options.baseID}" data-tableid="${tableID}" class="subcaptionButton clearFloatRectRecordButton" title="Anchor: no re-float" style="font-weight: bold; font-size: 82%; padding: 0; padding-left: 5px; padding-right: 5px;">&#x2366;</button>`;
+	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
+	
+	if (options.Tool === true){
+		var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
+	    var _InlineToolCaptionHost =      `<span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_InlineToolCaptionHost" class="tuningIDCaption ToolTableTopCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span>`;
+		var _TopToolCaptionHost    = `<div id="${tableID}_TopToolCaptionHost_Div" style="display:none;"><span class="captionRowInstrument ssCaptionWrapper"><span id="${tableID}_TopToolCaptionHost"   style="display:none;"  class="tuningIDCaption ToolTableTopCaption SectionStatus_captionRoleTarget" data-tablename="${tableID}">${options.baseID}</span></span></div>`;
+		var btnSwapToolCaption = "<button  class='swapToolTopCaption ToolTableButton' type='button' data-tableid='" + tableID + "' title='Swap Top Tool Caption'>T</button>";
+		var btnToolLeftCaption = "<button id='btnToolLeftCaption" + options.baseID + "' class='showLeftCaption ToolTableButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
+	    var btnToggleToolDisplayOptions = `<button id="btnToggleToolDisplayOptions_div${options.baseID}" class="toolDisplayOptionsToggleButton" type="button" data-tableid="${tableID}">Fr</button>`;
+		//...That button's caption is updated here: updateToolDisplayOptionsToggleButton()
+		var captionRowSpan = $("<span>");
+		captionRowSpan.addClass("captionRow");
+		captionRowSpan.addClass("captionRowTool");
+		captionRowSpan.html(_InlineToolCaptionHost + "&nbsp;&nbsp;" + btnToggleToolDisplayOptions + "&nbsp;&nbsp;"+ btnToolLeftCaption +"&nbsp;&nbsp;"+ btnSwapToolCaption + "&nbsp;&nbsp;" + btnPopOutDiv);
+		captionRow.append($(_TopToolCaptionHost));
+		captionRow.append(captionRowSpan);
+
+		// Detached (never appended to the DOM) -- exists only to host a SectionStatusWidget
+		// instance so Widget:SectionStatus:statusChanged events apply ssKey_* classes (e.g.
+		// ssKey_listener_notesource) to the Tool table's inline/top caption spans, mirroring
+		// the non-Tool captionRow widget below.
+		let toolCaptionRowLiveInfo = $('<span>');
+		toolCaptionRowLiveInfo.attr('id', tableID + '_toolCaptionRowLiveInfo');
+		SectionStatusBuilder.createWidget(toolCaptionRowLiveInfo, tableID, 'captionRow', 'horizontal', {
+			roleClassTargets: captionRow.find('.SectionStatus_captionRoleTarget')
+		});
+		return captionRow;
+	}
+
+	captionRow.addClass("captionRow");
+
 	var hamburger = "<button id='btnHamburger" + options.baseID + "' class='HamburgerInstrumentClass showsubcaption moveyButton' type='button' >&equiv;</button>";
 	var hamburgerCaptionRowButtons = "<button id='btnHamburgerCaptionRowButtons" + options.baseID + "' class='showCaptionRowButtons subcaptionButton' type='button' >&equiv;</button>";
 	var hamburgerColorDict = "<button id='btnHamburgerColorDict" + options.baseID + "' class='showcolordict subcaptionButton' type='button' >M<small>ini</small>P<small>alette</small></button>";
-	var hamburgerLeftCaption = "<button id='btnHamburgerLeftCaption" + options.baseID + "' class='showLeftCaption subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side caption'>C</button>";
 	var hamburgerCaptionLooperLayout = "<button id='btnHamburgerCaptionLooperLayout" + options.baseID + "' class='toggleCaptionLooperLayout subcaptionButton' type='button' data-tableid='" + tableID + "' title='Toggle Instrument Caption / LooperLight layout'>&#x21CB;</button>";
 	var hamburgerLeftSectionMark = "<button id='btnHamburgerLeftSectionMark" + options.baseID + "' class='showLeftSectionStatus subcaptionButton' type='button' data-tableid='" + tableID + "' title='Show left side Section info'>S</button>";
 	var hamburgerTuningDetails = "<button id='hamburgerTuningDetails" + options.baseID + "' class='showTuningDetails subcaptionButton' type='button' >T<small>uning</small></button>";
@@ -238,17 +321,15 @@ function buildCaptionRow(options, tableID) {
 	//Not really a btnHamburger, but that's where this button's event is wired: installBtnHamburgerClicks() 
 	var btnShowWiring = "<button id='btnHamburgerShowWiring" + options.baseID + "' class='showWiringButton subcaptionButton' type='button' tabindex='-1'>W<small>iring</small></button>";
 
+	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
+	
 	var joniTuning = "<span><small>Joni:</small>" + getJoniTuning(options) + "</span>";
 	var noteClickedCaption = "<span class='lblNoteClickedCaption'></span>";
 	var tuningBaseIDCaption = "<span class='tuningBaseIDCaption'>" + options.caption + ':</span>';
-	var tuningIDCaption = '<span class="tuningIDCaption SectionStatus_captionRoleTarget" data-tablename="' + tableID + '">' + options.baseID + '</span>';
 	var tuningIDnStrings = '<span>' + options.nStrings + '-string:</span>';
 	var tuningIDbaseInstrument = '<span>' + options.baseInstrument + '</span>';
 
-	var captionRow = $("<div>");
-	captionRow.addClass("captionRow");
 	var reverse = options.reverse ? '&nbsp;&nbsp;<span class="tuningReverseCaption">Left-Handed</span>' : '';
-	var btnPopOutDiv = `<button id="btnFloatSection_div${options.baseID}" class="subcaptionButton floatDockableButton" onclick="makeDivDockable('div${options.baseID}')">F<small>loat</small></button>`;
 	
 	var tonalInfo = "<span id='"+tableID + "_captionRowTonalInfo' class='captionRowTonalInfo'></span>";
 
@@ -269,14 +350,16 @@ function buildCaptionRow(options, tableID) {
 
 		+ hamburgerCaptionRowButtons
 		+ '<span class="captionRowButtons">'
-		+ hamburgerLeftCaption
-		+ hamburgerCaptionLooperLayout
-		+ hamburgerLeftSectionMark 
-		+ hamburgerColorDict
-		+ btnShowWiring
-		+ btnPopOutDiv
-		
-		+ hamburgerTuningDetails
+			+ '<span class="LeftRailLayoutButtons">'
+				+ hamburgerLeftCaption
+				+ hamburgerCaptionLooperLayout
+				+ hamburgerLeftSectionMark
+			+ '</span>' 
+		  + hamburgerColorDict
+		  + btnShowWiring
+		  + btnPopOutDiv
+		  + btnClearFloatRectRecord
+		  + hamburgerTuningDetails
 		+ '<span class="spanTuningDetails">'
 		+ tuningBaseIDCaption
 		+ tuningIDnStrings
@@ -310,7 +393,24 @@ function buildCaptionRow(options, tableID) {
 		roleClassTargets: captionRow.find('.SectionStatus_captionRoleTarget')
 	});
 	captionRow.append(spanCaptionRowLiveInfo);
-	captionRow.append($("<div class='currentColorDict''></div>"));
+
+	// Groups the two read-only palette status spans with the color-dict swatch
+	// strip so they ride around together and share the Mini Palette's
+	// hide/small/large tri-state (toggled via .currentColorDict, see
+	// installBtnHamburgerClicks() in infinite-neck.js) and its large-mode
+	// font-size scaling. The swatch strip is a distinct child (not
+	// .currentColorDict itself) because colorFunctions.js's
+	// updateCurrentColorDictStrip() empties and repopulates it on every
+	// stylesheet change; keeping the status spans as siblings protects them
+	// from being wiped out by that refresh.
+	var colorDictRow = $("<div class='currentColorDict'></div>");
+	var spanStatus = $("<span class='miniPaletteStatus'></span>");
+	colorDictRow.append(spanStatus);
+	spanStatus.append($('<span class="paletteHighlightStatus paletteStatusSpan"></span>'));
+	spanStatus.append($('<span class="paletteModeStatus paletteStatusSpan"></span>'));
+	spanStatus.append($('<span class="paletteHidingStatus paletteStatusSpan" style="display: none;"></span>'));
+	colorDictRow.append($("<span class='colorDictSwatchStrip'></span>"));
+	captionRow.append(colorDictRow);
 	return captionRow;
 }
 

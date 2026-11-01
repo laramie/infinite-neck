@@ -192,6 +192,9 @@ describe('FillPlugin', () => {
     expect(useChartNode.children.map((child) => child.actionName)).toEqual(['useChartChord', 'useChartMode']);
     const automaticNode = optionsNode.children.find((child) => child.name === 'automaticFromChart');
     expect(automaticNode.trigger).toBe('a');
+    const literalNode = optionsNode.children.find((child) => child.name === 'literalChartedChord');
+    expect(literalNode.trigger).toBe('l');
+    expect(optionsNode.children.indexOf(literalNode)).toBe(optionsNode.children.indexOf(automaticNode) + 1);
     expect(optionsNode.children.some((child) => child.trigger === ',')).toBe(true);
     expect(optionsNode.children.some((child) => child.trigger === '.')).toBe(true);
   });
@@ -434,6 +437,76 @@ describe('FillPlugin', () => {
     expect(noteNames.has('Ab')).toBe(false);
   });
 
+  test('automatic-from-chart literal mode uses chart tonic instead of section key', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    section.rootID = 3; // C
+    section.chartChord = 'Bb11';
+    section.chartMode = '';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    plugin.setPropertyValue('literalChartedChord', true, { song });
+    plugin.setPropertyValue('maxFret', 12, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleRootMode', 'none', { song });
+    plugin.setPropertyValue('singleChordMode', 'role', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    const result = plugin.invokeAction('apply', { song });
+    const playedSingle = getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE);
+    const noteNames = new Set(playedSingle.map((note) => note.noteName));
+
+    expect(result.result).toContain('Fill applied:');
+    expect(plugin.getProperty('chordFormula').getValue()).toBe('11');
+    expect(noteNames.has('Ab')).toBe(true);
+    expect(noteNames.has('G')).toBe(false);
+  });
+
+  test('automatic-from-chart literal mode normalizes sharps to flat model names', () => {
+    const targetTable = `${Constants.TABLE_ID_PREFIX}P1`;
+    const section = makeSection({ [targetTable]: {} });
+    section.rootID = 3; // C
+    section.chartChord = 'AM';
+    section.chartMode = '';
+
+    const song = makeSong({
+      myTunings: [createPrimaryTuning()],
+      sections: [section]
+    });
+    mockRuntime.song = song;
+
+    const plugin = new FillPlugin();
+    plugin.setManager({ song });
+    plugin.setPropertyValue('targetTable', targetTable, { song });
+    plugin.setPropertyValue('automaticFromChart', true, { song });
+    plugin.setPropertyValue('literalChartedChord', true, { song });
+    plugin.setPropertyValue('maxFret', 12, { song });
+    setAllFamilyModes(plugin, 'named', 'none', song);
+    setAllFamilyModes(plugin, 'tiny', 'none', song);
+    plugin.setPropertyValue('singleRootMode', 'none', { song });
+    plugin.setPropertyValue('singleChordMode', 'role', { song });
+    plugin.setPropertyValue('singleScaleMode', 'none', { song });
+
+    plugin.invokeAction('apply', { song });
+    const playedSingle = getPlayedNotesByStyle(section, targetTable, Note.STYLENUM_SINGLE);
+    const noteNames = new Set(playedSingle.map((note) => note.noteName));
+
+    expect(noteNames.has('A')).toBe(true);
+    expect(noteNames.has('Db')).toBe(true);
+    expect(noteNames.has('E')).toBe(true);
+    expect(noteNames.has('C#')).toBe(false);
+  });
+
   test('useChartChord adopts direct chart matches and slash-chord aliases', () => {
     const section = makeSection();
     const song = makeSong({
@@ -507,7 +580,7 @@ describe('FillPlugin', () => {
     section.chartChord = 'Amb6b9';
     let result = plugin.invokeAction('useChartChord', { song });
     expect(result.result).toBe('No fill subset match for chartChord="Amb6b9" tonalType="mb6b9"');
-    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 9, 11, 13, 6add9, none]');
+    expect(result.message).toBe('Fill use chart chord: no match for chartChord="Amb6b9" normalized="mb6b9" against [M, m, aug, dim, dim7, m7b5, sus2, sus4, maj7, s m7, 7 (dom7), 7no5, m/ma7, m9, 9, m11, 11, 13, 6add9, none]');
     expect(plugin.getProperty('chordFormula').getValue()).toBe('M');
 
     section.chartMode = 'A ultralocrian';

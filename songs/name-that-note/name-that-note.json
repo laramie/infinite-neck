@@ -703,7 +703,7 @@
       "displayOptions": {
         "autoColor": true,
         "showCellNotes": true,
-        "showSubscriptFunctions": true,
+        "showSubscriptFunctions": false,
         "cellIsFunction": false,
         "showMidiNum": false,
         "useCenterForRightFunction": true,
@@ -712,6 +712,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -723,10 +724,7 @@
           "height": "30px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",

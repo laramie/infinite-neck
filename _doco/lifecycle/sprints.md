@@ -208,7 +208,49 @@ The sprints toward this effort are documented here.
 - [sprint-137-macros](../design/sprints/137-macros/sprint-137.md)  
 
 - [sprint-138-tutorial-mode](../design/sprints/138-tutorial-mode/sprint-138.md)
-  - At the end of sprint-138, we have one tutorial working with all features: [L001-one-string-intro/L001-1.json](../../songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)      
+  - At the end of sprint-138, we have one tutorial working with all features: [L001-one-string-intro/L001-1.json](../../songs/tutorials/C000-intro/L001-one-string-intro/L001-1.json)  
+
+  ## sprints after version 2 rollout
+
+- [sprint 139-macro-call](../design/sprints/139-macro-call/sprint-139.md)
+  - COMPLETE.  Allows macros to call macros with a JSON object of vars.
+
+- [sprint 140-tool-notesource](../design/sprints/140-tool-notesource/sprint-140.md)
+  - an investigative sprint to provide notesources for Tool windows such as Perfect4thsCalculator.
+
+- [sprint 141-float-layouts](../design/sprints/141-float-layouts/sprint-141.md)
+  - fix float layouts.
+
+- [sprint 142-loop-button-central](../design/sprints/142-loop-button-central/sprint-142.md)
+  - centralize handling of loop button captions and state.
+
+- [143-midi-note-in](../design/sprints/143-midi-note-in/sprint-143.md)
+  - Creation of Desktop > MIDI page and handling of the Launchpad Pro in Programmer mode, and sending notes to the VoiceLive 3.
+  
+- [144-highlights-palette-ui](../design/sprints/144-highlights-palette-ui/sprint-144.md)
+  - Added H1, H2, H3 and handling of custom highlight colors.
+
+- [145-face-diamonds](../design/sprints/145-face-diamonds/sprint-145.md)
+  - Theme control of diamonds on the face of the Instruments (guitar and Launchpad mostly) in between the cells.
+
+- [146-table-themes](../design/sprints/146-table-themes/sprint-146.md)
+  - Allows automation of Themes per Section, and the Theme Matrix on the Themes page. 
+
+- [147-chord-caption-widget](../design/sprints/147-chord-caption-widget/sprint-147.md)
+  - Also called sprint-137 erroneously in commit messages
+  - Chord and Mode widgets that show the notes in order in a small table with Function values and CSS rules for display of black key notes.
+  - Also the genesis of SongWidgets 
+
+- [148-displayOptions-diff](../design/sprints/148-displayOptions-diff/sprint-148.md)
+  - Added new DisplayOptionsMatrix aka "Matrix" and handling of Save Diff.
+  - Added widget to preview and CRUD the Function Symbols by Users.
+
+- [149-hide-nut-note-name](../design/sprints//sprint-149-hide-nut-note-name.md)
+  - Hide the note names in the Nut for use by songs in name-that-note.
+
+- [](../design/sprints//sprint-.md)
+  - 
+
 
 
 

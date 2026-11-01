@@ -129,6 +129,7 @@
     "options": [
       { "value": "NamedNote", "caption": "named", "trigger": "n" },
       { "value": "SingleNote", "caption": "single", "trigger": "s" },
+      { "value": "PlacedSingleNote", "caption": "placed single", "trigger": "p" },
       { "value": "AutoChartChord", "caption": "auto chord", "trigger": "c" },
       { "value": "AutoChartMode", "caption": "auto mode", "trigger": "m" },
       { "value": "AutoChartChordMode", "caption": "auto chord+mode", "trigger": "b" }
@@ -146,7 +147,8 @@
       { "value": "off", "caption": "off", "trigger": "f" },
       { "value": "one", "caption": "one", "trigger": "o" },
       { "value": "all", "caption": "all", "trigger": "a" },
-      { "value": "played", "caption": "played", "trigger": "p" }
+      { "value": "played", "caption": "played", "trigger": "p" },
+      { "value": "named", "caption": "named", "trigger": "n" }
     ]
   },
   {
@@ -163,6 +165,16 @@
     "name": "flashcard",
     "caption": "flashcard",
     "trigger": "f",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "inputCaption": "true|false",
+    "visibleInMenu": true
+  },
+  {
+    "name": "extraClearBeat",
+    "caption": "extra clear beat",
+    "trigger": "e",
     "datatype": "org.dynamide.toggle",
     "value": false,
     "defaultValue": false,

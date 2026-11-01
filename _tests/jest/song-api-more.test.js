@@ -129,6 +129,7 @@ describe('Headless tuning bootstrap contracts', () => {
             'CycleOfColors',
             'Roles',
             'Fingerings',
+            'Highlights',
             'Default',
             'lar4'
         ]);

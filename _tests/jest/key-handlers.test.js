@@ -2,6 +2,8 @@ import { jest } from '@jest/globals';
 
 const mockEventBus = {
 	trigger: jest.fn(),
+	on: jest.fn(),
+	off: jest.fn(),
 	setLogEvents: jest.fn(() => false),
 	getLogEvents: jest.fn(() => false)
 };
@@ -32,6 +34,7 @@ jest.unstable_mockModule('../../jsonTree80kg/json-tree-80kg.js', () => ({
 
 jest.unstable_mockModule('../../themeFunctions.js', () => ({
 	setOneCssVar: jest.fn(),
+	applyThemeToTableElement: jest.fn(),
 	dumpThemeIds: jest.fn()
 }));
 
@@ -91,8 +94,14 @@ jest.unstable_mockModule('../../infinite-neck.js', () => ({
 	showTransport: mockShowTransport,
 	toggleSectionDrawer: jest.fn(),
 	toggleRandomLoop: jest.fn(),
+	toggleCaptionLooperLayout: jest.fn(),
+	setSongFlats: jest.fn(),
+	setSongSharps: jest.fn(),
 	setSectionKeysFlats: jest.fn(),
-	setSectionKeysSharps: jest.fn()
+	setSectionKeysSharps: jest.fn(),
+	getSong: jest.fn(),
+	refreshShowAllNoteNames: jest.fn(),
+	buildFloatRectForTable: jest.fn(() => null)
 }));
 
 jest.unstable_mockModule('../../event-bus.js', () => ({
@@ -237,8 +246,13 @@ describe('key-handlers spacebar mapping', () => {
 	let mockGetBPM;
 	let mockToggleRecording;
 	let mockShowAllNoteNames;
-	let mockHandleBtnControlsToDisplayOptions;
+	let mockHandleBtnSaveDiff;
+	let mockHandleBtnSaveAll;
 	let mockHandleBtnDeleteDisplayOptions;
+	let mockClearDisplayOptionsCell;
+	let mockSetDisplayOptionsGate;
+	let mockUndoDisplayOptionsOp;
+	let showMessagesChecked;
 	let updateSectionsStatus;
 
 	beforeEach(() => {
@@ -267,8 +281,13 @@ describe('key-handlers spacebar mapping', () => {
 		mockGetBPM = jest.fn(() => 120);
 		mockToggleRecording = jest.fn();
 		mockShowAllNoteNames = jest.fn();
-		mockHandleBtnControlsToDisplayOptions = jest.fn();
+		mockHandleBtnSaveDiff = jest.fn();
+		mockHandleBtnSaveAll = jest.fn();
 		mockHandleBtnDeleteDisplayOptions = jest.fn();
+		mockClearDisplayOptionsCell = jest.fn(() => ({ changed: true, report: 'cleared' }));
+		mockSetDisplayOptionsGate = jest.fn(() => ({ changed: true, report: 'gated' }));
+		mockUndoDisplayOptionsOp = jest.fn(() => ({ changed: true, report: 'undone' }));
+		showMessagesChecked = false;
 		mockDownloadBackupThenClearGraveyardByType = jest.fn(() => ({ result: 'cleared: SECTION (1)' }));
 		updateSectionsStatus = jest.fn();
 
@@ -303,8 +322,17 @@ describe('key-handlers spacebar mapping', () => {
 			getTransportController: () => mockTransportController,
 			hideAllMenuDivs: jest.fn(),
 			hideFullscreenLeadSheetLine: jest.fn(() => 'LeadSheetLine hidden'),
-			handleBtnControlsToDisplayOptions: mockHandleBtnControlsToDisplayOptions,
+			handleBtnSaveDiff: mockHandleBtnSaveDiff,
+			handleBtnSaveAll: mockHandleBtnSaveAll,
 			handleBtnDeleteDisplayOptions: mockHandleBtnDeleteDisplayOptions,
+			clearDisplayOptionsCell: mockClearDisplayOptionsCell,
+			setDisplayOptionsGate: mockSetDisplayOptionsGate,
+			undoDisplayOptionsOp: mockUndoDisplayOptionsOp,
+			isDisplayOptionsShowMessages: () => showMessagesChecked,
+			toggleDisplayOptionsShowMessages: jest.fn(() => {
+				showMessagesChecked = !showMessagesChecked;
+				return showMessagesChecked;
+			}),
 			highlightOneNote: jest.fn(),
 			leaveFullscreen: jest.fn(),
 			printSections: jest.fn(),
@@ -327,9 +355,7 @@ describe('key-handlers spacebar mapping', () => {
 			setTinyNoteOpacity: jest.fn(),
 			showAllNoteNames: mockShowAllNoteNames,
 			showOneMenu: jest.fn(),
-			toggleCaption: jest.fn(),
 			toggleFullscreen: jest.fn(),
-			toggleInstrumentCaptionRow: jest.fn(),
 			toggleRecording: mockToggleRecording,
 			transpose: jest.fn(),
 			transposeSong: jest.fn(),
@@ -547,13 +573,49 @@ describe('key-handlers spacebar mapping', () => {
 
 		expect(getValue('displayOptionsSaveState')).toBe('unsaved');
 		const saveResult = performCmdAction({ action: 'saveViewDisplayOptions' });
-		expect(mockHandleBtnControlsToDisplayOptions).toHaveBeenCalledTimes(1);
+		expect(mockHandleBtnSaveDiff).toHaveBeenCalledTimes(1);
 		expect(saveResult.preserveMenuStack).toBe(true);
+
+		const saveAllResult = performCmdAction({ action: 'saveViewDisplayOptionsAll' });
+		expect(mockHandleBtnSaveAll).toHaveBeenCalledTimes(1);
+		expect(saveAllResult.preserveMenuStack).toBe(true);
 
 		expect(getValue('displayOptionsClearState')).toBe('present');
 		const clearResult = performCmdAction({ action: 'clearViewDisplayOptions' });
 		expect(mockHandleBtnDeleteDisplayOptions).toHaveBeenCalledTimes(1);
 		expect(clearResult.preserveMenuStack).toBe(true);
+	});
+
+	test('Sprint 148 it4: /vpm Matrix actions split their comma-separated input and pass it to the providers', () => {
+		const menuNode = (action, id, extra = {}) => ({ action, input: { id }, ...extra });
+
+		const clearCell = performCmdAction(menuNode('matrixClearCell', 'sectionAndKey'), { sectionAndKey: '3, noteFont' });
+		expect(mockClearDisplayOptionsCell).toHaveBeenCalledWith('3', 'noteFont');
+		expect(clearCell.result).toBe('cleared');
+
+		performCmdAction(menuNode('matrixGateKey', 'keyAndValue', { on: true }), { keyAndValue: 'noteFont,read-blocked' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'column', key: 'noteFont', valueText: 'read-blocked', on: true }));
+
+		performCmdAction(menuNode('matrixGateSection', 'sectionAndValue', { on: false }), { sectionAndValue: '2' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'row', sectionNumberText: '2', valueText: '', on: false }));
+
+		performCmdAction(menuNode('matrixGateCell', 'sectionKeyAndValue', { on: true }), { sectionKeyAndValue: '1,showMidiNum,write-blocked' });
+		expect(mockSetDisplayOptionsGate).toHaveBeenLastCalledWith(
+			expect.objectContaining({ scope: 'cell', sectionNumberText: '1', key: 'showMidiNum', valueText: 'write-blocked', on: true }));
+
+		expect(performCmdAction({ action: 'matrixUndo' }).result).toBe('undone');
+	});
+
+	test('Sprint 148 it7: /vpms toggles the Show Messages checkbox, and the menu variable reads it back (one source of truth)', () => {
+		expect(getValue('displayOptionsShowMessagesState')).toBe(false);
+		const on = performCmdAction({ action: 'toggleDisplayOptionsShowMessages' });
+		expect(on.result).toBe('show messages: true');
+		expect(on.preserveMenuStack).toBe(true);
+		expect(getValue('displayOptionsShowMessagesState')).toBe(true);
+		expect(performCmdAction({ action: 'toggleDisplayOptionsShowMessages' }).result).toBe('show messages: false');
+		expect(getValue('displayOptionsShowMessagesState')).toBe(false);
 	});
 
 	test('Meta+Shift+m opens command line in strict tutorial mode', () => {
@@ -786,7 +848,7 @@ describe('key-handlers spacebar mapping', () => {
 
 		performCmdAction({ action: 'selectFingering' }, { key: '1' });
 
-		expect(paintModeRadio.click).toHaveBeenCalledTimes(1);
+		expect(paintModeRadio.click).toHaveBeenCalledTimes(2);
 		expect(fingerRadio.click).toHaveBeenCalledTimes(1);
 		expect(fingerColor.click).toHaveBeenCalledTimes(1);
 	});

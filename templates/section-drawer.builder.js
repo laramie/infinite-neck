@@ -13,6 +13,7 @@ export class SectionDrawerBuilder {
             SectionDrawerBuilder.span_sectionDrawer = clone.querySelector('#sectionDrawer');
             $(divDestSelector).empty().append(SectionDrawerBuilder.span_sectionDrawer);
             SectionDrawerBuilder.bindEvents();
+            SectionDrawerBuilder.setSaveDiffActionRequired(InfiniteNeck.isDisplayOptionsSaveActionRequired());
         }
         return SectionDrawerBuilder.span_sectionDrawer;
     }
@@ -93,8 +94,8 @@ export class SectionDrawerBuilder {
             InfiniteNeck.updateSectionsStatus();
             NoteTableController.fullRepaint();
         });
-        $("#btnControlsToDisplayOptions_Section").click(function() {
-	        InfiniteNeck.handleBtnControlsToDisplayOptions();
+        $("#btnSaveDiff_Section").click(function() {
+	        InfiniteNeck.handleBtnSaveDiff();
 	    });
 		$("#btnDeleteDisplayOptions_Section").click(function() {
 			InfiniteNeck.handleBtnDeleteDisplayOptions();
@@ -107,6 +108,9 @@ export class SectionDrawerBuilder {
     static setDisplayOptionsPresent(enabled) {
         $('#btnDeleteDisplayOptions_Section').prop("disabled", !enabled);
     }
+    static setSaveDiffActionRequired(isRequired) {
+        $('#btnSaveDiff_Section').toggleClass('riskyButtonActionRequired', !!isRequired);
+    }
     static sectionChanged(){
         $("#txtCaption").val(getSong().getCurrentSection().caption);
         $('#dropDownSectionOrder').html(InfiniteNeck.buildDropDownSectionOrderOptions());
@@ -115,6 +119,9 @@ export class SectionDrawerBuilder {
     }
     static rootIDChanged(){
         $("#dropDownRoot").val(getCurrentSection().rootID);
+    }
+    static rootIDLeadChanged(){
+        $("#dropDownRootLead").val(getCurrentSection().rootIDLead);
     }
 
 }

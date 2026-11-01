@@ -1,5 +1,5 @@
 /*  Copyright (c) 2023, 2024 Laramie Crocker http://LaramieCrocker.com  */
-import { jsonTree } from './jsonTree80kg/json-tree-80kg.js';
+import { splitMatrixArgs } from './templates/display-options/displayOptionsGates.js';
 import { 
 	setOneCssVar, 
 	dumpThemeIds 
@@ -14,23 +14,17 @@ import {
 	updateCmdLineView
 } from './command-line.js';
 import {
-	displayOptionsTable
-} from './display-options.js';
-import {
-	beatsLooping,
 	sectionsLooping,
-	restartLoopSections,
-	toggleLoopBeats,
 	toggleLoopSections,
 	clearBeatAndSectionLooping
 } from './looper.js';
 import {
+	refreshRuntimeChildren,
 	buildChildMenuCaptionsRow,
 	diveMenu,
 	dumpMenus,
 	gMenuFile,
 	gMenuPointer,
-	refreshRuntimeChildren,
 	setMenuRuntimeChildrenResolver,
 	setMenuValueResolver,
 	setMenuAtRoot,
@@ -47,7 +41,6 @@ import {
 	toInt
 } from './utils.js';
 import {
-	showMessagesTab,
 	showDisplayOptions,
 	getVersionString,
 	getVersionObject,
@@ -56,6 +49,8 @@ import {
 	showTransport,
 	toggleSectionDrawer,
 	toggleRandomLoop,
+	setSongFlats,
+	setSongSharps,
 	setSectionKeysFlats,
 	setSectionKeysSharps
 } from './infinite-neck.js';
@@ -64,7 +59,6 @@ import pluginManager from './plugins/pluginRuntime.js';
 import * as paletteUtils from './paletteUtils.js';
 import {
 	deleteSongMacro,
-	executeSongMacro,
 	getMacroIdValidationMessage,
 	getSongMacro,
 	getSongMacroIds,
@@ -72,17 +66,39 @@ import {
 	upsertSongMacro
 } from './MacroExecutor.js';
 import {
+	configureMacroEngine,
+	focusMacroOverlay,
+	isAllowedDuringMacro,
+	isInMacroAction,
+	isMacroMutationLockActive,
+	logMacro,
+	parseMacroCallInput,
+	runSongMacroById,
+	startSongMacroById
+} from './MacroEngine.js';
+import {
+	getMacroNumberOptions,
+	getMacroDeleteNumberOptions,
+	getMacroMoveNumberOptions
+} from './MacroMenu.js';
+import {
 	TUTORIAL_MODES
 } from './Tutorial.js';
+import * as Calculators from './calculators.js';
+import {
+	hasAnyFloatingDockables
+} from './dockable.js';
+import { UserLog } from './UserLog.js';
+import { Messages } from './Messages.js'
+
 export { document_keydown, document_keypress, document_keyup, runActionByName };
 
 let keyHandlerProviders = {};
 let spacebarActionName = '';
 let sectionEditInstrumentTableID = '';
 let macroVerbose = false;
-let macroExecutionDepth = 0;
 let pendingMacroDeleteID = '';
-const USER_LOG_MAX_ROWS = 1000;
+
 const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'CLIP',
 	'INSTRUMENT',
@@ -91,6 +107,7 @@ const GRAVEYARD_CLEAR_BY_TYPE_ORDER = Object.freeze([
 	'TUNING',
 	'STYLESHEET'
 ]);
+
 let graveyardClearByTypeState = {
 	CLIP: false,
 	INSTRUMENT: false,
@@ -99,6 +116,26 @@ let graveyardClearByTypeState = {
 	TUNING: false,
 	STYLESHEET: false
 };
+
+configureMacroEngine({
+    getValue,
+    isMacroVerbose: () => macroVerbose,
+    performCmdAction,
+    refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
+    refreshRuntimeChildren,
+    rootMenu: () => gMenuFile,
+    setPluginToggleValueForMacro,
+    showUserLog: () => UserLog.showUserLog
+});
+
+function setPluginToggleValueForMacro(menuItem, value) {
+    const entry = pluginManager.getPluginEntry(menuItem.pluginId);
+    if (!entry) {
+        throw new Error(`Unknown plugin: ${menuItem.pluginId}`);
+    }
+    const pluginResult = pluginManager.setPropertyValue(entry, menuItem.propertyName, value);
+    return { result: pluginResult.result || '' };
+}
 
 export function setKeyHandlerProviders(nextProviders = {}) {
 	keyHandlerProviders = { ...keyHandlerProviders, ...nextProviders };
@@ -113,14 +150,14 @@ function requireProvider(name) {
 }
 
 function addBeat(...args) { return requireProvider('addBeat')(...args); }
-function checkRB(...args) { return requireProvider('checkRB')(...args); }
-function clearAndReplaySection(...args) { return requireProvider('clearAndReplaySection')(...args); }
 function cycleThruKeys(...args) { return requireProvider('cycleThruKeys')(...args); }
+function cycleThruLeadKeys(...args) { return requireProvider('cycleThruLeadKeys')(...args); }
 function cycleThruNutWidths(...args) { return requireProvider('cycleThruNutWidths')(...args); }
 function downloadBackupThenClearGraveyard(...args) { return requireProvider('downloadBackupThenClearGraveyard')(...args); }
 function downloadBackupThenClearGraveyardByType(...args) { return requireProvider('downloadBackupThenClearGraveyardByType')(...args); }
 function downloadPlayedNotes(...args) { return requireProvider('downloadPlayedNotes')(...args); }
 function enterFullscreen(...args) { return requireProvider('enterFullscreen')(...args); }
+function fixDockableHandlesIfFullscreen(...args) { return requireProvider('fixDockableHandlesIfFullscreen')(...args); }
 function getBPM(...args) { return requireProvider('getBPM')(...args); }
 function getCurrentSection(...args) { return requireProvider('getCurrentSection')(...args); }
 function getPersistentSongFile(...args) { return requireProvider('getPersistentSongFile')(...args); }
@@ -134,8 +171,15 @@ function hideFullscreenLeadSheetLine(...args) { return requireProvider('hideFull
 function hideFullscreenChart(...args) { return requireProvider('hideFullscreenChart')(...args); }
 function hideFullscreenAllCharts(...args) { return requireProvider('hideFullscreenAllCharts')(...args); }
 function highlightOneNote(...args) { return requireProvider('highlightOneNote')(...args); }
-function handleBtnControlsToDisplayOptions(...args) { return requireProvider('handleBtnControlsToDisplayOptions')(...args); }
+function handleBtnSaveDiff(...args) { return requireProvider('handleBtnSaveDiff')(...args); }
+function handleBtnSaveAll(...args) { return requireProvider('handleBtnSaveAll')(...args); }
 function handleBtnDeleteDisplayOptions(...args) { return requireProvider('handleBtnDeleteDisplayOptions')(...args); }
+function clearDisplayOptionsCell(...args) { return requireProvider('clearDisplayOptionsCell')(...args); }
+function setDisplayOptionsGate(...args) { return requireProvider('setDisplayOptionsGate')(...args); }
+function undoDisplayOptionsOp(...args) { return requireProvider('undoDisplayOptionsOp')(...args); }
+function showDisplayOptionsMatrix(...args) { return requireProvider('showDisplayOptionsMatrix')(...args); }
+function isDisplayOptionsShowMessages(...args) { return requireProvider('isDisplayOptionsShowMessages')(...args); }
+function toggleDisplayOptionsShowMessages(...args) { return requireProvider('toggleDisplayOptionsShowMessages')(...args); }
 function leaveFullscreen(...args) { return requireProvider('leaveFullscreen')(...args); }
 function printSections(...args) { return requireProvider('printSections')(...args); }
 function printSectionsInput(...args) { return requireProvider('printSectionsInput')(...args); }
@@ -143,11 +187,9 @@ function printSectionsNotes(...args) { return requireProvider('printSectionsNote
 function printSectionsOptions(...args) { return requireProvider('printSectionsOptions')(...args); }
 function printSectionsChart(...args) { return requireProvider('printSectionsChart')(...args); }
 function printSectionsLine(...args) { return requireProvider('printSectionsLine')(...args); }
-function resetNoteNames(...args) { return requireProvider('resetNoteNames')(...args); }
 function sectionChanged(...args) { return requireProvider('sectionChanged')(...args); }
 function setPresentationMode(...args) { return requireProvider('setPresentationMode')(...args); }
 function setTutorialMode(...args) { return requireProvider('setTutorialMode')(...args); }
-function setBPM(...args) { return requireProvider('setBPM')(...args); }
 function setNamedNoteOpacity(...args) { return requireProvider('setNamedNoteOpacity')(...args); }
 function setSingleNoteOpacity(...args) { return requireProvider('setSingleNoteOpacity')(...args); }
 function setTinyNoteOpacity(...args) { return requireProvider('setTinyNoteOpacity')(...args); }
@@ -159,15 +201,16 @@ function showOneMenu(...args) { return requireProvider('showOneMenu')(...args); 
 function getMyTunings(...args) { return requireProvider('getMyTunings')(...args); }
 function showTuning(...args) { return requireProvider('showTuning')(...args); }
 function hideTuning(...args) { return requireProvider('hideTuning')(...args); }
-function toggleCaption(...args) { return requireProvider('toggleCaption')(...args); }
 function toggleFullscreen(...args) { return requireProvider('toggleFullscreen')(...args); }
-function toggleInstrumentCaptionRow(...args) { return requireProvider('toggleInstrumentCaptionRow')(...args); }
 function toggleRecording(...args) { return requireProvider('toggleRecording')(...args); }
 function transpose(...args) { return requireProvider('transpose')(...args); }
 function transposeSong(...args) { return requireProvider('transposeSong')(...args); }
 function transposeSongKeys(...args) { return requireProvider('transposeSongKeys')(...args); }
 function updateFontLabel(...args) { return requireProvider('updateFontLabel')(...args); }
 function updateSectionsStatus(...args) { return requireProvider('updateSectionsStatus')(...args); }
+function toggleQuickMenu(...args) { return requireProvider('toggleQuickMenu')(...args); }
+function hideQuickMenu(...args) { return requireProvider('hideQuickMenu')(...args); }
+function showQuickMenu(...args) { return requireProvider('showQuickMenu')(...args); }
 
 
 const FONT_INCREMENT = 1;
@@ -264,60 +307,6 @@ function refreshSectionEditRuntimeChildren(menu){
 	return getSectionEditInstrumentOptions();
 }
 
-function getMacroNumberOptions(actionName) {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `${actionName}:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		action: actionName,
-		value: macroId,
-		popOnBang: true
-	}));
-}
-
-function getMacroDeleteNumberOptions() {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `macroDeleteConfirm:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		children: [
-			{
-				caption: `<b>Y</b>es: delete ${macroId}`,
-				trigger: 'Y',
-				action: 'macroDeleteConfirmed',
-				value: macroId,
-				popOnBang: true
-			},
-			{
-				caption: '<b>n</b>o: keep macro',
-				trigger: 'n',
-				action: 'macroDeleteCancel',
-				popOnBang: true
-			}
-		]
-	}));
-}
-
-function getMacroMoveNumberOptions() {
-	const song = getSong();
-	return getSongMacroIds(song).slice(0, 9).map((macroId, index) => ({
-		name: `macroMove:${macroId}`,
-		caption: `<b>${index + 1}</b>) ${macroId}`,
-		trigger: `${index + 1}`,
-		action: 'macroMoveById',
-		value: macroId,
-		popOnBang: true,
-		input: {
-			type: 'input',
-			caption: 'destination number',
-			datatype: 'int',
-			id: 'destination'
-		}
-	}));
-}
-
 function getMyTuningOptions(actionName) {
 	const tunings = Array.isArray(getMyTunings()) ? getMyTunings() : [];
 	return tunings.slice(0, 9).map((tuning, index) => ({
@@ -362,61 +351,6 @@ function refreshRuntimeMenuChildren(menu) {
 	return refreshSectionEditRuntimeChildren(menu)
 		|| refreshMacroAndTuningRuntimeChildren(menu)
 		|| null;
-}
-
-function setPluginToggleValueForMacro(menuItem, value) {
-	const entry = pluginManager.getPluginEntry(menuItem.pluginId);
-	if (!entry) {
-		throw new Error(`Unknown plugin: ${menuItem.pluginId}`);
-	}
-	const pluginResult = pluginManager.setPropertyValue(entry, menuItem.propertyName, value);
-	return { result: pluginResult.result || '' };
-}
-
-function runMacroMenuAction(menuItem, args, context = {}) {
-	if (menuItem?.action === 'pluginProperty:toggle' && context.hasValue) {
-		return setPluginToggleValueForMacro(menuItem, context.value);
-	}
-	return performCmdAction(menuItem, args);
-}
-
-function logMacro(message) {
-	addToUserLog('Macro', message);
-}
-
-export function runSongMacroById(macroId, options = {}) {
-	const id = `${macroId || ''}`.trim();
-	if (!id) {
-		return { ok: false, error: 'macro id is required' };
-	}
-	if (macroExecutionDepth > 0) {
-		const message = `Macro recursion blocked: ${id}`;
-		logMacro(message);
-		return { ok: false, error: message };
-	}
-	macroExecutionDepth += 1;
-	try {
-		pluginManager.refreshPluginsMenuNode();
-		const result = executeSongMacro(getSong(), id, {
-			rootMenu: gMenuFile,
-			actionRunner: runMacroMenuAction,
-			refreshBeforePath: () => pluginManager.refreshPluginsMenuNode(),
-			refreshRuntimeChildren,
-			verbose: options.verbose ?? macroVerbose,
-			log: logMacro
-		});
-		if (result.ok) {
-			logMacro(`Macro ${id} completed (${result.results.length} lines)`);
-		} else {
-			logMacro(`Macro ${id} stopped at line ${result.failedLineNumber}: ${result.error}`);
-		}
-		return result;
-	} catch (error) {
-		logMacro(`Macro ${id} failed: ${error.message}`);
-		return { ok: false, error: error.message };
-	} finally {
-		macroExecutionDepth -= 1;
-	}
 }
 
 function moveSelectByClampedStep(selectSelector, delta) {
@@ -479,6 +413,11 @@ function isMappedSpacebarEvent(evt) {
 }
 
 function document_keydown(e) {
+	if (isMacroMutationLockActive()) {
+		e.preventDefault();
+		focusMacroOverlay();
+		return;
+	}
 	if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key || ''}`.toLowerCase() === 'm' && getSong()?.tutorial?.level === 'strict') {
 		showCmdLine();
 		e.preventDefault();
@@ -492,7 +431,20 @@ function document_keydown(e) {
 
 
 function document_keyup(evt) {
+	if (isMacroMutationLockActive()) {
+		evt.preventDefault();
+		focusMacroOverlay();
+		return;
+	}
     if (evt.keyCode == 27) {  // ESC key
+        if (evt.shiftKey) {
+            // SHIFT+ESC toggles between floated-all and floated-none, using the same
+            // action dispatch as the /vwd (dock all) and /vwr (re-float all) menu
+            // items/commands. If any tables are currently floated, treat that as the
+            // floated-all state and dock everything; otherwise re-float everything.
+            runActionByName(hasAnyFloatingDockables() ? "dockAllDockables" : "refloatAllDockables");
+            return;
+        }
         leaveFullscreen();
         hideCmdLine();
         hideAllMenuDivs();
@@ -503,6 +455,11 @@ function document_keyup(evt) {
 
 
 function document_keypress(e) {
+	if (isMacroMutationLockActive()) {
+		e.preventDefault();
+		focusMacroOverlay();
+		return;
+	}
 	if (isMappedSpacebarEvent(e)) {
 		e.preventDefault();
 		return;
@@ -515,7 +472,7 @@ function document_keypress(e) {
     if ( tag != 'input' && tag != 'textarea'){
 		const strictTutorial = getSong()?.tutorial?.level === TUTORIAL_MODES.STRICT;
 				
-		if (strictTutorial && (!['n', 'b', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L'].includes(e.key))){
+		if (strictTutorial && (!['n', 'b', 'B', ',', '.', '<', '>', 'h', 'H', 'w', 'W', 'l', 'L','0','-','=','_','+',')'].includes(e.key))){
 			return;
 		}
         switch (e.key){
@@ -532,15 +489,15 @@ function document_keypress(e) {
                 clearCmdResults();
                 showCmdLine();
                 var menu = gMenuPointer;
-                var childCaptions = buildChildMenuCaptionsRow(menu);
+                buildChildMenuCaptionsRow(menu);
                 updateCmdLineView();
                 e.preventDefault();
                 break;
             case "a":
-                toggleCaption();
+				getSong().getLayout().toggleCaptionRow();
                 break;
             case "A":
-                toggleInstrumentCaptionRow();
+				getSong().getLayout().toggleInstrumentCaptions();
                 break;
             case "b":
 				getSong().prevBeat();
@@ -548,25 +505,29 @@ function document_keypress(e) {
 			case "B":
 				getTransportController().toggleLoopBeats();
 				break;
-			case "c": //"_C_olor"
+			case "c": //"_C_olor"  see also: case "y" where we do #cbAutomaticColorHighlight
 				$("#cbAutomaticColor").trigger('click');
+                break;
+			case "y": //"yellowpen: toggle auto color for highlights."
+				$("#cbAutomaticColorHighlight").trigger('click');
                 break;
 			case "C":
 				try {
 					parkCommandLineAtPath('fpc');
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
             case "e":
                 toggleWiringOpenState();
                 break;
-
 			case "E":
-				//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
-				$(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
-				$(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				/*//Using toggle() here is a stop-gap.  It works well, until you show one set in just one instrument, then the toggling of this gets instruments out of sync. Solution is to only click C and S toggle buttons when this is toggled into view.  Later, we'll sync all these behaviors up.  For now, it works if you just get all the instruments set how you want them and then toggle them off and on with this.
+				 *  $(".leftRailSectionStatusHost").toggle();//display:flex (hide seems to preserve this)
+				 *  $(".fretTableLeftCaption").toggle();//display:flex (hide seems to preserve this)
+				*/
+				getSong().getLayout().toggleLeftRails();
 				break;
             case "f":
                 toggleFullscreen();
@@ -578,6 +539,9 @@ function document_keypress(e) {
                 showOneMenu("#divTunings");
 				EventBus.trigger('ReloadTuningsDisplays');
                 break;
+            case "G": //"Grabbles"
+				$(".dockable-handle").toggle();
+                break;
             case "i":
                 showOneMenu("#divFillNotes");
                 break;
@@ -585,13 +549,18 @@ function document_keypress(e) {
                 showInfoDialog();
                 break;
             case "k":
-                 cycleThruKeys(1);
-                 highlightOneNote(getSong().getRootNoteName());
-                 break;
+				cycleThruKeys(1);
+				highlightOneNote(getSong().getRootNoteName());
+				break;
             case "K":
-                cycleThruKeys(-1);
-                highlightOneNote(getSong().getRootNoteName());
-                break;
+				if ((e.metaKey || e.ctrlKey) && e.shiftKey && `${e.key}` === 'K') {
+					cycleThruLeadKeys(1);
+					highlightOneNote(getSong().getLeadNoteName(), "noteHighlightOverrideBlue");
+				} else {
+					cycleThruKeys(-1);
+					highlightOneNote(getSong().getRootNoteName());
+				}
+				break;
 			case "l":
                 toggleLoopSections();
                 break;
@@ -611,12 +580,12 @@ function document_keypress(e) {
 				try {
 					parkCommandLineAtPath('fp');
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
             case "q":
-                $('#divQuick').toggle();
+                toggleQuickMenu();
                 break;
 			case "r":
                 showOneMenu("#divChart");
@@ -631,13 +600,16 @@ function document_keypress(e) {
 				try {
 					runActionByName('sectionAdd', {});
 				} catch (error) {
-					showMessages(`<pre>${error.message}</pre>`);
+					Messages.showMessages(`<pre>${error.message}</pre>`);
 				}
 				e.preventDefault();
 				break;
             case "t":
                 toggleTransport();
                 break;
+			case "T":
+				showOneMenu("#divThemeControls");
+                break;	
             case "v":
             case "V":
                 showOneMenu("#divViewControls");
@@ -680,11 +652,18 @@ function document_keypress(e) {
             case "h":
 					moveSelectByClampedStep('#dropDownCellHeight', 1);
                 break;
+			// case "y" is handled above near case "c"	
+			case "z":
+				runActionByName("dockAllDockables");
+				break;
+			case "Z":
+				runActionByName("refloatAllDockables");
+				break;	
             case "o":
 				//the letter 'o' because '0' (zero) is for the nut width.
 				paletteUtils.activateUiControl('#idPaletteModePaint');
-				paletteUtils.activateUiControl('#rbFinger0');
 				paletteUtils.activateUiControl('#idRFinger0');
+				paletteUtils.activateUiControl('#rbFinger0');
                 break;
             case "1":
                 //select radio button with value e.key, which will be one of 12345, with 5 representing "T".
@@ -768,6 +747,12 @@ function document_keypress(e) {
 				paletteUtils.activateUiControl('#idPaletteModePaint');
 				paletteUtils.activateUiControl('#idMidiPitchesSingle');
                 break;
+			case "*":
+				let $el = $('body');
+				$el.toggleClass('HideFaceDiamonds');
+				let hideFace = $el.hasClass('HideFaceDiamonds');
+				$('.diamondsRow').toggle(!hideFace);
+				break;	
             default:
         }
     }
@@ -792,6 +777,11 @@ export function performCmdAction(menuItem, args){
 	if (menuItem.popOnBang){
 		actionResult.popOnBang = true;
 	}
+	if (isMacroMutationLockActive() && !isAllowedDuringMacro(menuItem?.action)) {
+		actionResult.result = `macro running: blocked action ${menuItem?.action || ''}`;
+		actionResult.suppressBang = true;
+		return actionResult;
+	}
 	var argByInputID = (args && menuItem && menuItem.input) ? args[menuItem.input.id] : undefined;
 	switch (menuItem.action){
 		case "setupOpenFile":
@@ -810,7 +800,7 @@ export function performCmdAction(menuItem, args){
 		case "versionMore":
 			actionResult.result = getVersionString();
 			let version = getVersionObject();
-			showMessagesJSON(JSON.stringify(version, null, 2),
+			Messages.showMessagesJSON(JSON.stringify(version, null, 2),
 			                 `<a target='_blank' href='${version.README}'>${version.README}</a><br><br>`);
 			break;
 		case "removeUnusedTablesFromMemoryModel":
@@ -859,6 +849,32 @@ export function performCmdAction(menuItem, args){
 				$("#txtFilename").val(argByInputID).trigger('change');
 			}
 			break;
+
+		case "setSongFlats":
+			setSongFlats();
+			break;
+		case "setSongSharps":
+			setSongSharps();
+			break;
+		case "setSongKeyWhite":
+			var keyIdx = ['a','x','b','c','x','d','x','e','f','x','g','x',].indexOf(menuItem.trigger);
+			if (keyIdx >= 0){
+				getSong().rootID = keyIdx;
+				if (menuItem.trigger == 'f'){
+					setSongFlats();
+				} else {					
+					setSongSharps();
+				}
+			}
+			break;
+		case "setSongKeyBlack":
+			var keyIdx = ['x','b','x','x','d','x','e','x','x','g','x','a'].indexOf(menuItem.trigger);
+			if (keyIdx >= 0){
+				getSong().rootID = keyIdx;
+				setSongFlats();
+			}
+			break;
+
 		case "setSectionCaption":
 			getCurrentSection().caption = argByInputID;
 			updateSectionsStatus();
@@ -1070,7 +1086,6 @@ export function performCmdAction(menuItem, args){
 			clearBeatAndSectionLooping();
 			actionResult.result = "Looping Stopped";
 			break;
-		case "toggleLoopBeats":
 		case "toggleLoopSections":
 			Object.assign(actionResult, getTransportController().toggleLoopSections());
 			break;
@@ -1173,9 +1188,53 @@ export function performCmdAction(menuItem, args){
 		}
 		case "macroRunById": {
 			const macroId = `${menuItem.value || argByInputID || ''}`.trim();
-			const macroResult = runSongMacroById(macroId);
-			actionResult.result = macroResult.ok ? `ran ${macroId}` : macroResult.error;
+			const macroResult = startSongMacroById(macroId);
+			actionResult.result = macroResult.ok ? `running ${macroId}` : macroResult.error;
 			actionResult.suppressBang = !macroResult.ok;
+			break;
+		}
+		case "macroCall": {
+			try {
+				const parsedCall = parseMacroCallInput(argByInputID);
+				const inMacroAction = isInMacroAction();
+				const macroResult = inMacroAction
+					? runSongMacroById(parsedCall.macroId, { callArgs: parsedCall.args })
+					: startSongMacroById(parsedCall.macroId, { callArgs: parsedCall.args });
+				actionResult.result = macroResult.ok
+					? (inMacroAction ? `ran ${parsedCall.macroId}` : `running ${parsedCall.macroId}`)
+					: macroResult.error;
+				actionResult.suppressBang = !macroResult.ok;
+				if (!macroResult.ok) {
+					actionResult.macroExecutionError = macroResult.error;
+				}
+			} catch (error) {
+				logMacro(`macroCall rejected: ${error.message}`);
+				actionResult.result = error.message;
+				actionResult.suppressBang = true;
+				actionResult.macroExecutionError = error.message;
+			}
+			break;
+		}
+		case "macroListAll": {
+			const list = getSongMacroIds(getSong());
+			Messages.showMessages(list.join("<br>"));
+			actionResult.result ="listed macros";
+			break;
+		}
+		case "macroLog": {
+			if (typeof argByInputID !== 'string') {
+				actionResult.result = 'printf input must be a JSON string value';
+				actionResult.suppressBang = true;
+				actionResult.macroExecutionError = actionResult.result;
+				break;
+			}
+			const message = `${argByInputID}`;
+			if (macroVerbose) {
+				logMacro(message);
+				actionResult.result = `printf: ${message}`;
+			} else {
+				actionResult.result = 'printf skipped (macro verbose=false)';
+			}
 			break;
 		}
 		case "macroQueueDeleteById": {
@@ -1268,7 +1327,7 @@ export function performCmdAction(menuItem, args){
 			break;
 		}
 		case "showThemeIds":
-			showMessages(dumpThemeIds());
+			Messages.showMessages(dumpThemeIds());
 			break;
 		case "viewFullscreen":
 			enterFullscreen();
@@ -1310,9 +1369,22 @@ export function performCmdAction(menuItem, args){
 			actionResult.preserveMenuStack = true;
 			break;
 		}
-		case "saveViewDisplayOptions":
-			handleBtnControlsToDisplayOptions();
-			actionResult.result = `Display Options saved: ${getDisplayOptionsSaveState()}`;
+		case "useCaptionForSectionCaptionAction":
+			const song = getSong();
+			if (!song.tutorial){
+				song.tutorial = {};
+			}
+			song.tutorial.useCaptionForSectionCaption = !song.tutorial.useCaptionForSectionCaption;
+			actionResult.result = `useCaptionForSectionCaption: ${getSong().tutorial.useCaptionForSectionCaption}`
+			break;
+		case "saveViewDisplayOptions":   //SAVE Diff
+			handleBtnSaveDiff();
+			actionResult.result = `Display Options saved (diff): ${getDisplayOptionsSaveState()}`;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "saveViewDisplayOptionsAll":
+			handleBtnSaveAll();
+			actionResult.result = `Display Options saved (all): ${getDisplayOptionsSaveState()}`;
 			actionResult.preserveMenuStack = true;
 			break;
 		case "clearViewDisplayOptions":
@@ -1320,36 +1392,76 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = `Display Options cleared: ${getDisplayOptionsClearState()}`;
 			actionResult.preserveMenuStack = true;
 			break;
+		// Sprint 148 it4: static /vpm (Matrix) commands.  Inputs are comma-separated, no quotes: "3,noteFont".
+		case "matrixClearCell": {
+			const [sectionNumber, key] = splitMatrixArgs(argByInputID);
+			actionResult.result = clearDisplayOptionsCell(sectionNumber, key).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateKey": {        // key[,value]
+			const [key, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'column', key, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateSection": {    // sectionNumber[,value]
+			const [sectionNumber, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'row', sectionNumberText: sectionNumber, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixGateCell": {       // sectionNumber,key[,value]
+			const [sectionNumber, key, value] = splitMatrixArgs(argByInputID);
+			actionResult.result = setDisplayOptionsGate({ scope: 'cell', sectionNumberText: sectionNumber, key, valueText: value, on: menuItem.on !== false }).report;
+			actionResult.preserveMenuStack = true;
+			break;
+		}
+		case "matrixUndo":
+			actionResult.result = undoDisplayOptionsOp().report;
+			actionResult.preserveMenuStack = true;
+			break;
+		case "matrixOpen":
+			showDisplayOptionsMatrix();
+			actionResult.result = 'DisplayOptions Matrix opened';
+			actionResult.preserveMenuStack = true;
+			break;
+		case "toggleDisplayOptionsShowMessages":   // Sprint 148 it7: flips #cbShowDisplayOptionsShowMessages, the single source of truth
+			actionResult.result = `show messages: ${toggleDisplayOptionsShowMessages()}`;
+			actionResult.preserveMenuStack = true;
+			break;
 		case "cmdBackgroundOpacity":
 			setOneCssVar("--cmd-menu-opacity", menuItem.name);
 			break;	
 		case "showViewDiagnostics":
-			showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
+			Messages.showMessagesJSON(JSON.stringify(getCurrentSection(), null, 2));
 			break;
 		case "showViewDiagnosticsFullModel":
-			showMessagesJSON(JSON.stringify(getSong(), null, 2));
+			Messages.showMessagesJSON(JSON.stringify(getSong(), null, 2));
 			break;
 		case "showViewDiagnosticsMenu":
-			showMessages(dumpMenus());
+			Messages.showMessages(dumpMenus());
 			break;
         case "showViewDiagnosticsMenuJson":
-			showMessagesJSON(gMenuLoaded);
+			Messages.showMessagesJSON(gMenuLoaded);
 			break;
         case "showViewDiagnosticsUserColorDict":
-            showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
+            Messages.showMessagesJSON(JSON.stringify(gUserColorDict.dict, null, 2));
             actionResult.result = "ColorDictionary sent to Messages";
             break;
         case "showViewDiagnosticsDisplayOptions":
             showDisplayOptions();
-			//showMessages(displayOptionsTable());
             actionResult.result = "DisplayOptions sent to Messages";
             break;
 		case "showViewDiagnosticsVariables":
-			showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
+			Messages.showMessages(renderApprovedValuesReferenceHtml({ includeSamples: true }));
 			actionResult.result = "Approved variables sent to Messages";
 			break;
         case "showViewDiagnosticsSongFileFormat":
-			showMessagesJSON(getPersistentSongFile());
+			Messages.showMessagesJSON(getPersistentSongFile());
+			break;
+        case "showViewDiagnosticsSongFileFormatHTML":
+			Messages.showMessagesJSON(getPersistentSongFile().replaceAll('<', "&lt;"));
 			break;
         case "showViewDiagnosticsLogEvents":
 			let obj = {};
@@ -1359,11 +1471,11 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = "EventBus logging: "+EventBus.setLogEvents(!EventBus.getLogEvents(), obj);
 			break;
 		case "showUserLog":
-			showUserLog();
+			UserLog.showUserLog();
 			actionResult.result = "User Log shown";
 			break;
 		case "clearUserLog":
-			clearUserLog();
+			UserLog.clearUserLog();
 			actionResult.result = "User Log cleared";
 			break;
 		case "showGraveyard":
@@ -1379,7 +1491,7 @@ export function performCmdAction(menuItem, args){
             $("#divMessages").show();
             actionResult.result = "Messages re-shown";
 			hideCmdLine();
-    		scrollToMessages();
+    		Messages.scrollToMessages();
             break;
 		case "printSectionsDetails":
 			printSections(true);
@@ -1522,17 +1634,81 @@ export function performCmdAction(menuItem, args){
 		case "showFingering":
 			$("#cbHideFingering").prop("checked", false).trigger('change');
 			break;
-		case "showSectionStatusLeft":
-			$(".leftRailSectionStatusHost").show();//display:flex (hide seems to preserve this)
+		case "hideCaptionRow":
+			getSong().getLayout().toggleCaptionRow(false);
+			break;	
+		case "showCaptionRow":
+			getSong().getLayout().toggleCaptionRow(true);
+			break;	
+		case "hideSongTitle":
+			getSong().getLayout().toggleSongTitle(false);
 			break;
-		case "showCaptionLeft":
-			$(".fretTableLeftCaption").show();//display:flex (hide seems to preserve this)
+		case "showSongTitle":
+			getSong().getLayout().toggleSongTitle(true);
 			break;
-		case "hideSectionStatusLeft":
-			$(".leftRailSectionStatusHost").hide();
+		case "hideSongWidgets":
+			getSong().getLayout().toggleSongWidgets(false);
 			break;
-		case "hideCaptionLeft":
-			$(".fretTableLeftCaption").hide();
+		case "showSongWidgets":
+			getSong().getLayout().toggleSongWidgets(true);
+			break;
+		case "hideInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions(false);
+			break;	
+		case "showInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions(true);
+			break;	
+		case "hideWidgetRow":
+			getSong().getLayout().toggleWidgetRow(false);
+			break;
+		case "showWidgetRow":
+			getSong().getLayout().toggleWidgetRow(true);
+			break;
+		case "toggleCaptionRow":
+			getSong().getLayout().toggleCaptionRow();
+			break;
+		case "toggleSongTitle":
+			getSong().getLayout().toggleSongTitle();
+			break;
+		case "toggleSongWidgets":
+			getSong().getLayout().toggleSongWidgets();
+			break;
+		case "toggleWidgetRow":
+			getSong().getLayout().toggleWidgetRow();
+			break;
+		case "toggleInstrumentCaptions":
+			getSong().getLayout().toggleInstrumentCaptions();
+			break;
+		case "toggleLeftRail":
+			getSong().getLayout().toggleLeftRails();
+			break;
+		case "toggleRealtimeClock":
+			$('#realtimeTickStart').toggle();
+			break;
+		case "toggleQuickMenu":
+			toggleQuickMenu();
+			break;	
+		case "hideQuickMenu":
+			hideQuickMenu();
+			break;
+		case "showQuickMenu":
+			showQuickMenu();
+			break;
+		case "hideLeftRail":
+			getSong().getLayout().toggleLeftRails(false);
+			break;
+		case "showLeftRail":
+			getSong().getLayout().toggleLeftRails(true);
+			break;	
+		case "hideRealtimeClock":
+			$('#realtimeTickStart').hide();
+			break;	
+		case "showRealtimeClock":
+			$('#realtimeTickStart').show();
+			break;	
+		case "toggleCaptionLooperLayout":
+			getSong().getLayout().toggleLeftRails(true);
+			getSong().getLayout().toggleCaptionLooperLayout();
 			break;
 		case "hideAllNoteNames":
 			showAllNoteNames(false);
@@ -1569,30 +1745,37 @@ export function performCmdAction(menuItem, args){
 				paletteUtils.activatePaintModeIfSpecialSelected();
 				switch (args["key"]){
 					case "o":  //the letter o, for the Finger0, since 0 is used for the nut width keymap.
-						paletteUtils.check("#rbFinger0");
-						paletteUtils.checkAndTrigger("#idRFinger0");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger0');
+						paletteUtils.activateUiControl('#rbFinger0');
 						break;
 					case "1":
-					    paletteUtils.check("#rbFinger1");
-						paletteUtils.checkAndTrigger("#idRFinger1");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger1');
+						paletteUtils.activateUiControl('#rbFinger1');
 						break;
 					case "2":
-					    paletteUtils.check("#rbFinger2");
-					    paletteUtils.checkAndTrigger("#idRFinger2");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger2');
+						paletteUtils.activateUiControl('#rbFinger2');
 						break;
 					case "3":
-					    paletteUtils.check("#rbFinger3");
-					    paletteUtils.checkAndTrigger("#idRFinger3");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger3');
+						paletteUtils.activateUiControl('#rbFinger3');
 						break;
 					case "4":
-					    paletteUtils.check("#rbFinger4");
-					    paletteUtils.checkAndTrigger("#idRFinger4");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFinger4');
+						paletteUtils.activateUiControl('#rbFinger4');
 						break;
 					case "5":
-					    paletteUtils.check("#rbFingerT");
-						paletteUtils.checkAndTrigger("#idRFingerT");
+						paletteUtils.activateUiControl('#idPaletteModePaint');
+						paletteUtils.activateUiControl('#idRFingerT');
+						paletteUtils.activateUiControl('#rbFingerT');
 						break;
 					case "t":
+						paletteUtils.activateUiControl('#idPaletteModePaint');
 					    paletteUtils.check("#rbFingerT");
 						paletteUtils.checkAndTrigger("#idRFingerT");
 						break;
@@ -1627,16 +1810,20 @@ export function performCmdAction(menuItem, args){
 						paletteUtils.check("#idMidiPitchesSingle");
 						break;
 					case "l":
-						paletteUtils.check("#idPaletteModePaint");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.check("#idPaletteModePaint");
 						break;
 					case "k":
-						paletteUtils.checkAndTrigger("#idPaletteModeKeep");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeKeep");
 						break;
 					case "c":
-						paletteUtils.checkAndTrigger("#idPaletteModeClear");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeClear");
 						break;
 					case "f":
-						paletteUtils.checkAndTrigger("#idPaletteModeDropper");
+						paletteUtils.activatePaintModeIfSpecialSelected();
+					    paletteUtils.checkAndTrigger("#idPaletteModeDropper");
 						break;
 				}
 			}
@@ -1657,7 +1844,7 @@ export function performCmdAction(menuItem, args){
 					case "r":
 						paletteUtils.checkAndTrigger("#idRRoot");
 						break;
-					case "c":
+					case "h":
 						paletteUtils.checkAndTrigger("#idRChromatic");
 						break;
 					case "p":
@@ -1730,6 +1917,49 @@ export function performCmdAction(menuItem, args){
 				}
 			}
 			break;		
+		case "selectRoleNote":
+			if (args) {
+				paletteUtils.activatePaintModeIfSpecialSelected();
+				switch (args["key"]) {
+					case "1":
+						paletteUtils.checkAndTrigger("#idR1");
+						break;
+					case "t":
+						paletteUtils.checkAndTrigger("#idR2");
+						break;
+					case "2":
+						paletteUtils.checkAndTrigger("#idR3");
+						break;
+					case "m":
+						paletteUtils.checkAndTrigger("#idR4");
+						break;
+					case "3":
+						paletteUtils.checkAndTrigger("#idR5");
+						break;
+					case "4":
+						paletteUtils.checkAndTrigger("#idR6");
+						break;
+					case "r":
+						paletteUtils.checkAndTrigger("#idR7");
+						break;
+					case "5":
+						paletteUtils.checkAndTrigger("#idR8");
+						break;
+					case "s":
+						paletteUtils.checkAndTrigger("#idR9");
+						break;
+					case "6":
+						paletteUtils.checkAndTrigger("#idR10");
+						break;
+					case "d":
+						paletteUtils.checkAndTrigger("#idR11");
+						break;
+					case "7":
+						paletteUtils.checkAndTrigger("#idR12");
+						break;
+				}
+			}
+			break;		
 		case "selectBendType":
 			console.log("selectBendType: "+stringifyMenuItem(menuItem));
 			$("#selBend").val(menuItem.name);
@@ -1737,19 +1967,27 @@ export function performCmdAction(menuItem, args){
 			paletteUtils.check("#rbBend");
 			break;
 		case "disposeAllDockables":
+			dockDivInPage('divDisplayOptionsMatrix');  //Sprint 148 it5: dispose would delete a floating Matrix (no-op when docked).
 			disposeAllDockables();
 			EventBus.trigger('ReinstallAllTuningsTables');
 			EventBus.trigger('UpdateAllWiringSelects');
 			break;		
 		case "dockAllDockables":
 			dockAllDockables();
+			break;	
+		case "refloatAllDockables":
+			refloatAllDockables();
+			fixDockableHandlesIfFullscreen();
 			break;		
 		case "gatherAllDockables":
 			gatherAllDockables();
 			break;		
 		case "clampAllDockablesToViewport":
 			clampAllDockablesToViewport();
-			break;		
+			break;	
+		case "showPerfect4thsCalculator":
+			Calculators.createPerfect4thsCalculator(getSong());
+			break;
 		case "noAction":
 			console.log("noAction=====!");
 			actionResult.result = "none";
@@ -1769,12 +2007,12 @@ export function performCmdAction(menuItem, args){
 			actionResult.result = pluginResult.result || '';
 			actionResult.preserveMenuStack = pluginResult.preserveMenuStack === true;
 			if (pluginResult.messageJSON) {
-				showMessagesJSON(pluginResult.messageJSON);
+				Messages.showMessagesJSON(pluginResult.messageJSON);
 			} else if (pluginResult.message) {
-				if (isQuietUserLogMessage(pluginResult.message)) {
-					addToUserLog('PluginManager', pluginResult.message);
+				if (UserLog.isQuietUserLogMessage(pluginResult.message)) {
+					UserLog.addToUserLog('PluginManager', pluginResult.message);
 				} else {
-					showMessages(pluginResult.message);
+					Messages.showMessages(pluginResult.message);
 				}
 			}
 			break;
@@ -1786,122 +2024,10 @@ export function performCmdAction(menuItem, args){
 	return actionResult;
 }
 
-function scrollToMessages(){
-    var scrollDiv = document.getElementById("divMessageAndJsonTree").offsetTop;
-    window.scrollTo({ top: scrollDiv, behavior: 'smooth'});
-}
 
-function getUserLogTableBody(){
-	if (typeof document === 'undefined') {
-		return null;
-	}
-
-	const divUserLog = document.getElementById('divUserLog');
-	if (!divUserLog) {
-		return null;
-	}
-
-	let table = document.getElementById('tblUserLog');
-	if (!table) {
-		table = document.createElement('table');
-		table.id = 'tblUserLog';
-		const thead = document.createElement('thead');
-		const headerRow = document.createElement('tr');
-		['Time', 'SubSystem', 'Message'].forEach((caption) => {
-			const th = document.createElement('th');
-			th.textContent = caption;
-			headerRow.appendChild(th);
-		});
-		thead.appendChild(headerRow);
-		table.appendChild(thead);
-		table.appendChild(document.createElement('tbody'));
-		divUserLog.appendChild(table);
-	}
-
-	let tbody = table.querySelector('tbody');
-	if (!tbody) {
-		tbody = document.createElement('tbody');
-		table.appendChild(tbody);
-	}
-	return tbody;
-}
-
-function getUserLogTime(){
-	const now = new Date();
-	return [now.getHours(), now.getMinutes(), now.getSeconds()]
-		.map((value) => `${value}`.padStart(2, '0'))
-		.join(':');
-}
-
-function isQuietUserLogMessage(message = '') {
-	const text = `${message || ''}`.trim();
-	return text.startsWith('#raise=');
-}
-
-export function addToUserLog(subSystem, message){
-	const tbody = getUserLogTableBody();
-	if (!tbody) {
-		return false;
-	}
-
-	const row = document.createElement('tr');
-	const timeCell = document.createElement('td');
-	const subSystemCell = document.createElement('td');
-	const messageCell = document.createElement('td');
-
-	timeCell.textContent = getUserLogTime();
-	subSystemCell.textContent = `${subSystem || ''}`;
-	messageCell.innerHTML = `${message || ''}`;
-
-	row.appendChild(timeCell);
-	row.appendChild(subSystemCell);
-	row.appendChild(messageCell);
-	tbody.insertBefore(row, tbody.firstChild);
-
-	while (tbody.rows.length > USER_LOG_MAX_ROWS) {
-		tbody.deleteRow(tbody.rows.length - 1);
-	}
-
-	return true;
-}
-
-export function clearUserLog(){
-	const tbody = getUserLogTableBody();
-	if (tbody) {
-		tbody.innerHTML = '';
-	}
-}
-
-function showUserLog(){
-	getUserLogTableBody();
-	$("#divMessageAndJsonTree").show();
-	showMessagesTab("UserLog");
-	hideCmdLine();
-	scrollToMessages();
-}
-
-export function showMessagesJSON(json, preamble = ""){
-	showMessages(preamble+json);
-    const div = document.getElementById('divJsonTree');
-	div.innerHTML = '';
-	let data = JSON.parse(json);
-	jsonTree(data, div);
-}
-export function showMessages(html){
-    $("#divMessageAndJsonTree").show();
-    $("#divMessages").show();
-    $("#divMessages").html(html);
-	showMessagesTab("Messages");
-    hideCmdLine();
-    scrollToMessages();
-}
-export function hideMessages(){
-    $("#divMessages").hide();
-	$("#divMessageAndJsonTree").hide();
-}
 function showGraveyard(){
     hideAllMenuDivs();
-    showMessages(getSong().graveyard.buildGraveyardTable());
+    Messages.showMessages(getSong().graveyard.buildGraveyardTable());
 }
 export function hideGraveyard(){
     $("#divMessages").hide();
@@ -1974,6 +2100,9 @@ export function getValue(what){
 	}
 	if (what === 'presentationModeState'){
 		return !!getSong()?.presentationMode;
+	}
+	if (what === 'displayOptionsShowMessagesState'){
+		return !!isDisplayOptionsShowMessages();
 	}
 	if (what === 'displayOptionsSaveState'){
 		return getDisplayOptionsSaveState();

@@ -60,6 +60,44 @@ export class SectionNotesPersistence {
             }
         });
     }
-    
+
+    /** Removes every playedNote and namedNote whose `owner` field matches the given owner string
+     *  (same owner-tagging convention as ArpeggioPlugin/FillPlugin's generated notes). Used by MIDI
+     *  Momentary mode to sweep up notes left behind when a Section change happens while a button is
+     *  still held -- see templates/midi/midi.builder.js's cleanupMomentaryNotes(). No-op for a falsy
+     *  owner, so it can never accidentally clear unowned (regular) notes. */
+    removeNotesByOwner(owner){
+        if (!owner) {
+            return;
+        }
+        this.removePlayedNotesWhere((note) => note?.owner === owner);
+        Object.entries(this.namedNotes || {}).forEach(([noteName, note]) => {
+            if (note?.owner === owner) {
+                this.clearNamedNote(noteName);
+            }
+        });
+    }
+
+    /** Removes the specific owner-tagged note(s) at ONE cell -- a namedNote by `noteName`, or
+     *  playedNote(s) by `row`+`col` -- rather than every owner-tagged note in this table (see
+     *  removeNotesByOwner() for the broader table-wide sweep). Used by MIDI Momentary's proactive
+     *  cross-Section release handling (templates/midi/midi.builder.js): when a button-up lands in a
+     *  DIFFERENT Section than its button-down (the Section changed while held, e.g. while looping),
+     *  this surgically releases exactly the note THAT press created in the Section it was pressed
+     *  in, without disturbing any OTHER currently-held Momentary button's note in that same (now
+     *  stale) Section. No-op for a falsy owner, so it can never accidentally clear unowned notes. */
+    removeOwnedNoteAtCell(owner, { noteName, row, col } = {}){
+        if (!owner) {
+            return;
+        }
+        if (noteName && this.namedNotes?.[noteName]?.owner === owner) {
+            this.clearNamedNote(noteName);
+        }
+        if (row != null && col != null) {
+            this.removePlayedNotesWhere((note) => note?.owner === owner
+                && `${note?.row ?? ''}` === `${row}`
+                && `${note?.col ?? ''}` === `${col}`);
+        }
+    }
 
 }

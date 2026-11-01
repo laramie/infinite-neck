@@ -77,4 +77,10 @@ describe('Tutorial IncludeInLooping helpers', () => {
     expect(getLoopCaptionModel({ looping: true, includeInLoopingSectionIndexes: [1, 2, 3, 6, 7, 8], sectionCount: 9 })).toBe('LOOPING 2..9');
     expect(getLoopCaptionModel({ looping: true, includeInLoopingSectionIndexes: [], sectionCount: 4 })).toBe('LOOPING');
   });
+
+  test('loop caption composes random with full and partial section ranges', () => {
+    expect(getLoopCaptionModel({ looping: true, random: true, includeInLoopingSectionIndexes: [], sectionCount: 4 })).toBe('RANDOM');
+    expect(getLoopCaptionModel({ looping: true, random: true, includeInLoopingSectionIndexes: [1, 2], sectionCount: 4 })).toBe('RANDOM 2..3');
+    expect(getLoopCaptionModel({ looping: false, random: true, includeInLoopingSectionIndexes: [1, 2], sectionCount: 4 })).toBe('LOOP');
+  });
 });

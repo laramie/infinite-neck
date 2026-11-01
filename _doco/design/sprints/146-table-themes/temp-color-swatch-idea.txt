@@ -1,0 +1,110 @@
+HTML
+
+<label for="colorSelect">Choose a color:</label>
+<select id="colorSelect">
+  <option value="red">Red</option>
+  <option value="blue">Blue</option>
+  <option value="green">Green</option>
+  <option value="yellow">Yellow</option>
+  <option value="purple">Purple</option>
+</select>
+
+<button id="showSwatches">Show Color Swatches</button>
+
+<!-- Popup Container -->
+<div id="swatchPopup" class="popup" style="display:none;">
+  <div class="popup-content">
+    <span id="closePopup">&times;</span>
+    <h3>Color Swatches</h3>
+    <div id="swatchContainer"></div>
+  </div>
+</div>
+
+
+CSS
+
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  position: relative;
+}
+#closePopup {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+.swatch-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.swatch-box {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+
+JS
+
+const btn = document.getElementById('showSwatches');
+const popup = document.getElementById('swatchPopup');
+const closeBtn = document.getElementById('closePopup');
+const select = document.getElementById('colorSelect');
+const container = document.getElementById('swatchContainer');
+
+// Open popup and generate swatches
+btn.addEventListener('click', () => {
+  container.innerHTML = ''; // Clear previous swatches
+  
+  // Loop through all options in the select element
+  Array.from(select.options).forEach(option => {
+    const colorValue = option.value;
+    
+    // Create wrapper
+    const item = document.createElement('div');
+    item.className = 'swatch-item';
+    
+    // Create color box
+    const box = document.createElement('span');
+    box.className = 'swatch-box';
+    box.style.backgroundColor = colorValue;
+    
+    // Create text label
+    const label = document.createElement('span');
+    label.textContent = option.text;
+    
+    // Append to container
+    item.appendChild(box);
+    item.appendChild(label);
+    container.appendChild(item);
+  });
+  
+  popup.style.display = 'flex';
+});
+
+// Close popup on 'X' click
+closeBtn.addEventListener('click', () => {
+  popup.style.display = 'none';
+});
+
+// Close popup when clicking outside content
+window.addEventListener('click', (e) => {
+  if (e.target === popup) {
+    popup.style.display = 'none';
+  }
+});

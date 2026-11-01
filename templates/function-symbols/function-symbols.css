@@ -1,0 +1,119 @@
+/* Sprint 148 Iteration 3: Function Symbols panel (templates/function-symbols/).
+   One column so it fits a .divViewCard, including on a phone. */
+
+#widgetFunctionSymbols {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.8em;
+    background-color: #f4f4f4;
+}
+
+#widgetFunctionSymbols select,
+#widgetFunctionSymbols textarea,
+#widgetFunctionSymbols input[type="text"] {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+#widgetFunctionSymbols textarea,
+#widgetFunctionSymbols input[type="text"] {
+    width: 100%;
+}
+
+#widgetFunctionSymbols textarea {
+    resize: vertical;
+}
+
+#divFunctionSymbolsCRUD {
+    margin-top: 0.5em;
+}
+
+#widgetFunctionSymbols .fsRow {
+    margin: 0.3em 0;
+}
+
+#widgetFunctionSymbols .fsLabel {
+    display: block;
+    margin-top: 0.4em;
+}
+
+/* Warning labels: small and brown (readable on the light View card). Empty ones take no space. */
+#widgetFunctionSymbols .fsWarn {
+    font-size: 70%;
+    color: brown;
+}
+#widgetFunctionSymbols .fsWarn:empty {
+    display: none;
+}
+
+#lblUserFunctionSymbolsID {
+    font-family: monospace;
+}
+
+#btnSaveUserFunctionSymbols {
+    margin-top: 0.4em;
+}
+#btnSaveUserFunctionSymbols:disabled {
+    background-color: #ababab !important;
+}
+
+/* ---- Preview: 5 equal "frets", rows listed top to bottom (11,12 / 6-10 / 1-5) ---- */
+table.fsPreview {
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 0.4em;
+}
+table.fsPreview td {
+    text-align: center;
+    height: 1.8em;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: var(--td-note-font-family), sans-serif;
+    border: 1px solid gray;
+}
+/* No background-color on the generic td: the AutoColor note1..note12 classes must win. */
+table.fsPreview td.fsPreviewWhite {
+    background-color: white;
+    color: black;
+}
+table.fsPreview td.fsPreviewBlank {
+    border: none;
+    background: none;
+}
+table.fsPreview td em {
+    display: inline-block;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 0.5em;
+    width: 0.9em;
+    overflow: hidden;
+    text-align: center;
+    margin-right: -0.15em;
+}
+
+/* ---- Move up / down / delete row (styles copied from .btnMoveTuningUp/Down, .btnRemoveTuning) ---- */
+.fsButtonRow {
+    margin-top: 0.5em;
+}
+.fsButtonRow button {
+    font-size: 120%;
+    min-width: 2.2em;
+}
+.fsButtonRow .fsMoveUp {
+    background-color: #87fc59;
+    font-weight: bold;
+}
+.fsButtonRow .fsMoveDown {
+    background-color: #5084ff;
+    font-weight: bold;
+}
+.fsButtonRow .fsDelete {
+    background-color: #e45724;
+}
+.fsButtonRow button:disabled {
+    background-color: #ababab;
+    font-weight: normal;
+}

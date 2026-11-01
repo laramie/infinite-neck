@@ -1,0 +1,151 @@
+<!-- Sprint 143 (midi-note-in), Iteration 3. Sibling of ../mobile-keyboard/mobile-keyboard.html.
+     Ported from the Iteration 1 standalone prototype
+     (_doco/design/sprints/143-midi-note-in/143-it1-midi-prototype.html) with added
+     Instrument routing controls per 143-design-3.md. -->
+<template id="midi-template">
+    <div id="MidiTab">
+        <div class="midiSection">
+            <h4>MIDI IN</h4>
+            <label for="selMidiInDevice">Input device:</label>
+            <select id="selMidiInDevice"></select>
+            <div class="midiNoteInIndicator" id="spanMidiNoteInIndicator">no NOTE ON received yet</div>
+        </div>
+
+        <div class="midiSection">
+            <h4>MIDI OUT</h4>
+            <label for="selMidiOutDevice">Output device:</label>
+            <select id="selMidiOutDevice"></select>
+        </div>
+
+        <div class="midiSection">
+            <h4>MIDI OUT (debug/test send)</h4>
+            <label for="selMidiDebugOutDevice">Output device:</label>
+            <select id="selMidiDebugOutDevice"></select>
+
+            <div class="midiOutTestGrid">
+                <div class="midiOutTestGridHeader">message</div>
+                <div class="midiOutTestGridHeader">channel</div>
+                <div class="midiOutTestGridHeader">note</div>
+                <div class="midiOutTestGridHeader">velocity</div>
+                <div class="midiOutTestGridHeader"></div>
+
+                <div>Note Off</div>
+                <div><select id="selMidiTestNoteOffChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOffNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOffVelocity" value="0" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOff" class="MenuButton BtnPunchedOut" type="button" title="Send a Note OFF message">Send</button></div>
+
+                <div>Note On</div>
+                <div><select id="selMidiTestNoteOnChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOnNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOnVelocity" value="127" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOn" class="MenuButton BtnPunchedOut" type="button" title="Send a Note ON message">Send</button></div>
+
+                <div>Note On</div>
+                <div><select id="selMidiTestNoteOnZeroChannel"></select></div>
+                <div><input type="text" id="txtMidiTestNoteOnZeroNote" value="60" size="4"></div>
+                <div><input type="text" id="txtMidiTestNoteOnZeroVelocity" value="0" size="4"></div>
+                <div><button id="btnMidiTestSendNoteOnZero" class="MenuButton BtnPunchedOut" type="button" title="Send a Note ON message with velocity 0 (functionally a Note Off on most devices)">Send</button></div>
+
+                <div>CC</div>
+                <div><select id="selMidiTestCCChannel"></select></div>
+                <div><input type="text" id="txtMidiTestCCNumber" value="123" size="4"></div>
+                <div><input type="text" id="txtMidiTestCCValue" value="127" size="4"></div>
+                <div><button id="btnMidiTestSendCC" class="MenuButton BtnPunchedOut" type="button" title="Send a Control Change message">Send</button></div>
+            </div>
+            <div class="midiColorPageButtons">
+                <button id="btnMidiSendColorPage1" class="MenuButton BtnPunchedOut" type="button" title="Send NOTE ON to all 64 grid pads with velocities 1-64, one velocity per pad (cell 1,1=1, cell 1,2=2, ... row by row) -- the first half of the Launchpad's colour palette.">send color page 1</button>
+                <button id="btnMidiSendColorPage2" class="MenuButton BtnPunchedOut" type="button" title="Send NOTE ON to all 64 grid pads with velocities 64-127, one velocity per pad -- the second half of the Launchpad's colour palette.">send color page 2</button>
+            </div>
+        </div>
+
+        <div class="midiSection">
+            <h4>Routing</h4>
+            <label for="selMidiRouteInstrument">Instrument:</label>
+            <select id="selMidiRouteInstrument">
+                <option value="">none</option>
+            </select>
+            <label for="selMidiRouteChannel">Channel:</label>
+            <select id="selMidiRouteChannel"></select>
+            <button id="btnMidiRouteToggle" class="MenuButton BtnPunchedOut" type="button">MIDI Routing</button>
+            <button id="btnMidiTriggerMode" class="MenuButton BtnPunchedOut classMidiTriggerMode" type="button"
+                title="Latched: press toggles the note on/off. Momentary: note follows button down/up.">Latched</button>
+            <br>
+            <br>
+            <label for="selMidiDeviceMode">Device mode:</label>
+            <select id="selMidiDeviceMode">
+                <option value="Programmer">Programmer (grid row/col)</option>
+                <option value="Note">Note (raw MIDI note numbers)</option>
+            </select>
+            <label for="selMidiDeviceColorMap">Color map:</label>
+            <select id="selMidiDeviceColorMap">
+                <option value="LaunchpadCycleOfColors">Launchpad Cycle Of Colors</option>
+                <option value="LaunchpadColors">Launchpad Colors</option>
+            </select>
+            <label for="selMidiDeviceOrientation">Orientation:</label>
+            <select id="selMidiDeviceOrientation">
+                <option value="normal">Normal (device top = screen top)</option>
+                <option value="inverted">Inverted</option>
+            </select>
+            <br>
+            <br>
+            <label for="chkMidiUseSysExClear" title="Programmer mode only: use SysEx messages (one 'Light all LEDs' + one 'Light LED' batch) to bulk-clear AND bulk-paint the device instead of ~70+ individual NOTE ON messages. Faster; used only for the Section-navigation/beat-tick repaint (replay()), never for single button-press lights or the downstream VoiceLive forward.">
+                <input type="checkbox" id="chkMidiUseSysExClear" checked> Use SysEx bulk clear+paint (Programmer mode)
+            </label>
+            <br>
+            <label for="chkMidiUseMomentaryCleanup" title="Momentary trigger mode only: a proactive fix already prevents a button-up landing in a different Section (because the Section changed while held, e.g. while looping) from leaving a stuck/misplaced note. This checkbox controls an EXTRA safety-net sweep (owner:'Momentary' notes cleared from every Section on each Section change) that catches anything the proactive fix doesn't (e.g. combined with Recording). Safe to leave on.">
+                <input type="checkbox" id="chkMidiUseMomentaryCleanup" checked> Momentary cleanup safety net (sweep stuck notes on Section change)
+            </label>
+        </div>
+
+        <div class="midiSection">
+            <h4>Forward (downstream sound device)</h4>
+            <label for="selMidiForwardDevice">Output device:</label>
+            <select id="selMidiForwardDevice"></select>
+            <label for="selMidiForwardChannel">Channel:</label>
+            <select id="selMidiForwardChannel"></select>
+            <br>
+            <span id="spanMidiForwardStatus" class="midiForwardStatus">Forwarding: OFF</span>
+        </div>
+
+        <div class="midiSection">
+            <h4>PlayForward (replay to downstream sound device)</h4>
+            <label for="chkPlayForwardSingle" title="replay Single notes on downstream sound device">
+                <input type="checkbox" id="chkPlayForwardSingle"> Single Notes
+            </label>
+            <label for="chkPlayForwardTiny" title="replay Tiny notes on downstream sound device">
+                <input type="checkbox" id="chkPlayForwardTiny"> Tiny Notes
+            </label>
+            <label for="chkPlayForwardMulti" title="replay Multi highlight notes on downstream sound device">
+                <input type="checkbox" id="chkPlayForwardMulti"> Multi highlight Notes
+            </label>
+        </div>
+
+        <div class="midiSection">
+            <div class="midiActivityLogHeader">
+                <h4>Activity log</h4>
+                <button id="btnMidiClearActivityLog" class="MenuButton BtnPunchedOut" type="button" title="Clear the activity log">Clear</button>
+                <label for="chkMidiFilterAftertouch" title="Aftertouch (Channel Pressure) messages are never acted on -- checking this also skips logging them, to keep the log/critical path clear of this noise.">
+                    <input type="checkbox" id="chkMidiFilterAftertouch"> Filter Aftertouch
+                </label>
+                <br>
+                <label for="chkMidiFilterSend" title="Hide 'send' log lines (lights sent to the Launchpad via individual NOTE ON messages).">
+                    <input type="checkbox" id="chkMidiFilterSend"> Send (lights)
+                </label>
+                <label for="chkMidiFilterReceive" title="Hide 'receive' log lines (raw MIDI IN messages from the input device).">
+                    <input type="checkbox" id="chkMidiFilterReceive"> Receive (pad)
+                </label>
+                <label for="chkMidiFilterForward" title="Hide 'fwd-on'/'fwd-off' log lines (notes forwarded downstream from a real button press/release).">
+                    <input type="checkbox" id="chkMidiFilterForward"> Forward (notes)
+                </label>
+                <label for="chkMidiFilterSysex" title="Hide 'sysex' log lines (bulk SysEx clear/paint messages to the Launchpad).">
+                    <input type="checkbox" id="chkMidiFilterSysex"> Sysex (lights)
+                </label>
+                <label for="chkMidiFilterReplay" title="Hide 'playfwd-on'/'playfwd-off' log lines (notes forwarded downstream by PlayForward replay).">
+                    <input type="checkbox" id="chkMidiFilterReplay"> Replay (notes)
+                </label>
+            </div>
+            <div id="divMidiActivityLog" class="midiActivityLog"></div>
+        </div>
+    </div>
+</template>

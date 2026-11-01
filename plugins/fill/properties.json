@@ -79,6 +79,15 @@
     "visibleInMenu": false
   },
   {
+    "name": "literalChartedChord",
+    "caption": "literal charted chord",
+    "trigger": "l",
+    "datatype": "org.dynamide.toggle",
+    "value": false,
+    "defaultValue": false,
+    "visibleInMenu": false
+  },
+  {
     "name": "minFret",
     "caption": "minFret position",
     "trigger": "i",

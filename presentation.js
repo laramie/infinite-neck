@@ -1,11 +1,14 @@
+import EventBus from './event-bus.js';
+
 export const gPresentation = {
     palette: {
         mode: 'paint',
         lastRestorableColor: null,
         lastRestorableHighlight: null,
+        lastRestorableMultiColor: null,
         suppressRbColorRemember: false,
         keepWasForced: false,
-        lockKeep: false
+        keepLocked: false
     }
 };
 
@@ -24,6 +27,33 @@ const RESTORABLE_HIGHLIGHT_IDS = new Set([
     'idMidiPitches',
     'idMidiPitchesSingle'
 ]);
+
+// Multi (STYLENUM_MIDIPITCHESSINGLE) remembers its own last-picked color, separate from the
+// general lastRestorableColor that every other note type (Named/Single/Tiny/Bend/Pitch/
+// Fingering) shares. Defaults to the "H2" role button, which by default resolves to the
+// theme's System Multi Color (see userColors.js::gUserColorDictHighlightsDefault and
+// infinite-neck.css's .noteHighlightH2), unless the User stylesheet overrides "noteH2".
+const MULTI_HIGHLIGHT_ID = 'idMidiPitchesSingle';
+const DEFAULT_MULTI_COLOR = {
+    id: 'idRH2',
+    value: 'noteH2',
+    caption: 'H2'
+};
+
+// Mirrors the #selBend <option> captions in templates/palette.html -- read here
+// instead of scraping the <option> text so PalettePresentation.getHighlightStatusMarkup()
+// can compose the "Bend: <small>...</small>" status span from #selBend's plain value.
+const BEND_TYPE_CAPTIONS = {
+    semitone1: '1 semitone',
+    semitone2: '2 semitones',
+    semitone3: '3 semitones',
+    prebend1: 'prebend 1',
+    prebend2: 'prebend 2',
+    prebend3: 'prebend 3',
+    updown1: 'up-down 1',
+    updown2: 'up-down 2',
+    updown3: 'up-down 3'
+};
 
 export class PalettePresentation {
     static lockKeep(){
@@ -139,6 +169,24 @@ export class PalettePresentation {
         return { ...remembered };
     }
 
+    static getLastRestorableMultiColor() {
+        if (!gPresentation.palette.lastRestorableMultiColor) {
+            PalettePresentation.initializePalettePresentation();
+        }
+
+        const remembered = gPresentation.palette.lastRestorableMultiColor || { ...DEFAULT_MULTI_COLOR };
+
+        return { ...remembered };
+    }
+
+    static isMultiHighlightRadio($radio) {
+        return !!$radio && $radio.length > 0 && $radio.attr('id') === MULTI_HIGHLIGHT_ID;
+    }
+
+    static isMultiHighlightActive() {
+        return $('#' + MULTI_HIGHLIGHT_ID).is(':checked');
+    }
+
     static getRbColorCaption($radio) {
         if (!$radio || $radio.length === 0) {
             return "";
@@ -180,6 +228,126 @@ export class PalettePresentation {
 
         $label.toggleClass("chooseLastColorAligned", isAligned);
         $caption.text("Color: " + caption + postfix);
+        PalettePresentation.refreshPaletteStatusSpans();
+    }
+
+    // Read-only status spans (see TableBuilder.js's buildCaptionRow(), which rides
+    // these along with currentColorDict): span 1 mirrors whichever restorable
+    // highlight radio (idNamedNotes/idSingleNotes/idTinyNotes/rbBend/
+    // idMidiPitches/idMidiPitchesSingle) is active; span 2 mirrors whichever
+    // palette-mode button (CLEAR/KEEP/Find Color/Color:...) is active, taking on
+    // the resolved swatch color when in paint mode.
+    static getHighlightStatusText() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        if (PalettePresentation.isRestorableHighlightRadio($checked)) {
+            return PalettePresentation.getRbHighlightCaption($checked);
+        }
+        return PalettePresentation.getLastRestorableRbHighlight().caption;
+    }
+
+    static getActiveHighlightId() {
+        const $checked = $('input[name="rbHighlight"]:checked').first();
+        if (PalettePresentation.isRestorableHighlightRadio($checked)) {
+            return $checked.attr('id');
+        }
+        return PalettePresentation.getLastRestorableRbHighlight().id;
+    }
+
+    static getBendSelectionCaption() {
+        const value = $('#selBend').val();
+        return BEND_TYPE_CAPTIONS[value] || value || '';
+    }
+
+    // HTML markup for the .paletteHighlightStatus span: plain caption, except for
+    // Bend, which always has a selected #selBend value (no empty slot in that
+    // dropdown) appended as a smaller sub-caption.
+    static getHighlightStatusMarkup() {
+        const caption = PalettePresentation.getHighlightStatusText();
+        if (PalettePresentation.getActiveHighlightId() === 'rbBend') {
+            return caption + ': <small>' + PalettePresentation.getBendSelectionCaption() + '</small>' /*+' \u2713'*/ ;
+        }
+        return caption /*+' \u2713'*/ ;
+    }
+
+    static getPaletteModeStatusText() {
+        const $label = PalettePresentation.findPaletteModeRadio().closest('label');
+        return $label.length > 0 ? $.trim($label.text()) : '';
+    }
+
+    static getResolvedRbColorStyle() {
+        const FALLBACK = { backgroundColor: '#ffffff', color: '#000000' };
+        const $label = PalettePresentation.findRestorableRbColor().closest('label');
+        if ($label.length === 0 || typeof getComputedStyle !== 'function') {
+            return FALLBACK;
+        }
+        const computed = getComputedStyle($label[0]);
+        return {
+            backgroundColor: computed.backgroundColor || FALLBACK.backgroundColor,
+            color: computed.color || FALLBACK.color
+        };
+    }
+
+    // Multi's own remembered swatch is never hidden, even when "Multi AC" (AutoColorHighlight)
+    // is checked -- mirrors how .paletteModeStatus keeps showing the last picked color while
+    // AutoColor is checked (see getPaletteModeStatusStyle()).
+    static getResolvedMultiColorStyle() {
+        const FALLBACK = { backgroundColor: '#ffffff', color: '#000000' };
+        const $label = PalettePresentation.findRestorableMultiColor().closest('label');
+        if ($label.length === 0 || typeof getComputedStyle !== 'function') {
+            return FALLBACK;
+        }
+        const computed = getComputedStyle($label[0]);
+        return {
+            backgroundColor: computed.backgroundColor || FALLBACK.backgroundColor,
+            color: computed.color || FALLBACK.color
+        };
+    }
+
+    static getPaletteModeStatusStyle() {
+        if (PalettePresentation.getMode() !== 'paint') {
+            return { backgroundColor: '#ffffff', color: '#000000' };
+        }
+        return PalettePresentation.getResolvedRbColorStyle();
+    }
+
+    // Names of the Display Options "Hide ..." checkboxes currently checked; non-empty means something is hidden.
+    static getHiddenNoteKinds() {
+        const kinds = [];
+        if ($('#cbHideNamedNotes').prop('checked')) { kinds.push('Named'); }
+        if ($('#cbHideSingleNotes').prop('checked')) { kinds.push('Single'); }
+        if ($('#cbHideTinyNotes').prop('checked')) { kinds.push('Tiny'); }
+        if ($('#cbHideFingering').prop('checked')) { kinds.push('Fingering'); }
+        return kinds;
+    }
+
+    // .paletteHidingStatus is display:none (inline style) until something is hidden, so it takes no
+    // space in .miniPaletteStatus; jQuery toggle(true) removes the inline style, restoring the
+    // stylesheet's inline-block from .paletteStatusSpan.
+    static refreshPaletteHidingStatus() {
+        const kinds = PalettePresentation.getHiddenNoteKinds();
+        $('.paletteHidingStatus')
+            .html('Hiding <span style="color: red;">\u2713</span>') // <span>\u2327</span>
+            .attr('title', kinds.length > 0 ? 'Hidden: ' + kinds.join(', ') : '')
+            .toggle(kinds.length > 0);
+    }
+
+    static refreshPaletteStatusSpans() {
+        PalettePresentation.refreshPaletteHidingStatus();
+        $('.paletteHighlightStatus').html(PalettePresentation.getHighlightStatusMarkup()+' <span style="color: #1e82f3;">\u2713</span>' );
+
+        const modeStyle = PalettePresentation.getPaletteModeStatusStyle();
+        let extraCheckmark = ' <span style="color: lightgreen;">\u2713</span>' ;//hack, because checkmark is created for #spanPaletteModePaintCaption, but we need the checkmark always so the buttons will have the right heights, because the checkmark is a Unicode char with extra height: once you use it you have to use it everywhere to get things to line up with the other spans.
+        let statusText = PalettePresentation.getPaletteModeStatusText();
+        if (!statusText.includes('\u2713')){
+            statusText = statusText + extraCheckmark;
+        }
+        $('.paletteModeStatus')
+            .html(statusText)
+            .css({
+                backgroundColor: modeStyle.backgroundColor,
+                color: modeStyle.color
+            });
+        PalettePresentation.updateAutomaticColorHighlightSwatch();
     }
 
     static setExtraColorsVisible(isVisible) {
@@ -213,6 +381,30 @@ export class PalettePresentation {
         $("#btnAutoColor,#btnAutoColor2")
             .toggleClass("BtnPunchedIn", automatic)
             .toggleClass("BtnPunchedOut", !automatic);
+    }
+
+    // AutoColorHighlight is independent of AutoColor: it only governs whether Pitch/Multi
+    // highlight notes (styleNums STYLENUM_MIDIPITCHES/STYLENUM_MIDIPITCHESSINGLE) follow the
+    // AutoColor scheme or the color explicitly picked on the highlight note. Unlike AutoColor,
+    // it never hides #manualColors/role buttons, since it doesn't affect the manual color pickers.
+    static setAutomaticColorHighlightUi(isAutomaticColorHighlight) {
+        const automatic = !!isAutomaticColorHighlight;
+        $("#cbAutomaticColorHighlight").prop("checked", automatic);
+    }
+
+    // Keeps #lblAutomaticColorHighlight's background/text painted with Multi's own remembered
+    // color at all times (independent of the checkbox's checked state, and independent of
+    // whichever color the shared rbColor radio group is currently showing for other note types).
+    static updateAutomaticColorHighlightSwatch() {
+        const $label = $('#lblAutomaticColorHighlight');
+        if (!$label || $label.length === 0) {
+            return;
+        }
+        const style = PalettePresentation.getResolvedMultiColorStyle();
+        $label.css({
+            backgroundColor: style.backgroundColor,
+            color: style.color
+        });
     }
 
     static ensureColorRadioVisible($radio) {
@@ -264,6 +456,22 @@ export class PalettePresentation {
         return true;
     }
 
+    static rememberRestorableMultiColor(radioEl) {
+        if (!radioEl) {
+            return;
+        }
+        const $radio = $(radioEl);
+        const value = $radio.val();
+
+        gPresentation.palette.lastRestorableMultiColor = {
+            id: $radio.attr("id"),
+            value,
+            caption: PalettePresentation.getRbColorCaption($radio)
+        };
+
+        PalettePresentation.updateAutomaticColorHighlightSwatch();
+    }
+
     static rememberCurrentRestorableRbHighlight() {
         const $checked = $('input[name="rbHighlight"]:checked').first();
         return PalettePresentation.rememberRestorableRbHighlight($checked);
@@ -303,6 +511,15 @@ export class PalettePresentation {
         let $radio = $("#" + remembered.id);
         if ($radio.length === 0 && remembered.value) {
             $radio = $('input[name="rbHighlight"][value="' + remembered.value + '"]');
+        }
+        return $radio.first();
+    }
+
+    static findRestorableMultiColor() {
+        const remembered = PalettePresentation.getLastRestorableMultiColor();
+        let $radio = $("#" + remembered.id);
+        if ($radio.length === 0 && remembered.value) {
+            $radio = $('input[name="rbColor"][value="' + remembered.value + '"]');
         }
         return $radio.first();
     }
@@ -349,6 +566,20 @@ export class PalettePresentation {
         return colorRestored || highlightRestored;
     }
 
+    // Called when the Multi ("idMidiPitchesSingle") highlight-type radio is selected: restores
+    // Multi's own remembered color into the shared rbColor radio group, without touching the
+    // general lastRestorableColor memory that other note types rely on.
+    static restoreLastMultiColor() {
+        const $radio = PalettePresentation.findRestorableMultiColor();
+        if ($radio.length === 0) {
+            return false;
+        }
+        return PalettePresentation.selectRbColorByElement($radio, {
+            remember: false,
+            forcedKeep: false
+        });
+    }
+
     static restoreLastRbHighlightIfNeeded() {
         if (PalettePresentation.hasRestorableHighlightSelected()) {
             return false;
@@ -368,6 +599,22 @@ export class PalettePresentation {
             $('#' + id).prop('checked', PalettePresentation.getMode() === mode);
         });
         PalettePresentation.updateRestoreRbColorButton();
+        // Sprint 143 (midi-note-in): single choke point for EVERY mode change
+        // that goes through setMode() (enterPaintMode/enterClearMode/
+        // enterKeepMode/enterDropperMode) -- unlike the rbPaletteMode radio's
+        // own native 'change' event (which only fires for a direct click/
+        // activateUiControl() on that radio), this fires for the "special
+        // handling going back and forth between paint mode and clear" too,
+        // e.g. picking a color or highlight while in Clear mode calls
+        // enterPaintMode() directly (see infinite-neck.js's rbColor/
+        // rbHighlight 'change' handlers), which reaches here without ever
+        // firing a 'change' event on input[name="rbPaletteMode"]. Consumed by
+        // templates/midi/midi.builder.js to keep the Launchpad's physical
+        // Clear-mode indicator light in sync regardless of which code path
+        // changed the mode. NOT fired by PalettePresentation.lockKeep(), which
+        // bypasses setMode()/updatePaletteModeUi() entirely (a pre-existing
+        // quirk, not introduced here).
+        EventBus.trigger('Palette:modeChanged', { mode: PalettePresentation.getMode() });
     }
 
     static initializePalettePresentation() {
@@ -401,6 +648,10 @@ export class PalettePresentation {
                 value: 'Named',
                 caption: 'Named'
             };
+        }
+
+        if (!gPresentation.palette.lastRestorableMultiColor) {
+            gPresentation.palette.lastRestorableMultiColor = { ...DEFAULT_MULTI_COLOR };
         }
 
         PalettePresentation.updatePaletteModeUi();

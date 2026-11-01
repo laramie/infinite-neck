@@ -112,12 +112,55 @@
       ]
     },
     {
+      "href": "demo/function-symbols-extensions.json",
+      "description": "Shows options for jazz function symbols and extensions, especially for piano.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "practice/All-Chords.json",
       "description": "<b>All-Chords</b>: All the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
       "instruments": [
         {
           "fromBaseID": "P46",
           "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/All-Chords-flashcard.json",
+      "description": "<b>All-Chords-flashcard</b>: Flashcard mode of all the common Jazz chords, in C with <i>transposition</i> to all 12 keys. <em>P4-tuning</em> Guitar.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/All-Chords-w-Modes-Piano.json",
+      "description": "<b>All-Chords with Modes</b> for <i>Piano</i> (Listens to a backing <em>P4-tuning</em> Guitar, and standard <em>color theme</em>.  Click SongWidgets to swap between Chords and Modes.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
           "visible": true
         }
       ]
@@ -240,6 +283,210 @@
       ]
     },
     {
+      "href": "practice/piano-ionian-scales.json",
+      "description": "<b>scales-ionian</b>: ionian scale in all 12 keys, for piano.",
+      "instruments": [
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/supersong-C.json",
+      "description": "<b>supersong</b> in C: Other keys with chords superimposed over key of C, to practice function names in the other key relative to fixed notes in C.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/supersong-template.json",
+      "description": "<b>supersong</b> in C template: Use this template to create the supersong.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/supersong-black-keys.json",
+      "description": "<b>supersong</b> in C (black-keys).",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ],
+      "tutorial": "strict",
+      "SectionCount": 46
+    },
+    {
+      "href": "practice/supersong-midi8x8-black-keys.json",
+      "description": "<b>supersong</b> in C (black-keys) with MIDI 8x8 pad.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "MIDI-P4",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ],
+      "tutorial": "strict",
+      "SectionCount": 46
+    },
+    {
+      "href": "practice/12-major-scales.json",
+      "description": "12 Major scales, highlighted with brown for flats on black keys, orange for sharps on black keys, black for root on black key, navy for root on white key, blue for scale note natural on white key.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/12-major-scales-w-ccalc.json",
+      "description": "12 Major scales, with a C-Calculator.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P4C",
+          "wiring": "Listener",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P4",
+          "wiring": "Listener",
+          "visible": false
+        },
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "ListenerNotesource",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/p4-voicings.json",
+      "description": "Jazz voicings for P4 guitar, in C.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/3rds-and-6ths.json",
+      "description": "3rds and 6ths interval practice for P4 guitar, in C.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "practice/diatonics.json",
+      "description": "Diatonic chord and modes for each key, for P4 guitar",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "name-that-note/name-that-note.json",
       "description": "<em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
       "instruments": [
@@ -260,6 +507,100 @@
         },
         {
           "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-placed-singles.json",
+      "description": "<b>placed SingleNote</b> version of <em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-placed-singles-5-7.json",
+      "description": "<b>placed SingleNote</b> version of <em>name-that-note</em> game for <em>Standard 6-String</em>, <em>Drop-D</em>, <em>P46</em>, and <em>P48</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions (defaults to P4). Defaults to positions 0,5,7,12.  Shows all NamedNotes upon reveal, and gives an extra beat before clearing.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-fret-flavors.json ",
+      "description": "<b>placed SingleNote</b> version of <em>name-that-note</em> game, with Sections for Perfect Frets, Diamond Frets, Black Keys, White Keys, and All Notes, nick-named \"fret flavors\". Use the link buttons in the Song Widgets.  Gives option to show all NamedNotes upon reveal, and gives an extra beat before clearing.",
+      "instruments": [
+        {
+          "fromBaseID": "S6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "DropD",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "P48",
+          "wiring": "Main",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "href": "name-that-note/name-that-note-MIDI.json",
+      "description": "<em>name-that-note</em> game for <em>MIDI 8x8</em> and <em>Linstrument 8x24</em>. Use the links on the <i>Info</i> page to choose Tunings and Positions.",
+      "instruments": [
+        {
+          "fromBaseID": "MIDI",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Linstrument",
           "wiring": "Main",
           "visible": false
         }
@@ -399,6 +740,80 @@
       ]
     },
     {
+      "href": "theory/double-blues-scale.json",
+      "description": "double blues scale with major and minor pentatonic as explained by https://www.youtube.com/watch?v=OWt96jktlww",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "US6",
+          "wiring": "Main",
+          "visible": false
+        },
+        {
+          "fromBaseID": "S6",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "theory/key-signatures.json",
+      "description": "key signatures as seen on a Perfect 4ths Calculator with two frets.  Watch the signatures move around the cycle of fifths.",
+      "instruments": [
+        {
+          "fromBaseID": "4thsCalculator",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "Piano",
+          "wiring": "Listener",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "theory/4-minors.json",
+      "description": "Four minor scales in C: Natural, Harmonic, Melodic, Dorian.",
+      "instruments": [
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        },
+        {
+          "fromBaseID": "PianoSchroeder",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "href": "theory//I-IV-V-C-Ionian-w-LeadKey.json",
+      "description": "I-IV-V (Maj7, Maj7, dom7) in C, showing effect of Tiny notes with LeadKeys in C, F, G.",
+      "instruments": [
+        {
+          "fromBaseID": "P46",
+          "wiring": "Main",
+          "visible": true
+        }
+      ]
+    },
+    {
       "href": "tutorials/C000-intro/L001-one-string-intro/L001-1.json",
       "description": "One-string Intro",
       "instruments": [
@@ -407,15 +822,13 @@
           "wiring": "Main",
           "visible": true
         }
-      ],
-      "tutorial": "strict",
-      "SectionCount": 4
+      ]
     }
   ],
   "directoryIntros": [
     {
       "introFor": "root",
-      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features;  <b>practice</b> has songs with drills such as chords, modes, and arpeggios; <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions; <b>theory</b> demonstrates topics of music theory. <br><i>Each song shows Instrument</i> <a href='help.html#fileSongLibrary' target='infinitehelp'>Role Badges</a>:  <span class='songLibraryInstrument instrumentMain'>Main</span> <span class='songLibraryInstrument instrumentMain instrumentNotVisible'>Main-hidden</span> <span class='songLibraryInstrument instrumentListener'>Listener</span> <span class='songLibraryInstrument instrumentListener instrumentNotVisible'>Listener-hidden</span> <span class='songLibraryInstrument instrumentObserver'>Observer</span> <span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>Observer-hidden</span></p>"
+      "html": "<p>Songs are grouped: <b>demo</b> shows <span class='productsmaller'>infinite-neck</span> features;  <b>practice</b> has songs with drills such as chords, modes, and arpeggios; <b>name-that-note</b> has games for memorizing where all the notes are on the neck for various instruments and positions; <b>theory</b> demonstrates topics of music theory. <br><i>Each song shows Instrument</i> <a href='help.html#fileSongLibrary' target='infinitehelp'>Role Badges</a>:  <span class='songLibraryInstrument instrumentMain'>Main</span> <span class='songLibraryInstrument instrumentMain instrumentNotVisible'>Main-hidden</span> <span class='songLibraryInstrument instrumentListener'>Listener</span> <span class='songLibraryInstrument instrumentListener instrumentNotVisible'>Listener-hidden</span> <span class='songLibraryInstrument instrumentObserver'>Observer</span> <span class='songLibraryInstrument instrumentObserver instrumentNotVisible'>Observer-hidden</span><span class='songLibraryInstrument instrumentListenerNotesource'>ListenerNotesource</span></p>"
     },
     {
       "introFor": "demo",

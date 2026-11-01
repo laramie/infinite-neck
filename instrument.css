@@ -70,14 +70,19 @@
     box-sizing: border-box;
     padding: 0.5em;
     color: gold;
-    background-color: #0aa; 
+    background-color: var(--instrument-background-color, #7C4700);
     border: 1px solid rgb(0, 0, 0);
     box-shadow: 0 0 6pt 3pt maroon;
     border-radius: 0.3em;
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    border-image: var(--instrument-border-image) 30 / 19px round;
+    border-image: var(--instrument-border-image) var(--instrument-border-slice) / var(--instrument-border-thickness) round;
     border-width: var(--instrument-border-thickness);
+}
+
+/* This is for when an instrument is floated, it gets put inside another div, so we don't want box shadow. */
+.toolWindowRounded .instrumentBackground {
+        box-shadow: none;
 }
 
 .instrumentBackground .captionRow {
@@ -105,6 +110,10 @@
     margin: 0 0 0 0.4em;
     min-height: 1em;
     width: auto;
+}
+.captionRowTool {
+    display: inline-block;
+    margin-top: 0.6em;
 }
 .captionRow .lblRootID {
     display: inline-flex;
@@ -220,7 +229,7 @@
 }
 
 .divWiring {
-    width: 250px;      /* fixed width */
+    width: 100px;      /* fixed width */
     flex-shrink: 0;
     /* No overflow or scroll here */
     /* Stays visible while table scrolls */

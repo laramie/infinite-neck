@@ -1481,6 +1481,21 @@
 <p>They drive the in-memory version of your song, and have various ways to persist the changes to the songfile. The plugins also store per-plugin values in the songfile, so the next time you open the file, the plugin default values you last chose should be there.  Some of the plugins have various options for clearing their state in the Section or Song.  When there are errors or messages or help messages, they show up in the Show Messages area.</p>
 
 <p>Some of the plugins respond to song events, so they can listen to the Looper and to DaCapo events which happen at song boundaries such as Section begin/end and Song begin/end.  This way, you can transpose a song on every song loop, for example.</p>
+
+<h3>Clearing Plugin Data</h3>
+<p>To clear plugin data from the song, you need to remove two types of settings:
+    <ul>
+        <li>Song-level plugin data: Use plugin > graveyard > bury (save+clear) :: <b>/fp > plugin > g > b</b></li>
+        <li>Section-level plugin data:
+            <ul>
+                <li>ArpeggioPlugin: positions: <b>/fpapL</b> (c<b>L</b>ear all sections)</li>
+                <li>FillPlugin: positions: <b>/fpfopL</b> (c<b>L</b>ear all sections)</li>
+            </ul>
+        </li>
+    </ul>
+
+
+
 <h2 id="plugin-arpeggio">ArpeggioPlugin</h2>
 
 <table class="helpCmdDetailHelp">
@@ -1707,9 +1722,10 @@
         <li><b>o</b> lowToHigh: control whether the candidate traversal starts from lower strings and lower frets or the reverse logical order.</li>
         <li><b>u</b> upOnly: keep the pattern moving upward instead of bouncing back.</li>
         <li><b>y</b> style chooses every, alternate, random, or bach.</li>
-        <li><b>n</b> show note name chooses off, one, all, or played.</li>
+        <li><b>n</b> show note name chooses off, one, all, played, or named.</li>
         <li><b>c</b> color notes chooses Emboss or AutoColor-style.</li>
         <li><b>f</b> flashcard delays note-name reveal by one beat.</li>
+        <li><b>e</b> extra clear beat (used with flashcard) gives each note two beats: 1) highlight, 2) reveal, 3) clear and highlight the next note, and so on. The revealed note names are gone before the next highlight appears, so you practice from a blank neck. Each Section uses half as many notes as it has beats; an odd final beat reveals its note on that same beat.</li>
     </ul>
 
         <h4>Show Note Name Modes</h4>
@@ -1719,6 +1735,7 @@
         <li>one: show only one beat's note-name text at a time.</li>
         <li>all: show note-name text for all generated beats in the current Section.</li>
         <li>played: accumulate note-name text beat by beat as the pass continues.</li>
+        <li>named: like one, but also reveals every other cell with the same note name inside the allowed fret window and string limits (all the A's when the note is an A). The extra cells clear on the next step the same way as one.</li>
     </ul>
 
     <h4>Flashcard Mode</h4>

@@ -656,6 +656,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -667,10 +668,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",
@@ -797,6 +795,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -808,10 +807,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",
@@ -938,6 +934,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -949,10 +946,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",
@@ -1079,6 +1073,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -1090,10 +1085,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",
@@ -1220,6 +1212,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -1231,10 +1224,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",
@@ -1361,6 +1351,7 @@
         "hideTinyNotes": false,
         "hideSingleNotes": false,
         "hideFingering": false,
+        "hideNutNames": true,
         "showAllNoteNames": false,
         "namedNoteOpacity": "1",
         "singleNoteOpacity": "1",
@@ -1372,10 +1363,7 @@
           "height": "50px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "3",
         "pianoWidthScaleFactor": "3",

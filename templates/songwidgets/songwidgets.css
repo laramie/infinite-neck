@@ -1,0 +1,6 @@
+/* Sprint 147 (chord-caption-widget), Iteration 4. Reuses the .info* classes from ../info/info.css. */
+
+#lblSongWidgets {
+    display: block;
+    width: 100%;
+}

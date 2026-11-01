@@ -143,7 +143,7 @@ describe('ArpeggioPlugin sequencing', () => {
 		expect(help).toContain('target table = tblARP');
 		expect(help).toContain('max fret limit = 3');
 		expect(help).toContain('upper/lower string limit = 1..1');
-		expect(help).toContain('type = NamedNote, SingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
+		expect(help).toContain('type = NamedNote, SingleNote, PlacedSingleNote, AutoChartChord, AutoChartMode, or AutoChartChordMode');
 	});
 
 		test('menu includes type before show note name', () => {
@@ -167,6 +167,7 @@ describe('ArpeggioPlugin sequencing', () => {
 			'showNoteName',
 			'colorNotes',
 			'flashcard',
+			'extraClearBeat',
 			'help'
 		]);
 		expect(positionsNode.children.map((child) => child.name)).toEqual([
@@ -776,6 +777,262 @@ describe('ArpeggioPlugin sequencing', () => {
 
 		expect(candidateNames).toEqual(['C', 'D']);
 		expect([...new Set(candidates.map((candidate) => candidate.noteName))]).toEqual(['C', 'D']);
+	});
+
+	describe('type=PlacedSingleNote', () => {
+		const single = (row, col, extra = {}) => ({ noteName: 'X', styleNum: Note.STYLENUM_SINGLE, row: `${row}`, col: `${col}`, ...extra });
+
+		test('uses the exact placed SingleNote cells, deduped, ignoring other note styles', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [
+					single(0, 2),
+					single(1, 3),
+					single(1, 3),
+					{ noteName: 'E', styleNum: Note.STYLENUM_TINY, row: '0', col: '4' }
+				]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+
+			const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+			expect(candidates.map((c) => `${c.row}:${c.col}`)).toEqual(['1:3', '0:2']);
+			expect(candidates.map((c) => c.midinum)).toEqual([48, 42]);
+		});
+
+		test('keeps same-pitch-class notes in different cells as separate candidates', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 5), single(1, 0)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+
+			const candidates = plugin.collectCandidatesForSection(song.getCurrentSection(), song.myTunings[0], { lowToHigh: true });
+
+			expect(candidates.map((c) => c.noteName)).toEqual(['A', 'A']);
+			expect(candidates.map((c) => `${c.row}:${c.col}`)).toEqual(['1:0', '0:5']);
+		});
+
+		test('filters placed cells by fret window and string limits', () => {
+			const { plugin, song } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 1), single(0, 4), single(1, 4)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			const section = song.getCurrentSection();
+			const tuning = song.myTunings[0];
+
+			const byFret = plugin.collectCandidatesForSection(section, tuning, { lowToHigh: true, minFret: 3, maxFret: 5 });
+			const byRow = plugin.collectCandidatesForSection(section, tuning, { lowToHigh: true, minRow: 1, maxRow: 1 });
+
+			expect(byFret.map((c) => `${c.row}:${c.col}`)).toEqual(['1:4', '0:4']);
+			expect(byRow.map((c) => `${c.row}:${c.col}`)).toEqual(['1:4']);
+		});
+
+		test('random sequence draws only from the placed cells', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40, 45],
+				frets: 5,
+				namedNotes: {},
+				playedNotes: [single(0, 2), single(1, 3)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			plugin.setPropertyValue('style', 'random', { song });
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			const midinums = getBeatMidinums(sectionNotes, 4);
+			expect(new Set(midinums)).toEqual(new Set([42, 48]));
+			expect(new Set(midinums.slice(0, 2)).size).toBe(2);
+		});
+
+		test('empty placed set generates nothing and logs a warning', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40],
+				frets: 3,
+				namedNotes: {},
+				playedNotes: []
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			EventBus.trigger.mockClear();
+
+			const result = plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(result.result).toContain('no matching placed single notes');
+			expect(sectionNotes.recordedNotes).toEqual({});
+			expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+				subSystem: 'ArpeggioPlugin',
+				message: expect.stringContaining('no placed SingleNotes')
+			});
+		});
+
+		test('style=bach is rejected with a UserLog message', () => {
+			const { plugin, song, sectionNotes } = makeContext({
+				beats: 4,
+				rowRange: [40],
+				frets: 3,
+				namedNotes: {},
+				playedNotes: [single(0, 1)]
+			});
+			plugin.setPropertyValue('type', 'PlacedSingleNote', { song });
+			plugin.setPropertyValue('style', 'bach', { song });
+			EventBus.trigger.mockClear();
+
+			const result = plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(result.result).toContain('skipped');
+			expect(sectionNotes.recordedNotes).toEqual({});
+			expect(EventBus.trigger).toHaveBeenCalledWith('UserLog', {
+				subSystem: 'ArpeggioPlugin',
+				message: expect.stringContaining('style bach is not supported with type placed single')
+			});
+		});
+	});
+
+	describe('showNoteName=named', () => {
+		const GUITAR = [40, 45, 50, 55, 59, 64];
+		const ALL_A_CELLS = ['0:5', '1:0', '1:12', '2:7', '3:2', '4:10', '5:5'];
+
+		function lastNamedNoteCells() {
+			const calls = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells');
+			return calls[calls.length - 1][1].cells.map((cell) => `${cell.cellrow}:${cell.cellcol}`).sort();
+		}
+
+		test('reveals every cell with the same note name within the fret and string range', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			EventBus.trigger.mockClear();
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			expect(lastNamedNoteCells()).toEqual([...ALL_A_CELLS].sort());
+		});
+
+		test('respects string limits and fret window', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			plugin.setPropertyValue('minRow', 2, { song });
+			plugin.setPropertyValue('maxRow', 4, { song });
+			plugin.setPropertyValue('maxFret', 9, { song });
+			EventBus.trigger.mockClear();
+
+			plugin.applyToSection({ song, clearSectionFirst: true });
+
+			// 1-based minRow/maxRow 2..4 => rows 1..3; maxFret 9 drops 1:12
+			expect(lastNamedNoteCells()).toEqual(['1:0', '2:7', '3:2']);
+		});
+
+		test('flashcard reveals the previous beat note name everywhere, then clears on the next step', () => {
+			const { plugin, song } = makeContext({
+				beats: 4, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: 1
+			});
+			plugin.setPropertyValue('showNoteName', 'named', { song });
+			plugin.setPropertyValue('flashcard', true, { song });
+			plugin.applyToSection({ song, clearSectionFirst: true });
+			expect(lastNamedNoteCells()).toEqual([]);
+			plugin.skipNextSongUiShowBeats = false;
+			EventBus.trigger.mockClear();
+
+			song.getBeat.mockReturnValue(2);
+			song.getCurrentSection().currentBeat = 2;
+			plugin.handleEvent('SongUiShowBeats', {}, { song });
+
+			expect(lastNamedNoteCells()).toEqual([...ALL_A_CELLS].sort());
+			const lastCall = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells').pop();
+			expect(lastCall[1].clearExisting).toBe(true);
+		});
+	});
+
+	describe('extraClearBeat', () => {
+		const GUITAR = [40, 45, 50, 55, 59, 64];
+
+		function setup({ beats = 6, showNoteName = 'named', flashcard = true, extra = true, beat = 1 } = {}) {
+			const ctx = makeContext({ beats, rowRange: GUITAR, frets: 12, namedNotes: makeNamedNotesFromNames(['A']), currentBeat: beat });
+			ctx.plugin.setPropertyValue('style', 'every', { song: ctx.song });
+			ctx.plugin.setPropertyValue('showNoteName', showNoteName, { song: ctx.song });
+			ctx.plugin.setPropertyValue('flashcard', flashcard, { song: ctx.song });
+			ctx.plugin.setPropertyValue('extraClearBeat', extra, { song: ctx.song });
+			return ctx;
+		}
+
+		function showBeat({ plugin, song }, beat) {
+			plugin.skipNextSongUiShowBeats = false;
+			EventBus.trigger.mockClear();
+			song.getBeat.mockReturnValue(beat);
+			song.getCurrentSection().currentBeat = beat;
+			plugin.handleEvent('SongUiShowBeats', {}, { song });
+			const calls = EventBus.trigger.mock.calls.filter(([name]) => name === 'NoteTable:ShowNamedNotesAtCells');
+			return calls[calls.length - 1][1].cells.length;
+		}
+
+		test('defaults to false and appears in the summary', () => {
+			const { plugin } = makeContext({ beats: 4, rowRange: [40], frets: 3 });
+
+			expect(plugin.getProperty('extraClearBeat').getValue()).toBe(false);
+			expect(plugin.buildSummary()).toContain('extra clear beat=false');
+		});
+
+		test('places highlights only on odd beats and uses half the notes', () => {
+			const ctx = setup({ beats: 6 });
+
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			const beatsWithNotes = Object.keys(ctx.sectionNotes.recordedNotes)
+				.filter((key) => ctx.sectionNotes.recordedNotes[key].length > 0).sort();
+			expect(beatsWithNotes).toEqual(['1', '3', '5']);
+		});
+
+		test('reveals on even beats and clears on odd beats', () => {
+			const ctx = setup({ beats: 6 });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 1)).toBe(0);
+			expect(showBeat(ctx, 2)).toBe(7);
+			expect(showBeat(ctx, 3)).toBe(0);
+			expect(showBeat(ctx, 4)).toBe(7);
+			expect(showBeat(ctx, 5)).toBe(0);
+			expect(showBeat(ctx, 6)).toBe(7);
+		});
+
+		test('odd beat count reveals the final highlighted note on the last beat', () => {
+			const ctx = setup({ beats: 5 });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 4)).toBe(7);
+			expect(showBeat(ctx, 5)).toBe(7);
+		});
+
+		test('has no effect unless flashcard is on', () => {
+			const ctx = setup({ beats: 6, flashcard: false });
+
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(ctx.plugin.getExtraClearBeatEnabled()).toBe(false);
+			expect(Object.keys(ctx.sectionNotes.recordedNotes).filter((key) => ctx.sectionNotes.recordedNotes[key].length > 0)).toHaveLength(6);
+		});
+
+		test('off keeps the existing flashcard timing (reveal previous beat on every beat)', () => {
+			const ctx = setup({ beats: 6, extra: false });
+			ctx.plugin.applyToSection({ song: ctx.song, clearSectionFirst: true });
+
+			expect(showBeat(ctx, 2)).toBe(7);
+			expect(showBeat(ctx, 3)).toBe(7);
+		});
 	});
 
 	test('type=NamedNote preserves current candidate collection even when SingleNotes exist', () => {

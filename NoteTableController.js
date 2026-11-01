@@ -18,7 +18,9 @@ import {
 import {
 	createLookupContext,
     lookupClassForNote,
-    lookupUserColorClass
+    lookupUserColorClass,
+    getAllRegisteredColorClasses,
+    resolveHighlightGlowColor
 } from './colorFunctions.js';
 import {
     Note
@@ -42,6 +44,8 @@ import {
     appInit_running,
     controlsToDisplayOptions,
     buildCellsForTable,
+    markNoteTableTiming,
+    measureNoteTableTiming,
     turnOffAutoColorCheckbox,
     updatePrintSections
 } from './infinite-neck.js';
@@ -66,6 +70,10 @@ import {
     applyNamedPlanToSectionNotes,
     legacyFillColorToRoleMode
 } from './fill/fill-role-engine.js';
+import {
+    isNotesourceID,
+    resolveNotesourceNamedNotes
+} from './fill/notesource-registry.js';
 
 const PIANO_SKEUOMORPHIC_HEIGHT_MULTIPLIER = 4;
 const PIANO_SKEUOMORPHIC_MIN_HEIGHT_PX = 100;
@@ -97,7 +105,7 @@ function hideNoteClickedCaption() { return notetableProviders.hideNoteClickedCap
 function resetNoteNames() { return notetableProviders.resetNoteNames(); }
 function setNoteClickedCaption(...args) { return notetableProviders.setNoteClickedCaption(...args); }
 function showBeats() { return notetableProviders.showBeats(); }
-function turnOffHiding() { return notetableProviders.turnOffHiding(); }
+function turnOffHiding(noteType) { return notetableProviders.turnOffHiding(noteType); }
 
 function createNotetableLookupContext(section = getCurrentSection(), tableID = '') {
     // Table-scoped lookup context lets AutoColor see whether this table owns the
@@ -114,6 +122,21 @@ function createNotetableLookupContext(section = getCurrentSection(), tableID = '
 
 function getTuningByTableID(tableID) {
     return (getSong()?.myTunings || []).find((tuning) => getTableID(tuning) === `${tableID || ''}`) || null;
+}
+
+/** Returns the namedNotes-shaped map to paint for a Listener-style wiring's
+ *  listenToTablename: either a real table's stored namedNotes, or (if
+ *  listenToTablename is a virtual notesource id) a live-computed map from
+ *  the notesource registry, keyed off the render-time Section so a Tool
+ *  table recolors/relabels itself correctly as the Section changes. */
+function getListenSourceNamedNotes(currSection, listenToTablename) {
+    if (isNotesourceID(listenToTablename)) {
+        return resolveNotesourceNamedNotes(listenToTablename, {
+            rootID: currSection?.rootID,
+            chartChord: currSection?.chartChord
+        });
+    }
+    return currSection?.sectionNotesByTable?.[listenToTablename]?.namedNotes || null;
 }
 
 function shouldProjectListenerByMidi(replayOptions) {
@@ -227,6 +250,26 @@ export function getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(widthValue, sc
     return Math.max(1, Math.round(scaledWidth * 100) / 100);
 }
 
+/** Sets the three piano-skeuomorphic CSS custom properties on the <table id=tableID> element
+ *  itself, once. These vars are table-scoped (read by CSS on descendant black/white keys),
+ *  not cell-scoped, so they only need to be written once per table per rebuild -- not once
+ *  per matched <td> as buildCellsFromSelector() used to do via cell.closest("table").
+ *  See 903-implementation-plan-ph3-1.md Step B. */
+export function applyPianoSkeuomorphicTableCssVars(tableID, options) {
+    const w = options.NoteDisplaySizes.width;
+    const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
+    const pianoWhiteToBlackWidthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(options.pianoWhiteToBlackWidthRatio);
+    const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
+        w,
+        options.pianoWidthScaleFactor,
+        pianoWhiteToBlackWidthRatio
+    ) + "px";
+    $('#' + tableID)
+        .css("--piano-white-key-width", pianoWhiteKeyWidth)
+        .css("--piano-white-to-black-width-ratio", pianoWhiteToBlackWidthRatio)
+        .css("--piano-black-key-width", pianoBlackKeyWidth);
+}
+
 
 export function cellBuilder(noteNameBase, sharpFlat, noteNum, options, theMidinum) {
     var song = getSong() || {};
@@ -329,74 +372,116 @@ export function buildFloatingNotes(cell, subright, subleft, noteFn, midinum, not
      return result;
 }
 
+/** Computes cell sizing (fontMultiplier, td width/height, NoteDisplay font-size/height) for a
+ *  given displayed column position and nut-ness. Depends only on (cellcol, isNut, options,
+ *  tuning) -- never on note content/midinum -- so callers can precompute/cache this once per
+ *  distinct render key instead of recomputing it once per matched <td> on every rebuild (see
+ *  NoteTableRenderCache.createEntry()'s buildSizing callback). Also used directly here as the
+ *  fallback in buildCellsFromSelector() when no cached sizing is available (e.g. render cache
+ *  disabled), so behavior is identical either way. See 903-implementation-plan-step-D.md Step D1. */
+export function computeCellSizing(cellcol, isNut, options, tuning) {
+    const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
+    const w = options.NoteDisplaySizes.width;
+    let h = options.NoteDisplaySizes.height;
+    if (pianoSkeuomorphic) {
+        h = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
+    }
+    if (tuning.fixedFretHeightMult ){
+        const height = h.substring(0, w.indexOf("px"));
+        let iHeight = toInt(height, 60);
+        iHeight = iHeight * tuning.fixedFretHeightMult;
+        h = iHeight + "px";
+    }
+
+    let multiplier = 1;
+    const width = w.substring(0, w.indexOf("px"));
+
+    let fretWidth = toInt(width, 60);
+    if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
+        multiplier = getSong().fretLengths[cellcol];
+        let mellowNormieRadical = 60;
+        if (options.naturalFontScaling){
+            mellowNormieRadical = options.naturalFontScaling;
+        }
+        fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
+    }
+    if (tuning.fixedFretWidthMult ){
+        fretWidth = width * tuning.fixedFretWidthMult * 0.6;
+    }
+    const sW = fretWidth+"pt";
+
+    const fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
+
+    if (isNut){
+        //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
+        return {
+            fontMultiplier,
+            tdWidth: "var(--nut-width)",
+            tdHeight: h,
+            noteDisplayFontSize: ""+(0.6*fontMultiplier)+"em",
+            noteDisplayHeight: h
+        };
+    }
+    return {
+        fontMultiplier,
+        tdWidth: sW,
+        tdHeight: h,
+        noteDisplayFontSize: ""+fontMultiplier+"em",
+        noteDisplayHeight: h
+    };
+}
+
+/** Parses an HTML fragment string into a detached DOM Node via a throwaway <template> element.
+ *  Used as the buildNode callback for NoteTableRenderCache.getOrBuildContentNode() -- this is where
+ *  the one-time-per-distinct-key ParseHTML cost still happens, but only once per distinct
+ *  (noteClass, midinum) key ever, not once per cell. See
+ *  903-phase-5-flyweight-content-cache-plan.md Option A. */
+function parseHtmlToNode(html) {
+    var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstElementChild;
+}
+
 export function buildCellsFromSelector(selector, noteLetter, sharpflat, noteNum, options, renderCacheEntry = null, noteClass = ''){
     var cellsSet = $(selector);
 	cellsSet.each(function(i, obj){
-        var cell=$(this);
-        var td = $(obj);
-        var midinum = td.attr("midinum");
-		var cellcol = td.attr("cellcol");
-        var celltable = td.attr("celltable");
-        if (celltable) {
-            var tuning = TuningsLibrary.findTuningForName(celltable);
-            const pianoSkeuomorphic = isPianoSkeuomorphicEnabled(tuning);
-            const cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
-            cell.html(cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum));
+        var midinum = obj.getAttribute("midinum");
+		var cellcol = obj.getAttribute("cellcol");
+        var celltable = obj.getAttribute("celltable");
+        if (!celltable) {
+            return;
+        }
+        var tuning = TuningsLibrary.findTuningForName(celltable);
+        var isNut = obj.classList.contains("nut") || obj.classList.contains("nutR");
 
-			var isNut = (cell.hasClass("nut") || cell.hasClass("nutR"));
+        // Flyweight content-node cache (903-phase-5-flyweight-content-cache-plan.md, Option A):
+        // clone an already-parsed master node instead of forcing a fresh HTML parse via
+        // innerHTML= on every cell. Falls back to the existing string-based path whenever no
+        // cached master is available (e.g. render cache disabled, or key not found).
+        var contentNode = NoteTableRenderCache.getOrBuildContentNode(renderCacheEntry, noteClass, midinum, parseHtmlToNode);
+        if (contentNode) {
+            obj.replaceChildren(contentNode.cloneNode(true));
+        } else {
+            var cachedHtml = NoteTableRenderCache.getHtml(renderCacheEntry, noteClass, midinum);
+            obj.innerHTML = cachedHtml || cellBuilder(noteLetter, sharpflat, noteNum, options, midinum);
+        }
+        // Step D1 (903-implementation-plan-step-D.md): sizing depends only on
+        // (renderCacheKey, cellcol, isNut), never on note content, so prefer the value
+        // already cached per-column in NoteTableRenderCache.createEntry() over recomputing
+        // it here for every cell on every rebuild. Falls back to a direct computation (e.g.
+        // when the render cache is disabled, or for any key not found in the cache) so
+        // behavior is identical either way.
+        var sizing = NoteTableRenderCache.getSizing(renderCacheEntry, cellcol, isNut)
+            || computeCellSizing(cellcol, isNut, options, tuning);
 
-			var w = options.NoteDisplaySizes.width;
-			var h = options.NoteDisplaySizes.height;
-            if (pianoSkeuomorphic) {
-                const pianoHeight = getPianoSkeuomorphicCellHeightPxForScaleFactor(h, options.pianoHeightScaleFactor) + "px";
-                const pianoWhiteKeyWidth = getPianoSkeuomorphicWhiteKeyWidthPxForScaleFactor(w, options.pianoWidthScaleFactor) + "px";
-                const pianoWhiteToBlackWidthRatio = getPianoSkeuomorphicWhiteToBlackWidthRatio(options.pianoWhiteToBlackWidthRatio);
-                const pianoBlackKeyWidth = getPianoSkeuomorphicBlackKeyWidthPxForScaleFactor(
-                    w,
-                    options.pianoWidthScaleFactor,
-                    pianoWhiteToBlackWidthRatio
-                ) + "px";
-                h = pianoHeight;
-                cell.closest("table")
-                    .css("--piano-white-key-width", pianoWhiteKeyWidth)
-                    .css("--piano-white-to-black-width-ratio", pianoWhiteToBlackWidthRatio)
-                    .css("--piano-black-key-width", pianoBlackKeyWidth);
-            }
-			var multiplier = 1;
-			var width = w.substring(0, w.indexOf("px"));
-			var height = h.substring(0, h.indexOf("px"));
+        obj.setAttribute("fontMultiplier", sizing.fontMultiplier);
+        obj.style.width = sizing.tdWidth;
+        obj.style.height = sizing.tdHeight;
 
-			var fretWidth = toInt(width,60);
-            if (options.naturalFretWidths && !tuning.fixedFretWidthMult){
-				multiplier = getSong().fretLengths[cellcol];
-                let mellowNormieRadical = 60;
-                if (options.naturalFontScaling){
-                    mellowNormieRadical = options.naturalFontScaling;
-                }
-				fretWidth = fretWidth * multiplier * (0.01*mellowNormieRadical);
-			}
-            if (tuning.fixedFretWidthMult ){
-                fretWidth = width * tuning.fixedFretWidthMult * 0.6;
-            }
-            const sW = fretWidth+"pt";
-
-            var fontMultiplier = Math.pow(multiplier, options.naturalFontScaling*0.01);//{was 0.75 when I got the body, cell, and scaling fonts worked out, before that was: 0.3} The smaller the exponent, the samller the effect of the multiplier, since it is less than one.
-            cell.attr("fontMultiplier", fontMultiplier);
-
-            var newTDSizes;
-            var newNoteDisplaySizes;
-            if (isNut){
-                //newSizes = {"width":"var(--nut-width)", "height":h, "font-size":""+(0.6*fontMultiplier)+"em"};  //special for nut.
-                newTDSizes = {"width":"var(--nut-width)", "height":h};  //special for nut.
-                newNoteDisplaySizes = {"font-size":""+(0.6*fontMultiplier)+"em", "height":h};  //special for nut. //If you set the width for the NoteDisplay instead of td.note it gets wonky.
-            } else {
-                //newSizes = {"width":sW, "height":h, "font-size":""+fontMultiplier+"em"};
-                newTDSizes = {"width":sW, "height":h};
-                newNoteDisplaySizes = {"font-size":""+fontMultiplier+"em", "height":h};  //If you set the width for the NoteDisplay instead of td.note it gets wonky.
-            }
-			//cell.children(".NoteDisplay").css(newSizes);
-			cell.children(".NoteDisplay").css(newNoteDisplaySizes);
-			cell.css(newTDSizes);  //The calculated width must be on .td.note, not .NoteDisplay
+        var noteDisplay = obj.querySelector(".NoteDisplay");
+        if (noteDisplay) {
+            noteDisplay.style.fontSize = sizing.noteDisplayFontSize;
+            noteDisplay.style.height = sizing.noteDisplayHeight;
         }
     });
 }
@@ -415,8 +500,13 @@ export const Cause = Object.freeze({
     HIGHLIGHTMULTI: "HighlightMulti" // for historical reasons, HighlightSingle==HighlightMulti
 });
 
-// td.note click calls just this from infinite-neck.js::installTDNoteClick()
-export function colorNote(cell) {
+// td.note click calls just this from infinite-neck.js::installTDNoteClick().
+// `options.owner`, if provided, is stamped onto any Note created/updated by this call (same
+// convention as ArpeggioPlugin/FillPlugin's owner-tagged generated notes) -- used by MIDI
+// Momentary mode (templates/midi/midi.builder.js) to mark notes so they can be swept up on
+// Section change, since a Momentary button-up landing in a different Section than its
+// button-down would otherwise leave a stuck, un-toggleable note behind.
+export function colorNote(cell, options = {}) {
     // Observer tables (relative-section wiring) should not accept direct note clicks.
     const clickedTableID = cell && typeof cell.closest === 'function'
         ? cell.closest('table').attr('id')
@@ -431,7 +521,7 @@ export function colorNote(cell) {
 
     let res = {returnCause: Cause.ERROR};
     try {
-        res = colorNoteInner(cell);
+        res = colorNoteInner(cell, options);
     } finally {
         EventBus.trigger('Note:colored', {
             sourceTableID: res.tableID,
@@ -453,7 +543,8 @@ export function colorNote(cell) {
         updatePrintSections(); //infinite-neck, rather than updateSectionStatus, which is too heavy.
     }
 }
-export function colorNoteInner(cell) {
+export function colorNoteInner(cell, options = {}) {
+    const owner = options?.owner || '';
     let tableID = "";
     let result = {returnCause:Cause.ERROR, tableID: ""};
     var styleNum = Note.STYLENUM_NAMED;
@@ -475,6 +566,7 @@ export function colorNoteInner(cell) {
     let lookupContext = createNotetableLookupContext(getCurrentSection(), tableID);
 
     $("td.note.noteHighlight").removeClass("noteHighlight");
+    $("td.note.noteHighlight").removeClass(gLast_noteHighlight);
     var theHighlight = $("input:radio[name=rbHighlight]:checked").val();
 
     if (  theHighlight != "MidiPitchesSingle" ){
@@ -544,7 +636,7 @@ export function colorNoteInner(cell) {
     }
 
     if (!doKeep){
-        turnOffHiding();
+        turnOffHiding(theHighlight);
     }
     setNoteClickedCaption(cell, theColorClass, styleNum);
 
@@ -557,7 +649,7 @@ export function colorNoteInner(cell) {
                 unRecordPlayedNote(tableID, sBeatNum, proxyNote);
                 cell.find('.'+className).attr("class", className).hide();
         } else {
-            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext);
+            var thatNote = colorSingleNotes(cell, theColorClass, styleNum, true, lookupContext, owner);
             recordPlayedNote(tableID, sBeatNum, thatNote);
             cell.find('.'+className).addClass("Playback").show();
         }
@@ -592,11 +684,11 @@ export function colorNoteInner(cell) {
                                ||  styleNum == Note.STYLENUM_BEND){
                             handleRecordedNote(tableID, "tinyNote");
                         } else {
-                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext);//no recording for namedNote.
+                            colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext, owner);//no recording for namedNote.
                         }
                     }
                 } else {
-                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext); //not sure why we want to drop in here with noteClear.... TODO!
+                    colorSingleNotes(cell, theColorClass, styleNum, false, lookupContext, owner); //not sure why we want to drop in here with noteClear.... TODO!
                 }
             }
             result.returnCause = Cause.PLAYEDNOTE;
@@ -609,15 +701,20 @@ export function colorNoteInner(cell) {
                     result.returnCause = Cause.CLEAR;
                     return result;
                 }
+            var matchingMidinumCells = $(parentTableSel+"td.note[midinum='"+midinum+"']");
             if (doEraseHighlight){
-                cell.removeClass("noteHighlight");
-                $(parentTableSel+"td.note[midinum='"+midinum+"']").removeClass("noteHighlight");
+                cell.removeClass("noteHighlight").removeClass(gLast_noteHighlight).removeClass(getAllRegisteredColorClasses(lookupContext));
+                matchingMidinumCells.removeClass("noteHighlight").removeClass(getAllRegisteredColorClasses(lookupContext));
+                setResolvedHighlightColorVar(matchingMidinumCells, null);
             } else {
+                // Pitch highlights never participate in coloring (AutoColor, AutoColorHighlight, or a
+                // manually picked swatch) -- they always render via the Theme's System Pitch Color,
+                // which is the plain .noteHighlight CSS rule's default fallback. Coloring is Multi-only.
                 cell.addClass("noteHighlight");
-                $(parentTableSel+"td.note[midinum='"+midinum+"']").addClass("noteHighlight");
+                matchingMidinumCells.addClass("noteHighlight");
             }
             if (isRecording()){
-              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName);
+              	recordHighlight(tableID, doEraseHighlight, styleNum, sBeatNum, midinum, cellrow, noteName, theColorClass);
             }
             result.returnCause = Cause.HIGHLIGHT;
            return result;
@@ -629,22 +726,26 @@ export function colorNoteInner(cell) {
                    result.returnCause = Cause.CLEAR;
                    return result;
                }
+           var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
            if (doEraseHighlightSingle){
-               cell.removeClass("noteHighlightSingle");
-               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
-               tdn.removeClass("noteHighlightSingle");
+               cell.removeClass("noteHighlightSingle").removeClass(getAllRegisteredColorClasses(lookupContext));
+               tdn.removeClass("noteHighlightSingle").removeClass(getAllRegisteredColorClasses(lookupContext));
+               setResolvedHighlightColorVar(tdn, null);
            } else {
-               var tdn = $(parentTableSel+"td.note[midinum='"+midinum+"'][cellrow='"+cellrow+"']");
+               var resolvedHighlightSingleClass = lookupUserColorClass({noteName, styleNum, colorClass: theColorClass}, lookupContext);
+               cell.addClass("noteHighlightSingle");
                tdn.addClass("noteHighlightSingle");
+               setResolvedHighlightColorVar(tdn, resolveHighlightGlowColor(resolvedHighlightSingleClass));
            }
            if (isRecording()){
-               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName);
+               recordHighlightSingle(tableID, doEraseHighlightSingle, styleNum, sBeatNum, midinum, cellrow, noteName, theColorClass);
            }
            result.returnCause = Cause.HIGHLIGHTMULTI;
            return result;
         } else {
             cell.css("outline", "");
             cell.removeClass("noteHighlight");
+            cell.removeClass(gLast_noteHighlight);
         }
 
         if(doDropper) {
@@ -673,6 +774,9 @@ export function colorNoteInner(cell) {
             result.returnCause = Cause.NAMEDNOTE;
             var note = Note.newNote(noteName, styleNum);
             note.colorClass = theColorClass;
+            if (owner) {
+                note.owner = owner;
+            }
 
             // When placing a noteRoot note, the model hasn't been updated yet so getNoteRoot
             // won't find it. Rebuild context with explicit ownership so noteRoot styling
@@ -854,12 +958,34 @@ function clearNamedNoteAtPitch(tableID, noteName, parentTableSel = '') {
 }
 
 function clearTransientHighlightsAtCell(parentTableSel, midinum, cellrow) {
-    $(parentTableSel + "td.note[midinum='" + midinum + "']").removeClass('noteHighlight');
-    $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']").removeClass('noteHighlightSingle');
+    const allColorClasses = getAllRegisteredColorClasses();
+    const midinumCells = $(parentTableSel + "td.note[midinum='" + midinum + "']");
+    midinumCells.removeClass('noteHighlight').removeClass(gLast_noteHighlight).removeClass(allColorClasses);
+    setResolvedHighlightColorVar(midinumCells, null);
+    const rowCells = $(parentTableSel + "td.note[midinum='" + midinum + "'][cellrow='" + cellrow + "']");
+    rowCells.removeClass('noteHighlightSingle').removeClass(allColorClasses);
+    setResolvedHighlightColorVar(rowCells, null);
+}
+
+/** Sets or clears the --resolved-highlight-color CSS var on the given cells. This var drives
+ *  both the outer (.noteHighlight/.noteHighlightSingle) and inner (.NoteDisplay) highlight glow
+ *  box-shadows in infinite-neck.css, keeping the two rings in sync with whatever palette color
+ *  was actually picked for a Pitch/Multi highlight -- see resolveHighlightGlowColor(). Bypasses
+ *  jQuery's .css() for custom properties so clearing truly removes the property (an empty-string
+ *  custom property value is a valid-but-empty token stream, which would make var()'s fallback
+ *  never kick in, rather than falling back to the Theme's system color as intended). */
+function setResolvedHighlightColorVar($cells, colorValue) {
+    $cells.each(function() {
+        if (colorValue) {
+            this.style.setProperty('--resolved-highlight-color', colorValue);
+        } else {
+            this.style.removeProperty('--resolved-highlight-color');
+        }
+    });
 }
 
 
-export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null) {
+export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableArray, lookupContext = null, owner = null) {
     lookupContext = lookupContext || createNotetableLookupContext(getCurrentSection(), tableID);
     var bendValue = $('#selBend').val();
     if (styleNum == Note.STYLENUM_BEND){
@@ -894,6 +1020,9 @@ export function colorSingleNotes(cell, theColorClass, styleNum, dontAddToTableAr
     notePlayed.row = r;
     notePlayed.col = c;
     notePlayed.colorClass = theColorClass;
+    if (owner) {
+        notePlayed.owner = owner;
+    }
 
     var sn = jCell.attr("stylenum");
     var sns = sn ? sn : "";
@@ -1049,10 +1178,13 @@ function getReplaySection(replayOptions){
           meaning replay() will be called first for your listenToTablename, then once for your own tablename.
 */    
 export function replay(){
+    markNoteTableTiming('replay:start');
     let optsArray = getReplayOptionsArray();
     optsArray.forEach(opts => {
         replayTable(opts);
     });
+    markNoteTableTiming('replay:end');
+    measureNoteTableTiming('NoteTableTiming:replay', 'replay:start', 'replay:end');
 }
 
 export function replayTable(replayOptions){
@@ -1093,7 +1225,7 @@ export function replayTable(replayOptions){
         
         Object.assign(relSectionOptions, replayOptions);
         //console.log("relSectionOptions after assign: "+JSON.stringify(relSectionOptions));
-        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename);
+        buildCellsForTable(relSectionOptions.sharps, relSectionOptions, replayOptions.tablename, 'replayTable:RELATIVE');
         EventBus.trigger("Widget:SectionStatus:statusChanged",
                             {
                                 ownerID: replayOptions.tablename,
@@ -1103,7 +1235,8 @@ export function replayTable(replayOptions){
                                 showBeatCounter,
                                 rootKey: relSectionOptions.rootKey || '',
                                 rootKeyLead: relSectionOptions.rootKeyLead || '',
-                                keyMode: relSectionOptions.type
+                                keyMode: relSectionOptions.type,
+                                isNotesourceListener: isNotesourceID(relSectionOptions.listenToTablename)
                             }
                         );
     } else {
@@ -1116,29 +1249,28 @@ export function replayTable(replayOptions){
                 showBeatCounter,
                 rootKey: replayOptions.rootKey || '',
                 rootKeyLead: replayOptions.rootKeyLead || '',
-                keyMode: replayOptions.type
+                keyMode: replayOptions.type,
+                isNotesourceListener: isNotesourceID(replayOptions.listenToTablename)
             }
         );
     }
     
     if (!replayOptions.hideNamedNotes){
-        if (currSection.sectionNotesByTable && currSection.sectionNotesByTable[listenToTablename]){
-            let namedNotes = currSection.sectionNotesByTable[listenToTablename].namedNotes;
-            if (namedNotes){
-                Object.keys(namedNotes).forEach(noteName => {
-                    var namedNote = namedNotes[noteName];
-                    var theSelect;
-                    if (namedNote.noteName){
-                        theSelect = nnTablenameSelector+".note"+namedNote.noteName;
-                    }
-                    var theClass = $(theSelect);
-                    if (!theSelect){
-                        console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
-                    }
-                    var theColorClass = lookupUserColorClass(namedNote, lookupContext);
-                    styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
-                });
-            }
+        let namedNotes = getListenSourceNamedNotes(currSection, listenToTablename);
+        if (namedNotes){
+            Object.keys(namedNotes).forEach(noteName => {
+                var namedNote = namedNotes[noteName];
+                var theSelect;
+                if (namedNote.noteName){
+                    theSelect = nnTablenameSelector+".note"+namedNote.noteName;
+                }
+                var theClass = $(theSelect);
+                if (!theSelect){
+                    console.log("undef:["+theSelect+"]"+JSON.stringify(namedNote));
+                }
+                var theColorClass = lookupUserColorClass(namedNote, lookupContext);
+                styleNamedNote(theClass, theColorClass, noteName); // sets opacity.
+            });
         }
     } else {
         // Keep baseline lane text (especially nut labels) visible; hide only actual placed named notes.
@@ -1441,10 +1573,15 @@ export function showHighlightsForBeatForOptions(nBeat, options){
         dict = sn.recordedNotes;
     }
     if (dict){
-        $(tableSelector+"td.note").removeClass("noteHighlight");
-		$(tableSelector+"td.note").removeClass("OverlayRaisedForPiano");
+        const allColorClasses = getAllRegisteredColorClasses(lookupContext);
+        const allNoteCells = $(tableSelector+"td.note");
+        allNoteCells.removeClass("noteHighlight");
+        allNoteCells.removeClass(gLast_noteHighlight);
+		allNoteCells.removeClass("OverlayRaisedForPiano");
 
-        $(tableSelector+"td.note").removeClass("noteHighlightSingle");
+        allNoteCells.removeClass("noteHighlightSingle");
+        allNoteCells.removeClass(allColorClasses);
+        setResolvedHighlightColorVar(allNoteCells, null);
 
 		$(tableSelector+"div.Fingering.Playback")
 			.attr("class", "Fingering")    //remove marker classes: FingeringPlayed Playback, and any color
@@ -1463,11 +1600,14 @@ export function showHighlightsForBeatForOptions(nBeat, options){
             arrForBeat.forEach(note => {
                 var tdNote = $(tableSelector+"td.note[midinum='"+note.midinum+"'][cellrow='"+note.row+"']");
                 if (note.styleNum == Note.STYLENUM_MIDIPITCHES){
-                    $(tableSelector+"td.note[midinum='"+note.midinum+"']")
-                        .addClass("noteHighlight");
+                    // Pitch highlights never participate in coloring -- always the System Pitch Color
+                    // (plain .noteHighlight fallback). Coloring is Multi-only.
+                    $(tableSelector+"td.note[midinum='"+note.midinum+"']").addClass("noteHighlight");
                 } else if (note.styleNum == Note.STYLENUM_MIDIPITCHESSINGLE){
+                    var resolvedMultiClass = lookupUserColorClass(note, lookupContext);
                     tdNote
                         .addClass("noteHighlightSingle");
+                    setResolvedHighlightColorVar(tdNote, resolveHighlightGlowColor(resolvedMultiClass));
                 } else if (note.styleNum == Note.STYLENUM_FINGERING && !options.hideFingering){
                     tdNote
                         .find("div.Fingering")
@@ -1511,9 +1651,16 @@ export function showHighlightsForBeatForOptions(nBeat, options){
     }
 }
 
-export function highlightOneNote(noteName){
-	var selector = "td.note"+noteName;
-      $(selector).addClass("noteHighlight");
+var gLast_noteHighlight = "";
+
+export function highlightOneNote(noteName, noteHighlightOverride = null){
+    var selector = "td.note"+noteName;
+    $(selector).addClass("noteHighlight");
+    if (noteHighlightOverride){
+        $(selector).addClass(noteHighlightOverride);
+        gLast_noteHighlight = noteHighlightOverride;
+    } 
+    
 }
 
 //=================================CLEARING========================================
@@ -1525,6 +1672,8 @@ export function fullRepaint(){
     clearAll();
     resetNoteNames();
     showBeats();
+    // Sprint 148 it3: the Function Symbols preview follows AutoColor/stylesheet/theme changes.
+    EventBus.trigger('FunctionSymbols:refresh');
     // After resizing cells
     const wrapper = document.querySelector('.fretTableWrapper');
     if (wrapper) {
@@ -1584,8 +1733,12 @@ export function clearHighlightsForTable(tablename){
         tableSelector = '#'+tablename+' ';
     }
 
-    $(tableSelector+"td.note").removeClass("noteHighlight");
-    $(tableSelector+"td.note").removeClass("noteHighlightSingle");
+    const allNoteCells = $(tableSelector+"td.note");
+    allNoteCells.removeClass("noteHighlight");
+    allNoteCells.removeClass("noteHighlightSingle");
+    allNoteCells.removeClass(gLast_noteHighlight);
+    allNoteCells.removeClass(getAllRegisteredColorClasses());
+    setResolvedHighlightColorVar(allNoteCells, null);
 }
 
 //==================FILLING=====================================================

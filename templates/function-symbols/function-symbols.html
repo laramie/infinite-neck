@@ -1,0 +1,36 @@
+<!-- Sprint 148 Iteration 3: Function Symbols panel.
+     Design: _doco/design/sprints/148-displayOptions-diff/148-it3-functions-panel.md
+     Plan:   _doco/design/sprints/148-displayOptions-diff/148-it3-implementation-plan.md
+     Built by function-symbols.builder.js; pure logic in functionSymbolSets.js -->
+<template id="function-symbols-template">
+    <div id="widgetFunctionSymbols">
+        <table id="previewFunctionSymbols" class="fsPreview" title="Preview of the chosen Function Symbols"></table>
+
+        <select id="dropDownFunctionSymbols"></select>
+        <br />
+        <button type="button" id="btnCustomizeFunctionSymbols" class="safeButton">Customize <span id="spanCustomizeFunctionSymbolsArrow">&#x25B6;</span></button>
+
+        <div id="divFunctionSymbolsCRUD" style="display:none;">
+            <div class="fsRow">From: <span id="lblFunctionSymbolsCaption"></span></div>
+
+            <label for="textareaFunctionSymbols" class="fsLabel">Function Symbols:</label>
+            <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" spellcheck="false"></textarea>
+            <div id="lblWarnUserFunctionSymbols" class="fsWarn"></div>
+
+            <div class="fsRow">ID: <span id="lblUserFunctionSymbolsID"></span></div>
+            <label for="txtUserFunctionSymbolsCaption" class="fsLabel">Caption:</label>
+            <input type="text" id="txtUserFunctionSymbolsCaption" maxlength="40" autocomplete="off" />
+            <div id="lblWarnUserFunctionSymbolsCaption" class="fsWarn"></div>
+
+            <button type="button" id="btnSaveUserFunctionSymbols" class="safeButton" disabled>Save</button>
+            <div id="lblWarnUserFunctionSymbolsUsageCount" class="fsWarn"></div>
+            <div id="lblNoteFunctionSymbolsMissing" class="fsWarn"></div>
+
+            <div class="fsButtonRow">
+                <button type="button" id="btnMoveUpUserFunctionSymbols" class="fsMoveUp" title="Move this User set up" disabled>&uarr;</button>
+                <button type="button" id="btnMoveDownUserFunctionSymbols" class="fsMoveDown" title="Move this User set down" disabled>&darr;</button>
+                <button type="button" id="btnDeleteUserFunctionSymbols" class="fsDelete" title="Delete this User set" disabled>X</button>
+            </div>
+        </div>
+    </div>
+</template>

@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="jsonTree80kg/json-tree-80kg.css">
 
     <link rel="stylesheet" type="text/css" href="infinite-neck.css" />
+    <link rel="stylesheet" type="text/css" href="html-whitelist.css" />
     <link rel="stylesheet" type="text/css" href="chart-input.css" />
     <link rel="stylesheet" type="text/css" href="song-library.css" />
     <link rel="stylesheet" type="text/css" href="instrument.css" />
@@ -30,10 +31,15 @@
     <link rel="stylesheet" type="text/css" href="templates/palette.css" />
     <link rel="stylesheet" type="text/css" href="templates/piano/piano-skeuomorphic.css" />
     <link rel="stylesheet" type="text/css" href="templates/info/info.css" />
+    <link rel="stylesheet" type="text/css" href="templates/mobile-keyboard/mobile-keyboard.css" />
+    <link rel="stylesheet" type="text/css" href="templates/midi/midi.css" />
     <link rel="stylesheet" type="text/css" href="templates/macros/macros.css" />
+    <link rel="stylesheet" type="text/css" href="templates/songwidgets/songwidgets.css" />
     <link rel="stylesheet" type="text/css" href="templates/section-drawer.css" />
     <link rel="stylesheet" type="text/css" href="templates/SectionStatus/section-status.css" />
     <link rel="stylesheet" type="text/css" href="templates/tutorial/tutorial.css" />
+    <link rel="stylesheet" type="text/css" href="templates/function-symbols/function-symbols.css" />
+    <link rel="stylesheet" type="text/css" href="templates/display-options/display-options.css" />
 
     <!--
     
@@ -61,8 +67,17 @@
                     <button id="btnHamburger" class="HamburgerClass" type="button">&equiv;</button>
                     <span class="productsmall">Laramie's </span><span class="product">infinite-neck</span>
                 </span>
-                <span id="transportLeftPoint"></span>
                 <span id="divControls">
+                    <label for="cbFloatyControls" class="MainMenuTabBtn BtnPunchedOut  BtnPunchedOutLighter">
+                        <input id="cbFloatyControls" type="checkbox" tabindex="-1"
+                                    name="cbnFloatyControls" value="1">Floaty</label>
+                            <script>
+                              document.getElementById('cbFloatyControls').addEventListener('change', function() {
+                                this.blur();
+                              });
+                            </script>
+
+
                     <button id="btnFileControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1"><b><u>F</u></b>ile</button>
                     <button id="btnInfo" type="button" class="MainMenuTabBtn BtnPunchedOut" tabindex="-1"><b><u>I</u></b>nfo</button>
@@ -77,14 +92,15 @@
                     <button id="btnViewControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1"><b><u>V</u></b>iew</button>
                     <button id="btnThemeControls" type="button" class="MainMenuTabBtn BtnPunchedOut"
-                        tabindex="-1">Themes</button>
+                        tabindex="-1"><u>T</u>hemes</button>
                     <button id="btnDesktop" type="button" class="MainMenuTabBtn BtnPunchedOut"
                         tabindex="-1">Desktop</button>
                     <button data-action="help" class="MainMenuTabBtn" tabindex="-1">Help</button>
                     &nbsp;&nbsp;<span id="SelectThemesDest"></span>
                 </span>
-                <span id="transportTopPoint"></span>
             </div>
+    
+            <!-- divQuick was here-->
 
             <div id="divPalette">
             </div>
@@ -138,7 +154,7 @@
                             <input type="text" name="txtFilename" id="txtFilename" value="Round-midnight" size="50"><button
                                 type="button">&check;</button>
                         </label>
-                        <span class="fileRolesCaption">Roles:</span><span id="fileMenuSongInstrumentBadges"></span>
+                        <span class="fileRolesCaption">Roles:&nbsp;&nbsp;<span id="fileMenuSongInstrumentBadges"></span></span>
                         <br />
                         <button id="btnDownload" type="button">Download Song</button>&nbsp;<span
                             class="lblSongName"></span><span style="color: green;">.json</span>
@@ -384,6 +400,9 @@
                             <nobr><label for="cbHideFingering"><input id="cbHideFingering" type="checkbox"
                                         name="cbnHideFingering" value="4">HIDE Fingering</label></nobr>
                             <br>
+                            <nobr><label for="cbHideNutNames"><input id="cbHideNutNames" type="checkbox"
+                                        name="cbnHideNutNames" value="5">HIDE Nut Note Names</label></nobr>
+                            <br>
                             <nobr><label for="cbShowAllNoteNames"><input id="cbShowAllNoteNames" type="checkbox"
                                         name="cbnShowAllNoteNames" value="1">Show All Note Names</label></nobr>
                         </td>
@@ -429,41 +448,8 @@
                     </tr>
                 </table>
                 <br>
-                <div style="padding: 0.8em; background-color: #f4f4f4;">
-                    <!-- WIDGET-EXAMPLE("TextAreaWButtonWidget", "FunctionSymbols") -->
-                    <label for="textareaFunctionSymbols">Function Symbols:<br />
-                        <nobr>
-                            <textarea id="textareaFunctionSymbols" name="txtnFunctionSymbols" rows="3" cols="24"
-                                class="scalingTextarea">
-                                </textarea>
-                            <button type="button" id="btnFunctionSymbolsChanged" class="BtnPunchedOut">&check;</button>
-                            <button type="button" id="btnFunctionSymbolsReset" class="BtnPunchedOut">&#x21BA;</button>
-                        </nobr>
-                        <!-- END-WIDGET-EXAMPLE("TextAreaWButtonWidget") -->
-                        <br />
-                        <select id="dropDownFunctionSymbols">
-                            <option
-                                value='["I","&tau;","II","m","III","IV","&Theta;","V","&sigma;","6","&delta;","&Delta;"]'>
-                                Default</option>
-                            <option value='["One","Tau","Two","Mi","Three","Four","Tri","Fi","Sa","Six","Dom","Say"]'>
-                                Sounds Like</option>
-                            <option value='["1","2","3","4","5","6","7","8","9","10","11","12"]'>Function Numbers
-                            </option>
-                            <option value='["+0","+1","+2","+3","+4","+5","+6","+7","+8","+9","+10","+11"]'>Function
-                                Offset</option>
-                            <option
-                                value='["I<small>+0</small>","&tau;<small>+1</small>","II<small>+2</small>","m<small>+3</small>","III<small>+4</small>","IV<small>+5</small>","&Theta;<small>+6</small>","V<small>+7</small>","&sigma;<small>+8</small>","6<small>+9</small>","&delta;<small>+10</small>","&Delta;<small>+11</small>"]'>
-                                Function +
-                                Offset</option>
-                            <option value='["Do","Ra","Re","Ma","Mi","Fa","Se","Sol","Le","La","Ta","Ti"]'>
-                                Solf&#232;ge
-                            </option>
-                            <option
-                                value='["&#x4e00;","&#x4e8c;","&#x4e09;","&#x56db;","&#x4e94;","&#x516d;","&#x4e03;","&#x516b;","&#x4e5d;","&#x5341;","&#x5341;&#x4e00;","&#x5341;&#x4e8c;"]'>
-                                Kanji Numerals</option>
-                        </select>
-                    </label>
-                </div>
+                <!-- Sprint 148 it3: built from templates/function-symbols/ by FunctionSymbolsBuilder -->
+                <div id="divFunctionSymbols"></div>
             </div>
 
             <div class="divViewCard">
@@ -517,7 +503,9 @@
                                 <option value="120px">120</option>
                                 <option value="140px">140</option>
                                 <option value="160px">160</option>
+                                <option value="180px">180</option>
                                 <option value="200px">200</option>
+                                <option value="230px">230</option>
                                 <option value="260px">260</option>
                                 <option value="320px">320</option>
                                 <option value="440px">440</option>
@@ -936,26 +924,37 @@
             <div class="divViewCard" id="divViewDisplayOptions">
                 <b class="left">Display Options:</b><br>
                 <span style="float:left; ">
-                    <button id="btnControlsToDisplayOptions_View" class="riskyButton" type="button">SAVE
-                        <small><br>Display
-                            Options</small></button>
+                    <button id="btnSaveDiff_View" class="riskyButton" type="button">SAVE Diff</button>
                 </span>
                 <span style="float:left; ">
-                    <button id="btnDeleteDisplayOptions_View" class="riskyButton" type="button">CLEAR<small><br>Display
-                            Options</small></button>
+                    <button id="btnDeleteDisplayOptions_View" class="riskyButton" type="button">CLEAR</button>
                 </span>
-                <p class="clearBoth"><small>Options are all applied from this Section forward until another Section
-                        sets Display
-                        Options. <i>Tip: Set-and-forget in the first section.</i></small>
+                <span style="float:left; ">
+                    <button id="btnSaveAll_View" class="riskyButton" type="button" title="Stores every writable control value in this Section">Save All</button>
+                </span>
+                <p class="clearBoth">
+                    <button id="btnToggleDisplayOptionsTips" type="button"><small>Help Tips&nbsp;&nbsp;<span id="spanDisplayOptionsTipsArrow">&#x25B6;</span></small></button>
+                </p>
+                <div id="displayOptionsTips" style="display:none">
+                    <p><small>Options are applied from this Section forward until another Section
+                        changes them. SAVE Diff stores only the controls that differ from what this Section inherits.
+                        <i>Tip: Set-and-forget in the first section, or save to Song-DEFAULTS in Display Options Matrix.</i></small>
                     </p>
-                <br>
-                <p><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
+                    <p class="displayOptionsSpecialCheckbox"><label for="cbShowDisplayOptionsShowMessages"><input type="checkbox" id="cbShowDisplayOptionsShowMessages" value="1">Show Messages</label>
+                        <br>
+                        <small><i>Checked: every <b>Save Diff/CLEAR/Save All</b> logs to <b>Messages</b> log below Instruments.  Uncheck to suppress.</i></small>
+                    
+                    </p>
+
+                    
+                </div>    
+                <p class="displayOptionsSpecialCheckbox"><label for="cbPresentationMode"><input type="checkbox" id="cbPresentationMode" value="1">Presentation
                         Mode</label>
-                    <br>&nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<i><small>Automate cell widths/heights/NoteFontSize.</i></small>
                 </p>
-                <br>
-                <p><label for="cbAllowThemeAutomation"><input type="checkbox" id="cbAllowThemeAutomation" value="1">Allow Theme Automation</label>
+                <p class="displayOptionsSpecialCheckbox"><label for="cbAllowThemeAutomation"><input type="checkbox" id="cbAllowThemeAutomation" value="1">Allow Theme Automation</label>
                 </p>
+                <p class="viewDisplayOptionsReadOnly">autoColorHighlight: <span id="viewDisplayOptionAutoColorHighlightValue">false</span></p>
                 <p class="viewDisplayOptionsReadOnly">autoColor: <span id="viewDisplayOptionAutoColorValue">false</span></p>
                 <p class="viewDisplayOptionsReadOnly">currentColorDict: [ <span id="viewDisplayOptionCurrentColorDictValue"></span> ]</p>
                 <p class="viewDisplayOptionsReadOnly">sectionTheme: [ <span id="viewDisplayOptionCurrentSectionTheme"></span> ]
@@ -963,7 +962,12 @@
                 </p>
                 <p class="viewDisplayOptionsReadOnly"><button id="btnShowDisplayOptions" type="button" data-action="showDisplayOptions">Show Display Options</button>
                     </p>
+                <p class="viewDisplayOptionsReadOnly"><button id="btnToggleDisplayOptionsMatrix" type="button" class="safeButton" title="The interactive Display Options Matrix (command line: /vpmo)">Display Options Matrix <span id="spanDisplayOptionsMatrixArrow">&#x25B6;</span></button>
+                    </p>
             </div>
+
+            <!-- Sprint 148 it5: the interactive Matrix, built from templates/display-options/ by DisplayOptionsMatrixBuilder.  Page-wide (flex: 1 0 100%). -->
+            <div id="divDisplayOptionsMatrixHost"></div>
 
         </div>
         <!-- END divViewControls -->
@@ -1014,7 +1018,7 @@
                                                 <label for="txtSongTuningID"><b>Tuning ID:</b>
                                                     <input type="text" id="txtSongTuningID" value="" size="32">
                                                 </label>
-                                                <br>Unique ID for this song-owned instrument, for example: <b>LarP5_mark</b>
+                                                <br>Unique ID for this song-owned instrument, for example: <b>P5_Jimmy</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1022,7 +1026,7 @@
                                                 <label for="txtLineageID"><b>Lineage ID:</b>
                                                     <input type="text" id="txtLineageID" value="" size="32">
                                                 </label>
-                                                <br>Compatibility lineage for this tuning, for example: <b>P5</b>
+                                                <br>Compatibility lineage for this tuning, ends up in the "Role" column: <b>P5</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1081,8 +1085,8 @@
                                                     Empty, or one or more pairs of id:fret to specify where to
                                                     block out a nut position up the neck, such as is used for
                                                     Banjo or using a Capo.<br>
-                                                    "0" is the first string, and 0 is the first position, which
-                                                    places the nut in the normal position. The nut is fret 0.
+                                                    "0" is the first string, and 0 is the first fret, which
+                                                    places the nut in the normal location. The nut is fret 0.
                                                     Thus the first fret is fret 1.<br>
                                                     {"zero-based-string-id": zero-based-fret-number}<br>
                                                     Follow the braces, commas, and quotes exactly as shown in
@@ -1117,7 +1121,7 @@
                                                             id="txtUserInstrumentCaption" value="" size="64">
                                                     </label>
                                                 </nobr>
-                                                <br>Give your tuning a name.
+                                                <br>Tuning caption, can have spaces.
 
                                             </td>
                                         </tr>
@@ -1139,79 +1143,108 @@
         </div>
 
         <div id="divDesktop" style="display: none;">
+            <div class="infoTabsTop">
+                <span class="infoTabsButtons">
+                    <button id="btnDesktopTabKeyboard" type="button" class="MenuTabBtn BtnPunchedIn">Keyboard</button>
+                    <button id="btnDesktopTabButtons" type="button" class="MenuTabBtn BtnPunchedOut">Buttons</button>
+                    <button id="btnDesktopTabSongWidgets" type="button" class="MenuTabBtn BtnPunchedOut">SongWidgets</button>
+                    <button id="btnDesktopTabMIDI" type="button" class="MenuTabBtn BtnPunchedOut">MIDI</button>
+                </span>
+                <span class="infoTabsFill"></span>
+            </div>
+
+            <div class="infoTabsBody">
+                <div class="infoTabsPaper">
+                    <div id="divMobileKeyboard" class="infoTabPanel">
+                    </div>
+                    <div id="divDesktopButtons" class="infoTabPanel" style="display: none;">
             <form id="frmDesktop" onsubmit="return false;">
                 <div class="menuDiv">
-                    <div style="float: left;" class="sectionPageControlsGroup">
-                        <p>Buttons for Mobile instead of keyboard shortcuts. </p>
+                    <div class="sectionPageControlsGroup">
+                        
+                        <button id="btnRunMobileCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Run</button>
+                        <label for="txtMobileCmdLine"><b>Command-Line:</b>
+                            <input type="text" name="txtNameMobileCmdLine"
+                            id="txtMobileCmdLine" value="" size="32">
+                        </label>
                         <br>
                         <br>
+                        
+                        <button id="btnRunMobilePreset" class="BtnPunchedOut BigMobileBtn" type="button">Mobile Presets</button>
+                        <button id="btnRunDesktopPreset" class="BtnPunchedOut BigMobileBtn" type="button">Desktop Presets</button>
+
 
                         <button id="btnToggleTransport" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             Transport</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnToggleCmdLine" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             Command-Line</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnToggleQuick" class="BtnPunchedOut BigMobileBtn" type="button">Toggle
                             QuickMenu</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnChromeFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="ChromeFullscreen">Chrome Fullscreen</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnFullscreen" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="enterFullscreen" data-action-args='[true]'>infinite-neck Fullscreen</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnIncreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="increaseUIFont">Increase UI Font</button>
-                        <br>
-                        <br>
-                        <button id="btntoggleCaption" class="BtnPunchedOut BigMobileBtn" type="button"
-                            data-action="toggleCaption">Toggle Caption</button>
-                        <br>
-                        <br>
-                        <button id="btntoggleInstrumentCaption" class="BtnPunchedOut BigMobileBtn" type="button"
-                            data-action="toggleInstrumentCaptionRow">Toggle Instrument
-                            Caption</button>
-                        <br>
-                        <br>
+                        
+                        <button id="btnDecreaseUIFont" class="BtnPunchedOut BigMobileBtn" type="button"
+                            data-action="decreaseUIFont">Decrease UI Font</button>
+                        
+                        
                         <button id="btnSaveScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="saveScalingPrefs">Save Scaling Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnApplyScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="applyScalingPrefs">Apply Scaling Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnClearScaling" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="clearScalingPrefs">Clear Scaling Prefs</button>
-                        <br>
-                        <br>
-                        <div id="divScalingPrefs"></div>
-                        <br>
-                        <br>
+                        
+                        
+                        
+                        
                         <button id="btnSaveInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="saveInstrumentPrefs">Save Instrument Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnApplyInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="applyInstrumentPrefs">Show Instrument Prefs</button>
-                        <br>
-                        <br>
+                        
+                        
                         <button id="btnClearInstrument" class="BtnPunchedOut BigMobileBtn" type="button"
                             data-action="clearInstrumentPrefs">Clear Instrument Prefs</button>
+                        
+                        
                         <br>
                         <br>
-                        <div id="divInstrumentPrefs"></div>
+                        <span style="display: inline-block; border: 1px solid green; padding: 0.2em;"><b>Scaling Prefs:</b>
+                        <span id="divScalingPrefs"></span>
+                        </span>&nbsp;&nbsp;&nbsp;<span style="display: inline-block; border: 1px solid green; padding: 0.2em;">
+                        <b>Instrument Prefs:</b>
+                        <span id="divInstrumentPrefs"></span></span>
                     </div>
                 </div>
                 <!--end menuDiv-->
             </form>
+                    </div>
+                    <div id="divSongWidgetsTab" class="infoTabPanel" style="display: none;"></div>
+                    <div id="divMidiTab" class="infoTabPanel" style="display: none;"></div>
+                </div>
+            </div>
         </div>
+
 
         <!-- BEGIN Chart menu page -->
         <div id="divChart" style="display: none;">
@@ -1246,7 +1279,7 @@
                         <div id="divChartSummaryTab" style="display: none;"></div>
                         <div id="divChartInputTab" style="display: none;"></div>
                         <div id="divChartNotesTab"></div>
-                        <div id="divChartDetailsTab" style="display: none;"></div>
+                        <div id="divChartDetailsTab" style="display: none;overflow-x: auto;width: 100%;"></div>
                         <div id="divChartOptionsTab" style="display: none;"></div>
                         <div id="divChartTab" style="display: none;"></div>
                         <div id="divChartLineTab" style="display: none;"></div>
@@ -1298,12 +1331,40 @@
 
 
     <div>
+
+
+
+        <div id="divQuick" style="display: none;">
+            <button onclick="$('#divQuick').toggle();" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">X</button>
+            <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note Names</button>
+            <button id="quickLoopToggle" class="MenuButton BtnPunchedOut classLoopSections" type="button">LOOP</button>
+            <button id="quickBeatLoopToggle" class="MenuButton BtnPunchedOut classLoopBeats" type="button">&infin;</button>
+            <button id="btnRandomLoop" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
+            <button id="quickTransportToggle" class="MenuButton BtnPunchedOut" type="button">Transport</button>
+            <span class="PunchedTogether"><button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">Func</button>
+            <button id="btnNoteV" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button></span>
+            <button id="btnAutoColor" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
+            <button id="btnMidiTriggerModeQuick" class="MenuButton BtnPunchedOut classMidiTriggerMode" type="button"
+                tabindex="-1" title="Latched: press toggles the note on/off. Momentary: note follows button down/up.">Latched</button>
+                <span class="miniPaletteStatus">
+                    <span class="paletteHighlightStatus paletteStatusSpan">Named <span style="color: #1e82f3;">✓</span>
+                </span><span class="paletteModeStatus paletteStatusSpan" style="background-color: rgba(0, 0, 0, 0); color: rgb(0, 0, 0);">Color: Emboss ✓</span><span class="paletteHidingStatus paletteStatusSpan" style="display: none;"></span>
+            </span>
+        </div>
+
+
+
+
+
         <div id="divFullscreenLeadSheetLineHost" style="display: none;"></div>
         <div id="divFullscreenChartHost" style="display: none;"></div>
         <div id="topControlsCaptions">
             <nobr>
-                <strong><span class="lblSongName"></span></strong>&nbsp;&nbsp;<span class="lblSectionCaption"></span>
-                <br>
+                <strong><span class="lblSongName"></span></strong><span id="realtimeTickStart" style="display: none;">0:00:00</span><!--trigger with /vhwr and /vswr, not persisted.-->
+                &nbsp;&nbsp;<span class="lblSectionCaption"></span>
+                <div id="lblSongWidgets" style="display:none;"></div>
+                <BR id="lblSongWidgetsBR" style="display:none;">
+
                 <span class="SongTitleLeadSheet">
                     <span id="spanSectionStatusLeadSheetHost" class="leadSheetSectionStatusHost"></span>
                     <span class="lblSectionChartChord"></span>
@@ -1316,16 +1377,7 @@
         </div>
     </div>
 
-    <div id="divQuick" style="display: none;">
-        <button id="btnShowAllNoteNames" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Show All Note
-            Names</button>
-        <button id="btnRandomLoop" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Random Loop</button>
-        <span class="PunchedTogether"><button id="btnFuncV" class="MenuButton BtnPunchedIn" type="button"
-                tabindex="-1">Func</button>
-            <button id="btnNoteV" class="MenuButton BtnPunchedOut" type="button" tabindex="-1">Note</button></span>
-        <button id="btnAutoColor" class="MenuButton BtnPunchedIn" type="button" tabindex="-1">AutoColor</button>
-    </div>
-
+    
     <div id="tabledest"></div><!-- The place where all the Instrument noteTables go. -->
 
 

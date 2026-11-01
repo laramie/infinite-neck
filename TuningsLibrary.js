@@ -7,6 +7,7 @@ import EventBus from './event-bus.js';
 import { allTunings } from './tunings.js';
 import { rowRangeToNoteNames } from './TableBuilder.js';
 import { refreshShowAllNoteNames, getSong } from './infinite-neck.js';
+import { dockDivInPage, isDivFloating, renameDockableDiv } from './dockable.js';
 import {
     supportsPianoSkeuomorphic,
     normalizePianoLayoutOptions
@@ -158,15 +159,23 @@ function buildDefaultSongTuningTemplate(baseInstrument = 'Guitar') {
         nStrings: 0,
         rowRange: [],
         showDiamonds: !isPiano,
+        showFaceDiamonds: true,
         diamonds: [3, 5, 7, 9, 15, 17, 19, 21],
         doubleDiamonds: [12, 24],
+        faceDiamondsStrings: [],
+        faceDoubleDiamondsStrings: [],
+        faceTinyDiamondsStrings: [],
+        faceDiamondsLeft: '50%',
+        faceDoubleDiamondsLeft: '100%',
+        faceTinyDiamondsLeft: '50%',
         frets: 24,
         nut: !isPiano,
         reverse: false,
         banjoNut: {},
         pianoNamesRow: false,
         pianoSkeuomorphic: false,
-        stringDividerHeight: '0.5em'
+        stringDividerHeight: '0.5em',
+        pinkKey: 'none'
     };
 }
 
@@ -283,6 +292,9 @@ export function createSongTuningFromDraft(draft = {}, {
     if (!createdTuning.banjoNut || typeof createdTuning.banjoNut !== 'object') {
         createdTuning.banjoNut = {};
     }
+    // MyTunings always carries an explicit pinkKey: either the value inherited from the
+    // library/lineage tuning, or the literal sentinel 'none' when the source has no pinkKey.
+    createdTuning.pinkKey = createdTuning.pinkKey || 'none';
     return createdTuning;
 }
 
@@ -296,14 +308,60 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
     var primaryHeader = primaryControl === "visibility" ? "&#10003;" : "Clone";
     var showMoveColumn = primaryControl === "visibility";
     var inMemHeader = '<button type="button" class="moveyButton btnRefreshInMemGate" title="Refresh Notes in memory">Notes &#x1F5D8;</button>';
+    
+    var trhFace = $("<tr>");
+    let blankColumns = 16 + (showMoveColumn ? 2 : 0) + (isSongOwnedTable?1:0);
+    trhFace.html(
+              "<th colspan='"+blankColumns+"'></th>"
+            + "<th colspan='3' class='padControllerSpanTH'>Pad Controllers</th>"
+            + "<th colspan='3' class='edgeDiamondsSpanTH'>Edge Diamonds</th>"
+            + "<th colspan='7' class='faceDiamondsSpanTH'>Face Diamonds</th>"
+    );
+    table.append(trhFace);
+    
     var trh = $("<tr>");
     trh.html("<th>" + primaryHeader + "</th>"
-        + (showMoveColumn ? "<th>Move</th><th>" + inMemHeader + "</th>" : "")
-        +"<th>Tuning</th><th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th><th>Instrument</th><th>Notes&nbsp;&uarr;</th><th>MIDI&nbsp;&darr;</th><th>SR&nbsp;&nbsp;</th>"
-        + "<th>BN</th><th>Right/Left</th><th class='TuningsTableSkinny'>Piano Names</th><th class='TuningsTableSkinny'>Piano Skeuo</th><th>Diamonds</th><th>Nut</th><th>Frets</th><th>Divider</th>"
+        + (showMoveColumn ? "<th>Move</th>"
+        + "<th>" + inMemHeader + "</th>" : "")
+        + "<th>Tuning</th>"
+        + "<th>ID</th>"+(isSongOwnedTable?"<th>Role</th>":"")+"<th>Strings</th>"
+        + "<th>Instrument</th>"
+        + "<th>Notes&nbsp;&uarr;</th>"
+        + "<th>MIDI&nbsp;&darr;</th>"
+        + "<th title='Special Row'>SR&nbsp;&nbsp;</th>"
+        + "<th title='Banjo Nut'>BN</th>"
+        + "<th>Right/Left</th>"
+        + "<th>Tool</th>"
+        + "<th class='TuningsTableSkinny'>Piano Names</th>"
+        + "<th class='TuningsTableSkinny'>Piano<br>Skeuo</th>"
+
+        + "<th>Nut</th>"
+        + "<th>Frets</th>"
+        + "<th>Divider</th>"
         
+        + "<th>FixedWidth<br>Multiplier</th>"
+        + "<th>FixedHeight<br>Multiplier</th>"
+        + "<th>Pink Key</th>"
+
+        + "<th>Show</th>"
+        + "<th class='TuningsTableSkinny'title='Diamonds Frets (comma-separated list)'>Diamond Frets</th>"
+        + "<th class='TuningsTableSkinny' title='Double-Diamonds Frets (comma-separated list)'>DblDiamond Frets</th>"
+
+        + "<th class='TuningsTableSkinny'>Show</th>"
+        + "<th class='TuningsTableSkinny' title='Face Diamonds String  (comma-separated list)'>Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Double-Diamonds String (comma-separated list)'>Dbl Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Face Tiny-Diamonds String (comma-separated list)'>Tiny Strings</th>"
+        + "<th class='TuningsTableSkinny' title='Face Diamonds Left Offset (0 - 100%)'>Left</th>"
+        + "<th class='TuningsTableSkinny' title='Face Double-Diamonds Left Offset (0 - 100%)'>Dbl Left</th>"
+        + "<th class='TuningsTableSkinny' title='Face Tiny-Diamonds Left offset (0 - 100%)'>Tiny Left</th>"
+
     );
     table.append(trh);
+
+    
+    
+    
+
     var sInMemCount = "";
     var rows = tunings.length;
     for (var r = 0; r < rows; r++) {
@@ -317,7 +375,9 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             ? " checked "
             : (!isSongOwnedTable && tun.visible ? " checked " : "");
 
-        var captionStr = '<nobr>' + tun.caption + '</nobr>';
+        var captionCellHtml = '<nobr>' + (isSongOwnedTable
+            ? formatTuningInlineEditor('caption', tun.baseID, tun.caption)
+            : escapeHtmlText(tun.caption)) + '</nobr>';
         var primaryControlHtml = '<button type="button" class="btnCloneTuning" data-baseid="' + tun.baseID + '">Clone</button>';
         if (primaryControl === "visibility") {
             primaryControlHtml = '<label for="cb' + tun.baseID + '"><input id="cb' + tun.baseID + '" '
@@ -332,6 +392,13 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + ' type="checkbox" name="cbnLH' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checkedLH + '>Left-Handed</nobr></label>';
         var leftHandCellHtml = isSongOwnedTable ? checkboxLH : (tun.reverse ? 'Left-Handed' : '');
+
+        var checkedTool = tun.Tool ? " checked " : "";
+        var checkboxTool = '<label for="cbTool' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxTool"   id="cbTool' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnTool' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedTool + '></nobr></label>';
+        var ToolCellHtml = isSongOwnedTable ? checkboxTool : (tun.reverse ? 'Tool' : '');
 
         var checkedPN = tun.pianoNamesRow ? " checked " : "";
         var disabledPN = tun.pianoSkeuomorphic ? " disabled " : "";
@@ -363,6 +430,59 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
             + tun.baseID + '" ' + checkedShowDiamonds + '></nobr></label>';
         var showDiamondsCellHtml = isSongOwnedTable ? checkboxShowDiamonds : (tun.showDiamonds ? 'Yes' : '');
 
+        var diamondsText = Array.isArray(tun.diamonds) ? tun.diamonds.join(', ') : '';
+        var diamondsCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('diamonds', tun.baseID, diamondsText)
+            : escapeHtmlText(diamondsText);
+
+        var doubleDiamondsText = Array.isArray(tun.doubleDiamonds) ? tun.doubleDiamonds.join(', ') : '';
+        var doubleDiamondsCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('doubleDiamonds', tun.baseID, doubleDiamondsText)
+            : escapeHtmlText(doubleDiamondsText);
+
+        var checkedShowFaceDiamonds = tun.showFaceDiamonds !== false ? " checked " : "";
+        var checkboxShowFaceDiamonds = '<label for="cbShowFaceDiamonds' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxShowFaceDiamonds"   id="cbShowFaceDiamonds' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnShowFaceDiamonds' + tun.baseID + '" value="'
+            + tun.baseID + '" ' + checkedShowFaceDiamonds + '></nobr></label>';
+        var showFaceDiamondsCellHtml = isSongOwnedTable ? checkboxShowFaceDiamonds : (tun.showFaceDiamonds !== false ? 'Yes' : '');
+
+
+        var faceDiamondsStringsText = Array.isArray(tun.faceDiamondsStrings) ? tun.faceDiamondsStrings.join(', ') : '';
+        var faceDiamondsStringsCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceDiamondsStrings', tun.baseID, faceDiamondsStringsText)
+            : escapeHtmlText(faceDiamondsStringsText);
+
+        var faceDoubleDiamondsStringsText = Array.isArray(tun.faceDoubleDiamondsStrings) ? tun.faceDoubleDiamondsStrings.join(', ') : '';
+        var faceDoubleDiamondsStringsCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceDoubleDiamondsStrings', tun.baseID, faceDoubleDiamondsStringsText)
+            : escapeHtmlText(faceDoubleDiamondsStringsText);
+
+        var faceTinyDiamondsStringsText = Array.isArray(tun.faceTinyDiamondsStrings) ? tun.faceTinyDiamondsStrings.join(', ') : '';
+        var faceTinyDiamondsStringsCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceTinyDiamondsStrings', tun.baseID, faceTinyDiamondsStringsText)
+            : escapeHtmlText(faceTinyDiamondsStringsText);
+
+        var faceDiamondsLeftCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceDiamondsLeft', tun.baseID, tun.faceDiamondsLeft || '50%')
+            : escapeHtmlText(tun.faceDiamondsLeft || '50%');
+
+        var faceDoubleDiamondsLeftCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceDoubleDiamondsLeft', tun.baseID, tun.faceDoubleDiamondsLeft || '100%')
+            : escapeHtmlText(tun.faceDoubleDiamondsLeft || '100%');
+
+        var faceTinyDiamondsLeftCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('faceTinyDiamondsLeft', tun.baseID, tun.faceTinyDiamondsLeft || '50%')
+            : escapeHtmlText(tun.faceTinyDiamondsLeft || '50%');
+
+        var fixedFretWidthMultCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('fixedFretWidthMult', tun.baseID, tun.fixedFretWidthMult || '')
+            : escapeHtmlText(tun.fixedFretWidthMult || '');
+
+        var fixedFretHeightMultCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('fixedFretHeightMult', tun.baseID, tun.fixedFretHeightMult || '')
+            : escapeHtmlText(tun.fixedFretHeightMult || '');
+
         var checkedNut = tun.nut ? " checked " : "";
         var disabledNut = isPianoTuning ? ' disabled ' : '';
         var nutTitle = isPianoTuning
@@ -375,18 +495,33 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         var nutCellHtml = isSongOwnedTable ? checkboxNut : (tun.nut ? 'Yes' : '');
 
         var checked_doSpecialRows = tun.doSpecialRows ? " checked " : "";
-        var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.doSpecialRows + '"><nobr>'
-            + '<input class="checkboxDoSpecialRows"   id="cbDoSpecialRows' + tun.doSpecialRows + '" '
-            + ' type="checkbox" name="cbnDoSpecialRows' + tun.doSpecialRows + '" value="'
+        var checkboxDoSpecialRows = '<label for="cbDoSpecialRows' + tun.baseID + '"><nobr>'
+            + '<input class="checkboxDoSpecialRows"   id="cbDoSpecialRows' + tun.baseID + '" '
+            + ' type="checkbox" name="cbnDoSpecialRows' + tun.baseID + '" value="'
             + tun.baseID + '" ' + checked_doSpecialRows + '></nobr></label>';
 
-            
+        var specialRowsText = Array.isArray(tun.specialBackgroundIDRows) ? tun.specialBackgroundIDRows.join(', ') : '';
+        var specialRowsCellHtml = isSongOwnedTable
+            ? checkboxDoSpecialRows + ' ' + formatTuningInlineEditor('specialBackgroundIDRows', tun.baseID, specialRowsText)
+            : (specialRowsText || (tun.doSpecialRows ? 'Yes' : ''));
 
+        var banjoNutText = tun.banjoNut ? JSON.stringify(tun.banjoNut) : '';
+        var banjoNutCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('banjoNut', tun.baseID, banjoNutText)
+            : escapeHtmlText(banjoNutText);
 
-        var BN = tun.banjoNut ? JSON.stringify(tun.banjoNut) : "";
-        if (BN) {
-            BN = BN.replaceAll(",", ",<br>");
-        }
+        var baseInstrumentCellHtml = isSongOwnedTable
+            ? generateBaseInstrumentSelect(tun.baseID, tun.baseInstrument)
+            : escapeHtmlText(tun.baseInstrument);
+
+        var pinkKeyCellHtml = isSongOwnedTable
+            ? generatePinkKeySelect(tun.baseID, tun.pinkKey)
+            : escapeHtmlText(tun.pinkKey || 'none');
+
+        var rowRangeText = '' + tun.rowRange;
+        var midiCellHtml = isSongOwnedTable
+            ? formatTuningInlineEditor('rowRange', tun.baseID, rowRangeText)
+            : escapeHtmlText(rowRangeText);
 
         sInMemCount = "";
         if (tuningsInMemoryHash[tun.baseID]) {
@@ -415,38 +550,44 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
         } else {
             idCellHtml = tun.baseID;
         }
-        let specialRows = (tun.specialBackgroundIDRows) 
-                            ? checkboxDoSpecialRows+' '+tun.specialBackgroundIDRows 
-                            : "";
-
         var tr = $("<tr>");
         tr.append($("<td>").html(primaryControlHtml));
         if (showMoveColumn) {
             tr.append($("<td>").html(moveButtonHtml));
             tr.append($("<td>").html("<b>" + sInMemCount + "</b>"));
         }
-        tr.append($("<td>").html(captionStr));
+        tr.append($("<td>").html(captionCellHtml));
         tr.append($("<td>").html(idCellHtml));
         if (isSongOwnedTable) {
             tr.append($("<td>").html(renderInstrumentBadge(getInstrumentSummaryForTuning(getSong(), tun, { allowUnknown: true }), { allowUnknown: true })));
         }
-        tr.append($("<td>").html(tun.nStrings + "-string"));
-        tr.append($("<td>").html(tun.baseInstrument));
-        tr.append($("<td>").html(rowRangeToNoteNames(tun.rowRange, tun)));
-        tr.append($("<td>").html("" + tun.rowRange));
-        tr.append($("<td>").html());
-        tr.append($("<td>").html(specialRows));
-        tr.append($("<td>").html("" + BN));
+        tr.append($("<td class='tuningStringsCell'>").html(tun.nStrings + "-string"));
+        tr.append($("<td>").html(baseInstrumentCellHtml));
+        tr.append($("<td class='tuningNotesCell'>").html(rowRangeToNoteNames(tun.rowRange, tun)));
+        tr.append($("<td>").html(midiCellHtml));
+        tr.append($("<td>").html(specialRowsCellHtml));
+        tr.append($("<td>").html(banjoNutCellHtml));
         tr.append($("<td>").html(leftHandCellHtml));
+        tr.append($("<td>").html(ToolCellHtml));
         tr.append($("<td>").html(pianoNamesCellHtml));
         tr.append($("<td>").html(pianoSkeuoCellHtml));
-        tr.append($("<td>").html(showDiamondsCellHtml));
         tr.append($("<td>").html(nutCellHtml));
         tr.append($("<td>").html(isSongOwnedTable ? selectBlock : `${tun.frets ?? ''}`)); //numFrets
         tr.append($("<td>").html(isSongOwnedTable ? selectStringDividerHt : `${tun.stringDividerHeight || ''}`));
+        tr.append($("<td>").html(fixedFretWidthMultCellHtml));
+        tr.append($("<td>").html(fixedFretHeightMultCellHtml));
+        tr.append($("<td>").html(pinkKeyCellHtml));
+        tr.append($("<td>").html(showDiamondsCellHtml));
+        tr.append($("<td>").html(diamondsCellHtml));
+        tr.append($("<td>").html(doubleDiamondsCellHtml));
+        tr.append($("<td>").html(showFaceDiamondsCellHtml));
+        tr.append($("<td>").html(faceDiamondsStringsCellHtml));
+        tr.append($("<td>").html(faceDoubleDiamondsStringsCellHtml));
+        tr.append($("<td>").html(faceTinyDiamondsStringsCellHtml));
+        tr.append($("<td>").html(faceDiamondsLeftCellHtml));
+        tr.append($("<td>").html(faceDoubleDiamondsLeftCellHtml));
+        tr.append($("<td>").html(faceTinyDiamondsLeftCellHtml));
         
-        
-
         table.append(tr);
     }
     return table;
@@ -454,6 +595,46 @@ export function dumpTuningsToTable(tuningsInMemoryHash, tunings = allTunings.tun
 
 const SELECT_FRETS_PFX = "selFrets";
 const SELECT_STRINGDIVIDER_PFX = "selDivider";
+
+const BASE_INSTRUMENT_OPTIONS = ['Guitar', 'Bass', 'Cello', 'Ukulele', 'Mandolin', 'Banjo', 'ChampmanStick', 'MIDI', 'Piano'];
+
+function escapeHtmlText(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+}
+
+/** Unified click-to-edit mechanism for MyTunings fields: renders a bordered span that
+ *  swaps to a text input (blur/Enter commits, Escape cancels) -- see bindFormTuningsEvents()
+ *  for the delegated wiring and TUNING_INLINE_FIELD_HANDLERS for the per-field parse/apply. */
+function formatTuningInlineEditor(fieldName, baseID, value) {
+    const safeValue = escapeHtmlText(value);
+    return '<span class="tuningInlineField" data-tuning-field="' + fieldName + '" data-baseid="' + baseID + '">'
+        + '<span class="tuningInlineFieldDisplay" tabindex="0" title="Click to edit">' + safeValue + '</span>'
+        + '<input type="text" class="tuningInlineFieldInput" value="' + safeValue + '" hidden>'
+        + '</span>';
+}
+
+function generateBaseInstrumentSelect(baseID, currentValue) {
+    const options = BASE_INSTRUMENT_OPTIONS.map((name) => {
+        const selected = name === currentValue ? ' selected' : '';
+        return '<option value="' + name + '"' + selected + '>' + name + '</option>';
+    }).join('');
+    return '<select class="selectBaseInstrument" data-baseid="' + baseID + '">' + options + '</select>';
+}
+
+const PINK_KEY_OPTIONS = ['none', ...Constants.NOTE_NAMES_ARRAY];
+
+function generatePinkKeySelect(baseID, currentValue) {
+    const effectiveValue = currentValue || 'none';
+    const options = PINK_KEY_OPTIONS.map((name) => {
+        const selected = name === effectiveValue ? ' selected' : '';
+        return '<option value="' + name + '"' + selected + '>' + name + '</option>';
+    }).join('');
+    return '<select class="selectPinkKey" data-baseid="' + baseID + '">' + options + '</select>';
+}
 
 export function generateSelect(ID, frets) {
     var sel = "<select class='selectFrets' id='" + SELECT_FRETS_PFX + ID + "'>";
@@ -514,6 +695,7 @@ export function ensureDefaultMyTuning(defaultBaseID) {
     cloned.baseID = generateNextTuningID(defaultBaseID);
     cloned.fromBaseID = defaultBaseID;
     cloned.instance = true;
+    cloned.pinkKey = original.pinkKey || 'none';
     delete cloned.visible;
     store.push(cloned);
     getSong().setTableVisibilityByBaseID(cloned.baseID, true);
@@ -547,6 +729,12 @@ export function showHideTuning(show, basekey) {
     var jdiv = $(divKey);
     jcb.prop("checked", show);
     //jcb.click();
+    if (!show) {
+        // Dock first so a floating table's wrapper (handle/dockBtn) is torn down
+        // instead of being left showing over an empty, hidden inner div -- same
+        // dock-before-move-up/down pattern used elsewhere. See sprint-141 Iteration 4.
+        dockIfFloating(basekey);
+    }
     if (show) {   //change the checkbox in the GUI
         jdiv.show();
     } else {
@@ -584,6 +772,18 @@ export function showTuningsForTablesInFile() {
 
 export function hideAllTunings() {
     getAllTunings().forEach(tuning => hideTuning(tuning.baseID));
+}
+
+/** Docks a floating instrument before a move-up/move-down, so the reorder in
+ *  noteTablesLayout/myTunings order is meaningful (docked order is the single
+ *  source of truth for all tables, floated or not -- see sprint-141 Iteration 3,
+ *  point 9.3). anchorage.floatRect is preserved (only captured at save time), so
+ *  re-floating afterward restores its prior position/size. */
+function dockIfFloating(baseID) {
+    const divID = Constants.TABLEDIV_ID_PREFIX + baseID;
+    if (isDivFloating(divID)) {
+        dockDivInPage(divID);
+    }
 }
 
 export function moveMyTuningUp(baseID) {
@@ -735,6 +935,23 @@ function convertStringToIntArray(inputString) {
     return intArray;
 }
 
+/** Same as convertStringToIntArray() but tolerates an empty string (-> []) and an
+ *  optional wrapping [ ] pair, per sprint-145's "allow the user to skip the brackets"
+ *  requirement for array-valued MyTunings fields (diamonds, doubleDiamonds, faceDiamonds*). */
+function parseFlexibleIntArray(inputString) {
+    let trimmed = inputString.trim();
+    if (!trimmed) {
+        return [];
+    }
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        trimmed = trimmed.slice(1, -1).trim();
+    }
+    if (!trimmed) {
+        return [];
+    }
+    return convertStringToIntArray(trimmed);
+}
+
 
 //===================== EventBus handling =======================================
 export function reloadMyTuningsDisplay(){
@@ -799,6 +1016,214 @@ function resetSongTuningForm() {
     $('#dropDownBaseInstrument').val('Guitar');
 }
 
+//===================== MyTunings inline field editing =======================================
+// Unified click-to-edit mechanism (see formatTuningInlineEditor()): a bordered display span
+// swaps to a text input on click/Enter/Space; blur or Enter commits via the handler below
+// keyed by data-tuning-field; Escape cancels without committing.
+
+const TUNING_INLINE_FIELD_HANDLERS = {
+    caption: {
+        parse: (raw) => {
+            const value = raw.trim();
+            if (!value) {
+                throw new Error('Tuning caption cannot be empty.');
+            }
+            return value;
+        },
+        apply: (tuning, value) => {
+            tuning.caption = value;
+            return value;
+        },
+        invalidMessage: () => 'Tuning caption cannot be empty.'
+    },
+    rowRange: {
+        parse: (raw) => convertStringToIntArray(raw.trim()),
+        apply: (tuning, value, row) => {
+            tuning.rowRange = value;
+            tuning.nStrings = value.length;
+            row.find('.tuningNotesCell').text(rowRangeToNoteNames(tuning.rowRange, tuning));
+            row.find('.tuningStringsCell').text(tuning.nStrings + '-string');
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'MIDI rowRange invalid: "' + raw + '". Use comma-separated integers.'
+    },
+    banjoNut: {
+        parse: (raw) => {
+            const trimmed = raw.trim();
+            if (!trimmed) {
+                return {};
+            }
+            const parsed = JSON.parse(trimmed);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                throw new Error('BanjoNut must be a JSON object.');
+            }
+            return parsed;
+        },
+        apply: (tuning, value) => {
+            tuning.banjoNut = value;
+            requestReinstallAllTuningsTables();
+            return JSON.stringify(value);
+        },
+        invalidMessage: (raw) => 'BanjoNut invalid JSON: "' + raw + '"'
+    },
+    specialBackgroundIDRows: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.specialBackgroundIDRows = value;
+            requestReinstallAllTuningsTables();
+            refreshShowAllNoteNames();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Special Rows invalid: "' + raw + '". Use comma-separated integers.'
+    },
+    diamonds: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.diamonds = value;
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Diamond frets invalid: "' + raw + '". Use comma-separated integers.'
+    },
+    doubleDiamonds: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.doubleDiamonds = value;
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Double diamond frets invalid: "' + raw + '". Use comma-separated integers.'
+    },
+    faceDiamondsStrings: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.faceDiamondsStrings = value;
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Face Diamonds strings invalid: "' + raw + '". Use zero-based, comma-separated integers.'
+    },
+    faceDoubleDiamondsStrings: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.faceDoubleDiamondsStrings = value;
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Face Double Diamonds strings invalid: "' + raw + '". Use zero-based, comma-separated integers.'
+    },
+    faceTinyDiamondsStrings: {
+        parse: (raw) => parseFlexibleIntArray(raw),
+        apply: (tuning, value) => {
+            tuning.faceTinyDiamondsStrings = value;
+            requestReinstallAllTuningsTables();
+            return value.join(', ');
+        },
+        invalidMessage: (raw) => 'Face Tiny Diamonds strings invalid: "' + raw + '". Use zero-based, comma-separated integers.'
+    },
+    faceDiamondsLeft: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.faceDiamondsLeft = value;
+            } else {
+                delete tuning.faceDiamondsLeft;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '50%';
+        }
+    },
+    faceDoubleDiamondsLeft: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.faceDoubleDiamondsLeft = value;
+            } else {
+                delete tuning.faceDoubleDiamondsLeft;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '100%';
+        }
+    },
+    faceTinyDiamondsLeft: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.faceTinyDiamondsLeft = value;
+            } else {
+                delete tuning.faceTinyDiamondsLeft;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '50%';
+        }
+    },
+    fixedFretWidthMult: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.fixedFretWidthMult = value;
+            } else {
+                delete tuning.fixedFretWidthMult;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '';
+        }
+    },
+    fixedFretHeightMult: {
+        parse: (raw) => raw.trim(),
+        apply: (tuning, value) => {
+            if (value) {
+                tuning.fixedFretHeightMult = value;
+            } else {
+                delete tuning.fixedFretHeightMult;
+            }
+            requestReinstallAllTuningsTables();
+            return value || '';
+        }
+    }
+};
+
+function openTuningInlineEditor(wrap) {
+    const jWrap = $(wrap);
+    const display = jWrap.find('.tuningInlineFieldDisplay');
+    const input = jWrap.find('.tuningInlineFieldInput');
+    input.val(display.text());
+    display.prop('hidden', true);
+    input.prop('hidden', false);
+    input.trigger('focus');
+    const inputEl = input.get(0);
+    if (inputEl && typeof inputEl.select === 'function') {
+        inputEl.select();
+    }
+}
+
+function closeTuningInlineEditor(wrap) {
+    const jWrap = $(wrap);
+    jWrap.find('.tuningInlineFieldInput').prop('hidden', true);
+    jWrap.find('.tuningInlineFieldDisplay').prop('hidden', false);
+}
+
+function commitTuningInlineEdit(wrap, rawValue) {
+    const jWrap = $(wrap);
+    const fieldName = jWrap.data('tuningField');
+    const baseID = jWrap.data('baseid');
+    const handler = TUNING_INLINE_FIELD_HANDLERS[fieldName];
+    const tuning = findTuningForID(baseID);
+    if (!handler || !tuning) {
+        return;
+    }
+    let parsedValue;
+    try {
+        parsedValue = handler.parse(rawValue);
+    } catch (error) {
+        alert(handler.invalidMessage ? handler.invalidMessage(rawValue) : ('Invalid value: "' + rawValue + '"'));
+        return;
+    }
+    const displayText = handler.apply(tuning, parsedValue, jWrap.closest('tr'));
+    jWrap.find('.tuningInlineFieldDisplay').text(displayText);
+}
+
 export function bindFormTuningsEvents() {
     $('#frmTunings').off('submit').on('submit', function (event) {
         event.preventDefault();
@@ -828,6 +1253,12 @@ export function bindFormTuningsEvents() {
         if (tuning.reverse && tuning.baseInstrument === 'Piano') {
             revealPianoReverseWarning(tuningID);
         }
+    });
+    $('#frmTunings .checkboxTool').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.Tool = this.checked;
+        requestReinstallAllTuningsTables();
     });
     $('#frmTunings .selectFrets').change(function () {
         var tuningID = this.id.substring(SELECT_FRETS_PFX.length);
@@ -875,11 +1306,59 @@ export function bindFormTuningsEvents() {
         tuning.showDiamonds = this.checked;
         requestReinstallAllTuningsTables();
     });
+    $('#frmTunings .checkboxShowFaceDiamonds').change(function () {
+        var tuningID = this.value;
+        var tuning = findTuningForID(tuningID);
+        tuning.showFaceDiamonds = this.checked;
+        requestReinstallAllTuningsTables();
+    });
     $('#frmTunings .checkboxNut').change(function () {
         var tuningID = this.value;
         var tuning = findTuningForID(tuningID);
         tuning.nut = this.checked;
         requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .selectBaseInstrument').change(function () {
+        var tuningID = $(this).data('baseid');
+        var tuning = findTuningForID(tuningID);
+        tuning.baseInstrument = this.value;
+        reloadMyTuningsDisplay();
+        requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .selectPinkKey').change(function () {
+        var tuningID = $(this).data('baseid');
+        var tuning = findTuningForID(tuningID);
+        tuning.pinkKey = this.value;
+        requestReinstallAllTuningsTables();
+    });
+    $('#frmTunings .tuningInlineFieldDisplay').on('click', function () {
+        openTuningInlineEditor($(this).closest('.tuningInlineField'));
+    });
+    $('#frmTunings .tuningInlineFieldDisplay').on('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openTuningInlineEditor($(this).closest('.tuningInlineField'));
+        }
+    });
+    $('#frmTunings .tuningInlineFieldInput').on('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.blur();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            $(this).data('cancelEdit', true);
+            this.blur();
+        }
+    });
+    $('#frmTunings .tuningInlineFieldInput').on('blur', function () {
+        var jInput = $(this);
+        var cancelled = jInput.data('cancelEdit');
+        jInput.removeData('cancelEdit');
+        var wrap = jInput.closest('.tuningInlineField');
+        if (!cancelled) {
+            commitTuningInlineEdit(wrap, jInput.val());
+        }
+        closeTuningInlineEditor(wrap);
     });
     $('#btnShowHideAddSongTuning').off('click').on('click', function () {
         $('#divAddSongTuning').toggle();
@@ -948,6 +1427,7 @@ export function bindFormTuningsEvents() {
         cloned.baseID = newBaseID;
         cloned.fromBaseID = baseID;
         cloned.instance = true;
+        cloned.pinkKey = original.pinkKey || 'none';
         delete cloned.visible;
         getMyTuningsStore().push(cloned);
         getSong().setTableVisibilityByBaseID(cloned.baseID, true);
@@ -958,15 +1438,17 @@ export function bindFormTuningsEvents() {
 
     $('#frmTunings').off('click', '.btnMoveTuningUp').on('click', '.btnMoveTuningUp', function () {
         var baseID = $(this).data('baseid');
+        dockIfFloating(baseID);
         if (!moveMyTuningUp(baseID)) {
             return;
         }
         reloadMyTuningsDisplay();
-        requestReinstallAllTuningsTables(); //todo: make this just reorder the divs, because some are floating.
+        requestReinstallAllTuningsTables();
     });
 
     $('#frmTunings').off('click', '.btnMoveTuningDown').on('click', '.btnMoveTuningDown', function () {
         var baseID = $(this).data('baseid');
+        dockIfFloating(baseID);
         if (!moveMyTuningDown(baseID)) {
             return;
         }
@@ -1030,6 +1512,15 @@ export function bindFormTuningsEvents() {
         tuning.baseID = newID;
         $(this).data('oldid', newID); // Update the stored old ID for future changes
 
+        // Keep a currently-floating table's DOM/floating-window in sync with the renamed
+        // ID -- divIds are derived from baseID (Constants.TABLEDIV_ID_PREFIX), so without
+        // this the floating window is orphaned under the old id (stale caption, no longer
+        // recognized as floating) and installAllTuningsTables() builds a brand-new docked
+        // instance under the new id instead of recognizing "same table, renamed". Must run
+        // before renameTuningIDInModel()/requestReinstallAllTuningsTables() rebuild the
+        // tables. See sprint-141 Iteration 3 bugfix.
+        renameDockableDiv(Constants.TABLEDIV_ID_PREFIX + oldID, Constants.TABLEDIV_ID_PREFIX + newID);
+
         // Rename all NoteTable references in the Song model (section noteTables keys + noteTablesLayout)
         getSong().renameTuningIDInModel(oldID, newID);
 
@@ -1044,7 +1535,7 @@ EventBus.on('ReloadTuningsDisplays', function() {
 });
 
 
-function requestReinstallAllTuningsTables() {
+export function requestReinstallAllTuningsTables() {
 	EventBus.trigger('ReinstallAllTuningsTables');
 	EventBus.trigger('UpdateAllWiringSelects');
 }
@@ -1053,7 +1544,7 @@ function requestReinstallAllTuningsTables() {
 function requestUpdateAllWiringSelects() {
    EventBus.trigger('UpdateAllWiringSelects'); 
 }
-function requestInstrumentAdded() {
+export function requestInstrumentAdded() {
    EventBus.trigger('InstrumentAdded'); 
 }
 

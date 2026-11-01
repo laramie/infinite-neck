@@ -15,6 +15,8 @@ import { SectionNotes } from './SectionNotes.js';
 import { Wiring } from './Wiring.js';
 import { DEFAULT_BEATS, RANDOM_SECTION_HISTORY_MAX } from './Constants.js';
 import { SongPersistence } from './SongPersistence.js';
+import { isNotesourceID } from './fill/notesource-registry.js';
+import { resolveDisplayOptions } from './templates/display-options/displayOptionsResolver.js';
 
 
 export class Song extends SongPersistence {
@@ -77,7 +79,24 @@ export class Song extends SongPersistence {
                 return;
             }
             seen.add(tableID);
-            normalized.push({ tableID, visible: entry.visible !== false });
+            const normalizedEntry = { tableID, visible: entry.visible !== false };
+            Object.keys(entry).forEach((key) => {
+                if (key === 'tableID' || key === 'tablename' || key === 'visible') {
+                    return;
+                }
+                if (key === 'ToolDisplayOptions' && entry[key] && typeof entry[key] === 'object') {
+                    normalizedEntry[key] = entry[key];
+                    return;
+                }
+                if (key === 'anchorage' && entry[key] && typeof entry[key] === 'object') {
+                    normalizedEntry[key] = entry[key];
+                    return;
+                }
+                if (entry[key] === true) {
+                    normalizedEntry[key] = true;
+                }
+            });
+            normalized.push(normalizedEntry);
         });
 
         this.noteTablesLayout = normalized;
@@ -99,6 +118,186 @@ export class Song extends SongPersistence {
     setNoteTablesLayout(layout = []) {
         this.noteTablesLayout = Array.isArray(layout) ? layout : [];
         this.ensureNoteTablesLayout();
+    }
+
+    setNoteTablesLayoutOption(tableID, optionName, optionValue){
+        const safeTableID = `${tableID || ''}`.trim();
+        const safeOptionName = `${optionName || ''}`.trim();
+        if (!safeTableID || !safeOptionName) {
+            return;
+        }
+
+        if (safeOptionName === 'tableID' || safeOptionName === 'tablename') {
+            return;
+        }
+
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+
+        if (safeOptionName === 'visible') {
+            const nextVisible = optionValue !== false;
+            if (entry.visible === nextVisible) {
+                return;
+            }
+            entry.visible = nextVisible;
+            EventBus.trigger('TableVisibility:changed', { tableID: safeTableID, visible: nextVisible });
+            return;
+        }
+
+        const nextValue = optionValue === true;
+        const hadValue = Object.prototype.hasOwnProperty.call(entry, safeOptionName);
+        if (nextValue) {
+            if (entry[safeOptionName] === true) {
+                return;
+            }
+            entry[safeOptionName] = true;
+            return;
+        }
+
+        if (hadValue) {
+            delete entry[safeOptionName];
+        }
+    }
+
+    /** Freezes a deep copy of the given DisplayOptions object as the Tool table's
+     *  ToolDisplayOptions. Deliberately does not accept rootID/rootIDLead/sharps/
+     *  noteNamesFuncArr as part of displayOptionsObject: Tool tables must keep
+     *  following the live current Section for those fields (see checkOptionsForToolTables()
+     *  in infinite-neck.js, which merges ToolDisplayOptions last/unconditionally). */
+    setToolDisplayOptions(tableID, displayOptionsObject) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        entry.ToolDisplayOptions = structuredClone(displayOptionsObject || {});
+    }
+
+    clearToolDisplayOptions(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const entry = this.getNoteTablesLayout().find((one) => one.tableID === safeTableID);
+        if (entry) {
+            delete entry.ToolDisplayOptions;
+        }
+    }
+
+    /** Marks whether this table is currently floated. This is deliberately not kept in
+     *  sync live during interactive float/dock (dockable.js's live DOM state is the
+     *  runtime source of truth for that) -- it is only consulted at song open (to
+     *  restore floating windows) and captured at song save time (see
+     *  updateMemoryModelPreFileSave() in infinite-neck.js). Preserves any
+     *  previously-saved anchorage.floatRect/zIndex. See sprint-141 Iteration 3. */
+    setTableFloated(tableID, floated) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.floated = !!floated;
+        entry.anchorage = anchorage;
+    }
+
+    /** Stores left/top/width/height into the table's anchorage.floatRect. Units: left
+     *  and width are percentages of window.innerWidth; top and height are percentages
+     *  of window.innerHeight (NOT pixels, and NOT both relative to the same viewport
+     *  dimension) -- see captureAnchorageBeforeSave()/makeDivDockable() in
+     *  infinite-neck.js/dockable.js, sprint-141 Iteration 3, point 9.2. Only numeric
+     *  finite values are kept; missing/invalid keys are omitted. */
+    setTableFloatRect(tableID, rect) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID || !rect || typeof rect !== 'object') {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        const floatRect = {};
+        ['left', 'top', 'width', 'height'].forEach((key) => {
+            if (typeof rect[key] === 'number' && Number.isFinite(rect[key])) {
+                floatRect[key] = rect[key];
+            }
+        });
+        anchorage.floatRect = floatRect;
+        entry.anchorage = anchorage;
+    }
+
+    /** Stores the floating window's stacking order into the table's anchorage.zIndex.
+     *  See sprint-141 Iteration 4, points 1-2 ("deck of cards" reordering on
+     *  .dockable-handle click). Ignores non-finite values. */
+    setTableZIndex(tableID, zIndex) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID || typeof zIndex !== 'number' || !Number.isFinite(zIndex)) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.zIndex = zIndex;
+        entry.anchorage = anchorage;
+    }
+
+    /** Returns the zIndex to assign to a newly-floated table: 10 above the highest
+     *  anchorage.zIndex currently recorded across noteTablesLayout, or 200 if none of
+     *  the entries have a zIndex yet. Deliberately only considers noteTablesLayout
+     *  entries -- other floating tool windows (Info, ChartInput, Transport, etc.) are
+     *  out of scope for this calculation. See sprint-141 Iteration 4, point 3. */
+    getNextAnchorageZIndex() {
+        const zIndexes = this.getNoteTablesLayout()
+            .map((entry) => entry?.anchorage?.zIndex)
+            .filter((zIndex) => typeof zIndex === 'number' && Number.isFinite(zIndex));
+        if (zIndexes.length === 0) {
+            return 200;
+        }
+        return Math.max(...zIndexes) + 10;
+    }
+
+    /** Stores whether the floating window's drag handle is along the 'top' or 'side'
+     *  into the table's anchorage.handleOrientation, so re-Floating (from docked or
+     *  from file-load) restores the same orientation. See sprint-141 Iteration 4,
+     *  point 4. */
+    setTableHandleOrientation(tableID, orientation) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return;
+        }
+        const layout = this.getNoteTablesLayout();
+        let entry = layout.find((one) => one.tableID === safeTableID);
+        if (!entry) {
+            entry = { tableID: safeTableID, visible: true };
+            layout.push(entry);
+        }
+        const anchorage = (entry.anchorage && typeof entry.anchorage === 'object') ? entry.anchorage : {};
+        anchorage.handleOrientation = orientation === 'top' ? 'top' : 'side';
+        entry.anchorage = anchorage;
+    }
+
+    getTableAnchorage(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const entry = this.getNoteTablesLayout().find((one) => one.tableID === safeTableID);
+        return entry?.anchorage || null;
     }
 
     setTableVisibilityByBaseID(baseID, visible) {
@@ -185,7 +384,10 @@ export class Song extends SongPersistence {
                 if (wiring?.tablename) {
                     tableIDs.add(wiring.tablename);
                 }
-                if (wiring?.listenToTablename) {
+                // Notesources (e.g. "nsEveryNamedNote") are a fixed, code-defined algorithm
+                // registry, not real persisted model tables -- exclude them here so
+                // ghost-table detection (getGhostTableIDs()) doesn't false-positive on them.
+                if (wiring?.listenToTablename && !isNotesourceID(wiring.listenToTablename)) {
                     tableIDs.add(wiring.listenToTablename);
                 }
             });
@@ -1357,22 +1559,124 @@ export class Song extends SongPersistence {
 
     //=============== Model Management/Cleanup Functions ==========================================
 
-    /** call with defaultDisplayOptions = infinite-neck:controlsToDisplayOptions() */
-    getDisplayOptionsInEffect(currSection, defaultDisplayOptions){
-        // Start at currSection and walk backwards through song.sections
+    /** Sprint 148 it4: the 'render' resolve for currSection -- the sparse cascade (see
+     *  templates/display-options/displayOptionsResolver.js) completed from `liveOptions`
+     *  (call with infinite-neck:controlsToDisplayOptions()).  Always a fresh object. */
+    getDisplayOptionsInEffect(currSection, liveOptions){
+        const idx = this.sections.indexOf(currSection);
+        if (idx === -1) {
+            return liveOptions;
+        }
+        return resolveDisplayOptions(this, idx, { purpose: 'render', live: liveOptions }).values;
+    }
+
+    /** Sprint 148 it4: the 'apply' resolve -- the sparse set of keys navigation pushes into the
+     *  controls for currSection (gates, absent-cell policy and provenance: see the resolver).
+     *  Fresh object (never a live block); null if currSection is not in this Song. */
+    getStoredDisplayOptionsInEffect(currSection){
+        const idx = this.sections.indexOf(currSection);
+        if (idx === -1) {
+            return null;
+        }
+        return resolveDisplayOptions(this, idx, { purpose: 'apply' }).values;
+    }
+
+    /** Sprint 148 it4: resolve with provenance for the Section at `idx` (used by /vdd and the plan engine). */
+    resolveDisplayOptionsAt(idx, options = {}){
+        return resolveDisplayOptions(this, idx, options);
+    }
+
+    /** Sprint 146 Iteration 2: derives the canonical id/caption/baseid/basecaption a per-table
+     *  Theme block should carry once it's saved for a specific Table+Section, so the Theme
+     *  Matrix can show something like "Autobahn+P46_1:S1" instead of the generic
+     *  "Autobahn+Autobahn" controlsToTheme() produces on its own (see 146-it2-design.md point 2).
+     *  themeObject.baseid/basecaption (set by themeFunctions.js's controlsToTheme()) are
+     *  preferred so re-tagging (e.g. via setTableThemeAtSection() writing to a different
+     *  Table+Section than the one the controls were last loaded from) never has to re-parse an
+     *  already-suffixed caption; falls back to id/caption if a theme predates baseid/basecaption. */
+    _computeTableThemeIdentity(themeObject, tableID, sectionIndex) {
+        const baseId = themeObject?.baseid || themeObject?.id || 'Theme';
+        const baseCaption = themeObject?.basecaption || themeObject?.caption || 'Theme';
+        const safeTableID = `${tableID || ''}`;
+        const displayTableID = safeTableID.startsWith(Constants.TABLE_ID_PREFIX)
+            ? safeTableID.slice(Constants.TABLE_ID_PREFIX.length)
+            : safeTableID;
+        const sectionNum = sectionIndex + 1;
+        return {
+            id: `${baseId}-${displayTableID}-S${sectionNum}`,
+            caption: `${baseCaption}+${displayTableID}:S${sectionNum}`,
+            baseid: baseId,
+            basecaption: baseCaption
+        };
+    }
+
+    /** Sprint 146 (table-themes): freezes a copy of the given Theme object (same shape as
+     *  themeFunctions.js's controlsToTheme() / getSong().userTheme) onto sectionIndex's
+     *  sectionNotesByTable[tableID].theme. Mirrors setToolDisplayOptions()/the displayOptions
+     *  Save button, just scoped to one Table+Section instead of the whole Section/song. Re-tags
+     *  the id/caption to identify this Table+Section (see _computeTableThemeIdentity()). Returns
+     *  false (no-op) if tableID is blank or sectionIndex doesn't resolve to a real Section. */
+    setTableThemeAtSection(tableID, sectionIndex, themeObject) {
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return false;
+        }
+        const section = this.sections[sectionIndex];
+        if (!section) {
+            return false;
+        }
+        const identity = this._computeTableThemeIdentity(themeObject, safeTableID, sectionIndex);
+        section.getSectionNotes(safeTableID).theme = { ...structuredClone(themeObject || {}), ...identity };
+        return true;
+    }
+
+    /** Convenience wrapper for setTableThemeAtSection() scoped to the CURRENT Section --
+     *  see that method for the shared implementation/semantics. */
+    setTableTheme(tableID, themeObject) {
+        this.setTableThemeAtSection(tableID, this.getSectionsCurrentIndex(), themeObject);
+    }
+
+    /** Removes a table's saved Theme from the CURRENT section only (mirrors
+     *  clearToolDisplayOptions()/the displayOptions Clear button). Earlier sections' saved
+     *  Themes for this table (if any) are untouched, and remain in effect per
+     *  getStoredTableThemeInEffect()'s walk-back. */
+    clearTableTheme(tableID) {
+        const safeTableID = `${tableID || ''}`.trim();
+        const sectionNotes = this.getCurrentSection().sectionNotesByTable?.[safeTableID];
+        if (sectionNotes) {
+            delete sectionNotes.theme;
+        }
+    }
+
+    /** Like getStoredDisplayOptionsInEffect(), but for a single table's Theme: walks backwards
+     *  from currSection through song.sections looking for the first section (at or before
+     *  currSection) whose sectionNotesByTable[tableID].theme is set. Returns null if no section
+     *  from currSection back to index 0 has ever saved a Theme for this table. */
+    getStoredTableThemeInEffect(currSection, tableID){
+        const safeTableID = `${tableID || ''}`.trim();
+        if (!safeTableID) {
+            return null;
+        }
         let idx = this.sections.indexOf(currSection);
         if (idx === -1) {
-            // currSection not found, fallback to default
-            return defaultDisplayOptions;
+            return null;
         }
         for (let i = idx; i >= 0; i--) {
             const section = this.sections[i];
-            if (section && section.displayOptions) {
-                return section.displayOptions;
+            const theme = section?.sectionNotesByTable?.[safeTableID]?.theme;
+            if (theme) {
+                return theme;
             }
         }
-        return defaultDisplayOptions;
+        return null;
     }
+
+    /** call with defaultTheme = the tier-1/"default" Theme currently in effect (i.e. whatever
+     *  #selThemes/getSong().userTheme resolves to today) -- see getStoredTableThemeInEffect(). */
+    getTableThemeInEffect(currSection, tableID, defaultTheme){
+        return this.getStoredTableThemeInEffect(currSection, tableID) ?? defaultTheme;
+    }
+
 
     //This function works: it transposes every Section in a Song by 'amount'.
     cycleThruKeysAllSections(amount, doKeyLead = false){
@@ -1444,11 +1748,13 @@ export class Song extends SongPersistence {
             delete section.sectionNotesByTable[oldKey];
         });
 
+        // Preserve every other property on the entry (ToolDisplayOptions, anchorage,
+        // CaptionLeft, SectionStatusLeft, etc.) -- only the tableID key itself changes.
+        // Previously this rebuilt each entry down to just {tableID, visible}, silently
+        // discarding a floated table's anchorage (and any other per-table layout
+        // options) on every ID rename. See sprint-141 Iteration 3 bugfix.
         this.noteTablesLayout = this.getNoteTablesLayout()
-            .map((entry) => ({
-                tableID: entry.tableID === oldKey ? newKey : entry.tableID,
-                visible: entry.visible !== false
-            }))
+            .map((entry) => (entry.tableID === oldKey ? { ...entry, tableID: newKey } : entry))
             .filter((entry, index, arr) => arr.findIndex((other) => other.tableID === entry.tableID) === index);
 
         if (Array.isArray(this.wirings)) {

@@ -1,5 +1,6 @@
 import Ajv2020 from 'ajv/dist/2020.js';
 import { SECTION_CHART_CAPTION_WIDTH, SONG_CHART_BAR_CLASS } from '../Constants.js';
+import { DISPLAY_OPTION_KEYS } from '../templates/display-options/displayOptionsMeta.js';
 
 const INTEGER_LIKE_PATTERN = '^-?\\d+$';
 const ALLOWED_NOTE_NAMES = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab'];
@@ -152,15 +153,31 @@ const sectionNotesSchema = {
         },
         chord: { type: 'string' },
         mode: { type: 'string' },
-        tonalSourceSet: { type: 'string' }
+        tonalSourceSet: { type: 'string' },
+        // Sprint 146 (table-themes): a frozen Theme object (same shape as controlsToTheme()'s
+        // output / song.userTheme), saved per-table per-Section via handleBtnControlsToTableTheme().
+        // Loosely typed since Theme's own key set is intentionally open-ended (see themes.js).
+        theme: { type: 'object' }
     },
     required: ['playedNotes', 'namedNotes', 'recordedNotes'],
     additionalProperties: false
 };
 
+// Sprint 148 it4: deny-only gates.  Song: column gates.  Section: '*' (whole Section) or a key.
+function displayOptionGatesSchema(allowRow) {
+    const keys = { type: 'string', enum: allowRow ? ['*', ...DISPLAY_OPTION_KEYS] : [...DISPLAY_OPTION_KEYS] };
+    const list = { type: 'array', items: keys, minItems: 1, uniqueItems: true };
+    return {
+        type: 'object',
+        properties: { readBlocked: list, writeBlocked: list },
+        additionalProperties: false
+    };
+}
+
 const sectionSchema = {
     type: 'object',
     properties: {
+        displayOptionGates: displayOptionGatesSchema(true),
         sectionNotesByTable: {
             type: 'object',
             additionalProperties: sectionNotesSchema
@@ -231,7 +248,8 @@ const songTutorialSchema = {
     properties: {
         level: tutorialLevelSchema,
         caption: { type: 'string' },
-        storageKey: { type: 'string' }
+        storageKey: { type: 'string' },
+        useCaptionForSectionCaption: { type: 'boolean' }
     },
     required: ['level'],
     additionalProperties: false
@@ -283,11 +301,47 @@ const chartOptionsSchema = {
     additionalProperties: false
 };
 
+const anchorageSchema = {
+    type: 'object',
+    properties: {
+        floated: { type: 'boolean' },
+        // left/width are percentages of window.innerWidth; top/height are percentages
+        // of window.innerHeight (each 0-100+). Captured from the floating window's
+        // getBoundingClientRect() at save time and applied back as CSS `%` values
+        // (position: fixed) at load time -- see captureAnchorageBeforeSave() and
+        // makeDivDockable() in infinite-neck.js/dockable.js. Not pixels.
+        floatRect: {
+            type: 'object',
+            properties: {
+                left: { type: 'number' },
+                top: { type: 'number' },
+                width: { type: 'number' },
+                height: { type: 'number' }
+            },
+            additionalProperties: false
+        },
+        // Stacking order among currently-floated windows: raised to the top of the
+        // "deck" whenever the User clicks a floating window's .dockable-handle. See
+        // sprint-141 Iteration 4, points 1-3.
+        zIndex: { type: 'number' },
+        // 'top' or 'side' -- which edge of the floating window the drag handle sits
+        // along. See sprint-141 Iteration 4, point 4.
+        handleOrientation: { type: 'string', enum: ['top', 'side'] }
+    },
+    additionalProperties: false
+};
+
 const noteTableLayoutEntrySchema = {
     type: 'object',
     properties: {
         tableID: { type: 'string', minLength: 1 },
-        visible: { type: 'boolean' }
+        visible: { type: 'boolean' },
+        ToolDisplayOptions: { type: 'object' },
+        CaptionLeft: { type: 'boolean' },
+        SectionStatusLeft: { type: 'boolean' },
+        TopToolCaption: { type: 'boolean' },
+        SectionStatusLeft: { type: 'boolean' },
+        anchorage: anchorageSchema
     },
     required: ['tableID', 'visible'],
     additionalProperties: false
@@ -328,6 +382,31 @@ export const songFileV2Schema = {
         namedNoteOpacity: stringOrNumberSchema,
         presentationMode: { type: 'boolean' },
         allowThemeAutomation: { type: 'boolean' },
+        displayOptionGates: displayOptionGatesSchema(false),
+        // Sprint 148 it6: Song-DEFAULTS, a sparse DisplayOptions block (same keys as a Section's displayOptions); omitted when empty.
+        displayOptionsDefault: {
+            type: 'object',
+            propertyNames: { enum: [...DISPLAY_OPTION_KEYS] },
+            minProperties: 1
+        },
+        functionSymbolSets: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    id: { type: 'string', pattern: '^u-[a-z0-9]+(-[a-z0-9]+)*$' },
+                    caption: { type: 'string', minLength: 1, maxLength: 40 },
+                    symbols: {
+                        type: 'array',
+                        minItems: 12,
+                        maxItems: 12,
+                        items: { type: 'string', minLength: 1, maxLength: 40 }
+                    }
+                },
+                required: ['id', 'caption', 'symbols'],
+                additionalProperties: false
+            }
+        },
         pluginFiringOrder: {
             type: 'array',
             items: { type: 'string', minLength: 1 }
@@ -349,6 +428,12 @@ export const songFileV2Schema = {
             ]
         },
         tutorial: songTutorialSchema,
+        songWidgets: {
+            anyOf: [
+                { type: 'string' },
+                infoLinesSchema
+            ]
+        },
         userTheme: {
             anyOf: [
                 { type: 'string' },

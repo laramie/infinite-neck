@@ -1,0 +1,95 @@
+/* Sprint 143 (midi-note-in), Iteration 3. Sibling of ../mobile-keyboard/mobile-keyboard.css. */
+
+#MidiTab .midiSection {
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 0.5em;
+    margin-bottom: 0.75em;
+}
+
+#MidiTab .midiSection h4 {
+    margin: 0 0 0.4em 0;
+}
+
+#MidiTab .midiNoteInIndicator {
+    display: inline-block;
+    min-width: 22em;
+    margin-left: 0.6em;
+    padding: 0.3em 0.7em;
+    font-family: monospace;
+    border-radius: 4px;
+    background: #eee;
+    border: 1px solid #999;
+    transition: background-color 0.05s ease-out;
+}
+
+#MidiTab .midiNoteInIndicator.bright {
+    background: #ffe066;
+}
+
+#MidiTab .midiOutTestGrid {
+    display: grid;
+    grid-template-columns: 5em 6em 5em 5em auto;
+    gap: 0.3em 0.6em;
+    align-items: center;
+    margin-top: 0.5em;
+}
+
+#MidiTab .midiOutTestGridHeader {
+    font-weight: bold;
+    opacity: 0.75;
+}
+
+#MidiTab .midiColorPageButtons {
+    margin-top: 0.5em;
+}
+
+/* Iteration 5 Round 6 "Forwarding indicator": at-a-glance status of whether
+   forwarding is on, to which device/channel, and whether that device is
+   actually connected right now. See
+   MidiTabBuilder.updateForwardStatusIndicator(). */
+#MidiTab .midiForwardStatus {
+    display: inline-block;
+    margin-top: 0.4em;
+    font-weight: bold;
+}
+
+#MidiTab .midiForwardStatus.midiForwardStatusOk {
+    color: #2e7d32;
+}
+
+#MidiTab .midiForwardStatus.midiForwardStatusWarn {
+    color: #c62828;
+}
+
+#MidiTab .midiActivityLogHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+#MidiTab .midiActivityLog {
+    font-family: monospace;
+    font-size: 0.85em;
+    background: #111;
+    color: #b7f7b7;
+    padding: 0.5em;
+    height: 20em;
+    overflow-y: auto;
+    white-space: pre;
+}
+
+/* Iteration 5 Round 4 close-out: color-code activity log lines by direction.
+   'receive' (inbound) lines are left unstyled, inheriting the log's own base
+   color above. See MidiTabBuilder.appendActivityLogLine(). */
+#MidiTab .midiActivityLog .midiLogForward {
+    color: #39ff14;
+}
+
+#MidiTab .midiActivityLog .midiLogPlayForward {
+    color: #4da6ff;
+}
+
+#MidiTab .midiActivityLog .midiLogSend {
+    color: #ffd700;
+}

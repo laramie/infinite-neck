@@ -521,7 +521,7 @@ function formatChartBar(theSong, barEntry, songChartOptions, chartBarWidthClass,
     }
 
     if (isLeadSheetBar && songChartOptions.detailLine) {
-        parts.push(`<div class='chartBARBeatCount'><span class='leadSheetLineBARBeatCount'>${barBeats}</span></div>`);
+        parts.push(`<div class='chartBARBeatCount'>${getSectionKeyDisplay(theSong, section)} &#x2866; <span class='leadSheetLineBARBeatCount'>${barBeats}</span></div>`);
     }
 
     parts.push('</span>');

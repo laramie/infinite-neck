@@ -1,6 +1,10 @@
 import * as Constants from './Constants.js';
 import { Wiring } from './Wiring.js';
 import { Graveyard } from './graveyard.js';
+import { Layout } from './layout.js';
+import { normalizeUserSets } from './templates/function-symbols/functionSymbolSets.js';
+import { normalizeSongGates } from './templates/display-options/displayOptionsGates.js';
+import { normalizeSongDisplayOptionsDefault } from './templates/display-options/displayOptionsMeta.js';
 
 const DEFAULT_CHART_HEAD_NAMES = [
     Constants.SECTION_CHART_POSITION.HEAD,
@@ -67,10 +71,27 @@ function normalizeLayoutEntry(entry) {
     if (!tableID) {
         return null;
     }
-    return {
+    const normalized = {
         tableID,
         visible: entry.visible !== false
     };
+    Object.keys(entry).forEach((key) => {
+        if (key === 'tableID' || key === 'tablename' || key === 'visible') {
+            return;
+        }
+        if (key === 'ToolDisplayOptions' && entry[key] && typeof entry[key] === 'object') {
+            normalized[key] = entry[key];
+            return;
+        }
+        if (key === 'anchorage' && entry[key] && typeof entry[key] === 'object') {
+            normalized[key] = entry[key];
+            return;
+        }
+        if (entry[key] === true) {
+            normalized[key] = true;
+        }
+    });
+    return normalized;
 }
 
 function normalizeNoteTablesLayout({ noteTablesLayout, myTunings }) {
@@ -129,7 +150,7 @@ function normalizeSongMacros(rawMacros) {
             return;
         }
         const lines = Array.isArray(macro?.lines)
-            ? macro.lines.map((line) => `${line}`.trim()).filter((line) => line.length > 0)
+            ? macro.lines.map((line) => `${line == null ? '' : line}`)
             : [];
         macros[macroId] = {
             ...(macro && typeof macro === 'object' && !Array.isArray(macro) ? macro : {}),
@@ -162,6 +183,16 @@ function persistSongInfo(rawInfo) {
     };
 }
 
+// Song Widgets (sprint 147 Iteration 4): raw HTML + ${expansions} held in memory as one string,
+// persisted as { lines: [...] } like Song.info, but omitted from the file entirely when empty.
+function persistSongWidgets(rawWidgets) {
+    const widgetsText = normalizeSongInfo(rawWidgets);
+    if (widgetsText.length === 0) {
+        return undefined;
+    }
+    return { lines: widgetsText.split('\n') };
+}
+
 function normalizeSongTutorial(rawTutorial) {
     if (!rawTutorial || typeof rawTutorial !== 'object' || Array.isArray(rawTutorial)) {
         return { level: 'none' };
@@ -176,7 +207,52 @@ function normalizeSongTutorial(rawTutorial) {
     if (typeof rawTutorial.storageKey === 'string') {
         normalized.storageKey = rawTutorial.storageKey;
     }
+    if (typeof rawTutorial.useCaptionForSectionCaption === 'boolean') {
+        normalized.useCaptionForSectionCaption = rawTutorial.useCaptionForSectionCaption;
+    }
     return normalized;
+}
+
+// MIDI device config (sprint 143, midi-note-in): persisted per-Song so that
+// whichever physical device/mode/colorMap/orientation the User set up follows
+// the Song file. See _doco/design/sprints/143-midi-note-in/143-design-3.md.
+const MIDI_DEVICE_MODES = ['Programmer', 'Note'];
+const MIDI_DEVICE_COLOR_MAPS = ['LaunchpadCycleOfColors', 'LaunchpadColors'];
+const MIDI_DEVICE_ORIENTATIONS = ['normal', 'inverted'];
+// Iteration 4 (143-it4-design.md): Latch (default) ignores button-up entirely;
+// Momentary also toggles the note off on button-up, following the CURRENT
+// triggerMode at release time (not whatever was in effect when pressed) --
+// see MidiTabBuilder.handleIncomingMidiMessage()'s comment for why that's
+// the correct behavior for both Latch->Momentary and Momentary->Latch
+// transitions while a button is held.
+const MIDI_DEVICE_TRIGGER_MODES = ['Latch', 'Momentary'];
+
+function normalizeMidiDevice(rawMidiDevice) {
+    const raw = rawMidiDevice && typeof rawMidiDevice === 'object' && !Array.isArray(rawMidiDevice) ? rawMidiDevice : {};
+    const channel = Number.isInteger(raw.channel) && raw.channel >= 0 && raw.channel <= 15 ? raw.channel : 0;
+    // Downstream forwarding (Iteration 4) targets a SEPARATE physical device
+    // (e.g. a VoiceLive 3 on its own Class-Compliant-USB MIDI port) from the
+    // Launchpad itself, so it gets its own name/channel, independent of the
+    // Launchpad's `channel` above. Defaults to MIDI channel 1 (0-based 0) --
+    // Iteration 5 Round 4 close-out: channel 2 (0-based 1, the previous
+    // default per 143-it4-design.md's "VoiceLive 3 MIDI 2") was found to be
+    // unreliable over the Class-Compliant USB cable in practice; channel 1 is
+    // the confirmed-working default.
+    const forwardChannel = Number.isInteger(raw.forwardChannel) && raw.forwardChannel >= 0 && raw.forwardChannel <= 15
+        ? raw.forwardChannel
+        : 0;
+    return {
+        name: `${raw.name || ''}`,
+        mode: MIDI_DEVICE_MODES.includes(raw.mode) ? raw.mode : 'Programmer',
+        colorMap: MIDI_DEVICE_COLOR_MAPS.includes(raw.colorMap) ? raw.colorMap : 'LaunchpadCycleOfColors',
+        orientation: MIDI_DEVICE_ORIENTATIONS.includes(raw.orientation) ? raw.orientation : 'normal',
+        triggerMode: MIDI_DEVICE_TRIGGER_MODES.includes(raw.triggerMode) ? raw.triggerMode : 'Latch',
+        tableID: `${raw.tableID || ''}`,
+        channel,
+        enabled: raw.enabled === true,
+        forwardName: `${raw.forwardName || ''}`,
+        forwardChannel
+    };
 }
 
 const songDefaults = {
@@ -184,6 +260,7 @@ const songDefaults = {
     captionsRowShowing: false,
     defaultBPM: "80",
     info: "",
+    songWidgets: "",
     namedNoteOpacity: "1.00",
     openInfo: "none",
     presentationMode: false,
@@ -246,7 +323,25 @@ export class SongPersistence {
         this.pluginFiringOrder = normalizePluginFiringOrder(this.pluginFiringOrder);
         this.myTunings = normalizeMyTunings(this.myTunings);
         this.info = normalizeSongInfo(this.info);
+        this.songWidgets = normalizeSongInfo(this.songWidgets);
         this.tutorial = normalizeSongTutorial(this.tutorial);
+        this.midiDevice = normalizeMidiDevice(this.midiDevice);
+        // Sprint 148 it3: User Function Symbols sets (registry = built-ins + these).  Per-Song, not a shared default.
+        this.functionSymbolSets = normalizeUserSets(obj.functionSymbolSets);
+        // Sprint 148 it4: Song-level (column) gates for the DisplayOptions matrix; omitted when empty.
+        const displayOptionGates = normalizeSongGates(obj.displayOptionGates);
+        if (displayOptionGates) {
+            this.displayOptionGates = displayOptionGates;
+        } else {
+            delete this.displayOptionGates;
+        }
+        // Sprint 148 it6: Song-DEFAULTS (the tier between the Sections and DISPLAY_OPTIONS_DEFAULTS); omitted when empty.
+        const displayOptionsDefault = normalizeSongDisplayOptionsDefault(obj.displayOptionsDefault);
+        if (displayOptionsDefault) {
+            this.displayOptionsDefault = displayOptionsDefault;
+        } else {
+            delete this.displayOptionsDefault;
+        }
 
         this.sections = (obj.sections||[]).map(s => new Section_Class(s));
         this.wirings =  (obj.wirings||[]).map(w => new Wiring(w));
@@ -258,6 +353,11 @@ export class SongPersistence {
         this.macros = normalizeSongMacros(obj.macros);
         this.graveyard = new Graveyard(obj.graveyard);
         this.graveyard.setSong(this);
+        this.layout = new Layout(obj.layout); //If the file (obj) had a layout, let Layout constructor do Object.assign.
+    }
+
+    getLayout(){
+        return this.layout;
     }
 
     static filterPersistentColorDicts(colorDicts){
@@ -284,7 +384,13 @@ export class SongPersistence {
         if (key === 'info') {
             return persistSongInfo(value);
         }
+        if (key === 'songWidgets') {
+            return persistSongWidgets(value);
+        }
         if (key === 'tutorial' && (!value || value.level === 'none')) {
+            return undefined;
+        }
+        if (key === 'functionSymbolSets' && Array.isArray(value) && value.length === 0) {
             return undefined;
         }
         if (   key === 'userColors' 

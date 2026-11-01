@@ -1,5 +1,5 @@
 .SectionStatus_loopLight {
-    border: 2px solid green; 
+    border: 3px solid green; 
     padding: 0.18em;
     border-radius: 0.7em 0.3em 0.3em 0.7em;
     display: inline-block;
@@ -10,13 +10,18 @@
 }
 
 .SectionStatus_loopActive {
-    border: 2px solid magenta !important; 
+    border: 3px solid magenta !important; 
 }
 .SectionStatus_beatWrap {
     display: none;
     align-items: baseline;
     gap: 0;
     white-space: nowrap;
+}
+.SectionStatus_beatNumber.SectionStatus_showBeatBorder{
+    border: 1px solid magenta;
+    border-radius: 3px;
+    
 }
 .SectionStatus_showBeatCounter .SectionStatus_beatWrap {
     display: inline-flex;
@@ -28,6 +33,9 @@
 }
 .SectionStatus_beatNumber {
     color: chartreuse;
+    border: 1px solid transparent;
+    padding-left: 0;
+    text-align: center;
 }
 .SectionStatus_loopLight.SectionStatus_loopActive .SectionStatus_beatNumber {
     color: magenta;
@@ -112,6 +120,13 @@
     --section-status-key-idle-bg: rgb(254, 219, 90);
     --section-status-key-live-bg: rgb(252, 172, 0);
 }
+.SectionStatus_rootKey.ssKey_listener_notesource {
+    --section-status-key-idle-bg: orange;
+}
+.SectionStatus_rootKeyLead.ssKey_listener_notesource {
+    --section-status-key-idle-bg: orange;
+    --section-status-key-live-bg: rgb(153, 92, 0);
+}
 .SectionStatus_rootKey.ssKey_hasValue,
 .SectionStatus_rootKeyLead.ssKey_hasValue {
     background-color: var(--section-status-key-live-bg);
@@ -122,6 +137,48 @@
     transform: rotate(180deg);
     text-align: center;
     background-color: black;
+}
+/*For Tool windows, they just need the caption, not the baseID */
+.tuningCaptionOnly {
+    padding: 0.1em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    font-size: 100%;
+    font-weight: bold;
+    border: 2px solid orange;
+    border-radius: 0.2em;
+    corner-shape: notch;
+    background-color: black;
+    color: orange;
+}
+
+.ToolTableButton,
+.toolDisplayOptionsToggleButton {
+    font-size: 90%;
+    padding-block: 0.1em;
+    padding-inline: 0.3em;
+    background-color: rgb(172, 113, 2);
+    color: black;
+    border-style: solid;
+    border-top-color: rgb(251, 188, 71);
+    border-left-color: rgb(251, 188, 71);
+    border-right-color: rgb(96, 53, 1);
+    border-bottom-color: rgb(96, 53, 1);
+}
+.ToolTableButton:active,
+.toolDisplayOptionsToggleButton:active{
+    background-color: rgb(172, 113, 2);
+    color: black;
+    border-style: solid;
+    border-top-color: rgb(96, 53, 1);
+    border-left-color: rgb(96, 53, 1);
+    border-right-color: rgb(251, 188, 71);
+    border-bottom-color: rgb(251, 188, 71);
+}
+.ToolTableButton:hover,
+.toolDisplayOptionsToggleButton:hover {
+    background-color: rgb(228, 149, 2);
+    color: black;
 }
 
 .ssCaptionWrapper  .SectionStatus_captionRoleTarget {
@@ -138,6 +195,13 @@
     padding-top: 1em;
     padding-bottom: 1em;
     margin-bottom: 1.6em;
+}
+.ssCaptionWrapper .ToolTableTopCaption {
+    font-size: 90%;
+    padding: 0.2em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    margin-bottom: 0.2em;
 }
 .ssCaptionWrapper .fretTableLeftCaption,
 .ssCaptionWrapper .tuningIDCaption {
@@ -159,6 +223,14 @@
     border-radius: 0.2em;
     corner-shape: notch;
     background-color: #091A00;
+}
+.ssCaptionWrapper .fretTableLeftCaption.ssKey_listener_notesource,
+.ssCaptionWrapper .tuningIDCaption.ssKey_listener_notesource {
+    border: 2px solid orange;
+    border-radius: 0.2em;
+    corner-shape: notch;
+    color: orange;
+    background-color: black;
 }
 
 .RecordDot {
@@ -185,6 +257,32 @@
 }
 .section-status-vertical-table  .RecordDot {
     margin-top: 0.4em;
+}
+.RecordDotMomentaryBorder {
+    border: 1px solid transparent;
+    border-radius: 0.5em 0.2em 0.2em 0.5em;
+    padding: 2px;
+}
+.RecordDotMomentaryBorderVertical {
+    border: 1px solid transparent;
+    border-radius: 0.8em 0.8em 0.2em 0.2em;
+    padding: 0.2em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    margin-top: 0.3em;
+    display: inline-block;
+}
+/* Sprint 143 (midi-note-in), Iteration 4 Round 4 follow-up: the Momentary-mode
+   indicator border around the REC dot (see .RecordDotMomentaryBorder(Vertical)
+   above) is only visible while MIDI triggerMode is 'Momentary' -- toggled
+   globally on <body> by MidiTabBuilder.applyTriggerModeButtonUi() (see
+   templates/midi/midi.builder.js), same $('body').toggleClass(...) pattern
+   infinite-neck.js uses for 'ShowAllNoteNames'. The border stays present
+   (transparent, not display:none) in Latch mode so the contained REC dot's
+   layout/box never shifts when the mode toggles. */
+body.MidiTriggerModeMomentary .RecordDotMomentaryBorder,
+body.MidiTriggerModeMomentary .RecordDotMomentaryBorderVertical {
+    border-color: cyan;
 }
 
 

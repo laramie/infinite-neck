@@ -1,0 +1,3645 @@
+{
+  "myTunings": [
+    {
+      "instance": true,
+      "baseID": "S6_1",
+      "baseInstrument": "Guitar",
+      "caption": "Standard",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        40
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 16,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "S6"
+    },
+    {
+      "instance": true,
+      "baseID": "DropD_1",
+      "baseInstrument": "Guitar",
+      "caption": "DropD",
+      "nStrings": 6,
+      "rowRange": [
+        64,
+        59,
+        55,
+        50,
+        45,
+        38
+      ],
+      "specialBackgroundIDRows": [
+        0,
+        1,
+        5
+      ],
+      "doSpecialRows": true,
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 18,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "DropD"
+    },
+    {
+      "instance": true,
+      "baseID": "P46_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4",
+      "nStrings": 6,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P46",
+      "faceDiamondsStrings": [
+        2
+      ],
+      "faceDoubleDiamondsStrings": [
+        1,
+        3
+      ],
+      "faceTinyDiamondsStrings": []
+    },
+    {
+      "instance": true,
+      "baseID": "P48_1",
+      "baseInstrument": "Guitar",
+      "caption": "P4-8",
+      "nStrings": 8,
+      "rowRange": [
+        65,
+        60,
+        55,
+        50,
+        45,
+        40,
+        35,
+        30
+      ],
+      "showDiamonds": true,
+      "diamonds": [
+        3,
+        5,
+        7,
+        9,
+        15,
+        17,
+        19,
+        21
+      ],
+      "doubleDiamonds": [
+        12,
+        24
+      ],
+      "stringDividerHeight": "0",
+      "frets": 24,
+      "nut": true,
+      "reverse": false,
+      "fromBaseID": "P48"
+    }
+  ],
+  "noteTablesLayout": [
+    {
+      "tableID": "tblS6_1",
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblDropD_1",
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblP46_1",
+      "visible": true,
+      "anchorage": {
+        "floated": false
+      }
+    },
+    {
+      "tableID": "tblP48_1",
+      "visible": false,
+      "anchorage": {
+        "floated": false
+      }
+    }
+  ],
+  "colorDicts": {},
+  "plugins": {
+    "transpose": {
+      "enabled": false,
+      "enableOnSongLoad": false,
+      "graveyardKey": "chromatic",
+      "properties": {
+        "intervals": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "NamedNotes": true,
+        "SingleNotes": false,
+        "TinyNotes": false,
+        "BendNotes": false,
+        "FingeringNotes": false,
+        "RecordedNotes": false,
+        "octaves": "0",
+        "useOctavesForRecorded": true,
+        "autoSharpsFlats": true,
+        "doLeadKey": true
+      }
+    },
+    "arpeggio": {
+      "enabled": true,
+      "enableOnSongLoad": true,
+      "graveyardKey": "flashcard-0-7",
+      "properties": {
+        "targetTable": "tblP46_1",
+        "minFret": 0,
+        "maxFret": 12,
+        "songLoopsPerPositionPair": 1,
+        "minRow": 0,
+        "maxRow": 5,
+        "lowToHigh": true,
+        "upOnly": false,
+        "style": "random",
+        "type": "PlacedSingleNote",
+        "showNoteName": "named",
+        "colorNotes": true,
+        "flashcard": true,
+        "extraClearBeat": true
+      }
+    }
+  },
+  "macros": {
+    "position-1": {
+      "lines": [
+        "/snf",
+        "/fpapC",
+        "/fpapv \"0,4\"",
+        "/rsR"
+      ]
+    },
+    "position-3": {
+      "lines": [
+        "/snf",
+        "/fpapC",
+        "/fpapv \"3,6\"",
+        "/rsR"
+      ]
+    },
+    "position-5": {
+      "lines": [
+        "/snf",
+        "/fpapv \"5,8\"",
+        "/fpapC",
+        "/rsR"
+      ]
+    },
+    "position-7": {
+      "lines": [
+        "/snf",
+        "/fpapv \"7,10\"",
+        "/fpapC",
+        "/rsR"
+      ]
+    },
+    "position-9": {
+      "lines": [
+        "/snf",
+        "/fpapv \"9,12\"",
+        "/fpapC",
+        "/rsR"
+      ]
+    },
+    "position-12": {
+      "lines": [
+        "/snf",
+        "/fpapv \"12,15\"",
+        "/fpapC",
+        "/rsR"
+      ]
+    },
+    "S6": {
+      "lines": [
+        "/tha",
+        "/tsi \"S6_1\"",
+        "/fpaC",
+        "/fpaIi \"S6_1\"",
+        "/rsR"
+      ]
+    },
+    "DropD": {
+      "lines": [
+        "/tha",
+        "/tsi \"DropD_1\"",
+        "/fpaC",
+        "/fpaIi \"DropD_1\"",
+        "/rsR"
+      ]
+    },
+    "P46": {
+      "lines": [
+        "/tha",
+        "/tsi \"P46_1\"",
+        "/fpaC",
+        "/fpaIi \"P46_1\"",
+        "/rsR"
+      ]
+    },
+    "P48": {
+      "lines": [
+        "/tha",
+        "/tsi \"P48_1\"",
+        "/fpaC",
+        "/fpaIi \"P48_1\"",
+        "/rsR"
+      ]
+    },
+    "loopPerfectFrets": {
+      "lines": [
+        "/sng \"1\"",
+        "/rL",
+        "/re"
+      ]
+    },
+    "loopDiamondFrets": {
+      "lines": [
+        "/sng \"2\"",
+        "/rL",
+        "/re"
+      ]
+    },
+    "loopBlackKeys": {
+      "lines": [
+        "/sng \"3\"",
+        "/rL",
+        "/re"
+      ]
+    },
+    "loopWhiteKeys": {
+      "lines": [
+        "/sng \"4\"",
+        "/rL",
+        "/re"
+      ]
+    },
+    "loopAllNotes": {
+      "lines": [
+        "/sng \"5\"",
+        "/rL",
+        "/re"
+      ]
+    }
+  },
+  "activeStylesheets": "Default",
+  "captionsRowShowing": false,
+  "defaultBPM": "60",
+  "info": {
+    "lines": [
+      "See: <a href=\"help.html#runningSongFromLibrary\">Tips for running from the Song Library</a><br>",
+      "<br>",
+      "<br>",
+      "This song is just like <a href=\"?song=name-that-note/name-that-note.json\">name-that-note</a>, but it uses \"placed single note\" as the ArpeggioPlugin type: <cmd-line> /fpat<i> <b>p</b>laced single</i></cmd-line>  By default, it has SingleNotes placed at the Nut, 5th, 7th, and 12th frets, since in P4 this gives the fourth, the fifth, and the octave.  To change the name-that-note excercise to just exact note positions, turn off <b>HIDE Single Notes</b>, then place SingleNotes you want to practice, then turn <b>HIDE Single Notes</b> back on.",
+      "<br>",
+      "<br>",
+      "Also on by default is <cmd-line> /fpan<i> <b>n</b>amed</i></cmd-line> which shows all matching NamedNotes on the neck in the current range upon reveal, and <cmd-line> /fpa<i> <b>e</b>xtra clear beat</i></cmd-line> which gives you an extra beat to admire the revealed notes before clearing and showing the next prompt highlight.",
+      "<br>",
+      "<br>",
+      "Default is P4, positions [0,12], and Transposition off.  Use the links below to set other Tunings, Positions, and Transpositions.",
+      "<br>",
+      "",
+      "<br>",
+      "<table>",
+      "<caption>Choose Instrument:</caption>",
+      "<tbody>",
+      "<tr>",
+      "    <td><a href=\"#macro=S6\">S6</a></td>",
+      "    <td><a href=\"#macro=DropD\">DropD</a></td>",
+      "    <td><a href=\"#macro=P46\">P46</a></td>",
+      "    <td><a href=\"#macro=P48\">P48</a></td>",
+      "</tr>",
+      "</tbody>",
+      "</table>",
+      "<br>",
+      "",
+      "<table>",
+      "<caption>Click the links to set the Position:</caption>",
+      "<tbody><tr>",
+      "<td><a href=\"#macro=position-1\">First</a></td>",
+      "<td><a href=\"#macro=position-3\">Third</a></td>",
+      "<td><a href=\"#macro=position-5\">Fifth</a></td>",
+      "<td><a href=\"#macro=position-7\">Seventh</a></td>",
+      "<td><a href=\"#macro=position-9\">Ninth</a></td>",
+      "<td><a href=\"#macro=position-12\">Twelth</a></td>",
+      "</tr>",
+      "</tbody></table>",
+      "<br>",
+      "<table>",
+      "<caption>Transposition</caption>",
+      "<tbody>",
+      "<tr>",
+      "<td>Chromatic</td>",
+      "<td><a href=\"#raise=transpose.chromatic\">transpose.chromatic</a></td>",
+      "</tr>",
+      "<tr>",
+      "<td>Key of C only</td>",
+      "<td><a href=\"#raise=transpose.no-transposition\">transpose.no-transposition</a></td>",
+      "</tr>",
+      "</tbody></table>"
+    ]
+  },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"centerWidgets\">",
+      "",
+      "<table class=\"ButtonTable\">",
+      "<caption>Beat-Loop One Section</caption>",
+      "<tbody>",
+      "<tr>",
+      "    <td><a href=\"#macro=loopPerfectFrets\">frets [0,5,7,12]</a></td>",
+      "    <td><a href=\"#macro=loopDiamondFrets\">Diamond frets [0,3,5,7,9,12]</a></td>",
+      "    <td><a href=\"#macro=loopBlackKeys\">Black Keys</a></td>",
+      "    <td><a href=\"#macro=loopWhiteKeys\">White Keys</a></td>",
+      "    <td><a href=\"#macro=loopAllNotes\">All Notes</a></td>",
+      "</tr>",
+      "</tbody>",
+      "</table>",
+      "",
+      "",
+      "",
+      "",
+      "</div>"
+    ]
+  },
+  "namedNoteOpacity": "1",
+  "openInfo": "parked",
+  "presentationMode": true,
+  "allowThemeAutomation": false,
+  "pluginFiringOrder": [
+    "t",
+    "f",
+    "a",
+    "o",
+    "c",
+    "m"
+  ],
+  "chartOptions": {
+    "modes": true,
+    "detailLine": true,
+    "showCaptions": true,
+    "showNextLine": false,
+    "stripTonalRoots": true,
+    "addTransposedRootToChord": true,
+    "HEADNames": [
+      "HEAD",
+      "BRIDGE",
+      "CHORUS",
+      "SOLO",
+      "CODA"
+    ],
+    "barClass": "Box",
+    "chartSpacing": "relaxed",
+    "chordFontsize": "100%",
+    "lineCaptionFontsize": "100%",
+    "boxCaptionFontsize": "100%"
+  },
+  "rootID": "3",
+  "sharps": true,
+  "singleNoteOpacity": "1",
+  "tinyNoteOpacity": "1",
+  "songfileVersion": "V2.1",
+  "songName": "name-that-note-placed-singles-P4",
+  "theme": "USER",
+  "sections": [
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblDropD_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "5",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "3",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "1",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "1",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "2",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "3",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "4",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "5",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "5",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "4",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "3",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "2",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "1",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "77",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "1",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "2",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "3",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "4",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "5",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblP48_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Perfect Frets",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {},
+      "__arpeggioRuntimeIdentity": "s1",
+      "displayOptions": {
+        "autoColor": true,
+        "showCellNotes": true,
+        "showSubscriptFunctions": false,
+        "cellIsFunction": false,
+        "showMidiNum": false,
+        "useCenterForRightFunction": true,
+        "naturalFretWidths": true,
+        "hideNamedNotes": false,
+        "hideTinyNotes": false,
+        "hideFingering": false,
+        "showAllNoteNames": false,
+        "namedNoteOpacity": "1",
+        "singleNoteOpacity": "1",
+        "tinyNoteOpacity": "1",
+        "currentColorDict": "",
+        "NoteDisplaySizes": {
+          "caption": "260x60:22",
+          "width": "260px",
+          "height": "60px",
+          "NoteFontSize": 22
+        },
+        "functionSymbols": "function",
+        "naturalFontScaling": "60",
+        "pianoHeightScaleFactor": "3",
+        "pianoWidthScaleFactor": "3",
+        "pianoWhiteToBlackWidthRatio": "2.3",
+        "pianoFingeringHPosition": "50%",
+        "showLooperLightBeats": true,
+        "noteFont": "EB Garamond",
+        "leftSubscriptFontSize": "80%",
+        "rightSubscriptFontSize": "80%",
+        "midiFontSize": "80%",
+        "fingeringFontSize": "80%",
+        "fingeringPosition": "0",
+        "tinyNoteFontSize": "50%",
+        "tinyNoteMaxHeight": "45%",
+        "tinyNoteVPosition": "50%",
+        "tinyNoteWidth": "35%",
+        "tinyNoteHPosition": "90%",
+        "tinyNoteRadius": "50%",
+        "hideNutNames": true,
+        "autoColorHighlight": false,
+        "hideSingleNotes": true
+      }
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblDropD_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "5",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "3",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "1",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "1",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "2",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "3",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "4",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "5",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "5",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "4",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "3",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "2",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "1",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "77",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "1",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "2",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "3",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "4",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "5",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "5",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "74",
+              "row": "0",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "1",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "2",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "3",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "4",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblP48_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Diamond Frets",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {},
+      "__arpeggioRuntimeIdentity": "s1"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblDropD_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "4",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "0",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "1",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "2",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "3",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "46",
+              "row": "4",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "42",
+              "row": "5",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "4",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "3",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "1",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "2",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "4",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "46",
+              "row": "5",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "3",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "73",
+              "row": "0",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "1",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "2",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "3",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "1",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "75",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "2",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "3",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "4",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "5",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblP48_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "Black Keys",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {},
+      "__arpeggioRuntimeIdentity": "s1"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblDropD_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "5",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "3",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "1",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "1",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "2",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "3",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "4",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "5",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "5",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "4",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "3",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "2",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "1",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "77",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "1",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "2",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "3",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "4",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "5",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "5",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "74",
+              "row": "0",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "1",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "2",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "3",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "4",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "1",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "0",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "71",
+              "row": "0",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "5",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "4",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "5",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "4",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "3",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "2",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "71",
+              "row": "1",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "76",
+              "row": "0",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "41",
+              "row": "5",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "4",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "3",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "2",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "1",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "0",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblP48_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "White Keys",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {},
+      "__arpeggioRuntimeIdentity": "s1"
+    },
+    {
+      "sectionNotesByTable": {
+        "tblS6_1": {
+          "namedNotes": {
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblDropD_1": {
+          "namedNotes": {
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        },
+        "tblP46_1": {
+          "namedNotes": {},
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": [
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "5",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "4",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "3",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "2",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "1",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "0",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "1",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "2",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "3",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "4",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "5",
+              "col": "7",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "5",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "4",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "3",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "2",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "72",
+              "row": "1",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "77",
+              "row": "0",
+              "col": "12",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "0",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "1",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "2",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "3",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "45",
+              "row": "4",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "40",
+              "row": "5",
+              "col": "0",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "3",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "4",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "43",
+              "row": "5",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "74",
+              "row": "0",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "1",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "2",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "3",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "4",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "5",
+              "col": "9",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "59",
+              "row": "2",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "64",
+              "row": "1",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "69",
+              "row": "0",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "71",
+              "row": "0",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "48",
+              "row": "5",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "53",
+              "row": "4",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "50",
+              "row": "5",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "55",
+              "row": "4",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "C",
+              "styleNum": 2,
+              "midinum": "60",
+              "row": "3",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "65",
+              "row": "2",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "71",
+              "row": "1",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "76",
+              "row": "0",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "F",
+              "styleNum": 2,
+              "midinum": "41",
+              "row": "5",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "B",
+              "styleNum": 2,
+              "midinum": "47",
+              "row": "4",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "E",
+              "styleNum": 2,
+              "midinum": "52",
+              "row": "3",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "A",
+              "styleNum": 2,
+              "midinum": "57",
+              "row": "2",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "D",
+              "styleNum": 2,
+              "midinum": "62",
+              "row": "1",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "G",
+              "styleNum": 2,
+              "midinum": "67",
+              "row": "0",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "0",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "1",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "2",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "3",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "46",
+              "row": "4",
+              "col": "1",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "42",
+              "row": "5",
+              "col": "2",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "2",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "1",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "0",
+              "col": "3",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "54",
+              "row": "3",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "49",
+              "row": "4",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "44",
+              "row": "5",
+              "col": "4",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "0",
+              "col": "5",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "1",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "2",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "3",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "4",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "46",
+              "row": "5",
+              "col": "6",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "58",
+              "row": "3",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "63",
+              "row": "2",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "68",
+              "row": "1",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "73",
+              "row": "0",
+              "col": "8",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "75",
+              "row": "0",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Bb",
+              "styleNum": 2,
+              "midinum": "70",
+              "row": "1",
+              "col": "10",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Gb",
+              "styleNum": 2,
+              "midinum": "66",
+              "row": "2",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Db",
+              "styleNum": 2,
+              "midinum": "61",
+              "row": "3",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Ab",
+              "styleNum": 2,
+              "midinum": "56",
+              "row": "4",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            },
+            {
+              "noteName": "Eb",
+              "styleNum": 2,
+              "midinum": "51",
+              "row": "5",
+              "col": "11",
+              "colorClass": "noteTransparent"
+            }
+          ]
+        },
+        "tblP48_1": {
+          "namedNotes": {
+            "E": {
+              "noteName": "E",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "B": {
+              "noteName": "B",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Gb": {
+              "noteName": "Gb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Db": {
+              "noteName": "Db",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Ab": {
+              "noteName": "Ab",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Eb": {
+              "noteName": "Eb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "Bb": {
+              "noteName": "Bb",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "F": {
+              "noteName": "F",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "A": {
+              "noteName": "A",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "D": {
+              "noteName": "D",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "G": {
+              "noteName": "G",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            },
+            "C": {
+              "noteName": "C",
+              "styleNum": 0,
+              "colorClass": "noteTransparent"
+            }
+          },
+          "recordedNotes": {},
+          "chord": "",
+          "mode": "",
+          "tonalSourceSet": "",
+          "playedNotes": []
+        }
+      },
+      "caption": "All Notes",
+      "chartChord": "",
+      "chartMode": "C chromatic",
+      "chartPosition": "BAR",
+      "chartCaptionWidth": "none",
+      "rootID": 3,
+      "rootIDLead": "-1",
+      "beats": 32,
+      "currentBeat": 1,
+      "sharps": false,
+      "pluginData": {},
+      "__arpeggioRuntimeIdentity": "s1"
+    }
+  ],
+  "wirings": [],
+  "graveyard": {
+    "records": [
+      {
+        "timestamp": 1782368248425,
+        "date": "6/24/2026",
+        "time": "11:17:28 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "arpeggio",
+          "userKey": "flashcard-7-12",
+          "logicalKey": "arpeggio::flashcard-7-12",
+          "schemaVersion": 1,
+          "caption": "arpeggio / flashcard-7-12"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"flashcard-7-12\",\n    \"properties\": {\n        \"targetTable\": \"tblS6_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"random\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"one\",\n        \"colorNotes\": true,\n        \"flashcard\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1783184074468,
+        "date": "7/4/2026",
+        "time": "9:54:34 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "arpeggio",
+          "userKey": "flashcard-0-7",
+          "logicalKey": "arpeggio::flashcard-0-7",
+          "schemaVersion": 1,
+          "caption": "arpeggio / flashcard-0-7"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"flashcard-0-7\",\n    \"properties\": {\n        \"targetTable\": \"tblS6_1\",\n        \"minFret\": 0,\n        \"maxFret\": 12,\n        \"songLoopsPerPositionPair\": 1,\n        \"minRow\": 0,\n        \"maxRow\": 5,\n        \"lowToHigh\": true,\n        \"upOnly\": false,\n        \"style\": \"random\",\n        \"type\": \"AutoChartMode\",\n        \"showNoteName\": \"one\",\n        \"colorNotes\": true,\n        \"flashcard\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1783184827649,
+        "date": "7/4/2026",
+        "time": "10:07:07 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "chromatic",
+          "logicalKey": "transpose::chromatic",
+          "schemaVersion": 1,
+          "caption": "transpose / chromatic"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"chromatic\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1782370008573,
+        "date": "6/24/2026",
+        "time": "11:46:48 PM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "no-transposition",
+          "logicalKey": "transpose::no-transposition",
+          "schemaVersion": 1,
+          "caption": "transpose / no-transposition"
+        },
+        "json": "{\n    \"enabled\": false,\n    \"enableOnSongLoad\": false,\n    \"graveyardKey\": \"no-transposition\",\n    \"properties\": {\n        \"intervals\": [\n            0\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1783184823958,
+        "date": "7/4/2026",
+        "time": "10:07:03 AM",
+        "type": "PLUGIN",
+        "context": {
+          "pluginId": "transpose",
+          "userKey": "USER",
+          "logicalKey": "transpose::USER",
+          "schemaVersion": 1,
+          "caption": "transpose / USER"
+        },
+        "json": "{\n    \"enabled\": true,\n    \"enableOnSongLoad\": true,\n    \"graveyardKey\": \"USER\",\n    \"properties\": {\n        \"intervals\": [\n            0,\n            1,\n            2,\n            3,\n            4,\n            5,\n            6,\n            7,\n            8,\n            9,\n            10,\n            11\n        ],\n        \"NamedNotes\": true,\n        \"SingleNotes\": true,\n        \"TinyNotes\": true,\n        \"BendNotes\": true,\n        \"FingeringNotes\": true,\n        \"RecordedNotes\": true,\n        \"octaves\": \"0\",\n        \"useOctavesForRecorded\": true,\n        \"autoSharpsFlats\": true,\n        \"doLeadKey\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1792832453659,
+        "date": "10/24/2026",
+        "time": "2:00:53 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 2,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"namedNotes\": {\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblDropD_1\": {\n            \"namedNotes\": {\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblP46_1\": {\n            \"namedNotes\": {},\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"0\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"1\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"5\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"2\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"7\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"40\",\n                        \"row\": \"5\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"9\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"11\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"70\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"13\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"2\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"15\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"17\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"1\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"19\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"77\",\n                        \"row\": \"0\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"21\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"4\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"23\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"5\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"25\": [\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"50\",\n                        \"row\": \"3\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"27\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"57\",\n                        \"row\": \"3\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"29\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"4\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"31\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"5\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ]\n            },\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"45\",\n                    \"row\": \"5\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"50\",\n                    \"row\": \"4\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"55\",\n                    \"row\": \"3\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"60\",\n                    \"row\": \"2\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"65\",\n                    \"row\": \"1\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"70\",\n                    \"row\": \"0\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"72\",\n                    \"row\": \"0\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"67\",\n                    \"row\": \"1\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"62\",\n                    \"row\": \"2\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"57\",\n                    \"row\": \"3\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"4\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"47\",\n                    \"row\": \"5\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"5\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"57\",\n                    \"row\": \"4\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"62\",\n                    \"row\": \"3\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"67\",\n                    \"row\": \"2\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"72\",\n                    \"row\": \"1\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"77\",\n                    \"row\": \"0\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"65\",\n                    \"row\": \"0\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"60\",\n                    \"row\": \"1\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"55\",\n                    \"row\": \"2\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"50\",\n                    \"row\": \"3\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"45\",\n                    \"row\": \"4\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"40\",\n                    \"row\": \"5\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                }\n            ]\n        },\n        \"tblP48_1\": {\n            \"namedNotes\": {\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"C chromatic\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 32,\n    \"currentBeat\": 1,\n    \"sharps\": false,\n    \"pluginData\": {},\n    \"__arpeggioRuntimeIdentity\": \"s1\",\n    \"displayOptions\": {\n        \"autoColor\": true,\n        \"showCellNotes\": true,\n        \"showSubscriptFunctions\": false,\n        \"cellIsFunction\": false,\n        \"showMidiNum\": false,\n        \"useCenterForRightFunction\": true,\n        \"naturalFretWidths\": true,\n        \"hideNamedNotes\": false,\n        \"hideTinyNotes\": false,\n        \"hideFingering\": false,\n        \"showAllNoteNames\": false,\n        \"namedNoteOpacity\": \"1\",\n        \"singleNoteOpacity\": \"1\",\n        \"tinyNoteOpacity\": \"1\",\n        \"currentColorDict\": \"\",\n        \"NoteDisplaySizes\": {\n            \"caption\": \"100x30:22\",\n            \"width\": \"100px\",\n            \"height\": \"30px\",\n            \"NoteFontSize\": 22\n        },\n        \"functionSymbols\": \"function\",\n        \"naturalFontScaling\": \"60\",\n        \"pianoHeightScaleFactor\": \"3\",\n        \"pianoWidthScaleFactor\": \"3\",\n        \"pianoWhiteToBlackWidthRatio\": \"2.3\",\n        \"pianoFingeringHPosition\": \"50%\",\n        \"showLooperLightBeats\": true,\n        \"noteFont\": \"EB Garamond\",\n        \"leftSubscriptFontSize\": \"80%\",\n        \"rightSubscriptFontSize\": \"80%\",\n        \"midiFontSize\": \"80%\",\n        \"fingeringFontSize\": \"80%\",\n        \"fingeringPosition\": \"0\",\n        \"tinyNoteFontSize\": \"50%\",\n        \"tinyNoteMaxHeight\": \"45%\",\n        \"tinyNoteVPosition\": \"50%\",\n        \"tinyNoteWidth\": \"35%\",\n        \"tinyNoteHPosition\": \"90%\",\n        \"tinyNoteRadius\": \"50%\",\n        \"hideNutNames\": true,\n        \"autoColorHighlight\": false,\n        \"hideSingleNotes\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1792832455509,
+        "date": "10/24/2026",
+        "time": "2:00:55 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 1,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"namedNotes\": {\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblDropD_1\": {\n            \"namedNotes\": {\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblP46_1\": {\n            \"namedNotes\": {},\n            \"recordedNotes\": {\n                \"1\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"3\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"50\",\n                        \"row\": \"3\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"1\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"3\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"57\",\n                        \"row\": \"3\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"2\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"5\": [\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"50\",\n                        \"row\": \"3\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"50\",\n                        \"row\": \"4\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"7\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"1\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"1\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"9\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"77\",\n                        \"row\": \"0\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"57\",\n                        \"row\": \"4\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"5\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"11\": [\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"70\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"1\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"13\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"5\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"Bb\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"70\",\n                        \"row\": \"0\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"57\",\n                        \"row\": \"3\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"15\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"1\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"2\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"1\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"17\": [\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"1\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"62\",\n                        \"row\": \"3\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"19\": [\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"40\",\n                        \"row\": \"5\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"4\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"62\",\n                        \"row\": \"2\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"21\": [\n                    {\n                        \"noteName\": \"D\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"62\",\n                        \"row\": \"2\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"0\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"40\",\n                        \"row\": \"5\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"23\": [\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"67\",\n                        \"row\": \"2\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"G\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"55\",\n                        \"row\": \"3\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"E\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"52\",\n                        \"row\": \"4\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"25\": [\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"60\",\n                        \"row\": \"2\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"5\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"F\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"65\",\n                        \"row\": \"0\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"27\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"5\",\n                        \"col\": \"5\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"4\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"B\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"47\",\n                        \"row\": \"5\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"29\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"45\",\n                        \"row\": \"4\",\n                        \"col\": \"0\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"C\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"72\",\n                        \"row\": \"0\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ],\n                \"31\": [\n                    {\n                        \"noteName\": \"A\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"57\",\n                        \"row\": \"4\",\n                        \"col\": \"12\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    },\n                    {\n                        \"noteName\": \"B\",\n                        \"styleNum\": 4,\n                        \"midinum\": \"47\",\n                        \"row\": \"5\",\n                        \"col\": \"7\",\n                        \"owner\": \"ArpeggioPlugin\"\n                    }\n                ]\n            },\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"45\",\n                    \"row\": \"5\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"50\",\n                    \"row\": \"4\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"55\",\n                    \"row\": \"3\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"60\",\n                    \"row\": \"2\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"65\",\n                    \"row\": \"1\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"70\",\n                    \"row\": \"0\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"72\",\n                    \"row\": \"0\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"67\",\n                    \"row\": \"1\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"62\",\n                    \"row\": \"2\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"57\",\n                    \"row\": \"3\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"4\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"47\",\n                    \"row\": \"5\",\n                    \"col\": \"7\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"52\",\n                    \"row\": \"5\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"57\",\n                    \"row\": \"4\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"62\",\n                    \"row\": \"3\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"67\",\n                    \"row\": \"2\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"72\",\n                    \"row\": \"1\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"77\",\n                    \"row\": \"0\",\n                    \"col\": \"12\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"65\",\n                    \"row\": \"0\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"60\",\n                    \"row\": \"1\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"55\",\n                    \"row\": \"2\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"50\",\n                    \"row\": \"3\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"45\",\n                    \"row\": \"4\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"40\",\n                    \"row\": \"5\",\n                    \"col\": \"0\",\n                    \"colorClass\": \"noteTransparent\"\n                }\n            ]\n        },\n        \"tblP48_1\": {\n            \"namedNotes\": {\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"C chromatic\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 32,\n    \"currentBeat\": 1,\n    \"sharps\": false,\n    \"pluginData\": {},\n    \"__arpeggioRuntimeIdentity\": \"s1\",\n    \"displayOptions\": {\n        \"autoColor\": true,\n        \"showCellNotes\": true,\n        \"showSubscriptFunctions\": false,\n        \"cellIsFunction\": true,\n        \"showMidiNum\": false,\n        \"useCenterForRightFunction\": true,\n        \"naturalFretWidths\": true,\n        \"hideNamedNotes\": false,\n        \"hideTinyNotes\": false,\n        \"hideFingering\": false,\n        \"showAllNoteNames\": false,\n        \"namedNoteOpacity\": \"1\",\n        \"singleNoteOpacity\": \"1\",\n        \"tinyNoteOpacity\": \"1\",\n        \"currentColorDict\": \"\",\n        \"NoteDisplaySizes\": {\n            \"caption\": \"100x30:22\",\n            \"width\": \"100px\",\n            \"height\": \"30px\",\n            \"NoteFontSize\": 22\n        },\n        \"functionSymbols\": \"function\",\n        \"naturalFontScaling\": \"60\",\n        \"pianoHeightScaleFactor\": \"3\",\n        \"pianoWidthScaleFactor\": \"3\",\n        \"pianoWhiteToBlackWidthRatio\": \"2.3\",\n        \"pianoFingeringHPosition\": \"50%\",\n        \"showLooperLightBeats\": true,\n        \"noteFont\": \"EB Garamond\",\n        \"leftSubscriptFontSize\": \"80%\",\n        \"rightSubscriptFontSize\": \"80%\",\n        \"midiFontSize\": \"80%\",\n        \"fingeringFontSize\": \"80%\",\n        \"fingeringPosition\": \"0\",\n        \"tinyNoteFontSize\": \"50%\",\n        \"tinyNoteMaxHeight\": \"45%\",\n        \"tinyNoteVPosition\": \"50%\",\n        \"tinyNoteWidth\": \"35%\",\n        \"tinyNoteHPosition\": \"90%\",\n        \"tinyNoteRadius\": \"50%\",\n        \"hideNutNames\": true,\n        \"autoColorHighlight\": false,\n        \"hideSingleNotes\": true\n    }\n}",
+        "lastRevived": null
+      },
+      {
+        "timestamp": 1792833401935,
+        "date": "10/24/2026",
+        "time": "2:16:41 AM",
+        "type": "SECTION",
+        "context": {
+          "SectionIndex": 3,
+          "caption": ""
+        },
+        "json": "{\n    \"sectionNotesByTable\": {\n        \"tblS6_1\": {\n            \"namedNotes\": {\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblDropD_1\": {\n            \"namedNotes\": {\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        },\n        \"tblP46_1\": {\n            \"namedNotes\": {},\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": [\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"54\",\n                    \"row\": \"4\",\n                    \"col\": \"9\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"49\",\n                    \"row\": \"5\",\n                    \"col\": \"9\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"66\",\n                    \"row\": \"0\",\n                    \"col\": \"1\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"61\",\n                    \"row\": \"1\",\n                    \"col\": \"1\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"56\",\n                    \"row\": \"2\",\n                    \"col\": \"1\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"51\",\n                    \"row\": \"3\",\n                    \"col\": \"1\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"46\",\n                    \"row\": \"4\",\n                    \"col\": \"1\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"42\",\n                    \"row\": \"5\",\n                    \"col\": \"2\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"44\",\n                    \"row\": \"5\",\n                    \"col\": \"4\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"49\",\n                    \"row\": \"4\",\n                    \"col\": \"4\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"54\",\n                    \"row\": \"3\",\n                    \"col\": \"4\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"58\",\n                    \"row\": \"2\",\n                    \"col\": \"3\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"63\",\n                    \"row\": \"1\",\n                    \"col\": \"3\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"68\",\n                    \"row\": \"0\",\n                    \"col\": \"3\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"70\",\n                    \"row\": \"0\",\n                    \"col\": \"5\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"66\",\n                    \"row\": \"1\",\n                    \"col\": \"6\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"61\",\n                    \"row\": \"2\",\n                    \"col\": \"6\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"51\",\n                    \"row\": \"4\",\n                    \"col\": \"6\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"46\",\n                    \"row\": \"5\",\n                    \"col\": \"6\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"56\",\n                    \"row\": \"3\",\n                    \"col\": \"6\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"73\",\n                    \"row\": \"0\",\n                    \"col\": \"8\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"68\",\n                    \"row\": \"1\",\n                    \"col\": \"8\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"63\",\n                    \"row\": \"2\",\n                    \"col\": \"8\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"58\",\n                    \"row\": \"3\",\n                    \"col\": \"8\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"70\",\n                    \"row\": \"1\",\n                    \"col\": \"10\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"75\",\n                    \"row\": \"0\",\n                    \"col\": \"10\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"66\",\n                    \"row\": \"2\",\n                    \"col\": \"11\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"61\",\n                    \"row\": \"3\",\n                    \"col\": \"11\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"56\",\n                    \"row\": \"4\",\n                    \"col\": \"11\",\n                    \"colorClass\": \"noteTransparent\"\n                },\n                {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 2,\n                    \"midinum\": \"51\",\n                    \"row\": \"5\",\n                    \"col\": \"11\",\n                    \"colorClass\": \"noteTransparent\"\n                }\n            ]\n        },\n        \"tblP48_1\": {\n            \"namedNotes\": {\n                \"E\": {\n                    \"noteName\": \"E\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"B\": {\n                    \"noteName\": \"B\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Gb\": {\n                    \"noteName\": \"Gb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Db\": {\n                    \"noteName\": \"Db\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Ab\": {\n                    \"noteName\": \"Ab\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Eb\": {\n                    \"noteName\": \"Eb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"Bb\": {\n                    \"noteName\": \"Bb\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"F\": {\n                    \"noteName\": \"F\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"A\": {\n                    \"noteName\": \"A\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"D\": {\n                    \"noteName\": \"D\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"G\": {\n                    \"noteName\": \"G\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                },\n                \"C\": {\n                    \"noteName\": \"C\",\n                    \"styleNum\": 0,\n                    \"colorClass\": \"noteTransparent\"\n                }\n            },\n            \"recordedNotes\": {},\n            \"chord\": \"\",\n            \"mode\": \"\",\n            \"tonalSourceSet\": \"\",\n            \"playedNotes\": []\n        }\n    },\n    \"caption\": \"\",\n    \"chartChord\": \"\",\n    \"chartMode\": \"C chromatic\",\n    \"chartPosition\": \"BAR\",\n    \"chartCaptionWidth\": \"none\",\n    \"rootID\": 3,\n    \"rootIDLead\": \"-1\",\n    \"beats\": 32,\n    \"currentBeat\": 1,\n    \"sharps\": false,\n    \"pluginData\": {},\n    \"__arpeggioRuntimeIdentity\": \"s1\",\n    \"displayOptions\": {\n        \"autoColor\": true,\n        \"showCellNotes\": true,\n        \"showSubscriptFunctions\": false,\n        \"cellIsFunction\": false,\n        \"showMidiNum\": false,\n        \"useCenterForRightFunction\": true,\n        \"naturalFretWidths\": true,\n        \"hideNamedNotes\": false,\n        \"hideTinyNotes\": false,\n        \"hideFingering\": false,\n        \"showAllNoteNames\": false,\n        \"namedNoteOpacity\": \"1\",\n        \"singleNoteOpacity\": \"1\",\n        \"tinyNoteOpacity\": \"1\",\n        \"currentColorDict\": \"\",\n        \"NoteDisplaySizes\": {\n            \"caption\": \"100x30:22\",\n            \"width\": \"100px\",\n            \"height\": \"30px\",\n            \"NoteFontSize\": 22\n        },\n        \"functionSymbols\": \"function\",\n        \"naturalFontScaling\": \"60\",\n        \"pianoHeightScaleFactor\": \"3\",\n        \"pianoWidthScaleFactor\": \"3\",\n        \"pianoWhiteToBlackWidthRatio\": \"2.3\",\n        \"pianoFingeringHPosition\": \"50%\",\n        \"showLooperLightBeats\": true,\n        \"noteFont\": \"EB Garamond\",\n        \"leftSubscriptFontSize\": \"80%\",\n        \"rightSubscriptFontSize\": \"80%\",\n        \"midiFontSize\": \"80%\",\n        \"fingeringFontSize\": \"80%\",\n        \"fingeringPosition\": \"0\",\n        \"tinyNoteFontSize\": \"50%\",\n        \"tinyNoteMaxHeight\": \"45%\",\n        \"tinyNoteVPosition\": \"50%\",\n        \"tinyNoteWidth\": \"35%\",\n        \"tinyNoteHPosition\": \"90%\",\n        \"tinyNoteRadius\": \"50%\",\n        \"hideNutNames\": true,\n        \"autoColorHighlight\": false,\n        \"hideSingleNotes\": true\n    }\n}",
+        "lastRevived": null
+      }
+    ]
+  },
+  "currentColorDict": "",
+  "midiDevice": {
+    "name": "",
+    "mode": "Programmer",
+    "colorMap": "LaunchpadCycleOfColors",
+    "orientation": "normal",
+    "triggerMode": "Latch",
+    "tableID": "",
+    "channel": 0,
+    "enabled": false,
+    "forwardName": "",
+    "forwardChannel": 0
+  },
+  "layout": {
+    "screenList": {
+      "fullscreen": {
+        "name": "fullscreen",
+        "CaptionRow": true,
+        "SongTitle": false,
+        "SongWidgets": true,
+        "WidgetRow": false,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      },
+      "escaped": {
+        "name": "escaped",
+        "CaptionRow": true,
+        "SongTitle": true,
+        "SongWidgets": true,
+        "WidgetRow": true,
+        "InstrumentCaptions": false,
+        "LeftRails": true,
+        "CaptionLooperLayout": "column"
+      }
+    },
+    "screen": {
+      "name": "escaped",
+      "CaptionRow": true,
+      "SongTitle": true,
+      "SongWidgets": true,
+      "WidgetRow": true,
+      "InstrumentCaptions": false,
+      "LeftRails": true,
+      "CaptionLooperLayout": "column"
+    }
+  },
+  "userTheme": {
+    "id": "USER-USER",
+    "caption": "USER+USER ",
+    "noteRadius": "0",
+    "noteCornerShape": "round",
+    "namedNoteRadius": "10%",
+    "notePadding": "0.5pt",
+    "cellSpacing": "0.1pt",
+    "instrumentBackground": "#311900",
+    "instrumentMargins": "0",
+    "nutColor": "brown",
+    "rootColor": "green",
+    "diamondsSize": "1.5rem",
+    "diamondsColor": "pink",
+    "doubleDiamondsColor": "gold",
+    "diamondsBackgroundColor": "transparent",
+    "faceDiamondsSize": "1.2rem",
+    "faceDiamondsColor": "dodgerblue",
+    "faceDoubleDiamondsSize": "1.2rem",
+    "faceDoubleDiamondsColor": "gold",
+    "faceTinyDiamondsSize": "0.4rem",
+    "singleNoteShrink": "5%",
+    "singleNoteShadowColor": "#56fa00",
+    "noteWhiteShadowColor": "black",
+    "noteBlackShadowColor": "black",
+    "noteWhiteKeyShadowColor": "0 0 2pt 1pt black",
+    "noteBlackKeyShadowColor": "0 0 2pt 1pt black",
+    "noteWhiteKeyColor": "black",
+    "noteBlackKeyColor": "black",
+    "noteWhiteKeySpecialColor": "SaddleBrown",
+    "noteBlackKeySpecialColor": "#191919",
+    "noteWhiteKeyFontColor": "white",
+    "noteBlackKeyFontColor": "white",
+    "systemPitchColor": "gold",
+    "systemMultiColor": "magenta",
+    "systemLeadColor": "rgb(94, 251, 244)",
+    "borderImageWhiteKey": "url('img/guitar-string-fret.png')",
+    "borderImageBlackKey": "url('img/guitar-string-fret.png')",
+    "instrumentBorderThickness": "0",
+    "instrumentBorderSlice": "30",
+    "instrumentBorderImage": "none",
+    "baseid": "GuitarStringsBlack",
+    "basecaption": "Guitar Black"
+  }
+}

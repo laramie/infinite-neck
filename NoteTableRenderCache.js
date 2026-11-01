@@ -1,6 +1,7 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
 import * as Constants from './Constants.js';
+import { getDisplayedCellcol } from './table-column-helpers.js';
 
 const SHARP = "&#9839;";
 const FLAT = "&#9837;";
@@ -10,6 +11,18 @@ const DEFAULT_MAX_ENTRIES = 24;
 
 const cache = new Map();
 let maxEntries = DEFAULT_MAX_ENTRIES;
+let totalHits = 0;
+let totalMisses = 0;
+let totalSets = 0;
+let totalEvictions = 0;
+
+// Tracks the renderCacheKey last actually painted into the live DOM for each tableID,
+// separate from the HTML-string cache above. Since buildRenderKey() already covers every
+// input that affects a table's rendered content/size, two buildCellsForTable() calls with
+// the same key for the same tableID are guaranteed to produce identical DOM output -- so
+// the second (and any subsequent) call can skip the per-cell rebuild entirely.
+// See 903-implementation-plan-ph3-1.md Step A.
+const lastPaintedKeyByTableID = new Map();
 
 const SHARP_NOTE_CLASS_SPECS = Object.freeze([
 	{ noteClass: 'noteAb', noteLetter: 'G', sharpflat: SHARP, noteNum: 11 },
@@ -78,13 +91,25 @@ export function buildTuningFingerprint(tuning = {}) {
 	return stableStringify({
 		banjoNut: tuning?.banjoNut || null,
 		baseID: tuning?.baseID || '',
+		diamonds: Array.isArray(tuning?.diamonds) ? tuning.diamonds.map(Number) : [],
 		doSpecialRows: !!tuning?.doSpecialRows,
+		doubleDiamonds: Array.isArray(tuning?.doubleDiamonds) ? tuning.doubleDiamonds.map(Number) : [],
+		faceDiamondsLeft: tuning?.faceDiamondsLeft || '',
+		faceDiamondsStrings: Array.isArray(tuning?.faceDiamondsStrings) ? tuning.faceDiamondsStrings.map(Number) : [],
+		faceDoubleDiamondsLeft: tuning?.faceDoubleDiamondsLeft || '',
+		faceDoubleDiamondsStrings: Array.isArray(tuning?.faceDoubleDiamondsStrings) ? tuning.faceDoubleDiamondsStrings.map(Number) : [],
+		faceTinyDiamondsLeft: tuning?.faceTinyDiamondsLeft || '',
+		faceTinyDiamondsStrings: Array.isArray(tuning?.faceTinyDiamondsStrings) ? tuning.faceTinyDiamondsStrings.map(Number) : [],
 		fixedFretWidthMult: tuning?.fixedFretWidthMult ?? null,
+		fixedFretHeightMult: tuning?.fixedFretHeightMult ?? null,
 		frets: tuning?.frets ?? null,
 		nut: !!tuning?.nut,
 		pianoNamesRow: !!tuning?.pianoNamesRow,
+		pinkKey: tuning?.pinkKey || 'none',
 		reverse: !!tuning?.reverse,
 		rowRange: Array.isArray(tuning?.rowRange) ? tuning.rowRange.map(Number) : [],
+		showDiamonds: !!tuning?.showDiamonds,
+		showFaceDiamonds: tuning?.showFaceDiamonds !== false,
 		specialBackgroundIDRows: Array.isArray(tuning?.specialBackgroundIDRows) ? tuning.specialBackgroundIDRows.map(Number) : []
 	});
 }
@@ -113,12 +138,18 @@ export function buildRenderKey({ tableID = '', options = {}, tuning = {}, noteNa
 	});
 }
 
+function getColumnCount(tuning = {}) {
+	const frets = Number.parseInt(tuning.frets, 10);
+	const normalizedFrets = Number.isFinite(frets) ? frets : 0;
+	return tuning.nut ? normalizedFrets + 1 : normalizedFrets;
+}
+
 function getCellMidiNumsByNoteClass(tuning = {}) {
 	const result = new Map();
 	const rowRange = Array.isArray(tuning.rowRange) ? tuning.rowRange : [];
 	const frets = Number.parseInt(tuning.frets, 10);
 	const normalizedFrets = Number.isFinite(frets) ? frets : 0;
-	const nCols = tuning.nut ? normalizedFrets + 1 : normalizedFrets;
+	const nCols = getColumnCount(tuning);
 
 	rowRange.forEach((rowMidi) => {
 		for (let c = 0; c < nCols; c += 1) {
@@ -139,7 +170,7 @@ function getCellMidiNumsByNoteClass(tuning = {}) {
 	return result;
 }
 
-export function createEntry({ key, tableID = '', sectionIndex = null, options = {}, tuning = {}, buildCellHtml } = {}) {
+export function createEntry({ key, tableID = '', sectionIndex = null, options = {}, tuning = {}, buildCellHtml, buildSizing } = {}) {
 	if (!key || typeof buildCellHtml !== 'function') {
 		return null;
 	}
@@ -162,11 +193,37 @@ export function createEntry({ key, tableID = '', sectionIndex = null, options = 
 		};
 	});
 
+	// Step D1 (903-implementation-plan-step-D.md): cell SIZING (fontMultiplier, td/NoteDisplay
+	// width/height) depends only on (cellcol, isNut, options, tuning) -- never on note content --
+	// so it's cached here per-column (a ~2 x nCols state space) alongside the per-note-class HTML
+	// above, letting buildCellsFromSelector() skip the per-cell sizing recomputation it used to do
+	// on every rebuild, cache hit or miss. Iterates displayed column positions (via
+	// getDisplayedCellcol()) rather than raw loop indices, so this matches the actual `cellcol`
+	// attribute values TableBuilder.js bakes into each <td>, including for reverse tunings.
+	const sizingByColumn = {};
+	if (typeof buildSizing === 'function') {
+		const nCols = getColumnCount(tuning);
+		for (let c = 0; c < nCols; c += 1) {
+			const cellcol = getDisplayedCellcol(tuning, c);
+			if (cellcol === null || cellcol === undefined) {
+				continue;
+			}
+			sizingByColumn[`${cellcol}:0`] = buildSizing({ cellcol, isNut: false, options, tuning });
+			sizingByColumn[`${cellcol}:1`] = buildSizing({ cellcol, isNut: true, options, tuning });
+		}
+	}
+
 	return {
 		key,
 		tableID,
 		sectionIndex,
 		noteClassHtmlByNoteName,
+		sizingByColumn,
+		// Step D2/Flyweight (903-phase-5-flyweight-content-cache-plan.md): lazily-populated cache of
+		// detached master content Nodes, keyed the same way as getHtml()'s string lookup. Populated on
+		// first real use via getOrBuildContentNode(), not precomputed eagerly here, since the actual
+		// distinct-content count observed in practice is much smaller than the theoretical max.
+		contentNodeByKey: {},
 		createdAt: Date.now(),
 		hitCount: 0
 	};
@@ -183,6 +240,39 @@ export function getHtml(entry, noteClass, midinum) {
 	return byMidi[String(midinum)] ?? byMidi.__default;
 }
 
+export function getSizing(entry, cellcol, isNut) {
+	if (!entry || cellcol === undefined || cellcol === null || cellcol === '') {
+		return undefined;
+	}
+	return entry.sizingByColumn?.[`${cellcol}:${isNut ? 1 : 0}`];
+}
+
+/** Flyweight content-node cache (903-phase-5-flyweight-content-cache-plan.md, Option A): returns a
+ *  detached master Node built from the same cached HTML string getHtml() would return, parsing it
+ *  (via the caller-supplied buildNode callback, kept DOM-agnostic here) only once per distinct
+ *  (noteClass, midinum) key, then returning that same cached master on every subsequent call for
+ *  the same key. Callers MUST clone the returned node before inserting it -- this function always
+ *  returns the shared master, never a fresh instance. Returns undefined whenever getHtml() would
+ *  (missing entry/noteClass/cached string), so callers can fall back to their existing string-based
+ *  path unchanged. */
+export function getOrBuildContentNode(entry, noteClass, midinum, buildNode) {
+	if (!entry || !noteClass || typeof buildNode !== 'function') {
+		return undefined;
+	}
+	const html = getHtml(entry, noteClass, midinum);
+	if (!html) {
+		return undefined;
+	}
+	entry.contentNodeByKey = entry.contentNodeByKey || {};
+	const cacheKey = `${noteClass}:${midinum ?? ''}`;
+	let master = entry.contentNodeByKey[cacheKey];
+	if (!master) {
+		master = buildNode(html);
+		entry.contentNodeByKey[cacheKey] = master;
+	}
+	return master;
+}
+
 function evictIfNeeded() {
 	while (cache.size > maxEntries) {
 		let oldestKey = null;
@@ -197,6 +287,7 @@ function evictIfNeeded() {
 			return;
 		}
 		cache.delete(oldestKey);
+		totalEvictions += 1;
 	}
 }
 
@@ -210,6 +301,9 @@ export function get(key) {
 	const entry = cache.get(key);
 	if (entry) {
 		entry.hitCount = (entry.hitCount || 0) + 1;
+		totalHits += 1;
+	} else {
+		totalMisses += 1;
 	}
 	return entry;
 }
@@ -219,8 +313,22 @@ export function set(key, entry) {
 		return null;
 	}
 	cache.set(key, entry);
+	totalSets += 1;
 	evictIfNeeded();
 	return entry;
+}
+
+/** Snapshot of cache health for console/DevTools instrumentation.
+ *  See 903-timing-revisited-plan-1.md section 4. */
+export function stats() {
+	return {
+		size: cache.size,
+		maxEntries,
+		hits: totalHits,
+		misses: totalMisses,
+		sets: totalSets,
+		evictions: totalEvictions
+	};
 }
 
 export function has(key) {
@@ -233,6 +341,24 @@ export function clear() {
 
 export function size() {
 	return cache.size;
+}
+
+export function wasLastPainted(tableID, key) {
+	return !!tableID && !!key && lastPaintedKeyByTableID.get(tableID) === key;
+}
+
+export function recordPainted(tableID, key) {
+	if (tableID && key) {
+		lastPaintedKeyByTableID.set(tableID, key);
+	}
+}
+
+export function clearPaintedTracking(tableID) {
+	if (tableID) {
+		lastPaintedKeyByTableID.delete(tableID);
+	} else {
+		lastPaintedKeyByTableID.clear();
+	}
 }
 
 export function getNextSectionIndexForPrewarm(song) {
@@ -252,4 +378,9 @@ export function getNextSectionIndexForPrewarm(song) {
 export function __resetForTests() {
 	cache.clear();
 	maxEntries = DEFAULT_MAX_ENTRIES;
+	totalHits = 0;
+	totalMisses = 0;
+	totalSets = 0;
+	totalEvictions = 0;
+	lastPaintedKeyByTableID.clear();
 }

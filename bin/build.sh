@@ -1,11 +1,13 @@
 ## Adjust the date after you run this to the date you ran it: 
-bin/update-git-log.bash --since "2026-06-30" > _doco/lifecycle/CHANGELOG-new.md
+bin/update-git-log.bash --since "2026-09-21" > _doco/lifecycle/CHANGELOG-new.md
+
+cat _doco/lifecycle/CHANGELOG-new.md
 
 vi _doco/lifecycle/CHANGELOG.md
 
-rm _doco/lifecycle/CHANGELOG-new.md
-
 node bin/version-update.js ./version.json
+
+# Add version to version.js instead of generated value.  Use v2.1-beta-17 
 
 vi ./version.json
 
@@ -13,12 +15,15 @@ node bin/version-read.js
 
 ## NOW tag and commit
 
+## Then push from vscode with CTRL-`
+git push --tags
+
 npm run package:deploy 
-## ==>  dist/infinite-neck-20260701-110631.tar.gz
+## ==>  dist/infinite-neck-20260921-102749.tar.gz
 
 ## Your ssh login here:
 export SSH_LAR=    
-export DEPLOY_DATE='20260701-110631'
+export DEPLOY_DATE='20260921-102749'
 
 scp dist/infinite-neck-$DEPLOY_DATE.tar.gz $SSH_LAR@demo.laramiecrocker.com:/home/laramiessh/sites/demo.laramiecrocker.com/
 
@@ -28,8 +33,8 @@ ssh $SSH_LAR@demo.laramiecrocker.com
 
 ## Adjust the dates, and do something like: 
 
-export DEPLOY_VERSION='v2.1-beta-8'
-export DEPLOY_DATE='20260701-110631'
+export DEPLOY_VERSION='v2.1-beta-17'
+export DEPLOY_DATE='20260921-102749'
 
 cd sites/demo.laramiecrocker.com
 mkdir infinite-neck-deploy

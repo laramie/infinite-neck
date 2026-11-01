@@ -117,6 +117,19 @@
   "info": {
     "lines": []
   },
+  "songWidgets": {
+    "lines": [
+      "<div class=\"centerWidgets\">",
+      "",
+      "<span class=\"fontLarger200\">${chartChordCaption}${transposedChordNotesFunctions}</span>",
+      "",
+      "<span class=\"spacer2\"></span><span class=\"spacer2\"></span>",
+      "",
+      "<span class=\"fontLarger200\">${chartModeCaption}${transposedModeNotesFunctions}</span> ",
+      "",
+      "</div>"
+    ]
+  },
   "namedNoteOpacity": "1",
   "openInfo": "none",
   "presentationMode": true,
@@ -236,10 +249,7 @@
           "height": "30px",
           "NoteFontSize": 22
         },
-        "dropDownFunctionSymbols": {
-          "caption": "\n                                Default",
-          "value": "[\"I\",\"τ\",\"II\",\"m\",\"III\",\"IV\",\"Θ\",\"V\",\"σ\",\"6\",\"δ\",\"Δ\"]"
-        },
+        "functionSymbols": "function",
         "naturalFontScaling": "60",
         "pianoHeightScaleFactor": "9",
         "pianoWidthScaleFactor": "4",

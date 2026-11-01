@@ -101,7 +101,7 @@ export const gUserColorDictRolesDefault = {
             "tiny": "L"
         },
         "noteLead2":{
-            "colorClass": "notePink6",
+            "colorClass": "notePink7",
             "caption": "Lead 2",
             "tiny": "L2"
         }
@@ -147,22 +147,44 @@ export const gUserColorDictFingeringsDefault = {
     }
 };
 
+export const gUserColorDictHighlightsDefault = {
+    readOnly: true,
+    computed: false,
+    checked: true,
+    dict: {
+        "noteH1":{
+            "colorClass": "noteHighlightH1",
+            "caption": "H1",
+            "tiny": "H1"
+        },
+        "noteH2":{
+            "colorClass": "noteHighlightH2",
+            "caption": "H2",
+            "tiny": "H2"
+        },
+        "noteH3":{
+            "colorClass": "noteHighlightH3",
+            "caption": "H3",
+            "tiny": "H3"
+        }
+    }
+};
+
 export const gDefault_CycleOfColors = {
     readOnly: true,
     computed: false,
     checked: true,
     dict: {
         "note1": {
-            "colorClass": "noteBlack",
-            "MOJOcaptionClass": "noteBlack",
+            "colorClass": "noteHatchedRootPink noteWhite",
             "caption": "I"
         },
         "note2": {
-            "colorClass": "notePink3",
+            "colorClass": "notePink6",
             "caption": "&tau;"
         },
         "note3": {
-            "colorClass": "notePink5",
+            "colorClass": "notePink3",
             "caption": "II"
         },
         "note4": {
@@ -198,7 +220,7 @@ export const gDefault_CycleOfColors = {
             "caption": "&delta;"
         },
         "note12": {
-            "colorClass": "noteGreen7",
+            "colorClass": "noteGreen6",
             "caption": "&Delta;"
         }
     }
@@ -370,6 +392,21 @@ export const gAllClear = {
           "colorClass": "noteWhite",
           "caption": "Thumb",
           "tiny": "T"
+        },
+        "noteH1": {
+          "colorClass": "noteWhite",
+          "caption": "H1",
+          "tiny": "H1"
+        },
+        "noteH2": {
+          "colorClass": "noteWhite",
+          "caption": "H2",
+          "tiny": "H2"
+        },
+        "noteH3": {
+          "colorClass": "noteWhite",
+          "caption": "H3",
+          "tiny": "H3"
         }
     }
 };
@@ -382,6 +419,9 @@ gUserColorDictFingeringsDefault.readOnly = true;
 
 Object.assign(gUserColorDict.dict, gDefault_CycleOfColors.dict);
 gDefault_CycleOfColors.readOnly = true;
+
+Object.assign(gUserColorDict.dict, gUserColorDictHighlightsDefault.dict);
+gUserColorDictHighlightsDefault.readOnly = true;
 
 export const gUserColorDictOEM = {
     readOnly: true,

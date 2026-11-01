@@ -10,4 +10,12 @@ Settings, search for
    lineNumbers
 
 Snippets: 
-   ~/.config/Code/User/snippets/laramie-snippets.code-snippets   
+   ~/.config/Code/User/snippets/laramie-snippets.code-snippets 
+
+
+To turn off the annoying Copy behaviors: 
+    in preferences, do: editor.emptySelectionClipboard : OFF    
+       AKA "Editor: Empty Selection Clipboard"
+
+    in preferences: editor.dragAndDrop : OFF
+       AKA "Editor: Drag and Drop"

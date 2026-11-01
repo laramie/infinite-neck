@@ -162,6 +162,18 @@ const approvedValueEntries = [
 		resolve: () => getRootKeyLead()
 	},
 	{
+		name: 'chartChordCaption',
+		description: 'placeholder span that shows the current Section chart chord (filled live)',
+		resolve: () => '<span class="lblSectionChartChord"></span>',
+		sampleFormat: 'html'
+	},
+	{
+		name: 'chartModeCaption',
+		description: 'placeholder span that shows the current Section chart mode (filled live)',
+		resolve: () => '<span class="lblSectionMode"></span>',
+		sampleFormat: 'html'
+	},
+	{
 		name: 'transposeCurrentInterval',
 		description: 'Current interval in the active TransposePlugin interval list',
 		resolve: () => getTransposeCaptionValue('transposeCurrentInterval')
@@ -247,6 +259,36 @@ const approvedValueEntries = [
 		sampleFormat: 'html'
 	},
 	{
+		name: 'transposedModeNotesFunctions',
+		description: 'tonal transposed mode notes with functions (not enharmonic)',
+		resolve: () => getTonalCaptionValue('transposedModeNotesFunctions'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'enharmonicTransposedChordNotes',
+		description: 'tonal enharmonic notes of the chart chord transposed to the current Key',
+		resolve: () => getTonalCaptionValue('enharmonicTransposedChordNotes'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'transposedChordNotes',
+		description: 'tonal notes of the chart chord transposed to the current Key',
+		resolve: () => getTonalCaptionValue('transposedChordNotes'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'transposedChordNotesFunctions',
+		description: 'transposed chord notes with Functions',
+		resolve: () => getTonalCaptionValue('transposedChordNotesFunctions'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'transposedChordNotesLeadKeyFunctions',
+		description: 'transposed chord notes with Functions relative to LeadKey ',
+		resolve: () => getTonalCaptionValue('transposedChordNotesLeadKeyFunctions'),
+		sampleFormat: 'html'
+	},
+	{
 		name: 'enharmonicChartModeNotes',
 		description: 'tonal chart mode notes',
 		resolve: () => getTonalCaptionValue('enharmonicChartModeNotes'),
@@ -262,6 +304,12 @@ const approvedValueEntries = [
 		name: 'keySignatureCountHand',
 		description: 'tonal transposed mode sharps-flats count, with leading pointer hand',
 		resolve: () => getTonalCaptionValue('keySignatureCountHand'),
+		sampleFormat: 'html'
+	},
+	{
+		name: 'keySignatureSimplified',
+		description: 'tonal simplified key signature (major only)',
+		resolve: () => getTonalCaptionValue('keySignatureSimplified'),
 		sampleFormat: 'html'
 	},
 	{

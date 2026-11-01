@@ -96,6 +96,16 @@ The important sequence helpers are:
 - `expandRandomSequence()`
 - `expandBachSequence()`
 
+## Source type `PlacedSingleNote` (`/fpat` `p`)
+
+`type = PlacedSingleNote` uses the exact cells (`row`, `col`) of SingleNotes placed in the Section's `playedNotes`, instead of expanding their pitch classes across the whole neck the way `SingleNote` does. The placed notes may be hidden with View > HIDE Single Notes; they remain in `playedNotes`.
+
+- Cells are filtered by the effective fret window (`positions` or `minFret`/`maxFret`) and by `minRow`/`maxRow`.
+- Candidate order matches the other types, so `every` and `alternate` behave consistently; `random` and `flashcard` work unchanged.
+- `style = bach` is rejected for this type (it needs a tonic-relative pitch-class cycle); the reason is sent to UserLog.
+- An empty result (no placed SingleNotes in the window) generates nothing and logs a UserLog warning.
+- No special handling for TransposePlugin or FillPlugin interactions.
+
 ## Section-local positions
 
 Arpeggio now supports a custom `p) positions` submenu in the plugin menu.
@@ -173,6 +183,7 @@ Current values:
 - `one`
 - `all`
 - `played`
+- `named`
 
 Meaning:
 
@@ -180,6 +191,7 @@ Meaning:
 - `one`: show only one beat's note-name text at a time
 - `all`: reveal all generated beat positions for the section
 - `played`: accumulate beat-by-beat named-note reveals through the pass
+- `named`: timing and clearing like `one`, but each revealed beat expands to every cell with the same note name inside the effective fret window and `minRow`/`maxRow` (`getSameNoteNameNamedNoteCells()`); works with `flashcard`
 
 ### `colorNotes`
 
@@ -211,6 +223,12 @@ Examples:
 - `one + flashcard`: delayed single-note reveal
 - `all + flashcard`: hide on beat 1, then reveal the whole section from beat 2 onward
 - `played + flashcard`: accumulate delayed reveals, and also reveal the final beat on the last beat
+
+### `extraClearBeat`
+
+Boolean, menu `/fpae`, effective only when `flashcard` is on (`getExtraClearBeatEnabled()`).
+
+With it on, each note takes two beats: highlight (odd beat), reveal (even beat), then the next odd beat clears the reveal and shows the next highlight. `expandCandidateSequence()` builds the style sequence for `ceil(beats / 2)` notes and returns a per-beat array with notes on odd beats and `null` on even beats, so the existing flashcard payload logic (reveal the previous beat's note, reveal the current note on the last beat) works unchanged. Generated recorded notes are written only for non-null entries. `played` mode still accumulates by design, and `all` is not changed.
 
 ## Beat-Driven Refresh Path
 

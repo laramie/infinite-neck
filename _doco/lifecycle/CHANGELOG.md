@@ -1,5 +1,322 @@
 # ChangeLog
 
+### 20260921
+
+Tag: v2.1-beta-16
+
+- 6f37dd6 **2026-09-21** Added m11 chord. Added colored lines and filters to log for PlayForward and Forward. Removed default 'true' from Cello for face diamonds.
+- a96a50c **2026-09-15** Added PlayForward capability to send certain note types to MIDI Forward downstream device, like a Player Piano.
+- d74118e **2026-09-15** Reorganized the Tunings tables to group features like Pad Controllers, Edge Diamonds, and Face Diamonds. Organized the buttons on the Themes page
+- fdf81ea **2026-09-14** Added fix for calc'ing half the --cell-spacing for Double Diamonds in Launchpad, where we used to use 109% but now we calc using CSS calc().  Added to 8x8 and 8x8-P4.
+- 12c5f58 **2026-09-14** Getting rid of case where holding Launchpad buttons while Section changes underneath creates notes in *incoming* Section.
+- 78e096f **2026-09-14** voicing that works in many positions, so this song shows all 12 positions: some sound great, some sound terrible, e.g. mixing the tritone and flat six
+- ab8c5da **2026-09-14** Fixed:1)  notePinkKey: removed black color from style since its a background color. 2) flats/sharps not rendering. 3) added owner:Momentary to notes so Momentary around Section changes doesn't get lost.
+- f9735d7 **2026-09-14** Fixed highlighter
+- 719e009 **2026-09-11** Added "y" Multi AutoColor to help and Desktop Keyboard map.  Autocolor Multi is filling in the whole cell, however.
+- 1d01149 **2026-09-10** Tests cleaned up.  Removed test that required console logging. :(
+- 1c985f3 **2026-09-10** Added default theme to Theme Matrix if Theme Automation. Has its own column now. Brought fixedFretHeightMult and fixedFretWidthMult up to speed for all fixed width instruments (Piano already used, but the old MIDI boards didn't have the new property name, and didn't do Height.)  If these are present, the instrument eschews fixed width and just uses the multiplier, so you can make 8x8 much bigger keys x and y than a Guitar.  Since width and height are stored on Section, you can't table-theme these, so they are built in now and adjustable by edit boxes on MyTuning.
+- 24a94af **2026-09-10** went with brighter and bolder for dom, III, m and II, swapped Iv and tri again, went with bright for IV, muted for tri.  Looks good on Launchpad.
+- 61acabd **2026-09-09** Added `0` zero as dropDownInstrumentBorderThickness for when a Theme has zero.
+- 8a63f2d **2026-09-09** Trying to clean up by setting a default for instrumentBorderThickness of 0.
+- b6976d3 **2026-09-09** Added dropDownInstrumentBorderSlice/instrumentBorderSlice/--instrument-border-slice so that different images can be sliced correctly.
+- 9df9805 **2026-09-09** sprint 146 Iteration 2 complete.
+- 297c496 **2026-09-09** Switched toggle on diamonds to be dependent on our fancy new face diamonds toggle, which is on $('body').  If that is hiding face diamonds, then we unhide and set the diamonds to match, otherwise vice-versa, so they are in lock-step.  There will sometimes be an apparent  hiccup as it turns both off but only one was off by dint of messing around with the checkboxes in MyTunings, and the reverse combination.  This is correct.
+- f3115b9 **2026-09-09** sprint 143 Iteration 1 is complete.  Per-table-per-Section themes are working.  (They don't work during Looping or Navigation yet.)
+- cd53ff1 **2026-09-08** through phase 4
+- 9ea244c **2026-09-08** Ready for sprint-146-table-themes
+- 95de370 **2026-09-08** Added center diamond to 8x8 grid like Novation does.
+- 20c6dbb **2026-09-08** Added face diamonds that show on the face of the fretboard.
+- 1d3f1bb **2026-09-08** Selectable pinkKey for MIDI grids now.
+- bb4d98d **2026-09-08** Fixed diamonds row not hiding its nut when nut widths are cycled around zero.
+- 3e101d0 **2026-09-08** added noteHatchedRootPink for a nice gradient of pink links on white for MIDI devices.  Set as default for now.
+- 2d739d5 **2026-09-08** Vertical alignment tweaks for palette status widgets.
+- 8803867 **2026-09-08** MyTunings now fully editable in grid. New pinkNote color.  Added live duplicate of PaintMode status button set to QuickMenu.
+- 6f7b675 **2026-09-07** Added opening song and reconnecting to MIDI
+- b39696a **2026-09-07** Somehow Round got bumped up to Iteration 5, Round 9 in the chat.  In Round 9 we finally got all Launchpad presses Latch AND Momentary to just forward perfectly, and not consult lights or cells.  Note button press on Launchpad is now releasing notes properly in Momentary/Latch plus Named and Single note variants.
+- a038866 **2026-09-07** Somehow Round got bumped up to Iteration 5, Round 9 in the chat.  In Round 9 we finally got all Launchpad presses Latch AND Momentary to just forward perfectly, and not consult lights or cells.  Note button press on Launchpad is now releasing notes properly in Momentary/Latch plus Named and Single note variants.
+- 20c4212 **2026-09-07** Tweaked CycleOfColors and palette.css so that the Highlights are in a better order, note II is a more subtle pink, and notePink* has a new member, and these show up on the colorPicker properly.  Maj7 is also a lighter apple green. The Maj7 and the II are to match the Launchpad light colors I settled on. On the LaunchpadCycleOfColors, I matched the IV-Tri-V set better, to match the original UI colors.  I also swapped the more purple color for the pink and adjusted the pink so it would be more subtle than the highlight pink, and so that the darker pink, almost a purple is the II, the note of Prince and Sade.
+- 803acad **2026-09-06** It5, Round 6
+- cdc5411 **2026-09-06** Sprint 143, Iteration 5, Round 5
+- e8a140d **2026-09-06** Up to Iteration 5, Round 3.  Request ready for Round 4.
+- b23bc3b **2026-09-05** Quite a few UI changes from a read-only display of active button, to big changes for highlights and autocolor of new highlight theming and auto coloring and letting highlights be real notes with colors.
+- 4939bf7 **2026-09-05** Kept autoColor and autoColorHighlight out of reset loop when no displayOptions saved. Added "y" shortcut key to toggle autoColorHighlight. Made the three H1, H2, H3 radio buttons show their box shadow representatives.
+- 90f6e0a **2026-09-05** Multi highlights can now be autocolored or not, per section via displayOptions.  Pitch is always system color, which can be themed.  Multi highlights use the color radioButton you chose before clicking a Multi note, when not in Multi AC (Multi AutoColor, which is called AutoColorHighlights).  Also fixed up the inner/outer glow areas: .noteHighlightSingle versus  .NoteDisplay
+- 25cefe3 **2026-09-04** Hacky addition of highlighting in blue for LeakKey shift.
+- 17d0833 **2026-09-04** Added ability of CTRL+SHIFT+K gives a shift of the LeadKey, where k/K shifts the root Key.  Added a hack to parallel the highlights, added a single var to hold the last blue highlight: gLast_noteHighlight.  I feel we should make this a stack of colors to be cleared.  It's possible we could make a system-wide color option instead, and have something keep track of them.  It is suspect that adding a highlight has to be done in multiple places, with multiple CSS rules, and must be remembered and cleared specifically.
+- 5e51839 **2026-09-04** Cleanup.  Checkmark appears always now, in two places.
+- 92d317d **2026-09-04** MiniPalette now has status spans that reflect the Note type and the paint color.  Read-only.
+- d261297 **2026-09-04** Added preview spans to MiniPalette which show the palette buttons so you don't have to have palette open to see stati.  Useful for when you are using Launchpad buttons to set Named/Single/Tiny/Bend/Pitch/Multi and the CLEAR button.
+- 8126c0a **2026-09-04** It4-round-4
+- 92b5e98 **2026-09-03** Added Momentary light
+- 75e0b57 **2026-09-03** Iteration 4, Round 4
+- c3561b5 **2026-09-03** Fixed test to use proper LAUNCHPAD_VELOCITY_DEFAULT instead of defaulting to RED.
+- ce02d8e **2026-09-03** Ready for sprint-143-it4-round-4
+- 9645fbd **2026-09-03** Added green Latch/Momentary button on Launchpad (Lower Left, Circle) to pair with same buttons in MIDI and Quick in the UI. Includes now handling CC control messages. Fixed light-at-startup bugs with pre-emptive edge clear.
+- 4dee431 **2026-09-03** Cleaned up Iterations
+- 1e60c3e **2026-09-03** Moved divQuick to where it can be picked up by Fullscreen. Made a better fix for noteHighlightSingle blotting out the double magenta border like the Nut column.  Used specificity to re-instate the magenta border rule. Tweaked the IV, tri, V colors for Launchpad. Added Highlight behavior to Latched and Momentary modes. Addede duplicate Latch/Momentary button to divQuick.
+- 8604296 **2026-09-03** These were covering the Highlight magenta shadows with colors from the Theme noteWhiteKeyShadowColor.  Now there are properly two borders around all cells, just like there were only in the Nut cells before.
+- 7c8e759 **2026-09-02** Iteration 4 work.
+- cc301a7 **2026-09-02** Ready for it4 analysis.
+- 8d7ceae **2026-09-02** Reorder colors a few times.  This corresponds to CycleOfColor the best, except that the I is the color of middle C in C, since that corresponds to NoteMode. However, in ProgrammerMode, we translate it so that row/column find the right key and then must transfer midi notes.  Right now, the notes are weird because of how Programmer mode wraps the keys in the row/column encoding, so you aren't getting midi notes.
+- b0b49aa **2026-09-01** MIDI with Launchpad in Programmer mode mostly working for Launchpad press==>Section and TD.note==>Launchpad.  Section repaint also sent, so nextSection and looping work.  Colors are not curated yet.  Automatic Claude mapping selects colors, and these are hard-coded in the tests for now.
+- ef05bd5 **2026-09-01** Ready for Iteration 3
+- d29eb4f **2026-09-01** Prototype working.
+- feb223d **2026-08-31** Ready for first plan.
+- 1b9d45d **2026-08-31** Starting sprint 143
+- ef91cda **2026-08-31** removed log with repeats of cache items
+- 5a9fccf **2026-08-31** phase5-5 complete.  Sprint complete.
+- e8e2e2d **2026-08-31** Ready for prewarm non-blocking fix.
+- d18947b **2026-08-31** realtimeTickStart added for testing
+- e1ba626 **2026-08-31** phase-5-1
+- 4eeef19 **2026-08-31** phase 4, steps A-C, D1.
+- a615bf0 **2026-08-31** Tweaking caching settings
+- 93c56e7 **2026-08-31** Phase 4 docs.
+- 4fa63fe **2026-08-31** Steps A-C implemented
+- 93e28b6 **2026-08-31** Ready for phase-3 implementation.
+- 3b0b96f **2026-08-31** added
+- 75b12ed **2026-08-31** Claude added timing marks.
+- d296a5b **2026-08-31** Ready for betting timing capture. Sprint 903 revisited.
+- 730f6ab **2026-08-30** Updated help about /fk menu changes.
+- c8c9009 **2026-08-30** Fixed bug where transpose and sharps/Flats buttons and others were settting Song.sharps and not Section.sharps exclusively. Removed elipses from tests around LOOP buttons.
+- 53d7f91 **2026-08-30** Adding command-line to set the song rootID and sharps, so default/new section follows that and not last chosen.
+- 4d11a2e **2026-08-30** Removed elipses from LOOPING captions.  Changed other buttons to also use magenta when looping.
+- 464a755 **2026-08-30** Added quickMenu view show/hide/toggle
+- a5dbdbd **2026-08-30** Copied L001 actual lines to prompts.html  If build tutorial gets re-run it could hose the tutorial lines, so the buttons were copied into prompts.html but we didn't check if other things are updated in song and not prompts.
+- a1cf0aa **2026-08-30** sprint-142 iterations applied.
+- f18800b **2026-08-30** plan generated
+- 13c0c29 **2026-08-30** Ready for sprint-142
+- 2c56452 **2026-08-30** Ready for sprint-142
+- 1371803 **2026-08-29** Tweaked remaining hoggy tables to be in divs with overflow-x: auto;
+- 4a4afff **2026-08-29** Tweak mobile layout buttons so quick menu and main menu have big buttons on MobileSettings, but small on DesktopSettings.  Scaling and instrument prefs displays to inline-block. Help typos.
+- f4b373b **2026-08-29** v2.1-beta-16
+- 9ba4be9 **2026-08-29** Fixed borders and resizing diamonds
+- 821b0be **2026-08-29** foo
+
+
+
+
+### 20260828
+
+Tag: v2.1-beta-15
+
+
+- 3c87b85 **2026-08-28** Added message about what toggling diamondRows does to help. Fixed ambiguous captions for Add One User Tuning.
+- a443935 **2026-08-28** Moved Quick menu up. Added transport and beat loop to Quick menu. Added beat looper border to looper light. Fixed TonalPlugin buildKeySignatureCount. Added '*' key shortcut to toggle all diamondRows.  Added to mobile keyboard. Updated help.
+- 286d9a5 **2026-08-26** Organized widths and hard returns in mobile keyboard so it stretches well for mobile and desktop. Added p4-voicings song. Added decrease UI font button (plumbing was already there).
+- 6fe40df **2026-08-25** hide messages was broken
+- b6d08be **2026-08-25** added Presentation mode
+- d430f2f **2026-08-25** Updated in song-list
+- 41337a5 **2026-08-25** Added 4-minors.json song to show natural minor, harmonic, melodic, and Dorian minors. Did a build.
+- 7ac419a **2026-08-24** v2.1-beta-13
+
+
+### 20260824
+
+Tag: v2.1-beta-13
+
+
+- 1e30808 **2026-08-24** reordered to cycle of fourths
+- 33fabaa **2026-08-24** fixed autocolor section 1, changed C and F to Emboss
+- d6a7956 **2026-08-24** Added color to sharps/flats buttons in SectionDrawer. Added more to key-signatures.json Fixed up mobile-keyboard page more.
+- abe029f **2026-08-24** added key-signatures.json song to show sharps and flats for each key on a 2-fret 4ths calculator; added build"
+- 922838b **2026-08-23** beta-12
+- 45d9ee2 **2026-08-23** Possible fix for mobile command-line keyhandler.
+
+### 20260823
+
+Tag: v2.1-beta-11
+
+- 933450e **2026-08-23** Cleanup
+- e474b01 **2026-08-23** Desktop page working with buttons from help file, with stylesheet working too.
+- c851634 **2026-08-23** Ready for Desktop tabs group
+- ad5d728 **2026-08-23** Adding MobileKeyboard to Desktop page.
+- 519098f **2026-08-23** Adding MobileKeyboard to Desktop page.
+- 8c78074 **2026-08-23** Ready for implementation of runMobileCommandLine()
+- bf2faae **2026-08-23** Moved constant
+- 2305b4f **2026-08-23** Moved Macro calls into new MacroMenu.js and created Messages.js and UserLog.js
+- 2e590af **2026-08-21** Added 4ths calculator to test the badges.  Probably won't use that, because the wired listener to P46 is better--it shows the cycle of fourths for the key in each section.
+- 0c660a5 **2026-08-21** Added SHIFT-G for Grabbles on Floating windows toggle. Added 12-major-scale-w-ccalc.json which has a C-Calculator
+- 051f799 **2026-08-20** These files missed the tag for v2.1-beta-10 but get included in the deployment.
+- c4f20cd **2026-08-20** Fixed bug in 5thsCalculator, notes were wrong midi numbers. Added ListenerNotesource example badge to song-list description. Added 4ths calculator listener to 12-major-scales song.  This shows the notes in each key on the 4ths calculator, rather than just wiring the 4ths calc to all notes as the defailt calculator does with /vscp.  This is a cool use of 4ths calc.
+
+
+### 20260820
+
+Tag: v2.1-beta-10
+
+- c4f20cd **2026-08-20** Fixed bug in 5thsCalculator, notes were wrong midi numbers. Added ListenerNotesource example badge to song-list description. Added 4ths calculator listener to 12-major-scales song.  This shows the notes in each key on the 4ths calculator, rather than just wiring the 4ths calc to all notes as the defailt calculator does with /vscp.  This is a cool use of 4ths calc.
+- 97bba2f **2026-08-20** Added 12-major practice song
+- 38d6d33 **2026-08-20** Song with black keys highlighted, and all 12 major scales
+- c0e45ea **2026-08-19** Swapable top captions in Tool tables is working.  Added to schema and noteTableLayout and survives persistence round trip.  Tool table top captions are smaller, but follow normal caption role coloring.
+- ca28aa8 **2026-08-19** Working on custom caption handling for Tool tables.
+- 8e91898 **2026-08-19** Added special coloring for Role badges and captions when being a Notesource listener.
+- be58bb7 **2026-08-19** Tweaking captions for Tool tables.  Kind of janky in that there are now multiples.
+- 48a08aa **2026-08-18** FillPlugin and Notesource now respect automaticFromChart && literalChartedChord.  When both are true, we use the chart chord as entered, even if it does match the notes that may be in the Section.  User has entered a Chart Chord, and expects it to be filled as such and not re-rooted to Section Key.
+- 1d1e649 **2026-08-18** Tweaks to get ready to add FillPlugin:literalChartedChord.
+- c84da83 **2026-08-18** removed BS hardcoded html tests
+- 3d84443 **2026-08-18** Spiffy changes for instrument role badges widget table and file save dialog uses white-space: nowrap now for roles.
+- 2b18283 **2026-08-18** Added dockAll reFloatAll, changed button style on keyhelp for File, SHIFT+ESC,
+- 6987cb0 **2026-08-18** Added T to show Themes menu. Added z to dock all, Z to re-float all. Added re-floating current menu if Floaty and menu is visible and re-float. Changed width on Event Wiring panel added getVisibleMenu Made all Menu floats have zIndex = 900.
+- 7b234c6 **2026-08-18** Made all menu divs floatable by the Floaty checkbox in the menu now.  palette and themes have their Float buttons removed.  Info keeps its button.
+- e11b42b **2026-08-18** Removed red border on .instrumentBackground when inside a floated .toolWindowRounded so that it is black on black. Added anchor button after Float button to anchor tables that should not be re-floated.
+- 2338722 **2026-08-18** Fixed "visible" checkbox should hide floating windows too.
+- 23a7a08 **2026-08-18** Implemented SHIFT+ESC to dock-all and float-all
+- de62f32 **2026-08-18** Ready for it4
+- aaabcb3 **2026-08-17** sprint-141 mostly complete.  Could add zIndex now.
+- 16af4c7 **2026-08-17** It3
+- 0ea16e4 **2026-08-17** Ready for Iteration 3
+- 3751b2d **2026-08-17** Fixed sprint-141 Iteration 2
+- 4ed8106 **2026-08-17** Ready for Iteration 2
+- aafd222 **2026-08-17** Iteration 1
+- e29eade **2026-08-17** Add it1 scope to request.
+- cf57fa8 **2026-08-17** Ready for analysis
+- d70a270 **2026-08-17** This test has a Perfect4ths Calculator, and it opens correctly.  However, it does not open floated.
+- 259aba9 **2026-08-17** Perfect4thsCalculator working as singleton float window from command line /vscp. Has cute Fr and UN (Freeze and UnFreeze) buttons. /vscp floats automatically.  But opening from file shows it docked. Fixed missing mocks from jest tests.
+- 1c742a6 **2026-08-17** Tool window for Perfect4thsCalculator working. Programmatic pop-up for calculator working from menu /vscp. Changed Perfect4ths to EveryNamedNote
+- e7a9d38 **2026-08-17** Fixed ghost-table warning for ns notesource tables.  Tested Tool windows without notesource wirings still freeze DisplayOptions, such as widths for Presentation mode.  Also, toggling Diamonds doesn't work when instruments are floated.  This is a bug. Added minimal instrument caption to Tool tables.
+- f5e53a8 **2026-08-16** Notesource working as a wiring source, Perfect4thsCalculator working as Tool.
+- a0c6fd2 **2026-08-16** Ready for implemention
+- 7709e44 **2026-08-16** Ready for alt analysis
+- 0f75295 **2026-08-16** Ready for sprint-140 design
+- c48571c **2026-08-16** Prep for Tool table: options looked up in Layout.ToolDisplayOptions, special Instrument Caption Row with just a Float button, Tunings now supports Tool as a checkbox and a tuning option.
+- ebbdad2 **2026-08-15** Added section-status examples and diagram of parts
+- 8e727a0 **2026-08-14** added command-line keyboard link.
+- 0078fb8 **2026-08-14** Added space
+- 1f16fd1 **2026-08-14** removed extra key displays from table.
+- 7831c42 **2026-08-14** Fixed the /p menu so that all fingerings work, especially Finger0 and the "o" shortcut, the keep and find work again, the chromatic, and added the missing /prn "n) note (degree)" choices for selecting by scale degree (note1, note2,...)
+- 6f1f903 **2026-08-14** Fixed the /p menu so that all fingerings work, especially Finger0 and the "o" shortcut, the keep and find work again, the chromatic, and added the missing /prn "n) note (degree)" choices for selecting by scale degree (note1, note2,...)
+- 32283f4 **2026-08-14** Added macro examples.
+- 374ffdd **2026-08-14** helpfile enhancements around section-status, LeftRail, and moving section-status to its own section, out of TonalPicker.
+- 99a3ba9 **2026-08-14** Moved toggleCaptionLooperLayout to layout.js, added remaining keyboard-shortcut-only actions to menu (e.g. show/hide Caption).
+- 04f0a72 **2026-08-14** Added setUIFromNoteTablesLayoutOptions which rips through noteTablesLayout and sets all LeftRail options for each table.
+- 244839b **2026-08-14** ready for implementation
+- edb53d7 **2026-08-14** NoteTablesLayout options round-tripping.
+- 69c01ed **2026-08-14** NoteTablesLayout options round-tripping.
+- f3d4423 **2026-08-14** Got the C and S buttons to read from data-tableid, and toggle thence.  Next we will persist these values.
+- 6d66b68 **2026-08-14** Installed Song.Layout to handle toggles of CaptionRow, WidgetRow, SongTitle, LeftRail, LeftRailCaption, LeftRailSectionStatus, separately in fullscreen and escaped.  Persists to file and loads on no song and on open song.  Grays out left rail layout buttons on SHIFT-E when hiding.
+- c3fbc5d **2026-08-12** Added details about roles and colors used in the Left Rail and section-status widgets.
+- e380403 **2026-08-12** More examples and images for View Layout help, and Variables for Captions, with plugin status widgets.
+- a8cbb31 **2026-08-12** Added help for View Layout and all toggling keystrokes, with images.
+- bc15421 **2026-08-12** Added ability to toggle useCaptionForSectionCaption from menu, which then persists in song.  No feedback in menu, just use /vdf to see if it is there. Added toggle for song title in /vht /vst
+- 799a4e3 **2026-08-12** show/hide widget row (caption row with widgets).
+- 8a7880f **2026-08-11** thicker border
+- cf8dc80 **2026-08-09** added midi8x8-black-keys
+- def3bcd **2026-08-09** added MIDI 8x8-P4
+- 24a05a5 **2026-08-09** removed escapeHtml() which was unnecessary
+- 8c765dc **2026-08-05** turned into two separate macros for white and black to shorten the runtime.
+- e555b22 **2026-08-05** Added switch links for P4<-->S6
+- c3b4ac9 **2026-08-05** added do-all-keys which calls fill-one-key which calls fill-tiny-automatic
+- 6099131 **2026-08-05** Added hidden S6 listener so it can be turned on by macro.
+- efd5f1a **2026-08-05** sprint-139-macro-call Iteration 3: refactor into own module MacroEngine.js
+- 721227e **2026-08-05** sprint-139 Iteration 2 to make a MacroEngine with yields is basically working, but has clogged up key-handlers.js
+- 25dda39 **2026-08-05** Added S6 listener to supersong-C, but not template yet.
+- 8c5d68d **2026-08-05** added supersong template
+- 948c051 **2026-08-05** Added working call-all macro
+- 4888dcb **2026-08-05** sprint-139-macro-calls working, and added song which uses them: supersong-calls.json
+- b026c3d **2026-08-05** sprint-139 ready for coding.
+- 5f6f0b5 **2026-08-05** ready for design
+- b1f7943 **2026-08-05** ready for sprint-139 design
+- e951de1 **2026-08-04** Added other chords to macro.  Made it so macro clones and navs rather than doing C every time.
+- e6192b0 **2026-08-04** Made tutorial strict mode controls hamburger follow Sections like the sectionList does, by cloning that toggle button into the hamburger button, including an upside-down arrow pair.   Hidden in wizard mode because wizard mode does not do sectionList or looper controls.
+- 92c3d2a **2026-08-04** macro working to fill tiny notes in chord using noteAutomatic, against noteTransparent diatonic named in C.
+- ab22fff **2026-08-04** Added handling for tutorial strict such that if song.tutorial.useCaptionForSectionCaption is present and true, then the Section.caption values are used for song.section.tutorial.caption.
+
+### 20260803
+
+Tag: v2.1-beta-9
+
+- 1439db3 **2026-08-03** added supersong-C
+- 85305f3 **2026-08-02** added superson
+- cecdc84 **2026-07-31** Added css rule for `.infoRendered u a` which creates pseudo buttons.  Added this to help.
+- 4637792 **2026-07-30** updated double-blues-scale.json song
+- 22409c0 **2026-07-30** added double-blues-scale.json song
+- 612aa6d **2026-07-28** Added key::leadKey to LeadSheet detail line display, similar to other Bar Style displays.  You can turn it off (with the beat counts) by turning off "Show section detail line". No real reason to split it out from beat counts.  Did not add to LeadSheetLine.
+- 2f5d67a **2026-07-28** Made keymap entry smaller
+- 10f9de4 **2026-07-28** Fingerings regression is on much older version on server, so not in last commit. Fixed helpfile un-closed i tag.
+- aecb3ad **2026-07-28** Removed imports and providers that VSCode said were not being used.  Did basic testing to see if things still worked.  Only thing funny is that /pf setting of fingerings doesn't check the Fingerings radio button, which seeems like a regression because I think we fixed this already--TODO.
+- 2dffb77 **2026-07-28** Added Beat Looping keyboard shortcut to allowed keys in tutorial strict, also -,=,_,+, and ) for resizing fonts. Added menu /fml to list all macros (macroListAll) to showMessages because once you have more than 9 macros, you can't run, edit, etc. them by number, just ID.  So you can get the list of IDs by /fml. Added macros to test LeadSheet and LeadSheetLine to L001-1.json tutorial.
+- 870d6bb **2026-07-28** Cleaned up help and added help around keyboard shortcuts (beat looping, stop looping), new transport image, updated transport actions table. Fixed keyboard shortcut span radii.
+- 177cf34 **2026-07-28** simplified to just one menu item to hide charts, does the right thing in fullscreen and normal, since you can't show both LeadSheet and LeadSheetLine. Added Legend and coloring in keymap help. Added B keymap  to toggleLoopBeats(). Added N keymap (New Beat) to addBeat()
+- 9612640 **2026-07-27** Updated sprint documents
+- af236dd **2026-07-27** Added feature required by sprint-138-tutorial-mode to have fullscreen Chart in addition to existing fullscreen LeadSheetLine.  They are exclusive, in that in fullscreen or strict tutorial, only Chart or LeadSheetLine may be seen at one time only related to fullscreen.  And the choice of showing either is unrelated to non-fullscreen normal mode.  They are persistent at run-time in each of these modes.
+- 420445a **2026-07-27** Added help for keyboard E (toggle left rail)
+- e0e086a **2026-07-27** Added quick-n-dirty toggle to left rail with SHIFT+E.  Sync is a bit funny when you have instruments out of sync with toggle. Added scales-major practice song.
+- 8bd5f0e **2026-07-27** Added hand entity for sharps/flats to plugin allowed value so it can be chosen, and so that it can be absent for key of C with no sharps/flats.
+- bc79c2f **2026-07-27** tonalChartModeNotes to enharmonicTransposedModeNotes because it hints that you'll get double-flats, which happens, e.g. in Bbb in Db minor.  Also that you'll get a Cb in Ab minor.
+- a123d69 **2026-07-27** Added small to flats in getApprovedCaptionValue.  Added scales-major-minor.json which uses this.
+- 5ace326 **2026-07-27** Taught TonalPlugin show transposed notes in correct sharps/flats.  To do this, I moved  ChartInput.getPreferredRootName to call  Constants.getPreferredRootName. approved-values now has tonalChartModeNotes, in addition to recently added tonalTransposedModeNotes.
+- c72c06f **2026-07-26** Added getApprovedCaptionValue() with "tonalTransposedModeNotes" to TonalPlugin which dumps out the note names in the mode of the current Section when used in the Caption.
+- 78663a5 **2026-07-25** Added param  to hideAllMenuDivs(openingSong) so that we can hide divs without triggering mid-song-load persistence of non-existent info or openInfo.
+- cb99dd4 **2026-07-25** Fixed bug where FillPlugin was not respecting the key of the Section but using the key embedded in the chart chord and mode when "automatic from chart" was true.
+- 9f2c15f **2026-07-25** Added more space below left caption.
+- 7eb39ef **2026-07-23** Fixed tests for Tutorial layout changes, and added function in Themes.
+- 97aa362 **2026-07-23** Added 'Allow Theme Automation' checkbox and display of values to View, and its stored 'sectionTheme' variable in Song, schema, and DisplayOptions. Added collapsing of menus and hiding of command-line when a file or URL is opened, including tutorial links.  This especially hides the Song Library when you click on a song.
+- 8c2c013 **2026-07-23** td without class snuck in and corrupted all td's.
+- a776a5d **2026-07-23** Fixed left rail caption/section-status widget side-by-side versus vertical.  Removed Cody error of flipping the CaptionRow versions. Fixed %2F instead of / in URLs. Added themes by id to menu for macros. Tweaked tutorial layout (added arrow for section toggle). Added dump theme ids to menu. Added show/hide for left rail widgets to menu. Mostly fixed no-drop for tutorial cells, but some nav actions replace it with regular hand, but cells are still locked to KEEP anyway. Made Instrument Captions have background colors for Observer and Listener--mostly black but subtly green and blue.  Regular is pure black now.
+- 5fb381b **2026-07-22** Updated lockKeep in presentation.js and infinite-neck.js so that if tutorial.mode==strict, then keep button stays selected across navigation actions.
+- 95039c7 **2026-07-22** Keep, keyboard shortcut filtering, and chrome removal and reset are now working via resetTutorialChrome().
+- ab8b393 **2026-07-21** Sprint 138 basically working.  Looping tutorial buttons aren't getting all the broadcasts, so they lose captions when the section rebuilds the tutorial prompt area.  Chrome not removed, keyboard shortcuts not removed.  No splash screen.
+- 8a11334 **2026-07-18** Ready for Iteration 4 Implementation
+- 1203801 **2026-07-17** Preparing for Iteration 4.  Tutorial Song in place.
+- 815ebaf **2026-07-17** Building tutorials
+- f61d852 **2026-07-17** Fixed bug where Fingering didn't respect font size when a recordedNote, and no Fingerings were respecting hides, per comment, which Cody fixed.
+- afcb093 **2026-07-17** Building tutorials
+- 1594219 **2026-07-17** Added one-string guitar
+- ba8e7b1 **2026-07-17** fixed bad link
+- f4b4e3d **2026-07-16** Putting stub prompts files in for the course outline songs.
+- ba7fa37 **2026-07-16** working on it4
+- 4fb4c21 **2026-07-15** Ready for It3
+- 4566225 **2026-07-14** got rid of splash animation
+- 912a97c **2026-07-14** 138 it2 implementation plan done
+- df685d4 **2026-07-13** Ready for It2
+- 971e5f7 **2026-07-13** Ready for Iteration 2
+- 4166bcf **2026-07-11** Preparing for sprint-138-tutorial-mode; one small change to key-handlers to add AddBeat.
+- 535aaa9 **2026-07-10** Added tonal plugin actions: prinnt chord, print mode.
+- 66a7886 **2026-07-10** Added note1 to root in addition to already having noteRoot
+- d400fa3 **2026-07-09** Fixing FillPlugin
+- 24bf56a **2026-07-08** Added song to show natural minor against ebony/ivory
+- 16326a5 **2026-07-07** Brought Info into update with "lines"
+- 75593e6 **2026-07-07** Fixed Info in both songs
+- d6c2ccf **2026-07-07** switched from <menu> to <cmd-line>
+- 5378f70 **2026-07-07** Added helpfile link to songs Info page.  Changed kbd to menu.
+- aa5ef43 **2026-07-07** Swapped <kbd> and <menu> in Info editing.  Added more song library help notes.
+- 95f23d6 **2026-07-06** updated Info
+- b8b339e **2026-07-06** Added song library instructions to help, and updated LooperLight images.
+- 2a9c27c **2026-07-06** Help for fragments updated
+- 8786185 **2026-07-06** added URL parameter handling, and sanitizer allowance of, opening a song by URL, and pasting a song like like this in Info.
+- 456874b **2026-07-06** Updated all to 60BPM, all these now have Info.lines[] array instead of single line.
+- f041bd2 **2026-07-06** Changed Info to be array of string lines instead of one string with linefeed chars.
+- 0ee099b **2026-07-05** Condenscing songs into multi-instrument flavors with macros to turn instruments on and show them, and wire to plugins.  Moved single-instrument versions to _trash for now.
+- 9b703eb **2026-07-05** Cleaned of old notes, Cleared, Reset.
+- 7cfd6ea **2026-07-05** wired new /fptgri into key-handlers.js, fixed pantatonics song to actually use this new command in a macro for P48 only.
+- b90c4a4 **2026-07-05** added /fpfgri for example, but to all graveyard raise... now they all support raise by stable id.  Also, added superlink-style links to Info for pentatonics-7-m-V7-in-6-keys-with-fill-ALL.json so it could run with selected instruments AND set the chord/mode raise.
+- 8b608e7 **2026-07-04** Added basic Macros help
+- b881ae3 **2026-07-04** Added more multi-Instrument action to songs using macros.
+- 3682177 **2026-07-04** Fixed some keymappings.  Added screenshot for DisplayOptions-from-other-pages.png
+- 318d1a2 **2026-07-03** Added Event Wiring, Observer, Listener, Roles, and color-scheme examples.  Reordered main sections under File.
+- ebf4661 **2026-07-03** Cleaned up File Info help.
+- 70ad779 **2026-07-03** Made name-that-note-bass-ALL.json the official song.
+- 1a9cdec **2026-07-03** Obviated by name-that-note-bass-ALL.json
+- a225baa **2026-07-03** sprint-137 Iteration 2 complete.
+- 2f0fb3c **2026-07-03** Sprint-137 Iteration 1 complete.
+- a09681c **2026-07-03** More options commented on.
+- abba0c2 **2026-07-03** Ready for 137 implementation.
+- 010c737 **2026-07-03** sprint-137 opened.
+- 6637ece **2026-07-02** real file is tunings.js, this was for validation at some point, no longer needed.
+- 9eebab6 **2026-07-02** Cleaned up Song Library intro. Fixed broken tests.
+- afb4df6 **2026-07-02** Added chartreuse to changed properties, inputs, and outputs in Plugin Audit.
+- 9309ebe **2026-07-02** Removed PianoSkeuomorphic as an actual Tuning, because now it is a behavior based on the PianoSkeuo checkbox.  Now Piano is the base Piano tuning which can be skeuo'd.
+- 5aedc56 **2026-07-02** Tweaking captions in new Role borders with padding and margins
+- e95663c **2026-07-02** Iteraiton 5 implemented.
+- eb18e19 **2026-07-02** Next iteration
+- 6374762 **2026-07-01** Added badges to File save as area.
+- 3f2ee4e **2026-07-01** 134-it4 implemented
+- 7e1a058 **2026-07-01** Ready for Iteration 4 Design
+- c2eecb4 **2026-07-01** Updated visibility
+- 1b77da4 **2026-07-01** Moved relativeSection down below REC light in LooperLight.  Tweaked Song Library badges CSS.  Removed obviated directory ./css/ from build.  Defaulted row height to 30.
+- 79fae9d **2026-07-01** v2.1-beta-8
+
+
 ### 20260701
 
 Tag: v2.1-beta-8

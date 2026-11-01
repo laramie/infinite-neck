@@ -1,5 +1,7 @@
 import { jest } from '@jest/globals';
 import {
+    classifyMacroLine,
+    expandMacroLine,
     executeMacroLine,
     executeMacroLines,
     getSongMacroIds,
@@ -42,7 +44,14 @@ describe('MacroExecutor', () => {
     });
 
     test('normalizeMacroLines trims lines and removes blanks', () => {
-        expect(normalizeMacroLines('  /a  \n\n /b 1 \n')).toEqual(['/a', '/b 1']);
+        expect(normalizeMacroLines('  /a  \n\n /b 1 \n')).toEqual(['  /a  ', '', ' /b 1 ', '']);
+    });
+
+    test('classifyMacroLine recognizes blank, comment, and command lines', () => {
+        expect(classifyMacroLine('')).toBe('blank');
+        expect(classifyMacroLine('   ')).toBe('blank');
+        expect(classifyMacroLine('  # comment')).toBe('comment');
+        expect(classifyMacroLine('/a')).toBe('command');
     });
 
     test('validateMacroId accepts conservative ids', () => {
@@ -56,7 +65,33 @@ describe('MacroExecutor', () => {
         const song = {};
         upsertSongMacro(song, 'macro1', [' /a ', '', '/b true']);
         expect(getSongMacroIds(song)).toEqual(['macro1']);
-        expect(song.macros.macro1.lines).toEqual(['/a', '/b true']);
+        expect(song.macros.macro1.lines).toEqual([' /a ', '', '/b true']);
+    });
+
+    test('validateMacroLines skips blank and comment lines', () => {
+        const result = validateMacroLines(['', ' # note', '/ok true']);
+        expect(result.valid).toBe(true);
+        expect(result.errors).toEqual([]);
+    });
+
+    test('validateMacroLines allows JSON templates to be validated at runtime', () => {
+        const result = validateMacroLines(['/x {"beats": ${beats}}']);
+        expect(result.valid).toBe(true);
+        expect(result.errors).toEqual([]);
+    });
+
+    test('expandMacroLine expands values and preserves escaped templates', () => {
+        const resolved = expandMacroLine('/sc "${currentSectionCardinal} \\${sectionCount}"', (name) => {
+            if (name === 'currentSectionCardinal') {
+                return 3;
+            }
+            return undefined;
+        });
+        expect(resolved).toBe('/sc "3 ${sectionCount}"');
+    });
+
+    test('expandMacroLine throws for unknown values', () => {
+        expect(() => expandMacroLine('/x ${unknown}', () => undefined)).toThrow('Unknown expansion name: unknown');
     });
 
     test('moveSongMacro reorders macros using 1-based destinations', () => {
@@ -116,6 +151,20 @@ describe('MacroExecutor', () => {
         const result = executeMacroLines(['/a', '/b', '/a'], { rootMenu, actionRunner });
         expect(result.ok).toBe(false);
         expect(result.failedLineNumber).toBe(2);
+        expect(actionRunner).toHaveBeenCalledTimes(1);
+    });
+
+    test('executeMacroLines silently skips blanks and comments', () => {
+        const rootMenu = {
+            children: [
+                { trigger: 'a', action: 'a' }
+            ]
+        };
+        const actionRunner = jest.fn(() => ({ result: 'ok' }));
+        const result = executeMacroLines(['', ' # note', '/a'], { rootMenu, actionRunner, verbose: true, log: jest.fn() });
+        expect(result.ok).toBe(true);
+        expect(result.results).toHaveLength(1);
+        expect(result.results[0].lineNumber).toBe(3);
         expect(actionRunner).toHaveBeenCalledTimes(1);
     });
 

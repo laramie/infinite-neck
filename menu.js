@@ -102,6 +102,103 @@ export var gMenuFile =    {
             "id": "bpm"
           }
         },
+
+        {
+          "caption": "<b>k</b>eys",
+          "trigger": "k",
+          "children": [
+            {
+              "caption": "<b>s</b>harps (default)",
+              "trigger": "s",
+              "action": "setSongSharps"
+            },
+            {
+              "caption": "<b>f</b>lats (default)",
+              "trigger": "f",
+              "action": "setSongFlats"
+            },
+            {
+              "name": "key",
+              "caption": "<b>k</b>ey (default)",
+              "trigger": "k",
+              "children": [
+                {
+                "caption": "<b>w</b>hite keys",
+                "trigger": "w",
+                "children": [
+                  {
+                  "caption": "<b>a</b>",
+                  "trigger": "a",
+                  "action": "setSongKeyWhite"        
+                  },
+                  {
+                  "caption": "<b>b</b>",
+                  "trigger": "b",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>c</b>",
+                  "trigger": "c",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>d</b>",
+                  "trigger": "d",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>e</b>",
+                  "trigger": "e",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>f</b>",
+                  "trigger": "f",
+                  "action": "setSongKeyWhite"
+                  },
+                  {
+                  "caption": "<b>g</b>",
+                  "trigger": "g",
+                  "action": "setSongKeyWhite"
+                  }
+                ]
+                },
+                {
+                "caption": "<b>b</b>lack keys",
+                "trigger": "b",
+                "children": [
+                  {
+                  "caption": "<b>a</b>&flat;",
+                  "trigger": "a",
+                  "action": "setSongKeyBlack"    
+                  },
+                  {
+                  "caption": "<b>b</b>&flat;",
+                  "trigger": "b",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>d</b>&flat;",
+                  "trigger": "d",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>e</b>&flat;",
+                  "trigger": "e",
+                  "action": "setSongKeyBlack"
+                  },
+                  {
+                  "caption": "<b>g</b>&flat;",
+                  "trigger": "g",
+                  "action": "setSongKeyBlack"
+                  }
+                ]
+                }
+              ]
+            }
+          ]
+        },
+
         {
           "caption": "<b>g</b>raveyard",
           "trigger": "g",
@@ -410,6 +507,18 @@ export var gMenuFile =    {
               }
             },
             {
+              "name": "macroCall",
+              "caption": "<b>c</b>all",
+              "trigger": "c",
+              "action": "macroCall",
+              "input": {
+                "type": "input",
+                "caption": "{\"macro\":\"id\",\"args\":{...}}",
+                "datatype": "json",
+                "id": "call"
+              }
+            },
+            {
               "name": "macroDelete",
               "caption": "<b>d</b>elete",
               "trigger": "d",
@@ -478,6 +587,25 @@ export var gMenuFile =    {
               "caption": "<b>m</b>ove",
               "trigger": "m",
               "runtimeChildren": "macroMoveNumber"
+            },
+            {
+               "name": "macroList",
+               "caption": "<b>l</b>ist all",
+               "trigger": "l",
+               "action": "macroListAll",
+               "popOnBang": false
+            },
+            {
+              "name": "macroPrintf",
+              "caption": "<b>p</b>rintf",
+              "trigger": "p",
+              "action": "macroLog",
+              "input": {
+                "type": "input",
+                "caption": "\"message\"",
+                "datatype": "string",
+                "id": "message"
+              }
             },
             {
               "name": "macroRun",
@@ -1103,21 +1231,51 @@ export var gMenuFile =    {
               "action": "hideFingering"
             },
             {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "hideQuickMenu"
+            },
+            {
               "caption": "<b>w</b>idgets",
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption left",
+                    "caption": "<b>c</b>aption row",
                     "trigger": "c",
-                    "action": "hideCaptionLeft"
+                    "action": "hideCaptionRow"
                   },
                   {
-                    "caption": "<b>s</b>ection status left",
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "hideSongTitle"
+                  },
+                  {
+                    "caption": "<b>s</b>ong widgets",
                     "trigger": "s",
-                    "action": "hideSectionStatusLeft"
+                    "action": "hideSongWidgets"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "hideWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "hideInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "hideLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "hideRealtimeClock"
                   }
               ]
-            }
+            }            
           ]
         },
         {
@@ -1150,18 +1308,59 @@ export var gMenuFile =    {
               "action": "showFingering"
             },
             {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "showQuickMenu"
+            },
+            {
               "caption": "<b>w</b>idgets",
               "trigger": "w",
               "children": [
                   {
-                    "caption": "<b>c</b>aption left",
+                    "caption": "<b>c</b>aption row",
                     "trigger": "c",
-                    "action": "showCaptionLeft"
+                    "action": "showCaptionRow"
                   },
                   {
-                    "caption": "<b>s</b>ection status left",
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "showSongTitle"
+                  },
+                  {
+                    "caption": "<b>s</b>ong widgets",
                     "trigger": "s",
-                    "action": "showSectionStatusLeft"
+                    "action": "showSongWidgets"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "showWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "showInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "showLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "showRealtimeClock"
+                  }
+              ]
+            },
+            {
+              "caption": "<b>c</b>alculators",
+              "trigger": "c",
+              "children": [
+                  {
+                    "caption": "<b>p</b>erfect 4ths",
+                    "trigger": "p",
+                    "action": "showPerfect4thsCalculator"
                   }
               ]
             }
@@ -1175,6 +1374,11 @@ export var gMenuFile =    {
               "caption": "f<b>u</b>llscreen",
               "trigger": "u",
               "action": "toggleFullscreen"
+            },
+            {
+              "caption": "<b>l</b>eft rail layout",
+              "trigger": "l",
+              "action": "toggleCaptionLooperLayout"
             },
             {
               "caption": "<b>a</b>ll note names",
@@ -1200,6 +1404,52 @@ export var gMenuFile =    {
               "caption": "<b>f</b>ingering",
               "trigger": "f",
               "action": "toggleFingering"
+            },
+            {
+              "caption": "<b>q</b>uick menu",
+              "trigger": "q",
+              "action": "toggleQuickMenu"
+            },
+            {
+              "caption": "<b>w</b>idgets",
+              "trigger": "w",
+              "children": [
+                  {
+                    "caption": "<b>c</b>aption row",
+                    "trigger": "c",
+                    "action": "toggleCaptionRow"
+                  },
+                  {
+                    "caption": "<b>t</b>itle",
+                    "trigger": "t",
+                    "action": "toggleSongTitle"
+                  },
+                  {
+                    "caption": "<b>s</b>ong widgets",
+                    "trigger": "s",
+                    "action": "toggleSongWidgets"
+                  },
+                  {
+                    "caption": "<b>w</b>idget row",
+                    "trigger": "w",
+                    "action": "toggleWidgetRow"
+                  },
+                  {
+                    "caption": "<b>i</b>nstrument captions",
+                    "trigger": "i",
+                    "action": "toggleInstrumentCaptions"
+                  },
+                  {
+                    "caption": "<b>l</b>eft rail",
+                    "trigger": "l",
+                    "action": "toggleLeftRail"
+                  },
+                  {
+                    "caption": "<b>r</b>eal-time clock",
+                    "trigger": "r",
+                    "action": "toggleRealtimeClock"
+                  }
+              ]
             }
           ]
         },
@@ -1269,6 +1519,11 @@ export var gMenuFile =    {
               "caption": "song <b>f</b>ile format",
               "trigger": "f",
               "action": "showViewDiagnosticsSongFileFormat"
+            },
+            {
+              "caption": "song <b>F</b>ile format HTML",
+              "trigger": "F",
+              "action": "showViewDiagnosticsSongFileFormatHTML"
             },
             {
               "caption": "<b>s</b>ong model",
@@ -1347,6 +1602,11 @@ export var gMenuFile =    {
               "action": "dockAllDockables"
             },
             {
+              "caption": "<b>r</b>e-float all",
+              "trigger": "r",
+              "action": "refloatAllDockables"
+            },
+            {
               "caption": "<b>g</b>ather",
               "trigger": "g",
               "action": "gatherAllDockables"
@@ -1377,6 +1637,13 @@ export var gMenuFile =    {
               "preserveMenuStack": true
             },
             {
+              "caption": "<b>u</b>se caption for tutorial",
+              "trigger": "u",
+              "action": "useCaptionForSectionCaptionAction",
+              "preserveMenuStack": true
+              
+            },
+            {
               "caption": "<b>t</b>utorial mode",
               "trigger": "t",
               "children": [
@@ -1404,12 +1671,18 @@ export var gMenuFile =    {
               ]
             },
             {
-              "caption": "<b>s</b>ave Display Options [${displayOptionsSaveState}]",
+              "caption": "<b>s</b>ave Diff Display Options [${displayOptionsSaveState}]",
               "trigger": "s",
               "action": "saveViewDisplayOptions",
               "vars": [
                 "displayOptionsSaveState"
               ],
+              "preserveMenuStack": true
+            },
+            {
+              "caption": "save <b>a</b>ll Display Options (no confirmation)",
+              "trigger": "a",
+              "action": "saveViewDisplayOptionsAll",
               "preserveMenuStack": true
             },
             {
@@ -1420,6 +1693,141 @@ export var gMenuFile =    {
                 "displayOptionsClearState"
               ],
               "preserveMenuStack": true
+            },
+            {
+              "caption": "<b>m</b>atrix",
+              "trigger": "m",
+              "children": [
+                {
+                  "caption": "<b>c</b>lear cell",
+                  "trigger": "c",
+                  "action": "matrixClearCell",
+                  "preserveMenuStack": true,
+                  "input": {
+                    "type": "input",
+                    "caption": "section-number,key",
+                    "datatype": "string",
+                    "id": "sectionAndKey"
+                  }
+                },
+                {
+                  "caption": "<b>g</b>ate",
+                  "trigger": "g",
+                  "children": [
+                    {
+                      "caption": "<b>a</b>dd",
+                      "trigger": "a",
+                      "children": [
+                        {
+                          "caption": "<b>k</b>ey (column)",
+                          "trigger": "k",
+                          "action": "matrixGateKey",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "key,value  (value: read-blocked | write-blocked | blocked)",
+                            "datatype": "string",
+                            "id": "keyAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>s</b>ection (row)",
+                          "trigger": "s",
+                          "action": "matrixGateSection",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number[,value]",
+                            "datatype": "string",
+                            "id": "sectionAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>c</b>ell",
+                          "trigger": "c",
+                          "action": "matrixGateCell",
+                          "on": true,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number,key[,value]",
+                            "datatype": "string",
+                            "id": "sectionKeyAndValue"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "caption": "<b>d</b>elete",
+                      "trigger": "d",
+                      "children": [
+                        {
+                          "caption": "<b>k</b>ey (column)",
+                          "trigger": "k",
+                          "action": "matrixGateKey",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "key[,value]  (no value removes both gates)",
+                            "datatype": "string",
+                            "id": "keyAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>s</b>ection (row)",
+                          "trigger": "s",
+                          "action": "matrixGateSection",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number[,value]",
+                            "datatype": "string",
+                            "id": "sectionAndValue"
+                          }
+                        },
+                        {
+                          "caption": "<b>c</b>ell",
+                          "trigger": "c",
+                          "action": "matrixGateCell",
+                          "on": false,
+                          "preserveMenuStack": true,
+                          "input": {
+                            "type": "input",
+                            "caption": "section-number,key[,value]",
+                            "datatype": "string",
+                            "id": "sectionKeyAndValue"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "caption": "<b>u</b>ndo last Save/Clear",
+                  "trigger": "u",
+                  "action": "matrixUndo",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>o</b>pen Matrix",
+                  "trigger": "o",
+                  "action": "matrixOpen",
+                  "preserveMenuStack": true
+                },
+                {
+                  "caption": "<b>s</b>how messages [${displayOptionsShowMessagesState}]",
+                  "trigger": "s",
+                  "action": "toggleDisplayOptionsShowMessages",
+                  "vars": [
+                    "displayOptionsShowMessagesState"
+                  ],
+                  "preserveMenuStack": true
+                }
+              ]
             },
             {
               "caption": "<b>v</b>iew DisplayOptions",
@@ -1823,6 +2231,61 @@ export var gMenuFile =    {
                 {
                   "caption": "<b>2</b> - Lead 2",
                   "trigger": "2"
+                }
+              ]
+            },
+            {
+              "caption": "<b>n</b>ote (degree)",
+              "trigger": "n",
+              "action": "selectRoleNote",
+              "children": [
+                {
+                  "caption": "<b>1</b> (1)",
+                  "trigger": "1"
+                },
+                {
+                  "caption": "<b>t</b>au (2)",
+                  "trigger": "t"
+                },
+                {
+                  "caption": "<b>2</b> (3)",
+                  "trigger": "2"
+                },
+                {
+                  "caption": "<b>m</b>i (4)",
+                  "trigger": "m"
+                },
+                {
+                  "caption": "<b>3</b> (5)",
+                  "trigger": "3"
+                },
+                {
+                  "caption": "<b>4</b> (6)",
+                  "trigger": "4"
+                },
+                {
+                  "caption": "t<b>r</b>i (7)",
+                  "trigger": "r"
+                },
+                {
+                  "caption": "<b>5</b> (8)",
+                  "trigger": "5"
+                },
+                {
+                  "caption": "<b>s</b>a (9)",
+                  "trigger": "s"
+                },
+                {
+                  "caption": "<b>6</b> (10)",
+                  "trigger": "6"
+                },
+                {
+                  "caption": "<b>d</b>om (11)",
+                  "trigger": "d"
+                },
+                {
+                  "caption": "<b>7</b> (12)",
+                  "trigger": "7"
                 }
               ]
             }

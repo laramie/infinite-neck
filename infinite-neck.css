@@ -10,7 +10,7 @@
    *       --diamonds-color: pink;
    *       --double-diamonds-color: aqua;
    *       --diamonds-background-color: transparent;
-   *       --diamonds-size: 1em;
+   *       --diamonds-size: 1rem;  (rem, not em: must stay independent of UI/note font-size scaling, only Theme-driven)
    *       --note-white-shadow-color: black;
    *       --note-black-shadow-color: white;
    *       --instrument-margin-tb: 4em;             now just bottom, not top.
@@ -126,7 +126,7 @@ table {
   vertical-align: bottom;
   background-color: #ddd;
 }
-.vertical-header span {
+.vertical-header > span {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
@@ -196,6 +196,15 @@ table {
 
 /***************************** Buttons *****************************/
 
+.grayed-out-button {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.shadowButton {
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
+}
 
 .BtnPunchedIn {
     box-shadow: inset 2px 2px 5px 2px #555;
@@ -228,6 +237,10 @@ table {
     border-radius: 4px;
     display: inline-block;
     padding: 2px;
+}
+.BtnPunchedOutLighter {
+  background-color: #314a05 !important;
+  color:  #c3fb63 !important;
 }
 
 .MainMenuTabBtn, .MenuButton, .MenuTabBtn {
@@ -326,7 +339,9 @@ table {
 }
 
 #divQuick {
-    margin-left: 4em;
+    margin: 0;
+    margin-left: 2em;
+
 }
 
 #divControls {
@@ -355,6 +370,7 @@ table {
     white-space: pre;
     margin: 0.2em;
     margin-bottom: 12em;
+    overflow: scroll;
 }
 
 #tblUserLog {
@@ -393,14 +409,20 @@ table {
 }
 
 .safeButton{
-    background-color: lightgreen !important;
+    background-color: #6faa09 !important;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 .riskyButton {
     background-color: pink !important;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 .riskyButtonActionRequired {
     background-color: #f836f8 !important;
     font-weight: bold;
+    box-shadow: 5px 2px 4px gray;
+    margin-right: 0.2em;
 }
 
 /***************************** View *****************************/
@@ -422,6 +444,7 @@ table.viewControls th {
     flex-wrap: wrap;     /* Allows cards to move to the next row */
     gap: 10px;           /* Sets spacing between cards */
     justify-content: space-around; 
+    max-width: 98%;
 }
 
 .divViewCard {
@@ -463,11 +486,36 @@ table.viewControls th {
 #divViewDisplayOptions {
     padding: 2em;
 }
+#btnToggleDisplayOptionsTips {
+    background-color: #b9f74d;
+    margin-block: 0.8em;
+    font-size: 80%;
+    box-shadow: 5px 2px 4px black;
+    border-radius: 2px;
+    border: 1px solid gray;
+    transition: all 0.1s ease;
+}
+#btnToggleDisplayOptionsTips:active {
+    box-shadow: 5px 1px 3px rgb(31, 62, 0);
+    transform: translateY(3px); /* Move the button down slightly */
+}
+#displayOptionsTips {
+    border: 1px solid gray;
+    margin: 0.2em;
+    padding: 1em;
+}
+.displayOptionsSpecialCheckbox {
+    margin-block: 0.6em;
+}
 .viewDisplayOptionsReadOnly {
   /* Read-only display of controls that are _not_ on the View page. */
-  padding-top: 1em;
+  padding-block: 0.2em;
   padding-left: 0;
   font-size: 110%;
+}
+#viewDisplayOptionAutoColorHighlightValue {
+    font-weight: 600;
+    color: brown;
 }
 #viewDisplayOptionAutoColorValue {
     font-weight: 600;
@@ -596,15 +644,71 @@ table.viewControls th {
 #myTuningsTable th {
     font-size:  90%;
     height: 3em;
+    border: 1px solid gray;
 }
 .TuningsTableSkinny{
     max-width: 6em;
-
 }
 #allTuningsTable tr:not(:first-child):hover,
 #myTuningsTable tr:not(:first-child):hover {
     background-color: lightgreen;
 }
+
+/* Unified click-to-edit fields on MyTunings (Tuning caption, MIDI, BanjoNut, Special Rows).
+   Display is a bordered span; clicking it swaps in a text input (blur/Enter commits,
+   Escape cancels) -- see TuningsLibrary.js formatTuningInlineEditor()/bindFormTuningsEvents(). */
+#myTuningsTable .tuningInlineField {
+    --tuning-inline-edit-width: 25ch;
+    display: inline-block;
+    vertical-align: middle;
+}
+#myTuningsTable .tuningInlineFieldDisplay {
+    display: inline-block;
+    border: 1px solid #6faa09;
+    border-radius: 3px;
+    padding: 1px 4px;
+    cursor: pointer;
+    min-width: 2em;
+    max-width: 20em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+#myTuningsTable .tuningInlineFieldDisplay:empty::before {
+    content: '\00a0\00a0\00a0\00a0';
+}
+#myTuningsTable .tuningInlineFieldDisplay:hover,
+#myTuningsTable .tuningInlineFieldDisplay:focus {
+    background-color: #eaffda;
+    outline: none;
+}
+#myTuningsTable .tuningInlineFieldInput {
+    width: var(--tuning-inline-edit-width);
+    border: 1px solid #6faa09;
+    border-radius: 3px;
+    padding: 1px 4px;
+    font: inherit;
+}
+#myTuningsTable .tuningInlineFieldDisplay[hidden],
+#myTuningsTable .tuningInlineFieldInput[hidden] {
+    display: none !important;
+}
+
+
+#allTuningsTable .faceDiamondsSpanTH,
+#myTuningsTable  .faceDiamondsSpanTH {
+    background-color: rgb(240, 223, 75);
+}
+#allTuningsTable .edgeDiamondsSpanTH,
+#myTuningsTable  .edgeDiamondsSpanTH {
+    background-color: rgb(240, 177, 75);
+}
+#allTuningsTable .padControllerSpanTH,
+#myTuningsTable  .padControllerSpanTH {
+    background-color: rgb(240, 125, 75);
+}
+
 .btnRefreshInMemGate {
     padding: 0;
     padding-right: 0.4em;
@@ -720,7 +824,7 @@ table.viewControls th {
     padding-left: 3pt;
     display: inline-block;
     border: 1px solid gray;
-    border-radius: 20%;
+    border-radius: 0.3em;
     background-color: white; 
     box-shadow: 1pt 1pt 2pt 0.5pt gray;
 }
@@ -757,9 +861,88 @@ table.viewControls th {
 /***************************** key-handlers: display-options *****************************/
 .tblDisplayOptions {
     border: 2px solid black;
+    border-spacing: 5px;
 }
 .tblDisplayOptions th {
-    border: 1px solid gray;
+    border: 1px solid green;
+    background-color: rgb(250, 235, 94);
+}
+.tblDisplayOptions td {
+    text-align: center;
+    padding: 4px;
+}
+
+/* Sprint 148 it4: Matrix gates in /vdd: r = read-blocked, w = write-blocked */
+.tblDisplayOptions .gateRead {
+    color: rgb(166, 64, 0) !important; /* wins over cell-level */
+    outline: 4px solid rgb(252, 97, 1) !important; /* This wins over cell-level, until this class is removed by the UI when the User wants to inspecpt cell-level only. */
+    outline-offset: -4px;
+    text-decoration: line-through rgb(252, 97, 1) !important;  /* wins over cell-level */
+}
+.tblDisplayOptions .gateWrite {
+    box-shadow: inset 0 0 5px 6px rgb(0, 50, 251);
+}
+.tblDisplayOptions .gateMark {
+    font-size: 70%;
+    color: #444;
+    margin-left: 0.2em;
+}
+/* the key header's name and its adapter hint (same markup as the interactive Matrix): the rotated outer span is
+   .vertical-header > span; the hint is a second line, which in vertical text sits beside the name. */
+.tblDisplayOptions .vertical-header > span {
+    display: inline-block;
+}
+.tblDisplayOptions .dmKeyName,
+.tblDisplayOptions .dmKeyHint {
+    display: block;
+}
+.tblDisplayOptions .dmKeyHint {
+    font-size: 75%;
+    color: #444;
+}
+.tblDisplayOptions .cellGateRead {
+    /* Since row or column read-block and write-block, don't put !important here,
+       rather let it be overridden, because when those classes are turned off in the Matrix,
+       the cell-level blocks will show through. */
+    color: rgb(76, 0, 0);
+    outline: 4px solid red; 
+    outline-offset: -4px;
+    text-decoration: line-through red;
+    background-image: 
+        repeating-linear-gradient(135deg, 
+            red, 
+            red 1px, 
+            transparent 1px, 
+            transparent 11px
+        );
+}
+.tblDisplayOptions .cellGateWrite {
+    outline: 4px solid blue; 
+    outline-offset: -4px;
+    background-image: 
+        repeating-linear-gradient(45deg, 
+            blue, 
+            blue 1px, 
+            transparent 1px, 
+            transparent 11px
+        );
+}
+.tblDisplayOptions .cellGateReadWrite {
+    outline: 4px solid red; 
+    outline-offset: -4px;
+    background-image: 
+        repeating-linear-gradient(135deg, 
+            red, 
+            red 1px, 
+            transparent 1px, 
+            transparent 11px
+        ),
+        repeating-linear-gradient(45deg, 
+            blue, 
+            blue 1px, 
+            transparent 1px, 
+            transparent 11px
+        );
 }
 
 /***************************** Transport *****************************/
@@ -831,9 +1014,14 @@ table.viewControls th {
 #btnLoopBeats {
     border: 1px solid green;
 }
+#quickLoopToggle.ButtonOn,
+#quickBeatLoopToggle.ButtonOn,
 #btnLoopSections.ButtonOn,
 #btnLoopBeats.ButtonOn {
     background-color: magenta !important;
+}
+#realtimeTickStart { /* in #divQuick */
+    color: cyan;
 }
 .LooperLight {
     border: 2px solid green; 
@@ -874,7 +1062,21 @@ table.viewControls th {
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
+    
+}
+.SongTitleLeadSheet .lblSectionChartChord {
     min-width: 4.5em;
+}
+.SongTitleLeadSheet .lblSectionMode {
+    min-width: 7em;
+}
+#lblSongWidgets .lblSectionChartChord {
+    font-size: 140%;
+    vertical-align: text-top;
+}
+#lblSongWidgets .lblSectionMode {
+    font-size: 140%;
+    vertical-align: text-top;
 }
 .lblSectionMode {
     display: inline-block;
@@ -883,7 +1085,6 @@ table.viewControls th {
     font-weight: 200;
     font-size:  100%;
     padding-right: 0.4em;
-    min-width: 7em;
 }
 .lblSectionNumber {
     padding: 0.2em;
@@ -1114,6 +1315,7 @@ td.fillStringRange {
     font-weight: 400;
     margin-left: 2em;
     padding: 0.5em;
+    white-space: nowrap;
 }
 
 
@@ -1290,10 +1492,26 @@ input:read-only,textarea:read-only {
 
 /***************************** Instrument / NoteTable / FretTable *****************************/
 
+/* Sprint 146 (table-themes): these rules used to be injected as literal computed values
+   directly by themeFunctions.js's theme(), document-wide, on every render. They are now
+   plain var()-driven CSS with the current Default theme's value as fallback, which is what
+   makes per-table (per-instrument) theming possible: TableBuilder.js can set any of these
+   custom properties directly on one <table class="fretTable"> element to override the
+   :root default for just that instrument, using the same mechanism already proven for
+   --face-diamonds-left/--stringDividerHeight. See themeFunctions.js's theme() for the
+   corresponding :root rule() calls.
+   NOTE: .instrumentBackground's own var(--instrument-background-color, ...) rule lives in
+   instrument.css (it already had a real, more complete rule block for this selector, found
+   during the Phase 5 bugfix -- a duplicate rule here would be a silently-dead no-op, since
+   instrument.css loads after this file and wins on equal specificity). */
+table.fretTable {
+    border-spacing: var(--cell-spacing, 6pt);
+}
+
 .diamondsPositionCurrent {
     background-color: chartreuse !important;
 }
-.diamondsRow td {
+.diamondsRow td.diamonds {
     background-color: var(--diamonds-background-color);
     font-size: var(--diamonds-size);
 }
@@ -1301,7 +1519,7 @@ input:read-only,textarea:read-only {
     background: none !important;
 }
 .diamondsPositionCurrent.diamondRowSupernut {
-    background-color: rgb(0, 224, 41) !important;
+    background-color: rgb(0, 224, 41, 0.4) !important;
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20px, var(--nut-gradient-color) 21px ) !important;
 }
 .diamonds {
@@ -1344,7 +1562,76 @@ small {
     display: none;
 }
 
-
+/* "Face" diamonds (sprint 145-face-diamonds): fret-position markers on the fretboard
+   face itself (as opposed to the separate .diamondsRow), for the same fret columns as
+   the tuning's diamonds/doubleDiamonds arrays. TableBuilder.js's buildNoteTable() adds
+   these classes to individual td.note cells based on the tuning's faceDiamondsStrings/
+   faceDoubleDiamondsStrings/faceTinyDiamondsStrings (zero-based string/row indices, same
+   convention as specialBackgroundIDRows). td.note already sets position:relative, so the
+   marker positions itself with a ::before pseudo-element anchored to the cell's bottom
+   edge (a diamond on the bottom of a cell reads as a marker on the fret boundary below
+   that string; there is deliberately no top-edge variant, since a mark on the bottom of
+   the last string is the lowest meaningful position). Horizontal placement is per-tuning
+   (--face-diamonds-left/--face-double-diamonds-left/--face-tiny-diamonds-left, set as
+   inline CSS vars on the table by buildNoteTable()); color/size are Theme-driven
+   (--face-diamonds-color/--face-diamonds-size/--face-double-diamonds-color/
+   --face-double-diamonds-size/--face-tiny-diamonds-size, see themeFunctions.js's
+   theme()). FaceTinyDiamonds intentionally reuses FaceDiamonds' color, not its own.
+   All three are additionally nudged down by half of --cell-spacing (the
+   dropDownCellSpacing theme control) on top of the usual -50%/50% centering, so the
+   marker visually sits within the cell's spacing gap rather than dead-center on the
+   fret boundary. This vertical nudge is safe because every td.note in a row shares the
+   same fixed height regardless of fret/column.
+   IMPORTANT: there is deliberately NO horizontal (--cell-spacing-based) nudge here, even
+   though one existed in an earlier version. `left: 50%`/`100%` above is a PERCENTAGE of
+   THIS cell's own width, which already self-scales correctly no matter how wide the
+   column is. But --cell-spacing is a single absolute length shared by the whole table,
+   the same for every column; adding it via translateX() on top of that percentage-based
+   left mixes two different scales, so the SAME absolute nudge becomes a much bigger
+   fraction of a narrow column than a wide one. Since column widths shrink hard toward
+   higher frets under "Natural Fret Widths" (and any nudge grows even larger the higher
+   Cell Spacing is cranked), that old horizontal term made the marker visibly "creep"
+   rightward, worse at higher frets, worse still with Natural Fret Widths -- see
+   _doco/design/sprints/145-face-diamonds/ for the bugfix writeup. Keeping translateX at
+   a plain -50% (relative to the marker's OWN fixed box, not the cell) avoids any
+   cell-width dependency entirely, so there is nothing left to creep. */
+.faceDiamonds::before,
+.faceDoubleDiamonds::before,
+.faceTinyDiamonds::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    pointer-events: none;
+    transform: translate(-50%, calc(50% + (var(--cell-spacing, 0px) / 2))) rotate(45deg);
+}
+.faceDiamonds::before {
+    left: var(--face-diamonds-left, 50%);
+    width: var(--face-diamonds-size, 0.8rem);
+    height: var(--face-diamonds-size, 0.8rem);
+    background-color: var(--face-diamonds-color, pink);
+}
+.faceDoubleDiamonds::before {
+    left: var(--face-double-diamonds-left, 100%);
+    width: var(--face-double-diamonds-size, 0.8rem);
+    height: var(--face-double-diamonds-size, 0.8rem);
+    background-color: var(--face-double-diamonds-color, gold);
+}
+.faceTinyDiamonds::before {
+    left: var(--face-tiny-diamonds-left, 50%);
+    width: var(--face-tiny-diamonds-size, 0.35rem);
+    height: var(--face-tiny-diamonds-size, 0.35rem);
+    background-color: var(--face-diamonds-color, pink);
+}
+/* Global blanket toggle for the "*" key shortcut (see key-handlers.js), mirroring the
+   plain .diamondsRow.toggle() -- a display-only override that doesn't touch any
+   per-instrument showFaceDiamonds/tuning model state. ::before pseudo-elements can't be
+   jQuery .toggle()'d directly, so a body class flips them all off via CSS instead. */
+body.HideFaceDiamonds .faceDiamonds::before,
+body.HideFaceDiamonds .faceDoubleDiamonds::before,
+body.HideFaceDiamonds .faceTinyDiamonds::before {
+    display: none;
+}
 
 #EXAMPLECmdMenuOptionsTable  td:nth-child(2) {width: 100pt;}
 
@@ -1352,6 +1639,74 @@ small {
 
 
 
+/*****************************  Special handling of SongWidgets notesFunctionTable *****************************/
+.notesFunctionTable {
+  /* Merges cell borders and eliminates the default gap between cells */
+  border-collapse: collapse; 
+  margin-bottom: 0.3em;
+}
+
+.notesFunctionTable td {
+  border: 1px solid gray; 
+  margin: 0;
+  padding: 0;
+}
+
+.notesFunctionTable .functionRow td {
+    font-family: var(--td-note-font-family), sans-serif;
+    text-align: center;
+    font-size: 60%;
+    font-weight: bold;
+}
+
+.notesFunctionTable .notesRow td {
+    text-align: center;
+    font-size: 120%;
+    padding-inline: 0.05em; 
+}
+
+.notesFunctionTable .notesRow td.blackKey {
+    vertical-align: top;
+    padding-bottom: 0.3em;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.notesFunctionTable .notesRow td.whiteKey {
+    vertical-align: bottom;
+    padding-top: 0.3em;
+    padding-inline: 0.2em;
+    background-color: white;
+    color: brown;
+}
+
+.notesFunctionTable.relativeToLeadKey .notesRow td.blackKey {
+    vertical-align: top;
+    padding-bottom: 0.3em;
+    background-color: aqua;
+    color: black;
+    font-weight: bold;
+}
+
+.notesFunctionTable.relativeToLeadKey .notesRow td.whiteKey {
+    vertical-align: bottom;
+    padding-top: 0.3em;
+    padding-inline: 0.2em;
+    background-color: aqua;
+    color: rgb(149, 14, 14);
+}
+
+.notesFunctionTable em {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 0.5em;
+  width: 0.9em;       /* Force a narrow boundary container */
+  overflow: hidden;   /* Hide the extra glyph padding that spills over */
+  text-align: center; /* Center the symbol inside its new narrow container */
+  margin-right: -0.15em; 
+}
 /*****************************  Now all the display note cells *****************************/
 
 
@@ -1359,13 +1714,24 @@ small {
     background-color: black;
 }
 td.note small {
-    font-size: 0.55em;
-    padding: 0;
+    font-size: 0.5em;
+    padding: 0.2em; /*this is the space between a note letter and sharp or flat symbol*/
     margin: 0;
 }
+td.note em {
+  display: inline-block;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 0.5em;
+  width: 0.9em;       /* Force a narrow boundary container */
+  overflow: hidden;   /* Hide the extra glyph padding that spills over */
+  text-align: center; /* Center the symbol inside its new narrow container */
+  margin-right: -0.15em; 
+}
+
 
 .nut {
-    border: 2px solid brown;
+    border: 2px solid var(--nut-gradient-color, #331e01);
     border-right: 20px double brown;
     margin: 4px;
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--nut-gradient-color) 20.5px, var(--nut-gradient-color) 21px );
@@ -1381,6 +1747,17 @@ td.note small {
 }
 .noteHatchedRoot {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, var(--note-root-color) 20px, var(--note-root-color) 21px );
+}
+
+.noteHatchedRootPink {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 0, 255, 0.174) 4px, /* Soft fade-in */
+    rgba(251, 103, 251, 0.9) 8px,   /* Solid magenta core */
+    rgba(255, 0, 255, 0.174) 13px, /* Soft fade-out */
+    transparent 18px
+  );
 }
 .noteHatched2 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 10px, brown 10px, brown 14px );
@@ -1403,6 +1780,7 @@ td.note small {
 .noteHatched8 {
     background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, rgb(249, 201, 98) 20px, rgb(249, 201, 98) 21px );
 }
+
 td.note {
     /*  width:100%; No.  Makes the .Nut blow up and spread to the width of the screen minus other non-nut notes.*/
     height: 100%;
@@ -1412,6 +1790,9 @@ td.note {
     vertical-align: middle;
     font-family: var(--td-note-font-family), sans-serif;
     position: relative;
+    padding: var(--note-padding, 8pt);
+    border-radius: var(--note-radius, 20%);
+    corner-shape: var(--note-corner-shape, round);
       /* below 3 highlight is mushed.
                     * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
     /* LOL Best effect yet!   -webkit-transform: rotate(-90deg);   */
@@ -1455,13 +1836,13 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
                        * this is a driver of space for IvoryEbony display of noteWhiteKey and noteBlackKey.*/
         padding: 0;
         position: relative;  /* By taking 'relative' the position coordinates of children are relative to this div. */
-        border-radius: 10px;
+        border-radius: var(--named-note-radius, 16%);
         min-height: 20px;
         min-width: 20px;
 }
 .namedNote {
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
     display: block;
     height: 100%;
     width: 100%;
@@ -1471,7 +1852,7 @@ td.note.noteWhiteKey.specialRowBackgroundImg {
 
 .universalNamedNote {
     position: absolute;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
     display: none;
     height: 100%;
     width: 100%;
@@ -1491,6 +1872,17 @@ body.ShowAllNoteNames .universalNamedNote {
     color: var(--universal-note-black-key-color);
 }
 
+/* Sprint 149: hides only the baseline Nut label (the open-string note name that nut cells show
+   because they are excluded from .noteWhiteKey/.noteBlackKey, whose color is transparent).
+   A placed Named note has .NamedNoteActive and is left alone. So is a transient Named note shown
+   by the Arpeggio plugin (NoteTableController.js showNamedNoteAtCell(), which does not add
+   .NamedNoteActive but stamps data-transient-named-note-owner). The separate .universalNamedNote
+   lane is untouched, so body.ShowAllNoteNames still reveals the Nut labels. */
+body.HideNutNames td.nut .namedNote:not(.NamedNoteActive):not([data-transient-named-note-owner="ArpeggioPlugin"]),
+body.HideNutNames td.nutR .namedNote:not(.NamedNoteActive):not([data-transient-named-note-owner="ArpeggioPlugin"]) {
+    color: transparent;
+}
+
 
 .singleNote {
     /* these two lines from cellFn */
@@ -1499,7 +1891,8 @@ body.ShowAllNoteNames .universalNamedNote {
 
     display:none;
     z-index: 4;
-    border-radius: 10px;
+    border-radius: var(--named-note-radius, 16%);
+    border-top-left-radius: var(--singleNote-top-left-radius);
     /* make it a bit smaller to fit within NamedNote when they are both there, so highlights work better. */
     width: calc(100% - (2 * var(--single-note-shrink, 0)));
     height: calc(100% - (2 * var(--single-note-shrink, 0)));
@@ -1533,7 +1926,6 @@ body.ShowAllNoteNames .universalNamedNote {
     align-items: center;
     flex-grow: 1;
     font-size: 120%;
-    border: var(--debug-border) solid blue;
 }
 
 td.nut div.NoteActive .CenterCell {
@@ -1693,18 +2085,33 @@ td.nut div.NoteActive .CenterCell {
     background-color: black;
 }
 .noteBlackKey {
-    background-color: green;
-    color: green;
+    background-color: var(--note-black-key-color, #555);
+    color: transparent;
     box-shadow: 0 0 2pt 1pt cornflowerblue;
 }
 .noteWhiteKey {
-    background-color:white;
-    color: blue;
+    background-color: var(--note-white-key-color, white);
+    color: transparent;
     box-shadow: 0 0 2pt 1pt pink;
 }
+/* Per-key theme-driven box-shadow, excluded on highlighted cells (:not(...)) so it never
+   fights with an active Pitch/Multi/root/lead highlight's own box-shadow -- both are
+   single-class-equivalent selectors, and this higher-specificity :not() selector always
+   wins over the plain .noteWhiteKey/.noteBlackKey literal box-shadow above when NOT
+   highlighted. When a highlight class IS present, this rule doesn't match at all, so the
+   plain rule's literal box-shadow above intentionally applies instead. See
+   NoteTableController.js's doHighlight/doHighlightSingle and .noteHighlight/
+   .noteHighlightSingle below. */
+.noteWhiteKey:not(.noteHighlight):not(.noteHighlightSingle) {
+    box-shadow: var(--note-white-key-shadow-color, 0 0 2pt 1pt pink);
+}
+.noteBlackKey:not(.noteHighlight):not(.noteHighlightSingle) {
+    box-shadow: var(--note-black-key-shadow-color, 0 0 2pt 1pt cornflowerblue);
+}
 .notePinkKey {
-    background-color:pink !important;
-    color: black;
+    /* was-for-note-mode: background-color:pink !important;*/
+    background-color:rgb(246, 177, 189) !important;
+    FOOcolor: black;
     box-shadow: 0 0 2pt 1pt cornflowerblue;
 }
 
@@ -1753,26 +2160,77 @@ td.nut div.NoteActive .CenterCell {
 
 
 .noteHighlight {
-    box-shadow: 0 0 4pt 4pt yellow;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
 .noteHighlight .namedNote {
-    box-shadow: 0 0 9pt 8pt yellow;
+    box-shadow: 0 0 9pt 8pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
 .noteHighlight .NoteDisplay {
-    box-shadow: 0 0 9pt 8pt red;
+    box-shadow: 0 0 9pt 8pt var(--resolved-highlight-color, var(--system-pitch-color, yellow));
 }
+.noteHighlight.noteHighlightOverrideBlue {
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color, rgb(94, 251, 244));
+}
+.noteHighlight.noteHighlightOverrideBlue .namedNote {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color, rgb(94, 251, 244));
+}
+.noteHighlight.noteHighlightOverrideBlue .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color, rgb(94, 251, 244));
+}
+
+
 /** box-shadow nums: offset-x offset-y blur-radius spread-radius
   * see: https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
  */
+
 .noteHighlightSingle {
-    box-shadow: 0 0 4pt 4pt magenta;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
 }
+
 .noteHighlightSingle .namedNote {
-    box-shadow: 0 0 4pt 4pt magenta;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
 }
+
 .noteHighlightSingle .NoteDisplay {
-    box-shadow: 0 0 4pt 4pt red;
+    box-shadow: 0 0 4pt 4pt var(--resolved-highlight-color, var(--system-multi-color, magenta));
 }
+
+
+/** Highlights (H1/H2/H3) stylesheet colors -- theme-driven defaults, user-overridable via the
+ *  "Highlights" stylesheet + color picker (see userColors.js::gUserColorDictHighlightsDefault).
+ *  These are independent, self-contained classes (not stacked overrides like noteHighlight /
+ *  noteHighlightOverrideBlue above) so they can be painted directly like any other rbColor. */
+.noteHighlightH1 {
+    box-shadow: 0 0 4pt 4pt var(--system-pitch-color);
+}
+.noteHighlightH1 .namedNote {
+    box-shadow: 0 0 9pt 8pt var(--system-pitch-color);
+}
+.noteHighlightH1 .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt var(--system-pitch-color);
+}
+
+.noteHighlightH2 {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+.noteHighlightH2 .namedNote {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+.noteHighlightH2 .NoteDisplay {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+
+.noteHighlightH3 {
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color);
+}
+.noteHighlightH3 .namedNote {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color);
+}
+.noteHighlightH3 .NoteDisplay {
+    box-shadow: 0 0 9pt 8pt var(--system-lead-color);
+}
+
+
 
 .midiPitch{
     color: green;

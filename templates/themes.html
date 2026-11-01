@@ -3,12 +3,51 @@
         <div class="menuDiv">
             <span id='warny' class="floater"><span class="floaterClose">CLOSE</span>MESSAGES:<br></span>
             <div class="sectionPageControlsGroup">
-                <button id="btnFloatSection_divThemes" class="moveyButton floatDockableButton"
-                    onclick="makeDivDockable('divThemes')">Float</button>
 
+                
+                
+            
+
+                <!-- Sprint 146 (table-themes): scope the Theme/Clear buttons above to one Instrument
+                     instead of the whole song. "default" (empty value) keeps the pre-existing global
+                     USER-theme behavior. -->
+                <label for="selThemeTable">Save/Clear Theme for:
+                    <select id="selThemeTable">
+                        <option value="" selected>default (whole song)</option>
+                    </select>
+                </label>
                 <button id="btnTheme" class="safeButton" type="button">Theme</button>
+                <button id="btnDeleteTableTheme" class="safeButton" type="button" disabled>Clear Table Theme</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <button id="btnToggleThemeTableResults" class="safeButton" type="button">Results</button>
                 <button id="btnShowWarny" class="safeButton" type="button">Show Theme Messages</button>
+                <br>
+                <br>
+
+                <!-- Sprint 146 Iteration 2 (146-it2-design.md point 3, revised per user feedback):
+                     writes the CURRENT Theme controls (however they got that way -- Save button,
+                     #selThemeTable pick, or "default") onto an arbitrary destination Table+Section.
+                     Neither destination select navigates or changes the displayed controls. -->
+                <label for="selThemeTableDest">Copy Table Theme to Table:
+                    <select id="selThemeTableDest"></select>
+                </label>
+                <label for="selThemeSectionNumDest">Section:
+                    <select id="selThemeSectionNumDest"></select>
+                </label>
+                <button id="btnCopyThemeToSection" class="safeButton" type="button">Copy to Section</button>
+                <br>
+                <br>
+
+                <!-- Sprint 146 Iteration 2 (146-it2-design.md point 1-2): Section x Instrument
+                     matrix of saved per-table Themes, collapsed by default like
+                     #tutorialPromptSectionToggle. -->
+                <div>
+                    <button id="btnToggleThemeMatrix" class="safeButton" type="button">Theme Matrix <span id="spanThemeMatrixArrow">&#x25B6;</span></button>
+                </div>
+                <div id="divThemeMatrixWrap" style="display:none;">
+                    <table id="tblThemeMatrix" class="themeMatrixTable" border="1" cellpadding="3" cellspacing="0"></table>
+                    <div id="divThemeMatrixFooter" class="themeMatrixFooter"></div>
+                </div>
                 <br>
 
                 <!-- Theme Controls -->
@@ -183,6 +222,49 @@
                                     <option value="url('img/celtic-background-black.png')">celtic
                                     </option>
                                     <option value="url('img/blade-border.png')">blade</option>
+                                    <option value="url('img/blade-fullbox.jpeg')">blade</option>
+                                    <option value="url('img/blade-fullbox.jpeg')">blade half (slice 80)</option><!-- just a reminder, doesn't *do* anything, and gets de-selected.-->
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Instrument Border Thickness:
+                            </td>
+                            <td>
+                                <select id="dropDownInstrumentBorderThickness">
+                                    <option value="0">0</option>
+                                    <option selected value="10px">10px</option>
+                                    <option value="20px">20px</option>
+                                    <option value="30px">30px</option>
+                                    <option value="40px">40px</option>
+                                    <option value="60px">60px</option>
+                                    <option value="80px">80px</option>
+                                    <option value="100px">100px</option>
+                                    <option value="120px">120px</option>
+                                    <option value="140px">140px</option>
+                                    <option value="160px">160px</option>
+                                    <option value="200px">200px</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Instrument Border Slice:
+                            </td>
+                            <td>
+                                <select id="dropDownInstrumentBorderSlice">
+                                    <option selected value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                    <option value="60">60</option>
+                                    <option value="80">80</option>
+                                    <option value="100">100</option>
+                                    <option value="120">120</option>
+                                    <option value="140">140</option>
+                                    <option value="160">160</option>
+                                    <option value="200">200</option>
                                 </select>
                             </td>
                         </tr>
@@ -242,24 +324,24 @@
                             </td>
                             <td>
                                 <select id="dropDownDiamondsSize">
-                                    <option value="0.4em">0.4em</option>
-                                    <option value="0.5em">0.5em</option>
-                                    <option value="0.6em">0.6em</option>
-                                    <option value="0.7em">0.7em</option>
-                                    <option value="0.8em">0.8em</option>
-                                    <option value="0.9em">0.9em</option>
-                                    <option value="1.0em" selected>1.0em</option>
-                                    <option value="1.2em">1.2em</option>
-                                    <option value="1.4em">1.4em</option>
-                                    <option value="1.5em">1.5em</option>
-                                    <option value="1.6em">1.6em</option>
-                                    <option value="1.8em">1.8em</option>
-                                    <option value="2em">2em</option>
-                                    <option value="3em">3em</option>
-                                    <option value="4em">4em</option>
-                                    <option value="6em">6em</option>
-                                    <option value="9em">9em</option>
-                                    <option value="20em">20em</option>
+                                    <option value="0.4rem">0.4rem</option>
+                                    <option value="0.5rem">0.5rem</option>
+                                    <option value="0.6rem">0.6rem</option>
+                                    <option value="0.7rem">0.7rem</option>
+                                    <option value="0.8rem">0.8rem</option>
+                                    <option value="0.9rem">0.9rem</option>
+                                    <option value="1.0rem" selected>1.0rem</option>
+                                    <option value="1.2rem">1.2rem</option>
+                                    <option value="1.4rem">1.4rem</option>
+                                    <option value="1.5rem">1.5rem</option>
+                                    <option value="1.6rem">1.6rem</option>
+                                    <option value="1.8rem">1.8rem</option>
+                                    <option value="2rem">2rem</option>
+                                    <option value="3rem">3rem</option>
+                                    <option value="4rem">4rem</option>
+                                    <option value="6rem">6rem</option>
+                                    <option value="9rem">9rem</option>
+                                    <option value="20rem">20rem</option>
                                 </select>
                             </td>
                         </tr>
@@ -331,6 +413,121 @@
                         </tr>
                         <tr>
                             <td>
+                                Face Diamonds Size:
+                            </td>
+                            <td>
+                                <select id="dropDownFaceDiamondsSize">
+                                    <option value="0.2rem">0.2rem</option>
+                                    <option value="0.3rem">0.3rem</option>
+                                    <option value="0.35rem">0.35rem</option>
+                                    <option value="0.4rem">0.4rem</option>
+                                    <option value="0.5rem">0.5rem</option>
+                                    <option value="0.6rem">0.6rem</option>
+                                    <option value="0.7rem">0.7rem</option>
+                                    <option value="0.8rem" selected>0.8rem</option>
+                                    <option value="0.9rem">0.9rem</option>
+                                    <option value="1.0rem">1.0rem</option>
+                                    <option value="1.2rem">1.2rem</option>
+                                    <option value="1.5rem">1.5rem</option>
+                                    <option value="2.0rem">2.0rem</option>
+                                    <option value="2.5rem">2.5rem</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Face Diamonds Color:
+                            </td>
+                            <td>
+                                <select id="dropDownFaceDiamondsColor">
+                                    <option value="dodgerblue" selected>dodgerblue</option>
+                                    <option value="#6ebcff">pool blue</option>
+                                    <option value="aqua">aqua</option>
+                                    <option value="green">green</option>
+                                    <option value="darkblue">darkblue</option>
+                                    <option value="lightgreen">lightgreen</option>
+                                    <option value="brown">brown</option>
+                                    <option value="red">red</option>
+                                    <option value="#ab0000">red2</option>
+                                    <option value="pink">pink</option>
+                                    <option value="orange">orange</option>
+                                    <option value="gold">gold</option>
+                                    <option value="yellow">yellow</option>
+                                    <option value="white">white</option>
+                                    <option value="black">black</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Face Double Diamonds Size:
+                            </td>
+                            <td>
+                                <select id="dropDownFaceDoubleDiamondsSize">
+                                    <option value="0.2rem">0.2rem</option>
+                                    <option value="0.3rem">0.3rem</option>
+                                    <option value="0.35rem">0.35rem</option>
+                                    <option value="0.4rem">0.4rem</option>
+                                    <option value="0.5rem">0.5rem</option>
+                                    <option value="0.6rem">0.6rem</option>
+                                    <option value="0.7rem">0.7rem</option>
+                                    <option value="0.8rem" selected>0.8rem</option>
+                                    <option value="0.9rem">0.9rem</option>
+                                    <option value="1.0rem">1.0rem</option>
+                                    <option value="1.2rem">1.2rem</option>
+                                    <option value="1.5rem">1.5rem</option>
+                                    <option value="2.0rem">2.0rem</option>
+                                    <option value="3.0rem">3.0rem</option>
+                                    <option value="5.0rem">5.0rem</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Face Double Diamonds Color:
+                            </td>
+                            <td>
+                                <select id="dropDownFaceDoubleDiamondsColor">
+                                    <option value="dodgerblue">dodgerblue</option>
+                                    <option value="#6ebcff">pool blue</option>
+                                    <option value="green">green</option>
+                                    <option value="lightgreen">lightgreen</option>
+                                    <option value="brown">brown</option>
+                                    <option value="red">red</option>
+                                    <option value="#ab0000">red2</option>
+                                    <option value="pink">pink</option>
+                                    <option value="orange">orange</option>
+                                    <option value="gold" selected>gold</option>
+                                    <option value="yellow">yellow</option>
+                                    <option value="white">white</option>
+                                    <option value="black">black</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Face Tiny Diamonds Size:
+                            </td>
+                            <td>
+                                <select id="dropDownFaceTinyDiamondsSize">
+                                    <option value="0.15rem">0.15rem</option>
+                                    <option value="0.2rem">0.2rem</option>
+                                    <option value="0.25rem">0.25rem</option>
+                                    <option value="0.3rem">0.3rem</option>
+                                    <option value="0.35rem">0.35rem</option>
+                                    <option value="0.4rem" selected>0.4rem</option>
+                                    <option value="0.5rem">0.5rem</option>
+                                    <option value="0.6rem">0.6rem</option>
+                                    <option value="0.7rem">0.7rem</option>
+                                    <option value="0.8rem">0.8rem</option>
+                                    <option value="0.9rem">0.9rem</option>
+                                    <option value="1.0rem">1.0rem</option>
+                                    <option value="1.2rem">1.2rem</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 SingleNote Shrink:
                             </td>
                             <td>
@@ -397,6 +594,91 @@
                                     <option value="gray">gray</option>
                                     <option value="white">white</option>
                                     <option value="chartreuse">chartreuse</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                System Pitch Color (Highlights H1):
+                            </td>
+                            <td>
+                                <select id="dropDownSystemPitchColor">
+                                    <option value="gold" selected>gold</option>
+                                    <option value="magenta">magenta</option>
+                                    <option value="cyan">cyan</option>
+                                    <option value="">------</option>
+                                    <option value="yellow">yellow</option>
+                                    <option value="orange">orange</option>
+                                    <option value="orangered">OrangeRed</option>
+                                    <option value="red">red</option>
+                                    <option value="lime">lime</option>
+                                    <option value="springgreen">springgreen</option>
+                                    <option value="chartreuse">chartreuse</option>
+                                    <option value="aqua">aqua</option>
+                                    <option value="dodgerblue">dodgerblue</option>
+                                    <option value="deeppink">deeppink</option>
+                                    <option value="#1D0075">maroon</option>
+                                    <option value="magenta" selected>magenta</option>
+                                    <option value="pink">pink</option>
+                                    <option value="white">white</option>
+                                    <option value="black">black</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                System Multi Color (Highlights H2):
+                            </td>
+                            <td>
+                                <select id="dropDownSystemMultiColor">
+                                    <option value="gold">gold</option>
+                                    <option value="magenta"  selected>magenta</option>
+                                    <option value="cyan">cyan</option>
+                                    <option value="">------</option>
+                                    <option value="yellow">yellow</option>
+                                    <option value="orange">orange</option>
+                                    <option value="orangered">OrangeRed</option>
+                                    <option value="red">red</option>
+                                    <option value="lime">lime</option>
+                                    <option value="springgreen">springgreen</option>
+                                    <option value="chartreuse">chartreuse</option>
+                                    <option value="aqua">aqua</option>
+                                    <option value="dodgerblue">dodgerblue</option>
+                                    <option value="deeppink">deeppink</option>
+                                    <option value="#1D0075">maroon</option>
+                                    <option value="magenta" selected>magenta</option>
+                                    <option value="pink">pink</option>
+                                    <option value="white">white</option>
+                                    <option value="black">black</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                System Lead Color (Highlights H3):
+                            </td>
+                            <td>
+                                <select id="dropDownSystemLeadColor">
+                                    <option value="gold" selected>gold</option>
+                                    <option value="magenta">magenta</option>
+                                    <option value="cyan"  selected>cyan</option>
+                                    <option value="">------</option>
+                                    <option value="rgb(94, 251, 244)">cyan-blue</option>
+                                    <option value="yellow">yellow</option>
+                                    <option value="orange">orange</option>
+                                    <option value="orangered">OrangeRed</option>
+                                    <option value="red">red</option>
+                                    <option value="lime">lime</option>
+                                    <option value="springgreen">springgreen</option>
+                                    <option value="chartreuse">chartreuse</option>
+                                    <option value="aqua">aqua</option>
+                                    <option value="dodgerblue">dodgerblue</option>
+                                    <option value="deeppink">deeppink</option>
+                                    <option value="#1D0075">maroon</option>
+                                    <option value="magenta" selected>magenta</option>
+                                    <option value="pink">pink</option>
+                                    <option value="white">white</option>
+                                    <option value="black">black</option>
                                 </select>
                             </td>
                         </tr>

@@ -4,6 +4,7 @@ import { PluginProperty, buildCaption, buildValueReference } from '../PluginProp
 import { buildPluginEventsHelpFooter, buildPluginHelpHeader } from '../pluginHelp.js';
 import * as Constants from '../../Constants.js';
 import { getSong, getTransportController } from '../../infinite-neck.js';
+import * as SongWidgets from '../../SongWidgets.js';
 import {
   applyTonalSelection,
   buildOverflowResultSuffix,
@@ -15,8 +16,14 @@ import {
 } from '../../tonalPicker-functions.js';
 import { TonalSourceSet,
          getChord,
-         getMode     
+         getMode,
+         getKeySignatureInfo    
 } from '../../TonalFunctions.js';
+
+const { Note: TonalNote } = globalThis.Tonal?.Note
+    ? globalThis.Tonal
+    : await import('tonal');
+
 import { linkToSectionChangedTonal, linkToSectionTableTonalSourceSet } from '../../infinite-neck.js';
 import { modeNotesFromStoredMode, parseScaleBestEffort } from  '../chart/chart-tonal-resolver.js';
 
@@ -583,21 +590,23 @@ export class TonalPlugin {
   getApprovedCaptionValue(tokenName, context = {}) {
     const state = this.getApprovedCaptionState(context);
     if (tokenName === 'enharmonicTransposedModeNotes') {
-      const song = getSong();
-      const section = this .getCurrentSection(song);
-      const theMode = parseScaleBestEffort(section.chartMode);
-      const type = theMode?.type || 'no-type';
-      const transposedKey = Constants.getPreferredRootName(section.rootID);
-      const mode = getMode(transposedKey+' '+type); //from TonalFunctions
-      const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
-      return body;
-      //Don't do it this way, always returns flats:
-      //let res = modeNotesFromStoredMode(section.chartMode, section.rootID, {transposeToRootID: true}); 
-      //return [...res].join(', ');
+      return this.formatEnharmonicTransposedModeNotes();
+    } else if (tokenName === 'transposedModeNotesFunctions') {
+      return this.formatTransposedModeNotes();
+    } else if (tokenName === 'enharmonicTransposedChordNotes') {
+      return this.formatTransposedChordNotes(true);
+    } else if (tokenName === 'transposedChordNotes') {
+      return this.formatTransposedChordNotes();
+    } else if (tokenName === 'transposedChordNotesFunctions') {
+      return this.formatTransposedChordNotesFunctions();
+    } else if (tokenName === 'transposedChordNotesLeadKeyFunctions') {
+      return this.formatTransposedChordNotesFunctions(true);
     } else if (tokenName === 'keySignatureCount') {
       return this.buildKeySignatureCount(false);
     } else if (tokenName === 'keySignatureCountHand') {
       return this.buildKeySignatureCount(true);
+    } else if (tokenName === 'keySignatureSimplified') {
+      return this.buildKeySignatureSimplified();
     } else if (tokenName === 'enharmonicChartModeNotes') {
       const song = getSong();
       const section = this .getCurrentSection(song);
@@ -608,24 +617,82 @@ export class TonalPlugin {
     return '';
   }
 
-  buildKeySignatureCount(wantHand){
+  formatEnharmonicTransposedModeNotes(){
+    const notes = this.buildTransposedModeNotes();
+    const body = notes.join(', ').replaceAll('b','<small>&flat;</small>');
+    return body;
+  }
+  formatTransposedModeNotes(){
+    const notes = this.buildTransposedModeNotes().map(TonalNote.simplify);
+    const body = SongWidgets.formatTransposedChordNotesFunctions(notes, false); 
+    return body;
+      
+  }
+  buildTransposedModeNotes(){
       const song = getSong();
       const section = this .getCurrentSection(song);
       const theMode = parseScaleBestEffort(section.chartMode);
       const type = theMode?.type || 'no-type';
       const transposedKey = Constants.getPreferredRootName(section.rootID);
       const mode = getMode(transposedKey+' '+type); //from TonalFunctions
-      const doubleSharpsCount = mode.notes.filter(note => note.endsWith('##')).length;
-      const sharpsCount = doubleSharpsCount + mode.notes.filter(note => note.endsWith('#')).length;
-      const doubleFlatsCount  = mode.notes.filter(note => note.endsWith('bb')).length;
-      const flatsCount  = doubleFlatsCount + mode.notes.filter(note => note.endsWith('b')).length;
+      return mode.notes;
+
+      //const body = mode.notes.join(', ').replaceAll('b','<small>&flat;</small>');
+
+      //TODO: this works, so factor the above code into a build* function and add an expansion for the *Functions version below.
+      //if (true)return SongWidgets.formatTransposedChordNotesFunctions(mode.notes, false); 
+      
+      //return body;
+  }
+
+  formatTransposedChordNotes(enharmonic=false){
+    return this.buildTransposedChordNotes(enharmonic).join(', ').replaceAll('b','<small>&flat;</small>');
+  }
+  formatTransposedChordNotesFunctions(relativeToLeadKey=false){
+    const noteArray = this.buildTransposedChordNotes(false);
+    return SongWidgets.formatTransposedChordNotesFunctions(noteArray, relativeToLeadKey); 
+  }
+
+  buildTransposedChordNotes(enharmonic){
+      const song = getSong();
+      const section = this.getCurrentSection(song);
+      const chartChord = getChord(section.chartChord); //from TonalFunctions
+      if (!chartChord || chartChord.empty) {
+        return [];
+      }
+      const rootID = section.rootID;
+      const transposedRoot = Constants.getPreferredRootName(rootID);
+      const transposedChord = getChord(transposedRoot + (chartChord.aliases?.[0] ?? ''));
+      if (!transposedChord || transposedChord.empty) {
+        return [];
+      }
+      if (enharmonic){
+        return transposedChord.notes; 
+      } else {
+        return transposedChord.notes.map(TonalNote.simplify); //Tonal.js::Note.simplify removes enharmonic spellings, turning Ebb into D.
+      }
+  }
+
+  buildKeySignatureCount(wantHand){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const info = getKeySignatureInfo(transposedKey);
       let body = ' ';
-      if (sharpsCount > 0){
-        body = (wantHand?'&#x261E; ':'')+sharpsCount+" sharp"+(sharpsCount>1?'s':'');
-      } else if (flatsCount > 0){
-        body = (wantHand?'&#x261E; ':'')+flatsCount+" flat"+(flatsCount>1?'s':'');
+      if (info.sharps > 0){
+        body = (wantHand?'&#x261E; ':'')+info.sharps+" sharp"+(info.sharps>1?'s':'');
+      } else if (info.flats > 0){
+        body = (wantHand?'&#x261E; ':'')+info.flats+" flat"+(info.flats>1?'s':'');
       }
       return body;
+  }
+
+  buildKeySignatureSimplified(){
+      const song = getSong();
+      const section = this .getCurrentSection(song);
+      const transposedKey = Constants.getPreferredRootName(section.rootID);
+      const info = getKeySignatureInfo(transposedKey);
+      return info.standardKey;
   }
 
 

@@ -24,7 +24,11 @@ function installJqueryStub(onAddClass) {
         return globalThis.$(`${selector} ${subselector}`);
       },
       show() { return this; },
-      html() { return this; }
+      html() { return this; },
+      each(callback) {
+        callback.call({ style: { setProperty() {}, removeProperty() {} } });
+        return this;
+      }
     };
     return chain;
   };
@@ -103,6 +107,7 @@ describe('NoteTableController observer replay color context', () => {
       getSong: () => song,
       getCurrentSection: () => currentSection,
       doingAutomaticColor: () => true,
+      doingAutomaticColorHighlight: () => true,
       fullRepaint: () => {}
     });
 
@@ -168,6 +173,7 @@ describe('NoteTableController observer replay color context', () => {
       getSong: () => song,
       getCurrentSection: () => currentSection,
       doingAutomaticColor: () => false,
+      doingAutomaticColorHighlight: () => false,
       fullRepaint: () => {}
     });
 

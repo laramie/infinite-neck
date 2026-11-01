@@ -164,7 +164,7 @@ export function stringifyMenuItem(menuItem){
 
 
 export function txtCmdLine_keypress(e) {
-    if (gMenuPointer.type && gMenuPointer.type == "input" && event.keyCode != 13){
+    if (gMenuPointer.type && gMenuPointer.type == "input" && e.keyCode != 13){
         return;
     }
     if (e.keyCode == 13) {  // ENTER key : means value has been entered.
@@ -269,7 +269,7 @@ export function txtCmdLine_keypress(e) {
                     clearCmdLine();
                     updateCmdLineView(child.trigger);
                     child.bang = false;
-                    event.preventDefault();
+                    e.preventDefault();
                     return;
                 }
             } else {
@@ -303,7 +303,7 @@ export function txtCmdLine_keypress(e) {
                         }
                     }
                    diveMenu(child, childIdx);
-                    event.preventDefault();
+                    e.preventDefault();
                     clearCmdLine();
                     updateCmdLineView();
                     return;
@@ -332,5 +332,40 @@ export function txtCmdLine_keydown(e) {
         e.preventDefault();
         e.stopPropagation();
         applyMenuPrefKey('o');
+    }
+}
+
+// On some mobile browsers (notably Android Chrome with a soft keyboard), the
+// 'keypress' event either doesn't fire with a usable e.key, or its
+// preventDefault() doesn't actually stop the character from being inserted
+// into the text box, so trigger characters can land and stay in #txtCmdLine
+// instead of driving the menu. 'beforeinput' is dispatched more reliably by
+// soft keyboards/IMEs and its preventDefault() reliably blocks the insertion.
+//
+// On desktop, when 'keypress' already recognizes and cancels a keystroke,
+// the browser does not go on to dispatch 'beforeinput' for it at all, so
+// this handler simply won't run for those keys there, and desktop behavior
+// is unaffected.
+export function txtCmdLine_beforeinput(e) {
+    if (gMenuPointer.type && gMenuPointer.type == "input") {
+        // Gathering free-form text for an .input menu: let it type normally.
+        return;
+    }
+    if (e.inputType !== 'insertText' || typeof e.data !== 'string' || e.data.length !== 1) {
+        // Only intercept simple single-character text insertion; leave
+        // deletions, IME composition-in-progress, pastes, etc. untouched.
+        return;
+    }
+
+    let handled = false;
+    txtCmdLine_keypress({
+        key: e.data,
+        keyCode: undefined,
+        preventDefault() {
+            handled = true;
+        }
+    });
+    if (handled) {
+        e.preventDefault();
     }
 }

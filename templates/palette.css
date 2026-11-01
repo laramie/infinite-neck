@@ -61,7 +61,7 @@ table.organizer td {
     width: 5em;
     font-weight: bold;
     border: 1px solid gray;
-    background-color: buttercup;
+    background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 #chooseHighlightNamed,
@@ -108,7 +108,7 @@ table.organizer td {
     color: black;
     font-weight: bold;
     border: 1px solid gray;
-    background-color: buttercup;
+    background-color: white;
     box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
 
@@ -142,6 +142,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
    padding: 0.7em !important;
    box-shadow: 2pt 2pt  2pt 0.01pt gray;
 }
+#lblAutomaticColorHighlight {
+   padding: 0.7em !important;
+   box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
 
 #palette label.userColorRB {
   margin: 4px;
@@ -153,6 +157,15 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
   font-family: sans-serif;
   border: 1px solid gray;
   box-shadow: 2pt 2pt  2pt 0.01pt gray;
+}
+#palette label.userColorRB.noteHighlightH1 {
+    box-shadow: 0 0 4pt 4pt var(--system-pitch-color);
+}
+#palette label.userColorRB.noteHighlightH2 {
+    box-shadow: 0 0 4pt 4pt var(--system-multi-color);
+}
+#palette label.userColorRB.noteHighlightH3 {
+    box-shadow: 0 0 4pt 4pt var(--system-lead-color);
 }
 
 .radioFillChooser {
@@ -191,6 +204,8 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 
 .tblColorDictOneRow{
+    display: inline-table;
+    vertical-align: middle;
     border: 1px solid #555;
 }
 .tblColorDictOneRow td {
@@ -218,8 +233,10 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    margin-top: 0.5em;
+    margin-top: 0.4em;
     margin-bottom: 0.4em;
+    /* 20260908
+      verticcal-align: top; display: block;*/
 }
 .currentColorDict a {
    pointer-events: none;
@@ -245,6 +262,45 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 }
 .largeColorDict td {
     padding: 0.2em;
+}
+
+/* Read-only status spans riding alongside currentColorDict/tblColorDictOneRow
+   (see TableBuilder.js's buildCaptionRow()); em-based sizing lets them scale
+   automatically with .largeColorDict's font-size bump. */
+.paletteStatusSpan {
+    display: inline-block;
+    /*20260908
+       vertical-align: bottom;
+       box-sizing: border-box;*/
+    margin-right: 0.1em;
+    padding: 0.2em 0.4em;
+    border: 1px solid black;
+    border-radius: 0.1em;
+    font-weight: bold;
+    font-size: 70%;
+    background-color: white;
+    color: black;
+}
+
+.paletteHidingStatus {
+    background-color: white; /*#fdd;*/
+    color: #900;
+    border-color: #900;
+}
+
+.miniPaletteStatus {
+    display: inline-block;
+    background-color: #dfd;
+    padding: 0.23em;
+    padding-inline: 0.6em;
+    /* 20260908
+       padding-top: 0.5em;
+       min-height: 1.6em;*/
+    height: 100%;  
+    margin-right: 1em;
+    box-shadow: inset 2px 5px 20px black;
+    border-radius: 0.2em;
+    border: 1px solid green;
 }
 
 .userColorResultCaption {
@@ -310,8 +366,11 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
 .notePink3 { color: lightblue; background-color:#1D0075;  }
 .notePink4 { color: yellow; background-color:purple;  }
 .notePink5 { color: black; background-color:magenta;  }
-.notePink6 { color: black; background-color:pink;  }
-.notePink7 { color: black; background-color:RosyBrown;  }
+.notePink6 { color: black; background-color: rgb(252, 76, 199); }
+.notePink7 { color: black; background-color:pink;  }
+.notePink8 { color: black; background-color:RosyBrown;  }
+
+
 
 .noteBlue1 { color: Wheat; background-color:Navy; }
 .noteBlue2 { color: white; background-color:#1606c7; }/* this one is needed by old songs, but is not in the standard color picker.*/
@@ -366,6 +425,18 @@ label.chooseHighlight#idMidiPitchesSingleLbl {
     background-color: #555;
     color: #BBB;
 }
+
+/* Highlights color-picker swatches: 9 raw "glow" colors, undictionaried like notePink1-7 etc.
+   Selectable directly (behind the More... button) and reassignable to noteH1/H2/H3 via Customize. */
+.noteHighlight1 { color: blue; background-color: gold;        box-shadow: 0 0 6pt 2pt gold; }
+.noteHighlight2 { color: rgb(17, 84, 94); background-color: magenta;     box-shadow: 0 0 6pt 2pt magenta; }
+.noteHighlight3 { color: rgb(5, 5, 123); background-color: cyan;        box-shadow: 0 0 6pt 2pt cyan; }
+.noteHighlight4 { color: black; background-color: lime;        box-shadow: 0 0 6pt 2pt lime; }
+.noteHighlight5 { color: white; background-color: dodgerblue;  box-shadow: 0 0 6pt 2pt dodgerblue; }
+.noteHighlight6 { color: lightblue; background-color: #1D0075; box-shadow: 0 0 12pt 4pt springgreen; }
+.noteHighlight7 { color: black; background-color: orange;      box-shadow: 0 0 6pt 2pt orange; }
+.noteHighlight8 { color: white; background-color: orangered;   box-shadow: 0 0 6pt 2pt orangered; }
+.noteHighlight9 { color: orange; background-color: maroon;     box-shadow: 0 0 6pt 2pt deeppink; }
 
 
 
