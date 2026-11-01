@@ -1,4 +1,4 @@
-# sprint-150-shortname
+# sprint-150-palette-crud-redo
 
 sprint number: 150
 
