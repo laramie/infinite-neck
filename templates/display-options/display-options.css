@@ -35,7 +35,7 @@
     margin: 0;
     white-space: nowrap;
 }
-/* Tool buttons: the look of the palette's highlight buttons (#chooseHighlightNamed, templates/palette.css):
+/* Tool buttons: the look of the palette's highlight buttons (#chooseHighlightNamed, templates/palette/palette.css):
    a white button with a floating box-shadow.  The selected Tool gets the palette's cyan "pressed" shadow
    (as .chooseLastColor / .chooseKeep do), in addition to its radio dot. */
 #divDisplayOptionsMatrix .dmTools label {

@@ -15,7 +15,7 @@
 
 export const DEFAULT_FUNCTION_SYMBOLS_ID = 'function';
 
-/** Values the markup of index.html / templates/palette.html gives the controls before any Song is
+/** Values the markup of index.html / templates/palette/palette.html gives the controls before any Song is
  *  applied.  `bin/print-control-defaults.js` prints the markup values for comparison.
  *  NOT defaulted (no entry): currentColorDict, NoteDisplaySizes, sectionTheme.  */
 export const DISPLAY_OPTIONS_DEFAULTS = Object.freeze({

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Sprint 148 Iteration 4: prints the control values the markup of index.html (and templates/palette.html)
+// Sprint 148 Iteration 4: prints the control values the markup of index.html (and templates/palette/palette.html)
 // gives the DisplayOptions controls, next to DISPLAY_OPTIONS_DEFAULTS, so a drift is easy to spot.
 // Text-only: it reads the checked / selected / value attributes with regular expressions.
 //
@@ -28,7 +28,7 @@ const SELECTS = {
 };
 const RANGES = { namedNoteOpacity: 'rangeNamedNoteOpacity', singleNoteOpacity: 'rangeSingleNoteOpacity', tinyNoteOpacity: 'rangeTinyNoteOpacity' };
 
-const html = ['index.html', 'templates/palette.html'].filter((f) => fs.existsSync(f)).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
+const html = ['index.html', 'templates/palette/palette.html'].filter((f) => fs.existsSync(f)).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 
 function tagFor(id) {
     const m = html.match(new RegExp(`<input[^>]*id="${id}"[^>]*>`, 's'));
@@ -58,7 +58,7 @@ Object.entries(CHECKBOXES).forEach(([key, id]) => { found[key] = checkboxDefault
 Object.entries(SELECTS).forEach(([key, id]) => { found[key] = selectDefault(id); });
 Object.entries(RANGES).forEach(([key, id]) => { found[key] = rangeDefault(id); });
 
-// Keys whose markup differs ON PURPOSE: the palette checkbox is unchecked in templates/palette.html and
+// Keys whose markup differs ON PURPOSE: the palette checkbox is unchecked in templates/palette/palette.html and
 // applyDisplayOptionDefaults() checks it once the palette exists (AutoColor starts on).
 const KNOWN_MARKUP_DIFFERENCES = new Set(['autoColor']);
 

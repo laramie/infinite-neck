@@ -1,7 +1,7 @@
 /*  Copyright (c) 2026 Laramie Crocker http://LaramieCrocker.com  */
 
 // Sprint 148 Iteration 3: Function Symbols panel.  Follows the other widgets built from
-// templates/ (see themes.builder.js, palette.builder.js): addToDest() clones the <template>
+// templates/ (see themes.builder.js, palette/palette.builder.js): addToDest() clones the <template>
 // once into a destination div and binds events.
 //
 // MODEL FIRST, DOM SECOND.  appInit applies DisplayOptions before any template has loaded,

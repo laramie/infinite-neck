@@ -40,7 +40,7 @@ const DEFAULT_MULTI_COLOR = {
     caption: 'H2'
 };
 
-// Mirrors the #selBend <option> captions in templates/palette.html -- read here
+// Mirrors the #selBend <option> captions in templates/palette/palette.html -- read here
 // instead of scraping the <option> text so PalettePresentation.getHighlightStatusMarkup()
 // can compose the "Bend: <small>...</small>" status span from #selBend's plain value.
 const BEND_TYPE_CAPTIONS = {

@@ -130,7 +130,7 @@ import { escapeHtml, renderSongInstrumentBadges } from './InstrumentRoleBadges.j
 
 import * as WiringBuilder from './templates/WiringBuilder.js';
 import { ThemesBuilder }  from './templates/themes.builder.js';
-import { PaletteBuilder } from './templates/palette.builder.js';
+import { PaletteBuilder } from './templates/palette/palette.builder.js';
 import { InfoBuilder } from './templates/info/info.builder.js';
 import { MobileKeyboardBuilder } from './templates/mobile-keyboard/mobile-keyboard.builder.js';
 import { MidiTabBuilder } from './templates/midi/midi.builder.js';
@@ -2481,7 +2481,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 			// spans TableBuilder.js's buildCaptionRow() creates can actually be found by
 			// a document-scoped $() query. Runs on every reinstall (startup, song load,
 			// append, MyTunings edits, etc.), covering the case where these tables are
-			// (re)built before templates/palette.html has finished loading -- once it
+			// (re)built before templates/palette/palette.html has finished loading -- once it
 			// does, installRBColorChangeEvents()'s own initializePalettePresentation()
 			// call refreshes them again.
 			PalettePresentation.refreshPaletteStatusSpans();
@@ -5010,7 +5010,7 @@ if (typeof window !== 'undefined' && typeof $ !== 'undefined') {
 
 		updateFontLabel();
 
-		loadTemplates('templates/palette.html').then(() => {
+		loadTemplates('templates/palette/palette.html').then(() => {
 			PaletteBuilder.addToDest("#divPalette");
 			installDefaultColorDicts();
 			applyStylesheetsTo_gUserColorDict();

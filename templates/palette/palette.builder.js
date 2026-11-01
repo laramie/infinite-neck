@@ -1,9 +1,9 @@
-import * as NoteTableController from '../NoteTableController.js';
-import * as ColorFunctions from '../colorFunctions.js';
+import * as NoteTableController from '../../NoteTableController.js';
+import * as ColorFunctions from '../../colorFunctions.js';
 import { 
 	PalettePresentation 
-} from '../presentation.js';
-import * as PaletteUtils from '../paletteUtils.js'
+} from '../../presentation.js';
+import * as PaletteUtils from '../../paletteUtils.js'
 
 
 export class PaletteBuilder {
