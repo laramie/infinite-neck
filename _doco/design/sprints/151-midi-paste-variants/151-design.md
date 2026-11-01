@@ -98,3 +98,81 @@ where `m)ap` is a sub-menu that lists and lets the User select from built-in cho
 Please incorporate these rules, plus the previous discussion in the chat, eliding rejected design possibilities (such as fret-based copies, `0` for skipped strings, flat lists with source-only specifiers, alternate small-grammars), and write an implementation plan in `151-implementation-plan.md` for us to review and answer questions.  This will give us a documentation of the accepted portions of the chat so far.
 
 This Iteration has an output of the implementation plan, and no coding yet.
+
+# sprint-151 Iteration 2
+
+The previously read sections above this one are unchanged, and can be considered Iteration 1.
+
+Iteration 2 answers and request follow.
+
+## 151-implementation-plan section 8. Questions :: ANSWERED
+
+
+1. **Bass built-ins.**  The library puts Bass5's extra string at the bottom (F12), so the MIDI-correct maps differ from the design.  *Recommend using the library-derived values:* `Bass5 > Bass4` `1:1, 2:2, 3:3, 4:4`; `Bass6 > Bass5` `2:1, 3:2, 4:3, 5:4, 6:5`; `Bass6 > Bass4` `2:1, 3:2, 4:3, 5:4`.  Or do you want the design values as written (if the real basses you have in mind are tuned from the top)?
+
+- ANSWER: You are correct, we forgot about the Bass5 and Bass6 orders.  Use the Recommendation.
+
+
+2. **Starting selection.**  *Recommend the active id starts empty and shows `[none]` in `m)ap`, which means today's behavior.*  The list has no `0)`, so how does the User go back to none?  *Recommend a final `n)one` child under `m)ap` (letter `n` is reserved, so choices skip it).*  Alternative: the first built-in is the default and "none" does not exist.
+
+- ANSWER: Accept Recommendation
+
+3. **Pick a map by hand every time?**  Pasting P48 to P46 and then Bass5 to Bass4 means switching the active map between them.  *Recommend also trying a stored pair-form map automatically when the active map does not fit,* the Song's own maps first, then built-ins.  The active map still wins when it fits.  The design only describes the active map; this is an addition, so say no if you want it strictly manual.
+
+- ANSWER:  Keep is strictly manual.  Authors will tend to batch edits and move between Sections as they work per Instrument, so as long as the menu retains current map, it works.
+
+4. **Active map does not fit the pair.**  *Recommend fall back to today's behavior* (identity, 6-string Guitar only) *with the result line saying so.*  Alternative: refuse the paste.
+
+- ANSWER:  Accept Recommendation.
+
+5. **Custom ids** (no `>`): *Recommend they apply to any pair, with no reverse inference.*  Alternative: they are valid only if the User also gives the endpoints, which would add syntax.
+
+- ANSWER:  Accept Recommendation 
+
+6. **Class wildcard on both sides.**  *Recommend yes:* `P48 > S6` matches any 8-string-Guitar source and any 6-string-Guitar target, and the reverse.  Endpoint class is looked up from the Song's tunings and then the library; an unknown tuning id matches only by lineage.  The design states the target side explicitly; the source side is my reading.
+
+- ANSWER:  Accept Recommendation
+
+7. **Many-to-one: last wins by pair order** (the later pair in the spec), not by clip order.  The User controls precedence by the order they write.  OK?
+
+- ANSWER: Yes.
+
+8. **Pair beyond an instrument's string count:** skip the pair and log (recommended), or fail the paste.
+
+- ANSWER: skip and log.
+
+9. **Same id as a built-in or User map:** *Recommend reject on add.*  Alternative: a User map with a built-in's id shadows it, and deleting it brings the built-in back (lets the User override a built-in without a new name).
+
+- ANSWER:  Accept Recommendation.
+
+10. **Delete:** number/letter then Y/n (recommended, matches `/fmd`), or delete directly.  Built-ins are never deletable.
+
+- ANSWER:  Accept Recommendation
+
+11. **Where the map applies:** `midiPasteClip` and recorded-notes MIDI Paste (`/fpcrp m`); not Listener copy.  OK?
+
+- ANSWER: YES.
+
+12. **Named notes** are pasted unchanged, as today.  OK?
+
+- ANSWER: YES.
+
+13. **Id characters:** letters, digits, space, `_ - . '` and one `>`; spacing of pair-form ids rewritten to `A > B`.  Case-insensitive uniqueness, case-sensitive endpoint matching.  OK?
+
+- ANSWER: YES.  User Log if rejected. 
+
+14. **Key cap of 35 (`1-9`, `a-z`)**, with the rest shown only in `l)ist`.  Acceptable, or do you want an `i)d` entry at the end of `m)ap` (like `/fmd`) that takes a typed id?  *Recommend the cap, since 35 maps is far beyond what a Song needs.*
+
+- ANSWER: Just the cap.  35 maps is already too much as you said.  Near that point, the menu output blows out or scrolls or something ugly. Unlikely to get used in practice. 
+
+15. **Advisory script** `bin/check-midi-paste-maps.js` (section 7): wanted now, later, or never?
+
+- ANSWER: later.
+
+16. **Approvals:** this plan edits no top-level `./` code file.  [help-plugins.html](../../../../help-plugins.html) is documentation at the top level; may it be updated in Phase 6?  Also, [sprint-151.md](sprint-151.md) gets a link to this plan once you accept it.
+
+- ANSWER: help-plugins.html change APPROVED.
+
+## Iteration 2 Request
+
+Please proceed to implementation.
